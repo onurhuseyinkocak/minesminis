@@ -162,6 +162,101 @@
   transform: scale(1.08) translateY(-5px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
+/* Words Page */
+.words-page {
+  font-family: "Comic Neue", "Nunito", "Poppins", cursive;
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.words-page h1 {
+  color: #ff8c94;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.search-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.search-section input {
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 2px solid #ffd3b6;
+  width: 200px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.search-btn {
+  background: #ffaaa5;
+  color: white;
+}
+
+.random-btn {
+  background: #96ceb4;
+  color: white;
+}
+
+.btn:hover {
+  transform: scale(1.1) rotate(-2deg);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.results h2 {
+  color: #6a2c70;
+  font-size: 2rem;
+  margin-top: 20px;
+}
+
+.word-image {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 20px;
+  margin: 15px 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.definitions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.def-card {
+  background: #ffee93;
+  padding: 15px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.def-card:hover {
+  transform: scale(1.05);
+  background: #ffd97d;
+}
+
+.example-sentence {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  color: #355c7d;
+}
 
 /* Farklı renkler */
 .grid-card.words {
