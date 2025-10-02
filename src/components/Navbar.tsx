@@ -18,7 +18,7 @@ function Navbar() {
       {/* Sağdaki Sosyal Medya Butonları */}
       <div className="social-buttons">
         <a 
-          href="https://instagram.com" 
+          href="https://instagram.com/minesminis" 
           target="_blank" 
           rel="noopener noreferrer" 
           className="social-btn insta"
@@ -26,7 +26,7 @@ function Navbar() {
           Instagram
         </a>
         <a 
-          href="https://youtube.com" 
+          href="https://www.youtube.com/channel/UCsammzIAT0BJdDzUXi5OD4Q" 
           target="_blank" 
           rel="noopener noreferrer" 
           className="social-btn youtube"

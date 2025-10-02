@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
           <ul>
             <li>Email: info@egitim.com</li>
             <li>Telefon: +90 123 456 7890</li>
-            <li>Adres: Çocuk Caddesi, Oyun Sokak No:5</li>
+            <li>Adres: Eğlence Caddesi, Oyun Sokak No:5</li>
           </ul>
         </div>
 
