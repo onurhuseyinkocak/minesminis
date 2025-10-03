@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Post as PostType } from '../../../services/postsService';
 import { User } from 'firebase/auth';
+import { useAuth } from '../../../contexts/AuthContext';
+import { userService } from '../../../services/userService';
+import DeleteConfirmationModal from '../../../components/DeleteConfirmationModal';
 import toast from 'react-hot-toast';
 
 interface PostProps {
@@ -26,6 +29,19 @@ const Post: React.FC<PostProps> = ({
   isRetweeting
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [authorProfile, setAuthorProfile] = useState<any>(null);
+  const { userProfile } = useAuth();
+
+  useEffect(() => {
+    const fetchAuthorProfile = async () => {
+      if (post.authorId) {
+        const profile = await userService.getUserProfile(post.authorId);
+        setAuthorProfile(profile);
+      }
+    };
+    fetchAuthorProfile();
+  }, [post.authorId]);
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -63,11 +79,17 @@ const Post: React.FC<PostProps> = ({
       toast.error('Bu postu silme yetkiniz yok');
       return;
     }
-    
-    if (window.confirm('Bu postu silmek istediğinizden emin misiniz?')) {
-      onDeletePost(post.id);
-      toast.success('Post silindi');
-    }
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    onDeletePost(post.id);
+    toast.success('Post silindi');
+    setShowDeleteModal(false);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const formatDate = (timestamp: any) => {
@@ -98,6 +120,9 @@ const Post: React.FC<PostProps> = ({
   const isRetweeted = currentUser && post.retweets?.includes(currentUser.uid);
   const retweetCount = post.retweets?.length || 0;
 
+  // Yazarın görünen adını belirle: önce profil, sonra post içindeki authorName, en son email
+  const displayName = authorProfile?.displayName || post.authorName || 'Anonim';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -108,17 +133,17 @@ const Post: React.FC<PostProps> = ({
     >
       {post.isRetweet && post.originalAuthorName && (
         <div className="retweet-indicator">
-          <span>🔁 {post.authorName} tarafından retweetlendi</span>
+          <span>🔁 {displayName} tarafından retweetlendi</span>
         </div>
       )}
       
       <div className="post-header">
         <div className="post-author">
           <div className="author-avatar">
-            {post.authorName?.charAt(0).toUpperCase()}
+            {displayName?.charAt(0).toUpperCase()}
           </div>
           <div className="author-info">
-            <span className="author-name">{post.authorName}</span>
+            <span className="author-name">{displayName}</span>
             <span className="post-date">{formatDate(post.timestamp)}</span>
           </div>
         </div>
@@ -181,6 +206,12 @@ const Post: React.FC<PostProps> = ({
         <span>{retweetCount} retweet</span>
         <span>{post.engagementScore || 0} etkileşim</span>
       </div>
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </motion.div>
   );
 };

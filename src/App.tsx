@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import Home from "./pages/Home";
 import Games from "./pages/Games";
 import Words from "./pages/Words";
@@ -14,24 +15,26 @@ import "./App.css";
 
 function App() {
   return (
-    <ToastProvider>
-      <div className="app-container">
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/games" element={<Games />} />
-            <Route path="/words" element={<Words />} />
-            <Route path="/videos" element={<Videos />} />
-            <Route path="/worksheets" element={<Worksheets />} />
-            <Route path="/discover" element={<Discover />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <div className="app-container">
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/games" element={<Games />} />
+              <Route path="/words" element={<Words />} />
+              <Route path="/videos" element={<Videos />} />
+              <Route path="/worksheets" element={<Worksheets />} />
+              <Route path="/discover" element={<Discover />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/profile" element={<Profile />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 

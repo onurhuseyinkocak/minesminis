@@ -1,4 +1,3 @@
-// src/services/postsService.ts
 import { 
   collection, 
   addDoc, 

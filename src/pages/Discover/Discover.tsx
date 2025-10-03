@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, updateDoc, doc, arrayUnion, arrayRemove, deleteDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, updateDoc, doc, arrayUnion, arrayRemove, deleteDoc, where, getDocs } from 'firebase/firestore';
 import { db, auth } from '../../config/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import Timeline from './components/Timeline';
 import { Post } from '../../services/postsService';
+import { useAuth } from '../../contexts/AuthContext';
+import { userService } from '../../services/userService';
 import './Discover.css';
 
 const Discover: React.FC = () => {
@@ -12,6 +14,7 @@ const Discover: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState<'for-you' | 'following'>('for-you');
   const [retweetingPosts, setRetweetingPosts] = useState<Set<string>>(new Set());
+  const { userProfile } = useAuth();
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -35,13 +38,14 @@ const Discover: React.FC = () => {
             content: data.content || '',
             timestamp: data.timestamp || data.createdAt || serverTimestamp(),
             likes: data.likes || [],
-            reports: data.reports || [],
+            reports: data.reports || 0,
             isApproved: data.isApproved !== undefined ? data.isApproved : true,
             engagementScore: data.engagementScore || 0,
             imageUrl: data.imageUrl || '',
             retweets: data.retweets || [],
             isRetweet: data.isRetweet || false,
-            originalPostId: data.originalPostId || ''
+            originalPostId: data.originalPostId || '',
+            originalAuthorName: data.originalAuthorName || ''
           };
           postsData.push(post);
         });
@@ -67,19 +71,24 @@ const Discover: React.FC = () => {
         return false;
       }
 
+      // Kullanıcı profilini getir
+      const profile = await userService.getUserProfile(currentUser.uid);
+      const authorName = profile?.displayName || currentUser.displayName || currentUser.email || 'Anonim';
+
       await addDoc(collection(db, 'posts'), {
         content,
         authorId: currentUser.uid,
-        authorName: currentUser.email,
+        authorName: authorName,
         timestamp: serverTimestamp(),
         likes: [],
-        reports: [],
+        reports: 0,
         imageUrl: '',
         isApproved: true,
         engagementScore: 0,
         retweets: [],
         isRetweet: false,
-        originalPostId: ''
+        originalPostId: '',
+        originalAuthorName: ''
       });
 
       console.log('Post başarıyla gönderildi');
@@ -124,6 +133,10 @@ const Discover: React.FC = () => {
         // Kullanıcının bu postu daha önce retweet edip etmediğini kontrol et
         const hasRetweeted = originalPost.retweets?.includes(currentUser.uid);
 
+        // Kullanıcı profilini getir
+        const profile = await userService.getUserProfile(currentUser.uid);
+        const authorName = profile?.displayName || currentUser.displayName || currentUser.email || 'Anonim';
+
         if (hasRetweeted) {
           // Retweet'i kaldır
           const postRef = doc(db, 'posts', postId);
@@ -131,15 +144,27 @@ const Discover: React.FC = () => {
             retweets: arrayRemove(currentUser.uid),
             engagementScore: (originalPost.engagementScore || 0) - 1
           });
+          
+          // Retweet postunu bul ve sil
+          const retweetsQuery = query(
+            collection(db, 'posts'),
+            where('originalPostId', '==', postId),
+            where('authorId', '==', currentUser.uid),
+            where('isRetweet', '==', true)
+          );
+          const retweetsSnapshot = await getDocs(retweetsQuery);
+          retweetsSnapshot.forEach(async (doc) => {
+            await deleteDoc(doc.ref);
+          });
         } else {
           // Yeni retweet postu oluştur
           await addDoc(collection(db, 'posts'), {
             content: originalPost.content,
             authorId: currentUser.uid,
-            authorName: currentUser.email,
+            authorName: authorName,
             timestamp: serverTimestamp(),
             likes: [],
-            reports: [],
+            reports: 0,
             imageUrl: originalPost.imageUrl || '',
             isApproved: true,
             engagementScore: 0,
@@ -173,18 +198,13 @@ const Discover: React.FC = () => {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `${post.authorName} paylaştı`,
+          title: 'Paylaş',
           text: post.content,
           url: window.location.href,
         });
       } else {
         await navigator.clipboard.writeText(post.content);
-        // Toast bildirimi burada gösterilecek
-        if (typeof window !== 'undefined' && (window as any).toast) {
-          (window as any).toast.success('Paylaşım linki kopyalandı!');
-        } else {
-          alert('Paylaşım linki kopyalandı!');
-        }
+        alert('Paylaşım linki kopyalandı!');
       }
     } catch (error) {
       console.error('Paylaşım hatası:', error);
@@ -193,14 +213,8 @@ const Discover: React.FC = () => {
 
   const handleDeletePost = async (postId: string) => {
     try {
-      if (window.confirm('Bu postu silmek istediğinizden emin misiniz?')) {
-        await deleteDoc(doc(db, 'posts', postId));
-        console.log('Post silindi');
-        // Toast bildirimi burada gösterilecek
-        if (typeof window !== 'undefined' && (window as any).toast) {
-          (window as any).toast.success('Post başarıyla silindi!');
-        }
-      }
+      await deleteDoc(doc(db, 'posts', postId));
+      console.log('Post silindi');
     } catch (error) {
       console.error('Post silinemedi:', error);
     }
