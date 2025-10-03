@@ -1,4 +1,6 @@
+// src/pages/Games.tsx
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 // Oyun tipini tanımlıyoruz
 type Game = {
@@ -48,14 +50,15 @@ const grade2Games: Game[] = [
   }
 ];
 
-// Diğer sınıflar için boş diziler (ileride doldurabilirsin)
+// Diğer sınıflar için boş diziler
 const primarySchoolGames: Game[] = [];
 const grade3Games: Game[] = [];
 const grade4Games: Game[] = [];
 
 function Games() {
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
-  const [activeSection, setActiveSection] = useState<string>('grade2'); // Varsayılan olarak 2. grade açık
+  const [activeSection, setActiveSection] = useState<string>('grade2');
+  const { user } = useAuth();
 
   const selectedGameData = [...primarySchoolGames, ...grade2Games, ...grade3Games, ...grade4Games]
     .find(game => game.id === selectedGame);
@@ -72,6 +75,16 @@ function Games() {
   };
 
   const activeGames = getActiveGames();
+
+  const handleAddToFavorites = (game: Game) => {
+    if (!user) {
+      alert('Favorilere eklemek için giriş yapın!');
+      return;
+    }
+    // Favori ekleme işlemi - Firebase'e kaydedilecek
+    console.log('Favorilere eklendi:', game.title);
+    alert(`${game.title} favorilere eklendi!`);
+  };
 
   return (
     <div style={{ padding: '20px' }}>
@@ -174,7 +187,8 @@ function Games() {
                   cursor: 'pointer',
                   textAlign: 'center',
                   transition: 'transform 0.2s',
-                  backgroundColor: 'white'
+                  backgroundColor: 'white',
+                  position: 'relative'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
@@ -184,6 +198,32 @@ function Games() {
                 }}
                 onClick={() => setSelectedGame(game.id)}
               >
+                {/* FAVORİ BUTONU */}
+                {user && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToFavorites(game);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      background: 'gold',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '30px',
+                      height: '30px',
+                      cursor: 'pointer',
+                      fontSize: '16px',
+                      zIndex: 10
+                    }}
+                    title="Favorilere Ekle"
+                  >
+                    ⭐
+                  </button>
+                )}
+                
                 <img 
                   src={game.thumbnailUrl} 
                   alt={game.title}
