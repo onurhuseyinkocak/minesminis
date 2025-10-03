@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -7,27 +6,22 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      {/* Logo */}
       <div className="logo">
         <Link to="/" className="logo-link">MINESMINIS</Link>
       </div>
 
-      {/* Orta Menü */}
       <ul className="nav-links">
         <li><Link to="/" className="nav-btn">Home</Link></li>
         <li><Link to="/games" className="nav-btn">Games</Link></li>
         <li><Link to="/words" className="nav-btn">Words</Link></li>
         <li><Link to="/worksheets" className="nav-btn">Worksheets</Link></li>
-        {/* YENİ LİNKLER */}
         <li><Link to="/discover" className="nav-btn">Discover</Link></li>
         {user && (
           <li><Link to="/favorites" className="nav-btn">Favorites</Link></li>
         )}
       </ul>
 
-      {/* Sağdaki Sosyal Medya Butonları + Giriş Butonu */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        {/* SOSYAL MEDYA BUTONLARI */}
         <div className="social-buttons">
           <a 
             href="https://instagram.com/minesminis" 
@@ -47,7 +41,6 @@ function Navbar() {
           </a>
         </div>
 
-        {/* AUTH BUTONLARI */}
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Link to="/profile" style={{ 

@@ -1,4 +1,3 @@
-// src/App.tsx
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Games from "./pages/Games";
@@ -7,7 +6,7 @@ import Videos from "./pages/Videos";
 import Worksheets from "./pages/Worksheets";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Discover from "./pages/Discover";
+import Discover from "./pages/Discover/Discover";
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
 import { ToastProvider } from "./components/ToastProvider";

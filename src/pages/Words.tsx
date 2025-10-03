@@ -1,9 +1,5 @@
+// src/pages/Words.tsx
 import React, { useState } from "react";
-
-interface WordData {
-  meta: { id: string };
-  hwi?: { prs?: { sound?: { audio?: string } }[] };
-}
 
 const Words: React.FC = () => {
   const [word, setWord] = useState<string>("");

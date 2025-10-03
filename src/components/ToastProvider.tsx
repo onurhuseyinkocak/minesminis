@@ -1,4 +1,3 @@
-// src/components/ToastProvider.tsx
 import { Toaster } from 'react-hot-toast';
 import React from 'react';
 
