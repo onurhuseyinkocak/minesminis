@@ -5,11 +5,11 @@ import Games from "./pages/Games";
 import Words from "./pages/Words";
 import Videos from "./pages/Videos";
 import Worksheets from "./pages/Worksheets";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Discover from "./pages/Discover/Discover";
+import Reels from "./pages/Reels/Reels"; // Diğerleriyle aynı formatta
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import { ToastProvider } from "./components/ToastProvider";
 import "./App.css";
 
@@ -26,9 +26,10 @@ function App() {
               <Route path="/words" element={<Words />} />
               <Route path="/videos" element={<Videos />} />
               <Route path="/worksheets" element={<Worksheets />} />
-              <Route path="/discover" element={<Discover />} />
+              <Route path="/discover" element={<Reels />} /> {/* Veya /reels'ı kaldırın */}
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/profile" element={<Profile />} />
+              {/* <Route path="/reels" element={<Reels />} /> Çakışmayı önlemek için kaldırıldı */}
             </Routes>
           </main>
           <Footer />

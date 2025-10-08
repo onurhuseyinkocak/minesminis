@@ -1,0 +1,312 @@
+/* Premium Reels Container - Instagram Web gibi */
+.reels-premium-container {
+  display: flex;
+  min-height: 100vh;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: white;
+}
+
+/* Sidebar - Instagram web tarzı */
+.reels-sidebar {
+  background: #000;
+  border-right: 1px solid #262626;
+  padding: 20px 16px;
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 0 0 24px 0;
+  border-bottom: 1px solid #262626;
+  margin-bottom: 24px;
+}
+
+.sidebar-header h2 {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(45deg, #ff0050, #833ab4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Premium Upload Button */
+.upload-section {
+  margin-bottom: 32px;
+}
+
+.premium-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: 1px solid #363636;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.premium-upload-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #555;
+}
+
+.upload-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg, #ff0050, #833ab4);
+  border-radius: 4px;
+  color: white;
+}
+
+/* Sidebar Stats */
+.sidebar-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.stat-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.stat-number {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.stat-label {
+  color: #a8a8a8;
+  font-size: 13px;
+}
+
+/* Main Content Area */
+.reels-main-content {
+  margin-left: 280px;
+  flex: 1;
+  background: #000;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+}
+
+/* Empty State - Premium */
+.empty-reels-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  width: 100%;
+  background: #000;
+}
+
+.empty-content {
+  max-width: 400px;
+  padding: 40px;
+}
+
+.camera-illustration {
+  margin-bottom: 32px;
+  color: #8e8e8e;
+  opacity: 0.7;
+}
+
+.camera-illustration svg {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.empty-content h2 {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+}
+
+.empty-content p {
+  color: #a8a8a8;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.premium-cta-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #0095f6;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 auto;
+}
+
+.premium-cta-button:hover {
+  background: #0081d6;
+  transform: translateY(-1px);
+}
+
+/* Reels List Container - Instagram web gibi */
+.reels-list-container {
+  width: 100%;
+  max-width: 435px;
+  height: 100vh;
+  background: #000;
+  position: relative;
+}
+
+.reels-list {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  background: #000;
+}
+
+.reels-list::-webkit-scrollbar {
+  display: none;
+}
+
+.reels-list {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Premium Loading State */
+.reels-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #000;
+  color: white;
+  gap: 16px;
+}
+
+.premium-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid transparent;
+  border-top: 2px solid #0095f6;
+  border-radius: 50%;
+  animation: premium-spin 1s linear infinite;
+}
+
+@keyframes premium-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.reels-loading p {
+  margin: 0;
+  font-size: 14px;
+  color: #a8a8a8;
+}
+
+/* Responsive Design */
+@media (max-width: 1264px) {
+  .reels-sidebar {
+    width: 240px;
+  }
+  
+  .reels-main-content {
+    margin-left: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reels-premium-container {
+    flex-direction: column;
+  }
+  
+  .reels-sidebar {
+    display: none;
+  }
+  
+  .reels-main-content {
+    margin-left: 0;
+    margin-top: 0;
+  }
+  
+  .reels-list-container {
+    max-width: 100%;
+  }
+}
+
+/* Navigation for mobile */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #000;
+  border-top: 1px solid #262626;
+  padding: 12px 0;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+/* Premium scrollbar for webkit */
+.reels-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.reels-sidebar::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.reels-sidebar::-webkit-scrollbar-thumb {
+  background: #363636;
+  border-radius: 2px;
+}
+
+.reels-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
