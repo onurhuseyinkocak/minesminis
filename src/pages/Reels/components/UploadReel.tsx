@@ -25,6 +25,16 @@ interface UploadReelProps {
   currentUser: User;
 }
 
+// Base64 converter - Acil fallback
+const convertToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+  });
+};
+
 const UploadReel: React.FC<UploadReelProps> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -101,10 +111,19 @@ const UploadReel: React.FC<UploadReelProps> = ({ currentUser }) => {
         });
       }, 200);
 
-      // VERCEL BLOB İLE YÜKLEME
-      console.log('📤 Vercel Blob\'a yükleniyor...');
-      const videoUrl = await blobService.uploadVideo(videoFile, currentUser.uid);
-      
+      let videoUrl: string;
+
+      // Önce Vercel Blob'u dene
+      try {
+        console.log('📤 Vercel Blob\'a yükleniyor...');
+        videoUrl = await blobService.uploadVideo(videoFile, currentUser.uid);
+        console.log('✅ Vercel Blob başarılı');
+      } catch (blobError) {
+        console.log('❌ Vercel Blob hatası, Base64 fallback kullanılıyor...', blobError);
+        videoUrl = await convertToBase64(videoFile);
+        console.log('✅ Base64 fallback başarılı');
+      }
+
       clearInterval(progressInterval);
       setProgress(100);
 
