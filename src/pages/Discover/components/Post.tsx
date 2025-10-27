@@ -40,7 +40,7 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
     e.preventDefault();
     e.stopPropagation();
 
-    if (!user || user.uid !== post.author_id) {
+    if (!user || user.id !== post.author_id) {
       toast.error('You cannot delete this post');
       return;
     }
@@ -70,7 +70,7 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
   const shouldShowReadMore = post.content.length > 280;
 
   const isLiked = post.is_liked || false;
-  const isOwnPost = user?.uid === post.author_id;
+  const isOwnPost = user?.id === post.author_id;
 
   return (
     <motion.div

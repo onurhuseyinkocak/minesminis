@@ -16,7 +16,7 @@ export const usePosts = () => {
   const loadPosts = async () => {
     try {
       setIsLoadingPosts(true);
-      const postsData = await postsService.getDiscoverPosts(50, user?.uid);
+      const postsData = await postsService.getDiscoverPosts(50, user?.id);
       setPosts(postsData);
     } catch (error) {
       console.error('Error loading posts:', error);
@@ -35,7 +35,7 @@ export const usePosts = () => {
     try {
       const post = posts.find((p) => p.id === postId);
       if (post?.is_liked) {
-        await postsService.unlikePost(postId, user.uid);
+        await postsService.unlikePost(postId, user.id);
         setPosts((prev) =>
           prev.map((p) =>
             p.id === postId
@@ -44,7 +44,7 @@ export const usePosts = () => {
           )
         );
       } else {
-        await postsService.likePost(postId, user.uid);
+        await postsService.likePost(postId, user.id);
         setPosts((prev) =>
           prev.map((p) =>
             p.id === postId
@@ -80,7 +80,7 @@ export const usePosts = () => {
     if (!user) return;
 
     try {
-      await postsService.deletePost(postId, user.uid);
+      await postsService.deletePost(postId, user.id);
       setPosts((prev) => prev.filter((p) => p.id !== postId));
       toast.success('Post deleted');
     } catch (error: any) {

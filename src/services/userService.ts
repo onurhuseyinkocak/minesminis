@@ -30,18 +30,21 @@ export const userService = {
       avatarUrl?: string;
     }
   ) {
+    const userId = user.id || user.uid;
+    const userEmail = user.email;
+
     const { data: existingUser } = await supabase
       .from('users')
       .select('*')
-      .eq('id', user.uid)
+      .eq('id', userId)
       .maybeSingle();
 
     const userProfile = {
-      id: user.uid,
-      email: user.email,
+      id: userId,
+      email: userEmail,
       role: profileData.role,
       display_name: profileData.displayName,
-      avatar_url: profileData.avatarUrl || user.photoURL || null,
+      avatar_url: profileData.avatarUrl || null,
       bio: profileData.bio || '',
       grade: profileData.grade || null,
       subjects: profileData.subjects || [],
@@ -64,13 +67,13 @@ export const userService = {
         throw error;
       }
 
-      await this.awardPoints(user.uid, 10);
-      await this.checkAndAwardAchievement(user.uid, 'first_steps');
+      await this.awardPoints(userId, 10);
+      await this.checkAndAwardAchievement(userId, 'first_steps');
     } else {
       const { error } = await supabase
         .from('users')
         .update(userProfile)
-        .eq('id', user.uid);
+        .eq('id', userId);
 
       if (error) {
         console.error('Error updating user profile:', error);

@@ -4,14 +4,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 
 const Sidebar: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, userProfile, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate('/');
+      await signOut();
+      navigate('/landing');
     } catch (error) {
       console.error('Çıkış yapılırken hata:', error);
     }
@@ -60,14 +60,14 @@ const Sidebar: React.FC = () => {
       {user && (
         <div className="user-profile">
           <Link to="/profile" className="profile-link">
-            <img 
-              src={user.photoURL || '/default-avatar.png'} 
-              alt={user.displayName || 'User'}
+            <img
+              src={userProfile?.avatar_url || 'https://ui-avatars.com/api/?name=' + (userProfile?.display_name || 'User')}
+              alt={userProfile?.display_name || 'User'}
               className="profile-avatar"
             />
             <div className="profile-info">
               <div className="profile-name">
-                {user.displayName || 'Kullanıcı'}
+                {userProfile?.display_name || 'Kullanıcı'}
               </div>
               <div className="profile-handle">
                 @{user.email?.split('@')[0]}

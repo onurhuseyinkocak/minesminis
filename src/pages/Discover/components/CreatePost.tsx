@@ -28,7 +28,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
     setIsSubmitting(true);
     try {
       await postsService.createPost({
-        authorId: user.uid,
+        authorId: user.id,
         content: content.trim(),
       });
 

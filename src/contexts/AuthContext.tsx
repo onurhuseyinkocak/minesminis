@@ -1,18 +1,20 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { User, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '../config/supabase';
 import { userService, UserProfile } from '../services/userService';
 import ProfileSetupModal from '../components/ProfileSetupModal';
 
 interface AuthContextType {
   user: User | null;
+  session: Session | null;
   userProfile: UserProfile | null;
   loading: boolean;
   showProfileSetup: boolean;
   setShowProfileSetup: (show: boolean) => void;
   refreshUserProfile: () => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  logout: () => Promise<void>;
+  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -21,56 +23,73 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [showProfileSetup, setShowProfileSetup] = useState(false);
 
   const refreshUserProfile = async () => {
     if (user) {
-      const profile = await userService.getUserProfile(user.uid);
+      const profile = await userService.getUserProfile(user.id);
       setUserProfile(profile);
     }
   };
 
-  const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
+  const signUp = async (email: string, password: string) => {
     try {
-      console.log('Google login başlatılıyor...');
-      console.log('Auth domain:', auth.app.options.authDomain);
-      const result = await signInWithRedirect(auth, provider);
-      console.log('Redirect başlatıldı:', result);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+      return { error: null };
     } catch (error) {
-      console.error('Google ile giriş yapılırken hata oluştu:', error);
-      alert('Hata: ' + (error as Error).message);
+      return { error: error as Error };
     }
   };
 
-  const logout = async () => {
+  const signIn = async (email: string, password: string) => {
     try {
-      await signOut(auth);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      return { error: null };
     } catch (error) {
-      console.error('Çıkış yapılırken hata oluştu:', error);
+      return { error: error as Error };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
     }
   };
 
   useEffect(() => {
-    const checkRedirectResult = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          console.log('Google ile giriş başarılı');
-        }
-      } catch (error) {
-        console.error('Redirect sonucu alınırken hata:', error);
-      }
-    };
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-    checkRedirectResult();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
       if (user) {
-        const profile = await userService.getUserProfile(user.uid);
+        const profile = await userService.getUserProfile(user.id);
         if (profile) {
           setUserProfile(profile);
           setShowProfileSetup(false);
@@ -81,21 +100,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserProfile(null);
         setShowProfileSetup(false);
       }
-      setLoading(false);
-    });
+    };
 
-    return unsubscribe;
-  }, []);
+    loadUserProfile();
+  }, [user]);
 
   const value = {
     user,
+    session,
     userProfile,
     loading,
     showProfileSetup,
     setShowProfileSetup,
     refreshUserProfile,
-    loginWithGoogle,
-    logout,
+    signUp,
+    signIn,
+    signOut,
   };
 
   return (
