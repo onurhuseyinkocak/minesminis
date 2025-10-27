@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Timeline from './components/Timeline';
 import CreatePost from './components/CreatePost';
+import LeftSidebar from './components/LeftSidebar';
+import RightSidebar from './components/RightSidebar';
 import './Discover.css';
 
 const Discover: React.FC = () => {
@@ -30,14 +32,18 @@ const Discover: React.FC = () => {
   }
 
   return (
-    <div className="discover-wrapper">
-      <div className="discover-container">
-        <div className="discover-header">
-          <h1>Discover</h1>
+    <div className="discover-layout">
+      <LeftSidebar />
+      <div className="discover-main">
+        <div className="discover-container">
+          <div className="discover-header">
+            <h1>Discover</h1>
+          </div>
+          <CreatePost onPostCreated={handlePostCreated} />
+          <Timeline key={refreshTrigger} />
         </div>
-        <CreatePost onPostCreated={handlePostCreated} />
-        <Timeline key={refreshTrigger} />
       </div>
+      <RightSidebar />
     </div>
   );
 };
