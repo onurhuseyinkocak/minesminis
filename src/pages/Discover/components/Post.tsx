@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Heart, MessageCircle, Share2, Trash2 } from 'lucide-react';
 import { Post as PostType } from '../../../services/postsService';
 import { useAuth } from '../../../contexts/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
@@ -73,92 +74,84 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
   const isOwnPost = user?.id === post.author_id;
 
   return (
-    <motion.div
-      className="post"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ delay: index * 0.05 }}
-    >
-      <div className="post-header">
-        <div className="post-avatar">
-          {post.author?.avatar_url ? (
-            <img src={post.author.avatar_url} alt={post.author.display_name} />
-          ) : (
-            <div className="avatar-placeholder">
-              {post.author?.display_name?.charAt(0).toUpperCase() || '?'}
+    <>
+      <motion.div
+        className="post"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ delay: index * 0.05 }}
+      >
+        <div className="post-header">
+          <div className="post-author">
+            <div className="author-avatar">
+              {post.author?.avatar_url ? (
+                <img src={post.author.avatar_url} alt={post.author.display_name} />
+              ) : (
+                post.author?.display_name?.charAt(0).toUpperCase() || '?'
+              )}
             </div>
+            <div className="author-info">
+              <div className="author-name">
+                {post.author?.display_name || 'Anonymous'}
+                <span style={{ marginLeft: '4px', fontSize: '0.75rem' }}>
+                  {post.author?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'}
+                </span>
+              </div>
+              <div className="post-date">{getTimeAgo()}</div>
+            </div>
+          </div>
+          {isOwnPost && (
+            <button className="delete-post-btn" onClick={handleDelete} title="Delete post">
+              <Trash2 size={18} />
+            </button>
           )}
         </div>
-        <div className="post-info">
-          <div className="post-author-name">
-            {post.author?.display_name || 'Anonymous'}
-            <span className="role-badge">{post.author?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'}</span>
+
+        <div className="post-content">
+          <p>{formatContent(post.content)}</p>
+          {shouldShowReadMore && (
+            <button className="show-more-btn" onClick={() => setIsExpanded(!isExpanded)}>
+              {isExpanded ? 'Show less' : 'Read more'}
+            </button>
+          )}
+        </div>
+
+        {post.media_url && (
+          <div className="post-image">
+            <img src={post.media_url} alt="Post media" />
           </div>
-          <div className="post-time">{getTimeAgo()}</div>
-        </div>
-        {isOwnPost && (
-          <button className="post-delete-btn" onClick={handleDelete} title="Delete post">
-            🗑️
-          </button>
         )}
-      </div>
 
-      <div className="post-content">
-        <p>{formatContent(post.content)}</p>
-        {shouldShowReadMore && (
-          <button className="read-more-btn" onClick={() => setIsExpanded(!isExpanded)}>
-            {isExpanded ? 'Show less' : 'Read more'}
+        <div className="post-actions">
+          <button
+            className={`action-btn like-btn ${isLiked ? 'liked' : ''}`}
+            onClick={handleLike}
+          >
+            <Heart size={18} fill={isLiked ? '#EC4899' : 'none'} />
+            <span>{post.likes_count > 0 ? post.likes_count : ''}</span>
           </button>
-        )}
-      </div>
 
-      {post.media_url && (
-        <div className="post-media">
-          <img src={post.media_url} alt="Post media" />
+          <button className="action-btn comment-btn">
+            <MessageCircle size={18} />
+            <span>{post.comments_count > 0 ? post.comments_count : ''}</span>
+          </button>
+
+          <button className="action-btn share-btn" onClick={handleShare}>
+            <Share2 size={18} />
+            <span>{post.shares_count > 0 ? post.shares_count : ''}</span>
+          </button>
         </div>
-      )}
+      </motion.div>
 
-      {post.hashtags && post.hashtags.length > 0 && (
-        <div className="post-hashtags">
-          {post.hashtags.map((tag, i) => (
-            <span key={i} className="hashtag">
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="post-footer">
-        <button
-          className={`post-action-btn ${isLiked ? 'liked' : ''}`}
-          onClick={handleLike}
-          title={isLiked ? 'Unlike' : 'Like'}
-        >
-          <span className="action-icon">{isLiked ? '❤️' : '🤍'}</span>
-          <span className="action-count">{post.likes_count > 0 ? post.likes_count : ''}</span>
-        </button>
-
-        <button className="post-action-btn" title="Comment">
-          <span className="action-icon">💬</span>
-          <span className="action-count">{post.comments_count > 0 ? post.comments_count : ''}</span>
-        </button>
-
-        <button className="post-action-btn" onClick={handleShare} title="Share">
-          <span className="action-icon">🔗</span>
-          <span className="action-count">{post.shares_count > 0 ? post.shares_count : ''}</span>
-        </button>
-      </div>
-
-      {showDeleteModal && (
-        <DeleteConfirmationModal
-          isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          onConfirm={confirmDelete}
-          itemName="post"
-        />
-      )}
-    </motion.div>
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Delete Post"
+        message="Are you sure you want to delete this post? This action cannot be undone."
+      />
+    </>
   );
 };
 

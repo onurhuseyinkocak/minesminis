@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Timeline from './components/Timeline';
-import Sidebar from './components/Sidebar';
-import RightSidebar from './components/RightSidebar';
 import CreatePost from './components/CreatePost';
 import './Discover.css';
 
@@ -16,11 +14,15 @@ const Discover: React.FC = () => {
 
   if (!user || !userProfile) {
     return (
-      <div className="discover-container">
-        <div className="discover-main">
-          <div className="auth-required">
-            <h2>Please sign in to access the social feed</h2>
-            <p>Connect with teachers and students, share your learning journey!</p>
+      <div className="discover-wrapper">
+        <div className="discover-container">
+          <div className="discover-header">
+            <h1>Discover</h1>
+          </div>
+          <div className="empty-state">
+            <div className="empty-icon">🔒</div>
+            <h3>Sign in to connect</h3>
+            <p>Join the community to share and learn together!</p>
           </div>
         </div>
       </div>
@@ -28,13 +30,14 @@ const Discover: React.FC = () => {
   }
 
   return (
-    <div className="discover-container">
-      <Sidebar />
-      <div className="discover-main">
+    <div className="discover-wrapper">
+      <div className="discover-container">
+        <div className="discover-header">
+          <h1>Discover</h1>
+        </div>
         <CreatePost onPostCreated={handlePostCreated} />
         <Timeline key={refreshTrigger} />
       </div>
-      <RightSidebar />
     </div>
   );
 };
