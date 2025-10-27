@@ -119,11 +119,7 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
 
         {post.media_url && (
           <div className="post-image">
-            {post.media_type === 'video' ? (
-              <video src={post.media_url} controls className="post-video" />
-            ) : (
-              <img src={post.media_url} alt="Post media" />
-            )}
+            <img src={post.media_url} alt="Post media" />
           </div>
         )}
 
