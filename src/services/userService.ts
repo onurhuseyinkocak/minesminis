@@ -12,6 +12,8 @@ export interface UserProfile {
   points: number;
   badges: string[];
   streak_days: number;
+  level: number;
+  xp: number;
   last_login: string;
   is_online: boolean;
   settings: Record<string, any>;
