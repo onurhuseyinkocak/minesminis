@@ -1,37 +1,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Post as PostType } from '../../../services/postsService';
-import CreatePost from './CreatePost';
 import PostComponent from './Post';
-import { User } from 'firebase/auth';
+import { usePosts } from './hooks/usePosts';
 
-interface TimelineProps {
-  posts: PostType[];
-  isLoadingPosts: boolean;
-  activeTab: 'for-you' | 'following';
-  setActiveTab: (tab: 'for-you' | 'following') => void;
-  onSubmitPost: (content: string) => Promise<boolean>;
-  onLike: (postId: string) => void;
-  onRetweet: (postId: string) => void;
-  onShare: (post: PostType) => void;
-  onDeletePost: (postId: string) => void;
-  currentUser: User | null;
-  retweetingPosts: Set<string>;
-}
+const Timeline: React.FC = () => {
+  const { posts, isLoadingPosts, activeTab, setActiveTab, handleLike, handleShare, handleDeletePost } =
+    usePosts();
 
-const Timeline: React.FC<TimelineProps> = ({
-  posts,
-  isLoadingPosts,
-  activeTab,
-  setActiveTab,
-  onSubmitPost,
-  onLike,
-  onRetweet,
-  onShare,
-  onDeletePost,
-  currentUser,
-  retweetingPosts
-}) => {
   return (
     <div className="timeline">
       <div className="timeline-header">
@@ -40,20 +15,18 @@ const Timeline: React.FC<TimelineProps> = ({
             onClick={() => setActiveTab('for-you')}
             className={`tab ${activeTab === 'for-you' ? 'tab-active' : ''}`}
           >
-            Sana Özel
+            For You
             {activeTab === 'for-you' && <div className="tab-indicator" />}
           </button>
           <button
             onClick={() => setActiveTab('following')}
             className={`tab ${activeTab === 'following' ? 'tab-active' : ''}`}
           >
-            Takip Edilenler
+            Following
             {activeTab === 'following' && <div className="tab-indicator" />}
           </button>
         </div>
       </div>
-
-      <CreatePost onSubmit={onSubmitPost} />
 
       <div className="posts-container">
         <AnimatePresence>
@@ -75,21 +48,18 @@ const Timeline: React.FC<TimelineProps> = ({
               className="empty-state"
             >
               <div className="empty-icon">📝</div>
-              <h3>Henüz paylaşım yok</h3>
-              <p>İlk paylaşımı yaparak başlayın!</p>
+              <h3>No posts yet</h3>
+              <p>Be the first to share something!</p>
             </motion.div>
           ) : (
             posts.map((post, index) => (
               <PostComponent
                 key={post.id}
                 post={post}
-                onLike={onLike}
-                onRetweet={onRetweet}
-                onShare={onShare}
-                onDeletePost={onDeletePost}
+                onLike={handleLike}
+                onShare={handleShare}
+                onDeletePost={handleDeletePost}
                 index={index}
-                currentUser={currentUser}
-                isRetweeting={retweetingPosts.has(post.id)}
               />
             ))
           )}

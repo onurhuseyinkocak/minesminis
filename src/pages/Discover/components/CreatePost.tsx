@@ -1,41 +1,45 @@
 import React, { useState } from 'react';
-import { auth } from '../../../config/firebase';
+import { useAuth } from '../../../contexts/AuthContext';
+import { postsService } from '../../../services/postsService';
 import toast from 'react-hot-toast';
 
 interface CreatePostProps {
-  onSubmit: (content: string) => Promise<boolean>;
+  onPostCreated?: () => void;
 }
 
-const CreatePost: React.FC<CreatePostProps> = ({ onSubmit }) => {
+const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const currentUser = auth.currentUser;
+  const { user, userProfile } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!currentUser) {
-      toast.error('Paylaşım yapmak için giriş yapmalısınız');
+
+    if (!user || !userProfile) {
+      toast.error('Please sign in to create a post');
       return;
     }
 
     if (!content.trim()) {
-      toast.error('Paylaşım içeriği boş olamaz');
+      toast.error('Post content cannot be empty');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const success = await onSubmit(content.trim());
-      if (success) {
-        setContent('');
-        toast.success('Paylaşımınız yayınlandı!');
-      } else {
-        toast.error('Paylaşımınız yayınlanamadı. Lütfen tekrar deneyin.');
+      await postsService.createPost({
+        authorId: user.uid,
+        content: content.trim(),
+      });
+
+      setContent('');
+      toast.success('Post published successfully!');
+      if (onPostCreated) {
+        onPostCreated();
       }
     } catch (error) {
-      console.error('Paylaşım gönderilirken hata:', error);
-      toast.error('Paylaşımınız yayınlanamadı. Lütfen tekrar deneyin.');
+      console.error('Error creating post:', error);
+      toast.error('Failed to publish post. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -47,11 +51,11 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSubmit }) => {
     }
   };
 
-  if (!currentUser) {
+  if (!user || !userProfile) {
     return (
       <div className="create-post-login-prompt">
         <div className="login-icon">🔒</div>
-        <p>Paylaşım yapmak için giriş yapmalısınız</p>
+        <p>Please sign in to create posts</p>
       </div>
     );
   }
@@ -60,7 +64,11 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSubmit }) => {
     <div className="create-post">
       <div className="create-post-header">
         <div className="user-avatar">
-          {currentUser.email?.charAt(0).toUpperCase()}
+          {userProfile.avatar_url ? (
+            <img src={userProfile.avatar_url} alt={userProfile.display_name} />
+          ) : (
+            userProfile.display_name.charAt(0).toUpperCase()
+          )}
         </div>
         <form onSubmit={handleSubmit} className="post-form">
           <div className="post-input-container">
@@ -68,27 +76,25 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSubmit }) => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={`${currentUser.email?.split('@')[0]}, bugün neler paylaşmak istiyorsun?`}
+              placeholder={`What's on your mind, ${userProfile.display_name}?`}
               className="post-input"
               rows={3}
               maxLength={500}
             />
             <div className="post-actions-bar">
-              <span className="char-count">
-                {content.length}/500
-              </span>
-              <button 
-                type="submit" 
+              <span className="char-count">{content.length}/500</span>
+              <button
+                type="submit"
                 disabled={isSubmitting || !content.trim()}
                 className={`submit-btn ${isSubmitting ? 'submitting' : ''}`}
               >
                 {isSubmitting ? (
                   <>
                     <div className="spinner"></div>
-                    Paylaşılıyor...
+                    Publishing...
                   </>
                 ) : (
-                  'Paylaş'
+                  'Post'
                 )}
               </button>
             </div>

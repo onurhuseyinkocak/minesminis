@@ -1,68 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Post as PostType } from '../../../services/postsService';
-import { User } from 'firebase/auth';
 import { useAuth } from '../../../contexts/AuthContext';
-import { userService } from '../../../services/userService';
+import { formatDistanceToNow } from 'date-fns';
 import DeleteConfirmationModal from '../../../components/DeleteConfirmationModal';
 import toast from 'react-hot-toast';
 
 interface PostProps {
   post: PostType;
   onLike: (postId: string) => void;
-  onRetweet: (postId: string) => void;
   onShare: (post: PostType) => void;
   onDeletePost: (postId: string) => void;
   index: number;
-  currentUser: User | null;
-  isRetweeting: boolean;
 }
 
-const Post: React.FC<PostProps> = ({ 
-  post, 
-  onLike, 
-  onRetweet, 
-  onShare, 
-  onDeletePost, 
-  index,
-  currentUser,
-  isRetweeting
-}) => {
+const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [authorProfile, setAuthorProfile] = useState<any>(null);
-  const { userProfile } = useAuth();
-
-  useEffect(() => {
-    const fetchAuthorProfile = async () => {
-      if (post.authorId) {
-        const profile = await userService.getUserProfile(post.authorId);
-        setAuthorProfile(profile);
-      }
-    };
-    fetchAuthorProfile();
-  }, [post.authorId]);
+  const { user } = useAuth();
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (!currentUser) {
-      toast.error('Beğenmek için giriş yapmalısınız');
+
+    if (!user) {
+      toast.error('Please sign in to like posts');
       return;
     }
     onLike(post.id);
-  };
-
-  const handleRetweet = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!currentUser) {
-      toast.error('Retweet yapmak için giriş yapmalısınız');
-      return;
-    }
-    onRetweet(post.id);
   };
 
   const handleShare = (e: React.MouseEvent) => {
@@ -74,9 +39,9 @@ const Post: React.FC<PostProps> = ({
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (!currentUser || currentUser.uid !== post.authorId) {
-      toast.error('Bu postu silme yetkiniz yok');
+
+    if (!user || user.uid !== post.author_id) {
+      toast.error('You cannot delete this post');
       return;
     }
     setShowDeleteModal(true);
@@ -84,134 +49,115 @@ const Post: React.FC<PostProps> = ({
 
   const confirmDelete = () => {
     onDeletePost(post.id);
-    toast.success('Post silindi');
     setShowDeleteModal(false);
   };
 
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-  };
-
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return '';
-    
+  const getTimeAgo = () => {
     try {
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-      const now = new Date();
-      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-      
-      if (diffInSeconds < 60) return 'şimdi';
-      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} dk`;
-      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} s`;
-      if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} g`;
-      
-      return date.toLocaleDateString('tr-TR');
-    } catch (error) {
-      return '';
+      return formatDistanceToNow(new Date(post.created_at), { addSuffix: true });
+    } catch {
+      return 'recently';
     }
   };
 
-  const shouldShowMore = post.content.length > 200;
-  const displayContent = shouldShowMore && !isExpanded 
-    ? post.content.slice(0, 200) + '...' 
-    : post.content;
+  const formatContent = (content: string) => {
+    if (content.length <= 280 || isExpanded) {
+      return content;
+    }
+    return content.substring(0, 280) + '...';
+  };
 
-  const isLiked = currentUser && post.likes.includes(currentUser.uid);
-  const isRetweeted = currentUser && post.retweets?.includes(currentUser.uid);
-  const retweetCount = post.retweets?.length || 0;
+  const shouldShowReadMore = post.content.length > 280;
 
-  // Yazarın görünen adını belirle: önce profil, sonra post içindeki authorName, en son email
-  const displayName = authorProfile?.displayName || post.authorName || 'Anonim';
+  const isLiked = post.is_liked || false;
+  const isOwnPost = user?.uid === post.author_id;
 
   return (
     <motion.div
+      className="post"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      className="post"
+      transition={{ delay: index * 0.05 }}
     >
-      {post.isRetweet && post.originalAuthorName && (
-        <div className="retweet-indicator">
-          <span>🔁 {displayName} tarafından retweetlendi</span>
-        </div>
-      )}
-      
       <div className="post-header">
-        <div className="post-author">
-          <div className="author-avatar">
-            {displayName?.charAt(0).toUpperCase()}
-          </div>
-          <div className="author-info">
-            <span className="author-name">{displayName}</span>
-            <span className="post-date">{formatDate(post.timestamp)}</span>
-          </div>
+        <div className="post-avatar">
+          {post.author?.avatar_url ? (
+            <img src={post.author.avatar_url} alt={post.author.display_name} />
+          ) : (
+            <div className="avatar-placeholder">
+              {post.author?.display_name?.charAt(0).toUpperCase() || '?'}
+            </div>
+          )}
         </div>
-        
-        {currentUser && currentUser.uid === post.authorId && (
-          <button 
-            className="delete-post-btn"
-            onClick={handleDelete}
-            title="Postu sil"
-          >
+        <div className="post-info">
+          <div className="post-author-name">
+            {post.author?.display_name || 'Anonymous'}
+            <span className="role-badge">{post.author?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'}</span>
+          </div>
+          <div className="post-time">{getTimeAgo()}</div>
+        </div>
+        {isOwnPost && (
+          <button className="post-delete-btn" onClick={handleDelete} title="Delete post">
             🗑️
           </button>
         )}
       </div>
 
       <div className="post-content">
-        <p>{displayContent}</p>
-        {shouldShowMore && (
-          <button 
-            className="show-more-btn"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? 'Daha az göster' : 'Devamını oku'}
+        <p>{formatContent(post.content)}</p>
+        {shouldShowReadMore && (
+          <button className="read-more-btn" onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? 'Show less' : 'Read more'}
           </button>
         )}
       </div>
 
-      {post.imageUrl && (
-        <div className="post-image">
-          <img src={post.imageUrl} alt="Post" />
+      {post.media_url && (
+        <div className="post-media">
+          <img src={post.media_url} alt="Post media" />
         </div>
       )}
 
-      <div className="post-actions">
-        <button 
-          className={`action-btn like-btn ${isLiked ? 'liked' : ''}`}
+      {post.hashtags && post.hashtags.length > 0 && (
+        <div className="post-hashtags">
+          {post.hashtags.map((tag, i) => (
+            <span key={i} className="hashtag">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="post-footer">
+        <button
+          className={`post-action-btn ${isLiked ? 'liked' : ''}`}
           onClick={handleLike}
+          title={isLiked ? 'Unlike' : 'Like'}
         >
-          ❤️ {post.likes.length}
+          <span className="action-icon">{isLiked ? '❤️' : '🤍'}</span>
+          <span className="action-count">{post.likes_count > 0 ? post.likes_count : ''}</span>
         </button>
-        
-        <button 
-          className={`action-btn retweet-btn ${isRetweeted ? 'retweeted' : ''} ${isRetweeting ? 'retweeting' : ''}`}
-          onClick={handleRetweet}
-          disabled={isRetweeting}
-        >
-          {isRetweeting ? '⏳' : '🔁'} {retweetCount}
+
+        <button className="post-action-btn" title="Comment">
+          <span className="action-icon">💬</span>
+          <span className="action-count">{post.comments_count > 0 ? post.comments_count : ''}</span>
         </button>
-        
-        <button 
-          className="action-btn share-btn"
-          onClick={handleShare}
-        >
-          📤
+
+        <button className="post-action-btn" onClick={handleShare} title="Share">
+          <span className="action-icon">🔗</span>
+          <span className="action-count">{post.shares_count > 0 ? post.shares_count : ''}</span>
         </button>
       </div>
 
-      <div className="post-stats">
-        <span>{post.likes.length} beğenme</span>
-        <span>{retweetCount} retweet</span>
-        <span>{post.engagementScore || 0} etkileşim</span>
-      </div>
-
-      <DeleteConfirmationModal
-        isOpen={showDeleteModal}
-        onConfirm={confirmDelete}
-        onCancel={cancelDelete}
-      />
+      {showDeleteModal && (
+        <DeleteConfirmationModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={confirmDelete}
+          itemName="post"
+        />
+      )}
     </motion.div>
   );
 };

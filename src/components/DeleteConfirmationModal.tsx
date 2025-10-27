@@ -5,18 +5,22 @@ import './DeleteConfirmationModal.css';
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
   onConfirm: () => void;
-  onCancel: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
   title?: string;
   message?: string;
+  itemName?: string;
 }
 
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   isOpen,
   onConfirm,
+  onClose,
   onCancel,
-  title = 'Gönderiyi Sil',
-  message = 'Bu gönderiyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'
+  title = 'Delete Post',
+  message = 'Are you sure you want to delete this post? This action cannot be undone.',
 }) => {
+  const handleCancel = onClose || onCancel || (() => {});
   return (
     <AnimatePresence>
       {isOpen && (
@@ -25,7 +29,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="delete-modal-overlay"
-          onClick={onCancel}
+          onClick={handleCancel}
         >
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -38,11 +42,11 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
             <h3>{title}</h3>
             <p>{message}</p>
             <div className="delete-modal-actions">
-              <button className="cancel-btn" onClick={onCancel}>
-                İptal
+              <button className="cancel-btn" onClick={handleCancel}>
+                Cancel
               </button>
               <button className="confirm-btn" onClick={onConfirm}>
-                Evet, Sil
+                Yes, Delete
               </button>
             </div>
           </motion.div>

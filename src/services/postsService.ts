@@ -1,322 +1,231 @@
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  doc, 
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  orderBy,
-  query,
-  limit,
-  where,
-  Timestamp,
-  deleteDoc
-} from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
 
 export interface Post {
   id: string;
-  authorId: string;
-  authorName: string;
-  authorPhoto?: string;
+  author_id: string;
   content: string;
-  imageUrl?: string;
-  timestamp: Date;
-  likes: string[];
-  reports: number;
-  isApproved: boolean;
-  engagementScore: number;
-  hashtags?: string[];
-  // Yeni alanlar
-  retweets: string[];
-  isRetweet: boolean;
-  originalPostId?: string;
-  originalAuthorName?: string;
+  media_url: string | null;
+  media_type: string | null;
+  post_type: string;
+  visibility: 'everyone' | 'students' | 'teachers' | 'followers' | 'private';
+  hashtags: string[];
+  mentions: string[];
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  is_pinned: boolean;
+  scheduled_for: string | null;
+  created_at: string;
+  author?: {
+    id: string;
+    display_name: string;
+    avatar_url: string | null;
+    role: 'teacher' | 'student';
+  };
+  is_liked?: boolean;
 }
 
 export const postsService = {
-  async createPost(postData: {
-    authorId: string;
-    authorName: string;
-    authorPhoto?: string;
-    content: string;
-    imageQuery?: string;
-    isRetweet?: boolean;
-    originalPostId?: string;
-    originalAuthorName?: string;
-  }) {
-    try {
-      console.log('🔄 Creating post with data:', postData);
-      
-      // Hashtag'leri içerikten çıkar
-      const hashtags = this.extractHashtags(postData.content);
-      
-      let imageUrl = '';
-      if (postData.imageQuery) {
-        imageUrl = `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(postData.imageQuery)},education`;
-      }
-
-      const post = {
-        authorId: postData.authorId,
-        authorName: postData.authorName,
-        authorPhoto: postData.authorPhoto || '',
-        content: postData.content,
-        imageUrl: imageUrl,
-        timestamp: Timestamp.now(),
-        likes: [],
-        retweets: [], // Yeni: retweets array
-        reports: 0,
-        isApproved: true,
-        engagementScore: Math.random(),
-        hashtags: hashtags,
-        isRetweet: postData.isRetweet || false, // Yeni: isRetweet
-        originalPostId: postData.originalPostId || '', // Yeni: originalPostId
-        originalAuthorName: postData.originalAuthorName || '' // Yeni: originalAuthorName
-      };
-
-      console.log('💾 Post to be saved:', post);
-      
-      const docRef = await addDoc(collection(db, 'posts'), post);
-      console.log('✅ Post created with ID:', docRef.id);
-      
-      return { 
-        id: docRef.id, 
-        ...post,
-        timestamp: new Date()
-      };
-    } catch (error) {
-      console.error('❌ Error creating post:', error);
-      throw error;
-    }
-  },
-
-  // Hashtag'leri içerikten çıkaran fonksiyon
   extractHashtags(content: string): string[] {
     const hashtagRegex = /#(\w+)/g;
     const matches = content.match(hashtagRegex);
     if (!matches) return [];
-    
-    return matches.map(tag => tag.substring(1).toLowerCase()); // # işaretini kaldır ve küçük harfe çevir
+    return matches.map((tag) => tag.substring(1).toLowerCase());
   },
 
-  async getDiscoverPosts(limitCount: number = 50) {
+  async createPost(postData: {
+    authorId: string;
+    content: string;
+    mediaUrl?: string;
+    mediaType?: string;
+    visibility?: 'everyone' | 'students' | 'teachers' | 'followers' | 'private';
+    hashtags?: string[];
+  }) {
     try {
-      console.log('🔄 Getting posts from Firestore...');
-      
-      let q;
-      try {
-        q = query(
-          collection(db, 'posts'),
-          where('isApproved', '==', true),
-          orderBy('timestamp', 'desc'),
-          limit(limitCount)
-        );
-      } catch (error) {
-        console.log('❌ Complex query failed, trying simple query...');
-        q = query(
-          collection(db, 'posts'),
-          orderBy('timestamp', 'desc'),
-          limit(limitCount)
-        );
-      }
-      
-      const snapshot = await getDocs(q);
-      console.log('📊 Firestore response - docs count:', snapshot.docs.length);
-      
-      const posts = snapshot.docs.map(doc => {
-        const data = doc.data();
-        
-        let postTimestamp: Date;
-        const timestamp = data.timestamp;
-        
-        if (timestamp && typeof timestamp.toDate === 'function') {
-          postTimestamp = timestamp.toDate();
-        } else if (timestamp instanceof Date) {
-          postTimestamp = timestamp;
-        } else if (timestamp) {
-          postTimestamp = new Date(timestamp);
-        } else {
-          postTimestamp = new Date();
-        }
-        
-        const post = {
-          id: doc.id,
-          authorId: data.authorId || '',
-          authorName: data.authorName || 'Anonim Öğretmen',
-          authorPhoto: data.authorPhoto || '',
-          content: data.content || '',
-          imageUrl: data.imageUrl || '',
-          timestamp: postTimestamp,
-          likes: data.likes || [],
-          retweets: data.retweets || [], // Yeni: retweets
-          reports: data.reports || 0,
-          isApproved: data.isApproved !== undefined ? data.isApproved : true,
-          engagementScore: data.engagementScore || Math.random(),
-          hashtags: data.hashtags || [],
-          isRetweet: data.isRetweet || false, // Yeni: isRetweet
-          originalPostId: data.originalPostId || '', // Yeni: originalPostId
-          originalAuthorName: data.originalAuthorName || '' // Yeni: originalAuthorName
-        };
-        
-        console.log('📄 Processed post:', post);
-        return post;
-      });
-      
-      console.log('✅ Final posts array:', posts);
-      return posts;
+      const hashtags = postData.hashtags || this.extractHashtags(postData.content);
+
+      const { data, error } = await supabase
+        .from('posts')
+        .insert({
+          author_id: postData.authorId,
+          content: postData.content,
+          media_url: postData.mediaUrl || null,
+          media_type: postData.mediaType || null,
+          visibility: postData.visibility || 'everyone',
+          hashtags,
+          post_type: 'text',
+        })
+        .select(
+          `
+          *,
+          author:users!posts_author_id_fkey(id, display_name, avatar_url, role)
+        `
+        )
+        .single();
+
+      if (error) throw error;
+
+      return data;
     } catch (error) {
-      console.error('❌ Error getting posts:', error);
-      if (error instanceof Error) {
-        console.error('Error details:', error.message);
-      }
+      console.error('Error creating post:', error);
+      throw error;
+    }
+  },
+
+  async getDiscoverPosts(limitCount: number = 50, userId?: string) {
+    try {
+      let query = supabase
+        .from('posts')
+        .select(
+          `
+          *,
+          author:users!posts_author_id_fkey(id, display_name, avatar_url, role)
+        `
+        )
+        .order('created_at', { ascending: false })
+        .limit(limitCount);
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      if (!userId) return data || [];
+
+      const postsWithLikes = await Promise.all(
+        (data || []).map(async (post) => {
+          const { data: likeData } = await supabase
+            .from('post_likes')
+            .select('id')
+            .eq('post_id', post.id)
+            .eq('user_id', userId)
+            .maybeSingle();
+
+          return {
+            ...post,
+            is_liked: !!likeData,
+          };
+        })
+      );
+
+      return postsWithLikes;
+    } catch (error) {
+      console.error('Error getting posts:', error);
       return [];
     }
   },
 
-  // Like işlemi
   async likePost(postId: string, userId: string) {
     try {
-      const postRef = doc(db, 'posts', postId);
-      await updateDoc(postRef, {
-        likes: arrayUnion(userId),
-        engagementScore: Math.random()
-      });
-      console.log('✅ Post liked:', postId);
+      const { error: likeError } = await supabase
+        .from('post_likes')
+        .insert({ post_id: postId, user_id: userId });
+
+      if (likeError) throw likeError;
+
+      const { data: post } = await supabase
+        .from('posts')
+        .select('likes_count')
+        .eq('id', postId)
+        .single();
+
+      if (post) {
+        await supabase
+          .from('posts')
+          .update({ likes_count: post.likes_count + 1 })
+          .eq('id', postId);
+      }
     } catch (error) {
-      console.error('❌ Error liking post:', error);
+      console.error('Error liking post:', error);
       throw error;
     }
   },
 
-  // Unlike işlemi
   async unlikePost(postId: string, userId: string) {
     try {
-      const postRef = doc(db, 'posts', postId);
-      await updateDoc(postRef, {
-        likes: arrayRemove(userId)
-      });
-      console.log('✅ Post unliked:', postId);
-    } catch (error) {
-      console.error('❌ Error unliking post:', error);
-      throw error;
-    }
-  },
+      const { error: unlikeError } = await supabase
+        .from('post_likes')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', userId);
 
-  // Retweet işlemi için fonksiyon
-  async retweetPost(originalPostId: string, userId: string, userEmail: string) {
-    try {
-      // Önce orijinal postu al
-      const originalPostDoc = await getDocs(query(collection(db, 'posts'), where('__name__', '==', originalPostId)));
-      if (originalPostDoc.empty) {
-        throw new Error('Original post not found');
-      }
-      const originalPost = originalPostDoc.docs[0].data();
+      if (unlikeError) throw unlikeError;
 
-      // Retweet postu oluştur
-      const retweetPostData = {
-        authorId: userId,
-        authorName: userEmail,
-        content: originalPost.content,
-        imageUrl: originalPost.imageUrl,
-        isRetweet: true,
-        originalPostId: originalPostId,
-        originalAuthorName: originalPost.authorName
-      };
+      const { data: post } = await supabase
+        .from('posts')
+        .select('likes_count')
+        .eq('id', postId)
+        .single();
 
-      const retweetPost = await this.createPost(retweetPostData);
-
-      // Orijinal postun retweets array'ine kullanıcıyı ekle
-      const originalPostRef = doc(db, 'posts', originalPostId);
-      await updateDoc(originalPostRef, {
-        retweets: arrayUnion(userId)
-      });
-
-      console.log('✅ Post retweeted:', originalPostId);
-      return retweetPost;
-    } catch (error) {
-      console.error('❌ Error retweeting post:', error);
-      throw error;
-    }
-  },
-
-  // Retweet'i kaldırma
-  async unretweetPost(originalPostId: string, userId: string) {
-    try {
-      // Orijinal postun retweets array'inden kullanıcıyı çıkar
-      const originalPostRef = doc(db, 'posts', originalPostId);
-      await updateDoc(originalPostRef, {
-        retweets: arrayRemove(userId)
-      });
-
-      // Kullanıcının retweet'ini bul ve sil
-      const retweetsQuery = query(
-        collection(db, 'posts'),
-        where('originalPostId', '==', originalPostId),
-        where('authorId', '==', userId),
-        where('isRetweet', '==', true)
-      );
-      const retweetsSnapshot = await getDocs(retweetsQuery);
-      retweetsSnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-
-      console.log('✅ Post unretweeted:', originalPostId);
-    } catch (error) {
-      console.error('❌ Error unretweeting post:', error);
-      throw error;
-    }
-  },
-
-  // Raporlama işlemi
-  async reportPost(postId: string) {
-    try {
-      const postRef = doc(db, 'posts', postId);
-      const postQuery = query(collection(db, 'posts'), where('__name__', '==', postId));
-      const postSnapshot = await getDocs(postQuery);
-      
-      if (!postSnapshot.empty) {
-        const postData = postSnapshot.docs[0].data();
-        const currentReports = postData.reports || 0;
-        
-        await updateDoc(postRef, {
-          reports: currentReports + 1,
-          isApproved: currentReports + 1 < 3
-        });
-
-        console.log('✅ Post reported:', postId, 'Reports:', currentReports + 1);
-
-        if (currentReports + 1 >= 3) {
-          await this.notifyAdmin(postId);
-        }
+      if (post && post.likes_count > 0) {
+        await supabase
+          .from('posts')
+          .update({ likes_count: post.likes_count - 1 })
+          .eq('id', postId);
       }
     } catch (error) {
-      console.error('❌ Error reporting post:', error);
+      console.error('Error unliking post:', error);
       throw error;
     }
-  },
-
-  async notifyAdmin(postId: string) {
-    console.log(`🚨 ADMIN ALERT: Post ${postId} needs moderation!`);
   },
 
   async deletePost(postId: string, userId: string) {
     try {
-      const postQuery = query(collection(db, 'posts'), where('__name__', '==', postId));
-      const postSnapshot = await getDocs(postQuery);
-      
-      if (!postSnapshot.empty) {
-        const postData = postSnapshot.docs[0].data();
-        if (postData.authorId !== userId) {
-          throw new Error('Sadece kendi paylaşımlarınızı silebilirsiniz');
-        }
-        
-        await deleteDoc(doc(db, 'posts', postId));
-        console.log('✅ Post deleted:', postId);
+      const { data: post } = await supabase
+        .from('posts')
+        .select('author_id')
+        .eq('id', postId)
+        .single();
+
+      if (post?.author_id !== userId) {
+        throw new Error('You can only delete your own posts');
       }
+
+      const { error } = await supabase.from('posts').delete().eq('id', postId);
+
+      if (error) throw error;
     } catch (error) {
-      console.error('❌ Error deleting post:', error);
+      console.error('Error deleting post:', error);
       throw error;
     }
-  }
+  },
+
+  async reportPost(postId: string, userId: string, reason: string, description?: string) {
+    try {
+      const { error } = await supabase.from('reports').insert({
+        reporter_id: userId,
+        content_type: 'post',
+        content_id: postId,
+        reason,
+        description: description || '',
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error reporting post:', error);
+      throw error;
+    }
+  },
+
+  async getUserPosts(userId: string, limitCount: number = 20) {
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select(
+          `
+          *,
+          author:users!posts_author_id_fkey(id, display_name, avatar_url, role)
+        `
+        )
+        .eq('author_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limitCount);
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (error) {
+      console.error('Error getting user posts:', error);
+      return [];
+    }
+  },
 };
