@@ -1,8 +1,8 @@
-// src/pages/Games.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../config/supabase';
+import toast from 'react-hot-toast';
 
-// Oyun tipini tanımlıyoruz
 type Game = {
   id: number;
   title: string;
@@ -10,7 +10,6 @@ type Game = {
   thumbnailUrl: string;
 };
 
-// 2. Grade oyun verileri
 const grade2Games: Game[] = [
   {
     id: 1,
@@ -50,7 +49,6 @@ const grade2Games: Game[] = [
   }
 ];
 
-// Diğer sınıflar için boş diziler
 const primarySchoolGames: Game[] = [];
 const grade3Games: Game[] = [];
 const grade4Games: Game[] = [];
@@ -58,12 +56,37 @@ const grade4Games: Game[] = [];
 function Games() {
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState<string>('grade2');
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      loadFavorites();
+    }
+  }, [user]);
+
+  const loadFavorites = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('favorites')
+        .select('item_id')
+        .eq('user_id', user.id)
+        .eq('item_type', 'game');
+
+      if (error) throw error;
+
+      const favoriteIds = new Set(data.map(fav => parseInt(fav.item_id)));
+      setFavorites(favoriteIds);
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+    }
+  };
 
   const selectedGameData = [...primarySchoolGames, ...grade2Games, ...grade3Games, ...grade4Games]
     .find(game => game.id === selectedGame);
 
-  // Aktif bölüme göre oyunları seç
   const getActiveGames = (): Game[] => {
     switch (activeSection) {
       case 'primary': return primarySchoolGames;
@@ -76,214 +99,145 @@ function Games() {
 
   const activeGames = getActiveGames();
 
-  const handleAddToFavorites = (game: Game) => {
+  const handleToggleFavorite = async (game: Game) => {
     if (!user) {
-      alert('Favorilere eklemek için giriş yapın!');
+      toast.error('Please sign in to add favorites!');
       return;
     }
-    // Favori ekleme işlemi - Firebase'e kaydedilecek
-    console.log('Favorilere eklendi:', game.title);
-    alert(`${game.title} favorilere eklendi!`);
+
+    const isFavorite = favorites.has(game.id);
+
+    try {
+      if (isFavorite) {
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('item_id', game.id.toString())
+          .eq('item_type', 'game');
+
+        if (error) throw error;
+
+        setFavorites(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(game.id);
+          return newSet;
+        });
+        toast.success('Removed from favorites!');
+      } else {
+        const { error } = await supabase
+          .from('favorites')
+          .insert({
+            user_id: user.id,
+            item_type: 'game',
+            item_id: game.id.toString(),
+            item_name: game.title,
+            item_image: game.thumbnailUrl
+          });
+
+        if (error) throw error;
+
+        setFavorites(prev => new Set(prev).add(game.id));
+        toast.success('Added to favorites!');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast.error('Failed to update favorites');
+    }
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Oyunlar</h1>
-      
-      {/* Bölüm Seçim Butonları */}
-      <div style={{
-        display: 'flex',
-        gap: '10px',
-        marginBottom: '30px',
-        flexWrap: 'wrap'
-      }}>
+    <div className="games-page">
+      <div className="games-header">
+        <h1>🎮 Games</h1>
+        <p>Fun and educational games for every grade</p>
+      </div>
+
+      <div className="grade-tabs">
         <button
           onClick={() => setActiveSection('primary')}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: activeSection === 'primary' ? '#4CAF50' : '#f0f0f0',
-            color: activeSection === 'primary' ? 'white' : 'black',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}
+          className={`grade-tab ${activeSection === 'primary' ? 'active' : ''}`}
         >
           Primary School
         </button>
         <button
           onClick={() => setActiveSection('grade2')}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: activeSection === 'grade2' ? '#4CAF50' : '#f0f0f0',
-            color: activeSection === 'grade2' ? 'white' : 'black',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}
+          className={`grade-tab ${activeSection === 'grade2' ? 'active' : ''}`}
         >
-          2. Grade
+          2nd Grade
         </button>
         <button
           onClick={() => setActiveSection('grade3')}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: activeSection === 'grade3' ? '#4CAF50' : '#f0f0f0',
-            color: activeSection === 'grade3' ? 'white' : 'black',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}
+          className={`grade-tab ${activeSection === 'grade3' ? 'active' : ''}`}
         >
-          3. Grade
+          3rd Grade
         </button>
         <button
           onClick={() => setActiveSection('grade4')}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: activeSection === 'grade4' ? '#4CAF50' : '#f0f0f0',
-            color: activeSection === 'grade4' ? 'white' : 'black',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}
+          className={`grade-tab ${activeSection === 'grade4' ? 'active' : ''}`}
         >
-          4. Grade
+          4th Grade
         </button>
       </div>
 
-      {/* Bölüm İçeriği */}
-      <div>
+      <div className="games-content">
         {activeGames.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            padding: '40px',
-            backgroundColor: '#f9f9f9',
-            borderRadius: '8px'
-          }}>
-            <h3>Bu bölümde henüz oyun bulunmuyor</h3>
-            <p>Yakında yeni oyunlar eklenecek!</p>
+          <div className="games-empty">
+            <div className="empty-icon">🎯</div>
+            <h3>No games yet in this section</h3>
+            <p>New games coming soon!</p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: '20px'
-          }}>
+          <div className="games-grid">
             {activeGames.map((game) => (
-              <div 
+              <div
                 key={game.id}
-                style={{
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '10px',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'transform 0.2s',
-                  backgroundColor: 'white',
-                  position: 'relative'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                }}
-                onClick={() => setSelectedGame(game.id)}
+                className="game-card"
               >
-                {/* FAVORİ BUTONU */}
                 {user && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleAddToFavorites(game);
+                      handleToggleFavorite(game);
                     }}
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      right: '10px',
-                      background: 'gold',
-                      border: 'none',
-                      borderRadius: '50%',
-                      width: '30px',
-                      height: '30px',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      zIndex: 10
-                    }}
-                    title="Favorilere Ekle"
+                    className={`game-favorite-btn ${favorites.has(game.id) ? 'favorited' : ''}`}
+                    title={favorites.has(game.id) ? "Remove from favorites" : "Add to favorites"}
                   >
-                    ⭐
+                    {favorites.has(game.id) ? '❤️' : '🤍'}
                   </button>
                 )}
-                
-                <img 
-                  src={game.thumbnailUrl} 
-                  alt={game.title}
-                  style={{
-                    width: '100%',
-                    height: '150px',
-                    objectFit: 'cover',
-                    borderRadius: '4px'
-                  }}
-                />
-                <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{game.title}</p>
+
+                <div
+                  className="game-thumbnail"
+                  onClick={() => setSelectedGame(game.id)}
+                >
+                  <img
+                    src={game.thumbnailUrl}
+                    alt={game.title}
+                  />
+                  <div className="game-overlay">
+                    <span className="play-icon">▶️</span>
+                  </div>
+                </div>
+                <div className="game-info">
+                  <h3>{game.title}</h3>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Seçili Oyun Modal'ı */}
       {selectedGame && selectedGameData && (
-        <div style={{
-          position: 'fixed',
-          top: '0',
-          left: '0',
-          width: '100vw',
-          height: '100vh',
-          backgroundColor: 'rgba(0, 0, 0, 0.9)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            width: '95%',
-            height: '95%',
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            overflow: 'hidden',
-            position: 'relative'
-          }}>
+        <div className="game-modal-overlay">
+          <div className="game-modal">
             <button
               onClick={() => setSelectedGame(null)}
-              style={{
-                position: 'absolute',
-                top: '15px',
-                right: '15px',
-                zIndex: 1001,
-                background: 'red',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '40px',
-                height: '40px',
-                cursor: 'pointer',
-                fontSize: '18px',
-                fontWeight: 'bold'
-              }}
+              className="game-modal-close"
             >
-              X
+              ✖️
             </button>
-            
+
             <iframe
               src={selectedGameData.embedUrl}
               width="100%"
@@ -291,7 +245,7 @@ function Games() {
               frameBorder="0"
               allowFullScreen
               title={selectedGameData.title}
-            ></iframe>
+            />
           </div>
         </div>
       )}
