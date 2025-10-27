@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, MessageCircle, Share2, Trash2 } from 'lucide-react';
 import { Post as PostType } from '../../../services/postsService';
 import { useAuth } from '../../../contexts/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
@@ -103,7 +102,7 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
           </div>
           {isOwnPost && (
             <button className="delete-post-btn" onClick={handleDelete} title="Delete post">
-              <Trash2 size={18} />
+              🗑️
             </button>
           )}
         </div>
@@ -132,17 +131,17 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
             className={`action-btn like-btn ${isLiked ? 'liked' : ''}`}
             onClick={handleLike}
           >
-            <Heart size={18} fill={isLiked ? '#EC4899' : 'none'} />
+            <span className="action-icon">{isLiked ? '❤️' : '🤍'}</span>
             <span>{post.likes_count > 0 ? post.likes_count : ''}</span>
           </button>
 
           <button className="action-btn comment-btn">
-            <MessageCircle size={18} />
+            <span className="action-icon">💬</span>
             <span>{post.comments_count > 0 ? post.comments_count : ''}</span>
           </button>
 
           <button className="action-btn share-btn" onClick={handleShare}>
-            <Share2 size={18} />
+            <span className="action-icon">↗️</span>
             <span>{post.shares_count > 0 ? post.shares_count : ''}</span>
           </button>
         </div>

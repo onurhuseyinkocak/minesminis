@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { Home, Gamepad2, BookOpen, FileText, Compass, Star, LogOut } from "lucide-react";
 
 function Navbar() {
   const { user, userProfile, signOut } = useAuth();
@@ -17,38 +16,38 @@ function Navbar() {
       <ul className="nav-links">
         <li>
           <Link to="/" className="nav-btn">
-            <Home size={18} />
+            <span className="nav-icon">🏠</span>
             <span>Ana Sayfa</span>
           </Link>
         </li>
         <li>
           <Link to="/games" className="nav-btn">
-            <Gamepad2 size={18} />
+            <span className="nav-icon">🎮</span>
             <span>Oyunlar</span>
           </Link>
         </li>
         <li>
           <Link to="/words" className="nav-btn">
-            <BookOpen size={18} />
+            <span className="nav-icon">📖</span>
             <span>Kelimeler</span>
           </Link>
         </li>
         <li>
           <Link to="/worksheets" className="nav-btn">
-            <FileText size={18} />
+            <span className="nav-icon">📝</span>
             <span>Çalışma</span>
           </Link>
         </li>
         <li>
           <Link to="/discover" className="nav-btn">
-            <Compass size={18} />
+            <span className="nav-icon">🔍</span>
             <span>Keşfet</span>
           </Link>
         </li>
         {user && (
           <li>
             <Link to="/favorites" className="nav-btn">
-              <Star size={18} />
+              <span className="nav-icon">⭐</span>
               <span>Favoriler</span>
             </Link>
           </li>
@@ -92,7 +91,7 @@ function Navbar() {
               </span>
             </Link>
             <button onClick={signOut} className="logout-btn">
-              <LogOut size={16} />
+              <span>🚪</span>
               <span>Çıkış</span>
             </button>
           </div>

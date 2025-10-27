@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { userService } from '../../../services/userService';
-import { User, Users, Compass, TrendingUp } from 'lucide-react';
 
 const LeftSidebar: React.FC = () => {
   const { userProfile } = useAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'following' | 'explore'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'following' | 'explore' | 'reels'>('profile');
   const [following, setFollowing] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [currentReelIndex, setCurrentReelIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const sampleReels = [
+    { id: 1, videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', title: '🎨 Sanat Etkinliği', user: 'Öğretmen Ayşe' },
+    { id: 2, videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', title: '📚 İngilizce Ders', user: 'Teacher John' },
+    { id: 3, videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', title: '🎵 Şarkı Öğrenelim', user: 'Müzik Öğretmeni' },
+  ];
 
   useEffect(() => {
     if (activeTab === 'following' && userProfile) {
@@ -40,6 +46,14 @@ const LeftSidebar: React.FC = () => {
       console.error('Error loading leaderboard:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReelSwipe = (direction: 'up' | 'down') => {
+    if (direction === 'down' && currentReelIndex < sampleReels.length - 1) {
+      setCurrentReelIndex(prev => prev + 1);
+    } else if (direction === 'up' && currentReelIndex > 0) {
+      setCurrentReelIndex(prev => prev - 1);
     }
   };
 
@@ -111,7 +125,7 @@ const LeftSidebar: React.FC = () => {
       return (
         <div className="sidebar-content">
           <div className="empty-sidebar-state">
-            <Users size={48} />
+            <span style={{ fontSize: '3rem' }}>👥</span>
             <p>You're not following anyone yet</p>
           </div>
         </div>
@@ -159,7 +173,7 @@ const LeftSidebar: React.FC = () => {
       <div className="sidebar-content">
         <div className="explore-section">
           <div className="section-header">
-            <TrendingUp size={20} />
+            <span style={{ fontSize: '1.5rem' }}>📈</span>
             <h4>Top Learners</h4>
           </div>
           <div className="leaderboard-list">
@@ -185,6 +199,62 @@ const LeftSidebar: React.FC = () => {
     );
   };
 
+  const renderReelsTab = () => {
+    const currentReel = sampleReels[currentReelIndex];
+
+    return (
+      <div className="sidebar-content reels-container">
+        <div className="reels-header">
+          <span style={{ fontSize: '1.5rem' }}>🎬</span>
+          <h4>Reels</h4>
+        </div>
+        <div className="reels-player">
+          <video
+            key={currentReel.id}
+            src={currentReel.videoUrl}
+            className="reel-video"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+          <div className="reel-overlay">
+            <div className="reel-info">
+              <h5>{currentReel.title}</h5>
+              <p>👤 {currentReel.user}</p>
+            </div>
+            <div className="reel-actions">
+              <button className="reel-action-btn">❤️</button>
+              <button className="reel-action-btn">💬</button>
+              <button className="reel-action-btn">↗️</button>
+            </div>
+          </div>
+          <div className="reel-navigation">
+            <button
+              onClick={() => handleReelSwipe('up')}
+              disabled={currentReelIndex === 0}
+              className="reel-nav-btn reel-nav-up"
+              title="Previous"
+            >
+              ⬆️
+            </button>
+            <div className="reel-indicator">
+              {currentReelIndex + 1} / {sampleReels.length}
+            </div>
+            <button
+              onClick={() => handleReelSwipe('down')}
+              disabled={currentReelIndex === sampleReels.length - 1}
+              className="reel-nav-btn reel-nav-down"
+              title="Next"
+            >
+              ⬇️
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="discover-left-sidebar">
       <div className="sidebar-tabs">
@@ -192,26 +262,34 @@ const LeftSidebar: React.FC = () => {
           className={`sidebar-tab ${activeTab === 'profile' ? 'active' : ''}`}
           onClick={() => setActiveTab('profile')}
         >
-          <User size={20} />
+          <span style={{ fontSize: '1.25rem' }}>👤</span>
           <span>Profile</span>
         </button>
         <button
           className={`sidebar-tab ${activeTab === 'following' ? 'active' : ''}`}
           onClick={() => setActiveTab('following')}
         >
-          <Users size={20} />
+          <span style={{ fontSize: '1.25rem' }}>👥</span>
           <span>Following</span>
+        </button>
+        <button
+          className={`sidebar-tab ${activeTab === 'reels' ? 'active' : ''}`}
+          onClick={() => setActiveTab('reels')}
+        >
+          <span style={{ fontSize: '1.25rem' }}>🎬</span>
+          <span>Reels</span>
         </button>
         <button
           className={`sidebar-tab ${activeTab === 'explore' ? 'active' : ''}`}
           onClick={() => setActiveTab('explore')}
         >
-          <Compass size={20} />
+          <span style={{ fontSize: '1.25rem' }}>🔍</span>
           <span>Explore</span>
         </button>
       </div>
       {activeTab === 'profile' && renderProfileTab()}
       {activeTab === 'following' && renderFollowingTab()}
+      {activeTab === 'reels' && renderReelsTab()}
       {activeTab === 'explore' && renderExploreTab()}
     </div>
   );

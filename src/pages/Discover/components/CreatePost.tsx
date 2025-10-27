@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { postsService } from '../../../services/postsService';
 import { uploadService } from '../../../services/uploadService';
-import { Image, Video, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface CreatePostProps {
@@ -146,7 +145,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
                   className="remove-media-btn"
                   aria-label="Remove media"
                 >
-                  <X size={16} />
+                  ❌
                 </button>
               </div>
             )}
@@ -172,7 +171,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
                   disabled={isSubmitting || !!uploadedFile}
                   title="Add photo or video"
                 >
-                  <Image size={20} />
+                  🖼️
                 </button>
                 <button
                   type="button"
@@ -181,7 +180,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
                   disabled={isSubmitting || !!uploadedFile}
                   title="Add video"
                 >
-                  <Video size={20} />
+                  🎥
                 </button>
               </div>
               <div className="right-actions">
