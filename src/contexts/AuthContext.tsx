@@ -35,9 +35,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithRedirect(auth, provider);
+      console.log('Google login başlatılıyor...');
+      console.log('Auth domain:', auth.app.options.authDomain);
+      const result = await signInWithRedirect(auth, provider);
+      console.log('Redirect başlatıldı:', result);
     } catch (error) {
       console.error('Google ile giriş yapılırken hata oluştu:', error);
+      alert('Hata: ' + (error as Error).message);
     }
   };
 
