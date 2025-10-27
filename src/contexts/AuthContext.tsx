@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { User, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { User, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { userService, UserProfile } from '../services/userService';
 import ProfileSetupModal from '../components/ProfileSetupModal';
@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       console.error('Google ile giriş yapılırken hata oluştu:', error);
     }
@@ -50,16 +50,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          console.log('Google ile giriş başarılı');
+        }
+      } catch (error) {
+        console.error('Redirect sonucu alınırken hata:', error);
+      }
+    };
+
+    checkRedirectResult();
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        // Kullanıcı profili var mı kontrol et
         const profile = await userService.getUserProfile(user.uid);
         if (profile) {
           setUserProfile(profile);
           setShowProfileSetup(false);
         } else {
-          // Profil yoksa, profil kurulum modal'ını göster
           setShowProfileSetup(true);
         }
       } else {
