@@ -6,36 +6,36 @@ const Footer: React.FC = () => {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-section">
-          <h3>📚 Eğitim Hakkında</h3>
+          <h3>📚 Education</h3>
           <ul>
-            <li>Programlar</li>
-            <li>Dersler</li>
-            <li>Etkinlikler</li>
-            <li>Kaynaklar</li>
+            <li>Programs</li>
+            <li>Lessons</li>
+            <li>Activities</li>
+            <li>Resources</li>
           </ul>
         </div>
 
         <div className="footer-section">
-          <h3>🎨 Eğlenceli Köşe</h3>
+          <h3>🎨 Fun Corner</h3>
           <ul>
-            <li>Boyama Sayfaları</li>
-            <li>Mini Oyunlar</li>
-            <li>Bulmacalar</li>
-            <li>Videolar</li>
+            <li>Coloring Pages</li>
+            <li>Mini Games</li>
+            <li>Puzzles</li>
+            <li>Videos</li>
           </ul>
         </div>
 
         <div className="footer-section">
-          <h3>📞 İletişim</h3>
+          <h3>📞 Contact</h3>
           <ul>
-            <li>Email: info@egitim.com</li>
-            <li>Telefon: +90 123 456 7890</li>
-            <li>Adres: Eğlence Caddesi, Oyun Sokak No:5</li>
+            <li>Email: info@minesminis.com</li>
+            <li>Phone: +90 123 456 7890</li>
+            <li>Address: Learning Street, Fun Avenue No:5</li>
           </ul>
         </div>
 
         <div className="footer-section">
-          <h3>🌐 Bizi Takip Et</h3>
+          <h3>🌐 Follow Us</h3>
           <div className="social-icons">
             <span role="img" aria-label="facebook">👍</span>
             <span role="img" aria-label="twitter">🐦</span>
@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>© 2025 MinesMinis | Çocuklar için güvenli ve eğlenceli eğitim.</p>
+        <p>© 2025 MinesMinis | Safe and fun education for kids.</p>
       </div>
     </footer>
   );

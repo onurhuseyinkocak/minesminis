@@ -131,10 +131,27 @@
   gap: var(--spacing-sm);
 }
 
+.favorite-heart {
+  animation: heartbeat 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 2px 8px rgba(255, 0, 0, 0.5));
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10%, 30% {
+    transform: scale(1.1);
+  }
+  20%, 40% {
+    transform: scale(1.05);
+  }
+}
+
 .social-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 0.625rem 1.125rem;
   border-radius: var(--radius-full);
   font-weight: 700;
@@ -142,6 +159,10 @@
   font-size: 0.875rem;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.social-btn svg {
+  transition: transform 0.3s ease;
 }
 
 .social-btn.insta {
@@ -155,6 +176,10 @@
 .social-btn:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.social-btn:hover svg {
+  transform: scale(1.15) rotate(5deg);
 }
 
 .navbar-user {
