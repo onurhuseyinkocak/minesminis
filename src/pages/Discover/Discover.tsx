@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { postsService } from '../../services/postsService';
 import { Heart, MessageCircle, Bookmark, Play } from 'lucide-react';
+import InstagramSidebar from '../../components/InstagramSidebar';
 import './Discover.css';
 
 interface Post {
@@ -53,7 +54,9 @@ const Discover: React.FC = () => {
   }
 
   return (
-    <div className="instagram-explore">
+    <>
+      <InstagramSidebar />
+      <div className="instagram-explore">
       <div className="explore-container">
         <div className="explore-grid">
           {loading ? (
@@ -187,7 +190,8 @@ const Discover: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
