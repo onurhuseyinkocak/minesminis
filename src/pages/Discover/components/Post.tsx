@@ -24,7 +24,12 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
   const [newComment, setNewComment] = useState('');
   const [loadingComments, setLoadingComments] = useState(false);
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
   const { user, userProfile } = useAuth();
+
+  useEffect(() => {
+    loadComments();
+  }, []);
 
   useEffect(() => {
     if (showCommentsModal) {
@@ -230,6 +235,44 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
             <span>{post.shares_count > 0 ? post.shares_count : ''}</span>
           </button>
         </div>
+
+        {comments.length > 0 && (
+          <div className="post-comments-preview">
+            {(showAllComments ? comments : comments.slice(0, 2)).map((comment) => (
+              <div key={comment.id} className="comment-preview-item">
+                <div className="comment-preview-avatar">
+                  {comment.users?.avatar_url ? (
+                    <img src={comment.users.avatar_url} alt={comment.users.display_name} />
+                  ) : (
+                    comment.users?.display_name?.charAt(0).toUpperCase() || '?'
+                  )}
+                </div>
+                <div className="comment-preview-content">
+                  <span className="comment-preview-author">
+                    {comment.users?.display_name || 'Anonymous'}
+                  </span>
+                  <span className="comment-preview-text">{comment.content}</span>
+                </div>
+              </div>
+            ))}
+            {comments.length > 2 && !showAllComments && (
+              <button
+                className="show-more-comments-btn"
+                onClick={() => setShowAllComments(true)}
+              >
+                View {comments.length - 2} more comment{comments.length - 2 > 1 ? 's' : ''}
+              </button>
+            )}
+            {showAllComments && comments.length > 2 && (
+              <button
+                className="show-more-comments-btn"
+                onClick={() => setShowAllComments(false)}
+              >
+                Show less
+              </button>
+            )}
+          </div>
+        )}
       </motion.div>
 
       <DeleteConfirmationModal
