@@ -29,10 +29,22 @@ const Landing: React.FC = () => {
         : await signUp(email, password);
 
       if (error) {
-        setError(error.message);
+        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+          setError('This email is already registered. Please login instead.');
+          setIsLogin(true);
+        } else if (error.message.includes('Invalid login credentials')) {
+          setError('Invalid email or password. Please try again.');
+        } else {
+          setError(error.message);
+        }
       }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
+    } catch (err: any) {
+      if (err?.message?.includes('already registered')) {
+        setError('This email is already registered. Please login instead.');
+        setIsLogin(true);
+      } else {
+        setError('An error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
