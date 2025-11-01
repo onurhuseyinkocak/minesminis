@@ -25,6 +25,7 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
   const [loadingComments, setLoadingComments] = useState(false);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
+  const [showHeartAnimation, setShowHeartAnimation] = useState(false);
   const { user, userProfile } = useAuth();
 
   useEffect(() => {
@@ -102,6 +103,19 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
       return;
     }
     onLike(post.id);
+  };
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      toast.error('Please sign in to like posts');
+      return;
+    }
+    if (!post.is_liked) {
+      onLike(post.id);
+      setShowHeartAnimation(true);
+      setTimeout(() => setShowHeartAnimation(false), 1000);
+    }
   };
 
   const handleShare = (e: React.MouseEvent) => {
@@ -207,12 +221,33 @@ const Post: React.FC<PostProps> = ({ post, onLike, onShare, onDeletePost, index 
         </div>
 
         {post.media_url && (
-          <div className="post-image">
+          <div className="post-image" onDoubleClick={handleDoubleClick} style={{ position: 'relative' }}>
             {post.media_type === 'video' ? (
               <video src={post.media_url} controls className="post-video" />
             ) : (
               <img src={post.media_url} alt="Post media" />
             )}
+            <AnimatePresence>
+              {showHeartAnimation && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1.5, opacity: 1 }}
+                  exit={{ scale: 2, opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '80px',
+                    pointerEvents: 'none',
+                    zIndex: 10
+                  }}
+                >
+                  ❤️
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
