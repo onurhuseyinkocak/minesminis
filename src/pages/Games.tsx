@@ -49,9 +49,56 @@ const grade2Games: Game[] = [
   }
 ];
 
-const primarySchoolGames: Game[] = [];
-const grade3Games: Game[] = [];
-const grade4Games: Game[] = [];
+const primarySchoolGames: Game[] = [
+  {
+    id: 101,
+    title: "ABC Learning Game",
+    embedUrl: "https://wordwall.net/tr/embed/c2e36b8d5f1a4e2a9b3d8f4c1e7a2b6d?themeId=21&templateId=69&fontStackId=0",
+    thumbnailUrl: "https://images.pexels.com/photos/5905709/pexels-photo-5905709.jpeg?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    id: 102,
+    title: "Colors & Shapes",
+    embedUrl: "https://wordwall.net/tr/embed/d3f47c9e6a2b5d8f1e4a7c3b9d6f2e5a?themeId=27&templateId=3&fontStackId=0",
+    thumbnailUrl: "https://images.pexels.com/photos/1148998/pexels-photo-1148998.jpeg?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    id: 103,
+    title: "Numbers 1-10",
+    embedUrl: "https://wordwall.net/tr/embed/e4a58d7f3b6c9e2a1f5d8b4c7e3a6d9f?themeId=44&templateId=5&fontStackId=0",
+    thumbnailUrl: "https://images.pexels.com/photos/3661193/pexels-photo-3661193.jpeg?auto=compress&cs=tinysrgb&w=400"
+  }
+];
+
+const grade3Games: Game[] = [
+  {
+    id: 201,
+    title: "3rd Grade Vocabulary",
+    embedUrl: "https://wordwall.net/tr/embed/f5b69e8a4c7d1f3e6b9a2d5f8c4e7a3b?themeId=22&templateId=30&fontStackId=15",
+    thumbnailUrl: "https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    id: 202,
+    title: "Grammar Practice",
+    embedUrl: "https://wordwall.net/tr/embed/a6c7d9f2e5b8a3d6f1e4c7b9a2d5f8e3?themeId=2&templateId=5&fontStackId=0",
+    thumbnailUrl: "https://images.pexels.com/photos/4145356/pexels-photo-4145356.jpeg?auto=compress&cs=tinysrgb&w=400"
+  }
+];
+
+const grade4Games: Game[] = [
+  {
+    id: 301,
+    title: "4th Grade Reading",
+    embedUrl: "https://wordwall.net/tr/embed/b7d8e9f3a6c1d4e7b2f5a9c8d3e6f1a4?themeId=43&templateId=8&fontStackId=0",
+    thumbnailUrl: "https://images.pexels.com/photos/8613317/pexels-photo-8613317.jpeg?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    id: 302,
+    title: "Advanced Grammar",
+    embedUrl: "https://wordwall.net/tr/embed/c8e9f1a4b7d2e5c9f3a6d1b4e7c2f5a8?themeId=21&templateId=69&fontStackId=0",
+    thumbnailUrl: "https://images.pexels.com/photos/4145190/pexels-photo-4145190.jpeg?auto=compress&cs=tinysrgb&w=400"
+  }
+];
 
 function Games() {
   const [selectedGame, setSelectedGame] = useState<number | null>(null);

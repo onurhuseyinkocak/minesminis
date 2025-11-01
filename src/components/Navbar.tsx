@@ -80,7 +80,7 @@ function Navbar() {
           </a>
         </div>
 
-        {user && (
+        {user ? (
           <div className="navbar-user">
             <Link to="/profile" className="profile-link">
               <div className="profile-avatar-nav">
@@ -101,6 +101,11 @@ function Navbar() {
               <span>Logout</span>
             </button>
           </div>
+        ) : (
+          <Link to="/login" className="login-btn">
+            <span>🔐</span>
+            <span>Login</span>
+          </Link>
         )}
       </div>
     </nav>

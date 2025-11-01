@@ -6,21 +6,21 @@ import { BookOpen, GamepadIcon, Video, FileText, Users, Trophy, Flame, Star } fr
 import './Home.css';
 
 const Home: React.FC = () => {
-  const { userProfile } = useAuth();
+  const { userProfile, user } = useAuth();
 
   const menuItems = [
     {
       title: 'Games',
       icon: GamepadIcon,
       path: '/games',
-      gradient: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+      gradient: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)',
       description: 'Play fun learning games'
     },
     {
       title: 'Worksheets',
       icon: FileText,
       path: '/worksheets',
-      gradient: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)',
+      gradient: 'linear-gradient(135deg, #14B8A6 0%, #06B6D4 100%)',
       description: 'Practice with worksheets'
     },
     {
@@ -48,7 +48,7 @@ const Home: React.FC = () => {
       title: 'My Progress',
       icon: Trophy,
       path: '/profile',
-      gradient: 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)',
+      gradient: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)',
       description: 'Track your achievements'
     },
   ];
@@ -77,51 +77,59 @@ const Home: React.FC = () => {
             <Star className="mascot-icon" size={64} />
           </motion.div>
           <h1 className="welcome-title">
-            Welcome back, <span className="gradient-text">{userProfile?.display_name || 'Friend'}</span>!
+            {user ? (
+              <>Welcome back, <span className="gradient-text">{userProfile?.display_name || 'Friend'}</span>!</>
+            ) : (
+              <>Welcome to <span className="gradient-text">MinesMinis</span>!</>
+            )}
           </h1>
-          <p className="welcome-subtitle">Ready to learn something amazing today?</p>
+          <p className="welcome-subtitle">
+            {user ? 'Ready to learn something amazing today?' : 'Start your English learning adventure today!'}
+          </p>
         </div>
 
-        <div className="stats-row">
-          <motion.div
-            className="stat-card"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #FCD34D, #FB923C)' }}>
-              <Trophy size={24} />
-            </div>
-            <div className="stat-info">
-              <div className="stat-value">{userProfile?.points || 0}</div>
-              <div className="stat-label">Points</div>
-            </div>
-          </motion.div>
+        {user && (
+          <div className="stats-row">
+            <motion.div
+              className="stat-card"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #FCD34D, #FB923C)' }}>
+                <Trophy size={24} />
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">{userProfile?.points || 0}</div>
+                <div className="stat-label">Points</div>
+              </div>
+            </motion.div>
 
-          <motion.div
-            className="stat-card"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #EF4444, #FB923C)' }}>
-              <Flame size={24} />
-            </div>
-            <div className="stat-info">
-              <div className="stat-value">{userProfile?.streak_days || 0}</div>
-              <div className="stat-label">Day Streak</div>
-            </div>
-          </motion.div>
+            <motion.div
+              className="stat-card"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #EF4444, #FB923C)' }}>
+                <Flame size={24} />
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">{userProfile?.streak_days || 0}</div>
+                <div className="stat-label">Day Streak</div>
+              </div>
+            </motion.div>
 
-          <motion.div
-            className="stat-card"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #8B5CF6, #EC4899)' }}>
-              <Star size={24} />
-            </div>
-            <div className="stat-info">
-              <div className="stat-value">{userProfile?.level || 1}</div>
-              <div className="stat-label">Level</div>
-            </div>
-          </motion.div>
-        </div>
+            <motion.div
+              className="stat-card"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #06B6D4, #3B82F6)' }}>
+                <Star size={24} />
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">{userProfile?.level || 1}</div>
+                <div className="stat-label">Level</div>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </motion.div>
 
       <div className="menu-grid">
@@ -153,24 +161,26 @@ const Home: React.FC = () => {
         ))}
       </div>
 
-      <motion.div
-        className="daily-challenge"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        <div className="challenge-header">
-          <h2>Today's Challenge</h2>
-          <span className="challenge-badge">+100 Points</span>
-        </div>
-        <p className="challenge-text">Complete 3 games and earn bonus points!</p>
-        <div className="challenge-progress">
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: '33%' }}></div>
+      {user && (
+        <motion.div
+          className="daily-challenge"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <div className="challenge-header">
+            <h2>Today's Challenge</h2>
+            <span className="challenge-badge">+100 Points</span>
           </div>
-          <span className="progress-text">1 / 3 completed</span>
-        </div>
-      </motion.div>
+          <p className="challenge-text">Complete 3 games and earn bonus points!</p>
+          <div className="challenge-progress">
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: '33%' }}></div>
+            </div>
+            <span className="progress-text">1 / 3 completed</span>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

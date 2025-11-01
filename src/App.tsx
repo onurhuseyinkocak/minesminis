@@ -25,19 +25,10 @@ function AppRoutes() {
         justifyContent: 'center',
         minHeight: '100vh',
         fontSize: '1.5rem',
-        color: '#8B5CF6'
+        color: '#06B6D4'
       }}>
         Loading...
       </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <Routes>
-        <Route path="/landing" element={<Landing />} />
-        <Route path="*" element={<Navigate to="/landing" replace />} />
-      </Routes>
     );
   }
 
@@ -51,9 +42,10 @@ function AppRoutes() {
           <Route path="/words" element={<Words />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/worksheets" element={<Worksheets />} />
-          <Route path="/discover" element={<Discover />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/discover" element={user ? <Discover /> : <Landing />} />
+          <Route path="/favorites" element={user ? <Favorites /> : <Landing />} />
+          <Route path="/profile" element={user ? <Profile /> : <Landing />} />
+          <Route path="/login" element={<Landing />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

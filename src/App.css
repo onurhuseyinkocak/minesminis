@@ -264,6 +264,28 @@
   box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4);
 }
 
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.625rem 1.125rem;
+  background: linear-gradient(135deg, #06B6D4, #3B82F6);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+  text-decoration: none;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.4);
+}
+
 @media (max-width: 1024px) {
   .navbar-actions {
     gap: var(--spacing-sm);
@@ -297,5 +319,28 @@
 
   .profile-name-nav {
     display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: var(--spacing-sm);
+  }
+
+  .navbar {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .logo-text {
+    font-size: 1.25rem;
+  }
+
+  .logo-emoji {
+    font-size: 1.25rem;
+  }
+
+  .logout-btn, .login-btn {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
   }
 }

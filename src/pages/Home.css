@@ -144,12 +144,12 @@
 
 .menu-arrow {
   font-size: 1.5rem;
-  color: var(--primary-purple);
+  color: var(--primary-cyan);
   font-weight: bold;
 }
 
 .daily-challenge {
-  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);
   border-radius: var(--radius-xl);
   padding: var(--spacing-2xl);
   color: white;
@@ -226,6 +226,7 @@
 
   .menu-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
 
   .stats-row {
@@ -234,5 +235,55 @@
 
   .daily-challenge {
     padding: var(--spacing-lg);
+  }
+
+  .challenge-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .challenge-header h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .welcome-banner {
+    padding: var(--spacing-md);
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 0.9375rem;
+  }
+
+  .menu-card-inner {
+    padding: var(--spacing-lg);
+  }
+
+  .menu-icon-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .menu-title {
+    font-size: 1.25rem;
+  }
+
+  .stat-card {
+    padding: var(--spacing-md);
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
   }
 }
