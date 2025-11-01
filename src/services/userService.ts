@@ -61,6 +61,7 @@ export const userService = {
         badges: [],
         streak_days: 0,
         settings: {},
+        level: 1,
         created_at: new Date().toISOString(),
       });
 
@@ -69,8 +70,12 @@ export const userService = {
         throw error;
       }
 
-      await this.awardPoints(userId, 10);
-      await this.checkAndAwardAchievement(userId, 'first_steps');
+      try {
+        await this.awardPoints(userId, 10);
+        await this.checkAndAwardAchievement(userId, 'first_steps');
+      } catch (achievementError) {
+        console.error('Error awarding initial achievements:', achievementError);
+      }
     } else {
       const { error } = await supabase
         .from('users')
@@ -187,12 +192,12 @@ export const userService = {
       .from('users')
       .select('points')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (user) {
       await supabase
         .from('users')
-        .update({ points: user.points + points })
+        .update({ points: (user.points || 0) + points })
         .eq('id', userId);
     }
   },

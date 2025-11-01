@@ -54,9 +54,9 @@
 }
 
 .form-group input:focus {
-  border-color: #667eea;
+  border-color: #06B6D4;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
 }
 
 .form-group small {
@@ -71,7 +71,7 @@
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #3B82F6, #06B6D4);
   color: white;
   border: none;
   padding: 14px 30px;
@@ -81,17 +81,19 @@
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
+  opacity: 1;
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 15px rgba(6, 182, 212, 0.4);
 }
 
 .submit-btn:disabled {
-  background: #ccc;
+  background: linear-gradient(135deg, #9CA3AF, #6B7280);
   cursor: not-allowed;
   transform: none;
+  opacity: 0.6;
 }
 
 .role-selector {
@@ -113,13 +115,13 @@
 }
 
 .role-btn:hover {
-  border-color: #667eea;
+  border-color: #06B6D4;
   background: #f7f9fc;
 }
 
 .role-btn.active {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #06B6D4;
+  background: linear-gradient(135deg, #3B82F6, #06B6D4);
   color: white;
 }
 
@@ -135,9 +137,9 @@
 }
 
 .form-group select:focus {
-  border-color: #667eea;
+  border-color: #06B6D4;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
 }
 
 .form-group textarea {
@@ -152,9 +154,9 @@
 }
 
 .form-group textarea:focus {
-  border-color: #667eea;
+  border-color: #06B6D4;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
 }
 
 .subjects-grid {
@@ -176,12 +178,12 @@
 }
 
 .subject-chip:hover {
-  border-color: #667eea;
+  border-color: #06B6D4;
   background: #f7f9fc;
 }
 
 .subject-chip.selected {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #06B6D4;
+  background: linear-gradient(135deg, #3B82F6, #06B6D4);
   color: white;
 }
