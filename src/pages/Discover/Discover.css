@@ -281,8 +281,10 @@
 }
 
 .media-btn:disabled {
-  opacity: 0.5;
+  opacity: 1;
   cursor: not-allowed;
+  background: rgba(139, 92, 246, 0.05);
+  color: var(--text-light);
 }
 
 .right-actions {
@@ -319,7 +321,8 @@
 }
 
 .submit-btn:disabled {
-  opacity: 0.5;
+  opacity: 1;
+  background: #9CA3AF;
   cursor: not-allowed;
 }
 
@@ -516,8 +519,9 @@
 }
 
 .action-btn:disabled {
-  opacity: 0.5;
+  opacity: 1;
   cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .post-comments-preview {
@@ -1280,7 +1284,8 @@
 }
 
 .reel-nav-btn:disabled {
-  opacity: 0.3;
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.3);
   cursor: not-allowed;
 }
 

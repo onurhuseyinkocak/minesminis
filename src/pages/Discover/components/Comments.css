@@ -236,7 +236,8 @@
 }
 
 .comment-textarea:disabled {
-  opacity: 0.6;
+  opacity: 1;
+  background: #f9fafb;
   cursor: not-allowed;
 }
 
@@ -269,7 +270,8 @@
 }
 
 .comment-submit-btn:disabled {
-  opacity: 0.5;
+  opacity: 1;
+  background: linear-gradient(135deg, #9CA3AF, #6B7280);
   cursor: not-allowed;
 }
 

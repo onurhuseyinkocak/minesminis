@@ -78,33 +78,34 @@ function Navbar() {
             </svg>
             <span>YouTube</span>
           </a>
-        </div>
 
-        {user ? (
-          <div className="navbar-user">
-            <Link to="/profile" className="profile-link">
-              <div className="profile-avatar-nav">
-                {userProfile?.avatar_url ? (
-                  <img src={userProfile.avatar_url} alt={userProfile.display_name} />
-                ) : (
-                  <div className="avatar-placeholder">
-                    {userProfile?.display_name?.charAt(0).toUpperCase() || '👤'}
-                  </div>
-                )}
-              </div>
-              <span className="profile-name-nav">
-                {userProfile?.display_name || 'Profile'}
-              </span>
-            </Link>
-            <button onClick={signOut} className="logout-btn">
+          {user ? (
+            <button onClick={signOut} className="social-btn logout">
               <span>🚪</span>
               <span>Logout</span>
             </button>
-          </div>
-        ) : (
-          <Link to="/login" className="login-btn">
-            <span>🔐</span>
-            <span>Login</span>
+          ) : (
+            <Link to="/login" className="social-btn login">
+              <span>🔐</span>
+              <span>Login</span>
+            </Link>
+          )}
+        </div>
+
+        {user && (
+          <Link to="/profile" className="profile-link">
+            <div className="profile-avatar-nav">
+              {userProfile?.avatar_url ? (
+                <img src={userProfile.avatar_url} alt={userProfile.display_name} />
+              ) : (
+                <div className="avatar-placeholder">
+                  {userProfile?.display_name?.charAt(0).toUpperCase() || '👤'}
+                </div>
+              )}
+            </div>
+            <span className="profile-name-nav">
+              {userProfile?.display_name || 'Profile'}
+            </span>
           </Link>
         )}
       </div>
