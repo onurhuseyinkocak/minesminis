@@ -1,0 +1,254 @@
+/* Instagram Reels - Full Screen Vertical Video */
+
+.reels-container {
+  position: fixed;
+  top: 0;
+  left: 245px;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+.reels-viewer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.reel-video-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 100%;
+  background: #000;
+}
+
+.reel-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Mute Button */
+.mute-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.mute-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Reel Info */
+.reel-info {
+  position: absolute;
+  bottom: 100px;
+  left: 20px;
+  right: 80px;
+  color: white;
+  z-index: 5;
+}
+
+.reel-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #F09433, #E6683C, #DC2743);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+.author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.follow-btn-small {
+  padding: 4px 12px;
+  border: 1px solid white;
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.follow-btn-small:hover {
+  background: white;
+  color: #000;
+}
+
+.reel-caption {
+  font-size: 14px;
+  line-height: 18px;
+  margin-bottom: 8px;
+  max-width: 300px;
+}
+
+.reel-music {
+  font-size: 13px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Actions Sidebar */
+.reel-actions {
+  position: absolute;
+  bottom: 100px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  z-index: 5;
+}
+
+.action-btn-reel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.action-btn-reel:hover {
+  transform: scale(1.1);
+}
+
+.action-btn-reel:active {
+  transform: scale(0.95);
+}
+
+.action-btn-reel span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.reel-music-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid white;
+  animation: spin 3s linear infinite;
+}
+
+.reel-music-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Navigation Arrows */
+.nav-arrow {
+  position: absolute;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.nav-arrow:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-up {
+  top: 20px;
+}
+
+.nav-down {
+  bottom: 20px;
+}
+
+/* Empty State */
+.reels-empty {
+  text-align: center;
+  color: white;
+  padding: 40px;
+}
+
+.reels-empty h2 {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.reels-empty p {
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 1264px) {
+  .reels-container {
+    left: 72px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reels-container {
+    left: 0;
+  }
+
+  .reel-info {
+    right: 70px;
+  }
+
+  .nav-arrow {
+    display: none;
+  }
+}

@@ -88,10 +88,10 @@ const InstagramSidebar: React.FC = () => {
 
   const navItems = [
     { icon: Home, label: 'Home', path: '/discover', activePaths: ['/discover'] },
-    { icon: Search, label: 'Search', path: '/discover', activePaths: [] },
-    { icon: Film, label: 'Reels', path: '/discover', activePaths: ['/reels'] },
-    { icon: MessageCircle, label: 'Messages', path: '/discover', activePaths: [] },
-    { icon: Heart, label: 'Notifications', path: '/discover', activePaths: [] },
+    { icon: Search, label: 'Search', path: '/search', activePaths: ['/search'] },
+    { icon: Film, label: 'Reels', path: '/reels', activePaths: ['/reels'] },
+    { icon: MessageCircle, label: 'Messages', path: '/messages', activePaths: ['/messages'] },
+    { icon: Heart, label: 'Notifications', path: '/notifications', activePaths: ['/notifications'] },
     { icon: PlusSquare, label: 'Create', path: null, activePaths: [] },
     { icon: User, label: 'Profile', path: '/profile', activePaths: ['/profile'] },
   ];

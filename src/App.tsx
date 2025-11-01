@@ -11,6 +11,10 @@ import Footer from "./components/Footer";
 import Discover from "./pages/Discover/Discover";
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
+import Reels from "./pages/Reels";
+import Search from "./pages/Search";
+import Messages from "./pages/Messages";
+import Notifications from "./pages/Notifications";
 import { ToastProvider } from "./components/ToastProvider";
 import "./App.css";
 
@@ -43,8 +47,13 @@ function AppRoutes() {
           <Route path="/videos" element={<Videos />} />
           <Route path="/worksheets" element={<Worksheets />} />
           <Route path="/discover" element={user ? <Discover /> : <Landing />} />
+          <Route path="/reels" element={user ? <Reels /> : <Landing />} />
+          <Route path="/search" element={user ? <Search /> : <Landing />} />
+          <Route path="/messages" element={user ? <Messages /> : <Landing />} />
+          <Route path="/notifications" element={user ? <Notifications /> : <Landing />} />
           <Route path="/favorites" element={user ? <Favorites /> : <Landing />} />
           <Route path="/profile" element={user ? <Profile /> : <Landing />} />
+          <Route path="/profile/:userId" element={user ? <Profile /> : <Landing />} />
           <Route path="/login" element={<Landing />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
