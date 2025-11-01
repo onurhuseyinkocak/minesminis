@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../config/supabase';
 import { Home, Search, PlusSquare, Film, User, Heart, MessageCircle, Menu, LogOut } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './InstagramSidebar.css';
 
 interface CreateModalProps {
@@ -9,9 +11,11 @@ interface CreateModalProps {
 }
 
 const CreateModal: React.FC<CreateModalProps> = ({ onClose }) => {
+  const { user } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -22,6 +26,36 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose }) => {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!preview || !user) return;
+
+    setUploading(true);
+    try {
+      const mediaType = selectedFile?.type.startsWith('video/') ? 'video' : 'image';
+
+      const { error } = await supabase.from('posts').insert({
+        author_id: user.id,
+        content: caption,
+        media_url: preview,
+        media_type: mediaType,
+        likes_count: 0,
+        comments_count: 0,
+        shares_count: 0
+      });
+
+      if (error) throw error;
+
+      toast.success('Post created successfully!');
+      onClose();
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast.error('Failed to create post');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -64,7 +98,13 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose }) => {
                   className="caption-input"
                   maxLength={2200}
                 />
-                <button className="share-btn">Share</button>
+                <button
+                  className="share-btn"
+                  onClick={handleShare}
+                  disabled={uploading}
+                >
+                  {uploading ? 'Sharing...' : 'Share'}
+                </button>
               </div>
             </div>
           )}
