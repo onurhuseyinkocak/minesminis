@@ -37,7 +37,7 @@ function AppRoutes() {
       <Navbar />
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={user ? <Navigate to="/discover" replace /> : <Home />} />
           <Route path="/games" element={<Games />} />
           <Route path="/words" element={<Words />} />
           <Route path="/videos" element={<Videos />} />

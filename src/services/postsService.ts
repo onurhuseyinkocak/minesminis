@@ -72,6 +72,29 @@ export const postsService = {
     }
   },
 
+  async getAllPosts(limitCount: number = 50) {
+    try {
+      let query = supabase
+        .from('posts')
+        .select(
+          `
+          *,
+          users:author_id(id, display_name, avatar_url, role)
+        `
+        )
+        .order('created_at', { ascending: false })
+        .limit(limitCount);
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error getting all posts:', error);
+      return [];
+    }
+  },
+
   async getDiscoverPosts(limitCount: number = 50, userId?: string) {
     try {
       let query = supabase
