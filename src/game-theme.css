@@ -1,0 +1,198 @@
+/* Game Theme - Radical Redesign */
+
+:root {
+    /* Vibrant Palette */
+    --game-primary: #2563EB;
+    /* Hero Blue */
+    --game-secondary: #FACC15;
+    /* Power Yellow */
+    --game-success: #22C55E;
+    /* Victory Green */
+    --game-danger: #EC4899;
+    /* Berry Blast */
+    --game-dark: #1E293B;
+    /* Dark Navy */
+    --game-light: #F8FAFC;
+    /* Cloud White */
+
+    /* Borders & Shadows */
+    --game-border: 3px solid var(--game-dark);
+    --game-shadow: 4px 4px 0px var(--game-dark);
+    --game-radius: 20px;
+
+    /* Fonts */
+    --font-heading: 'Fredoka', 'Baloo 2', cursive, sans-serif;
+    --font-body: 'Nunito', sans-serif;
+}
+
+/* Global Resets & Typography */
+body {
+    background-color: #E0F2FE;
+    /* Light Sky Blue */
+    font-family: var(--font-body);
+    color: var(--game-dark);
+    overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Game Buttons */
+.game-btn {
+    background: var(--game-primary);
+    color: white;
+    border: var(--game-border);
+    border-radius: var(--game-radius);
+    padding: 12px 24px;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 800;
+    box-shadow: var(--game-shadow);
+    cursor: pointer;
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.game-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--game-dark);
+}
+
+.game-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px var(--game-dark);
+}
+
+.game-btn-secondary {
+    background: var(--game-secondary);
+    color: var(--game-dark);
+}
+
+.game-btn-success {
+    background: var(--game-success);
+}
+
+.game-btn-danger {
+    background: var(--game-danger);
+}
+
+/* Game Cards */
+.game-card {
+    background: white;
+    border: var(--game-border);
+    border-radius: var(--game-radius);
+    box-shadow: var(--game-shadow);
+    padding: 20px;
+    transition: transform 0.2s ease;
+}
+
+.game-card:hover {
+    transform: rotate(-1deg) scale(1.02);
+    z-index: 10;
+}
+
+/* Navbar - Floating Dock Style */
+.navbar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: var(--game-border);
+    border-radius: 50px;
+    margin: 20px;
+    box-shadow: var(--game-shadow);
+    padding: 10px 30px;
+}
+
+.nav-links .nav-btn {
+    border-radius: 15px;
+    padding: 10px 15px;
+    font-weight: 800;
+    color: var(--game-dark);
+    transition: all 0.2s;
+}
+
+.nav-links .nav-btn:hover {
+    background: var(--game-secondary);
+    transform: translateY(-5px);
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.2));
+}
+
+/* Animations */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+
+    0%,
+    100% {
+        transform: rotate(-3deg);
+    }
+
+    50% {
+        transform: rotate(3deg);
+    }
+}
+
+.animate-wiggle:hover {
+    animation: wiggle 0.5s ease-in-out infinite;
+}
+
+/* Inputs */
+input,
+textarea {
+    border: var(--game-border);
+    border-radius: 15px;
+    padding: 12px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+input:focus {
+    background: #EFF6FF;
+    border-color: var(--game-primary);
+}
+
+/* Overrides for existing components */
+.teacher-mode-container .mode-toggle-btn {
+    border: var(--game-border) !important;
+    box-shadow: var(--game-shadow) !important;
+    border-radius: 50px !important;
+    font-family: var(--font-heading) !important;
+}
+
+.teacher-mode-container .tool-btn {
+    border: var(--game-border) !important;
+    box-shadow: var(--game-shadow) !important;
+}

@@ -1,0 +1,135 @@
+/* Claymorphism Design System */
+
+:root {
+    /* Clay Colors */
+    --clay-bg: #f0f4f8;
+    --clay-card-bg: #ffffff;
+    --clay-primary: #4F46E5;
+    /* Electric Blueberry */
+    --clay-secondary: #10B981;
+    /* Slime Green */
+    --clay-accent: #EC4899;
+    /* Bubblegum Pink */
+    --clay-text: #4a5568;
+
+    /* Clay Shadows */
+    --clay-shadow-out:
+        8px 8px 16px 0 rgba(166, 180, 200, 0.5),
+        -8px -8px 16px 0 rgba(255, 255, 255, 0.8);
+    --clay-shadow-in:
+        inset 6px 6px 12px 0 rgba(166, 180, 200, 0.5),
+        inset -6px -6px 12px 0 rgba(255, 255, 255, 0.8);
+
+    /* Border Radius */
+    --clay-radius: 24px;
+    --clay-btn-radius: 16px;
+}
+
+body {
+    background-color: var(--clay-bg);
+    color: var(--clay-text);
+}
+
+/* Clay Cards */
+.clay-card {
+    background: var(--clay-card-bg);
+    border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow-out);
+    padding: 24px;
+    transition: transform 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.clay-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Clay Buttons */
+.clay-btn {
+    border: none;
+    outline: none;
+    padding: 12px 24px;
+    border-radius: var(--clay-btn-radius);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.clay-btn-primary {
+    background: var(--clay-primary);
+    color: white;
+    box-shadow:
+        6px 6px 12px rgba(79, 70, 229, 0.3),
+        -6px -6px 12px rgba(255, 255, 255, 0.5);
+}
+
+.clay-btn-primary:active {
+    box-shadow:
+        inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.2);
+    transform: scale(0.98);
+}
+
+.clay-btn-secondary {
+    background: var(--clay-secondary);
+    color: white;
+    box-shadow:
+        6px 6px 12px rgba(16, 185, 129, 0.3),
+        -6px -6px 12px rgba(255, 255, 255, 0.5);
+}
+
+.clay-btn-accent {
+    background: var(--clay-accent);
+    color: white;
+    box-shadow:
+        6px 6px 12px rgba(236, 72, 153, 0.3),
+        -6px -6px 12px rgba(255, 255, 255, 0.5);
+}
+
+/* Inputs */
+.clay-input {
+    border: none;
+    background: #eef2f6;
+    border-radius: 12px;
+    padding: 12px 16px;
+    width: 100%;
+    box-shadow: var(--clay-shadow-in);
+    font-size: 1rem;
+    color: var(--clay-text);
+    outline: none;
+}
+
+.clay-input:focus {
+    box-shadow:
+        inset 8px 8px 16px rgba(166, 180, 200, 0.6),
+        inset -8px -8px 16px rgba(255, 255, 255, 0.9);
+}
+
+/* Typography Overrides */
+h1,
+h2,
+h3 {
+    color: #2D3748;
+    letter-spacing: -0.02em;
+}
+
+/* Animations */
+@keyframes popIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-pop {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}

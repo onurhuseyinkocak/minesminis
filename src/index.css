@@ -44,6 +44,17 @@
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
   --spacing-3xl: 64px;
+
+  /* Breakpoints */
+  --mobile: 360px;
+  --tablet: 768px;
+  --desktop: 1024px;
+  --smart-board: 1920px;
+  --smart-board-lg: 2560px;
+
+  /* Accessibility */
+  --focus-ring: 0 0 0 4px rgba(6, 182, 212, 0.4);
+  --touch-target-min: 44px;
 }
 
 body {
@@ -58,7 +69,29 @@ body {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23EC4899"><circle cx="12" cy="12" r="10" fill="%23FCD34D"/><circle cx="8" cy="9" r="2" fill="%23000"/><circle cx="16" cy="9" r="2" fill="%23000"/><path d="M 7 14 Q 12 17 17 14" stroke="%23000" stroke-width="2" fill="none"/></svg>'), auto;
 }
 
-button, a, .clickable {
+.skip-to-content {
+  position: absolute;
+  top: -9999px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-cyan);
+  color: white;
+  padding: 1rem 2rem;
+  z-index: 9999;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  font-weight: bold;
+  text-decoration: none;
+  transition: top 0.3s ease;
+}
+
+.skip-to-content:focus {
+  top: 0;
+  outline: var(--focus-ring);
+}
+
+button,
+a,
+.clickable {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="%23EC4899"><circle cx="12" cy="12" r="11" fill="%23FCD34D"/><circle cx="8" cy="9" r="2.5" fill="%23000"/><circle cx="16" cy="9" r="2.5" fill="%23000"/><ellipse cx="12" cy="15" rx="5" ry="3" fill="%23FF6B6B"/><path d="M 7 13 Q 12 16 17 13" stroke="%23000" stroke-width="2.5" fill="none"/></svg>'), pointer;
 }
 
@@ -66,7 +99,12 @@ code {
   font-family: 'Fira Code', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   line-height: 1.2;
 }
@@ -95,7 +133,9 @@ button {
   transition: all 0.3s ease;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: inherit;
   outline: none;
   transition: all 0.3s ease;
@@ -206,6 +246,7 @@ ul {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -217,6 +258,7 @@ ul {
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -228,6 +270,7 @@ ul {
     opacity: 0;
     transform: translateX(20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -235,9 +278,12 @@ ul {
 }
 
 @keyframes bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -250,9 +296,12 @@ ul {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -331,9 +380,12 @@ ul {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
+
   50% {
     transform: translateY(-20px) rotate(10deg);
   }
@@ -450,6 +502,7 @@ ul {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

@@ -1,0 +1,149 @@
+/* Mobile First Responsive Styles */
+
+/* Base Mobile Styles (Default) */
+:root {
+    --nav-height: 60px;
+}
+
+/* Typography Adjustments for Mobile */
+html {
+    font-size: 16px;
+}
+
+h1 {
+    font-size: 1.75rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.25rem;
+}
+
+/* Touch Targets */
+button,
+a,
+input,
+select,
+textarea {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+}
+
+/* Tablet Breakpoint */
+@media (min-width: 768px) {
+    :root {
+        --nav-height: 70px;
+    }
+
+    html {
+        font-size: 16px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Desktop Breakpoint */
+@media (min-width: 1024px) {
+    :root {
+        --nav-height: 80px;
+    }
+
+    html {
+        font-size: 16px;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    h2 {
+        font-size: 2.25rem;
+    }
+
+    h3 {
+        font-size: 1.875rem;
+    }
+}
+
+/* Smart Board Breakpoint (Standard 1920x1080) */
+@media (min-width: 1920px) {
+    :root {
+        --nav-height: 100px;
+    }
+
+    html {
+        font-size: 20px;
+        /* Scale up base font size */
+    }
+
+    h1 {
+        font-size: 3.5rem;
+    }
+
+    h2 {
+        font-size: 2.75rem;
+    }
+
+    h3 {
+        font-size: 2.25rem;
+    }
+
+    .container,
+    .app-container {
+        max-width: 1800px;
+    }
+
+    /* Increase touch targets for large screens */
+    button,
+    a {
+        padding: 1rem 2rem;
+    }
+}
+
+/* Large Smart Board Breakpoint (4K) */
+@media (min-width: 2560px) {
+    html {
+        font-size: 24px;
+    }
+
+    h1 {
+        font-size: 4rem;
+    }
+
+    .container,
+    .app-container {
+        max-width: 2400px;
+    }
+}
+
+/* Utility Classes for Responsiveness */
+.hide-mobile {
+    display: none;
+}
+
+.hide-desktop {
+    display: block;
+}
+
+@media (min-width: 1024px) {
+    .hide-mobile {
+        display: block;
+    }
+
+    .hide-desktop {
+        display: none;
+    }
+}

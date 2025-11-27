@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
-import { BookOpen, GamepadIcon, Video, FileText, Users, Trophy, Flame, Star } from 'lucide-react';
+import { BookOpen, GamepadIcon, Video, FileText, Trophy, Flame, Star } from 'lucide-react';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -38,13 +38,6 @@ const Home: React.FC = () => {
       description: 'Watch educational videos'
     },
     {
-      title: 'Social Feed',
-      icon: Users,
-      path: '/discover',
-      gradient: 'linear-gradient(135deg, #FCD34D 0%, #FB923C 100%)',
-      description: 'Connect with learners'
-    },
-    {
       title: 'My Progress',
       icon: Trophy,
       path: '/profile',
@@ -76,11 +69,11 @@ const Home: React.FC = () => {
           >
             <Star className="mascot-icon" size={64} />
           </motion.div>
-          <h1 className="welcome-title">
+          <h1 className="welcome-title glow-text">
             {user ? (
-              <>Welcome back, <span className="gradient-text">{userProfile?.display_name || 'Friend'}</span>!</>
+              <>Welcome back, {userProfile?.display_name || 'Friend'}! 🎉</>
             ) : (
-              <>Welcome to <span className="gradient-text">MinesMinis</span>!</>
+              <>Welcome to MinesMinis! 🚀</>
             )}
           </h1>
           <p className="welcome-subtitle">
@@ -140,7 +133,7 @@ const Home: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: index * 0.1, duration: 0.5 }}
           >
-            <Link to={item.path} className="menu-card">
+            <Link to={item.path} className="menu-card premium-card">
               <motion.div
                 className="menu-card-inner"
                 whileHover={{ scale: 1.05, y: -5 }}
