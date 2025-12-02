@@ -4,12 +4,12 @@ const FloatingParticles: React.FC = () => {
     const [particles, setParticles] = useState<Array<{ id: number; emoji: string; left: string; delay: number }>>([]);
 
     useEffect(() => {
-        const emojis = ['⭐', '✨', '🎯', '🏆', '💎', '🚀', '🌟', '⚡'];
-        const newParticles = Array.from({ length: 8 }, (_, i) => ({
+        const emojis = ['☁️', '⭐', '✨', '🌸'];
+        const newParticles = Array.from({ length: 4 }, (_, i) => ({
             id: i,
             emoji: emojis[i],
-            left: `${(i * 12) + 5}%`,
-            delay: i * 3
+            left: `${(i * 25) + 10}%`,
+            delay: i * 5
         }));
         setParticles(newParticles);
     }, []);

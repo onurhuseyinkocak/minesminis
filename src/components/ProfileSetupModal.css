@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(44, 62, 111, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,20 +15,20 @@
 .modal-content {
   background: white;
   padding: 2rem;
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-xl);
 }
 
 .modal-content h2 {
-  color: #333;
+  color: var(--text-dark);
   margin-bottom: 0.5rem;
   text-align: center;
 }
 
 .modal-content p {
-  color: #666;
+  color: var(--text-medium);
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -41,28 +41,28 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-dark);
 }
 
 .form-group input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e1e8ed;
-  border-radius: 12px;
+  border: 2px solid var(--bg-navy-soft);
+  border-radius: var(--radius-lg);
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .form-group input:focus {
-  border-color: #06B6D4;
+  border-color: var(--primary-navy-pale);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  box-shadow: 0 0 0 3px rgba(74, 91, 140, 0.1);
 }
 
 .form-group small {
   display: block;
   margin-top: 0.5rem;
-  color: #666;
+  color: var(--text-light);
   font-size: 0.85rem;
 }
 
@@ -71,26 +71,25 @@
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #3B82F6, #06B6D4);
+  background: var(--gradient-navy);
   color: white;
   border: none;
   padding: 14px 30px;
-  border-radius: 25px;
+  border-radius: var(--radius-full);
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   width: 100%;
-  opacity: 1;
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(6, 182, 212, 0.4);
+  box-shadow: 0 5px 15px rgba(44, 62, 111, 0.35);
 }
 
 .submit-btn:disabled {
-  background: linear-gradient(135deg, #9CA3AF, #6B7280);
+  background: var(--text-light);
   cursor: not-allowed;
   transform: none;
   opacity: 0.6;
@@ -104,59 +103,59 @@
 
 .role-btn {
   padding: 1rem;
-  border: 2px solid #e1e8ed;
-  border-radius: 12px;
+  border: 2px solid var(--bg-navy-soft);
+  border-radius: var(--radius-lg);
   background: white;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  color: #666;
+  transition: all var(--transition-base);
+  color: var(--text-medium);
 }
 
 .role-btn:hover {
-  border-color: #06B6D4;
-  background: #f7f9fc;
+  border-color: var(--primary-navy-pale);
+  background: var(--bg-soft);
 }
 
 .role-btn.active {
-  border-color: #06B6D4;
-  background: linear-gradient(135deg, #3B82F6, #06B6D4);
+  border-color: var(--primary-navy);
+  background: var(--gradient-navy);
   color: white;
 }
 
 .form-group select {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e1e8ed;
-  border-radius: 12px;
+  border: 2px solid var(--bg-navy-soft);
+  border-radius: var(--radius-lg);
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   background: white;
   cursor: pointer;
 }
 
 .form-group select:focus {
-  border-color: #06B6D4;
+  border-color: var(--primary-navy-pale);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  box-shadow: 0 0 0 3px rgba(74, 91, 140, 0.1);
 }
 
 .form-group textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e1e8ed;
-  border-radius: 12px;
+  border: 2px solid var(--bg-navy-soft);
+  border-radius: var(--radius-lg);
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   font-family: inherit;
   resize: vertical;
 }
 
 .form-group textarea:focus {
-  border-color: #06B6D4;
+  border-color: var(--primary-navy-pale);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  box-shadow: 0 0 0 3px rgba(74, 91, 140, 0.1);
 }
 
 .subjects-grid {
@@ -167,23 +166,23 @@
 
 .subject-chip {
   padding: 0.75rem 1rem;
-  border: 2px solid #e1e8ed;
-  border-radius: 20px;
+  border: 2px solid var(--bg-navy-soft);
+  border-radius: var(--radius-full);
   background: white;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  color: #666;
+  transition: all var(--transition-base);
+  color: var(--text-medium);
 }
 
 .subject-chip:hover {
-  border-color: #06B6D4;
-  background: #f7f9fc;
+  border-color: var(--primary-navy-pale);
+  background: var(--bg-soft);
 }
 
 .subject-chip.selected {
-  border-color: #06B6D4;
-  background: linear-gradient(135deg, #3B82F6, #06B6D4);
+  border-color: var(--primary-navy);
+  background: var(--gradient-navy);
   color: white;
 }
