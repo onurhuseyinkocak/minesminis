@@ -170,6 +170,32 @@
   flex-wrap: wrap;
 }
 
+.filter-buttons.category-scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-navy-pale) transparent;
+}
+
+.filter-buttons.category-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.filter-buttons.category-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-buttons.category-scroll::-webkit-scrollbar-thumb {
+  background: var(--primary-navy-pale);
+  border-radius: 3px;
+}
+
+.filter-buttons.category-scroll .filter-btn {
+  flex-shrink: 0;
+}
+
 .filter-btn {
   padding: 8px 16px;
   border-radius: var(--radius-md);

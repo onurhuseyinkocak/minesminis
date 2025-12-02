@@ -71,12 +71,22 @@
 }
 
 .header-dragon {
-    width: 60px;
-    height: 60px;
+    width: 44px;
+    height: 44px;
     flex-shrink: 0;
-    transform: scale(0.5);
-    transform-origin: center;
-    margin: -15px -10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-dragon .dragon-mascot-container {
+    transform: scale(0.22);
+    transform-origin: center center;
+}
+
+.header-dragon .dragon-shadow {
+    display: none;
 }
 
 .header-title {
@@ -180,12 +190,22 @@
 }
 
 .avatar-dragon {
-    width: 50px;
-    height: 50px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
-    transform: scale(0.4);
-    transform-origin: bottom left;
-    margin: -25px -20px -5px 0;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.avatar-dragon .dragon-mascot-container {
+    transform: scale(0.18);
+    transform-origin: center bottom;
+}
+
+.avatar-dragon .dragon-shadow {
+    display: none;
 }
 
 .message-bubble {
@@ -309,18 +329,20 @@
 }
 
 .send-button {
-    padding: 12px 20px;
+    padding: 12px 18px;
     background: linear-gradient(135deg, #4A5B8C 0%, #2C3E6F 100%);
     color: white;
     border: none;
     border-radius: 24px;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.25s ease;
     box-shadow: 0 4px 16px rgba(44, 62, 111, 0.3);
     white-space: nowrap;
     font-family: 'Nunito', sans-serif;
+    min-width: fit-content;
+    flex-shrink: 0;
 }
 
 .send-button:hover {
@@ -350,8 +372,12 @@
     }
 
     .header-dragon {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .header-dragon .dragon-mascot-container {
+        transform: scale(0.2);
     }
 
     .header-title h2 {
@@ -373,8 +399,12 @@
     }
 
     .avatar-dragon {
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .avatar-dragon .dragon-mascot-container {
+        transform: scale(0.16);
     }
 
     .chat-input-area {
@@ -446,8 +476,12 @@
     }
 
     .header-dragon {
-        width: 65px;
-        height: 65px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .header-dragon .dragon-mascot-container {
+        transform: scale(0.25);
     }
 
     .header-title h2 {
