@@ -19,6 +19,7 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const randomLookTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const randomLookIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastMouseMoveRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (state === 'idle' || state === 'walking') {
@@ -39,16 +40,17 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
     }
 
     randomLookIntervalRef.current = setInterval(() => {
-      if (Math.random() < 0.3) {
+      const timeSinceLastMove = Date.now() - lastMouseMoveRef.current;
+      if (timeSinceLastMove < 2000) return;
+      
+      if (Math.random() < 0.08) {
         setIsRandomLooking(true);
         const directions = [
-          { x: -4, y: 0 },
-          { x: 4, y: 0 },
-          { x: -3, y: -2 },
-          { x: 3, y: -2 },
-          { x: 0, y: -3 },
-          { x: -2, y: 2 },
-          { x: 2, y: 2 },
+          { x: -8, y: 0 },
+          { x: 8, y: 0 },
+          { x: -6, y: -4 },
+          { x: 6, y: -4 },
+          { x: 0, y: -6 },
         ];
         const randomDir = directions[Math.floor(Math.random() * directions.length)];
         setRandomLookOffset(randomDir);
@@ -56,9 +58,9 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
         randomLookTimeoutRef.current = setTimeout(() => {
           setIsRandomLooking(false);
           setRandomLookOffset({ x: 0, y: 0 });
-        }, 800 + Math.random() * 1200);
+        }, 500 + Math.random() * 400);
       }
-    }, 3000 + Math.random() * 4000);
+    }, 8000 + Math.random() * 4000);
 
     return () => {
       if (randomLookIntervalRef.current) {
@@ -71,31 +73,38 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
   }, [state]);
 
   useEffect(() => {
-    const shouldTrack = state !== 'sleeping' && state !== 'thinking' && !isRandomLooking;
+    const shouldTrack = state !== 'sleeping' && state !== 'thinking';
     
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!containerRef.current || !shouldTrack) return;
       
+      lastMouseMoveRef.current = Date.now();
+      
+      if (isRandomLooking) {
+        setIsRandomLooking(false);
+        setRandomLookOffset({ x: 0, y: 0 });
+      }
+      
       const rect = containerRef.current.getBoundingClientRect();
       const dragonCenterX = rect.left + rect.width / 2;
-      const dragonCenterY = rect.top + rect.height * 0.35;
+      const dragonCenterY = rect.top + rect.height * 0.3;
 
       const dx = e.clientX - dragonCenterX;
       const dy = e.clientY - dragonCenterY;
       
       const distance = Math.sqrt(dx * dx + dy * dy);
-      const maxDistance = 450;
+      const maxDistance = 280;
       const normalizedDistance = Math.min(distance / maxDistance, 1);
       
-      const maxOffset = 5;
+      const maxOffset = 11;
       const angle = Math.atan2(dy, dx);
       
       const offsetX = Math.cos(angle) * maxOffset * normalizedDistance;
-      const offsetY = Math.sin(angle) * maxOffset * normalizedDistance * 0.7;
+      const offsetY = Math.sin(angle) * maxOffset * normalizedDistance;
 
       setEyeOffset({ 
         x: Math.max(-maxOffset, Math.min(maxOffset, offsetX)), 
-        y: Math.max(-maxOffset * 0.7, Math.min(maxOffset * 0.7, offsetY))
+        y: Math.max(-maxOffset, Math.min(maxOffset, offsetY))
       });
     };
 
@@ -106,7 +115,7 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
     }
     
     return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
-  }, [isRandomLooking, state]);
+  }, [state, isRandomLooking]);
 
   const handleClick = useCallback(() => {
     onClick?.();
@@ -130,7 +139,7 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
   const currentEyeOffset = isRandomLooking ? randomLookOffset : eyeOffset;
   const eyeStyle = state !== 'sleeping' && state !== 'thinking' ? {
     transform: `translate(${currentEyeOffset.x}px, ${currentEyeOffset.y}px)`,
-    transition: isRandomLooking ? 'transform 0.3s ease-out' : 'transform 0.15s ease-out'
+    transition: isRandomLooking ? 'transform 0.25s ease-out' : 'transform 0.08s ease-out'
   } : {};
 
   return (
