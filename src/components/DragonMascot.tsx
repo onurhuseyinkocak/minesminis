@@ -1,18 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './DragonMascot.css';
 
 interface DragonMascotProps {
   state: 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'thinking' | 'love' | 'jumping' | 'surprised';
   onClick?: () => void;
   isHovered?: boolean;
+  mousePosition?: { x: number; y: number };
 }
 
 const DragonMascot: React.FC<DragonMascotProps> = ({ 
   state, 
   onClick,
-  isHovered = false
+  isHovered = false,
+  mousePosition
 }) => {
   const [isSmiling, setIsSmiling] = useState(false);
+  const [eyeOffset, setEyeOffset] = useState({ x: 0, y: 0 });
+  const [isRandomLooking, setIsRandomLooking] = useState(false);
+  const [randomLookOffset, setRandomLookOffset] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (state === 'idle' || state === 'walking') {
@@ -24,6 +30,94 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
       return () => clearInterval(smileInterval);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (state === 'sleeping' || state === 'thinking') return;
+
+    const randomLookInterval = setInterval(() => {
+      if (Math.random() < 0.3) {
+        setIsRandomLooking(true);
+        const directions = [
+          { x: -4, y: 0 },
+          { x: 4, y: 0 },
+          { x: -3, y: -2 },
+          { x: 3, y: -2 },
+          { x: 0, y: -3 },
+          { x: -2, y: 2 },
+          { x: 2, y: 2 },
+        ];
+        const randomDir = directions[Math.floor(Math.random() * directions.length)];
+        setRandomLookOffset(randomDir);
+        
+        setTimeout(() => {
+          setIsRandomLooking(false);
+          setRandomLookOffset({ x: 0, y: 0 });
+        }, 800 + Math.random() * 1200);
+      }
+    }, 3000 + Math.random() * 4000);
+
+    return () => clearInterval(randomLookInterval);
+  }, [state]);
+
+  useEffect(() => {
+    if (state === 'sleeping' || isRandomLooking) return;
+    if (!containerRef.current || !mousePosition) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const dragonCenterX = rect.left + rect.width / 2;
+    const dragonCenterY = rect.top + rect.height * 0.35;
+
+    const dx = mousePosition.x - dragonCenterX;
+    const dy = mousePosition.y - dragonCenterY;
+    
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const maxDistance = 400;
+    const normalizedDistance = Math.min(distance / maxDistance, 1);
+    
+    const maxOffset = 5;
+    const angle = Math.atan2(dy, dx);
+    
+    const offsetX = Math.cos(angle) * maxOffset * normalizedDistance;
+    const offsetY = Math.sin(angle) * maxOffset * normalizedDistance * 0.7;
+
+    setEyeOffset({ 
+      x: Math.max(-maxOffset, Math.min(maxOffset, offsetX)), 
+      y: Math.max(-maxOffset * 0.7, Math.min(maxOffset * 0.7, offsetY))
+    });
+  }, [mousePosition, state, isRandomLooking]);
+
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      
+      const rect = containerRef.current.getBoundingClientRect();
+      const dragonCenterX = rect.left + rect.width / 2;
+      const dragonCenterY = rect.top + rect.height * 0.35;
+
+      const dx = e.clientX - dragonCenterX;
+      const dy = e.clientY - dragonCenterY;
+      
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const maxDistance = 500;
+      const normalizedDistance = Math.min(distance / maxDistance, 1);
+      
+      const maxOffset = 5;
+      const angle = Math.atan2(dy, dx);
+      
+      const offsetX = Math.cos(angle) * maxOffset * normalizedDistance;
+      const offsetY = Math.sin(angle) * maxOffset * normalizedDistance * 0.7;
+
+      if (!isRandomLooking && state !== 'sleeping') {
+        setEyeOffset({ 
+          x: Math.max(-maxOffset, Math.min(maxOffset, offsetX)), 
+          y: Math.max(-maxOffset * 0.7, Math.min(maxOffset * 0.7, offsetY))
+        });
+      }
+    };
+
+    window.addEventListener('mousemove', handleGlobalMouseMove);
+    return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
+  }, [isRandomLooking, state]);
 
   const handleClick = useCallback(() => {
     onClick?.();
@@ -44,8 +138,15 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
   const emoji = getEmoji();
   const showBigSmile = state === 'laughing' || state === 'celebrating' || state === 'dancing' || isSmiling;
 
+  const currentEyeOffset = isRandomLooking ? randomLookOffset : eyeOffset;
+  const eyeStyle = state !== 'sleeping' ? {
+    transform: `translate(${currentEyeOffset.x}px, ${currentEyeOffset.y}px)`,
+    transition: isRandomLooking ? 'transform 0.3s ease-out' : 'transform 0.15s ease-out'
+  } : {};
+
   return (
     <div 
+      ref={containerRef}
       className={`dragon-mascot-container state-${state} ${isHovered ? 'is-hovered' : ''} ${isSmiling ? 'is-smiling' : ''}`}
       onClick={handleClick}
     >
@@ -152,16 +253,20 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
             <g className="dragon-eyes">
               <g className="dragon-eye dragon-eye-left">
                 <ellipse cx="78" cy="52" rx="16" ry="18" fill="white" stroke="#E8E8E8" strokeWidth="1"/>
-                <ellipse cx="80" cy="54" rx="10" ry="12" fill="#2D1B14" className="dragon-pupil"/>
-                <circle cx="84" cy="48" r="4" fill="white" className="dragon-sparkle"/>
-                <circle cx="76" cy="58" r="2" fill="white" className="dragon-sparkle"/>
+                <g className="dragon-pupil-group" style={eyeStyle}>
+                  <ellipse cx="80" cy="54" rx="10" ry="12" fill="#2D1B14" className="dragon-pupil"/>
+                  <circle cx="84" cy="48" r="4" fill="white" className="dragon-sparkle"/>
+                  <circle cx="76" cy="58" r="2" fill="white" className="dragon-sparkle"/>
+                </g>
               </g>
               
               <g className="dragon-eye dragon-eye-right">
                 <ellipse cx="122" cy="52" rx="16" ry="18" fill="white" stroke="#E8E8E8" strokeWidth="1"/>
-                <ellipse cx="124" cy="54" rx="10" ry="12" fill="#2D1B14" className="dragon-pupil"/>
-                <circle cx="128" cy="48" r="4" fill="white" className="dragon-sparkle"/>
-                <circle cx="120" cy="58" r="2" fill="white" className="dragon-sparkle"/>
+                <g className="dragon-pupil-group" style={eyeStyle}>
+                  <ellipse cx="124" cy="54" rx="10" ry="12" fill="#2D1B14" className="dragon-pupil"/>
+                  <circle cx="128" cy="48" r="4" fill="white" className="dragon-sparkle"/>
+                  <circle cx="120" cy="58" r="2" fill="white" className="dragon-sparkle"/>
+                </g>
               </g>
             </g>
 
