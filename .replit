@@ -1,0 +1,11 @@
+modules = ["nodejs-20", "web"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+VITE_BACKEND_URL = "https://ffc530cf-ed0a-4912-a9d5-a591195dfd7a-00-352s92llktwki.sisko.replit.dev:3001"
