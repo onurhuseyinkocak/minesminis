@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import toast from 'react-hot-toast';
+import './Games.css';
 
 type Game = {
   id: number;
@@ -127,7 +128,9 @@ function Games() {
       const favoriteIds = new Set(data.map(fav => parseInt(fav.item_id)));
       setFavorites(favoriteIds);
     } catch (error) {
-      console.error('Error loading favorites:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error loading favorites:', error);
+      }
     }
   };
 
@@ -188,7 +191,9 @@ function Games() {
         toast.success('Added to favorites!');
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error toggling favorite:', error);
+      }
       toast.error('Failed to update favorites');
     }
   };

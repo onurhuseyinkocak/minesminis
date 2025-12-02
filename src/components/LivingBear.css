@@ -1,0 +1,479 @@
+/* Living Bear Character Styles */
+
+.living-bear-container {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    /* Allow clicks through container */
+}
+
+.living-bear {
+    position: relative;
+    width: 80px;
+    height: 100px;
+    pointer-events: all;
+    /* But bear itself is clickable */
+    cursor: pointer;
+    transition: left 1.5s ease-in-out, top 1.5s ease-in-out;
+}
+
+/* Bear Body (Simple SVG-style CSS) */
+.bear-body {
+    position: absolute;
+    width: 60px;
+    height: 70px;
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+    border-radius: 50% 50% 45% 45%;
+    bottom: 0;
+    left: 10px;
+    box-shadow: inset -5px -5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Bear Head */
+.bear-head {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #A0522D 0%, #CD853F 100%);
+    border-radius: 50%;
+    top: 5px;
+    left: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Bear Ears */
+.bear-ear {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #8B4513;
+    border-radius: 50%;
+    top: 0;
+}
+
+.bear-ear.left {
+    left: 5px;
+}
+
+.bear-ear.right {
+    right: 5px;
+}
+
+/* Bear Face */
+.bear-face {
+    position: absolute;
+    width: 30px;
+    height: 25px;
+    background: #DEB887;
+    border-radius: 50%;
+    top: 25px;
+    left: 12px;
+}
+
+/* Bear Eyes */
+.bear-eye {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+    top: 18px;
+    animation: blink 4s infinite;
+}
+
+.bear-eye.left {
+    left: 17px;
+}
+
+.bear-eye.right {
+    right: 17px;
+}
+
+@keyframes blink {
+
+    0%,
+    48%,
+    52%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(0.1);
+    }
+}
+
+/* Bear Nose */
+.bear-nose {
+    position: absolute;
+    width: 10px;
+    height: 8px;
+    background: #000;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    top: 28px;
+    left: 22px;
+}
+
+/* Bear Smile */
+.bear-smile {
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    border: 2px solid #000;
+    border-top: none;
+    border-radius: 0 0 50% 50%;
+    top: 33px;
+    left: 17px;
+}
+
+/* Bear Arms */
+.bear-arm {
+    position: absolute;
+    width: 15px;
+    height: 35px;
+    background: #8B4513;
+    border-radius: 50%;
+    bottom: 20px;
+}
+
+.bear-arm.left {
+    left: 5px;
+    transform: rotate(-10deg);
+}
+
+.bear-arm.right {
+    right: 5px;
+    transform: rotate(10deg);
+}
+
+/* Bear Legs */
+.bear-leg {
+    position: absolute;
+    width: 18px;
+    height: 30px;
+    background: #8B4513;
+    border-radius: 0 0 40% 40%;
+    bottom: 0;
+}
+
+.bear-leg.left {
+    left: 15px;
+}
+
+.bear-leg.right {
+    right: 15px;
+}
+
+/* === ANIMATION STATES === */
+
+/* Walking Animation */
+.living-bear.walking {
+    animation: waddle 0.8s ease-in-out infinite;
+}
+
+.living-bear.walking .bear-leg.left {
+    animation: walk-left 0.8s ease-in-out infinite;
+}
+
+.living-bear.walking .bear-leg.right {
+    animation: walk-right 0.8s ease-in-out infinite;
+}
+
+@keyframes waddle {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-3px) rotate(-2deg);
+    }
+
+    75% {
+        transform: translateY(-3px) rotate(2deg);
+    }
+}
+
+@keyframes walk-left {
+
+    0%,
+    100% {
+        transform: rotate(-10deg);
+    }
+
+    50% {
+        transform: rotate(10deg);
+    }
+}
+
+@keyframes walk-right {
+
+    0%,
+    100% {
+        transform: rotate(10deg);
+    }
+
+    50% {
+        transform: rotate(-10deg);
+    }
+}
+
+/* Idle Animation */
+.living-bear.idle {
+    animation: breathe 2s ease-in-out infinite;
+}
+
+.living-bear.idle .bear-head {
+    animation: look-around 5s ease-in-out infinite;
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+@keyframes look-around {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-5deg);
+    }
+
+    75% {
+        transform: rotate(5deg);
+    }
+}
+
+/* Sleeping Animation */
+.living-bear.sleeping {
+    animation: sleep-breathe 3s ease-in-out infinite;
+}
+
+.living-bear.sleeping .bear-eye {
+    transform: scaleY(0.1);
+    animation: none;
+}
+
+@keyframes sleep-breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Zzz sleep indicator */
+.bear-zzz {
+    position: absolute;
+    top: -30px;
+    right: -20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #6B8E23;
+    opacity: 0;
+    animation: float-zzz 2s ease-in-out infinite;
+}
+
+.living-bear.sleeping .bear-zzz {
+    opacity: 1;
+}
+
+@keyframes float-zzz {
+    0% {
+        transform: translateY(0px);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+}
+
+/* Pointing gesture (when interacting with UI) */
+.living-bear.pointing .bear-arm.right {
+    transform: rotate(-45deg);
+    transform-origin: top;
+    animation: point 0.5s ease-in-out infinite;
+}
+
+@keyframes point {
+
+    0%,
+    100% {
+        transform: rotate(-45deg);
+    }
+
+    50% {
+        transform: rotate(-40deg);
+    }
+}
+
+/* Celebrating/Excited */
+.living-bear.celebrating {
+    animation: jump 0.6s ease-in-out infinite;
+}
+
+.living-bear.celebrating .bear-arm {
+    animation: wave 0.6s ease-in-out infinite;
+}
+
+@keyframes jump {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        transform: rotate(10deg);
+    }
+
+    50% {
+        transform: rotate(45deg);
+    }
+}
+
+/* === COZY HOME (Bottom-right corner) === */
+
+.bear-home {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+    height: 100px;
+    z-index: 9998;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.bear-home:hover {
+    transform: scale(1.05);
+}
+
+/* House structure */
+.home-roof {
+    width: 0;
+    height: 0;
+    border-left: 60px solid transparent;
+    border-right: 60px solid transparent;
+    border-bottom: 50px solid #8B0000;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.home-body {
+    width: 100px;
+    height: 60px;
+    background: linear-gradient(135deg, #D2691E 0%, #8B4513 100%);
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.home-door {
+    width: 30px;
+    height: 40px;
+    background: #654321;
+    border-radius: 5px 5px 0 0;
+    position: absolute;
+    bottom: 0;
+    left: 35px;
+}
+
+.home-window {
+    width: 20px;
+    height: 20px;
+    background: #FFD700;
+    border: 2px solid #8B4513;
+    border-radius: 3px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Window glow when bear is home */
+.bear-home.bear-inside .home-window {
+    animation: window-glow 2s ease-in-out infinite;
+}
+
+@keyframes window-glow {
+
+    0%,
+    100% {
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    50% {
+        box-shadow: inset 0 0 20px rgba(255, 223, 0, 0.8), 0 0 20px rgba(255, 223, 0, 0.5);
+    }
+}
+
+/* Speech Bubble */
+.bear-speech-bubble {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 3px solid #FF6B6B;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.bear-speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid white;
+}
+
+.living-bear.talking .bear-speech-bubble {
+    opacity: 1;
+}

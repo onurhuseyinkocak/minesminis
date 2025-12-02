@@ -1,0 +1,16 @@
+{
+    "name": "minesminis-server",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Backend proxy server for OpenAI API",
+    "main": "server.js",
+    "scripts": {
+        "dev": "node server.js",
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1"
+    }
+}

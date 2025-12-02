@@ -1,0 +1,286 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" id="ultra-bear-animated" aria-hidden="false">
+  <style>
+    /* ---- General transform setup ---- */
+    g, path, circle, ellipse { transform-box: fill-box; transform-origin: 50% 50%; }
+    .anim-smooth { will-change: transform, opacity; }
+
+    /* ---- Easing helpers (Disney-like smooth curves) ---- */
+    :root {
+      --slow: cubic-bezier(.22,.9,.3,1);   /* smooth end */
+      --soft: cubic-bezier(.25,.46,.45,.94);
+      --spring: cubic-bezier(.2,1.2,.3,1);
+    }
+
+    /* ---- Core animations ---- */
+    @keyframes breathe {
+      0%   { transform: scaleY(1) translateY(0); }
+      50%  { transform: scaleY(1.035) translateY(-3px); }
+      100% { transform: scaleY(1) translateY(0); }
+    }
+    @keyframes headSway {
+      0%   { transform: rotate(0deg); }
+      35%  { transform: rotate(-3deg); }
+      60%  { transform: rotate(2deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes blink {
+      0%   { transform: scaleY(1); opacity:1; }
+      45%  { transform: scaleY(0.08); opacity:1; }
+      55%  { transform: scaleY(0.08); opacity:1; }
+      100% { transform: scaleY(1); opacity:1; }
+    }
+    @keyframes armWaveL {
+      0%   { transform: rotate(10deg) translateY(0); }
+      35%  { transform: rotate(0deg) translateY(-4px); }
+      70%  { transform: rotate(14deg) translateY(0); }
+      100% { transform: rotate(10deg) translateY(0); }
+    }
+    @keyframes armWaveR {
+      0%   { transform: rotate(-10deg) translateY(0); }
+      35%  { transform: rotate(-4deg) translateY(-3px); }
+      70%  { transform: rotate(-16deg) translateY(0); }
+      100% { transform: rotate(-10deg) translateY(0); }
+    }
+    @keyframes legShift {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(3px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes blushPulse {
+      0%   { transform: scale(0.95); opacity:0.0; }
+      20%  { transform: scale(1.08); opacity:0.55; }
+      60%  { transform: scale(1.0); opacity:0.35; }
+      100% { transform: scale(0.96); opacity:0.0; }
+    }
+    @keyframes pawWiggle {
+      0% { transform: rotate(0deg); }
+      30% { transform: rotate(-12deg) translateY(-2px); }
+      60% { transform: rotate(10deg) translateY(0); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes shadowBounce {
+      0% { transform: scaleX(1) translateY(0); opacity:0.6; }
+      50% { transform: scaleX(1.07) translateY(2px); opacity:0.45; }
+      100% { transform: scaleX(1) translateY(0); opacity:0.6; }
+    }
+
+    /* ---- Animation assignments ---- */
+    #chest { animation: breathe 4s var(--soft) infinite; transform-origin: 50% 60%; }
+    #f-head { animation: headSway 6.5s var(--spring) infinite; transform-origin: 256px 220px; }
+    #f-eyes { /* pupils stationary; blinks use eyelid rectangles */ }
+    .blink-rect { animation: blink 5.5s steps(1,end) infinite; transform-origin: center; }
+    #f-arm-L { animation: armWaveL 5.8s var(--soft) infinite; transform-origin: 170px 280px; }
+    #f-arm-R { animation: armWaveR 6.2s var(--soft) infinite; transform-origin: 342px 280px; }
+    #f-arm-L .paw, #f-arm-R .paw { animation: pawWiggle 4.2s var(--soft) infinite; transform-origin: center; }
+    #v-front ellipse[cy="430"] { animation: legShift 6s var(--soft) infinite; transform-origin: center; } /* feet subtle bob */
+    #blush-left, #blush-right { animation: blushPulse 3.5s var(--soft) infinite; transform-origin: center; opacity:0; }
+    #ground-ellipse { animation: shadowBounce 4s var(--soft) infinite; transform-origin: center; }
+
+    /* ---- Fine tuning: delays for natural rhythm ---- */
+    #f-arm-L { animation-delay: 0.2s; }
+    #f-arm-R { animation-delay: 0.6s; }
+    #blush-right { animation-delay: 0.25s; }
+    #blush-left  { animation-delay: 0.55s; }
+    .blink-rect { animation-delay: 1s; } /* eyes blink slightly offset */
+
+    /* ---- Soft rim highlight and sheen improvements ---- */
+    .rim { filter: url(#rimLightEffect); opacity:0.95; }
+    .soft-fur { filter: url(#furSoft); }
+
+    /* ---- Accessibility: reduce motion (prefers-reduced-motion) ---- */
+    @media (prefers-reduced-motion: reduce) {
+      #chest, #f-head, #f-arm-L, #f-arm-R, #ground-ellipse, #blush-left, #blush-right { animation: none; }
+    }
+  </style>
+
+  <defs>
+    <!-- Fur gradients -->
+    <radialGradient id="furBase" cx="40%" cy="30%" r="70%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#D2691E"/>
+      <stop offset="60%" stop-color="#8B4513"/>
+      <stop offset="100%" stop-color="#482308"/>
+    </radialGradient>
+
+    <radialGradient id="furBack" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8B4513"/>
+      <stop offset="100%" stop-color="#3E1C08"/>
+    </radialGradient>
+
+    <linearGradient id="depthShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3E1C08" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#3E1C08" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFDAB9"/>
+      <stop offset="100%" stop-color="#DEB887"/>
+    </linearGradient>
+
+    <radialGradient id="eyeSparkle" cx="30%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Blush gradient -->
+    <radialGradient id="blushGrad" cx="30%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FF7A7A" stop-opacity="0.95"/>
+      <stop offset="50%" stop-color="#FF7A7A" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FF7A7A" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Soft rim and lighting -->
+    <filter id="rimLightEffect" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+      <feOffset dx="-2" dy="-2" result="offsetBlur"/>
+      <feSpecularLighting in="blur" surfaceScale="4" specularConstant="1" specularExponent="15" lighting-color="#ffffff" result="specOut">
+        <fePointLight x="-500" y="-500" z="200"/>
+      </feSpecularLighting>
+      <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+    </filter>
+
+    <!-- Soft overall fur blur for subtle warmth -->
+    <filter id="furSoft">
+      <feGaussianBlur stdDeviation="0.6" result="s"/>
+      <feMerge>
+        <feMergeNode in="s"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Ground shadow filter -->
+    <filter id="groundShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="gblur"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.45 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="gblur"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Ground shadow that reacts to breathe -->
+  <ellipse id="ground-ellipse" cx="256" cy="460" rx="140" ry="30"
+           fill="#000000" filter="url(#groundShadow)" opacity="0.6"/>
+
+  <!-- FRONT VIEW GROUP -->
+  <g id="v-front" class="anim-smooth" display="block">
+
+    <!-- Body silhouette -->
+    <path d="M180,420 C140,420 130,350 150,300 C160,260 352,260 362,300 C382,350 372,420 332,420 Z"
+          fill="url(#furBase)" class="rim soft-fur"/>
+
+    <!-- Chest (breath animated) -->
+    <ellipse id="chest" cx="256" cy="350" rx="70" ry="85" fill="url(#skinGrad)" opacity="0.95" class="anim-smooth"/>
+
+    <!-- Feet (slight bobbing) -->
+    <ellipse cx="180" cy="430" rx="40" ry="35" fill="url(#furBase)" class="rim"/>
+    <ellipse cx="332" cy="430" rx="40" ry="35" fill="url(#furBase)" class="rim"/>
+    <circle cx="180" cy="425" r="12" fill="#DEB887"/>
+    <circle cx="332" cy="425" r="12" fill="#DEB887"/>
+
+    <!-- LEFT ARM group (animated) -->
+    <g id="f-arm-L" class="anim-smooth" transform-origin="170 280">
+      <ellipse cx="140" cy="300" rx="30" ry="50" transform="rotate(20 140 300)"
+               fill="url(#furBase)" class="rim"/>
+      <!-- paw -->
+      <g class="paw" transform="translate(120,330)">
+        <ellipse cx="20" cy="10" rx="16" ry="10" fill="#DEB887"/>
+        <path d="M12,6 Q20,18 30,6" fill="none" stroke="#3E1C08" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- RIGHT ARM group (animated) -->
+    <g id="f-arm-R" class="anim-smooth" transform-origin="342 280">
+      <ellipse cx="372" cy="300" rx="30" ry="50" transform="rotate(-20 372 300)"
+               fill="url(#furBase)" class="rim"/>
+      <g class="paw" transform="translate(344,330)">
+        <ellipse cx="24" cy="10" rx="16" ry="10" fill="#DEB887"/>
+        <path d="M16,6 Q24,18 34,6" fill="none" stroke="#3E1C08" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- HEAD group (animated subtle sway) -->
+    <g id="f-head" class="anim-smooth" transform-origin="256 220">
+      <!-- ear/cheek small heads for character -->
+      <circle cx="190" cy="160" r="35" fill="url(#furBase)"/>
+      <circle cx="190" cy="160" r="15" fill="#DEB887"/>
+      <circle cx="322" cy="160" r="35" fill="url(#furBase)"/>
+      <circle cx="322" cy="160" r="15" fill="#DEB887"/>
+
+      <!-- main face -->
+      <path d="M166,220 C166,150 346,150 346,220 C346,290 280,310 256,310 C232,310 166,290 166,220"
+            fill="url(#furBase)" class="rim"/>
+      <ellipse cx="256" cy="240" rx="45" ry="35" fill="url(#skinGrad)" opacity="0.98"/>
+
+      <!-- nose and mouth -->
+      <path d="M246,230 L266,230 L256,242 Z" fill="#3E1C08" stroke="#3E1C08" stroke-linejoin="round" stroke-width="4"/>
+      <path d="M256,242 L256,260 M240,255 Q256,265 272,255" stroke="#3E1C08" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+      <!-- EYES group: pupils + subtle sparkle + eyelid rect for blink -->
+      <g id="f-eyes" transform-origin="256 220">
+        <!-- left eye -->
+        <g transform="translate(-30,-10)">
+          <circle cx="256" cy="230" r="10" fill="#000"/>
+          <circle cx="259" cy="227" r="4" fill="url(#eyeSparkle)"/>
+          <!-- eyelid rectangle that scales Y for blink -->
+          <rect x="244" y="222" width="24" height="24" rx="12" ry="12" fill="#FFDAB9" class="blink-rect" transform-origin="256px 234px"/>
+        </g>
+
+        <!-- right eye -->
+        <g transform="translate(10,-10)">
+          <circle cx="256" cy="230" r="10" fill="#000"/>
+          <circle cx="259" cy="227" r="4" fill="url(#eyeSparkle)"/>
+          <rect x="278" y="222" width="24" height="24" rx="12" ry="12" fill="#FFDAB9" class="blink-rect" transform-origin="290px 234px"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- Cheeks blush (animated pulse when 'embarrassed') -->
+    <g id="blushes" transform-origin="256 240">
+      <ellipse id="blush-left" cx="226" cy="245" rx="18" ry="10" fill="url(#blushGrad)" opacity="0"/>
+      <ellipse id="blush-right" cx="286" cy="245" rx="18" ry="10" fill="url(#blushGrad)" opacity="0"/>
+    </g>
+
+  </g>
+
+  <!-- SIDE VIEW (hidden by default but structured for future transitions) -->
+  <g id="v-side" display="none">
+    <path d="M240,430 C200,430 200,350 240,320 C260,310 300,350 300,430 Z" fill="url(#furBase)" filter="url(#rimLightEffect)" opacity="0.9"/>
+    <path d="M250,420 C200,420 200,280 250,260 C300,250 350,300 350,400 C350,430 300,420 250,420" fill="url(#furBase)" filter="url(#rimLightEffect)"/>
+    <path d="M350,380 C350,320 320,300 290,300 C290,300 300,350 300,420" fill="url(#skinGrad)" opacity="0.6"/>
+    <ellipse cx="300" cy="430" rx="22" ry="12" fill="#DEB887"/>
+    <g transform="translate(-10, 0)">
+      <circle cx="240" cy="165" r="25" fill="#8B4513"/>
+    </g>
+    <g id="s-head" transform-origin="260 220">
+      <circle cx="260" cy="220" r="65" fill="url(#furBase)" filter="url(#rimLightEffect)"/>
+      <circle cx="250" cy="160" r="30" fill="url(#furBase)"/>
+      <circle cx="250" cy="160" r="12" fill="#DEB887"/>
+      <path d="M310,210 Q345,210 345,235 Q345,260 310,250" fill="url(#skinGrad)"/>
+      <g>
+        <circle cx="343" cy="225" r="9" fill="#3E1C08"/>
+        <ellipse cx="340" cy="222" rx="3" ry="2" fill="#FFF" opacity="0.5"/>
+      </g>
+      <g transform="rotate(-5 300 200)">
+        <ellipse cx="300" cy="200" rx="9" ry="12" fill="#000"/>
+        <circle cx="303" cy="196" r="4" fill="url(#eyeSparkle)"/>
+      </g>
+    </g>
+    <g id="s-arm" transform-origin="270 280">
+      <ellipse cx="270" cy="320" rx="28" ry="53" transform="rotate(-10 270 280)" fill="#3E1C08" opacity="0.3"/>
+      <ellipse cx="270" cy="320" rx="25" ry="50" transform="rotate(-10 270 280)" fill="url(#furBase)" filter="url(#rimLightEffect)"/>
+    </g>
+  </g>
+
+  <!-- BACK VIEW (hidden) -->
+  <g id="v-back" display="none">
+    <circle cx="256" cy="380" r="25" fill="#D2691E" filter="url(#rimLightEffect)"/>
+    <path d="M180,420 C140,420 130,350 150,300 C160,260 352,260 362,300 C382,350 372,420 332,420 Z" fill="url(#furBack)" filter="url(#rimLightEffect)"/>
+    <g id="b-head" transform-origin="256 220">
+      <circle cx="190" cy="160" r="35" fill="url(#furBack)"/>
+      <circle cx="322" cy="160" r="35" fill="url(#furBack)"/>
+      <circle cx="256" cy="220" r="75" fill="url(#furBack)" filter="url(#rimLightEffect)"/>
+    </g>
+  </g>
+</svg>

@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { getUserBadges, Badge } from '../services/badgeService';
+import ConfettiEffect from './ConfettiEffect';
 
 const BadgeCollection: React.FC = () => {
   const [badges, setBadges] = useState<Badge[]>([]);
   const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     const userBadges = getUserBadges();
     setBadges(userBadges);
+
+    // Show confetti if significant progress
+    const earned = userBadges.filter(b => b.earned).length;
+    const total = userBadges.length;
+    const percentage = (earned / total) * 100;
+    if (percentage >= 25 && percentage % 25 < 5) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+    }
   }, []);
 
   const filteredBadges = badges.filter(badge => {
@@ -75,6 +86,8 @@ const BadgeCollection: React.FC = () => {
           </div>
         ))}
       </div>
+
+      <ConfettiEffect trigger={showConfetti} type="achievement" />
 
       <style>{`
         .badge-collection {
@@ -153,6 +166,12 @@ const BadgeCollection: React.FC = () => {
 
         .badge-card.earned {
           border: 2px solid var(--primary);
+          animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+          0%, 100% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
+          50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
         }
 
         .badge-card.locked {

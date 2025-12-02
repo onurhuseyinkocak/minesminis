@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Landing from "./pages/Landing";
 import Home from "./pages/Home";
@@ -18,10 +19,11 @@ import { ToastProvider } from "./components/ToastProvider";
 import TeacherMode from "./components/TeacherMode";
 import AnimatedBackground from "./components/AnimatedBackground";
 import FloatingParticles from "./components/FloatingParticles";
-import RoleSelector from "./components/RoleSelector";
 import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 import StudentDashboard from "./pages/Student/StudentDashboard";
-import AIMascot from "./components/AIMascot";
+import LivingBearImages from "./components/LivingBearImages";
+import ChatHome from "./components/ChatHome";
+import { sendMessageToAI } from "./services/aiService";
 import "./App.css";
 
 function AppRoutes() {
@@ -72,6 +74,13 @@ function AppRoutes() {
 }
 
 function App() {
+  const [showChat, setShowChat] = React.useState(false);
+
+  const handleMascotClick = () => {
+    console.log('🎈 Opening AI chat with Mimi!');
+    setShowChat(true);
+  };
+
   return (
     <AuthProvider>
       <ToastProvider>
@@ -79,7 +88,24 @@ function App() {
         <FloatingParticles />
         <AppRoutes />
         <TeacherMode />
-        <AIMascot subscriptionTier="free" />
+
+        {/* AI-Powered Living Mascot - Freely roaming on website */}
+        <LivingBearImages onMascotClick={handleMascotClick} />
+
+        {/* AI Chat Window - Opens when mascot is clicked */}
+        {showChat && (
+          <ChatHome
+            onClose={() => setShowChat(false)}
+            onSendMessage={async (text) => {
+              const response = await sendMessageToAI([{
+                role: 'user',
+                content: text,
+                timestamp: new Date()
+              }]);
+              return response;
+            }}
+          />
+        )}
       </ToastProvider>
     </AuthProvider>
   );

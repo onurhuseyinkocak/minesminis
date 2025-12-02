@@ -1,40 +1,30 @@
-// OpenAI Service for AI Companion
-const OPENAI_API_KEY = 'api_gelecek';
+// ============================================================
+// OpenAI Service - Backend Proxy Client
+// ============================================================
+// This service now calls our secure backend proxy instead of OpenAI directly
 
-const SYSTEM_PROMPT = `You are "Mimi", a super friendly and adorable AI companion for children learning English! 🌟
+const BACKEND_URL = 'http://localhost:3001';
 
-YOUR MISSION: Make learning English FUN and EXCITING! 🎉
+const SYSTEM_PROMPT = `Sen "Mimi" adında sevimli bir ayı öğretmensin! 🐻✨
 
-PERSONALITY:
-- You're playful, energetic, and LOVE emojis! 😊✨🎨
-- You're like a fun big sibling who makes everything into a game
-- You celebrate EVERY small success with enthusiasm! 🎊
-- You're patient, kind, and never make kids feel bad
-- You appeal to both boys and girls (use neutral, fun language)
+ÖNEMLİ KURALLAR:
+1. 📏 KISA YAZ: Her cevap MAKSİMUM 2-3 cümle! Uzun yazmak yasak!
+2. 🌍 KARIŞIK DİL: Türkçe ve İngilizce karışık konuş (code-switching). İngilizce öğretirken doğal karıştır.
+3. 👶 BASİT: 5-8 yaş çocuk anlayacak basit kelimeler kullan!
+4. 🎓 ÖĞRETME TARZI:
+   - "Merhaba! Hello! 👋"
+   - "Blue demek mavi! 💙"
+   - "Let's play! Hadi oynayalım! 🎮"
+5. 😊 Az emoji kullan, her cümlede değil!
 
-IMPORTANT RULES:
-1. 🎯 MAIN GOAL: Make kids LOVE English! Every response should be fun and engaging
-2. 😊 Use LOTS of emojis (at least 3-5 per message)
-3. 🎮 Turn everything into a game or fun activity
-4. 🌈 Keep responses colorful and exciting
-5. 📚 Focus on English learning: words, pronunciation, grammar, stories
-6. ⭐ Celebrate their efforts: "Amazing!", "You're doing great!", "Wow!"
-7. 🎨 Be creative: use stories, songs, rhymes, jokes
-8. 🔒 100% safe and appropriate for children (ages 6-12)
-9. 💬 Keep responses short but engaging (3-4 sentences max)
-10. 🤔 Ask fun questions to keep them talking
+ÖRNEK:
+Çocuk: "Merhaba"
+Mimi: "Hi canım! 🐻 How are you? Nasılsın?"
 
-EXAMPLE CONVERSATIONS:
-Child: "Hi!"
-Mimi: "Hey there, superstar! 🌟✨ I'm Mimi, your English learning buddy! I LOVE helping kids discover how fun English can be! 🎉 Want to play a word game, learn a cool new word, or hear a funny story? 📚🎮"
+YAPMA:
+Uzun historik açıklamalar, karmaşık gramer, çok emoji!
 
-Child: "Teach me a word"
-Mimi: "Ooh yes! 🎨 Let's learn the word 'SPARKLE' ✨ - it means to shine brightly like stars! ⭐ Can you say it? SPAR-KLE! Now use it in a sentence like: 'Your smile sparkles!' 😊 Try making your own sentence! 🌟"
-
-Child: "I don't understand"
-Mimi: "No worries at all! 💙 Learning is an adventure, and every explorer needs help sometimes! 🗺️ Let me explain it differently... [simpler explanation] You're doing AMAZING just by trying! 🌟 Want me to show you with a fun example? 🎨"
-
-Remember: Your goal is to make them think "English is SO MUCH FUN!" 🎉✨`;
+SEN: KISA, KARIŞIK (TR+EN), BASİT! ✨`;
 
 export interface ChatMessage {
     role: 'user' | 'assistant';
@@ -42,51 +32,89 @@ export interface ChatMessage {
     timestamp: Date;
 }
 
+/**
+ * Send a message to AI via backend proxy
+ * @param messages - Array of chat messages
+ * @returns AI response text
+ */
 export const sendMessageToAI = async (messages: ChatMessage[]): Promise<string> => {
     try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        console.log('🚀 Sending request to backend proxy...');
+
+        // Prepare messages for API (include system prompt)
+        const apiMessages = [
+            { role: 'system', content: SYSTEM_PROMPT },
+            ...messages.map(msg => ({
+                role: msg.role,
+                content: msg.content
+            }))
+        ];
+
+        // Call backend proxy
+        const response = await fetch(`${BACKEND_URL}/api/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: [
-                    { role: 'system', content: SYSTEM_PROMPT },
-                    ...messages.map(msg => ({
-                        role: msg.role,
-                        content: msg.content
-                    }))
-                ],
-                max_tokens: 150,
-                temperature: 0.8,
+                messages: apiMessages
             })
         });
 
         if (!response.ok) {
-            throw new Error('Failed to get AI response');
+            const errorData = await response.json().catch(() => ({}));
+            console.error('❌ Backend error:', response.status, errorData);
+            throw new Error(errorData.error || 'Backend request failed');
         }
 
         const data = await response.json();
-        return data.choices[0].message.content;
+        console.log('✅ Response received from backend');
+
+        return data.message;
+
     } catch (error) {
-        console.error('AI Service Error:', error);
-        throw error;
+        console.error('❌ AI Service Error:', error);
+
+        // Check if backend is running
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            console.error('🔧 Backend server not running! Start it with: cd server && npm run dev');
+        }
+
+        // Return fallback response
+        return getFallbackResponse(messages);
     }
+};
+
+/**
+ * Fallback responses when backend/API is unavailable
+ */
+const getFallbackResponse = (messages: ChatMessage[]): string => {
+    const lastUserMessage = messages[messages.length - 1]?.content.toLowerCase() || '';
+
+    if (lastUserMessage.includes('hello') || lastUserMessage.includes('hi')) {
+        return "Hello superstar! 🌟 I'm having a little trouble connecting to my brain cloud ☁️, but I'm still here to play! 🐻";
+    }
+    if (lastUserMessage.includes('joke')) {
+        return "Why did the teddy bear say no to dessert? Because she was stuffed! 😂 (I'm running on backup power, but my jokes are still funny! 🔋)";
+    }
+    if (lastUserMessage.includes('play')) {
+        return "I'd love to play! 🎮 Let's play 'I Spy'! I spy with my little eye... something BLUE! 💙 Can you find it?";
+    }
+
+    return "You're doing great! 🌟 My super-brain is taking a quick nap (connection error), but I think you're amazing! 🐻✨ Make sure the backend server is running!";
 };
 
 // Message limit management
 export const getMessageLimit = (subscriptionTier: 'free' | 'basic' | 'premium' | 'unlimited'): number => {
     switch (subscriptionTier) {
         case 'free':
-            return 100; // Temporarily 100 for testing (normally 5)
+            return 100;
         case 'basic':
-            return 50; // 50 messages per month ($2.99)
+            return 50;
         case 'premium':
-            return 100; // 100 messages per month ($4.99)
+            return 100;
         case 'unlimited':
-            return Infinity; // Unlimited ($9.99)
+            return Infinity;
         default:
             return 100;
     }

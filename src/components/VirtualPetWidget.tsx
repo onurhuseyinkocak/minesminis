@@ -1,90 +1,101 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Zap, Star } from 'lucide-react';
+import toast from 'react-hot-toast';
 import {
-    getUserPet,
-    createPet,
-    feedPet,
-    playWithPet,
-    updatePetStats,
-    getPetMood,
-    VirtualPet,
-    PET_TYPES
+  getUserPet,
+  createPet,
+  feedPet,
+  playWithPet,
+  updatePetStats,
+  getPetMood,
+  VirtualPet,
+  PET_TYPES
 } from '../services/petService';
 
 const VirtualPetWidget: React.FC = () => {
-    const [pet, setPet] = useState<VirtualPet | null>(null);
-    const [showCreator, setShowCreator] = useState(false);
-    const [selectedType, setSelectedType] = useState<VirtualPet['type']>('cat');
-    const [petName, setPetName] = useState('');
+  const [pet, setPet] = useState<VirtualPet | null>(null);
+  const [showCreator, setShowCreator] = useState(false);
+  const [selectedType, setSelectedType] = useState<VirtualPet['type']>('cat');
+  const [petName, setPetName] = useState('');
 
-    useEffect(() => {
-        const userPet = getUserPet();
-        if (userPet) {
-            const updated = updatePetStats(userPet);
-            setPet(updated);
-        } else {
-            setShowCreator(true);
-        }
-    }, []);
+  useEffect(() => {
+    const userPet = getUserPet();
+    if (userPet) {
+      const updated = updatePetStats(userPet);
+      setPet(updated);
+    } else {
+      setShowCreator(true);
+    }
+  }, []);
 
-    const handleCreatePet = () => {
-        const newPet = createPet(selectedType, petName || undefined);
-        setPet(newPet);
-        setShowCreator(false);
-    };
+  const handleCreatePet = () => {
+    const newPet = createPet(selectedType, petName || undefined);
+    setPet(newPet);
+    setShowCreator(false);
+  };
 
-    const handleFeed = () => {
-        if (!pet) return;
-        try {
-            const fed = feedPet(pet);
-            setPet(fed);
-        } catch (error: any) {
-            alert(error.message);
-        }
-    };
+  const handleFeed = () => {
+    if (!pet) return;
+    try {
+      const fed = feedPet(pet);
+      setPet(fed);
+      toast.success('Yummy! Your pet loved that! 😋', {
+        icon: '🍖',
+        duration: 2000
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Oops! Try again later! 🤗';
+      toast.error(errorMessage, { duration: 3000 });
+    }
+  };
 
-    const handlePlay = () => {
-        if (!pet) return;
-        try {
-            const played = playWithPet(pet);
-            setPet(played);
-        } catch (error: any) {
-            alert(error.message);
-        }
-    };
+  const handlePlay = () => {
+    if (!pet) return;
+    try {
+      const played = playWithPet(pet);
+      setPet(played);
+      toast.success('Playtime was amazing! 🎾✨', {
+        icon: '🎮',
+        duration: 2000
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Your pet needs rest! Try later! 😴';
+      toast.error(errorMessage, { duration: 3000 });
+    }
+  };
 
-    if (showCreator) {
-        return (
-            <div className="pet-creator">
-                <h2>🐾 Create Your Pet!</h2>
-                <p>Choose a pet to be your learning companion!</p>
+  if (showCreator) {
+    return (
+      <div className="pet-creator">
+        <h2>🐾 Create Your Pet!</h2>
+        <p>Choose a pet to be your learning companion!</p>
 
-                <div className="pet-types">
-                    {PET_TYPES.map(type => (
-                        <button
-                            key={type.type}
-                            className={`pet-type-btn ${selectedType === type.type ? 'selected' : ''}`}
-                            onClick={() => setSelectedType(type.type)}
-                        >
-                            <div className="pet-emoji">{type.emoji}</div>
-                            <div className="pet-name">{type.name}</div>
-                        </button>
-                    ))}
-                </div>
+        <div className="pet-types">
+          {PET_TYPES.map(type => (
+            <button
+              key={type.type}
+              className={`pet-type-btn ${selectedType === type.type ? 'selected' : ''}`}
+              onClick={() => setSelectedType(type.type)}
+            >
+              <div className="pet-emoji">{type.emoji}</div>
+              <div className="pet-name">{type.name}</div>
+            </button>
+          ))}
+        </div>
 
-                <input
-                    type="text"
-                    placeholder="Give your pet a name (optional)"
-                    value={petName}
-                    onChange={(e) => setPetName(e.target.value)}
-                    className="pet-name-input"
-                />
+        <input
+          type="text"
+          placeholder="Give your pet a name (optional)"
+          value={petName}
+          onChange={(e) => setPetName(e.target.value)}
+          className="pet-name-input"
+        />
 
-                <button className="create-pet-btn" onClick={handleCreatePet}>
-                    Create My Pet! 🎉
-                </button>
+        <button className="create-pet-btn" onClick={handleCreatePet}>
+          Create My Pet! 🎉
+        </button>
 
-                <style>{`
+        <style>{`
           .pet-creator {
             background: white;
             border-radius: 24px;
@@ -162,61 +173,61 @@ const VirtualPetWidget: React.FC = () => {
             cursor: pointer;
           }
         `}</style>
-            </div>
-        );
-    }
+      </div>
+    );
+  }
 
-    if (!pet) return null;
+  if (!pet) return null;
 
-    const expProgress = (pet.experience / (pet.level * 100)) * 100;
+  const expProgress = (pet.experience / (pet.level * 100)) * 100;
 
-    return (
-        <div className="pet-widget">
-            <div className="pet-header">
-                <div className="pet-avatar">{pet.emoji}</div>
-                <div className="pet-info">
-                    <h3>{pet.name}</h3>
-                    <p className="pet-level">Level {pet.level}</p>
-                    <p className="pet-mood">{getPetMood(pet)}</p>
-                </div>
-            </div>
+  return (
+    <div className="pet-widget">
+      <div className="pet-header">
+        <div className="pet-avatar">{pet.emoji}</div>
+        <div className="pet-info">
+          <h3>{pet.name}</h3>
+          <p className="pet-level">Level {pet.level}</p>
+          <p className="pet-mood">{getPetMood(pet)}</p>
+        </div>
+      </div>
 
-            <div className="pet-stats">
-                <div className="stat">
-                    <Heart size={16} color="#EF4444" />
-                    <div className="stat-bar">
-                        <div className="stat-fill" style={{ width: `${pet.happiness}%`, background: '#EF4444' }} />
-                    </div>
-                    <span>{pet.happiness}%</span>
-                </div>
+      <div className="pet-stats">
+        <div className="stat">
+          <Heart size={16} color="#EF4444" />
+          <div className="stat-bar">
+            <div className="stat-fill" style={{ width: `${pet.happiness}%`, background: '#EF4444' }} />
+          </div>
+          <span>{pet.happiness}%</span>
+        </div>
 
-                <div className="stat">
-                    <Zap size={16} color="#F59E0B" />
-                    <div className="stat-bar">
-                        <div className="stat-fill" style={{ width: `${pet.energy}%`, background: '#F59E0B' }} />
-                    </div>
-                    <span>{pet.energy}%</span>
-                </div>
+        <div className="stat">
+          <Zap size={16} color="#F59E0B" />
+          <div className="stat-bar">
+            <div className="stat-fill" style={{ width: `${pet.energy}%`, background: '#F59E0B' }} />
+          </div>
+          <span>{pet.energy}%</span>
+        </div>
 
-                <div className="stat">
-                    <Star size={16} color="#6366F1" />
-                    <div className="stat-bar">
-                        <div className="stat-fill" style={{ width: `${expProgress}%`, background: '#6366F1' }} />
-                    </div>
-                    <span>{pet.experience}/{pet.level * 100}</span>
-                </div>
-            </div>
+        <div className="stat">
+          <Star size={16} color="#6366F1" />
+          <div className="stat-bar">
+            <div className="stat-fill" style={{ width: `${expProgress}%`, background: '#6366F1' }} />
+          </div>
+          <span>{pet.experience}/{pet.level * 100}</span>
+        </div>
+      </div>
 
-            <div className="pet-actions">
-                <button onClick={handleFeed} className="pet-action-btn">
-                    🍖 Feed
-                </button>
-                <button onClick={handlePlay} className="pet-action-btn">
-                    🎾 Play
-                </button>
-            </div>
+      <div className="pet-actions">
+        <button onClick={handleFeed} className="pet-action-btn">
+          🍖 Feed
+        </button>
+        <button onClick={handlePlay} className="pet-action-btn">
+          🎾 Play
+        </button>
+      </div>
 
-            <style>{`
+      <style>{`
         .pet-widget {
           background: white;
           border-radius: 16px;
@@ -346,8 +357,8 @@ const VirtualPetWidget: React.FC = () => {
           font-size: 1.1rem;
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default VirtualPetWidget;

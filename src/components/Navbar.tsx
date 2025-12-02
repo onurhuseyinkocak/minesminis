@@ -48,7 +48,7 @@ function Navbar() {
         <li>
           <Link to="/worksheets" className="nav-btn" onClick={() => setIsMenuOpen(false)}>
             <span className="nav-icon">📝</span>
-            <span>Worksheets</span>
+            <span>Fun Sheets</span>
           </Link>
         </li>
 
@@ -89,13 +89,13 @@ function Navbar() {
 
           {user ? (
             <button onClick={signOut} className="social-btn logout">
-              <span>🚪</span>
-              <span>Logout</span>
+              <span>👋</span>
+              <span>See You!</span>
             </button>
           ) : (
             <Link to="/login" className="social-btn login">
-              <span>🔐</span>
-              <span>Login</span>
+              <span>🎉</span>
+              <span>Join Fun!</span>
             </Link>
           )}
         </div>
@@ -112,7 +112,7 @@ function Navbar() {
               )}
             </div>
             <span className="profile-name-nav">
-              {userProfile?.display_name || 'Profile'}
+              {userProfile?.display_name || 'My Space'}
             </span>
           </Link>
         )}

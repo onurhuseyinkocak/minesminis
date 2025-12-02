@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Sparkles } from 'lucide-react';
 import { sendMessageToAI, checkMessageLimit, ChatMessage } from '../services/aiService';
+import toast from 'react-hot-toast';
 
 interface AIMascotProps {
   subscriptionTier?: 'free' | 'basic' | 'premium' | 'unlimited';
@@ -39,7 +40,15 @@ const AIMascot: React.FC<AIMascotProps> = ({ subscriptionTier = 'free' }) => {
     if (!inputValue.trim() || isLoading) return;
 
     if (!checkMessageLimit(usedMessages, subscriptionTier)) {
-      alert('You\'ve reached your daily message limit! Upgrade to Premium for more messages. 🌟');
+      toast('You\'ve chatted a lot today! 🌟 Come back tomorrow for more fun!', {
+        icon: '💬',
+        duration: 4000,
+        style: {
+          borderRadius: '12px',
+          background: '#FEF3C7',
+          color: '#92400E',
+        }
+      });
       return;
     }
 
@@ -67,10 +76,27 @@ const AIMascot: React.FC<AIMascotProps> = ({ subscriptionTier = 'free' }) => {
       setUsedMessages(newCount);
       localStorage.setItem('ai_messages_used', newCount.toString());
     } catch (error) {
-      console.error('Failed to get AI response:', error);
+      // Handle different error types with child-friendly messages
+      let errorContent = 'Oops! I had a little hiccup. Can you try again? 😊';
+
+      if (error instanceof Error) {
+        if (error.message === 'MISSING_API_KEY') {
+          errorContent = 'Oh no! Mimi needs a special key to work. Ask a grown-up for help! 🔑';
+        } else if (error.message.includes('API_ERROR')) {
+          errorContent = 'I\'m having trouble thinking right now. Let\'s try again in a moment! 🤔💭';
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorContent = 'Hmm, I can\'t connect right now. Check your internet! 🌐';
+        }
+      }
+
+      // Only log in development
+      if (import.meta.env.DEV) {
+        console.error('Failed to get AI response:', error);
+      }
+
       const errorMessage: ChatMessage = {
         role: 'assistant',
-        content: 'Oops! I had trouble understanding that. Can you try again? 😊',
+        content: errorContent,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -104,8 +130,13 @@ const AIMascot: React.FC<AIMascotProps> = ({ subscriptionTier = 'free' }) => {
           <div className="mascot-avatar">🐻</div>
           {showWelcome && (
             <div className="mascot-bubble">
-              Hi! I'm Mimi! 🌟<br />
-              Let's learn English! 🎉
+              {usedMessages === 0 ? (
+                <>Hi! I'm Mimi! 🌟<br />Let's learn English! 🎉</>
+              ) : usedMessages < 10 ? (
+                <>Great to see you! 💙<br />Ready to chat? 😊</>
+              ) : (
+                <>You're doing amazing! ⭐<br />Let's talk! 🚀</>
+              )}
             </div>
           )}
         </button>

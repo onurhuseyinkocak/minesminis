@@ -119,7 +119,7 @@ const Landing: React.FC = () => {
                 setError('');
               }}
             >
-              Login
+              Welcome Back! 👋
             </button>
             <button
               className={`auth-tab ${!isLogin ? 'active' : ''}`}
@@ -128,7 +128,7 @@ const Landing: React.FC = () => {
                 setError('');
               }}
             >
-              Sign Up
+              Join the Fun! 🎉
             </button>
           </div>
 
@@ -193,9 +193,9 @@ const Landing: React.FC = () => {
               {loading ? (
                 <span className="spinner" />
               ) : isLogin ? (
-                'Login'
+                'Let\'s Go! 🚀'
               ) : (
-                'Create Account'
+                'Start Adventure! ✨'
               )}
             </motion.button>
 
