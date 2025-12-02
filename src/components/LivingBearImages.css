@@ -105,3 +105,196 @@
         top: -45px;
     }
 }
+
+/* Dragon's Cozy Cave Home */
+.dragon-home {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 100px;
+    height: 80px;
+    z-index: 9998;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    pointer-events: auto;
+}
+
+.dragon-home:hover {
+    transform: scale(1.08);
+}
+
+.dragon-home:hover .cave-entrance {
+    filter: brightness(1.1);
+}
+
+.cave-entrance {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: filter 0.3s ease;
+}
+
+.cave-arch {
+    width: 80px;
+    height: 60px;
+    background: linear-gradient(180deg, #5D4037 0%, #3E2723 100%);
+    border-radius: 40px 40px 0 0;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    box-shadow: 
+        inset 0 -20px 30px rgba(0, 0, 0, 0.5),
+        0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.cave-arch::before {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 40px;
+    background: linear-gradient(180deg, #2D1B14 0%, #1a0f0a 100%);
+    border-radius: 25px 25px 0 0;
+    bottom: 0;
+    left: 15px;
+}
+
+.cave-arch::after {
+    content: '🐲';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.cave-shadow {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 90px;
+    height: 10px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.cave-grass {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+    border-radius: 0 0 10px 10px;
+}
+
+.cave-grass::before,
+.cave-grass::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    width: 8px;
+    height: 15px;
+    background: #66BB6A;
+    border-radius: 50% 50% 0 0;
+}
+
+.cave-grass::before {
+    left: 15px;
+    transform: rotate(-10deg);
+}
+
+.cave-grass::after {
+    right: 15px;
+    transform: rotate(10deg);
+}
+
+/* Dragon inside cave */
+.dragon-home.dragon-inside .cave-arch::before {
+    background: linear-gradient(180deg, #3E2723 0%, #1a0f0a 100%);
+    box-shadow: inset 0 0 20px rgba(255, 200, 100, 0.3);
+}
+
+.sleeping-dragon {
+    position: absolute;
+    bottom: 15px;
+    left: 25px;
+    transform: scale(0.5);
+    z-index: 2;
+}
+
+.sleep-zzz {
+    position: absolute;
+    top: -15px;
+    right: -20px;
+    font-size: 18px;
+    animation: zzz-float 2s ease-in-out infinite;
+}
+
+@keyframes zzz-float {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-10px) scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+/* Cave glow when dragon is inside */
+.dragon-home.dragon-inside .cave-arch::before {
+    animation: cave-glow 3s ease-in-out infinite;
+}
+
+@keyframes cave-glow {
+    0%, 100% {
+        box-shadow: inset 0 0 20px rgba(255, 150, 50, 0.2);
+    }
+    50% {
+        box-shadow: inset 0 0 30px rgba(255, 200, 100, 0.4);
+    }
+}
+
+@media (max-width: 768px) {
+    .dragon-home {
+        width: 80px;
+        height: 65px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .cave-arch {
+        width: 65px;
+        height: 50px;
+    }
+    
+    .cave-arch::before {
+        width: 40px;
+        height: 32px;
+        left: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dragon-home {
+        width: 70px;
+        height: 55px;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .cave-arch {
+        width: 55px;
+        height: 42px;
+    }
+    
+    .cave-arch::before {
+        width: 35px;
+        height: 28px;
+        left: 10px;
+    }
+    
+    .cave-arch::after {
+        font-size: 12px;
+    }
+}

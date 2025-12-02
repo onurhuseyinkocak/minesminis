@@ -1,10 +1,10 @@
 .dragon-mascot-container {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   cursor: pointer;
   transition: transform 0.3s ease;
-  filter: drop-shadow(0 4px 12px rgba(76, 175, 80, 0.3));
+  filter: drop-shadow(0 6px 16px rgba(76, 175, 80, 0.4));
 }
 
 .dragon-mascot-container:hover {
@@ -20,6 +20,44 @@
   height: 100%;
   position: relative;
   z-index: 2;
+}
+
+.dragon-svg {
+  display: block;
+}
+
+.dragon-body,
+.dragon-head,
+.dragon-belly {
+  transform-origin: center center;
+}
+
+.dragon-pupil {
+  transition: transform 0.2s ease;
+}
+
+.dragon-mascot-container:hover .dragon-pupil {
+  transform: scale(1.1);
+}
+
+.dragon-wing {
+  transform-origin: center;
+  animation: wingFlap 0.5s ease-in-out infinite;
+}
+
+@keyframes wingFlap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.9); }
+}
+
+.dragon-tail {
+  transform-origin: 145px 140px;
+  animation: tailWag 2s ease-in-out infinite;
+}
+
+@keyframes tailWag {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(5deg); }
 }
 
 .dragon-shadow {

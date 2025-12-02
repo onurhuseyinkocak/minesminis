@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Lottie from 'lottie-react';
 import './DragonMascot.css';
 
 interface DragonMascotProps {
@@ -7,195 +6,6 @@ interface DragonMascotProps {
   onClick?: () => void;
   isHovered?: boolean;
 }
-
-const dragonAnimation = {
-  "v": "5.7.8",
-  "fr": 30,
-  "ip": 0,
-  "op": 60,
-  "w": 200,
-  "h": 200,
-  "nm": "Cute Dragon",
-  "ddd": 0,
-  "assets": [],
-  "layers": [
-    {
-      "ddd": 0,
-      "ind": 1,
-      "ty": 4,
-      "nm": "Dragon Body",
-      "sr": 1,
-      "ks": {
-        "o": { "a": 0, "k": 100 },
-        "r": { 
-          "a": 1, 
-          "k": [
-            { "t": 0, "s": [0], "e": [3] },
-            { "t": 15, "s": [3], "e": [0] },
-            { "t": 30, "s": [0], "e": [-3] },
-            { "t": 45, "s": [-3], "e": [0] },
-            { "t": 60, "s": [0] }
-          ]
-        },
-        "p": { 
-          "a": 1,
-          "k": [
-            { "t": 0, "s": [100, 105], "e": [100, 100] },
-            { "t": 15, "s": [100, 100], "e": [100, 105] },
-            { "t": 30, "s": [100, 105], "e": [100, 100] },
-            { "t": 45, "s": [100, 100], "e": [100, 105] },
-            { "t": 60, "s": [100, 105] }
-          ]
-        },
-        "a": { "a": 0, "k": [100, 100, 0] },
-        "s": { "a": 0, "k": [100, 100, 100] }
-      },
-      "shapes": [
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [0, 20] }, "s": { "a": 0, "k": [80, 90] }, "nm": "Body" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.30, 0.70, 0.40, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 100] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [0, 10] }, "s": { "a": 0, "k": [60, 65] }, "nm": "Belly" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.60, 0.90, 0.65, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 110] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [55, 50] }, "nm": "Head" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.35, 0.75, 0.45, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 55] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [-12, 0] }, "s": { "a": 0, "k": [22, 26] }, "nm": "Left Eye White" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 1, 1, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 50] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [12, 0] }, "s": { "a": 0, "k": [22, 26] }, "nm": "Right Eye White" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 1, 1, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 50] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [-10, 2] }, "s": { "a": 0, "k": [12, 14] }, "nm": "Left Pupil" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.1, 0.1, 0.1, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 50] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [14, 2] }, "s": { "a": 0, "k": [12, 14] }, "nm": "Right Pupil" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.1, 0.1, 0.1, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 50] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [-8, -1] }, "s": { "a": 0, "k": [4, 4] }, "nm": "Left Sparkle" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 1, 1, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 50] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [16, -1] }, "s": { "a": 0, "k": [4, 4] }, "nm": "Right Sparkle" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 1, 1, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 50] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [-25, 5] }, "s": { "a": 0, "k": [14, 10] }, "nm": "Left Cheek" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 0.6, 0.7, 1] }, "o": { "a": 0, "k": 60 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 55] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [25, 5] }, "s": { "a": 0, "k": [14, 10] }, "nm": "Right Cheek" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 0.6, 0.7, 1] }, "o": { "a": 0, "k": 60 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 55] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [-20, -28] }, "s": { "a": 0, "k": [16, 24] }, "nm": "Left Horn" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 0.85, 0.4, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 55] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": -20 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [20, -28] }, "s": { "a": 0, "k": [16, 24] }, "nm": "Right Horn" },
-            { "ty": "fl", "c": { "a": 0, "k": [1, 0.85, 0.4, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 55] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 20 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [-30, 50] }, "s": { "a": 0, "k": [18, 30] }, "nm": "Left Arm" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.30, 0.70, 0.40, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 80] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 15 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [30, 50] }, "s": { "a": 0, "k": [18, 30] }, "nm": "Right Arm" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.30, 0.70, 0.40, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 80] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": -15 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [-18, 75] }, "s": { "a": 0, "k": [22, 28] }, "nm": "Left Leg" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.30, 0.70, 0.40, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 80] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        },
-        {
-          "ty": "gr",
-          "it": [
-            { "ty": "el", "p": { "a": 0, "k": [18, 75] }, "s": { "a": 0, "k": [22, 28] }, "nm": "Right Leg" },
-            { "ty": "fl", "c": { "a": 0, "k": [0.30, 0.70, 0.40, 1] }, "o": { "a": 0, "k": 100 } },
-            { "ty": "tr", "p": { "a": 0, "k": [100, 80] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] }, "r": { "a": 0, "k": 0 }, "o": { "a": 0, "k": 100 } }
-          ]
-        }
-      ],
-      "ip": 0,
-      "op": 60,
-      "st": 0,
-      "bm": 0
-    }
-  ],
-  "markers": []
-};
 
 const DragonMascot: React.FC<DragonMascotProps> = ({ 
   state, 
@@ -224,12 +34,179 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
       onClick={onClick}
     >
       <div className="dragon-animation-wrapper">
-        <Lottie
-          animationData={dragonAnimation}
-          loop={true}
-          autoplay={true}
+        <svg 
+          viewBox="0 0 200 200" 
+          className="dragon-svg"
           style={{ width: '100%', height: '100%' }}
-        />
+        >
+          {/* Dragon Body */}
+          <ellipse 
+            cx="100" 
+            cy="120" 
+            rx="45" 
+            ry="50" 
+            fill="url(#bodyGradient)"
+            className="dragon-body"
+          />
+          
+          {/* Belly */}
+          <ellipse 
+            cx="100" 
+            cy="130" 
+            rx="32" 
+            ry="38" 
+            fill="url(#bellyGradient)"
+            className="dragon-belly"
+          />
+          
+          {/* Head */}
+          <ellipse 
+            cx="100" 
+            cy="60" 
+            rx="35" 
+            ry="32" 
+            fill="url(#headGradient)"
+            className="dragon-head"
+          />
+          
+          {/* Left Horn */}
+          <ellipse 
+            cx="72" 
+            cy="32" 
+            rx="8" 
+            ry="18" 
+            fill="#FFD93D"
+            transform="rotate(-20 72 32)"
+            className="dragon-horn"
+          />
+          
+          {/* Right Horn */}
+          <ellipse 
+            cx="128" 
+            cy="32" 
+            rx="8" 
+            ry="18" 
+            fill="#FFD93D"
+            transform="rotate(20 128 32)"
+            className="dragon-horn"
+          />
+          
+          {/* Left Eye White */}
+          <ellipse cx="82" cy="55" rx="14" ry="16" fill="white" className="dragon-eye-white"/>
+          
+          {/* Right Eye White */}
+          <ellipse cx="118" cy="55" rx="14" ry="16" fill="white" className="dragon-eye-white"/>
+          
+          {/* Left Pupil */}
+          <ellipse cx="85" cy="57" rx="7" ry="9" fill="#1a1a2e" className="dragon-pupil"/>
+          
+          {/* Right Pupil */}
+          <ellipse cx="121" cy="57" rx="7" ry="9" fill="#1a1a2e" className="dragon-pupil"/>
+          
+          {/* Left Eye Sparkle */}
+          <circle cx="88" cy="52" r="3" fill="white" className="dragon-sparkle"/>
+          
+          {/* Right Eye Sparkle */}
+          <circle cx="124" cy="52" r="3" fill="white" className="dragon-sparkle"/>
+          
+          {/* Left Cheek */}
+          <ellipse cx="62" cy="68" rx="10" ry="7" fill="#FF99B3" opacity="0.7" className="dragon-cheek"/>
+          
+          {/* Right Cheek */}
+          <ellipse cx="138" cy="68" rx="10" ry="7" fill="#FF99B3" opacity="0.7" className="dragon-cheek"/>
+          
+          {/* Snout */}
+          <ellipse cx="100" cy="75" rx="12" ry="8" fill="#5CB85C"/>
+          
+          {/* Nostrils */}
+          <circle cx="95" cy="74" r="2" fill="#2E7D32"/>
+          <circle cx="105" cy="74" r="2" fill="#2E7D32"/>
+          
+          {/* Smile */}
+          <path 
+            d="M 90 82 Q 100 92 110 82" 
+            stroke="#2E7D32" 
+            strokeWidth="2.5" 
+            fill="none"
+            strokeLinecap="round"
+            className="dragon-smile"
+          />
+          
+          {/* Left Arm */}
+          <ellipse 
+            cx="55" 
+            cy="115" 
+            rx="12" 
+            ry="20" 
+            fill="url(#bodyGradient)"
+            transform="rotate(25 55 115)"
+            className="dragon-arm"
+          />
+          
+          {/* Right Arm */}
+          <ellipse 
+            cx="145" 
+            cy="115" 
+            rx="12" 
+            ry="20" 
+            fill="url(#bodyGradient)"
+            transform="rotate(-25 145 115)"
+            className="dragon-arm"
+          />
+          
+          {/* Left Leg */}
+          <ellipse cx="75" cy="165" rx="14" ry="18" fill="url(#bodyGradient)" className="dragon-leg"/>
+          
+          {/* Right Leg */}
+          <ellipse cx="125" cy="165" rx="14" ry="18" fill="url(#bodyGradient)" className="dragon-leg"/>
+          
+          {/* Tail */}
+          <path 
+            d="M 145 140 Q 170 130 175 150 Q 180 170 160 175 Q 150 178 155 165"
+            fill="url(#bodyGradient)"
+            className="dragon-tail"
+          />
+          
+          {/* Tail spikes */}
+          <circle cx="175" cy="155" r="5" fill="#FFD93D"/>
+          <circle cx="165" cy="172" r="4" fill="#FFD93D"/>
+          
+          {/* Wing Left */}
+          <path 
+            d="M 55 95 Q 30 70 35 100 Q 30 110 50 115"
+            fill="url(#wingGradient)"
+            opacity="0.8"
+            className="dragon-wing"
+          />
+          
+          {/* Wing Right */}
+          <path 
+            d="M 145 95 Q 170 70 165 100 Q 170 110 150 115"
+            fill="url(#wingGradient)"
+            opacity="0.8"
+            className="dragon-wing"
+          />
+          
+          {/* Gradients */}
+          <defs>
+            <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#6BCB77"/>
+              <stop offset="100%" stopColor="#4CAF50"/>
+            </linearGradient>
+            <linearGradient id="bellyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#A8E6CF"/>
+              <stop offset="100%" stopColor="#88D4AB"/>
+            </linearGradient>
+            <linearGradient id="headGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#6BCB77"/>
+              <stop offset="100%" stopColor="#5CB85C"/>
+            </linearGradient>
+            <linearGradient id="wingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#81C784"/>
+              <stop offset="100%" stopColor="#66BB6A"/>
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       
       {showEmoji && (
