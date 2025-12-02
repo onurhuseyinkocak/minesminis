@@ -45,7 +45,7 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick, onHo
             const stateStr = String(newState);
             if (stateStr === 'sleeping') {
                 setIsDragonHome(true);
-            } else if (isDragonHome && stateStr !== 'sleeping') {
+            } else if (stateStr !== 'sleeping') {
                 setIsDragonHome(false);
             }
         });
@@ -57,7 +57,7 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick, onHo
             unsubscribe();
             mascotRoaming.stopRoaming();
         };
-    }, [isDragonHome]);
+    }, []);
 
     const handleMouseMove = useCallback((e: MouseEvent) => {
         if (!containerRef.current) return;
