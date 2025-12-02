@@ -111,11 +111,16 @@ The following environment variables are configured in Replit:
 - Shows once per session (sessionStorage)
 - 1.5s display + 0.4s fade animation
 
-### Dragon Mascot Replacement
-- Replaced Mimi bear with cute green dragon using Lottie animation
+### Dragon Mascot - Mimi
+- Replaced Mimi bear with cute green dragon using custom SVG animation
 - Dragon has big eyes, pink cheeks, and golden horns
 - Fully animated with bounce and movement effects
 - Child-friendly design with playful expressions
+- **Eye Tracking Feature**: Dragon's eyes follow the user's mouse cursor for engaging eye contact
+- **Random Looking**: Every 3-7 seconds there's a 30% chance dragon looks in a random direction
+- **State-aware**: Eyes reset during sleeping and thinking states
+- **Speech Bubbles**: Shows capability messages explaining what Mimi can do (games, learning, etc.)
+- **Interactive Home**: Clicking on dragon's cave home opens the AI chat interface
 
 ### Technical Improvements
 - Disabled service worker (was causing console errors)
