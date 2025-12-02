@@ -5,20 +5,20 @@ interface DragonMascotProps {
   state: 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'thinking' | 'love' | 'jumping' | 'surprised';
   onClick?: () => void;
   isHovered?: boolean;
-  mousePosition?: { x: number; y: number };
 }
 
 const DragonMascot: React.FC<DragonMascotProps> = ({ 
   state, 
   onClick,
-  isHovered = false,
-  mousePosition
+  isHovered = false
 }) => {
   const [isSmiling, setIsSmiling] = useState(false);
   const [eyeOffset, setEyeOffset] = useState({ x: 0, y: 0 });
   const [isRandomLooking, setIsRandomLooking] = useState(false);
   const [randomLookOffset, setRandomLookOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const randomLookTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const randomLookIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (state === 'idle' || state === 'walking') {
@@ -32,9 +32,13 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
   }, [state]);
 
   useEffect(() => {
-    if (state === 'sleeping' || state === 'thinking') return;
+    if (state === 'sleeping' || state === 'thinking') {
+      setRandomLookOffset({ x: 0, y: 0 });
+      setIsRandomLooking(false);
+      return;
+    }
 
-    const randomLookInterval = setInterval(() => {
+    randomLookIntervalRef.current = setInterval(() => {
       if (Math.random() < 0.3) {
         setIsRandomLooking(true);
         const directions = [
@@ -49,46 +53,28 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
         const randomDir = directions[Math.floor(Math.random() * directions.length)];
         setRandomLookOffset(randomDir);
         
-        setTimeout(() => {
+        randomLookTimeoutRef.current = setTimeout(() => {
           setIsRandomLooking(false);
           setRandomLookOffset({ x: 0, y: 0 });
         }, 800 + Math.random() * 1200);
       }
     }, 3000 + Math.random() * 4000);
 
-    return () => clearInterval(randomLookInterval);
+    return () => {
+      if (randomLookIntervalRef.current) {
+        clearInterval(randomLookIntervalRef.current);
+      }
+      if (randomLookTimeoutRef.current) {
+        clearTimeout(randomLookTimeoutRef.current);
+      }
+    };
   }, [state]);
 
   useEffect(() => {
-    if (state === 'sleeping' || isRandomLooking) return;
-    if (!containerRef.current || !mousePosition) return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const dragonCenterX = rect.left + rect.width / 2;
-    const dragonCenterY = rect.top + rect.height * 0.35;
-
-    const dx = mousePosition.x - dragonCenterX;
-    const dy = mousePosition.y - dragonCenterY;
+    const shouldTrack = state !== 'sleeping' && state !== 'thinking' && !isRandomLooking;
     
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const maxDistance = 400;
-    const normalizedDistance = Math.min(distance / maxDistance, 1);
-    
-    const maxOffset = 5;
-    const angle = Math.atan2(dy, dx);
-    
-    const offsetX = Math.cos(angle) * maxOffset * normalizedDistance;
-    const offsetY = Math.sin(angle) * maxOffset * normalizedDistance * 0.7;
-
-    setEyeOffset({ 
-      x: Math.max(-maxOffset, Math.min(maxOffset, offsetX)), 
-      y: Math.max(-maxOffset * 0.7, Math.min(maxOffset * 0.7, offsetY))
-    });
-  }, [mousePosition, state, isRandomLooking]);
-
-  useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !shouldTrack) return;
       
       const rect = containerRef.current.getBoundingClientRect();
       const dragonCenterX = rect.left + rect.width / 2;
@@ -98,7 +84,7 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
       const dy = e.clientY - dragonCenterY;
       
       const distance = Math.sqrt(dx * dx + dy * dy);
-      const maxDistance = 500;
+      const maxDistance = 450;
       const normalizedDistance = Math.min(distance / maxDistance, 1);
       
       const maxOffset = 5;
@@ -107,15 +93,18 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
       const offsetX = Math.cos(angle) * maxOffset * normalizedDistance;
       const offsetY = Math.sin(angle) * maxOffset * normalizedDistance * 0.7;
 
-      if (!isRandomLooking && state !== 'sleeping') {
-        setEyeOffset({ 
-          x: Math.max(-maxOffset, Math.min(maxOffset, offsetX)), 
-          y: Math.max(-maxOffset * 0.7, Math.min(maxOffset * 0.7, offsetY))
-        });
-      }
+      setEyeOffset({ 
+        x: Math.max(-maxOffset, Math.min(maxOffset, offsetX)), 
+        y: Math.max(-maxOffset * 0.7, Math.min(maxOffset * 0.7, offsetY))
+      });
     };
 
-    window.addEventListener('mousemove', handleGlobalMouseMove);
+    if (shouldTrack) {
+      window.addEventListener('mousemove', handleGlobalMouseMove);
+    } else {
+      setEyeOffset({ x: 0, y: 0 });
+    }
+    
     return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
   }, [isRandomLooking, state]);
 
@@ -139,7 +128,7 @@ const DragonMascot: React.FC<DragonMascotProps> = ({
   const showBigSmile = state === 'laughing' || state === 'celebrating' || state === 'dancing' || isSmiling;
 
   const currentEyeOffset = isRandomLooking ? randomLookOffset : eyeOffset;
-  const eyeStyle = state !== 'sleeping' ? {
+  const eyeStyle = state !== 'sleeping' && state !== 'thinking' ? {
     transform: `translate(${currentEyeOffset.x}px, ${currentEyeOffset.y}px)`,
     transition: isRandomLooking ? 'transform 0.3s ease-out' : 'transform 0.15s ease-out'
   } : {};
