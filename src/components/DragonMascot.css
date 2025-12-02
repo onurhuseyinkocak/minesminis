@@ -7,11 +7,11 @@
 }
 
 .dragon-mascot-container:hover {
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
 
 .dragon-mascot-container.is-hovered {
-  transform: scale(1.12);
+  transform: scale(1.08);
 }
 
 .dragon-animation-wrapper {
@@ -28,584 +28,601 @@
   filter: drop-shadow(0 8px 16px rgba(91, 194, 54, 0.3));
 }
 
-/* ========== IDLE STATE - Natural breathing and micro-movements ========== */
+/* ========== TRANSFORM ORIGINS - Eklem noktaları ========== */
+.dragon-tail { transform-origin: 145px 145px; }
+.dragon-wing-left { transform-origin: 55px 105px; }
+.dragon-wing-right { transform-origin: 145px 105px; }
+.dragon-arm-left { transform-origin: 52px 108px; }
+.dragon-arm-right { transform-origin: 148px 108px; }
+.dragon-leg-left { transform-origin: 72px 160px; }
+.dragon-leg-right { transform-origin: 128px 160px; }
+.dragon-head { transform-origin: 100px 75px; }
+.dragon-body { transform-origin: 100px 140px; }
+
+/* ========== IDLE STATE - Yumuşak nefes alma ========== */
 .state-idle .dragon-body {
-  animation: bodyBreath 3s ease-in-out infinite;
+  animation: bodyBreathSoft 4s ease-in-out infinite;
 }
 
 .state-idle .dragon-head {
-  animation: headBob 4s ease-in-out infinite;
+  animation: headBobSoft 5s ease-in-out infinite;
 }
 
 .state-idle .dragon-tail {
-  animation: tailSwayIdle 2.5s ease-in-out infinite;
-  transform-origin: 145px 145px;
+  animation: tailSwaySoft 3s ease-in-out infinite;
 }
 
 .state-idle .dragon-wing-left {
-  animation: wingFlapIdle 2s ease-in-out infinite;
-  transform-origin: 55px 100px;
+  animation: wingIdleLeft 2.5s ease-in-out infinite;
 }
 
 .state-idle .dragon-wing-right {
-  animation: wingFlapIdleRight 2s ease-in-out infinite 0.1s;
-  transform-origin: 145px 100px;
+  animation: wingIdleRight 2.5s ease-in-out infinite 0.15s;
 }
 
 .state-idle .dragon-arm-left {
-  animation: armSwayLeft 3s ease-in-out infinite;
-  transform-origin: 52px 110px;
+  animation: armIdleLeft 4s ease-in-out infinite;
 }
 
 .state-idle .dragon-arm-right {
-  animation: armSwayRight 3s ease-in-out infinite 0.3s;
-  transform-origin: 148px 110px;
-}
-
-.state-idle .dragon-leg-left {
-  animation: legBounce 3s ease-in-out infinite;
-  transform-origin: 72px 165px;
-}
-
-.state-idle .dragon-leg-right {
-  animation: legBounce 3s ease-in-out infinite 0.2s;
-  transform-origin: 128px 165px;
+  animation: armIdleRight 4s ease-in-out infinite 0.2s;
 }
 
 /* Eye Blinking */
 .dragon-eye {
-  animation: eyeBlink 4s ease-in-out infinite;
+  animation: eyeBlinkSoft 5s ease-in-out infinite;
 }
 
 .dragon-eye-right {
-  animation-delay: 0.1s;
+  animation-delay: 0.15s;
 }
 
 .dragon-pupil {
-  animation: pupilLook 6s ease-in-out infinite;
+  animation: pupilLookSoft 8s ease-in-out infinite;
 }
 
 .dragon-sparkle {
-  animation: sparkleGlow 2s ease-in-out infinite;
+  animation: sparkleGlowSoft 3s ease-in-out infinite;
 }
 
-.dragon-sparkle-2 {
-  animation-delay: 0.5s;
-}
-
-/* Cheek Blush */
 .dragon-cheek {
-  animation: cheekPulse 3s ease-in-out infinite;
+  animation: cheekPulseSoft 4s ease-in-out infinite;
 }
 
-.dragon-cheek-right {
-  animation-delay: 0.2s;
-}
-
-/* Ambient Sparkles */
 .ambient-sparkle {
-  animation: ambientFloat 3s ease-in-out infinite;
+  animation: ambientFloatSoft 4s ease-in-out infinite;
 }
 
 .sparkle-1 { animation-delay: 0s; }
-.sparkle-2 { animation-delay: 0.5s; }
-.sparkle-3 { animation-delay: 1s; }
-.sparkle-4 { animation-delay: 1.5s; }
+.sparkle-2 { animation-delay: 0.7s; }
+.sparkle-3 { animation-delay: 1.4s; }
+.sparkle-4 { animation-delay: 2.1s; }
 
-/* ========== WALKING STATE ========== */
+/* ========== WALKING STATE - Yumuşak yürüme ========== */
 .state-walking .dragon-body {
-  animation: bodyWalk 0.6s ease-in-out infinite;
+  animation: bodyWalkSoft 0.8s ease-in-out infinite;
 }
 
 .state-walking .dragon-head {
-  animation: headWalk 0.6s ease-in-out infinite;
+  animation: headWalkSoft 0.8s ease-in-out infinite;
 }
 
 .state-walking .dragon-leg-left {
-  animation: legWalkLeft 0.6s ease-in-out infinite;
-  transform-origin: 72px 165px;
+  animation: legWalkLeft 0.8s ease-in-out infinite;
 }
 
 .state-walking .dragon-leg-right {
-  animation: legWalkRight 0.6s ease-in-out infinite;
-  transform-origin: 128px 165px;
+  animation: legWalkRight 0.8s ease-in-out infinite;
 }
 
 .state-walking .dragon-arm-left {
-  animation: armWalkLeft 0.6s ease-in-out infinite;
-  transform-origin: 52px 110px;
+  animation: armWalkLeft 0.8s ease-in-out infinite;
 }
 
 .state-walking .dragon-arm-right {
-  animation: armWalkRight 0.6s ease-in-out infinite;
-  transform-origin: 148px 110px;
+  animation: armWalkRight 0.8s ease-in-out infinite;
 }
 
 .state-walking .dragon-tail {
-  animation: tailWalk 0.4s ease-in-out infinite;
-  transform-origin: 145px 145px;
+  animation: tailWalkSoft 0.5s ease-in-out infinite;
 }
 
-.state-walking .dragon-wing-left {
-  animation: wingFlapFast 0.3s ease-in-out infinite;
-  transform-origin: 55px 100px;
-}
-
+.state-walking .dragon-wing-left,
 .state-walking .dragon-wing-right {
-  animation: wingFlapFastRight 0.3s ease-in-out infinite;
-  transform-origin: 145px 100px;
+  animation: wingWalkSoft 0.4s ease-in-out infinite;
 }
 
-/* ========== DANCING STATE ========== */
+/* ========== DANCING STATE - Hafif swing tarzı ========== */
 .state-dancing .dragon-body {
-  animation: bodyDance 0.4s ease-in-out infinite;
+  animation: bodySwing 1.2s ease-in-out infinite;
 }
 
 .state-dancing .dragon-head {
-  animation: headDance 0.4s ease-in-out infinite;
+  animation: headSwing 1.2s ease-in-out infinite;
 }
 
 .state-dancing .dragon-arm-left {
-  animation: armDanceLeft 0.4s ease-in-out infinite;
-  transform-origin: 52px 110px;
+  animation: armSwingLeft 1.2s ease-in-out infinite;
 }
 
 .state-dancing .dragon-arm-right {
-  animation: armDanceRight 0.4s ease-in-out infinite;
-  transform-origin: 148px 110px;
+  animation: armSwingRight 1.2s ease-in-out infinite;
 }
 
 .state-dancing .dragon-leg-left {
-  animation: legDance 0.4s ease-in-out infinite;
-  transform-origin: 72px 165px;
+  animation: legSwing 1.2s ease-in-out infinite;
 }
 
 .state-dancing .dragon-leg-right {
-  animation: legDance 0.4s ease-in-out infinite 0.2s;
-  transform-origin: 128px 165px;
+  animation: legSwing 1.2s ease-in-out infinite 0.6s;
 }
 
 .state-dancing .dragon-tail {
-  animation: tailDance 0.3s ease-in-out infinite;
-  transform-origin: 145px 145px;
+  animation: tailSwing 0.8s ease-in-out infinite;
 }
 
 .state-dancing .dragon-wing-left,
 .state-dancing .dragon-wing-right {
-  animation: wingDance 0.2s ease-in-out infinite;
+  animation: wingSwing 0.6s ease-in-out infinite;
 }
 
 /* ========== CELEBRATING STATE ========== */
 .state-celebrating .dragon-body {
-  animation: bodyCelebrate 0.3s ease-in-out infinite;
+  animation: bodyCelebrateSoft 0.5s ease-in-out infinite;
 }
 
 .state-celebrating .dragon-head {
-  animation: headCelebrate 0.3s ease-in-out infinite;
+  animation: headCelebrateSoft 0.5s ease-in-out infinite;
 }
 
 .state-celebrating .dragon-arm-left,
 .state-celebrating .dragon-arm-right {
-  animation: armsCelebrate 0.25s ease-in-out infinite;
+  animation: armsCelebrateSoft 0.4s ease-in-out infinite;
 }
 
 .state-celebrating .dragon-tail {
-  animation: tailCelebrate 0.2s ease-in-out infinite;
-  transform-origin: 145px 145px;
+  animation: tailCelebrateSoft 0.3s ease-in-out infinite;
 }
 
 .state-celebrating .ambient-sparkle {
-  animation: sparkleExplode 0.5s ease-out infinite;
+  animation: sparkleExplodeSoft 0.8s ease-out infinite;
 }
 
 /* ========== SLEEPING STATE ========== */
 .state-sleeping .dragon-body {
-  animation: bodySleep 4s ease-in-out infinite;
+  animation: bodySleepSoft 5s ease-in-out infinite;
 }
 
 .state-sleeping .dragon-head {
-  animation: headSleep 4s ease-in-out infinite;
-  transform: translateY(5px);
+  animation: headSleepSoft 5s ease-in-out infinite;
+  transform: translateY(5px) rotate(-5deg);
 }
 
 .state-sleeping .dragon-eye {
-  animation: eyesClosed 4s ease-in-out infinite;
-}
-
-.state-sleeping .dragon-eyelid {
-  fill: url(#bodyGrad);
-  animation: eyelidClose 4s ease-in-out infinite;
+  animation: eyesClosedSoft 5s ease-in-out infinite;
+  transform: scaleY(0.1);
 }
 
 .state-sleeping .dragon-tail {
-  animation: tailSleep 5s ease-in-out infinite;
-  transform-origin: 145px 145px;
+  animation: tailSleepSoft 6s ease-in-out infinite;
 }
 
 .state-sleeping .dragon-wing-left,
 .state-sleeping .dragon-wing-right {
-  animation: wingSleep 4s ease-in-out infinite;
+  animation: wingSleepSoft 5s ease-in-out infinite;
+  opacity: 0.7;
 }
 
 .state-sleeping .dragon-arm-left,
 .state-sleeping .dragon-arm-right {
-  transform: translateY(5px);
-}
-
-.state-sleeping .dragon-mouth {
-  d: path("M 92 88 Q 100 92 108 88");
+  transform: translateY(3px);
 }
 
 /* ========== WAVING STATE ========== */
 .state-waving .dragon-arm-right {
-  animation: armWave 0.5s ease-in-out infinite;
-  transform-origin: 148px 110px;
+  animation: armWaveSoft 0.6s ease-in-out infinite;
 }
 
 .state-waving .dragon-body {
-  animation: bodyWave 1s ease-in-out infinite;
+  animation: bodyWaveSoft 1.2s ease-in-out infinite;
 }
 
 .state-waving .dragon-head {
-  animation: headWave 0.8s ease-in-out infinite;
+  animation: headWaveSoft 1s ease-in-out infinite;
 }
 
 /* ========== LAUGHING STATE ========== */
 .state-laughing .dragon-body {
-  animation: bodyLaugh 0.2s ease-in-out infinite;
+  animation: bodyLaughSoft 0.3s ease-in-out infinite;
 }
 
 .state-laughing .dragon-head {
-  animation: headLaugh 0.15s ease-in-out infinite;
+  animation: headLaughSoft 0.25s ease-in-out infinite;
 }
 
-.state-laughing .dragon-mouth {
-  d: path("M 85 85 Q 100 105 115 85");
-}
-
-.state-laughing .dragon-tongue {
-  opacity: 1;
-  animation: tongueBounce 0.3s ease-in-out infinite;
+.state-laughing .dragon-cheek {
+  opacity: 0.9;
+  animation: cheekLaughSoft 0.3s ease-in-out infinite;
 }
 
 /* ========== THINKING STATE ========== */
 .state-thinking .dragon-head {
-  animation: headThink 3s ease-in-out infinite;
+  animation: headThinkSoft 4s ease-in-out infinite;
 }
 
 .state-thinking .dragon-pupil {
-  animation: pupilThink 2s ease-in-out infinite;
+  animation: pupilThinkSoft 3s ease-in-out infinite;
 }
 
 .state-thinking .dragon-arm-right {
-  animation: armThink 3s ease-in-out infinite;
-  transform-origin: 148px 110px;
+  animation: armThinkSoft 4s ease-in-out infinite;
 }
 
 /* ========== LOVE STATE ========== */
 .state-love .dragon-eye {
-  animation: eyesLove 1s ease-in-out infinite;
+  animation: eyesLoveSoft 1.5s ease-in-out infinite;
 }
 
 .state-love .dragon-cheek {
-  animation: cheekLove 0.8s ease-in-out infinite;
-  opacity: 0.8;
+  animation: cheekLoveSoft 1s ease-in-out infinite;
+  opacity: 0.85;
 }
 
 .state-love .dragon-body {
-  animation: bodyLove 1s ease-in-out infinite;
+  animation: bodyLoveSoft 1.5s ease-in-out infinite;
 }
 
 .state-love .dragon-tail {
-  animation: tailLove 0.5s ease-in-out infinite;
-  transform-origin: 145px 145px;
+  animation: tailLoveSoft 0.8s ease-in-out infinite;
 }
 
-/* ========== KEYFRAME ANIMATIONS ========== */
+/* ========== JUMPING STATE ========== */
+.state-jumping .dragon-mascot-container {
+  animation: jumpContainer 0.8s ease-in-out infinite;
+}
 
-/* Body Animations */
-@keyframes bodyBreath {
+.state-jumping .dragon-body {
+  animation: bodyJumpSoft 0.8s ease-in-out infinite;
+}
+
+.state-jumping .dragon-leg-left,
+.state-jumping .dragon-leg-right {
+  animation: legJumpSoft 0.8s ease-in-out infinite;
+}
+
+.state-jumping .dragon-wing-left,
+.state-jumping .dragon-wing-right {
+  animation: wingJumpSoft 0.4s ease-in-out infinite;
+}
+
+/* ========== SURPRISED STATE ========== */
+.state-surprised .dragon-body {
+  animation: bodySurpriseSoft 0.2s ease-out forwards;
+}
+
+.state-surprised .dragon-eye {
+  animation: eyesSurpriseSoft 0.3s ease-out forwards;
+}
+
+.state-surprised .dragon-arm-left,
+.state-surprised .dragon-arm-right {
+  animation: armsSurpriseSoft 0.2s ease-out forwards;
+}
+
+/* ========== SMILING OVERRIDE ========== */
+.is-smiling .dragon-cheek {
+  opacity: 0.8 !important;
+  transform: scale(1.1);
+}
+
+/* ========== KEYFRAME ANIMATIONS - SOFT ========== */
+
+/* Idle Soft */
+@keyframes bodyBreathSoft {
   0%, 100% { transform: scaleY(1) translateY(0); }
-  50% { transform: scaleY(1.02) translateY(-2px); }
+  50% { transform: scaleY(1.015) translateY(-1px); }
 }
 
-@keyframes bodyWalk {
+@keyframes headBobSoft {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-4px) rotate(-2deg); }
-  75% { transform: translateY(-4px) rotate(2deg); }
+  50% { transform: translateY(-2px) rotate(1deg); }
 }
 
-@keyframes bodyDance {
-  0%, 100% { transform: translateY(0) rotate(-5deg) scale(1); }
-  50% { transform: translateY(-8px) rotate(5deg) scale(1.05); }
-}
-
-@keyframes bodyCelebrate {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-12px) scale(1.1); }
-}
-
-@keyframes bodySleep {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.97); }
-}
-
-@keyframes bodyWave {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(3px); }
-}
-
-@keyframes bodyLaugh {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes bodyLove {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-}
-
-/* Head Animations */
-@keyframes headBob {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-2px) rotate(-2deg); }
-  75% { transform: translateY(-1px) rotate(2deg); }
-}
-
-@keyframes headWalk {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(3px); }
-}
-
-@keyframes headDance {
-  0%, 100% { transform: rotate(-8deg); }
-  50% { transform: rotate(8deg); }
-}
-
-@keyframes headCelebrate {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(5deg); }
-}
-
-@keyframes headSleep {
-  0%, 100% { transform: translateY(5px) rotate(-5deg); }
-  50% { transform: translateY(8px) rotate(-8deg); }
-}
-
-@keyframes headWave {
+@keyframes tailSwaySoft {
   0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(5deg); }
+  33% { transform: rotate(5deg); }
+  66% { transform: rotate(-5deg); }
 }
 
-@keyframes headLaugh {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+@keyframes wingIdleLeft {
+  0%, 100% { transform: scaleY(1) rotate(0deg); }
+  50% { transform: scaleY(0.92) rotate(-3deg); }
 }
 
-@keyframes headThink {
-  0%, 100% { transform: rotate(0deg) translateX(0); }
-  50% { transform: rotate(8deg) translateX(5px); }
+@keyframes wingIdleRight {
+  0%, 100% { transform: scaleY(1) rotate(0deg); }
+  50% { transform: scaleY(0.92) rotate(3deg); }
 }
 
-/* Tail Animations */
-@keyframes tailSwayIdle {
+@keyframes armIdleLeft {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(8deg); }
-  75% { transform: rotate(-8deg); }
+  50% { transform: rotate(-4deg); }
 }
 
-@keyframes tailWalk {
+@keyframes armIdleRight {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes eyeBlinkSoft {
+  0%, 42%, 58%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.08); }
+}
+
+@keyframes pupilLookSoft {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(1.5px, -0.5px); }
+  50% { transform: translate(-1px, 0.5px); }
+  75% { transform: translate(0.5px, 1px); }
+}
+
+@keyframes sparkleGlowSoft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+@keyframes cheekPulseSoft {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.05); }
+}
+
+@keyframes ambientFloatSoft {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+  50% { transform: translate(3px, -5px) scale(1.15); opacity: 0.9; }
+}
+
+/* Walking Soft */
+@keyframes bodyWalkSoft {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-2px) rotate(-1deg); }
+  75% { transform: translateY(-2px) rotate(1deg); }
+}
+
+@keyframes headWalkSoft {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
+}
+
+@keyframes legWalkLeft {
+  0%, 100% { transform: translateY(0) rotate(8deg); }
+  50% { transform: translateY(-5px) rotate(-8deg); }
+}
+
+@keyframes legWalkRight {
+  0%, 100% { transform: translateY(-5px) rotate(-8deg); }
+  50% { transform: translateY(0) rotate(8deg); }
+}
+
+@keyframes armWalkLeft {
+  0%, 100% { transform: rotate(10deg); }
+  50% { transform: rotate(-10deg); }
+}
+
+@keyframes armWalkRight {
   0%, 100% { transform: rotate(-10deg); }
   50% { transform: rotate(10deg); }
 }
 
-@keyframes tailDance {
-  0%, 100% { transform: rotate(-15deg); }
-  50% { transform: rotate(15deg); }
+@keyframes tailWalkSoft {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
 }
 
-@keyframes tailCelebrate {
-  0%, 100% { transform: rotate(-20deg); }
-  50% { transform: rotate(20deg); }
-}
-
-@keyframes tailSleep {
-  0%, 100% { transform: rotate(-3deg); }
-  50% { transform: rotate(3deg); }
-}
-
-@keyframes tailLove {
-  0%, 100% { transform: rotate(-12deg); }
-  50% { transform: rotate(12deg); }
-}
-
-/* Wing Animations */
-@keyframes wingFlapIdle {
+@keyframes wingWalkSoft {
   0%, 100% { transform: scaleY(1) rotate(0deg); }
   50% { transform: scaleY(0.85) rotate(-5deg); }
 }
 
-@keyframes wingFlapIdleRight {
-  0%, 100% { transform: scaleY(1) rotate(0deg); }
-  50% { transform: scaleY(0.85) rotate(5deg); }
+/* Dancing Swing */
+@keyframes bodySwing {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-3px) rotate(-3deg); }
+  75% { transform: translateX(3px) rotate(3deg); }
 }
 
-@keyframes wingFlapFast {
-  0%, 100% { transform: scaleY(1) rotate(0deg); }
-  50% { transform: scaleY(0.7) rotate(-10deg); }
-}
-
-@keyframes wingFlapFastRight {
-  0%, 100% { transform: scaleY(1) rotate(0deg); }
-  50% { transform: scaleY(0.7) rotate(10deg); }
-}
-
-@keyframes wingDance {
-  0%, 100% { transform: scaleY(1) rotate(-5deg); }
-  50% { transform: scaleY(0.6) rotate(5deg); }
-}
-
-@keyframes wingSleep {
-  0%, 100% { transform: scaleY(1); opacity: 0.7; }
-  50% { transform: scaleY(0.95); opacity: 0.6; }
-}
-
-/* Arm Animations */
-@keyframes armSwayLeft {
+@keyframes headSwing {
   0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(-8deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
 }
 
-@keyframes armSwayRight {
+@keyframes armSwingLeft {
   0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(8deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(10deg); }
 }
 
-@keyframes armWalkLeft {
-  0%, 100% { transform: rotate(15deg); }
-  50% { transform: rotate(-15deg); }
+@keyframes armSwingRight {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-15deg); }
 }
 
-@keyframes armWalkRight {
-  0%, 100% { transform: rotate(-15deg); }
-  50% { transform: rotate(15deg); }
-}
-
-@keyframes armDanceLeft {
-  0%, 100% { transform: rotate(-30deg) translateY(0); }
-  50% { transform: rotate(30deg) translateY(-10px); }
-}
-
-@keyframes armDanceRight {
-  0%, 100% { transform: rotate(30deg) translateY(0); }
-  50% { transform: rotate(-30deg) translateY(-10px); }
-}
-
-@keyframes armsCelebrate {
-  0%, 100% { transform: rotate(-40deg) translateY(0); }
-  50% { transform: rotate(-60deg) translateY(-15px); }
-}
-
-@keyframes armWave {
-  0%, 100% { transform: rotate(-20deg); }
-  25% { transform: rotate(-50deg); }
-  75% { transform: rotate(-30deg); }
-}
-
-@keyframes armThink {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  50% { transform: rotate(-20deg) translateY(-10px); }
-}
-
-/* Leg Animations */
-@keyframes legBounce {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.95); }
-}
-
-@keyframes legWalkLeft {
-  0%, 100% { transform: translateY(0) rotate(10deg); }
-  50% { transform: translateY(-8px) rotate(-10deg); }
-}
-
-@keyframes legWalkRight {
-  0%, 100% { transform: translateY(-8px) rotate(-10deg); }
-  50% { transform: translateY(0) rotate(10deg); }
-}
-
-@keyframes legDance {
+@keyframes legSwing {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+  50% { transform: translateY(-4px); }
 }
 
-/* Eye Animations */
-@keyframes eyeBlink {
-  0%, 45%, 55%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.1); }
+@keyframes tailSwing {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
 }
 
-@keyframes eyesClosed {
+@keyframes wingSwing {
+  0%, 100% { transform: scaleY(1) rotate(0deg); }
+  50% { transform: scaleY(0.88) rotate(-4deg); }
+}
+
+/* Celebrating Soft */
+@keyframes bodyCelebrateSoft {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.03); }
+}
+
+@keyframes headCelebrateSoft {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+}
+
+@keyframes armsCelebrateSoft {
+  0%, 100% { transform: rotate(-25deg) translateY(0); }
+  50% { transform: rotate(-40deg) translateY(-8px); }
+}
+
+@keyframes tailCelebrateSoft {
+  0%, 100% { transform: rotate(-12deg); }
+  50% { transform: rotate(12deg); }
+}
+
+@keyframes sparkleExplodeSoft {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+  100% { transform: scale(1.5) translate(5px, -8px); opacity: 0; }
+}
+
+/* Sleeping Soft */
+@keyframes bodySleepSoft {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.98); }
+}
+
+@keyframes headSleepSoft {
+  0%, 100% { transform: translateY(5px) rotate(-5deg); }
+  50% { transform: translateY(7px) rotate(-6deg); }
+}
+
+@keyframes eyesClosedSoft {
   0%, 100% { transform: scaleY(0.1); }
 }
 
-@keyframes eyelidClose {
-  0%, 100% { transform: scaleY(1); }
+@keyframes tailSleepSoft {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
 }
 
-@keyframes eyesLove {
+@keyframes wingSleepSoft {
+  0%, 100% { transform: scaleY(1); opacity: 0.7; }
+  50% { transform: scaleY(0.96); opacity: 0.6; }
+}
+
+/* Waving Soft */
+@keyframes armWaveSoft {
+  0%, 100% { transform: rotate(-25deg); }
+  33% { transform: rotate(-45deg); }
+  66% { transform: rotate(-30deg); }
+}
+
+@keyframes bodyWaveSoft {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
+}
+
+@keyframes headWaveSoft {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+/* Laughing Soft */
+@keyframes bodyLaughSoft {
   0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes headLaughSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes cheekLaughSoft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Thinking Soft */
+@keyframes headThinkSoft {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  50% { transform: rotate(6deg) translateX(3px); }
+}
+
+@keyframes pupilThinkSoft {
+  0%, 100% { transform: translate(2px, -1px); }
+  50% { transform: translate(4px, -2px); }
+}
+
+@keyframes armThinkSoft {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(-15deg) translateY(-6px); }
+}
+
+/* Love Soft */
+@keyframes eyesLoveSoft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes cheekLoveSoft {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes bodyLoveSoft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes tailLoveSoft {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+
+/* Jumping Soft */
+@keyframes jumpContainer {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes bodyJumpSoft {
+  0% { transform: scaleY(0.92); }
+  30% { transform: scaleY(1.05) translateY(-8px); }
+  100% { transform: scaleY(1) translateY(0); }
+}
+
+@keyframes legJumpSoft {
+  0% { transform: rotate(10deg); }
+  50% { transform: rotate(-15deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes wingJumpSoft {
+  0%, 100% { transform: scaleY(1) rotate(0deg); }
+  50% { transform: scaleY(1.1) rotate(-8deg); }
+}
+
+/* Surprised Soft */
+@keyframes bodySurpriseSoft {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.03); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes eyesSurpriseSoft {
+  0% { transform: scale(1); }
   50% { transform: scale(1.15); }
+  100% { transform: scale(1.08); }
 }
 
-@keyframes pupilLook {
-  0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(2px, -1px); }
-  50% { transform: translate(-2px, 1px); }
-  75% { transform: translate(1px, 2px); }
-}
-
-@keyframes pupilThink {
-  0%, 100% { transform: translate(3px, -2px); }
-  50% { transform: translate(5px, -3px); }
-}
-
-/* Sparkle Animations */
-@keyframes sparkleGlow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-@keyframes ambientFloat {
-  0%, 100% { 
-    transform: translate(0, 0) scale(1);
-    opacity: 0.8;
-  }
-  50% { 
-    transform: translate(5px, -8px) scale(1.3);
-    opacity: 1;
-  }
-}
-
-@keyframes sparkleExplode {
-  0% { transform: scale(1) translate(0, 0); opacity: 1; }
-  100% { transform: scale(2) translate(10px, -15px); opacity: 0; }
-}
-
-/* Cheek Animations */
-@keyframes cheekPulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.1); }
-}
-
-@keyframes cheekLove {
-  0%, 100% { opacity: 0.8; transform: scale(1); fill: #FFB6C1; }
-  50% { opacity: 1; transform: scale(1.2); fill: #FF6B9D; }
-}
-
-/* Tongue Animation */
-@keyframes tongueBounce {
-  0%, 100% { transform: translateY(0) scaleY(1); }
-  50% { transform: translateY(3px) scaleY(1.1); }
+@keyframes armsSurpriseSoft {
+  0% { transform: rotate(0deg) translateY(0); }
+  100% { transform: rotate(-12deg) translateY(-5px); }
 }
 
 /* Shadow */
@@ -619,12 +636,12 @@
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
   border-radius: 50%;
   z-index: 1;
-  animation: shadowPulse 3s ease-in-out infinite;
+  animation: shadowPulseSoft 4s ease-in-out infinite;
 }
 
-@keyframes shadowPulse {
+@keyframes shadowPulseSoft {
   0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.2; }
-  50% { transform: translateX(-50%) scale(1.1); opacity: 0.15; }
+  50% { transform: translateX(-50%) scale(1.05); opacity: 0.15; }
 }
 
 /* Emoji Bubble */
@@ -637,37 +654,30 @@
 
 .emoji-float {
   font-size: 1.8rem;
-  animation: emojiFloat 1.5s ease-in-out infinite;
+  animation: emojiFloatSoft 2s ease-in-out infinite;
   display: block;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
-@keyframes emojiFloat {
-  0%, 100% {
-    transform: translateY(0) scale(1) rotate(-5deg);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.15) rotate(5deg);
-  }
+@keyframes emojiFloatSoft {
+  0%, 100% { transform: translateY(0) scale(1) rotate(-3deg); }
+  50% { transform: translateY(-6px) scale(1.08) rotate(3deg); }
 }
 
 /* Hover Effects */
 .dragon-mascot-container:hover .dragon-cheek {
-  opacity: 0.9 !important;
-  animation: cheekHover 0.3s ease-out forwards;
-}
-
-@keyframes cheekHover {
-  to { transform: scale(1.2); }
+  opacity: 0.85 !important;
+  transform: scale(1.08);
+  transition: all 0.3s ease;
 }
 
 .dragon-mascot-container:hover .ambient-sparkle {
-  animation: sparkleHover 0.5s ease-out infinite;
+  animation: sparkleHoverSoft 0.8s ease-out infinite;
 }
 
-@keyframes sparkleHover {
+@keyframes sparkleHoverSoft {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.5); }
+  50% { transform: scale(1.3); }
 }
 
 /* Mobile Responsiveness */
