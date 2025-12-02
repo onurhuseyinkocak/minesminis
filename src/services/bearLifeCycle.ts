@@ -6,6 +6,8 @@
 
 type LifeCycleState = 'idle' | 'teaching' | 'playing' | 'sleeping' | 'eating' | 'goingHome' | 'interacting';
 
+export type BearState = 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'thinking' | 'love' | 'singing' | 'surprised' | 'jumping' | 'following';
+
 type LifeCycleListener = (state: { state: LifeCycleState }) => void;
 
 class BearLifeCycleService {

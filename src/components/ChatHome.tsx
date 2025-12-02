@@ -120,7 +120,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                 {/* HEADER */}
                 <div className="chat-home-header">
                     <div className="header-bear">
-                        <ProfessorPaws bearState="waving" facingDirection="right" />
+                        <ProfessorPaws bearState="waving" viewDirection="right" />
                     </div>
                     <div className="header-title">
                         <h2>Mimi's Cottage</h2>
@@ -147,7 +147,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                         <div key={msg.id} className={`message-row ${msg.role}`}>
                             {msg.role === 'assistant' && (
                                 <div className="avatar-bear">
-                                    <ProfessorPaws bearState="idle" facingDirection="right" />
+                                    <ProfessorPaws bearState="idle" viewDirection="right" />
                                 </div>
                             )}
                             <div className={`message-bubble ${msg.role}`}>
@@ -159,7 +159,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                     {isTyping && (
                         <div className="message-row assistant">
                             <div className="avatar-bear">
-                                <ProfessorPaws bearState="thinking" facingDirection="right" />
+                                <ProfessorPaws bearState="thinking" viewDirection="right" />
                             </div>
                             <div className="message-bubble assistant typing-indicator">
                                 <span>•</span><span>•</span><span>•</span>

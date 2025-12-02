@@ -27,7 +27,7 @@ const LivingBear: React.FC<LivingBearProps> = ({ onBearClick, speechText }) => {
             if (state === 'walking') {
                 setBearState('walking');
                 setIsBearHome(false);
-            } else if (state === 'active') {
+            } else if (state === 'celebrating') {
                 setBearState('celebrating');
             } else {
                 setBearState('idle');
@@ -87,7 +87,6 @@ const LivingBear: React.FC<LivingBearProps> = ({ onBearClick, speechText }) => {
         }
     };
 
-    // Get animation class
     const getAnimationClass = () => {
         switch (bearState) {
             case 'walking':
@@ -96,8 +95,6 @@ const LivingBear: React.FC<LivingBearProps> = ({ onBearClick, speechText }) => {
                 return 'sleeping';
             case 'celebrating':
                 return 'celebrating';
-            case 'interacting':
-                return 'pointing';
             default:
                 return 'idle';
         }

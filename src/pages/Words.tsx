@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { BookOpen, Volume2, Star, Trophy, Sparkles } from "lucide-react";
@@ -75,7 +75,6 @@ const Words: React.FC = () => {
   const [wordData, setWordData] = useState<WordDefinition | null>(null);
   const [turkishTranslation, setTurkishTranslation] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'definition' | 'translation'>('definition');
   const [selectedLevel, setSelectedLevel] = useState<'all' | 'beginner' | 'intermediate' | 'advanced'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set());

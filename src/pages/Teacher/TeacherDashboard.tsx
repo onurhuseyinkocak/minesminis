@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { BarChart3, Users, BookOpen, Award, TrendingUp } from 'lucide-react';
+import { Users, BookOpen, Award, TrendingUp } from 'lucide-react';
 
 const TeacherDashboard: React.FC = () => {
   const { userProfile } = useAuth();

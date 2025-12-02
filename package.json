@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "concurrently \"npm:server:dev\" \"vite\"",
     "build": "tsc -b && vite build",
+    "start": "concurrently \"npm:server:start\" \"npm:preview:prod\"",
+    "preview:prod": "vite preview --host 0.0.0.0 --port 5000",
     "lint": "eslint .",
     "preview": "vite preview",
     "server:dev": "cd server && npm run dev",
+    "server:start": "cd server && npm run start",
     "server:install": "cd server && npm install"
   },
   "dependencies": {
