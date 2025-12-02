@@ -114,9 +114,9 @@ class MascotRoamingService {
     private state: AnimationState = 'idle';
     private viewDirection: ViewDirection = 'front';
     private isRoaming: boolean = false;
-    private roamingInterval: NodeJS.Timeout | null = null;
-    private bubbleInterval: NodeJS.Timeout | null = null;
-    private mouseFollowInterval: NodeJS.Timeout | null = null;
+    private roamingInterval: ReturnType<typeof setTimeout> | null = null;
+    private bubbleInterval: ReturnType<typeof setTimeout> | null = null;
+    private mouseFollowInterval: ReturnType<typeof setTimeout> | null = null;
     private listeners: ((pos: Position, state: AnimationState, view: ViewDirection, bubble: SpeechBubble | null) => void)[] = [];
 
     private energy: number = 100;
@@ -130,7 +130,7 @@ class MascotRoamingService {
     
     private isFollowingMouse: boolean = false;
     private mousePosition: Position = { x: 50, y: 50 };
-    private followTimeout: NodeJS.Timeout | null = null;
+    private followTimeout: ReturnType<typeof setTimeout> | null = null;
 
     startRoaming(): void {
         if (this.isRoaming) return;
@@ -288,13 +288,12 @@ class MascotRoamingService {
         const newX = this.position.x + dx * speed;
         const newY = this.position.y + dy * speed;
         
-        this.previousPosition = { ...this.position };
         this.position = { x: newX, y: newY };
         
         if (dx > 2) {
-            this.viewDirection = 'left';
-        } else if (dx < -2) {
             this.viewDirection = 'right';
+        } else if (dx < -2) {
+            this.viewDirection = 'left';
         } else {
             this.viewDirection = 'front';
         }
@@ -378,13 +377,12 @@ class MascotRoamingService {
         const dx = targetPosition.x - this.position.x;
         
         if (dx > 2) {
-            this.viewDirection = 'left';
-        } else if (dx < -2) {
             this.viewDirection = 'right';
+        } else if (dx < -2) {
+            this.viewDirection = 'left';
         }
 
         this.state = 'walking';
-        this.previousPosition = { ...this.position };
         this.position = { ...targetPosition };
         this.notifyListeners();
 

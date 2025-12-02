@@ -78,10 +78,6 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
         setIsHovered(false);
     };
 
-    const getFacingDirection = (): 'left' | 'right' => {
-        return viewDirection === 'right' ? 'left' : 'right';
-    };
-
     return (
         <div className="living-bear-container" ref={containerRef}>
             <div
@@ -93,7 +89,7 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
                     transform: 'translate(-50%, -50%)',
                     transition: animationState === 'following' 
                         ? 'left 0.3s ease-out, top 0.3s ease-out'
-                        : 'left 6s cubic-bezier(0.25, 0.1, 0.25, 1), top 6s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                        : 'left 4s cubic-bezier(0.25, 0.1, 0.25, 1), top 4s cubic-bezier(0.25, 0.1, 0.25, 1)',
                     zIndex: 9999,
                     pointerEvents: 'none'
                 }}
@@ -112,7 +108,6 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
                 >
                     <ProfessorPaws
                         bearState={animationState === 'following' ? 'walking' : animationState}
-                        facingDirection={getFacingDirection()}
                         viewDirection={viewDirection}
                         isHovered={isHovered}
                     />

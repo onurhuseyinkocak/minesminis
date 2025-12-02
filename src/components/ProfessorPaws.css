@@ -5,60 +5,28 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+    transition: transform 0.4s ease-out, filter 0.3s ease;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12));
     cursor: pointer;
     z-index: 1000;
-    transform-style: preserve-3d;
 }
 
 .professor-paws-container.is-hovered {
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.18));
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.18));
 }
 
 .professor-paws-container.is-hovered .character-svg {
-    animation: hover-tilt 0.5s ease-out forwards !important;
+    animation: hover-bounce 0.4s ease-out forwards;
 }
 
-@keyframes hover-tilt {
-    0% { transform: rotate(0deg) scale(1); }
-    30% { transform: rotate(-3deg) scale(1.03); }
-    60% { transform: rotate(2deg) scale(1.02); }
-    100% { transform: rotate(0deg) scale(1.02); }
+@keyframes hover-bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1.03); }
 }
 
 .professor-paws-container:active {
-    transform: scale(0.98) !important;
-}
-
-.professor-paws-container.view-left {
-    transform: perspective(400px) rotateY(-25deg);
-}
-
-.professor-paws-container.view-right {
-    transform: perspective(400px) rotateY(25deg);
-}
-
-.professor-paws-container.view-front {
-    transform: perspective(400px) rotateY(0deg);
-}
-
-.professor-paws-container.ear-wiggle .ear-left,
-.professor-paws-container.ear-wiggle .ear-right {
-    animation: hover-ear-wiggle 0.6s ease-out !important;
-}
-
-@keyframes hover-ear-wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    20% { transform: rotate(-8deg); }
-    40% { transform: rotate(6deg); }
-    60% { transform: rotate(-4deg); }
-    80% { transform: rotate(2deg); }
-}
-
-.ear-left.wiggling,
-.ear-right.wiggling {
-    animation: hover-ear-wiggle 0.6s ease-out !important;
+    transform: scale(0.96) !important;
 }
 
 .character-svg {
@@ -69,91 +37,115 @@
 
 .limb {
     transform-origin: center top;
-    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-.arm-back { transform-origin: 55px 130px; }
-.arm-front { transform-origin: 145px 130px; }
-.leg-back { transform-origin: 70px 190px; }
-.leg-front { transform-origin: 130px 190px; }
-.head-group { transform-origin: 100px 120px; }
-.ear-left { transform-origin: 60px 50px; }
-.ear-right { transform-origin: 140px 50px; }
+.arm-back { transform-origin: 60px 130px; }
+.arm-front { transform-origin: 140px 130px; }
+.leg-back { transform-origin: 75px 185px; }
+.leg-front { transform-origin: 125px 185px; }
+.head-group { transform-origin: 100px 90px; }
+.ear-left { transform-origin: 55px 48px; }
+.ear-right { transform-origin: 145px 48px; }
+.body-group { transform-origin: 100px 160px; }
 
 .state-idle .character-svg {
-    animation: idle-breathe 4s ease-in-out infinite;
+    animation: idle-breathe 3.5s ease-in-out infinite;
 }
 
 .state-idle .head-group {
-    animation: idle-head-tilt 8s ease-in-out infinite;
-}
-
-.state-idle .ear-left,
-.state-idle .ear-right {
-    animation: ear-wiggle 6s ease-in-out infinite;
+    animation: idle-head 6s ease-in-out infinite;
 }
 
 @keyframes idle-breathe {
     0%, 100% { transform: scale(1) translateY(0); }
-    50% { transform: scale(1.015, 0.985) translateY(1px); }
+    50% { transform: scale(1.01, 0.99) translateY(1px); }
 }
 
-@keyframes idle-head-tilt {
+@keyframes idle-head {
     0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-2deg); }
-    75% { transform: rotate(2deg); }
-}
-
-@keyframes ear-wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-3deg); }
-    75% { transform: rotate(3deg); }
+    30% { transform: rotate(-1.5deg); }
+    70% { transform: rotate(1.5deg); }
 }
 
 .state-walking .character-svg {
-    animation: walk-waddle 2.2s ease-in-out infinite;
+    animation: walk-bounce 0.5s ease-in-out infinite;
 }
 
-.state-walking .leg-back { animation: walk-leg 2.2s ease-in-out infinite; }
-.state-walking .leg-front { animation: walk-leg 2.2s ease-in-out infinite reverse; }
-.state-walking .arm-back { animation: walk-arm 2.2s ease-in-out infinite reverse; }
-.state-walking .arm-front { animation: walk-arm 2.2s ease-in-out infinite; }
-.state-walking .head-group { animation: walk-head 2.2s ease-in-out infinite; }
-
-@keyframes walk-waddle {
-    0%, 100% { transform: rotate(-2deg) translateY(0); }
-    50% { transform: rotate(2deg) translateY(-3px); }
+.state-walking .leg-back { 
+    animation: walk-leg-back 0.5s ease-in-out infinite; 
+}
+.state-walking .leg-front { 
+    animation: walk-leg-front 0.5s ease-in-out infinite; 
+}
+.state-walking .arm-back { 
+    animation: walk-arm-back 0.5s ease-in-out infinite; 
+}
+.state-walking .arm-front { 
+    animation: walk-arm-front 0.5s ease-in-out infinite; 
+}
+.state-walking .head-group { 
+    animation: walk-head 0.5s ease-in-out infinite; 
+}
+.state-walking .body-group {
+    animation: walk-body 0.5s ease-in-out infinite;
 }
 
-@keyframes walk-leg {
-    0%, 100% { transform: rotate(-12deg); }
-    50% { transform: rotate(12deg); }
+@keyframes walk-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
 }
 
-@keyframes walk-arm {
-    0%, 100% { transform: rotate(6deg); }
-    50% { transform: rotate(-6deg); }
+@keyframes walk-leg-back {
+    0%, 100% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
+}
+
+@keyframes walk-leg-front {
+    0%, 100% { transform: rotate(15deg); }
+    50% { transform: rotate(-15deg); }
+}
+
+@keyframes walk-arm-back {
+    0%, 100% { transform: rotate(10deg); }
+    50% { transform: rotate(-10deg); }
+}
+
+@keyframes walk-arm-front {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
 }
 
 @keyframes walk-head {
-    0%, 100% { transform: translateX(-1px); }
-    50% { transform: translateX(1px); }
+    0%, 100% { transform: translateX(-1px) rotate(-1deg); }
+    50% { transform: translateX(1px) rotate(1deg); }
 }
 
+@keyframes walk-body {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+}
 
-.state-dancing .character-svg { animation: dance-groove 1.8s ease-in-out infinite; }
-.state-dancing .head-group { animation: dance-head 0.9s ease-in-out infinite; }
-.state-dancing .arm-back { animation: dance-arm-left 1.8s ease-in-out infinite; }
-.state-dancing .arm-front { animation: dance-arm-right 1.8s ease-in-out infinite; }
-.state-dancing .leg-back { animation: dance-leg 1.8s ease-in-out infinite; }
-.state-dancing .leg-front { animation: dance-leg 1.8s ease-in-out infinite reverse; }
-.state-dancing .ear-left, .state-dancing .ear-right { animation: dance-ears 0.9s ease-in-out infinite; }
+.state-dancing .character-svg { 
+    animation: dance-groove 0.6s ease-in-out infinite; 
+}
+.state-dancing .head-group { 
+    animation: dance-head 0.3s ease-in-out infinite; 
+}
+.state-dancing .arm-back { 
+    animation: dance-arm-left 0.6s ease-in-out infinite; 
+}
+.state-dancing .arm-front { 
+    animation: dance-arm-right 0.6s ease-in-out infinite; 
+}
+.state-dancing .leg-back, .state-dancing .leg-front { 
+    animation: dance-leg 0.6s ease-in-out infinite; 
+}
 
 @keyframes dance-groove {
-    0%, 100% { transform: rotate(-5deg) translateY(0); }
-    25% { transform: rotate(0deg) translateY(-5px); }
-    50% { transform: rotate(5deg) translateY(0); }
-    75% { transform: rotate(0deg) translateY(-5px); }
+    0%, 100% { transform: rotate(-4deg) translateY(0); }
+    25% { transform: rotate(0deg) translateY(-6px); }
+    50% { transform: rotate(4deg) translateY(0); }
+    75% { transform: rotate(0deg) translateY(-6px); }
 }
 
 @keyframes dance-head {
@@ -162,305 +154,186 @@
 }
 
 @keyframes dance-arm-left {
-    0%, 100% { transform: rotate(-25deg); }
-    50% { transform: rotate(-55deg); }
+    0%, 100% { transform: rotate(-30deg); }
+    50% { transform: rotate(-60deg); }
 }
 
 @keyframes dance-arm-right {
-    0%, 100% { transform: rotate(25deg); }
-    50% { transform: rotate(55deg); }
+    0%, 100% { transform: rotate(30deg); }
+    50% { transform: rotate(60deg); }
 }
 
 @keyframes dance-leg {
-    0%, 100% { transform: rotate(-8deg); }
-    50% { transform: rotate(8deg); }
-}
-
-@keyframes dance-ears {
     0%, 100% { transform: rotate(-6deg); }
     50% { transform: rotate(6deg); }
 }
 
-.state-celebrating .character-svg { animation: celebrate-jump 1s cubic-bezier(0.25, 0.1, 0.25, 1) infinite; }
-.state-celebrating .arm-back, .state-celebrating .arm-front { animation: celebrate-arms 1s ease-in-out infinite; }
-.state-celebrating .head-group { animation: celebrate-head 0.5s ease-in-out infinite; }
+.state-celebrating .character-svg { 
+    animation: celebrate-jump 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite; 
+}
+.state-celebrating .arm-back, .state-celebrating .arm-front { 
+    animation: celebrate-arms 0.6s ease-in-out infinite; 
+}
 
 @keyframes celebrate-jump {
     0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-12px) scale(1.03); }
+    50% { transform: translateY(-15px) scale(1.03); }
 }
 
 @keyframes celebrate-arms {
-    0%, 100% { transform: rotate(-45deg); }
-    50% { transform: rotate(-65deg); }
+    0%, 100% { transform: rotate(-50deg); }
+    50% { transform: rotate(-70deg); }
 }
 
-@keyframes celebrate-head {
-    0%, 100% { transform: rotate(-2deg); }
-    50% { transform: rotate(2deg); }
-}
-
-.state-waving .character-svg { animation: wave-body 3s ease-in-out infinite; }
-.state-waving .arm-front { animation: wave-arm 0.8s ease-in-out infinite; }
-.state-waving .head-group { animation: wave-head 3s ease-in-out infinite; }
-
-@keyframes wave-body {
-    0%, 100% { transform: rotate(-1deg); }
-    50% { transform: rotate(1deg); }
+.state-waving .arm-front { 
+    animation: wave-arm 0.4s ease-in-out infinite; 
 }
 
 @keyframes wave-arm {
-    0%, 100% { transform: rotate(-35deg); }
-    50% { transform: rotate(-55deg); }
+    0%, 100% { transform: rotate(-40deg); }
+    50% { transform: rotate(-65deg); }
 }
 
-@keyframes wave-head {
-    0%, 100% { transform: rotate(-3deg); }
-    50% { transform: rotate(3deg); }
+.state-sleeping .character-svg { 
+    animation: sleep-breathe 4s ease-in-out infinite; 
 }
-
-.state-sleeping .character-svg { animation: sleep-breathe 5s ease-in-out infinite; }
-.state-sleeping .head-group { animation: sleep-head 5s ease-in-out infinite; }
+.state-sleeping .head-group { 
+    animation: sleep-head 4s ease-in-out infinite; 
+}
 
 @keyframes sleep-breathe {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02, 0.98); }
+    50% { transform: scale(1.015, 0.985); }
 }
 
 @keyframes sleep-head {
-    0%, 100% { transform: rotate(-4deg) translateY(0); }
-    50% { transform: rotate(-4deg) translateY(2px); }
+    0%, 100% { transform: rotate(-5deg) translateY(0); }
+    50% { transform: rotate(-5deg) translateY(2px); }
 }
 
-.state-laughing .character-svg { animation: laugh-shake 0.25s ease-in-out infinite; }
-.state-laughing .head-group { animation: laugh-head 0.35s ease-in-out infinite; }
-.state-laughing .arm-back, .state-laughing .arm-front { animation: laugh-arms 0.5s ease-in-out infinite; }
+.state-laughing .character-svg { 
+    animation: laugh-shake 0.15s ease-in-out infinite; 
+}
+.state-laughing .head-group { 
+    animation: laugh-head 0.2s ease-in-out infinite; 
+}
 
 @keyframes laugh-shake {
-    0%, 100% { transform: translateX(-1px) rotate(-0.5deg); }
-    50% { transform: translateX(1px) rotate(0.5deg); }
+    0%, 100% { transform: translateX(-1px); }
+    50% { transform: translateX(1px); }
 }
 
 @keyframes laugh-head {
-    0%, 100% { transform: translateY(0) rotate(-1deg); }
-    50% { transform: translateY(-2px) rotate(1deg); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
 }
 
-@keyframes laugh-arms {
-    0%, 100% { transform: rotate(-15deg); }
-    50% { transform: rotate(-30deg); }
+.state-singing .character-svg { 
+    animation: sing-sway 1.5s ease-in-out infinite; 
 }
-
-.state-singing .character-svg { animation: sing-sway 2.5s ease-in-out infinite; }
-.state-singing .head-group { animation: sing-head 1.25s ease-in-out infinite; }
-.state-singing .arm-back { animation: sing-arm-left 2.5s ease-in-out infinite; }
-.state-singing .arm-front { animation: sing-arm-right 2.5s ease-in-out infinite; }
+.state-singing .head-group { 
+    animation: sing-head 0.75s ease-in-out infinite; 
+}
 
 @keyframes sing-sway {
-    0%, 100% { transform: rotate(-3deg); }
-    50% { transform: rotate(3deg); }
-}
-
-@keyframes sing-head {
-    0%, 100% { transform: rotate(-5deg) translateY(0); }
-    50% { transform: rotate(5deg) translateY(-2px); }
-}
-
-@keyframes sing-arm-left {
-    0%, 100% { transform: rotate(-15deg); }
-    50% { transform: rotate(-35deg); }
-}
-
-@keyframes sing-arm-right {
-    0%, 100% { transform: rotate(15deg); }
-    50% { transform: rotate(35deg); }
-}
-
-.state-thinking .character-svg { animation: think-breathe 4s ease-in-out infinite; }
-.state-thinking .head-group { animation: think-head 4s ease-in-out infinite; }
-.state-thinking .arm-front { animation: think-arm 4s ease-in-out infinite; }
-
-@keyframes think-breathe {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(1px); }
-}
-
-@keyframes think-head {
-    0%, 100% { transform: rotate(3deg) translateX(2px); }
-    50% { transform: rotate(5deg) translateX(3px); }
-}
-
-@keyframes think-arm {
-    0%, 100% { transform: rotate(-25deg) translateY(-8px); }
-    50% { transform: rotate(-28deg) translateY(-10px); }
-}
-
-.state-surprised .character-svg { animation: surprise-jump 0.8s cubic-bezier(0.25, 0.1, 0.25, 1); }
-.state-surprised .head-group { animation: surprise-head 0.5s ease-out; }
-.state-surprised .ear-left, .state-surprised .ear-right { animation: surprise-ears 0.8s ease-out; }
-
-@keyframes surprise-jump {
-    0% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-10px) scale(1.06); }
-    100% { transform: translateY(0) scale(1); }
-}
-
-@keyframes surprise-head {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.06) translateY(-3px); }
-    100% { transform: scale(1); }
-}
-
-@keyframes surprise-ears {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(10deg); }
-    100% { transform: rotate(0deg); }
-}
-
-.state-love .character-svg { animation: love-float 3s ease-in-out infinite; }
-.state-love .head-group { animation: love-head 1.5s ease-in-out infinite; }
-
-@keyframes love-float {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-5px) scale(1.01); }
-}
-
-@keyframes love-head {
     0%, 100% { transform: rotate(-2deg); }
     50% { transform: rotate(2deg); }
 }
 
-.state-jumping .character-svg { animation: jump-high 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) infinite; }
-.state-jumping .arm-back, .state-jumping .arm-front { animation: jump-arms 0.8s ease-in-out infinite; }
-.state-jumping .leg-back, .state-jumping .leg-front { animation: jump-legs 0.8s ease-in-out infinite; }
+@keyframes sing-head {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(4deg); }
+}
+
+.state-thinking .head-group { 
+    animation: think-head 3s ease-in-out infinite; 
+}
+.state-thinking .arm-front { 
+    animation: think-arm 3s ease-in-out infinite; 
+}
+
+@keyframes think-head {
+    0%, 100% { transform: rotate(3deg); }
+    50% { transform: rotate(5deg); }
+}
+
+@keyframes think-arm {
+    0%, 100% { transform: rotate(-30deg) translateY(-10px); }
+    50% { transform: rotate(-35deg) translateY(-12px); }
+}
+
+.state-surprised .character-svg { 
+    animation: surprise-jump 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); 
+}
+
+@keyframes surprise-jump {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-12px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+.state-love .character-svg { 
+    animation: love-float 2s ease-in-out infinite; 
+}
+
+@keyframes love-float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-6px) scale(1.02); }
+}
+
+.state-jumping .character-svg { 
+    animation: jump-high 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) infinite; 
+}
+.state-jumping .arm-back, .state-jumping .arm-front { 
+    animation: jump-arms 0.5s ease-in-out infinite; 
+}
+.state-jumping .leg-back, .state-jumping .leg-front { 
+    animation: jump-legs 0.5s ease-in-out infinite; 
+}
 
 @keyframes jump-high {
     0%, 100% { transform: translateY(0) scaleY(1); }
-    30% { transform: translateY(3px) scaleY(0.95); }
-    50% { transform: translateY(-18px) scaleY(1.05); }
+    25% { transform: translateY(3px) scaleY(0.95); }
+    50% { transform: translateY(-20px) scaleY(1.02); }
 }
 
 @keyframes jump-arms {
     0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-45deg); }
+    50% { transform: rotate(-50deg); }
 }
 
 @keyframes jump-legs {
     0%, 100% { transform: rotate(0deg); }
-    30% { transform: rotate(10deg); }
-    50% { transform: rotate(-8deg); }
-}
-
-.floating-heart {
-    position: absolute;
-    font-size: 16px;
-    animation: float-heart 2.5s ease-out forwards;
-    pointer-events: none;
-    z-index: 1001;
-}
-
-@keyframes float-heart {
-    0% { transform: translateY(0) scale(0.4) rotate(0deg); opacity: 0; }
-    15% { opacity: 1; }
-    100% { transform: translateY(-50px) scale(1) rotate(10deg); opacity: 0; }
-}
-
-.floating-note {
-    position: absolute;
-    font-size: 14px;
-    animation: float-note 2.5s ease-out forwards;
-    pointer-events: none;
-    z-index: 1001;
-}
-
-@keyframes float-note {
-    0% { transform: translateY(0) scale(0.6) rotate(-8deg); opacity: 0; }
-    15% { opacity: 1; }
-    100% { transform: translateY(-40px) translateX(15px) scale(1) rotate(15deg); opacity: 0; }
-}
-
-.chat-bubble {
-    position: absolute;
-    top: -50px;
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF8F5 100%);
-    padding: 8px 14px;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    font-family: 'Nunito', 'Poppins', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: #5D3A1A;
-    white-space: nowrap;
-    z-index: 2000;
-    opacity: 0;
-    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-    pointer-events: none;
-    border: 2px solid #FFD1DC;
-}
-
-.chat-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #FFD1DC;
-}
-
-.chat-bubble::before {
-    content: '';
-    position: absolute;
-    bottom: -7px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 8px solid #FFFFFF;
-    z-index: 1;
-}
-
-.chat-bubble.visible {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    25% { transform: rotate(8deg); }
+    50% { transform: rotate(-10deg); }
 }
 
 .character-shadow {
     position: absolute;
-    bottom: -6px;
+    bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 55%;
-    height: 10px;
-    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.15) 0%, transparent 70%);
+    width: 60%;
+    height: 12px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.12) 0%, transparent 70%);
     border-radius: 50%;
     z-index: -1;
-    animation: shadow-pulse 4s infinite ease-in-out;
 }
 
-@keyframes shadow-pulse {
-    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.15; }
-    50% { transform: translateX(-50%) scale(1.1); opacity: 0.2; }
+.state-walking .character-shadow,
+.state-dancing .character-shadow,
+.state-celebrating .character-shadow,
+.state-jumping .character-shadow {
+    animation: shadow-walk 0.5s ease-in-out infinite;
 }
 
-.waving-sparkles text {
-    animation: sparkle-float 1.5s ease-in-out infinite;
-}
-
-@keyframes sparkle-float {
-    0%, 100% { opacity: 1; transform: translateY(0); }
-    50% { opacity: 0.6; transform: translateY(-3px); }
+@keyframes shadow-walk {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.12; }
+    50% { transform: translateX(-50%) scale(0.85); opacity: 0.08; }
 }
 
 .nose {
-    animation: nose-wiggle 7s ease-in-out infinite;
+    animation: nose-wiggle 5s ease-in-out infinite;
 }
 
 @keyframes nose-wiggle {
@@ -474,31 +347,11 @@
         width: 100px;
         height: 115px;
     }
-
-    .chat-bubble {
-        font-size: 11px;
-        padding: 6px 10px;
-        top: -42px;
-    }
-
-    .floating-heart {
-        font-size: 14px;
-    }
-
-    .floating-note {
-        font-size: 12px;
-    }
 }
 
 @media (max-width: 480px) {
     .professor-paws-container {
         width: 85px;
         height: 98px;
-    }
-
-    .chat-bubble {
-        font-size: 10px;
-        padding: 5px 8px;
-        top: -38px;
     }
 }

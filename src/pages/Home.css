@@ -1,124 +1,94 @@
 .home-page {
   min-height: calc(100vh - 200px);
   padding: var(--spacing-xl);
-  max-width: 1600px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Welcome Banner - Premium Glassmorphism */
 .welcome-banner {
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: var(--radius-2xl);
-  padding: var(--spacing-3xl);
-  margin-bottom: var(--spacing-2xl);
-  box-shadow: var(--shadow-xl);
-  border: 1px solid var(--glass-border);
-  position: relative;
-  overflow: hidden;
-}
-
-.welcome-banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: var(--gradient-rainbow);
-  animation: gradientShift 3s ease infinite;
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--bg-navy-soft);
 }
 
 .welcome-content {
   text-align: center;
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-xl);
 }
 
-.mascot-bounce {
-  display: inline-block;
+.mascot-star {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: var(--bg-navy-soft);
+  border-radius: var(--radius-full);
   margin-bottom: var(--spacing-lg);
-}
-
-.mascot-icon {
-  color: var(--primary-yellow);
-  filter: drop-shadow(0 0 30px rgba(252, 211, 77, 0.8));
-  animation: float 3s ease-in-out infinite;
+  color: var(--primary-navy);
 }
 
 .welcome-title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 900;
-  margin-bottom: var(--spacing-md);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
   color: var(--text-dark);
-  letter-spacing: -0.5px;
-}
-
-.glow-text {
-  text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
 }
 
 .welcome-subtitle {
-  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-  color: var(--text-gray);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-medium);
   font-weight: 500;
 }
 
-/* Stats Row - Premium Cards */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
 }
 
 .stat-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-xl);
+  background: var(--bg-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   transition: all var(--transition-base);
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-
-.stat-card:hover::before {
-  opacity: 1;
+  border: 1px solid transparent;
 }
 
 .stat-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-2xl);
-  border-color: rgba(255, 255, 255, 0.8);
+  background: white;
+  border-color: var(--bg-navy-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-icon {
-  width: 70px;
-  height: 70px;
-  border-radius: var(--radius-lg);
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: var(--shadow-lg);
   flex-shrink: 0;
+}
+
+.stat-icon.coral {
+  background: var(--accent-coral);
+}
+
+.stat-icon.mint {
+  background: var(--accent-mint);
+}
+
+.stat-icon.navy {
+  background: var(--primary-navy);
 }
 
 .stat-info {
@@ -126,240 +96,162 @@
 }
 
 .stat-value {
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 900;
+  font-size: 1.75rem;
+  font-weight: 700;
   color: var(--text-dark);
-  line-height: 1;
-  margin-bottom: var(--spacing-xs);
+  line-height: 1.2;
 }
 
 .stat-label {
-  font-size: 0.9375rem;
-  color: var(--text-gray);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 0.875rem;
+  color: var(--text-light);
+  font-weight: 500;
 }
 
-/* Menu Grid - Premium Cards */
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-2xl);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .menu-card {
-  display: block;
-  text-decoration: none;
-}
-
-.menu-card-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
   background: white;
-  border-radius: var(--radius-2xl);
-  padding: var(--spacing-2xl);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
   transition: all var(--transition-base);
-  position: relative;
-  overflow: hidden;
   border: 2px solid transparent;
 }
 
-.menu-card-inner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: var(--gradient-rainbow);
-  transform: scaleX(0);
-  transition: transform var(--transition-base);
-  transform-origin: left;
-}
-
-.menu-card-inner:hover::before {
-  transform: scaleX(1);
-}
-
-.menu-card-inner:hover {
-  border-color: rgba(59, 130, 246, 0.2);
+.menu-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--bg-navy-soft);
 }
 
 .menu-icon-wrapper {
-  width: 90px;
-  height: 90px;
-  border-radius: var(--radius-xl);
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  margin-bottom: var(--spacing-lg);
-  box-shadow: var(--shadow-lg);
-  position: relative;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.menu-icon-wrapper::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  animation: rotate 10s linear infinite;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
+.menu-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .menu-title {
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
-  font-weight: 800;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--text-dark);
-  margin-bottom: var(--spacing-sm);
-  letter-spacing: -0.25px;
+  margin-bottom: 4px;
 }
 
 .menu-description {
-  font-size: 1.0625rem;
-  color: var(--text-gray);
-  margin-bottom: var(--spacing-lg);
-  line-height: 1.5;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 0;
 }
 
 .menu-arrow {
-  font-size: 1.75rem;
-  color: var(--primary-cyan);
-  font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: 600;
   transition: transform var(--transition-base);
-  display: inline-block;
+  flex-shrink: 0;
 }
 
-.menu-card-inner:hover .menu-arrow {
-  transform: translateX(8px);
+.menu-card:hover .menu-arrow {
+  transform: translateX(4px);
 }
 
-/* Daily Challenge - Premium Card */
 .daily-challenge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  border-radius: var(--radius-2xl);
-  padding: var(--spacing-3xl);
+  background: var(--gradient-navy);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
   color: white;
-  box-shadow: var(--shadow-2xl);
-  position: relative;
-  overflow: hidden;
-}
-
-.daily-challenge::before {
-  content: '🎯';
-  position: absolute;
-  font-size: 200px;
-  opacity: 0.1;
-  top: -50px;
-  right: -50px;
-  animation: float 6s ease-in-out infinite;
+  box-shadow: var(--shadow-lg);
 }
 
 .challenge-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-lg);
-  position: relative;
-  z-index: 1;
+  margin-bottom: var(--spacing-md);
 }
 
 .challenge-header h2 {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 900;
+  font-size: 1.5rem;
+  font-weight: 700;
   margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  color: white;
 }
 
 .challenge-badge {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
   border-radius: var(--radius-full);
-  font-weight: 700;
-  font-size: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .challenge-text {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  margin-bottom: var(--spacing-xl);
-  opacity: 0.95;
-  position: relative;
-  z-index: 1;
-  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.9;
 }
 
 .challenge-progress {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
-  position: relative;
-  z-index: 1;
+  gap: var(--spacing-md);
 }
 
 .progress-bar {
   flex: 1;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.25);
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-full);
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #FCD34D 0%, #FB923C 50%, #EF4444 100%);
+  background: var(--accent-coral);
   border-radius: var(--radius-full);
-  transition: width 0.8s var(--spring);
-  box-shadow: 0 0 10px rgba(252, 211, 77, 0.8);
+  transition: width 0.5s ease;
 }
 
 .progress-text {
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
   white-space: nowrap;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Design - Mobile */
 @media (max-width: 768px) {
   .home-page {
     padding: var(--spacing-md);
   }
 
   .welcome-banner {
-    padding: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .welcome-content {
-    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-lg);
   }
 
   .stats-row {
     grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
   }
 
   .stat-card {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
   }
 
   .menu-grid {
@@ -367,25 +259,28 @@
     gap: var(--spacing-md);
   }
 
-  .menu-card-inner {
-    padding: var(--spacing-xl);
+  .menu-card {
+    padding: var(--spacing-md);
+  }
+
+  .menu-icon-wrapper {
+    width: 56px;
+    height: 56px;
   }
 
   .daily-challenge {
-    padding: var(--spacing-xl);
+    padding: var(--spacing-lg);
   }
 
   .challenge-header {
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     text-align: center;
-    align-items: center;
   }
 
   .challenge-progress {
     flex-direction: column;
     gap: var(--spacing-sm);
-    width: 100%;
   }
 
   .progress-bar {
@@ -393,62 +288,12 @@
   }
 }
 
-/* Responsive Design - Tablet */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stats-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Smart Board Optimization */
-@media (min-width: 1920px) {
+@media (min-width: 1400px) {
   .home-page {
-    max-width: 1800px;
-    padding: var(--spacing-2xl);
-  }
-
-  .welcome-banner {
-    padding: var(--spacing-4xl);
+    max-width: 1400px;
   }
 
   .menu-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-2xl);
-  }
-
-  .menu-card-inner {
-    padding: var(--spacing-3xl);
-  }
-
-  .menu-icon-wrapper {
-    width: 110px;
-    height: 110px;
-  }
-
-  .stat-card {
-    padding: var(--spacing-2xl);
-  }
-
-  .stat-icon {
-    width: 90px;
-    height: 90px;
-  }
-
-  .daily-challenge {
-    padding: var(--spacing-4xl);
-  }
-}
-
-@media (min-width: 2560px) {
-  .home-page {
-    max-width: 2400px;
-  }
-
-  .menu-grid {
-    grid-template-columns: repeat(4, 1fr);
   }
 }

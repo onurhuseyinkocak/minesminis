@@ -1,13 +1,12 @@
-/* Instagram Reels - Full Screen Vertical Video */
-
 .reels-container {
   position: fixed;
   top: 0;
-  left: 245px;
+  left: 0;
   right: 0;
   bottom: 0;
-  background: #000;
+  background: #1a1a2e;
   overflow: hidden;
+  z-index: 100;
 }
 
 .reels-viewer {
@@ -22,9 +21,9 @@
 .reel-video-container {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 450px;
   height: 100%;
-  background: #000;
+  background: #1a1a2e;
 }
 
 .reel-video {
@@ -33,15 +32,14 @@
   object-fit: contain;
 }
 
-/* Mute Button */
 .mute-btn {
   position: absolute;
   top: 20px;
   right: 20px;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   display: flex;
@@ -49,19 +47,18 @@
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  transition: background 0.2s;
+  transition: background var(--transition-base);
 }
 
 .mute-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Reel Info */
 .reel-info {
   position: absolute;
-  bottom: 100px;
-  left: 20px;
-  right: 80px;
+  bottom: 80px;
+  left: 16px;
+  right: 70px;
   color: white;
   z-index: 5;
 }
@@ -69,20 +66,20 @@
 .reel-author {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .author-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(45deg, #F09433, #E6683C, #DC2743);
+  border-radius: var(--radius-full);
+  background: var(--gradient-navy);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.8125rem;
   overflow: hidden;
 }
 
@@ -94,49 +91,48 @@
 
 .author-name {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .follow-btn-small {
   padding: 4px 12px;
   border: 1px solid white;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: white;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.8125rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
 }
 
 .follow-btn-small:hover {
   background: white;
-  color: #000;
+  color: #1a1a2e;
 }
 
 .reel-caption {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 0.875rem;
+  line-height: 1.4;
   margin-bottom: 8px;
-  max-width: 300px;
+  max-width: 280px;
 }
 
 .reel-music {
-  font-size: 13px;
-  opacity: 0.9;
+  font-size: 0.8125rem;
+  opacity: 0.85;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-/* Actions Sidebar */
 .reel-actions {
   position: absolute;
-  bottom: 100px;
+  bottom: 80px;
   right: 12px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   align-items: center;
   z-index: 5;
 }
@@ -150,26 +146,22 @@
   border: none;
   color: white;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform var(--transition-base);
 }
 
 .action-btn-reel:hover {
   transform: scale(1.1);
 }
 
-.action-btn-reel:active {
-  transform: scale(0.95);
-}
-
 .action-btn-reel span {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
 .reel-music-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   border: 2px solid white;
   animation: spin 3s linear infinite;
@@ -182,11 +174,9 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* Navigation Arrows */
 .nav-arrow {
   position: absolute;
   right: 50%;
@@ -194,13 +184,13 @@
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  font-size: 1.25rem;
   cursor: pointer;
   z-index: 10;
-  transition: background 0.2s;
+  transition: background var(--transition-base);
 }
 
 .nav-arrow:hover {
@@ -215,37 +205,25 @@
   bottom: 20px;
 }
 
-/* Empty State */
 .reels-empty {
   text-align: center;
   color: white;
-  padding: 40px;
+  padding: var(--spacing-2xl);
 }
 
 .reels-empty h2 {
-  font-size: 24px;
-  margin-bottom: 12px;
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 .reels-empty p {
-  font-size: 16px;
+  font-size: 1rem;
   opacity: 0.7;
 }
 
-/* Responsive */
-@media (max-width: 1264px) {
-  .reels-container {
-    left: 72px;
-  }
-}
-
 @media (max-width: 768px) {
-  .reels-container {
-    left: 0;
-  }
-
   .reel-info {
-    right: 70px;
+    right: 60px;
   }
 
   .nav-arrow {
