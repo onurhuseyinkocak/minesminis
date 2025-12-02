@@ -1,0 +1,192 @@
+.dragon-mascot-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 4px 12px rgba(76, 175, 80, 0.3));
+}
+
+.dragon-mascot-container:hover {
+  transform: scale(1.1);
+}
+
+.dragon-mascot-container.is-hovered {
+  transform: scale(1.15);
+}
+
+.dragon-animation-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.dragon-shadow {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 10px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.dragon-emoji-bubble {
+  position: absolute;
+  top: -20px;
+  right: -10px;
+  z-index: 10;
+}
+
+.emoji-float {
+  font-size: 1.5rem;
+  animation: emojiFloat 2s ease-in-out infinite;
+  display: block;
+}
+
+@keyframes emojiFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+.dragon-mascot-container.state-idle .dragon-animation-wrapper {
+  animation: dragonIdle 3s ease-in-out infinite;
+}
+
+.dragon-mascot-container.state-walking .dragon-animation-wrapper {
+  animation: dragonWalk 0.8s ease-in-out infinite;
+}
+
+.dragon-mascot-container.state-dancing .dragon-animation-wrapper {
+  animation: dragonDance 0.5s ease-in-out infinite;
+}
+
+.dragon-mascot-container.state-sleeping .dragon-animation-wrapper {
+  animation: dragonSleep 2s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.dragon-mascot-container.state-celebrating .dragon-animation-wrapper {
+  animation: dragonCelebrate 0.4s ease-in-out infinite;
+}
+
+.dragon-mascot-container.state-waving .dragon-animation-wrapper {
+  animation: dragonWave 0.6s ease-in-out infinite;
+}
+
+.dragon-mascot-container.state-laughing .dragon-animation-wrapper {
+  animation: dragonLaugh 0.3s ease-in-out infinite;
+}
+
+.dragon-mascot-container.state-love .dragon-animation-wrapper {
+  animation: dragonLove 1s ease-in-out infinite;
+}
+
+.dragon-mascot-container.state-thinking .dragon-animation-wrapper {
+  animation: dragonThink 2s ease-in-out infinite;
+}
+
+@keyframes dragonIdle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes dragonWalk {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(3deg);
+  }
+}
+
+@keyframes dragonDance {
+  0%, 100% {
+    transform: rotate(-8deg) scale(1);
+  }
+  50% {
+    transform: rotate(8deg) scale(1.05);
+  }
+}
+
+@keyframes dragonSleep {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(3px) scale(0.98);
+  }
+}
+
+@keyframes dragonCelebrate {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1) rotate(0deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+@keyframes dragonWave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes dragonLaugh {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes dragonLove {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes dragonThink {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(-2deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(2deg);
+  }
+}

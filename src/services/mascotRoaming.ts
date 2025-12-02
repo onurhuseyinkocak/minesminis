@@ -23,26 +23,31 @@ const SPEECH_BUBBLES: Record<string, string[]> = {
         "Merhaba arkadaşım! 🌟",
         "What a beautiful day! 🌈",
         "Let's have fun! 🎉",
-        "Seni gördüğüme sevindim! 😊"
+        "Seni gördüğüme sevindim! 😊",
+        "Roar! I'm a friendly dragon! 🐉",
+        "I can breathe sparkles! ✨"
     ],
     walking: [
         "La la la~ 🎵",
-        "Yürüyorum! 🚶",
+        "Uçuyorum! 🐉",
         "Where shall I go? 🗺️",
         "Adventure time! ⭐",
-        "Exploring! 🔍"
+        "Exploring! 🔍",
+        "Flying around! 🌈"
     ],
     dancing: [
         "Dance with me! 💃",
         "Harika müzik! 🎶",
         "Shake it! 🕺",
-        "Party time! 🎊"
+        "Party time! 🎊",
+        "Dragon dance! 🐉💃"
     ],
     celebrating: [
         "Yaay! 🎉",
         "We did it! 🏆",
         "Harika! 🌟",
-        "Amazing! ✨"
+        "Amazing! ✨",
+        "Dragon power! 🐉🎉"
     ],
     waving: [
         "Hi there! 👋",
@@ -53,7 +58,8 @@ const SPEECH_BUBBLES: Record<string, string[]> = {
     sleeping: [
         "Zzz... 💤",
         "So sleepy... 😴",
-        "Uykum var... 💤"
+        "Uykum var... 💤",
+        "Dragon nap time... 🐉💤"
     ],
     laughing: [
         "Hahaha! 😂",
@@ -83,20 +89,20 @@ const SPEECH_BUBBLES: Record<string, string[]> = {
         "So much love! 💗"
     ],
     jumping: [
-        "Hop hop! 🐰",
+        "Hop hop! 🐉",
         "Wheee! 🎈",
-        "Jump jump! 🦘"
+        "Jump jump! 🦎"
     ],
     following: [
         "Seni takip ediyorum! 👀",
         "Wait for me! 🏃",
-        "I'm coming! 🐻",
+        "I'm coming! 🐉",
         "Following you! 💫"
     ],
     random: [
         "Did you know? English is fun! 🇬🇧",
         "A is for Apple! 🍎",
-        "B is for Bear! 🐻",
+        "D is for Dragon! 🐉",
         "Let's learn together! 📖",
         "Practice makes perfect! ⭐",
         "You're doing great! 👏",
@@ -105,7 +111,8 @@ const SPEECH_BUBBLES: Record<string, string[]> = {
         "Çok yeteneklisin! 🏅",
         "I believe in you! 💖",
         "Learning is an adventure! 🚀",
-        "Words are magic! ✨"
+        "Words are magic! ✨",
+        "Dragons love learning! 🐉📚"
     ]
 };
 

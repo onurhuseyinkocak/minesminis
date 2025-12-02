@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import ProfessorPaws from './ProfessorPaws';
+import DragonMascot from './DragonMascot';
 import { mascotRoaming } from '../services/mascotRoaming';
 import './LivingBearImages.css';
-import cottageSvg from '../assets/bear/cottage.svg';
 
 type AnimationState = 'idle' | 'walking' | 'dancing' | 'celebrating' | 'waving' | 'sleeping' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping' | 'following';
 type ViewDirection = 'front' | 'left' | 'right';
@@ -19,7 +18,7 @@ interface LivingBearImagesProps {
 const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) => {
     const [position, setPosition] = useState({ x: 85, y: 75 });
     const [animationState, setAnimationState] = useState<AnimationState>('idle');
-    const [viewDirection, setViewDirection] = useState<ViewDirection>('front');
+    const [, setViewDirection] = useState<ViewDirection>('front');
     const [speechBubble, setSpeechBubble] = useState<SpeechBubble | null>(null);
     const [isHovered, setIsHovered] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -106,37 +105,11 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
                     onMouseEnter={handleMascotHover}
                     onMouseLeave={handleMascotLeave}
                 >
-                    <ProfessorPaws
-                        bearState={animationState === 'following' ? 'walking' : animationState}
-                        viewDirection={viewDirection}
+                    <DragonMascot
+                        state={animationState === 'following' ? 'walking' : (animationState === 'singing' || animationState === 'surprised' || animationState === 'jumping' ? 'celebrating' : animationState)}
                         isHovered={isHovered}
                     />
                 </div>
-            </div>
-
-            <div
-                className="cottage-container"
-                style={{
-                    position: 'fixed',
-                    right: '20px',
-                    bottom: '20px',
-                    zIndex: 9998,
-                    cursor: 'pointer',
-                    transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                }}
-                onClick={() => mascotRoaming.goHome()}
-                title="Mimi'nin Evi"
-            >
-                <img
-                    src={cottageSvg}
-                    alt="Mimi's Home"
-                    style={{
-                        width: '80px',
-                        height: '80px',
-                        filter: 'drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2))',
-                        transition: 'filter 0.3s ease'
-                    }}
-                />
             </div>
         </div>
     );
