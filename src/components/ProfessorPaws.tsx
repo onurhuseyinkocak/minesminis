@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ProfessorPaws.css';
 
 interface ProfessorPawsProps {
-  bearState: 'idle' | 'walking' | 'running' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping';
+  bearState: 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping';
   facingDirection: 'left' | 'right';
   onClick?: () => void;
 }

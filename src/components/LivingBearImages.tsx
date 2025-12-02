@@ -4,7 +4,7 @@ import { mascotRoaming } from '../services/mascotRoaming';
 import './LivingBearImages.css';
 import cottageSvg from '../assets/bear/cottage.svg';
 
-type AnimationState = 'idle' | 'walking' | 'running' | 'dancing' | 'celebrating' | 'waving' | 'sleeping' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping';
+type AnimationState = 'idle' | 'walking' | 'dancing' | 'celebrating' | 'waving' | 'sleeping' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping';
 
 interface LivingBearImagesProps {
     onMascotClick?: () => void;
@@ -21,18 +21,19 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
     useEffect(() => {
         const unsubscribe = mascotRoaming.onChange((newPosition, newState) => {
             const prevX = previousPositionRef.current.x;
+            const positionCopy = { ...newPosition };
             
-            if (newPosition.x > prevX) {
+            if (positionCopy.x > prevX + 0.5) {
                 setFacingDirection('right');
-            } else if (newPosition.x < prevX) {
+            } else if (positionCopy.x < prevX - 0.5) {
                 setFacingDirection('left');
             }
 
-            previousPositionRef.current = newPosition;
-            setPosition(newPosition);
+            previousPositionRef.current = { ...positionCopy };
+            setPosition(positionCopy);
             setBearState(newState);
 
-            setIsAtHome(newPosition.x > 80 && newPosition.y > 80 && newState === 'sleeping');
+            setIsAtHome(positionCopy.x > 80 && positionCopy.y > 80 && newState === 'sleeping');
         });
 
         mascotRoaming.startRoaming();
@@ -48,7 +49,7 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
     useEffect(() => {
         const glowInterval = setInterval(() => {
             setCottageGlow(prev => !prev);
-        }, 2000);
+        }, 3000);
         return () => clearInterval(glowInterval);
     }, []);
 
@@ -81,7 +82,7 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
                     left: `${position.x}%`,
                     top: `${position.y}%`,
                     transform: 'translate(-50%, -50%)',
-                    transition: 'left 2.5s cubic-bezier(0.34, 1.56, 0.64, 1), top 2.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    transition: 'left 6s cubic-bezier(0.25, 0.1, 0.25, 1), top 6s cubic-bezier(0.25, 0.1, 0.25, 1)',
                     zIndex: 9999,
                     pointerEvents: 'none'
                 }}
