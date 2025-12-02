@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Player } from '@lottiefiles/react-lottie-player';
 import './SplashScreen.css';
 
 interface SplashScreenProps {
@@ -12,8 +11,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeOut(true);
-      setTimeout(onComplete, 800);
-    }, 3500);
+      setTimeout(onComplete, 400);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -36,12 +35,11 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         </div>
         
         <div className="splash-loading">
-          <Player
-            autoplay
-            loop
-            src="https://lottie.host/4db68bbd-31f6-4cd8-84eb-189571e6c9a2/6fzrouDtrT.json"
-            style={{ height: '80px', width: '80px' }}
-          />
+          <div className="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
         
         <div className="splash-tagline">

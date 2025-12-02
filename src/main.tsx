@@ -6,7 +6,6 @@ import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
 import "./responsive.css";
 import "./refined-premium-theme.css";
-import { registerServiceWorker } from "./config/OfflineConfig";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -17,5 +16,3 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-
-registerServiceWorker();

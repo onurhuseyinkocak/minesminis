@@ -77,15 +77,26 @@ function AppRoutes() {
 
 function App() {
   const [showChat, setShowChat] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+      return !hasSeenSplash;
+    }
+    return true;
+  });
 
   const handleMascotClick = () => {
     console.log('🎈 Opening AI chat with Mimi!');
     setShowChat(true);
   };
 
+  const handleSplashComplete = () => {
+    sessionStorage.setItem('hasSeenSplash', 'true');
+    setShowSplash(false);
+  };
+
   if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+    return <SplashScreen onComplete={handleSplashComplete} />;
   }
 
   return (

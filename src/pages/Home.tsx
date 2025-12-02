@@ -12,40 +12,35 @@ const Home: React.FC = () => {
       title: 'Games',
       icon: GamepadIcon,
       path: '/games',
-      color: '#4A5B8C',
-      bgColor: '#E8ECF4',
+      colorClass: 'purple',
       description: 'Play fun learning games'
     },
     {
       title: 'Worksheets',
       icon: FileText,
       path: '/worksheets',
-      color: '#6BA494',
-      bgColor: '#E8F4F0',
+      colorClass: 'teal',
       description: 'Practice with worksheets'
     },
     {
       title: 'Dictionary',
       icon: BookOpen,
       path: '/words',
-      color: '#8474A4',
-      bgColor: '#F0ECF4',
+      colorClass: 'yellow',
       description: 'Learn new words'
     },
     {
       title: 'Videos',
       icon: Video,
       path: '/videos',
-      color: '#C47474',
-      bgColor: '#F4ECEC',
+      colorClass: 'coral',
       description: 'Watch educational videos'
     },
     {
       title: 'My Progress',
       icon: Trophy,
       path: '/profile',
-      color: '#7494A4',
-      bgColor: '#ECF0F4',
+      colorClass: 'pink',
       description: 'Track your achievements'
     },
   ];
@@ -107,17 +102,14 @@ const Home: React.FC = () => {
       <div className="menu-grid">
         {menuItems.map((item) => (
           <Link key={item.path} to={item.path} className="menu-card">
-            <div
-              className="menu-icon-wrapper"
-              style={{ backgroundColor: item.bgColor, color: item.color }}
-            >
-              <item.icon size={40} strokeWidth={2} />
+            <div className={`menu-icon-wrapper ${item.colorClass}`}>
+              <item.icon size={40} strokeWidth={2} color="white" />
             </div>
             <div className="menu-content">
               <h3 className="menu-title">{item.title}</h3>
               <p className="menu-description">{item.description}</p>
             </div>
-            <div className="menu-arrow" style={{ color: item.color }}>→</div>
+            <div className="menu-arrow">→</div>
           </Link>
         ))}
       </div>
