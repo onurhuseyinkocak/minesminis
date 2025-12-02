@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <radialGradient id="padGradient" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FFB6C1"/>
+      <stop offset="100%" stop-color="#FF91A4"/>
+    </radialGradient>
+    <radialGradient id="pawGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#DEB887"/>
+      <stop offset="100%" stop-color="#D2691E"/>
+    </radialGradient>
+  </defs>
+  
+  <ellipse cx="10" cy="6" rx="4" ry="4.5" fill="url(#pawGradient)"/>
+  <ellipse cx="4" cy="12" rx="3.5" ry="4" fill="url(#pawGradient)"/>
+  <ellipse cx="16" cy="4" rx="3.5" ry="4" fill="url(#pawGradient)"/>
+  <ellipse cx="22" cy="8" rx="3" ry="3.5" fill="url(#pawGradient)"/>
+  
+  <ellipse cx="13" cy="18" rx="10" ry="11" fill="url(#pawGradient)"/>
+  
+  <ellipse cx="10" cy="6" rx="2.5" ry="3" fill="url(#padGradient)"/>
+  <ellipse cx="4" cy="12" rx="2" ry="2.5" fill="url(#padGradient)"/>
+  <ellipse cx="16" cy="4" rx="2" ry="2.5" fill="url(#padGradient)"/>
+  <ellipse cx="22" cy="8" rx="1.8" ry="2.2" fill="url(#padGradient)"/>
+  
+  <ellipse cx="13" cy="19" rx="6" ry="7" fill="url(#padGradient)"/>
+</svg>

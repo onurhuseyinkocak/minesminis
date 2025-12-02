@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <radialGradient id="padGrad" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FFB6C1"/>
+      <stop offset="100%" stop-color="#FF91A4"/>
+    </radialGradient>
+    <radialGradient id="pawGrad" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#DEB887"/>
+      <stop offset="100%" stop-color="#C4A86C"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="0.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#glow)">
+    <ellipse cx="12" cy="7" rx="4.5" ry="5" fill="url(#pawGrad)"/>
+    <ellipse cx="5" cy="14" rx="4" ry="4.5" fill="url(#pawGrad)"/>
+    <ellipse cx="19" cy="5" rx="4" ry="4.5" fill="url(#pawGrad)"/>
+    <ellipse cx="25" cy="10" rx="3.5" ry="4" fill="url(#pawGrad)"/>
+    
+    <ellipse cx="15" cy="20" rx="11" ry="10" fill="url(#pawGrad)"/>
+    
+    <ellipse cx="12" cy="7" rx="3" ry="3.5" fill="url(#padGrad)"/>
+    <ellipse cx="5" cy="14" rx="2.5" ry="3" fill="url(#padGrad)"/>
+    <ellipse cx="19" cy="5" rx="2.5" ry="3" fill="url(#padGrad)"/>
+    <ellipse cx="25" cy="10" rx="2.2" ry="2.7" fill="url(#padGrad)"/>
+    
+    <ellipse cx="15" cy="21" rx="7" ry="6" fill="url(#padGrad)"/>
+  </g>
+  
+  <circle cx="15" cy="21" r="2" fill="#FF6B8A" opacity="0.6"/>
+</svg>

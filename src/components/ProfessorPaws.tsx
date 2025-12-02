@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import './ProfessorPaws.css';
 
+type ViewDirection = 'front' | 'left' | 'right';
+
 interface ProfessorPawsProps {
   bearState: 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping';
   facingDirection: 'left' | 'right';
+  viewDirection?: ViewDirection;
+  isHovered?: boolean;
   onClick?: () => void;
 }
 
-const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirection, onClick }) => {
-  const [chatMessage, setChatMessage] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
+const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ 
+  bearState, 
+  facingDirection, 
+  viewDirection = 'front',
+  isHovered = false,
+  onClick 
+}) => {
   const [blink, setBlink] = useState(false);
   const [mouthOpen, setMouthOpen] = useState(false);
   const [hearts, setHearts] = useState<{ id: string, x: number, y: number }[]>([]);
   const [musicNotes, setMusicNotes] = useState<{ id: string, x: number }[]>([]);
   const [eyeSparkle, setEyeSparkle] = useState(false);
+  const [earWiggle, setEarWiggle] = useState(false);
 
   useEffect(() => {
     const blinkLoop = () => {
@@ -80,36 +89,12 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
   }, [bearState]);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    const showMessage = (msg: string, duration: number = 3000) => {
-      setChatMessage(msg);
-      setIsVisible(true);
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        setIsVisible(false);
-        setTimeout(() => setChatMessage(null), 500);
-      }, duration);
-    };
-
-    const messages: Record<string, string> = {
-      sleeping: "Zzz... 💤",
-      celebrating: "Yaay! 🎉",
-      waving: "Hi! Merhaba! 👋",
-      laughing: "Hahaha! 😂",
-      singing: "La la la~ 🎵",
-      thinking: "Hmm... 🤔",
-      surprised: "Ohhh! 😲",
-      love: "Seni seviyorum! 💕",
-      dancing: "Let's dance! 💃",
-      jumping: "Hop hop! 🐰"
-    };
-
-    if (messages[bearState]) {
-      showMessage(messages[bearState], 4000);
+    if (isHovered) {
+      setEarWiggle(true);
+      const timeout = setTimeout(() => setEarWiggle(false), 600);
+      return () => clearTimeout(timeout);
     }
-
-    return () => clearTimeout(timeout);
-  }, [bearState]);
+  }, [isHovered]);
 
   const getEyeStyle = () => {
     if (bearState === 'sleeping') return 'sleeping';
@@ -129,24 +114,31 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
     return 'smile';
   };
 
+  const getViewTransform = () => {
+    if (viewDirection === 'left') {
+      return 'perspective(400px) rotateY(-25deg)';
+    } else if (viewDirection === 'right') {
+      return 'perspective(400px) rotateY(25deg)';
+    }
+    return 'perspective(400px) rotateY(0deg)';
+  };
+
+  const getBodySkew = () => {
+    if (viewDirection === 'left') return -3;
+    if (viewDirection === 'right') return 3;
+    return 0;
+  };
+
   return (
     <div
-      className={`professor-paws-container state-${bearState}`}
+      className={`professor-paws-container state-${bearState} view-${viewDirection} ${isHovered ? 'is-hovered' : ''} ${earWiggle ? 'ear-wiggle' : ''}`}
       onClick={onClick}
       style={{
-        transform: `scaleX(${facingDirection === 'right' ? 1 : -1})`,
-        cursor: 'pointer'
+        transform: getViewTransform(),
+        cursor: 'pointer',
+        transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
       }}
     >
-      {chatMessage && (
-        <div
-          className={`chat-bubble ${isVisible ? 'visible' : ''}`}
-          style={{ transform: `scaleX(${facingDirection === 'right' ? 1 : -1})` }}
-        >
-          {chatMessage}
-        </div>
-      )}
-
       {hearts.map(heart => (
         <div
           key={heart.id}
@@ -206,57 +198,59 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
           </filter>
         </defs>
 
-        <g className="limb arm-back">
-          <ellipse cx="55" cy="150" rx="14" ry="28" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
-          <ellipse cx="52" cy="172" rx="10" ry="10" fill="#D2691E" />
+        <g className="limb arm-back" style={{ transform: `skewX(${getBodySkew()}deg)` }}>
+          <ellipse cx={viewDirection === 'left' ? 60 : viewDirection === 'right' ? 50 : 55} cy="150" rx="14" ry="28" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx={viewDirection === 'left' ? 57 : viewDirection === 'right' ? 47 : 52} cy="172" rx="10" ry="10" fill="#D2691E" />
         </g>
 
-        <g className="limb leg-back">
-          <ellipse cx="70" cy="205" rx="16" ry="22" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
-          <ellipse cx="68" cy="222" rx="12" ry="8" fill="#A0522D" />
+        <g className="limb leg-back" style={{ transform: `skewX(${getBodySkew()}deg)` }}>
+          <ellipse cx={viewDirection === 'left' ? 75 : viewDirection === 'right' ? 65 : 70} cy="205" rx="16" ry="22" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx={viewDirection === 'left' ? 73 : viewDirection === 'right' ? 63 : 68} cy="222" rx="12" ry="8" fill="#A0522D" />
         </g>
 
-        <ellipse cx="100" cy="165" rx="48" ry="55" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
-        <ellipse cx="100" cy="170" rx="32" ry="38" fill="url(#bellyGradientMimi)" opacity="0.9" />
+        <g style={{ transform: `skewX(${getBodySkew()}deg)` }}>
+          <ellipse cx="100" cy="165" rx="48" ry="55" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx="100" cy="170" rx="32" ry="38" fill="url(#bellyGradientMimi)" opacity="0.9" />
+        </g>
 
-        <g className="limb leg-front">
-          <ellipse cx="130" cy="205" rx="16" ry="22" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
-          <ellipse cx="132" cy="222" rx="12" ry="8" fill="#A0522D" />
+        <g className="limb leg-front" style={{ transform: `skewX(${getBodySkew()}deg)` }}>
+          <ellipse cx={viewDirection === 'left' ? 135 : viewDirection === 'right' ? 125 : 130} cy="205" rx="16" ry="22" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx={viewDirection === 'left' ? 137 : viewDirection === 'right' ? 127 : 132} cy="222" rx="12" ry="8" fill="#A0522D" />
         </g>
 
         <g className="head-group">
-          <g className="ear-left">
-            <ellipse cx="60" cy="50" rx="18" ry="18" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
-            <ellipse cx="60" cy="50" rx="10" ry="10" fill="#FFB6C1" opacity="0.6" />
+          <g className={`ear-left ${earWiggle ? 'wiggling' : ''}`}>
+            <ellipse cx={viewDirection === 'left' ? 65 : viewDirection === 'right' ? 55 : 60} cy="50" rx="18" ry="18" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+            <ellipse cx={viewDirection === 'left' ? 65 : viewDirection === 'right' ? 55 : 60} cy="50" rx="10" ry="10" fill="#FFB6C1" opacity="0.6" />
           </g>
 
-          <g className="ear-right">
-            <ellipse cx="140" cy="50" rx="18" ry="18" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
-            <ellipse cx="140" cy="50" rx="10" ry="10" fill="#FFB6C1" opacity="0.6" />
+          <g className={`ear-right ${earWiggle ? 'wiggling' : ''}`}>
+            <ellipse cx={viewDirection === 'left' ? 145 : viewDirection === 'right' ? 135 : 140} cy="50" rx="18" ry="18" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+            <ellipse cx={viewDirection === 'left' ? 145 : viewDirection === 'right' ? 135 : 140} cy="50" rx="10" ry="10" fill="#FFB6C1" opacity="0.6" />
           </g>
 
           <ellipse cx="100" cy="85" rx="52" ry="48" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
 
           <ellipse cx="100" cy="105" rx="22" ry="18" fill="#FAEBD7" opacity="0.8" />
 
-          <circle cx="68" cy="100" r="14" fill="url(#cheekGlow)" />
-          <circle cx="132" cy="100" r="14" fill="url(#cheekGlow)" />
+          <circle cx={viewDirection === 'left' ? 72 : viewDirection === 'right' ? 64 : 68} cy="100" r="14" fill="url(#cheekGlow)" />
+          <circle cx={viewDirection === 'left' ? 136 : viewDirection === 'right' ? 128 : 132} cy="100" r="14" fill="url(#cheekGlow)" />
 
           <g className={`eyes eyes-${getEyeStyle()}`}>
             <g className="eye-left" transform={blink ? "translate(0, 85) scale(1, 0.1)" : ""}>
               {getEyeStyle() === 'love' ? (
-                <text x="75" y="90" fontSize="18" textAnchor="middle">❤️</text>
+                <text x={viewDirection === 'left' ? 80 : viewDirection === 'right' ? 70 : 75} y="90" fontSize="18" textAnchor="middle">❤️</text>
               ) : getEyeStyle() === 'sleeping' ? (
-                <path d="M67,82 Q75,88 83,82" fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
+                <path d={`M${viewDirection === 'left' ? 72 : viewDirection === 'right' ? 62 : 67},82 Q${viewDirection === 'left' ? 80 : viewDirection === 'right' ? 70 : 75},88 ${viewDirection === 'left' ? 88 : viewDirection === 'right' ? 78 : 83},82`} fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
               ) : (
                 <>
-                  <ellipse cx="75" cy="82" rx={getEyeStyle() === 'surprised' ? 12 : 10} ry={getEyeStyle() === 'surprised' ? 14 : 12} fill="#333" />
-                  <ellipse cx="75" cy="82" rx="8" ry="10" fill="url(#eyeShine)" />
-                  <circle cx="78" cy="78" r="4" fill="white" />
-                  <circle cx="72" cy="84" r="2" fill="white" opacity="0.6" />
+                  <ellipse cx={viewDirection === 'left' ? 80 : viewDirection === 'right' ? 70 : 75} cy="82" rx={getEyeStyle() === 'surprised' ? 12 : 10} ry={getEyeStyle() === 'surprised' ? 14 : 12} fill="#333" />
+                  <ellipse cx={viewDirection === 'left' ? 80 : viewDirection === 'right' ? 70 : 75} cy="82" rx="8" ry="10" fill="url(#eyeShine)" />
+                  <circle cx={viewDirection === 'left' ? 83 : viewDirection === 'right' ? 73 : 78} cy="78" r="4" fill="white" />
+                  <circle cx={viewDirection === 'left' ? 77 : viewDirection === 'right' ? 67 : 72} cy="84" r="2" fill="white" opacity="0.6" />
                   {eyeSparkle && (
                     <g filter="url(#sparkle)">
-                      <text x="82" y="76" fontSize="8">✨</text>
+                      <text x={viewDirection === 'left' ? 87 : viewDirection === 'right' ? 77 : 82} y="76" fontSize="8">✨</text>
                     </g>
                   )}
                 </>
@@ -264,18 +258,18 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
             </g>
             <g className="eye-right" transform={blink ? "translate(0, 85) scale(1, 0.1)" : ""}>
               {getEyeStyle() === 'love' ? (
-                <text x="125" y="90" fontSize="18" textAnchor="middle">❤️</text>
+                <text x={viewDirection === 'left' ? 130 : viewDirection === 'right' ? 120 : 125} y="90" fontSize="18" textAnchor="middle">❤️</text>
               ) : getEyeStyle() === 'sleeping' ? (
-                <path d="M117,82 Q125,88 133,82" fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
+                <path d={`M${viewDirection === 'left' ? 122 : viewDirection === 'right' ? 112 : 117},82 Q${viewDirection === 'left' ? 130 : viewDirection === 'right' ? 120 : 125},88 ${viewDirection === 'left' ? 138 : viewDirection === 'right' ? 128 : 133},82`} fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
               ) : (
                 <>
-                  <ellipse cx="125" cy="82" rx={getEyeStyle() === 'surprised' ? 12 : 10} ry={getEyeStyle() === 'surprised' ? 14 : 12} fill="#333" />
-                  <ellipse cx="125" cy="82" rx="8" ry="10" fill="url(#eyeShine)" />
-                  <circle cx="128" cy="78" r="4" fill="white" />
-                  <circle cx="122" cy="84" r="2" fill="white" opacity="0.6" />
+                  <ellipse cx={viewDirection === 'left' ? 130 : viewDirection === 'right' ? 120 : 125} cy="82" rx={getEyeStyle() === 'surprised' ? 12 : 10} ry={getEyeStyle() === 'surprised' ? 14 : 12} fill="#333" />
+                  <ellipse cx={viewDirection === 'left' ? 130 : viewDirection === 'right' ? 120 : 125} cy="82" rx="8" ry="10" fill="url(#eyeShine)" />
+                  <circle cx={viewDirection === 'left' ? 133 : viewDirection === 'right' ? 123 : 128} cy="78" r="4" fill="white" />
+                  <circle cx={viewDirection === 'left' ? 127 : viewDirection === 'right' ? 117 : 122} cy="84" r="2" fill="white" opacity="0.6" />
                   {eyeSparkle && (
                     <g filter="url(#sparkle)">
-                      <text x="132" y="76" fontSize="8">✨</text>
+                      <text x={viewDirection === 'left' ? 137 : viewDirection === 'right' ? 127 : 132} y="76" fontSize="8">✨</text>
                     </g>
                   )}
                 </>
@@ -366,9 +360,9 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
           )}
         </g>
 
-        <g className="limb arm-front">
-          <ellipse cx="145" cy="150" rx="14" ry="28" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
-          <ellipse cx="148" cy="172" rx="10" ry="10" fill="#D2691E" />
+        <g className="limb arm-front" style={{ transform: `skewX(${getBodySkew()}deg)` }}>
+          <ellipse cx={viewDirection === 'left' ? 150 : viewDirection === 'right' ? 140 : 145} cy="150" rx="14" ry="28" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx={viewDirection === 'left' ? 153 : viewDirection === 'right' ? 143 : 148} cy="172" rx="10" ry="10" fill="#D2691E" />
         </g>
 
         {bearState === 'waving' && (
