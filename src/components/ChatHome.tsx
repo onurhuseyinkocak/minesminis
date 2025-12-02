@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ProfessorPaws from './ProfessorPaws';
+import DragonMascot from './DragonMascot';
 import './ChatHome.css';
-
-/* ============================================================
-   CHAT HOME - COZY INTERFACE
-   ============================================================ */
 
 interface ChatMessage {
     id: string;
@@ -15,14 +11,14 @@ interface ChatMessage {
 
 interface ChatHomeProps {
     onClose: () => void;
-    onSendMessage: (text: string) => Promise<string>; // Hook up to AI service
+    onSendMessage: (text: string) => Promise<string>;
 }
 
 const QUICK_REPLIES = [
-    { text: "Hello! 👋", value: "Hello! 👋" },
-    { text: "Tell me a joke! 😂", value: "Tell me a joke! 😂" },
-    { text: "I love you! ❤️", value: "I love you! ❤️" },
-    { text: "Let's play! 🎮", value: "Let's play! 🎮" }
+    { text: "Hello! 👋", value: "Hello Mimi!" },
+    { text: "Teach me! 📚", value: "Teach me a new English word!" },
+    { text: "Let's play! 🎮", value: "Let's play a game!" },
+    { text: "Tell me a joke! 😂", value: "Tell me a funny joke!" }
 ];
 
 const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
@@ -30,7 +26,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
         {
             id: 'welcome',
             role: 'assistant',
-            content: "Welcome to my cozy home! 🏠✨ I'm so happy you're here! What should we talk about? 🐻",
+            content: "Merhaba! Welcome to my cozy cave! 🐲✨ I'm Mimi the dragon! Let's learn English together! What would you like to do today? 🌟",
             timestamp: Date.now()
         }
     ]);
@@ -41,10 +37,11 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
     const speak = (text: string) => {
         if (!isTTSEnabled) return;
-        const utterance = new SpeechSynthesisUtterance(text);
+        const cleanText = text.replace(/[🐲✨🌟💖🎮📚👋😂🎵🔢🌈]/g, '');
+        const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'en-US';
-        utterance.pitch = 1.2; // Higher pitch for cute bear voice
-        utterance.rate = 1.1;
+        utterance.pitch = 1.3;
+        utterance.rate = 0.95;
         window.speechSynthesis.speak(utterance);
     };
 
@@ -68,7 +65,6 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     const handleSend = async (text: string) => {
         if (!text.trim()) return;
 
-        // Add User Message
         const userMsg: ChatMessage = {
             id: Date.now().toString(),
             role: 'user',
@@ -80,10 +76,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
         setIsTyping(true);
 
         try {
-            // Simulate network delay for "thinking" effect
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Get AI Response
+            await new Promise(resolve => setTimeout(resolve, 800));
             const responseText = await onSendMessage(text);
 
             const aiMsg: ChatMessage = {
@@ -93,11 +86,10 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                 timestamp: Date.now()
             };
             setMessages(prev => [...prev, aiMsg]);
-            speak(responseText); // Speak the response
+            speak(responseText);
         } catch (error) {
             console.error("Chat Error:", error);
-            // Fallback error message
-            const errorMsg = "Oops! My ears are a bit fuzzy. Can you say that again? 🐻👂";
+            const errorMsg = "Oops! My dragon ears didn't catch that. Can you say it again? 🐲👂";
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 role: 'assistant',
@@ -115,23 +107,21 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     };
 
     return (
-        <div className="chat-home-overlay">
+        <div className="chat-home-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div className="chat-home-container">
-                {/* HEADER */}
                 <div className="chat-home-header">
-                    <div className="header-bear">
-                        <ProfessorPaws bearState="waving" viewDirection="right" />
+                    <div className="header-dragon">
+                        <DragonMascot state="waving" />
                     </div>
                     <div className="header-title">
-                        <h2>Mimi's Cottage</h2>
-                        <p>English Learning Buddy</p>
+                        <h2>Mimi's Cave</h2>
+                        <p>Your English Learning Dragon</p>
                     </div>
-                    <div className="header-actions" style={{ marginLeft: 'auto', display: 'flex', gap: '10px' }}>
+                    <div className="header-actions">
                         <button
                             className="tts-toggle"
                             onClick={toggleTTS}
                             title={isTTSEnabled ? "Mute Voice" : "Enable Voice"}
-                            style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
                         >
                             {isTTSEnabled ? "🔊" : "🔇"}
                         </button>
@@ -141,13 +131,12 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                     </div>
                 </div>
 
-                {/* MESSAGES AREA */}
                 <div className="chat-messages-area">
                     {messages.map((msg) => (
                         <div key={msg.id} className={`message-row ${msg.role}`}>
                             {msg.role === 'assistant' && (
-                                <div className="avatar-bear">
-                                    <ProfessorPaws bearState="idle" viewDirection="right" />
+                                <div className="avatar-dragon">
+                                    <DragonMascot state="idle" />
                                 </div>
                             )}
                             <div className={`message-bubble ${msg.role}`}>
@@ -158,18 +147,17 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
                     {isTyping && (
                         <div className="message-row assistant">
-                            <div className="avatar-bear">
-                                <ProfessorPaws bearState="thinking" viewDirection="right" />
+                            <div className="avatar-dragon">
+                                <DragonMascot state="thinking" />
                             </div>
                             <div className="message-bubble assistant typing-indicator">
-                                <span>•</span><span>•</span><span>•</span>
+                                <span></span><span></span><span></span>
                             </div>
                         </div>
                     )}
                     <div ref={messagesEndRef} />
                 </div>
 
-                {/* INPUT AREA */}
                 <div className="chat-input-area">
                     <div className="quick-replies">
                         {QUICK_REPLIES.map(reply => (
@@ -185,7 +173,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder="Type a message..."
+                            placeholder="Type a message to Mimi..."
                             aria-label="Type your message"
                         />
                         <button className="send-button" onClick={() => handleSend(inputValue)}>

@@ -13,9 +13,10 @@ interface SpeechBubble {
 
 interface LivingBearImagesProps {
     onMascotClick?: () => void;
+    onHomeClick?: () => void;
 }
 
-const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) => {
+const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick, onHomeClick }) => {
     const [position, setPosition] = useState({ x: 85, y: 75 });
     const [animationState, setAnimationState] = useState<AnimationState>('idle');
     const [, setViewDirection] = useState<ViewDirection>('front');
@@ -90,6 +91,9 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
     };
 
     const handleHomeClick = () => {
+        if (onHomeClick) {
+            onHomeClick();
+        }
         if (isDragonHome) {
             setIsDragonHome(false);
             setAnimationState('celebrating');

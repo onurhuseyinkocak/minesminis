@@ -108,7 +108,7 @@ function App() {
         <TeacherMode />
 
         {/* AI-Powered Living Mascot - Freely roaming on website */}
-        <LivingBearImages onMascotClick={handleMascotClick} />
+        <LivingBearImages onMascotClick={handleMascotClick} onHomeClick={() => setShowChat(true)} />
 
         {/* AI Chat Window - Opens when mascot is clicked */}
         {showChat && (

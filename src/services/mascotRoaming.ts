@@ -22,14 +22,11 @@ const SPEECH_BUBBLES: Record<string, string[]> = {
         "Beraber oynayalım mı? 🎮",
         "Merhaba arkadaşım! 🌟",
         "What a beautiful day! 🌈",
-        "Let's have fun! 🎉",
         "Seni gördüğüme sevindim! 😊",
-        "Roar! I'm a friendly dragon! 🐉",
-        "I can breathe sparkles! ✨"
+        "Roar! I'm a friendly dragon! 🐉"
     ],
     walking: [
         "La la la~ 🎵",
-        "Uçuyorum! 🐉",
         "Where shall I go? 🗺️",
         "Adventure time! ⭐",
         "Exploring! 🔍",
@@ -38,7 +35,6 @@ const SPEECH_BUBBLES: Record<string, string[]> = {
     dancing: [
         "Dance with me! 💃",
         "Harika müzik! 🎶",
-        "Shake it! 🕺",
         "Party time! 🎊",
         "Dragon dance! 🐉💃"
     ],
@@ -113,6 +109,28 @@ const SPEECH_BUBBLES: Record<string, string[]> = {
         "Learning is an adventure! 🚀",
         "Words are magic! ✨",
         "Dragons love learning! 🐉📚"
+    ],
+    capabilities: [
+        "Bana tıkla ve sohbet edelim! 💬",
+        "Click on me to chat! 🗨️",
+        "Benimle kelime oyunları oynayabilirsin! 🎮",
+        "Bana İngilizce sorular sorabilirsin! 📚",
+        "I can help you learn new words! 🌟",
+        "Let's play matching games! 🃏",
+        "Hafıza oyunu oynayalım mı? 🧠",
+        "I can teach you colors and animals! 🎨🐱",
+        "Hayvanları İngilizce öğrenelim! 🦁",
+        "Numbers are fun with me! 🔢",
+        "Renkleri beraber öğrenelim! 🌈",
+        "Ask me anything in English! ❓",
+        "Evime tıkla, sohbet edelim! 🏠💬",
+        "Click my cave to start chatting! 🐲",
+        "I can sing ABC with you! 🎵",
+        "Let's count together! 1, 2, 3! 🔢",
+        "Bana meyveler sor! Apple, banana... 🍎🍌",
+        "I know lots of English words! 📖",
+        "Oyun oynamak ister misin? 🎲",
+        "Flash cards ile öğrenelim! 🃏"
     ]
 };
 
@@ -213,10 +231,11 @@ class MascotRoamingService {
         const now = Date.now();
         if (now - this.lastBubbleTime < this.bubbleCooldown) return;
         
-        const pool = SPEECH_BUBBLES['random'];
+        const useCapabilities = Math.random() < 0.4;
+        const pool = useCapabilities ? SPEECH_BUBBLES['capabilities'] : SPEECH_BUBBLES['random'];
         const message = pool[Math.floor(Math.random() * pool.length)];
         
-        this.showBubble(message, 4000);
+        this.showBubble(message, 4500);
     }
     
     private showBubble(message: string, duration: number = 3500): void {
