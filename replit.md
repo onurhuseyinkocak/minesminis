@@ -51,7 +51,24 @@ The following environment variables are configured in Replit:
 7. **Teacher Dashboard**: Analytics and student management
 8. **Student Dashboard**: Progress tracking and gamification
 
-## Recent Changes (GitHub Import Setup)
+## Recent Changes (December 2025)
+
+### Mimi Mascot Animation Improvements
+- Removed "running" animation state entirely - Mimi only walks slowly now
+- Increased walking animation cycle from 1.4s to 2.2s for smoother movement
+- Increased position transition duration from 4s to 6s with cubic-bezier easing
+- Increased walking duration multiplier from 120 to 180 (distance * 180ms)
+- Fixed position mutation bug with defensive object copies
+- Roaming delays changed from 4-9s to 6-14s between actions
+
+### UX/UI Modernization
+- Redesigned ChatHome with modern gradient backgrounds
+- Added mobile responsive breakpoints (480px, 768px, 1200px)
+- Added safe-area-inset support for notch devices
+- Updated cottage styling with softer shadows and hover effects
+- Improved child-friendly design with smooth animations
+
+### GitHub Import Setup
 - Configured Vite to work with Replit environment (port 5000, host 0.0.0.0)
 - Updated backend server for dynamic port assignment and CORS configuration
 - Modified AI service to auto-detect Replit domains for backend communication
