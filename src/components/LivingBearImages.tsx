@@ -98,12 +98,31 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
     };
 
     const mapState = (state: AnimationState): 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'thinking' | 'love' => {
-        if (state === 'following') return 'walking';
-        if (state === 'singing' || state === 'surprised' || state === 'jumping') return 'celebrating';
-        if (['idle', 'walking', 'dancing', 'sleeping', 'celebrating', 'waving', 'laughing', 'thinking', 'love'].includes(state)) {
-            return state as 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'thinking' | 'love';
+        switch (state) {
+            case 'following':
+            case 'walking':
+                return 'walking';
+            case 'singing':
+            case 'surprised':
+            case 'jumping':
+            case 'celebrating':
+                return 'celebrating';
+            case 'dancing':
+                return 'dancing';
+            case 'sleeping':
+            case 'goingHome':
+                return 'sleeping';
+            case 'waving':
+                return 'waving';
+            case 'laughing':
+                return 'laughing';
+            case 'thinking':
+                return 'thinking';
+            case 'love':
+                return 'love';
+            default:
+                return 'idle';
         }
-        return 'idle';
     };
 
     return (
