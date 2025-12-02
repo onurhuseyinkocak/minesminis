@@ -3,17 +3,24 @@
 ## Project Overview
 MinesMinis is a premium English learning platform designed for children (ages 5-8) that combines interactive games, educational videos, worksheets, and an AI-powered mascot named "Mimi" the bear. The application features a social media-like interface (Instagram-style) to make learning engaging and fun.
 
+**Developer**: Onur Hüseyin Koçak
+
 ## Tech Stack
 - **Frontend**: React 18 + TypeScript + Vite
 - **Backend**: Express.js proxy server for OpenAI API
 - **Database**: Supabase (PostgreSQL + Auth)
 - **AI**: OpenAI GPT-4o-mini (via backend proxy)
-- **Styling**: Custom CSS with pastel navy color theme and glassmorphism effects
+- **Styling**: Custom CSS with vibrant colorful premium theme
+- **Icons**: Lucide React (vector icons)
+- **Animations**: Lottie React (lottie-react, @lottiefiles/react-lottie-player)
 
 ## Project Structure
 ```
 ├── src/                    # Frontend React application
 │   ├── components/         # Reusable UI components
+│   │   ├── SplashScreen.tsx/css  # Branded splash screen
+│   │   ├── ProfessorPaws.tsx     # Mimi mascot component
+│   │   └── Navbar.tsx            # Navigation with icons
 │   ├── pages/             # Page components (Home, Games, etc.)
 │   ├── services/          # API services and utilities
 │   ├── contexts/          # React contexts (Auth, etc.)
@@ -21,6 +28,7 @@ MinesMinis is a premium English learning platform designed for children (ages 5-
 ├── server/                # Backend Express proxy server
 │   ├── server.js          # Main server file
 │   └── package.json       # Server dependencies
+├── attached_assets/       # Logo and brand assets
 └── supabase/             # Database migrations and functions
 ```
 
@@ -43,60 +51,76 @@ The following environment variables are configured in Replit:
 3. **Workflow**: Both frontend and backend run concurrently via `npm run dev`
 
 ## Key Features
-1. **AI Mascot (Mimi)**: Interactive bear character that roams the website and chats with students
-2. **Games Section**: Educational games for language learning
-3. **Words Library**: Vocabulary learning with visuals
-4. **Videos**: Curated educational YouTube videos
-5. **Worksheets**: Downloadable learning materials
-6. **Social Features**: Posts, comments, likes, following (Instagram-style)
-7. **Teacher Dashboard**: Analytics and student management
-8. **Student Dashboard**: Progress tracking and gamification
+1. **Splash Screen**: Branded loading screen with logo and developer credit
+2. **AI Mascot (Mimi)**: Interactive brown bear character that roams the website and chats with students
+3. **Games Section**: Educational games for language learning
+4. **Words Library**: Vocabulary learning with visuals
+5. **Videos**: Curated educational YouTube videos
+6. **Worksheets**: Downloadable learning materials
+7. **Social Features**: Posts, comments, likes, following (Instagram-style)
+8. **Teacher Dashboard**: Analytics and student management
+9. **Student Dashboard**: Progress tracking and gamification
 
 ## Design System (Updated December 2025)
 
-### Color Palette - Pastel Navy Theme
-- **Primary Navy**: #2C3E6F (dark navy text)
-- **Primary Navy Dark**: #1E2A4A (hover states)
-- **Primary Navy Pale**: #4A5B8C (borders, accents)
-- **Background Soft**: #F8F9FC (light backgrounds)
-- **Background Navy Soft**: #E8EBF2 (soft borders)
-- **Accent Coral**: #E8A87C (warm accents)
-- **Accent Mint**: #7EB8A8 (success states)
-- **Accent Lavender**: #B8A8D9 (purple accents)
-- **Text Dark**: #2C3E6F
-- **Text Medium**: #5A6B8C
-- **Text Light**: #8A95B0
+### Color Palette - Vibrant Premium Theme
+- **Primary Purple**: #6366f1 (indigo purple)
+- **Primary Dark**: #4f46e5 (darker purple for hover)
+- **Accent Coral**: #FF6B6B (vibrant coral red)
+- **Accent Mint**: #4ECDC4 (fresh mint/teal)
+- **Accent Lavender**: #a78bfa (soft purple)
+- **Accent Peach**: #FFB347 (warm orange-peach)
+- **Accent Sky**: #74b9ff (bright sky blue)
+- **Accent Rose**: #fd79a8 (playful pink)
+- **Text Dark**: #1a1a2e (deep dark blue)
+- **Text Medium**: #4a4a6a (medium gray-purple)
+- **Background Light**: #f8f9ff (very light blue-white)
+
+### Gradient Backgrounds
+- **Splash Screen**: `linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899, #f97316)` with animation
+- **Hero Sections**: Purple to pink gradients
+- **Cards**: White with colored shadows and borders
+
+### Mimi Mascot Colors
+- **Body**: #8B6F47 (realistic bear brown)
+- **Inner Ears**: #D4A574 (lighter tan)
+- **Snout**: #D4A574 (tan)
+- **Eyes/Nose**: #2C1810 (dark brown)
+- **Cheeks**: #FFB6C1 (light pink blush)
 
 ### Design Principles
-- Child-friendly with soft, rounded corners (8-24px radius)
-- Glassmorphism effects with subtle shadows
-- Minimal animations appropriate for children
-- Clean typography with good readability
-- Mobile-responsive layouts
+- Child-friendly with soft, rounded corners (12-24px radius)
+- Vibrant gradients and colorful accents
+- Vector icons from Lucide React
+- Lottie animations for engaging interactions
+- Mobile-responsive layouts with safe-area support
+- Premium glassmorphism effects with colorful shadows
 
 ## Recent Changes (December 2025)
 
-### Complete Pastel Navy Redesign
-- Replaced all neon/bright gradients with soft pastel navy color scheme
-- Updated all page CSS files: Landing, Home, Games, Words, Profile, Messages, Notifications, Search, Reels
-- Updated global styles in index.css and App.css
-- Implemented glassmorphism effects with soft shadows
-- Added consistent border radius and spacing throughout
+### Vibrant Premium Redesign
+- Replaced pastel navy with vibrant colorful theme
+- Updated all CSS files with bright, engaging colors
+- Added gradient backgrounds and colorful shadows
+- Implemented premium-colorful-theme.css
 
-### Mimi Mascot Improvements
-- Softened Mimi's appearance with pastel colors (peach #FFD4B8, cream #FFF5E8, soft pink cheeks)
-- Fixed left/right profile direction logic in mascotRoaming.ts
-- Removed "running" animation - Mimi only walks slowly now
-- Increased animation durations for smoother, child-appropriate movement
-- Walking animation: 2.2s cycle, position transitions: 6s with easing
-- Roaming delays: 6-14s between actions
+### Splash Screen Added
+- Custom branded splash screen with uploaded logo
+- Developer credit: "Onur Hüseyin Koçak"
+- Animated gradient background (purple-pink-orange)
+- Shows once per session (sessionStorage)
+- 1.5s display + 0.4s fade animation
 
-### UX/UI Modernization
-- Redesigned all components with pastel navy theme
-- Added mobile responsive breakpoints (480px, 768px, 1200px)
-- Added safe-area-inset support for notch devices
-- Updated cursor to simple arrow design
-- Improved contrast and readability for children
+### Mimi Mascot Updates
+- Changed to realistic bear brown color (#8B6F47)
+- Removed pastel peach/cream colors
+- Natural brown gradient for authentic bear look
+
+### Technical Improvements
+- Disabled service worker (was causing console errors)
+- Integrated lucide-react for vector icons
+- Installed Lottie animation libraries
+- Optimized splash screen timing
 
 ## Running Locally
 The application automatically starts both frontend and backend:
@@ -117,4 +141,5 @@ This runs:
 ## User Preferences
 - Language: Mixed Turkish/English for the educational content
 - Target Audience: Children ages 5-8 learning English
-- Design Style: Soft pastel navy with glassmorphism effects, child-friendly animations
+- Design Style: Vibrant colorful premium with gradients, NOT pastel/muted tones
+- Future Plans: TWA (Trusted Web Activity) conversion for mobile app
