@@ -3,7 +3,27 @@
 // ============================================================
 // This service now calls our secure backend proxy instead of OpenAI directly
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const getBackendUrl = () => {
+    if (import.meta.env.VITE_BACKEND_URL) {
+        return import.meta.env.VITE_BACKEND_URL;
+    }
+    
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        if (hostname.includes('replit.dev')) {
+            const backendHostname = hostname.replace(/-5000\./, '-3001.');
+            return `https://${backendHostname}`;
+        }
+        if (hostname.includes('repl.co')) {
+            const backendHostname = hostname.replace(/^(.+?)--/, '3001--$1--');
+            return `https://${backendHostname}`;
+        }
+    }
+    
+    return 'http://localhost:3001';
+};
+
+const BACKEND_URL = getBackendUrl();
 
 const SYSTEM_PROMPT = `Sen "Mimi" adında sevimli bir ayı öğretmensin! 🐻✨
 
