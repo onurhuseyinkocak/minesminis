@@ -1,24 +1,21 @@
-// AI-Powered Mascot Roaming System
-// Mascot can freely move around the screen and make its own decisions!
+type AnimationState = 'idle' | 'walking' | 'running' | 'dancing' | 'celebrating' | 'waving' | 'sleeping' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping';
 
 interface Position {
-    x: number; // Percentage (0-100)
-    y: number; // Percentage (0-100)
+    x: number;
+    y: number;
 }
 
-type AnimationState = 'idle' | 'walking' | 'running' | 'dancing' | 'celebrating' | 'waving' | 'sleeping';
-
 class MascotRoamingService {
-    private position: Position = { x: 85, y: 80 }; // Start bottom-right
+    private position: Position = { x: 85, y: 75 };
     private state: AnimationState = 'idle';
     private isRoaming: boolean = false;
     private roamingInterval: NodeJS.Timeout | null = null;
     private listeners: ((pos: Position, state: AnimationState) => void)[] = [];
 
-    // AI Decision Factors
-    private energy: number = 100; // 0-100
-    private mood: number = 90; // 0-100
-    private lastActionTime: number = Date.now();
+    private energy: number = 100;
+    private mood: number = 90;
+    private happiness: number = 80;
+    private lastInteractionTime: number = Date.now();
 
     startRoaming(): void {
         if (this.isRoaming) return;
@@ -38,8 +35,7 @@ class MascotRoamingService {
     private scheduleNextAction(): void {
         if (!this.isRoaming) return;
 
-        // AI decides how long to wait (Increased to 6-12 seconds for calmness)
-        const delay = 6000 + Math.random() * 6000;
+        const delay = 4000 + Math.random() * 5000;
 
         this.roamingInterval = setTimeout(() => {
             this.makeAIDecision();
@@ -48,51 +44,67 @@ class MascotRoamingService {
     }
 
     private makeAIDecision(): void {
-        // Update energy and mood over time
         this.updateAIFactors();
 
         const decision = Math.random();
+        const timeSinceInteraction = Date.now() - this.lastInteractionTime;
 
-        // AI Decision Tree (Calmer Behavior)
-        if (this.energy < 30) {
-            // Low energy - sleep!
-            this.setState('sleeping');
-            setTimeout(() => {
-                this.energy = 100; // Restore energy
-                this.setState('idle');
-            }, 10000); // Sleep longer
-        } else if (this.mood > 80 && this.energy > 70) {
-            // Happy - maybe celebrate or dance (Low chance)
-            if (decision < 0.15) {
-                this.setState('celebrating');
-                setTimeout(() => this.setState('idle'), 3000);
-            } else if (decision < 0.3) {
-                this.setState('dancing');
-                setTimeout(() => this.setState('idle'), 4000);
-            } else {
-                // Mostly just chill
-                this.setState('idle');
-            }
-        } else if (decision < 0.4) {
-            // Move around (40% chance, down from 50%)
+        if (this.energy < 20) {
+            this.doAction('sleeping', 8000);
+            this.energy = 100;
+            return;
+        }
+
+        if (timeSinceInteraction > 60000 && Math.random() < 0.3) {
+            this.doAction('waving', 3000);
+            return;
+        }
+
+        if (this.happiness > 90 && this.mood > 85) {
+            const happyActions: AnimationState[] = ['celebrating', 'dancing', 'jumping', 'laughing', 'love'];
+            const action = happyActions[Math.floor(Math.random() * happyActions.length)];
+            this.doAction(action, 3500);
+            return;
+        }
+
+        if (decision < 0.15) {
+            this.doAction('dancing', 4000);
+        } else if (decision < 0.25) {
+            this.doAction('singing', 5000);
+        } else if (decision < 0.32) {
+            this.doAction('laughing', 2500);
+        } else if (decision < 0.38) {
+            this.doAction('thinking', 3500);
+        } else if (decision < 0.43) {
+            this.doAction('waving', 2500);
+        } else if (decision < 0.48) {
+            this.doAction('jumping', 2000);
+        } else if (decision < 0.65) {
             this.moveToRandomPosition();
-        } else if (decision < 0.5) {
-            // Wave hello (10% chance)
-            this.setState('waving');
-            setTimeout(() => this.setState('idle'), 3000);
+        } else if (decision < 0.70) {
+            this.doAction('celebrating', 3000);
         } else {
-            // Just idle (50% chance - very calm)
-            this.setState('idle');
+            this.doAction('idle', 0);
+        }
+    }
+
+    private doAction(action: AnimationState, duration: number): void {
+        this.setState(action);
+        if (duration > 0) {
+            setTimeout(() => {
+                if (this.state === action) {
+                    this.setState('idle');
+                }
+            }, duration);
         }
     }
 
     private updateAIFactors(): void {
-        // Energy decreases over time
-        this.energy = Math.max(0, this.energy - Math.random() * 5);
-
-        // Mood fluctuates
-        this.mood += (Math.random() - 0.5) * 10;
-        this.mood = Math.max(0, Math.min(100, this.mood));
+        this.energy = Math.max(0, this.energy - Math.random() * 3);
+        this.mood += (Math.random() - 0.4) * 8;
+        this.mood = Math.max(30, Math.min(100, this.mood));
+        this.happiness += (Math.random() - 0.45) * 6;
+        this.happiness = Math.max(40, Math.min(100, this.happiness));
     }
 
     private moveToRandomPosition(): void {
@@ -102,38 +114,32 @@ class MascotRoamingService {
             Math.pow(targetPosition.y - this.position.y, 2)
         );
 
-        // Decide speed based on distance
-        const speed = distance > 40 ? 'running' : 'walking';
+        const speed: AnimationState = distance > 35 ? 'running' : 'walking';
         this.state = speed;
         this.position = targetPosition;
         this.notifyListeners();
 
-        // Calculate duration based on distance
-        const duration = speed === 'running' ? distance * 30 : distance * 50;
+        const duration = speed === 'running' ? distance * 40 : distance * 60;
 
         setTimeout(() => {
-            this.state = 'idle';
-            this.notifyListeners();
+            if (this.state === speed) {
+                this.setState('idle');
+            }
         }, duration);
     }
 
     private getRandomSafePosition(): Position {
-        // Safe zones avoid top navbar and footer
         const safeZones: Position[] = [
-            // Bottom area
-            { x: 10, y: 85 }, { x: 25, y: 80 }, { x: 50, y: 85 },
-            { x: 75, y: 80 }, { x: 90, y: 85 },
-            // Middle-right area
-            { x: 85, y: 60 }, { x: 90, y: 50 }, { x: 85, y: 40 },
-            // Middle-left area
-            { x: 10, y: 60 }, { x: 15, y: 50 }, { x: 10, y: 40 },
-            // Center area
-            { x: 50, y: 60 }, { x: 50, y: 50 },
+            { x: 15, y: 75 }, { x: 30, y: 80 }, { x: 50, y: 75 },
+            { x: 70, y: 80 }, { x: 85, y: 75 },
+            { x: 85, y: 55 }, { x: 88, y: 45 }, { x: 85, y: 35 },
+            { x: 12, y: 55 }, { x: 15, y: 45 }, { x: 12, y: 35 },
+            { x: 50, y: 55 }, { x: 45, y: 45 }, { x: 55, y: 40 },
+            { x: 30, y: 50 }, { x: 70, y: 50 },
         ];
 
-        // Filter out current position
         const available = safeZones.filter(
-            pos => Math.abs(pos.x - this.position.x) > 15 || Math.abs(pos.y - this.position.y) > 10
+            pos => Math.abs(pos.x - this.position.x) > 12 || Math.abs(pos.y - this.position.y) > 8
         );
 
         return available.length > 0
@@ -143,13 +149,18 @@ class MascotRoamingService {
 
     setState(state: AnimationState): void {
         this.state = state;
-        this.lastActionTime = Date.now();
 
-        // Update energy based on action
-        if (state === 'running') this.energy -= 5;
-        else if (state === 'dancing') this.energy -= 3;
-        else if (state === 'walking') this.energy -= 2;
-        else if (state === 'sleeping') this.energy = 100;
+        switch (state) {
+            case 'running': this.energy -= 4; break;
+            case 'dancing': this.energy -= 3; this.happiness += 5; break;
+            case 'jumping': this.energy -= 3; this.happiness += 3; break;
+            case 'walking': this.energy -= 1; break;
+            case 'sleeping': this.energy = 100; break;
+            case 'celebrating': this.happiness += 8; this.mood += 5; break;
+            case 'laughing': this.happiness += 6; this.mood += 4; break;
+            case 'singing': this.happiness += 4; this.mood += 3; break;
+            case 'love': this.happiness += 10; this.mood += 8; break;
+        }
 
         this.notifyListeners();
     }
@@ -160,7 +171,6 @@ class MascotRoamingService {
 
     onChange(callback: (pos: Position, state: AnimationState) => void): () => void {
         this.listeners.push(callback);
-        // Return unsubscribe function
         return () => {
             this.listeners = this.listeners.filter(cb => cb !== callback);
         };
@@ -170,16 +180,55 @@ class MascotRoamingService {
         this.listeners.forEach(cb => cb(this.position, this.state));
     }
 
-    // Manual control methods (for user interaction)
     jumpToPosition(x: number, y: number): void {
         this.position = { x, y };
         this.notifyListeners();
     }
 
-    triggerCelebration(): void {
+    jumpToChat(): void {
+        this.position = { x: 85, y: 75 };
         this.setState('celebrating');
-        this.mood = Math.min(100, this.mood + 20);
+        setTimeout(() => this.setState('idle'), 2000);
+    }
+
+    triggerCelebration(): void {
+        this.lastInteractionTime = Date.now();
+        this.happiness = Math.min(100, this.happiness + 15);
+        this.mood = Math.min(100, this.mood + 10);
+        
+        const celebrationActions: AnimationState[] = ['celebrating', 'love', 'jumping', 'dancing'];
+        const action = celebrationActions[Math.floor(Math.random() * celebrationActions.length)];
+        this.setState(action);
         setTimeout(() => this.setState('idle'), 3000);
+    }
+
+    triggerSurprise(): void {
+        this.setState('surprised');
+        setTimeout(() => this.setState('idle'), 2000);
+    }
+
+    triggerLaugh(): void {
+        this.happiness += 5;
+        this.setState('laughing');
+        setTimeout(() => this.setState('idle'), 3000);
+    }
+
+    triggerSing(): void {
+        this.setState('singing');
+        setTimeout(() => this.setState('idle'), 5000);
+    }
+
+    triggerThink(): void {
+        this.setState('thinking');
+        setTimeout(() => this.setState('idle'), 4000);
+    }
+
+    goHome(): void {
+        this.position = { x: 88, y: 85 };
+        this.setState('walking');
+        setTimeout(() => {
+            this.setState('sleeping');
+        }, 2000);
     }
 }
 

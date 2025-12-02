@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ProfessorPaws.css';
 
 interface ProfessorPawsProps {
-  bearState: 'idle' | 'walking' | 'running' | 'dancing' | 'sleeping' | 'celebrating' | 'waving';
+  bearState: 'idle' | 'walking' | 'running' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping';
   facingDirection: 'left' | 'right';
   onClick?: () => void;
 }
@@ -11,36 +11,74 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
   const [chatMessage, setChatMessage] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [blink, setBlink] = useState(false);
+  const [mouthOpen, setMouthOpen] = useState(false);
   const [hearts, setHearts] = useState<{ id: number, x: number, y: number }[]>([]);
+  const [musicNotes, setMusicNotes] = useState<{ id: number, x: number }[]>([]);
+  const [eyeSparkle, setEyeSparkle] = useState(false);
 
-  // Auto Blink Logic
   useEffect(() => {
     const blinkLoop = () => {
-      setBlink(true);
-      setTimeout(() => setBlink(false), 200); // Slower blink
-      setTimeout(blinkLoop, 3000 + Math.random() * 4000);
-    };
-    const timeout = setTimeout(blinkLoop, 3000);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  // Random Hearts Logic
-  useEffect(() => {
-    const heartLoop = () => {
-      if (Math.random() > 0.8 && bearState !== 'sleeping') {
-        const id = Date.now();
-        setHearts(prev => [...prev, { id, x: Math.random() * 30 - 15, y: 0 }]);
-        setTimeout(() => {
-          setHearts(prev => prev.filter(h => h.id !== id));
-        }, 2500);
+      if (bearState !== 'sleeping') {
+        setBlink(true);
+        setTimeout(() => setBlink(false), 150);
       }
-      setTimeout(heartLoop, 4000);
+      setTimeout(blinkLoop, 2500 + Math.random() * 3000);
     };
-    const timeout = setTimeout(heartLoop, 4000);
+    const timeout = setTimeout(blinkLoop, 2000);
     return () => clearTimeout(timeout);
   }, [bearState]);
 
-  // Chat Bubble Logic
+  useEffect(() => {
+    if (bearState === 'singing' || bearState === 'laughing') {
+      const mouthLoop = setInterval(() => {
+        setMouthOpen(prev => !prev);
+      }, 200);
+      return () => clearInterval(mouthLoop);
+    } else {
+      setMouthOpen(false);
+    }
+  }, [bearState]);
+
+  useEffect(() => {
+    const sparkleLoop = () => {
+      setEyeSparkle(true);
+      setTimeout(() => setEyeSparkle(false), 500);
+      setTimeout(sparkleLoop, 5000 + Math.random() * 5000);
+    };
+    const timeout = setTimeout(sparkleLoop, 3000);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    let counter = 0;
+    const heartLoop = () => {
+      if ((bearState === 'love' || bearState === 'celebrating' || Math.random() > 0.85) && bearState !== 'sleeping') {
+        const id = Date.now() + counter++;
+        setHearts(prev => [...prev, { id, x: Math.random() * 40 - 20, y: 0 }]);
+        setTimeout(() => {
+          setHearts(prev => prev.filter(h => h.id !== id));
+        }, 2000);
+      }
+      setTimeout(heartLoop, bearState === 'love' ? 500 : 3000);
+    };
+    const timeout = setTimeout(heartLoop, 2000);
+    return () => clearTimeout(timeout);
+  }, [bearState]);
+
+  useEffect(() => {
+    let noteCounter = 0;
+    if (bearState === 'singing') {
+      const noteLoop = setInterval(() => {
+        const id = Date.now() + noteCounter++;
+        setMusicNotes(prev => [...prev, { id, x: Math.random() * 30 - 15 }]);
+        setTimeout(() => {
+          setMusicNotes(prev => prev.filter(n => n.id !== id));
+        }, 2000);
+      }, 400);
+      return () => clearInterval(noteLoop);
+    }
+  }, [bearState]);
+
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const showMessage = (msg: string, duration: number = 3000) => {
@@ -53,12 +91,43 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
       }, duration);
     };
 
-    if (bearState === 'sleeping') showMessage("Zzz... ☁️", 5000);
-    else if (bearState === 'celebrating') showMessage("Yaşasın! 🎈", 3000);
-    else if (bearState === 'waving') showMessage("Merhaba! 👋", 3000);
+    const messages: Record<string, string> = {
+      sleeping: "Zzz... 💤",
+      celebrating: "Yaay! 🎉",
+      waving: "Hi! Merhaba! 👋",
+      laughing: "Hahaha! 😂",
+      singing: "La la la~ 🎵",
+      thinking: "Hmm... 🤔",
+      surprised: "Ohhh! 😲",
+      love: "Seni seviyorum! 💕",
+      dancing: "Let's dance! 💃",
+      jumping: "Hop hop! 🐰"
+    };
+
+    if (messages[bearState]) {
+      showMessage(messages[bearState], 4000);
+    }
 
     return () => clearTimeout(timeout);
   }, [bearState]);
+
+  const getEyeStyle = () => {
+    if (bearState === 'sleeping') return 'sleeping';
+    if (bearState === 'laughing') return 'happy';
+    if (bearState === 'love') return 'love';
+    if (bearState === 'surprised') return 'surprised';
+    if (bearState === 'thinking') return 'thinking';
+    return 'normal';
+  };
+
+  const getMouthStyle = () => {
+    if (bearState === 'sleeping') return 'sleep';
+    if (bearState === 'laughing' || bearState === 'celebrating') return mouthOpen ? 'laugh-open' : 'laugh';
+    if (bearState === 'singing') return mouthOpen ? 'sing-open' : 'sing';
+    if (bearState === 'surprised') return 'surprised';
+    if (bearState === 'love') return 'kiss';
+    return 'smile';
+  };
 
   return (
     <div
@@ -69,7 +138,6 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
         cursor: 'pointer'
       }}
     >
-      {/* Chat Bubble */}
       {chatMessage && (
         <div
           className={`chat-bubble ${isVisible ? 'visible' : ''}`}
@@ -79,7 +147,6 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
         </div>
       )}
 
-      {/* Floating Hearts */}
       {hearts.map(heart => (
         <div
           key={heart.id}
@@ -90,102 +157,226 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
         </div>
       ))}
 
-      {/* --- NEW CHUBBY SVG --- */}
-      <svg className="character-svg" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+      {musicNotes.map(note => (
+        <div
+          key={note.id}
+          className="floating-note"
+          style={{ left: `calc(50% + ${note.x}px)`, top: '-10px' }}
+        >
+          {['🎵', '🎶', '♪'][Math.floor(Math.random() * 3)]}
+        </div>
+      ))}
+
+      <svg className="character-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          {/* Soft Pastel Gradients */}
-          <radialGradient id="bodyGradient" cx="50%" cy="50%" r="70%">
-            <stop offset="0%" stopColor="#B2F0F5" /> {/* Very Light Turquoise */}
-            <stop offset="100%" stopColor="#6EDCD9" /> {/* Soft Turquoise */}
+          <radialGradient id="bodyGradientMimi" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#FFE4C4" />
+            <stop offset="50%" stopColor="#DEB887" />
+            <stop offset="100%" stopColor="#D2691E" />
           </radialGradient>
-          <radialGradient id="bellyGradient" cx="50%" cy="40%" r="50%">
+          <radialGradient id="bellyGradientMimi" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stopColor="#FFF8DC" />
+            <stop offset="100%" stopColor="#FAEBD7" />
+          </radialGradient>
+          <radialGradient id="cheekGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#FFB6C1" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#FFB6C1" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="eyeShine" cx="30%" cy="30%" r="50%">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="100%" stopColor="#E6FFFF" />
+            <stop offset="100%" stopColor="#000000" />
           </radialGradient>
-          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
             <feOffset dx="0" dy="2" result="offsetblur" />
             <feComponentTransfer>
-              <feFuncA type="linear" slope="0.2" />
+              <feFuncA type="linear" slope="0.15" />
             </feComponentTransfer>
             <feMerge>
               <feMergeNode />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <filter id="sparkle">
+            <feGaussianBlur stdDeviation="1" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
-        {/* --- LIMBS (Integrated look) --- */}
-
-        {/* Back Arm */}
         <g className="limb arm-back">
-          <ellipse cx="65" cy="135" rx="12" ry="25" fill="url(#bodyGradient)" filter="url(#softShadow)" />
+          <ellipse cx="55" cy="150" rx="14" ry="28" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx="52" cy="172" rx="10" ry="10" fill="#D2691E" />
         </g>
 
-        {/* Back Leg */}
         <g className="limb leg-back">
-          <ellipse cx="80" cy="185" rx="14" ry="20" fill="url(#bodyGradient)" filter="url(#softShadow)" />
+          <ellipse cx="70" cy="205" rx="16" ry="22" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx="68" cy="222" rx="12" ry="8" fill="#A0522D" />
         </g>
 
-        {/* --- MAIN BODY (Chubby Pear Shape) --- */}
-        <path
-          d="M 70 120 
-                       Q 60 190 100 195 
-                       Q 140 190 130 120 
-                       Q 125 90 100 90 
-                       Q 75 90 70 120"
-          fill="url(#bodyGradient)"
-          filter="url(#softShadow)"
-        />
+        <ellipse cx="100" cy="165" rx="48" ry="55" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+        <ellipse cx="100" cy="170" rx="32" ry="38" fill="url(#bellyGradientMimi)" opacity="0.9" />
 
-        {/* Belly Patch (Soft & Round) */}
-        <ellipse cx="100" cy="150" rx="28" ry="35" fill="url(#bellyGradient)" opacity="0.8" />
-
-        {/* Front Leg */}
         <g className="limb leg-front">
-          <ellipse cx="120" cy="185" rx="14" ry="20" fill="url(#bodyGradient)" filter="url(#softShadow)" />
+          <ellipse cx="130" cy="205" rx="16" ry="22" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx="132" cy="222" rx="12" ry="8" fill="#A0522D" />
         </g>
 
-        {/* --- HEAD (Round & Cute) --- */}
         <g className="head-group">
-          {/* Ears (Small & Attached) */}
-          <circle cx="72" cy="65" r="9" fill="url(#bodyGradient)" filter="url(#softShadow)" />
-          <circle cx="72" cy="65" r="5" fill="#FFC0CB" opacity="0.6" />
+          <g className="ear-left">
+            <ellipse cx="60" cy="50" rx="18" ry="18" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+            <ellipse cx="60" cy="50" rx="10" ry="10" fill="#FFB6C1" opacity="0.6" />
+          </g>
 
-          <circle cx="128" cy="65" r="9" fill="url(#bodyGradient)" filter="url(#softShadow)" />
-          <circle cx="128" cy="65" r="5" fill="#FFC0CB" opacity="0.6" />
+          <g className="ear-right">
+            <ellipse cx="140" cy="50" rx="18" ry="18" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+            <ellipse cx="140" cy="50" rx="10" ry="10" fill="#FFB6C1" opacity="0.6" />
+          </g>
 
-          {/* Face Shape */}
-          <ellipse cx="100" cy="85" rx="45" ry="40" fill="url(#bodyGradient)" filter="url(#softShadow)" />
+          <ellipse cx="100" cy="85" rx="52" ry="48" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
 
-          {/* Cheeks */}
-          <circle cx="75" cy="95" r="8" fill="#FFB6C1" opacity="0.4" />
-          <circle cx="125" cy="95" r="8" fill="#FFB6C1" opacity="0.4" />
+          <ellipse cx="100" cy="105" rx="22" ry="18" fill="#FAEBD7" opacity="0.8" />
 
-          {/* Eyes (Friendly & Wide) */}
-          <g className="eyes">
-            {/* Left Eye */}
-            <g transform={blink ? "scale(1, 0.1) translate(0, 750)" : ""}>
-              <circle cx="82" cy="82" r="5" fill="#333" />
-              <circle cx="84" cy="80" r="2" fill="white" />
+          <circle cx="68" cy="100" r="14" fill="url(#cheekGlow)" />
+          <circle cx="132" cy="100" r="14" fill="url(#cheekGlow)" />
+
+          <g className={`eyes eyes-${getEyeStyle()}`}>
+            <g className="eye-left" transform={blink ? "translate(0, 85) scale(1, 0.1)" : ""}>
+              {getEyeStyle() === 'love' ? (
+                <text x="75" y="90" fontSize="18" textAnchor="middle">❤️</text>
+              ) : getEyeStyle() === 'sleeping' ? (
+                <path d="M67,82 Q75,88 83,82" fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
+              ) : (
+                <>
+                  <ellipse cx="75" cy="82" rx={getEyeStyle() === 'surprised' ? 12 : 10} ry={getEyeStyle() === 'surprised' ? 14 : 12} fill="#333" />
+                  <ellipse cx="75" cy="82" rx="8" ry="10" fill="url(#eyeShine)" />
+                  <circle cx="78" cy="78" r="4" fill="white" />
+                  <circle cx="72" cy="84" r="2" fill="white" opacity="0.6" />
+                  {eyeSparkle && (
+                    <g filter="url(#sparkle)">
+                      <text x="82" y="76" fontSize="8">✨</text>
+                    </g>
+                  )}
+                </>
+              )}
             </g>
-            {/* Right Eye */}
-            <g transform={blink ? "scale(1, 0.1) translate(0, 750)" : ""}>
-              <circle cx="118" cy="82" r="5" fill="#333" />
-              <circle cx="120" cy="80" r="2" fill="white" />
+            <g className="eye-right" transform={blink ? "translate(0, 85) scale(1, 0.1)" : ""}>
+              {getEyeStyle() === 'love' ? (
+                <text x="125" y="90" fontSize="18" textAnchor="middle">❤️</text>
+              ) : getEyeStyle() === 'sleeping' ? (
+                <path d="M117,82 Q125,88 133,82" fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
+              ) : (
+                <>
+                  <ellipse cx="125" cy="82" rx={getEyeStyle() === 'surprised' ? 12 : 10} ry={getEyeStyle() === 'surprised' ? 14 : 12} fill="#333" />
+                  <ellipse cx="125" cy="82" rx="8" ry="10" fill="url(#eyeShine)" />
+                  <circle cx="128" cy="78" r="4" fill="white" />
+                  <circle cx="122" cy="84" r="2" fill="white" opacity="0.6" />
+                  {eyeSparkle && (
+                    <g filter="url(#sparkle)">
+                      <text x="132" y="76" fontSize="8">✨</text>
+                    </g>
+                  )}
+                </>
+              )}
             </g>
           </g>
 
-          {/* Nose & Mouth (Tiny) */}
-          <ellipse cx="100" cy="92" rx="4" ry="3" fill="#FF69B4" />
-          <path d="M95,100 Q100,105 105,100" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+          <g className={`eyebrows brow-${bearState}`}>
+            {bearState === 'thinking' && (
+              <>
+                <path d="M65,68 Q75,62 85,68" fill="none" stroke="#8B4513" strokeWidth="2" />
+                <path d="M115,62 Q125,58 135,64" fill="none" stroke="#8B4513" strokeWidth="2" />
+              </>
+            )}
+            {bearState === 'surprised' && (
+              <>
+                <path d="M65,62 Q75,56 85,62" fill="none" stroke="#8B4513" strokeWidth="2" />
+                <path d="M115,62 Q125,56 135,62" fill="none" stroke="#8B4513" strokeWidth="2" />
+              </>
+            )}
+          </g>
+
+          <ellipse cx="100" cy="100" rx="8" ry="6" fill="#5D3A1A" className="nose" />
+          <ellipse cx="100" cy="100" rx="3" ry="2" fill="#8B5A2B" opacity="0.5" />
+
+          <g className={`mouth mouth-${getMouthStyle()}`}>
+            {getMouthStyle() === 'smile' && (
+              <path d="M88,112 Q100,125 112,112" fill="none" stroke="#5D3A1A" strokeWidth="3" strokeLinecap="round" />
+            )}
+            {getMouthStyle() === 'laugh' && (
+              <path d="M85,110 Q100,130 115,110" fill="#FFB6C1" stroke="#5D3A1A" strokeWidth="2" />
+            )}
+            {getMouthStyle() === 'laugh-open' && (
+              <>
+                <ellipse cx="100" cy="118" rx="15" ry="12" fill="#FF6B6B" />
+                <ellipse cx="100" cy="124" rx="8" ry="5" fill="#FFB6C1" />
+              </>
+            )}
+            {getMouthStyle() === 'sing' && (
+              <ellipse cx="100" cy="115" rx="8" ry="6" fill="#FF6B6B" stroke="#5D3A1A" strokeWidth="2" />
+            )}
+            {getMouthStyle() === 'sing-open' && (
+              <ellipse cx="100" cy="115" rx="10" ry="10" fill="#FF6B6B" stroke="#5D3A1A" strokeWidth="2" />
+            )}
+            {getMouthStyle() === 'surprised' && (
+              <ellipse cx="100" cy="115" rx="8" ry="10" fill="#FF6B6B" stroke="#5D3A1A" strokeWidth="2" />
+            )}
+            {getMouthStyle() === 'kiss' && (
+              <ellipse cx="100" cy="112" rx="5" ry="6" fill="#FF69B4" />
+            )}
+            {getMouthStyle() === 'sleep' && (
+              <path d="M95,110 Q100,105 105,110" fill="none" stroke="#5D3A1A" strokeWidth="2" strokeLinecap="round" />
+            )}
+          </g>
+
+          {bearState === 'thinking' && (
+            <g className="thinking-dots">
+              <circle cx="150" cy="60" r="4" fill="#DEB887" opacity="0.6">
+                <animate attributeName="opacity" values="0.6;1;0.6" dur="1s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="160" cy="45" r="6" fill="#DEB887" opacity="0.5">
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="1s" begin="0.3s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="175" cy="30" r="8" fill="#DEB887" opacity="0.4">
+                <animate attributeName="opacity" values="0.4;1;0.4" dur="1s" begin="0.6s" repeatCount="indefinite" />
+              </circle>
+            </g>
+          )}
+
+          {bearState === 'sleeping' && (
+            <g className="zzz-bubbles">
+              <text x="145" y="50" fontSize="14" fill="#6B8E23" opacity="0.8">
+                Z
+                <animate attributeName="y" values="50;30" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.8;0" dur="2s" repeatCount="indefinite" />
+              </text>
+              <text x="155" y="40" fontSize="12" fill="#6B8E23" opacity="0.6">
+                z
+                <animate attributeName="y" values="40;15" dur="2.5s" begin="0.5s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.6;0" dur="2.5s" begin="0.5s" repeatCount="indefinite" />
+              </text>
+              <text x="165" y="30" fontSize="10" fill="#6B8E23" opacity="0.4">
+                z
+                <animate attributeName="y" values="30;5" dur="3s" begin="1s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.4;0" dur="3s" begin="1s" repeatCount="indefinite" />
+              </text>
+            </g>
+          )}
         </g>
 
-        {/* Front Arm */}
         <g className="limb arm-front">
-          <ellipse cx="135" cy="135" rx="12" ry="25" fill="url(#bodyGradient)" filter="url(#softShadow)" />
+          <ellipse cx="145" cy="150" rx="14" ry="28" fill="url(#bodyGradientMimi)" filter="url(#softGlow)" />
+          <ellipse cx="148" cy="172" rx="10" ry="10" fill="#D2691E" />
         </g>
 
+        {bearState === 'waving' && (
+          <g className="waving-sparkles">
+            <text x="160" y="130" fontSize="12">✨</text>
+            <text x="170" y="140" fontSize="10">⭐</text>
+          </g>
+        )}
       </svg>
 
       <div className="character-shadow"></div>

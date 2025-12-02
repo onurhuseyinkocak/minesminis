@@ -1,21 +1,23 @@
-/* === PROFESSOR PAWS - CHUBBY & CALM === */
-
 .professor-paws-container {
     position: relative;
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 160px;
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-    /* Slower, smoother movement */
-    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.08));
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
     cursor: pointer;
     z-index: 1000;
 }
 
 .professor-paws-container:hover {
-    transform: scale(1.05) !important;
+    transform: scale(1.08) !important;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2));
+}
+
+.professor-paws-container:active {
+    transform: scale(0.95) !important;
 }
 
 .character-svg {
@@ -24,305 +26,424 @@
     overflow: visible;
 }
 
-/* --- LIMB PIVOTS --- */
 .limb {
     transform-origin: center top;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.arm-back {
-    transform-origin: 65px 120px;
-}
+.arm-back { transform-origin: 55px 130px; }
+.arm-front { transform-origin: 145px 130px; }
+.leg-back { transform-origin: 70px 190px; }
+.leg-front { transform-origin: 130px 190px; }
+.head-group { transform-origin: 100px 120px; }
+.ear-left { transform-origin: 60px 50px; }
+.ear-right { transform-origin: 140px 50px; }
 
-.arm-front {
-    transform-origin: 135px 120px;
-}
-
-.leg-back {
-    transform-origin: 80px 170px;
-}
-
-.leg-front {
-    transform-origin: 120px 170px;
-}
-
-.head-group {
-    transform-origin: 100px 120px;
-}
-
-/* --- IDLE STATE (Very Subtle Breathing) --- */
 .state-idle .character-svg {
-    animation: idle-breathe 4s ease-in-out infinite;
+    animation: idle-breathe 3s ease-in-out infinite;
 }
 
 .state-idle .head-group {
-    animation: idle-head 5s ease-in-out infinite;
+    animation: idle-head-tilt 6s ease-in-out infinite;
+}
+
+.state-idle .ear-left,
+.state-idle .ear-right {
+    animation: ear-wiggle 4s ease-in-out infinite;
 }
 
 @keyframes idle-breathe {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.02, 0.99);
-    }
-
-    /* Very slight squash */
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.02, 0.98) translateY(2px); }
 }
 
-@keyframes idle-head {
-
-    0%,
-    100% {
-        transform: rotate(0deg);
-    }
-
-    50% {
-        transform: rotate(2deg);
-    }
+@keyframes idle-head-tilt {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
 }
 
-/* --- WALKING STATE (Slow & Cute waddle) --- */
+@keyframes ear-wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
 .state-walking .character-svg {
-    animation: waddle 1.2s ease-in-out infinite;
+    animation: walk-waddle 0.8s ease-in-out infinite;
 }
 
-.state-walking .leg-back {
-    animation: walk-leg 1.2s ease-in-out infinite;
-}
+.state-walking .leg-back { animation: walk-leg 0.8s ease-in-out infinite; }
+.state-walking .leg-front { animation: walk-leg 0.8s ease-in-out infinite reverse; }
+.state-walking .arm-back { animation: walk-arm 0.8s ease-in-out infinite reverse; }
+.state-walking .arm-front { animation: walk-arm 0.8s ease-in-out infinite; }
+.state-walking .head-group { animation: walk-head 0.8s ease-in-out infinite; }
 
-.state-walking .leg-front {
-    animation: walk-leg 1.2s ease-in-out infinite reverse;
-}
-
-.state-walking .arm-back {
-    animation: walk-arm 1.2s ease-in-out infinite reverse;
-}
-
-.state-walking .arm-front {
-    animation: walk-arm 1.2s ease-in-out infinite;
-}
-
-@keyframes waddle {
-
-    0%,
-    100% {
-        transform: rotate(-2deg) translateY(0);
-    }
-
-    50% {
-        transform: rotate(2deg) translateY(-2px);
-    }
+@keyframes walk-waddle {
+    0%, 100% { transform: rotate(-3deg) translateY(0); }
+    50% { transform: rotate(3deg) translateY(-5px); }
 }
 
 @keyframes walk-leg {
-
-    0%,
-    100% {
-        transform: rotate(-10deg);
-    }
-
-    50% {
-        transform: rotate(10deg);
-    }
+    0%, 100% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
 }
 
 @keyframes walk-arm {
-
-    0%,
-    100% {
-        transform: rotate(5deg);
-    }
-
-    50% {
-        transform: rotate(-5deg);
-    }
+    0%, 100% { transform: rotate(8deg); }
+    50% { transform: rotate(-8deg); }
 }
 
-/* --- RUNNING STATE (Just a bit faster waddle) --- */
-.state-running .character-svg {
-    animation: waddle 0.6s ease-in-out infinite;
+@keyframes walk-head {
+    0%, 100% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
 }
 
-.state-running .leg-back {
-    animation: walk-leg 0.6s ease-in-out infinite;
+.state-running .character-svg { animation: run-bounce 0.4s ease-in-out infinite; }
+.state-running .leg-back { animation: run-leg 0.4s ease-in-out infinite; }
+.state-running .leg-front { animation: run-leg 0.4s ease-in-out infinite reverse; }
+.state-running .arm-back { animation: run-arm 0.4s ease-in-out infinite reverse; }
+.state-running .arm-front { animation: run-arm 0.4s ease-in-out infinite; }
+
+@keyframes run-bounce {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
 }
 
-.state-running .leg-front {
-    animation: walk-leg 0.6s ease-in-out infinite reverse;
+@keyframes run-leg {
+    0%, 100% { transform: rotate(-25deg); }
+    50% { transform: rotate(25deg); }
 }
 
-.state-running .arm-back {
-    animation: walk-arm 0.6s ease-in-out infinite reverse;
+@keyframes run-arm {
+    0%, 100% { transform: rotate(15deg); }
+    50% { transform: rotate(-15deg); }
 }
 
-.state-running .arm-front {
-    animation: walk-arm 0.6s ease-in-out infinite;
+.state-dancing .character-svg { animation: dance-groove 1s ease-in-out infinite; }
+.state-dancing .head-group { animation: dance-head 0.5s ease-in-out infinite; }
+.state-dancing .arm-back { animation: dance-arm-left 1s ease-in-out infinite; }
+.state-dancing .arm-front { animation: dance-arm-right 1s ease-in-out infinite; }
+.state-dancing .leg-back { animation: dance-leg 1s ease-in-out infinite; }
+.state-dancing .leg-front { animation: dance-leg 1s ease-in-out infinite reverse; }
+.state-dancing .ear-left, .state-dancing .ear-right { animation: dance-ears 0.5s ease-in-out infinite; }
+
+@keyframes dance-groove {
+    0%, 100% { transform: rotate(-8deg) translateY(0); }
+    25% { transform: rotate(0deg) translateY(-8px); }
+    50% { transform: rotate(8deg) translateY(0); }
+    75% { transform: rotate(0deg) translateY(-8px); }
 }
 
-/* --- DANCING STATE (Gentle Sway) --- */
-.state-dancing .character-svg {
-    animation: dance-sway 2s ease-in-out infinite;
+@keyframes dance-head {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
 }
 
-.state-dancing .arm-back,
-.state-dancing .arm-front {
-    animation: dance-arms 2s ease-in-out infinite;
+@keyframes dance-arm-left {
+    0%, 100% { transform: rotate(-30deg); }
+    50% { transform: rotate(-70deg); }
 }
 
-@keyframes dance-sway {
-
-    0%,
-    100% {
-        transform: rotate(-5deg);
-    }
-
-    50% {
-        transform: rotate(5deg);
-    }
+@keyframes dance-arm-right {
+    0%, 100% { transform: rotate(30deg); }
+    50% { transform: rotate(70deg); }
 }
 
-@keyframes dance-arms {
-
-    0%,
-    100% {
-        transform: rotate(-20deg);
-    }
-
-    50% {
-        transform: rotate(-60deg);
-    }
+@keyframes dance-leg {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
 }
 
-/* --- CELEBRATING STATE (Small Hops) --- */
-.state-celebrating .character-svg {
-    animation: celebrate-hop 1s ease-in-out infinite;
+@keyframes dance-ears {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
 }
 
-@keyframes celebrate-hop {
+.state-celebrating .character-svg { animation: celebrate-jump 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+.state-celebrating .arm-back, .state-celebrating .arm-front { animation: celebrate-arms 0.6s ease-in-out infinite; }
+.state-celebrating .head-group { animation: celebrate-head 0.3s ease-in-out infinite; }
 
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-15px);
-    }
+@keyframes celebrate-jump {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
 }
 
-/* --- WAVING STATE --- */
-.state-waving .arm-front {
-    animation: wave 1.5s ease-in-out infinite;
+@keyframes celebrate-arms {
+    0%, 100% { transform: rotate(-60deg); }
+    50% { transform: rotate(-80deg); }
 }
 
-@keyframes wave {
-
-    0%,
-    100% {
-        transform: rotate(0deg);
-    }
-
-    50% {
-        transform: rotate(-40deg);
-    }
+@keyframes celebrate-head {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
 }
 
-/* --- SLEEPING STATE --- */
-.state-sleeping .character-svg {
-    animation: sleep 5s ease-in-out infinite;
-    opacity: 0.9;
+.state-waving .character-svg { animation: wave-body 2s ease-in-out infinite; }
+.state-waving .arm-front { animation: wave-arm 0.5s ease-in-out infinite; }
+.state-waving .head-group { animation: wave-head 2s ease-in-out infinite; }
+
+@keyframes wave-body {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
 }
 
-@keyframes sleep {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.03, 0.97);
-    }
+@keyframes wave-arm {
+    0%, 100% { transform: rotate(-40deg); }
+    50% { transform: rotate(-70deg); }
 }
 
-/* --- FLOATING HEARTS --- */
+@keyframes wave-head {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+.state-sleeping .character-svg { animation: sleep-breathe 4s ease-in-out infinite; }
+.state-sleeping .head-group { animation: sleep-head 4s ease-in-out infinite; }
+
+@keyframes sleep-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03, 0.97); }
+}
+
+@keyframes sleep-head {
+    0%, 100% { transform: rotate(-5deg) translateY(0); }
+    50% { transform: rotate(-5deg) translateY(3px); }
+}
+
+.state-laughing .character-svg { animation: laugh-shake 0.15s ease-in-out infinite; }
+.state-laughing .head-group { animation: laugh-head 0.2s ease-in-out infinite; }
+.state-laughing .arm-back, .state-laughing .arm-front { animation: laugh-arms 0.3s ease-in-out infinite; }
+
+@keyframes laugh-shake {
+    0%, 100% { transform: translateX(-2px) rotate(-1deg); }
+    50% { transform: translateX(2px) rotate(1deg); }
+}
+
+@keyframes laugh-head {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+@keyframes laugh-arms {
+    0%, 100% { transform: rotate(-20deg); }
+    50% { transform: rotate(-40deg); }
+}
+
+.state-singing .character-svg { animation: sing-sway 1.5s ease-in-out infinite; }
+.state-singing .head-group { animation: sing-head 0.75s ease-in-out infinite; }
+.state-singing .arm-back { animation: sing-arm-left 1.5s ease-in-out infinite; }
+.state-singing .arm-front { animation: sing-arm-right 1.5s ease-in-out infinite; }
+
+@keyframes sing-sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+@keyframes sing-head {
+    0%, 100% { transform: rotate(-8deg) translateY(0); }
+    50% { transform: rotate(8deg) translateY(-3px); }
+}
+
+@keyframes sing-arm-left {
+    0%, 100% { transform: rotate(-20deg); }
+    50% { transform: rotate(-50deg); }
+}
+
+@keyframes sing-arm-right {
+    0%, 100% { transform: rotate(20deg); }
+    50% { transform: rotate(50deg); }
+}
+
+.state-thinking .character-svg { animation: think-breathe 3s ease-in-out infinite; }
+.state-thinking .head-group { animation: think-head 3s ease-in-out infinite; }
+.state-thinking .arm-front { animation: think-arm 3s ease-in-out infinite; }
+
+@keyframes think-breathe {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(2px); }
+}
+
+@keyframes think-head {
+    0%, 100% { transform: rotate(5deg) translateX(3px); }
+    50% { transform: rotate(8deg) translateX(5px); }
+}
+
+@keyframes think-arm {
+    0%, 100% { transform: rotate(-30deg) translateY(-10px); }
+    50% { transform: rotate(-35deg) translateY(-12px); }
+}
+
+.state-surprised .character-svg { animation: surprise-jump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.state-surprised .head-group { animation: surprise-head 0.3s ease-out; }
+.state-surprised .ear-left, .state-surprised .ear-right { animation: surprise-ears 0.5s ease-out; }
+
+@keyframes surprise-jump {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-15px) scale(1.1); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes surprise-head {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1) translateY(-5px); }
+    100% { transform: scale(1); }
+}
+
+@keyframes surprise-ears {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(15deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.state-love .character-svg { animation: love-float 2s ease-in-out infinite; }
+.state-love .head-group { animation: love-head 1s ease-in-out infinite; }
+
+@keyframes love-float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes love-head {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+.state-jumping .character-svg { animation: jump-high 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+.state-jumping .arm-back, .state-jumping .arm-front { animation: jump-arms 0.5s ease-in-out infinite; }
+.state-jumping .leg-back, .state-jumping .leg-front { animation: jump-legs 0.5s ease-in-out infinite; }
+
+@keyframes jump-high {
+    0%, 100% { transform: translateY(0) scaleY(1); }
+    30% { transform: translateY(5px) scaleY(0.9); }
+    50% { transform: translateY(-25px) scaleY(1.1); }
+}
+
+@keyframes jump-arms {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-60deg); }
+}
+
+@keyframes jump-legs {
+    0%, 100% { transform: rotate(0deg); }
+    30% { transform: rotate(15deg); }
+    50% { transform: rotate(-10deg); }
+}
+
 .floating-heart {
     position: absolute;
-    font-size: 20px;
-    animation: float-up 2.5s ease-out forwards;
+    font-size: 18px;
+    animation: float-heart 2s ease-out forwards;
     pointer-events: none;
     z-index: 1001;
 }
 
-@keyframes float-up {
-    0% {
-        transform: translateY(0) scale(0.5);
-        opacity: 0;
-    }
-
-    50% {
-        opacity: 0.8;
-    }
-
-    100% {
-        transform: translateY(-40px) scale(1);
-        opacity: 0;
-    }
+@keyframes float-heart {
+    0% { transform: translateY(0) scale(0.3) rotate(0deg); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-60px) scale(1) rotate(15deg); opacity: 0; }
 }
 
-/* --- CHAT BUBBLE --- */
+.floating-note {
+    position: absolute;
+    font-size: 16px;
+    animation: float-note 2s ease-out forwards;
+    pointer-events: none;
+    z-index: 1001;
+}
+
+@keyframes float-note {
+    0% { transform: translateY(0) scale(0.5) rotate(-10deg); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-50px) translateX(20px) scale(1) rotate(20deg); opacity: 0; }
+}
+
 .chat-bubble {
     position: absolute;
-    top: -50px;
+    top: -55px;
     left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    padding: 8px 14px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    font-family: 'Comic Sans MS', sans-serif;
-    font-size: 13px;
-    color: #555;
+    transform: translateX(-50%) translateY(10px);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5EE 100%);
+    padding: 10px 16px;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    font-family: 'Comic Sans MS', 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5D3A1A;
     white-space: nowrap;
     z-index: 2000;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: none;
-    border: 2px solid #B2F0F5;
+    border: 3px solid #FFB6C1;
+}
+
+.chat-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 12px solid #FFB6C1;
+}
+
+.chat-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #FFFFFF;
+    z-index: 1;
 }
 
 .chat-bubble.visible {
     opacity: 1;
-    transform: translateX(-50%) translateY(-5px);
+    transform: translateX(-50%) translateY(0);
 }
 
-/* --- SHADOW --- */
 .character-shadow {
     position: absolute;
-    bottom: -5px;
-    width: 50%;
-    height: 8px;
-    background: rgba(0, 0, 0, 0.15);
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 12px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(3px);
     z-index: -1;
-    animation: shadow-pulse 4s infinite ease-in-out;
+    animation: shadow-pulse 3s infinite ease-in-out;
 }
 
 @keyframes shadow-pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.2; }
+    50% { transform: translateX(-50%) scale(1.15); opacity: 0.25; }
+}
 
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 0.15;
-    }
+.waving-sparkles text {
+    animation: sparkle-float 1s ease-in-out infinite;
+}
 
-    50% {
-        transform: scale(1.1);
-        opacity: 0.2;
-    }
+@keyframes sparkle-float {
+    0%, 100% { opacity: 1; transform: translateY(0); }
+    50% { opacity: 0.5; transform: translateY(-5px); }
+}
+
+.nose {
+    animation: nose-wiggle 5s ease-in-out infinite;
+}
+
+@keyframes nose-wiggle {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-1px); }
+    75% { transform: translateX(1px); }
 }
