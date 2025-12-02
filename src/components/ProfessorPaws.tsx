@@ -12,8 +12,8 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
   const [isVisible, setIsVisible] = useState(true);
   const [blink, setBlink] = useState(false);
   const [mouthOpen, setMouthOpen] = useState(false);
-  const [hearts, setHearts] = useState<{ id: number, x: number, y: number }[]>([]);
-  const [musicNotes, setMusicNotes] = useState<{ id: number, x: number }[]>([]);
+  const [hearts, setHearts] = useState<{ id: string, x: number, y: number }[]>([]);
+  const [musicNotes, setMusicNotes] = useState<{ id: string, x: number }[]>([]);
   const [eyeSparkle, setEyeSparkle] = useState(false);
 
   useEffect(() => {
@@ -50,10 +50,10 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
   }, []);
 
   useEffect(() => {
-    let counter = 0;
+    let heartCounter = 0;
     const heartLoop = () => {
       if ((bearState === 'love' || bearState === 'celebrating' || Math.random() > 0.85) && bearState !== 'sleeping') {
-        const id = Date.now() + counter++;
+        const id = `heart-${Date.now()}-${heartCounter++}-${Math.random().toString(36).substr(2, 5)}`;
         setHearts(prev => [...prev, { id, x: Math.random() * 40 - 20, y: 0 }]);
         setTimeout(() => {
           setHearts(prev => prev.filter(h => h.id !== id));
@@ -69,7 +69,7 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ bearState, facingDirectio
     let noteCounter = 0;
     if (bearState === 'singing') {
       const noteLoop = setInterval(() => {
-        const id = Date.now() + noteCounter++;
+        const id = `note-${Date.now()}-${noteCounter++}-${Math.random().toString(36).substr(2, 5)}`;
         setMusicNotes(prev => [...prev, { id, x: Math.random() * 30 - 15 }]);
         setTimeout(() => {
           setMusicNotes(prev => prev.filter(n => n.id !== id));

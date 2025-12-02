@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ProfessorPaws from './ProfessorPaws';
 import { mascotRoaming } from '../services/mascotRoaming';
 import './LivingBearImages.css';
@@ -16,15 +16,19 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
     const [facingDirection, setFacingDirection] = useState<'left' | 'right'>('left');
     const [isAtHome, setIsAtHome] = useState(false);
     const [cottageGlow, setCottageGlow] = useState(false);
+    const previousPositionRef = useRef({ x: 85, y: 75 });
 
     useEffect(() => {
         const unsubscribe = mascotRoaming.onChange((newPosition, newState) => {
-            if (newPosition.x > position.x) {
+            const prevX = previousPositionRef.current.x;
+            
+            if (newPosition.x > prevX) {
                 setFacingDirection('right');
-            } else if (newPosition.x < position.x) {
+            } else if (newPosition.x < prevX) {
                 setFacingDirection('left');
             }
 
+            previousPositionRef.current = newPosition;
             setPosition(newPosition);
             setBearState(newState);
 
@@ -39,7 +43,7 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick }) =>
             unsubscribe();
             mascotRoaming.stopRoaming();
         };
-    }, [position.x]);
+    }, []);
 
     useEffect(() => {
         const glowInterval = setInterval(() => {
