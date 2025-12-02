@@ -12,8 +12,11 @@ function Navbar() {
     <nav className="navbar" aria-label="Main Navigation">
       <div className="navbar-logo">
         <Link to="/" className="logo-link" aria-label="MinesMinis Home">
-          <span className="logo-emoji" aria-hidden="true">🎯</span>
-          <span className="logo-text gradient-text">MINESMINIS</span>
+          <img 
+            src="/images/minesminis-logo.png" 
+            alt="MinesMinis" 
+            className="navbar-logo-img"
+          />
         </Link>
       </div>
 

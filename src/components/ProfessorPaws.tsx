@@ -76,25 +76,25 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({
       <svg className="character-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="bodyGradientMimi" cx="50%" cy="30%" r="70%">
-            <stop offset="0%" stopColor="#F5E6D3" />
-            <stop offset="50%" stopColor="#E8D4C4" />
-            <stop offset="100%" stopColor="#D4B8A0" />
+            <stop offset="0%" stopColor="#A67B5B" />
+            <stop offset="50%" stopColor="#8B6914" />
+            <stop offset="100%" stopColor="#6B4423" />
           </radialGradient>
           <radialGradient id="bellyGradientMimi" cx="50%" cy="40%" r="50%">
-            <stop offset="0%" stopColor="#FFF8F0" />
-            <stop offset="100%" stopColor="#F5EDE5" />
+            <stop offset="0%" stopColor="#D4A574" />
+            <stop offset="100%" stopColor="#C49A6C" />
           </radialGradient>
           <radialGradient id="cheekGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FFB5C5" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#FFB5C5" stopOpacity="0" />
+            <stop offset="0%" stopColor="#E8A87C" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#E8A87C" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="noseGradient" cx="40%" cy="30%" r="60%">
-            <stop offset="0%" stopColor="#4A5568" />
-            <stop offset="100%" stopColor="#2D3748" />
+            <stop offset="0%" stopColor="#4A3728" />
+            <stop offset="100%" stopColor="#2D1F15" />
           </radialGradient>
           <radialGradient id="earInnerGradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FFD4E0" />
-            <stop offset="100%" stopColor="#FFB5C5" />
+            <stop offset="0%" stopColor="#C49A6C" />
+            <stop offset="100%" stopColor="#B88B5C" />
           </radialGradient>
           <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#000" floodOpacity="0.1"/>
@@ -103,14 +103,14 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({
 
         <g className="limb leg-back">
           <ellipse cx="75" cy="200" rx="18" ry="28" fill="url(#bodyGradientMimi)" />
-          <ellipse cx="75" cy="222" rx="14" ry="10" fill="#C4A484" />
-          <ellipse cx="75" cy="222" rx="10" ry="7" fill="#D4B8A0" />
+          <ellipse cx="75" cy="222" rx="14" ry="10" fill="#5D3A1A" />
+          <ellipse cx="75" cy="222" rx="10" ry="7" fill="#7A4E2D" />
         </g>
 
         <g className="limb arm-back">
           <ellipse cx="60" cy="145" rx="16" ry="30" fill="url(#bodyGradientMimi)" />
-          <ellipse cx="58" cy="170" rx="12" ry="12" fill="#C4A484" />
-          <ellipse cx="58" cy="170" rx="8" ry="8" fill="#D4B8A0" />
+          <ellipse cx="58" cy="170" rx="12" ry="12" fill="#5D3A1A" />
+          <ellipse cx="58" cy="170" rx="8" ry="8" fill="#7A4E2D" />
         </g>
 
         <g className="body-group">
@@ -120,8 +120,8 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({
 
         <g className="limb leg-front">
           <ellipse cx="125" cy="200" rx="18" ry="28" fill="url(#bodyGradientMimi)" />
-          <ellipse cx="125" cy="222" rx="14" ry="10" fill="#C4A484" />
-          <ellipse cx="125" cy="222" rx="10" ry="7" fill="#D4B8A0" />
+          <ellipse cx="125" cy="222" rx="14" ry="10" fill="#5D3A1A" />
+          <ellipse cx="125" cy="222" rx="10" ry="7" fill="#7A4E2D" />
         </g>
 
         <g className="head-group">
@@ -226,8 +226,8 @@ const ProfessorPaws: React.FC<ProfessorPawsProps> = ({
 
         <g className="limb arm-front">
           <ellipse cx="140" cy="145" rx="16" ry="30" fill="url(#bodyGradientMimi)" />
-          <ellipse cx="142" cy="170" rx="12" ry="12" fill="#C4A484" />
-          <ellipse cx="142" cy="170" rx="8" ry="8" fill="#D4B8A0" />
+          <ellipse cx="142" cy="170" rx="12" ry="12" fill="#5D3A1A" />
+          <ellipse cx="142" cy="170" rx="8" ry="8" fill="#7A4E2D" />
         </g>
       </svg>
 

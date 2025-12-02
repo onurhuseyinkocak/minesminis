@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import React from "react";
+import { useState } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Landing from "./pages/Landing";
 import Home from "./pages/Home";
@@ -23,8 +23,10 @@ import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 import StudentDashboard from "./pages/Student/StudentDashboard";
 import LivingBearImages from "./components/LivingBearImages";
 import ChatHome from "./components/ChatHome";
+import SplashScreen from "./components/SplashScreen";
 import { sendMessageToAI } from "./services/aiService";
 import "./App.css";
+import "./premium-colorful-theme.css";
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -74,12 +76,17 @@ function AppRoutes() {
 }
 
 function App() {
-  const [showChat, setShowChat] = React.useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   const handleMascotClick = () => {
     console.log('🎈 Opening AI chat with Mimi!');
     setShowChat(true);
   };
+
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
 
   return (
     <AuthProvider>

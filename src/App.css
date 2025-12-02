@@ -47,6 +47,19 @@
   transform: scale(1.03);
 }
 
+.navbar-logo-img {
+  height: 50px;
+  width: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  transition: all 0.3s ease;
+}
+
+.navbar-logo-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
 .logo-emoji {
   font-size: 2rem;
   filter: drop-shadow(0 2px 4px rgba(74, 91, 140, 0.2));
