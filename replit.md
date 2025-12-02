@@ -52,7 +52,7 @@ The following environment variables are configured in Replit:
 
 ## Key Features
 1. **Splash Screen**: Branded loading screen with logo and developer credit
-2. **AI Mascot (Mimi)**: Interactive brown bear character that roams the website and chats with students
+2. **Dragon Mascot**: Interactive cute green dragon (Lottie animated) that roams the website and chats with students
 3. **Games Section**: Educational games for language learning
 4. **Words Library**: Vocabulary learning with visuals
 5. **Videos**: Curated educational YouTube videos
@@ -81,12 +81,12 @@ The following environment variables are configured in Replit:
 - **Hero Sections**: Purple to pink gradients
 - **Cards**: White with colored shadows and borders
 
-### Mimi Mascot Colors
-- **Body**: #8B6F47 (realistic bear brown)
-- **Inner Ears**: #D4A574 (lighter tan)
-- **Snout**: #D4A574 (tan)
-- **Eyes/Nose**: #2C1810 (dark brown)
-- **Cheeks**: #FFB6C1 (light pink blush)
+### Dragon Mascot Colors (Lottie Animation)
+- **Body**: Green (#4DB866 - vibrant green)
+- **Belly**: Light green (#99E6A6)
+- **Horns**: Golden yellow (#FFD966)
+- **Eyes**: White with black pupils
+- **Cheeks**: Pink blush (#FF99B3)
 
 ### Design Principles
 - Child-friendly with soft, rounded corners (12-24px radius)
@@ -111,10 +111,11 @@ The following environment variables are configured in Replit:
 - Shows once per session (sessionStorage)
 - 1.5s display + 0.4s fade animation
 
-### Mimi Mascot Updates
-- Changed to realistic bear brown color (#8B6F47)
-- Removed pastel peach/cream colors
-- Natural brown gradient for authentic bear look
+### Dragon Mascot Replacement
+- Replaced Mimi bear with cute green dragon using Lottie animation
+- Dragon has big eyes, pink cheeks, and golden horns
+- Fully animated with bounce and movement effects
+- Child-friendly design with playful expressions
 
 ### Technical Improvements
 - Disabled service worker (was causing console errors)
