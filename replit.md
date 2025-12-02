@@ -8,7 +8,7 @@ MinesMinis is a premium English learning platform designed for children (ages 5-
 - **Backend**: Express.js proxy server for OpenAI API
 - **Database**: Supabase (PostgreSQL + Auth)
 - **AI**: OpenAI GPT-4o-mini (via backend proxy)
-- **Styling**: Custom CSS with claymorphism design
+- **Styling**: Custom CSS with pastel navy color theme and glassmorphism effects
 
 ## Project Structure
 ```
@@ -22,6 +22,7 @@ MinesMinis is a premium English learning platform designed for children (ages 5-
 │   ├── server.js          # Main server file
 │   └── package.json       # Server dependencies
 └── supabase/             # Database migrations and functions
+```
 
 ## Environment Setup (Replit)
 
@@ -51,30 +52,51 @@ The following environment variables are configured in Replit:
 7. **Teacher Dashboard**: Analytics and student management
 8. **Student Dashboard**: Progress tracking and gamification
 
+## Design System (Updated December 2025)
+
+### Color Palette - Pastel Navy Theme
+- **Primary Navy**: #2C3E6F (dark navy text)
+- **Primary Navy Dark**: #1E2A4A (hover states)
+- **Primary Navy Pale**: #4A5B8C (borders, accents)
+- **Background Soft**: #F8F9FC (light backgrounds)
+- **Background Navy Soft**: #E8EBF2 (soft borders)
+- **Accent Coral**: #E8A87C (warm accents)
+- **Accent Mint**: #7EB8A8 (success states)
+- **Accent Lavender**: #B8A8D9 (purple accents)
+- **Text Dark**: #2C3E6F
+- **Text Medium**: #5A6B8C
+- **Text Light**: #8A95B0
+
+### Design Principles
+- Child-friendly with soft, rounded corners (8-24px radius)
+- Glassmorphism effects with subtle shadows
+- Minimal animations appropriate for children
+- Clean typography with good readability
+- Mobile-responsive layouts
+
 ## Recent Changes (December 2025)
 
-### Mimi Mascot Animation Improvements
-- Removed "running" animation state entirely - Mimi only walks slowly now
-- Increased walking animation cycle from 1.4s to 2.2s for smoother movement
-- Increased position transition duration from 4s to 6s with cubic-bezier easing
-- Increased walking duration multiplier from 120 to 180 (distance * 180ms)
-- Fixed position mutation bug with defensive object copies
-- Roaming delays changed from 4-9s to 6-14s between actions
+### Complete Pastel Navy Redesign
+- Replaced all neon/bright gradients with soft pastel navy color scheme
+- Updated all page CSS files: Landing, Home, Games, Words, Profile, Messages, Notifications, Search, Reels
+- Updated global styles in index.css and App.css
+- Implemented glassmorphism effects with soft shadows
+- Added consistent border radius and spacing throughout
+
+### Mimi Mascot Improvements
+- Softened Mimi's appearance with pastel colors (peach #FFD4B8, cream #FFF5E8, soft pink cheeks)
+- Fixed left/right profile direction logic in mascotRoaming.ts
+- Removed "running" animation - Mimi only walks slowly now
+- Increased animation durations for smoother, child-appropriate movement
+- Walking animation: 2.2s cycle, position transitions: 6s with easing
+- Roaming delays: 6-14s between actions
 
 ### UX/UI Modernization
-- Redesigned ChatHome with modern gradient backgrounds
+- Redesigned all components with pastel navy theme
 - Added mobile responsive breakpoints (480px, 768px, 1200px)
 - Added safe-area-inset support for notch devices
-- Updated cottage styling with softer shadows and hover effects
-- Improved child-friendly design with smooth animations
-
-### GitHub Import Setup
-- Configured Vite to work with Replit environment (port 5000, host 0.0.0.0)
-- Updated backend server for dynamic port assignment and CORS configuration
-- Modified AI service to auto-detect Replit domains for backend communication
-- Installed backend dependencies
-- Set up environment variables for Supabase and OpenAI
-- Configured deployment settings for VM deployment
+- Updated cursor to simple arrow design
+- Improved contrast and readability for children
 
 ## Running Locally
 The application automatically starts both frontend and backend:
@@ -95,4 +117,4 @@ This runs:
 ## User Preferences
 - Language: Mixed Turkish/English for the educational content
 - Target Audience: Children ages 5-8 learning English
-- Design Style: Colorful, playful, with claymorphism effects
+- Design Style: Soft pastel navy with glassmorphism effects, child-friendly animations
