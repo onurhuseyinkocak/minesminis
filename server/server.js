@@ -5,16 +5,23 @@
 // - Keeps API key secure (server-side only)
 // - Eliminates CORS issues
 // - Adds request validation and logging
+// - In production, serves the built frontend static files
 
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Load environment variables
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const PORT = process.env.PORT || 3001;
+const isProduction = process.env.NODE_ENV === 'production';
+const PORT = process.env.PORT || (isProduction ? 5000 : 3001);
 
 // Middleware
 app.use(cors({
@@ -98,8 +105,26 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
+// In production, serve the built frontend static files
+if (isProduction) {
+    const distPath = path.join(__dirname, '..', 'dist');
+    
+    // Serve static files from the dist folder
+    app.use(express.static(distPath));
+    
+    // Handle SPA routing - serve index.html for all non-API routes
+    app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api')) {
+            res.sendFile(path.join(distPath, 'index.html'));
+        }
+    });
+    
+    console.log('📁 Serving static files from:', distPath);
+}
+
 // Start server
-app.listen(PORT, () => {
-    console.log(`🚀 Backend proxy server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+    console.log(`✅ Mode: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
     console.log(`✅ Ready to proxy requests to OpenAI API`);
 });

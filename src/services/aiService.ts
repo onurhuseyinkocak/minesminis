@@ -4,13 +4,17 @@
 // This service now calls our secure backend proxy instead of OpenAI directly
 
 const getBackendUrl = () => {
+    if (import.meta.env.MODE === 'production') {
+        return '';
+    }
+    
     if (import.meta.env.VITE_BACKEND_URL) {
         return import.meta.env.VITE_BACKEND_URL;
     }
     
     if (typeof window !== 'undefined') {
         const hostname = window.location.hostname;
-        if (hostname.includes('replit.dev')) {
+        if (hostname.includes('replit.dev') || hostname.includes('replit.app')) {
             const backendHostname = hostname.replace(/-5000\./, '-3001.');
             return `https://${backendHostname}`;
         }
