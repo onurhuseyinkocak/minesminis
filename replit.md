@@ -225,12 +225,32 @@ The following environment variables are configured in Replit:
 - **Open/Print buttons** for each worksheet
 - **External Resources section** with links to more free worksheets
 
+### MiniPremium Subscription System (December 2025)
+- **Stripe Integration**: Full payment system with stripe-replit-sync
+  - Automatic webhook management
+  - Product/price syncing from Stripe
+  - Customer and subscription tracking
+- **Subscription Tiers**:
+  - Monthly: ₺99.99/month (price_1SaFHSGjXmnQ9wpX3BYFd0lB)
+  - Yearly: ₺799.99/year - 33% savings (price_1SaFHSGjXmnQ9wpXexPj7vzZ)
+  - Product ID: prod_TXJvMW7rAvZY2j
+- **Premium Features Gating**:
+  - Free tier: 4 games (Matching, Spelling, Memory, Speed Round)
+  - Premium tier: +3 games (Listen & Pick, Sentence Builder, Bubble Pop)
+  - Premium tier: Full vocabulary learning with TTS
+  - Premium tier: Daily challenges with rewards
+- **Premium Context**: React context for subscription state management
+- **Premium Page**: Beautiful pricing cards with feature comparison
+- **Premium Prompts**: Contextual upsell modals when accessing locked features
+- **Navbar Integration**: Crown icon with premium navigation
+
 ### Technical Improvements
 - Disabled service worker (was causing console errors)
 - Integrated lucide-react for vector icons
 - Installed Lottie animation libraries
 - Optimized splash screen timing
 - Fixed vocabulary quiz options caching (December 2025)
+- Added Stripe integration with stripe-replit-sync package
 
 ## Running Locally
 The application automatically starts both frontend and backend:

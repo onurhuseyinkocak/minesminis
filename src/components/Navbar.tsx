@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { usePremium } from "../contexts/PremiumContext";
 
 function Navbar() {
   const { user, userProfile, signOut } = useAuth();
+  const { isPremium } = usePremium();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -58,6 +60,12 @@ function Navbar() {
           <Link to="/videos" className="nav-btn" onClick={() => setIsMenuOpen(false)}>
             <span className="nav-icon">🎬</span>
             <span>Videos</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/premium" className={`nav-btn premium-nav-btn ${isPremium ? 'is-premium' : ''}`} onClick={() => setIsMenuOpen(false)}>
+            <span className="nav-icon">👑</span>
+            <span>{isPremium ? 'Premium' : 'Go Premium'}</span>
           </Link>
         </li>
 

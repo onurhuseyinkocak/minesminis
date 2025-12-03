@@ -1501,6 +1501,170 @@
   color: #1a1a2e;
 }
 
+/* Premium Prompt Modal */
+.premium-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.premium-prompt-modal {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(99, 102, 241, 0.3);
+}
+
+.premium-prompt-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.premium-prompt-modal h2 {
+  font-size: 1.5rem;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.premium-prompt-modal > p {
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.premium-prompt-features {
+  background: linear-gradient(135deg, #f8f9ff, #e0e7ff);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.premium-prompt-features .feature-item {
+  padding: 8px 0;
+  color: #475569;
+  font-weight: 500;
+}
+
+.premium-prompt-btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.premium-prompt-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+.premium-prompt-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.premium-prompt-close:hover {
+  color: #64748b;
+}
+
+/* Free Usage Info */
+.free-usage-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.usage-icon {
+  font-size: 1.1rem;
+}
+
+/* Premium Locked Styles */
+.menu-option.premium-locked {
+  opacity: 0.8;
+  position: relative;
+}
+
+.premium-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.locked-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.2rem;
+}
+
+/* Games Info Banner */
+.games-info-banner {
+  text-align: center;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #e0e7ff, #fdf2f8);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Game Card Premium Styles */
+.game-card.premium-locked {
+  opacity: 0.7;
+  position: relative;
+}
+
+.premium-game-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.2rem;
+}
+
+.free-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #10b981;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
 /* Replay Button Styles */
 .replay-btn {
   background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;

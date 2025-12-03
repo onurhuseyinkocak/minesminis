@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import DragonMascot from './DragonMascot';
 import { useAuth } from '../contexts/AuthContext';
+import { usePremium } from '../contexts/PremiumContext';
 import './MimiLearning.css';
 
 type LearningMode = 'menu' | 'vocabulary' | 'challenge' | 'games' | 'chat';
@@ -120,6 +122,10 @@ interface MimiLearningProps {
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
 const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
+  const navigate = useNavigate();
+  useAuth();
+  const { isPremium } = usePremium();
+  
   const [mode, setMode] = useState<LearningMode>('menu');
   const [gameType, setGameType] = useState<GameType>('menu');
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -133,7 +139,45 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const [challengeComplete, setChallengeComplete] = useState(false);
   const [dragonState, setDragonState] = useState<'idle' | 'celebrating' | 'thinking' | 'waving'>('waving');
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  useAuth();
+  const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
+  
+  const FREE_DAILY_LIMIT = 3;
+  const [dailyUsage, setDailyUsage] = useState(() => {
+    const today = new Date().toDateString();
+    const stored = localStorage.getItem('mimi_daily_usage');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed.date === today) {
+        return parsed.count;
+      }
+    }
+    return 0;
+  });
+
+  const incrementDailyUsage = () => {
+    const today = new Date().toDateString();
+    const newCount = dailyUsage + 1;
+    setDailyUsage(newCount);
+    localStorage.setItem('mimi_daily_usage', JSON.stringify({ date: today, count: newCount }));
+  };
+
+  const canAccessFeature = (featureType: 'vocabulary' | 'challenge' | 'games') => {
+    if (isPremium) return true;
+    if (featureType === 'vocabulary' && dailyUsage < FREE_DAILY_LIMIT) return true;
+    if (featureType === 'games' && ['matching', 'spelling'].includes(gameType)) return true;
+    return false;
+  };
+
+  const handleFeatureAccess = (featureType: 'vocabulary' | 'challenge' | 'games', callback: () => void) => {
+    if (!canAccessFeature(featureType)) {
+      setShowPremiumPrompt(true);
+      return;
+    }
+    if (featureType === 'vocabulary' && !isPremium) {
+      incrementDailyUsage();
+    }
+    callback();
+  };
   
   const audioCache = useRef<Map<string, string>>(new Map());
   const currentAudio = useRef<HTMLAudioElement | null>(null);
@@ -926,6 +970,49 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     setIsCorrect(null);
   }, []);
 
+  // Render Premium Prompt
+  const renderPremiumPrompt = () => (
+    <motion.div 
+      className="premium-prompt-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={() => setShowPremiumPrompt(false)}
+    >
+      <motion.div 
+        className="premium-prompt-modal"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="premium-prompt-icon">👑</div>
+        <h2>Premium Özellik!</h2>
+        <p>Bu özelliğe erişmek için MiniPremium üyesi olmalısın.</p>
+        <div className="premium-prompt-features">
+          <div className="feature-item">✨ Sınırsız kelime pratik</div>
+          <div className="feature-item">🎮 Tüm oyunlara erişim</div>
+          <div className="feature-item">⭐ Günlük meydan okumalar</div>
+          <div className="feature-item">🔊 Sesli telaffuz</div>
+        </div>
+        <button 
+          className="premium-prompt-btn"
+          onClick={() => {
+            onClose();
+            navigate('/premium');
+          }}
+        >
+          Premium'a Geç 🚀
+        </button>
+        <button 
+          className="premium-prompt-close"
+          onClick={() => setShowPremiumPrompt(false)}
+        >
+          Belki sonra
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+
   // Render Menu
   const renderMenu = () => (
     <motion.div 
@@ -941,10 +1028,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
       <h2 className="menu-title">Mimi ile Öğren! 🎓</h2>
       <p className="menu-subtitle">Ne öğrenmek istersin?</p>
       
+      {!isPremium && (
+        <div className="free-usage-info">
+          <span className="usage-icon">🎁</span>
+          <span>Ücretsiz: {FREE_DAILY_LIMIT - dailyUsage} kelime pratik kaldı</span>
+        </div>
+      )}
+      
       <div className="menu-options">
         <motion.button
           className="menu-option vocabulary"
-          onClick={() => setMode('vocabulary')}
+          onClick={() => handleFeatureAccess('vocabulary', () => setMode('vocabulary'))}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -953,11 +1047,12 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <h3>Kelime Öğren</h3>
             <p>Yeni kelimeler öğren ve pratik yap!</p>
           </div>
+          {!isPremium && dailyUsage >= FREE_DAILY_LIMIT && <span className="locked-badge">🔒</span>}
         </motion.button>
         
         <motion.button
-          className="menu-option challenge"
-          onClick={() => setMode('challenge')}
+          className={`menu-option challenge ${!isPremium ? 'premium-locked' : ''}`}
+          onClick={() => isPremium ? setMode('challenge') : setShowPremiumPrompt(true)}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -966,6 +1061,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <h3>Günlük Meydan Okuma</h3>
             <p>Bugünün sorularını çöz!</p>
           </div>
+          {!isPremium && <span className="premium-badge">👑 Premium</span>}
         </motion.button>
         
         <motion.button
@@ -1829,6 +1925,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     if (gameType === 'sentence') return renderSentenceGame();
     if (gameType === 'bubble') return renderBubbleGame();
     
+    const freeGames = ['matching', 'spelling'];
+    
+    const handleGameClick = (game: GameType, initFn: () => void) => {
+      if (isPremium || freeGames.includes(game)) {
+        initFn();
+        setGameType(game);
+      } else {
+        setShowPremiumPrompt(true);
+      }
+    };
+    
     return (
       <div className="mimi-games">
         <div className="games-header">
@@ -1836,82 +1943,95 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h2>🎮 Hızlı Oyunlar</h2>
         </div>
         
+        {!isPremium && (
+          <div className="games-info-banner">
+            <span>🎁 Ücretsiz: 2 oyun | 👑 Premium: Tüm 7 oyun</span>
+          </div>
+        )}
+        
         <div className="games-list">
           <motion.button
             className="game-card playable"
-            onClick={() => { resetMatchingGame(); setGameType('matching'); }}
+            onClick={() => handleGameClick('matching', resetMatchingGame)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">🔤</span>
             <h3>Kelime Eşleştirme</h3>
             <p>İngilizce-Türkçe eşleştir!</p>
+            <span className="free-badge">Ücretsiz</span>
           </motion.button>
           
           <motion.button
             className="game-card playable"
-            onClick={() => { resetSpellingGame(); setGameType('spelling'); }}
+            onClick={() => handleGameClick('spelling', resetSpellingGame)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">🅰️</span>
             <h3>Harf Dizme</h3>
             <p>Harfleri doğru sırala!</p>
+            <span className="free-badge">Ücretsiz</span>
           </motion.button>
           
           <motion.button
-            className="game-card playable"
-            onClick={() => { initializeMemoryGame(); setGameType('memory'); }}
+            className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
+            onClick={() => handleGameClick('memory', initializeMemoryGame)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">🧠</span>
             <h3>Hafıza Oyunu</h3>
             <p>Kartları eşleştir!</p>
+            {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
           
           <motion.button
-            className="game-card playable"
-            onClick={() => { resetSpeedRound(); setGameType('speed'); }}
+            className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
+            onClick={() => handleGameClick('speed', resetSpeedRound)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">⏱️</span>
             <h3>Hız Turu</h3>
             <p>60 saniyede kaç kelime?</p>
+            {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
           
           <motion.button
-            className="game-card playable"
-            onClick={() => { resetListenGame(); setGameType('listen'); }}
+            className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
+            onClick={() => handleGameClick('listen', resetListenGame)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">🎧</span>
             <h3>Dinle ve Seç</h3>
             <p>Duyduğun kelimeyi bul!</p>
+            {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
           
           <motion.button
-            className="game-card playable"
-            onClick={() => { resetSentenceGame(); setGameType('sentence'); }}
+            className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
+            onClick={() => handleGameClick('sentence', resetSentenceGame)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">📝</span>
             <h3>Cümle Kur</h3>
             <p>Kelimeleri sıraya koy!</p>
+            {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
           
           <motion.button
-            className="game-card playable"
-            onClick={() => { resetBubbleGame(); setGameType('bubble'); }}
+            className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
+            onClick={() => handleGameClick('bubble', resetBubbleGame)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">🫧</span>
             <h3>Balon Patlatma</h3>
             <p>Doğru balonu patlat!</p>
+            {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
         </div>
       </div>
@@ -1933,6 +2053,10 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           {mode === 'vocabulary' && renderVocabulary()}
           {mode === 'challenge' && renderChallenge()}
           {mode === 'games' && renderGames()}
+        </AnimatePresence>
+        
+        <AnimatePresence>
+          {showPremiumPrompt && renderPremiumPrompt()}
         </AnimatePresence>
       </motion.div>
     </div>

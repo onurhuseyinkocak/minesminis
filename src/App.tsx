@@ -1,12 +1,14 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { PremiumProvider } from "./contexts/PremiumContext";
 import Landing from "./pages/Landing";
 import Home from "./pages/Home";
 import Games from "./pages/Games";
 import Words from "./pages/Words";
 import Videos from "./pages/Videos";
 import Worksheets from "./pages/Worksheets";
+import Premium from "./pages/Premium";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Favorites from "./pages/Favorites";
@@ -57,6 +59,8 @@ function AppRoutes() {
           <Route path="/favorites" element={user ? <Favorites /> : <Landing />} />
           <Route path="/dashboard" element={user ? <StudentDashboard /> : <Landing />} />
           <Route path="/profile" element={user ? <Profile /> : <Landing />} />
+          <Route path="/premium" element={<Premium />} />
+          <Route path="/premium/success" element={<Premium />} />
           <Route path="/login" element={<Landing />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -145,9 +149,11 @@ function App() {
 
   return (
     <AuthProvider>
-      <ToastProvider>
-        <AppContent />
-      </ToastProvider>
+      <PremiumProvider>
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
+      </PremiumProvider>
     </AuthProvider>
   );
 }
