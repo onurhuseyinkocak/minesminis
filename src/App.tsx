@@ -11,15 +11,9 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
-import Reels from "./pages/Reels";
-import Search from "./pages/Search";
-import Messages from "./pages/Messages";
-import Notifications from "./pages/Notifications";
 import { ToastProvider } from "./components/ToastProvider";
-import TeacherMode from "./components/TeacherMode";
 import AnimatedBackground from "./components/AnimatedBackground";
 import FloatingParticles from "./components/FloatingParticles";
-import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 import StudentDashboard from "./pages/Student/StudentDashboard";
 import Ataturk from "./pages/Ataturk";
 import LivingBearImages from "./components/LivingBearImages";
@@ -59,15 +53,9 @@ function AppRoutes() {
           <Route path="/videos" element={<Videos />} />
           <Route path="/ataturk" element={<Ataturk />} />
           <Route path="/worksheets" element={<Worksheets />} />
-          <Route path="/reels" element={user ? <Reels /> : <Landing />} />
-          <Route path="/search" element={user ? <Search /> : <Landing />} />
-          <Route path="/messages" element={user ? <Messages /> : <Landing />} />
-          <Route path="/notifications" element={user ? <Notifications /> : <Landing />} />
           <Route path="/favorites" element={user ? <Favorites /> : <Landing />} />
-          <Route path="/teacher/dashboard" element={user ? <TeacherDashboard /> : <Landing />} />
-          <Route path="/student/dashboard" element={user ? <StudentDashboard /> : <Landing />} />
+          <Route path="/dashboard" element={user ? <StudentDashboard /> : <Landing />} />
           <Route path="/profile" element={user ? <Profile /> : <Landing />} />
-          <Route path="/profile/:userId" element={user ? <Profile /> : <Landing />} />
           <Route path="/login" element={<Landing />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -92,7 +80,6 @@ function AppContent() {
       <AnimatedBackground />
       <FloatingParticles />
       <AppRoutes />
-      <TeacherMode />
 
       {!isAtaturkPage && (
         <LivingBearImages onMascotClick={handleMascotClick} onHomeClick={() => setShowChat(true)} />

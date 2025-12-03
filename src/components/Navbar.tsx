@@ -62,12 +62,20 @@ function Navbar() {
         </li>
 
         {user && (
-          <li>
-            <Link to="/favorites" className="nav-btn" onClick={() => setIsMenuOpen(false)}>
-              <span className="nav-icon favorite-heart">❤️</span>
-              <span>Favorites</span>
-            </Link>
-          </li>
+          <>
+            <li>
+              <Link to="/favorites" className="nav-btn" onClick={() => setIsMenuOpen(false)}>
+                <span className="nav-icon favorite-heart">❤️</span>
+                <span>Favorites</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/dashboard" className="nav-btn" onClick={() => setIsMenuOpen(false)}>
+                <span className="nav-icon">🏆</span>
+                <span>My Progress</span>
+              </Link>
+            </li>
+          </>
         )}
       </ul>
 

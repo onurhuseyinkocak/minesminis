@@ -6,6 +6,7 @@ export interface UserProfile {
   role: 'teacher' | 'student';
   display_name: string;
   avatar_url: string | null;
+  avatar_emoji: string | null;
   bio: string;
   grade: string | null;
   subjects: string[];
@@ -30,6 +31,7 @@ export const userService = {
       subjects?: string[];
       bio?: string;
       avatarUrl?: string;
+      avatar_emoji?: string;
     }
   ) {
     const userId = user.id || user.uid;
@@ -47,6 +49,7 @@ export const userService = {
       role: profileData.role,
       display_name: profileData.displayName,
       avatar_url: profileData.avatarUrl || null,
+      avatar_emoji: profileData.avatar_emoji || null,
       bio: profileData.bio || '',
       grade: profileData.grade || null,
       subjects: profileData.subjects || [],
