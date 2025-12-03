@@ -54,6 +54,12 @@ function Navbar() {
             <span>Fun Sheets</span>
           </Link>
         </li>
+        <li>
+          <Link to="/videos" className="nav-btn" onClick={() => setIsMenuOpen(false)}>
+            <span className="nav-icon">🎬</span>
+            <span>Videos</span>
+          </Link>
+        </li>
 
         {user && (
           <li>
