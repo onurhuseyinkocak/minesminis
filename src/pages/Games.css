@@ -77,10 +77,13 @@
 .grade-tab.active {
   color: white;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .grade-tab.active::before {
   opacity: 1;
+  z-index: -1;
 }
 
 .games-grid {
