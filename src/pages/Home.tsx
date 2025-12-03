@@ -4,6 +4,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { BookOpen, GamepadIcon, Video, FileText, Trophy, Flame, Star, ArrowRight, Sparkles } from 'lucide-react';
 import './Home.css';
 
+import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
+import ataturkSignature from '@assets/ataturk_images/ataturk-signature.png';
+
 const Home: React.FC = () => {
   const { userProfile, user } = useAuth();
 
@@ -50,10 +53,14 @@ const Home: React.FC = () => {
       {/* Atatürk Corner - Most Prominent Section */}
       <Link to="/ataturk" className="ataturk-corner">
         <div className="ataturk-pattern"></div>
+        <img src={ataturkFormal} alt="Atatürk" className="ataturk-hero-image" />
         <div className="ataturk-content">
-          <div className="ataturk-flag">
-            <div className="flag-crescent"></div>
-            <div className="flag-star"></div>
+          <div className="ataturk-flag-section">
+            <div className="turkish-flag">
+              <div className="flag-bg"></div>
+              <div className="flag-crescent"></div>
+              <div className="flag-star"></div>
+            </div>
           </div>
           <div className="ataturk-text">
             <div className="ataturk-badge">
@@ -62,13 +69,14 @@ const Home: React.FC = () => {
             </div>
             <h2 className="ataturk-title">Mustafa Kemal Atatürk</h2>
             <p className="ataturk-subtitle">Learn about the visionary leader who transformed a nation</p>
+            <img src={ataturkSignature} alt="İmza" className="ataturk-signature" />
           </div>
           <div className="ataturk-arrow">
             <ArrowRight size={24} />
           </div>
         </div>
         <div className="ataturk-quote">
-          <span>"Peace at home, peace in the world"</span>
+          <span>"Yurtta sulh, cihanda sulh" - Peace at home, peace in the world</span>
         </div>
       </Link>
 

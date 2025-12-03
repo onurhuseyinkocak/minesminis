@@ -418,6 +418,7 @@
   box-shadow: 0 12px 40px rgba(26, 26, 46, 0.4);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid rgba(220, 38, 38, 0.3);
+  min-height: 200px;
 }
 
 .ataturk-corner:hover {
@@ -435,49 +436,96 @@
   pointer-events: none;
 }
 
+.ataturk-hero-image {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4));
+  z-index: 1;
+  transition: transform 0.4s ease;
+}
+
+.ataturk-corner:hover .ataturk-hero-image {
+  transform: scale(1.05);
+}
+
 .ataturk-content {
   display: flex;
   align-items: center;
   gap: 1.5rem;
   padding: 1.75rem 2rem;
+  padding-right: 220px;
   position: relative;
   z-index: 2;
 }
 
-.ataturk-flag {
-  width: 72px;
-  height: 72px;
-  background: linear-gradient(135deg, #dc2626, #991b1b);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ataturk-flag-section {
   flex-shrink: 0;
+}
+
+.turkish-flag {
+  width: 100px;
+  height: 66px;
+  background: #e30a17;
+  border-radius: 8px;
   position: relative;
   box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+  overflow: hidden;
 }
 
-.flag-crescent {
-  width: 28px;
-  height: 28px;
-  border: 4px solid white;
-  border-radius: 50%;
+.turkish-flag .flag-bg {
   position: absolute;
-  clip-path: polygon(100% 0%, 100% 100%, 30% 100%, 30% 0%);
+  inset: 0;
+  background: #e30a17;
 }
 
-.flag-star {
-  width: 14px;
-  height: 14px;
+.turkish-flag .flag-crescent {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 28px;
+  transform: translateY(-50%);
+}
+
+.turkish-flag .flag-crescent::after {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background: #e30a17;
+  border-radius: 50%;
+  top: 3px;
+  left: 8px;
+}
+
+.turkish-flag .flag-star {
+  position: absolute;
+  width: 18px;
+  height: 18px;
   background: white;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  position: absolute;
-  right: 14px;
+  top: 50%;
+  left: 58px;
+  transform: translateY(-50%);
 }
 
 .ataturk-text {
   flex: 1;
   min-width: 0;
+}
+
+.ataturk-signature {
+  max-width: 150px;
+  height: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.6;
+  margin-top: 0.75rem;
 }
 
 .ataturk-badge {
@@ -543,16 +591,44 @@
 }
 
 @media (max-width: 768px) {
+  .ataturk-corner {
+    min-height: 280px;
+  }
+
+  .ataturk-hero-image {
+    height: 160px;
+    right: 10px;
+    opacity: 0.6;
+  }
+
   .ataturk-content {
     flex-direction: column;
     text-align: center;
     padding: 1.5rem;
+    padding-right: 1.5rem;
     gap: 1rem;
   }
 
-  .ataturk-flag {
-    width: 64px;
-    height: 64px;
+  .turkish-flag {
+    width: 80px;
+    height: 53px;
+  }
+
+  .turkish-flag .flag-crescent {
+    width: 26px;
+    height: 26px;
+    left: 22px;
+  }
+
+  .turkish-flag .flag-crescent::after {
+    width: 21px;
+    height: 21px;
+  }
+
+  .turkish-flag .flag-star {
+    width: 14px;
+    height: 14px;
+    left: 48px;
   }
 
   .ataturk-title {
@@ -561,6 +637,10 @@
 
   .ataturk-subtitle {
     font-size: 0.9rem;
+  }
+
+  .ataturk-signature {
+    max-width: 120px;
   }
 
   .ataturk-arrow {
