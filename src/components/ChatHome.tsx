@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DragonMascot from './DragonMascot';
+import { generateDynamicQuickReplies, getStarterReplies, QuickReply, ChatMessage as QRChatMessage } from '../services/quickReplies';
 import './ChatHome.css';
 
 interface ChatMessage {
@@ -11,15 +12,8 @@ interface ChatMessage {
 
 interface ChatHomeProps {
     onClose: () => void;
-    onSendMessage: (text: string) => Promise<string>;
+    onSendMessage: (history: Array<{role: 'user' | 'assistant', content: string}>) => Promise<string>;
 }
-
-const QUICK_REPLIES = [
-    { text: "Hello! 👋", value: "Hello Mimi!" },
-    { text: "Teach me! 📚", value: "Teach me a new English word!" },
-    { text: "Let's play! 🎮", value: "Let's play a game!" },
-    { text: "Tell me a joke! 😂", value: "Tell me a funny joke!" }
-];
 
 const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     const [messages, setMessages] = useState<ChatMessage[]>([
