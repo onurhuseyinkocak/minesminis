@@ -2,12 +2,10 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DragonMascot from './DragonMascot';
 import { useAuth } from '../contexts/AuthContext';
-import { userService } from '../services/userService';
-import toast from 'react-hot-toast';
 import './MimiLearning.css';
 
-type LearningMode = 'menu' | 'vocabulary' | 'challenge' | 'games';
-type GameType = 'menu' | 'matching' | 'spelling' | 'memory' | 'speed';
+type LearningMode = 'menu' | 'vocabulary' | 'challenge' | 'games' | 'chat';
+type GameType = 'menu' | 'matching' | 'spelling' | 'memory' | 'speed' | 'listen' | 'sentence' | 'bubble';
 
 interface VocabularyWord {
   word: string;
@@ -30,6 +28,27 @@ interface MemoryCard {
   pairId: number;
   isFlipped: boolean;
   isMatched: boolean;
+}
+
+interface LetterTile {
+  id: number;
+  letter: string;
+  placed: boolean;
+  correct: boolean | null;
+}
+
+interface Bubble {
+  id: number;
+  word: VocabularyWord;
+  x: number;
+  y: number;
+  popped: boolean;
+}
+
+interface SentenceWord {
+  id: number;
+  word: string;
+  placed: boolean;
 }
 
 const vocabularyWords: VocabularyWord[] = [
@@ -63,6 +82,17 @@ const vocabularyWords: VocabularyWord[] = [
   { word: 'Heart', translation: 'Kalp', emoji: '❤️', example: 'I love you with my heart.' },
   { word: 'Cloud', translation: 'Bulut', emoji: '☁️', example: 'Clouds are white and fluffy.' },
   { word: 'Rainbow', translation: 'Gökkuşağı', emoji: '🌈', example: 'The rainbow has many colors.' }
+];
+
+const sentenceTemplates = [
+  { words: ['I', 'love', 'you'], correct: 'I love you' },
+  { words: ['The', 'cat', 'is', 'happy'], correct: 'The cat is happy' },
+  { words: ['I', 'like', 'apples'], correct: 'I like apples' },
+  { words: ['The', 'dog', 'runs', 'fast'], correct: 'The dog runs fast' },
+  { words: ['She', 'is', 'my', 'friend'], correct: 'She is my friend' },
+  { words: ['The', 'sun', 'is', 'bright'], correct: 'The sun is bright' },
+  { words: ['I', 'read', 'books'], correct: 'I read books' },
+  { words: ['Birds', 'can', 'fly'], correct: 'Birds can fly' }
 ];
 
 const dailyChallengeQuestions: QuizQuestion[] = [
@@ -103,18 +133,18 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const [challengeComplete, setChallengeComplete] = useState(false);
   const [dragonState, setDragonState] = useState<'idle' | 'celebrating' | 'thinking' | 'waving'>('waving');
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const { user } = useAuth();
+  useAuth();
   
   const audioCache = useRef<Map<string, string>>(new Map());
   const currentAudio = useRef<HTMLAudioElement | null>(null);
 
   const shuffledWords = [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 5);
-  const [vocabWords] = useState(shuffledWords);
+  const [vocabWords, setVocabWords] = useState(shuffledWords);
   
   const todaysChallenges = [...dailyChallengeQuestions].sort(() => Math.random() - 0.5).slice(0, 3);
-  const [challenges] = useState(todaysChallenges);
+  const [challenges, setChallenges] = useState(todaysChallenges);
   
-  const [vocabQuizOptions] = useState<string[][]>(() => {
+  const [vocabQuizOptions, setVocabQuizOptions] = useState<string[][]>(() => {
     return shuffledWords.map(word => {
       const otherWords = vocabularyWords.filter(w => w.word !== word.word);
       const shuffled = [...otherWords].sort(() => Math.random() - 0.5).slice(0, 3);
@@ -124,13 +154,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   });
 
   // Matching Game State
-  const [matchingWords] = useState(() => 
+  const [matchingWords, setMatchingWords] = useState<VocabularyWord[]>(() => 
     [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 6)
   );
-  const [matchingLeft] = useState<VocabularyWord[]>(() => 
+  const [matchingLeft, setMatchingLeft] = useState<VocabularyWord[]>(() => 
     [...matchingWords].sort(() => Math.random() - 0.5)
   );
-  const [matchingRight] = useState<VocabularyWord[]>(() => 
+  const [matchingRight, setMatchingRight] = useState<VocabularyWord[]>(() => 
     [...matchingWords].sort(() => Math.random() - 0.5)
   );
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
@@ -138,16 +168,18 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const [matchedPairs, setMatchedPairs] = useState<Set<string>>(new Set());
   const [matchingScore, setMatchingScore] = useState(0);
 
-  // Spelling Game State
-  const [spellingWords] = useState(() => 
+  // Enhanced Spelling Game State
+  const [spellingWords, setSpellingWords] = useState<VocabularyWord[]>(() => 
     [...vocabularyWords].filter(w => w.word.length <= 7).sort(() => Math.random() - 0.5).slice(0, 5)
   );
   const [spellingIndex, setSpellingIndex] = useState(0);
-  const [spellingInput, setSpellingInput] = useState('');
   const [spellingScore, setSpellingScore] = useState(0);
-  const [spellingHint, setSpellingHint] = useState('');
-  const [spellingFeedback, setSpellingFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [spellingComplete, setSpellingComplete] = useState(false);
+  const [letterTiles, setLetterTiles] = useState<LetterTile[]>([]);
+  const [placedLetters, setPlacedLetters] = useState<(LetterTile | null)[]>([]);
+  const [spellingFeedback, setSpellingFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [showSpellingHint, setShowSpellingHint] = useState(false);
 
   // Memory Game State
   const [memoryCards, setMemoryCards] = useState<MemoryCard[]>([]);
@@ -166,17 +198,71 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const [speedComplete, setSpeedComplete] = useState(false);
   const speedTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Listen & Pick Game State
+  const [listenWord, setListenWord] = useState<VocabularyWord | null>(null);
+  const [listenOptions, setListenOptions] = useState<VocabularyWord[]>([]);
+  const [listenScore, setListenScore] = useState(0);
+  const [listenRound, setListenRound] = useState(0);
+  const [listenComplete, setListenComplete] = useState(false);
+  const [listenFeedback, setListenFeedback] = useState<'correct' | 'wrong' | null>(null);
+
+  // Sentence Builder State
+  const [sentenceIndex, setSentenceIndex] = useState(0);
+  const [sentenceWords, setSentenceWords] = useState<SentenceWord[]>([]);
+  const [builtSentence, setBuiltSentence] = useState<SentenceWord[]>([]);
+  const [sentenceScore, setSentenceScore] = useState(0);
+  const [sentenceComplete, setSentenceComplete] = useState(false);
+  const [sentenceFeedback, setSentenceFeedback] = useState<'correct' | 'wrong' | null>(null);
+
+  // Bubble Pop State
+  const [bubbles, setBubbles] = useState<Bubble[]>([]);
+  const [targetWord, setTargetWord] = useState<VocabularyWord | null>(null);
+  const [bubbleScore, setBubbleScore] = useState(0);
+  const [bubbleTimeLeft, setBubbleTimeLeft] = useState(45);
+  const [bubbleActive, setBubbleActive] = useState(false);
+  const [bubbleComplete, setBubbleComplete] = useState(false);
+  const bubbleTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const bubbleSpawnRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Prefetch audio for upcoming words
+  const prefetchAudio = useCallback(async (text: string) => {
+    if (audioCache.current.has(text)) return;
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const audioUrl = `data:audio/mp3;base64,${data.audio}`;
+        audioCache.current.set(text, audioUrl);
+      }
+    } catch (error) {
+      console.error('Prefetch error:', error);
+    }
+  }, []);
+
+  // Prefetch vocabulary words on mount
+  useEffect(() => {
+    const wordsToPreload = vocabWords.slice(0, 3);
+    wordsToPreload.forEach(w => {
+      prefetchAudio(w.word);
+      prefetchAudio(w.example);
+    });
+  }, [vocabWords, prefetchAudio]);
+
   // OpenAI TTS with caching and fallback
   const speakWord = async (text: string) => {
     if (isLoadingAudio) return;
     
-    // Stop any currently playing audio
     if (currentAudio.current) {
       currentAudio.current.pause();
       currentAudio.current = null;
     }
 
-    // Check cache first
     if (audioCache.current.has(text)) {
       const cachedAudio = audioCache.current.get(text)!;
       const audio = new Audio(cachedAudio);
@@ -199,7 +285,6 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
       const data = await response.json();
       const audioUrl = `data:audio/mp3;base64,${data.audio}`;
       
-      // Cache the audio
       audioCache.current.set(text, audioUrl);
       
       const audio = new Audio(audioUrl);
@@ -208,7 +293,6 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
       
     } catch (error) {
       console.error('TTS error, falling back to Web Speech:', error);
-      // Fallback to Web Speech API
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
@@ -220,6 +304,141 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     } finally {
       setIsLoadingAudio(false);
     }
+  };
+
+  // Initialize Enhanced Spelling Game
+  const initializeSpellingGame = useCallback(() => {
+    const word = spellingWords[spellingIndex];
+    const letters = word.word.toUpperCase().split('');
+    const extraLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      .split('')
+      .filter(l => !letters.includes(l))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 2);
+    
+    const allLetters = [...letters, ...extraLetters].sort(() => Math.random() - 0.5);
+    
+    setLetterTiles(allLetters.map((letter, i) => ({
+      id: i,
+      letter,
+      placed: false,
+      correct: null
+    })));
+    setPlacedLetters(new Array(word.word.length).fill(null));
+    setSpellingFeedback(null);
+    setShowSpellingHint(false);
+    
+    prefetchAudio(word.word);
+    prefetchAudio(word.example);
+  }, [spellingWords, spellingIndex, prefetchAudio]);
+
+  // Reset Spelling Game for replay
+  const resetSpellingGame = useCallback(() => {
+    const newWords = [...vocabularyWords].filter(w => w.word.length <= 7).sort(() => Math.random() - 0.5).slice(0, 5);
+    setSpellingWords(newWords);
+    setSpellingIndex(0);
+    setSpellingScore(0);
+    setSpellingComplete(false);
+    setHintsUsed(0);
+  }, []);
+
+  useEffect(() => {
+    if (gameType === 'spelling' && !spellingComplete) {
+      initializeSpellingGame();
+    }
+  }, [gameType, spellingIndex, spellingComplete, initializeSpellingGame]);
+
+  // Handle Letter Tile Click
+  const handleLetterTileClick = (tile: LetterTile) => {
+    if (tile.placed || spellingFeedback !== null) return;
+    
+    const emptySlotIndex = placedLetters.findIndex(slot => slot === null);
+    if (emptySlotIndex === -1) return;
+    
+    const newPlaced = [...placedLetters];
+    newPlaced[emptySlotIndex] = { ...tile, placed: true };
+    setPlacedLetters(newPlaced);
+    
+    setLetterTiles(prev => prev.map(t => 
+      t.id === tile.id ? { ...t, placed: true } : t
+    ));
+  };
+
+  // Handle Placed Letter Click (remove)
+  const handlePlacedLetterClick = (index: number) => {
+    if (spellingFeedback !== null) return;
+    
+    const tile = placedLetters[index];
+    if (!tile) return;
+    
+    const newPlaced = [...placedLetters];
+    newPlaced[index] = null;
+    setPlacedLetters(newPlaced);
+    
+    setLetterTiles(prev => prev.map(t => 
+      t.id === tile.id ? { ...t, placed: false } : t
+    ));
+  };
+
+  // Check Spelling Answer
+  const checkSpellingAnswer = () => {
+    const answer = placedLetters.map(t => t?.letter || '').join('');
+    const correct = spellingWords[spellingIndex].word.toUpperCase();
+    
+    if (answer === correct) {
+      setSpellingFeedback('correct');
+      setDragonState('celebrating');
+      const points = hintsUsed === 0 ? 25 : hintsUsed === 1 ? 15 : 10;
+      setSpellingScore(prev => prev + points);
+      speakWord('Great job!');
+      
+      setTimeout(() => {
+        if (spellingIndex < spellingWords.length - 1) {
+          setSpellingIndex(prev => prev + 1);
+          setHintsUsed(0);
+        } else {
+          setSpellingComplete(true);
+        }
+        setDragonState('idle');
+      }, 1500);
+    } else {
+      setSpellingFeedback('wrong');
+      setDragonState('thinking');
+      
+      const newPlaced = placedLetters.map((t, i) => {
+        if (t && t.letter === correct[i]) {
+          return { ...t, correct: true };
+        } else if (t) {
+          return { ...t, correct: false };
+        }
+        return null;
+      });
+      setPlacedLetters(newPlaced);
+      
+      setTimeout(() => {
+        newPlaced.forEach(t => {
+          if (t && t.correct === false) {
+            setLetterTiles(prev => prev.map(lt => 
+              lt.id === t.id ? { ...lt, placed: false, correct: null } : lt
+            ));
+          }
+        });
+        setPlacedLetters(prev => prev.map(t => 
+          t && t.correct === false ? null : t
+        ));
+        setSpellingFeedback(null);
+        setDragonState('idle');
+      }, 1500);
+    }
+  };
+
+  // Give Spelling Hint
+  const giveSpellingHint = () => {
+    if (hintsUsed >= 2) return;
+    
+    setShowSpellingHint(true);
+    setHintsUsed(prev => prev + 1);
+    speakWord(spellingWords[spellingIndex].word);
   };
 
   // Initialize Memory Game
@@ -253,59 +472,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     setMemoryComplete(false);
   }, []);
 
-  // Generate Speed Question
-  const generateSpeedQuestion = useCallback(() => {
-    const word = vocabularyWords[Math.floor(Math.random() * vocabularyWords.length)];
-    const otherWords = vocabularyWords.filter(w => w.word !== word.word);
-    const shuffled = [...otherWords].sort(() => Math.random() - 0.5).slice(0, 3);
-    const options = [...shuffled.map(w => w.translation), word.translation].sort(() => Math.random() - 0.5);
-    
-    setSpeedQuestion(word);
-    setSpeedOptions(options);
+  // Reset Matching Game
+  const resetMatchingGame = useCallback(() => {
+    const newWords = [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 6);
+    setMatchingWords(newWords);
+    setMatchingLeft([...newWords].sort(() => Math.random() - 0.5));
+    setMatchingRight([...newWords].sort(() => Math.random() - 0.5));
+    setSelectedLeft(null);
+    setSelectedRight(null);
+    setMatchedPairs(new Set());
+    setMatchingScore(0);
   }, []);
-
-  // Start Speed Round
-  const startSpeedRound = useCallback(() => {
-    setSpeedTimeLeft(60);
-    setSpeedScore(0);
-    setSpeedActive(true);
-    setSpeedComplete(false);
-    generateSpeedQuestion();
-  }, [generateSpeedQuestion]);
-
-  // Speed Round Timer
-  useEffect(() => {
-    if (speedActive && speedTimeLeft > 0) {
-      speedTimerRef.current = setTimeout(() => {
-        setSpeedTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (speedActive && speedTimeLeft === 0) {
-      setSpeedActive(false);
-      setSpeedComplete(true);
-      setDragonState('celebrating');
-      if (user) {
-        userService.awardPoints(user.id, speedScore);
-      }
-    }
-    
-    return () => {
-      if (speedTimerRef.current) {
-        clearTimeout(speedTimerRef.current);
-      }
-    };
-  }, [speedActive, speedTimeLeft, speedScore, user]);
-
-  // Handle Speed Answer
-  const handleSpeedAnswer = (answer: string) => {
-    if (!speedQuestion || !speedActive) return;
-    
-    if (answer === speedQuestion.translation) {
-      setSpeedScore(prev => prev + 10);
-      setDragonState('celebrating');
-      setTimeout(() => setDragonState('idle'), 300);
-    }
-    generateSpeedQuestion();
-  };
 
   // Handle Memory Card Click
   const handleMemoryCardClick = (cardId: number) => {
@@ -316,8 +493,6 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     
     const newFlipped = [...flippedCards, cardId];
     setFlippedCards(newFlipped);
-    
-    // Update card state
     setMemoryCards(prev => prev.map(c => 
       c.id === cardId ? { ...c, isFlipped: true } : c
     ));
@@ -330,45 +505,313 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
       const firstCard = memoryCards.find(c => c.id === firstId)!;
       const secondCard = memoryCards.find(c => c.id === secondId)!;
       
-      if (firstCard.pairId === secondCard.pairId) {
-        // Match!
-        setMemoryScore(prev => prev + 20);
-        setDragonState('celebrating');
-        
-        setTimeout(() => {
+      setTimeout(() => {
+        if (firstCard.pairId === secondCard.pairId) {
           setMemoryCards(prev => prev.map(c => 
             c.pairId === firstCard.pairId ? { ...c, isMatched: true } : c
           ));
-          setFlippedCards([]);
-          setIsFlipping(false);
-          setDragonState('idle');
+          setMemoryScore(prev => prev + 20);
+          setDragonState('celebrating');
           
-          // Check if all matched
-          const allMatched = memoryCards.filter(c => !c.isMatched).length === 2;
+          const allMatched = memoryCards.filter(c => c.pairId !== firstCard.pairId).every(c => c.isMatched);
           if (allMatched) {
-            setMemoryComplete(true);
-            if (user) {
-              userService.awardPoints(user.id, memoryScore + 20);
-            }
+            setTimeout(() => setMemoryComplete(true), 500);
           }
-        }, 500);
-      } else {
-        // No match
-        setTimeout(() => {
+        } else {
           setMemoryCards(prev => prev.map(c => 
             newFlipped.includes(c.id) ? { ...c, isFlipped: false } : c
           ));
-          setFlippedCards([]);
-          setIsFlipping(false);
-        }, 1000);
-      }
+        }
+        
+        setFlippedCards([]);
+        setIsFlipping(false);
+        setDragonState('idle');
+      }, 1000);
     }
   };
 
-  // Handle Matching Selection
-  const handleMatchingSelect = (word: VocabularyWord, side: 'left' | 'right') => {
-    if (matchedPairs.has(word.word)) return;
+  // Initialize Listen & Pick
+  const initializeListenGame = useCallback(() => {
+    const shuffled = [...vocabularyWords].sort(() => Math.random() - 0.5);
+    const target = shuffled[0];
+    const options = shuffled.slice(0, 4);
     
+    setListenWord(target);
+    setListenOptions(options.sort(() => Math.random() - 0.5));
+    setListenFeedback(null);
+    
+    setTimeout(() => speakWord(target.word), 500);
+  }, []);
+
+  // Reset Listen & Pick
+  const resetListenGame = useCallback(() => {
+    setListenRound(0);
+    setListenScore(0);
+    setListenComplete(false);
+    initializeListenGame();
+  }, [initializeListenGame]);
+
+  // Handle Listen Answer
+  const handleListenAnswer = (word: VocabularyWord) => {
+    if (listenFeedback !== null) return;
+    
+    const isCorrectAnswer = word.word === listenWord?.word;
+    setListenFeedback(isCorrectAnswer ? 'correct' : 'wrong');
+    
+    if (isCorrectAnswer) {
+      setListenScore(prev => prev + 20);
+      setDragonState('celebrating');
+    } else {
+      setDragonState('thinking');
+    }
+    
+    setTimeout(() => {
+      if (listenRound < 4) {
+        setListenRound(prev => prev + 1);
+        initializeListenGame();
+      } else {
+        setListenComplete(true);
+      }
+      setDragonState('idle');
+    }, 1500);
+  };
+
+  // Initialize Sentence Builder
+  const initializeSentenceGame = useCallback(() => {
+    const template = sentenceTemplates[sentenceIndex % sentenceTemplates.length];
+    const words = template.words.map((word, i) => ({
+      id: i,
+      word,
+      placed: false
+    }));
+    setSentenceWords(words.sort(() => Math.random() - 0.5));
+    setBuiltSentence([]);
+    setSentenceFeedback(null);
+  }, [sentenceIndex]);
+
+  // Reset Sentence Builder
+  const resetSentenceGame = useCallback(() => {
+    setSentenceIndex(0);
+    setSentenceScore(0);
+    setSentenceComplete(false);
+    initializeSentenceGame();
+  }, [initializeSentenceGame]);
+
+  // Handle Sentence Word Click
+  const handleSentenceWordClick = (word: SentenceWord) => {
+    if (word.placed || sentenceFeedback !== null) return;
+    
+    setSentenceWords(prev => prev.map(w => 
+      w.id === word.id ? { ...w, placed: true } : w
+    ));
+    setBuiltSentence(prev => [...prev, word]);
+  };
+
+  // Remove Sentence Word
+  const removeSentenceWord = (index: number) => {
+    if (sentenceFeedback !== null) return;
+    
+    const word = builtSentence[index];
+    setSentenceWords(prev => prev.map(w => 
+      w.id === word.id ? { ...w, placed: false } : w
+    ));
+    setBuiltSentence(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Check Sentence
+  const checkSentence = () => {
+    const built = builtSentence.map(w => w.word).join(' ');
+    const correct = sentenceTemplates[sentenceIndex % sentenceTemplates.length].correct;
+    
+    if (built === correct) {
+      setSentenceFeedback('correct');
+      setSentenceScore(prev => prev + 25);
+      setDragonState('celebrating');
+      speakWord(correct);
+      
+      setTimeout(() => {
+        if (sentenceIndex < 4) {
+          setSentenceIndex(prev => prev + 1);
+        } else {
+          setSentenceComplete(true);
+        }
+        setDragonState('idle');
+      }, 2000);
+    } else {
+      setSentenceFeedback('wrong');
+      setDragonState('thinking');
+      
+      setTimeout(() => {
+        setSentenceFeedback(null);
+        setDragonState('idle');
+      }, 1500);
+    }
+  };
+
+  useEffect(() => {
+    if (gameType === 'sentence' && !sentenceComplete) {
+      initializeSentenceGame();
+    }
+  }, [gameType, sentenceIndex, sentenceComplete, initializeSentenceGame]);
+
+  // Initialize Bubble Pop
+  const startBubbleGame = useCallback(() => {
+    setBubbleActive(true);
+    setBubbleTimeLeft(45);
+    setBubbleScore(0);
+    setBubbles([]);
+    
+    const randomWord = vocabularyWords[Math.floor(Math.random() * vocabularyWords.length)];
+    setTargetWord(randomWord);
+    speakWord(randomWord.translation);
+  }, []);
+
+  // Spawn Bubbles
+  useEffect(() => {
+    if (!bubbleActive || !targetWord) return;
+    
+    const spawnBubble = () => {
+      const words = [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 4);
+      if (!words.find(w => w.word === targetWord.word)) {
+        words[Math.floor(Math.random() * words.length)] = targetWord;
+      }
+      
+      const word = words[Math.floor(Math.random() * words.length)];
+      const newBubble: Bubble = {
+        id: Date.now(),
+        word,
+        x: Math.random() * 80 + 10,
+        y: 100,
+        popped: false
+      };
+      
+      setBubbles(prev => [...prev.filter(b => !b.popped && b.y > 0), newBubble]);
+    };
+    
+    bubbleSpawnRef.current = setInterval(spawnBubble, 1200);
+    return () => {
+      if (bubbleSpawnRef.current) clearInterval(bubbleSpawnRef.current);
+    };
+  }, [bubbleActive, targetWord]);
+
+  // Bubble Timer
+  useEffect(() => {
+    if (!bubbleActive) return;
+    
+    bubbleTimerRef.current = setInterval(() => {
+      setBubbleTimeLeft(prev => {
+        if (prev <= 1) {
+          setBubbleActive(false);
+          setBubbleComplete(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    return () => {
+      if (bubbleTimerRef.current) clearInterval(bubbleTimerRef.current);
+    };
+  }, [bubbleActive]);
+
+  // Animate Bubbles
+  useEffect(() => {
+    if (!bubbleActive) return;
+    
+    const animateBubbles = setInterval(() => {
+      setBubbles(prev => prev
+        .map(b => ({ ...b, y: b.y - 2 }))
+        .filter(b => b.y > -10 && !b.popped)
+      );
+    }, 50);
+    
+    return () => clearInterval(animateBubbles);
+  }, [bubbleActive]);
+
+  // Pop Bubble
+  const popBubble = (bubble: Bubble) => {
+    if (bubble.word.word === targetWord?.word) {
+      setBubbleScore(prev => prev + 15);
+      setDragonState('celebrating');
+      
+      const newTarget = vocabularyWords[Math.floor(Math.random() * vocabularyWords.length)];
+      setTargetWord(newTarget);
+      speakWord(newTarget.translation);
+      
+      setTimeout(() => setDragonState('idle'), 500);
+    }
+    
+    setBubbles(prev => prev.map(b => 
+      b.id === bubble.id ? { ...b, popped: true } : b
+    ));
+  };
+
+  // Reset Bubble Game
+  const resetBubbleGame = useCallback(() => {
+    setBubbleComplete(false);
+    setBubbleScore(0);
+    setBubbleTimeLeft(45);
+    setBubbles([]);
+    setTargetWord(null);
+    setBubbleActive(false);
+  }, []);
+
+  // Speed Round Logic
+  const generateSpeedQuestion = useCallback(() => {
+    const word = vocabularyWords[Math.floor(Math.random() * vocabularyWords.length)];
+    const otherWords = vocabularyWords.filter(w => w.word !== word.word);
+    const shuffledOthers = [...otherWords].sort(() => Math.random() - 0.5).slice(0, 3);
+    const options = [...shuffledOthers.map(w => w.translation), word.translation].sort(() => Math.random() - 0.5);
+    
+    setSpeedQuestion(word);
+    setSpeedOptions(options);
+  }, []);
+
+  const startSpeedRound = useCallback(() => {
+    setSpeedActive(true);
+    setSpeedScore(0);
+    setSpeedTimeLeft(60);
+    generateSpeedQuestion();
+    
+    speedTimerRef.current = setInterval(() => {
+      setSpeedTimeLeft(prev => {
+        if (prev <= 1) {
+          setSpeedActive(false);
+          setSpeedComplete(true);
+          if (speedTimerRef.current) clearInterval(speedTimerRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, [generateSpeedQuestion]);
+
+  const resetSpeedRound = useCallback(() => {
+    setSpeedComplete(false);
+    setSpeedActive(false);
+    setSpeedScore(0);
+    setSpeedTimeLeft(60);
+    setSpeedQuestion(null);
+    if (speedTimerRef.current) clearInterval(speedTimerRef.current);
+  }, []);
+
+  const handleSpeedAnswer = (answer: string) => {
+    if (answer === speedQuestion?.translation) {
+      setSpeedScore(prev => prev + 10);
+    }
+    generateSpeedQuestion();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (speedTimerRef.current) clearInterval(speedTimerRef.current);
+      if (bubbleTimerRef.current) clearInterval(bubbleTimerRef.current);
+      if (bubbleSpawnRef.current) clearInterval(bubbleSpawnRef.current);
+    };
+  }, []);
+
+  // Matching Game Logic
+  const handleMatchingSelect = (word: VocabularyWord, side: 'left' | 'right') => {
     if (side === 'left') {
       setSelectedLeft(word.word);
       if (selectedRight) {
@@ -383,89 +826,38 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   };
 
   const checkMatch = (left: string, right: string) => {
-    if (left === right) {
+    const leftWord = matchingWords.find(w => w.word === left);
+    const rightWord = matchingWords.find(w => w.word === right);
+    
+    if (leftWord && rightWord && leftWord.word === rightWord.word) {
       setMatchedPairs(prev => new Set([...prev, left]));
       setMatchingScore(prev => prev + 15);
       setDragonState('celebrating');
-      toast.success('Eşleşti! +15 puan! 🎉');
       
       setTimeout(() => setDragonState('idle'), 1000);
-      
-      if (matchedPairs.size + 1 === matchingWords.length) {
-        if (user) {
-          userService.awardPoints(user.id, matchingScore + 15);
-        }
-      }
-    } else {
-      setDragonState('thinking');
-      toast.error('Tekrar dene! 💪');
-      setTimeout(() => setDragonState('idle'), 500);
     }
     
     setSelectedLeft(null);
     setSelectedRight(null);
   };
 
-  // Handle Spelling Check
-  const handleSpellingCheck = () => {
-    const currentWord = spellingWords[spellingIndex];
-    const isCorrectSpelling = spellingInput.toLowerCase().trim() === currentWord.word.toLowerCase();
-    
-    setSpellingFeedback(isCorrectSpelling ? 'correct' : 'wrong');
-    
-    if (isCorrectSpelling) {
-      setSpellingScore(prev => prev + 20);
-      setDragonState('celebrating');
-      toast.success('Doğru yazım! +20 puan! ✨');
-    } else {
-      setDragonState('thinking');
-      toast.error(`Doğru yazım: ${currentWord.word}`);
-    }
-    
-    setTimeout(() => {
-      setDragonState('idle');
-      setSpellingFeedback(null);
-      setSpellingInput('');
-      setSpellingHint('');
-      
-      if (spellingIndex < spellingWords.length - 1) {
-        setSpellingIndex(prev => prev + 1);
-      } else {
-        setSpellingComplete(true);
-        if (user) {
-          userService.awardPoints(user.id, spellingScore + (isCorrectSpelling ? 20 : 0));
-        }
-      }
-    }, 1500);
-  };
-
-  const showSpellingHint = () => {
-    const word = spellingWords[spellingIndex].word;
-    const hintLength = Math.ceil(word.length / 2);
-    setSpellingHint(word.substring(0, hintLength) + '_'.repeat(word.length - hintLength));
-  };
-
-  const handleVocabQuizAnswer = (answerIndex: number) => {
-    if (selectedAnswer !== null) return;
-    
-    setSelectedAnswer(answerIndex);
+  // Vocabulary Logic
+  const handleVocabAnswer = (answerIndex: number) => {
     const currentWord = vocabWords[currentWordIndex];
     const options = vocabQuizOptions[currentWordIndex];
-    const correct = options[answerIndex] === currentWord.translation;
+    const isAnswerCorrect = options[answerIndex] === currentWord.translation;
     
-    setIsCorrect(correct);
+    setSelectedAnswer(answerIndex);
+    setIsCorrect(isAnswerCorrect);
     
-    if (correct) {
+    if (isAnswerCorrect) {
       setScore(prev => prev + 10);
       setDragonState('celebrating');
-      toast.success('Harika! +10 puan! 🌟');
     } else {
       setDragonState('thinking');
-      toast.error('Tekrar dene! 💪');
     }
     
     setTimeout(() => {
-      setDragonState('idle');
       if (currentWordIndex < vocabWords.length - 1) {
         setCurrentWordIndex(prev => prev + 1);
         setVocabStep('learn');
@@ -473,93 +865,153 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         setIsCorrect(null);
       } else {
         setShowCelebration(true);
-        if (user) {
-          userService.awardPoints(user.id, score + (correct ? 10 : 0));
-        }
       }
+      setDragonState('idle');
     }, 1500);
   };
 
+  // Challenge Logic
   const handleChallengeAnswer = (answerIndex: number) => {
-    if (selectedAnswer !== null) return;
+    const currentQuestion = challenges[challengeIndex];
+    const isAnswerCorrect = answerIndex === currentQuestion.correctAnswer;
     
     setSelectedAnswer(answerIndex);
-    const currentQuestion = challenges[challengeIndex];
-    const correct = answerIndex === currentQuestion.correctAnswer;
+    setIsCorrect(isAnswerCorrect);
     
-    setIsCorrect(correct);
-    
-    if (correct) {
+    if (isAnswerCorrect) {
       setChallengeScore(prev => prev + 20);
       setDragonState('celebrating');
-      toast.success('Doğru! +20 puan! ⭐');
     } else {
       setDragonState('thinking');
     }
     
     setTimeout(() => {
-      setDragonState('idle');
       if (challengeIndex < challenges.length - 1) {
         setChallengeIndex(prev => prev + 1);
         setSelectedAnswer(null);
         setIsCorrect(null);
       } else {
         setChallengeComplete(true);
-        if (user) {
-          userService.awardPoints(user.id, challengeScore + (correct ? 20 : 0));
-        }
       }
+      setDragonState('idle');
     }, 1500);
   };
 
+  // Reset Vocabulary
+  const resetVocabulary = useCallback(() => {
+    const newWords = [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 5);
+    setVocabWords(newWords);
+    setVocabQuizOptions(newWords.map(word => {
+      const otherWords = vocabularyWords.filter(w => w.word !== word.word);
+      const shuffled = [...otherWords].sort(() => Math.random() - 0.5).slice(0, 3);
+      const options = [...shuffled.map(w => w.translation), word.translation];
+      return options.sort(() => Math.random() - 0.5);
+    }));
+    setCurrentWordIndex(0);
+    setVocabStep('learn');
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+    setScore(0);
+    setShowCelebration(false);
+  }, []);
+
+  // Reset Challenge
+  const resetChallenge = useCallback(() => {
+    const newChallenges = [...dailyChallengeQuestions].sort(() => Math.random() - 0.5).slice(0, 3);
+    setChallenges(newChallenges);
+    setChallengeIndex(0);
+    setChallengeScore(0);
+    setChallengeComplete(false);
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+  }, []);
+
+  // Render Menu
   const renderMenu = () => (
-    <div className="mimi-menu">
+    <motion.div 
+      className="mimi-menu"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <div className="menu-dragon">
         <DragonMascot state={dragonState} />
       </div>
-      <h2>Mimi ile Öğren! 🐲</h2>
-      <p>Bugün ne öğrenmek istersin?</p>
+      
+      <h2 className="menu-title">Mimi ile Öğren! 🎓</h2>
+      <p className="menu-subtitle">Ne öğrenmek istersin?</p>
       
       <div className="menu-options">
         <motion.button
           className="menu-option vocabulary"
           onClick={() => setMode('vocabulary')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <span className="option-emoji">📚</span>
-          <span className="option-title">Kelime Öğren</span>
-          <span className="option-desc">Yeni kelimeler öğren!</span>
+          <span className="option-icon">📚</span>
+          <div className="option-content">
+            <h3>Kelime Öğren</h3>
+            <p>Yeni kelimeler öğren ve pratik yap!</p>
+          </div>
         </motion.button>
         
         <motion.button
           className="menu-option challenge"
           onClick={() => setMode('challenge')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <span className="option-emoji">🎯</span>
-          <span className="option-title">Günlük Meydan Okuma</span>
-          <span className="option-desc">3 soru, çok puan!</span>
+          <span className="option-icon">⭐</span>
+          <div className="option-content">
+            <h3>Günlük Meydan Okuma</h3>
+            <p>Bugünün sorularını çöz!</p>
+          </div>
         </motion.button>
         
         <motion.button
           className="menu-option games"
           onClick={() => setMode('games')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <span className="option-emoji">🎮</span>
-          <span className="option-title">Hızlı Oyunlar</span>
-          <span className="option-desc">Eğlenerek öğren!</span>
+          <span className="option-icon">🎮</span>
+          <div className="option-content">
+            <h3>Hızlı Oyunlar</h3>
+            <p>Eğlenceli oyunlarla öğren!</p>
+          </div>
         </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 
+  // Render Vocabulary
   const renderVocabulary = () => {
     const currentWord = vocabWords[currentWordIndex];
-    const options = vocabQuizOptions[currentWordIndex];
+    
+    if (showCelebration) {
+      return (
+        <motion.div 
+          className="celebration"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <div className="complete-dragon">
+            <DragonMascot state="celebrating" />
+          </div>
+          <h2>🎉 Harika İş! 🎉</h2>
+          <p>Tüm kelimeleri öğrendin!</p>
+          <div className="final-score">Toplam Puan: ⭐ {score}</div>
+          <div className="celebration-buttons">
+            <button className="replay-btn" onClick={resetVocabulary}>
+              🔄 Tekrar Oyna
+            </button>
+            <button className="menu-btn" onClick={() => { resetVocabulary(); setMode('menu'); }}>
+              Ana Menüye Dön
+            </button>
+          </div>
+        </motion.div>
+      );
+    }
     
     return (
       <div className="mimi-vocabulary">
@@ -577,52 +1029,44 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         
         {vocabStep === 'learn' ? (
           <motion.div 
-            className="vocab-learn"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            className="word-card"
+            key={currentWord.word}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
           >
             <div className="word-emoji">{currentWord.emoji}</div>
             <div className="word-english">{currentWord.word}</div>
             <div className="word-turkish">{currentWord.translation}</div>
             <div className="word-example">"{currentWord.example}"</div>
             
-            <div className="learn-actions">
-              <button 
-                className={`speak-btn ${isLoadingAudio ? 'loading' : ''}`} 
-                onClick={() => speakWord(currentWord.word)}
-                disabled={isLoadingAudio}
-              >
-                {isLoadingAudio ? '⏳' : '🔊'} Dinle
-              </button>
-              <button 
-                className={`speak-btn ${isLoadingAudio ? 'loading' : ''}`} 
-                onClick={() => speakWord(currentWord.example)}
-                disabled={isLoadingAudio}
-              >
-                {isLoadingAudio ? '⏳' : '🔊'} Cümleyi Dinle
-              </button>
-            </div>
-            
             <button 
-              className="next-btn"
-              onClick={() => setVocabStep('quiz')}
+              className="speak-btn"
+              onClick={() => {
+                speakWord(currentWord.word);
+                setTimeout(() => speakWord(currentWord.example), 1000);
+              }}
+              disabled={isLoadingAudio}
             >
-              Hazırım! Quiz Zamanı! 🎯
+              {isLoadingAudio ? '⏳' : '🔊'} Dinle
+            </button>
+            
+            <button className="next-btn" onClick={() => setVocabStep('quiz')}>
+              Quiz Zamanı! →
             </button>
           </motion.div>
         ) : (
           <motion.div 
-            className="vocab-quiz"
+            className="quiz-card"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="quiz-question">
-              <span className="question-emoji">{currentWord.emoji}</span>
-              <span>"{currentWord.word}" Türkçe'de ne demek?</span>
+              <span className="quiz-emoji">{currentWord.emoji}</span>
+              <h3>"{currentWord.word}" ne demek?</h3>
             </div>
             
             <div className="quiz-options">
-              {options.map((option, index) => (
+              {vocabQuizOptions[currentWordIndex].map((option, index) => (
                 <motion.button
                   key={index}
                   className={`quiz-option ${
@@ -632,7 +1076,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
                         : 'wrong'
                       : ''
                   } ${selectedAnswer !== null && option === currentWord.translation ? 'show-correct' : ''}`}
-                  onClick={() => handleVocabQuizAnswer(index)}
+                  onClick={() => handleVocabAnswer(index)}
                   disabled={selectedAnswer !== null}
                   whileHover={selectedAnswer === null ? { scale: 1.02 } : {}}
                   whileTap={selectedAnswer === null ? { scale: 0.98 } : {}}
@@ -643,33 +1087,18 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             </div>
           </motion.div>
         )}
-        
-        {showCelebration && (
-          <motion.div 
-            className="celebration-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <div className="celebration-content">
-              <DragonMascot state="celebrating" />
-              <h2>🎉 Tebrikler! 🎉</h2>
-              <p>Tüm kelimeleri tamamladın!</p>
-              <div className="final-score">Toplam Puan: ⭐ {score}</div>
-              <button onClick={() => setMode('menu')}>Ana Menüye Dön</button>
-            </div>
-          </motion.div>
-        )}
       </div>
     );
   };
 
+  // Render Challenge
   const renderChallenge = () => {
     const currentQuestion = challenges[challengeIndex];
     
     if (challengeComplete) {
       return (
         <motion.div 
-          className="challenge-complete"
+          className="celebration"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
@@ -692,9 +1121,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
              challengeScore >= 40 ? 'Çok iyi! Yarın daha da iyi olacaksın! 💪' :
              'Pratik yapmaya devam et! Sen başarabilirsin! 🎯'}
           </p>
-          <button className="menu-btn" onClick={() => setMode('menu')}>
-            Ana Menüye Dön
-          </button>
+          <div className="celebration-buttons">
+            <button className="replay-btn" onClick={resetChallenge}>
+              🔄 Tekrar Oyna
+            </button>
+            <button className="menu-btn" onClick={() => { resetChallenge(); setMode('menu'); }}>
+              Ana Menüye Dön
+            </button>
+          </div>
         </motion.div>
       );
     }
@@ -747,6 +1181,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     );
   };
 
+  // Render Matching Game
   const renderMatchingGame = () => {
     const isComplete = matchedPairs.size === matchingWords.length;
     
@@ -761,7 +1196,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h2>🎉 Tebrikler! 🎉</h2>
           <p>Tüm eşleştirmeleri tamamladın!</p>
           <div className="final-score">Toplam Puan: ⭐ {matchingScore}</div>
-          <button onClick={() => setGameType('menu')}>Oyunlara Dön</button>
+          <div className="game-complete-buttons">
+            <button className="replay-btn" onClick={() => { resetMatchingGame(); }}>
+              🔄 Tekrar Oyna
+            </button>
+            <button onClick={() => { resetMatchingGame(); setGameType('menu'); }}>
+              Oyunlara Dön
+            </button>
+          </div>
         </motion.div>
       );
     }
@@ -810,6 +1252,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     );
   };
 
+  // Render Enhanced Spelling Game
   const renderSpellingGame = () => {
     if (spellingComplete) {
       return (
@@ -822,7 +1265,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h2>🎉 Harika İş! 🎉</h2>
           <p>Yazım pratiğini tamamladın!</p>
           <div className="final-score">Toplam Puan: ⭐ {spellingScore}</div>
-          <button onClick={() => setGameType('menu')}>Oyunlara Dön</button>
+          <div className="game-complete-buttons">
+            <button className="replay-btn" onClick={() => { resetSpellingGame(); }}>
+              🔄 Tekrar Oyna
+            </button>
+            <button onClick={() => { resetSpellingGame(); setGameType('menu'); }}>
+              Oyunlara Dön
+            </button>
+          </div>
         </motion.div>
       );
     }
@@ -830,7 +1280,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     const currentWord = spellingWords[spellingIndex];
     
     return (
-      <div className="spelling-game">
+      <div className="spelling-game enhanced">
         <div className="game-header">
           <button className="back-btn" onClick={() => setGameType('menu')}>← Geri</button>
           <h3>🅰️ Harf Dizme</h3>
@@ -841,54 +1291,86 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           {spellingIndex + 1} / {spellingWords.length}
         </div>
         
-        <div className="spelling-dragon">
-          <DragonMascot state={dragonState} />
-        </div>
-        
         <motion.div 
-          className="spelling-card"
+          className="spelling-card-enhanced"
           key={spellingIndex}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="spelling-emoji">{currentWord.emoji}</div>
-          <div className="spelling-turkish">
-            <strong>Türkçe:</strong> {currentWord.translation}
+          <div className="spelling-word-display">
+            <div className="spelling-emoji-large">{currentWord.emoji}</div>
+            <div className="spelling-turkish-large">
+              <strong>{currentWord.translation}</strong>
+            </div>
           </div>
           
-          {spellingHint && (
-            <div className="spelling-hint">
-              💡 İpucu: {spellingHint}
-            </div>
+          {showSpellingHint && (
+            <motion.div 
+              className="spelling-hint-enhanced"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+            >
+              <span className="hint-icon">💡</span>
+              <span>İlk harf: <strong>{currentWord.word[0].toUpperCase()}</strong></span>
+              <span className="hint-length">({currentWord.word.length} harf)</span>
+            </motion.div>
           )}
           
-          <input
-            type="text"
-            className={`spelling-input ${spellingFeedback === 'correct' ? 'correct' : ''} ${spellingFeedback === 'wrong' ? 'wrong' : ''}`}
-            placeholder="İngilizce yaz..."
-            value={spellingInput}
-            onChange={(e) => setSpellingInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSpellingCheck()}
-            disabled={spellingFeedback !== null}
-          />
+          <div className="letter-slots">
+            {placedLetters.map((tile, index) => (
+              <motion.div
+                key={index}
+                className={`letter-slot ${tile ? 'filled' : ''} ${tile?.correct === true ? 'correct' : ''} ${tile?.correct === false ? 'wrong' : ''}`}
+                onClick={() => handlePlacedLetterClick(index)}
+                whileHover={tile ? { scale: 1.1 } : {}}
+                whileTap={tile ? { scale: 0.9 } : {}}
+              >
+                {tile?.letter || ''}
+              </motion.div>
+            ))}
+          </div>
           
-          <div className="spelling-actions">
-            <button className="hint-btn" onClick={showSpellingHint} disabled={spellingHint !== ''}>
-              💡 İpucu
+          <div className="letter-tiles">
+            {letterTiles.map(tile => (
+              <motion.button
+                key={tile.id}
+                className={`letter-tile ${tile.placed ? 'placed' : ''}`}
+                onClick={() => handleLetterTileClick(tile)}
+                disabled={tile.placed}
+                whileHover={!tile.placed ? { scale: 1.1, y: -5 } : {}}
+                whileTap={!tile.placed ? { scale: 0.9 } : {}}
+                initial={{ opacity: 1, scale: 1 }}
+                animate={{ 
+                  opacity: tile.placed ? 0.3 : 1,
+                  scale: tile.placed ? 0.8 : 1
+                }}
+              >
+                {tile.letter}
+              </motion.button>
+            ))}
+          </div>
+          
+          <div className="spelling-actions-enhanced">
+            <button 
+              className="hint-btn" 
+              onClick={giveSpellingHint} 
+              disabled={hintsUsed >= 2}
+            >
+              💡 İpucu ({2 - hintsUsed})
             </button>
             <button 
               className="speak-btn" 
               onClick={() => speakWord(currentWord.word)}
               disabled={isLoadingAudio}
             >
-              🔊 Dinle
+              {isLoadingAudio ? '⏳' : '🔊'} Dinle
             </button>
             <button 
               className="check-btn" 
-              onClick={handleSpellingCheck}
-              disabled={!spellingInput.trim() || spellingFeedback !== null}
+              onClick={checkSpellingAnswer}
+              disabled={placedLetters.some(t => t === null) || spellingFeedback !== null}
             >
-              ✓ Kontrol
+              ✓ Kontrol Et
             </button>
           </div>
         </motion.div>
@@ -896,6 +1378,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     );
   };
 
+  // Render Memory Game
   const renderMemoryGame = () => {
     if (memoryComplete) {
       return (
@@ -911,7 +1394,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <div>Puan: ⭐ {memoryScore}</div>
             <div>Hamle: {memoryMoves}</div>
           </div>
-          <button onClick={() => setGameType('menu')}>Oyunlara Dön</button>
+          <div className="game-complete-buttons">
+            <button className="replay-btn" onClick={() => { initializeMemoryGame(); }}>
+              🔄 Tekrar Oyna
+            </button>
+            <button onClick={() => { initializeMemoryGame(); setGameType('menu'); }}>
+              Oyunlara Dön
+            </button>
+          </div>
         </motion.div>
       );
     }
@@ -955,6 +1445,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     );
   };
 
+  // Render Speed Round
   const renderSpeedRound = () => {
     if (speedComplete) {
       return (
@@ -975,9 +1466,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
              speedScore >= 60 ? 'Çok iyi! Süper hızlısın! ⚡' :
              'Pratik yap, daha hızlı ol! 💪'}
           </p>
-          <button onClick={() => { setSpeedComplete(false); setGameType('menu'); }}>
-            Oyunlara Dön
-          </button>
+          <div className="game-complete-buttons">
+            <button className="replay-btn" onClick={() => { resetSpeedRound(); startSpeedRound(); }}>
+              🔄 Tekrar Oyna
+            </button>
+            <button onClick={() => { resetSpeedRound(); setGameType('menu'); }}>
+              Oyunlara Dön
+            </button>
+          </div>
         </motion.div>
       );
     }
@@ -1051,6 +1547,273 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     );
   };
 
+  // Render Listen & Pick Game
+  const renderListenGame = () => {
+    if (listenComplete) {
+      return (
+        <motion.div 
+          className="game-complete"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <DragonMascot state="celebrating" />
+          <h2>🎧 Dinleme Tamamlandı! 🎧</h2>
+          <p>Kulakların çok keskin!</p>
+          <div className="final-score">Toplam Puan: ⭐ {listenScore}</div>
+          <div className="game-complete-buttons">
+            <button className="replay-btn" onClick={resetListenGame}>
+              🔄 Tekrar Oyna
+            </button>
+            <button onClick={() => { resetListenGame(); setGameType('menu'); }}>
+              Oyunlara Dön
+            </button>
+          </div>
+        </motion.div>
+      );
+    }
+    
+    return (
+      <div className="listen-game">
+        <div className="game-header">
+          <button className="back-btn" onClick={() => setGameType('menu')}>← Geri</button>
+          <h3>🎧 Dinle ve Seç</h3>
+          <div className="game-score">⭐ {listenScore}</div>
+        </div>
+        
+        <div className="listen-progress">
+          {listenRound + 1} / 5
+        </div>
+        
+        <div className="listen-content">
+          <motion.button
+            className="listen-play-btn"
+            onClick={() => listenWord && speakWord(listenWord.word)}
+            disabled={isLoadingAudio}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isLoadingAudio ? '⏳' : '🔊'}
+            <span>Tekrar Dinle</span>
+          </motion.button>
+          
+          <p className="listen-instruction">Duyduğun kelimeyi seç!</p>
+          
+          <div className="listen-options">
+            {listenOptions.map(word => (
+              <motion.button
+                key={word.word}
+                className={`listen-option ${
+                  listenFeedback !== null && word.word === listenWord?.word ? 'correct' : ''
+                } ${listenFeedback === 'wrong' && word.word !== listenWord?.word ? '' : ''}`}
+                onClick={() => handleListenAnswer(word)}
+                disabled={listenFeedback !== null}
+                whileHover={listenFeedback === null ? { scale: 1.05 } : {}}
+                whileTap={listenFeedback === null ? { scale: 0.95 } : {}}
+              >
+                <span className="listen-emoji">{word.emoji}</span>
+                <span className="listen-text">{word.translation}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render Sentence Builder
+  const renderSentenceGame = () => {
+    if (sentenceComplete) {
+      return (
+        <motion.div 
+          className="game-complete"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <DragonMascot state="celebrating" />
+          <h2>📝 Cümle Ustası! 📝</h2>
+          <p>Tüm cümleleri doğru kurdun!</p>
+          <div className="final-score">Toplam Puan: ⭐ {sentenceScore}</div>
+          <div className="game-complete-buttons">
+            <button className="replay-btn" onClick={resetSentenceGame}>
+              🔄 Tekrar Oyna
+            </button>
+            <button onClick={() => { resetSentenceGame(); setGameType('menu'); }}>
+              Oyunlara Dön
+            </button>
+          </div>
+        </motion.div>
+      );
+    }
+    
+    const template = sentenceTemplates[sentenceIndex % sentenceTemplates.length];
+    
+    return (
+      <div className="sentence-game">
+        <div className="game-header">
+          <button className="back-btn" onClick={() => setGameType('menu')}>← Geri</button>
+          <h3>📝 Cümle Kur</h3>
+          <div className="game-score">⭐ {sentenceScore}</div>
+        </div>
+        
+        <div className="sentence-progress">
+          {sentenceIndex + 1} / 5
+        </div>
+        
+        <div className="sentence-content">
+          <p className="sentence-instruction">Kelimeleri sıraya koy!</p>
+          
+          <div className={`sentence-build-area ${sentenceFeedback === 'correct' ? 'correct' : ''} ${sentenceFeedback === 'wrong' ? 'wrong' : ''}`}>
+            {builtSentence.length === 0 ? (
+              <span className="placeholder">Kelimelere tıkla...</span>
+            ) : (
+              builtSentence.map((word, index) => (
+                <motion.span
+                  key={word.id}
+                  className="built-word"
+                  onClick={() => removeSentenceWord(index)}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ scale: 1.1 }}
+                >
+                  {word.word}
+                </motion.span>
+              ))
+            )}
+          </div>
+          
+          <div className="sentence-words">
+            {sentenceWords.map(word => (
+              <motion.button
+                key={word.id}
+                className={`sentence-word ${word.placed ? 'placed' : ''}`}
+                onClick={() => handleSentenceWordClick(word)}
+                disabled={word.placed || sentenceFeedback !== null}
+                whileHover={!word.placed ? { scale: 1.1 } : {}}
+                whileTap={!word.placed ? { scale: 0.9 } : {}}
+              >
+                {word.word}
+              </motion.button>
+            ))}
+          </div>
+          
+          <div className="sentence-actions">
+            <button 
+              className="speak-btn"
+              onClick={() => speakWord(template.correct)}
+              disabled={isLoadingAudio}
+            >
+              {isLoadingAudio ? '⏳' : '🔊'} Dinle
+            </button>
+            <button 
+              className="check-btn"
+              onClick={checkSentence}
+              disabled={builtSentence.length !== template.words.length || sentenceFeedback !== null}
+            >
+              ✓ Kontrol Et
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render Bubble Pop Game
+  const renderBubbleGame = () => {
+    if (bubbleComplete) {
+      return (
+        <motion.div 
+          className="game-complete"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <DragonMascot state="celebrating" />
+          <h2>🫧 Balon Patlatma Bitti! 🫧</h2>
+          <p>Süper eğlenceydi!</p>
+          <div className="final-score">Toplam Puan: ⭐ {bubbleScore}</div>
+          <div className="game-complete-buttons">
+            <button className="replay-btn" onClick={() => { resetBubbleGame(); startBubbleGame(); }}>
+              🔄 Tekrar Oyna
+            </button>
+            <button onClick={() => { resetBubbleGame(); setGameType('menu'); }}>
+              Oyunlara Dön
+            </button>
+          </div>
+        </motion.div>
+      );
+    }
+    
+    if (!bubbleActive) {
+      return (
+        <div className="bubble-start">
+          <div className="game-header">
+            <button className="back-btn" onClick={() => setGameType('menu')}>← Geri</button>
+            <h3>🫧 Balon Patlatma</h3>
+          </div>
+          
+          <div className="bubble-intro">
+            <DragonMascot state="waving" />
+            <h2>Balonları Patlat!</h2>
+            <p>Türkçe kelimeyi duy, doğru İngilizce balonu patlat!</p>
+            <ul>
+              <li>🫧 Balonlar yukarı çıkıyor</li>
+              <li>🎯 Doğru balonu patlat</li>
+              <li>⏱️ 45 saniye süren var</li>
+            </ul>
+            <motion.button
+              className="start-bubble-btn"
+              onClick={startBubbleGame}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              🎈 Başla!
+            </motion.button>
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="bubble-game">
+        <div className="bubble-header">
+          <div className={`bubble-timer ${bubbleTimeLeft <= 10 ? 'warning' : ''}`}>
+            ⏱️ {bubbleTimeLeft}s
+          </div>
+          <div className="bubble-target">
+            🎯 {targetWord?.translation}
+          </div>
+          <div className="bubble-score">⭐ {bubbleScore}</div>
+        </div>
+        
+        <button 
+          className="bubble-listen-btn"
+          onClick={() => targetWord && speakWord(targetWord.translation)}
+          disabled={isLoadingAudio}
+        >
+          {isLoadingAudio ? '⏳' : '🔊'}
+        </button>
+        
+        <div className="bubble-area">
+          {bubbles.filter(b => !b.popped).map(bubble => (
+            <motion.div
+              key={bubble.id}
+              className="bubble"
+              style={{ left: `${bubble.x}%`, bottom: `${bubble.y}%` }}
+              onClick={() => popBubble(bubble)}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.8 }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+            >
+              <span className="bubble-emoji">{bubble.word.emoji}</span>
+              <span className="bubble-word">{bubble.word.word}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Render Games Menu
   const renderGames = () => {
     if (gameType === 'matching') return renderMatchingGame();
     if (gameType === 'spelling') return renderSpellingGame();
@@ -1059,6 +1822,12 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
       return renderMemoryGame();
     }
     if (gameType === 'speed') return renderSpeedRound();
+    if (gameType === 'listen') {
+      if (!listenWord) initializeListenGame();
+      return renderListenGame();
+    }
+    if (gameType === 'sentence') return renderSentenceGame();
+    if (gameType === 'bubble') return renderBubbleGame();
     
     return (
       <div className="mimi-games">
@@ -1067,14 +1836,10 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h2>🎮 Hızlı Oyunlar</h2>
         </div>
         
-        <div className="games-dragon">
-          <DragonMascot state="idle" />
-        </div>
-        
         <div className="games-list">
           <motion.button
             className="game-card playable"
-            onClick={() => setGameType('matching')}
+            onClick={() => { resetMatchingGame(); setGameType('matching'); }}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -1085,13 +1850,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           
           <motion.button
             className="game-card playable"
-            onClick={() => setGameType('spelling')}
+            onClick={() => { resetSpellingGame(); setGameType('spelling'); }}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">🅰️</span>
             <h3>Harf Dizme</h3>
-            <p>Kelimeleri doğru yaz!</p>
+            <p>Harfleri doğru sırala!</p>
           </motion.button>
           
           <motion.button
@@ -1107,13 +1872,46 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           
           <motion.button
             className="game-card playable"
-            onClick={() => setGameType('speed')}
+            onClick={() => { resetSpeedRound(); setGameType('speed'); }}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="game-icon">⏱️</span>
             <h3>Hız Turu</h3>
             <p>60 saniyede kaç kelime?</p>
+          </motion.button>
+          
+          <motion.button
+            className="game-card playable"
+            onClick={() => { resetListenGame(); setGameType('listen'); }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <span className="game-icon">🎧</span>
+            <h3>Dinle ve Seç</h3>
+            <p>Duyduğun kelimeyi bul!</p>
+          </motion.button>
+          
+          <motion.button
+            className="game-card playable"
+            onClick={() => { resetSentenceGame(); setGameType('sentence'); }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <span className="game-icon">📝</span>
+            <h3>Cümle Kur</h3>
+            <p>Kelimeleri sıraya koy!</p>
+          </motion.button>
+          
+          <motion.button
+            className="game-card playable"
+            onClick={() => { resetBubbleGame(); setGameType('bubble'); }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <span className="game-icon">🫧</span>
+            <h3>Balon Patlatma</h3>
+            <p>Doğru balonu patlat!</p>
           </motion.button>
         </div>
       </div>
