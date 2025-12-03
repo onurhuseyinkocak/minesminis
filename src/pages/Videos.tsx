@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Star, Clock, Users, Sparkles, GraduationCap, Music, BookOpen, Palette, Calculator } from 'lucide-react';
+import { Play, Star, Clock, Users, Sparkles, GraduationCap, Music, BookOpen, Gamepad2, Heart } from 'lucide-react';
 
 type Video = {
   id: string;
@@ -14,59 +14,77 @@ type Video = {
 };
 
 const videos: Video[] = [
-  // 2nd Grade - Basic English
+  // 2nd Grade - Basic English (Beginners)
   {
-    id: '75p-N9YKqNo',
-    title: 'ABC Phonics Song',
-    description: 'Learn letter sounds with catchy music!',
-    thumbnail: 'https://img.youtube.com/vi/75p-N9YKqNo/mqdefault.jpg',
+    id: 'ZanHgPprl-0',
+    title: 'ABC Song - Learn the Alphabet',
+    description: 'Sing along and learn all 26 letters!',
+    thumbnail: 'https://img.youtube.com/vi/ZanHgPprl-0/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'song',
-    duration: '4:12',
+    duration: '2:01',
     isPopular: true
   },
   {
-    id: 'hq3yfQnllfQ',
-    title: 'Colors Song for Children',
-    description: 'Learn all the colors in English!',
-    thumbnail: 'https://img.youtube.com/vi/hq3yfQnllfQ/mqdefault.jpg',
+    id: 'pO1-gnIvYsg',
+    title: 'Learn Colors Song',
+    description: 'Red, blue, green - learn all colors!',
+    thumbnail: 'https://img.youtube.com/vi/pO1-gnIvYsg/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'song',
-    duration: '3:45'
+    duration: '2:48'
   },
   {
-    id: '0gAtnvuJP_c',
-    title: 'Numbers 1-20 Song',
-    description: 'Count and sing along with numbers!',
-    thumbnail: 'https://img.youtube.com/vi/0gAtnvuJP_c/mqdefault.jpg',
+    id: 'DR-cfDsHCHo',
+    title: 'Counting 1 to 10 Song',
+    description: 'Learn to count with fun music!',
+    thumbnail: 'https://img.youtube.com/vi/DR-cfDsHCHo/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'song',
-    duration: '3:28',
+    duration: '2:25',
     isPopular: true
   },
   {
-    id: 'pWepfJ-8XU0',
-    title: 'Shapes Song for Kids',
-    description: 'Circle, square, triangle and more!',
-    thumbnail: 'https://img.youtube.com/vi/pWepfJ-8XU0/mqdefault.jpg',
+    id: 'WTeqUejf3D0',
+    title: 'Baby Shark Dance',
+    description: 'The famous Baby Shark song!',
+    thumbnail: 'https://img.youtube.com/vi/WTeqUejf3D0/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'song',
-    duration: '2:56'
+    duration: '2:17'
   },
   {
-    id: 'yCjJyiqpAuU',
-    title: 'Head Shoulders Knees & Toes',
-    description: 'Learn body parts with action song!',
-    thumbnail: 'https://img.youtube.com/vi/yCjJyiqpAuU/mqdefault.jpg',
+    id: 'e54m6XOpRgU',
+    title: 'Head Shoulders Knees Toes',
+    description: 'Learn body parts with actions!',
+    thumbnail: 'https://img.youtube.com/vi/e54m6XOpRgU/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'song',
-    duration: '2:14',
+    duration: '2:15',
     isPopular: true
+  },
+  {
+    id: 'Yt8GFgxlITs',
+    title: 'Five Little Monkeys',
+    description: 'Counting song with silly monkeys!',
+    thumbnail: 'https://img.youtube.com/vi/Yt8GFgxlITs/mqdefault.jpg',
+    grade: '2nd Grade',
+    type: 'story',
+    duration: '2:30'
+  },
+  {
+    id: '6xZ6R8t4d7g',
+    title: 'Animal Sounds Song',
+    description: 'What does the cat say? Meow!',
+    thumbnail: 'https://img.youtube.com/vi/6xZ6R8t4d7g/mqdefault.jpg',
+    grade: '2nd Grade',
+    type: 'song',
+    duration: '3:10'
   },
   {
     id: 'OEbRDtCAFdU',
     title: 'Five Little Ducks',
-    description: 'Fun counting song with ducks!',
+    description: 'Quack quack - counting ducks!',
     thumbnail: 'https://img.youtube.com/vi/OEbRDtCAFdU/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'story',
@@ -76,8 +94,8 @@ const videos: Video[] = [
   // 3rd Grade - Intermediate
   {
     id: 'mXMofxtDPUQ',
-    title: 'Days of the Week Song',
-    description: 'Monday, Tuesday... Learn them all!',
+    title: 'Days of the Week',
+    description: 'Monday, Tuesday, Wednesday...',
     thumbnail: 'https://img.youtube.com/vi/mXMofxtDPUQ/mqdefault.jpg',
     grade: '3rd Grade',
     type: 'song',
@@ -85,108 +103,144 @@ const videos: Video[] = [
     isPopular: true
   },
   {
-    id: 'lPeAo1hz8GA',
-    title: 'Months of the Year Song',
-    description: 'January to December with fun!',
-    thumbnail: 'https://img.youtube.com/vi/lPeAo1hz8GA/mqdefault.jpg',
+    id: 'Fe9bnYRzFvk',
+    title: 'Months of the Year',
+    description: 'January to December song!',
+    thumbnail: 'https://img.youtube.com/vi/Fe9bnYRzFvk/mqdefault.jpg',
     grade: '3rd Grade',
     type: 'song',
-    duration: '3:15'
+    duration: '2:45'
   },
   {
-    id: 'teMU8dHLqSk',
+    id: 'CjnDEUyEgPc',
     title: 'Weather Song for Kids',
-    description: 'Sunny, rainy, cloudy... Learn weather!',
-    thumbnail: 'https://img.youtube.com/vi/teMU8dHLqSk/mqdefault.jpg',
+    description: 'Sunny, rainy, cloudy, snowy!',
+    thumbnail: 'https://img.youtube.com/vi/CjnDEUyEgPc/mqdefault.jpg',
     grade: '3rd Grade',
     type: 'song',
     duration: '3:02'
   },
   {
-    id: 'D1LDPmYLKdE',
-    title: 'Family Members Song',
-    description: 'Mom, dad, sister, brother and more!',
-    thumbnail: 'https://img.youtube.com/vi/D1LDPmYLKdE/mqdefault.jpg',
+    id: 'FHaObkHEkHQ',
+    title: 'Family Song',
+    description: 'Mom, Dad, Brother, Sister!',
+    thumbnail: 'https://img.youtube.com/vi/FHaObkHEkHQ/mqdefault.jpg',
     grade: '3rd Grade',
     type: 'song',
     duration: '2:35',
     isPopular: true
   },
   {
-    id: 'OGVl9IXpA48',
+    id: 'h4eueDYPTIg',
     title: 'Action Verbs Song',
-    description: 'Run, jump, swim - learn action words!',
-    thumbnail: 'https://img.youtube.com/vi/OGVl9IXpA48/mqdefault.jpg',
+    description: 'Run, jump, swim, fly!',
+    thumbnail: 'https://img.youtube.com/vi/h4eueDYPTIg/mqdefault.jpg',
     grade: '3rd Grade',
     type: 'lesson',
-    duration: '4:20'
+    duration: '3:20'
   },
   {
-    id: '8irSFvoyLHQ',
-    title: 'Feelings and Emotions',
-    description: 'Happy, sad, angry - express yourself!',
-    thumbnail: 'https://img.youtube.com/vi/8irSFvoyLHQ/mqdefault.jpg',
+    id: '0lkuWGZTA0E',
+    title: 'Feelings Song',
+    description: 'Happy, sad, angry, excited!',
+    thumbnail: 'https://img.youtube.com/vi/0lkuWGZTA0E/mqdefault.jpg',
     grade: '3rd Grade',
     type: 'song',
-    duration: '3:45'
+    duration: '2:45'
+  },
+  {
+    id: 'L0mL4oZycnU',
+    title: 'Fruit Song for Kids',
+    description: 'Apple, banana, orange, grape!',
+    thumbnail: 'https://img.youtube.com/vi/L0mL4oZycnU/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '2:55'
+  },
+  {
+    id: 'loINl3Ln6Ck',
+    title: 'Shapes Song',
+    description: 'Circle, square, triangle, star!',
+    thumbnail: 'https://img.youtube.com/vi/loINl3Ln6Ck/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '2:40'
   },
 
   // 4th Grade - Advanced
   {
-    id: 'R4vj-fJXeWY',
-    title: 'Present Simple Tense',
-    description: 'Learn grammar with fun examples!',
-    thumbnail: 'https://img.youtube.com/vi/R4vj-fJXeWY/mqdefault.jpg',
+    id: 'D1LDPmYLKdE',
+    title: 'Present Tense Song',
+    description: 'I eat, you eat, he eats!',
+    thumbnail: 'https://img.youtube.com/vi/D1LDPmYLKdE/mqdefault.jpg',
     grade: '4th Grade',
     type: 'lesson',
-    duration: '5:30',
+    duration: '3:30',
     isPopular: true
   },
   {
-    id: '_Ir0Mc6Qilo',
+    id: 'Sj8qPwRzcS8',
+    title: 'Daily Routines',
+    description: 'Wake up, brush teeth, go to school!',
+    thumbnail: 'https://img.youtube.com/vi/Sj8qPwRzcS8/mqdefault.jpg',
+    grade: '4th Grade',
+    type: 'lesson',
+    duration: '3:55'
+  },
+  {
+    id: 'WMy7wSuo5BI',
+    title: 'Telling Time Song',
+    description: 'What time is it? Learn the clock!',
+    thumbnail: 'https://img.youtube.com/vi/WMy7wSuo5BI/mqdefault.jpg',
+    grade: '4th Grade',
+    type: 'lesson',
+    duration: '4:05',
+    isPopular: true
+  },
+  {
+    id: 'ddDN30evKPc',
     title: 'Prepositions Song',
-    description: 'In, on, under, behind - learn positions!',
-    thumbnail: 'https://img.youtube.com/vi/_Ir0Mc6Qilo/mqdefault.jpg',
+    description: 'In, on, under, behind, between!',
+    thumbnail: 'https://img.youtube.com/vi/ddDN30evKPc/mqdefault.jpg',
     grade: '4th Grade',
     type: 'song',
     duration: '3:18'
   },
   {
-    id: 'ZU7pVeAGhmY',
-    title: 'Telling Time Song',
-    description: 'Learn to read the clock in English!',
-    thumbnail: 'https://img.youtube.com/vi/ZU7pVeAGhmY/mqdefault.jpg',
-    grade: '4th Grade',
-    type: 'song',
-    duration: '4:05',
-    isPopular: true
-  },
-  {
-    id: 'XaA79CFaHhw',
-    title: 'Food and Drinks Vocabulary',
-    description: 'Fruits, vegetables, and yummy foods!',
-    thumbnail: 'https://img.youtube.com/vi/XaA79CFaHhw/mqdefault.jpg',
+    id: 'frN3nvhIHUk',
+    title: 'Opposite Words',
+    description: 'Big-small, hot-cold, fast-slow!',
+    thumbnail: 'https://img.youtube.com/vi/frN3nvhIHUk/mqdefault.jpg',
     grade: '4th Grade',
     type: 'lesson',
-    duration: '4:42'
-  },
-  {
-    id: 'bmu1hVLdWvY',
-    title: 'Opposite Words Song',
-    description: 'Big-small, hot-cold, learn antonyms!',
-    thumbnail: 'https://img.youtube.com/vi/bmu1hVLdWvY/mqdefault.jpg',
-    grade: '4th Grade',
-    type: 'song',
     duration: '3:28'
   },
   {
-    id: 'Sj8qPwRzcS8',
-    title: 'Daily Routines Song',
-    description: 'Wake up, eat breakfast, go to school!',
-    thumbnail: 'https://img.youtube.com/vi/Sj8qPwRzcS8/mqdefault.jpg',
+    id: 'wCmBJPF3Vlo',
+    title: 'Vegetables Song',
+    description: 'Carrot, potato, tomato, onion!',
+    thumbnail: 'https://img.youtube.com/vi/wCmBJPF3Vlo/mqdefault.jpg',
     grade: '4th Grade',
     type: 'song',
-    duration: '3:55'
+    duration: '2:50'
+  },
+  {
+    id: 'RE5tvaveVak',
+    title: 'Clothes Song',
+    description: 'Shirt, pants, shoes, hat!',
+    thumbnail: 'https://img.youtube.com/vi/RE5tvaveVak/mqdefault.jpg',
+    grade: '4th Grade',
+    type: 'song',
+    duration: '3:15'
+  },
+  {
+    id: 'tkGeEU0cFqU',
+    title: 'Transportation Song',
+    description: 'Car, bus, train, airplane!',
+    thumbnail: 'https://img.youtube.com/vi/tkGeEU0cFqU/mqdefault.jpg',
+    grade: '4th Grade',
+    type: 'song',
+    duration: '2:42'
   }
 ];
 
@@ -214,8 +268,8 @@ const gradeInfo: Record<string, { color: string; gradient: string; icon: string;
 const typeIcons: Record<string, { icon: React.ReactNode; label: string }> = {
   song: { icon: <Music size={14} />, label: 'Song' },
   lesson: { icon: <BookOpen size={14} />, label: 'Lesson' },
-  story: { icon: <Palette size={14} />, label: 'Story' },
-  game: { icon: <Calculator size={14} />, label: 'Game' }
+  story: { icon: <Heart size={14} />, label: 'Story' },
+  game: { icon: <Gamepad2 size={14} />, label: 'Game' }
 };
 
 function Videos() {
@@ -359,7 +413,7 @@ function Videos() {
                 whileHover={{ y: -8 }}
               >
                 <div className="popular-thumbnail">
-                  <img src={video.thumbnail} alt={video.title} />
+                  <img src={video.thumbnail} alt={video.title} loading="lazy" />
                   <div className="popular-overlay">
                     <Play size={40} fill="white" />
                   </div>
@@ -422,7 +476,7 @@ function Videos() {
                 whileHover={{ y: -8, scale: 1.02 }}
               >
                 <div className="video-thumbnail">
-                  <img src={video.thumbnail} alt={video.title} />
+                  <img src={video.thumbnail} alt={video.title} loading="lazy" />
                   <div className="video-overlay">
                     <motion.div 
                       className="play-button"
