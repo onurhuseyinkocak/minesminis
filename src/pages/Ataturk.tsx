@@ -33,7 +33,6 @@ const content = {
     legacyPara2: 'His principles of democracy, secularism, and modernization continue to guide our country today. His vision of a peaceful, progressive nation that respects all people regardless of religion, gender, or background remains the foundation of our Republic.',
     legacyQuote: '"The future belongs to those who prepare for it today."',
     footerMain: 'Ne Mutlu Türküm Diyene!',
-    footerSub: 'How happy is the one who says "I am a Turk!"',
     galleryTitle: 'Photo Gallery',
     timeline: [
       { year: '1881', title: 'Birth of Our Leader', desc: 'Mustafa Kemal was born in Thessaloniki. His father Ali Riza Efendi gave him the middle name "Kemal" meaning "perfection" - and perfect he was for our nation.' },
@@ -73,7 +72,6 @@ const content = {
     legacyPara2: 'Demokrasi, laiklik ve modernleşme ilkeleri bugün ülkemize yol göstermeye devam ediyor. Din, cinsiyet veya geçmişe bakılmaksızın tüm insanlara saygı duyan barışçıl, ilerici bir ulus vizyonu, Cumhuriyetimizin temeli olmaya devam ediyor.',
     legacyQuote: '"Gelecek, bugün ona hazırlananlarındır."',
     footerMain: 'Ne Mutlu Türküm Diyene!',
-    footerSub: 'Türk olduğunu söyleyebilen ne mutlu!',
     galleryTitle: 'Fotoğraf Galerisi',
     timeline: [
       { year: '1881', title: 'Liderimizin Doğuşu', desc: 'Mustafa Kemal, Selanik\'te doğdu. Babası Ali Rıza Efendi ona "mükemmellik" anlamına gelen "Kemal" ikinci adını verdi - milletimiz için gerçekten mükemmeldi.' },
@@ -454,7 +452,6 @@ function Ataturk() {
         />
         <div className="banner-content">
           <h3>{t.footerMain}</h3>
-          <p>{t.footerSub}</p>
           <img src={ataturkSignature} alt="İmza" className="footer-signature" />
         </div>
       </motion.section>
