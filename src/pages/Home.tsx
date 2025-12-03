@@ -50,86 +50,90 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-page">
-      {/* Atatürk Corner - Most Prominent Section */}
-      <Link to="/ataturk" className="ataturk-corner">
-        <div className="ataturk-pattern"></div>
-        <img src={ataturkFormal} alt="Atatürk" className="ataturk-hero-image" />
-        <div className="ataturk-content">
-          <div className="ataturk-flag-section">
-            <div className="turkish-flag">
-              <div className="flag-bg"></div>
-              <div className="flag-crescent"></div>
-              <div className="flag-star"></div>
+      {/* Hero Grid - Welcome + Atatürk Side by Side */}
+      <div className="hero-grid">
+        {/* Welcome Section - Smaller */}
+        <div className="welcome-banner">
+          <div className="welcome-content">
+            <div className="mascot-star">
+              <Star size={48} strokeWidth={2} />
             </div>
+            <h1 className="welcome-title">
+              {user ? (
+                <>Welcome back, {userProfile?.display_name || 'Friend'}!</>
+              ) : (
+                <>Welcome to MinesMinis!</>
+              )}
+            </h1>
+            <p className="welcome-subtitle">
+              {user ? 'Ready to learn something amazing today?' : 'Start your English learning adventure today!'}
+            </p>
           </div>
-          <div className="ataturk-text">
-            <div className="ataturk-badge">
-              <Sparkles size={14} />
-              <span>Father of Modern Turkey</span>
+
+          {user && (
+            <div className="stats-row">
+              <div className="stat-card">
+                <div className="stat-icon coral">
+                  <Trophy size={20} />
+                </div>
+                <div className="stat-info">
+                  <div className="stat-value">{userProfile?.points || 0}</div>
+                  <div className="stat-label">Points</div>
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-icon mint">
+                  <Flame size={20} />
+                </div>
+                <div className="stat-info">
+                  <div className="stat-value">{userProfile?.streak_days || 0}</div>
+                  <div className="stat-label">Streak</div>
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-icon navy">
+                  <Star size={20} />
+                </div>
+                <div className="stat-info">
+                  <div className="stat-value">{userProfile?.level || 1}</div>
+                  <div className="stat-label">Level</div>
+                </div>
+              </div>
             </div>
-            <h2 className="ataturk-title">Mustafa Kemal Atatürk</h2>
-            <p className="ataturk-subtitle">Learn about the visionary leader who transformed a nation</p>
-            <img src={ataturkSignature} alt="İmza" className="ataturk-signature" />
-          </div>
-          <div className="ataturk-arrow">
-            <ArrowRight size={24} />
-          </div>
+          )}
         </div>
-        <div className="ataturk-quote">
-          <span>"Yurtta sulh, cihanda sulh" - Peace at home, peace in the world</span>
-        </div>
-      </Link>
 
-      <div className="welcome-banner">
-        <div className="welcome-content">
-          <div className="mascot-star">
-            <Star size={56} strokeWidth={2} />
-          </div>
-          <h1 className="welcome-title">
-            {user ? (
-              <>Welcome back, {userProfile?.display_name || 'Friend'}! 🎉</>
-            ) : (
-              <>Welcome to MinesMinis! 🚀</>
-            )}
-          </h1>
-          <p className="welcome-subtitle">
-            {user ? 'Ready to learn something amazing today?' : 'Start your English learning adventure today!'}
-          </p>
-        </div>
-
-        {user && (
-          <div className="stats-row">
-            <div className="stat-card">
-              <div className="stat-icon coral">
-                <Trophy size={24} />
-              </div>
-              <div className="stat-info">
-                <div className="stat-value">{userProfile?.points || 0}</div>
-                <div className="stat-label">Points</div>
+        {/* Atatürk Corner - Larger, More Prominent */}
+        <Link to="/ataturk" className="ataturk-corner">
+          <div className="ataturk-pattern"></div>
+          <img src={ataturkFormal} alt="Atatürk" className="ataturk-hero-image" />
+          <div className="ataturk-content">
+            <div className="ataturk-flag-section">
+              <div className="turkish-flag">
+                <div className="flag-bg"></div>
+                <div className="flag-crescent"></div>
+                <div className="flag-star"></div>
               </div>
             </div>
-
-            <div className="stat-card">
-              <div className="stat-icon mint">
-                <Flame size={24} />
+            <div className="ataturk-text">
+              <div className="ataturk-badge">
+                <Sparkles size={14} />
+                <span>Sevgili Liderimiz</span>
               </div>
-              <div className="stat-info">
-                <div className="stat-value">{userProfile?.streak_days || 0}</div>
-                <div className="stat-label">Day Streak</div>
-              </div>
+              <h2 className="ataturk-title">Mustafa Kemal Atatürk</h2>
+              <p className="ataturk-subtitle">Vatanımızı dönüştüren vizyoner liderimizi tanıyın</p>
+              <img src={ataturkSignature} alt="İmza" className="ataturk-signature" />
             </div>
-
-            <div className="stat-card">
-              <div className="stat-icon navy">
-                <Star size={24} />
-              </div>
-              <div className="stat-info">
-                <div className="stat-value">{userProfile?.level || 1}</div>
-                <div className="stat-label">Level</div>
-              </div>
+            <div className="ataturk-arrow">
+              <ArrowRight size={24} />
             </div>
           </div>
-        )}
+          <div className="ataturk-quote">
+            <span>"Yurtta sulh, cihanda sulh" - Peace at home, peace in the world</span>
+          </div>
+        </Link>
       </div>
 
       <div className="menu-grid">

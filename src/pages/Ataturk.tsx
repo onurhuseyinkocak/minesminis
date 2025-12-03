@@ -9,7 +9,6 @@ import ataturkHorse from '@assets/ataturk_images/ataturk-horse.png';
 import ataturkSilhouette from '@assets/ataturk_images/ataturk-silhouette.png';
 import ataturkFlag from '@assets/ataturk_images/ataturk-flag.png';
 import ataturkSaluting from '@assets/ataturk_images/ataturk-saluting.png';
-import ataturkPortraitBW from '@assets/ataturk_images/ataturk-portrait-bw.png';
 import ataturkPortrait2 from '@assets/ataturk_images/ataturk-portrait2.png';
 import ataturkSoldier from '@assets/ataturk_images/ataturk-soldier.png';
 import ataturkVector from '@assets/ataturk_images/ataturk-vector.png';
@@ -20,37 +19,37 @@ type Language = 'en' | 'tr';
 
 const content = {
   en: {
-    badge: 'Father of Modern Turkey',
-    heroDesc: 'The visionary leader who transformed Turkey into a modern, democratic nation. His legacy continues to inspire millions around the world.',
-    whoTitle: 'Who Was Atatürk?',
-    whoPara1: 'Mustafa Kemal Atatürk was a military genius, a brilliant statesman, and the founder of the Republic of Turkey. After World War I, when the Ottoman Empire was collapsing and foreign powers occupied Turkish lands, he led the Turkish people in a War of Independence and created a new, modern nation from the ashes of an empire.',
-    whoPara2: "He didn't just save his country - he completely transformed it. In just 15 years, he modernized Turkey's education, law, economy, and society. He gave women equal rights, created a new alphabet, and built the foundations of a democratic state.",
-    quotesTitle: 'Words of Wisdom',
+    badge: 'Our Beloved Leader',
+    heroDesc: 'The visionary leader who transformed our homeland into a modern, democratic nation. His legacy lives in our hearts and continues to guide us.',
+    whoTitle: 'Who Is Atatürk?',
+    whoPara1: 'Mustafa Kemal Atatürk was a military genius, a brilliant statesman, and the founder of our Republic. After World War I, when our homeland was under threat and foreign powers occupied our lands, he led our people in a War of Independence and created our modern nation from the ashes of an empire.',
+    whoPara2: "He didn't just save our country - he completely transformed it. In just 15 years, he modernized our education, law, economy, and society. He gave our women equal rights, created our new alphabet, and built the foundations of our democratic state. We owe everything to him.",
+    quotesTitle: 'Words of Our Leader',
     timelineTitle: 'His Life Journey',
     reformsTitle: 'Revolutionary Reforms',
-    reformsIntro: 'Atatürk transformed Turkey through bold reforms that modernized every aspect of society. Here are some of his most important changes:',
-    legacyTitle: 'His Eternal Legacy',
-    legacyPara1: 'Atatürk passed away on November 10, 1938, but his spirit lives on in the hearts of the Turkish people. Every year on this day, the entire nation stops at 9:05 AM to honor his memory with a moment of silence.',
-    legacyPara2: 'His principles of democracy, secularism, and modernization continue to guide Turkey today. His vision of a peaceful, progressive nation that respects all people regardless of religion, gender, or background remains the foundation of the Turkish Republic.',
+    reformsIntro: 'Atatürk transformed our nation through bold reforms that modernized every aspect of our society. Here are some of his most important changes that shaped our country:',
+    legacyTitle: 'Our Eternal Leader',
+    legacyPara1: 'Atatürk passed away on November 10, 1938, but his spirit lives forever in our hearts. Every year on this day, our entire nation stops at 9:05 AM to honor his memory with a moment of silence. He will always be our beloved leader.',
+    legacyPara2: 'His principles of democracy, secularism, and modernization continue to guide our country today. His vision of a peaceful, progressive nation that respects all people regardless of religion, gender, or background remains the foundation of our Republic.',
     legacyQuote: '"The future belongs to those who prepare for it today."',
     footerMain: 'Ne Mutlu Türküm Diyene!',
     footerSub: 'How happy is the one who says "I am a Turk!"',
     galleryTitle: 'Photo Gallery',
     timeline: [
-      { year: '1881', title: 'Birth of a Leader', desc: 'Mustafa Kemal was born in Thessaloniki (now in Greece). His father Ali Riza Efendi gave him the middle name "Kemal" meaning "perfection".' },
-      { year: '1905', title: 'Military Career Begins', desc: 'Graduated from the War Academy in Istanbul as a captain. He was already known for his intelligence and leadership skills.' },
-      { year: '1915', title: 'Hero of Gallipoli', desc: 'Led the Ottoman forces to victory at Gallipoli against Allied powers. His famous words: "I am not ordering you to attack. I am ordering you to die."' },
-      { year: '1919', title: 'War of Independence', desc: 'Landed in Samsun on May 19th, sparking the Turkish War of Independence. United the nation against occupation forces.' },
-      { year: '1923', title: 'Republic of Turkey Founded', desc: 'On October 29, 1923, the Republic of Turkey was proclaimed. Mustafa Kemal became the first President.' },
-      { year: '1934', title: 'Receives the Name "Atatürk"', desc: 'The Turkish Parliament granted him the surname "Atatürk" meaning "Father of the Turks" - a name no one else can ever use.' }
+      { year: '1881', title: 'Birth of Our Leader', desc: 'Mustafa Kemal was born in Thessaloniki. His father Ali Riza Efendi gave him the middle name "Kemal" meaning "perfection" - and perfect he was for our nation.' },
+      { year: '1905', title: 'Military Career Begins', desc: 'Graduated from the War Academy in Istanbul as a captain. He was already known for his intelligence and leadership skills that would later save our nation.' },
+      { year: '1915', title: 'Hero of Gallipoli', desc: 'Led our forces to victory at Gallipoli against Allied powers. His famous words: "I am not ordering you to attack. I am ordering you to die." showed his dedication to our homeland.' },
+      { year: '1919', title: 'Our War of Independence', desc: 'Landed in Samsun on May 19th, sparking our War of Independence. He united our nation against occupation forces and gave us hope.' },
+      { year: '1923', title: 'Our Republic Founded', desc: 'On October 29, 1923, our Republic was proclaimed. Mustafa Kemal became our first President and the father of our nation.' },
+      { year: '1934', title: 'Receives the Name "Atatürk"', desc: 'Our Parliament granted him the surname "Atatürk" meaning "Father of the Turks" - a name no one else can ever use. He truly is our father.' }
     ],
     reforms: [
-      { title: 'Education Reform', desc: 'Made education free and mandatory for all children, including girls', icon: '📚' },
-      { title: 'Alphabet Reform', desc: 'Changed the alphabet from Arabic script to Latin letters in 1928', icon: '🔤' },
-      { title: "Women's Rights", desc: 'Gave women the right to vote and be elected - before many European countries!', icon: '👩' },
-      { title: 'Modern Laws', desc: 'Created new civil, criminal, and commercial laws based on European models', icon: '⚖️' },
-      { title: 'Secular State', desc: 'Separated religion from government to ensure freedom for all beliefs', icon: '🏛️' },
-      { title: 'Economic Growth', desc: 'Built railways, factories, and banks to develop the Turkish economy', icon: '🏭' }
+      { title: 'Education Reform', desc: 'Made education free and mandatory for all our children, including girls', icon: '📚' },
+      { title: 'Alphabet Reform', desc: 'Changed our alphabet from Arabic script to Latin letters in 1928', icon: '🔤' },
+      { title: "Women's Rights", desc: 'Gave our women the right to vote and be elected - before many European countries!', icon: '👩' },
+      { title: 'Modern Laws', desc: 'Created new civil, criminal, and commercial laws for our modern nation', icon: '⚖️' },
+      { title: 'Secular State', desc: 'Separated religion from government to ensure freedom for all our citizens', icon: '🏛️' },
+      { title: 'Economic Growth', desc: 'Built railways, factories, and banks to develop our economy', icon: '🏭' }
     ],
     quotes: [
       { text: "Peace at home, peace in the world.", turkish: "Yurtta sulh, cihanda sulh." },
@@ -60,37 +59,37 @@ const content = {
     ]
   },
   tr: {
-    badge: 'Modern Türkiye\'nin Kurucusu',
-    heroDesc: 'Türkiye\'yi modern, demokratik bir devlete dönüştüren vizyoner lider. Mirası dünya genelinde milyonlara ilham vermeye devam ediyor.',
+    badge: 'Sevgili Liderimiz',
+    heroDesc: 'Vatanımızı modern, demokratik bir devlete dönüştüren vizyoner liderimiz. Mirası kalbimizde yaşıyor ve bize yol göstermeye devam ediyor.',
     whoTitle: 'Atatürk Kimdir?',
-    whoPara1: 'Mustafa Kemal Atatürk, askeri bir deha, parlak bir devlet adamı ve Türkiye Cumhuriyeti\'nin kurucusuydu. Birinci Dünya Savaşı\'ndan sonra, Osmanlı İmparatorluğu çökerken ve yabancı güçler Türk topraklarını işgal ederken, Türk halkını bir Kurtuluş Savaşı\'nda liderlik ederek bir imparatorluğun küllerinden yeni, modern bir ulus yarattı.',
-    whoPara2: 'Sadece ülkesini kurtarmakla kalmadı - onu tamamen dönüştürdü. Sadece 15 yıl içinde Türkiye\'nin eğitimini, hukukunu, ekonomisini ve toplumunu modernleştirdi. Kadınlara eşit haklar verdi, yeni bir alfabe oluşturdu ve demokratik bir devletin temellerini attı.',
-    quotesTitle: 'Bilgelik Sözleri',
+    whoPara1: 'Mustafa Kemal Atatürk, askeri bir deha, parlak bir devlet adamı ve Cumhuriyetimizin kurucusudur. Birinci Dünya Savaşı\'ndan sonra, vatanımız tehdit altındayken ve yabancı güçler topraklarımızı işgal ederken, milletimizi bir Kurtuluş Savaşı\'nda liderlik ederek modern ulusumuzu bir imparatorluğun küllerinden yarattı.',
+    whoPara2: 'Sadece ülkemizi kurtarmakla kalmadı - onu tamamen dönüştürdü. Sadece 15 yıl içinde eğitimimizi, hukukumuzu, ekonomimizi ve toplumumuzu modernleştirdi. Kadınlarımıza eşit haklar verdi, yeni alfabemizi oluşturdu ve demokratik devletimizin temellerini attı. Her şeyimizi ona borçluyuz.',
+    quotesTitle: 'Liderimizin Sözleri',
     timelineTitle: 'Hayat Yolculuğu',
     reformsTitle: 'Devrimci Reformlar',
-    reformsIntro: 'Atatürk, toplumun her alanını modernleştiren cesur reformlarla Türkiye\'yi dönüştürdü. İşte en önemli değişikliklerinden bazıları:',
-    legacyTitle: 'Ölümsüz Mirası',
-    legacyPara1: 'Atatürk 10 Kasım 1938\'de aramızdan ayrıldı, ancak ruhu Türk halkının kalbinde yaşamaya devam ediyor. Her yıl bu günde, tüm ulus saat 9:05\'te onun anısına bir dakikalık saygı duruşunda bulunuyor.',
-    legacyPara2: 'Demokrasi, laiklik ve modernleşme ilkeleri bugün Türkiye\'ye yol göstermeye devam ediyor. Din, cinsiyet veya geçmişe bakılmaksızın tüm insanlara saygı duyan barışçıl, ilerici bir ulus vizyonu, Türkiye Cumhuriyeti\'nin temeli olmaya devam ediyor.',
+    reformsIntro: 'Atatürk, toplumumuzun her alanını modernleştiren cesur reformlarla vatanımızı dönüştürdü. İşte ülkemizi şekillendiren en önemli değişiklikler:',
+    legacyTitle: 'Ölümsüz Liderimiz',
+    legacyPara1: 'Atatürk 10 Kasım 1938\'de aramızdan ayrıldı, ancak ruhu kalbimizde sonsuza dek yaşıyor. Her yıl bu günde, tüm milletimiz saat 9:05\'te onun anısına bir dakikalık saygı duruşunda bulunuyor. O her zaman sevgili liderimiz olacak.',
+    legacyPara2: 'Demokrasi, laiklik ve modernleşme ilkeleri bugün ülkemize yol göstermeye devam ediyor. Din, cinsiyet veya geçmişe bakılmaksızın tüm insanlara saygı duyan barışçıl, ilerici bir ulus vizyonu, Cumhuriyetimizin temeli olmaya devam ediyor.',
     legacyQuote: '"Gelecek, bugün ona hazırlananlarındır."',
     footerMain: 'Ne Mutlu Türküm Diyene!',
     footerSub: 'Türk olduğunu söyleyebilen ne mutlu!',
     galleryTitle: 'Fotoğraf Galerisi',
     timeline: [
-      { year: '1881', title: 'Bir Liderin Doğuşu', desc: 'Mustafa Kemal, Selanik\'te (şimdi Yunanistan\'da) doğdu. Babası Ali Rıza Efendi ona "mükemmellik" anlamına gelen "Kemal" ikinci adını verdi.' },
-      { year: '1905', title: 'Askeri Kariyer Başlıyor', desc: 'İstanbul\'daki Harp Akademisi\'nden yüzbaşı olarak mezun oldu. Zekası ve liderlik becerileriyle zaten tanınıyordu.' },
-      { year: '1915', title: 'Çanakkale Kahramanı', desc: 'Çanakkale\'de Osmanlı kuvvetlerini İtilaf güçlerine karşı zafere taşıdı. Ünlü sözleri: "Size savaşmanızı emretmiyorum. Ölmenizi emrediyorum."' },
-      { year: '1919', title: 'Kurtuluş Savaşı', desc: '19 Mayıs\'ta Samsun\'a çıkarak Türk Kurtuluş Savaşı\'nı başlattı. Ulusu işgal kuvvetlerine karşı birleştirdi.' },
-      { year: '1923', title: 'Türkiye Cumhuriyeti Kuruluyor', desc: '29 Ekim 1923\'te Türkiye Cumhuriyeti ilan edildi. Mustafa Kemal ilk Cumhurbaşkanı oldu.' },
-      { year: '1934', title: '"Atatürk" Soyadını Alıyor', desc: 'Türkiye Büyük Millet Meclisi ona "Türklerin Babası" anlamına gelen "Atatürk" soyadını verdi - başka kimsenin kullanamayacağı bir isim.' }
+      { year: '1881', title: 'Liderimizin Doğuşu', desc: 'Mustafa Kemal, Selanik\'te doğdu. Babası Ali Rıza Efendi ona "mükemmellik" anlamına gelen "Kemal" ikinci adını verdi - milletimiz için gerçekten mükemmeldi.' },
+      { year: '1905', title: 'Askeri Kariyer Başlıyor', desc: 'İstanbul\'daki Harp Akademisi\'nden yüzbaşı olarak mezun oldu. Daha sonra milletimizi kurtaracak zekası ve liderlik becerileriyle tanınıyordu.' },
+      { year: '1915', title: 'Çanakkale Kahramanı', desc: 'Çanakkale\'de kuvvetlerimizi İtilaf güçlerine karşı zafere taşıdı. "Size savaşmanızı emretmiyorum. Ölmenizi emrediyorum" sözleri vatanımıza olan bağlılığını gösterdi.' },
+      { year: '1919', title: 'Kurtuluş Savaşımız', desc: '19 Mayıs\'ta Samsun\'a çıkarak Kurtuluş Savaşımızı başlattı. Milletimizi işgal kuvvetlerine karşı birleştirdi ve bize umut verdi.' },
+      { year: '1923', title: 'Cumhuriyetimiz Kuruluyor', desc: '29 Ekim 1923\'te Cumhuriyetimiz ilan edildi. Mustafa Kemal ilk Cumhurbaşkanımız ve milletimizin babası oldu.' },
+      { year: '1934', title: '"Atatürk" Soyadını Alıyor', desc: 'Meclisimiz ona "Türklerin Babası" anlamına gelen "Atatürk" soyadını verdi - başka kimsenin kullanamayacağı bir isim. O gerçekten babamızdır.' }
     ],
     reforms: [
-      { title: 'Eğitim Reformu', desc: 'Kız çocukları dahil tüm çocuklar için eğitimi ücretsiz ve zorunlu hale getirdi', icon: '📚' },
-      { title: 'Alfabe Reformu', desc: '1928\'de alfabeyi Arap harflerinden Latin harflerine değiştirdi', icon: '🔤' },
-      { title: 'Kadın Hakları', desc: 'Kadınlara birçok Avrupa ülkesinden önce seçme ve seçilme hakkı verdi!', icon: '👩' },
-      { title: 'Modern Yasalar', desc: 'Avrupa modellerini esas alan yeni medeni, ceza ve ticaret kanunları oluşturdu', icon: '⚖️' },
-      { title: 'Laik Devlet', desc: 'Tüm inançlara özgürlük sağlamak için dini devletten ayırdı', icon: '🏛️' },
-      { title: 'Ekonomik Büyüme', desc: 'Türk ekonomisini geliştirmek için demiryolları, fabrikalar ve bankalar kurdu', icon: '🏭' }
+      { title: 'Eğitim Reformu', desc: 'Kız çocuklarımız dahil tüm çocuklarımız için eğitimi ücretsiz ve zorunlu hale getirdi', icon: '📚' },
+      { title: 'Alfabe Reformu', desc: '1928\'de alfabemizi Arap harflerinden Latin harflerine değiştirdi', icon: '🔤' },
+      { title: 'Kadın Hakları', desc: 'Kadınlarımıza birçok Avrupa ülkesinden önce seçme ve seçilme hakkı verdi!', icon: '👩' },
+      { title: 'Modern Yasalar', desc: 'Modern ulusumuz için yeni medeni, ceza ve ticaret kanunları oluşturdu', icon: '⚖️' },
+      { title: 'Laik Devlet', desc: 'Tüm vatandaşlarımıza özgürlük sağlamak için dini devletten ayırdı', icon: '🏛️' },
+      { title: 'Ekonomik Büyüme', desc: 'Ekonomimizi geliştirmek için demiryolları, fabrikalar ve bankalar kurdu', icon: '🏭' }
     ],
     quotes: [
       { text: "Yurtta sulh, cihanda sulh.", turkish: "Peace at home, peace in the world." },
@@ -364,7 +363,7 @@ function Ataturk() {
       >
         <div className="quotes-header">
           <motion.img 
-            src={ataturkPortraitBW} 
+            src={ataturkFormal} 
             alt="Atatürk" 
             className="quotes-portrait ataturk-photo"
             initial={{ opacity: 0, scale: 0.8 }}
