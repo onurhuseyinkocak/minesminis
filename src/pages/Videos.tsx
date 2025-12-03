@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Star, Clock, Users, Sparkles, GraduationCap, Music, BookOpen, Gamepad2, Heart } from 'lucide-react';
+import { Play, Star, Clock, Users, Sparkles, GraduationCap, Music, BookOpen, Heart } from 'lucide-react';
 
 type Video = {
   id: string;
@@ -8,259 +8,255 @@ type Video = {
   description: string;
   thumbnail: string;
   grade: string;
-  type: 'song' | 'lesson' | 'story' | 'game';
+  type: 'song' | 'lesson' | 'story';
   duration: string;
   isPopular?: boolean;
 };
 
 const videos: Video[] = [
-  // 2nd Grade - Basic English (Beginners)
+  // 2nd Grade - Basic English (8 videos)
   {
-    id: 'ZanHgPprl-0',
-    title: 'ABC Song - Learn the Alphabet',
-    description: 'Sing along and learn all 26 letters!',
-    thumbnail: 'https://img.youtube.com/vi/ZanHgPprl-0/mqdefault.jpg',
-    grade: '2nd Grade',
-    type: 'song',
-    duration: '2:01',
-    isPopular: true
-  },
-  {
-    id: 'pO1-gnIvYsg',
-    title: 'Learn Colors Song',
-    description: 'Red, blue, green - learn all colors!',
-    thumbnail: 'https://img.youtube.com/vi/pO1-gnIvYsg/mqdefault.jpg',
-    grade: '2nd Grade',
-    type: 'song',
-    duration: '2:48'
-  },
-  {
-    id: 'DR-cfDsHCHo',
-    title: 'Counting 1 to 10 Song',
-    description: 'Learn to count with fun music!',
-    thumbnail: 'https://img.youtube.com/vi/DR-cfDsHCHo/mqdefault.jpg',
-    grade: '2nd Grade',
-    type: 'song',
-    duration: '2:25',
-    isPopular: true
-  },
-  {
-    id: 'WTeqUejf3D0',
+    id: 'XqZsoesa55w',
     title: 'Baby Shark Dance',
-    description: 'The famous Baby Shark song!',
-    thumbnail: 'https://img.youtube.com/vi/WTeqUejf3D0/mqdefault.jpg',
+    description: 'The most popular kids song ever!',
+    thumbnail: 'https://img.youtube.com/vi/XqZsoesa55w/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'song',
-    duration: '2:17'
-  },
-  {
-    id: 'e54m6XOpRgU',
-    title: 'Head Shoulders Knees Toes',
-    description: 'Learn body parts with actions!',
-    thumbnail: 'https://img.youtube.com/vi/e54m6XOpRgU/mqdefault.jpg',
-    grade: '2nd Grade',
-    type: 'song',
-    duration: '2:15',
+    duration: '2:16',
     isPopular: true
   },
   {
-    id: 'Yt8GFgxlITs',
-    title: 'Five Little Monkeys',
-    description: 'Counting song with silly monkeys!',
-    thumbnail: 'https://img.youtube.com/vi/Yt8GFgxlITs/mqdefault.jpg',
+    id: 'e0-2XxgHIXk',
+    title: 'Phonics Song with TWO Words',
+    description: 'A-Apple, B-Ball, learn letters!',
+    thumbnail: 'https://img.youtube.com/vi/e0-2XxgHIXk/mqdefault.jpg',
     grade: '2nd Grade',
-    type: 'story',
+    type: 'song',
+    duration: '4:06',
+    isPopular: true
+  },
+  {
+    id: 'BD75RYqrSEI',
+    title: 'Wheels On The Bus',
+    description: 'Classic nursery rhyme song!',
+    thumbnail: 'https://img.youtube.com/vi/BD75RYqrSEI/mqdefault.jpg',
+    grade: '2nd Grade',
+    type: 'song',
     duration: '2:30'
   },
   {
-    id: '6xZ6R8t4d7g',
-    title: 'Animal Sounds Song',
-    description: 'What does the cat say? Meow!',
-    thumbnail: 'https://img.youtube.com/vi/6xZ6R8t4d7g/mqdefault.jpg',
-    grade: '2nd Grade',
-    type: 'song',
-    duration: '3:10'
-  },
-  {
-    id: 'OEbRDtCAFdU',
-    title: 'Five Little Ducks',
-    description: 'Quack quack - counting ducks!',
-    thumbnail: 'https://img.youtube.com/vi/OEbRDtCAFdU/mqdefault.jpg',
+    id: 'WHLZsCz6Yx4',
+    title: 'Five Little Ducks Song',
+    description: 'Count ducks with this fun song!',
+    thumbnail: 'https://img.youtube.com/vi/WHLZsCz6Yx4/mqdefault.jpg',
     grade: '2nd Grade',
     type: 'story',
-    duration: '3:22'
+    duration: '2:45'
+  },
+  {
+    id: 'ZS1J3VrxnM0',
+    title: 'Head Shoulders Knees and Toes',
+    description: 'Learn body parts with actions!',
+    thumbnail: 'https://img.youtube.com/vi/ZS1J3VrxnM0/mqdefault.jpg',
+    grade: '2nd Grade',
+    type: 'song',
+    duration: '1:53',
+    isPopular: true
+  },
+  {
+    id: 'eBVqcTEC3zQ',
+    title: 'If You\'re Happy and You Know It',
+    description: 'Clap your hands and sing along!',
+    thumbnail: 'https://img.youtube.com/vi/eBVqcTEC3zQ/mqdefault.jpg',
+    grade: '2nd Grade',
+    type: 'song',
+    duration: '2:15'
+  },
+  {
+    id: '75NQK-Sm1YY',
+    title: 'ABC Song Classic',
+    description: 'Learn the alphabet the fun way!',
+    thumbnail: 'https://img.youtube.com/vi/75NQK-Sm1YY/mqdefault.jpg',
+    grade: '2nd Grade',
+    type: 'song',
+    duration: '1:58'
+  },
+  {
+    id: 'M3rg-rh6MPo',
+    title: 'Numbers Song 1-10',
+    description: 'Count from one to ten!',
+    thumbnail: 'https://img.youtube.com/vi/M3rg-rh6MPo/mqdefault.jpg',
+    grade: '2nd Grade',
+    type: 'lesson',
+    duration: '2:35'
   },
 
-  // 3rd Grade - Intermediate
-  {
-    id: 'mXMofxtDPUQ',
-    title: 'Days of the Week',
-    description: 'Monday, Tuesday, Wednesday...',
-    thumbnail: 'https://img.youtube.com/vi/mXMofxtDPUQ/mqdefault.jpg',
-    grade: '3rd Grade',
-    type: 'song',
-    duration: '2:48',
-    isPopular: true
-  },
-  {
-    id: 'Fe9bnYRzFvk',
-    title: 'Months of the Year',
-    description: 'January to December song!',
-    thumbnail: 'https://img.youtube.com/vi/Fe9bnYRzFvk/mqdefault.jpg',
-    grade: '3rd Grade',
-    type: 'song',
-    duration: '2:45'
-  },
-  {
-    id: 'CjnDEUyEgPc',
-    title: 'Weather Song for Kids',
-    description: 'Sunny, rainy, cloudy, snowy!',
-    thumbnail: 'https://img.youtube.com/vi/CjnDEUyEgPc/mqdefault.jpg',
-    grade: '3rd Grade',
-    type: 'song',
-    duration: '3:02'
-  },
-  {
-    id: 'FHaObkHEkHQ',
-    title: 'Family Song',
-    description: 'Mom, Dad, Brother, Sister!',
-    thumbnail: 'https://img.youtube.com/vi/FHaObkHEkHQ/mqdefault.jpg',
-    grade: '3rd Grade',
-    type: 'song',
-    duration: '2:35',
-    isPopular: true
-  },
-  {
-    id: 'h4eueDYPTIg',
-    title: 'Action Verbs Song',
-    description: 'Run, jump, swim, fly!',
-    thumbnail: 'https://img.youtube.com/vi/h4eueDYPTIg/mqdefault.jpg',
-    grade: '3rd Grade',
-    type: 'lesson',
-    duration: '3:20'
-  },
-  {
-    id: '0lkuWGZTA0E',
-    title: 'Feelings Song',
-    description: 'Happy, sad, angry, excited!',
-    thumbnail: 'https://img.youtube.com/vi/0lkuWGZTA0E/mqdefault.jpg',
-    grade: '3rd Grade',
-    type: 'song',
-    duration: '2:45'
-  },
-  {
-    id: 'L0mL4oZycnU',
-    title: 'Fruit Song for Kids',
-    description: 'Apple, banana, orange, grape!',
-    thumbnail: 'https://img.youtube.com/vi/L0mL4oZycnU/mqdefault.jpg',
-    grade: '3rd Grade',
-    type: 'song',
-    duration: '2:55'
-  },
+  // 3rd Grade - Intermediate (8 videos)
   {
     id: 'loINl3Ln6Ck',
-    title: 'Shapes Song',
-    description: 'Circle, square, triangle, star!',
+    title: 'The Shapes Song',
+    description: 'Circle, square, triangle and more!',
     thumbnail: 'https://img.youtube.com/vi/loINl3Ln6Ck/mqdefault.jpg',
     grade: '3rd Grade',
     type: 'song',
-    duration: '2:40'
+    duration: '2:08'
+  },
+  {
+    id: '05pYU8saoDs',
+    title: 'Days of the Week Song',
+    description: 'Monday, Tuesday, Wednesday...',
+    thumbnail: 'https://img.youtube.com/vi/05pYU8saoDs/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '2:40',
+    isPopular: true
+  },
+  {
+    id: 'v608v42dKeI',
+    title: 'Months of the Year Song',
+    description: 'January to December!',
+    thumbnail: 'https://img.youtube.com/vi/v608v42dKeI/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '2:12'
+  },
+  {
+    id: 'cJynz8jmRBE',
+    title: 'Weather Song',
+    description: 'Sunny, rainy, cloudy, snowy!',
+    thumbnail: 'https://img.youtube.com/vi/cJynz8jmRBE/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '2:30'
+  },
+  {
+    id: 'AOz4DqJuAaA',
+    title: 'Finger Family Song',
+    description: 'Daddy finger, where are you?',
+    thumbnail: 'https://img.youtube.com/vi/AOz4DqJuAaA/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '1:45',
+    isPopular: true
+  },
+  {
+    id: 'VuNlGfIfigs',
+    title: 'Old MacDonald Had a Farm',
+    description: 'E-I-E-I-O! Animal sounds!',
+    thumbnail: 'https://img.youtube.com/vi/VuNlGfIfigs/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '3:05'
+  },
+  {
+    id: '3rl7Mdg4Qvk',
+    title: 'Colors Song for Kids',
+    description: 'Red, blue, yellow, green!',
+    thumbnail: 'https://img.youtube.com/vi/3rl7Mdg4Qvk/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'song',
+    duration: '2:25'
+  },
+  {
+    id: 'mXMofxtDPUQ',
+    title: 'Animal Sounds Song',
+    description: 'What does the cow say? Moo!',
+    thumbnail: 'https://img.youtube.com/vi/mXMofxtDPUQ/mqdefault.jpg',
+    grade: '3rd Grade',
+    type: 'lesson',
+    duration: '2:50'
   },
 
-  // 4th Grade - Advanced
+  // 4th Grade - Advanced (8 videos)
   {
-    id: 'D1LDPmYLKdE',
-    title: 'Present Tense Song',
-    description: 'I eat, you eat, he eats!',
-    thumbnail: 'https://img.youtube.com/vi/D1LDPmYLKdE/mqdefault.jpg',
+    id: 'TfkIAyJLvyE',
+    title: 'Twinkle Twinkle Little Star',
+    description: 'Beautiful lullaby to sing!',
+    thumbnail: 'https://img.youtube.com/vi/TfkIAyJLvyE/mqdefault.jpg',
     grade: '4th Grade',
-    type: 'lesson',
-    duration: '3:30',
+    type: 'song',
+    duration: '2:00'
+  },
+  {
+    id: 'M2cckDmNLMI',
+    title: 'BINGO Dog Song',
+    description: 'B-I-N-G-O! Spell and sing!',
+    thumbnail: 'https://img.youtube.com/vi/M2cckDmNLMI/mqdefault.jpg',
+    grade: '4th Grade',
+    type: 'song',
+    duration: '2:20',
     isPopular: true
   },
   {
     id: 'Sj8qPwRzcS8',
-    title: 'Daily Routines',
-    description: 'Wake up, brush teeth, go to school!',
+    title: 'Daily Routines Song',
+    description: 'Wake up, eat, go to school!',
     thumbnail: 'https://img.youtube.com/vi/Sj8qPwRzcS8/mqdefault.jpg',
     grade: '4th Grade',
     type: 'lesson',
     duration: '3:55'
   },
   {
-    id: 'WMy7wSuo5BI',
-    title: 'Telling Time Song',
-    description: 'What time is it? Learn the clock!',
-    thumbnail: 'https://img.youtube.com/vi/WMy7wSuo5BI/mqdefault.jpg',
-    grade: '4th Grade',
-    type: 'lesson',
-    duration: '4:05',
-    isPopular: true
-  },
-  {
-    id: 'ddDN30evKPc',
-    title: 'Prepositions Song',
-    description: 'In, on, under, behind, between!',
-    thumbnail: 'https://img.youtube.com/vi/ddDN30evKPc/mqdefault.jpg',
+    id: 'L0mL4oZycnU',
+    title: 'Fruits Song',
+    description: 'Apple, banana, orange, grape!',
+    thumbnail: 'https://img.youtube.com/vi/L0mL4oZycnU/mqdefault.jpg',
     grade: '4th Grade',
     type: 'song',
-    duration: '3:18'
+    duration: '2:55'
   },
   {
-    id: 'frN3nvhIHUk',
-    title: 'Opposite Words',
-    description: 'Big-small, hot-cold, fast-slow!',
-    thumbnail: 'https://img.youtube.com/vi/frN3nvhIHUk/mqdefault.jpg',
+    id: 'pLpHF9dLc2Q',
+    title: 'Row Row Row Your Boat',
+    description: 'Classic song for kids!',
+    thumbnail: 'https://img.youtube.com/vi/pLpHF9dLc2Q/mqdefault.jpg',
+    grade: '4th Grade',
+    type: 'song',
+    duration: '2:10'
+  },
+  {
+    id: '_cgc6FCyNnk',
+    title: 'Walking Walking Song',
+    description: 'Action words - walking, running!',
+    thumbnail: 'https://img.youtube.com/vi/_cgc6FCyNnk/mqdefault.jpg',
     grade: '4th Grade',
     type: 'lesson',
-    duration: '3:28'
+    duration: '2:30'
   },
   {
-    id: 'wCmBJPF3Vlo',
+    id: 'LRirT_MyHZQ',
     title: 'Vegetables Song',
-    description: 'Carrot, potato, tomato, onion!',
-    thumbnail: 'https://img.youtube.com/vi/wCmBJPF3Vlo/mqdefault.jpg',
+    description: 'Carrot, potato, tomato!',
+    thumbnail: 'https://img.youtube.com/vi/LRirT_MyHZQ/mqdefault.jpg',
     grade: '4th Grade',
     type: 'song',
-    duration: '2:50'
+    duration: '2:15'
   },
   {
-    id: 'RE5tvaveVak',
-    title: 'Clothes Song',
-    description: 'Shirt, pants, shoes, hat!',
-    thumbnail: 'https://img.youtube.com/vi/RE5tvaveVak/mqdefault.jpg',
+    id: '7OyUZBo0VtE',
+    title: 'Family Members Song',
+    description: 'Mom, dad, sister, brother!',
+    thumbnail: 'https://img.youtube.com/vi/7OyUZBo0VtE/mqdefault.jpg',
     grade: '4th Grade',
-    type: 'song',
-    duration: '3:15'
-  },
-  {
-    id: 'tkGeEU0cFqU',
-    title: 'Transportation Song',
-    description: 'Car, bus, train, airplane!',
-    thumbnail: 'https://img.youtube.com/vi/tkGeEU0cFqU/mqdefault.jpg',
-    grade: '4th Grade',
-    type: 'song',
-    duration: '2:42'
+    type: 'lesson',
+    duration: '3:10'
   }
 ];
 
-const gradeInfo: Record<string, { color: string; gradient: string; icon: string; emoji: string }> = {
+const gradeInfo: Record<string, { color: string; gradient: string; emoji: string }> = {
   '2nd Grade': { 
     color: '#22c55e', 
     gradient: 'linear-gradient(135deg, #22c55e, #16a34a)',
-    icon: 'leaf',
     emoji: '🌱'
   },
   '3rd Grade': { 
     color: '#3b82f6', 
     gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-    icon: 'star',
     emoji: '⭐'
   },
   '4th Grade': { 
     color: '#8b5cf6', 
     gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-    icon: 'rocket',
     emoji: '🚀'
   }
 };
@@ -268,8 +264,7 @@ const gradeInfo: Record<string, { color: string; gradient: string; icon: string;
 const typeIcons: Record<string, { icon: React.ReactNode; label: string }> = {
   song: { icon: <Music size={14} />, label: 'Song' },
   lesson: { icon: <BookOpen size={14} />, label: 'Lesson' },
-  story: { icon: <Heart size={14} />, label: 'Story' },
-  game: { icon: <Gamepad2 size={14} />, label: 'Game' }
+  story: { icon: <Heart size={14} />, label: 'Story' }
 };
 
 function Videos() {
@@ -286,7 +281,6 @@ function Videos() {
 
   return (
     <div className="videos-page">
-      {/* Hero Section */}
       <motion.div
         className="videos-hero"
         initial={{ opacity: 0 }}
@@ -319,7 +313,7 @@ function Videos() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            Songs, stories and lessons for every grade level
+            {videos.length} songs, stories and lessons for every grade level
           </motion.p>
         </div>
 
@@ -342,7 +336,6 @@ function Videos() {
         </div>
       </motion.div>
 
-      {/* Grade Selection */}
       <motion.div 
         className="grade-selection"
         initial={{ y: 30, opacity: 0 }}
@@ -385,7 +378,6 @@ function Videos() {
         </div>
       </motion.div>
 
-      {/* Popular Section - Only show when "All" is selected */}
       {selectedGrade === 'All' && (
         <motion.div 
           className="popular-section"
@@ -439,7 +431,6 @@ function Videos() {
         </motion.div>
       )}
 
-      {/* Videos Grid */}
       <motion.div 
         className="videos-section"
         initial={{ opacity: 0 }}
@@ -522,7 +513,6 @@ function Videos() {
         </AnimatePresence>
       </motion.div>
 
-      {/* Video Modal */}
       <AnimatePresence>
         {selectedVideo && (
           <motion.div 
@@ -566,7 +556,6 @@ function Videos() {
           padding-bottom: 4rem;
         }
 
-        /* Hero Section */
         .videos-hero {
           position: relative;
           background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
@@ -577,10 +566,7 @@ function Videos() {
           margin-bottom: 2rem;
         }
 
-        .hero-content {
-          position: relative;
-          z-index: 2;
-        }
+        .hero-content { position: relative; z-index: 2; }
 
         .hero-badge {
           display: inline-flex;
@@ -636,7 +622,6 @@ function Videos() {
         .icon-2 { top: 30%; right: 15%; }
         .icon-3 { bottom: 20%; left: 20%; }
 
-        /* Grade Selection */
         .grade-selection {
           max-width: 900px;
           margin: 0 auto 3rem;
@@ -652,11 +637,7 @@ function Videos() {
           color: #4a4a6a;
         }
 
-        .grade-header h2 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          margin: 0;
-        }
+        .grade-header h2 { font-size: 1.5rem; font-weight: 700; margin: 0; }
 
         .grade-buttons {
           display: flex;
@@ -694,20 +675,15 @@ function Videos() {
           box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
         }
 
-        .grade-emoji {
-          font-size: 1.3rem;
-        }
+        .grade-emoji { font-size: 1.3rem; }
 
-        /* Popular Section */
-        .popular-section {
+        .popular-section, .videos-section {
           max-width: 1400px;
           margin: 0 auto 3rem;
           padding: 0 1rem;
         }
 
-        .section-header {
-          margin-bottom: 1.5rem;
-        }
+        .section-header { margin-bottom: 1.5rem; }
 
         .section-title {
           display: flex;
@@ -716,28 +692,9 @@ function Videos() {
           margin-bottom: 0.25rem;
         }
 
-        .section-title h2 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #1a1a2e;
-          margin: 0;
-        }
-
-        .section-title .star-icon {
-          color: #fbbf24;
-        }
-
-        .section-subtitle {
-          color: #6b7280;
-          font-size: 1rem;
-          margin: 0;
-        }
-
-        .video-count {
-          color: #6b7280;
-          font-size: 0.9rem;
-          margin: 0;
-        }
+        .section-title h2 { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin: 0; }
+        .section-title .star-icon { color: #fbbf24; }
+        .section-subtitle, .video-count { color: #6b7280; font-size: 0.95rem; margin: 0; }
 
         .popular-scroll {
           display: flex;
@@ -745,22 +702,11 @@ function Videos() {
           overflow-x: auto;
           padding: 1rem 0.5rem;
           scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
         }
 
-        .popular-scroll::-webkit-scrollbar {
-          height: 8px;
-        }
-
-        .popular-scroll::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
-        }
-
-        .popular-scroll::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
-          border-radius: 10px;
-        }
+        .popular-scroll::-webkit-scrollbar { height: 8px; }
+        .popular-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .popular-scroll::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 10px; }
 
         .popular-card {
           flex: 0 0 300px;
@@ -786,9 +732,7 @@ function Videos() {
           transition: transform 0.4s ease;
         }
 
-        .popular-card:hover .popular-thumbnail img {
-          transform: scale(1.1);
-        }
+        .popular-card:hover .popular-thumbnail img { transform: scale(1.1); }
 
         .popular-overlay {
           position: absolute;
@@ -801,9 +745,7 @@ function Videos() {
           transition: opacity 0.3s;
         }
 
-        .popular-card:hover .popular-overlay {
-          opacity: 1;
-        }
+        .popular-card:hover .popular-overlay { opacity: 1; }
 
         .popular-badge {
           position: absolute;
@@ -835,9 +777,7 @@ function Videos() {
           font-weight: 600;
         }
 
-        .popular-info {
-          padding: 1rem 1.25rem;
-        }
+        .popular-info { padding: 1rem 1.25rem; }
 
         .grade-tag {
           display: inline-block;
@@ -849,20 +789,7 @@ function Videos() {
           margin-bottom: 8px;
         }
 
-        .popular-info h3 {
-          font-size: 1rem;
-          font-weight: 700;
-          color: #1a1a2e;
-          margin: 0;
-          line-height: 1.4;
-        }
-
-        /* Videos Grid */
-        .videos-section {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 0 1rem;
-        }
+        .popular-info h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin: 0; line-height: 1.4; }
 
         .videos-grid {
           display: grid;
@@ -880,9 +807,7 @@ function Videos() {
           transition: all 0.3s ease;
         }
 
-        .video-card:hover {
-          box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        }
+        .video-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
 
         .video-thumbnail {
           position: relative;
@@ -897,9 +822,7 @@ function Videos() {
           transition: transform 0.4s ease;
         }
 
-        .video-card:hover .video-thumbnail img {
-          transform: scale(1.1);
-        }
+        .video-card:hover .video-thumbnail img { transform: scale(1.1); }
 
         .video-overlay {
           position: absolute;
@@ -912,9 +835,7 @@ function Videos() {
           transition: opacity 0.3s;
         }
 
-        .video-card:hover .video-overlay {
-          opacity: 1;
-        }
+        .video-card:hover .video-overlay { opacity: 1; }
 
         .play-button {
           width: 64px;
@@ -974,9 +895,7 @@ function Videos() {
           justify-content: center;
         }
 
-        .video-content {
-          padding: 1.25rem;
-        }
+        .video-content { padding: 1.25rem; }
 
         .video-grade {
           display: inline-block;
@@ -987,22 +906,9 @@ function Videos() {
           margin-bottom: 10px;
         }
 
-        .video-title {
-          font-size: 1rem;
-          font-weight: 700;
-          color: #1a1a2e;
-          margin: 0 0 6px;
-          line-height: 1.4;
-        }
+        .video-title { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 6px; line-height: 1.4; }
+        .video-desc { font-size: 0.875rem; color: #6b7280; margin: 0; line-height: 1.5; }
 
-        .video-desc {
-          font-size: 0.875rem;
-          color: #6b7280;
-          margin: 0;
-          line-height: 1.5;
-        }
-
-        /* Modal */
         .video-modal-overlay {
           position: fixed;
           inset: 0;
@@ -1025,11 +931,7 @@ function Videos() {
           box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
-        .video-modal iframe {
-          width: 100%;
-          height: 100%;
-          border: none;
-        }
+        .video-modal iframe { width: 100%; height: 100%; border: none; }
 
         .modal-close {
           position: absolute;
@@ -1051,41 +953,15 @@ function Videos() {
           z-index: 10;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-          .hero-title {
-            font-size: 1.75rem;
-          }
-
-          .hero-subtitle {
-            font-size: 1rem;
-          }
-
-          .grade-buttons {
-            flex-direction: column;
-          }
-
-          .grade-btn {
-            width: 100%;
-            justify-content: center;
-          }
-
-          .videos-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .popular-card {
-            flex: 0 0 260px;
-          }
-
-          .video-modal {
-            border-radius: 12px;
-          }
-
-          .modal-close {
-            top: -48px;
-            right: 0;
-          }
+          .hero-title { font-size: 1.75rem; }
+          .hero-subtitle { font-size: 1rem; }
+          .grade-buttons { flex-direction: column; }
+          .grade-btn { width: 100%; justify-content: center; }
+          .videos-grid { grid-template-columns: 1fr; }
+          .popular-card { flex: 0 0 260px; }
+          .video-modal { border-radius: 12px; }
+          .modal-close { top: -48px; }
         }
       `}</style>
     </div>

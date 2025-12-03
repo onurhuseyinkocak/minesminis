@@ -21,6 +21,7 @@ import AnimatedBackground from "./components/AnimatedBackground";
 import FloatingParticles from "./components/FloatingParticles";
 import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 import StudentDashboard from "./pages/Student/StudentDashboard";
+import Ataturk from "./pages/Ataturk";
 import LivingBearImages from "./components/LivingBearImages";
 import ChatHome from "./components/ChatHome";
 import SplashScreen from "./components/SplashScreen";
@@ -56,6 +57,7 @@ function AppRoutes() {
           <Route path="/games" element={<Games />} />
           <Route path="/words" element={<Words />} />
           <Route path="/videos" element={<Videos />} />
+          <Route path="/ataturk" element={<Ataturk />} />
           <Route path="/worksheets" element={<Worksheets />} />
           <Route path="/reels" element={user ? <Reels /> : <Landing />} />
           <Route path="/search" element={user ? <Search /> : <Landing />} />

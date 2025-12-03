@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { BookOpen, GamepadIcon, Video, FileText, Trophy, Flame, Star } from 'lucide-react';
+import { BookOpen, GamepadIcon, Video, FileText, Trophy, Flame, Star, ArrowRight, Sparkles } from 'lucide-react';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -47,6 +47,31 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-page">
+      {/* Atatürk Corner - Most Prominent Section */}
+      <Link to="/ataturk" className="ataturk-corner">
+        <div className="ataturk-pattern"></div>
+        <div className="ataturk-content">
+          <div className="ataturk-flag">
+            <div className="flag-crescent"></div>
+            <div className="flag-star"></div>
+          </div>
+          <div className="ataturk-text">
+            <div className="ataturk-badge">
+              <Sparkles size={14} />
+              <span>Father of Modern Turkey</span>
+            </div>
+            <h2 className="ataturk-title">Mustafa Kemal Atatürk</h2>
+            <p className="ataturk-subtitle">Learn about the visionary leader who transformed a nation</p>
+          </div>
+          <div className="ataturk-arrow">
+            <ArrowRight size={24} />
+          </div>
+        </div>
+        <div className="ataturk-quote">
+          <span>"Peace at home, peace in the world"</span>
+        </div>
+      </Link>
+
       <div className="welcome-banner">
         <div className="welcome-content">
           <div className="mascot-star">
