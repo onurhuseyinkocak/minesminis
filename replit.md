@@ -122,6 +122,27 @@ The following environment variables are configured in Replit:
 - **Speech Bubbles**: Shows capability messages explaining what Mimi can do (games, learning, etc.)
 - **Interactive Home**: Clicking on dragon's cave home opens the AI chat interface
 
+### Videos Page (December 2025)
+- Complete redesign with grade-based categories (2nd, 3rd, 4th Grade)
+- 24 curated educational YouTube videos for English learning
+- Content types: Songs, Lessons, Stories
+- Interactive grade filtering with animated buttons
+- Popular videos horizontal scroll section
+- Video modal player with autoplay
+- Responsive grid layout
+
+### Atatürk Tribute Section (December 2025)
+- **Atatürk Corner**: Prominent dark-themed banner on homepage with Turkish flag icon
+- **Dedicated /ataturk page** with comprehensive content:
+  - Hero section with dramatic gradient background
+  - "Who Was Atatürk?" introduction
+  - Famous quotes in English and Turkish
+  - Timeline of his life (1881-1938) with 6 key events
+  - Revolutionary reforms grid (6 major reforms)
+  - Legacy section
+  - Footer banner with "Ne Mutlu Türküm Diyene"
+- Dark theme (#1a1a2e, #16213e) with red accents (#dc2626)
+
 ### Technical Improvements
 - Disabled service worker (was causing console errors)
 - Integrated lucide-react for vector icons
