@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DragonMascot from './DragonMascot';
-import { generateDynamicQuickReplies, getStarterReplies, QuickReply, ChatMessage as QRChatMessage } from '../services/quickReplies';
+import { generateDynamicQuickReplies, getStarterReplies, QuickReply } from '../services/quickReplies';
 import './ChatHome.css';
 
 interface ChatMessage {
@@ -27,11 +27,13 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isTTSEnabled, setIsTTSEnabled] = useState(false);
+    const [quickReplies, setQuickReplies] = useState<QuickReply[]>(getStarterReplies());
+    const [usedReplies, setUsedReplies] = useState<Set<string>>(new Set());
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const speak = (text: string) => {
         if (!isTTSEnabled) return;
-        const cleanText = text.replace(/[🐲✨🌟💖🎮📚👋😂🎵🔢🌈]/g, '');
+        const cleanText = text.replace(/[🐲✨🌟💖🎮📚👋😂🎵🔢🌈🐾🍎👨‍👩‍👧🖐️👕🍕☀️📅😊🤔📖⭐👅🎯✏️📝🔤🗣️↔️🎶🤓🤷😎😅💪👂💖]/g, '');
         const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'en-US';
         utterance.pitch = 1.3;
@@ -56,6 +58,15 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
         scrollToBottom();
     }, [messages, isTyping]);
 
+    const updateQuickReplies = (allMessages: ChatMessage[]) => {
+        const historyForReplies = allMessages.map(m => ({
+            role: m.role,
+            content: m.content
+        }));
+        const newReplies = generateDynamicQuickReplies(historyForReplies, usedReplies);
+        setQuickReplies(newReplies);
+    };
+
     const handleSend = async (text: string) => {
         if (!text.trim()) return;
 
@@ -65,13 +76,26 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
             content: text,
             timestamp: Date.now()
         };
-        setMessages(prev => [...prev, userMsg]);
+        
+        const updatedMessages = [...messages, userMsg];
+        setMessages(updatedMessages);
         setInputValue('');
         setIsTyping(true);
 
+        const clickedReply = quickReplies.find(r => r.value === text);
+        if (clickedReply) {
+            setUsedReplies(prev => new Set([...prev, clickedReply.id]));
+        }
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 800));
-            const responseText = await onSendMessage(text);
+            await new Promise(resolve => setTimeout(resolve, 600));
+
+            const historyForAI = updatedMessages.map(m => ({
+                role: m.role,
+                content: m.content
+            }));
+            
+            const responseText = await onSendMessage(historyForAI);
 
             const aiMsg: ChatMessage = {
                 id: (Date.now() + 1).toString(),
@@ -79,17 +103,23 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                 content: responseText,
                 timestamp: Date.now()
             };
-            setMessages(prev => [...prev, aiMsg]);
+            
+            const finalMessages = [...updatedMessages, aiMsg];
+            setMessages(finalMessages);
             speak(responseText);
+            
+            updateQuickReplies(finalMessages);
+            
         } catch (error) {
             console.error("Chat Error:", error);
             const errorMsg = "Oops! My dragon ears didn't catch that. Can you say it again? 🐲👂";
-            setMessages(prev => [...prev, {
+            const errorMessage: ChatMessage = {
                 id: Date.now().toString(),
                 role: 'assistant',
                 content: errorMsg,
                 timestamp: Date.now()
-            }]);
+            };
+            setMessages(prev => [...prev, errorMessage]);
             speak(errorMsg);
         } finally {
             setIsTyping(false);
@@ -154,8 +184,8 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
                 <div className="chat-input-area">
                     <div className="quick-replies">
-                        {QUICK_REPLIES.map(reply => (
-                            <button key={reply.value} onClick={() => handleSend(reply.value)}>
+                        {quickReplies.map(reply => (
+                            <button key={reply.id} onClick={() => handleSend(reply.value)}>
                                 {reply.text}
                             </button>
                         ))}

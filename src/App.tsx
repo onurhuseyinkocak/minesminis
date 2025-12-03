@@ -114,12 +114,13 @@ function App() {
         {showChat && (
           <ChatHome
             onClose={() => setShowChat(false)}
-            onSendMessage={async (text) => {
-              const response = await sendMessageToAI([{
-                role: 'user',
-                content: text,
+            onSendMessage={async (history) => {
+              const messagesForAI = history.map(msg => ({
+                role: msg.role,
+                content: msg.content,
                 timestamp: new Date()
-              }]);
+              }));
+              const response = await sendMessageToAI(messagesForAI);
               return response;
             }}
           />
