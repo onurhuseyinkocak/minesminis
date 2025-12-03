@@ -18,6 +18,7 @@ import StudentDashboard from "./pages/Student/StudentDashboard";
 import Ataturk from "./pages/Ataturk";
 import LivingBearImages from "./components/LivingBearImages";
 import ChatHome from "./components/ChatHome";
+import MimiLearning from "./components/MimiLearning";
 import SplashScreen from "./components/SplashScreen";
 import { sendMessageToAI } from "./services/aiService";
 import "./App.css";
@@ -67,11 +68,17 @@ function AppRoutes() {
 
 function AppContent() {
   const [showChat, setShowChat] = useState(false);
+  const [showLearning, setShowLearning] = useState(false);
   const location = useLocation();
   const isAtaturkPage = location.pathname === '/ataturk';
 
   const handleMascotClick = () => {
-    console.log('🎈 Opening AI chat with Mimi!');
+    console.log('🎈 Opening Mimi Learning!');
+    setShowLearning(true);
+  };
+
+  const handleHomeClick = () => {
+    console.log('🏠 Opening AI chat with Mimi!');
     setShowChat(true);
   };
 
@@ -82,7 +89,7 @@ function AppContent() {
       <AppRoutes />
 
       {!isAtaturkPage && (
-        <LivingBearImages onMascotClick={handleMascotClick} onHomeClick={() => setShowChat(true)} />
+        <LivingBearImages onMascotClick={handleMascotClick} onHomeClick={handleHomeClick} />
       )}
 
       {showChat && (
@@ -98,6 +105,10 @@ function AppContent() {
             return response;
           }}
         />
+      )}
+
+      {showLearning && (
+        <MimiLearning onClose={() => setShowLearning(false)} />
       )}
     </>
   );
