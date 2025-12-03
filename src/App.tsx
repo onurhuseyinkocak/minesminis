@@ -110,6 +110,17 @@ function AppContent() {
       {showLearning && (
         <MimiLearning onClose={() => setShowLearning(false)} />
       )}
+
+      {!isAtaturkPage && !showChat && !showLearning && (
+        <button 
+          className="floating-chat-btn"
+          onClick={() => setShowChat(true)}
+          aria-label="Mimi ile sohbet et"
+        >
+          <span className="chat-btn-icon">💬</span>
+          <span className="chat-btn-text">Sohbet</span>
+        </button>
+      )}
     </>
   );
 }

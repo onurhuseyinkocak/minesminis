@@ -182,26 +182,35 @@ The following environment variables are configured in Replit:
 - Images stored in: `public/ataturk-images/` (13 PNG files)
 
 ### MimiLearning Interactive Component (December 2025)
+- **High-Quality OpenAI TTS**:
+  - Uses OpenAI TTS API with 'nova' voice (child-friendly)
+  - Audio caching to avoid repeat API calls
+  - Fallback to Web Speech API if TTS fails
+  - Backend endpoint `/api/tts` for secure API key handling
 - **Vocabulary Practice Mode**: 
-  - 5 random words from pool of 15
+  - 5 random words from pool of 30
   - Visual emoji representation
   - Turkish translation and example sentence
-  - Text-to-Speech pronunciation (speaker button)
+  - High-quality pronunciation playback
   - Mini quiz with 4 options (cached for correctness)
   - Points awarded for correct answers
 - **Daily Challenge Mode**:
-  - 3 random questions from pool of 10
+  - 3 random questions from pool of 15
   - Multiple choice answers
   - Stars earned for correct answers
   - Completion celebration with confetti
-- **Quick Games Menu** (placeholders):
-  - Word Matching
-  - Spelling Practice
-  - Memory Game
-  - Speed Round
+- **Quick Games (Fully Implemented)**:
+  - **Word Matching**: 6 English-Turkish pairs, select and match
+  - **Spelling Practice**: 5 words with hints, type correct spelling
+  - **Memory Game**: 12 cards (6 pairs), flip and match word/emoji
+  - **Speed Round**: 60-second timer, rapid-fire translation quiz
 - **Dragon State Animations**:
   - Celebrating, thinking, idle, waving states
   - Smooth CSS transitions
+- **Floating Chat Button**:
+  - Bottom-right position with pulse animation
+  - Hidden on Atatürk page and when modals open
+  - Mobile responsive (icon only on small screens)
 
 ### Worksheets Page Redesign (December 2025)
 - **Grade-based filtering**: 2nd, 3rd, 4th Grade tabs

@@ -43,6 +43,63 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Server is running' });
 });
 
+// OpenAI Text-to-Speech Endpoint for child-friendly voice
+app.post('/api/tts', async (req, res) => {
+    try {
+        const { text } = req.body;
+
+        if (!text || typeof text !== 'string') {
+            return res.status(400).json({
+                error: 'Invalid request: text string required'
+            });
+        }
+
+        console.log('🔊 TTS request:', text.substring(0, 50) + '...');
+
+        const response = await fetch('https://api.openai.com/v1/audio/speech', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: 'tts-1',
+                input: text,
+                voice: 'nova', // Nova is friendly and child-appropriate
+                response_format: 'mp3',
+                speed: 0.95 // Slightly slower for children
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('❌ OpenAI TTS Error:', response.status, errorData);
+            return res.status(response.status).json({
+                error: 'OpenAI TTS Error',
+                details: errorData.error?.message || 'Unknown error'
+            });
+        }
+
+        // Stream the audio back
+        const audioBuffer = await response.arrayBuffer();
+        const base64Audio = Buffer.from(audioBuffer).toString('base64');
+        
+        console.log('✅ TTS audio generated successfully');
+        
+        res.json({
+            audio: base64Audio,
+            format: 'mp3'
+        });
+
+    } catch (error) {
+        console.error('❌ TTS Server error:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: error.message
+        });
+    }
+});
+
 // OpenAI Chat Proxy Endpoint
 app.post('/api/chat', async (req, res) => {
     try {
