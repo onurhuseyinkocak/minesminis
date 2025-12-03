@@ -28,7 +28,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       <div className="splash-content">
         <div className="splash-logo-container">
           <img 
-            src="/images/minesminis-logo.png" 
+            src="/images/minesminis-logo.svg" 
             alt="MinesMinis" 
             className="splash-logo"
           />

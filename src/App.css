@@ -48,16 +48,17 @@
 }
 
 .navbar-logo-img {
-  height: 50px;
+  height: 48px;
   width: auto;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
 }
 
 .navbar-logo-img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
 }
 
 .logo-emoji {

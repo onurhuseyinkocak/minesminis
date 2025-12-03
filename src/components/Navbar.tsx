@@ -13,7 +13,7 @@ function Navbar() {
       <div className="navbar-logo">
         <Link to="/" className="logo-link" aria-label="MinesMinis Home">
           <img 
-            src="/images/minesminis-logo.png" 
+            src="/images/minesminis-logo.svg" 
             alt="MinesMinis" 
             className="navbar-logo-img"
           />
