@@ -132,16 +132,28 @@ The following environment variables are configured in Replit:
 - Responsive grid layout
 
 ### Atatürk Tribute Section (December 2025)
-- **Atatürk Corner**: Prominent dark-themed banner on homepage with Turkish flag icon
-- **Dedicated /ataturk page** with comprehensive content:
-  - Hero section with dramatic gradient background
-  - "Who Was Atatürk?" introduction
-  - Famous quotes in English and Turkish
-  - Timeline of his life (1881-1938) with 6 key events
-  - Revolutionary reforms grid (6 major reforms)
-  - Legacy section
-  - Footer banner with "Ne Mutlu Türküm Diyene"
+- **Homepage Atatürk Corner**: Enhanced dark-themed banner with:
+  - Realistic CSS Turkish flag (red background, white crescent and star)
+  - Atatürk formal portrait image
+  - Atatürk signature image
+  - Hover animations and gradient effects
+- **Dedicated /ataturk page** with comprehensive bilingual content (EN/TR toggle):
+  - 13 high-quality transparent PNG Atatürk images throughout the page
+  - Hero section with portrait and silhouette images
+  - Photo gallery strip with 6 historical photos
+  - "Who Was Atatürk?" introduction with vector portrait
+  - Famous quotes in English and Turkish with B&W portrait
+  - Timeline of his life (1881-1938) with horse and republic images
+  - Revolutionary reforms grid with Turkish flag image
+  - Legacy section with saluting portrait
+  - Footer banner with silhouette and signature
+- **Mimi Mascot Respect Behavior**:
+  - Dragon approaches Atatürk photos
+  - Points at photos and sends heart emojis
+  - Positioned with offset to NEVER overlap photos
+  - Disappears when user scrolls away from photo areas
 - Dark theme (#1a1a2e, #16213e) with red accents (#dc2626)
+- Images stored in: `public/ataturk-images/` (13 PNG files)
 
 ### Technical Improvements
 - Disabled service worker (was causing console errors)
