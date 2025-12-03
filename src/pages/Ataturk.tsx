@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Star, Heart, BookOpen, Award, Globe, Users, Sparkles, Quote, Languages } from 'lucide-react';
 
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
@@ -104,42 +104,8 @@ const timelineIcons = [Star, Award, Heart, Users, Globe, Sparkles];
 
 function Ataturk() {
   const [lang, setLang] = useState<Language>('en');
-  const [showMimi, setShowMimi] = useState(false);
-  const [mimiPosition, setMimiPosition] = useState({ x: 0, y: 0 });
-  const [mimiState, setMimiState] = useState<'walking' | 'pointing' | 'heart'>('walking');
   
   const t = content[lang];
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowMimi(true);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!showMimi) return;
-    
-    const moveInterval = setInterval(() => {
-      const photos = document.querySelectorAll('.ataturk-photo');
-      if (photos.length > 0) {
-        const randomPhoto = photos[Math.floor(Math.random() * photos.length)];
-        const rect = randomPhoto.getBoundingClientRect();
-        const scrollY = window.scrollY;
-        
-        setMimiPosition({
-          x: rect.left - 100,
-          y: rect.top + scrollY + rect.height / 2 - 50
-        });
-        
-        setMimiState('pointing');
-        setTimeout(() => setMimiState('heart'), 1500);
-        setTimeout(() => setMimiState('walking'), 3000);
-      }
-    }, 8000);
-
-    return () => clearInterval(moveInterval);
-  }, [showMimi]);
 
   return (
     <div className="ataturk-page">
@@ -165,64 +131,6 @@ function Ataturk() {
           Türkçe
         </button>
       </motion.div>
-
-      {/* Mimi Dragon Showing Respect */}
-      <AnimatePresence>
-        {showMimi && (
-          <motion.div
-            className="mimi-respect"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              opacity: 1, 
-              scale: 1,
-              x: mimiPosition.x,
-              y: mimiPosition.y
-            }}
-            transition={{ type: 'spring', duration: 1 }}
-            style={{ position: 'absolute', zIndex: 100, pointerEvents: 'none' }}
-          >
-            <div className="mimi-dragon">
-              <svg viewBox="0 0 100 100" width="80" height="80">
-                <ellipse cx="50" cy="60" rx="30" ry="25" fill="#4DB866"/>
-                <ellipse cx="50" cy="65" rx="20" ry="15" fill="#99E6A6"/>
-                <circle cx="50" cy="35" r="25" fill="#4DB866"/>
-                <circle cx="40" cy="30" r="10" fill="white"/>
-                <circle cx="60" cy="30" r="10" fill="white"/>
-                <circle cx="42" cy="30" r="5" fill="#1a1a2e"/>
-                <circle cx="62" cy="30" r="5" fill="#1a1a2e"/>
-                <circle cx="43" cy="29" r="2" fill="white"/>
-                <circle cx="63" cy="29" r="2" fill="white"/>
-                <ellipse cx="35" cy="40" rx="6" ry="4" fill="#FF99B3" opacity="0.7"/>
-                <ellipse cx="65" cy="40" rx="6" ry="4" fill="#FF99B3" opacity="0.7"/>
-                <path d="M 45 45 Q 50 50 55 45" stroke="#2d7a3f" strokeWidth="2" fill="none"/>
-                <ellipse cx="35" cy="15" rx="5" ry="8" fill="#FFD966"/>
-                <ellipse cx="65" cy="15" rx="5" ry="8" fill="#FFD966"/>
-              </svg>
-            </div>
-            {mimiState === 'pointing' && (
-              <motion.div 
-                className="mimi-action pointing"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-              >
-                👉
-              </motion.div>
-            )}
-            {mimiState === 'heart' && (
-              <motion.div 
-                className="mimi-hearts"
-                initial={{ opacity: 0, y: 0 }}
-                animate={{ opacity: [1, 1, 0], y: -50 }}
-                transition={{ duration: 2 }}
-              >
-                <span>❤️</span>
-                <span>💖</span>
-                <span>❤️</span>
-              </motion.div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Hero Section */}
       <motion.section 

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Landing from "./pages/Landing";
@@ -77,8 +77,46 @@ function AppRoutes() {
   );
 }
 
-function App() {
+function AppContent() {
   const [showChat, setShowChat] = useState(false);
+  const location = useLocation();
+  const isAtaturkPage = location.pathname === '/ataturk';
+
+  const handleMascotClick = () => {
+    console.log('🎈 Opening AI chat with Mimi!');
+    setShowChat(true);
+  };
+
+  return (
+    <>
+      <AnimatedBackground />
+      <FloatingParticles />
+      <AppRoutes />
+      <TeacherMode />
+
+      {!isAtaturkPage && (
+        <LivingBearImages onMascotClick={handleMascotClick} onHomeClick={() => setShowChat(true)} />
+      )}
+
+      {showChat && (
+        <ChatHome
+          onClose={() => setShowChat(false)}
+          onSendMessage={async (history) => {
+            const messagesForAI = history.map(msg => ({
+              role: msg.role,
+              content: msg.content,
+              timestamp: new Date()
+            }));
+            const response = await sendMessageToAI(messagesForAI);
+            return response;
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+function App() {
   const [showSplash, setShowSplash] = useState(() => {
     if (typeof window !== 'undefined') {
       const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
@@ -86,11 +124,6 @@ function App() {
     }
     return true;
   });
-
-  const handleMascotClick = () => {
-    console.log('🎈 Opening AI chat with Mimi!');
-    setShowChat(true);
-  };
 
   const handleSplashComplete = () => {
     sessionStorage.setItem('hasSeenSplash', 'true');
@@ -104,29 +137,7 @@ function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <AnimatedBackground />
-        <FloatingParticles />
-        <AppRoutes />
-        <TeacherMode />
-
-        {/* AI-Powered Living Mascot - Freely roaming on website */}
-        <LivingBearImages onMascotClick={handleMascotClick} onHomeClick={() => setShowChat(true)} />
-
-        {/* AI Chat Window - Opens when mascot is clicked */}
-        {showChat && (
-          <ChatHome
-            onClose={() => setShowChat(false)}
-            onSendMessage={async (history) => {
-              const messagesForAI = history.map(msg => ({
-                role: msg.role,
-                content: msg.content,
-                timestamp: new Date()
-              }));
-              const response = await sendMessageToAI(messagesForAI);
-              return response;
-            }}
-          />
-        )}
+        <AppContent />
       </ToastProvider>
     </AuthProvider>
   );
