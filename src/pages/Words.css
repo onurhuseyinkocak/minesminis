@@ -41,13 +41,15 @@
 
 .stat-box {
   background: white;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
   transition: all var(--transition-base);
+  min-height: 80px;
+  box-sizing: border-box;
 }
 
 .stat-box:hover {
@@ -59,14 +61,16 @@
   width: 40px;
   height: 40px;
   color: var(--primary-navy);
+  flex-shrink: 0;
 }
 
 .stat-info {
   flex: 1;
+  min-width: 0;
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 700;
   color: var(--text-dark);
   line-height: 1.2;
@@ -76,6 +80,9 @@
   font-size: 0.8rem;
   color: var(--text-light);
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search-section {
@@ -87,16 +94,19 @@
   margin: 0 auto;
   display: flex;
   gap: var(--spacing-sm);
+  align-items: stretch;
 }
 
 .search-input {
   flex: 1;
-  padding: 14px 20px;
+  padding: 12px 20px;
   border: 2px solid var(--bg-navy-soft);
   border-radius: var(--radius-lg);
   font-size: 1rem;
   transition: all var(--transition-base);
   background: white;
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -106,18 +116,21 @@
 }
 
 .search-button {
-  padding: 14px 24px;
+  padding: 12px 24px;
   background: var(--primary-navy);
   color: white;
   border: none;
   border-radius: var(--radius-lg);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   cursor: pointer;
   transition: all var(--transition-base);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-xs);
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .search-button:hover {
@@ -197,7 +210,7 @@
 }
 
 .filter-btn {
-  padding: 8px 16px;
+  padding: 10px 16px;
   border-radius: var(--radius-md);
   border: 2px solid var(--bg-navy-soft);
   background: white;
@@ -206,6 +219,11 @@
   font-size: 0.875rem;
   cursor: pointer;
   transition: all var(--transition-base);
+  min-height: 40px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .filter-btn:hover {
@@ -250,7 +268,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-state p {

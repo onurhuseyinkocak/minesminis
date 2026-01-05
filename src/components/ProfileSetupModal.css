@@ -132,8 +132,15 @@
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .selected-name {
@@ -366,4 +373,28 @@
 
 .modal-actions {
   text-align: center;
+}
+
+.skip-setup {
+  margin-top: 1.5rem;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.skip-setup:hover {
+  opacity: 1;
+}
+
+.skip-link {
+  background: none;
+  border: none;
+  color: #64748b;
+  text-decoration: underline;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.skip-link:hover {
+  color: #6366f1;
 }

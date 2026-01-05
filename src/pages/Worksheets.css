@@ -51,6 +51,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: stretch;
 }
 
 .filter-btn {
@@ -58,11 +59,16 @@
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   background: white;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   color: #64748b;
+  min-height: 42px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .filter-btn:hover {
@@ -85,6 +91,7 @@
 .category-btn {
   font-size: 0.85rem;
   padding: 8px 14px;
+  min-height: 38px;
 }
 
 .category-btn.active {

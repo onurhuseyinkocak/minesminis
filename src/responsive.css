@@ -3,6 +3,7 @@
 /* Base Mobile Styles (Default) */
 :root {
     --nav-height: 60px;
+    --touch-target-min: 44px;
 }
 
 /* Typography Adjustments for Mobile */
@@ -101,15 +102,53 @@ textarea {
         font-size: 2.25rem;
     }
 
-    .container,
-    .app-container {
+    .container {
         max-width: 1800px;
+        margin: 0 auto;
     }
 
-    /* Increase touch targets for large screens */
-    button,
-    a {
-        padding: 1rem 2rem;
+    /* app-container should fill full width for seamless background */
+    .app-container {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Navbar buttons should maintain consistent size */
+    .nav-btn,
+    .social-btn,
+    .theme-toggle-nav {
+        height: 44px;
+        padding: 0 14px;
+        font-size: 0.85rem;
+    }
+
+    /* Videos page should use its own inline font sizes */
+    .videos-page h1,
+    .videos-page h2,
+    .videos-page h3 {
+        font-size: unset;
+    }
+
+    .videos-page .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .videos-page .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .videos-page .grade-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .videos-page .section-title h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Landing page should use its own font sizes */
+    .landing-page h1,
+    .landing-page .hero-title {
+        font-size: clamp(2rem, 4vw, 3rem);
     }
 }
 
@@ -123,9 +162,14 @@ textarea {
         font-size: 4rem;
     }
 
-    .container,
-    .app-container {
+    .container {
         max-width: 2400px;
+        margin: 0 auto;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: none;
     }
 }
 

@@ -22,10 +22,10 @@ function getBackendUrl(): string {
   if (import.meta.env.VITE_BACKEND_URL) {
     return import.meta.env.VITE_BACKEND_URL;
   }
-  
+
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    
+
     if (hostname.includes('replit') || hostname.includes('.dev') || hostname.includes('.app')) {
       const protocol = window.location.protocol;
       const parts = hostname.split('.');
@@ -39,7 +39,7 @@ function getBackendUrl(): string {
       }
     }
   }
-  
+
   return 'http://localhost:3001';
 }
 
@@ -47,7 +47,7 @@ export default function Premium() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isPremium, subscription, loading: premiumLoading, createCheckout, openCustomerPortal, checkPremiumStatus } = usePremium();
-  
+
   const [plans, setPlans] = useState<Plan[]>([]);
   const [selectedInterval, setSelectedInterval] = useState<'month' | 'year'>('year');
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ export default function Premium() {
 
   useEffect(() => {
     fetchPlans();
-    
+
     // Check for success query param
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('session_id')) {
@@ -71,9 +71,23 @@ export default function Premium() {
       if (response.ok) {
         const data = await response.json();
         setPlans(data.plans || []);
+      } else {
+        throw new Error('Failed to fetch plans');
       }
     } catch (error) {
-      console.error('Error fetching plans:', error);
+      console.error('Error fetching plans, using fallback:', error);
+      // Fallback mock data if server is down
+      setPlans([
+        {
+          id: 'prod_fallback',
+          name: 'MiniPremium',
+          description: 'Sınırsız öğrenme macerası!',
+          prices: [
+            { id: 'price_monthly', unit_amount: 9999, currency: 'try', recurring: { interval: 'month' } },
+            { id: 'price_yearly', unit_amount: 79999, currency: 'try', recurring: { interval: 'year' } }
+          ]
+        }
+      ]);
     } finally {
       setLoading(false);
     }
@@ -85,13 +99,18 @@ export default function Premium() {
       return;
     }
 
+    if (priceId.startsWith('price_')) {
+      alert('Ödeme sistemi şu an bakımda. Lütfen daha sonra tekrar deneyiniz.');
+      return;
+    }
+
     setCheckoutLoading(true);
     const url = await createCheckout(priceId);
-    
+
     if (url) {
       window.location.href = url;
     } else {
-      alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+      alert('Ödeme başlatılamadı. Lütfen internet bağlantınızı kontrol edin.');
     }
     setCheckoutLoading(false);
   };
@@ -99,7 +118,7 @@ export default function Premium() {
   const handleManageSubscription = async () => {
     setCheckoutLoading(true);
     const url = await openCustomerPortal();
-    
+
     if (url) {
       window.location.href = url;
     } else {
@@ -119,7 +138,7 @@ export default function Premium() {
 
   // Get the premium product
   const premiumPlan = plans.find(p => p.name === 'MiniPremium') || plans[0];
-  
+
   // Get prices for selected interval
   const monthlyPrice = premiumPlan?.prices?.find(p => p.recurring?.interval === 'month');
   const yearlyPrice = premiumPlan?.prices?.find(p => p.recurring?.interval === 'year');
@@ -152,7 +171,7 @@ export default function Premium() {
               <Crown size={32} />
               <span>Premium Üye</span>
             </div>
-            
+
             <h1>MiniPremium Üyeliğiniz Aktif!</h1>
             <p className="status-description">
               Tüm premium özelliklere sınırsız erişiminiz var. Mimi ile öğrenmeye devam edin!
@@ -175,7 +194,7 @@ export default function Premium() {
               )}
             </div>
 
-            <button 
+            <button
               className="manage-btn"
               onClick={handleManageSubscription}
               disabled={checkoutLoading}
@@ -183,7 +202,7 @@ export default function Premium() {
               {checkoutLoading ? 'Yükleniyor...' : 'Aboneliği Yönet'}
             </button>
 
-            <button 
+            <button
               className="back-btn"
               onClick={() => navigate('/')}
             >
@@ -225,16 +244,16 @@ export default function Premium() {
         {/* Pricing Section */}
         <div className="pricing-section">
           <h2>Planını Seç</h2>
-          
+
           {/* Interval Toggle */}
           <div className="interval-toggle">
-            <button 
+            <button
               className={`toggle-btn ${selectedInterval === 'month' ? 'active' : ''}`}
               onClick={() => setSelectedInterval('month')}
             >
               Aylık
             </button>
-            <button 
+            <button
               className={`toggle-btn ${selectedInterval === 'year' ? 'active' : ''}`}
               onClick={() => setSelectedInterval('year')}
             >
@@ -256,7 +275,7 @@ export default function Premium() {
             <div className="pricing-amount">
               <span className="currency">₺</span>
               <span className="amount">
-                {selectedInterval === 'month' 
+                {selectedInterval === 'month'
                   ? monthlyCost.toFixed(2).split('.')[0]
                   : yearlyMonthlyCost.toFixed(0)
                 }
@@ -279,7 +298,7 @@ export default function Premium() {
               <li><Check size={18} /> İlerleme takibi</li>
             </ul>
 
-            <button 
+            <button
               className="subscribe-btn"
               onClick={() => selectedPrice && handleSubscribe(selectedPrice.id)}
               disabled={checkoutLoading || !selectedPrice}

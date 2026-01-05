@@ -1,0 +1,493 @@
+/* Admin Mimi - Red Theme - IMPROVED VERSION */
+
+/* FAB Button */
+.admin-mimi-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 9999;
+    animation: adminMimiFabPulse 2s infinite;
+}
+
+.admin-mimi-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(220, 38, 38, 0.5);
+}
+
+@keyframes adminMimiFabPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 4px 30px rgba(220, 38, 38, 0.6), 0 0 0 8px rgba(220, 38, 38, 0.1);
+    }
+}
+
+.admin-mimi-fab-icon {
+    position: relative;
+    font-size: 2rem;
+}
+
+.admin-mimi-bear {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.admin-mimi-shield {
+    position: absolute;
+    bottom: -4px;
+    right: -8px;
+    background: #1e293b;
+    color: white;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+.admin-mimi-fab-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #fbbf24;
+    color: #1e293b;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 10px;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Main Container - LARGER SIZE */
+.admin-mimi-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 500px;
+    max-width: calc(100vw - 48px);
+    height: 700px;
+    max-height: calc(100vh - 100px);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 60px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
+    animation: adminMimiSlideIn 0.3s ease-out;
+}
+
+.admin-mimi-container.minimized {
+    height: auto;
+}
+
+@keyframes adminMimiSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+.admin-mimi-header {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    flex-shrink: 0;
+}
+
+.admin-mimi-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-mimi-avatar {
+    position: relative;
+    font-size: 2rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-mimi-avatar-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #fbbf24;
+    color: #1e293b;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+.admin-mimi-header-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.admin-mimi-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.admin-mimi-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.admin-mimi-header-actions button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.admin-mimi-header-actions button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Quick Actions - Horizontal Scroll */
+.admin-mimi-quick-actions {
+    padding: 12px 16px;
+    background: #fef2f2;
+    border-bottom: 1px solid #fecaca;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+.admin-mimi-quick-actions::-webkit-scrollbar {
+    height: 4px;
+}
+
+.admin-mimi-quick-actions::-webkit-scrollbar-thumb {
+    background: #fca5a5;
+    border-radius: 2px;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid #fecaca;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: #b91c1c;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.quick-action-btn:hover {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+/* Messages - MUCH LARGER AREA */
+.admin-mimi-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(180deg, #fafafa 0%, #f1f5f9 100%);
+    min-height: 300px;
+}
+
+.admin-mimi-message {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.admin-mimi-message.user {
+    flex-direction: row-reverse;
+}
+
+.admin-mimi-message .message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.admin-mimi-message .message-content {
+    max-width: 85%;
+    position: relative;
+}
+
+/* Message Text - LARGER & MORE READABLE */
+.admin-mimi-message .message-text {
+    background: white;
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.admin-mimi-message.user .message-text {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    border-radius: 16px 16px 4px 16px;
+}
+
+.admin-mimi-message.assistant .message-text {
+    border-radius: 16px 16px 16px 4px;
+}
+
+/* Better formatting for AI responses */
+.admin-mimi-message .message-text strong {
+    color: #dc2626;
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.admin-mimi-message.user .message-text strong {
+    color: #fef2f2;
+}
+
+.admin-mimi-message .message-time {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 6px;
+    text-align: right;
+}
+
+.message-copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f1f5f9;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.admin-mimi-message .message-content:hover .message-copy-btn {
+    opacity: 1;
+}
+
+.message-copy-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    gap: 5px;
+    padding: 12px 0;
+}
+
+.typing-indicator span {
+    width: 10px;
+    height: 10px;
+    background: #dc2626;
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+/* Input - LARGER */
+.admin-mimi-input {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.admin-mimi-input input {
+    flex: 1;
+    padding: 14px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 100px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.admin-mimi-input input:focus {
+    border-color: #dc2626;
+}
+
+.admin-mimi-input input::placeholder {
+    color: #94a3b8;
+}
+
+.admin-mimi-input .send-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.admin-mimi-input .send-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
+
+.admin-mimi-input .send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Footer */
+.admin-mimi-footer {
+    padding: 10px 20px;
+    background: #1e293b;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Scrollbar */
+.admin-mimi-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-mimi-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-mimi-messages::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.admin-mimi-messages::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .admin-mimi-container {
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+    }
+
+    .admin-mimi-fab {
+        bottom: 16px;
+        right: 16px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .admin-mimi-messages {
+        padding: 16px;
+    }
+
+    .admin-mimi-message .message-text {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+}

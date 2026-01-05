@@ -1,0 +1,208 @@
+/* XP Bar Styles */
+
+.xp-bar-container {
+    background: white;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.xp-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.xp-level {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.level-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.level-number {
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.xp-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+.xp-current {
+    font-weight: 700;
+    color: #6366f1;
+}
+
+.xp-divider {
+    color: #cbd5e1;
+}
+
+.xp-needed {
+    color: #94a3b8;
+}
+
+.xp-bar {
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+    border-radius: 6px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    min-width: 8px;
+}
+
+.xp-bar-shine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+    border-radius: 6px 6px 0 0;
+}
+
+.xp-bar-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.8rem;
+}
+
+.streak-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.streak-icon {
+    font-size: 1rem;
+}
+
+.streak-days {
+    color: #f97316;
+    font-weight: 600;
+}
+
+.streak-bonus {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.next-level-info {
+    color: #94a3b8;
+}
+
+/* Compact Version */
+.xp-bar-compact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 20px;
+}
+
+.xp-level-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.level-icon {
+    font-size: 0.9rem;
+}
+
+.level-num {
+    min-width: 16px;
+    text-align: center;
+}
+
+.xp-mini-bar {
+    width: 60px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.xp-mini-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.streak-badge-mini {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+/* Dark Mode */
+[data-theme="dark"] .xp-bar-container {
+    background: #1e293b;
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .level-label {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .xp-needed {
+    color: #64748b;
+}
+
+[data-theme="dark"] .xp-bar {
+    background: #334155;
+}
+
+[data-theme="dark"] .next-level-info {
+    color: #64748b;
+}
+
+[data-theme="dark"] .xp-bar-compact {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .xp-mini-bar {
+    background: rgba(255, 255, 255, 0.2);
+}

@@ -26,7 +26,7 @@ const funAvatars = [
 ];
 
 const funUsernames = [
-  'StarLearner', 'SuperReader', 'WordWizard', 'BrainChamp', 
+  'StarLearner', 'SuperReader', 'WordWizard', 'BrainChamp',
   'SmartCookie', 'GameMaster', 'SpellingStar', 'BookWorm',
   'CleverKid', 'QuizKing', 'EnglishHero', 'VocabNinja',
   'LearningPro', 'MiniGenius', 'BrightSpark', 'StudyStar'
@@ -124,7 +124,7 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ user, isOpen, onC
                 >
                   <h2>Choose Your Avatar! 🎨</h2>
                   <p>Pick a cool character to represent you</p>
-                  
+
                   <div className="avatar-grid">
                     {funAvatars.map((avatar) => (
                       <motion.button
@@ -168,7 +168,7 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ user, isOpen, onC
 
                   <h2>What's Your Name? ✨</h2>
                   <p>Pick a fun username for your adventure</p>
-                  
+
                   <div className="name-input-container">
                     <input
                       type="text"
@@ -220,7 +220,7 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ user, isOpen, onC
 
                   <h2>What Grade Are You In? 🎒</h2>
                   <p>This helps us pick the best games for you</p>
-                  
+
                   <div className="grade-grid">
                     {gradeOptions.map((gradeOpt) => (
                       <motion.button
@@ -250,6 +250,13 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ user, isOpen, onC
                     >
                       {isSubmitting ? 'Creating...' : "Let's Go! 🚀"}
                     </motion.button>
+                  </div>
+
+                  {/* Skip option for offline/testing */}
+                  <div className="skip-setup">
+                    <button type="button" onClick={onClose} className="skip-link">
+                      Skip for now (Maybe Later)
+                    </button>
                   </div>
                 </motion.div>
               )}

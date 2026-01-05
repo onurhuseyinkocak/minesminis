@@ -98,6 +98,11 @@
   font-size: 0.875rem;
   cursor: pointer;
   transition: all var(--transition-base);
+  min-height: 40px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-edit-btn:hover {

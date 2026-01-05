@@ -112,6 +112,11 @@
   border: none;
   cursor: pointer;
   transition: all var(--transition-base);
+  min-height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-tab:hover {
@@ -212,7 +217,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .auth-hint {

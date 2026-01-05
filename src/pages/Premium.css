@@ -28,7 +28,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Hero Section */
@@ -142,6 +144,7 @@
   padding: 6px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   margin-bottom: 32px;
+  align-items: stretch;
 }
 
 .toggle-btn {
@@ -155,7 +158,10 @@
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .toggle-btn.active {

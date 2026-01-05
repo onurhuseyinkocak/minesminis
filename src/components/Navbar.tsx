@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { usePremium } from "../contexts/PremiumContext";
+import XPBar from "./XPBar";
+import ThemeToggle from "./ThemeToggle";
+
 
 function Navbar() {
   const { user, userProfile, signOut } = useAuth();
@@ -14,11 +17,17 @@ function Navbar() {
     <nav className="navbar" aria-label="Main Navigation">
       <div className="navbar-logo">
         <Link to="/" className="logo-link" aria-label="MinesMinis Home">
-          <img 
-            src="/images/minesminis-logo.svg" 
-            alt="MinesMinis" 
-            className="navbar-logo-img"
-          />
+          <div className="logo-circle-nav">
+            <img
+              src="/images/mine-logo.jpg"
+              alt="MinesMinis"
+              className="navbar-logo-img"
+            />
+          </div>
+          <span className="logo-text">
+            <span className="logo-mine">Mine's</span>
+            <span className="logo-minis">Minis</span>
+          </span>
         </Link>
       </div>
 
@@ -83,11 +92,20 @@ function Navbar() {
                 <span>My Progress</span>
               </Link>
             </li>
+            <li>
+              <Link to="/parent-dashboard" className="nav-btn" onClick={() => setIsMenuOpen(false)}>
+                <span className="nav-icon">🛡️</span>
+                <span>Parent Area</span>
+              </Link>
+            </li>
           </>
         )}
       </ul>
 
       <div className="navbar-actions hide-mobile">
+        {/* XP Bar - only show for logged in users */}
+        {user && <XPBar compact />}
+
         <div className="social-buttons">
           <a
             href="https://instagram.com/minesminis"
@@ -123,6 +141,10 @@ function Navbar() {
               <span>Join Fun!</span>
             </Link>
           )}
+
+          <div className="theme-toggle-nav">
+            <ThemeToggle />
+          </div>
         </div>
 
         {user && (
@@ -142,7 +164,7 @@ function Navbar() {
           </Link>
         )}
       </div>
-    </nav>
+    </nav >
   );
 }
 

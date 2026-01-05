@@ -1,7 +1,9 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { PremiumProvider } from "./contexts/PremiumContext";
+import { GamificationProvider } from "./contexts/GamificationContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Landing from "./pages/Landing";
 import Home from "./pages/Home";
 import Games from "./pages/Games";
@@ -22,9 +24,27 @@ import LivingBearImages from "./components/LivingBearImages";
 import ChatHome from "./components/ChatHome";
 import MimiLearning from "./components/MimiLearning";
 import SplashScreen from "./components/SplashScreen";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import DailyReward from "./components/DailyReward";
+import LevelUpModal from "./components/LevelUpModal";
+import ParentDashboard from "./pages/Parent/ParentDashboard";
 import { sendMessageToAI } from "./services/aiService";
 import "./App.css";
 import "./premium-colorful-theme.css";
+import "./styles/dark-theme.css";
+
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('SW registered:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('SW registration failed:', error);
+      });
+  });
+}
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -44,6 +64,18 @@ function AppRoutes() {
     );
   }
 
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // Admin routes have their own layout, no navbar/footer
+  if (isAdminRoute) {
+    return (
+      <Routes>
+        <Route path="/admin/*" element={<AdminLayout />} />
+      </Routes>
+    );
+  }
+
   return (
     <div className="app-container">
       <a href="#main-content" className="skip-to-content">Skip to content</a>
@@ -59,8 +91,10 @@ function AppRoutes() {
           <Route path="/favorites" element={user ? <Favorites /> : <Landing />} />
           <Route path="/dashboard" element={user ? <StudentDashboard /> : <Landing />} />
           <Route path="/profile" element={user ? <Profile /> : <Landing />} />
+          <Route path="/parent-dashboard" element={user ? <ParentDashboard /> : <Landing />} />
           <Route path="/premium" element={<Premium />} />
           <Route path="/premium/success" element={<Premium />} />
+          <Route path="/setup" element={<Onboarding />} />
           <Route path="/login" element={<Landing />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -70,11 +104,28 @@ function AppRoutes() {
   );
 }
 
+// Import Onboarding
+import Onboarding from "./pages/Onboarding";
+
 function AppContent() {
   const [showChat, setShowChat] = useState(false);
   const [showLearning, setShowLearning] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
   const isAtaturkPage = location.pathname === '/ataturk';
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isSetupRoute = location.pathname === '/setup';
+  // const isPublicRoute = ['/', '/login', '/about'].includes(location.pathname);
+
+  const { user, userProfile, hasSkippedSetup } = useAuth();
+
+  // Redirect to setup if grounded
+  useEffect(() => {
+    if (user && !userProfile && !hasSkippedSetup && !isSetupRoute && !isAdminRoute) {
+      navigate('/setup');
+    }
+  }, [user, userProfile, hasSkippedSetup, isSetupRoute, isAdminRoute, navigate]);
 
   const handleMascotClick = () => {
     console.log('🎈 Opening Mimi Learning!');
@@ -92,7 +143,16 @@ function AppContent() {
       <FloatingParticles />
       <AppRoutes />
 
-      {!isAtaturkPage && (
+      {/* Gamification Components - only on non-admin pages and when NOT in setup/onboarding */}
+      {user && !isAdminRoute && !isSetupRoute && (
+        <>
+          <DailyReward />
+          <LevelUpModal />
+        </>
+      )}
+
+      {/* Mascot only shows on normal site, NOT on admin or Ataturk pages or Setup */}
+      {!isAtaturkPage && !isAdminRoute && !isSetupRoute && (
         <LivingBearImages onMascotClick={handleMascotClick} onHomeClick={handleHomeClick} />
       )}
 
@@ -114,17 +174,6 @@ function AppContent() {
       {showLearning && (
         <MimiLearning onClose={() => setShowLearning(false)} />
       )}
-
-      {!isAtaturkPage && !showChat && !showLearning && (
-        <button 
-          className="floating-chat-btn"
-          onClick={() => setShowChat(true)}
-          aria-label="Mimi ile sohbet et"
-        >
-          <span className="chat-btn-icon">💬</span>
-          <span className="chat-btn-text">Sohbet</span>
-        </button>
-      )}
     </>
   );
 }
@@ -132,14 +181,26 @@ function AppContent() {
 function App() {
   const [showSplash, setShowSplash] = useState(() => {
     if (typeof window !== 'undefined') {
-      const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
-      return !hasSeenSplash;
+      // Check if this is a page reload or fresh navigation
+      const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+      const navigationType = navigationEntries.length > 0 ? navigationEntries[0].type : 'navigate';
+
+      // Show splash on:
+      // - 'reload' = F5 or browser refresh
+      // - 'navigate' = first visit or typing URL directly
+      // Don't show on:
+      // - 'back_forward' = browser back/forward buttons
+      // - React Router navigation (doesn't trigger full page load)
+
+      if (navigationType === 'reload' || navigationType === 'navigate') {
+        return true;
+      }
+      return false;
     }
     return true;
   });
 
   const handleSplashComplete = () => {
-    sessionStorage.setItem('hasSeenSplash', 'true');
     setShowSplash(false);
   };
 
@@ -148,13 +209,17 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <PremiumProvider>
-        <ToastProvider>
-          <AppContent />
-        </ToastProvider>
-      </PremiumProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <PremiumProvider>
+          <GamificationProvider>
+            <ToastProvider>
+              <AppContent />
+            </ToastProvider>
+          </GamificationProvider>
+        </PremiumProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

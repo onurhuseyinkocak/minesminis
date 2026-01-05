@@ -34,7 +34,7 @@ interface KidsWord {
 // Türkiye İlkokul Müfredatı - 2., 3., 4., 5. Sınıf Kelime Listesi
 const kidsWords: KidsWord[] = [
   // ============ 2. SINIF SEVİYESİ (BEGINNER) ============
-  
+
   // Hayvanlar - Animals (2. Sınıf)
   { word: "cat", level: "beginner", category: "Animals", emoji: "🐱", turkish: "kedi", example: "I have a cute cat." },
   { word: "dog", level: "beginner", category: "Animals", emoji: "🐶", turkish: "köpek", example: "My dog is very friendly." },
@@ -51,7 +51,7 @@ const kidsWords: KidsWord[] = [
   { word: "frog", level: "beginner", category: "Animals", emoji: "🐸", turkish: "kurbağa", example: "The frog jumps high." },
   { word: "bee", level: "beginner", category: "Animals", emoji: "🐝", turkish: "arı", example: "The bee makes honey." },
   { word: "ant", level: "beginner", category: "Animals", emoji: "🐜", turkish: "karınca", example: "The ant is very small." },
-  
+
   // Renkler - Colors (2. Sınıf)
   { word: "red", level: "beginner", category: "Colors", emoji: "🔴", turkish: "kırmızı", example: "My favorite color is red." },
   { word: "blue", level: "beginner", category: "Colors", emoji: "🔵", turkish: "mavi", example: "The sky is blue." },
@@ -63,7 +63,7 @@ const kidsWords: KidsWord[] = [
   { word: "black", level: "beginner", category: "Colors", emoji: "⚫", turkish: "siyah", example: "My cat is black." },
   { word: "brown", level: "beginner", category: "Colors", emoji: "🟤", turkish: "kahverengi", example: "The bear is brown." },
   { word: "purple", level: "beginner", category: "Colors", emoji: "🟣", turkish: "mor", example: "Grapes are purple." },
-  
+
   // Sayılar - Numbers (2. Sınıf)
   { word: "one", level: "beginner", category: "Numbers", emoji: "1️⃣", turkish: "bir", example: "I have one book." },
   { word: "two", level: "beginner", category: "Numbers", emoji: "2️⃣", turkish: "iki", example: "I have two hands." },
@@ -75,7 +75,7 @@ const kidsWords: KidsWord[] = [
   { word: "eight", level: "beginner", category: "Numbers", emoji: "8️⃣", turkish: "sekiz", example: "An octopus has eight legs." },
   { word: "nine", level: "beginner", category: "Numbers", emoji: "9️⃣", turkish: "dokuz", example: "I am nine years old." },
   { word: "ten", level: "beginner", category: "Numbers", emoji: "🔟", turkish: "on", example: "I have ten toes." },
-  
+
   // Aile - Family (2. Sınıf)
   { word: "mother", level: "beginner", category: "Family", emoji: "👩", turkish: "anne", example: "My mother loves me." },
   { word: "father", level: "beginner", category: "Family", emoji: "👨", turkish: "baba", example: "My father is tall." },
@@ -84,7 +84,7 @@ const kidsWords: KidsWord[] = [
   { word: "baby", level: "beginner", category: "Family", emoji: "👶", turkish: "bebek", example: "The baby is sleeping." },
   { word: "grandma", level: "beginner", category: "Family", emoji: "👵", turkish: "büyükanne", example: "Grandma tells stories." },
   { word: "grandpa", level: "beginner", category: "Family", emoji: "👴", turkish: "büyükbaba", example: "Grandpa has a garden." },
-  
+
   // Yiyecekler - Food (2. Sınıf)
   { word: "apple", level: "beginner", category: "Food", emoji: "🍎", turkish: "elma", example: "I eat an apple every day." },
   { word: "banana", level: "beginner", category: "Food", emoji: "🍌", turkish: "muz", example: "Monkeys like bananas." },
@@ -98,7 +98,7 @@ const kidsWords: KidsWord[] = [
   { word: "cake", level: "beginner", category: "Food", emoji: "🎂", turkish: "pasta", example: "Birthday cake is yummy!" },
   { word: "candy", level: "beginner", category: "Food", emoji: "🍬", turkish: "şeker", example: "I love candy!" },
   { word: "ice cream", level: "beginner", category: "Food", emoji: "🍦", turkish: "dondurma", example: "I like chocolate ice cream." },
-  
+
   // Vücut - Body (2. Sınıf)
   { word: "head", level: "beginner", category: "Body", emoji: "👤", turkish: "baş", example: "I wear a hat on my head." },
   { word: "eye", level: "beginner", category: "Body", emoji: "👁️", turkish: "göz", example: "I have two eyes." },
@@ -110,7 +110,7 @@ const kidsWords: KidsWord[] = [
   { word: "leg", level: "beginner", category: "Body", emoji: "🦵", turkish: "bacak", example: "I have two legs." },
   { word: "arm", level: "beginner", category: "Body", emoji: "💪", turkish: "kol", example: "I have two arms." },
   { word: "hair", level: "beginner", category: "Body", emoji: "💇", turkish: "saç", example: "My hair is brown." },
-  
+
   // Okul - School (2. Sınıf)
   { word: "book", level: "beginner", category: "School", emoji: "📚", turkish: "kitap", example: "I read a book every night." },
   { word: "pen", level: "beginner", category: "School", emoji: "🖊️", turkish: "kalem", example: "I write with a pen." },
@@ -120,7 +120,7 @@ const kidsWords: KidsWord[] = [
   { word: "teacher", level: "beginner", category: "School", emoji: "👩‍🏫", turkish: "öğretmen", example: "My teacher is kind." },
   { word: "school", level: "beginner", category: "School", emoji: "🏫", turkish: "okul", example: "I go to school every day." },
   { word: "class", level: "beginner", category: "School", emoji: "🏛️", turkish: "sınıf", example: "My class has 25 students." },
-  
+
   // Doğa - Nature (2. Sınıf)
   { word: "sun", level: "beginner", category: "Nature", emoji: "☀️", turkish: "güneş", example: "The sun is bright today." },
   { word: "moon", level: "beginner", category: "Nature", emoji: "🌙", turkish: "ay", example: "The moon shines at night." },
@@ -130,14 +130,14 @@ const kidsWords: KidsWord[] = [
   { word: "rain", level: "beginner", category: "Nature", emoji: "🌧️", turkish: "yağmur", example: "I like playing in the rain." },
   { word: "cloud", level: "beginner", category: "Nature", emoji: "☁️", turkish: "bulut", example: "Clouds are white and fluffy." },
   { word: "sky", level: "beginner", category: "Nature", emoji: "🌤️", turkish: "gökyüzü", example: "The sky is blue today." },
-  
+
   // Yerler - Places (2. Sınıf)
   { word: "house", level: "beginner", category: "Places", emoji: "🏠", turkish: "ev", example: "I live in a big house." },
   { word: "park", level: "beginner", category: "Places", emoji: "🏞️", turkish: "park", example: "I play in the park." },
   { word: "garden", level: "beginner", category: "Places", emoji: "🌻", turkish: "bahçe", example: "We have a beautiful garden." },
   { word: "shop", level: "beginner", category: "Places", emoji: "🏪", turkish: "dükkan", example: "I buy toys at the shop." },
   { word: "street", level: "beginner", category: "Places", emoji: "🛣️", turkish: "sokak", example: "I walk on the street." },
-  
+
   // Duygular - Feelings (2. Sınıf)
   { word: "happy", level: "beginner", category: "Feelings", emoji: "😊", turkish: "mutlu", example: "I am happy today!" },
   { word: "sad", level: "beginner", category: "Feelings", emoji: "😢", turkish: "üzgün", example: "He is sad because it's raining." },
@@ -145,16 +145,16 @@ const kidsWords: KidsWord[] = [
   { word: "tired", level: "beginner", category: "Feelings", emoji: "😴", turkish: "yorgun", example: "I am tired. I want to sleep." },
   { word: "hot", level: "beginner", category: "Feelings", emoji: "🥵", turkish: "sıcak", example: "It is hot in summer." },
   { word: "cold", level: "beginner", category: "Feelings", emoji: "🥶", turkish: "soğuk", example: "It is cold in winter." },
-  
+
   // Oyuncaklar - Toys (2. Sınıf)
   { word: "ball", level: "beginner", category: "Toys", emoji: "⚽", turkish: "top", example: "I play with a ball." },
   { word: "doll", level: "beginner", category: "Toys", emoji: "🎎", turkish: "bebek", example: "She has a pretty doll." },
   { word: "car", level: "beginner", category: "Toys", emoji: "🚗", turkish: "araba", example: "He has a toy car." },
   { word: "kite", level: "beginner", category: "Toys", emoji: "🪁", turkish: "uçurtma", example: "I fly my kite in the park." },
   { word: "puzzle", level: "beginner", category: "Toys", emoji: "🧩", turkish: "yapboz", example: "I love doing puzzles." },
-  
+
   // ============ 3. SINIF SEVİYESİ (BEGINNER+) ============
-  
+
   // Daha Fazla Hayvan - More Animals (3. Sınıf)
   { word: "elephant", level: "beginner", category: "Animals", emoji: "🐘", turkish: "fil", example: "Elephants are very smart." },
   { word: "lion", level: "beginner", category: "Animals", emoji: "🦁", turkish: "aslan", example: "The lion is the king of animals." },
@@ -171,7 +171,7 @@ const kidsWords: KidsWord[] = [
   { word: "parrot", level: "beginner", category: "Animals", emoji: "🦜", turkish: "papağan", example: "Parrots can talk." },
   { word: "dolphin", level: "beginner", category: "Animals", emoji: "🐬", turkish: "yunus", example: "Dolphins are friendly." },
   { word: "whale", level: "beginner", category: "Animals", emoji: "🐋", turkish: "balina", example: "Whales are very big." },
-  
+
   // Günler - Days (3. Sınıf)
   { word: "Monday", level: "beginner", category: "Days", emoji: "📅", turkish: "Pazartesi", example: "Monday is the first day of school." },
   { word: "Tuesday", level: "beginner", category: "Days", emoji: "📅", turkish: "Salı", example: "I have art class on Tuesday." },
@@ -180,7 +180,7 @@ const kidsWords: KidsWord[] = [
   { word: "Friday", level: "beginner", category: "Days", emoji: "📅", turkish: "Cuma", example: "I love Fridays!" },
   { word: "Saturday", level: "beginner", category: "Days", emoji: "📅", turkish: "Cumartesi", example: "I play games on Saturday." },
   { word: "Sunday", level: "beginner", category: "Days", emoji: "📅", turkish: "Pazar", example: "Sunday is a rest day." },
-  
+
   // Aylar - Months (3. Sınıf)
   { word: "January", level: "beginner", category: "Months", emoji: "❄️", turkish: "Ocak", example: "January is very cold." },
   { word: "February", level: "beginner", category: "Months", emoji: "💝", turkish: "Şubat", example: "February has Valentine's Day." },
@@ -194,13 +194,13 @@ const kidsWords: KidsWord[] = [
   { word: "October", level: "beginner", category: "Months", emoji: "🎃", turkish: "Ekim", example: "October has Halloween." },
   { word: "November", level: "beginner", category: "Months", emoji: "🍁", turkish: "Kasım", example: "November is in autumn." },
   { word: "December", level: "beginner", category: "Months", emoji: "🎄", turkish: "Aralık", example: "December has New Year." },
-  
+
   // Mevsimler - Seasons (3. Sınıf)
   { word: "spring", level: "beginner", category: "Seasons", emoji: "🌸", turkish: "ilkbahar", example: "Flowers bloom in spring." },
   { word: "summer", level: "beginner", category: "Seasons", emoji: "☀️", turkish: "yaz", example: "We swim in summer." },
   { word: "autumn", level: "beginner", category: "Seasons", emoji: "🍂", turkish: "sonbahar", example: "Leaves fall in autumn." },
   { word: "winter", level: "beginner", category: "Seasons", emoji: "❄️", turkish: "kış", example: "We make snowmen in winter." },
-  
+
   // Giysiler - Clothes (3. Sınıf)
   { word: "shirt", level: "beginner", category: "Clothes", emoji: "👕", turkish: "gömlek", example: "I wear a white shirt." },
   { word: "pants", level: "beginner", category: "Clothes", emoji: "👖", turkish: "pantolon", example: "My pants are blue." },
@@ -211,7 +211,7 @@ const kidsWords: KidsWord[] = [
   { word: "socks", level: "beginner", category: "Clothes", emoji: "🧦", turkish: "çorap", example: "My socks are colorful." },
   { word: "gloves", level: "beginner", category: "Clothes", emoji: "🧤", turkish: "eldiven", example: "I wear gloves when it's cold." },
   { word: "scarf", level: "beginner", category: "Clothes", emoji: "🧣", turkish: "atkı", example: "This scarf is warm." },
-  
+
   // Fiiller - Verbs (3. Sınıf)
   { word: "run", level: "beginner", category: "Verbs", emoji: "🏃", turkish: "koşmak", example: "I run every morning." },
   { word: "walk", level: "beginner", category: "Verbs", emoji: "🚶", turkish: "yürümek", example: "I walk to school." },
@@ -228,9 +228,9 @@ const kidsWords: KidsWord[] = [
   { word: "draw", level: "beginner", category: "Verbs", emoji: "🎨", turkish: "çizmek", example: "I draw pictures." },
   { word: "cook", level: "beginner", category: "Verbs", emoji: "👨‍🍳", turkish: "yemek pişirmek", example: "My mom can cook well." },
   { word: "clean", level: "beginner", category: "Verbs", emoji: "🧹", turkish: "temizlemek", example: "I clean my room." },
-  
+
   // ============ 4. SINIF SEVİYESİ (INTERMEDIATE) ============
-  
+
   // Hava Durumu - Weather (4. Sınıf)
   { word: "sunny", level: "intermediate", category: "Weather", emoji: "☀️", turkish: "güneşli", example: "It's a sunny day today." },
   { word: "cloudy", level: "intermediate", category: "Weather", emoji: "☁️", turkish: "bulutlu", example: "The sky is cloudy." },
@@ -240,7 +240,7 @@ const kidsWords: KidsWord[] = [
   { word: "stormy", level: "intermediate", category: "Weather", emoji: "⛈️", turkish: "fırtınalı", example: "It's stormy tonight." },
   { word: "foggy", level: "intermediate", category: "Weather", emoji: "🌫️", turkish: "sisli", example: "It's foggy this morning." },
   { word: "temperature", level: "intermediate", category: "Weather", emoji: "🌡️", turkish: "sıcaklık", example: "The temperature is 25 degrees." },
-  
+
   // Hobiler - Hobbies (4. Sınıf)
   { word: "reading", level: "intermediate", category: "Hobbies", emoji: "📚", turkish: "okuma", example: "Reading is my favorite hobby." },
   { word: "painting", level: "intermediate", category: "Hobbies", emoji: "🎨", turkish: "resim yapma", example: "I love painting pictures." },
@@ -250,7 +250,7 @@ const kidsWords: KidsWord[] = [
   { word: "cooking", level: "intermediate", category: "Hobbies", emoji: "👨‍🍳", turkish: "yemek yapma", example: "I enjoy cooking with my mom." },
   { word: "photography", level: "intermediate", category: "Hobbies", emoji: "📷", turkish: "fotoğrafçılık", example: "Photography is my new hobby." },
   { word: "collecting", level: "intermediate", category: "Hobbies", emoji: "📦", turkish: "koleksiyon yapma", example: "I like collecting stamps." },
-  
+
   // Sporlar - Sports (4. Sınıf)
   { word: "football", level: "intermediate", category: "Sports", emoji: "⚽", turkish: "futbol", example: "I play football after school." },
   { word: "basketball", level: "intermediate", category: "Sports", emoji: "🏀", turkish: "basketbol", example: "Basketball is exciting." },
@@ -262,7 +262,7 @@ const kidsWords: KidsWord[] = [
   { word: "running", level: "intermediate", category: "Sports", emoji: "🏃", turkish: "koşu", example: "Running is good for health." },
   { word: "gymnastics", level: "intermediate", category: "Sports", emoji: "🤸", turkish: "jimnastik", example: "She does gymnastics." },
   { word: "karate", level: "intermediate", category: "Sports", emoji: "🥋", turkish: "karate", example: "I practice karate." },
-  
+
   // Taşıtlar - Transportation (4. Sınıf)
   { word: "bus", level: "intermediate", category: "Transportation", emoji: "🚌", turkish: "otobüs", example: "I go to school by bus." },
   { word: "train", level: "intermediate", category: "Transportation", emoji: "🚆", turkish: "tren", example: "The train is very fast." },
@@ -273,7 +273,7 @@ const kidsWords: KidsWord[] = [
   { word: "helicopter", level: "intermediate", category: "Transportation", emoji: "🚁", turkish: "helikopter", example: "Helicopters can fly anywhere." },
   { word: "subway", level: "intermediate", category: "Transportation", emoji: "🚇", turkish: "metro", example: "The subway is underground." },
   { word: "taxi", level: "intermediate", category: "Transportation", emoji: "🚕", turkish: "taksi", example: "We took a taxi to the airport." },
-  
+
   // Meslekler - Professions (4. Sınıf)
   { word: "doctor", level: "intermediate", category: "Professions", emoji: "👨‍⚕️", turkish: "doktor", example: "Doctors help sick people." },
   { word: "nurse", level: "intermediate", category: "Professions", emoji: "👩‍⚕️", turkish: "hemşire", example: "Nurses work in hospitals." },
@@ -287,7 +287,7 @@ const kidsWords: KidsWord[] = [
   { word: "scientist", level: "intermediate", category: "Professions", emoji: "👨‍🔬", turkish: "bilim insanı", example: "Scientists discover new things." },
   { word: "dentist", level: "intermediate", category: "Professions", emoji: "🦷", turkish: "diş doktoru", example: "I go to the dentist twice a year." },
   { word: "vet", level: "intermediate", category: "Professions", emoji: "🐾", turkish: "veteriner", example: "The vet helps sick animals." },
-  
+
   // Daha Fazla Yerler - More Places (4. Sınıf)
   { word: "hospital", level: "intermediate", category: "Places", emoji: "🏥", turkish: "hastane", example: "Doctors work in hospitals." },
   { word: "library", level: "intermediate", category: "Places", emoji: "📚", turkish: "kütüphane", example: "I borrow books from the library." },
@@ -303,7 +303,7 @@ const kidsWords: KidsWord[] = [
   { word: "zoo", level: "intermediate", category: "Places", emoji: "🦁", turkish: "hayvanat bahçesi", example: "We see animals at the zoo." },
   { word: "airport", level: "intermediate", category: "Places", emoji: "🛫", turkish: "havalimanı", example: "We go to the airport to travel." },
   { word: "station", level: "intermediate", category: "Places", emoji: "🚉", turkish: "istasyon", example: "We wait for the train at the station." },
-  
+
   // Sıfatlar - Adjectives (4. Sınıf)
   { word: "big", level: "intermediate", category: "Adjectives", emoji: "🐘", turkish: "büyük", example: "Elephants are big animals." },
   { word: "small", level: "intermediate", category: "Adjectives", emoji: "🐜", turkish: "küçük", example: "Ants are very small." },
@@ -325,7 +325,7 @@ const kidsWords: KidsWord[] = [
   { word: "kind", level: "intermediate", category: "Adjectives", emoji: "💖", turkish: "nazik", example: "She is a kind person." },
   { word: "smart", level: "intermediate", category: "Adjectives", emoji: "🧠", turkish: "akıllı", example: "She is very smart." },
   { word: "funny", level: "intermediate", category: "Adjectives", emoji: "😂", turkish: "komik", example: "The clown is very funny." },
-  
+
   // Daha Fazla Duygular - More Feelings (4. Sınıf)
   { word: "angry", level: "intermediate", category: "Feelings", emoji: "😠", turkish: "kızgın", example: "He is angry because he lost the game." },
   { word: "scared", level: "intermediate", category: "Feelings", emoji: "😨", turkish: "korkmuş", example: "I am scared of spiders." },
@@ -335,7 +335,7 @@ const kidsWords: KidsWord[] = [
   { word: "proud", level: "intermediate", category: "Feelings", emoji: "😊", turkish: "gururlu", example: "My parents are proud of me." },
   { word: "bored", level: "intermediate", category: "Feelings", emoji: "😐", turkish: "sıkılmış", example: "I am bored. Let's play!" },
   { word: "worried", level: "intermediate", category: "Feelings", emoji: "😟", turkish: "endişeli", example: "Mom is worried about the weather." },
-  
+
   // Doğa - Nature (4. Sınıf)
   { word: "rainbow", level: "intermediate", category: "Nature", emoji: "🌈", turkish: "gökkuşağı", example: "I saw a rainbow after the rain." },
   { word: "ocean", level: "intermediate", category: "Nature", emoji: "🌊", turkish: "okyanus", example: "The ocean is very deep." },
@@ -345,7 +345,7 @@ const kidsWords: KidsWord[] = [
   { word: "waterfall", level: "intermediate", category: "Nature", emoji: "💦", turkish: "şelale", example: "The waterfall is beautiful." },
   { word: "cave", level: "intermediate", category: "Nature", emoji: "🕳️", turkish: "mağara", example: "Bats live in caves." },
   { word: "jungle", level: "intermediate", category: "Nature", emoji: "🌴", turkish: "orman", example: "Many animals live in the jungle." },
-  
+
   // Yiyecekler - More Food (4. Sınıf)
   { word: "pizza", level: "intermediate", category: "Food", emoji: "🍕", turkish: "pizza", example: "Pizza is my favorite food." },
   { word: "hamburger", level: "intermediate", category: "Food", emoji: "🍔", turkish: "hamburger", example: "I eat hamburgers on weekends." },
@@ -359,9 +359,9 @@ const kidsWords: KidsWord[] = [
   { word: "chocolate", level: "intermediate", category: "Food", emoji: "🍫", turkish: "çikolata", example: "Chocolate is sweet." },
   { word: "cookie", level: "intermediate", category: "Food", emoji: "🍪", turkish: "kurabiye", example: "My grandma makes delicious cookies." },
   { word: "juice", level: "intermediate", category: "Food", emoji: "🧃", turkish: "meyve suyu", example: "I drink orange juice." },
-  
+
   // ============ 5. SINIF SEVİYESİ (ADVANCED) ============
-  
+
   // Gelişmiş Sıfatlar - Advanced Adjectives (5. Sınıf)
   { word: "magnificent", level: "advanced", category: "Adjectives", emoji: "🌟", turkish: "muhteşem", example: "The view was magnificent!" },
   { word: "mysterious", level: "advanced", category: "Adjectives", emoji: "🔮", turkish: "gizemli", example: "The mysterious box was locked." },
@@ -378,7 +378,7 @@ const kidsWords: KidsWord[] = [
   { word: "creative", level: "advanced", category: "Adjectives", emoji: "🎨", turkish: "yaratıcı", example: "She is a creative artist." },
   { word: "honest", level: "advanced", category: "Adjectives", emoji: "💯", turkish: "dürüst", example: "Always be honest." },
   { word: "responsible", level: "advanced", category: "Adjectives", emoji: "✅", turkish: "sorumlu", example: "He is a responsible student." },
-  
+
   // Gelişmiş Fiiller - Advanced Verbs (5. Sınıf)
   { word: "accomplish", level: "advanced", category: "Verbs", emoji: "🎯", turkish: "başarmak", example: "You can accomplish anything you try." },
   { word: "discover", level: "advanced", category: "Verbs", emoji: "🔍", turkish: "keşfetmek", example: "Scientists discover new things every day." },
@@ -395,7 +395,7 @@ const kidsWords: KidsWord[] = [
   { word: "compete", level: "advanced", category: "Verbs", emoji: "🏆", turkish: "yarışmak", example: "Athletes compete in the Olympics." },
   { word: "survive", level: "advanced", category: "Verbs", emoji: "💪", turkish: "hayatta kalmak", example: "Plants need water to survive." },
   { word: "observe", level: "advanced", category: "Verbs", emoji: "👀", turkish: "gözlemlemek", example: "Scientists observe nature." },
-  
+
   // Kavramlar - Concepts (5. Sınıf)
   { word: "imagination", level: "advanced", category: "Concepts", emoji: "💭", turkish: "hayal gücü", example: "Use your imagination to create stories." },
   { word: "perseverance", level: "advanced", category: "Concepts", emoji: "💪", turkish: "azim", example: "Success requires perseverance." },
@@ -412,7 +412,7 @@ const kidsWords: KidsWord[] = [
   { word: "teamwork", level: "advanced", category: "Concepts", emoji: "👥", turkish: "takım çalışması", example: "Teamwork makes work easier." },
   { word: "responsibility", level: "advanced", category: "Concepts", emoji: "✅", turkish: "sorumluluk", example: "Taking care of pets is a responsibility." },
   { word: "happiness", level: "advanced", category: "Concepts", emoji: "😊", turkish: "mutluluk", example: "Happiness comes from within." },
-  
+
   // Bilim - Science (5. Sınıf)
   { word: "planet", level: "advanced", category: "Science", emoji: "🪐", turkish: "gezegen", example: "Earth is our planet." },
   { word: "galaxy", level: "advanced", category: "Science", emoji: "🌌", turkish: "galaksi", example: "There are many galaxies in space." },
@@ -428,7 +428,7 @@ const kidsWords: KidsWord[] = [
   { word: "energy", level: "advanced", category: "Science", emoji: "⚡", turkish: "enerji", example: "The sun gives us energy." },
   { word: "robot", level: "advanced", category: "Science", emoji: "🤖", turkish: "robot", example: "Robots can do many things." },
   { word: "satellite", level: "advanced", category: "Science", emoji: "🛰️", turkish: "uydu", example: "Satellites orbit the Earth." },
-  
+
   // Teknoloji - Technology (5. Sınıf)
   { word: "computer", level: "advanced", category: "Technology", emoji: "💻", turkish: "bilgisayar", example: "I use a computer for homework." },
   { word: "internet", level: "advanced", category: "Technology", emoji: "🌐", turkish: "internet", example: "The internet connects the world." },
@@ -440,7 +440,7 @@ const kidsWords: KidsWord[] = [
   { word: "smartphone", level: "advanced", category: "Technology", emoji: "📱", turkish: "akıllı telefon", example: "Smartphones are very useful." },
   { word: "video", level: "advanced", category: "Technology", emoji: "🎥", turkish: "video", example: "I watch educational videos." },
   { word: "tablet", level: "advanced", category: "Technology", emoji: "📱", turkish: "tablet", example: "I read books on my tablet." },
-  
+
   // Daha Fazla Meslekler - More Professions (5. Sınıf)
   { word: "architect", level: "advanced", category: "Professions", emoji: "👷", turkish: "mimar", example: "Architects design buildings." },
   { word: "lawyer", level: "advanced", category: "Professions", emoji: "⚖️", turkish: "avukat", example: "Lawyers help people with laws." },
@@ -452,7 +452,7 @@ const kidsWords: KidsWord[] = [
   { word: "detective", level: "advanced", category: "Professions", emoji: "🔍", turkish: "dedektif", example: "Detectives solve mysteries." },
   { word: "author", level: "advanced", category: "Professions", emoji: "✍️", turkish: "yazar", example: "Authors write books." },
   { word: "athlete", level: "advanced", category: "Professions", emoji: "🏃", turkish: "atlet", example: "Athletes train every day." },
-  
+
   // Fantezi - Fantasy (5. Sınıf)
   { word: "magic", level: "advanced", category: "Fantasy", emoji: "✨", turkish: "sihir", example: "The wizard used magic to help us." },
   { word: "treasure", level: "advanced", category: "Fantasy", emoji: "💎", turkish: "hazine", example: "Pirates search for treasure." },
@@ -466,7 +466,7 @@ const kidsWords: KidsWord[] = [
   { word: "prince", level: "advanced", category: "Fantasy", emoji: "🤴", turkish: "prens", example: "The prince saved the kingdom." },
   { word: "kingdom", level: "advanced", category: "Fantasy", emoji: "👑", turkish: "krallık", example: "The kingdom was peaceful." },
   { word: "legend", level: "advanced", category: "Fantasy", emoji: "📜", turkish: "efsane", example: "This is an old legend." },
-  
+
   // Müzik ve Sanat - Music and Art (5. Sınıf)
   { word: "melody", level: "advanced", category: "Music", emoji: "🎵", turkish: "melodi", example: "This song has a beautiful melody." },
   { word: "rhythm", level: "advanced", category: "Music", emoji: "🥁", turkish: "ritim", example: "Dance to the rhythm!" },
@@ -476,7 +476,7 @@ const kidsWords: KidsWord[] = [
   { word: "sculpture", level: "advanced", category: "Art", emoji: "🗿", turkish: "heykel", example: "The sculpture is made of stone." },
   { word: "gallery", level: "advanced", category: "Art", emoji: "🖼️", turkish: "galeri", example: "We saw paintings at the gallery." },
   { word: "portrait", level: "advanced", category: "Art", emoji: "🖼️", turkish: "portre", example: "The artist painted a portrait." },
-  
+
   // Ülkeler ve Milliyetler - Countries (5. Sınıf)
   { word: "Turkey", level: "advanced", category: "Countries", emoji: "🇹🇷", turkish: "Türkiye", example: "Turkey is a beautiful country." },
   { word: "England", level: "advanced", category: "Countries", emoji: "🇬🇧", turkish: "İngiltere", example: "English comes from England." },
@@ -807,7 +807,7 @@ const Words: React.FC = () => {
             <div className="word-cards">
               {filteredWords.map((word, idx) => (
                 <motion.div
-                  key={word.word}
+                  key={`${word.word}-${idx}`}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: Math.min(idx * 0.02, 0.5) }}

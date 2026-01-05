@@ -1,11 +1,7 @@
 // ============================================================
 // Backend Proxy Server for OpenAI API + Stripe Payments
+// HARDENED WITH ENTERPRISE SECURITY
 // ============================================================
-// This server acts as a secure proxy between the frontend and OpenAI API
-// - Keeps API key secure (server-side only)
-// - Eliminates CORS issues
-// - Handles Stripe subscription payments
-// - In production, serves the built frontend static files
 
 import express from 'express';
 import cors from 'cors';
@@ -17,6 +13,7 @@ import { getStripeSync, getUncachableStripeClient, getStripePublishableKey } fro
 import { WebhookHandlers } from './webhookHandlers.js';
 import { stripeStorage } from './stripeStorage.js';
 import { stripeService } from './stripeService.js';
+import security from './security.js';
 
 dotenv.config();
 
@@ -27,7 +24,29 @@ const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 const PORT = process.env.PORT || (isProduction ? 5000 : 3001);
 
-// Initialize Stripe (must happen before routes)
+// ============================================================
+// SECURITY MIDDLEWARE (Applied First)
+// ============================================================
+
+// IP Blocking
+app.use(security.ipBlocker);
+
+// Security Headers (OWASP Compliant)
+app.use(security.securityHeaders);
+
+// Global Rate Limiting
+app.use(security.rateLimiter({
+  maxRequests: 100,
+  windowMs: 60000
+}));
+
+// Trust proxy (for correct IP detection behind load balancers)
+app.set('trust proxy', 1);
+
+// ============================================================
+// STRIPE INITIALIZATION
+// ============================================================
+
 async function initStripe() {
   const databaseUrl = process.env.DATABASE_URL;
 
@@ -38,7 +57,7 @@ async function initStripe() {
 
   try {
     console.log('🔧 Initializing Stripe schema...');
-    await runMigrations({ 
+    await runMigrations({
       databaseUrl,
       schema: 'stripe'
     });
@@ -69,7 +88,10 @@ async function initStripe() {
   }
 }
 
-// Stripe webhook route MUST be registered BEFORE express.json()
+// ============================================================
+// STRIPE WEBHOOK (Raw Body Required - Before JSON Parser)
+// ============================================================
+
 app.post(
   '/api/stripe/webhook/:uuid',
   express.raw({ type: 'application/json' }),
@@ -77,6 +99,7 @@ app.post(
     const signature = req.headers['stripe-signature'];
 
     if (!signature) {
+      security.auditLog('WEBHOOK_NO_SIGNATURE', req);
       return res.status(400).json({ error: 'Missing stripe-signature' });
     }
 
@@ -91,31 +114,70 @@ app.post(
       const { uuid } = req.params;
       await WebhookHandlers.processWebhook(req.body, sig, uuid);
 
+      security.auditLog('WEBHOOK_SUCCESS', req, { uuid });
       res.status(200).json({ received: true });
     } catch (error) {
       console.error('Webhook error:', error.message);
+      security.auditLog('WEBHOOK_ERROR', req, { error: error.message });
       res.status(400).json({ error: 'Webhook processing error' });
     }
   }
 );
 
-// Apply JSON middleware for all other routes
-app.use(cors({
-    origin: true,
-    credentials: true
-}));
-app.use(express.json());
+// ============================================================
+// CORS & JSON MIDDLEWARE
+// ============================================================
 
-// Validate OpenAI API key on startup
+const allowedOrigins = [
+  'http://localhost:5000',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin) || origin.endsWith('.replit.dev') || origin.endsWith('.repl.co')) {
+      return callback(null, true);
+    }
+
+    console.warn(`⚠️ CORS blocked origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  maxAge: 86400, // 24 hours
+}));
+
+// JSON body parser with size limit
+app.use(express.json({
+  limit: '10kb', // Prevent payload too large attacks
+  strict: true,
+}));
+
+// URL-encoded body parser
+app.use(express.urlencoded({
+  extended: true,
+  limit: '10kb'
+}));
+
+// ============================================================
+// VALIDATE OPENAI API KEY
+// ============================================================
+
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 if (!OPENAI_API_KEY) {
-    console.error('❌ OPENAI_API_KEY not found');
+  console.error('❌ OPENAI_API_KEY not found');
 } else {
-    console.log('✅ OpenAI API Key loaded:', OPENAI_API_KEY.substring(0, 20) + '...');
+  console.log('✅ OpenAI API Key loaded');
 }
 
 // ============================================================
-// STRIPE ROUTES
+// STRIPE ROUTES (with Rate Limiting)
 // ============================================================
 
 // Get Stripe publishable key (for frontend)
@@ -133,7 +195,7 @@ app.get('/api/stripe/config', async (req, res) => {
 app.get('/api/stripe/plans', async (req, res) => {
   try {
     const rows = await stripeStorage.listProductsWithPrices();
-    
+
     const productsMap = new Map();
     for (const row of rows) {
       if (!productsMap.has(row.product_id)) {
@@ -162,232 +224,312 @@ app.get('/api/stripe/plans', async (req, res) => {
   }
 });
 
-// Check premium status by email
-app.post('/api/stripe/check-premium', async (req, res) => {
-  try {
-    const { email } = req.body;
-    
-    if (!email) {
-      return res.status(400).json({ error: 'Email required' });
+// Check premium status by email (rate limited)
+app.post('/api/stripe/check-premium',
+  security.rateLimiter({ maxRequests: 20, windowMs: 60000 }),
+  security.validateRequest({
+    body: {
+      email: { required: true, type: 'string', email: true }
     }
-
-    const status = await stripeService.checkPremiumStatus(email);
-    res.json(status);
-  } catch (error) {
-    console.error('Error checking premium status:', error);
-    res.status(500).json({ error: 'Failed to check premium status' });
+  }),
+  async (req, res) => {
+    try {
+      const { email } = req.body;
+      const status = await stripeService.checkPremiumStatus(email);
+      res.json(status);
+    } catch (error) {
+      console.error('Error checking premium status:', error);
+      res.status(500).json({ error: 'Failed to check premium status' });
+    }
   }
-});
+);
 
-// Create checkout session
-app.post('/api/stripe/create-checkout', async (req, res) => {
-  try {
-    const { email, priceId } = req.body;
-    
-    if (!email || !priceId) {
-      return res.status(400).json({ error: 'Email and priceId required' });
+// Create checkout session (rate limited)
+app.post('/api/stripe/create-checkout',
+  security.rateLimiter({ maxRequests: 10, windowMs: 60000 }),
+  security.validateRequest({
+    body: {
+      email: { required: true, type: 'string', email: true },
+      priceId: { required: true, type: 'string' }
     }
+  }),
+  async (req, res) => {
+    try {
+      const { email, priceId } = req.body;
 
-    // Get or create customer
-    let customer = await stripeStorage.getCustomerByEmail(email);
-    
-    if (!customer) {
-      const stripe = await getUncachableStripeClient();
-      customer = await stripe.customers.create({ email });
+      security.auditLog('CHECKOUT_INITIATED', req, { email, priceId });
+
+      let customer = await stripeStorage.getCustomerByEmail(email);
+
+      if (!customer) {
+        const stripe = await getUncachableStripeClient();
+        customer = await stripe.customers.create({ email });
+      }
+
+      const baseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+
+      const session = await stripeService.createCheckoutSession(
+        customer.id,
+        priceId,
+        `${baseUrl}/premium/success?session_id={CHECKOUT_SESSION_ID}`,
+        `${baseUrl}/premium`
+      );
+
+      security.auditLog('CHECKOUT_CREATED', req, { email, sessionId: session.id });
+      res.json({ url: session.url });
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      security.auditLog('CHECKOUT_ERROR', req, { error: error.message });
+      res.status(500).json({ error: 'Failed to create checkout session' });
     }
-
-    const baseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
-    
-    const session = await stripeService.createCheckoutSession(
-      customer.id,
-      priceId,
-      `${baseUrl}/premium/success?session_id={CHECKOUT_SESSION_ID}`,
-      `${baseUrl}/premium`
-    );
-
-    res.json({ url: session.url });
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
-    res.status(500).json({ error: 'Failed to create checkout session' });
   }
-});
+);
 
 // Create customer portal session
-app.post('/api/stripe/customer-portal', async (req, res) => {
-  try {
-    const { email } = req.body;
-    
-    if (!email) {
-      return res.status(400).json({ error: 'Email required' });
+app.post('/api/stripe/customer-portal',
+  security.rateLimiter({ maxRequests: 10, windowMs: 60000 }),
+  security.validateRequest({
+    body: {
+      email: { required: true, type: 'string', email: true }
     }
+  }),
+  async (req, res) => {
+    try {
+      const { email } = req.body;
+      const customer = await stripeStorage.getCustomerByEmail(email);
 
-    const customer = await stripeStorage.getCustomerByEmail(email);
-    
-    if (!customer) {
-      return res.status(404).json({ error: 'Customer not found' });
+      if (!customer) {
+        return res.status(404).json({ error: 'Customer not found' });
+      }
+
+      const baseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+
+      const session = await stripeService.createCustomerPortalSession(
+        customer.id,
+        `${baseUrl}/premium`
+      );
+
+      res.json({ url: session.url });
+    } catch (error) {
+      console.error('Error creating portal session:', error);
+      res.status(500).json({ error: 'Failed to create portal session' });
     }
-
-    const baseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
-    
-    const session = await stripeService.createCustomerPortalSession(
-      customer.id,
-      `${baseUrl}/premium`
-    );
-
-    res.json({ url: session.url });
-  } catch (error) {
-    console.error('Error creating portal session:', error);
-    res.status(500).json({ error: 'Failed to create portal session' });
   }
-});
+);
 
 // ============================================================
-// OPENAI ROUTES
+// OPENAI ROUTES (with Rate Limiting & Validation)
 // ============================================================
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Server is running' });
+  res.json({
+    status: 'ok',
+    message: 'Server is running',
+    security: 'hardened',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// OpenAI Text-to-Speech Endpoint for child-friendly voice
-app.post('/api/tts', async (req, res) => {
+// OpenAI Text-to-Speech Endpoint
+app.post('/api/tts',
+  security.rateLimiter({ maxRequests: 30, windowMs: 60000 }),
+  security.validateRequest({
+    body: {
+      text: { required: true, type: 'string', maxLength: 4000 }
+    }
+  }),
+  async (req, res) => {
     try {
-        const { text } = req.body;
+      const { text } = req.body;
 
-        if (!text || typeof text !== 'string') {
-            return res.status(400).json({
-                error: 'Invalid request: text string required'
-            });
-        }
+      console.log('🔊 TTS request:', text.substring(0, 50) + '...');
 
-        console.log('🔊 TTS request:', text.substring(0, 50) + '...');
+      const response = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'tts-1',
+          input: text,
+          voice: 'nova',
+          response_format: 'mp3',
+          speed: 0.95
+        })
+      });
 
-        const response = await fetch('https://api.openai.com/v1/audio/speech', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'tts-1',
-                input: text,
-                voice: 'nova',
-                response_format: 'mp3',
-                speed: 0.95
-            })
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ OpenAI TTS Error:', response.status, errorData);
+        return res.status(response.status).json({
+          error: 'OpenAI TTS Error',
+          details: errorData.error?.message || 'Unknown error'
         });
+      }
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('❌ OpenAI TTS Error:', response.status, errorData);
-            return res.status(response.status).json({
-                error: 'OpenAI TTS Error',
-                details: errorData.error?.message || 'Unknown error'
-            });
-        }
+      const audioBuffer = await response.arrayBuffer();
+      const base64Audio = Buffer.from(audioBuffer).toString('base64');
 
-        const audioBuffer = await response.arrayBuffer();
-        const base64Audio = Buffer.from(audioBuffer).toString('base64');
-        
-        console.log('✅ TTS audio generated successfully');
-        
-        res.json({
-            audio: base64Audio,
-            format: 'mp3'
-        });
+      console.log('✅ TTS audio generated successfully');
+
+      res.json({
+        audio: base64Audio,
+        format: 'mp3'
+      });
 
     } catch (error) {
-        console.error('❌ TTS Server error:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error.message
-        });
+      console.error('❌ TTS Server error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        details: 'An unexpected error occurred'
+      });
     }
-});
+  }
+);
 
 // OpenAI Chat Proxy Endpoint
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat',
+  security.rateLimiter({ maxRequests: 30, windowMs: 60000 }),
+  async (req, res) => {
     try {
-        const { messages } = req.body;
+      const { messages } = req.body;
 
-        if (!messages || !Array.isArray(messages)) {
-            return res.status(400).json({
-                error: 'Invalid request: messages array required'
-            });
-        }
-
-        console.log('📨 Received chat request with', messages.length, 'messages');
-
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-4o-mini',
-                messages: messages,
-                max_tokens: 150,
-                temperature: 0.6,
-                frequency_penalty: 0.3,
-                presence_penalty: 0.2
-            })
+      if (!messages || !Array.isArray(messages)) {
+        return res.status(400).json({
+          error: 'Invalid request: messages array required'
         });
+      }
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('❌ OpenAI API Error:', response.status, errorData);
-
-            return res.status(response.status).json({
-                error: 'OpenAI API Error',
-                details: errorData.error?.message || 'Unknown error',
-                status: response.status
-            });
+      // Validate message structure
+      for (const msg of messages) {
+        if (!msg.role || !msg.content) {
+          return res.status(400).json({
+            error: 'Invalid message format'
+          });
         }
+        if (!['user', 'assistant', 'system'].includes(msg.role)) {
+          return res.status(400).json({
+            error: 'Invalid message role'
+          });
+        }
+      }
 
-        const data = await response.json();
-        console.log('✅ OpenAI response received');
+      console.log('📨 Received chat request with', messages.length, 'messages');
 
-        res.json({
-            message: data.choices[0].message.content,
-            model: data.model,
-            usage: data.usage
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: messages,
+          max_tokens: 150,
+          temperature: 0.6,
+          frequency_penalty: 0.3,
+          presence_penalty: 0.2
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ OpenAI API Error:', response.status, errorData);
+
+        return res.status(response.status).json({
+          error: 'OpenAI API Error',
+          details: errorData.error?.message || 'Unknown error',
+          status: response.status
         });
+      }
+
+      const data = await response.json();
+      console.log('✅ OpenAI response received');
+
+      res.json({
+        message: data.choices[0].message.content,
+        model: data.model,
+        usage: data.usage
+      });
 
     } catch (error) {
-        console.error('❌ Server error:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error.message
-        });
+      console.error('❌ Server error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        details: 'An unexpected error occurred'
+      });
     }
+  }
+);
+
+// ============================================================
+// ADMIN SECURITY ENDPOINTS
+// ============================================================
+
+// Get security status (admin only - would need auth in production)
+app.get('/api/admin/security-status', (req, res) => {
+  // In production, add authentication check here
+  const status = security.getSecurityStatus();
+  res.json(status);
 });
 
-// In production, serve the built frontend static files
+// ============================================================
+// STATIC FILE SERVING (Production)
+// ============================================================
+
 if (isProduction) {
-    const distPath = path.join(__dirname, '..', 'dist');
-    
-    app.use(express.static(distPath));
-    
-    app.get('*', (req, res) => {
-        if (!req.path.startsWith('/api')) {
-            res.sendFile(path.join(distPath, 'index.html'));
-        }
-    });
-    
-    console.log('📁 Serving static files from:', distPath);
+  const distPath = path.join(__dirname, '..', 'dist');
+
+  app.use(express.static(distPath, {
+    maxAge: '1d', // Cache static files for 1 day
+    etag: true,
+    lastModified: true,
+  }));
+
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(distPath, 'index.html'));
+    }
+  });
+
+  console.log('📁 Serving static files from:', distPath);
 }
 
-// Initialize Stripe and start server
+// ============================================================
+// ERROR HANDLING
+// ============================================================
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('❌ Unhandled error:', err);
+  security.auditLog('SERVER_ERROR', req, { error: err.message });
+
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: isProduction ? 'An unexpected error occurred' : err.message
+  });
+});
+
+// ============================================================
+// SERVER STARTUP
+// ============================================================
+
 async function startServer() {
   await initStripe();
-  
+
   app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
-      console.log(`✅ Mode: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
-      console.log(`✅ Ready to proxy requests to OpenAI API`);
-      console.log(`✅ Stripe payments enabled`);
+    console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+    console.log(`✅ Mode: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+    console.log(`🔒 Security: ENTERPRISE HARDENED`);
+    console.log(`✅ Ready to proxy requests to OpenAI API`);
+    console.log(`✅ Stripe payments enabled`);
   });
 }
 

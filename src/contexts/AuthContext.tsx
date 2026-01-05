@@ -2,15 +2,17 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../config/supabase';
 import { userService, UserProfile } from '../services/userService';
-import ProfileSetupModal from '../components/ProfileSetupModal';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   userProfile: UserProfile | null;
+  setUserProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
   loading: boolean;
   showProfileSetup: boolean;
   setShowProfileSetup: (show: boolean) => void;
+  hasSkippedSetup: boolean;
+  setHasSkippedSetup: (skipped: boolean) => void;
   refreshUserProfile: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -27,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [hasSkippedSetup, setHasSkippedSetup] = useState(false);
 
   const refreshUserProfile = async () => {
     if (user) {
@@ -66,6 +69,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await supabase.auth.signOut();
     } catch (error) {
       console.error('Sign out error:', error);
+    } finally {
+      // Force clear state to ensure UI updates even if network fails
+      setUser(null);
+      setSession(null);
+      setUserProfile(null);
+      setShowProfileSetup(false);
     }
   };
 
@@ -73,6 +82,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+    }).catch((err) => {
+      console.error('Auth session init error:', err);
+      // Even if auth fails, we should let the app load (as guest)
+    }).finally(() => {
       setLoading(false);
     });
 
@@ -93,12 +106,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (profile) {
           setUserProfile(profile);
           setShowProfileSetup(false);
-        } else {
+        } else if (!hasSkippedSetup) {
           setShowProfileSetup(true);
         }
       } else {
         setUserProfile(null);
         setShowProfileSetup(false);
+        setHasSkippedSetup(false); // Reset for next login
       }
     };
 
@@ -109,9 +123,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     session,
     userProfile,
+    setUserProfile,
     loading,
     showProfileSetup,
     setShowProfileSetup,
+    hasSkippedSetup, // Export this so we can check it in App.tsx
+    setHasSkippedSetup, // Export this too
     refreshUserProfile,
     signUp,
     signIn,
@@ -121,14 +138,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <AuthContext.Provider value={value}>
       {children}
-      {user && (
-        <ProfileSetupModal
-          user={user}
-          isOpen={showProfileSetup}
-          onClose={() => setShowProfileSetup(false)}
-          onProfileUpdated={refreshUserProfile}
-        />
-      )}
     </AuthContext.Provider>
   );
 };
