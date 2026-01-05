@@ -1,50 +1,104 @@
-# React + TypeScript + Vite
+# MinesMinis 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **The most fun and engaging English learning platform for children!**  
+> *Çocuklar için en eğlenceli ve etkileşimli İngilizce öğrenme platformu.*
 
-Currently, two official plugins are available:
+![MinesMinis Banner](public/images/mine-logo.jpeg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 Proje Hakkında (About the Project)
 
-## Expanding the ESLint configuration
+**MinesMinis**, çocukların İngilizce öğrenimini sıkıcı bir süreçten çıkarıp, oyunlaştırma (gamification) dinamikleriyle dolu, interaktif ve eğlenceli bir maceraya dönüştüren modern bir web platformudur. Geleceğin eğitim vizyonuyla tasarlanan bu projede, çocuklar sadece kelime ezberlemekle kalmaz; oyunlar, videolar, çalışma kağıtları ve AI destekli sohbet arkadaşları ile dili yaşayarak öğrenirler.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Proje, modern web teknolojilerinin gücünü arkasına alarak **hızlı, güvenli ve kullanıcı dostu** bir deneyim sunar. Hem öğrenciler, hem ebeveynler hem de yöneticiler için özel paneller içerir.
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## ✨ Temel Özellikler (Key Features)
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 🎮 Öğrenci Deneyimi (Student Experience)
+- **Oyunlaştırılmış Öğrenme:** Kelime oyunları, eşleştirme kartları ve interaktif bulmacalar ile öğrenirken eğlenin.
+- **AI Sohbet Arkadaşı (Mimi):** Yapay zeka destekli maskotumuz Mimi ile gerçek zamanlı İngilizce sohbet pratiği yapın.
+- **İlerleme Takibi (XP & Level):** Her aktivitede XP kazanın, seviye atlayın ve liderlik tablosunda yerinizi alın.
+- **Ödül Sistemi:** Günlük giriş ödülleri, rozetler ve sürpriz hediyeler.
+- **Zengin İçerik Kütüphanesi:** Eğitici videolar, hikayeler ve özel çalışma kağıtları (Worksheets).
+- **Kişiselleştirme:** Kendi avatarınızı seçin ve profilinizi özelleştirin.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### 👨‍👩‍👧‍👦 Ebeveyn Kontrolü (Parent Dashboard)
+- **Gelişim Raporları:** Çocuğunuzun hangi konularda ne kadar ilerlediğini detaylı grafiklerle takip edin.
+- **Aktivite İzleme:** Günlük kullanım süreleri ve tamamlanan görevleri görüntüleyin.
+- **Güvenli İçerik:** Çocuğunuzun sadece yaş grubuna uygun içeriklere eriştiğinden emin olun.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### 🛠 Yönetici Paneli (Admin Panel)
+- **Kullanıcı Yönetimi:** Öğrenci ve veli hesaplarını kolayca yönetin.
+- **İçerik Yönetimi:** Yeni kelimeler, videolar ve çalışma kağıtları ekleyin/düzenleyin.
+- **Premium Üyelik Sistemi:** Abonelikleri ve ödeme durumlarını (Stripe entegrasyonu) kontrol edin.
+
+---
+
+## 💻 Teknolojik Altyapı (Tech Stack)
+
+Bu proje, sektör standartlarında, performans odaklı ve ölçeklenebilir teknolojiler kullanılarak geliştirilmiştir.
+
+| Alan | Teknolojiler |
+|------|-------------|
+| **Frontend** | React, TypeScript, Vite |
+| **Styling** | Vanilla CSS, TailwindCSS (Utility-first), Framer Motion (Animations) |
+| **State Management** | React Context API, Custom Hooks |
+| **Backend / Database** | Supabase (PostgreSQL, Auth, Realtime, Storage) |
+| **Routing** | React Router DOM v6 |
+| **Forms & Validation** | React Hook Form, Zod |
+| **AI Integration** | OpenAI API (Mimi Chatbot) |
+| **Deployment** | Vercel / Netlify Ready |
+
+---
+
+## 🚀 Kurulum ve Çalıştırma (Getting Started)
+
+Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları takip edebilirsiniz.
+
+### Gereksinimler
+- Node.js (v18+)
+- npm veya yarn
+
+### Adımlar
+
+1. **Repoyu Klonlayın:**
+   ```bash
+   git clone https://github.com/onurhuseyinkocak/minesminis.git
+   cd minesminis
+   ```
+
+2. **Bağımlılıkları Yükleyin:**
+   ```bash
+   npm install
+   ```
+
+3. **Çevresel Değişkenleri Ayarlayın (.env):**
+   `env.example` dosyasını `.env` olarak kopyalayın ve Supabase/OpenAI API anahtarlarınızı girin.
+
+4. **Projeyi Başlatın:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Tarayıcıda Açın:**
+   `http://localhost:5173` adresine gidin.
+
+---
+
+## 🤝 Katkıda Bulunma (Contributing)
+
+Bu proje açık kaynak ruhuyla geliştirilmeye devam etmektedir. Her türlü katkı, öneri ve hata bildirimi (issue) bizim için değerlidir. Pull request göndermekten çekinmeyin!
+
+---
+
+## 📞 İletişim (Contact)
+
+**Geliştirici:** Onur Hüseyin Koçak  
+**GitHub:** [onurhuseyinkocak](https://github.com/onurhuseyinkocak)
+
+---
+
+<p align="center">
+  <i>Made with ❤️ for future generations.</i>
+</p>
