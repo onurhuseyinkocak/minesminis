@@ -15,8 +15,6 @@ export default defineConfig({
     port: 5000,
     strictPort: false,
     allowedHosts: true as const,
-    // Security: Disable source maps in production
-    sourcemap: process.env.NODE_ENV !== 'production',
   },
   build: {
     // Security: Disable source maps in production

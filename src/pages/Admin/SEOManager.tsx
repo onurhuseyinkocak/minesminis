@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
     Search,
     Globe,
@@ -10,15 +10,14 @@ import {
     XCircle,
     RefreshCw,
     Download,
-    Upload,
+
     Zap,
     TrendingUp,
     Eye,
     Hash,
-    MapPin,
-    Clock,
+
     Smartphone,
-    Monitor,
+
     ExternalLink,
     Copy,
     Save,

@@ -88,7 +88,7 @@ export function sanitizeURL(url: string): string | null {
 // ============================================================
 
 const STORAGE_PREFIX = 'mm_';
-const ENCRYPTION_KEY = 'minesminis_secure_2024';
+
 
 /**
  * Obfuscate data for storage (not true encryption, but prevents casual reading)

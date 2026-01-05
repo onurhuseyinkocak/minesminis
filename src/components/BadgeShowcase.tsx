@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { useGamification, ALL_BADGES, Badge } from '../contexts/GamificationContext';
+import { useGamification, Badge } from '../contexts/GamificationContext';
 import './BadgeShowcase.css';
 
 interface BadgeShowcaseProps {
@@ -13,7 +13,7 @@ interface BadgeShowcaseProps {
 }
 
 const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDisplay }) => {
-    const { stats, hasBadge, allBadges } = useGamification();
+    const { hasBadge, allBadges } = useGamification();
     const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
     const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
 

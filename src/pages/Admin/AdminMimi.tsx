@@ -8,14 +8,12 @@ import {
     Users,
     BarChart3,
     FileText,
-    Zap,
-    Settings,
-    HelpCircle,
+
     ChevronDown,
     Crown,
     Terminal,
     AlertTriangle,
-    CheckCircle,
+
     Copy,
     Trash2
 } from 'lucide-react';

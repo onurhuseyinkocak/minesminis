@@ -60,7 +60,7 @@ interface ActivityLog {
 function AdminDashboard() {
     const [totalUsers, setTotalUsers] = useState(0);
     const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
-    const [financialStats, setFinancialStats] = useState<FinancialStats>({
+    const [financialStats] = useState<FinancialStats>({
         totalRevenue: 0,
         monthlyRevenue: 0,
         previousMonthRevenue: 0,
@@ -70,7 +70,7 @@ function AdminDashboard() {
         averageRevenuePerUser: 0,
         projectedAnnualRevenue: 0
     });
-    const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+    const [activityLogs] = useState<ActivityLog[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentTime, setCurrentTime] = useState(new Date());
 

@@ -4,7 +4,7 @@
  * Core gamification system for MinesMinis
  */
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
 
@@ -486,7 +486,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
     // ==================== ACTIVITY TRACKING ====================
 
-    const trackActivity = async (type: string, metadata?: any) => {
+    const trackActivity = async (type: string, _metadata?: any) => {
         const newStats = { ...stats };
 
         switch (type) {
