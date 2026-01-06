@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { BookOpen, GamepadIcon, Video, FileText, Trophy, Flame, Star, ArrowRight, Sparkles } from 'lucide-react';
+import { BookOpen, GamepadIcon, Video, FileText, Trophy, Flame, Star, ArrowRight, Sparkles, Zap, Crown, Rocket } from 'lucide-react';
 import './Home.css';
 
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
@@ -16,51 +16,63 @@ const Home: React.FC = () => {
       icon: GamepadIcon,
       path: '/games',
       colorClass: 'purple',
-      description: 'Play fun learning games'
+      description: 'Play fun learning games',
+      emoji: '🎮'
     },
     {
       title: 'Worksheets',
       icon: FileText,
       path: '/worksheets',
       colorClass: 'teal',
-      description: 'Practice with worksheets'
+      description: 'Practice with worksheets',
+      emoji: '📝'
     },
     {
       title: 'Dictionary',
       icon: BookOpen,
       path: '/words',
       colorClass: 'yellow',
-      description: 'Learn new words'
+      description: 'Learn new words',
+      emoji: '📚'
     },
     {
       title: 'Videos',
       icon: Video,
       path: '/videos',
       colorClass: 'coral',
-      description: 'Watch educational videos'
+      description: 'Watch educational videos',
+      emoji: '🎬'
     },
     {
       title: 'My Progress',
       icon: Trophy,
       path: '/profile',
       colorClass: 'pink',
-      description: 'Track your achievements'
+      description: 'Track your achievements',
+      emoji: '🏆'
     },
   ];
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  };
 
   return (
     <div className="home-page">
       {/* Hero Grid - Welcome + Atatürk Side by Side */}
       <div className="hero-grid">
-        {/* Welcome Section - Smaller */}
+        {/* Welcome Section - Premium Design */}
         <div className="welcome-banner">
           <div className="welcome-content">
             <div className="mascot-star">
-              <Star size={48} strokeWidth={2} />
+              <Star size={42} strokeWidth={2.5} />
             </div>
             <h1 className="welcome-title">
               {user ? (
-                <>Welcome back, {userProfile?.display_name || 'Friend'}!</>
+                <>{getGreeting()}, {userProfile?.display_name || 'Friend'}! ✨</>
               ) : (
                 <>Welcome to MinesMinis!</>
               )}
@@ -74,31 +86,31 @@ const Home: React.FC = () => {
             <div className="stats-row">
               <div className="stat-card">
                 <div className="stat-icon coral">
-                  <Trophy size={20} />
+                  <Trophy size={22} />
                 </div>
                 <div className="stat-info">
-                  <div className="stat-value">{userProfile?.points || 0}</div>
+                  <div className="stat-value">{userProfile?.points?.toLocaleString() || 0}</div>
                   <div className="stat-label">Points</div>
                 </div>
               </div>
 
               <div className="stat-card">
                 <div className="stat-icon mint">
-                  <Flame size={20} />
+                  <Flame size={22} />
                 </div>
                 <div className="stat-info">
                   <div className="stat-value">{userProfile?.streak_days || 0}</div>
-                  <div className="stat-label">Streak</div>
+                  <div className="stat-label">Day Streak</div>
                 </div>
               </div>
 
               <div className="stat-card">
                 <div className="stat-icon navy">
-                  <Star size={20} />
+                  <Crown size={22} />
                 </div>
                 <div className="stat-info">
-                  <div className="stat-value">{userProfile?.level || 1}</div>
-                  <div className="stat-label">Level</div>
+                  <div className="stat-value">Level {userProfile?.level || 1}</div>
+                  <div className="stat-label">Rank</div>
                 </div>
               </div>
             </div>
@@ -127,7 +139,7 @@ const Home: React.FC = () => {
               <img src={ataturkSignature} alt="İmza" className="ataturk-signature" />
             </div>
             <div className="ataturk-arrow">
-              <ArrowRight size={24} />
+              <ArrowRight size={26} />
             </div>
           </div>
           <div className="ataturk-quote">
@@ -136,11 +148,12 @@ const Home: React.FC = () => {
         </Link>
       </div>
 
+      {/* Premium Menu Grid */}
       <div className="menu-grid">
         {menuItems.map((item) => (
           <Link key={item.path} to={item.path} className="menu-card">
             <div className={`menu-icon-wrapper ${item.colorClass}`}>
-              <item.icon size={40} strokeWidth={2} color="white" />
+              <item.icon size={36} strokeWidth={2} color="white" />
             </div>
             <div className="menu-content">
               <h3 className="menu-title">{item.title}</h3>
@@ -151,13 +164,20 @@ const Home: React.FC = () => {
         ))}
       </div>
 
+      {/* Daily Challenge - Premium Design */}
       {user && (
         <div className="daily-challenge">
           <div className="challenge-header">
-            <h2>Today's Challenge</h2>
-            <span className="challenge-badge">+100 Points</span>
+            <h2>
+              <Zap size={24} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} />
+              Today's Challenge
+            </h2>
+            <span className="challenge-badge">
+              <Rocket size={16} style={{ marginRight: '6px' }} />
+              +100 Points
+            </span>
           </div>
-          <p className="challenge-text">Complete 3 games and earn bonus points!</p>
+          <p className="challenge-text">Complete 3 games and earn bonus points! Keep your streak alive! 🔥</p>
           <div className="challenge-progress">
             <div className="progress-bar">
               <div className="progress-fill" style={{ width: '33%' }}></div>

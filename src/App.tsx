@@ -48,6 +48,8 @@ if ('serviceWorker' in navigator) {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   if (loading) {
     return (
@@ -63,9 +65,6 @@ function AppRoutes() {
       </div>
     );
   }
-
-  const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/admin');
 
   // Admin routes have their own layout, no navbar/footer
   if (isAdminRoute) {

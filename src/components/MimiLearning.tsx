@@ -125,7 +125,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const navigate = useNavigate();
   useAuth();
   const { isPremium } = usePremium();
-  
+
   const [mode, setMode] = useState<LearningMode>('menu');
   const [gameType, setGameType] = useState<GameType>('menu');
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -140,8 +140,8 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const [dragonState, setDragonState] = useState<'idle' | 'celebrating' | 'thinking' | 'waving'>('waving');
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
-  
-  const FREE_DAILY_LIMIT = 3;
+
+  const FREE_DAILY_LIMIT = 10;
   const [dailyUsage, setDailyUsage] = useState(() => {
     const today = new Date().toDateString();
     const stored = localStorage.getItem('mimi_daily_usage');
@@ -178,16 +178,16 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     }
     callback();
   };
-  
+
   const audioCache = useRef<Map<string, string>>(new Map());
   const currentAudio = useRef<HTMLAudioElement | null>(null);
 
   const shuffledWords = [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 5);
   const [vocabWords, setVocabWords] = useState(shuffledWords);
-  
+
   const todaysChallenges = [...dailyChallengeQuestions].sort(() => Math.random() - 0.5).slice(0, 3);
   const [challenges, setChallenges] = useState(todaysChallenges);
-  
+
   const [vocabQuizOptions, setVocabQuizOptions] = useState<string[][]>(() => {
     return shuffledWords.map(word => {
       const otherWords = vocabularyWords.filter(w => w.word !== word.word);
@@ -198,13 +198,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   });
 
   // Matching Game State
-  const [matchingWords, setMatchingWords] = useState<VocabularyWord[]>(() => 
+  const [matchingWords, setMatchingWords] = useState<VocabularyWord[]>(() =>
     [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 6)
   );
-  const [matchingLeft, setMatchingLeft] = useState<VocabularyWord[]>(() => 
+  const [matchingLeft, setMatchingLeft] = useState<VocabularyWord[]>(() =>
     [...matchingWords].sort(() => Math.random() - 0.5)
   );
-  const [matchingRight, setMatchingRight] = useState<VocabularyWord[]>(() => 
+  const [matchingRight, setMatchingRight] = useState<VocabularyWord[]>(() =>
     [...matchingWords].sort(() => Math.random() - 0.5)
   );
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
@@ -213,7 +213,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const [matchingScore, setMatchingScore] = useState(0);
 
   // Enhanced Spelling Game State
-  const [spellingWords, setSpellingWords] = useState<VocabularyWord[]>(() => 
+  const [spellingWords, setSpellingWords] = useState<VocabularyWord[]>(() =>
     [...vocabularyWords].filter(w => w.word.length <= 7).sort(() => Math.random() - 0.5).slice(0, 5)
   );
   const [spellingIndex, setSpellingIndex] = useState(0);
@@ -271,7 +271,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Prefetch audio for upcoming words
   const prefetchAudio = useCallback(async (text: string) => {
     if (audioCache.current.has(text)) return;
-    
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/tts`, {
         method: 'POST',
@@ -301,7 +301,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // OpenAI TTS with caching and fallback
   const speakWord = async (text: string) => {
     if (isLoadingAudio) return;
-    
+
     if (currentAudio.current) {
       currentAudio.current.pause();
       currentAudio.current = null;
@@ -316,7 +316,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     }
 
     setIsLoadingAudio(true);
-    
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/tts`, {
         method: 'POST',
@@ -328,13 +328,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
 
       const data = await response.json();
       const audioUrl = `data:audio/mp3;base64,${data.audio}`;
-      
+
       audioCache.current.set(text, audioUrl);
-      
+
       const audio = new Audio(audioUrl);
       currentAudio.current = audio;
       audio.play().catch(console.error);
-      
+
     } catch (error) {
       console.error('TTS error, falling back to Web Speech:', error);
       if ('speechSynthesis' in window) {
@@ -359,9 +359,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
       .filter(l => !letters.includes(l))
       .sort(() => Math.random() - 0.5)
       .slice(0, 2);
-    
+
     const allLetters = [...letters, ...extraLetters].sort(() => Math.random() - 0.5);
-    
+
     setLetterTiles(allLetters.map((letter, i) => ({
       id: i,
       letter,
@@ -371,7 +371,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     setPlacedLetters(new Array(word.word.length).fill(null));
     setSpellingFeedback(null);
     setShowSpellingHint(false);
-    
+
     prefetchAudio(word.word);
     prefetchAudio(word.example);
   }, [spellingWords, spellingIndex, prefetchAudio]);
@@ -395,15 +395,15 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Handle Letter Tile Click
   const handleLetterTileClick = (tile: LetterTile) => {
     if (tile.placed || spellingFeedback !== null) return;
-    
+
     const emptySlotIndex = placedLetters.findIndex(slot => slot === null);
     if (emptySlotIndex === -1) return;
-    
+
     const newPlaced = [...placedLetters];
     newPlaced[emptySlotIndex] = { ...tile, placed: true };
     setPlacedLetters(newPlaced);
-    
-    setLetterTiles(prev => prev.map(t => 
+
+    setLetterTiles(prev => prev.map(t =>
       t.id === tile.id ? { ...t, placed: true } : t
     ));
   };
@@ -411,15 +411,15 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Handle Placed Letter Click (remove)
   const handlePlacedLetterClick = (index: number) => {
     if (spellingFeedback !== null) return;
-    
+
     const tile = placedLetters[index];
     if (!tile) return;
-    
+
     const newPlaced = [...placedLetters];
     newPlaced[index] = null;
     setPlacedLetters(newPlaced);
-    
-    setLetterTiles(prev => prev.map(t => 
+
+    setLetterTiles(prev => prev.map(t =>
       t.id === tile.id ? { ...t, placed: false } : t
     ));
   };
@@ -428,14 +428,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const checkSpellingAnswer = () => {
     const answer = placedLetters.map(t => t?.letter || '').join('');
     const correct = spellingWords[spellingIndex].word.toUpperCase();
-    
+
     if (answer === correct) {
       setSpellingFeedback('correct');
       setDragonState('celebrating');
       const points = hintsUsed === 0 ? 25 : hintsUsed === 1 ? 15 : 10;
       setSpellingScore(prev => prev + points);
       speakWord('Great job!');
-      
+
       setTimeout(() => {
         if (spellingIndex < spellingWords.length - 1) {
           setSpellingIndex(prev => prev + 1);
@@ -448,7 +448,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     } else {
       setSpellingFeedback('wrong');
       setDragonState('thinking');
-      
+
       const newPlaced = placedLetters.map((t, i) => {
         if (t && t.letter === correct[i]) {
           return { ...t, correct: true };
@@ -458,16 +458,16 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         return null;
       });
       setPlacedLetters(newPlaced);
-      
+
       setTimeout(() => {
         newPlaced.forEach(t => {
           if (t && t.correct === false) {
-            setLetterTiles(prev => prev.map(lt => 
+            setLetterTiles(prev => prev.map(lt =>
               lt.id === t.id ? { ...lt, placed: false, correct: null } : lt
             ));
           }
         });
-        setPlacedLetters(prev => prev.map(t => 
+        setPlacedLetters(prev => prev.map(t =>
           t && t.correct === false ? null : t
         ));
         setSpellingFeedback(null);
@@ -479,7 +479,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Give Spelling Hint
   const giveSpellingHint = () => {
     if (hintsUsed >= 2) return;
-    
+
     setShowSpellingHint(true);
     setHintsUsed(prev => prev + 1);
     speakWord(spellingWords[spellingIndex].word);
@@ -489,7 +489,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const initializeMemoryGame = useCallback(() => {
     const selectedWords = [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 6);
     const cards: MemoryCard[] = [];
-    
+
     selectedWords.forEach((word, index) => {
       cards.push({
         id: index * 2,
@@ -508,7 +508,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         isMatched: false
       });
     });
-    
+
     setMemoryCards(cards.sort(() => Math.random() - 0.5));
     setFlippedCards([]);
     setMemoryScore(0);
@@ -531,42 +531,42 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Handle Memory Card Click
   const handleMemoryCardClick = (cardId: number) => {
     if (isFlipping) return;
-    
+
     const card = memoryCards.find(c => c.id === cardId);
     if (!card || card.isFlipped || card.isMatched) return;
-    
+
     const newFlipped = [...flippedCards, cardId];
     setFlippedCards(newFlipped);
-    setMemoryCards(prev => prev.map(c => 
+    setMemoryCards(prev => prev.map(c =>
       c.id === cardId ? { ...c, isFlipped: true } : c
     ));
-    
+
     if (newFlipped.length === 2) {
       setIsFlipping(true);
       setMemoryMoves(prev => prev + 1);
-      
+
       const [firstId, secondId] = newFlipped;
       const firstCard = memoryCards.find(c => c.id === firstId)!;
       const secondCard = memoryCards.find(c => c.id === secondId)!;
-      
+
       setTimeout(() => {
         if (firstCard.pairId === secondCard.pairId) {
-          setMemoryCards(prev => prev.map(c => 
+          setMemoryCards(prev => prev.map(c =>
             c.pairId === firstCard.pairId ? { ...c, isMatched: true } : c
           ));
           setMemoryScore(prev => prev + 20);
           setDragonState('celebrating');
-          
+
           const allMatched = memoryCards.filter(c => c.pairId !== firstCard.pairId).every(c => c.isMatched);
           if (allMatched) {
             setTimeout(() => setMemoryComplete(true), 500);
           }
         } else {
-          setMemoryCards(prev => prev.map(c => 
+          setMemoryCards(prev => prev.map(c =>
             newFlipped.includes(c.id) ? { ...c, isFlipped: false } : c
           ));
         }
-        
+
         setFlippedCards([]);
         setIsFlipping(false);
         setDragonState('idle');
@@ -579,11 +579,11 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     const shuffled = [...vocabularyWords].sort(() => Math.random() - 0.5);
     const target = shuffled[0];
     const options = shuffled.slice(0, 4);
-    
+
     setListenWord(target);
     setListenOptions(options.sort(() => Math.random() - 0.5));
     setListenFeedback(null);
-    
+
     setTimeout(() => speakWord(target.word), 500);
   }, []);
 
@@ -598,17 +598,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Handle Listen Answer
   const handleListenAnswer = (word: VocabularyWord) => {
     if (listenFeedback !== null) return;
-    
+
     const isCorrectAnswer = word.word === listenWord?.word;
     setListenFeedback(isCorrectAnswer ? 'correct' : 'wrong');
-    
+
     if (isCorrectAnswer) {
       setListenScore(prev => prev + 20);
       setDragonState('celebrating');
     } else {
       setDragonState('thinking');
     }
-    
+
     setTimeout(() => {
       if (listenRound < 4) {
         setListenRound(prev => prev + 1);
@@ -644,8 +644,8 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Handle Sentence Word Click
   const handleSentenceWordClick = (word: SentenceWord) => {
     if (word.placed || sentenceFeedback !== null) return;
-    
-    setSentenceWords(prev => prev.map(w => 
+
+    setSentenceWords(prev => prev.map(w =>
       w.id === word.id ? { ...w, placed: true } : w
     ));
     setBuiltSentence(prev => [...prev, word]);
@@ -654,9 +654,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Remove Sentence Word
   const removeSentenceWord = (index: number) => {
     if (sentenceFeedback !== null) return;
-    
+
     const word = builtSentence[index];
-    setSentenceWords(prev => prev.map(w => 
+    setSentenceWords(prev => prev.map(w =>
       w.id === word.id ? { ...w, placed: false } : w
     ));
     setBuiltSentence(prev => prev.filter((_, i) => i !== index));
@@ -666,13 +666,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const checkSentence = () => {
     const built = builtSentence.map(w => w.word).join(' ');
     const correct = sentenceTemplates[sentenceIndex % sentenceTemplates.length].correct;
-    
+
     if (built === correct) {
       setSentenceFeedback('correct');
       setSentenceScore(prev => prev + 25);
       setDragonState('celebrating');
       speakWord(correct);
-      
+
       setTimeout(() => {
         if (sentenceIndex < 4) {
           setSentenceIndex(prev => prev + 1);
@@ -684,7 +684,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     } else {
       setSentenceFeedback('wrong');
       setDragonState('thinking');
-      
+
       setTimeout(() => {
         setSentenceFeedback(null);
         setDragonState('idle');
@@ -704,7 +704,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     setBubbleTimeLeft(45);
     setBubbleScore(0);
     setBubbles([]);
-    
+
     const randomWord = vocabularyWords[Math.floor(Math.random() * vocabularyWords.length)];
     setTargetWord(randomWord);
     speakWord(randomWord.translation);
@@ -713,13 +713,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Spawn Bubbles
   useEffect(() => {
     if (!bubbleActive || !targetWord) return;
-    
+
     const spawnBubble = () => {
       const words = [...vocabularyWords].sort(() => Math.random() - 0.5).slice(0, 4);
       if (!words.find(w => w.word === targetWord.word)) {
         words[Math.floor(Math.random() * words.length)] = targetWord;
       }
-      
+
       const word = words[Math.floor(Math.random() * words.length)];
       const newBubble: Bubble = {
         id: Date.now(),
@@ -728,10 +728,10 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         y: 100,
         popped: false
       };
-      
+
       setBubbles(prev => [...prev.filter(b => !b.popped && b.y > 0), newBubble]);
     };
-    
+
     bubbleSpawnRef.current = setInterval(spawnBubble, 1200);
     return () => {
       if (bubbleSpawnRef.current) clearInterval(bubbleSpawnRef.current);
@@ -741,7 +741,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Bubble Timer
   useEffect(() => {
     if (!bubbleActive) return;
-    
+
     bubbleTimerRef.current = setInterval(() => {
       setBubbleTimeLeft(prev => {
         if (prev <= 1) {
@@ -752,7 +752,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         return prev - 1;
       });
     }, 1000);
-    
+
     return () => {
       if (bubbleTimerRef.current) clearInterval(bubbleTimerRef.current);
     };
@@ -761,14 +761,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Animate Bubbles
   useEffect(() => {
     if (!bubbleActive) return;
-    
+
     const animateBubbles = setInterval(() => {
       setBubbles(prev => prev
         .map(b => ({ ...b, y: b.y - 2 }))
         .filter(b => b.y > -10 && !b.popped)
       );
     }, 50);
-    
+
     return () => clearInterval(animateBubbles);
   }, [bubbleActive]);
 
@@ -777,15 +777,15 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     if (bubble.word.word === targetWord?.word) {
       setBubbleScore(prev => prev + 15);
       setDragonState('celebrating');
-      
+
       const newTarget = vocabularyWords[Math.floor(Math.random() * vocabularyWords.length)];
       setTargetWord(newTarget);
       speakWord(newTarget.translation);
-      
+
       setTimeout(() => setDragonState('idle'), 500);
     }
-    
-    setBubbles(prev => prev.map(b => 
+
+    setBubbles(prev => prev.map(b =>
       b.id === bubble.id ? { ...b, popped: true } : b
     ));
   };
@@ -806,7 +806,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     const otherWords = vocabularyWords.filter(w => w.word !== word.word);
     const shuffledOthers = [...otherWords].sort(() => Math.random() - 0.5).slice(0, 3);
     const options = [...shuffledOthers.map(w => w.translation), word.translation].sort(() => Math.random() - 0.5);
-    
+
     setSpeedQuestion(word);
     setSpeedOptions(options);
   }, []);
@@ -816,7 +816,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     setSpeedScore(0);
     setSpeedTimeLeft(60);
     generateSpeedQuestion();
-    
+
     speedTimerRef.current = setInterval(() => {
       setSpeedTimeLeft(prev => {
         if (prev <= 1) {
@@ -872,15 +872,15 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const checkMatch = (left: string, right: string) => {
     const leftWord = matchingWords.find(w => w.word === left);
     const rightWord = matchingWords.find(w => w.word === right);
-    
+
     if (leftWord && rightWord && leftWord.word === rightWord.word) {
       setMatchedPairs(prev => new Set([...prev, left]));
       setMatchingScore(prev => prev + 15);
       setDragonState('celebrating');
-      
+
       setTimeout(() => setDragonState('idle'), 1000);
     }
-    
+
     setSelectedLeft(null);
     setSelectedRight(null);
   };
@@ -890,17 +890,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     const currentWord = vocabWords[currentWordIndex];
     const options = vocabQuizOptions[currentWordIndex];
     const isAnswerCorrect = options[answerIndex] === currentWord.translation;
-    
+
     setSelectedAnswer(answerIndex);
     setIsCorrect(isAnswerCorrect);
-    
+
     if (isAnswerCorrect) {
       setScore(prev => prev + 10);
       setDragonState('celebrating');
     } else {
       setDragonState('thinking');
     }
-    
+
     setTimeout(() => {
       if (currentWordIndex < vocabWords.length - 1) {
         setCurrentWordIndex(prev => prev + 1);
@@ -918,17 +918,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const handleChallengeAnswer = (answerIndex: number) => {
     const currentQuestion = challenges[challengeIndex];
     const isAnswerCorrect = answerIndex === currentQuestion.correctAnswer;
-    
+
     setSelectedAnswer(answerIndex);
     setIsCorrect(isAnswerCorrect);
-    
+
     if (isAnswerCorrect) {
       setChallengeScore(prev => prev + 20);
       setDragonState('celebrating');
     } else {
       setDragonState('thinking');
     }
-    
+
     setTimeout(() => {
       if (challengeIndex < challenges.length - 1) {
         setChallengeIndex(prev => prev + 1);
@@ -972,14 +972,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
 
   // Render Premium Prompt
   const renderPremiumPrompt = () => (
-    <motion.div 
+    <motion.div
       className="premium-prompt-overlay"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={() => setShowPremiumPrompt(false)}
     >
-      <motion.div 
+      <motion.div
         className="premium-prompt-modal"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -994,7 +994,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <div className="feature-item">⭐ Günlük meydan okumalar</div>
           <div className="feature-item">🔊 Sesli telaffuz</div>
         </div>
-        <button 
+        <button
           className="premium-prompt-btn"
           onClick={() => {
             onClose();
@@ -1003,7 +1003,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         >
           Premium'a Geç 🚀
         </button>
-        <button 
+        <button
           className="premium-prompt-close"
           onClick={() => setShowPremiumPrompt(false)}
         >
@@ -1015,7 +1015,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
 
   // Render Menu
   const renderMenu = () => (
-    <motion.div 
+    <motion.div
       className="mimi-menu"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -1024,17 +1024,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
       <div className="menu-dragon">
         <DragonMascot state={dragonState} />
       </div>
-      
+
       <h2 className="menu-title">Mimi ile Öğren! 🎓</h2>
       <p className="menu-subtitle">Ne öğrenmek istersin?</p>
-      
+
       {!isPremium && (
         <div className="free-usage-info">
           <span className="usage-icon">🎁</span>
           <span>Ücretsiz: {FREE_DAILY_LIMIT - dailyUsage} kelime pratik kaldı</span>
         </div>
       )}
-      
+
       <div className="menu-options">
         <motion.button
           className="menu-option vocabulary"
@@ -1049,7 +1049,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           {!isPremium && dailyUsage >= FREE_DAILY_LIMIT && <span className="locked-badge">🔒</span>}
         </motion.button>
-        
+
         <motion.button
           className={`menu-option challenge ${!isPremium ? 'premium-locked' : ''}`}
           onClick={() => isPremium ? setMode('challenge') : setShowPremiumPrompt(true)}
@@ -1063,7 +1063,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           {!isPremium && <span className="premium-badge">👑 Premium</span>}
         </motion.button>
-        
+
         <motion.button
           className="menu-option games"
           onClick={() => setMode('games')}
@@ -1083,10 +1083,10 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Render Vocabulary
   const renderVocabulary = () => {
     const currentWord = vocabWords[currentWordIndex];
-    
+
     if (showCelebration) {
       return (
-        <motion.div 
+        <motion.div
           className="celebration"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1108,7 +1108,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     return (
       <div className="mimi-vocabulary">
         <div className="vocab-header">
@@ -1118,13 +1118,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           <div className="vocab-score">⭐ {score}</div>
         </div>
-        
+
         <div className="vocab-dragon">
           <DragonMascot state={dragonState} />
         </div>
-        
+
         {vocabStep === 'learn' ? (
-          <motion.div 
+          <motion.div
             className="word-card"
             key={currentWord.word}
             initial={{ opacity: 0, x: 50 }}
@@ -1134,8 +1134,8 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <div className="word-english">{currentWord.word}</div>
             <div className="word-turkish">{currentWord.translation}</div>
             <div className="word-example">"{currentWord.example}"</div>
-            
-            <button 
+
+            <button
               className="speak-btn"
               onClick={() => {
                 speakWord(currentWord.word);
@@ -1145,13 +1145,13 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             >
               {isLoadingAudio ? '⏳' : '🔊'} Dinle
             </button>
-            
+
             <button className="next-btn" onClick={() => setVocabStep('quiz')}>
               Quiz Zamanı! →
             </button>
           </motion.div>
         ) : (
-          <motion.div 
+          <motion.div
             className="quiz-card"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1160,18 +1160,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               <span className="quiz-emoji">{currentWord.emoji}</span>
               <h3>"{currentWord.word}" ne demek?</h3>
             </div>
-            
+
             <div className="quiz-options">
               {vocabQuizOptions[currentWordIndex].map((option, index) => (
                 <motion.button
                   key={index}
-                  className={`quiz-option ${
-                    selectedAnswer === index 
-                      ? isCorrect 
-                        ? 'correct' 
+                  className={`quiz-option ${selectedAnswer === index
+                      ? isCorrect
+                        ? 'correct'
                         : 'wrong'
                       : ''
-                  } ${selectedAnswer !== null && option === currentWord.translation ? 'show-correct' : ''}`}
+                    } ${selectedAnswer !== null && option === currentWord.translation ? 'show-correct' : ''}`}
                   onClick={() => handleVocabAnswer(index)}
                   disabled={selectedAnswer !== null}
                   whileHover={selectedAnswer === null ? { scale: 1.02 } : {}}
@@ -1190,10 +1189,10 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Render Challenge
   const renderChallenge = () => {
     const currentQuestion = challenges[challengeIndex];
-    
+
     if (challengeComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="celebration"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1214,8 +1213,8 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           <p className="encourage-text">
             {challengeScore >= 60 ? 'Muhteşem! Süper bir öğrencisin! 🌟' :
-             challengeScore >= 40 ? 'Çok iyi! Yarın daha da iyi olacaksın! 💪' :
-             'Pratik yapmaya devam et! Sen başarabilirsin! 🎯'}
+              challengeScore >= 40 ? 'Çok iyi! Yarın daha da iyi olacaksın! 💪' :
+                'Pratik yapmaya devam et! Sen başarabilirsin! 🎯'}
           </p>
           <div className="celebration-buttons">
             <button className="replay-btn" onClick={resetChallenge}>
@@ -1228,7 +1227,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     return (
       <div className="mimi-challenge">
         <div className="challenge-header">
@@ -1238,12 +1237,12 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           <div className="challenge-score">⭐ {challengeScore}</div>
         </div>
-        
+
         <div className="challenge-dragon">
           <DragonMascot state={dragonState} />
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="challenge-question"
           key={challengeIndex}
           initial={{ opacity: 0, x: 50 }}
@@ -1251,18 +1250,17 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         >
           <div className="question-emoji">{currentQuestion.emoji}</div>
           <h3>{currentQuestion.question}</h3>
-          
+
           <div className="challenge-options">
             {currentQuestion.options.map((option, index) => (
               <motion.button
                 key={index}
-                className={`challenge-option ${
-                  selectedAnswer === index 
-                    ? isCorrect 
-                      ? 'correct' 
+                className={`challenge-option ${selectedAnswer === index
+                    ? isCorrect
+                      ? 'correct'
                       : 'wrong'
                     : ''
-                } ${selectedAnswer !== null && index === currentQuestion.correctAnswer ? 'show-correct' : ''}`}
+                  } ${selectedAnswer !== null && index === currentQuestion.correctAnswer ? 'show-correct' : ''}`}
                 onClick={() => handleChallengeAnswer(index)}
                 disabled={selectedAnswer !== null}
                 whileHover={selectedAnswer === null ? { scale: 1.02 } : {}}
@@ -1280,10 +1278,10 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   // Render Matching Game
   const renderMatchingGame = () => {
     const isComplete = matchedPairs.size === matchingWords.length;
-    
+
     if (isComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="game-complete"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1303,7 +1301,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     return (
       <div className="matching-game">
         <div className="game-header">
@@ -1311,9 +1309,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h3>🔤 Kelime Eşleştirme</h3>
           <div className="game-score">⭐ {matchingScore}</div>
         </div>
-        
+
         <p className="game-instruction">İngilizce kelimeyi Türkçe karşılığıyla eşleştir!</p>
-        
+
         <div className="matching-columns">
           <div className="matching-column left">
             {matchingLeft.map(word => (
@@ -1329,7 +1327,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               </motion.button>
             ))}
           </div>
-          
+
           <div className="matching-column right">
             {matchingRight.map(word => (
               <motion.button
@@ -1352,7 +1350,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const renderSpellingGame = () => {
     if (spellingComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="game-complete"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1372,9 +1370,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     const currentWord = spellingWords[spellingIndex];
-    
+
     return (
       <div className="spelling-game enhanced">
         <div className="game-header">
@@ -1382,12 +1380,12 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h3>🅰️ Harf Dizme</h3>
           <div className="game-score">⭐ {spellingScore}</div>
         </div>
-        
+
         <div className="spelling-progress">
           {spellingIndex + 1} / {spellingWords.length}
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="spelling-card-enhanced"
           key={spellingIndex}
           initial={{ opacity: 0, y: 20 }}
@@ -1399,9 +1397,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               <strong>{currentWord.translation}</strong>
             </div>
           </div>
-          
+
           {showSpellingHint && (
-            <motion.div 
+            <motion.div
               className="spelling-hint-enhanced"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -1411,7 +1409,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               <span className="hint-length">({currentWord.word.length} harf)</span>
             </motion.div>
           )}
-          
+
           <div className="letter-slots">
             {placedLetters.map((tile, index) => (
               <motion.div
@@ -1425,7 +1423,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               </motion.div>
             ))}
           </div>
-          
+
           <div className="letter-tiles">
             {letterTiles.map(tile => (
               <motion.button
@@ -1436,7 +1434,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
                 whileHover={!tile.placed ? { scale: 1.1, y: -5 } : {}}
                 whileTap={!tile.placed ? { scale: 0.9 } : {}}
                 initial={{ opacity: 1, scale: 1 }}
-                animate={{ 
+                animate={{
                   opacity: tile.placed ? 0.3 : 1,
                   scale: tile.placed ? 0.8 : 1
                 }}
@@ -1445,24 +1443,24 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               </motion.button>
             ))}
           </div>
-          
+
           <div className="spelling-actions-enhanced">
-            <button 
-              className="hint-btn" 
-              onClick={giveSpellingHint} 
+            <button
+              className="hint-btn"
+              onClick={giveSpellingHint}
               disabled={hintsUsed >= 2}
             >
               💡 İpucu ({2 - hintsUsed})
             </button>
-            <button 
-              className="speak-btn" 
+            <button
+              className="speak-btn"
               onClick={() => speakWord(currentWord.word)}
               disabled={isLoadingAudio}
             >
               {isLoadingAudio ? '⏳' : '🔊'} Dinle
             </button>
-            <button 
-              className="check-btn" 
+            <button
+              className="check-btn"
               onClick={checkSpellingAnswer}
               disabled={placedLetters.some(t => t === null) || spellingFeedback !== null}
             >
@@ -1478,7 +1476,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const renderMemoryGame = () => {
     if (memoryComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="game-complete"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1501,7 +1499,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     return (
       <div className="memory-game">
         <div className="game-header">
@@ -1512,9 +1510,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <span>🎯 {memoryMoves}</span>
           </div>
         </div>
-        
+
         <p className="game-instruction">Kelimeyi emojiyle eşleştir!</p>
-        
+
         <div className="memory-grid">
           {memoryCards.map(card => (
             <motion.div
@@ -1545,7 +1543,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const renderSpeedRound = () => {
     if (speedComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="game-complete"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1559,8 +1557,8 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           <p className="speed-message">
             {speedScore >= 100 ? 'İnanılmaz hız! 🚀' :
-             speedScore >= 60 ? 'Çok iyi! Süper hızlısın! ⚡' :
-             'Pratik yap, daha hızlı ol! 💪'}
+              speedScore >= 60 ? 'Çok iyi! Süper hızlısın! ⚡' :
+                'Pratik yap, daha hızlı ol! 💪'}
           </p>
           <div className="game-complete-buttons">
             <button className="replay-btn" onClick={() => { resetSpeedRound(); startSpeedRound(); }}>
@@ -1573,7 +1571,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     if (!speedActive) {
       return (
         <div className="speed-start">
@@ -1581,7 +1579,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <button className="back-btn" onClick={() => setGameType('menu')}>← Geri</button>
             <h3>⏱️ Hız Turu</h3>
           </div>
-          
+
           <div className="speed-intro">
             <DragonMascot state="waving" />
             <h2>60 Saniye Meydan Okuma!</h2>
@@ -1603,7 +1601,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </div>
       );
     }
-    
+
     return (
       <div className="speed-game">
         <div className="speed-header">
@@ -1612,9 +1610,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           <div className="speed-score">⭐ {speedScore}</div>
         </div>
-        
+
         {speedQuestion && (
-          <motion.div 
+          <motion.div
             className="speed-question"
             key={speedQuestion.word}
             initial={{ opacity: 0, scale: 0.9 }}
@@ -1623,7 +1621,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           >
             <div className="speed-emoji">{speedQuestion.emoji}</div>
             <div className="speed-word">{speedQuestion.word}</div>
-            
+
             <div className="speed-options">
               {speedOptions.map((option, index) => (
                 <motion.button
@@ -1647,7 +1645,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const renderListenGame = () => {
     if (listenComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="game-complete"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1667,7 +1665,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     return (
       <div className="listen-game">
         <div className="game-header">
@@ -1675,11 +1673,11 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h3>🎧 Dinle ve Seç</h3>
           <div className="game-score">⭐ {listenScore}</div>
         </div>
-        
+
         <div className="listen-progress">
           {listenRound + 1} / 5
         </div>
-        
+
         <div className="listen-content">
           <motion.button
             className="listen-play-btn"
@@ -1691,16 +1689,15 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             {isLoadingAudio ? '⏳' : '🔊'}
             <span>Tekrar Dinle</span>
           </motion.button>
-          
+
           <p className="listen-instruction">Duyduğun kelimeyi seç!</p>
-          
+
           <div className="listen-options">
             {listenOptions.map(word => (
               <motion.button
                 key={word.word}
-                className={`listen-option ${
-                  listenFeedback !== null && word.word === listenWord?.word ? 'correct' : ''
-                } ${listenFeedback === 'wrong' && word.word !== listenWord?.word ? '' : ''}`}
+                className={`listen-option ${listenFeedback !== null && word.word === listenWord?.word ? 'correct' : ''
+                  } ${listenFeedback === 'wrong' && word.word !== listenWord?.word ? '' : ''}`}
                 onClick={() => handleListenAnswer(word)}
                 disabled={listenFeedback !== null}
                 whileHover={listenFeedback === null ? { scale: 1.05 } : {}}
@@ -1720,7 +1717,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const renderSentenceGame = () => {
     if (sentenceComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="game-complete"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1740,9 +1737,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     const template = sentenceTemplates[sentenceIndex % sentenceTemplates.length];
-    
+
     return (
       <div className="sentence-game">
         <div className="game-header">
@@ -1750,14 +1747,14 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           <h3>📝 Cümle Kur</h3>
           <div className="game-score">⭐ {sentenceScore}</div>
         </div>
-        
+
         <div className="sentence-progress">
           {sentenceIndex + 1} / 5
         </div>
-        
+
         <div className="sentence-content">
           <p className="sentence-instruction">Kelimeleri sıraya koy!</p>
-          
+
           <div className={`sentence-build-area ${sentenceFeedback === 'correct' ? 'correct' : ''} ${sentenceFeedback === 'wrong' ? 'wrong' : ''}`}>
             {builtSentence.length === 0 ? (
               <span className="placeholder">Kelimelere tıkla...</span>
@@ -1776,7 +1773,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               ))
             )}
           </div>
-          
+
           <div className="sentence-words">
             {sentenceWords.map(word => (
               <motion.button
@@ -1791,16 +1788,16 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
               </motion.button>
             ))}
           </div>
-          
+
           <div className="sentence-actions">
-            <button 
+            <button
               className="speak-btn"
               onClick={() => speakWord(template.correct)}
               disabled={isLoadingAudio}
             >
               {isLoadingAudio ? '⏳' : '🔊'} Dinle
             </button>
-            <button 
+            <button
               className="check-btn"
               onClick={checkSentence}
               disabled={builtSentence.length !== template.words.length || sentenceFeedback !== null}
@@ -1817,7 +1814,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
   const renderBubbleGame = () => {
     if (bubbleComplete) {
       return (
-        <motion.div 
+        <motion.div
           className="game-complete"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1837,7 +1834,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </motion.div>
       );
     }
-    
+
     if (!bubbleActive) {
       return (
         <div className="bubble-start">
@@ -1845,7 +1842,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <button className="back-btn" onClick={() => setGameType('menu')}>← Geri</button>
             <h3>🫧 Balon Patlatma</h3>
           </div>
-          
+
           <div className="bubble-intro">
             <DragonMascot state="waving" />
             <h2>Balonları Patlat!</h2>
@@ -1867,7 +1864,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         </div>
       );
     }
-    
+
     return (
       <div className="bubble-game">
         <div className="bubble-header">
@@ -1879,15 +1876,15 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
           </div>
           <div className="bubble-score">⭐ {bubbleScore}</div>
         </div>
-        
-        <button 
+
+        <button
           className="bubble-listen-btn"
           onClick={() => targetWord && speakWord(targetWord.translation)}
           disabled={isLoadingAudio}
         >
           {isLoadingAudio ? '⏳' : '🔊'}
         </button>
-        
+
         <div className="bubble-area">
           {bubbles.filter(b => !b.popped).map(bubble => (
             <motion.div
@@ -1924,9 +1921,9 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
     }
     if (gameType === 'sentence') return renderSentenceGame();
     if (gameType === 'bubble') return renderBubbleGame();
-    
+
     const freeGames = ['matching', 'spelling'];
-    
+
     const handleGameClick = (game: GameType, initFn: () => void) => {
       if (isPremium || freeGames.includes(game)) {
         initFn();
@@ -1935,20 +1932,20 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
         setShowPremiumPrompt(true);
       }
     };
-    
+
     return (
       <div className="mimi-games">
         <div className="games-header">
           <button className="back-btn" onClick={() => setMode('menu')}>← Geri</button>
           <h2>🎮 Hızlı Oyunlar</h2>
         </div>
-        
+
         {!isPremium && (
           <div className="games-info-banner">
             <span>🎁 Ücretsiz: 2 oyun | 👑 Premium: Tüm 7 oyun</span>
           </div>
         )}
-        
+
         <div className="games-list">
           <motion.button
             className="game-card playable"
@@ -1961,7 +1958,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <p>İngilizce-Türkçe eşleştir!</p>
             <span className="free-badge">Ücretsiz</span>
           </motion.button>
-          
+
           <motion.button
             className="game-card playable"
             onClick={() => handleGameClick('spelling', resetSpellingGame)}
@@ -1973,7 +1970,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <p>Harfleri doğru sırala!</p>
             <span className="free-badge">Ücretsiz</span>
           </motion.button>
-          
+
           <motion.button
             className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
             onClick={() => handleGameClick('memory', initializeMemoryGame)}
@@ -1985,7 +1982,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <p>Kartları eşleştir!</p>
             {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
-          
+
           <motion.button
             className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
             onClick={() => handleGameClick('speed', resetSpeedRound)}
@@ -1997,7 +1994,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <p>60 saniyede kaç kelime?</p>
             {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
-          
+
           <motion.button
             className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
             onClick={() => handleGameClick('listen', resetListenGame)}
@@ -2009,7 +2006,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <p>Duyduğun kelimeyi bul!</p>
             {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
-          
+
           <motion.button
             className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
             onClick={() => handleGameClick('sentence', resetSentenceGame)}
@@ -2021,7 +2018,7 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
             <p>Kelimeleri sıraya koy!</p>
             {!isPremium && <span className="premium-game-badge">👑</span>}
           </motion.button>
-          
+
           <motion.button
             className={`game-card ${isPremium ? 'playable' : 'premium-locked'}`}
             onClick={() => handleGameClick('bubble', resetBubbleGame)}
@@ -2040,21 +2037,21 @@ const MimiLearning: React.FC<MimiLearningProps> = ({ onClose }) => {
 
   return (
     <div className="mimi-learning-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <motion.div 
+      <motion.div
         className="mimi-learning-container"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
       >
         <button className="close-btn" onClick={onClose}>✖</button>
-        
+
         <AnimatePresence mode="wait">
           {mode === 'menu' && renderMenu()}
           {mode === 'vocabulary' && renderVocabulary()}
           {mode === 'challenge' && renderChallenge()}
           {mode === 'games' && renderGames()}
         </AnimatePresence>
-        
+
         <AnimatePresence>
           {showPremiumPrompt && renderPremiumPrompt()}
         </AnimatePresence>

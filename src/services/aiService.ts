@@ -4,30 +4,38 @@
 // This service now calls our secure backend proxy instead of OpenAI directly
 
 const getBackendUrl = () => {
-    if (import.meta.env.MODE === 'production') {
+    // Check if running in browser
+    if (typeof window === 'undefined') {
+        return 'http://localhost:3001';
+    }
+
+    const hostname = window.location.hostname;
+
+    // LOCALHOST / LOCAL DEVELOPMENT - Always use localhost:3001
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('📍 Running locally - using localhost:3001');
+        return 'http://localhost:3001';
+    }
+
+    // PRODUCTION (Vercel) - Use same origin API routes
+    if (hostname.includes('vercel.app') || hostname.includes('minesminis')) {
+        console.log('📍 Running on Vercel - using same origin');
         return '';
     }
-    
+
+    // Manual override from env
     if (import.meta.env.VITE_BACKEND_URL) {
+        console.log('📍 Using env override:', import.meta.env.VITE_BACKEND_URL);
         return import.meta.env.VITE_BACKEND_URL;
     }
-    
-    if (typeof window !== 'undefined') {
-        const hostname = window.location.hostname;
-        if (hostname.includes('replit.dev') || hostname.includes('replit.app')) {
-            const backendHostname = hostname.replace(/-5000\./, '-3001.');
-            return `https://${backendHostname}`;
-        }
-        if (hostname.includes('repl.co')) {
-            const backendHostname = hostname.replace(/^(.+?)--/, '3001--$1--');
-            return `https://${backendHostname}`;
-        }
-    }
-    
+
+    // Fallback to localhost
+    console.log('📍 Fallback to localhost:3001');
     return 'http://localhost:3001';
 };
 
 const BACKEND_URL = getBackendUrl();
+console.log('🔗 Backend URL:', BACKEND_URL || '(same origin)');
 
 const SYSTEM_PROMPT = `Sen "Mimi" adında sevimli yeşil bir ejderhasın! 🐲✨
 

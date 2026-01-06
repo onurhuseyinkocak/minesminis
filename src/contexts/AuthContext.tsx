@@ -79,13 +79,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    // Set a timeout to ensure the app loads even if Supabase is unreachable
+    const timeout = setTimeout(() => {
+      console.warn('Auth initialization timeout - loading app without auth');
+      setLoading(false);
+    }, 5000);
+
     supabase.auth.getSession().then(({ data: { session } }) => {
+      clearTimeout(timeout);
       setSession(session);
       setUser(session?.user ?? null);
     }).catch((err) => {
+      clearTimeout(timeout);
       console.error('Auth session init error:', err);
       // Even if auth fails, we should let the app load (as guest)
     }).finally(() => {
+      clearTimeout(timeout);
       setLoading(false);
     });
 
