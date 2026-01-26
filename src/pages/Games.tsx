@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import toast from 'react-hot-toast';
+import { Gamepad2, Sparkles, BookOpen, Library, GraduationCap, Target, Heart, Play, X } from 'lucide-react';
 import './Games.css';
 
 type Game = {
@@ -174,7 +175,10 @@ function Games() {
   return (
     <div className="games-page">
       <div className="games-header">
-        <h1>🎮 Games</h1>
+        <h1>
+          <Gamepad2 size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '12px' }} />
+          Games
+        </h1>
         <p>Fun and educational games for every grade</p>
       </div>
 
@@ -183,32 +187,32 @@ function Games() {
           onClick={() => setActiveSection('primary')}
           className={`grade-tab ${activeSection === 'primary' ? 'active' : ''}`}
         >
-          🌟 Primary School
+          <Sparkles size={18} style={{ marginRight: '8px' }} /> Primary School
         </button>
         <button
           onClick={() => setActiveSection('grade2')}
           className={`grade-tab ${activeSection === 'grade2' ? 'active' : ''}`}
         >
-          📚 2nd Grade
+          <BookOpen size={18} style={{ marginRight: '8px' }} /> 2nd Grade
         </button>
         <button
           onClick={() => setActiveSection('grade3')}
           className={`grade-tab ${activeSection === 'grade3' ? 'active' : ''}`}
         >
-          📖 3rd Grade
+          <Library size={18} style={{ marginRight: '8px' }} /> 3rd Grade
         </button>
         <button
           onClick={() => setActiveSection('grade4')}
           className={`grade-tab ${activeSection === 'grade4' ? 'active' : ''}`}
         >
-          🎓 4th Grade
+          <GraduationCap size={18} style={{ marginRight: '8px' }} /> 4th Grade
         </button>
       </div>
 
       <div className="games-content">
         {activeGames.length === 0 ? (
           <div className="games-empty">
-            <div className="empty-icon">🎯</div>
+            <div className="empty-icon"><Target size={48} /></div>
             <h3>Coming Soon!</h3>
             <p>New games for this grade are on the way! Check back soon!</p>
             <p className="empty-suggestion">Try <strong>2nd Grade</strong> games in the meantime!</p>
@@ -229,7 +233,7 @@ function Games() {
                     className={`game-favorite-btn ${favorites.has(game.id) ? 'favorited' : ''}`}
                     title={favorites.has(game.id) ? "Remove from favorites" : "Add to favorites"}
                   >
-                    {favorites.has(game.id) ? '❤️' : '🤍'}
+                    {favorites.has(game.id) ? <Heart size={20} fill="#FF6B6B" color="#FF6B6B" /> : <Heart size={20} color="#ccc" />}
                   </button>
                 )}
 
@@ -245,12 +249,12 @@ function Games() {
                     }}
                   />
                   <div className="game-overlay">
-                    <span className="play-icon">▶️</span>
+                    <span className="play-icon"><Play size={32} fill="white" /></span>
                   </div>
                 </div>
                 <div className="game-info">
                   <h3>{game.title}</h3>
-                  <span 
+                  <span
                     className="game-type-badge"
                     style={{ backgroundColor: getGameTypeColor(game.type) }}
                   >
@@ -272,7 +276,7 @@ function Games() {
                 onClick={() => setSelectedGame(null)}
                 className="game-modal-close"
               >
-                ✖️
+                <X size={24} />
               </button>
             </div>
 

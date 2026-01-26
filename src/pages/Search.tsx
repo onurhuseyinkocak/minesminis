@@ -58,7 +58,13 @@ const Search: React.FC = () => {
       <InstagramSidebar />
       <div className="search-container">
         <div className="search-panel">
-          <h2 className="search-title">Search</h2>
+          <div className="search-header">
+            <h1>
+              <SearchIcon size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '12px' }} />
+              Search Explorers
+            </h1>
+            <p>Find friends and discover new things!</p>
+          </div>
 
           <div className="search-input-wrapper">
             <SearchIcon size={16} className="search-icon" />

@@ -9,80 +9,16 @@
   background: var(--gradient-navy);
 }
 
-.landing-hero {
-  max-width: 1200px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-3xl);
+.landing-hero.solo-auth {
+  display: flex;
+  justify-content: center;
   align-items: center;
+  width: 100%;
+  max-width: 500px;
   position: relative;
   z-index: 10;
 }
 
-.hero-content {
-  text-align: center;
-  color: white;
-}
-
-.mascot {
-  display: inline-block;
-  margin-bottom: var(--spacing-lg);
-}
-
-.mascot-icon {
-  filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3));
-  color: #FFD4B8;
-}
-
-.hero-title {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-  margin-bottom: var(--spacing-md);
-  line-height: 1.2;
-  color: white;
-}
-
-.hero-title .gradient-text {
-  background: linear-gradient(135deg, #FFD4B8, #E8B4A0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-subtitle {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  margin-bottom: var(--spacing-xl);
-  opacity: 0.9;
-  font-weight: 500;
-}
-
-.feature-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  justify-content: center;
-}
-
-.feature-badge {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-full);
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  color: white;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all var(--transition-base);
-}
-
-.feature-badge:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-}
 
 .auth-card {
   background: white;

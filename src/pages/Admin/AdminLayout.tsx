@@ -13,7 +13,8 @@ import {
     LogOut,
     ChevronRight,
     Crown,
-    Search
+    Search,
+    AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../config/supabase';
@@ -27,6 +28,7 @@ import SiteSettings from './SiteSettings';
 import PremiumManager from './PremiumManager';
 import SEOManager from './SEOManager';
 import AdminMimi from './AdminMimi';
+import ReportsManager from './ReportsManager';
 import './Admin.css';
 
 const navItems = [
@@ -37,6 +39,7 @@ const navItems = [
     { path: '/admin/worksheets', icon: FileText, label: 'Çalışma Kağıtları' },
     { path: '/admin/users', icon: Users, label: 'Kullanıcılar' },
     { path: '/admin/premium', icon: Crown, label: 'Premium' },
+    { path: '/admin/reports', icon: AlertCircle, label: 'Raporlar' },
     { path: '/admin/seo', icon: Search, label: 'SEO' },
     { path: '/admin/settings', icon: Settings, label: 'Ayarlar' },
 ];
@@ -294,6 +297,7 @@ function AdminLayout() {
                     <Route path="worksheets" element={<WorksheetsManager />} />
                     <Route path="users" element={<UsersManager />} />
                     <Route path="premium" element={<PremiumManager />} />
+                    <Route path="reports" element={<ReportsManager />} />
                     <Route path="seo" element={<SEOManager />} />
                     <Route path="settings" element={<SiteSettings />} />
                 </Routes>

@@ -142,17 +142,18 @@ class MascotRoamingService {
     private roamingInterval: ReturnType<typeof setTimeout> | null = null;
     private bubbleInterval: ReturnType<typeof setTimeout> | null = null;
     private mouseFollowInterval: ReturnType<typeof setTimeout> | null = null;
+    private isManualMoving: boolean = false;
     private listeners: ((pos: Position, state: AnimationState, view: ViewDirection, bubble: SpeechBubble | null) => void)[] = [];
 
     private energy: number = 100;
     private mood: number = 90;
     private happiness: number = 80;
     private lastInteractionTime: number = Date.now();
-    
+
     private lastBubbleTime: number = 0;
     private bubbleCooldown: number = 8000;
     private currentBubble: SpeechBubble | null = null;
-    
+
     private isFollowingMouse: boolean = false;
     private mousePosition: Position = { x: 50, y: 50 };
     private followTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -194,31 +195,31 @@ class MascotRoamingService {
         const delay = 6000 + Math.random() * 8000;
 
         this.roamingInterval = setTimeout(() => {
-            if (!this.isFollowingMouse) {
+            if (!this.isFollowingMouse && !this.isManualMoving) {
                 this.makeAIDecision();
             }
             this.scheduleNextAction();
         }, delay);
     }
-    
+
     private scheduleRandomBubble(): void {
         if (!this.isRoaming) return;
-        
+
         const delay = 12000 + Math.random() * 18000;
-        
+
         this.bubbleInterval = setTimeout(() => {
-            if (this.isRoaming && !this.isFollowingMouse) {
+            if (this.isRoaming && !this.isFollowingMouse && !this.isManualMoving) {
                 this.showRandomBubble();
             }
             this.scheduleRandomBubble();
         }, delay);
     }
-    
+
     private scheduleMouseFollow(): void {
         if (!this.isRoaming) return;
-        
+
         const delay = 45000 + Math.random() * 60000;
-        
+
         this.mouseFollowInterval = setTimeout(() => {
             if (this.isRoaming && Math.random() < 0.4) {
                 this.startFollowingMouse();
@@ -226,66 +227,66 @@ class MascotRoamingService {
             this.scheduleMouseFollow();
         }, delay);
     }
-    
+
     private showRandomBubble(): void {
         const now = Date.now();
         if (now - this.lastBubbleTime < this.bubbleCooldown) return;
-        
+
         const useCapabilities = Math.random() < 0.4;
         const pool = useCapabilities ? SPEECH_BUBBLES['capabilities'] : SPEECH_BUBBLES['random'];
         const message = pool[Math.floor(Math.random() * pool.length)];
-        
+
         this.showBubble(message, 4500);
     }
-    
+
     private showBubble(message: string, duration: number = 3500): void {
         const now = Date.now();
         if (now - this.lastBubbleTime < this.bubbleCooldown) return;
-        
+
         this.lastBubbleTime = now;
         this.currentBubble = { message, duration };
         this.notifyListeners();
-        
+
         setTimeout(() => {
             this.currentBubble = null;
             this.notifyListeners();
         }, duration);
     }
-    
+
     private showStateBubble(): void {
         const stateMessages = SPEECH_BUBBLES[this.state];
         if (!stateMessages || stateMessages.length === 0) return;
-        
+
         if (Math.random() < 0.6) {
             const message = stateMessages[Math.floor(Math.random() * stateMessages.length)];
             this.showBubble(message, 3500);
         }
     }
-    
+
     updateMousePosition(x: number, y: number): void {
         this.mousePosition = { x, y };
-        
+
         if (this.isFollowingMouse) {
             this.followMouse();
         }
     }
-    
+
     private startFollowingMouse(): void {
         if (this.isFollowingMouse) return;
-        
+
         this.isFollowingMouse = true;
         this.state = 'following';
         this.showBubble(SPEECH_BUBBLES.following[Math.floor(Math.random() * SPEECH_BUBBLES.following.length)], 2500);
         this.notifyListeners();
-        
+
         this.followTimeout = setTimeout(() => {
             this.stopFollowingMouse();
         }, 8000 + Math.random() * 7000);
     }
-    
+
     private stopFollowingMouse(): void {
         if (!this.isFollowingMouse) return;
-        
+
         this.isFollowingMouse = false;
         if (this.followTimeout) {
             clearTimeout(this.followTimeout);
@@ -293,29 +294,29 @@ class MascotRoamingService {
         }
         this.setState('idle');
     }
-    
+
     private followMouse(): void {
         if (!this.isFollowingMouse) return;
-        
+
         const targetX = Math.max(10, Math.min(90, this.mousePosition.x));
         const targetY = Math.max(25, Math.min(85, this.mousePosition.y));
-        
+
         const dx = targetX - this.position.x;
         const dy = targetY - this.position.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (distance < 5) {
             this.viewDirection = 'front';
             this.notifyListeners();
             return;
         }
-        
+
         const speed = 0.15;
         const newX = this.position.x + dx * speed;
         const newY = this.position.y + dy * speed;
-        
+
         this.position = { x: newX, y: newY };
-        
+
         if (dx > 2) {
             this.viewDirection = 'right';
         } else if (dx < -2) {
@@ -323,7 +324,7 @@ class MascotRoamingService {
         } else {
             this.viewDirection = 'front';
         }
-        
+
         this.notifyListeners();
     }
 
@@ -375,7 +376,7 @@ class MascotRoamingService {
     private doAction(action: AnimationState, duration: number): void {
         this.setState(action);
         this.showStateBubble();
-        
+
         if (duration > 0) {
             setTimeout(() => {
                 if (this.state === action) {
@@ -394,6 +395,7 @@ class MascotRoamingService {
     }
 
     private moveToRandomPosition(): void {
+        if (this.isManualMoving) return;
         const targetPosition = this.getRandomSafePosition();
         const distance = Math.sqrt(
             Math.pow(targetPosition.x - this.position.x, 2) +
@@ -401,7 +403,7 @@ class MascotRoamingService {
         );
 
         const dx = targetPosition.x - this.position.x;
-        
+
         if (dx > 2) {
             this.viewDirection = 'right';
         } else if (dx < -2) {
@@ -443,7 +445,7 @@ class MascotRoamingService {
 
     setState(state: AnimationState): void {
         this.state = state;
-        
+
         if (state === 'idle') {
             this.viewDirection = 'front';
         }
@@ -461,14 +463,14 @@ class MascotRoamingService {
 
         this.notifyListeners();
     }
-    
+
     getViewDirection(): ViewDirection {
         return this.viewDirection;
     }
 
     getCurrentState(): { position: Position; state: AnimationState; viewDirection: ViewDirection; bubble: SpeechBubble | null } {
-        return { 
-            position: { ...this.position }, 
+        return {
+            position: { ...this.position },
             state: this.state,
             viewDirection: this.viewDirection,
             bubble: this.currentBubble
@@ -498,11 +500,29 @@ class MascotRoamingService {
         setTimeout(() => this.setState('idle'), 3000);
     }
 
+    startManualMove(): void {
+        this.isManualMoving = true;
+        this.state = 'following';
+        this.notifyListeners();
+    }
+
+    setManualPosition(x: number, y: number): void {
+        if (!this.isManualMoving) return;
+        this.position = { x, y };
+        this.notifyListeners();
+    }
+
+    stopManualMove(): void {
+        this.isManualMoving = false;
+        this.state = 'idle';
+        this.notifyListeners();
+    }
+
     triggerCelebration(): void {
         this.lastInteractionTime = Date.now();
         this.happiness = Math.min(100, this.happiness + 12);
         this.mood = Math.min(100, this.mood + 8);
-        
+
         const celebrationActions: AnimationState[] = ['celebrating', 'love', 'dancing'];
         const action = celebrationActions[Math.floor(Math.random() * celebrationActions.length)];
         this.setState(action);
@@ -542,7 +562,7 @@ class MascotRoamingService {
             this.setState('sleeping');
         }, 3000);
     }
-    
+
     onHover(): void {
         this.lastInteractionTime = Date.now();
         if (this.state === 'idle' && Math.random() < 0.5) {

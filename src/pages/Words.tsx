@@ -618,53 +618,45 @@ const Words: React.FC = () => {
   return (
     <div className="words-page">
       <div className="words-header">
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="header-content"
-        >
-          <BookOpen size={48} className="header-icon" />
-          <h1 className="words-title">
-            <span className="gradient-text">Smart Dictionary</span> 📚
-          </h1>
-          <p className="words-subtitle">
-            Learn English words made just for kids! 🌟
-          </p>
-        </motion.div>
+        <h1>
+          <BookOpen size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '12px' }} />
+          Smart Dictionary
+        </h1>
+        <p>Learn English words made just for kids!</p>
 
         <div className="stats-row">
-          <div className="stat-box">
-            <Trophy className="stat-icon" />
+          <div className="stat-box learned">
+            <Trophy className="stat-icon" size={24} />
             <div className="stat-info">
-              <div className="stat-value">{learnedWords.size}</div>
-              <div className="stat-label">Words Learned</div>
+              <span className="stat-value">{learnedWords.size}</span>
+              <span className="stat-label">Learned</span>
             </div>
           </div>
-          <div className="stat-box">
-            <Star className="stat-icon" />
+          <div className="stat-box favorite">
+            <Star className="stat-icon" size={24} />
             <div className="stat-info">
-              <div className="stat-value">{favoriteWords.size}</div>
-              <div className="stat-label">Favorites</div>
+              <span className="stat-value">{favoriteWords.size}</span>
+              <span className="stat-label">Favorites</span>
             </div>
           </div>
-          <div className="stat-box">
-            <Sparkles className="stat-icon" />
+          <div className="stat-box total">
+            <Sparkles className="stat-icon" size={24} />
             <div className="stat-info">
-              <div className="stat-value">{kidsWords.length}</div>
-              <div className="stat-label">Total Words</div>
+              <span className="stat-value">{kidsWords.length}</span>
+              <span className="stat-label">Total</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="search-section">
+      <div className="controls-section">
         <div className="search-wrapper">
           <input
             type="text"
             value={searchWord}
             onChange={(e) => setSearchWord(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Search for any English word... 🔍"
+            placeholder="Search for any word..."
             className="search-input"
             disabled={loading}
           />
@@ -673,41 +665,40 @@ const Words: React.FC = () => {
             className="search-button"
             disabled={loading}
           >
-            {loading ? <div className="spinner" /> : '🔍 Search'}
+            {loading ? <div className="spinner" /> : <Sparkles size={18} />}
+            <span>Search</span>
           </button>
         </div>
-      </div>
 
-      <div className="filters-section">
-        <div className="filter-group">
-          <label className="filter-label">Level:</label>
-          <div className="filter-buttons">
-            {['all', 'beginner', 'intermediate', 'advanced'].map((level) => (
-              <button
-                key={level}
-                onClick={() => setSelectedLevel(level as any)}
-                className={`filter-btn ${selectedLevel === level ? 'active' : ''} ${level !== 'all' ? getLevelColor(level) : ''}`}
-              >
-                {level === 'all' ? '🌟 All' :
-                  level === 'beginner' ? '🟢 2-3. Sınıf' :
-                    level === 'intermediate' ? '🟡 4. Sınıf' : '🔴 5. Sınıf'}
-              </button>
-            ))}
+        <div className="filters-wrapper">
+          <div className="filter-item">
+            <label htmlFor="level-filter">Level:</label>
+            <select
+              id="level-filter"
+              value={selectedLevel}
+              onChange={(e) => setSelectedLevel(e.target.value as any)}
+              className="filter-select"
+            >
+              <option value="all">All Levels</option>
+              <option value="beginner">Beginner (2-3. Grade)</option>
+              <option value="intermediate">Intermediate (4. Grade)</option>
+              <option value="advanced">Advanced (5. Grade)</option>
+            </select>
           </div>
-        </div>
 
-        <div className="filter-group">
-          <label className="filter-label">Category:</label>
-          <div className="filter-buttons category-scroll">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`filter-btn category ${selectedCategory === cat ? 'active' : ''}`}
-              >
-                {cat === 'all' ? '📚 All' : cat}
-              </button>
-            ))}
+          <div className="filter-item">
+            <label htmlFor="category-filter">Category:</label>
+            <select
+              id="category-filter"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="filter-select"
+            >
+              <option value="all">All Categories</option>
+              {categories.slice(1).map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -832,20 +823,22 @@ const Words: React.FC = () => {
 
                   <div className="card-actions">
                     <button
-                      className={`icon-btn ${learnedWords.has(word.word) ? 'active' : ''}`}
+                      className={`icon-btn check ${learnedWords.has(word.word) ? 'active' : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleLearned(word.word);
                       }}
+                      title="Mark as learned"
                     >
                       ✓
                     </button>
                     <button
-                      className={`icon-btn ${favoriteWords.has(word.word) ? 'active' : ''}`}
+                      className={`icon-btn favorite ${favoriteWords.has(word.word) ? 'active' : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleFavorite(word.word);
                       }}
+                      title="Add to favorites"
                     >
                       ★
                     </button>

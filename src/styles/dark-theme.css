@@ -6,14 +6,25 @@
 /* Root Variables Override */
 [data-theme="dark"] {
     --bg-soft: #1a1a2e;
-    --bg-navy-soft: #16213e;
+    --bg-navy-soft: #24243e;
+    --bg-card: #1e293b;
     --text-dark: #f8fafc;
     --text-medium: #cbd5e1;
     --text-light: #94a3b8;
     --primary-navy: #818cf8;
     --primary-navy-pale: #4f46e5;
 
-    --gradient-hero: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    /* Background Elements */
+    --bg-element-1: rgba(129, 140, 248, 0.15);
+    --bg-element-2: rgba(239, 68, 68, 0.15);
+    --bg-element-3: rgba(16, 185, 129, 0.15);
+
+    /* Glassmorphism */
+    --glass-bg: rgba(30, 41, 59, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    --gradient-hero: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 100%);
     --gradient-navy: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
 
     --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);

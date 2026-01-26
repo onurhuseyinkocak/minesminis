@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Heart, BookOpen, Award, Globe, Users, Sparkles, Quote, Languages } from 'lucide-react';
+import { Star, Heart, BookOpen, Award, Globe, Users, Sparkles, Quote, Languages, Zap } from 'lucide-react';
 
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
 import ataturkMilitary from '@assets/ataturk_images/ataturk-military.png';
@@ -43,12 +43,12 @@ const content = {
       { year: '1934', title: 'Receives the Name "Atatürk"', desc: 'Our Parliament granted him the surname "Atatürk" meaning "Father of the Turks" - a name no one else can ever use. He truly is our father.' }
     ],
     reforms: [
-      { title: 'Education Reform', desc: 'Made education free and mandatory for all our children, including girls', icon: '📚' },
-      { title: 'Alphabet Reform', desc: 'Changed our alphabet from Arabic script to Latin letters in 1928', icon: '🔤' },
-      { title: "Women's Rights", desc: 'Gave our women the right to vote and be elected - before many European countries!', icon: '👩' },
-      { title: 'Modern Laws', desc: 'Created new civil, criminal, and commercial laws for our modern nation', icon: '⚖️' },
-      { title: 'Secular State', desc: 'Separated religion from government to ensure freedom for all our citizens', icon: '🏛️' },
-      { title: 'Economic Growth', desc: 'Built railways, factories, and banks to develop our economy', icon: '🏭' }
+      { title: 'Education Reform', desc: 'Made education free and mandatory for all our children, including girls', icon: <BookOpen size={24} /> },
+      { title: 'Alphabet Reform', desc: 'Changed our alphabet from Arabic script to Latin letters in 1928', icon: <Languages size={24} /> },
+      { title: "Women's Rights", desc: 'Gave our women the right to vote and be elected - before many European countries!', icon: <Users size={24} /> },
+      { title: 'Modern Laws', desc: 'Created new civil, criminal, and commercial laws for our modern nation', icon: <Award size={24} /> },
+      { title: 'Secular State', desc: 'Separated religion from government to ensure freedom for all our citizens', icon: <Globe size={24} /> },
+      { title: 'Economic Growth', desc: 'Built railways, factories, and banks to develop our economy', icon: <Zap size={24} /> }
     ],
     quotes: [
       { text: "Peace at home, peace in the world.", turkish: "Yurtta sulh, cihanda sulh." },
@@ -82,12 +82,12 @@ const content = {
       { year: '1934', title: '"Atatürk" Soyadını Alıyor', desc: 'Meclisimiz ona "Türklerin Babası" anlamına gelen "Atatürk" soyadını verdi - başka kimsenin kullanamayacağı bir isim. O gerçekten babamızdır.' }
     ],
     reforms: [
-      { title: 'Eğitim Reformu', desc: 'Kız çocuklarımız dahil tüm çocuklarımız için eğitimi ücretsiz ve zorunlu hale getirdi', icon: '📚' },
-      { title: 'Alfabe Reformu', desc: '1928\'de alfabemizi Arap harflerinden Latin harflerine değiştirdi', icon: '🔤' },
-      { title: 'Kadın Hakları', desc: 'Kadınlarımıza birçok Avrupa ülkesinden önce seçme ve seçilme hakkı verdi!', icon: '👩' },
-      { title: 'Modern Yasalar', desc: 'Modern ulusumuz için yeni medeni, ceza ve ticaret kanunları oluşturdu', icon: '⚖️' },
-      { title: 'Laik Devlet', desc: 'Tüm vatandaşlarımıza özgürlük sağlamak için dini devletten ayırdı', icon: '🏛️' },
-      { title: 'Ekonomik Büyüme', desc: 'Ekonomimizi geliştirmek için demiryolları, fabrikalar ve bankalar kurdu', icon: '🏭' }
+      { title: 'Eğitim Reformu', desc: 'Kız çocuklarımız dahil tüm çocuklarımız için eğitimi ücretsiz ve zorunlu hale getirdi', icon: <BookOpen size={24} /> },
+      { title: 'Alfabe Reformu', desc: '1928\'de alfabemizi Arap harflerinden Latin harflerine değiştirdi', icon: <Languages size={24} /> },
+      { title: 'Kadın Hakları', desc: 'Kadınlarımıza birçok Avrupa ülkesinden önce seçme ve seçilme hakkı verdi!', icon: <Users size={24} /> },
+      { title: 'Modern Yasalar', desc: 'Modern ulusumuz için yeni medeni, ceza ve ticaret kanunları oluşturdu', icon: <Award size={24} /> },
+      { title: 'Laik Devlet', desc: 'Tüm vatandaşlarımıza özgürlük sağlamak için dini devletten ayırdı', icon: <Globe size={24} /> },
+      { title: 'Ekonomik Büyüme', desc: 'Ekonomimizi geliştirmek için demiryolları, fabrikalar ve bankalar kurdu', icon: <Zap size={24} /> }
     ],
     quotes: [
       { text: "Yurtta sulh, cihanda sulh.", turkish: "Peace at home, peace in the world." },
@@ -102,28 +102,28 @@ const timelineIcons = [Star, Award, Heart, Users, Globe, Sparkles];
 
 function Ataturk() {
   const [lang, setLang] = useState<Language>('en');
-  
+
   const t = content[lang];
 
   return (
     <div className="ataturk-page">
       {/* Language Toggle */}
-      <motion.div 
+      <motion.div
         className="language-toggle"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
         <Languages size={20} />
-        <button 
-          className={lang === 'en' ? 'active' : ''} 
+        <button
+          className={lang === 'en' ? 'active' : ''}
           onClick={() => setLang('en')}
         >
           English
         </button>
         <span className="divider">|</span>
-        <button 
-          className={lang === 'tr' ? 'active' : ''} 
+        <button
+          className={lang === 'tr' ? 'active' : ''}
           onClick={() => setLang('tr')}
         >
           Türkçe
@@ -131,84 +131,79 @@ function Ataturk() {
       </motion.div>
 
       {/* Hero Section */}
-      <motion.section 
+      <motion.section
         className="hero-section"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <div className="hero-overlay"></div>
-        <div className="hero-images">
-          <motion.img 
-            src={ataturkSilhouette} 
-            alt="Atatürk Silhouette" 
-            className="hero-silhouette ataturk-photo"
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 0.15, x: 0 }}
-            transition={{ delay: 0.5, duration: 1 }}
-          />
-          <motion.img 
-            src={ataturkFormal} 
-            alt="Atatürk" 
-            className="hero-portrait ataturk-photo"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 1 }}
-          />
-        </div>
-        <div className="hero-content">
-          <motion.div
-            className="hero-badge"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Star size={16} fill="currentColor" />
-            <span>{t.badge}</span>
-          </motion.div>
-          
-          <motion.h1
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            Mustafa Kemal
-            <span className="highlight">Atatürk</span>
-          </motion.h1>
-          
-          <motion.p
-            className="hero-subtitle"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            1881 - 1938
-          </motion.p>
-          
-          <motion.p
-            className="hero-desc"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.9 }}
-          >
-            {t.heroDesc}
-          </motion.p>
-
-          <motion.img 
-            src={ataturkSignature} 
-            alt="Atatürk İmza" 
-            className="hero-signature"
+        <div className="hero-background">
+          <div className="hero-overlay"></div>
+          <motion.img
+            src={ataturkSilhouette}
+            alt="Atatürk Silhouette"
+            className="hero-silhouette"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.8 }}
-            transition={{ delay: 1.2 }}
+            animate={{ opacity: 0.05 }}
+            transition={{ delay: 0.5, duration: 2 }}
           />
+          <div className="hero-pattern"></div>
         </div>
-        
-        <div className="hero-pattern"></div>
+
+        <div className="hero-container">
+          <div className="hero-grid">
+            <motion.div
+              className="hero-image-col"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8, duration: 1 }}
+            >
+              <div className="portrait-wrapper">
+                <img
+                  src={ataturkFormal}
+                  alt="Atatürk"
+                  className="hero-portrait ataturk-photo"
+                />
+                <div className="portrait-glow"></div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="hero-content-col"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8, duration: 1 }}
+            >
+              <div className="hero-badge">
+                <Star size={16} fill="currentColor" />
+                <span>{t.badge}</span>
+              </div>
+
+              <h1>
+                Mustafa Kemal
+                <span className="highlight">Atatürk</span>
+              </h1>
+
+              <p className="hero-subtitle">1881 - 1938</p>
+
+              <div className="hero-desc-box">
+                <p className="hero-desc">{t.heroDesc}</p>
+                <motion.img
+                  src={ataturkSignature}
+                  alt="Atatürk İmza"
+                  className="hero-signature"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.5 }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </motion.section>
 
       {/* Photo Gallery Strip */}
-      <motion.section 
+      <motion.section
         className="gallery-strip"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -216,8 +211,8 @@ function Ataturk() {
       >
         <div className="gallery-scroll">
           {[ataturkMilitary, ataturkSoldier, ataturkCommander, ataturkSaluting, ataturkPortrait2, ataturkHorse].map((img, i) => (
-            <motion.div 
-              key={i} 
+            <motion.div
+              key={i}
               className="gallery-item"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -232,7 +227,7 @@ function Ataturk() {
       </motion.section>
 
       {/* Introduction */}
-      <motion.section 
+      <motion.section
         className="intro-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -240,9 +235,9 @@ function Ataturk() {
         transition={{ duration: 0.8 }}
       >
         <div className="intro-content">
-          <motion.img 
-            src={ataturkVector} 
-            alt="Atatürk" 
+          <motion.img
+            src={ataturkVector}
+            alt="Atatürk"
             className="intro-image ataturk-photo"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -260,7 +255,7 @@ function Ataturk() {
       </motion.section>
 
       {/* Famous Quotes */}
-      <motion.section 
+      <motion.section
         className="quotes-section"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -268,9 +263,9 @@ function Ataturk() {
         transition={{ duration: 0.8 }}
       >
         <div className="quotes-header">
-          <motion.img 
-            src={ataturkFormal} 
-            alt="Atatürk" 
+          <motion.img
+            src={ataturkFormal}
+            alt="Atatürk"
             className="quotes-portrait ataturk-photo"
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -301,7 +296,7 @@ function Ataturk() {
       </motion.section>
 
       {/* Timeline with Images */}
-      <motion.section 
+      <motion.section
         className="timeline-section"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -312,19 +307,19 @@ function Ataturk() {
           <Sparkles size={28} />
           {t.timelineTitle}
         </h2>
-        
+
         <div className="timeline-images">
-          <motion.img 
-            src={ataturkHorse} 
-            alt="Atatürk on Horse" 
+          <motion.img
+            src={ataturkHorse}
+            alt="Atatürk on Horse"
             className="timeline-img-left ataturk-photo"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           />
-          <motion.img 
-            src={ataturkRepublic} 
-            alt="Atatürk Republic" 
+          <motion.img
+            src={ataturkRepublic}
+            alt="Atatürk Republic"
             className="timeline-img-right ataturk-photo"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -360,7 +355,7 @@ function Ataturk() {
       </motion.section>
 
       {/* Reforms with Flag */}
-      <motion.section 
+      <motion.section
         className="reforms-section"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -368,9 +363,9 @@ function Ataturk() {
         transition={{ duration: 0.8 }}
       >
         <div className="reforms-header">
-          <motion.img 
-            src={ataturkFlag} 
-            alt="Turkish Flag with Atatürk" 
+          <motion.img
+            src={ataturkFlag}
+            alt="Turkish Flag with Atatürk"
             className="reforms-flag ataturk-photo"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -382,7 +377,7 @@ function Ataturk() {
           </h2>
           <p className="reforms-intro">{t.reformsIntro}</p>
         </div>
-        
+
         <div className="reforms-grid">
           {t.reforms.map((reform, index) => (
             <motion.div
@@ -403,7 +398,7 @@ function Ataturk() {
       </motion.section>
 
       {/* Legacy with Image */}
-      <motion.section 
+      <motion.section
         className="legacy-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -411,9 +406,9 @@ function Ataturk() {
         transition={{ duration: 0.8 }}
       >
         <div className="legacy-content">
-          <motion.img 
-            src={ataturkSaluting} 
-            alt="Atatürk Saluting" 
+          <motion.img
+            src={ataturkSaluting}
+            alt="Atatürk Saluting"
             className="legacy-image ataturk-photo"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -435,16 +430,16 @@ function Ataturk() {
       </motion.section>
 
       {/* Footer Banner */}
-      <motion.section 
+      <motion.section
         className="footer-banner"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
       >
-        <motion.img 
-          src={ataturkSilhouette} 
-          alt="Atatürk" 
+        <motion.img
+          src={ataturkSilhouette}
+          alt="Atatürk"
           className="footer-silhouette"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 0.1 }}
@@ -459,10 +454,11 @@ function Ataturk() {
       <style>{`
         .ataturk-page {
           min-height: 100vh;
-          background: #0a0a0f;
+          background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
           color: white;
           position: relative;
           overflow-x: hidden;
+          padding: 2.5rem 1.5rem;
         }
 
         /* Language Toggle */
@@ -537,112 +533,156 @@ function Ataturk() {
         .mimi-hearts span:nth-child(2) { animation-delay: 0.2s; }
         .mimi-hearts span:nth-child(3) { animation-delay: 0.4s; }
 
-        /* Hero Section */
+        /* Hero Section Redesign */
         .hero-section {
           position: relative;
-          min-height: 100vh;
+          min-height: 85vh;
           display: flex;
           align-items: center;
-          justify-content: center;
-          text-align: center;
-          padding: 6rem 2rem;
-          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+          background: #0a0a0f;
           overflow: hidden;
+          padding: 4rem 2rem;
+          margin: 0 auto 3rem;
+          max-width: 1400px;
+          border-radius: 40px;
+          border: 1px solid rgba(255,255,255,0.05);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .hero-background {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
         }
 
         .hero-overlay {
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle at 30% 50%, rgba(220, 38, 38, 0.2) 0%, transparent 50%),
-                      radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-        }
-
-        .hero-images {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
+          background: 
+            radial-gradient(circle at 20% 30%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+          z-index: 2;
         }
 
         .hero-silhouette {
           position: absolute;
-          left: -5%;
+          left: 5%;
           bottom: 0;
           height: 90%;
           object-fit: contain;
+          opacity: 0.05;
+          z-index: 1;
+        }
+
+        .hero-container {
+          width: 100%;
+          max-width: 1400px;
+          margin: 0 auto;
+          position: relative;
+          z-index: 10;
+        }
+
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.2fr;
+          gap: 4rem;
+          align-items: center;
+        }
+
+        .hero-image-col {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+        }
+
+        .portrait-wrapper {
+          position: relative;
+          width: 100%;
+          max-width: 500px;
         }
 
         .hero-portrait {
-          position: absolute;
-          right: 5%;
-          bottom: 5%;
-          height: 80%;
-          max-width: 350px;
+          width: 100%;
+          height: auto;
           object-fit: contain;
-          filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));
-        }
-
-        .hero-pattern {
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-          opacity: 0.5;
-        }
-
-        .hero-content {
+          filter: drop-shadow(0 0 40px rgba(0,0,0,0.8));
           position: relative;
           z-index: 2;
-          max-width: 700px;
+        }
+
+        .portrait-glow {
+          position: absolute;
+          inset: 10%;
+          background: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
+          filter: blur(40px);
+          z-index: 1;
+        }
+
+        .hero-content-col {
+          text-align: left;
         }
 
         .hero-badge {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           background: linear-gradient(135deg, #dc2626, #991b1b);
-          padding: 12px 28px;
+          padding: 10px 24px;
           border-radius: 100px;
-          font-weight: 600;
-          font-size: 1rem;
+          font-weight: 700;
+          font-size: 0.9rem;
           margin-bottom: 2rem;
-          box-shadow: 0 4px 30px rgba(220, 38, 38, 0.5);
+          box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
 
-        .hero-section h1 {
-          font-size: 4.5rem;
-          font-weight: 800;
-          line-height: 1.1;
-          margin-bottom: 1rem;
-          text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        .hero-content-col h1 {
+          font-size: clamp(3rem, 5vw, 5.5rem);
+          font-weight: 900;
+          line-height: 1;
+          margin-bottom: 1.5rem;
+          color: white;
         }
 
-        .hero-section h1 .highlight {
+        .hero-content-col .highlight {
           display: block;
-          background: linear-gradient(90deg, #fbbf24, #f59e0b, #dc2626);
+          background: linear-gradient(90deg, #fbbf24, #f59e0b, #ffffff);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+          filter: drop-shadow(0 2px 10px rgba(0,0,0,0.3));
         }
 
         .hero-subtitle {
-          font-size: 1.75rem;
-          color: rgba(255,255,255,0.7);
-          margin-bottom: 1.5rem;
-          font-weight: 500;
-          letter-spacing: 4px;
+          font-size: 2.2rem;
+          font-weight: 700;
+          color: rgba(255,255,255,0.9);
+          letter-spacing: 8px;
+          margin-bottom: 2.5rem;
+          border-left: 4px solid #dc2626;
+          padding-left: 20px;
+        }
+
+        .hero-desc-box {
+          position: relative;
+          max-width: 650px;
         }
 
         .hero-desc {
-          font-size: 1.2rem;
-          color: rgba(255,255,255,0.8);
+          font-size: 1.25rem;
           line-height: 1.8;
-          max-width: 600px;
-          margin: 0 auto 2rem;
+          color: rgba(255,255,255,0.85);
+          margin-bottom: 2.5rem;
+          font-weight: 400;
         }
 
         .hero-signature {
-          max-width: 250px;
+          max-width: 300px;
           filter: brightness(0) invert(1);
-          opacity: 0.6;
+          opacity: 0.8;
+          display: block;
         }
 
         /* Gallery Strip */
@@ -650,6 +690,10 @@ function Ataturk() {
           background: linear-gradient(180deg, #0f3460 0%, #1a1a2e 100%);
           padding: 3rem 0;
           overflow: hidden;
+          margin: 0 auto 3rem;
+          max-width: 1400px;
+          border-radius: 40px;
+          border: 1px solid rgba(255,255,255,0.05);
         }
 
         .gallery-scroll {
@@ -690,6 +734,10 @@ function Ataturk() {
         .intro-section {
           padding: 6rem 2rem;
           background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+          margin: 0 auto 3rem;
+          max-width: 1400px;
+          border-radius: 40px;
+          border: 1px solid rgba(255,255,255,0.05);
         }
 
         .intro-content {
@@ -741,6 +789,10 @@ function Ataturk() {
         .quotes-section {
           padding: 6rem 2rem;
           background: #1a1a2e;
+          margin: 0 auto 3rem;
+          max-width: 1400px;
+          border-radius: 40px;
+          border: 1px solid rgba(255,255,255,0.05);
         }
 
         .quotes-header {
@@ -818,6 +870,10 @@ function Ataturk() {
           padding: 6rem 2rem;
           background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
           position: relative;
+          margin: 0 auto 3rem;
+          max-width: 1400px;
+          border-radius: 40px;
+          border: 1px solid rgba(255,255,255,0.05);
         }
 
         .timeline-section h2 {
@@ -928,6 +984,10 @@ function Ataturk() {
         .reforms-section {
           padding: 6rem 2rem;
           background: #1a1a2e;
+          margin: 0 auto 3rem;
+          max-width: 1400px;
+          border-radius: 40px;
+          border: 1px solid rgba(255,255,255,0.05);
         }
 
         .reforms-header {
@@ -1000,6 +1060,10 @@ function Ataturk() {
         .legacy-section {
           padding: 6rem 2rem;
           background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
+          margin: 0 auto 3rem;
+          max-width: 1400px;
+          border-radius: 40px;
+          border: 1px solid rgba(255,255,255,0.05);
         }
 
         .legacy-content {
@@ -1097,13 +1161,48 @@ function Ataturk() {
 
         /* Responsive */
         @media (max-width: 1024px) {
+          .hero-grid {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 2rem;
+          }
+
+          .hero-content-col {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .hero-image-col {
+            order: -1;
+            margin-bottom: 2rem;
+          }
+
+          .portrait-wrapper {
+            max-width: 320px;
+          }
+
+          .hero-subtitle {
+            border-left: none;
+            padding-left: 0;
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+          }
+
+          .hero-desc {
+            font-size: 1.15rem;
+          }
+
           .intro-content, .legacy-content {
             grid-template-columns: 1fr;
             text-align: center;
+            gap: 2rem;
           }
           
           .intro-image, .legacy-image {
-            margin: 0 auto 2rem;
+            margin: 0 auto;
+            max-width: 250px;
           }
           
           .intro-text, .legacy-text {
@@ -1115,16 +1214,9 @@ function Ataturk() {
             margin-left: auto;
             margin-right: auto;
           }
-          
-          .hero-portrait {
-            right: 50%;
-            transform: translateX(50%);
-            opacity: 0.3;
-          }
-          
-          .hero-silhouette { display: none; }
-          
+
           .timeline-images { display: none; }
+          .hero-silhouette { display: none; }
         }
 
         @media (max-width: 768px) {
@@ -1136,9 +1228,8 @@ function Ataturk() {
             padding: 8px 16px;
           }
           
-          .hero-section h1 { font-size: 2.5rem; }
-          .hero-subtitle { font-size: 1.25rem; letter-spacing: 2px; }
-          .hero-desc { font-size: 1rem; }
+          .hero-content-col h1 { font-size: 2.8rem; }
+          .hero-subtitle { font-size: 1.3rem; }
           
           .gallery-item img { height: 150px; }
           

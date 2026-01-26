@@ -1,0 +1,209 @@
+.global-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background-color: var(--bg-cream);
+}
+
+.bg-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFFAF0 100%);
+    opacity: 0.9;
+}
+
+.bg-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 50%, transparent 0%, rgba(255, 159, 28, 0.03) 100%),
+        var(--bg-pattern-dots);
+    background-size: 100% 100%, 32px 32px;
+    pointer-events: none;
+}
+
+[data-theme="dark"] .bg-overlay {
+    background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+.bg-elements {
+    position: absolute;
+    inset: 0;
+}
+
+/* Floating Elements Base */
+.floating-element {
+    position: absolute;
+    font-size: 2rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
+    opacity: 0.6;
+    user-select: none;
+}
+
+[data-theme="dark"] .floating-element {
+    opacity: 0.3;
+}
+
+/* Floating Shapes Base */
+.floating-shape {
+    position: absolute;
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    opacity: 0.1;
+    filter: blur(40px);
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    opacity: 0.2;
+}
+
+/* Specific Positions & Animations */
+.cloud-1 {
+    top: 10%;
+    left: 5%;
+    animation: floatCloud 20s linear infinite;
+    font-size: 4rem;
+}
+
+.cloud-2 {
+    top: 40%;
+    right: 10%;
+    animation: floatCloud 25s linear infinite reverse;
+    font-size: 3rem;
+}
+
+.cloud-3 {
+    bottom: 20%;
+    left: 15%;
+    animation: floatCloud 18s linear infinite;
+    font-size: 3.5rem;
+}
+
+.star-3 {
+    bottom: 15%;
+    right: 25%;
+    animation: twinkle 6s ease-in-out infinite 2s;
+}
+
+.shape-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--bg-element-1);
+    top: -10%;
+    left: -10%;
+    animation: blobFloat 25s ease-in-out infinite;
+}
+
+.shape-2 {
+    width: 350px;
+    height: 350px;
+    background: var(--bg-element-2);
+    bottom: -5%;
+    right: -5%;
+    animation: blobFloat 20s ease-in-out infinite reverse;
+}
+
+.shape-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--bg-element-3);
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: blobFloat 30s ease-in-out infinite;
+}
+
+.bubble-1 {
+    width: 40px;
+    height: 40px;
+    top: 30%;
+    left: 40%;
+    animation: rise 15s linear infinite;
+}
+
+.bubble-2 {
+    width: 60px;
+    height: 60px;
+    top: 70%;
+    right: 35%;
+    animation: rise 20s linear infinite 2s;
+}
+
+.bubble-3 {
+    width: 30px;
+    height: 30px;
+    bottom: 10%;
+    left: 60%;
+    animation: rise 12s linear infinite 1s;
+}
+
+/* Animations */
+@keyframes floatCloud {
+    from {
+        transform: translateX(-100px) translateY(0);
+    }
+
+    to {
+        transform: translateX(100vw) translateY(10px);
+    }
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(15deg);
+        opacity: 0.9;
+    }
+}
+
+@keyframes blobFloat {
+
+    0%,
+    100% {
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    33% {
+        border-radius: 60% 40% 30% 70% / 50% 60% 40% 60%;
+        transform: translate(20px, 40px) rotate(5deg);
+    }
+
+    66% {
+        border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+        transform: translate(-20px, 20px) rotate(-5deg);
+    }
+}
+
+@keyframes rise {
+    0% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.2;
+    }
+
+    90% {
+        opacity: 0.2;
+    }
+
+    100% {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}

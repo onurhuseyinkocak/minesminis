@@ -16,40 +16,35 @@ const Home: React.FC = () => {
       icon: GamepadIcon,
       path: '/games',
       colorClass: 'purple',
-      description: 'Play fun learning games',
-      emoji: '🎮'
+      description: 'Play fun learning games'
     },
     {
       title: 'Worksheets',
       icon: FileText,
       path: '/worksheets',
       colorClass: 'teal',
-      description: 'Practice with worksheets',
-      emoji: '📝'
+      description: 'Practice with worksheets'
     },
     {
       title: 'Dictionary',
       icon: BookOpen,
       path: '/words',
       colorClass: 'yellow',
-      description: 'Learn new words',
-      emoji: '📚'
+      description: 'Learn new words'
     },
     {
       title: 'Videos',
       icon: Video,
       path: '/videos',
       colorClass: 'coral',
-      description: 'Watch educational videos',
-      emoji: '🎬'
+      description: 'Watch educational videos'
     },
     {
       title: 'My Progress',
       icon: Trophy,
       path: '/profile',
       colorClass: 'pink',
-      description: 'Track your achievements',
-      emoji: '🏆'
+      description: 'Track your achievements'
     },
   ];
 
@@ -72,7 +67,7 @@ const Home: React.FC = () => {
             </div>
             <h1 className="welcome-title">
               {user ? (
-                <>{getGreeting()}, {userProfile?.display_name || 'Friend'}! ✨</>
+                <>{getGreeting()}, {userProfile?.display_name || 'Friend'}! <Sparkles size={24} style={{ display: 'inline', verticalAlign: 'middle' }} /></>
               ) : (
                 <>Welcome to MinesMinis!</>
               )}
@@ -80,6 +75,19 @@ const Home: React.FC = () => {
             <p className="welcome-subtitle">
               {user ? 'Ready to learn something amazing today?' : 'Start your English learning adventure today!'}
             </p>
+            <div className="welcome-cta">
+              {user ? (
+                <Link to="/games" className="cta-button primary">
+                  <Zap size={18} />
+                  <span>Go to Games</span>
+                </Link>
+              ) : (
+                <Link to="/login" className="cta-button auth-trigger">
+                  <Rocket size={18} />
+                  <span>Join the Adventure</span>
+                </Link>
+              )}
+            </div>
           </div>
 
           {user && (
@@ -177,7 +185,7 @@ const Home: React.FC = () => {
               +100 Points
             </span>
           </div>
-          <p className="challenge-text">Complete 3 games and earn bonus points! Keep your streak alive! 🔥</p>
+          <p className="challenge-text">Complete 3 games and earn bonus points! Keep your streak alive! <Flame size={20} style={{ display: 'inline', verticalAlign: 'middle', color: '#ff4d4d' }} /></p>
           <div className="challenge-progress">
             <div className="progress-bar">
               <div className="progress-fill" style={{ width: '33%' }}></div>

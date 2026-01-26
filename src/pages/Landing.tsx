@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
-import { Sparkles, BookOpen, GamepadIcon, Video, Users, Trophy } from 'lucide-react';
+import { Sparkles, Rocket, LogIn, PartyPopper } from 'lucide-react';
 import './Landing.css';
 
 const Landing: React.FC = () => {
@@ -52,64 +52,12 @@ const Landing: React.FC = () => {
 
   return (
     <div className="landing-page">
-      <div className="landing-hero">
-        <motion.div
-          className="hero-content"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            className="mascot"
-            animate={{
-              y: [0, -10, 0],
-              rotate: [0, 5, -5, 0],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <Sparkles size={80} className="mascot-icon" />
-          </motion.div>
-
-          <h1 className="hero-title">
-            Welcome to <span className="gradient-text">MinesMinis</span>
-          </h1>
-          <p className="hero-subtitle">
-            The most fun and engaging English learning platform for children!
-          </p>
-
-          <div className="feature-badges">
-            <motion.div className="feature-badge" whileHover={{ scale: 1.05 }}>
-              <BookOpen size={24} />
-              <span>Interactive Lessons</span>
-            </motion.div>
-            <motion.div className="feature-badge" whileHover={{ scale: 1.05 }}>
-              <GamepadIcon size={24} />
-              <span>Fun Games</span>
-            </motion.div>
-            <motion.div className="feature-badge" whileHover={{ scale: 1.05 }}>
-              <Video size={24} />
-              <span>Educational Videos</span>
-            </motion.div>
-            <motion.div className="feature-badge" whileHover={{ scale: 1.05 }}>
-              <Users size={24} />
-              <span>Social Learning</span>
-            </motion.div>
-            <motion.div className="feature-badge" whileHover={{ scale: 1.05 }}>
-              <Trophy size={24} />
-              <span>Earn Rewards</span>
-            </motion.div>
-          </div>
-        </motion.div>
-
+      <div className="landing-hero solo-auth">
         <motion.div
           className="auth-card"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="auth-tabs">
             <button
@@ -119,7 +67,7 @@ const Landing: React.FC = () => {
                 setError('');
               }}
             >
-              Welcome Back! 👋
+              <LogIn size={18} style={{ marginRight: '8px' }} /> Welcome Back!
             </button>
             <button
               className={`auth-tab ${!isLogin ? 'active' : ''}`}
@@ -128,7 +76,7 @@ const Landing: React.FC = () => {
                 setError('');
               }}
             >
-              Join the Fun! 🎉
+              <PartyPopper size={18} style={{ marginRight: '8px' }} /> Join the Fun!
             </button>
           </div>
 
@@ -193,9 +141,9 @@ const Landing: React.FC = () => {
               {loading ? (
                 <span className="spinner" />
               ) : isLogin ? (
-                'Let\'s Go! 🚀'
+                <><Rocket size={18} style={{ marginRight: '8px' }} /> Let's Go!</>
               ) : (
-                'Start Adventure! ✨'
+                <><Sparkles size={18} style={{ marginRight: '8px' }} /> Start Adventure!</>
               )}
             </motion.button>
 

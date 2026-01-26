@@ -2,6 +2,20 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import toast from 'react-hot-toast';
+import {
+  Printer,
+  Heart,
+  GraduationCap,
+  Library,
+  BookOpen,
+  PenTool,
+  Languages,
+  Music,
+  Layout,
+  ExternalLink
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useGamification } from '../contexts/GamificationContext';
 import './Worksheets.css';
 
 type Worksheet = {
@@ -23,7 +37,7 @@ const worksheetsData: Worksheet[] = [
     description: 'Learn animal names with pictures',
     category: 'Vocabulary',
     grade: '2',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=300&h=200&fit=crop',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=300&h=200&fit=crop',
     externalUrl: 'https://www.englishwsheets.com/animals.html',
     source: 'EnglishWsheets'
   },
@@ -33,7 +47,7 @@ const worksheetsData: Worksheet[] = [
     description: 'Match colors and shapes in English',
     category: 'Vocabulary',
     grade: '2',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=300&h=200&fit=crop',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop',
     externalUrl: 'https://learnenglishkids.britishcouncil.org/print-make/worksheets/colours',
     source: 'British Council'
   },
@@ -43,7 +57,7 @@ const worksheetsData: Worksheet[] = [
     description: 'Vocabulary about food items',
     category: 'Vocabulary',
     grade: '2',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=300&h=200&fit=crop',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop',
     externalUrl: 'https://www.englishwsheets.com/food-drinks.html',
     source: 'EnglishWsheets'
   },
@@ -53,7 +67,7 @@ const worksheetsData: Worksheet[] = [
     description: 'Learn body parts vocabulary',
     category: 'Vocabulary',
     grade: '2',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=300&h=200&fit=crop',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=200&fit=crop',
     externalUrl: 'https://games4esl.com/esl-worksheets/body-parts-worksheets/',
     source: 'Games4ESL'
   },
@@ -386,13 +400,13 @@ const worksheetsData: Worksheet[] = [
 ];
 
 const categories = ['All', 'Vocabulary', 'Grammar', 'Reading', 'Writing', 'Phonics'];
-const grades = ['All', '2', '3', '4'];
 
 function Worksheets() {
   const [activeGrade, setActiveGrade] = useState('All');
   const [activeCategory, setActiveCategory] = useState('All');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const { user } = useAuth();
+  const { trackActivity, addXP } = useGamification();
 
   useEffect(() => {
     if (user) {
@@ -472,14 +486,35 @@ function Worksheets() {
     return gradeMatch && categoryMatch;
   });
 
+  const handleWorksheetAction = async (worksheet: Worksheet) => {
+    try {
+      if (user) {
+        await trackActivity('worksheet_completed', { worksheetId: worksheet.id, title: worksheet.title });
+        await addXP(15, 'worksheet_completed');
+        toast.success(`You earned 15 XP for practicing! 🌟`);
+      }
+    } catch (err) {
+      console.error('Error tracking activity:', err);
+    }
+  };
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Vocabulary': return '📖';
-      case 'Grammar': return '📝';
-      case 'Reading': return '📕';
-      case 'Writing': return '✍️';
-      case 'Phonics': return '🔤';
-      default: return '📚';
+      case 'Vocabulary': return <BookOpen size={20} />;
+      case 'Grammar': return <Languages size={20} />;
+      case 'Reading': return <Library size={20} />;
+      case 'Writing': return <PenTool size={20} />;
+      case 'Phonics': return <Music size={20} />;
+      default: return <Layout size={20} />;
+    }
+  }
+
+  const getGradeIcon = (grade: string) => {
+    switch (grade) {
+      case '2': return <GraduationCap size={20} />;
+      case '3': return <GraduationCap size={20} />;
+      case '4': return <GraduationCap size={20} />;
+      default: return <GraduationCap size={20} />;
     }
   };
 
@@ -494,53 +529,47 @@ function Worksheets() {
     }
   };
 
-  const getGradeEmoji = (grade: string) => {
-    switch (grade) {
-      case '2': return '🌟';
-      case '3': return '⭐';
-      case '4': return '🏆';
-      default: return '📚';
-    }
-  };
 
   return (
     <div className="worksheets-page">
       <div className="worksheets-header">
-        <h1>📚 Fun Sheets</h1>
+        <h1>
+          <Library size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '12px' }} />
+          Fun Sheets
+        </h1>
         <p>Download and practice with fun worksheets!</p>
       </div>
 
-      <div className="worksheets-filters">
-        <div className="filter-group">
-          <h3>Grade Level</h3>
-          <div className="filter-buttons">
-            {grades.map(grade => (
-              <button
-                key={grade}
-                className={`filter-btn ${activeGrade === grade ? 'active' : ''}`}
-                onClick={() => setActiveGrade(grade)}
-              >
-                {grade === 'All' ? '📚 All Grades' : `${getGradeEmoji(grade)} Grade ${grade}`}
-              </button>
-            ))}
+      <div className="controls-section">
+        <div className="filters-wrapper">
+          <div className="filter-item">
+            <label htmlFor="grade-filter">Level:</label>
+            <select
+              id="grade-filter"
+              className="filter-select"
+              value={activeGrade}
+              onChange={(e) => setActiveGrade(e.target.value)}
+            >
+              <option value="All">All Grades</option>
+              <option value="2">2. Grade (Beginner)</option>
+              <option value="3">3. Grade (Intermediate)</option>
+              <option value="4">4. Grade (Advanced)</option>
+            </select>
           </div>
-        </div>
 
-        <div className="filter-group">
-          <h3>Category</h3>
-          <div className="filter-buttons category-filters">
-            {categories.map(category => (
-              <button
-                key={category}
-                className={`filter-btn category-btn ${activeCategory === category ? 'active' : ''}`}
-                onClick={() => setActiveCategory(category)}
-                style={{
-                  '--category-color': getCategoryColor(category)
-                } as React.CSSProperties}
-              >
-                {getCategoryIcon(category)} {category}
-              </button>
-            ))}
+          <div className="filter-item">
+            <label htmlFor="category-filter">Subject:</label>
+            <select
+              id="category-filter"
+              className="filter-select"
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value)}
+            >
+              <option value="All">All Subjects</option>
+              {categories.slice(1).map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -550,65 +579,83 @@ function Worksheets() {
       </div>
 
       <div className="worksheets-grid">
-        {filteredWorksheets.map(worksheet => (
-          <div key={worksheet.id} className="worksheet-card">
-            {user && (
-              <button
-                className={`favorite-btn ${favorites.has(worksheet.id) ? 'favorited' : ''}`}
-                onClick={() => handleToggleFavorite(worksheet)}
-                title={favorites.has(worksheet.id) ? 'Remove from favorites' : 'Add to favorites'}
-              >
-                {favorites.has(worksheet.id) ? '❤️' : '🤍'}
-              </button>
-            )}
+        <AnimatePresence mode="popLayout">
+          {filteredWorksheets.map(worksheet => (
+            <motion.div
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              key={worksheet.id}
+              className="worksheet-card"
+            >
+              <div className="worksheet-thumbnail">
+                <img
+                  src={worksheet.thumbnailUrl}
+                  alt={worksheet.title}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect fill="%236366f1" width="300" height="200"/><text x="150" y="100" text-anchor="middle" fill="white" font-size="48">📄</text></svg>';
+                  }}
+                />
+                <div className="worksheet-overlay">
+                  <span
+                    className="category-badge"
+                    style={{ backgroundColor: getCategoryColor(worksheet.category) }}
+                  >
+                    {getCategoryIcon(worksheet.category)}
+                    <span>{worksheet.category}</span>
+                  </span>
+                </div>
 
-            <div className="worksheet-thumbnail">
-              <img 
-                src={worksheet.thumbnailUrl} 
-                alt={worksheet.title}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect fill="%236366f1" width="300" height="200"/><text x="150" y="100" text-anchor="middle" fill="white" font-size="48">📄</text></svg>';
-                }}
-              />
-              <div className="worksheet-overlay">
-                <span 
-                  className="category-badge"
-                  style={{ backgroundColor: getCategoryColor(worksheet.category) }}
+                {user && (
+                  <button
+                    className={`favorite-btn ${favorites.has(worksheet.id) ? 'favorited' : ''}`}
+                    onClick={() => handleToggleFavorite(worksheet)}
+                    title={favorites.has(worksheet.id) ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    <Heart size={20} fill={favorites.has(worksheet.id) ? "currentColor" : "none"} />
+                  </button>
+                )}
+              </div>
+
+              <div className="worksheet-info">
+                <div className="worksheet-grade">
+                  {getGradeIcon(worksheet.grade)}
+                  <span>Grade {worksheet.grade}</span>
+                </div>
+                <h3>{worksheet.title}</h3>
+                <p>{worksheet.description}</p>
+                <div className="worksheet-source">
+                  <Library size={12} />
+                  <span>{worksheet.source}</span>
+                </div>
+              </div>
+
+              <div className="worksheet-actions">
+                <a
+                  href={worksheet.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="action-btn open-btn"
+                  onClick={() => handleWorksheetAction(worksheet)}
                 >
-                  {getCategoryIcon(worksheet.category)} {worksheet.category}
-                </span>
+                  <ExternalLink size={18} />
+                  <span>Open</span>
+                </a>
+                <button
+                  className="action-btn print-btn"
+                  onClick={() => {
+                    handleWorksheetAction(worksheet);
+                    window.open(worksheet.externalUrl, '_blank');
+                  }}
+                >
+                  <Printer size={18} />
+                  <span>Print</span>
+                </button>
               </div>
-            </div>
-
-            <div className="worksheet-info">
-              <div className="worksheet-grade">
-                {getGradeEmoji(worksheet.grade)} Grade {worksheet.grade}
-              </div>
-              <h3>{worksheet.title}</h3>
-              <p>{worksheet.description}</p>
-              <div className="worksheet-source">
-                Source: {worksheet.source}
-              </div>
-            </div>
-
-            <div className="worksheet-actions">
-              <a
-                href={worksheet.externalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="action-btn open-btn"
-              >
-                🔗 Open
-              </a>
-              <button
-                className="action-btn print-btn"
-                onClick={() => window.open(worksheet.externalUrl, '_blank')}
-              >
-                🖨️ Print
-              </button>
-            </div>
-          </div>
-        ))}
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       {filteredWorksheets.length === 0 && (

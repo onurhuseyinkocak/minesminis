@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
+import { Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
+import './Favorites.css';
 
 interface Favorite {
   id: string;
@@ -14,6 +17,7 @@ interface Favorite {
 
 const Favorites: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<'all' | 'game' | 'word' | 'worksheet' | 'video'>('all');
@@ -78,7 +82,7 @@ const Favorites: React.FC = () => {
     : favorites.filter(fav => fav.item_type === activeFilter);
 
   const getTypeEmoji = (type: string) => {
-    switch(type) {
+    switch (type) {
       case 'game': return '🎮';
       case 'word': return '📖';
       case 'worksheet': return '📝';
@@ -87,14 +91,24 @@ const Favorites: React.FC = () => {
     }
   };
 
+  const handleNavigate = (type: string) => {
+    switch (type) {
+      case 'game': navigate('/games'); break;
+      case 'word': navigate('/words'); break;
+      case 'worksheet': navigate('/worksheets'); break;
+      case 'video': navigate('/videos'); break;
+      default: navigate('/games');
+    }
+  };
+
   return (
     <div className="favorites-page">
       <div className="favorites-header">
         <h1>
-          <span className="header-icon">❤️</span>
-          My Favorites
+          <Heart size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '12px' }} />
+          My Treasures
         </h1>
-        <p>Items you love, all in one place</p>
+        <p>Your favorite games, words, and more!</p>
       </div>
 
       <div className="filter-tabs">
@@ -130,48 +144,53 @@ const Favorites: React.FC = () => {
         </button>
       </div>
 
-      {loading ? (
-        <div className="favorites-loading">
-          <div className="spinner-large"></div>
-          <p>Loading your favorites...</p>
-        </div>
-      ) : filteredFavorites.length === 0 ? (
-        <div className="favorites-empty">
-          <div className="empty-state-icon">💝</div>
-          <h2>No Favorites Yet</h2>
-          <p>Start adding your favorite games, words, worksheets, and videos!</p>
-          <p className="hint">Click the ❤️ icon on any item to add it here</p>
-        </div>
-      ) : (
-        <div className="favorites-grid">
-          {filteredFavorites.map((favorite) => (
-            <div key={favorite.id} className="favorite-card">
-              <div className="favorite-type-badge">
-                {getTypeEmoji(favorite.item_type)}
-              </div>
-              {favorite.item_image && (
-                <div className="favorite-image">
-                  <img src={favorite.item_image} alt={favorite.item_name} />
+      {
+        loading ? (
+          <div className="favorites-loading">
+            <div className="spinner-large"></div>
+            <p>Loading your favorites...</p>
+          </div>
+        ) : filteredFavorites.length === 0 ? (
+          <div className="favorites-empty">
+            <div className="empty-state-icon">💝</div>
+            <h2>No Favorites Yet</h2>
+            <p>Start adding your favorite games, words, worksheets, and videos!</p>
+            <p className="hint">Click the ❤️ icon on any item to add it here</p>
+          </div>
+        ) : (
+          <div className="favorites-grid">
+            {filteredFavorites.map((favorite) => (
+              <div key={favorite.id} className="favorite-card" onClick={() => handleNavigate(favorite.item_type)} style={{ cursor: 'pointer' }}>
+                <div className="favorite-type-badge">
+                  {getTypeEmoji(favorite.item_type)}
                 </div>
-              )}
-              <div className="favorite-content">
-                <h3>{favorite.item_name}</h3>
-                <span className="favorite-type-label">
-                  {favorite.item_type.charAt(0).toUpperCase() + favorite.item_type.slice(1)}
-                </span>
+                {favorite.item_image && (
+                  <div className="favorite-image">
+                    <img src={favorite.item_image} alt={favorite.item_name} />
+                  </div>
+                )}
+                <div className="favorite-content">
+                  <h3>{favorite.item_name}</h3>
+                  <span className="favorite-type-label">
+                    {favorite.item_type.charAt(0).toUpperCase() + favorite.item_type.slice(1)}
+                  </span>
+                </div>
+                <button
+                  className="remove-favorite-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFavorite(favorite.id);
+                  }}
+                  title="Remove from favorites"
+                >
+                  💔
+                </button>
               </div>
-              <button
-                className="remove-favorite-btn"
-                onClick={() => removeFavorite(favorite.id)}
-                title="Remove from favorites"
-              >
-                💔
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )
+      }
+    </div >
   );
 };
 
