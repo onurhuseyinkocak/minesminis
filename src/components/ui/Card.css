@@ -1,61 +1,85 @@
+/* ============================================================
+   CARD — MinesMinis Premium Design System
+   White bg, subtle shadow, generous padding, hover lift
+   ============================================================ */
+
 .mm-card {
-  background-color: var(--white, #FFFFFF);
-  border-radius: var(--radius-md, 12px);
-  transition: all 200ms ease-out;
+  background: #FFFFFF;
+  border-radius: 16px;
   position: relative;
+  transition:
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Padding */
-.mm-card--padding-none {
-  padding: 0;
-}
+/* ── Padding ──────────────────────────────────────────────── */
 
-.mm-card--padding-sm {
-  padding: var(--space-sm, 8px);
-}
+.mm-card--padding-none { padding: 0; }
+.mm-card--padding-sm   { padding: 12px; }
+.mm-card--padding-md   { padding: 20px; }
+.mm-card--padding-lg   { padding: 28px; }
+.mm-card--padding-xl   { padding: 40px; }
 
-.mm-card--padding-md {
-  padding: var(--space-md, 16px);
-}
+/* ── Variants ─────────────────────────────────────────────── */
 
-.mm-card--padding-lg {
-  padding: var(--space-lg, 24px);
-}
-
-.mm-card--padding-xl {
-  padding: var(--space-xl, 32px);
-}
-
-/* Variants */
 .mm-card--default {
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(26, 26, 46, 0.08));
+  box-shadow:
+    0 2px 8px rgba(26, 26, 46, 0.06),
+    0 0 0 1px rgba(26, 26, 46, 0.03);
 }
 
 .mm-card--elevated {
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(26, 26, 46, 0.12));
+  box-shadow:
+    0 4px 16px rgba(26, 26, 46, 0.10),
+    0 1px 4px rgba(26, 26, 46, 0.04),
+    0 0 0 1px rgba(26, 26, 46, 0.02);
 }
 
 .mm-card--outlined {
   box-shadow: none;
-  border: 1px solid var(--cloud, #D4D4E0);
+  border: 1.5px solid #EEEEF5;
 }
 
 .mm-card--interactive {
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(26, 26, 46, 0.08));
+  box-shadow:
+    0 2px 8px rgba(26, 26, 46, 0.06),
+    0 0 0 1px rgba(26, 26, 46, 0.03);
   cursor: pointer;
 }
 
 .mm-card--interactive:hover {
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(26, 26, 46, 0.12));
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 28px rgba(26, 26, 46, 0.12),
+    0 2px 8px rgba(26, 26, 46, 0.04),
+    0 0 0 1px rgba(232, 163, 23, 0.12);
 }
 
 .mm-card--interactive:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-md, 0 4px 12px rgba(26, 26, 46, 0.10));
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 12px rgba(26, 26, 46, 0.10),
+    0 0 0 1px rgba(232, 163, 23, 0.12);
 }
 
 .mm-card--interactive:focus-visible {
-  outline: 3px solid var(--primary, #E8A317);
+  outline: 3px solid rgba(232, 163, 23, 0.4);
   outline-offset: 2px;
+}
+
+/* ── Responsive padding ──────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .mm-card--padding-lg { padding: 20px; }
+  .mm-card--padding-xl { padding: 28px; }
+}
+
+/* ── Dark Mode ────────────────────────────────────────────── */
+
+[data-theme="dark"] .mm-card {
+  background: var(--bg-card, #2D2D44);
+}
+
+[data-theme="dark"] .mm-card--outlined {
+  border-color: rgba(255, 255, 255, 0.08);
 }

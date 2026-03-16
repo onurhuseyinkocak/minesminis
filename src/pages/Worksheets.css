@@ -1,48 +1,48 @@
-/* ═══════════════════════════════════════════
+/* ============================================
    Worksheets Page — Printable Fun
-   Design tokens: Honey Amber palette
-   ═══════════════════════════════════════════ */
+   MinesMinis Premium Design System
+   ============================================ */
 
 .worksheets-page {
   min-height: 100vh;
-  background: var(--gradient-warm, linear-gradient(135deg, #FFF8F0 0%, #FFF3E0 50%, #F8F8FC 100%));
-  padding-bottom: var(--space-2xl);
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 50%, #FDECC8 100%);
+  padding-bottom: 64px;
 }
 
-/* ── Controls section ── */
+/* ── Controls Section ── */
 .controls-section {
-  max-width: 1200px;
-  margin: var(--space-md) auto 0;
-  padding: 0 var(--space-lg);
+  max-width: 1280px;
+  margin: 16px auto 0;
+  padding: 0 24px;
 }
 
 .filters-wrapper {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .filter-item {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 8px;
 }
 
 .filter-item label {
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--charcoal, #2D2D44);
+  color: #2D2D44;
   white-space: nowrap;
 }
 
 .filter-select {
-  padding: 8px 32px 8px 14px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--cloud, #D4D4E0);
-  background: white;
-  color: var(--charcoal, #2D2D44);
+  padding: 10px 36px 10px 16px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(212, 212, 224, 0.7);
+  background: #FFFFFF;
+  color: #2D2D44;
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   cursor: pointer;
@@ -50,56 +50,56 @@
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C5C7A' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  transition: border-color var(--transition-fast, 150ms) ease;
+  background-position: right 14px center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 44px;
 }
 
 .filter-select:hover,
 .filter-select:focus {
-  border-color: var(--primary, #E8A317);
+  border-color: #E8A317;
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.08);
 }
 
-/* ── Worksheets count ── */
+/* ── Worksheets Count ── */
 .worksheets-count {
-  max-width: 1200px;
-  margin: var(--space-md) auto var(--space-sm);
-  padding: 0 var(--space-lg);
+  max-width: 1280px;
+  margin: 16px auto 12px;
+  padding: 0 24px;
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
 }
 
 .worksheets-count strong {
-  color: var(--primary, #E8A317);
+  color: #E8A317;
   font-weight: 700;
 }
 
-/* ── Worksheets grid ── */
+/* ── Worksheets Grid ── */
 .worksheets-grid {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 24px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--space-lg);
+  gap: 24px;
 }
 
-/* ── Worksheet card ── */
+/* ── Worksheet Card ── */
 .worksheet-card {
-  background: white;
-  border-radius: var(--radius-lg);
+  background: #FFFFFF;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
-  border: 1px solid var(--cloud, #D4D4E0);
-  transition: all var(--transition-base, 250ms) ease;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.05);
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
 .worksheet-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,0.12));
-  border-color: rgba(232, 163, 23, 0.25);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 36px rgba(26, 26, 46, 0.1);
 }
 
 /* ── Thumbnail ── */
@@ -113,58 +113,60 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-base, 250ms) ease;
+  transition: transform 0.4s ease;
 }
 
 .worksheet-card:hover .worksheet-thumbnail img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .worksheet-overlay {
   position: absolute;
-  bottom: var(--space-sm);
-  left: var(--space-sm);
+  bottom: 10px;
+  left: 10px;
 }
 
 .category-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 14px;
-  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  border-radius: 9999px;
   color: white;
   font-family: 'Nunito', sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .category-badge span {
   line-height: 1;
 }
 
-/* ── Favorite button ── */
+/* ── Favorite Button ── */
 .favorite-btn {
   position: absolute;
-  top: var(--space-sm);
-  right: var(--space-sm);
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.9);
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--stone, #9393A8);
-  transition: all var(--transition-fast, 150ms) ease;
-  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.08));
+  color: #9393A8;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .favorite-btn:hover {
-  transform: scale(1.15);
+  transform: scale(1.12);
   color: #f43f5e;
 }
 
@@ -173,20 +175,20 @@
   background: #FFF0F3;
 }
 
-/* ── Worksheet info ── */
+/* ── Worksheet Info ── */
 .worksheet-info {
-  padding: var(--space-md);
+  padding: 16px 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 6px;
 }
 
 .worksheet-grade {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--primary, #E8A317);
+  color: #C4880F;
   font-family: 'Nunito', sans-serif;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -196,17 +198,17 @@
   font-family: 'Nunito', sans-serif;
   font-size: 1.0625rem;
   font-weight: 700;
-  color: var(--ink, #1A1A2E);
+  color: #1A1A2E;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .worksheet-info p {
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -216,19 +218,19 @@
 .worksheet-source {
   display: flex;
   align-items: center;
-  gap: 4px;
-  color: var(--stone, #9393A8);
+  gap: 5px;
+  color: #9393A8;
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
   margin-top: auto;
-  padding-top: var(--space-xs);
+  padding-top: 4px;
 }
 
-/* ── Worksheet actions ── */
+/* ── Worksheet Actions ── */
 .worksheet-actions {
   display: flex;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md) var(--space-md);
+  gap: 10px;
+  padding: 10px 18px 18px;
 }
 
 .worksheet-actions .action-btn {
@@ -237,107 +239,108 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px;
-  border-radius: var(--radius-md);
+  padding: 12px;
+  border-radius: 12px;
   border: none;
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all var(--transition-fast, 150ms) ease;
+  transition: all 0.2s ease;
   text-decoration: none;
+  min-height: 44px;
 }
 
 .worksheet-actions .open-btn {
-  background: linear-gradient(135deg, var(--primary, #E8A317), #F5C842);
+  background: linear-gradient(135deg, #E8A317, #F5CC5C);
   color: white;
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.3);
+  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.3);
 }
 
 .worksheet-actions .open-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(232, 163, 23, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(232, 163, 23, 0.4);
 }
 
 .worksheet-actions .print-btn {
-  background: var(--mist, #EEEEF5);
-  color: var(--charcoal, #2D2D44);
+  background: #F8F8FC;
+  color: #2D2D44;
 }
 
 .worksheet-actions .print-btn:hover {
-  background: var(--cloud, #D4D4E0);
+  background: #EEEEF5;
 }
 
-/* ── Empty state ── */
+/* ── Empty State ── */
 .worksheets-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-2xl);
+  padding: 80px 24px;
   text-align: center;
 }
 
 .worksheets-empty .empty-icon {
   font-size: 3rem;
-  margin-bottom: var(--space-md);
+  margin-bottom: 16px;
 }
 
 .worksheets-empty h3 {
   font-family: 'Nunito', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
-  margin-bottom: var(--space-xs);
+  color: #1A1A2E;
+  margin: 0 0 8px;
 }
 
 .worksheets-empty p {
   font-family: 'Inter', sans-serif;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
+  margin: 0;
 }
 
-/* ── More resources ── */
+/* ── More Resources ── */
 .worksheets-resources {
-  max-width: 1200px;
-  margin: var(--space-2xl) auto 0;
-  padding: 0 var(--space-lg);
+  max-width: 1280px;
+  margin: 48px auto 0;
+  padding: 0 24px;
 }
 
 .worksheets-resources h3 {
   font-family: 'Nunito', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
-  margin-bottom: var(--space-lg);
+  color: #1A1A2E;
+  margin: 0 0 24px;
   text-align: center;
 }
 
 .resources-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-md);
+  gap: 16px;
 }
 
 .resource-link {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  background: white;
-  border: 1.5px solid var(--cloud, #D4D4E0);
+  gap: 10px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #FFFFFF;
   text-decoration: none;
-  color: var(--charcoal, #2D2D44);
+  color: #2D2D44;
   font-family: 'Nunito', sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
-  transition: all var(--transition-fast, 150ms) ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 4px rgba(26, 26, 46, 0.04);
 }
 
 .resource-link:hover {
-  border-color: var(--primary, #E8A317);
-  background: rgba(232, 163, 23, 0.04);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(26, 26, 46, 0.08);
+  color: #E8A317;
 }
 
 .resource-icon {
@@ -348,14 +351,14 @@
 @media (max-width: 768px) {
   .worksheets-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: var(--space-md);
-    padding: 0 var(--space-md);
+    gap: 16px;
+    padding: 0 16px;
   }
 
   .controls-section,
   .worksheets-count,
   .worksheets-resources {
-    padding: 0 var(--space-md);
+    padding: 0 16px;
   }
 
   .resources-grid {

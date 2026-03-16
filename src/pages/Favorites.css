@@ -1,19 +1,18 @@
-/* ═══════════════════════════════════════════
+/* ============================================
    Favorites Page — My Treasures
-   Design tokens: Honey Amber palette
-   ═══════════════════════════════════════════ */
+   MinesMinis Premium Design System
+   ============================================ */
 
 .favorites-page {
   min-height: 100vh;
-  background: var(--gradient-warm, linear-gradient(135deg, #FFF8F0 0%, #FFF3E0 50%, #F8F8FC 100%));
-  padding: var(--space-lg);
-  padding-bottom: var(--space-2xl);
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 50%, #FDECC8 100%);
+  padding: 32px 24px 64px;
 }
 
 /* ── Header ── */
 .favorites-header {
   max-width: 1000px;
-  margin: 0 auto var(--space-xl);
+  margin: 0 auto 32px;
   text-align: center;
 }
 
@@ -21,23 +20,24 @@
   font-family: 'Nunito', sans-serif;
   font-size: 2rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
-  margin: 0 0 var(--space-xs);
+  color: #1A1A2E;
+  margin: 0 0 6px;
 }
 
 .favorites-header p {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
   margin: 0;
+  line-height: 1.5;
 }
 
-/* ── Filter tabs ── */
+/* ── Filter Tabs ── */
 .filter-tabs {
   max-width: 1000px;
-  margin: 0 auto var(--space-xl);
+  margin: 0 auto 32px;
   display: flex;
-  gap: var(--space-sm);
+  gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -46,144 +46,147 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 18px;
-  border-radius: var(--radius-full);
-  border: 1.5px solid var(--cloud, #D4D4E0);
-  background: white;
-  color: var(--slate, #5C5C7A);
+  padding: 10px 20px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(212, 212, 224, 0.6);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  color: #5C5C7A;
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast, 150ms) ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
+  min-height: 44px;
 }
 
 .filter-tab:hover {
-  border-color: var(--primary, #E8A317);
-  color: var(--primary, #E8A317);
-  background: rgba(232, 163, 23, 0.04);
+  border-color: #E8A317;
+  color: #C4880F;
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .filter-tab.active {
-  background: var(--primary, #E8A317);
-  color: white;
-  border-color: var(--primary, #E8A317);
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.3);
+  background: linear-gradient(135deg, #E8A317, #F5CC5C);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.35);
+  font-weight: 700;
 }
 
-/* ── Loading state ── */
+/* ── Loading State ── */
 .favorites-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2xl);
-  gap: var(--space-md);
+  padding: 80px 24px;
+  gap: 16px;
 }
 
 .favorites-loading .spinner-large {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--cloud, #D4D4E0);
-  border-top-color: var(--primary, #E8A317);
-  border-radius: var(--radius-full);
-  animation: spin 0.7s linear infinite;
+  border: 3px solid #EEEEF5;
+  border-top-color: #E8A317;
+  border-radius: 50%;
+  animation: favSpin 0.7s linear infinite;
 }
 
 .favorites-loading p {
   font-family: 'Inter', sans-serif;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
 }
 
-@keyframes spin {
+@keyframes favSpin {
   to { transform: rotate(360deg); }
 }
 
-/* ── Empty state ── */
+/* ── Empty State ── */
 .favorites-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2xl) var(--space-lg);
+  padding: 80px 24px;
   text-align: center;
-  min-height: 320px;
+  min-height: 360px;
 }
 
 .empty-state-icon {
   font-size: 4rem;
-  margin-bottom: var(--space-md);
+  margin-bottom: 16px;
+  line-height: 1;
 }
 
 .favorites-empty h2 {
   font-family: 'Nunito', sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
-  margin: 0 0 var(--space-sm);
+  color: #1A1A2E;
+  margin: 0 0 10px;
 }
 
 .favorites-empty p {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
-  color: var(--slate, #5C5C7A);
-  margin: 0 0 var(--space-xs);
+  color: #5C5C7A;
+  margin: 0 0 6px;
   max-width: 400px;
+  line-height: 1.55;
 }
 
 .favorites-empty .hint {
   font-size: 0.875rem;
-  color: var(--stone, #9393A8);
+  color: #9393A8;
 }
 
-/* ── Favorites grid ── */
+/* ── Favorites Grid ── */
 .favorites-grid {
   max-width: 1000px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-lg);
+  gap: 24px;
 }
 
-/* ── Favorite card ── */
+/* ── Favorite Card ── */
 .favorite-card {
   position: relative;
-  background: white;
-  border-radius: var(--radius-lg);
+  background: #FFFFFF;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
-  border: 1px solid var(--cloud, #D4D4E0);
-  transition: all var(--transition-base, 250ms) ease;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.05);
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
 .favorite-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,0.12));
-  border-color: rgba(232, 163, 23, 0.25);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 36px rgba(26, 26, 46, 0.1);
 }
 
-/* ── Type badge ── */
+/* ── Type Badge ── */
 .favorite-type-badge {
   position: absolute;
-  top: var(--space-sm);
-  left: var(--space-sm);
+  top: 10px;
+  left: 10px;
   z-index: 5;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.125rem;
-  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.08));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* ── Favorite image ── */
+/* ── Favorite Image ── */
 .favorite-image {
   aspect-ratio: 16 / 10;
   overflow: hidden;
@@ -193,50 +196,50 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-base, 250ms) ease;
+  transition: transform 0.4s ease;
 }
 
 .favorite-card:hover .favorite-image img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
-/* ── Favorite content ── */
+/* ── Favorite Content ── */
 .favorite-content {
-  padding: var(--space-md);
+  padding: 16px 18px 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 4px;
 }
 
 .favorite-content h3 {
   font-family: 'Nunito', sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--ink, #1A1A2E);
+  color: #1A1A2E;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .favorite-type-label {
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--stone, #9393A8);
+  color: #9393A8;
   text-transform: capitalize;
 }
 
-/* ── Remove button ── */
+/* ── Remove Button ── */
 .remove-favorite-btn {
   position: absolute;
-  top: var(--space-sm);
-  right: var(--space-sm);
+  top: 10px;
+  right: 10px;
   z-index: 5;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   cursor: pointer;
   font-size: 0.875rem;
@@ -244,8 +247,10 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: all var(--transition-fast, 150ms) ease;
-  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.08));
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .favorite-card:hover .remove-favorite-btn {
@@ -253,19 +258,19 @@
 }
 
 .remove-favorite-btn:hover {
-  transform: scale(1.15);
+  transform: scale(1.12);
   background: #FFF0F0;
 }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .favorites-page {
-    padding: var(--space-md);
+    padding: 24px 16px 64px;
   }
 
   .favorites-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--space-md);
+    gap: 16px;
   }
 
   .filter-tabs {
@@ -273,8 +278,9 @@
   }
 
   .filter-tab {
-    padding: 6px 14px;
+    padding: 8px 14px;
     font-size: 0.8125rem;
+    min-height: 40px;
   }
 
   .remove-favorite-btn {

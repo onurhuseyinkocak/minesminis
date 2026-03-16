@@ -1,10 +1,9 @@
-.listening-challenge {
-  --lc-primary: var(--primary, #E8A317);
-  --lc-secondary: var(--secondary, #1A6B5A);
-  --lc-success: var(--mimi-green, #4CAF50);
-  --lc-bg: var(--bg-card, #ffffff);
-  --lc-text: var(--text-primary, #1a1a2e);
+/* ============================================================
+   LISTENING CHALLENGE — MinesMinis Premium Game
+   Big emoji options, play button, replay
+   ============================================================ */
 
+.listening-challenge {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -20,11 +19,14 @@
 }
 
 .listening-challenge__title {
+  font-family: 'Nunito', sans-serif;
   font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--lc-secondary);
+  font-weight: 800;
+  color: #1A6B5A;
   margin: 0;
 }
+
+/* ── Speaker card ─────────────────────────────────────────── */
 
 .listening-challenge__speaker {
   display: flex;
@@ -35,34 +37,41 @@
 }
 
 .listening-challenge__instruction {
-  font-size: 1.15rem;
-  color: var(--lc-text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2D2D44;
   margin: 0;
 }
 
 .listening-challenge__play-btn {
   min-width: 200px;
   min-height: 72px;
-  font-size: 1.35rem !important;
+  font-size: 1.3rem !important;
 }
+
+/* ── Feedback ─────────────────────────────────────────────── */
 
 .listening-challenge__feedback {
   text-align: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  border-radius: 14px;
 }
 
 .listening-challenge__feedback--correct {
-  background: rgba(76, 175, 80, 0.12);
-  color: var(--lc-success);
+  background: rgba(76, 175, 80, 0.10);
+  color: #2E7D32;
 }
 
 .listening-challenge__feedback--wrong {
-  background: rgba(232, 163, 23, 0.12);
-  color: var(--lc-primary);
+  background: rgba(232, 163, 23, 0.10);
+  color: #C4880F;
 }
+
+/* ── Options grid ─────────────────────────────────────────── */
 
 .listening-challenge__options {
   display: grid;
@@ -77,70 +86,76 @@
   gap: 0.75rem;
   padding: 1.5rem 1rem;
   min-height: 120px;
-  border: 3px solid rgba(26, 107, 90, 0.2);
+  border: 2.5px solid #EEEEF5;
   border-radius: 20px;
-  background: var(--lc-bg);
+  background: #FFFFFF;
   cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.05);
 }
 
 .listening-challenge__option:hover:not(:disabled) {
-  border-color: var(--lc-secondary);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: #2A9D8F;
+  box-shadow: 0 6px 20px rgba(26, 26, 46, 0.10);
   transform: translateY(-3px);
 }
 
 .listening-challenge__option:focus-visible {
-  outline: 3px solid var(--lc-primary);
+  outline: 3px solid rgba(232, 163, 23, 0.5);
   outline-offset: 2px;
 }
 
-.listening-challenge__option:disabled {
-  cursor: default;
-}
+.listening-challenge__option:disabled { cursor: default; }
 
 .listening-challenge__option--correct {
-  border-color: var(--lc-success);
-  background: rgba(76, 175, 80, 0.1);
-  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+  border-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.06);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
 }
 
 .listening-challenge__option--wrong {
-  border-color: var(--lc-primary);
-  background: rgba(232, 163, 23, 0.08);
+  border-color: #E8A317;
+  background: rgba(232, 163, 23, 0.05);
   animation: lc-shake 0.4s ease;
 }
 
 @keyframes lc-shake {
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-4px); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
 }
 
 .listening-challenge__option-emoji {
   font-size: 3.5rem;
   line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.06));
 }
 
 .listening-challenge__option-label {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--lc-text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2D2D44;
 }
+
+/* ── Prompt to listen ─────────────────────────────────────── */
 
 .listening-challenge__prompt-listen {
   text-align: center;
-  font-size: 1.1rem;
-  color: rgba(26, 26, 46, 0.5);
-  font-weight: 500;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  color: #9393A8;
+  font-weight: 600;
   margin: 0;
 }
 
-/* Results */
-.listening-challenge__results {
-  text-align: center;
-}
+/* ── Results ──────────────────────────────────────────────── */
+
+.listening-challenge__results { text-align: center; }
 
 .listening-challenge__results-content {
   display: flex;
@@ -149,41 +164,27 @@
   gap: 1rem;
 }
 
-.listening-challenge__results-icon {
-  color: var(--lc-primary);
-}
+.listening-challenge__results-icon { color: #E8A317; }
 
 .listening-challenge__results-title {
+  font-family: 'Nunito', sans-serif;
   font-size: 2rem;
-  font-weight: 700;
-  color: var(--lc-secondary);
+  font-weight: 800;
+  color: #1A6B5A;
   margin: 0;
 }
 
 .listening-challenge__results-score {
-  font-size: 1.25rem;
-  color: var(--lc-text);
+  font-size: 1.15rem;
+  color: #2D2D44;
   margin: 0;
 }
 
-/* Smart board: HUGE options */
+/* ── Smart board ──────────────────────────────────────────── */
+
 @media (min-width: 1024px) {
-  .listening-challenge__option {
-    min-height: 160px;
-    padding: 2rem 1.5rem;
-  }
-
-  .listening-challenge__option-emoji {
-    font-size: 5rem;
-  }
-
-  .listening-challenge__option-label {
-    font-size: 1.35rem;
-  }
-
-  .listening-challenge__play-btn {
-    min-width: 260px;
-    min-height: 88px;
-    font-size: 1.5rem !important;
-  }
+  .listening-challenge__option { min-height: 160px; padding: 2rem 1.5rem; }
+  .listening-challenge__option-emoji { font-size: 5rem; }
+  .listening-challenge__option-label { font-size: 1.3rem; }
+  .listening-challenge__play-btn { min-width: 260px; min-height: 88px; font-size: 1.5rem !important; }
 }

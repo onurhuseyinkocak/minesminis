@@ -1,199 +1,247 @@
-/* ============================================
-   XP BAR — Level progress & streak display
-   ============================================ */
+/* ============================================================
+   XPBar.css — Level progress bar & streak display
+   MinesMinis Design System
+   Honey Amber (#E8A317) / Deep Teal (#1A6B5A)
+   ============================================================ */
 
-/* --- Compact Variant --- */
+/* ---- Compact Variant (Navbar) ---- */
 .xp-bar-compact {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs) var(--space-sm);
-    background: var(--glass-bg, rgba(255, 255, 255, 0.08));
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
-    border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(232, 163, 23, 0.06);
+  border: 1px solid rgba(232, 163, 23, 0.1);
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .xp-bar-compact {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .xp-level-badge {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    background: linear-gradient(135deg, var(--primary), #d4911a);
-    padding: 2px var(--space-sm);
-    border-radius: var(--radius-full);
-    box-shadow: 0 2px 8px rgba(232, 163, 23, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
+  padding: 2px 8px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(232, 163, 23, 0.25);
 }
 
 .xp-level-badge .level-icon {
-    font-size: 0.7rem;
-    line-height: 1;
+  font-size: 0.7rem;
+  line-height: 1;
 }
 
 .xp-level-badge .level-num {
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #FFFFFF;
 }
 
 .xp-mini-bar {
-    width: 60px;
-    height: 6px;
-    background: var(--cloud);
-    border-radius: var(--radius-full);
-    overflow: hidden;
-    position: relative;
+  width: 60px;
+  height: 6px;
+  background: rgba(26, 26, 46, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+[data-theme="dark"] .xp-mini-bar {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .xp-mini-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--mimi-green));
-    border-radius: var(--radius-full);
-    transition: width var(--transition-base) ease;
-    min-width: 4px;
+  height: 100%;
+  background: linear-gradient(90deg, #E8A317, #4CAF50);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 4px;
+  box-shadow: 0 0 8px rgba(232, 163, 23, 0.2);
 }
 
 .streak-badge-mini {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--text-main, var(--ink));
-    background: rgba(255, 107, 0, 0.1);
-    padding: 2px var(--space-xs);
-    border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #C4880F;
+  background: rgba(232, 163, 23, 0.08);
+  padding: 2px 6px;
+  border-radius: 999px;
 }
 
-/* --- Full Variant --- */
+[data-theme="dark"] .streak-badge-mini {
+  color: #F5CC5C;
+  background: rgba(232, 163, 23, 0.1);
+}
+
+/* ---- Full Variant ---- */
 .xp-bar-container {
-    background: var(--glass-bg, rgba(255, 255, 255, 0.08));
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
-    border-radius: var(--radius-lg);
-    padding: var(--space-md);
+  background: #FFFFFF;
+  border: 1px solid rgba(232, 163, 23, 0.06);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(26, 26, 46, 0.03), 0 4px 12px rgba(26, 26, 46, 0.02);
+}
+
+[data-theme="dark"] .xp-bar-container {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .xp-bar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .xp-level {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-xs);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
 }
 
-.level-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted, var(--slate));
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.xp-bar-header .level-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5C5C7A;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.level-number {
-    font-size: 1.5rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--primary), #d4911a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+[data-theme="dark"] .xp-bar-header .level-label {
+  color: #9393A8;
+}
+
+.xp-bar-header .level-number {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .xp-info {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    font-size: 0.8rem;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
 }
 
 .xp-current {
-    font-weight: 800;
-    color: var(--primary);
+  font-weight: 800;
+  color: #E8A317;
 }
 
 .xp-divider {
-    color: var(--text-muted, var(--slate));
-    font-weight: 400;
+  color: #9393A8;
+  font-weight: 400;
 }
 
 .xp-needed {
-    font-weight: 600;
-    color: var(--text-muted, var(--slate));
+  font-weight: 600;
+  color: #5C5C7A;
 }
 
-/* Progress bar */
+[data-theme="dark"] .xp-needed {
+  color: #9393A8;
+}
+
+/* ---- Progress Bar ---- */
 .xp-bar {
-    width: 100%;
-    height: 12px;
-    background: var(--cloud);
-    border-radius: var(--radius-full);
-    overflow: hidden;
-    position: relative;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  height: 12px;
+  background: rgba(232, 163, 23, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+[data-theme="dark"] .xp-bar {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .xp-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--mimi-green));
-    border-radius: var(--radius-full);
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    min-width: 8px;
-    box-shadow: 0 0 12px rgba(232, 163, 23, 0.35);
+  height: 100%;
+  background: linear-gradient(90deg, #E8A317, #4CAF50);
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  min-width: 8px;
+  box-shadow: 0 0 12px rgba(232, 163, 23, 0.3);
 }
 
 .xp-bar-shine {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50%;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent);
-    border-radius: var(--radius-full) var(--radius-full) 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent);
+  border-radius: 999px 999px 0 0;
 }
 
-/* Footer area */
+/* ---- Footer ---- */
 .xp-bar-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: var(--space-sm);
-    flex-wrap: wrap;
-    gap: var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .streak-info {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .streak-icon {
-    font-size: 0.9rem;
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 .streak-days {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-main, var(--ink));
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #2D2D44;
+}
+
+[data-theme="dark"] .streak-days {
+  color: #D4D4E0;
 }
 
 .streak-bonus {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--mimi-green);
-    background: rgba(76, 175, 80, 0.1);
-    padding: 2px var(--space-sm);
-    border-radius: var(--radius-full);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #4CAF50;
+  background: rgba(76, 175, 80, 0.08);
+  padding: 2px 8px;
+  border-radius: 999px;
 }
 
 .next-level-info {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--text-muted, var(--slate));
-    margin-left: auto;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9393A8;
+  margin-left: auto;
 }

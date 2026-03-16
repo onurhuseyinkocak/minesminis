@@ -1,9 +1,12 @@
-/* ─── Pricing Page ─────────────────────────────────────────────────────────── */
+/* ============================================================
+   PRICING — MinesMinis Premium Page
+   4-tier pricing cards, monthly/yearly toggle, FAQ accordion
+   ============================================================ */
 
 .pricing-page {
   min-height: 100vh;
   padding: 2rem 1rem 4rem;
-  background: var(--bg-page, #f8f9fa);
+  background: linear-gradient(180deg, #FFF8E7 0%, #F8F8FC 40%);
 }
 
 .pricing-container {
@@ -11,217 +14,242 @@
   margin: 0 auto;
 }
 
-/* ── Hero ──────────────────────────────────────────────────────────────────── */
+/* ── Hero ─────────────────────────────────────────────────── */
 
 .pricing-hero {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .pricing-hero-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 1rem;
-  border-radius: 999px;
-  background: var(--primary-light, #e0f2fe);
-  color: var(--primary, var(--info));
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(232, 163, 23, 0.12);
+  color: #C4880F;
+  font-family: 'Nunito', sans-serif;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 1rem;
 }
 
 .pricing-hero h1 {
+  font-family: 'Nunito', sans-serif;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 800;
-  color: var(--text-primary, #1a1a2e);
+  color: #1A1A2E;
   margin: 0 0 0.75rem;
   line-height: 1.2;
 }
 
 .pricing-hero p {
+  font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
-  color: var(--text-secondary, var(--slate));
+  color: #5C5C7A;
   max-width: 540px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
-/* ── Billing Toggle ───────────────────────────────────────────────────────── */
+/* ── Billing toggle ───────────────────────────────────────── */
 
 .billing-toggle {
   display: flex;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 4px;
   margin-bottom: 2.5rem;
-  background: var(--bg-card, #fff);
-  border-radius: 12px;
-  padding: 0.25rem;
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 4px;
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 2px 8px rgba(26, 26, 46, 0.06),
+    0 0 0 1px rgba(26, 26, 46, 0.03);
 }
 
 .toggle-btn {
   position: relative;
-  padding: 0.625rem 1.5rem;
+  padding: 10px 24px;
   border: none;
   border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   background: transparent;
-  color: var(--text-secondary, var(--slate));
+  color: #5C5C7A;
   transition: all 0.2s ease;
 }
 
 .toggle-btn.active {
-  background: var(--primary, var(--info));
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  background: linear-gradient(135deg, #F5CC5C, #E8A317);
+  color: #1A1A2E;
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.30);
 }
 
 .save-badge {
   display: inline-block;
-  margin-left: 0.5rem;
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 9999px;
   font-size: 0.7rem;
-  font-weight: 700;
-  background: var(--success, var(--success));
-  color: #fff;
+  font-weight: 800;
+  background: #4CAF50;
+  color: #FFFFFF;
 }
 
 .toggle-btn.active .save-badge {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: rgba(26, 26, 46, 0.15);
+  color: #1A1A2E;
 }
 
-/* ── Plan Grid ────────────────────────────────────────────────────────────── */
+/* ── Plan grid ────────────────────────────────────────────── */
 
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
   margin-bottom: 4rem;
 }
 
 @media (min-width: 1024px) {
-  .pricing-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  .pricing-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ── Plan Card ────────────────────────────────────────────────────────────── */
+/* ── Plan card ────────────────────────────────────────────── */
 
 .plan-card {
   position: relative;
-  background: var(--bg-card, #fff);
-  border-radius: 16px;
+  background: #FFFFFF;
+  border-radius: 20px;
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   border: 2px solid transparent;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 2px 8px rgba(26, 26, 46, 0.06),
+    0 0 0 1px rgba(26, 26, 46, 0.03);
 }
 
 .plan-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 12px 32px rgba(26, 26, 46, 0.10),
+    0 0 0 1px rgba(26, 26, 46, 0.03);
 }
 
 .plan-card--highlight {
-  border-color: var(--primary, var(--info));
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+  border-color: #E8A317;
+  box-shadow:
+    0 4px 16px rgba(232, 163, 23, 0.15),
+    0 0 0 2px rgba(232, 163, 23, 0.15);
 }
 
 .plan-card--highlight:hover {
-  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.2);
+  box-shadow:
+    0 12px 36px rgba(232, 163, 23, 0.20),
+    0 0 0 2px rgba(232, 163, 23, 0.20);
 }
 
 .plan-card--current {
-  border-color: var(--success, var(--success));
+  border-color: #4CAF50;
 }
+
+/* ── Plan badge ───────────────────────────────────────────── */
 
 .plan-badge {
   position: absolute;
   top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 0.25rem 1rem;
-  border-radius: 999px;
+  padding: 4px 16px;
+  border-radius: 9999px;
+  font-family: 'Nunito', sans-serif;
   font-size: 0.75rem;
-  font-weight: 700;
-  background: var(--primary, var(--info));
-  color: #fff;
+  font-weight: 800;
+  background: linear-gradient(135deg, #F5CC5C, #E8A317);
+  color: #1A1A2E;
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.25);
 }
+
+/* ── Plan icon ────────────────────────────────────────────── */
 
 .plan-icon {
   width: 56px;
   height: 56px;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
-  background: var(--primary-light, #e0f2fe);
-  color: var(--primary, var(--info));
+  background: #FFF8E7;
+  color: #E8A317;
 }
 
 .plan-card--highlight .plan-icon {
-  background: var(--primary, var(--info));
-  color: #fff;
+  background: linear-gradient(135deg, #F5CC5C, #E8A317);
+  color: #1A1A2E;
+  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.20);
 }
 
 .plan-name {
+  font-family: 'Nunito', sans-serif;
   font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary, #1a1a2e);
+  font-weight: 800;
+  color: #1A1A2E;
   margin: 0 0 0.75rem;
 }
 
-/* ── Price ─────────────────────────────────────────────────────────────────── */
+/* ── Price ────────────────────────────────────────────────── */
 
 .plan-price {
   display: flex;
   align-items: baseline;
-  gap: 0.25rem;
-  margin-bottom: 0.25rem;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 
 .price-amount {
+  font-family: 'Nunito', sans-serif;
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--text-primary, #1a1a2e);
+  color: #1A1A2E;
 }
 
 .price-period {
   font-size: 0.9rem;
-  color: var(--text-secondary, var(--slate));
+  color: #9393A8;
 }
 
 .plan-per-month {
-  font-size: 0.8rem;
-  color: var(--text-secondary, var(--slate));
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #9393A8;
   margin-bottom: 0.5rem;
 }
 
 .plan-savings {
   display: inline-block;
-  margin-left: 0.375rem;
-  padding: 0.1rem 0.4rem;
-  border-radius: 999px;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 9999px;
   font-size: 0.7rem;
-  font-weight: 700;
-  background: var(--success-light, #dcfce7);
-  color: var(--success, #16a34a);
+  font-weight: 800;
+  background: rgba(76, 175, 80, 0.12);
+  color: #2E7D32;
 }
 
-/* ── Features List ────────────────────────────────────────────────────────── */
+/* ── Features list ────────────────────────────────────────── */
 
 .plan-features {
   list-style: none;
@@ -234,61 +262,72 @@
 .plan-features li {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
-  padding: 0.375rem 0;
+  gap: 8px;
+  padding: 6px 0;
+  font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
-  color: var(--text-primary, #1a1a2e);
+  color: #2D2D44;
   line-height: 1.4;
 }
 
 .feature-check {
   flex-shrink: 0;
   margin-top: 2px;
-  color: var(--success, var(--success));
+  color: #4CAF50;
 }
 
-/* ── CTA Button ───────────────────────────────────────────────────────────── */
+/* ── CTA button ───────────────────────────────────────────── */
 
 .plan-cta {
   width: 100%;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid var(--border-light, var(--cloud));
-  border-radius: 12px;
+  padding: 12px 24px;
+  border: 2px solid #EEEEF5;
+  border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   background: transparent;
-  color: var(--text-primary, #1a1a2e);
-  transition: all 0.2s ease;
+  color: #2D2D44;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
+  gap: 6px;
   margin-top: auto;
 }
 
 .plan-cta:hover:not(:disabled) {
-  background: var(--primary-light, #e0f2fe);
-  border-color: var(--primary, var(--info));
-  color: var(--primary, var(--info));
+  background: #FFF8E7;
+  border-color: #E8A317;
+  color: #C4880F;
+  transform: translateY(-1px);
 }
 
 .plan-cta--primary {
-  background: var(--primary, var(--info));
-  color: #fff;
-  border-color: var(--primary, var(--info));
+  background: linear-gradient(135deg, #F5CC5C, #E8A317);
+  color: #1A1A2E;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.25);
 }
 
 .plan-cta--primary:hover:not(:disabled) {
-  background: var(--primary-dark, #1d4ed8);
-  border-color: var(--primary-dark, #1d4ed8);
-  color: #fff;
+  background: linear-gradient(135deg, #F9D97C, #E8A317);
+  color: #1A1A2E;
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(232, 163, 23, 0.35);
+  transform: translateY(-2px);
 }
 
 .plan-cta--current {
-  background: var(--success-light, #dcfce7);
-  border-color: var(--success, var(--success));
-  color: var(--success, #16a34a);
+  background: rgba(76, 175, 80, 0.08);
+  border-color: #4CAF50;
+  color: #2E7D32;
 }
 
 .plan-cta:disabled {
@@ -296,16 +335,10 @@
   cursor: not-allowed;
 }
 
-.spin {
-  animation: spin 1s linear infinite;
-}
+.spin { animation: pricing-spin 1s linear infinite; }
+@keyframes pricing-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ── FAQ Section ──────────────────────────────────────────────────────────── */
+/* ── FAQ section ──────────────────────────────────────────── */
 
 .pricing-faq {
   max-width: 720px;
@@ -314,23 +347,33 @@
 
 .pricing-faq h2 {
   text-align: center;
+  font-family: 'Nunito', sans-serif;
   font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary, #1a1a2e);
+  font-weight: 800;
+  color: #1A1A2E;
   margin-bottom: 1.5rem;
 }
 
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .faq-item {
-  background: var(--bg-card, #fff);
-  border-radius: 12px;
+  background: #FFFFFF;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 4px rgba(26, 26, 46, 0.05),
+    0 0 0 1px rgba(26, 26, 46, 0.03);
+  transition: box-shadow 0.2s ease;
+}
+
+.faq-item--open {
+  box-shadow:
+    0 4px 12px rgba(26, 26, 46, 0.08),
+    0 0 0 1px rgba(232, 163, 23, 0.12);
 }
 
 .faq-question {
@@ -342,15 +385,15 @@
   border: none;
   background: transparent;
   cursor: pointer;
+  font-family: 'Nunito', sans-serif;
   font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary, #1a1a2e);
+  font-weight: 700;
+  color: #1A1A2E;
   text-align: left;
+  transition: background 0.15s ease;
 }
 
-.faq-question:hover {
-  background: var(--primary-light, #f0f7ff);
-}
+.faq-question:hover { background: #FFF8E7; }
 
 .faq-answer {
   padding: 0 1.25rem 1rem;
@@ -358,49 +401,58 @@
 
 .faq-answer p {
   margin: 0;
+  font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
-  color: var(--text-secondary, var(--slate));
-  line-height: 1.6;
+  color: #5C5C7A;
+  line-height: 1.7;
 }
 
-/* ── Bottom CTA ───────────────────────────────────────────────────────────── */
+/* ── Bottom CTA ───────────────────────────────────────────── */
 
 .pricing-cta-section {
   text-align: center;
-  padding: 2rem;
-  background: var(--bg-card, #fff);
-  border-radius: 16px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 2.5rem;
+  background: #FFFFFF;
+  border-radius: 20px;
+  box-shadow:
+    0 2px 8px rgba(26, 26, 46, 0.06),
+    0 0 0 1px rgba(26, 26, 46, 0.03);
 }
 
 .pricing-cta-section p {
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
-  color: var(--text-secondary, var(--slate));
+  color: #5C5C7A;
   margin: 0 0 1rem;
 }
 
 .pricing-cta-btn {
-  padding: 0.75rem 2rem;
+  padding: 12px 32px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  background: var(--primary, var(--info));
-  color: #fff;
-  transition: background 0.2s ease;
+  background: linear-gradient(135deg, #F5CC5C, #E8A317);
+  color: #1A1A2E;
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.25);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
 }
 
 .pricing-cta-btn:hover {
-  background: var(--primary-dark, #1d4ed8);
+  background: linear-gradient(135deg, #F9D97C, #E8A317);
+  box-shadow: 0 6px 20px rgba(232, 163, 23, 0.35);
+  transform: translateY(-2px);
 }
 
-/* ── Responsive ───────────────────────────────────────────────────────────── */
+/* ── Responsive ───────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-  .pricing-page {
-    padding: 1.5rem 0.75rem 3rem;
-  }
+  .pricing-page { padding: 1.5rem 0.75rem 3rem; }
 
   .pricing-grid {
     grid-template-columns: 1fr;
@@ -409,9 +461,7 @@
     margin-right: auto;
   }
 
-  .plan-card {
-    padding: 1.5rem 1.25rem;
-  }
+  .plan-card { padding: 1.5rem 1.25rem; }
 
   .billing-toggle {
     flex-direction: column;

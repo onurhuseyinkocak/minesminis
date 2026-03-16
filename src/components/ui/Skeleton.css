@@ -1,54 +1,54 @@
+/* ============================================================
+   SKELETON — MinesMinis Premium Design System
+   Shimmer loading animation with warm tones
+   ============================================================ */
+
 .mm-skeleton {
-  background-color: var(--mist, #EEEEF5);
-  position: relative;
-  overflow: hidden;
+  background: linear-gradient(90deg, #EEEEF5 25%, #F8F8FC 50%, #EEEEF5 75%);
+  background-size: 200% 100%;
+  animation: mm-skeleton-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
 }
 
-.mm-skeleton::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.5) 50%,
-    transparent 100%
-  );
-  animation: mm-skeleton-shimmer 1.5s ease-in-out infinite;
-}
+/* ── Variants ─────────────────────────────────────────────── */
 
-@keyframes mm-skeleton-shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Variants */
 .mm-skeleton--text {
   height: 16px;
-  border-radius: var(--radius-sm, 8px);
   width: 100%;
+  border-radius: 6px;
 }
 
 .mm-skeleton--circle {
-  border-radius: var(--radius-full, 9999px);
+  border-radius: 9999px;
 }
 
 .mm-skeleton--rect {
-  border-radius: var(--radius-sm, 8px);
+  border-radius: 12px;
 }
 
 .mm-skeleton--card {
-  border-radius: var(--radius-md, 12px);
-  min-height: 120px;
+  border-radius: 16px;
+  min-height: 140px;
 }
 
-/* Spacing between multiple skeletons */
+/* ── Group spacing ────────────────────────────────────────── */
+
 .mm-skeleton-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm, 8px);
+  gap: 10px;
+}
+
+/* ── Shimmer keyframes ────────────────────────────────────── */
+
+@keyframes mm-skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Dark mode ────────────────────────────────────────────── */
+
+[data-theme="dark"] .mm-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
 }

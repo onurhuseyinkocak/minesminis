@@ -1,17 +1,27 @@
+/* ============================================================
+   INPUT — MinesMinis Premium Design System
+   52px height, clean border, amber focus ring, labels, errors
+   ============================================================ */
+
 .mm-input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs, 4px);
+  gap: 6px;
   width: 100%;
 }
 
+/* ── Label ────────────────────────────────────────────────── */
+
 .mm-input-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Nunito', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--charcoal, #2D2D44);
+  color: #2D2D44;
+  line-height: 1.4;
   margin-bottom: 2px;
 }
+
+/* ── Container ────────────────────────────────────────────── */
 
 .mm-input-container {
   position: relative;
@@ -19,98 +29,142 @@
   align-items: center;
 }
 
+/* ── Input ────────────────────────────────────────────────── */
+
 .mm-input {
   width: 100%;
-  height: 52px;
-  padding: 0 var(--space-md, 16px);
   font-family: 'Inter', sans-serif;
   font-size: 15px;
-  color: var(--ink, #1A1A2E);
-  background-color: var(--white, #FFFFFF);
-  border: 1.5px solid var(--cloud, #D4D4E0);
-  border-radius: var(--radius-sm, 8px);
+  color: #1A1A2E;
+  background: #FFFFFF;
+  border: 1.5px solid #D4D4E0;
+  border-radius: 12px;
   outline: none;
-  transition: all 200ms ease-out;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
   -webkit-appearance: none;
 }
 
 .mm-input::placeholder {
-  color: var(--stone, #9393A8);
+  color: #9393A8;
 }
 
 .mm-input:hover:not(:disabled):not(:focus) {
-  border-color: var(--slate, #5C5C7A);
+  border-color: #9393A8;
 }
 
 .mm-input:focus {
-  border-color: var(--primary, #E8A317);
-  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.15);
+  border-color: #E8A317;
+  box-shadow:
+    0 0 0 3px rgba(232, 163, 23, 0.15),
+    0 1px 3px rgba(26, 26, 46, 0.06);
+  background: #FFFFFF;
 }
 
 .mm-input:disabled {
-  background-color: var(--mist, #EEEEF5);
-  color: var(--stone, #9393A8);
+  background: #F8F8FC;
+  color: #9393A8;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
-/* Sizes */
+/* ── Sizes ────────────────────────────────────────────────── */
+
 .mm-input--sm {
   height: 40px;
-  font-size: 13px;
+  padding: 0 14px;
+  font-size: 14px;
+  border-radius: 8px;
 }
 
 .mm-input--md {
-  height: 44px;
-  font-size: 14px;
+  height: 46px;
+  padding: 0 16px;
+  font-size: 15px;
+  border-radius: 10px;
 }
 
 .mm-input--lg {
   height: 52px;
-  font-size: 15px;
+  padding: 0 18px;
+  font-size: 16px;
+  border-radius: 12px;
 }
 
-/* With icon */
+/* ── Icon ─────────────────────────────────────────────────── */
+
 .mm-input--has-icon {
   padding-left: 44px;
 }
 
 .mm-input-icon {
   position: absolute;
-  left: var(--space-md, 16px);
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--slate, #5C5C7A);
+  color: #9393A8;
   pointer-events: none;
-  width: 20px;
-  height: 20px;
+  transition: color 0.2s ease;
 }
 
 .mm-input:focus ~ .mm-input-icon,
 .mm-input:focus + .mm-input-icon {
-  color: var(--primary, #E8A317);
+  color: #E8A317;
 }
 
-/* Error state */
+/* ── Error state ──────────────────────────────────────────── */
+
 .mm-input--error {
-  border-color: var(--error, #E53935);
+  border-color: #DC2626;
 }
 
 .mm-input--error:focus {
-  border-color: var(--error, #E53935);
-  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.15);
+  border-color: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
 .mm-input-error-text {
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  color: var(--error, #E53935);
-  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.4;
 }
+
+/* ── Helper text ──────────────────────────────────────────── */
 
 .mm-input-helper-text {
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  color: var(--slate, #5C5C7A);
-  margin-top: 2px;
+  font-size: 13px;
+  color: #9393A8;
+  line-height: 1.4;
+}
+
+/* ── Dark mode ────────────────────────────────────────────── */
+
+[data-theme="dark"] .mm-input-label {
+  color: #D4D4E0;
+}
+
+[data-theme="dark"] .mm-input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #EEEEF5;
+}
+
+[data-theme="dark"] .mm-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+[data-theme="dark"] .mm-input:focus {
+  border-color: #E8A317;
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }

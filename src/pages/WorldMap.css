@@ -1,54 +1,97 @@
-/* ============================================================
-   WORLD MAP PAGE
-   ============================================================ */
+/* ==========================================================================
+   WORLD MAP — World Selection Grid
+   MinesMinis Premium Design System v4.0
+   Warm, inviting world exploration with responsive card grid.
+   ========================================================================== */
 
+/* ---- PAGE LAYOUT ---- */
 .world-map-page {
   max-width: 1280px;
   margin: 0 auto;
-  padding: var(--mm-space-6) var(--mm-space-4);
+  padding: 32px 24px 80px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 50%, #FDECC8 100%);
 }
 
-/* Header */
+/* ---- HEADER ---- */
 .world-map-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--mm-space-4);
-  margin-bottom: var(--mm-space-8);
+  gap: 24px;
+  margin-bottom: 40px;
+  padding: 28px 32px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  box-shadow:
+    0 4px 16px rgba(232, 163, 23, 0.08),
+    0 1px 3px rgba(26, 26, 46, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.world-map-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #E8A317, #F5CC5C, #4CAF50, #2A9D8F);
+}
+
+.world-map-header__text {
+  flex: 1;
+  min-width: 0;
 }
 
 .world-map-title {
-  font-size: var(--mm-font-size-3xl);
+  font-family: 'Nunito', sans-serif;
+  font-size: 28px;
   font-weight: 800;
-  color: var(--mm-color-neutral-900);
+  color: #1A1A2E;
   margin: 0;
+  line-height: 1.2;
 }
 
 .world-map-subtitle {
   display: flex;
   align-items: center;
-  gap: var(--mm-space-2);
-  font-size: var(--mm-font-size-lg);
-  color: var(--mm-color-neutral-500);
-  margin: var(--mm-space-1) 0 0;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: #5C5C7A;
+  margin: 8px 0 0;
+  line-height: 1.4;
+}
+
+.world-map-subtitle svg {
+  color: #E8A317;
+  flex-shrink: 0;
+}
+
+.world-map-mimi {
+  flex-shrink: 0;
 }
 
 .world-map-mimi__avatar {
-  font-size: 3rem;
+  font-size: 3.5rem;
   display: block;
-  animation: mimi-bounce 2s ease-in-out infinite;
+  animation: mimi-float 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(76, 175, 80, 0.15));
 }
 
-@keyframes mimi-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+@keyframes mimi-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-6px) rotate(-2deg); }
+  66% { transform: translateY(-3px) rotate(2deg); }
 }
 
-/* Grid */
+/* ---- GRID ---- */
 .world-map-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: var(--mm-space-4);
+  gap: 20px;
 }
 
 @media (min-width: 540px) {
@@ -60,6 +103,7 @@
 @media (min-width: 860px) {
   .world-map-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
   }
 }
 
@@ -69,48 +113,89 @@
   }
 }
 
-/* Card link wrapper */
+/* ---- CARD LINK WRAPPER ---- */
 .world-card-link {
   text-decoration: none;
   color: inherit;
   display: block;
   height: 100%;
+  outline: none;
+}
+
+.world-card-link:focus-visible .world-card {
+  outline: 3px solid #E8A317;
+  outline-offset: 3px;
 }
 
 .world-card-link--locked {
   cursor: not-allowed;
-  opacity: 0.65;
 }
 
-/* ============================================================
-   WORLD CARD
-   ============================================================ */
-
+/* ---- WORLD CARD ---- */
 .world-card {
   overflow: hidden;
-  border-radius: var(--mm-radius-xl);
+  border-radius: 20px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
 }
 
+/* Current world golden glow */
 .world-card--current {
   box-shadow:
-    0 0 0 3px var(--mm-color-warning-400),
-    0 4px 20px rgba(245, 158, 11, 0.25);
+    0 0 0 3px #E8A317,
+    0 0 0 6px rgba(232, 163, 23, 0.15),
+    0 8px 28px rgba(232, 163, 23, 0.2);
 }
 
+.world-card--current::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #E8A317, #F5CC5C, #E8A317);
+  z-index: -1;
+  animation: golden-glow-pulse 3s ease-in-out infinite;
+  opacity: 0.6;
+  filter: blur(8px);
+}
+
+@keyframes golden-glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+/* Locked world */
 .world-card--locked {
-  filter: grayscale(0.5);
+  opacity: 0.55;
+  filter: grayscale(0.45) saturate(0.7);
 }
 
-.world-card-link:hover .world-card:not(.world-card--locked) {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+/* Hover for unlocked cards */
+.world-card-link:not(.world-card-link--locked):hover .world-card {
+  transform: translateY(-6px);
+  box-shadow:
+    0 16px 40px rgba(26, 26, 46, 0.12),
+    0 4px 12px rgba(26, 26, 46, 0.06);
 }
 
-/* Card top (gradient area) */
+.world-card-link:not(.world-card-link--locked):hover .world-card--current {
+  box-shadow:
+    0 0 0 3px #E8A317,
+    0 0 0 6px rgba(232, 163, 23, 0.2),
+    0 16px 40px rgba(232, 163, 23, 0.25);
+}
+
+.world-card-link:not(.world-card-link--locked):active .world-card {
+  transform: translateY(-2px);
+}
+
+/* Card gradient top */
 .world-card__top {
   position: relative;
   display: flex;
@@ -120,71 +205,122 @@
   overflow: hidden;
 }
 
-.world-card__icon {
-  font-size: 3rem;
-  line-height: 1;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+.world-card__top::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.05));
+  pointer-events: none;
 }
 
+.world-card__icon {
+  font-size: 3.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.15));
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.world-card-link:not(.world-card-link--locked):hover .world-card__icon {
+  transform: scale(1.12) rotate(-5deg);
+}
+
+/* Lock overlay */
 .world-card__lock-overlay {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.35);
-  color: var(--mm-color-neutral-600);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(2px);
+  color: #5C5C7A;
+  z-index: 2;
 }
 
+.world-card__lock-overlay svg {
+  filter: drop-shadow(0 1px 3px rgba(26, 26, 46, 0.15));
+}
+
+/* Badges on card top */
 .world-card__current-badge,
 .world-card__complete-badge {
   position: absolute;
-  top: var(--mm-space-2);
-  right: var(--mm-space-2);
+  top: 10px;
+  right: 10px;
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: var(--mm-font-size-xs);
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: var(--mm-radius-full);
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--mm-color-neutral-800);
+  padding: 4px 10px;
+  border-radius: 100px;
+  z-index: 3;
+  letter-spacing: 0.3px;
+}
+
+.world-card__current-badge {
+  background: rgba(255, 255, 255, 0.95);
+  color: #C4880F;
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.2);
+}
+
+.world-card__current-badge svg {
+  color: #E8A317;
+}
+
+.world-card__complete-badge {
+  background: rgba(255, 255, 255, 0.95);
+  color: #2E7D32;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+.world-card__complete-badge svg {
+  color: #4CAF50;
 }
 
 /* Card body */
 .world-card__body {
   flex: 1;
-  padding: var(--mm-space-4);
+  padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: var(--mm-space-2);
+  gap: 6px;
 }
 
 .world-card__name {
-  font-size: var(--mm-font-size-lg);
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px;
   font-weight: 700;
   margin: 0;
-  color: var(--mm-color-neutral-900);
+  color: #1A1A2E;
+  line-height: 1.3;
 }
 
 .world-card__theme {
-  font-size: var(--mm-font-size-sm);
-  color: var(--mm-color-neutral-500);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #5C5C7A;
   margin: 0;
   line-height: 1.4;
 }
 
 .world-card__progress-row {
   margin-top: auto;
+  padding-top: 12px;
   display: flex;
   flex-direction: column;
-  gap: var(--mm-space-1);
+  gap: 6px;
 }
 
 .world-card__lesson-count {
-  font-size: var(--mm-font-size-xs);
-  color: var(--mm-color-neutral-400);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #9393A8;
   font-weight: 600;
 }
 
@@ -192,30 +328,172 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: var(--mm-font-size-sm);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
   font-weight: 700;
-  color: var(--mm-color-primary-600);
-  margin-top: var(--mm-space-1);
+  color: #E8A317;
+  margin-top: 4px;
+  transition: gap 0.2s ease, color 0.2s ease;
 }
 
-/* ============================================================
-   SMART-BOARD FRIENDLY
-   ============================================================ */
+.world-card-link:hover .world-card__go {
+  gap: 8px;
+  color: #C4880F;
+}
 
-@media (min-width: 1600px) {
+.world-card__go svg {
+  transition: transform 0.2s ease;
+}
+
+.world-card-link:hover .world-card__go svg {
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+/* ---- Mobile ---- */
+@media (max-width: 539px) {
+  .world-map-page {
+    padding: 16px 12px 64px;
+  }
+
+  .world-map-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+    gap: 16px;
+  }
+
+  .world-map-header__text {
+    order: 2;
+  }
+
+  .world-map-mimi {
+    order: 1;
+  }
+
   .world-map-title {
-    font-size: 2.5rem;
+    font-size: 24px;
+  }
+
+  .world-map-subtitle {
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .world-map-mimi__avatar {
+    font-size: 3rem;
+  }
+
+  .world-map-grid {
+    gap: 14px;
   }
 
   .world-card__top {
-    height: 140px;
+    height: 100px;
   }
 
   .world-card__icon {
-    font-size: 4rem;
+    font-size: 2.6rem;
+  }
+
+  .world-card__body {
+    padding: 14px 16px 16px;
   }
 
   .world-card__name {
-    font-size: var(--mm-font-size-xl);
+    font-size: 15px;
+  }
+
+  .world-card__theme {
+    font-size: 12px;
+  }
+}
+
+/* ---- Tablet ---- */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .world-map-page {
+    padding: 28px 20px 64px;
+  }
+
+  .world-map-header {
+    padding: 24px 28px;
+  }
+}
+
+/* ---- Smart Board / Large Screens ---- */
+@media (min-width: 1200px) {
+  .world-map-page {
+    padding: 40px 32px 80px;
+  }
+
+  .world-map-header {
+    padding: 32px 40px;
+    margin-bottom: 48px;
+  }
+
+  .world-map-title {
+    font-size: 32px;
+  }
+
+  .world-map-subtitle {
+    font-size: 16px;
+  }
+
+  .world-map-mimi__avatar {
+    font-size: 4rem;
+  }
+
+  .world-card__top {
+    height: 130px;
+  }
+
+  .world-card__icon {
+    font-size: 3.5rem;
+  }
+
+  .world-card__name {
+    font-size: 18px;
+  }
+
+  .world-card__body {
+    padding: 20px 24px 24px;
+  }
+}
+
+/* ---- Ultra-wide / Projector ---- */
+@media (min-width: 1600px) {
+  .world-map-page {
+    max-width: 1440px;
+  }
+
+  .world-map-title {
+    font-size: 36px;
+  }
+
+  .world-card__top {
+    height: 150px;
+  }
+
+  .world-card__icon {
+    font-size: 4.2rem;
+  }
+
+  .world-card__name {
+    font-size: 20px;
+  }
+
+  .world-card__theme {
+    font-size: 14px;
+  }
+
+  .world-card__lesson-count {
+    font-size: 13px;
+  }
+
+  .world-card__go {
+    font-size: 15px;
   }
 }

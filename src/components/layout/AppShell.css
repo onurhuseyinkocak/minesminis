@@ -1,35 +1,36 @@
-/* ============================================
-   APP SHELL - Student/Child View Layout
-   Premium, breathing, responsive
-   ============================================ */
+/* ============================================================
+   APP SHELL — MinesMinis Premium Layout
+   Main wrapper, content padding, bottom nav, sidebar
+   ============================================================ */
 
 .app-shell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--bg-page);
-  color: var(--text-dark);
-  transition: background var(--transition-base);
+  background: linear-gradient(180deg, #FEFCF8 0%, #F8F8FC 100%);
+  color: #1A1A2E;
+  transition: background 0.3s ease;
 }
 
 .app-shell__main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-top: 72px; /* desktop nav height */
+  padding-top: 72px;
   width: 100%;
 }
 
 .app-shell__content {
   flex: 1;
   width: 100%;
-  max-width: var(--container-max);
+  max-width: 1280px;
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-lg) var(--space-3xl);
+  padding: 24px 24px 64px;
 }
 
-/* --- Desktop sidebar layout --- */
+/* ── Desktop sidebar layout ───────────────────────────────── */
+
 @media (min-width: 1024px) {
   .app-shell--with-sidebar {
     flex-direction: row;
@@ -41,12 +42,12 @@
     left: 0;
     bottom: 0;
     width: 240px;
-    background: var(--bg-card);
-    border-right: 1px solid var(--border-light);
-    padding: var(--space-lg) 0;
+    background: #FFFFFF;
+    border-right: 1px solid #EEEEF5;
+    padding: 24px 0;
     overflow-y: auto;
     z-index: 40;
-    transition: transform var(--transition-base), width var(--transition-base);
+    transition: transform 0.3s ease, width 0.3s ease;
   }
 
   .app-shell--with-sidebar .app-shell__main {
@@ -56,26 +57,26 @@
   .app-shell__sidebar-link {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-lg);
-    color: var(--text-medium);
+    gap: 10px;
+    padding: 10px 24px;
+    color: #5C5C7A;
     text-decoration: none;
     font-family: 'Nunito', sans-serif;
     font-weight: 600;
     font-size: 15px;
     border-radius: 0;
-    transition: background var(--transition-fast), color var(--transition-fast);
+    transition: background 0.15s ease, color 0.15s ease;
     position: relative;
   }
 
   .app-shell__sidebar-link:hover {
-    background: var(--bg-soft);
-    color: var(--text-dark);
+    background: #F8F8FC;
+    color: #2D2D44;
   }
 
   .app-shell__sidebar-link.active {
-    color: var(--primary);
-    background: var(--primary-pale);
+    color: #E8A317;
+    background: #FFF8E7;
   }
 
   .app-shell__sidebar-link.active::before {
@@ -85,24 +86,25 @@
     top: 4px;
     bottom: 4px;
     width: 3px;
-    background: var(--primary);
-    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+    background: linear-gradient(180deg, #E8A317, #F5CC5C);
+    border-radius: 0 9999px 9999px 0;
   }
 }
 
-/* --- Mobile: bottom navigation --- */
+/* ── Mobile: bottom navigation ────────────────────────────── */
+
 .app-shell__bottom-nav {
   display: none;
 }
 
 @media (max-width: 1023px) {
   .app-shell__main {
-    padding-top: 64px; /* mobile nav height */
-    padding-bottom: 68px; /* bottom nav height + safe area */
+    padding-top: 64px;
+    padding-bottom: 72px;
   }
 
   .app-shell__content {
-    padding: var(--space-md) var(--space-md) var(--space-xl);
+    padding: 16px 16px 32px;
   }
 
   .app-shell__sidebar {
@@ -116,13 +118,13 @@
     left: 0;
     right: 0;
     height: 64px;
-    background: var(--bg-card);
-    border-top: 1px solid var(--border-light);
+    background: rgba(255, 255, 255, 0.92);
+    border-top: 1px solid rgba(238, 238, 245, 0.8);
     z-index: 900;
-    padding: 0 var(--space-xs);
+    padding: 0 4px;
     padding-bottom: env(safe-area-inset-bottom, 0);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
   }
 
   .app-shell__bottom-nav-item {
@@ -133,11 +135,11 @@
     justify-content: center;
     gap: 2px;
     text-decoration: none;
-    color: var(--text-light);
+    color: #9393A8;
     font-family: 'Nunito', sans-serif;
     font-weight: 600;
     font-size: 10px;
-    transition: color var(--transition-fast), transform var(--transition-fast);
+    transition: color 0.15s ease, transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     position: relative;
   }
@@ -145,7 +147,7 @@
   .app-shell__bottom-nav-item svg {
     width: 22px;
     height: 22px;
-    transition: transform var(--transition-fast);
+    transition: transform 0.15s ease;
   }
 
   .app-shell__bottom-nav-item:active {
@@ -153,7 +155,7 @@
   }
 
   .app-shell__bottom-nav-item.active {
-    color: var(--primary);
+    color: #E8A317;
   }
 
   .app-shell__bottom-nav-item.active::before {
@@ -164,34 +166,37 @@
     transform: translateX(-50%);
     width: 32px;
     height: 3px;
-    background: var(--primary);
-    border-radius: 0 0 var(--radius-full) var(--radius-full);
+    background: linear-gradient(90deg, #E8A317, #F5CC5C);
+    border-radius: 0 0 9999px 9999px;
   }
 
   .app-shell__bottom-nav-item.active svg {
-    transform: scale(1.1);
+    transform: scale(1.12);
   }
 }
 
-/* --- Tablet tweaks --- */
+/* ── Tablet tweaks ────────────────────────────────────────── */
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .app-shell__content {
-    padding: var(--space-lg) var(--space-xl) var(--space-2xl);
+    padding: 24px 32px 48px;
     max-width: 768px;
   }
 }
 
-/* --- Smart Board --- */
+/* ── Smart Board ──────────────────────────────────────────── */
+
 @media (min-width: 1920px) {
   .app-shell__content {
-    max-width: var(--container-wide);
-    padding: var(--space-xl) var(--space-2xl) var(--space-3xl);
+    max-width: 1440px;
+    padding: 32px 48px 64px;
   }
 }
 
-/* --- Dark mode --- */
+/* ── Dark mode ────────────────────────────────────────────── */
+
 [data-theme="dark"] .app-shell {
-  background: var(--bg-page);
+  background: #1A1A2E;
 }
 
 [data-theme="dark"] .app-shell__bottom-nav {
@@ -200,6 +205,14 @@
 }
 
 [data-theme="dark"] .app-shell__sidebar {
-  background: var(--bg-card);
+  background: #1A1A2E;
   border-right-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .app-shell__sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .app-shell__sidebar-link.active {
+  background: rgba(232, 163, 23, 0.08);
 }

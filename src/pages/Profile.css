@@ -1,13 +1,12 @@
-/* ═══════════════════════════════════════════
+/* ============================================
    Profile Page — My Backpack
-   Design tokens: Honey Amber palette
-   ═══════════════════════════════════════════ */
+   MinesMinis Premium Design System
+   ============================================ */
 
 .profile-container {
   min-height: 100vh;
-  background: var(--gradient-warm, linear-gradient(135deg, #FFF8F0 0%, #FFF3E0 50%, #F8F8FC 100%));
-  padding: var(--space-lg);
-  padding-bottom: var(--space-2xl);
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 50%, #FDECC8 100%);
+  padding: 32px 24px 64px;
 }
 
 .profile-loading {
@@ -18,7 +17,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
 }
 
 .profile-content {
@@ -26,17 +25,16 @@
   margin: 0 auto;
 }
 
-/* ── Hero section ── */
+/* ── Hero Section ── */
 .profile-hero {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);
-  padding: var(--space-xl);
-  background: white;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.08));
-  border: 1px solid var(--cloud, #D4D4E0);
-  margin-bottom: var(--space-xl);
+  gap: 32px;
+  padding: 32px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(26, 26, 46, 0.06), 0 1px 4px rgba(26, 26, 46, 0.03);
+  margin-bottom: 32px;
 }
 
 /* ── Avatar ── */
@@ -46,264 +44,269 @@
 }
 
 .avatar-vector {
-  color: var(--primary, #E8A317);
-  opacity: 0.9;
+  color: #E8A317;
+  opacity: 0.85;
 }
 
 .change-avatar-btn {
   position: absolute;
   bottom: 4px;
   right: 4px;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  border: 2px solid white;
-  background: linear-gradient(135deg, var(--primary, #E8A317), #F5C842);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2.5px solid white;
+  background: linear-gradient(135deg, #E8A317, #F5CC5C);
   color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform var(--transition-fast, 150ms) ease;
-  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.3);
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 10px rgba(232, 163, 23, 0.35);
 }
 
 .change-avatar-btn:hover {
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 
-/* ── Main info ── */
+/* ── Main Info ── */
 .profile-main-info {
   flex: 1;
+  min-width: 0;
 }
 
 .name-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-md);
-  margin-bottom: var(--space-sm);
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
 .name-row h1 {
   font-family: 'Nunito', sans-serif;
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
+  color: #1A1A2E;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .edit-profile-btn {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--radius-full);
-  border: 1.5px solid var(--cloud, #D4D4E0);
+  padding: 10px 18px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(212, 212, 224, 0.7);
   background: white;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
   font-family: 'Nunito', sans-serif;
   font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all var(--transition-fast, 150ms) ease;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  white-space: nowrap;
 }
 
 .edit-profile-btn:hover {
-  border-color: var(--primary, #E8A317);
-  color: var(--primary, #E8A317);
+  border-color: #E8A317;
+  color: #E8A317;
   background: rgba(232, 163, 23, 0.04);
 }
 
 .level-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, rgba(232, 163, 23, 0.1), rgba(245, 200, 66, 0.1));
-  border: 1.5px solid rgba(232, 163, 23, 0.2);
-  color: var(--primary, #E8A317);
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(232, 163, 23, 0.08), rgba(245, 204, 92, 0.12));
+  color: #C4880F;
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
 }
 
-/* ── Stats grid ── */
+/* ── Stats Grid ── */
 .profile-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .stat-card {
-  background: white;
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
-  border: 1px solid var(--cloud, #D4D4E0);
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(26, 26, 46, 0.05);
 }
 
 .stat-card.xp-focused {
-  border-color: rgba(232, 163, 23, 0.25);
-  background: linear-gradient(135deg, white 0%, rgba(232, 163, 23, 0.03) 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, rgba(232, 163, 23, 0.04) 100%);
+  box-shadow: 0 4px 20px rgba(232, 163, 23, 0.08), 0 2px 8px rgba(26, 26, 46, 0.04);
 }
 
 .stat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-md);
+  margin-bottom: 16px;
 }
 
 .stat-header h3 {
   font-family: 'Nunito', sans-serif;
   font-size: 1rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
+  color: #1A1A2E;
   margin: 0;
 }
 
 .xp-details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 10px;
 }
 
 .xp-text {
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
   margin: 0;
 }
 
-/* ── Activity list ── */
+/* ── Activity List ── */
 .activity-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 10px;
 }
 
 .activity-item {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
-  border-radius: var(--radius-sm);
-  background: var(--mist, #EEEEF5);
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #F8F8FC;
 }
 
 .activity-dot {
   width: 8px;
   height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--primary, #E8A317);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E8A317, #F5CC5C);
   flex-shrink: 0;
 }
 
 .activity-desc {
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
-  color: var(--charcoal, #2D2D44);
+  color: #2D2D44;
+  font-weight: 500;
 }
 
-/* ── Badges section ── */
+/* ── Badges Section ── */
 .profile-badges-section {
-  background: white;
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
-  border: 1px solid var(--cloud, #D4D4E0);
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 2px 12px rgba(26, 26, 46, 0.05);
 }
 
 .profile-badges-section .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-lg);
+  margin-bottom: 24px;
 }
 
 .profile-badges-section .section-header h3 {
   font-family: 'Nunito', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
+  color: #1A1A2E;
   margin: 0;
 }
 
 .badges-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: var(--space-md);
+  gap: 20px;
 }
 
 .badge-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 8px;
   text-align: center;
 }
 
 .badge-circle {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, rgba(232, 163, 23, 0.1), rgba(245, 200, 66, 0.15));
-  border: 2px solid rgba(232, 163, 23, 0.25);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(232, 163, 23, 0.08), rgba(245, 204, 92, 0.12));
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  transition: transform var(--transition-fast, 150ms) ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.1);
 }
 
 .badge-item:hover .badge-circle {
-  transform: scale(1.1);
+  transform: scale(1.12) rotate(5deg);
+  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.2);
 }
 
 .badge-item span:last-child {
   font-family: 'Inter', sans-serif;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
   line-height: 1.2;
 }
 
 .no-badges {
   grid-column: 1 / -1;
   text-align: center;
-  padding: var(--space-lg);
+  padding: 32px;
 }
 
 .no-badges p {
   font-family: 'Inter', sans-serif;
   font-size: 0.9375rem;
-  color: var(--stone, #9393A8);
+  color: #9393A8;
 }
 
-/* ── Edit modal ── */
+/* ── Edit Modal ── */
 .edit-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 1000;
   background: rgba(26, 26, 46, 0.7);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-lg);
-  animation: fadeIn 200ms ease;
+  padding: 24px;
+  animation: profileFadeIn 200ms ease;
 }
 
 .edit-modal {
   width: 100%;
   max-width: 440px;
-  background: white;
-  border-radius: var(--radius-xl);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
-  animation: slideUp 300ms ease;
+  background: #FFFFFF;
+  border-radius: 24px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.2);
+  animation: profileSlideUp 300ms ease;
   overflow: hidden;
 }
 
@@ -311,126 +314,133 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-lg);
-  border-bottom: 1px solid var(--mist, #EEEEF5);
+  padding: 24px;
+  border-bottom: 1px solid #F0F0F6;
 }
 
 .edit-modal-header h2 {
   font-family: 'Nunito', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--ink, #1A1A2E);
+  color: #1A1A2E;
   margin: 0;
 }
 
 .edit-modal-header button {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: none;
-  background: var(--mist, #EEEEF5);
-  color: var(--slate, #5C5C7A);
+  background: #F8F8FC;
+  color: #5C5C7A;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-fast, 150ms) ease;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .edit-modal-header button:hover {
-  background: var(--cloud, #D4D4E0);
-  color: var(--ink, #1A1A2E);
+  background: #EEEEF5;
+  color: #1A1A2E;
 }
 
 .edit-modal-body {
-  padding: var(--space-lg);
+  padding: 24px;
 }
 
 .edit-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 10px;
 }
 
 .edit-field label {
   font-family: 'Nunito', sans-serif;
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--charcoal, #2D2D44);
+  color: #2D2D44;
 }
 
 .edit-field input {
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  border: 2px solid var(--cloud, #D4D4E0);
-  background: var(--snow, #F8F8FC);
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 2px solid #EEEEF5;
+  background: #F8F8FC;
   font-family: 'Inter', sans-serif;
   font-size: 0.9375rem;
-  color: var(--ink, #1A1A2E);
+  color: #1A1A2E;
   outline: none;
-  transition: border-color var(--transition-fast, 150ms) ease, box-shadow var(--transition-fast, 150ms) ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 48px;
 }
 
 .edit-field input:focus {
-  border-color: var(--primary, #E8A317);
-  box-shadow: 0 0 0 4px rgba(232, 163, 23, 0.12);
+  border-color: #E8A317;
+  box-shadow: 0 0 0 4px rgba(232, 163, 23, 0.1);
+  background: #FFFFFF;
 }
 
 .edit-field input::placeholder {
-  color: var(--stone, #9393A8);
+  color: #9393A8;
 }
 
 .edit-modal-footer {
   display: flex;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  gap: 10px;
+  padding: 16px 24px 24px;
 }
 
 .cancel-btn {
   flex: 1;
-  padding: 10px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--cloud, #D4D4E0);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1.5px solid #EEEEF5;
   background: white;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
   font-family: 'Nunito', sans-serif;
   font-size: 0.9375rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all var(--transition-fast, 150ms) ease;
+  transition: all 0.2s ease;
+  min-height: 48px;
 }
 
 .cancel-btn:hover {
-  background: var(--mist, #EEEEF5);
+  background: #F8F8FC;
+  border-color: #D4D4E0;
 }
 
 .save-btn {
   flex: 1;
-  padding: 10px;
-  border-radius: var(--radius-md);
+  padding: 12px;
+  border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, var(--primary, #E8A317), #F5C842);
+  background: linear-gradient(135deg, #E8A317, #F5CC5C);
   color: white;
   font-family: 'Nunito', sans-serif;
   font-size: 0.9375rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all var(--transition-fast, 150ms) ease;
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.3);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.3);
+  min-height: 48px;
 }
 
 .save-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(232, 163, 23, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(232, 163, 23, 0.4);
 }
 
 /* ── Animations ── */
-@keyframes fadeIn {
+@keyframes profileFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes slideUp {
+@keyframes profileSlideUp {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
@@ -438,18 +448,18 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .profile-container {
-    padding: var(--space-md);
+    padding: 16px 16px 64px;
   }
 
   .profile-hero {
     flex-direction: column;
     text-align: center;
-    padding: var(--space-lg);
+    padding: 24px;
   }
 
   .name-row {
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: 10px;
   }
 
   .profile-stats-grid {
@@ -458,5 +468,9 @@
 
   .badges-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+
+  .profile-badges-section {
+    padding: 24px;
   }
 }

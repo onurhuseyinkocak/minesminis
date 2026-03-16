@@ -1,24 +1,40 @@
+/* ============================================================
+   TABS — MinesMinis Premium Design System
+   Underline and pill variants, amber active state
+   ============================================================ */
+
+/* ── Base container ───────────────────────────────────────── */
+
 .mm-tabs {
   display: flex;
   position: relative;
-  gap: var(--space-xs, 4px);
-  border-bottom: 2px solid var(--mist, #EEEEF5);
+  gap: 0;
+  border-bottom: 2px solid #EEEEF5;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+
+.mm-tabs::-webkit-scrollbar { display: none; }
+
+/* ── Pill variant override ────────────────────────────────── */
 
 .mm-tabs--pill {
   border-bottom: none;
-  background-color: var(--mist, #EEEEF5);
-  border-radius: var(--radius-sm, 8px);
-  padding: 3px;
+  background: #F8F8FC;
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
 }
 
-/* Tab button */
+/* ── Tab button (underline default) ───────────────────────── */
+
 .mm-tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm, 8px);
-  padding: var(--space-sm, 8px) var(--space-md, 16px);
+  gap: 8px;
+  padding: 12px 18px;
   min-height: 44px;
   border: none;
   background: transparent;
@@ -26,26 +42,29 @@
   font-family: 'Nunito', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--slate, #5C5C7A);
+  color: #5C5C7A;
   position: relative;
-  transition: all 200ms ease-out;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
 }
 
 .mm-tab:hover {
-  color: var(--ink, #1A1A2E);
+  color: #2D2D44;
 }
 
 .mm-tab:focus-visible {
-  outline: 3px solid var(--primary, #E8A317);
+  outline: 3px solid rgba(232, 163, 23, 0.4);
   outline-offset: -3px;
-  border-radius: var(--radius-sm, 8px);
+  border-radius: 8px;
 }
 
-/* Active - underline style */
+/* ── Active — underline style ─────────────────────────────── */
+
 .mm-tab--active {
-  color: var(--primary, #E8A317);
+  color: #E8A317;
   font-weight: 700;
 }
 
@@ -53,27 +72,45 @@
   content: '';
   position: absolute;
   bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: var(--primary, #E8A317);
+  left: 8px;
+  right: 8px;
+  height: 2.5px;
+  background: linear-gradient(90deg, #E8A317, #F5CC5C);
   border-radius: 2px 2px 0 0;
 }
 
-/* Active - pill style */
-.mm-tabs--pill .mm-tab--active {
-  background-color: var(--white, #FFFFFF);
-  color: var(--ink, #1A1A2E);
-  border-radius: 6px;
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(26, 26, 46, 0.08));
+/* ── Active — pill style ──────────────────────────────────── */
+
+.mm-tabs--pill .mm-tab {
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
 }
 
-/* Icon in tab */
+.mm-tabs--pill .mm-tab:hover {
+  background: rgba(232, 163, 23, 0.06);
+}
+
+.mm-tabs--pill .mm-tab--active {
+  background: #FFFFFF;
+  color: #E8A317;
+  box-shadow:
+    0 1px 4px rgba(26, 26, 46, 0.08),
+    0 0 0 1px rgba(232, 163, 23, 0.12);
+  font-weight: 700;
+}
+
+/* ── Tab icon ─────────────────────────────────────────────── */
+
 .mm-tab__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
   flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.mm-tab--active .mm-tab__icon {
+  opacity: 1;
 }
