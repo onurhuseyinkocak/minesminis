@@ -16,6 +16,12 @@
   text-align: center;
 }
 
+.favorites-header-icon {
+  display: inline;
+  vertical-align: middle;
+  margin-right: var(--space-md);
+}
+
 .favorites-header h1 {
   font-family: var(--font-display);
   font-size: 2rem;
@@ -49,7 +55,7 @@
   padding: 10px var(--space-md);
   border-radius: var(--radius-full);
   border: 1.5px solid var(--border-light);
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bg-card);
   backdrop-filter: blur(8px);
   color: var(--text-secondary);
   font-family: var(--font-display);
@@ -64,7 +70,7 @@
 .filter-tab:hover {
   border-color: var(--primary);
   color: var(--primary-dark);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-elevated);
 }
 
 .filter-tab.active {
@@ -166,6 +172,10 @@
 .favorite-card:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-card-hover);
+}
+
+.favorite-card--clickable {
+  cursor: pointer;
 }
 
 /* ── Type Badge ── */

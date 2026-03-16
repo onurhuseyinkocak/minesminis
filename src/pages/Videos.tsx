@@ -156,7 +156,7 @@ function Videos() {
       >
         <div className="section-header">
           <div className="section-title">
-            <Users size={24} color="var(--primary-orange)" />
+            <Users size={24} color="var(--accent-orange)" />
             <h2>
               {selectedGrade === 'All' ? 'All Videos' : `${selectedGrade} Videos`}
             </h2>

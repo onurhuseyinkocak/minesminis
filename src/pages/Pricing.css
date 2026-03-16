@@ -90,7 +90,7 @@
 
 .toggle-btn.active {
   background: var(--gradient-primary);
-  color: var(--ink);
+  color: var(--text-on-primary);
   box-shadow: 0 2px 8px var(--primary-glow);
 }
 
@@ -106,8 +106,8 @@
 }
 
 .toggle-btn.active .save-badge {
-  background: rgba(26, 26, 46, 0.15);
-  color: var(--ink);
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-on-primary);
 }
 
 /* ── Plan grid ────────────────────────────────────────────── */
@@ -172,7 +172,7 @@
   font-size: 0.75rem;
   font-weight: 800;
   background: var(--gradient-primary);
-  color: var(--ink);
+  color: var(--text-on-primary);
   white-space: nowrap;
   box-shadow: 0 2px 8px var(--primary-glow);
 }
@@ -193,7 +193,7 @@
 
 .plan-card--highlight .plan-icon {
   background: var(--gradient-primary);
-  color: var(--ink);
+  color: var(--text-on-primary);
   box-shadow: 0 4px 12px var(--primary-glow);
 }
 
@@ -240,7 +240,7 @@
   border-radius: var(--radius-full);
   font-size: 0.7rem;
   font-weight: 800;
-  background: rgba(67, 160, 71, 0.12);
+  background: var(--success-pale);
   color: var(--success);
 }
 
@@ -306,21 +306,21 @@
 
 .plan-cta--primary {
   background: var(--gradient-primary);
-  color: var(--ink);
+  color: var(--text-on-primary);
   border-color: transparent;
   box-shadow: 0 2px 8px var(--primary-glow);
 }
 
 .plan-cta--primary:hover:not(:disabled) {
   background: var(--gradient-primary);
-  color: var(--ink);
+  color: var(--text-on-primary);
   border-color: transparent;
   box-shadow: 0 6px 20px var(--primary-glow);
   transform: translateY(-2px);
 }
 
 .plan-cta--current {
-  background: rgba(67, 160, 71, 0.08);
+  background: var(--success-pale);
   border-color: var(--success);
   color: var(--success);
 }
@@ -435,7 +435,7 @@
   font-weight: 700;
   cursor: pointer;
   background: var(--gradient-primary);
-  color: var(--ink);
+  color: var(--text-on-primary);
   box-shadow: 0 2px 8px var(--primary-glow);
   transition:
     box-shadow var(--transition-fast),

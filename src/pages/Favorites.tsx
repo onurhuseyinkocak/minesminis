@@ -106,7 +106,7 @@ const Favorites: React.FC = () => {
     <div className="favorites-page">
       <div className="favorites-header">
         <h1>
-          <Heart size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '12px' }} />
+          <Heart size={32} className="favorites-header-icon" />
           My Treasures
         </h1>
         <p>Your favorite games, words, and more!</p>
@@ -161,7 +161,7 @@ const Favorites: React.FC = () => {
         ) : (
           <div className="favorites-grid">
             {filteredFavorites.map((favorite) => (
-              <div key={favorite.id} className="favorite-card" onClick={() => handleNavigate(favorite.item_type)} style={{ cursor: 'pointer' }}>
+              <div key={favorite.id} className="favorite-card favorite-card--clickable" onClick={() => handleNavigate(favorite.item_type)}>
                 <div className="favorite-type-badge">
                   {getTypeEmoji(favorite.item_type)}
                 </div>

@@ -9,6 +9,48 @@
   padding-bottom: var(--space-3xl);
 }
 
+/* ── Shared Tabs (pill style — local copy for standalone routing) ── */
+.words-page .modern-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.words-page .modern-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-light);
+  background: var(--bg-elevated);
+  backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  min-height: var(--touch-target);
+}
+
+.words-page .modern-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  background: var(--primary-pale);
+  box-shadow: var(--shadow-sm);
+}
+
+.words-page .modern-tab.active {
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  border-color: transparent;
+  box-shadow: 0 4px 16px var(--primary-glow);
+  font-weight: 700;
+}
+
 /* ── Search Wrapper ── */
 .library-search-wrapper {
   position: relative;
@@ -121,7 +163,7 @@
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-elevated);
   backdrop-filter: blur(8px);
   box-shadow: var(--shadow-card);
 }

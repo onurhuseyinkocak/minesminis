@@ -179,7 +179,7 @@ function WorldCard({ world, progress, pct, unlocked, current }: WorldCardProps) 
         style={{
           background: unlocked
             ? `linear-gradient(135deg, ${world.color}, ${world.color}cc)`
-            : 'var(--mm-color-neutral-200)',
+            : 'var(--bg-muted)',
         }}
       >
         <span className="world-card__icon">{world.emoji}</span>

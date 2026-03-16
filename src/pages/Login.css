@@ -88,6 +88,11 @@
   color: var(--text-primary);
 }
 
+.login-lang-toggle button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .login-lang-toggle button.active {
   background: var(--primary);
   color: var(--text-on-primary);
@@ -144,7 +149,8 @@
   left: 0;
   right: 0;
   height: 60%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.08) 0%, transparent 100%);
+  background: linear-gradient(to top, var(--secondary-dark) 0%, transparent 100%);
+  opacity: 0.15;
   pointer-events: none;
 }
 
@@ -164,7 +170,7 @@
   position: relative;
   z-index: 1;
   letter-spacing: -0.01em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 2px 8px var(--primary-glow);
 }
 
 .login-side-tagline {

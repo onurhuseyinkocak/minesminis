@@ -198,7 +198,7 @@
 }
 
 .feature-card.glass-morphism {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bg-card);
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-card);
 }
@@ -348,17 +348,17 @@
   font-weight: 700;
   cursor: pointer;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 16px rgba(26, 107, 90, 0.3);
+  box-shadow: var(--shadow-button);
   min-height: 48px;
 }
 
 .login-prompt button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(26, 107, 90, 0.4);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .login-prompt button:focus-visible {
-  outline: 3px solid rgba(26, 107, 90, 0.5);
+  outline: var(--focus-ring);
   outline-offset: 2px;
 }
 

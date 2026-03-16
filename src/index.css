@@ -69,6 +69,13 @@
   --accent-red: #dc2626;
   --accent-red-dark: #991b1b;
 
+  /* ---- STORY WORLD COLORS ---- */
+  --world-forest: #2D5A27;
+  --world-ocean: #1A5276;
+  --world-mountain: #6C3483;
+  --world-space: #0B0E2D;
+  --world-desert: #B7950B;
+
   /* ---- NEUTRALS ---- */
   --ink: #1A1A2E;
   --charcoal: #2D2D44;
@@ -923,6 +930,7 @@ h1, h2, h3 {
   --gradient-premium: linear-gradient(135deg, #0E0E1A 0%, #1A1A2E 100%);
 
   --primary-glow: rgba(232, 163, 23, 0.2);
+  --mimi-green-light: rgba(76, 175, 80, 0.18);
   --error-soft: rgba(229, 57, 53, 0.15);
   --error-pale: rgba(229, 57, 53, 0.10);
   --success-pale: rgba(67, 160, 71, 0.12);

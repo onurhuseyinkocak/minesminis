@@ -10,6 +10,8 @@
   margin: 0 auto;
   padding: var(--space-2xl) var(--space-xl);
   font-family: var(--font-body);
+  min-height: 100vh;
+  background: var(--bg-page);
 }
 
 /* ── Header ───────────────────────────────────────────────── */

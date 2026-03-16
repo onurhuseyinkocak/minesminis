@@ -9,6 +9,60 @@
   padding-bottom: var(--space-3xl);
 }
 
+/* ── Shared Tabs (pill style — local copy for standalone routing) ── */
+.videos-page .modern-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.videos-page .modern-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-light);
+  background: var(--bg-elevated);
+  backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  min-height: var(--touch-target);
+}
+
+.videos-page .modern-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  background: var(--primary-pale);
+  box-shadow: var(--shadow-sm);
+}
+
+.videos-page .modern-tab:active {
+  transform: scale(0.97);
+}
+
+.videos-page .modern-tab.active {
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  border-color: transparent;
+  box-shadow: 0 4px 16px var(--primary-glow);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .videos-page .modern-tab {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.8125rem;
+    min-height: 40px;
+  }
+}
+
 /* ── Popular Section ── */
 .popular-section {
   max-width: 1280px;
@@ -265,7 +319,7 @@
   gap: 4px;
   padding: 4px 10px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--bg-elevated);
   backdrop-filter: blur(6px);
   color: var(--text-body);
   font-family: var(--font-body);
@@ -437,6 +491,8 @@
 /* ── Library Search (Videos page) ── */
 .videos-page .library-search-wrapper {
   position: relative;
+  display: flex;
+  align-items: center;
   max-width: 480px;
   margin: 0 auto var(--space-lg);
 }
