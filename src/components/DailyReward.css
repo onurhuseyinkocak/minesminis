@@ -12,7 +12,7 @@
   z-index: 80;
   width: 54px;
   height: 54px;
-  border-radius: 999px;
+  border-radius: 9999px;
   border: 2px solid rgba(232, 163, 23, 0.15);
   background: linear-gradient(135deg, #FFF8E7 0%, #FDECC8 100%);
   box-shadow: 0 4px 16px rgba(232, 163, 23, 0.12), 0 1px 3px rgba(26, 26, 46, 0.06);
@@ -36,6 +36,11 @@
   box-shadow: 0 6px 24px rgba(232, 163, 23, 0.25);
 }
 
+.daily-reward-trigger:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
+}
+
 .daily-reward-trigger.available {
   border-color: #E8A317;
   animation: triggerPulse 2s ease-in-out infinite;
@@ -57,7 +62,7 @@
   right: -4px;
   width: 20px;
   height: 20px;
-  border-radius: 999px;
+  border-radius: 9999px;
   background: #E53935;
   color: white;
   font-family: 'Nunito', sans-serif;
@@ -145,6 +150,11 @@
 .daily-reward-modal .close-btn:hover {
   background: rgba(229, 57, 53, 0.08);
   color: #E53935;
+}
+
+.daily-reward-modal .close-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 /* ---- Modal Header ---- */
@@ -281,6 +291,11 @@
   box-shadow: 0 6px 24px rgba(232, 163, 23, 0.4), 0 12px 40px rgba(232, 163, 23, 0.18);
 }
 
+.claim-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
+}
+
 .claim-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -413,7 +428,7 @@
   .daily-reward-modal {
     padding: 24px 16px;
     max-width: 100%;
-    border-radius: 20px;
+    border-radius: 24px;
   }
 
   .rewards-grid {

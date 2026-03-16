@@ -62,12 +62,12 @@
 
 .mm-badge--error {
   background: rgba(220, 38, 38, 0.10);
-  color: #DC2626;
+  color: #E53935;
 }
 
 .mm-badge--info {
   background: rgba(30, 136, 229, 0.10);
-  color: #1565C0;
+  color: #1E88E5;
 }
 
 .mm-badge--premium {

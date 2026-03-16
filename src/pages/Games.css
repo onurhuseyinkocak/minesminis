@@ -20,10 +20,10 @@
 .modern-tab {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 10px 20px;
+  gap: 8px;
+  padding: 8px 24px;
   border-radius: 9999px;
-  border: 1.5px solid rgba(212, 212, 224, 0.6);
+  border: 1.5px solid var(--cloud);
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   color: #5C5C7A;
@@ -41,6 +41,15 @@
   color: #C4880F;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 2px 8px rgba(232, 163, 23, 0.1);
+}
+
+.modern-tab:active {
+  transform: scale(0.97);
+}
+
+.modern-tab:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 .modern-tab.active {
@@ -135,13 +144,13 @@
   background: #FFFFFF;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06), 0 1px 3px rgba(26, 26, 46, 0.04);
+  box-shadow: var(--shadow-card);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .game-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(26, 26, 46, 0.12), 0 4px 12px rgba(26, 26, 46, 0.06);
+  box-shadow: var(--shadow-xl);
 }
 
 /* ── Favorite Button ── */
@@ -150,8 +159,8 @@
   top: 12px;
   right: 12px;
   z-index: 10;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
@@ -161,17 +170,22 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .game-favorite-btn:hover {
   transform: scale(1.15);
   background: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
+}
+
+.game-favorite-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 .game-favorite-btn.favorited {
-  background: #FFF0F0;
+  background: #FFCDD2;
 }
 
 /* ── Thumbnail ── */
@@ -180,6 +194,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
 .game-thumbnail img {
@@ -228,10 +243,10 @@
 
 /* ── Game Info ── */
 .game-info {
-  padding: 16px 16px 18px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .game-info h3 {
@@ -271,7 +286,7 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  animation: gamesModalFadeIn 200ms ease;
+  animation: gamesModalFadeIn 250ms ease;
 }
 
 .game-modal {
@@ -318,6 +333,11 @@
   background: rgba(255, 107, 107, 0.6);
 }
 
+.game-modal-close:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
 .game-iframe-container {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -353,11 +373,11 @@
   }
 
   .modern-tabs {
-    gap: 6px;
+    gap: 8px;
   }
 
   .modern-tab {
-    padding: 8px 14px;
+    padding: 8px 16px;
     font-size: 0.8125rem;
     min-height: 40px;
   }
@@ -367,5 +387,21 @@
   .games-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+}
+
+/* ── Smart Board / Large Screens ── */
+@media (min-width: 1600px) {
+  .games-content {
+    max-width: 1440px;
+    padding: 40px 32px;
+  }
+
+  .game-info h3 {
+    font-size: 1.125rem;
+  }
+
+  .game-info {
+    padding: 20px 20px 22px;
   }
 }

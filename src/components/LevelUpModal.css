@@ -50,7 +50,7 @@
 .confetti-piece:nth-child(5n) {
   width: 10px;
   height: 6px;
-  border-radius: 999px;
+  border-radius: 9999px;
 }
 
 @keyframes confettiFall {
@@ -231,7 +231,7 @@
   gap: 8px;
   padding: 14px 36px;
   border: none;
-  border-radius: 999px;
+  border-radius: 9999px;
   background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
   color: #FFFFFF;
   font-family: 'Nunito', sans-serif;
@@ -255,6 +255,11 @@
 
 .continue-btn:hover .btn-arrow {
   transform: translateX(3px);
+}
+
+.continue-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 /* ---- Responsive ---- */

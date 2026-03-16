@@ -20,7 +20,7 @@
 }
 
 .classroom-shell.high-contrast {
-  background: #000000;
+  background: #1A1A2E;
   color: #FFFFFF;
 }
 
@@ -33,14 +33,14 @@
   height: 72px;
   padding: 0 32px;
   background: #F8F8FC;
-  border-bottom: 2px solid #EEEEF5;
+  border-bottom: 2px solid rgba(26, 26, 46, 0.08);
   flex-shrink: 0;
   gap: 16px;
 }
 
 .classroom-shell.high-contrast .classroom-shell__topbar {
-  background: #111111;
-  border-bottom-color: #333333;
+  background: #1A1A2E;
+  border-bottom-color: #2D2D44;
 }
 
 .classroom-shell__topbar-left {
@@ -68,7 +68,7 @@
   text-overflow: ellipsis;
 }
 
-.classroom-shell.high-contrast .classroom-shell__lesson-name { color: #BBBBBB; }
+.classroom-shell.high-contrast .classroom-shell__lesson-name { color: #D4D4E0; }
 
 .classroom-shell__topbar-center {
   display: flex;
@@ -114,7 +114,7 @@
   justify-content: center;
   width: 52px;
   height: 52px;
-  border: 2px solid #D4D4E0;
+  border: 2px solid var(--cloud);
   background: #FFFFFF;
   border-radius: 12px;
   cursor: pointer;
@@ -147,20 +147,20 @@
 }
 
 .classroom-shell.high-contrast .classroom-shell__control {
-  border-color: #555555;
-  background: #222222;
+  border-color: #5C5C7A;
+  background: #2D2D44;
   color: #FFFFFF;
 }
 
 .classroom-shell.high-contrast .classroom-shell__control:hover {
-  background: #333333;
-  border-color: #777777;
+  background: #2D2D44;
+  border-color: #9393A8;
 }
 
 .classroom-shell.high-contrast .classroom-shell__control--primary {
   background: #E8A317;
   border-color: #E8A317;
-  color: #000000;
+  color: #1A1A2E;
 }
 
 /* ── Content area ─────────────────────────────────────────── */
@@ -246,8 +246,8 @@
   .classroom-shell__timer svg { width: 36px; height: 36px; }
   .classroom-shell__control { width: 64px; height: 64px; border-radius: 16px; }
   .classroom-shell__control svg { width: 32px; height: 32px; }
-  .classroom-shell__teacher-panel { width: 80px; right: 24px; padding: 16px 12px; gap: 12px; border-radius: 20px; }
-  .classroom-shell__teacher-btn { width: 56px; height: 56px; border-radius: 14px; }
+  .classroom-shell__teacher-panel { width: 80px; right: 24px; padding: 16px 12px; gap: 12px; border-radius: 24px; }
+  .classroom-shell__teacher-btn { width: 56px; height: 56px; border-radius: 16px; }
   .classroom-shell__teacher-btn svg { width: 28px; height: 28px; }
 }
 
@@ -262,7 +262,7 @@
   .classroom-shell__control svg { width: 22px; height: 22px; }
   .classroom-shell__teacher-panel {
     bottom: 16px; right: 16px; top: auto; transform: none;
-    flex-direction: row; width: auto; padding: 8px 12px; border-radius: 14px;
+    flex-direction: row; width: auto; padding: 8px 12px; border-radius: 16px;
   }
   .classroom-shell__teacher-divider { width: 1px; height: 28px; margin: 0 4px; }
 }
@@ -283,4 +283,4 @@
 [data-theme="dark"] .classroom-shell__topbar { background: #2D2D44; border-bottom-color: rgba(255, 255, 255, 0.06); }
 [data-theme="dark"] .classroom-shell__lesson-name { color: #9393A8; }
 [data-theme="dark"] .classroom-shell__control { background: #2D2D44; border-color: #5C5C7A; color: #D4D4E0; }
-[data-theme="dark"] .classroom-shell__control:hover { background: #3D3D5C; }
+[data-theme="dark"] .classroom-shell__control:hover { background: #2D2D44; }

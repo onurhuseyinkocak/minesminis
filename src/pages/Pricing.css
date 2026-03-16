@@ -61,7 +61,7 @@
   gap: 4px;
   margin-bottom: 2.5rem;
   background: #FFFFFF;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 4px;
   width: fit-content;
   margin-left: auto;
@@ -75,7 +75,7 @@
   position: relative;
   padding: 10px 24px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-family: 'Nunito', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
@@ -83,6 +83,11 @@
   background: transparent;
   color: #5C5C7A;
   transition: all 0.2s ease;
+}
+
+.toggle-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 .toggle-btn.active {
@@ -125,7 +130,7 @@
 .plan-card {
   position: relative;
   background: #FFFFFF;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -281,8 +286,8 @@
 .plan-cta {
   width: 100%;
   padding: 12px 24px;
-  border: 2px solid #EEEEF5;
-  border-radius: 14px;
+  border: 2px solid rgba(26, 26, 46, 0.08);
+  border-radius: 16px;
   font-family: 'Nunito', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
@@ -317,7 +322,7 @@
 }
 
 .plan-cta--primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #F9D97C, #E8A317);
+  background: linear-gradient(135deg, #F5CC5C, #E8A317);
   color: #1A1A2E;
   border-color: transparent;
   box-shadow: 0 6px 20px rgba(232, 163, 23, 0.35);
@@ -328,6 +333,11 @@
   background: rgba(76, 175, 80, 0.08);
   border-color: #4CAF50;
   color: #2E7D32;
+}
+
+.plan-cta:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 .plan-cta:disabled {
@@ -362,7 +372,7 @@
 
 .faq-item {
   background: #FFFFFF;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow:
     0 1px 4px rgba(26, 26, 46, 0.05),
@@ -395,6 +405,12 @@
 
 .faq-question:hover { background: #FFF8E7; }
 
+.faq-question:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: -3px;
+  border-radius: 16px;
+}
+
 .faq-answer {
   padding: 0 1.25rem 1rem;
 }
@@ -413,7 +429,7 @@
   text-align: center;
   padding: 2.5rem;
   background: #FFFFFF;
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow:
     0 2px 8px rgba(26, 26, 46, 0.06),
     0 0 0 1px rgba(26, 26, 46, 0.03);
@@ -429,7 +445,7 @@
 .pricing-cta-btn {
   padding: 12px 32px;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
   font-family: 'Nunito', sans-serif;
   font-size: 1rem;
   font-weight: 700;
@@ -443,8 +459,13 @@
     transform 0.15s ease;
 }
 
+.pricing-cta-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
+}
+
 .pricing-cta-btn:hover {
-  background: linear-gradient(135deg, #F9D97C, #E8A317);
+  background: linear-gradient(135deg, #F5CC5C, #E8A317);
   box-shadow: 0 6px 20px rgba(232, 163, 23, 0.35);
   transform: translateY(-2px);
 }

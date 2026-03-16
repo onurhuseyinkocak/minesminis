@@ -12,7 +12,7 @@
   z-index: 999;
   width: 48px;
   height: 48px;
-  border-radius: 999px;
+  border-radius: 9999px;
   border: 1px solid rgba(26, 26, 46, 0.06);
   background: rgba(255, 248, 231, 0.85);
   backdrop-filter: blur(16px) saturate(1.6);
@@ -66,7 +66,7 @@
   width: 7px;
   height: 7px;
   background: #E53935;
-  border-radius: 999px;
+  border-radius: 9999px;
   z-index: 3;
   box-shadow: 0 0 6px rgba(229, 57, 53, 0.5);
 }
@@ -287,7 +287,7 @@
   height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #FFFFFF;
-  border-radius: 999px;
+  border-radius: 9999px;
   animation: reportSpin 0.6s linear infinite;
 }
 

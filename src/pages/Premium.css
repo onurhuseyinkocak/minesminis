@@ -19,11 +19,11 @@
   position: relative;
   text-align: center;
   padding: 56px 40px;
-  background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 60%, #3D3D5C 100%);
+  background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 60%, #2D2D44 100%);
   border-radius: 24px;
   margin-bottom: 32px;
   overflow: hidden;
-  box-shadow: 0 16px 48px rgba(26, 26, 46, 0.35);
+  box-shadow: var(--shadow-xl);
 }
 
 .hero-badge {
@@ -103,7 +103,7 @@
   border-radius: 24px;
   border: 2px dashed rgba(232, 163, 23, 0.35);
   margin-bottom: 40px;
-  box-shadow: 0 2px 12px rgba(26, 26, 46, 0.04);
+  box-shadow: var(--shadow-card);
 }
 
 .coming-soon-icon {
@@ -146,6 +146,11 @@
 .back-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 24px rgba(232, 163, 23, 0.4);
+}
+
+.back-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 /* ── Features Section ── */
@@ -195,12 +200,12 @@
 .feature-card.glass-morphism {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
-  box-shadow: 0 2px 12px rgba(26, 26, 46, 0.05);
+  box-shadow: var(--shadow-card);
 }
 
 .feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 36px rgba(26, 26, 46, 0.1);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .feature-icon {
@@ -249,7 +254,7 @@
   background: #FFFFFF;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(26, 26, 46, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 .comparison-header {
@@ -277,7 +282,7 @@
 .comparison-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  border-bottom: 1px solid #F0F0F6;
+  border-bottom: 1px solid rgba(26, 26, 46, 0.08);
   transition: background 0.15s ease;
 }
 
@@ -322,7 +327,7 @@
   padding: 32px;
   background: #FFFFFF;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(26, 26, 46, 0.05);
+  box-shadow: var(--shadow-card);
 }
 
 .login-prompt p {
@@ -350,6 +355,11 @@
 .login-prompt button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 24px rgba(26, 107, 90, 0.4);
+}
+
+.login-prompt button:focus-visible {
+  outline: 3px solid rgba(26, 107, 90, 0.5);
+  outline-offset: 2px;
 }
 
 /* ── Animations ── */

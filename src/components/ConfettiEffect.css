@@ -74,6 +74,6 @@
 .confetti-particle:nth-child(11n) {
   width: 5px;
   height: 5px;
-  border-radius: 999px;
+  border-radius: 9999px;
   box-shadow: 0 0 4px currentColor;
 }

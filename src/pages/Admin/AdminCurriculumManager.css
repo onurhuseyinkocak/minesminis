@@ -137,7 +137,7 @@
 .adm-world-item-color {
   width: 6px;
   height: 32px;
-  border-radius: 3px;
+  border-radius: 4px;
   flex-shrink: 0;
 }
 
@@ -209,7 +209,7 @@
 .adm-lesson-order {
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--admin-bg);
   display: flex;
   align-items: center;
@@ -275,7 +275,7 @@
   margin: 0.25rem 0.25rem 0.25rem 0;
   background: var(--admin-bg);
   border: 1px solid var(--admin-border);
-  border-radius: 100px;
+  border-radius: 9999px;
   font-size: 0.725rem;
   font-weight: 500;
   color: var(--admin-text-secondary);
@@ -297,7 +297,7 @@
   padding: 0.3rem 0.625rem;
   background: var(--admin-primary-light);
   border: 1px solid rgba(212, 147, 13, 0.2);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.725rem;
   font-weight: 500;
   color: var(--admin-primary);

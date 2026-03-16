@@ -152,13 +152,13 @@
   width: 80px;
   height: 6px;
   background: var(--admin-bg);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .adm-top-bar-fill {
   height: 100%;
-  border-radius: 3px;
+  border-radius: 4px;
   transition: width 0.5s ease;
 }
 

@@ -37,7 +37,7 @@
 
 .mm-card--outlined {
   box-shadow: none;
-  border: 1.5px solid #EEEEF5;
+  border: 1.5px solid rgba(26, 26, 46, 0.08);
 }
 
 .mm-card--interactive {

@@ -11,7 +11,7 @@
   z-index: 1000;
   width: 48px;
   height: 48px;
-  border-radius: 999px;
+  border-radius: 9999px;
   border: 1px solid rgba(232, 163, 23, 0.1);
   background: rgba(255, 248, 231, 0.85);
   backdrop-filter: blur(16px) saturate(1.6);
@@ -78,7 +78,7 @@
 .toggle-glow {
   position: absolute;
   inset: -8px;
-  border-radius: 999px;
+  border-radius: 9999px;
   z-index: 1;
   opacity: 0;
   transition: opacity 0.3s ease;

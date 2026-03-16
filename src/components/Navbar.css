@@ -110,6 +110,11 @@
   background: rgba(232, 163, 23, 0.08);
 }
 
+.nav-link:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.4);
+  outline-offset: 2px;
+}
+
 .nav-link.active {
   color: #E8A317;
   background: rgba(232, 163, 23, 0.10);
@@ -123,7 +128,7 @@
   transform: translateX(-50%);
   width: 22px;
   height: 3px;
-  border-radius: 999px;
+  border-radius: 9999px;
   background: linear-gradient(90deg, #E8A317, #F5CC5C);
   box-shadow: 0 1px 6px rgba(232, 163, 23, 0.3);
 }
@@ -169,6 +174,12 @@
   background: rgba(232, 163, 23, 0.12);
 }
 
+.nav-theme-btn:focus-visible,
+.nav-icon-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.4);
+  outline-offset: 2px;
+}
+
 .nav-admin-btn {
   color: #C4880F;
 }
@@ -184,7 +195,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: 9999px;
   background: rgba(232, 163, 23, 0.06);
   border: 1px solid rgba(232, 163, 23, 0.12);
   color: #2D2D44;
@@ -208,6 +219,11 @@
   color: #E8A317;
 }
 
+.nav-profile-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.4);
+  outline-offset: 2px;
+}
+
 .nav-profile-name {
   max-width: 100px;
   overflow: hidden;
@@ -221,7 +237,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 24px;
-  border-radius: 999px;
+  border-radius: 9999px;
   background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
   color: #FFFFFF;
   font-family: 'Nunito', sans-serif;
@@ -236,6 +252,11 @@
 .nav-login-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35), 0 8px 28px rgba(232, 163, 23, 0.18);
+}
+
+.nav-login-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
 }
 
 /* ---- Hamburger ---- */
@@ -260,6 +281,11 @@
 
 .nav-hamburger:hover {
   background: rgba(232, 163, 23, 0.10);
+}
+
+.nav-hamburger:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.4);
+  outline-offset: 2px;
 }
 
 /* ---- Mobile Overlay & Slide-out Menu ---- */
@@ -391,6 +417,11 @@
   color: #E8A317;
 }
 
+.nav-mobile-link:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.4);
+  outline-offset: -2px;
+}
+
 .nav-mobile-link.active {
   background: rgba(232, 163, 23, 0.10);
   color: #E8A317;
@@ -454,6 +485,12 @@
 
 .nav-tab-icon {
   transition: transform 0.2s ease;
+}
+
+.nav-tab:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.4);
+  outline-offset: -2px;
+  border-radius: 8px;
 }
 
 .nav-tab.active {

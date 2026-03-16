@@ -98,7 +98,7 @@
   font-family: var(--admin-font);
   font-size: 0.8rem;
   border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--admin-bg);
   color: var(--admin-text);
   outline: none;
@@ -115,7 +115,7 @@
   font-family: var(--admin-font);
   font-size: 0.8rem;
   border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--admin-bg);
   color: var(--admin-text);
   cursor: pointer;
@@ -222,7 +222,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.2rem 0.5rem;
-  border-radius: 100px;
+  border-radius: 9999px;
   font-size: 0.7rem;
   font-weight: 600;
   white-space: nowrap;
@@ -243,7 +243,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--admin-surface);
   cursor: pointer;
   outline: none;
@@ -262,7 +262,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--admin-surface);
   color: var(--admin-text-secondary);
   cursor: pointer;
@@ -301,7 +301,7 @@
   font-size: 0.8rem;
   font-weight: 500;
   border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--admin-surface);
   color: var(--admin-text-secondary);
   cursor: pointer;
@@ -458,7 +458,7 @@
   font-family: var(--admin-font);
   font-size: 0.85rem;
   border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--admin-surface);
   color: var(--admin-text);
   outline: none;
@@ -508,7 +508,7 @@
   font-family: var(--admin-font);
   font-size: 0.8rem;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid var(--admin-border);
   background: var(--admin-surface);
   color: var(--admin-text);

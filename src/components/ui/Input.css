@@ -37,7 +37,7 @@
   font-size: 15px;
   color: #1A1A2E;
   background: #FFFFFF;
-  border: 1.5px solid #D4D4E0;
+  border: 1.5px solid var(--cloud);
   border-radius: 12px;
   outline: none;
   transition:
@@ -83,7 +83,7 @@
   height: 46px;
   padding: 0 16px;
   font-size: 15px;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .mm-input--lg {
@@ -119,11 +119,11 @@
 /* ── Error state ──────────────────────────────────────────── */
 
 .mm-input--error {
-  border-color: #DC2626;
+  border-color: #E53935;
 }
 
 .mm-input--error:focus {
-  border-color: #DC2626;
+  border-color: #E53935;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
@@ -131,7 +131,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: #DC2626;
+  color: #E53935;
   display: flex;
   align-items: center;
   gap: 4px;

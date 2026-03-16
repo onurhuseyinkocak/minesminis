@@ -80,13 +80,13 @@
   border-radius: 16px;
   overflow: hidden;
   background: #FFFFFF;
-  box-shadow: 0 2px 12px rgba(26, 26, 46, 0.06);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: box-shadow 0.3s ease;
 }
 
 .popular-card:hover {
-  box-shadow: 0 16px 40px rgba(26, 26, 46, 0.12);
+  box-shadow: var(--shadow-xl);
 }
 
 .popular-thumbnail {
@@ -198,13 +198,13 @@
   background: #FFFFFF;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.05);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .video-card:hover {
-  box-shadow: 0 12px 36px rgba(26, 26, 46, 0.1);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .video-thumbnail {
@@ -363,7 +363,7 @@
   position: relative;
   width: 100%;
   max-width: 900px;
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4);
   background: #1A1A2E;
@@ -431,5 +431,25 @@
 
   .popular-card {
     flex: 0 0 85vw;
+  }
+}
+
+/* ── Smart Board / Large Screens ── */
+@media (min-width: 1600px) {
+  .popular-section,
+  .videos-section {
+    max-width: 1440px;
+  }
+
+  .popular-card {
+    flex: 0 0 340px;
+  }
+
+  .videos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+
+  .video-title {
+    font-size: 1.125rem;
   }
 }

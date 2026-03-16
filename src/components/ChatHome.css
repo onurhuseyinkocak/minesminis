@@ -103,7 +103,7 @@
   gap: 4px;
   background: rgba(0, 0, 0, 0.2);
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: 9999px;
 }
 
 .usage-icon {
@@ -120,14 +120,14 @@
 .usage-progress {
   width: 44px;
   height: 3px;
-  border-radius: 999px;
+  border-radius: 9999px;
   background: rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
 .usage-fill {
   height: 100%;
-  border-radius: 999px;
+  border-radius: 9999px;
   background: linear-gradient(90deg, #4CAF50, #E8A317);
   transition: width 0.3s ease;
 }
@@ -139,7 +139,7 @@
   gap: 4px;
   background: rgba(0, 0, 0, 0.2);
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: 9999px;
   font-family: 'Nunito', sans-serif;
   font-size: 0.75rem;
   font-weight: 800;
@@ -204,7 +204,7 @@
 
 .chat-messages-area::-webkit-scrollbar-thumb {
   background: rgba(232, 163, 23, 0.15);
-  border-radius: 999px;
+  border-radius: 9999px;
 }
 
 /* ---- Message Row ---- */
@@ -254,7 +254,7 @@
   background: #F8F8FC;
   color: #1A1A2E;
   border-bottom-left-radius: 4px;
-  box-shadow: 0 1px 4px rgba(26, 26, 46, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 [data-theme="dark"] .message-bubble.assistant {
@@ -453,7 +453,7 @@
   flex-shrink: 0;
   padding: 8px 16px;
   border: 1px solid rgba(232, 163, 23, 0.15);
-  border-radius: 999px;
+  border-radius: 9999px;
   background: rgba(232, 163, 23, 0.04);
   color: #2D2D44;
   font-family: 'Inter', sans-serif;

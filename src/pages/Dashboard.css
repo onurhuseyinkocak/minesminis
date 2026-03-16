@@ -22,8 +22,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, #FFFFFF 0%, #FFFCF5 100%);
+  padding: 24px;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF8E7 100%);
   border-radius: 24px;
   box-shadow:
     0 2px 8px rgba(232, 163, 23, 0.08),
@@ -40,18 +40,18 @@
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, #E8A317, #F5CC5C, #4CAF50);
-  border-radius: 3px 3px 0 0;
+  border-radius: 4px 4px 0 0;
 }
 
 .greeting-mimi {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  background: linear-gradient(135deg, #E0F2EF 0%, #E0F2EF 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 32px;
   flex-shrink: 0;
   box-shadow:
     0 4px 12px rgba(76, 175, 80, 0.2),
@@ -88,10 +88,10 @@
 .greeting-streak {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
-  padding: 10px 16px;
-  border-radius: 100px;
+  gap: 8px;
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 100%);
+  padding: 8px 16px;
+  border-radius: 9999px;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(251, 140, 0, 0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -103,20 +103,20 @@
 }
 
 .greeting-streak .streak-icon {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
 }
 
 .greeting-streak .streak-count {
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: 18px;
+  font-size: 16px;
   color: #FB8C00;
 }
 
 .greeting-streak .streak-label {
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   color: #5C5C7A;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -128,8 +128,8 @@
   background: linear-gradient(135deg, #E8A317 0%, #F5CC5C 50%, #E8A317 100%);
   background-size: 200% 100%;
   animation: claim-shimmer 3s ease-in-out infinite;
-  border-radius: 20px;
-  padding: 18px 24px;
+  border-radius: 24px;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -188,7 +188,7 @@
 .daily-claim-banner .claim-title {
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
-  font-size: 17px;
+  font-size: 16px;
   letter-spacing: 0.2px;
 }
 
@@ -207,8 +207,8 @@
   color: #FFFFFF;
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
-  font-size: 15px;
-  padding: 10px 22px;
+  font-size: 14px;
+  padding: 8px 24px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -221,6 +221,11 @@
   transform: scale(1.03);
 }
 
+.daily-claim-banner .claim-btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
+}
+
 /* ---- B. CONTINUE LEARNING CARD (HERO) ---- */
 .continue-card {
   background: #FFFFFF;
@@ -228,7 +233,7 @@
   box-shadow:
     0 4px 20px rgba(232, 163, 23, 0.12),
     0 2px 6px rgba(26, 26, 46, 0.04);
-  padding: 28px 32px;
+  padding: 32px;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -278,12 +283,12 @@
 .continue-world-icon {
   width: 76px;
   height: 76px;
-  border-radius: 20px;
+  border-radius: 24px;
   background: linear-gradient(135deg, #FFF8E7 0%, #FDECC8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
+  font-size: 36px;
   flex-shrink: 0;
   box-shadow:
     0 4px 12px rgba(232, 163, 23, 0.15),
@@ -313,7 +318,7 @@
 .continue-lesson-name {
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: 22px;
+  font-size: 24px;
   color: #1A1A2E;
   margin: 0 0 12px;
   line-height: 1.2;
@@ -329,7 +334,7 @@
   flex: 1;
   height: 10px;
   background: #EEEEF5;
-  border-radius: 100px;
+  border-radius: 9999px;
   overflow: hidden;
   box-shadow: inset 0 1px 3px rgba(26, 26, 46, 0.06);
 }
@@ -337,7 +342,7 @@
 .continue-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #E8A317, #F5CC5C);
-  border-radius: 100px;
+  border-radius: 9999px;
   transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
 }
@@ -350,7 +355,7 @@
   right: 0;
   height: 50%;
   background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent);
-  border-radius: 100px;
+  border-radius: 9999px;
 }
 
 .continue-progress-text {
@@ -364,16 +369,17 @@
 .continue-btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
   color: #FFFFFF;
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: 17px;
+  font-size: 16px;
   padding: 16px 32px;
   border-radius: 16px;
   border: none;
   cursor: pointer;
+  min-height: 48px;
   box-shadow:
     0 4px 14px rgba(232, 163, 23, 0.35),
     0 2px 4px rgba(232, 163, 23, 0.15),
@@ -398,7 +404,7 @@
 }
 
 .continue-btn:hover {
-  background: linear-gradient(135deg, #C4880F 0%, #A87000 100%);
+  background: linear-gradient(135deg, #C4880F 0%, #C4880F 100%);
   box-shadow:
     0 6px 20px rgba(232, 163, 23, 0.4),
     0 3px 6px rgba(232, 163, 23, 0.2),
@@ -413,6 +419,11 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
+
+.continue-btn:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
+}
 /* ---- C. STATS ROW ---- */
 .stats-row {
   display: grid;
@@ -423,8 +434,8 @@
 .stat-card {
   background: #FFFFFF;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
-  padding: 20px 16px;
+  box-shadow: var(--shadow-card);
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -466,7 +477,7 @@
 .stat-icon {
   width: 48px;
   height: 48px;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -483,15 +494,15 @@
   box-shadow: 0 2px 8px rgba(232, 163, 23, 0.15);
 }
 .stat-icon.words {
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  background: linear-gradient(135deg, #E0F2EF 0%, #E0F2EF 100%);
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
 }
 .stat-icon.streak {
-  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 100%);
   box-shadow: 0 2px 8px rgba(251, 140, 0, 0.15);
 }
 .stat-icon.lessons {
-  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  background: linear-gradient(135deg, #E0F2EF 0%, #E0F2EF 100%);
   box-shadow: 0 2px 8px rgba(30, 136, 229, 0.15);
 }
 
@@ -512,7 +523,7 @@
 
 .stat-sub {
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   color: #9393A8;
   font-weight: 500;
 }
@@ -520,9 +531,9 @@
 /* ---- D. DAILY CHALLENGE ---- */
 .daily-challenge {
   background: #FFFFFF;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
-  padding: 20px 24px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  padding: 24px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -539,7 +550,7 @@
   bottom: 0;
   width: 5px;
   background: linear-gradient(180deg, #FB8C00, #F5CC5C);
-  border-radius: 5px 0 0 5px;
+  border-radius: 4px 0 0 4px;
 }
 
 .daily-challenge:hover {
@@ -552,8 +563,8 @@
 .daily-challenge-icon {
   width: 52px;
   height: 52px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -596,8 +607,8 @@
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
   font-size: 14px;
-  padding: 8px 14px;
-  border-radius: 100px;
+  padding: 8px 16px;
+  border-radius: 9999px;
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(232, 163, 23, 0.1);
 }
@@ -605,19 +616,20 @@
 .daily-challenge-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, #FB8C00 0%, #E65100 100%);
+  gap: 8px;
+  background: linear-gradient(135deg, #FB8C00 0%, #C4880F 100%);
   color: #FFFFFF;
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
   font-size: 14px;
-  padding: 12px 20px;
+  padding: 12px 24px;
   border-radius: 12px;
   border: none;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  min-height: 44px;
   box-shadow:
     0 3px 10px rgba(251, 140, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -625,7 +637,7 @@
 }
 
 .daily-challenge-btn:hover {
-  background: linear-gradient(135deg, #E65100 0%, #BF360C 100%);
+  background: linear-gradient(135deg, #C4880F 0%, #E53935 100%);
   box-shadow:
     0 5px 16px rgba(251, 140, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -636,19 +648,24 @@
   transform: translateY(0);
 }
 
+.daily-challenge-btn:focus-visible {
+  outline: 3px solid rgba(251, 140, 0, 0.5);
+  outline-offset: 2px;
+}
+
 /* ---- E. RECENT ACHIEVEMENTS ---- */
 .achievements-section {
   background: #FFFFFF;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
   padding: 24px;
 }
 
 .section-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 24px;
 }
 
 .section-header h2 {
@@ -665,7 +682,7 @@
 
 .achievements-scroll {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -698,7 +715,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 24px;
   box-shadow:
     0 4px 12px rgba(232, 163, 23, 0.15),
     0 0 0 3px #F5CC5C;
@@ -714,7 +731,7 @@
 
 .badge-name {
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #5C5C7A;
   line-height: 1.3;
@@ -743,8 +760,8 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 28px 16px;
-  border-radius: 20px;
+  padding: 32px 16px;
+  border-radius: 24px;
   text-decoration: none;
   transition: all 0.25s ease;
   cursor: pointer;
@@ -782,8 +799,13 @@
   transform: translateY(-1px);
 }
 
+.quick-action-card:focus-visible {
+  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline-offset: 2px;
+}
+
 .quick-action-card.worlds {
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 80%);
+  background: linear-gradient(135deg, #E0F2EF 0%, #E0F2EF 80%);
   box-shadow: 0 4px 14px rgba(76, 175, 80, 0.12);
 }
 .quick-action-card.worlds:hover {
@@ -794,7 +816,7 @@
 }
 
 .quick-action-card.practice {
-  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 80%);
+  background: linear-gradient(135deg, #E0F2EF 0%, #E0F2EF 80%);
   box-shadow: 0 4px 14px rgba(30, 136, 229, 0.12);
 }
 .quick-action-card.practice:hover {
@@ -805,7 +827,7 @@
 }
 
 .quick-action-card.games {
-  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 80%);
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 80%);
   box-shadow: 0 4px 14px rgba(251, 140, 0, 0.12);
 }
 .quick-action-card.games:hover {
@@ -816,7 +838,7 @@
 }
 
 .quick-action-card.story {
-  background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 80%);
+  background: linear-gradient(135deg, #FFCDD2 0%, #FFCDD2 80%);
   box-shadow: 0 4px 14px rgba(233, 30, 99, 0.12);
 }
 .quick-action-card.story:hover {
@@ -829,13 +851,13 @@
 .quick-action-icon {
   width: 52px;
   height: 52px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
+  box-shadow: var(--shadow-card);
   transition: transform 0.25s ease;
 }
 
@@ -846,15 +868,15 @@
 .quick-action-label {
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   color: #2D2D44;
 }
 
 /* ---- G. WEEKLY PROGRESS CHART ---- */
 .weekly-chart-section {
   background: #FFFFFF;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
   padding: 24px;
 }
 
@@ -889,7 +911,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  background: linear-gradient(135deg, #E0F2EF 0%, #E0F2EF 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -935,7 +957,7 @@
   }
 
   .greeting-text {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .greeting-streak {
@@ -947,19 +969,19 @@
     flex-direction: column;
     align-items: stretch;
     text-align: center;
-    padding: 24px 20px;
+    padding: 24px;
     gap: 16px;
   }
 
   .continue-world-icon {
     width: 60px;
     height: 60px;
-    font-size: 30px;
+    font-size: 32px;
     margin: 0 auto;
   }
 
   .continue-lesson-name {
-    font-size: 19px;
+    font-size: 20px;
   }
 
   .continue-progress-row {
@@ -971,8 +993,8 @@
     width: 100%;
     justify-content: center;
     padding: 16px;
-    font-size: 18px;
-    border-radius: 14px;
+    font-size: 16px;
+    border-radius: 16px;
   }
 
   .stats-row {
@@ -994,7 +1016,7 @@
 
   .quick-action-card {
     min-height: 110px;
-    padding: 20px 12px;
+    padding: 24px 12px;
   }
 
   .quick-action-icon {
@@ -1067,7 +1089,7 @@
   .dashboard {
     max-width: 1080px;
     padding: 40px 32px;
-    gap: 28px;
+    gap: 32px;
   }
 
   .greeting-bar {
@@ -1077,7 +1099,7 @@
   .greeting-mimi {
     width: 68px;
     height: 68px;
-    font-size: 34px;
+    font-size: 36px;
   }
 
   .greeting-text {
@@ -1089,17 +1111,17 @@
   }
 
   .continue-card {
-    padding: 32px 40px;
+    padding: 32px 48px;
   }
 
   .continue-world-icon {
     width: 88px;
     height: 88px;
-    font-size: 44px;
+    font-size: 48px;
   }
 
   .continue-lesson-name {
-    font-size: 26px;
+    font-size: 28px;
   }
 
   .continue-progress-bar {
@@ -1107,13 +1129,13 @@
   }
 
   .continue-btn {
-    padding: 20px 40px;
-    font-size: 19px;
-    border-radius: 18px;
+    padding: 24px 48px;
+    font-size: 20px;
+    border-radius: 16px;
   }
 
   .stat-card {
-    padding: 24px 20px;
+    padding: 24px;
   }
 
   .stat-icon {
@@ -1130,7 +1152,7 @@
   }
 
   .daily-challenge {
-    padding: 24px 28px;
+    padding: 24px 32px;
   }
 
   .daily-challenge-title {
@@ -1144,7 +1166,7 @@
 
   .quick-action-card {
     min-height: 150px;
-    padding: 32px 20px;
+    padding: 32px 24px;
   }
 
   .quick-action-icon {
@@ -1153,13 +1175,13 @@
   }
 
   .quick-action-label {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .badge-icon {
     width: 68px;
     height: 68px;
-    font-size: 30px;
+    font-size: 32px;
   }
 
   .badge-name {
@@ -1187,11 +1209,11 @@
   }
 
   .continue-lesson-name {
-    font-size: 30px;
+    font-size: 32px;
   }
 
   .continue-btn {
-    padding: 22px 48px;
+    padding: 24px 48px;
     font-size: 20px;
   }
 

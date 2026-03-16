@@ -40,7 +40,7 @@
 .filter-select {
   padding: 10px 36px 10px 16px;
   border-radius: 12px;
-  border: 1.5px solid rgba(212, 212, 224, 0.7);
+  border: 1.5px solid var(--cloud);
   background: #FFFFFF;
   color: #2D2D44;
   font-family: 'Inter', sans-serif;
@@ -91,7 +91,7 @@
   background: #FFFFFF;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.05);
+  box-shadow: var(--shadow-card);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -99,7 +99,7 @@
 
 .worksheet-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 36px rgba(26, 26, 46, 0.1);
+  box-shadow: var(--shadow-card-hover);
 }
 
 /* ── Thumbnail ── */
@@ -167,12 +167,12 @@
 
 .favorite-btn:hover {
   transform: scale(1.12);
-  color: #f43f5e;
+  color: #E53935;
 }
 
 .favorite-btn.favorited {
-  color: #f43f5e;
-  background: #FFF0F3;
+  color: #E53935;
+  background: #FFCDD2;
 }
 
 /* ── Worksheet Info ── */
@@ -334,12 +334,12 @@
   font-size: 0.9375rem;
   font-weight: 600;
   transition: all 0.25s ease;
-  box-shadow: 0 1px 4px rgba(26, 26, 46, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .resource-link:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(26, 26, 46, 0.08);
+  box-shadow: var(--shadow-lg);
   color: #E8A317;
 }
 
@@ -373,5 +373,23 @@
 
   .resources-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── Smart Board / Large Screens ── */
+@media (min-width: 1600px) {
+  .worksheets-grid,
+  .controls-section,
+  .worksheets-count,
+  .worksheets-resources {
+    max-width: 1440px;
+  }
+
+  .worksheets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+
+  .worksheet-info h3 {
+    font-size: 1.2rem;
   }
 }

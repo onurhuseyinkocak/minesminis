@@ -73,7 +73,7 @@
 .sentence-scramble__chip {
   padding: 0.75rem 1.25rem;
   min-height: 52px;
-  border-radius: 14px;
+  border-radius: 16px;
   font-family: 'Nunito', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
@@ -99,7 +99,7 @@
   background: #FFFFFF;
   border-color: #1A6B5A;
   color: #1A6B5A;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
+  box-shadow: var(--shadow-card);
 }
 
 .sentence-scramble__chip--available:hover:not(:disabled) {
@@ -117,8 +117,8 @@
 
 .sentence-scramble__chip--placed:hover {
   background: rgba(220, 38, 38, 0.06);
-  border-color: #DC2626;
-  color: #DC2626;
+  border-color: #E53935;
+  color: #E53935;
 }
 
 .sentence-scramble__available {
@@ -136,7 +136,7 @@
   font-size: 1.1rem;
   font-weight: 700;
   padding: 0.75rem 1.25rem;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;

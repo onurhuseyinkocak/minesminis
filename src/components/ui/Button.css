@@ -47,7 +47,7 @@
   height: 52px;
   padding: 0 28px;
   font-size: 16px;
-  border-radius: 14px;
+  border-radius: 16px;
   gap: 10px;
 }
 
@@ -76,7 +76,7 @@
     0 6px 20px rgba(232, 163, 23, 0.40),
     0 2px 6px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.30);
-  background: linear-gradient(135deg, #F9D97C 0%, #E8A317 50%, #C4880F 100%);
+  background: linear-gradient(135deg, #F5CC5C 0%, #E8A317 50%, #C4880F 100%);
 }
 
 .mm-button--primary:active:not(:disabled) {
@@ -103,7 +103,7 @@
     0 6px 20px rgba(26, 107, 90, 0.35),
     0 2px 6px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.20);
-  background: linear-gradient(135deg, #34B8A8 0%, #1A6B5A 100%);
+  background: linear-gradient(135deg, #2A9D8F 0%, #1A6B5A 100%);
 }
 
 .mm-button--secondary:active:not(:disabled) {
@@ -130,7 +130,7 @@
 /* ── Danger ───────────────────────────────────────────────── */
 
 .mm-button--danger {
-  background: linear-gradient(135deg, #F87171 0%, #DC2626 100%);
+  background: linear-gradient(135deg, #E53935 0%, #E53935 100%);
   color: #FFFFFF;
   box-shadow:
     0 2px 8px rgba(220, 38, 38, 0.25),
