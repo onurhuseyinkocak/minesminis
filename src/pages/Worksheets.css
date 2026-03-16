@@ -5,45 +5,45 @@
 
 .worksheets-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D4 50%, #FDECC8 100%);
-  padding-bottom: 64px;
+  background: var(--bg-page);
+  padding-bottom: var(--space-3xl);
 }
 
 /* ── Controls Section ── */
 .controls-section {
   max-width: 1280px;
-  margin: 16px auto 0;
-  padding: 0 24px;
+  margin: var(--space-md) auto 0;
+  padding: 0 var(--space-lg);
 }
 
 .filters-wrapper {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 
 .filter-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .filter-item label {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
-  color: #2D2D44;
+  color: var(--text-body);
   white-space: nowrap;
 }
 
 .filter-select {
-  padding: 10px 36px 10px 16px;
-  border-radius: 12px;
-  border: 1.5px solid var(--cloud);
-  background: #FFFFFF;
-  color: #2D2D44;
-  font-family: 'Inter', sans-serif;
+  padding: 10px 36px 10px var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--text-body);
+  font-family: var(--font-body);
   font-size: 0.875rem;
   cursor: pointer;
   outline: none;
@@ -51,28 +51,28 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C5C7A' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  min-height: 44px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  min-height: var(--touch-target);
 }
 
 .filter-select:hover,
 .filter-select:focus {
-  border-color: #E8A317;
-  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-pale);
 }
 
 /* ── Worksheets Count ── */
 .worksheets-count {
   max-width: 1280px;
-  margin: 16px auto 12px;
-  padding: 0 24px;
-  font-family: 'Inter', sans-serif;
+  margin: var(--space-md) auto var(--space-md);
+  padding: 0 var(--space-lg);
+  font-family: var(--font-body);
   font-size: 0.875rem;
-  color: #5C5C7A;
+  color: var(--text-secondary);
 }
 
 .worksheets-count strong {
-  color: #E8A317;
+  color: var(--primary);
   font-weight: 700;
 }
 
@@ -80,19 +80,19 @@
 .worksheets-grid {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--space-lg);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  gap: var(--space-lg);
 }
 
 /* ── Worksheet Card ── */
 .worksheet-card {
-  background: #FFFFFF;
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   display: flex;
   flex-direction: column;
 }
@@ -113,7 +113,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform var(--transition-slow);
 }
 
 .worksheet-card:hover .worksheet-thumbnail img {
@@ -131,9 +131,9 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border-radius: 9999px;
-  color: white;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  color: var(--white);
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -150,7 +150,7 @@
   right: 10px;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   border: none;
@@ -158,26 +158,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9393A8;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-height: 44px;
-  min-width: 44px;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
 }
 
 .favorite-btn:hover {
   transform: scale(1.12);
-  color: #E53935;
+  color: var(--error);
 }
 
 .favorite-btn.favorited {
-  color: #E53935;
-  background: #FFCDD2;
+  color: var(--error);
+  background: var(--error-soft);
 }
 
 /* ── Worksheet Info ── */
 .worksheet-info {
-  padding: 16px 18px;
+  padding: var(--space-md) 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -188,25 +188,25 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #C4880F;
-  font-family: 'Nunito', sans-serif;
+  color: var(--primary-dark);
+  font-family: var(--font-display);
   font-size: 0.8125rem;
   font-weight: 700;
 }
 
 .worksheet-info h3 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.0625rem;
   font-weight: 700;
-  color: #1A1A2E;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.35;
 }
 
 .worksheet-info p {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.55;
   display: -webkit-box;
@@ -219,8 +219,8 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #9393A8;
-  font-family: 'Inter', sans-serif;
+  color: var(--text-muted);
+  font-family: var(--font-body);
   font-size: 0.75rem;
   margin-top: auto;
   padding-top: 4px;
@@ -239,36 +239,36 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px;
-  border-radius: 12px;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
   border: none;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   text-decoration: none;
-  min-height: 44px;
+  min-height: var(--touch-target);
 }
 
 .worksheet-actions .open-btn {
-  background: linear-gradient(135deg, #E8A317, #F5CC5C);
-  color: white;
-  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.3);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  box-shadow: 0 4px 16px var(--primary-glow);
 }
 
 .worksheet-actions .open-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(232, 163, 23, 0.4);
+  box-shadow: 0 6px 24px var(--primary-glow);
 }
 
 .worksheet-actions .print-btn {
-  background: #F8F8FC;
-  color: #2D2D44;
+  background: var(--bg-elevated);
+  color: var(--text-body);
 }
 
 .worksheet-actions .print-btn:hover {
-  background: #EEEEF5;
+  background: var(--bg-muted);
 }
 
 /* ── Empty State ── */
@@ -276,71 +276,71 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 80px 24px;
+  padding: var(--space-3xl) var(--space-lg);
   text-align: center;
 }
 
 .worksheets-empty .empty-icon {
   font-size: 3rem;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
 }
 
 .worksheets-empty h3 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 800;
-  color: #1A1A2E;
-  margin: 0 0 8px;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm);
 }
 
 .worksheets-empty p {
-  font-family: 'Inter', sans-serif;
-  color: #5C5C7A;
+  font-family: var(--font-body);
+  color: var(--text-secondary);
   margin: 0;
 }
 
 /* ── More Resources ── */
 .worksheets-resources {
   max-width: 1280px;
-  margin: 48px auto 0;
-  padding: 0 24px;
+  margin: var(--space-2xl) auto 0;
+  padding: 0 var(--space-lg);
 }
 
 .worksheets-resources h3 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 800;
-  color: #1A1A2E;
-  margin: 0 0 24px;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-lg);
   text-align: center;
 }
 
 .resources-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .resource-link {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px;
-  border-radius: 12px;
-  background: #FFFFFF;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
   text-decoration: none;
-  color: #2D2D44;
-  font-family: 'Nunito', sans-serif;
+  color: var(--text-body);
+  font-family: var(--font-display);
   font-size: 0.9375rem;
   font-weight: 600;
-  transition: all 0.25s ease;
+  transition: all var(--transition-fast);
   box-shadow: var(--shadow-sm);
 }
 
 .resource-link:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
-  color: #E8A317;
+  color: var(--primary);
 }
 
 .resource-icon {
@@ -351,14 +351,14 @@
 @media (max-width: 768px) {
   .worksheets-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-    padding: 0 16px;
+    gap: var(--space-md);
+    padding: 0 var(--space-md);
   }
 
   .controls-section,
   .worksheets-count,
   .worksheets-resources {
-    padding: 0 16px;
+    padding: 0 var(--space-md);
   }
 
   .resources-grid {

@@ -1,7 +1,6 @@
 /* ============================================================
-   ConfettiEffect.css — Celebration falling particles
+   ConfettiEffect.css — Token-based celebration falling particles
    MinesMinis Design System
-   Honey Amber (#E8A317) / Deep Teal (#1A6B5A)
    ============================================================ */
 
 .confetti-container {
@@ -20,7 +19,7 @@
   top: -12px;
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   will-change: transform, opacity;
 }
 
@@ -67,13 +66,13 @@
 .confetti-particle:nth-child(7n) {
   width: 12px;
   height: 7px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
 }
 
 /* Tiny sparkle confetti */
 .confetti-particle:nth-child(11n) {
   width: 5px;
   height: 5px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   box-shadow: 0 0 4px currentColor;
 }

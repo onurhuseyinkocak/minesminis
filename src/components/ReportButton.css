@@ -1,61 +1,50 @@
 /* ============================================================
-   ReportButton.css — Floating bug report FAB + modal
+   ReportButton.css — Token-based floating bug report FAB + modal
    MinesMinis Design System
-   Honey Amber (#E8A317) / Deep Teal (#1A6B5A)
    ============================================================ */
 
 /* ---- FAB ---- */
 .report-fab {
   position: fixed;
-  bottom: 32px;
-  right: 24px;
+  bottom: var(--space-xl);
+  right: var(--space-lg);
   z-index: 999;
   width: 48px;
   height: 48px;
-  border-radius: 9999px;
-  border: 1px solid rgba(26, 26, 46, 0.06);
-  background: rgba(255, 248, 231, 0.85);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-light);
+  background: var(--bg-elevated);
   backdrop-filter: blur(16px) saturate(1.6);
   -webkit-backdrop-filter: blur(16px) saturate(1.6);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  min-width: 48px;
-  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06), 0 4px 16px rgba(26, 26, 46, 0.04);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-[data-theme="dark"] .report-fab {
-  background: rgba(45, 45, 68, 0.85);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .report-fab:hover {
-  border-color: #E53935;
-  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.12), 0 8px 32px rgba(229, 57, 53, 0.06);
+  border-color: var(--error);
+  box-shadow: var(--shadow-lg);
 }
 
 .report-fab:focus-visible {
-  outline: 2px solid #E53935;
+  outline: 2px solid var(--error);
   outline-offset: 3px;
 }
 
 .report-icon {
   position: relative;
   z-index: 2;
-  color: #5C5C7A;
-  transition: color 0.2s ease;
-}
-
-[data-theme="dark"] .report-icon {
-  color: #9393A8;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
 }
 
 .report-fab:hover .report-icon {
-  color: #E53935;
+  color: var(--error);
 }
 
 /* ---- Blinking Dot ---- */
@@ -65,10 +54,10 @@
   right: 8px;
   width: 7px;
   height: 7px;
-  background: #E53935;
-  border-radius: 9999px;
+  background: var(--error);
+  border-radius: var(--radius-full);
   z-index: 3;
-  box-shadow: 0 0 6px rgba(229, 57, 53, 0.5);
+  box-shadow: 0 0 6px var(--error-soft);
 }
 
 /* ---- Modal Overlay ---- */
@@ -76,13 +65,13 @@
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: rgba(26, 26, 46, 0.45);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 16px;
+  padding: var(--space-md);
 }
 
 @media (min-width: 640px) {
@@ -95,19 +84,12 @@
 .report-modal {
   width: 100%;
   max-width: 420px;
-  background: #FFFFFF;
-  border: 1px solid rgba(232, 163, 23, 0.06);
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 16px 48px rgba(26, 26, 46, 0.12), 0 4px 16px rgba(26, 26, 46, 0.04);
-  color: #1A1A2E;
-}
-
-[data-theme="dark"] .report-modal {
-  background: #2D2D44;
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-  color: #F8F8FC;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-xl);
+  color: var(--text-primary);
 }
 
 /* ---- Modal Header ---- */
@@ -115,22 +97,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
 }
 
 .report-header-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .report-header-title .header-icon {
-  color: #E53935;
+  color: var(--error);
 }
 
 .report-header-title h3 {
   margin: 0;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 900;
 }
@@ -142,107 +124,84 @@
   width: 34px;
   height: 34px;
   border: none;
-  background: rgba(26, 26, 46, 0.03);
-  border-radius: 8px;
+  background: var(--bg-muted);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  color: #5C5C7A;
-  min-height: 44px;
-  min-width: 44px;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-[data-theme="dark"] .report-modal-header .close-btn {
-  background: rgba(255, 255, 255, 0.06);
-  color: #9393A8;
+  color: var(--text-secondary);
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .report-modal-header .close-btn:hover {
-  background: rgba(229, 57, 53, 0.08);
-  color: #E53935;
+  background: var(--error-soft);
+  color: var(--error);
 }
 
 /* ---- Form ---- */
 .report-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .report-info {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.85rem;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   margin: 0;
   font-weight: 500;
   line-height: 1.5;
 }
 
-[data-theme="dark"] .report-info {
-  color: #9393A8;
-}
-
 .page-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: 'Inter', sans-serif;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
   font-size: 0.75rem;
-  padding: 8px 16px;
-  background: rgba(248, 248, 252, 0.8);
-  border-radius: 8px;
-}
-
-[data-theme="dark"] .page-info {
-  background: rgba(255, 255, 255, 0.04);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-muted);
+  border-radius: var(--radius-sm);
 }
 
 .info-label {
   font-weight: 600;
-  color: #5C5C7A;
-}
-
-[data-theme="dark"] .info-label {
-  color: #9393A8;
+  color: var(--text-secondary);
 }
 
 .info-value {
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.7rem;
-  color: #E8A317;
-  background: rgba(232, 163, 23, 0.06);
-  padding: 2px 6px;
-  border-radius: 4px;
+  color: var(--primary);
+  background: var(--primary-pale);
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-sm);
 }
 
 .report-textarea {
   width: 100%;
   min-height: 100px;
-  padding: 16px;
-  border: 1px solid rgba(26, 26, 46, 0.08);
-  border-radius: 12px;
-  background: rgba(248, 248, 252, 0.6);
-  color: #1A1A2E;
-  font-family: 'Inter', sans-serif;
+  padding: var(--space-md);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: var(--font-body);
   font-size: 0.85rem;
   resize: vertical;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   outline: none;
   line-height: 1.6;
 }
 
-[data-theme="dark"] .report-textarea {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
-  color: #F8F8FC;
-}
-
 .report-textarea::placeholder {
-  color: #9393A8;
+  color: var(--text-muted);
 }
 
 .report-textarea:focus {
-  border-color: rgba(232, 163, 23, 0.3);
-  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.06);
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-pale);
 }
 
 .report-textarea:disabled {
@@ -255,25 +214,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-sm);
   width: 100%;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
-  color: #FFFFFF;
+  padding: 14px var(--space-lg);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
   border: none;
-  border-radius: 12px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
   font-size: 0.9rem;
   font-weight: 800;
   cursor: pointer;
-  min-height: 48px;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.25);
+  min-height: var(--touch-target);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  box-shadow: var(--shadow-md);
 }
 
 .submit-report-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(232, 163, 23, 0.35);
+  box-shadow: var(--shadow-lg);
 }
 
 .submit-report-btn:disabled {
@@ -286,8 +245,8 @@
   width: 18px;
   height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #FFFFFF;
-  border-radius: 9999px;
+  border-top-color: var(--white);
+  border-radius: var(--radius-full);
   animation: reportSpin 0.6s linear infinite;
 }
 

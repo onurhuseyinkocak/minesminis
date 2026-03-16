@@ -1,7 +1,6 @@
 /* ============================================================
-   DailyReward.css — Daily login rewards modal
+   DailyReward.css — Token-based daily login rewards modal
    MinesMinis Design System
-   Honey Amber (#E8A317) / Deep Teal (#1A6B5A)
    ============================================================ */
 
 /* ---- Floating Trigger Button ---- */
@@ -12,43 +11,37 @@
   z-index: 80;
   width: 54px;
   height: 54px;
-  border-radius: 9999px;
-  border: 2px solid rgba(232, 163, 23, 0.15);
-  background: linear-gradient(135deg, #FFF8E7 0%, #FDECC8 100%);
-  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.12), 0 1px 3px rgba(26, 26, 46, 0.06);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--border-light);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-[data-theme="dark"] .daily-reward-trigger {
-  background: linear-gradient(135deg, #2D2D44 0%, #1A1A2E 100%);
-  border-color: rgba(232, 163, 23, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  min-height: var(--touch-target);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .daily-reward-trigger:hover {
   transform: scale(1.08);
-  border-color: #E8A317;
-  box-shadow: 0 6px 24px rgba(232, 163, 23, 0.25);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
 }
 
 .daily-reward-trigger:focus-visible {
-  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline: var(--focus-ring);
   outline-offset: 2px;
 }
 
 .daily-reward-trigger.available {
-  border-color: #E8A317;
+  border-color: var(--primary);
   animation: triggerPulse 2s ease-in-out infinite;
 }
 
 @keyframes triggerPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 163, 23, 0.35), 0 4px 16px rgba(232, 163, 23, 0.12); }
-  50% { box-shadow: 0 0 0 12px rgba(232, 163, 23, 0), 0 4px 16px rgba(232, 163, 23, 0.12); }
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow), var(--shadow-md); }
+  50% { box-shadow: 0 0 0 12px transparent, var(--shadow-md); }
 }
 
 .trigger-icon {
@@ -62,21 +55,17 @@
   right: -4px;
   width: 20px;
   height: 20px;
-  border-radius: 9999px;
-  background: #E53935;
-  color: white;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  background: var(--error);
+  color: var(--white);
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(229, 57, 53, 0.4);
-  border: 2px solid #FFF8E7;
-}
-
-[data-theme="dark"] .trigger-badge {
-  border-color: #1A1A2E;
+  box-shadow: 0 2px 8px var(--error-soft);
+  border: 2px solid var(--bg-card);
 }
 
 /* ---- Overlay ---- */
@@ -87,11 +76,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(26, 26, 46, 0.55);
+  background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   animation: drOverlayIn 0.25s ease;
-  padding: 16px;
+  padding: var(--space-md);
 }
 
 @keyframes drOverlayIn {
@@ -104,19 +93,13 @@
   position: relative;
   width: 100%;
   max-width: 440px;
-  background: linear-gradient(170deg, #FFFFFF 0%, #FFF8E7 100%);
-  border: 1px solid rgba(232, 163, 23, 0.12);
-  border-radius: 24px;
-  padding: 32px 24px;
-  box-shadow: 0 24px 80px rgba(26, 26, 46, 0.15), 0 4px 20px rgba(232, 163, 23, 0.06);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl) var(--space-lg);
+  box-shadow: var(--shadow-xl);
   animation: drModalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   overflow: hidden;
-}
-
-[data-theme="dark"] .daily-reward-modal {
-  background: linear-gradient(170deg, #2D2D44 0%, #1A1A2E 100%);
-  border-color: rgba(232, 163, 23, 0.15);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes drModalIn {
@@ -126,90 +109,72 @@
 
 .daily-reward-modal .close-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: var(--space-md);
+  right: var(--space-md);
   width: 34px;
   height: 34px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: none;
-  background: rgba(26, 26, 46, 0.04);
-  color: #5C5C7A;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
   font-size: 0.875rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-[data-theme="dark"] .daily-reward-modal .close-btn {
-  background: rgba(255, 255, 255, 0.06);
-  color: #9393A8;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .daily-reward-modal .close-btn:hover {
-  background: rgba(229, 57, 53, 0.08);
-  color: #E53935;
+  background: var(--error-soft);
+  color: var(--error);
 }
 
 .daily-reward-modal .close-btn:focus-visible {
-  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline: var(--focus-ring);
   outline-offset: 2px;
 }
 
 /* ---- Modal Header ---- */
 .modal-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-lg);
 }
 
 .modal-header h2 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 900;
-  color: #1A1A2E;
-  margin: 0 0 4px;
-}
-
-[data-theme="dark"] .modal-header h2 {
-  color: #F8F8FC;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-xs);
 }
 
 .modal-header p {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   margin: 0;
   font-weight: 500;
-}
-
-[data-theme="dark"] .modal-header p {
-  color: #9393A8;
 }
 
 /* ---- Rewards Grid (7 days) ---- */
 .rewards-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  margin-bottom: 24px;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
 }
 
 .reward-day {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 10px 4px;
-  border-radius: 12px;
-  background: rgba(26, 26, 46, 0.02);
-  border: 1px solid rgba(26, 26, 46, 0.06);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-[data-theme="dark"] .reward-day {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.06);
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-xs);
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .reward-day.past {
@@ -217,14 +182,10 @@
 }
 
 .reward-day.current {
-  border-color: #E8A317;
-  background: rgba(232, 163, 23, 0.06);
-  box-shadow: 0 0 0 1px rgba(232, 163, 23, 0.1), 0 4px 16px rgba(232, 163, 23, 0.08);
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  box-shadow: 0 0 0 1px var(--primary-glow), var(--shadow-md);
   transform: scale(1.06);
-}
-
-[data-theme="dark"] .reward-day.current {
-  background: rgba(232, 163, 23, 0.08);
 }
 
 .reward-day.future {
@@ -232,21 +193,17 @@
 }
 
 .reward-day.special {
-  border-color: rgba(232, 163, 23, 0.25);
-  background: linear-gradient(135deg, rgba(232, 163, 23, 0.06), rgba(26, 107, 90, 0.06));
+  border-color: var(--primary-light);
+  background: linear-gradient(135deg, var(--primary-pale), var(--secondary-pale));
 }
 
 .day-label {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.5625rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #5C5C7A;
-}
-
-[data-theme="dark"] .day-label {
-  color: #9393A8;
+  color: var(--text-secondary);
 }
 
 .reward-icon {
@@ -255,10 +212,10 @@
 }
 
 .reward-xp {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.6875rem;
   font-weight: 800;
-  color: #E8A317;
+  color: var(--primary);
 }
 
 .reward-badge {
@@ -270,29 +227,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-sm);
   width: 100%;
-  padding: 16px 24px;
+  padding: var(--space-md) var(--space-lg);
   border: none;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
-  color: #FFFFFF;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-lg);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
   min-height: 52px;
-  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.3), 0 8px 32px rgba(232, 163, 23, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .claim-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(232, 163, 23, 0.4), 0 12px 40px rgba(232, 163, 23, 0.18);
+  box-shadow: var(--shadow-xl);
 }
 
 .claim-btn:focus-visible {
-  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline: var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -327,30 +284,30 @@
 .claimed-icon {
   font-size: 2.5rem;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-sm);
 }
 
 .claimed-section h3 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 900;
-  color: #4CAF50;
-  margin: 0 0 4px;
+  color: var(--success);
+  margin: 0 0 var(--space-xs);
 }
 
 .claimed-xp {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 900;
-  color: #E8A317;
+  color: var(--primary);
   margin: 0;
 }
 
 .claimed-badge {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.875rem;
-  color: #1A6B5A;
-  margin: 4px 0 0;
+  color: var(--mimi-green);
+  margin: var(--space-xs) 0 0;
   font-weight: 600;
 }
 
@@ -362,35 +319,24 @@
 
 .next-reward p,
 .next-reward-fade-in p {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  color: #5C5C7A;
-  margin: 0 0 8px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-sm);
   font-weight: 500;
 }
 
-[data-theme="dark"] .next-reward p,
-[data-theme="dark"] .next-reward-fade-in p {
-  color: #9393A8;
-}
-
 .countdown {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 800;
-  color: #1A1A2E;
-  background: rgba(232, 163, 23, 0.06);
-  padding: 8px 16px;
-  border-radius: 12px;
+  color: var(--text-primary);
+  background: var(--bg-muted);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
   display: inline-block;
   letter-spacing: 0.04em;
-  border: 1px solid rgba(232, 163, 23, 0.1);
-}
-
-[data-theme="dark"] .countdown {
-  color: #D4D4E0;
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-light);
 }
 
 /* ---- Streak Display ---- */
@@ -398,14 +344,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(26, 26, 46, 0.06);
-}
-
-[data-theme="dark"] .streak-display {
-  border-top-color: rgba(255, 255, 255, 0.06);
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-light);
 }
 
 .streak-fire {
@@ -413,22 +355,18 @@
 }
 
 .streak-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.9375rem;
   font-weight: 800;
-  color: #2D2D44;
-}
-
-[data-theme="dark"] .streak-text {
-  color: #D4D4E0;
+  color: var(--text-primary);
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 480px) {
   .daily-reward-modal {
-    padding: 24px 16px;
+    padding: var(--space-lg) var(--space-md);
     max-width: 100%;
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
   }
 
   .rewards-grid {
@@ -436,7 +374,7 @@
   }
 
   .reward-day {
-    padding: 6px 2px;
+    padding: var(--space-xs) 2px;
   }
 
   .reward-icon {

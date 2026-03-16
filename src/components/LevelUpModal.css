@@ -1,7 +1,6 @@
 /* ============================================================
-   LevelUpModal.css — Level up celebration overlay
+   LevelUpModal.css — Token-based level up celebration overlay
    MinesMinis Design System
-   Honey Amber (#E8A317) / Deep Teal (#1A6B5A)
    ============================================================ */
 
 /* ---- Overlay ---- */
@@ -12,11 +11,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(26, 26, 46, 0.7);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   animation: luOverlayIn 0.3s ease;
-  padding: 16px;
+  padding: var(--space-md);
 }
 
 @keyframes luOverlayIn {
@@ -50,26 +49,14 @@
 .confetti-piece:nth-child(5n) {
   width: 10px;
   height: 6px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
 }
 
 @keyframes confettiFall {
-  0% {
-    transform: translateY(0) rotate(0deg) scale(1);
-    opacity: 1;
-  }
-  20% {
-    transform: translateY(20vh) rotate(120deg) scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(50vh) rotate(360deg) scale(0.85);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(110vh) rotate(720deg) scale(0.3);
-    opacity: 0;
-  }
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  20% { transform: translateY(20vh) rotate(120deg) scale(1); opacity: 1; }
+  50% { transform: translateY(50vh) rotate(360deg) scale(0.85); opacity: 0.8; }
+  100% { transform: translateY(110vh) rotate(720deg) scale(0.3); opacity: 0; }
 }
 
 /* ---- Modal ---- */
@@ -77,23 +64,14 @@
   position: relative;
   width: 100%;
   max-width: 380px;
-  background: linear-gradient(170deg, #FFFFFF 0%, #FFF8E7 100%);
-  border: 1px solid rgba(232, 163, 23, 0.15);
-  border-radius: 24px;
-  padding: 48px 32px;
-  box-shadow:
-    0 0 0 1px rgba(232, 163, 23, 0.08),
-    0 24px 80px rgba(26, 26, 46, 0.2),
-    0 8px 32px rgba(232, 163, 23, 0.08);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3xl) var(--space-xl);
+  box-shadow: var(--shadow-xl);
   animation: luModalIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   overflow: hidden;
   text-align: center;
-}
-
-[data-theme="dark"] .level-up-modal {
-  background: linear-gradient(170deg, #2D2D44 0%, #1A1A2E 100%);
-  border-color: rgba(232, 163, 23, 0.2);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(232, 163, 23, 0.08);
 }
 
 @keyframes luModalIn {
@@ -110,8 +88,8 @@
   transform: translate(-50%, -50%);
   width: 320px;
   height: 320px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(232, 163, 23, 0.15) 0%, rgba(232, 163, 23, 0.04) 40%, transparent 70%);
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
   filter: blur(40px);
   pointer-events: none;
   animation: glowPulse 2.5s ease-in-out infinite;
@@ -133,8 +111,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
 }
 
 .star {
@@ -155,16 +133,16 @@
 
 /* ---- Title ---- */
 .level-up-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #E8A317, #F5CC5C, #E8A317);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light), var(--primary));
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: shimmer 2.5s linear infinite;
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-lg);
   letter-spacing: 0.08em;
 }
 
@@ -178,30 +156,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 24px;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
 }
 
 .level-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.875rem;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-weight: 600;
 }
 
-[data-theme="dark"] .level-label {
-  color: #9393A8;
-}
-
 .new-level-display .level-number {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 4.5rem;
   font-weight: 900;
-  color: #E8A317;
+  color: var(--primary);
   line-height: 1;
-  text-shadow: 0 0 40px rgba(232, 163, 23, 0.35), 0 0 80px rgba(232, 163, 23, 0.12);
+  text-shadow: 0 0 40px var(--primary-glow), 0 0 80px var(--primary-glow);
   animation: levelPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
 }
 
@@ -212,15 +186,11 @@
 
 /* ---- Message ---- */
 .level-up-message {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.9375rem;
-  color: #5C5C7A;
+  color: var(--text-body);
   line-height: 1.6;
-  margin: 0 0 32px;
-}
-
-[data-theme="dark"] .level-up-message {
-  color: #D4D4E0;
+  margin: 0 0 var(--space-xl);
 }
 
 /* ---- Continue Button ---- */
@@ -228,29 +198,29 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px 36px;
+  gap: var(--space-sm);
+  padding: 14px var(--space-2xl);
   border: none;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #E8A317 0%, #C4880F 100%);
-  color: #FFFFFF;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  min-height: 48px;
-  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.3), 0 8px 32px rgba(232, 163, 23, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: var(--touch-target);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .continue-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(232, 163, 23, 0.4), 0 12px 40px rgba(232, 163, 23, 0.18);
+  box-shadow: var(--shadow-xl);
 }
 
 .btn-arrow {
   font-size: 1.125rem;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-fast);
 }
 
 .continue-btn:hover .btn-arrow {
@@ -258,14 +228,14 @@
 }
 
 .continue-btn:focus-visible {
-  outline: 3px solid rgba(232, 163, 23, 0.5);
+  outline: var(--focus-ring);
   outline-offset: 2px;
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 480px) {
   .level-up-modal {
-    padding: 36px 24px;
+    padding: var(--space-2xl) var(--space-lg);
   }
 
   .level-up-title {

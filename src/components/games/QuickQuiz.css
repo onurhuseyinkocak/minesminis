@@ -1,15 +1,12 @@
-/* ============================================================
-   QUICK QUIZ — MinesMinis Premium Game
-   4 option buttons, timer bar, streak indicator
-   ============================================================ */
+/* ==========================================================================
+   QUICK QUIZ — MinesMinis Design System v4
+   ========================================================================== */
 
 .quick-quiz {
-  --qq-primary: #E8A317;
-
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding: 1.5rem;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
   max-width: 700px;
   margin: 0 auto;
 }
@@ -21,44 +18,42 @@
 }
 
 .quick-quiz__title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 800;
-  color: #1A6B5A;
+  color: var(--secondary);
   margin: 0;
 }
 
 .quick-quiz__meta {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   align-items: center;
 }
-
-/* ── Timer ────────────────────────────────────────────────── */
 
 .quick-quiz__timer {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #2D2D44;
+  gap: var(--space-sm);
+  color: var(--text-body);
 }
 
 .quick-quiz__timer-bar {
   flex: 1;
   height: 8px;
-  background: #EEEEF5;
-  border-radius: 9999px;
+  background: var(--bg-muted);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .quick-quiz__timer-fill {
   height: 100%;
-  border-radius: 9999px;
-  transition: background-color 0.3s ease;
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-slow);
 }
 
 .quick-quiz__timer-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 1rem;
   min-width: 2.5rem;
@@ -66,15 +61,13 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Question card ────────────────────────────────────────── */
-
 .quick-quiz__question { text-align: center; }
 
 .quick-quiz__question-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-md);
 }
 
 .quick-quiz__emoji {
@@ -84,71 +77,69 @@
 }
 
 .quick-quiz__prompt-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 700;
-  color: #1A1A2E;
+  color: var(--text-primary);
   margin: 0;
 }
-
-/* ── Options ──────────────────────────────────────────────── */
 
 .quick-quiz__options {
   display: flex;
   flex-direction: column;
-  gap: 0.625rem;
+  gap: var(--space-sm);
 }
 
 .quick-quiz__option {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   min-height: 64px;
-  border: 2.5px solid rgba(26, 26, 46, 0.08);
-  border-radius: 16px;
-  background: #FFFFFF;
+  border: 2.5px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
   cursor: pointer;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
   transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   text-align: left;
   width: 100%;
   box-shadow: var(--shadow-sm);
 }
 
 .quick-quiz__option:hover:not(:disabled) {
-  border-color: #2A9D8F;
+  border-color: var(--secondary-light);
   background: rgba(26, 107, 90, 0.03);
   transform: translateX(4px);
   box-shadow: var(--shadow-md);
 }
 
 .quick-quiz__option:focus-visible {
-  outline: 3px solid rgba(232, 163, 23, 0.5);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .quick-quiz__option--selected {
-  border-color: #E8A317;
-  background: #FFF8E7;
+  border-color: var(--primary);
+  background: var(--primary-pale);
 }
 
 .quick-quiz__option--correct {
-  border-color: #4CAF50;
+  border-color: var(--mimi-green);
   background: rgba(76, 175, 80, 0.08);
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.10);
 }
 
 .quick-quiz__option--wrong {
-  border-color: #E53935;
-  background: rgba(220, 38, 38, 0.05);
+  border-color: var(--error);
+  background: rgba(229, 57, 53, 0.05);
   animation: qq-shake 0.4s ease;
 }
 
@@ -161,53 +152,49 @@
 .quick-quiz__option-label {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: rgba(26, 107, 90, 0.08);
-  color: #1A6B5A;
+  color: var(--secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: 0.9rem;
   flex-shrink: 0;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .quick-quiz__option--correct .quick-quiz__option-label {
-  background: #4CAF50;
-  color: white;
+  background: var(--mimi-green);
+  color: var(--white);
 }
 
 .quick-quiz__option--wrong .quick-quiz__option-label {
-  background: #E53935;
-  color: white;
+  background: var(--error);
+  color: var(--white);
 }
 
 .quick-quiz__option-text { font-size: 1.15rem; }
 
-/* ── Feedback ─────────────────────────────────────────────── */
-
 .quick-quiz__feedback {
   text-align: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
-  padding: 0.75rem 1.25rem;
-  border-radius: 16px;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
 }
 
 .quick-quiz__feedback--correct {
   background: rgba(76, 175, 80, 0.10);
-  color: #2E7D32;
+  color: var(--mimi-green-dark);
 }
 
 .quick-quiz__feedback--wrong,
 .quick-quiz__feedback--timeout {
   background: rgba(232, 163, 23, 0.10);
-  color: #C4880F;
+  color: var(--primary-dark);
 }
-
-/* ── Results ──────────────────────────────────────────────── */
 
 .quick-quiz__results { text-align: center; }
 
@@ -215,29 +202,27 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
-.quick-quiz__trophy { color: #E8A317; }
+.quick-quiz__trophy { color: var(--primary); }
 
 .quick-quiz__results-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 800;
-  color: #1A6B5A;
+  color: var(--secondary);
   margin: 0;
 }
 
 .quick-quiz__results-score {
   font-size: 1.15rem;
-  color: #2D2D44;
+  color: var(--text-body);
   margin: 0;
 }
 
-/* ── Smart board ──────────────────────────────────────────── */
-
 @media (min-width: 1024px) {
-  .quick-quiz__option { min-height: 76px; padding: 1.25rem 2rem; font-size: 1.3rem; }
+  .quick-quiz__option { min-height: 76px; padding: var(--space-lg) var(--space-xl); font-size: 1.3rem; }
   .quick-quiz__emoji { font-size: 5rem; }
   .quick-quiz__prompt-text { font-size: 1.5rem; }
 }

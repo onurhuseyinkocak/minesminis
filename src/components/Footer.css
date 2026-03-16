@@ -1,7 +1,6 @@
 /* ============================================================
-   Footer.css — Site footer with wave decoration
+   Footer.css — Token-based site footer with wave decoration
    MinesMinis Design System
-   Honey Amber (#E8A317) / Deep Teal (#1A6B5A)
    ============================================================ */
 
 .footer {
@@ -24,20 +23,20 @@
 }
 
 .footer-wave path {
-  fill: #2D2D44;
+  fill: var(--charcoal);
 }
 
 /* ---- Body ---- */
 .footer-body {
-  background: #2D2D44;
-  color: #D4D4E0;
-  padding: 24px 0 16px;
+  background: var(--charcoal);
+  color: var(--cloud);
+  padding: var(--space-lg) 0 var(--space-md);
 }
 
 .footer-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--space-lg);
 }
 
 /* ---- Top Row ---- */
@@ -46,25 +45,25 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  gap: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border-light);
 }
 
 /* ---- Brand ---- */
 .footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .footer-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
   text-decoration: none;
-  color: #F8F8FC;
-  transition: opacity 0.2s ease;
+  color: var(--snow);
+  transition: opacity var(--transition-fast);
 }
 
 .footer-logo:hover {
@@ -74,36 +73,36 @@
 .footer-logo-img {
   width: 38px;
   height: 38px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-sm);
 }
 
 .footer-logo-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: -0.3px;
-  color: #F8F8FC;
+  color: var(--snow);
 }
 
 .footer-logo-text span {
-  color: #E8A317;
+  color: var(--primary);
 }
 
 .footer-tagline {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.75rem;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   margin: 0;
   font-weight: 500;
 }
 
 .footer-heart {
-  color: #E53935;
+  color: var(--error);
   flex-shrink: 0;
 }
 
@@ -111,32 +110,32 @@
 .footer-nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 
 .footer-nav a {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   text-decoration: none;
-  color: #D4D4E0;
-  font-family: 'Inter', sans-serif;
+  color: var(--cloud);
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 6px 10px;
-  border-radius: 8px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
   min-height: 36px;
-  transition: color 0.2s ease, background 0.2s ease;
+  transition: color var(--transition-fast), background var(--transition-fast);
 }
 
 .footer-nav a:hover {
-  color: #E8A317;
-  background: rgba(232, 163, 23, 0.08);
+  color: var(--primary);
+  background: var(--primary-pale);
 }
 
 .footer-nav a:focus-visible {
-  outline: 2px solid #E8A317;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -144,7 +143,7 @@
 .footer-social {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .footer-social a {
@@ -153,23 +152,23 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.06);
-  color: #D4D4E0;
-  min-height: 44px;
-  transition: all 0.2s ease;
+  color: var(--cloud);
+  min-height: var(--touch-target);
+  transition: all var(--transition-fast);
   text-decoration: none;
 }
 
 .footer-social a:hover {
-  background: #E8A317;
-  color: #FFFFFF;
+  background: var(--primary);
+  color: var(--white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .footer-social a:focus-visible {
-  outline: 2px solid #E8A317;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -179,14 +178,14 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px;
-  padding-top: 16px;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
 }
 
 .footer-copy {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.7rem;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   margin: 0;
   font-weight: 500;
 }
@@ -195,25 +194,25 @@
 .footer-legal {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .footer-legal a {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.7rem;
   font-weight: 500;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   text-decoration: none;
-  padding: 4px 2px;
-  transition: color 0.2s ease;
+  padding: var(--space-xs) 2px;
+  transition: color var(--transition-fast);
 }
 
 .footer-legal a:hover {
-  color: #E8A317;
+  color: var(--primary);
 }
 
 .footer-legal a:focus-visible {
-  outline: 2px solid #E8A317;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -221,17 +220,17 @@
 .footer-email {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-family: 'Inter', sans-serif;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
   font-size: 0.7rem;
   font-weight: 500;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--transition-fast);
 }
 
 .footer-email:hover {
-  color: #E8A317;
+  color: var(--primary);
 }
 
 /* ---- Responsive ---- */
@@ -239,16 +238,16 @@
   .footer-top {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: var(--space-md);
   }
 
   .footer-bottom {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: var(--space-sm);
   }
 
   .footer-nav {
-    gap: 4px;
+    gap: var(--space-xs);
   }
 }

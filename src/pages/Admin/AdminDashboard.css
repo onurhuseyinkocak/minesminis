@@ -1,14 +1,13 @@
-/* ============================================================
-   Admin Dashboard - Metrics & Overview
-   ============================================================ */
+/* ==========================================================================
+   Admin Dashboard — MinesMinis Design System v4
+   ========================================================================== */
 
 .adm-dash {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-lg);
 }
 
-/* ---- Page Header ---- */
 .adm-dash-header {
   display: flex;
   justify-content: space-between;
@@ -26,19 +25,19 @@
 .adm-dash-header p {
   font-size: 0.85rem;
   color: var(--admin-text-secondary);
-  margin: 0.25rem 0 0;
+  margin: var(--space-xs) 0 0;
 }
 
 .adm-dash-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .adm-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 0.875rem;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
   font-family: var(--admin-font);
   font-size: 0.8rem;
   font-weight: 500;
@@ -53,34 +52,34 @@
 
 .adm-action-btn:hover {
   background: var(--admin-bg);
-  border-color: #ccd0d8;
+  border-color: var(--border-medium);
 }
 
 .adm-action-btn.primary {
-  background: var(--admin-primary);
-  color: #fff;
-  border-color: var(--admin-primary);
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
 }
 
 .adm-action-btn.primary:hover {
-  background: var(--admin-primary-hover);
+  background: var(--primary-dark);
 }
 
 /* ---- Metrics Grid ---- */
 .adm-metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .adm-metric-card {
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
-  padding: 1.25rem;
+  padding: var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-md);
 }
 
 .adm-metric-top {
@@ -92,35 +91,35 @@
 .adm-metric-icon {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.adm-metric-icon.blue   { background: #eff6ff; color: #3b82f6; }
-.adm-metric-icon.green  { background: #ecfdf5; color: #10b981; }
-.adm-metric-icon.amber  { background: #fffbeb; color: #f59e0b; }
-.adm-metric-icon.purple { background: #f5f3ff; color: #8b5cf6; }
+.adm-metric-icon.blue   { background: rgba(30, 136, 229, 0.10); color: var(--info); }
+.adm-metric-icon.green  { background: rgba(76, 175, 80, 0.10); color: var(--success); }
+.adm-metric-icon.amber  { background: rgba(232, 163, 23, 0.10); color: var(--primary); }
+.adm-metric-icon.purple { background: rgba(139, 92, 246, 0.10); color: rgba(139, 92, 246, 1); }
 
 .adm-metric-change {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--space-xs);
   font-size: 0.7rem;
   font-weight: 600;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
 }
 
 .adm-metric-change.up {
-  background: #ecfdf5;
-  color: #059669;
+  background: rgba(76, 175, 80, 0.10);
+  color: var(--success);
 }
 
 .adm-metric-change.down {
-  background: #fef2f2;
-  color: #dc2626;
+  background: rgba(229, 57, 53, 0.10);
+  color: var(--error);
 }
 
 .adm-metric-value {
@@ -141,7 +140,7 @@
 .adm-dash-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 /* ---- Cards ---- */
@@ -156,7 +155,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--admin-border-light);
 }
 
@@ -166,58 +165,44 @@
   color: var(--admin-text);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
-.adm-card-body {
-  padding: 1.25rem;
-}
+.adm-card-body { padding: var(--space-lg); }
+.adm-card-body.no-pad { padding: 0; }
 
-.adm-card-body.no-pad {
-  padding: 0;
-}
-
-/* ---- Chart Area ---- */
 .adm-chart-container {
   height: 280px;
-  padding: 1rem 1.25rem 0.5rem;
+  padding: var(--space-md) var(--space-lg) var(--space-sm);
 }
 
 /* ---- Activity Feed ---- */
 .adm-activity-item {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 1.25rem;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--admin-border-light);
   transition: background var(--admin-transition);
 }
 
-.adm-activity-item:last-child {
-  border-bottom: none;
-}
-
-.adm-activity-item:hover {
-  background: var(--admin-bg);
-}
+.adm-activity-item:last-child { border-bottom: none; }
+.adm-activity-item:hover { background: var(--admin-bg); }
 
 .adm-activity-dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   margin-top: 6px;
   flex-shrink: 0;
 }
 
-.adm-activity-dot.green  { background: #10b981; }
-.adm-activity-dot.blue   { background: #3b82f6; }
-.adm-activity-dot.amber  { background: #f59e0b; }
-.adm-activity-dot.purple { background: #8b5cf6; }
+.adm-activity-dot.green  { background: var(--success); }
+.adm-activity-dot.blue   { background: var(--info); }
+.adm-activity-dot.amber  { background: var(--primary); }
+.adm-activity-dot.purple { background: rgba(139, 92, 246, 1); }
 
-.adm-activity-content {
-  flex: 1;
-  min-width: 0;
-}
+.adm-activity-content { flex: 1; min-width: 0; }
 
 .adm-activity-text {
   font-size: 0.825rem;
@@ -241,33 +226,26 @@
 .adm-inventory-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--admin-border-light);
   border-right: 1px solid var(--admin-border-light);
 }
 
-.adm-inventory-item:nth-child(2n) {
-  border-right: none;
-}
-
-.adm-inventory-item:nth-last-child(-n+2) {
-  border-bottom: none;
-}
+.adm-inventory-item:nth-child(2n) { border-right: none; }
+.adm-inventory-item:nth-last-child(-n+2) { border-bottom: none; }
 
 .adm-inventory-icon {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
 }
 
-.adm-inventory-info {
-  flex: 1;
-}
+.adm-inventory-info { flex: 1; }
 
 .adm-inventory-count {
   font-size: 1.125rem;
@@ -284,16 +262,16 @@
 .adm-quick-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  padding: 1.25rem;
+  gap: var(--space-md);
+  padding: var(--space-lg);
 }
 
 .adm-quick-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0.75rem;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md);
   background: var(--admin-bg);
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius);
@@ -305,32 +283,23 @@
 }
 
 .adm-quick-btn:hover {
-  border-color: var(--admin-primary);
-  background: var(--admin-primary-light);
+  border-color: var(--primary);
+  background: var(--primary-pale);
 }
 
-.adm-quick-btn svg {
-  color: var(--admin-primary);
-}
-
-.adm-quick-btn span {
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-align: center;
-}
+.adm-quick-btn svg { color: var(--primary); }
+.adm-quick-btn span { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
 /* ---- System Health ---- */
 .adm-health-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--admin-border-light);
 }
 
-.adm-health-bar:last-child {
-  border-bottom: none;
-}
+.adm-health-bar:last-child { border-bottom: none; }
 
 .adm-health-label {
   flex: 1;
@@ -342,35 +311,27 @@
 .adm-health-status {
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
 }
 
-.adm-health-status.ok {
-  background: #ecfdf5;
-  color: #059669;
-}
+.adm-health-status.ok { background: rgba(76, 175, 80, 0.10); color: var(--success); }
+.adm-health-status.warn { background: rgba(251, 140, 0, 0.10); color: var(--warning); }
 
-.adm-health-status.warn {
-  background: #fffbeb;
-  color: #d97706;
-}
-
-/* ---- Empty State ---- */
+/* ---- Empty / Loading ---- */
 .adm-empty {
-  padding: 2rem;
+  padding: var(--space-xl);
   text-align: center;
   color: var(--admin-text-muted);
   font-size: 0.85rem;
 }
 
-/* ---- Loading ---- */
 .adm-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: var(--space-md);
   min-height: 50vh;
   color: var(--admin-text-secondary);
 }
@@ -379,45 +340,23 @@
   width: 32px;
   height: 32px;
   border: 3px solid var(--admin-border);
-  border-top-color: var(--admin-primary);
-  border-radius: 50%;
+  border-top-color: var(--primary);
+  border-radius: var(--radius-full);
   animation: adm-spin 0.7s linear infinite;
 }
 
-@keyframes adm-spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes adm-spin { to { transform: rotate(360deg); } }
 
 /* ---- Responsive ---- */
 @media (max-width: 1024px) {
-  .adm-metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .adm-dash-row {
-    grid-template-columns: 1fr;
-  }
+  .adm-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .adm-dash-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
-  .adm-metrics-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .adm-dash-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .adm-quick-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .adm-inventory-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .adm-inventory-item {
-    border-right: none;
-  }
+  .adm-metrics-grid { grid-template-columns: 1fr; }
+  .adm-dash-header { flex-direction: column; gap: var(--space-md); }
+  .adm-quick-grid { grid-template-columns: 1fr; }
+  .adm-inventory-grid { grid-template-columns: 1fr; }
+  .adm-inventory-item { border-right: none; }
 }

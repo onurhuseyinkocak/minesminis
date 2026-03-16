@@ -1,13 +1,12 @@
-/* ============================================================
-   SENTENCE SCRAMBLE — MinesMinis Premium Game
-   Word chips, drop zone, check button
-   ============================================================ */
+/* ==========================================================================
+   SENTENCE SCRAMBLE — MinesMinis Design System v4
+   ========================================================================== */
 
 .sentence-scramble {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding: 1.5rem;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
   max-width: 750px;
   margin: 0 auto;
 }
@@ -19,149 +18,137 @@
 }
 
 .sentence-scramble__title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 800;
-  color: #1A6B5A;
+  color: var(--secondary);
   margin: 0;
 }
-
-/* ── Hint ─────────────────────────────────────────────────── */
 
 .sentence-scramble__hint {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
   background: linear-gradient(135deg, rgba(232, 163, 23, 0.08) 0%, rgba(245, 204, 92, 0.12) 100%);
-  color: #C4880F;
-  border-radius: 12px;
-  font-family: 'Nunito', sans-serif;
+  color: var(--primary-dark);
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
   justify-content: center;
   border: 1px solid rgba(232, 163, 23, 0.12);
 }
 
-/* ── Drop zone ────────────────────────────────────────────── */
-
 .sentence-scramble__dropzone {
   min-height: 120px;
   border: 2.5px dashed rgba(26, 107, 90, 0.20);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(26, 107, 90, 0.02);
 }
 
 .sentence-scramble__dropzone-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.95rem;
-  color: #9393A8;
-  margin: 0 0 0.75rem;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-md);
   text-align: center;
 }
 
 .sentence-scramble__placed {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   justify-content: center;
   min-height: 56px;
 }
 
-/* ── Word chips ───────────────────────────────────────────── */
-
 .sentence-scramble__chip {
-  padding: 0.75rem 1.25rem;
+  padding: var(--space-md) var(--space-lg);
   min-height: 52px;
-  border-radius: 16px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
   border: 2.5px solid transparent;
   transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .sentence-scramble__chip:focus-visible {
-  outline: 3px solid rgba(232, 163, 23, 0.5);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .sentence-scramble__chip--available {
-  background: #FFFFFF;
-  border-color: #1A6B5A;
-  color: #1A6B5A;
+  background: var(--bg-card);
+  border-color: var(--secondary);
+  color: var(--secondary);
   box-shadow: var(--shadow-card);
 }
 
 .sentence-scramble__chip--available:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2A9D8F, #1A6B5A);
-  color: white;
+  background: var(--gradient-secondary);
+  color: var(--white);
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(26, 107, 90, 0.25);
 }
 
 .sentence-scramble__chip--placed {
   background: rgba(26, 107, 90, 0.08);
-  border-color: #2A9D8F;
-  color: #1A6B5A;
+  border-color: var(--secondary-light);
+  color: var(--secondary);
 }
 
 .sentence-scramble__chip--placed:hover {
-  background: rgba(220, 38, 38, 0.06);
-  border-color: #E53935;
-  color: #E53935;
+  background: var(--error-soft);
+  border-color: var(--error);
+  color: var(--error);
 }
 
 .sentence-scramble__available {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--space-md);
   justify-content: center;
 }
 
-/* ── Feedback ─────────────────────────────────────────────── */
-
 .sentence-scramble__feedback {
   text-align: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
-  padding: 0.75rem 1.25rem;
-  border-radius: 16px;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .sentence-scramble__feedback--correct {
   background: rgba(76, 175, 80, 0.10);
-  color: #2E7D32;
+  color: var(--mimi-green-dark);
 }
 
 .sentence-scramble__feedback--wrong {
   background: rgba(232, 163, 23, 0.10);
-  color: #C4880F;
+  color: var(--primary-dark);
 }
-
-/* ── Actions ──────────────────────────────────────────────── */
 
 .sentence-scramble__actions {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: var(--space-md);
 }
-
-/* ── Results ──────────────────────────────────────────────── */
 
 .sentence-scramble__results { text-align: center; }
 
@@ -169,28 +156,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .sentence-scramble__big-emoji { font-size: 4rem; }
 
 .sentence-scramble__results-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 800;
-  color: #1A6B5A;
+  color: var(--secondary);
   margin: 0;
 }
 
 .sentence-scramble__results-score {
   font-size: 1.15rem;
-  color: #2D2D44;
+  color: var(--text-body);
   margin: 0;
 }
 
-/* ── Smart board ──────────────────────────────────────────── */
-
 @media (min-width: 1024px) {
-  .sentence-scramble__chip { min-height: 64px; padding: 1rem 1.75rem; font-size: 1.4rem; }
+  .sentence-scramble__chip { min-height: 64px; padding: var(--space-md) var(--space-xl); font-size: 1.4rem; }
   .sentence-scramble__dropzone { min-height: 140px; }
 }

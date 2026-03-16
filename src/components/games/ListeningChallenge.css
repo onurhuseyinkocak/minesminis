@@ -1,13 +1,12 @@
-/* ============================================================
-   LISTENING CHALLENGE — MinesMinis Premium Game
-   Big emoji options, play button, replay
-   ============================================================ */
+/* ==========================================================================
+   LISTENING CHALLENGE — MinesMinis Design System v4
+   ========================================================================== */
 
 .listening-challenge {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding: 1.5rem;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
   max-width: 750px;
   margin: 0 auto;
 }
@@ -19,28 +18,26 @@
 }
 
 .listening-challenge__title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 800;
-  color: #1A6B5A;
+  color: var(--secondary);
   margin: 0;
 }
-
-/* ── Speaker card ─────────────────────────────────────────── */
 
 .listening-challenge__speaker {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-md);
   text-align: center;
 }
 
 .listening-challenge__instruction {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2D2D44;
+  color: var(--text-body);
   margin: 0;
 }
 
@@ -50,76 +47,72 @@
   font-size: 1.3rem !important;
 }
 
-/* ── Feedback ─────────────────────────────────────────────── */
-
 .listening-challenge__feedback {
   text-align: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
-  padding: 0.75rem 1.25rem;
-  border-radius: 16px;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
 }
 
 .listening-challenge__feedback--correct {
   background: rgba(76, 175, 80, 0.10);
-  color: #2E7D32;
+  color: var(--mimi-green-dark);
 }
 
 .listening-challenge__feedback--wrong {
   background: rgba(232, 163, 23, 0.10);
-  color: #C4880F;
+  color: var(--primary-dark);
 }
-
-/* ── Options grid ─────────────────────────────────────────── */
 
 .listening-challenge__options {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .listening-challenge__option {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem 1rem;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-md);
   min-height: 120px;
-  border: 2.5px solid rgba(26, 26, 46, 0.08);
-  border-radius: 24px;
-  background: #FFFFFF;
+  border: 2.5px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
   cursor: pointer;
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease,
-    background 0.2s ease;
-  font-family: 'Nunito', sans-serif;
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    background var(--transition-fast);
+  font-family: var(--font-display);
   box-shadow: var(--shadow-card);
 }
 
 .listening-challenge__option:hover:not(:disabled) {
-  border-color: #2A9D8F;
+  border-color: var(--secondary-light);
   box-shadow: var(--shadow-md);
   transform: translateY(-3px);
 }
 
 .listening-challenge__option:focus-visible {
-  outline: 3px solid rgba(232, 163, 23, 0.5);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .listening-challenge__option:disabled { cursor: default; }
 
 .listening-challenge__option--correct {
-  border-color: #4CAF50;
+  border-color: var(--mimi-green);
   background: rgba(76, 175, 80, 0.06);
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
 }
 
 .listening-challenge__option--wrong {
-  border-color: #E8A317;
+  border-color: var(--primary);
   background: rgba(232, 163, 23, 0.05);
   animation: lc-shake 0.4s ease;
 }
@@ -139,21 +132,17 @@
 .listening-challenge__option-label {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #2D2D44;
+  color: var(--text-body);
 }
-
-/* ── Prompt to listen ─────────────────────────────────────── */
 
 .listening-challenge__prompt-listen {
   text-align: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  color: #9393A8;
+  color: var(--text-muted);
   font-weight: 600;
   margin: 0;
 }
-
-/* ── Results ──────────────────────────────────────────────── */
 
 .listening-challenge__results { text-align: center; }
 
@@ -161,29 +150,27 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
-.listening-challenge__results-icon { color: #E8A317; }
+.listening-challenge__results-icon { color: var(--primary); }
 
 .listening-challenge__results-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 800;
-  color: #1A6B5A;
+  color: var(--secondary);
   margin: 0;
 }
 
 .listening-challenge__results-score {
   font-size: 1.15rem;
-  color: #2D2D44;
+  color: var(--text-body);
   margin: 0;
 }
 
-/* ── Smart board ──────────────────────────────────────────── */
-
 @media (min-width: 1024px) {
-  .listening-challenge__option { min-height: 160px; padding: 2rem 1.5rem; }
+  .listening-challenge__option { min-height: 160px; padding: var(--space-xl) var(--space-lg); }
   .listening-challenge__option-emoji { font-size: 5rem; }
   .listening-challenge__option-label { font-size: 1.3rem; }
   .listening-challenge__play-btn { min-width: 260px; min-height: 88px; font-size: 1.5rem !important; }

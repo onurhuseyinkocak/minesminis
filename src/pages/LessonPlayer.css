@@ -1,6 +1,6 @@
 /* ==========================================================================
    LESSON PLAYER — Lesson Play Page
-   MinesMinis Premium Design System v4.0
+   MinesMinis Premium — All colors via design tokens.
    Smart board optimized, large touch targets, clean activity area.
    ========================================================================== */
 
@@ -8,25 +8,25 @@
 .lesson-player-page {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--space-md);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E7 100%);
+  background: var(--bg-page);
 }
 
 .lesson-player-page--not-found {
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 24px;
+  gap: var(--space-lg);
 }
 
 .lesson-player-page--not-found h2 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 24px;
-  color: #2D2D44;
+  color: var(--text-body);
 }
 
 /* ==========================================================================
@@ -36,11 +36,11 @@
 .lesson-player-topbar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 0;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
   position: sticky;
   top: 0;
-  background: linear-gradient(180deg, #FFFFFF 85%, rgba(255, 255, 255, 0));
+  background: var(--bg-elevated);
   z-index: 20;
   backdrop-filter: blur(12px);
 }
@@ -49,10 +49,10 @@
   content: '';
   position: absolute;
   bottom: 0;
-  left: -20px;
-  right: -20px;
+  left: calc(-1 * var(--space-md));
+  right: calc(-1 * var(--space-md));
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(232, 163, 23, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
 }
 
 .lesson-player-topbar__back,
@@ -60,21 +60,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: var(--touch-target);
+  height: var(--touch-target);
   border: none;
-  border-radius: 16px;
-  background: #F8F8FC;
-  color: #5C5C7A;
+  border-radius: var(--radius-lg);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   flex-shrink: 0;
 }
 
 .lesson-player-topbar__back:hover,
 .lesson-player-topbar__skip:hover {
-  background: #EEEEF5;
-  color: #1A1A2E;
+  background: var(--border-light);
+  color: var(--text-primary);
   transform: scale(1.05);
 }
 
@@ -84,32 +84,38 @@
 }
 
 .lesson-player-topbar__back:hover {
-  color: #E8A317;
-  background: #FFF8E7;
+  color: var(--primary);
+  background: var(--primary-pale);
+}
+
+.lesson-player-topbar__back:focus-visible,
+.lesson-player-topbar__skip:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .lesson-player-topbar__center {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
   min-width: 0;
 }
 
 .lesson-player-topbar__title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
-  color: #1A1A2E;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .lesson-player-topbar__count {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
-  color: #9393A8;
+  color: var(--text-muted);
   font-weight: 600;
   margin-top: 2px;
 }
@@ -122,8 +128,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 32px 0;
+  gap: var(--space-lg);
+  padding: var(--space-xl) 0;
   overflow: hidden;
 }
 
@@ -131,14 +137,14 @@
 .lesson-activity {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-lg);
 }
 
 .lesson-activity__header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding-bottom: 16px;
+  gap: var(--space-md);
+  padding-bottom: var(--space-md);
   border-bottom: 3px solid transparent;
   position: relative;
 }
@@ -150,14 +156,14 @@
   left: 0;
   right: 0;
   height: 3px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   opacity: 0.2;
 }
 
 .lesson-activity__icon {
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -179,18 +185,18 @@
 }
 
 .lesson-activity__title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 800;
   margin: 0;
-  color: #1A1A2E;
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
 .lesson-activity__type {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
-  color: #9393A8;
+  color: var(--text-muted);
   text-transform: capitalize;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -200,18 +206,18 @@
 /* ---- ACTIVITY CONTENT (placeholder area) ---- */
 .lesson-activity__content {
   flex: 1;
-  border-radius: 24px !important;
+  border-radius: var(--radius-xl) !important;
   border: none !important;
-  background: #FFFFFF !important;
+  background: var(--bg-card) !important;
   box-shadow: var(--shadow-card) !important;
 }
 
 .lesson-activity__instructions {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 18px;
-  color: #2D2D44;
+  color: var(--text-body);
   line-height: 1.7;
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-lg);
   max-width: 600px;
 }
 
@@ -220,23 +226,23 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
-  background: linear-gradient(135deg, #FFF8E7 0%, #F8F8FC 100%);
-  border-radius: 16px;
-  border: 2px dashed #D4D4E0;
+  padding: var(--space-3xl) var(--space-lg);
+  background: var(--bg-muted);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--border-medium);
   text-align: center;
-  transition: border-color 0.3s ease;
+  transition: border-color var(--transition-base);
   min-height: 200px;
 }
 
 .lesson-activity__placeholder:hover {
-  border-color: #F5CC5C;
+  border-color: var(--primary-light);
 }
 
 .lesson-activity__placeholder-icon {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
   opacity: 0.4;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity var(--transition-base), transform var(--transition-base);
 }
 
 .lesson-activity__placeholder:hover .lesson-activity__placeholder-icon {
@@ -245,9 +251,9 @@
 }
 
 .lesson-activity__placeholder-text {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
-  color: #9393A8;
+  color: var(--text-muted);
   margin: 0;
   font-style: italic;
 }
@@ -259,12 +265,12 @@
 .lesson-player-mimi {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, #FFF8E7 0%, #FDECC8 100%);
-  border-radius: 24px;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--primary-pale);
+  border-radius: var(--radius-xl);
   position: relative;
-  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.1);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -275,7 +281,7 @@
   right: -20px;
   width: 80px;
   height: 80px;
-  background: radial-gradient(circle, rgba(232, 163, 23, 0.08) 0%, transparent 70%);
+  background: var(--primary-glow);
   pointer-events: none;
 }
 
@@ -284,7 +290,7 @@
   line-height: 1;
   flex-shrink: 0;
   animation: mimi-wiggle 3s ease-in-out infinite;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 2px 4px var(--shadow-glow));
 }
 
 @keyframes mimi-wiggle {
@@ -294,10 +300,10 @@
 }
 
 .lesson-player-mimi__bubble {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
-  color: #C4880F;
+  color: var(--primary-dark);
   line-height: 1.4;
 }
 
@@ -308,11 +314,11 @@
 .lesson-player-bottombar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 0 24px;
+  gap: var(--space-md);
+  padding: var(--space-md) 0 var(--space-lg);
   position: sticky;
   bottom: 0;
-  background: linear-gradient(0deg, #FFFFFF 75%, rgba(255, 255, 255, 0));
+  background: var(--bg-elevated);
   z-index: 20;
   backdrop-filter: blur(8px);
 }
@@ -321,10 +327,10 @@
   content: '';
   position: absolute;
   top: 0;
-  left: -20px;
-  right: -20px;
+  left: calc(-1 * var(--space-md));
+  right: calc(-1 * var(--space-md));
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(232, 163, 23, 0.12), transparent);
+  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
 }
 
 .lesson-player-bottombar__spacer {
@@ -334,26 +340,27 @@
 /* Make bottom bar buttons large for touch / smart board */
 .lesson-player-bottombar .mm-btn {
   min-height: 52px;
-  padding: 16px 32px;
+  padding: var(--space-md) var(--space-xl);
   font-size: 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
 }
 
 .lesson-player-bottombar .mm-btn--primary {
-  box-shadow:
-    0 4px 14px rgba(232, 163, 23, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-button);
 }
 
 .lesson-player-bottombar .mm-btn--primary:hover {
-  box-shadow:
-    0 6px 20px rgba(232, 163, 23, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-button-hover);
   transform: translateY(-2px);
 }
 
 .lesson-player-bottombar .mm-btn--primary:active {
   transform: translateY(0);
+}
+
+.lesson-player-bottombar .mm-btn--primary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* ==========================================================================
@@ -367,8 +374,8 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 48px 24px;
-  gap: 24px;
+  padding: var(--space-3xl) var(--space-lg);
+  gap: var(--space-lg);
   position: relative;
 }
 
@@ -377,7 +384,7 @@
   font-size: 3rem;
   letter-spacing: 0.4em;
   animation: confetti-pop 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(var(--shadow-sm));
 }
 
 @keyframes confetti-pop {
@@ -388,39 +395,36 @@
 
 /* Trophy */
 .lesson-complete__trophy {
-  color: #E8A317;
+  color: var(--primary);
   animation: trophy-glow 2s ease-in-out infinite alternate;
-  filter: drop-shadow(0 4px 16px rgba(232, 163, 23, 0.3));
+  filter: drop-shadow(var(--shadow-glow));
 }
 
 @keyframes trophy-glow {
   0% {
     transform: translateY(0) scale(1);
-    filter: drop-shadow(0 4px 16px rgba(232, 163, 23, 0.3));
   }
   100% {
     transform: translateY(-10px) scale(1.06);
-    filter: drop-shadow(0 8px 24px rgba(232, 163, 23, 0.4));
   }
 }
 
 .lesson-complete__title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 32px;
   font-weight: 800;
-  color: #1A1A2E;
   margin: 0;
   line-height: 1.2;
-  background: linear-gradient(135deg, #1A1A2E 0%, #E8A317 100%);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .lesson-complete__subtitle {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -429,31 +433,29 @@
 .lesson-complete__xp {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 32px;
-  background: linear-gradient(135deg, #FFF8E7 0%, #FDECC8 50%, #FFF3D4 100%);
-  border-radius: 9999px;
-  box-shadow:
-    0 4px 16px rgba(232, 163, 23, 0.15),
-    0 0 0 2px rgba(232, 163, 23, 0.1);
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--primary-pale);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
   animation: xp-pulse 2s ease-in-out infinite;
 }
 
 @keyframes xp-pulse {
-  0%, 100% { box-shadow: 0 4px 16px rgba(232, 163, 23, 0.15), 0 0 0 2px rgba(232, 163, 23, 0.1); }
-  50% { box-shadow: 0 6px 24px rgba(232, 163, 23, 0.22), 0 0 0 4px rgba(232, 163, 23, 0.06); }
+  0%, 100% { box-shadow: var(--shadow-md); }
+  50% { box-shadow: var(--shadow-lg); }
 }
 
 .lesson-complete__xp svg {
-  color: #E8A317;
-  filter: drop-shadow(0 1px 3px rgba(232, 163, 23, 0.3));
+  color: var(--primary);
+  filter: drop-shadow(var(--shadow-sm));
 }
 
 .lesson-complete__xp-value {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 800;
-  color: #C4880F;
+  color: var(--primary-dark);
 }
 
 /* Mimi celebration */
@@ -461,18 +463,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin: 8px 0;
-  padding: 24px 32px;
-  background: linear-gradient(135deg, #E0F2EF 0%, #E0F2EF 100%);
-  border-radius: 24px;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0;
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--mimi-green-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
 }
 
 .lesson-complete__mimi-avatar {
   font-size: 3.5rem;
   animation: mimi-celebrate 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(var(--shadow-sm));
 }
 
 @keyframes mimi-celebrate {
@@ -482,10 +484,10 @@
 }
 
 .lesson-complete__mimi p {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
-  color: #2E7D32;
+  color: var(--mimi-green-dark);
   margin: 0;
   line-height: 1.4;
 }
@@ -493,23 +495,26 @@
 /* Action buttons */
 .lesson-complete__actions {
   display: flex;
-  gap: 16px;
+  gap: var(--space-md);
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: var(--space-md);
 }
 
 .lesson-complete__actions .mm-btn {
   min-height: 56px;
-  padding: 16px 32px;
+  padding: var(--space-md) var(--space-xl);
   font-size: 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
 }
 
 .lesson-complete__actions .mm-btn--primary {
-  box-shadow:
-    0 4px 16px rgba(232, 163, 23, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-button);
+}
+
+.lesson-complete__actions .mm-btn--primary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* ==========================================================================
@@ -519,19 +524,19 @@
 /* ---- Mobile ---- */
 @media (max-width: 600px) {
   .lesson-player-page {
-    padding: 0 16px;
+    padding: 0 var(--space-md);
   }
 
   .lesson-player-topbar {
-    gap: 8px;
-    padding: 12px 0;
+    gap: var(--space-sm);
+    padding: var(--space-md) 0;
   }
 
   .lesson-player-topbar__back,
   .lesson-player-topbar__skip {
     width: 40px;
     height: 40px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
   }
 
   .lesson-player-topbar__title {
@@ -539,14 +544,14 @@
   }
 
   .lesson-player-main {
-    padding: 24px 0;
-    gap: 24px;
+    padding: var(--space-lg) 0;
+    gap: var(--space-lg);
   }
 
   .lesson-activity__icon {
     width: 48px;
     height: 48px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
   }
 
   .lesson-activity__title {
@@ -563,13 +568,13 @@
   }
 
   .lesson-activity__placeholder {
-    padding: 32px 24px;
+    padding: var(--space-xl) var(--space-lg);
     min-height: 160px;
   }
 
   .lesson-player-mimi {
-    padding: 16px;
-    gap: 12px;
+    padding: var(--space-md);
+    gap: var(--space-md);
   }
 
   .lesson-player-mimi__avatar {
@@ -581,19 +586,19 @@
   }
 
   .lesson-player-bottombar {
-    padding: 16px 0 24px;
-    gap: 8px;
+    padding: var(--space-md) 0 var(--space-lg);
+    gap: var(--space-sm);
   }
 
   .lesson-player-bottombar .mm-btn {
-    min-height: 48px;
-    padding: 12px 24px;
+    min-height: var(--touch-target);
+    padding: var(--space-md) var(--space-lg);
     font-size: 14px;
   }
 
   .lesson-complete {
-    padding: 32px 16px;
-    gap: 16px;
+    padding: var(--space-xl) var(--space-md);
+    gap: var(--space-md);
   }
 
   .lesson-complete__confetti {
@@ -614,7 +619,7 @@
   }
 
   .lesson-complete__xp {
-    padding: 16px 24px;
+    padding: var(--space-md) var(--space-lg);
   }
 
   .lesson-complete__xp-value {
@@ -632,7 +637,7 @@
   .lesson-complete__actions {
     flex-direction: column;
     width: 100%;
-    gap: 12px;
+    gap: var(--space-md);
   }
 
   .lesson-complete__actions .mm-btn {
@@ -645,7 +650,7 @@
 /* ---- Tablet ---- */
 @media (min-width: 601px) and (max-width: 1023px) {
   .lesson-player-page {
-    padding: 0 24px;
+    padding: 0 var(--space-lg);
   }
 
   .lesson-activity__instructions {
@@ -657,19 +662,19 @@
 @media (min-width: 1200px) {
   .lesson-player-page {
     max-width: 1000px;
-    padding: 0 32px;
+    padding: 0 var(--space-xl);
   }
 
   .lesson-player-topbar {
-    padding: 24px 0;
-    gap: 16px;
+    padding: var(--space-lg) 0;
+    gap: var(--space-md);
   }
 
   .lesson-player-topbar__back,
   .lesson-player-topbar__skip {
     width: 52px;
     height: 52px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
   }
 
   .lesson-player-topbar__title {
@@ -681,18 +686,18 @@
   }
 
   .lesson-player-main {
-    padding: 32px 0;
-    gap: 32px;
+    padding: var(--space-xl) 0;
+    gap: var(--space-xl);
   }
 
   .lesson-activity__header {
-    gap: 24px;
+    gap: var(--space-lg);
   }
 
   .lesson-activity__icon {
     width: 64px;
     height: 64px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
   }
 
   .lesson-activity__title {
@@ -709,7 +714,7 @@
   }
 
   .lesson-activity__placeholder {
-    padding: 56px 32px;
+    padding: 56px var(--space-xl);
     min-height: 260px;
   }
 
@@ -718,8 +723,8 @@
   }
 
   .lesson-player-mimi {
-    padding: 24px;
-    gap: 16px;
+    padding: var(--space-lg);
+    gap: var(--space-md);
   }
 
   .lesson-player-mimi__avatar {
@@ -731,15 +736,15 @@
   }
 
   .lesson-player-bottombar {
-    padding: 24px 0 32px;
-    gap: 16px;
+    padding: var(--space-lg) 0 var(--space-xl);
+    gap: var(--space-md);
   }
 
   .lesson-player-bottombar .mm-btn {
     min-height: 56px;
-    padding: 16px 32px;
+    padding: var(--space-md) var(--space-xl);
     font-size: 18px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
   }
 
   .lesson-complete__title {
@@ -760,7 +765,7 @@
 
   .lesson-complete__actions .mm-btn {
     min-height: 60px;
-    padding: 16px 48px;
+    padding: var(--space-md) var(--space-3xl);
     font-size: 18px;
   }
 }
@@ -780,7 +785,7 @@
   .lesson-activity__icon {
     width: 72px;
     height: 72px;
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
   }
 
   .lesson-activity__title {
@@ -818,7 +823,7 @@
 
   .lesson-player-bottombar .mm-btn {
     min-height: 64px;
-    padding: 24px 48px;
+    padding: var(--space-lg) var(--space-3xl);
     font-size: 20px;
   }
 }

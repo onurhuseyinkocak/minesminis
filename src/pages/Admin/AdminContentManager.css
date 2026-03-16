@@ -1,11 +1,11 @@
-/* ============================================================
-   Admin Content Manager - Unified Content CRUD
-   ============================================================ */
+/* ==========================================================================
+   Admin Content Manager — MinesMinis Design System v4
+   ========================================================================== */
 
 .adm-content {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-lg);
 }
 
 .adm-content-header h1 {
@@ -19,7 +19,7 @@
 .adm-content-header p {
   font-size: 0.85rem;
   color: var(--admin-text-secondary);
-  margin: 0.25rem 0 0;
+  margin: var(--space-xs) 0 0;
 }
 
 /* ---- Tabs ---- */
@@ -30,7 +30,7 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
-  padding: 0.25rem;
+  padding: var(--space-xs);
 }
 
 .adm-tab {
@@ -38,8 +38,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   font-family: var(--admin-font);
   font-size: 0.8rem;
   font-weight: 500;
@@ -51,21 +51,18 @@
   transition: all var(--admin-transition);
 }
 
-.adm-tab:hover {
-  color: var(--admin-text);
-  background: var(--admin-bg);
-}
+.adm-tab:hover { color: var(--admin-text); background: var(--admin-bg); }
 
 .adm-tab.active {
-  background: var(--admin-primary);
-  color: #fff;
+  background: var(--primary);
+  color: var(--white);
 }
 
 .adm-tab-count {
   font-size: 0.65rem;
   font-weight: 700;
-  padding: 0.125rem 0.375rem;
-  border-radius: 9999px;
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.2);
 }
 
@@ -74,47 +71,43 @@
   color: var(--admin-text-muted);
 }
 
-/* ---- Content Toolbar ---- */
+/* ---- Toolbar ---- */
 .adm-content-toolbar {
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
-  padding: 0.75rem 1rem;
+  padding: var(--space-md);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 
-/* ---- Filter Chips ---- */
 .adm-chips {
   display: flex;
-  gap: 0.375rem;
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 
 .adm-chip {
-  padding: 0.3rem 0.625rem;
+  padding: 5px var(--space-sm);
   font-family: var(--admin-font);
   font-size: 0.725rem;
   font-weight: 500;
   border: 1px solid var(--admin-border);
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: var(--admin-surface);
   color: var(--admin-text-secondary);
   cursor: pointer;
   transition: all var(--admin-transition);
 }
 
-.adm-chip:hover {
-  border-color: #ccd0d8;
-  color: var(--admin-text);
-}
+.adm-chip:hover { border-color: var(--border-medium); color: var(--admin-text); }
 
 .adm-chip.active {
-  background: var(--admin-primary-light);
-  border-color: var(--admin-primary);
-  color: var(--admin-primary);
+  background: var(--primary-pale);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 /* ---- Content Table ---- */
@@ -131,7 +124,7 @@
 }
 
 .adm-content-table thead th {
-  padding: 0.625rem 1rem;
+  padding: var(--space-sm) var(--space-md);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -148,26 +141,20 @@
   transition: background var(--admin-transition);
 }
 
-.adm-content-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.adm-content-table tbody tr:hover {
-  background: #fafbfc;
-}
+.adm-content-table tbody tr:last-child { border-bottom: none; }
+.adm-content-table tbody tr:hover { background: var(--snow); }
 
 .adm-content-table tbody td {
-  padding: 0.5rem 1rem;
+  padding: var(--space-sm) var(--space-md);
   font-size: 0.825rem;
   color: var(--admin-text);
   vertical-align: middle;
 }
 
-/* ---- Thumbnail ---- */
 .adm-thumb {
   width: 48px;
   height: 32px;
-  border-radius: 4px;
+  border-radius: var(--space-xs);
   object-fit: cover;
   background: var(--admin-bg);
 }
@@ -180,30 +167,28 @@
   justify-content: center;
   font-size: 1.25rem;
   background: var(--admin-bg);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
-/* ---- Level Badges ---- */
 .adm-level-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
+  gap: var(--space-xs);
+  padding: 3px var(--space-sm);
+  border-radius: var(--radius-full);
   font-size: 0.7rem;
   font-weight: 600;
 }
 
-.adm-level-badge.beginner    { background: #ecfdf5; color: #059669; }
-.adm-level-badge.intermediate { background: #fffbeb; color: #d97706; }
-.adm-level-badge.advanced    { background: #fef2f2; color: #dc2626; }
+.adm-level-badge.beginner     { background: rgba(76, 175, 80, 0.10); color: var(--success); }
+.adm-level-badge.intermediate { background: rgba(232, 163, 23, 0.10); color: var(--primary-dark); }
+.adm-level-badge.advanced     { background: rgba(229, 57, 53, 0.10); color: var(--error); }
 
-/* ---- Content Pagination ---- */
 .adm-content-pagination {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
+  padding: var(--space-md);
   border-top: 1px solid var(--admin-border-light);
   font-size: 0.8rem;
   color: var(--admin-text-secondary);
@@ -211,25 +196,12 @@
 
 .adm-content-pagination-btns {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--space-xs);
 }
 
-/* ---- Responsive ---- */
 @media (max-width: 768px) {
-  .adm-tabs {
-    flex-wrap: wrap;
-  }
-
-  .adm-tab {
-    flex: none;
-    min-width: auto;
-  }
-
-  .adm-content-toolbar {
-    flex-direction: column;
-  }
-
-  .adm-search-input {
-    width: 100%;
-  }
+  .adm-tabs { flex-wrap: wrap; }
+  .adm-tab { flex: none; min-width: auto; }
+  .adm-content-toolbar { flex-direction: column; }
+  .adm-search-input { width: 100%; }
 }

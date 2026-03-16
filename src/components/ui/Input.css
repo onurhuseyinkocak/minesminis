@@ -1,7 +1,6 @@
-/* ============================================================
-   INPUT — MinesMinis Premium Design System
-   52px height, clean border, amber focus ring, labels, errors
-   ============================================================ */
+/* ==========================================================================
+   INPUT — MinesMinis Design System v4
+   ========================================================================== */
 
 .mm-input-wrapper {
   display: flex;
@@ -10,18 +9,18 @@
   width: 100%;
 }
 
-/* ── Label ────────────────────────────────────────────────── */
+/* -- Label ------------------------------------------------------------ */
 
 .mm-input-label {
-  font-family: 'Nunito', 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #2D2D44;
+  color: var(--text-body);
   line-height: 1.4;
   margin-bottom: 2px;
 }
 
-/* ── Container ────────────────────────────────────────────── */
+/* -- Container -------------------------------------------------------- */
 
 .mm-input-container {
   position: relative;
@@ -29,71 +28,71 @@
   align-items: center;
 }
 
-/* ── Input ────────────────────────────────────────────────── */
+/* -- Input ------------------------------------------------------------ */
 
 .mm-input {
   width: 100%;
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  color: #1A1A2E;
-  background: #FFFFFF;
-  border: 1.5px solid var(--cloud);
-  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
   outline: none;
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
   -webkit-appearance: none;
 }
 
 .mm-input::placeholder {
-  color: #9393A8;
+  color: var(--text-muted);
 }
 
 .mm-input:hover:not(:disabled):not(:focus) {
-  border-color: #9393A8;
+  border-color: var(--stone);
 }
 
 .mm-input:focus {
-  border-color: #E8A317;
+  border-color: var(--primary);
   box-shadow:
     0 0 0 3px rgba(232, 163, 23, 0.15),
-    0 1px 3px rgba(26, 26, 46, 0.06);
-  background: #FFFFFF;
+    var(--shadow-sm);
+  background: var(--bg-card);
 }
 
 .mm-input:disabled {
-  background: #F8F8FC;
-  color: #9393A8;
+  background: var(--bg-muted);
+  color: var(--text-muted);
   cursor: not-allowed;
   opacity: 0.7;
 }
 
-/* ── Sizes ────────────────────────────────────────────────── */
+/* -- Sizes ------------------------------------------------------------ */
 
 .mm-input--sm {
   height: 40px;
-  padding: 0 14px;
-  font-size: 14px;
-  border-radius: 8px;
+  padding: 0 var(--space-md);
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
 }
 
 .mm-input--md {
   height: 46px;
-  padding: 0 16px;
-  font-size: 15px;
-  border-radius: 12px;
+  padding: 0 var(--space-md);
+  font-size: 0.9375rem;
+  border-radius: var(--radius-md);
 }
 
 .mm-input--lg {
-  height: 52px;
-  padding: 0 18px;
-  font-size: 16px;
-  border-radius: 12px;
+  height: var(--input-height);
+  padding: 0 var(--space-lg);
+  font-size: 1rem;
+  border-radius: var(--radius-md);
 }
 
-/* ── Icon ─────────────────────────────────────────────────── */
+/* -- Icon ------------------------------------------------------------- */
 
 .mm-input--has-icon {
   padding-left: 44px;
@@ -101,70 +100,72 @@
 
 .mm-input-icon {
   position: absolute;
-  left: 14px;
+  left: var(--space-md);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  color: #9393A8;
+  color: var(--text-muted);
   pointer-events: none;
-  transition: color 0.2s ease;
+  transition: color var(--transition-fast);
 }
 
 .mm-input:focus ~ .mm-input-icon,
 .mm-input:focus + .mm-input-icon {
-  color: #E8A317;
+  color: var(--primary);
 }
 
-/* ── Error state ──────────────────────────────────────────── */
+/* -- Error state ------------------------------------------------------ */
 
 .mm-input--error {
-  border-color: #E53935;
+  border-color: var(--error);
 }
 
 .mm-input--error:focus {
-  border-color: #E53935;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12);
 }
 
 .mm-input-error-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: #E53935;
+  color: var(--error);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   line-height: 1.4;
 }
 
-/* ── Helper text ──────────────────────────────────────────── */
+/* -- Helper text ------------------------------------------------------ */
 
 .mm-input-helper-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  color: #9393A8;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
   line-height: 1.4;
 }
 
-/* ── Dark mode ────────────────────────────────────────────── */
+/* -- Dark mode -------------------------------------------------------- */
 
-[data-theme="dark"] .mm-input-label {
-  color: #D4D4E0;
-}
+@media (prefers-color-scheme: dark) {
+  .mm-input-label {
+    color: var(--cloud);
+  }
 
-[data-theme="dark"] .mm-input {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #EEEEF5;
-}
+  .mm-input {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--mist);
+  }
 
-[data-theme="dark"] .mm-input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
-}
+  .mm-input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
 
-[data-theme="dark"] .mm-input:focus {
-  border-color: #E8A317;
-  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.2);
-  background: rgba(255, 255, 255, 0.08);
+  .mm-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+  }
 }

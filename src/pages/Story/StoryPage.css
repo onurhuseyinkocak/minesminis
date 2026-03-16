@@ -7,11 +7,11 @@
 .story-page {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(180deg, #0F0F1E 0%, #1A1A2E 40%, #2D2D44 100%);
+  background: linear-gradient(180deg, var(--ink) 0%, var(--charcoal) 40%, var(--slate) 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  color: white;
+  color: var(--white);
 }
 
 /* ── Loading ── */
@@ -21,20 +21,20 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  gap: 24px;
+  gap: var(--space-lg);
 }
 
 .story-page__loading-spinner {
   width: 48px;
   height: 48px;
   border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #E8A317;
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: storySpin 0.7s linear infinite;
 }
 
 .story-page__loading p {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.65);
@@ -49,7 +49,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
+  padding: 10px var(--space-md);
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -59,7 +59,7 @@
 .story-page__back {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   border: none;
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.8);
@@ -67,14 +67,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  min-width: 44px;
+  transition: all var(--transition-fast);
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
 }
 
 .story-page__back:hover {
   background: rgba(255, 255, 255, 0.15);
-  color: white;
+  color: var(--white);
 }
 
 .story-page__world-badge {
@@ -82,11 +82,11 @@
   align-items: center;
   gap: 7px;
   padding: 7px 18px;
-  border-radius: 9999px;
-  font-family: 'Nunito', sans-serif;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
   font-size: 0.8125rem;
   font-weight: 700;
-  color: white;
+  color: var(--white);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
@@ -98,7 +98,7 @@
 .story-page__icon-btn {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   border: none;
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.7);
@@ -106,25 +106,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  min-width: 44px;
+  transition: all var(--transition-fast);
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
 }
 
 .story-page__icon-btn:hover {
   background: rgba(255, 255, 255, 0.16);
-  color: white;
+  color: var(--white);
 }
 
 /* ── Panels (Stats & Inventory) ── */
 .story-page__panel {
   position: relative;
   z-index: 15;
-  margin: 8px 16px;
-  padding: 24px;
+  margin: var(--space-sm) var(--space-md);
+  padding: var(--space-lg);
   background: rgba(15, 15, 30, 0.6);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(255, 255, 255, 0.08);
   animation: storyPanelSlide 250ms ease;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
@@ -136,11 +136,11 @@
 }
 
 .story-page__panel h3 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 800;
-  color: white;
-  margin: 0 0 16px;
+  color: var(--white);
+  margin: 0 0 var(--space-md);
 }
 
 /* ── Stats Panel ── */
@@ -148,7 +148,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
 }
 
 .story-page__trait {
@@ -158,7 +158,7 @@
 }
 
 .story-page__trait-name {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.65);
   min-width: 80px;
@@ -167,19 +167,19 @@
 .story-page__trait-bar {
   flex: 1;
   height: 8px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 
 .story-page__trait-fill {
   height: 100%;
-  border-radius: 9999px;
-  transition: width 0.4s ease;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
 }
 
 .story-page__trait-val {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.5);
@@ -190,8 +190,8 @@
 .story-page__stats-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 24px;
-  font-family: 'Inter', sans-serif;
+  gap: var(--space-sm) var(--space-lg);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.55);
 }
@@ -202,7 +202,7 @@
 
 /* ── Inventory Panel ── */
 .story-page__empty {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.45);
   margin: 0;
@@ -217,12 +217,12 @@
 .story-page__item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-md);
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: background 0.2s ease;
+  transition: background var(--transition-fast);
 }
 
 .story-page__item:hover {
@@ -249,26 +249,22 @@
 }
 
 .story-page__item-name {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
-  color: white;
+  color: var(--white);
 }
 
 .story-page__item-desc {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.45);
   line-height: 1.35;
 }
 
 /* ── Stats & Inventory Panel variants ── */
-.story-page__stats-panel {
-  /* Inherits from .story-page__panel */
-}
-.story-page__inventory-panel {
-  /* Inherits from .story-page__panel */
-}
+.story-page__stats-panel { }
+.story-page__inventory-panel { }
 
 /* ── Choice Result Feedback ── */
 .story-page__feedback {
@@ -279,9 +275,9 @@
   z-index: 30;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 10px 24px;
-  border-radius: 9999px;
+  gap: var(--space-md);
+  padding: 10px var(--space-lg);
+  border-radius: var(--radius-full);
   background: rgba(15, 15, 30, 0.8);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(232, 163, 23, 0.2);
@@ -296,30 +292,30 @@
 }
 
 .story-page__feedback-xp {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 800;
-  color: #E8A317;
+  color: var(--primary);
 }
 
 .story-page__feedback-trait {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
 }
 
 .story-page__feedback-item {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
-  color: #F5CC5C;
+  color: var(--mimi-gold);
 }
 
 .story-page__feedback-world {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
-  color: #4CAF50;
+  color: var(--success);
 }
 
 /* ── Main Scene ── */
@@ -329,7 +325,7 @@
   flex-direction: column;
   position: relative;
   z-index: 10;
-  transition: opacity 400ms ease, transform 400ms ease;
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
 }
 
 .story-page__scene--transitioning {
@@ -341,7 +337,7 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .story-page__topbar {
-    padding: 8px 12px;
+    padding: var(--space-sm) var(--space-md);
   }
 
   .story-page__world-badge {
@@ -358,7 +354,7 @@
   }
 
   .story-page__panel {
-    margin: 6px 12px;
+    margin: 6px var(--space-md);
     padding: 18px;
   }
 
@@ -369,12 +365,12 @@
 
   .story-page__stats-row {
     font-size: 0.75rem;
-    gap: 6px 16px;
+    gap: 6px var(--space-md);
   }
 
   .story-page__feedback {
     font-size: 0.875rem;
-    padding: 8px 18px;
+    padding: var(--space-sm) 18px;
     gap: 10px;
   }
 }
@@ -385,7 +381,7 @@
   }
 
   .story-page__panel {
-    margin: 4px 8px;
+    margin: 4px var(--space-sm);
     padding: 14px;
   }
 }

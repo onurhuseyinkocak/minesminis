@@ -1,7 +1,6 @@
-/* ============================================================
-   PROGRESS BAR — MinesMinis Premium Design System
-   Rounded track, amber gradient fill, shimmer animation
-   ============================================================ */
+/* ==========================================================================
+   PROGRESS BAR — MinesMinis Design System v4
+   ========================================================================== */
 
 .mm-progress {
   display: flex;
@@ -10,48 +9,39 @@
   width: 100%;
 }
 
-/* ── Track ────────────────────────────────────────────────── */
-
 .mm-progress__track {
   flex: 1;
-  border-radius: 9999px;
-  background: #EEEEF5;
+  border-radius: var(--radius-full);
+  background: var(--bg-muted);
   overflow: hidden;
   position: relative;
 }
-
-/* ── Sizes ────────────────────────────────────────────────── */
 
 .mm-progress--sm .mm-progress__track { height: 6px; }
 .mm-progress--md .mm-progress__track { height: 10px; }
 .mm-progress--lg .mm-progress__track { height: 14px; }
 
-/* ── Fill ─────────────────────────────────────────────────── */
-
 .mm-progress__fill {
   height: 100%;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   min-width: 4px;
 }
 
-/* Default — Amber gradient */
 .mm-progress--default .mm-progress__fill {
-  background: linear-gradient(90deg, #F5CC5C 0%, #E8A317 60%, #C4880F 100%);
+  background: linear-gradient(90deg, var(--primary-light) 0%, var(--primary) 60%, var(--primary-dark) 100%);
 }
 
-/* Success — Green gradient */
 .mm-progress--success .mm-progress__fill {
-  background: linear-gradient(90deg, #81C784 0%, #4CAF50 60%, #2E7D32 100%);
+  background: linear-gradient(90deg, var(--mimi-green-light) 0%, var(--mimi-green) 60%, var(--mimi-green-dark) 100%);
 }
 
-/* Warning — Orange gradient */
 .mm-progress--warning .mm-progress__fill {
-  background: linear-gradient(90deg, #F5CC5C 0%, #FB8C00 60%, #C4880F 100%);
+  background: linear-gradient(90deg, var(--primary-light) 0%, var(--warning) 60%, var(--primary-dark) 100%);
 }
 
-/* ── Shimmer animation ────────────────────────────────────── */
+/* -- Shimmer animation ------------------------------------------------ */
 
 .mm-progress--animated .mm-progress__fill::after {
   content: '';
@@ -71,24 +61,24 @@
   100% { transform: translateX(200%); }
 }
 
-/* ── Label ────────────────────────────────────────────────── */
-
 .mm-progress__label {
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
   font-weight: 700;
-  color: #5C5C7A;
+  color: var(--text-secondary);
   min-width: 36px;
   text-align: right;
   flex-shrink: 0;
 }
 
-/* ── Dark mode ────────────────────────────────────────────── */
+/* -- Dark mode -------------------------------------------------------- */
 
-[data-theme="dark"] .mm-progress__track {
-  background: rgba(255, 255, 255, 0.08);
-}
+@media (prefers-color-scheme: dark) {
+  .mm-progress__track {
+    background: rgba(255, 255, 255, 0.08);
+  }
 
-[data-theme="dark"] .mm-progress__label {
-  color: #9393A8;
+  .mm-progress__label {
+    color: var(--stone);
+  }
 }
