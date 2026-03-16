@@ -22,13 +22,13 @@
 }
 
 .footer-wave path {
-    fill: var(--color-charcoal);
+    fill: var(--charcoal);
 }
 
 /* Body */
 .footer-body {
-    background: var(--color-charcoal);
-    color: var(--color-cloud);
+    background: var(--charcoal);
+    color: var(--cloud);
     padding: var(--space-lg) 0 var(--space-md);
 }
 
@@ -61,7 +61,7 @@
     align-items: center;
     gap: var(--space-sm);
     text-decoration: none;
-    color: var(--color-snow);
+    color: var(--snow);
 }
 
 .footer-logo-img {
@@ -76,7 +76,7 @@
     font-size: 1.1rem;
     font-weight: 800;
     letter-spacing: -0.3px;
-    color: var(--color-snow);
+    color: var(--snow);
 }
 
 .footer-logo-text span {
@@ -88,13 +88,13 @@
     align-items: center;
     gap: 4px;
     font-size: 0.75rem;
-    color: var(--color-slate);
+    color: var(--slate);
     margin: 0;
     font-weight: 500;
 }
 
 .footer-heart {
-    color: #ef4444;
+    color: var(--error);
     flex-shrink: 0;
 }
 
@@ -111,7 +111,7 @@
     align-items: center;
     gap: 6px;
     text-decoration: none;
-    color: var(--color-cloud);
+    color: var(--cloud);
     font-size: 0.8rem;
     font-weight: 600;
     padding: var(--space-xs) var(--space-sm);
@@ -139,7 +139,7 @@
     height: 36px;
     border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.06);
-    color: var(--color-cloud);
+    color: var(--cloud);
     transition: all var(--transition-fast);
     text-decoration: none;
 }
@@ -163,7 +163,7 @@
 
 .footer-copy {
     font-size: 0.7rem;
-    color: var(--color-slate);
+    color: var(--slate);
     margin: 0;
     font-weight: 500;
 }
@@ -178,7 +178,7 @@
 .footer-legal a {
     font-size: 0.7rem;
     font-weight: 500;
-    color: var(--color-slate);
+    color: var(--slate);
     text-decoration: none;
     transition: color var(--transition-fast);
 }
@@ -194,7 +194,7 @@
     gap: 6px;
     font-size: 0.7rem;
     font-weight: 500;
-    color: var(--color-slate);
+    color: var(--slate);
     text-decoration: none;
     transition: color var(--transition-fast);
 }

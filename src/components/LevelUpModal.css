@@ -63,7 +63,7 @@
   position: relative;
   width: 100%;
   max-width: 380px;
-  background: linear-gradient(170deg, var(--color-charcoal) 0%, var(--color-ink) 100%);
+  background: linear-gradient(170deg, var(--charcoal) 0%, var(--ink) 100%);
   border: 1px solid rgba(232, 163, 23, 0.2);
   border-radius: var(--radius-xl);
   padding: var(--space-2xl) var(--space-xl);
@@ -162,7 +162,7 @@
 .level-label {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
-  color: var(--color-stone);
+  color: var(--stone);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -186,7 +186,7 @@
 .level-up-message {
   font-family: 'Inter', sans-serif;
   font-size: 0.9375rem;
-  color: var(--color-cloud);
+  color: var(--cloud);
   line-height: 1.5;
   margin: 0 0 var(--space-xl);
 }
@@ -201,7 +201,7 @@
   border: none;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--primary), #d4941a);
-  color: var(--color-ink);
+  color: var(--ink);
   font-family: 'Nunito', sans-serif;
   font-size: 1rem;
   font-weight: 800;

@@ -16,8 +16,8 @@
   width: 72px;
   height: 72px;
   border-radius: var(--radius-full, 9999px);
-  background-color: var(--color-mist, #EEEEF5);
-  color: var(--color-slate, #5C5C7A);
+  background-color: var(--mist, #EEEEF5);
+  color: var(--slate, #5C5C7A);
   font-size: 32px;
   margin-bottom: var(--space-lg, 24px);
 }
@@ -26,14 +26,14 @@
   font-family: 'Nunito', sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
   margin: 0 0 var(--space-sm, 8px);
 }
 
 .mm-empty-state__description {
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   margin: 0 0 var(--space-lg, 24px);
   line-height: 1.5;
 }
@@ -48,7 +48,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-teal-dark, #134D42);
+  color: var(--secondary-dark, #134D42);
   margin-bottom: var(--space-lg, 24px);
 }
 

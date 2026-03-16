@@ -21,7 +21,7 @@
 
 .mm-modal {
   position: relative;
-  background-color: var(--color-white, #FFFFFF);
+  background-color: var(--white, #FFFFFF);
   border-radius: var(--radius-md, 12px);
   box-shadow: var(--shadow-xl, 0 16px 48px rgba(26, 26, 46, 0.16));
   max-height: calc(100vh - 32px);
@@ -75,7 +75,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
   margin: 0;
 }
 
@@ -89,7 +89,7 @@
   background: transparent;
   border-radius: var(--radius-sm, 8px);
   cursor: pointer;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   font-size: 20px;
   line-height: 1;
   transition: all 200ms ease-out;
@@ -97,12 +97,12 @@
 }
 
 .mm-modal__close:hover {
-  background-color: var(--color-mist, #EEEEF5);
-  color: var(--color-ink, #1A1A2E);
+  background-color: var(--mist, #EEEEF5);
+  color: var(--ink, #1A1A2E);
 }
 
 .mm-modal__close:focus-visible {
-  outline: 3px solid var(--color-honey, #E8A317);
+  outline: 3px solid var(--primary, #E8A317);
   outline-offset: 2px;
 }
 

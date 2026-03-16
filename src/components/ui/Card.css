@@ -1,5 +1,5 @@
 .mm-card {
-  background-color: var(--color-white, #FFFFFF);
+  background-color: var(--white, #FFFFFF);
   border-radius: var(--radius-md, 12px);
   transition: all 200ms ease-out;
   position: relative;
@@ -37,7 +37,7 @@
 
 .mm-card--outlined {
   box-shadow: none;
-  border: 1px solid var(--color-cloud, #D4D4E0);
+  border: 1px solid var(--cloud, #D4D4E0);
 }
 
 .mm-card--interactive {
@@ -56,6 +56,6 @@
 }
 
 .mm-card--interactive:focus-visible {
-  outline: 3px solid var(--color-honey, #E8A317);
+  outline: 3px solid var(--primary, #E8A317);
   outline-offset: 2px;
 }

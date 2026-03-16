@@ -294,7 +294,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
-  color: #22c55e;
+  color: var(--success);
 }
 
 /* ── Main scene ── */

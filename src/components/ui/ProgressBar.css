@@ -7,7 +7,7 @@
 
 .mm-progress__track {
   width: 100%;
-  background-color: var(--color-mist, #EEEEF5);
+  background-color: var(--mist, #EEEEF5);
   border-radius: var(--radius-full, 9999px);
   overflow: hidden;
 }
@@ -35,15 +35,15 @@
 
 /* Variants */
 .mm-progress--default .mm-progress__fill {
-  background: linear-gradient(90deg, var(--color-honey, #E8A317), var(--color-honey-light, #F5CC5C));
+  background: linear-gradient(90deg, var(--primary, #E8A317), var(--primary-light, #F5CC5C));
 }
 
 .mm-progress--success .mm-progress__fill {
-  background: linear-gradient(90deg, var(--color-success, #43A047), #66BB6A);
+  background: linear-gradient(90deg, var(--success, #43A047), #66BB6A);
 }
 
 .mm-progress--warning .mm-progress__fill {
-  background: linear-gradient(90deg, var(--color-warning, #FB8C00), #FFA726);
+  background: linear-gradient(90deg, var(--warning, #FB8C00), #FFA726);
 }
 
 /* Animated shimmer */
@@ -55,9 +55,9 @@
 .mm-progress--default.mm-progress--animated .mm-progress__fill {
   background: linear-gradient(
     90deg,
-    var(--color-honey, #E8A317) 0%,
-    var(--color-honey-light, #F5CC5C) 50%,
-    var(--color-honey, #E8A317) 100%
+    var(--primary, #E8A317) 0%,
+    var(--primary-light, #F5CC5C) 50%,
+    var(--primary, #E8A317) 100%
   );
   background-size: 200% 100%;
 }
@@ -86,6 +86,6 @@
   font-family: 'Nunito', sans-serif;
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-charcoal, #2D2D44);
+  color: var(--charcoal, #2D2D44);
   text-align: right;
 }

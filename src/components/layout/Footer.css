@@ -3,7 +3,7 @@
    ============================================ */
 
 .footer {
-  padding: var(--spacing-xl) var(--spacing-lg);
+  padding: var(--space-xl) var(--space-lg);
   border-top: 1px solid var(--border-light);
   background: var(--bg-card);
   font-family: 'Inter', sans-serif;
@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-md);
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 
@@ -27,7 +27,7 @@
 .footer__links {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--space-lg);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -53,17 +53,17 @@
 /* --- Mobile --- */
 @media (max-width: 640px) {
   .footer {
-    padding: var(--spacing-lg) var(--spacing-md);
+    padding: var(--space-lg) var(--space-md);
   }
 
   .footer__inner {
     flex-direction: column;
     text-align: center;
-    gap: var(--spacing-sm);
+    gap: var(--space-sm);
   }
 
   .footer__links {
-    gap: var(--spacing-md);
+    gap: var(--space-md);
   }
 }
 

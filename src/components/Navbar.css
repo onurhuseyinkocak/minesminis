@@ -86,14 +86,14 @@
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-stone);
+  color: var(--stone);
   text-decoration: none;
   transition: color var(--transition-fast), background var(--transition-fast);
   position: relative;
 }
 
 .nav-link:hover {
-  color: var(--color-snow);
+  color: var(--snow);
   background: rgba(232, 163, 23, 0.08);
 }
 
@@ -131,7 +131,7 @@
   border-radius: var(--radius-md);
   border: none;
   background: rgba(255, 255, 255, 0.06);
-  color: var(--color-stone);
+  color: var(--stone);
   cursor: pointer;
   transition: background var(--transition-fast), color var(--transition-fast);
   text-decoration: none;
@@ -149,11 +149,11 @@
 }
 
 .nav-admin-btn {
-  color: var(--color-warning);
+  color: var(--warning);
 }
 
 .nav-logout-btn:hover {
-  color: var(--color-error);
+  color: var(--error);
   background: rgba(229, 57, 53, 0.1);
 }
 
@@ -165,7 +165,7 @@
   padding: 6px 14px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.06);
-  color: var(--color-cloud);
+  color: var(--cloud);
   text-decoration: none;
   font-family: 'Nunito', sans-serif;
   font-size: 0.8125rem;
@@ -194,7 +194,7 @@
   padding: 8px 20px;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--primary), #d4941a);
-  color: var(--color-ink);
+  color: var(--ink);
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
@@ -218,7 +218,7 @@
   border: none;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.06);
-  color: var(--color-cloud);
+  color: var(--cloud);
   cursor: pointer;
   transition: background var(--transition-fast);
 }
@@ -248,7 +248,7 @@
   top: 0;
   width: 280px;
   height: 100%;
-  background: var(--color-ink);
+  background: var(--ink);
   border-left: 1px solid rgba(232, 163, 23, 0.1);
   box-shadow: var(--shadow-xl);
   animation: navSlideIn var(--transition-base) ease;
@@ -273,7 +273,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  color: var(--color-cloud);
+  color: var(--cloud);
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
   font-size: 0.9375rem;
@@ -288,14 +288,14 @@
   border: none;
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.06);
-  color: var(--color-stone);
+  color: var(--stone);
   cursor: pointer;
   transition: background var(--transition-fast);
 }
 
 .nav-mobile-close:hover {
   background: rgba(229, 57, 53, 0.15);
-  color: var(--color-error);
+  color: var(--error);
 }
 
 .nav-mobile-links {
@@ -313,7 +313,7 @@
   gap: var(--space-md);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
-  color: var(--color-cloud);
+  color: var(--cloud);
   text-decoration: none;
   font-family: 'Nunito', sans-serif;
   font-size: 0.9375rem;
@@ -337,7 +337,7 @@
 }
 
 .nav-mobile-logout:hover {
-  color: var(--color-error);
+  color: var(--error);
   background: rgba(229, 57, 53, 0.08);
 }
 
@@ -375,7 +375,7 @@
   flex: 1;
   height: 100%;
   text-decoration: none;
-  color: var(--color-stone);
+  color: var(--stone);
   transition: color var(--transition-fast);
 }
 

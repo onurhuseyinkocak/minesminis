@@ -9,7 +9,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-charcoal, #2D2D44);
+  color: var(--charcoal, #2D2D44);
   margin-bottom: 2px;
 }
 
@@ -25,9 +25,9 @@
   padding: 0 var(--space-md, 16px);
   font-family: 'Inter', sans-serif;
   font-size: 15px;
-  color: var(--color-ink, #1A1A2E);
-  background-color: var(--color-white, #FFFFFF);
-  border: 1.5px solid var(--color-cloud, #D4D4E0);
+  color: var(--ink, #1A1A2E);
+  background-color: var(--white, #FFFFFF);
+  border: 1.5px solid var(--cloud, #D4D4E0);
   border-radius: var(--radius-sm, 8px);
   outline: none;
   transition: all 200ms ease-out;
@@ -35,21 +35,21 @@
 }
 
 .mm-input::placeholder {
-  color: var(--color-stone, #9393A8);
+  color: var(--stone, #9393A8);
 }
 
 .mm-input:hover:not(:disabled):not(:focus) {
-  border-color: var(--color-slate, #5C5C7A);
+  border-color: var(--slate, #5C5C7A);
 }
 
 .mm-input:focus {
-  border-color: var(--color-honey, #E8A317);
+  border-color: var(--primary, #E8A317);
   box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.15);
 }
 
 .mm-input:disabled {
-  background-color: var(--color-mist, #EEEEF5);
-  color: var(--color-stone, #9393A8);
+  background-color: var(--mist, #EEEEF5);
+  color: var(--stone, #9393A8);
   cursor: not-allowed;
 }
 
@@ -80,7 +80,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   pointer-events: none;
   width: 20px;
   height: 20px;
@@ -88,29 +88,29 @@
 
 .mm-input:focus ~ .mm-input-icon,
 .mm-input:focus + .mm-input-icon {
-  color: var(--color-honey, #E8A317);
+  color: var(--primary, #E8A317);
 }
 
 /* Error state */
 .mm-input--error {
-  border-color: var(--color-error, #E53935);
+  border-color: var(--error, #E53935);
 }
 
 .mm-input--error:focus {
-  border-color: var(--color-error, #E53935);
+  border-color: var(--error, #E53935);
   box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.15);
 }
 
 .mm-input-error-text {
   font-family: 'Inter', sans-serif;
   font-size: 12px;
-  color: var(--color-error, #E53935);
+  color: var(--error, #E53935);
   margin-top: 2px;
 }
 
 .mm-input-helper-text {
   font-family: 'Inter', sans-serif;
   font-size: 12px;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   margin-top: 2px;
 }

@@ -1,9 +1,9 @@
 .word-match {
-  --wm-primary: var(--color-honey-amber, #E8A317);
-  --wm-secondary: var(--color-deep-teal, #1A6B5A);
-  --wm-success: var(--color-mimi-green, #4CAF50);
-  --wm-bg: var(--color-surface, #ffffff);
-  --wm-text: var(--color-text-primary, #1a1a2e);
+  --wm-primary: var(--primary, #E8A317);
+  --wm-secondary: var(--secondary, #1A6B5A);
+  --wm-success: var(--mimi-green, #4CAF50);
+  --wm-bg: var(--bg-card, #ffffff);
+  --wm-text: var(--text-primary, #1a1a2e);
 
   display: flex;
   flex-direction: column;

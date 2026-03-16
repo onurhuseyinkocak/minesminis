@@ -1,9 +1,9 @@
 .listening-challenge {
-  --lc-primary: var(--color-honey-amber, #E8A317);
-  --lc-secondary: var(--color-deep-teal, #1A6B5A);
-  --lc-success: var(--color-mimi-green, #4CAF50);
-  --lc-bg: var(--color-surface, #ffffff);
-  --lc-text: var(--color-text-primary, #1a1a2e);
+  --lc-primary: var(--primary, #E8A317);
+  --lc-secondary: var(--secondary, #1A6B5A);
+  --lc-success: var(--mimi-green, #4CAF50);
+  --lc-bg: var(--bg-card, #ffffff);
+  --lc-text: var(--text-primary, #1a1a2e);
 
   display: flex;
   flex-direction: column;

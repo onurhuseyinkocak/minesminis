@@ -33,16 +33,16 @@
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--color-charcoal, #2D2D44);
+  color: var(--charcoal, #2D2D44);
   white-space: nowrap;
 }
 
 .filter-select {
   padding: 8px 32px 8px 14px;
   border-radius: var(--radius-md);
-  border: 1.5px solid var(--color-cloud, #D4D4E0);
+  border: 1.5px solid var(--cloud, #D4D4E0);
   background: white;
-  color: var(--color-charcoal, #2D2D44);
+  color: var(--charcoal, #2D2D44);
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   cursor: pointer;
@@ -66,7 +66,7 @@
   padding: 0 var(--space-lg);
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
 }
 
 .worksheets-count strong {
@@ -90,7 +90,7 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
-  border: 1px solid var(--color-cloud, #D4D4E0);
+  border: 1px solid var(--cloud, #D4D4E0);
   transition: all var(--transition-base, 250ms) ease;
   display: flex;
   flex-direction: column;
@@ -158,7 +158,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-stone, #9393A8);
+  color: var(--stone, #9393A8);
   transition: all var(--transition-fast, 150ms) ease;
   box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.08));
 }
@@ -196,7 +196,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 1.0625rem;
   font-weight: 700;
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
   margin: 0;
   line-height: 1.3;
 }
@@ -204,7 +204,7 @@
 .worksheet-info p {
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   margin: 0;
   line-height: 1.5;
   display: -webkit-box;
@@ -217,7 +217,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: var(--color-stone, #9393A8);
+  color: var(--stone, #9393A8);
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
   margin-top: auto;
@@ -260,12 +260,12 @@
 }
 
 .worksheet-actions .print-btn {
-  background: var(--color-mist, #EEEEF5);
-  color: var(--color-charcoal, #2D2D44);
+  background: var(--mist, #EEEEF5);
+  color: var(--charcoal, #2D2D44);
 }
 
 .worksheet-actions .print-btn:hover {
-  background: var(--color-cloud, #D4D4E0);
+  background: var(--cloud, #D4D4E0);
 }
 
 /* ── Empty state ── */
@@ -286,13 +286,13 @@
   font-family: 'Nunito', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
   margin-bottom: var(--space-xs);
 }
 
 .worksheets-empty p {
   font-family: 'Inter', sans-serif;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
 }
 
 /* ── More resources ── */
@@ -306,7 +306,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
   margin-bottom: var(--space-lg);
   text-align: center;
 }
@@ -324,9 +324,9 @@
   padding: var(--space-md);
   border-radius: var(--radius-md);
   background: white;
-  border: 1.5px solid var(--color-cloud, #D4D4E0);
+  border: 1.5px solid var(--cloud, #D4D4E0);
   text-decoration: none;
-  color: var(--color-charcoal, #2D2D44);
+  color: var(--charcoal, #2D2D44);
   font-family: 'Nunito', sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;

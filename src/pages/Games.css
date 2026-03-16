@@ -44,19 +44,19 @@
   font-family: 'Nunito', sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
   margin-bottom: var(--space-sm);
 }
 
 .games-empty p {
   font-family: 'Inter', sans-serif;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   font-size: 1rem;
   margin-bottom: var(--space-xs);
 }
 
 .games-empty .empty-suggestion {
-  color: var(--color-stone, #9393A8);
+  color: var(--stone, #9393A8);
   font-size: 0.875rem;
 }
 
@@ -74,12 +74,12 @@
 /* ── Game card ── */
 .game-card {
   position: relative;
-  background: var(--color-snow, #F8F8FC);
+  background: var(--snow, #F8F8FC);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.08));
   transition: transform var(--transition-base, 250ms) ease, box-shadow var(--transition-base, 250ms) ease;
-  border: 1px solid var(--color-cloud, #D4D4E0);
+  border: 1px solid var(--cloud, #D4D4E0);
 }
 
 .game-card:hover {
@@ -181,7 +181,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
   margin: 0;
   line-height: 1.3;
 }
@@ -216,7 +216,7 @@
 .game-modal {
   width: 100%;
   max-width: 960px;
-  background: var(--color-snow, #F8F8FC);
+  background: var(--snow, #F8F8FC);
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
@@ -228,7 +228,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-md) var(--space-lg);
-  background: linear-gradient(135deg, var(--color-ink, #1A1A2E), var(--color-charcoal, #2D2D44));
+  background: linear-gradient(135deg, var(--ink, #1A1A2E), var(--charcoal, #2D2D44));
   color: white;
 }
 
@@ -260,7 +260,7 @@
 .game-iframe-container {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: var(--color-ink, #1A1A2E);
+  background: var(--ink, #1A1A2E);
 }
 
 .game-iframe-container iframe {
@@ -283,9 +283,9 @@
   gap: 6px;
   padding: 8px 18px;
   border-radius: var(--radius-full);
-  border: 1.5px solid var(--color-cloud, #D4D4E0);
+  border: 1.5px solid var(--cloud, #D4D4E0);
   background: white;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   font-family: 'Nunito', sans-serif;
   font-size: 0.875rem;
   font-weight: 600;

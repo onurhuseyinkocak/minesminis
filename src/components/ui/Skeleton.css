@@ -1,5 +1,5 @@
 .mm-skeleton {
-  background-color: var(--color-mist, #EEEEF5);
+  background-color: var(--mist, #EEEEF5);
   position: relative;
   overflow: hidden;
 }

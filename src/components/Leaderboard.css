@@ -9,7 +9,7 @@
     border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
     border-radius: var(--radius-lg);
     padding: var(--space-lg);
-    color: var(--text-main, var(--color-ink));
+    color: var(--text-main, var(--ink));
 }
 
 /* Header */
@@ -62,7 +62,7 @@
     align-items: center;
     gap: 6px;
     font-size: 0.75rem;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     font-weight: 600;
     margin-bottom: var(--space-lg);
 }
@@ -80,7 +80,7 @@
     display: flex;
     align-items: center;
     padding: var(--space-sm) var(--space-md);
-    background: var(--bg-soft, var(--color-mist));
+    background: var(--bg-soft, var(--mist));
     border-radius: var(--radius-md);
     border: 1px solid transparent;
     transition: all var(--transition-base) ease;
@@ -98,7 +98,7 @@
 }
 
 .leader-row.rank-1 {
-    background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), var(--bg-soft, var(--color-mist)));
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), var(--bg-soft, var(--mist)));
 }
 
 /* Rank badge */
@@ -106,7 +106,7 @@
     width: 24px;
     font-weight: 900;
     font-size: 0.9rem;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     flex-shrink: 0;
 }
 
@@ -170,7 +170,7 @@
 
 .leader-lvl {
     font-size: 0.7rem;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     font-weight: 600;
 }
 
@@ -191,7 +191,7 @@
 .leader-xp span {
     font-size: 0.6rem;
     font-weight: 700;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     text-transform: uppercase;
 }
 
@@ -200,7 +200,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--bg-soft, var(--color-mist));
+    background: var(--bg-soft, var(--mist));
     padding: 14px var(--space-lg);
     border-radius: var(--radius-md);
     cursor: pointer;
@@ -208,7 +208,7 @@
 }
 
 .user-context-action:hover {
-    background: var(--color-cloud);
+    background: var(--cloud);
     transform: translateX(2px);
 }
 
@@ -229,7 +229,7 @@
     padding: var(--space-lg);
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
 }
 
 /* Empty state */
@@ -240,7 +240,7 @@
 
 .empty-state p {
     font-size: 0.9rem;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     font-weight: 600;
     margin: 0;
 }

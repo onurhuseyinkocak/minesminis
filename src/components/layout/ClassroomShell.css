@@ -30,11 +30,11 @@
   align-items: center;
   justify-content: space-between;
   height: 72px;
-  padding: 0 var(--spacing-xl);
+  padding: 0 var(--space-xl);
   background: #F8F8FC;
   border-bottom: 2px solid #EEEEF5;
   flex-shrink: 0;
-  gap: var(--spacing-md);
+  gap: var(--space-md);
 }
 
 .classroom-shell.high-contrast .classroom-shell__topbar {
@@ -45,7 +45,7 @@
 .classroom-shell__topbar-left {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--space-lg);
   flex: 1;
   min-width: 0;
 }
@@ -74,7 +74,7 @@
 .classroom-shell__topbar-center {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--space-lg);
   flex-shrink: 0;
 }
 
@@ -106,7 +106,7 @@
 .classroom-shell__topbar-right {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--space-sm);
   flex-shrink: 0;
 }
 
@@ -182,7 +182,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-xl);
+  padding: var(--space-xl);
   overflow: auto;
 }
 
@@ -250,7 +250,7 @@
 @media (min-width: 1920px) {
   .classroom-shell__topbar {
     height: 88px;
-    padding: 0 var(--spacing-2xl);
+    padding: 0 var(--space-2xl);
   }
 
   .classroom-shell__class-name {
@@ -308,8 +308,8 @@
 @media (max-width: 1023px) {
   .classroom-shell__topbar {
     height: 64px;
-    padding: 0 var(--spacing-md);
-    gap: var(--spacing-sm);
+    padding: 0 var(--space-md);
+    gap: var(--space-sm);
   }
 
   .classroom-shell__class-name {
@@ -359,13 +359,13 @@
   .classroom-shell__topbar {
     flex-wrap: wrap;
     height: auto;
-    padding: var(--spacing-sm);
-    gap: var(--spacing-xs);
+    padding: var(--space-sm);
+    gap: var(--space-xs);
   }
 
   .classroom-shell__topbar-left {
     width: 100%;
-    gap: var(--spacing-sm);
+    gap: var(--space-sm);
   }
 
   .classroom-shell__topbar-center {
@@ -373,7 +373,7 @@
   }
 
   .classroom-shell__main {
-    padding: var(--spacing-md);
+    padding: var(--space-md);
   }
 
   .classroom-shell__teacher-panel {

@@ -235,7 +235,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing-xl);
+  padding: 0 var(--space-xl);
   background: #FFFFFF;
   border-bottom: 1px solid #EEEEF5; /* Mist */
   z-index: 50;
@@ -245,7 +245,7 @@
 .admin-shell__header-left {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: var(--space-md);
 }
 
 .admin-shell__header-title {
@@ -258,7 +258,7 @@
 .admin-shell__header-right {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: var(--space-md);
 }
 
 .admin-shell__header-btn {
@@ -316,7 +316,7 @@
 /* --- Content --- */
 .admin-shell__content {
   flex: 1;
-  padding: var(--spacing-xl);
+  padding: var(--space-xl);
   max-width: 1400px;
   width: 100%;
 }
@@ -358,11 +358,11 @@
   }
 
   .admin-shell__header {
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--space-md);
   }
 
   .admin-shell__content {
-    padding: var(--spacing-md);
+    padding: var(--space-md);
   }
 }
 
@@ -372,7 +372,7 @@
   }
 
   .admin-shell__content {
-    padding: var(--spacing-sm);
+    padding: var(--space-sm);
   }
 }
 

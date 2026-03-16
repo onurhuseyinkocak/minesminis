@@ -24,32 +24,32 @@
 
 /* Variants */
 .mm-badge--default {
-  background-color: var(--color-mist, #EEEEF5);
-  color: var(--color-charcoal, #2D2D44);
+  background-color: var(--mist, #EEEEF5);
+  color: var(--charcoal, #2D2D44);
 }
 
 .mm-badge--success {
   background-color: #E8F5E9;
-  color: var(--color-success, #43A047);
+  color: var(--success, #43A047);
 }
 
 .mm-badge--warning {
   background-color: #FFF3E0;
-  color: var(--color-warning, #FB8C00);
+  color: var(--warning, #FB8C00);
 }
 
 .mm-badge--error {
-  background-color: var(--color-error-soft, #FFCDD2);
-  color: var(--color-error, #E53935);
+  background-color: var(--error-soft, #FFCDD2);
+  color: var(--error, #E53935);
 }
 
 .mm-badge--info {
   background-color: #E3F2FD;
-  color: var(--color-info, #1E88E5);
+  color: var(--info, #1E88E5);
 }
 
 .mm-badge--premium {
-  background: linear-gradient(135deg, var(--color-honey, #E8A317), var(--color-honey-light, #F5CC5C));
+  background: linear-gradient(135deg, var(--primary, #E8A317), var(--primary-light, #F5CC5C));
   color: #ffffff;
 }
 

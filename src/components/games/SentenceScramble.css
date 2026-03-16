@@ -1,9 +1,9 @@
 .sentence-scramble {
-  --ss-primary: var(--color-honey-amber, #E8A317);
-  --ss-secondary: var(--color-deep-teal, #1A6B5A);
-  --ss-success: var(--color-mimi-green, #4CAF50);
-  --ss-bg: var(--color-surface, #ffffff);
-  --ss-text: var(--color-text-primary, #1a1a2e);
+  --ss-primary: var(--primary, #E8A317);
+  --ss-secondary: var(--secondary, #1A6B5A);
+  --ss-success: var(--mimi-green, #4CAF50);
+  --ss-bg: var(--bg-card, #ffffff);
+  --ss-text: var(--text-primary, #1a1a2e);
 
   display: flex;
   flex-direction: column;

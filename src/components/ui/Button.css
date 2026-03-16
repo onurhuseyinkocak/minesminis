@@ -52,51 +52,51 @@
 
 /* Variants */
 .mm-button--primary {
-  background-color: var(--color-honey, #E8A317);
+  background-color: var(--primary, #E8A317);
   color: #ffffff;
 }
 
 .mm-button--primary:hover:not(:disabled) {
-  background-color: var(--color-honey-light, #F5CC5C);
+  background-color: var(--primary-light, #F5CC5C);
   box-shadow: var(--shadow-md, 0 4px 12px rgba(26, 26, 46, 0.10));
 }
 
 .mm-button--primary:active:not(:disabled) {
-  background-color: var(--color-honey-dark, #C4880F);
+  background-color: var(--primary-dark, #C4880F);
   transform: scale(0.97);
 }
 
 .mm-button--secondary {
-  background-color: var(--color-teal, #1A6B5A);
+  background-color: var(--secondary, #1A6B5A);
   color: #ffffff;
 }
 
 .mm-button--secondary:hover:not(:disabled) {
-  background-color: var(--color-teal-light, #2A9D8F);
+  background-color: var(--secondary-light, #2A9D8F);
   box-shadow: var(--shadow-md, 0 4px 12px rgba(26, 26, 46, 0.10));
 }
 
 .mm-button--secondary:active:not(:disabled) {
-  background-color: var(--color-teal-dark, #134D42);
+  background-color: var(--secondary-dark, #134D42);
   transform: scale(0.97);
 }
 
 .mm-button--ghost {
   background-color: transparent;
-  color: var(--color-charcoal, #2D2D44);
+  color: var(--charcoal, #2D2D44);
 }
 
 .mm-button--ghost:hover:not(:disabled) {
-  background-color: var(--color-mist, #EEEEF5);
+  background-color: var(--mist, #EEEEF5);
 }
 
 .mm-button--ghost:active:not(:disabled) {
-  background-color: var(--color-cloud, #D4D4E0);
+  background-color: var(--cloud, #D4D4E0);
   transform: scale(0.97);
 }
 
 .mm-button--danger {
-  background-color: var(--color-error, #E53935);
+  background-color: var(--error, #E53935);
   color: #ffffff;
 }
 
@@ -126,12 +126,12 @@
 
 /* Focus */
 .mm-button:focus-visible {
-  outline: 3px solid var(--color-honey, #E8A317);
+  outline: 3px solid var(--primary, #E8A317);
   outline-offset: 2px;
 }
 
 .mm-button--secondary:focus-visible {
-  outline-color: var(--color-teal, #1A6B5A);
+  outline-color: var(--secondary, #1A6B5A);
 }
 
 /* Icon */
@@ -161,7 +161,7 @@
 
 .mm-button--ghost .mm-button__spinner {
   border-color: rgba(45, 45, 68, 0.2);
-  border-top-color: var(--color-charcoal, #2D2D44);
+  border-top-color: var(--charcoal, #2D2D44);
 }
 
 @keyframes mm-spin {

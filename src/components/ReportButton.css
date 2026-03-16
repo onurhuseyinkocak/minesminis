@@ -24,24 +24,24 @@
 }
 
 .report-fab:hover {
-    border-color: #ef4444;
+    border-color: var(--error);
     box-shadow: var(--shadow-lg), 0 0 16px rgba(239, 68, 68, 0.2);
 }
 
 .report-fab:focus-visible {
-    outline: 2px solid #ef4444;
+    outline: 2px solid var(--error);
     outline-offset: 2px;
 }
 
 .report-icon {
     position: relative;
     z-index: 2;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     transition: color var(--transition-fast);
 }
 
 .report-fab:hover .report-icon {
-    color: #ef4444;
+    color: var(--error);
 }
 
 /* Blinking dot */
@@ -51,7 +51,7 @@
     right: 8px;
     width: 7px;
     height: 7px;
-    background: #ef4444;
+    background: var(--error);
     border-radius: var(--radius-full);
     z-index: 3;
     box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
@@ -80,12 +80,12 @@
 .report-modal {
     width: 100%;
     max-width: 420px;
-    background: var(--bg-main, var(--color-snow));
+    background: var(--bg-main, var(--snow));
     border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
     border-radius: var(--radius-lg);
     padding: var(--space-lg);
     box-shadow: var(--shadow-lg);
-    color: var(--text-main, var(--color-ink));
+    color: var(--text-main, var(--ink));
 }
 
 /* Modal header */
@@ -103,7 +103,7 @@
 }
 
 .report-header-title .header-icon {
-    color: #ef4444;
+    color: var(--error);
 }
 
 .report-header-title h3 {
@@ -119,16 +119,16 @@
     width: 32px;
     height: 32px;
     border: none;
-    background: var(--bg-soft, var(--color-mist));
+    background: var(--bg-soft, var(--mist));
     border-radius: var(--radius-sm);
     cursor: pointer;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .close-btn:hover {
     background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    color: var(--error);
 }
 
 /* Form */
@@ -140,7 +140,7 @@
 
 .report-info {
     font-size: 0.85rem;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
     margin: 0;
     font-weight: 500;
     line-height: 1.5;
@@ -152,13 +152,13 @@
     gap: var(--space-sm);
     font-size: 0.75rem;
     padding: var(--space-sm) var(--space-md);
-    background: var(--bg-soft, var(--color-mist));
+    background: var(--bg-soft, var(--mist));
     border-radius: var(--radius-sm);
 }
 
 .info-label {
     font-weight: 600;
-    color: var(--text-muted, var(--color-slate));
+    color: var(--text-muted, var(--slate));
 }
 
 .info-value {
@@ -174,10 +174,10 @@
     width: 100%;
     min-height: 100px;
     padding: var(--space-md);
-    border: 1px solid var(--glass-border, var(--color-cloud));
+    border: 1px solid var(--glass-border, var(--cloud));
     border-radius: var(--radius-md);
-    background: var(--bg-soft, var(--color-mist));
-    color: var(--text-main, var(--color-ink));
+    background: var(--bg-soft, var(--mist));
+    color: var(--text-main, var(--ink));
     font-size: 0.85rem;
     font-family: inherit;
     resize: vertical;

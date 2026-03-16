@@ -31,7 +31,7 @@
 .splash-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, var(--color-ink) 0%, #0f0f22 50%, #0c1c18 100%);
+  background: linear-gradient(160deg, var(--ink) 0%, #0f0f22 50%, #0c1c18 100%);
   z-index: -1;
 }
 
@@ -104,7 +104,7 @@
 .tagline {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
-  color: var(--color-stone);
+  color: var(--stone);
   margin: 0;
   letter-spacing: 0.04em;
 }
@@ -149,7 +149,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  color: var(--color-slate);
+  color: var(--slate);
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
 }
@@ -166,16 +166,16 @@
   font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-stone);
+  color: var(--stone);
 }
 
 .credits strong {
-  color: var(--color-cloud);
+  color: var(--cloud);
   font-weight: 600;
 }
 
 .credits .dot {
-  color: var(--color-slate);
+  color: var(--slate);
   font-size: 0.5rem;
 }
 

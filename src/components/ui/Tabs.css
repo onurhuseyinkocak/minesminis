@@ -2,12 +2,12 @@
   display: flex;
   position: relative;
   gap: var(--space-xs, 4px);
-  border-bottom: 2px solid var(--color-mist, #EEEEF5);
+  border-bottom: 2px solid var(--mist, #EEEEF5);
 }
 
 .mm-tabs--pill {
   border-bottom: none;
-  background-color: var(--color-mist, #EEEEF5);
+  background-color: var(--mist, #EEEEF5);
   border-radius: var(--radius-sm, 8px);
   padding: 3px;
 }
@@ -26,7 +26,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-slate, #5C5C7A);
+  color: var(--slate, #5C5C7A);
   position: relative;
   transition: all 200ms ease-out;
   white-space: nowrap;
@@ -34,18 +34,18 @@
 }
 
 .mm-tab:hover {
-  color: var(--color-ink, #1A1A2E);
+  color: var(--ink, #1A1A2E);
 }
 
 .mm-tab:focus-visible {
-  outline: 3px solid var(--color-honey, #E8A317);
+  outline: 3px solid var(--primary, #E8A317);
   outline-offset: -3px;
   border-radius: var(--radius-sm, 8px);
 }
 
 /* Active - underline style */
 .mm-tab--active {
-  color: var(--color-honey, #E8A317);
+  color: var(--primary, #E8A317);
   font-weight: 700;
 }
 
@@ -56,14 +56,14 @@
   left: 0;
   right: 0;
   height: 2px;
-  background-color: var(--color-honey, #E8A317);
+  background-color: var(--primary, #E8A317);
   border-radius: 2px 2px 0 0;
 }
 
 /* Active - pill style */
 .mm-tabs--pill .mm-tab--active {
-  background-color: var(--color-white, #FFFFFF);
-  color: var(--color-ink, #1A1A2E);
+  background-color: var(--white, #FFFFFF);
+  color: var(--ink, #1A1A2E);
   border-radius: 6px;
   box-shadow: var(--shadow-sm, 0 1px 3px rgba(26, 26, 46, 0.08));
 }

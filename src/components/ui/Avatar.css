@@ -5,8 +5,8 @@
   border-radius: var(--radius-full, 9999px);
   overflow: hidden;
   flex-shrink: 0;
-  border: 2px solid var(--color-cloud, #D4D4E0);
-  background-color: var(--color-mist, #EEEEF5);
+  border: 2px solid var(--cloud, #D4D4E0);
+  background-color: var(--mist, #EEEEF5);
   user-select: none;
 }
 
@@ -48,7 +48,7 @@
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
   color: #ffffff;
-  background: linear-gradient(135deg, var(--color-teal, #1A6B5A), var(--color-teal-light, #2A9D8F));
+  background: linear-gradient(135deg, var(--secondary, #1A6B5A), var(--secondary-light, #2A9D8F));
 }
 
 .mm-avatar--sm .mm-avatar__fallback {

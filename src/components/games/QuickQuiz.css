@@ -1,9 +1,9 @@
 .quick-quiz {
-  --qq-primary: var(--color-honey-amber, #E8A317);
-  --qq-secondary: var(--color-deep-teal, #1A6B5A);
-  --qq-success: var(--color-mimi-green, #4CAF50);
-  --qq-bg: var(--color-surface, #ffffff);
-  --qq-text: var(--color-text-primary, #1a1a2e);
+  --qq-primary: var(--primary, #E8A317);
+  --qq-secondary: var(--secondary, #1A6B5A);
+  --qq-success: var(--mimi-green, #4CAF50);
+  --qq-bg: var(--bg-card, #ffffff);
+  --qq-text: var(--text-primary, #1a1a2e);
 
   display: flex;
   flex-direction: column;
