@@ -156,10 +156,10 @@ const Leaderboard: React.FC = () => {
 
                 .header-title span { color: var(--primary); }
 
-                .trophy-gold { color: #FBBF24; filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4)); }
+                .trophy-gold { color: var(--accent-amber); filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4)); }
 
                 .prize-pill {
-                    background: linear-gradient(135deg, #6366F1, #4F46E5);
+                    background: linear-gradient(135deg, var(--accent-indigo), var(--accent-indigo));
                     color: white;
                     font-size: 0.65rem;
                     font-weight: 800;
@@ -214,7 +214,7 @@ const Leaderboard: React.FC = () => {
                     color: var(--text-muted);
                 }
 
-                .rank-1 .rank-badge { color: #FBBF24; }
+                .rank-1 .rank-badge { color: var(--accent-amber); }
 
                 .avatar-mini {
                     position: relative;
@@ -243,7 +243,7 @@ const Leaderboard: React.FC = () => {
                     position: absolute;
                     top: -8px;
                     right: -5px;
-                    color: #FBBF24;
+                    color: var(--accent-amber);
                     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
                 }
 
@@ -312,7 +312,7 @@ const Leaderboard: React.FC = () => {
                 }
 
                 .star-bounce {
-                    color: #FBBF24;
+                    color: var(--accent-amber);
                     margin-bottom: 12px;
                     animation: starBounce 2s infinite ease-in-out;
                 }

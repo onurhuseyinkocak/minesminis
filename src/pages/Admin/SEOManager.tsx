@@ -268,14 +268,14 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <h2><RefreshCw size={20} /> Tek Tıkla SEO Uygula</h2>
                     </div>
                     <div className="card-content">
-                        <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+                        <p style={{ color: 'var(--stone)', marginBottom: '1rem' }}>
                             Sitemap Google ve Bing'e bildirilir. Sunucunuz /sitemap.xml ve /robots.txt adreslerini 7/24 sunar — bilgisayarınız kapalıyken bile (deploy edildiğinde).
                         </p>
                         <button className="add-btn" onClick={handleOneClickSEO} disabled={seoApplying} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <RefreshCw size={18} className={seoApplying ? 'spin' : ''} />
                             {seoApplying ? 'Uygulanıyor...' : 'SEO Uygula'}
                         </button>
-                        <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '1rem' }}>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--slate)', marginTop: '1rem' }}>
                             Sunucu çalışırken <code>/sitemap.xml</code> ve <code>/robots.txt</code> her zaman güncel içerik sunar.
                         </p>
                     </div>
@@ -289,11 +289,11 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <h2><FileText size={20} /> Sitemap.xml Oluştur</h2>
                     </div>
                     <div className="card-content">
-                        <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+                        <p style={{ color: 'var(--stone)', marginBottom: '1rem' }}>
                             Sitenizin tüm sayfalarını içeren sitemap.xml oluşturur. Google Search Console'a yükleyin.
                         </p>
                         <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', color: '#374151' }}>Site URL</label>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--charcoal)' }}>Site URL</label>
                             <input
                                 type="text"
                                 value={settings.siteUrl}
@@ -303,7 +303,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                                 placeholder="https://minesminis.com"
                             />
                         </div>
-                        <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '1rem' }}>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--stone)', marginBottom: '1rem' }}>
                             {SITE_ROUTES.length + blogSlugs.length} sayfa (statik + {blogSlugs.length} blog yazısı)
                         </p>
                         <button className="add-btn" onClick={generateSitemap} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -321,17 +321,17 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <h2><Code size={20} /> robots.txt</h2>
                     </div>
                     <div className="card-content">
-                        <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+                        <p style={{ color: 'var(--stone)', marginBottom: '1rem' }}>
                             Arama motorlarına hangi sayfaların taranacağını söyler. public/ klasörüne veya root'a koyun.
                         </p>
                         <pre style={{
-                            background: '#f3f4f6',
+                            background: 'var(--mist)',
                             padding: '1rem',
                             borderRadius: '8px',
                             overflow: 'auto',
                             fontSize: '0.85rem',
-                            color: '#374151',
-                            border: '1px solid #e5e7eb'
+                            color: 'var(--charcoal)',
+                            border: '1px solid var(--cloud)'
                         }}>{robotsTxt}</pre>
                         <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                             <button className="add-btn" onClick={generateRobotsTxt} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -353,11 +353,11 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <h2><Hash size={20} /> Meta Etiketleri Kodu</h2>
                     </div>
                     <div className="card-content">
-                        <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+                        <p style={{ color: 'var(--stone)', marginBottom: '1rem' }}>
                             index.html veya her sayfa için &lt;head&gt; içine ekleyeceğiniz meta etiketleri. Kopyalayıp yapıştırın.
                         </p>
                         <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', color: '#374151' }}>Site Adı</label>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--charcoal)' }}>Site Adı</label>
                             <input
                                 type="text"
                                 value={settings.siteName}
@@ -367,7 +367,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                             />
                         </div>
                         <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', color: '#374151' }}>Açıklama</label>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--charcoal)' }}>Açıklama</label>
                             <input
                                 type="text"
                                 value={settings.siteDescription}
@@ -377,7 +377,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                             />
                         </div>
                         <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', color: '#374151' }}>Anahtar Kelimeler (virgülle)</label>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--charcoal)' }}>Anahtar Kelimeler (virgülle)</label>
                             <input
                                 type="text"
                                 value={settings.siteKeywords.join(', ')}
@@ -394,19 +394,19 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                             return (
                                 <div key={i} style={{ marginBottom: '1rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                        <span style={{ color: '#374151', fontWeight: 500 }}>{label}</span>
+                                        <span style={{ color: 'var(--charcoal)', fontWeight: 500 }}>{label}</span>
                                         <button className="cancel-btn" style={{ padding: '0.35rem 0.75rem' }} onClick={() => copyToClipboard(code, label)}>
                                             <Copy size={14} /> Kopyala
                                         </button>
                                     </div>
                                     <pre style={{
-                                        background: '#f3f4f6',
+                                        background: 'var(--mist)',
                                         padding: '0.75rem',
                                         borderRadius: '6px',
                                         fontSize: '0.75rem',
-                                        color: '#374151',
+                                        color: 'var(--charcoal)',
                                         overflow: 'auto',
-                                        border: '1px solid #e5e7eb'
+                                        border: '1px solid var(--cloud)'
                                     }}>{code}</pre>
                                 </div>
                             );
@@ -422,19 +422,19 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <h2><Link size={20} /> Schema.org JSON-LD</h2>
                     </div>
                     <div className="card-content">
-                        <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+                        <p style={{ color: 'var(--stone)', marginBottom: '1rem' }}>
                             WebSite şeması — Google'ın sitenizi daha iyi anlamasına yardımcı olur. &lt;head&gt; içine script olarak ekleyin.
                         </p>
                         <pre style={{
-                            background: '#f3f4f6',
+                            background: 'var(--mist)',
                             padding: '1rem',
                             borderRadius: '8px',
                             overflow: 'auto',
                             fontSize: '0.85rem',
-                            color: '#374151',
-                            border: '1px solid #e5e7eb'
+                            color: 'var(--charcoal)',
+                            border: '1px solid var(--cloud)'
                         }}>{schemaOrgJSON()}</pre>
-                        <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.5rem' }}>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--stone)', marginTop: '0.5rem' }}>
                             Kullanım: &lt;script type="application/ld+json"&gt;{schemaOrgJSON().slice(0, 50)}...&lt;/script&gt;
                         </p>
                         <button className="cancel-btn" style={{ marginTop: '1rem' }} onClick={() => copyToClipboard(schemaOrgJSON(), 'Schema.org JSON-LD')}>
@@ -451,7 +451,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <h2><Eye size={20} /> Meta Etiketleri İncele</h2>
                     </div>
                     <div className="card-content">
-                        <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+                        <p style={{ color: 'var(--stone)', marginBottom: '1rem' }}>
                             Bir sayfanın HTML'inden gerçek meta etiketlerini okur. Aynı domain üzerinde çalışır (CORS).
                         </p>
                         <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -470,21 +470,21 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         </div>
                         {inspectionResult && (
                             <div style={{
-                                background: inspectionResult.status === 'error' ? 'rgba(239,68,68,0.05)' : '#f9fafb',
-                                border: `1px solid ${inspectionResult.status === 'error' ? 'rgba(239,68,68,0.3)' : '#e5e7eb'}`,
+                                background: inspectionResult.status === 'error' ? 'rgba(239,68,68,0.05)' : 'var(--snow)',
+                                border: `1px solid ${inspectionResult.status === 'error' ? 'rgba(239,68,68,0.3)' : 'var(--cloud)'}`,
                                 borderRadius: '8px',
                                 padding: '1rem'
                             }}>
                                 {inspectionResult.status === 'error' ? (
-                                    <p style={{ color: '#dc2626' }}>{inspectionResult.error}</p>
+                                    <p style={{ color: 'var(--accent-red)' }}>{inspectionResult.error}</p>
                                 ) : (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                        <div><span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>URL:</span> <span style={{ color: '#1a1a2e' }}>{inspectionResult.url}</span></div>
-                                        <div><span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>title:</span> {inspectionResult.title ? <span style={{ color: '#059669' }}>{inspectionResult.title}</span> : <span style={{ color: '#dc2626' }}>Yok</span>}</div>
-                                        <div><span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>meta description:</span> {inspectionResult.metaDescription ? <span style={{ color: '#059669' }}>{inspectionResult.metaDescription}</span> : <span style={{ color: '#dc2626' }}>Yok</span>}</div>
-                                        <div><span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>og:title:</span> {inspectionResult.ogTitle ? <span style={{ color: '#059669' }}>{inspectionResult.ogTitle}</span> : <span style={{ color: '#dc2626' }}>Yok</span>}</div>
-                                        <div><span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>og:image:</span> {inspectionResult.ogImage ? <span style={{ color: '#059669' }}>{inspectionResult.ogImage}</span> : <span style={{ color: '#dc2626' }}>Yok</span>}</div>
-                                        <div><span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>canonical:</span> {inspectionResult.canonical ? <span style={{ color: '#059669' }}>{inspectionResult.canonical}</span> : <span style={{ color: '#dc2626' }}>Yok</span>}</div>
+                                        <div><span style={{ color: 'var(--stone)', fontSize: '0.8rem' }}>URL:</span> <span style={{ color: 'var(--ink)' }}>{inspectionResult.url}</span></div>
+                                        <div><span style={{ color: 'var(--stone)', fontSize: '0.8rem' }}>title:</span> {inspectionResult.title ? <span style={{ color: 'var(--success)' }}>{inspectionResult.title}</span> : <span style={{ color: 'var(--accent-red)' }}>Yok</span>}</div>
+                                        <div><span style={{ color: 'var(--stone)', fontSize: '0.8rem' }}>meta description:</span> {inspectionResult.metaDescription ? <span style={{ color: 'var(--success)' }}>{inspectionResult.metaDescription}</span> : <span style={{ color: 'var(--accent-red)' }}>Yok</span>}</div>
+                                        <div><span style={{ color: 'var(--stone)', fontSize: '0.8rem' }}>og:title:</span> {inspectionResult.ogTitle ? <span style={{ color: 'var(--success)' }}>{inspectionResult.ogTitle}</span> : <span style={{ color: 'var(--accent-red)' }}>Yok</span>}</div>
+                                        <div><span style={{ color: 'var(--stone)', fontSize: '0.8rem' }}>og:image:</span> {inspectionResult.ogImage ? <span style={{ color: 'var(--success)' }}>{inspectionResult.ogImage}</span> : <span style={{ color: 'var(--accent-red)' }}>Yok</span>}</div>
+                                        <div><span style={{ color: 'var(--stone)', fontSize: '0.8rem' }}>canonical:</span> {inspectionResult.canonical ? <span style={{ color: 'var(--success)' }}>{inspectionResult.canonical}</span> : <span style={{ color: 'var(--accent-red)' }}>Yok</span>}</div>
                                     </div>
                                 )}
                             </div>
@@ -498,20 +498,20 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
                     {[
                         { icon: <Globe size={24} />, title: 'Google Search Console', desc: 'Arama performansı, indexleme', url: 'https://search.google.com/search-console', color: '#4285f4' },
-                        { icon: <BarChart3 size={24} />, title: 'Google Analytics', desc: 'Trafik analizi', url: 'https://analytics.google.com', color: '#f59e0b' },
-                        { icon: <Globe size={24} />, title: 'PageSpeed Insights', desc: 'Sayfa hızı testi', url: 'https://pagespeed.web.dev', color: '#22c55e' },
-                        { icon: <Smartphone size={24} />, title: 'Mobile Friendly Test', desc: 'Mobil uyumluluk', url: 'https://search.google.com/test/mobile-friendly', color: '#8b5cf6' },
-                        { icon: <Link size={24} />, title: 'Kırık Link Kontrolü', desc: 'Broken link tespiti', url: 'https://www.brokenlinkcheck.com', color: '#ef4444' },
-                        { icon: <Image size={24} />, title: 'TinyPNG', desc: 'Görsel sıkıştırma', url: 'https://tinypng.com', color: '#ec4899' },
-                        { icon: <Eye size={24} />, title: 'Rich Results Test', desc: 'Zengin sonuç önizleme', url: 'https://search.google.com/test/rich-results', color: '#14b8a6' },
+                        { icon: <BarChart3 size={24} />, title: 'Google Analytics', desc: 'Trafik analizi', url: 'https://analytics.google.com', color: 'var(--warning)' },
+                        { icon: <Globe size={24} />, title: 'PageSpeed Insights', desc: 'Sayfa hızı testi', url: 'https://pagespeed.web.dev', color: 'var(--accent-green)' },
+                        { icon: <Smartphone size={24} />, title: 'Mobile Friendly Test', desc: 'Mobil uyumluluk', url: 'https://search.google.com/test/mobile-friendly', color: 'var(--accent-purple)' },
+                        { icon: <Link size={24} />, title: 'Kırık Link Kontrolü', desc: 'Broken link tespiti', url: 'https://www.brokenlinkcheck.com', color: 'var(--error)' },
+                        { icon: <Image size={24} />, title: 'TinyPNG', desc: 'Görsel sıkıştırma', url: 'https://tinypng.com', color: 'var(--accent-pink)' },
+                        { icon: <Eye size={24} />, title: 'Rich Results Test', desc: 'Zengin sonuç önizleme', url: 'https://search.google.com/test/rich-results', color: 'var(--accent-teal)' },
                     ].map((t, i) => (
                         <a key={i} href={t.url} target="_blank" rel="noopener noreferrer" className="dashboard-card" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem' }}>
                             <div style={{ width: 48, height: 48, borderRadius: 12, background: `${t.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: t.color }}>{t.icon}</div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ fontWeight: 600, color: '#1a1a2e', marginBottom: '2px' }}>{t.title}</div>
-                                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{t.desc}</div>
+                                <div style={{ fontWeight: 600, color: 'var(--ink)', marginBottom: '2px' }}>{t.title}</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--stone)' }}>{t.desc}</div>
                             </div>
-                            <ExternalLink size={16} style={{ color: '#94a3b8' }} />
+                            <ExternalLink size={16} style={{ color: 'var(--stone)' }} />
                         </a>
                     ))}
                 </div>

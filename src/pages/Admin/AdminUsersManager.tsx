@@ -218,7 +218,7 @@ function AdminUsersManager() {
                     <strong>User created</strong><br />
                     <small>Email: {newUserData.email}</small><br />
                     <small>Password: <code>{password}</code></small><br />
-                    <small style={{ color: '#d97706' }}>Save this password!</small>
+                    <small style={{ color: 'var(--primary-dark)' }}>Save this password!</small>
                 </div>,
                 { duration: 10000 }
             );
@@ -282,7 +282,7 @@ function AdminUsersManager() {
             {/* Stats */}
             <div className="adm-users-stats">
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+                    <div className="adm-users-stat-icon" style={{ background: 'var(--info-pale)', color: 'var(--accent-blue)' }}>
                         <Users size={18} />
                     </div>
                     <div>
@@ -291,7 +291,7 @@ function AdminUsersManager() {
                     </div>
                 </div>
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: '#fffbeb', color: '#f59e0b' }}>
+                    <div className="adm-users-stat-icon" style={{ background: 'var(--warning-pale)', color: 'var(--warning)' }}>
                         <Crown size={18} />
                     </div>
                     <div>
@@ -300,7 +300,7 @@ function AdminUsersManager() {
                     </div>
                 </div>
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: '#fef2f2', color: '#dc2626' }}>
+                    <div className="adm-users-stat-icon" style={{ background: 'var(--error-pale)', color: 'var(--accent-red)' }}>
                         <Shield size={18} />
                     </div>
                     <div>
@@ -309,7 +309,7 @@ function AdminUsersManager() {
                     </div>
                 </div>
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: '#f5f3ff', color: '#7c3aed' }}>
+                    <div className="adm-users-stat-icon" style={{ background: 'var(--accent-purple-pale)', color: 'var(--accent-purple)' }}>
                         <Users size={18} />
                     </div>
                     <div>
@@ -382,7 +382,7 @@ function AdminUsersManager() {
                                         <div>
                                             <div className="adm-user-name">
                                                 {user.display_name || 'Unnamed'}
-                                                {isUserPremium(user) && <Crown size={12} style={{ color: '#f59e0b' }} />}
+                                                {isUserPremium(user) && <Crown size={12} style={{ color: 'var(--warning)' }} />}
                                             </div>
                                             <div className="adm-user-email">{user.email}</div>
                                         </div>
@@ -423,7 +423,7 @@ function AdminUsersManager() {
                                     )}
                                 </td>
                                 <td style={{ fontWeight: 600 }}>Lv. {user.level || 1}</td>
-                                <td style={{ fontWeight: 600, color: '#f59e0b' }}>{user.points || 0}</td>
+                                <td style={{ fontWeight: 600, color: 'var(--warning)' }}>{user.points || 0}</td>
                                 <td>
                                     <span className={`adm-badge ${user.is_online ? 'online' : 'offline'}`}>
                                         {user.is_online ? 'Online' : 'Offline'}
@@ -629,7 +629,7 @@ function AdminUsersManager() {
                                             onChange={(e) => setNewUserData({ ...newUserData, is_premium: e.target.checked })}
                                         />
                                         <label style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                            <Crown size={14} style={{ color: '#f59e0b' }} />
+                                            <Crown size={14} style={{ color: 'var(--warning)' }} />
                                             Grant Premium
                                         </label>
                                     </div>
@@ -650,15 +650,15 @@ function AdminUsersManager() {
                                     </div>
                                 )}
                                 <div style={{
-                                    background: '#fffbeb',
+                                    background: 'var(--warning-pale)',
                                     padding: '0.75rem 1rem',
                                     borderRadius: 8,
                                     display: 'flex',
                                     gap: 8,
                                     alignItems: 'flex-start'
                                 }}>
-                                    <Key size={16} style={{ color: '#d97706', marginTop: 2, flexShrink: 0 }} />
-                                    <div style={{ fontSize: '0.8rem', color: '#92400e' }}>
+                                    <Key size={16} style={{ color: 'var(--primary-dark)', marginTop: 2, flexShrink: 0 }} />
+                                    <div style={{ fontSize: '0.8rem', color: 'var(--primary-dark)' }}>
                                         An auto-generated password will be shown after creation. Make sure to save it.
                                     </div>
                                 </div>

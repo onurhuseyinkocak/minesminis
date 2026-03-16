@@ -454,7 +454,7 @@ function Ataturk() {
       <style>{`
         .ataturk-page {
           min-height: 100vh;
-          background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
+          background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 100%);
           color: white;
           position: relative;
           overflow-x: hidden;
@@ -478,7 +478,7 @@ function Ataturk() {
           box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
-        .language-toggle svg { color: #dc2626; }
+        .language-toggle svg { color: var(--accent-red); }
 
         .language-toggle button {
           background: none;
@@ -539,7 +539,7 @@ function Ataturk() {
           min-height: 85vh;
           display: flex;
           align-items: center;
-          background: #0a0a0f;
+          background: var(--ink);
           overflow: hidden;
           padding: 4rem 2rem;
           margin: 0 auto 3rem;
@@ -627,7 +627,7 @@ function Ataturk() {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: linear-gradient(135deg, #dc2626, #991b1b);
+          background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dark));
           padding: 10px 24px;
           border-radius: 100px;
           font-weight: 700;
@@ -648,7 +648,7 @@ function Ataturk() {
 
         .hero-content-col .highlight {
           display: block;
-          background: linear-gradient(90deg, #fbbf24, #f59e0b, #ffffff);
+          background: linear-gradient(90deg, var(--accent-amber), var(--warning), var(--white)fff);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -661,7 +661,7 @@ function Ataturk() {
           color: rgba(255,255,255,0.9);
           letter-spacing: 8px;
           margin-bottom: 2.5rem;
-          border-left: 4px solid #dc2626;
+          border-left: 4px solid var(--accent-red);
           padding-left: 20px;
         }
 
@@ -687,7 +687,7 @@ function Ataturk() {
 
         /* Gallery Strip */
         .gallery-strip {
-          background: linear-gradient(180deg, #0f3460 0%, #1a1a2e 100%);
+          background: linear-gradient(180deg, var(--charcoal) 0%, var(--ink) 100%);
           padding: 3rem 0;
           overflow: hidden;
           margin: 0 auto 3rem;
@@ -706,7 +706,7 @@ function Ataturk() {
 
         .gallery-scroll::-webkit-scrollbar { height: 8px; }
         .gallery-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        .gallery-scroll::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #dc2626, #fbbf24); border-radius: 10px; }
+        .gallery-scroll::-webkit-scrollbar-thumb { background: linear-gradient(135deg, var(--accent-red), var(--accent-amber)); border-radius: 10px; }
 
         .gallery-item {
           flex: 0 0 auto;
@@ -733,7 +733,7 @@ function Ataturk() {
         /* Introduction */
         .intro-section {
           padding: 6rem 2rem;
-          background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+          background: linear-gradient(180deg, var(--ink) 0%, var(--charcoal) 100%);
           margin: 0 auto 3rem;
           max-width: 1400px;
           border-radius: 40px;
@@ -759,7 +759,7 @@ function Ataturk() {
         .intro-icon {
           width: 72px;
           height: 72px;
-          background: linear-gradient(135deg, #dc2626, #991b1b);
+          background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dark));
           border-radius: 20px;
           display: flex;
           align-items: center;
@@ -772,7 +772,7 @@ function Ataturk() {
           font-size: 2.5rem;
           font-weight: 700;
           margin-bottom: 2rem;
-          background: linear-gradient(90deg, #fff, #fbbf24);
+          background: linear-gradient(90deg, var(--white), var(--accent-amber));
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -788,7 +788,7 @@ function Ataturk() {
         /* Quotes */
         .quotes-section {
           padding: 6rem 2rem;
-          background: #1a1a2e;
+          background: var(--ink);
           margin: 0 auto 3rem;
           max-width: 1400px;
           border-radius: 40px;
@@ -841,7 +841,7 @@ function Ataturk() {
         .quote-icon {
           font-size: 4rem;
           font-family: Georgia, serif;
-          color: #dc2626;
+          color: var(--accent-red);
           opacity: 0.5;
           position: absolute;
           top: 10px;
@@ -868,7 +868,7 @@ function Ataturk() {
         /* Timeline */
         .timeline-section {
           padding: 6rem 2rem;
-          background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+          background: linear-gradient(180deg, var(--ink) 0%, var(--charcoal) 100%);
           position: relative;
           margin: 0 auto 3rem;
           max-width: 1400px;
@@ -916,7 +916,7 @@ function Ataturk() {
           top: 0;
           bottom: 0;
           width: 4px;
-          background: linear-gradient(180deg, #dc2626, #fbbf24);
+          background: linear-gradient(180deg, var(--accent-red), var(--accent-amber));
           transform: translateX(-50%);
           border-radius: 2px;
         }
@@ -942,7 +942,7 @@ function Ataturk() {
         .timeline-year {
           position: absolute;
           top: -12px;
-          background: linear-gradient(135deg, #dc2626, #991b1b);
+          background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dark));
           color: white;
           padding: 6px 16px;
           border-radius: 100px;
@@ -961,7 +961,7 @@ function Ataturk() {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #dc2626;
+          color: var(--accent-red);
           margin-bottom: 1rem;
         }
 
@@ -983,7 +983,7 @@ function Ataturk() {
         /* Reforms */
         .reforms-section {
           padding: 6rem 2rem;
-          background: #1a1a2e;
+          background: var(--ink);
           margin: 0 auto 3rem;
           max-width: 1400px;
           border-radius: 40px;
@@ -1059,7 +1059,7 @@ function Ataturk() {
         /* Legacy */
         .legacy-section {
           padding: 6rem 2rem;
-          background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
+          background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 100%);
           margin: 0 auto 3rem;
           max-width: 1400px;
           border-radius: 40px;
@@ -1089,7 +1089,7 @@ function Ataturk() {
           font-size: 2rem;
           font-weight: 700;
           margin-bottom: 2rem;
-          color: #dc2626;
+          color: var(--accent-red);
         }
 
         .legacy-text p {
@@ -1107,7 +1107,7 @@ function Ataturk() {
           margin-top: 2rem;
         }
 
-        .legacy-quote svg { color: #dc2626; margin-bottom: 1rem; }
+        .legacy-quote svg { color: var(--accent-red); margin-bottom: 1rem; }
 
         .legacy-quote p {
           font-size: 1.3rem;
@@ -1119,7 +1119,7 @@ function Ataturk() {
         /* Footer Banner */
         .footer-banner {
           position: relative;
-          background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+          background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red-dark) 100%);
           padding: 5rem 2rem;
           text-align: center;
           overflow: hidden;

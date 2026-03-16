@@ -192,7 +192,7 @@ function GamesManager() {
                     <h2>{filteredGames.length} Oyun</h2>
                     <div className="table-actions">
                         <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--stone)' }} />
                             <input
                                 type="text"
                                 placeholder="Oyun ara..."

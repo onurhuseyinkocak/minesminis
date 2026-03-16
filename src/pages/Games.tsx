@@ -134,12 +134,12 @@ function Games() {
 
   const getGameTypeColor = (description: string) => {
     switch (description) {
-      case 'Maze Chase': return '#667eea';
-      case 'Match Up': return '#4ECDC4';
-      case 'Quiz': return '#FF6B6B';
-      case 'Whack-a-Mole': return '#FFD93D';
-      case 'Open Box': return '#a78bfa';
-      default: return '#667eea';
+      case 'Maze Chase': return 'var(--accent-indigo)';
+      case 'Match Up': return 'var(--accent-teal)';
+      case 'Quiz': return 'var(--error)';
+      case 'Whack-a-Mole': return 'var(--primary-light)';
+      case 'Open Box': return 'var(--accent-purple-light)';
+      default: return 'var(--accent-indigo)';
     }
   };
 
@@ -149,7 +149,7 @@ function Games() {
         icon={Gamepad2}
         title="Arcade Hub"
         description="Epic adventures and fun games await you!"
-        iconColor="#6366f1"
+        iconColor="var(--accent-indigo)"
         filterSlot={
           <div className="modern-tabs">
             <button
@@ -204,7 +204,7 @@ function Games() {
                     className={`game-favorite-btn ${favorites.has(game.id) ? 'favorited' : ''}`}
                     title={favorites.has(game.id) ? "Remove from favorites" : "Add to favorites"}
                   >
-                    {favorites.has(game.id) ? <Heart size={20} fill="#FF6B6B" color="#FF6B6B" /> : <Heart size={20} color="#ccc" />}
+                    {favorites.has(game.id) ? <Heart size={20} fill="var(--error)" color="var(--error)" /> : <Heart size={20} color="var(--cloud)" />}
                   </button>
                 )}
 

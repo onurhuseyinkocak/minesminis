@@ -13,7 +13,7 @@ const ConfettiEffect: React.FC<ConfettiEffectProps> = ({ isActive, trigger }) =>
 
   useEffect(() => {
     if (active) {
-      const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#6366f1', '#a78bfa', '#fd79a8'];
+      const colors = ['var(--error-light)', 'var(--accent-teal)', 'var(--accent-amber)', 'var(--accent-indigo)', 'var(--accent-purple-light)', 'var(--accent-pink)'];
       const newParticles = Array.from({ length: 50 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,

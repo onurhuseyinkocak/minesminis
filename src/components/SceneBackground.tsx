@@ -49,12 +49,12 @@ const SceneBackground: React.FC<SceneBackgroundProps> = ({ type, className = '' 
           <stop offset="100%" stopColor="#FFCDD2" />
         </linearGradient>
         <linearGradient id="flower2" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#FFD54F" />
+          <stop offset="0%" stopColor="var(--mimi-gold)" />
           <stop offset="100%" stopColor="#FFF9C4" />
         </linearGradient>
       </defs>
       <rect width="400" height="280" fill="url(#sky-meadow)" />
-      <path d="M0 200 Q100 150 200 200 Q300 250 400 200 L400 280 L0 280 Z" fill="#81C784" opacity="0.9" />
+      <path d="M0 200 Q100 150 200 200 Q300 250 400 200 L400 280 L0 280 Z" fill="var(--mimi-green-light)" opacity="0.9" />
       <circle cx="80" cy="230" r="12" fill="url(#flower1)" />
       <circle cx="200" cy="210" r="10" fill="url(#flower2)" />
       <circle cx="320" cy="240" r="8" fill="url(#flower1)" />
@@ -72,8 +72,8 @@ const SceneBackground: React.FC<SceneBackgroundProps> = ({ type, className = '' 
           <stop offset="100%" stopColor="#8BC34A" />
         </linearGradient>
         <linearGradient id="tree1" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#2E7D32" />
-          <stop offset="100%" stopColor="#4CAF50" />
+          <stop offset="0%" stopColor="var(--mimi-green-dark)" />
+          <stop offset="100%" stopColor="var(--mimi-green)" />
         </linearGradient>
       </defs>
       <rect width="400" height="280" fill="url(#sky-forest)" />
@@ -101,7 +101,7 @@ const SceneBackground: React.FC<SceneBackgroundProps> = ({ type, className = '' 
       <rect width="400" height="280" fill="url(#sky-river)" />
       <path d="M0 120 Q80 100 150 130 Q220 100 280 120 Q340 140 400 110 L400 280 L0 280 Z" fill="url(#water)" opacity="0.8" />
       <path d="M0 130 Q100 115 200 135 Q300 110 400 125" fill="none" stroke="#B2DFDB" strokeWidth="2" opacity="0.6" />
-      <ellipse cx="100" cy="240" rx="50" ry="30" fill="#81C784" opacity="0.8" />
+      <ellipse cx="100" cy="240" rx="50" ry="30" fill="var(--mimi-green-light)" opacity="0.8" />
       <ellipse cx="320" cy="250" rx="60" ry="25" fill="#66BB6A" opacity="0.7" />
     </svg>
   );

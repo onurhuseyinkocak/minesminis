@@ -92,8 +92,8 @@ const ProgressMap: React.FC = () => {
                     <svg className="path-svg-vertical" viewBox={`0 0 200 ${containerHeight}`} preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#4F46E5" />
-                                <stop offset="100%" stopColor="#EC4899" />
+                                <stop offset="0%" stopColor="var(--accent-indigo)" />
+                                <stop offset="100%" stopColor="var(--accent-pink)" />
                             </linearGradient>
                             <filter id="pathGlow">
                                 <feGaussianBlur stdDeviation="4" result="blur" />
@@ -288,14 +288,14 @@ const ProgressMap: React.FC = () => {
 
                 .adventure-node.unlocked .platform-top {
                     background: white;
-                    border-color: #6366F1;
-                    box-shadow: 0 10px 0 #4F46E5, 0 20px 40px rgba(99, 102, 241, 0.2);
+                    border-color: var(--accent-indigo);
+                    box-shadow: 0 10px 0 var(--accent-indigo), 0 20px 40px rgba(99, 102, 241, 0.2);
                 }
 
                 .adventure-node.current .platform-top {
                     animation: floatNode 3s infinite ease-in-out;
-                    border-color: #F59E0B;
-                    box-shadow: 0 10px 0 #D97706, 0 20px 40px rgba(245, 158, 11, 0.3);
+                    border-color: var(--warning);
+                    box-shadow: 0 10px 0 var(--primary-dark), 0 20px 40px rgba(245, 158, 11, 0.3);
                 }
 
                 .platform-base {
@@ -316,7 +316,7 @@ const ProgressMap: React.FC = () => {
                     left: -10px;
                     right: -10px;
                     bottom: -10px;
-                    border: 4px solid #F59E0B;
+                    border: 4px solid var(--warning);
                     border-radius: 30px;
                     animation: pulseRing 2s infinite;
                     pointer-events: none;
@@ -336,7 +336,7 @@ const ProgressMap: React.FC = () => {
                 }
 
                 [data-theme="dark"] .node-info-bubble {
-                    background: #1e293b;
+                    background: var(--ink);
                     border-color: rgba(255, 255, 255, 0.1);
                 }
 
@@ -374,7 +374,7 @@ const ProgressMap: React.FC = () => {
                     display: flex;
                     align-items: center;
                     gap: 6px;
-                    color: #D97706;
+                    color: var(--primary-dark);
                     font-size: 0.7rem;
                     font-weight: 800;
                 }
@@ -383,7 +383,7 @@ const ProgressMap: React.FC = () => {
                     display: flex;
                     align-items: center;
                     gap: 6px;
-                    color: #6366F1;
+                    color: var(--accent-indigo);
                     font-size: 0.75rem;
                     font-weight: 800;
                     margin-bottom: 8px;
@@ -396,13 +396,13 @@ const ProgressMap: React.FC = () => {
 
                 [data-theme="dark"] .xp-requirement {
                     background: rgba(99, 102, 241, 0.1);
-                    color: #818cf8;
+                    color: var(--accent-indigo);
                 }
 
                 .unlock-badge-mini {
                     font-size: 0.7rem;
                     font-weight: 700;
-                    color: #EF4444;
+                    color: var(--error);
                     background: rgba(239, 68, 68, 0.1);
                     padding: 4px 10px;
                     border-radius: 8px;
@@ -443,7 +443,7 @@ const ProgressMap: React.FC = () => {
                 .adventure-node.left .path-connector { left: calc(10% + 80px); }
                 .adventure-node.right .path-connector { right: calc(10% + 80px); }
 
-                .adventure-node.unlocked .path-connector { background: #6366F1; opacity: 0.3; }
+                .adventure-node.unlocked .path-connector { background: var(--accent-indigo); opacity: 0.3; }
 
                 .map-footer {
                     margin-top: 100px;
@@ -456,7 +456,7 @@ const ProgressMap: React.FC = () => {
                     z-index: 10;
                 }
 
-                .finish-flag { color: #6366F1; animation: swing 3s infinite ease-in-out; }
+                .finish-flag { color: var(--accent-indigo); animation: swing 3s infinite ease-in-out; }
 
                 @keyframes floatNode {
                     0%, 100% { transform: translateY(0); }
@@ -474,9 +474,9 @@ const ProgressMap: React.FC = () => {
                 }
 
                 /* Dark Mode Fine-tuning */
-                [data-theme="dark"] .adventure-map-arşa { background: #0F172A; }
-                [data-theme="dark"] .platform-top { background: #1E293B; }
-                [data-theme="dark"] .adventure-node.unlocked .platform-top { background: #1E293B; }
+                [data-theme="dark"] .adventure-map-arşa { background: var(--ink); }
+                [data-theme="dark"] .platform-top { background: var(--charcoal); }
+                [data-theme="dark"] .adventure-node.unlocked .platform-top { background: var(--charcoal); }
             `}</style>
         </div>
     );

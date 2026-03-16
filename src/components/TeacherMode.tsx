@@ -125,7 +125,7 @@ const TeacherMode: React.FC = () => {
         }
 
         .pin-card h3 { margin-bottom: 10px; }
-        .pin-card p { margin-bottom: 20px; color: #666; font-size: 0.9rem; }
+        .pin-card p { margin-bottom: 20px; color: var(--text-secondary); font-size: 0.9rem; }
         
         .pin-actions {
           display: flex;
@@ -165,7 +165,7 @@ const TeacherMode: React.FC = () => {
           height: 40px;
           border: none;
           border-radius: 8px;
-          background: #f0f4f8;
+          background: var(--bg-muted);
           font-size: 1.2rem;
           cursor: pointer;
           transition: transform 0.2s;
@@ -173,7 +173,7 @@ const TeacherMode: React.FC = () => {
 
         .tool-item:hover {
           transform: scale(1.1);
-          background: #e2e8f0;
+          background: var(--cloud);
         }
 
         @media (min-width: 1920px) {

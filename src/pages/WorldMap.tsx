@@ -27,18 +27,18 @@ interface WorldInfo {
 }
 
 const WORLDS: WorldInfo[] = [
-  { id: 'w1',  order: 1,  name: 'Hello World',       emoji: '\u{1F44B}', color: '#f59e0b', theme: 'Greetings & introductions',          lessonTotal: 10 },
-  { id: 'w2',  order: 2,  name: 'My Body',            emoji: '\u{1F9D2}', color: '#ef4444', theme: 'Body parts & senses',                lessonTotal: 10 },
-  { id: 'w3',  order: 3,  name: 'Colors & Shapes',    emoji: '\u{1F308}', color: '#8b5cf6', theme: 'Colors, shapes & patterns',          lessonTotal: 10 },
-  { id: 'w4',  order: 4,  name: 'Animals',            emoji: '\u{1F981}', color: '#10b981', theme: 'Farm, wild & pet animals',            lessonTotal: 10 },
-  { id: 'w5',  order: 5,  name: 'My Family',          emoji: '\u{1F46A}', color: '#ec4899', theme: 'Family members & relationships',      lessonTotal: 10 },
-  { id: 'w6',  order: 6,  name: 'Food & Drinks',      emoji: '\u{1F34E}', color: '#f97316', theme: 'Fruits, vegetables & meals',          lessonTotal: 10 },
-  { id: 'w7',  order: 7,  name: 'My Home',            emoji: '\u{1F3E0}', color: '#3b82f6', theme: 'Rooms, furniture & items',            lessonTotal: 10 },
-  { id: 'w8',  order: 8,  name: 'Clothes',            emoji: '\u{1F455}', color: '#14b8a6', theme: 'Clothing & weather dressing',         lessonTotal: 10 },
-  { id: 'w9',  order: 9,  name: 'Nature',             emoji: '\u{1F333}', color: '#22c55e', theme: 'Weather, seasons & plants',           lessonTotal: 10 },
-  { id: 'w10', order: 10, name: 'School',             emoji: '\u{1F3EB}', color: '#6366f1', theme: 'Classroom objects & school life',     lessonTotal: 10 },
-  { id: 'w11', order: 11, name: 'City & Transport',   emoji: '\u{1F68C}', color: '#a855f7', theme: 'Vehicles, places & directions',       lessonTotal: 10 },
-  { id: 'w12', order: 12, name: 'Adventures',         emoji: '\u{1F30D}', color: '#d946ef', theme: 'Travel, countries & cultures',        lessonTotal: 10 },
+  { id: 'w1',  order: 1,  name: 'Hello World',       emoji: '\u{1F44B}', color: 'var(--primary)', theme: 'Greetings & introductions',          lessonTotal: 10 },
+  { id: 'w2',  order: 2,  name: 'My Body',            emoji: '\u{1F9D2}', color: 'var(--error)', theme: 'Body parts & senses',                lessonTotal: 10 },
+  { id: 'w3',  order: 3,  name: 'Colors & Shapes',    emoji: '\u{1F308}', color: 'var(--accent-purple)', theme: 'Colors, shapes & patterns',          lessonTotal: 10 },
+  { id: 'w4',  order: 4,  name: 'Animals',            emoji: '\u{1F981}', color: 'var(--accent-emerald)', theme: 'Farm, wild & pet animals',            lessonTotal: 10 },
+  { id: 'w5',  order: 5,  name: 'My Family',          emoji: '\u{1F46A}', color: 'var(--accent-pink)', theme: 'Family members & relationships',      lessonTotal: 10 },
+  { id: 'w6',  order: 6,  name: 'Food & Drinks',      emoji: '\u{1F34E}', color: 'var(--accent-orange)', theme: 'Fruits, vegetables & meals',          lessonTotal: 10 },
+  { id: 'w7',  order: 7,  name: 'My Home',            emoji: '\u{1F3E0}', color: 'var(--accent-blue)', theme: 'Rooms, furniture & items',            lessonTotal: 10 },
+  { id: 'w8',  order: 8,  name: 'Clothes',            emoji: '\u{1F455}', color: 'var(--accent-teal)', theme: 'Clothing & weather dressing',         lessonTotal: 10 },
+  { id: 'w9',  order: 9,  name: 'Nature',             emoji: '\u{1F333}', color: 'var(--accent-green)', theme: 'Weather, seasons & plants',           lessonTotal: 10 },
+  { id: 'w10', order: 10, name: 'School',             emoji: '\u{1F3EB}', color: 'var(--accent-indigo)', theme: 'Classroom objects & school life',     lessonTotal: 10 },
+  { id: 'w11', order: 11, name: 'City & Transport',   emoji: '\u{1F68C}', color: 'var(--accent-violet)', theme: 'Vehicles, places & directions',       lessonTotal: 10 },
+  { id: 'w12', order: 12, name: 'Adventures',         emoji: '\u{1F30D}', color: 'var(--accent-fuchsia)', theme: 'Travel, countries & cultures',        lessonTotal: 10 },
 ];
 
 // Placeholder progress (World 1: 30%, rest: 0%)

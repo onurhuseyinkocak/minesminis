@@ -9,8 +9,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#2d3436',
-            color: '#fff',
+            background: 'var(--charcoal)',
+            color: 'var(--white)',
             borderRadius: '12px',
             fontWeight: 600,
             fontSize: '0.9rem',
@@ -18,15 +18,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           success: {
             duration: 3000,
             iconTheme: {
-              primary: '#00B894',
-              secondary: '#fff',
+              primary: 'var(--success)',
+              secondary: 'var(--white)',
             },
           },
           error: {
             duration: 4000,
             iconTheme: {
-              primary: '#FF6B6B',
-              secondary: '#fff',
+              primary: 'var(--error)',
+              secondary: 'var(--white)',
             },
           },
         }}

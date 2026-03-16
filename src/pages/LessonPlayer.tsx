@@ -120,12 +120,12 @@ const ACTIVITY_ICONS: Record<string, typeof Music> = {
 };
 
 const ACTIVITY_COLORS: Record<string, string> = {
-  song: '#3b82f6',
-  game: '#10b981',
-  flashcard: '#f59e0b',
-  story: '#8b5cf6',
-  practice: '#ec4899',
-  quiz: '#ef4444',
+  song: 'var(--accent-blue)',
+  game: 'var(--accent-emerald)',
+  flashcard: 'var(--warning)',
+  story: 'var(--accent-purple)',
+  practice: 'var(--accent-pink)',
+  quiz: 'var(--error)',
 };
 
 // ============================================================
@@ -335,7 +335,7 @@ const LessonPlayer = () => {
             {/* Activity Header */}
             <div className="lesson-activity__header" style={{ borderColor: activityColor }}>
               <div className="lesson-activity__icon" style={{ background: activityColor }}>
-                <ActivityIcon size={28} color="#fff" />
+                <ActivityIcon size={28} color="var(--white)" />
               </div>
               <div>
                 <h2 className="lesson-activity__title">{currentActivity?.title}</h2>

@@ -6,10 +6,10 @@ const TeacherDashboard: React.FC = () => {
   const { userProfile } = useAuth();
 
   const stats = [
-    { icon: Users, label: 'Active Students', value: '24', color: '#6366F1' },
-    { icon: TrendingUp, label: 'Engagement Rate', value: '85%', color: '#10B981' },
-    { icon: BookOpen, label: 'Active Lessons', value: '12', color: '#F59E0B' },
-    { icon: Award, label: 'Completed Tasks', value: '156', color: '#EC4899' },
+    { icon: Users, label: 'Active Students', value: '24', color: 'var(--accent-indigo)' },
+    { icon: TrendingUp, label: 'Engagement Rate', value: '85%', color: 'var(--accent-emerald)' },
+    { icon: BookOpen, label: 'Active Lessons', value: '12', color: 'var(--warning)' },
+    { icon: Award, label: 'Completed Tasks', value: '156', color: 'var(--accent-pink)' },
   ];
 
   return (
@@ -94,7 +94,7 @@ const TeacherDashboard: React.FC = () => {
         }
 
         .dashboard-subtitle {
-          color: #64748B;
+          color: var(--slate);
           font-size: 1.1rem;
           margin-top: 8px;
         }
@@ -128,7 +128,7 @@ const TeacherDashboard: React.FC = () => {
         }
 
         .stat-label {
-          color: #64748B;
+          color: var(--slate);
           font-size: 0.9rem;
         }
 
@@ -155,7 +155,7 @@ const TeacherDashboard: React.FC = () => {
         }
 
         .placeholder-text {
-          color: #94A3B8;
+          color: var(--stone);
           text-align: center;
           padding: 40px 20px;
         }

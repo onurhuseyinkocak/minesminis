@@ -9,7 +9,7 @@ function SiteSettings() {
         maintenanceMode: false,
         allowRegistration: true,
         defaultLanguage: 'tr',
-        themeColor: '#6366f1',
+        themeColor: 'var(--accent-indigo)',
         announcementEnabled: false,
         announcementText: '',
         announcementType: 'info'
@@ -240,7 +240,7 @@ function SiteSettings() {
           background: white;
           border-radius: 16px;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--cloud);
           overflow: hidden;
         }
 
@@ -249,14 +249,14 @@ function SiteSettings() {
           align-items: center;
           gap: 10px;
           padding: 1.25rem 1.5rem;
-          background: #f8fafc;
-          border-bottom: 1px solid #e2e8f0;
+          background: var(--snow);
+          border-bottom: 1px solid var(--cloud);
         }
 
         .settings-card-header h2 {
           font-size: 1rem;
           font-weight: 600;
-          color: #1e293b;
+          color: var(--ink);
           margin: 0;
         }
 
@@ -285,7 +285,7 @@ function SiteSettings() {
         }
 
         .toggle-text small {
-          color: #64748b;
+          color: var(--slate);
           font-size: 0.75rem;
         }
 

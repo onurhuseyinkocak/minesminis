@@ -29,9 +29,9 @@ const generateCompletionData = () => {
 };
 
 const generateMasteryData = () => [
-    { name: 'Mastered', value: 45, color: '#10b981' },
-    { name: 'Learning', value: 30, color: '#f59e0b' },
-    { name: 'New', value: 25, color: '#e2e5ea' },
+    { name: 'Mastered', value: 45, color: 'var(--accent-emerald)' },
+    { name: 'Learning', value: 30, color: 'var(--warning)' },
+    { name: 'New', value: 25, color: 'var(--cloud)' },
 ];
 
 const generateStreakData = () => [
@@ -44,11 +44,11 @@ const generateStreakData = () => [
 ];
 
 const topGames = [
-    { name: 'Animals Quiz', plays: 342, color: '#f59e0b' },
-    { name: 'Colors Match', plays: 289, color: '#8b5cf6' },
-    { name: 'Body Parts Maze', plays: 256, color: '#ef4444' },
-    { name: 'Family Words', plays: 198, color: '#ec4899' },
-    { name: 'Food Memory', plays: 167, color: '#10b981' },
+    { name: 'Animals Quiz', plays: 342, color: 'var(--warning)' },
+    { name: 'Colors Match', plays: 289, color: 'var(--accent-purple)' },
+    { name: 'Body Parts Maze', plays: 256, color: 'var(--error)' },
+    { name: 'Family Words', plays: 198, color: 'var(--accent-pink)' },
+    { name: 'Food Memory', plays: 167, color: 'var(--accent-emerald)' },
 ];
 
 const generateMonthlyUsers = () => {
@@ -116,7 +116,7 @@ function AdminAnalytics() {
             {/* Key Stats */}
             <div className="adm-analytics-stats">
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--info-pale)', color: 'var(--accent-blue)' }}>
                         <Users size={20} />
                     </div>
                     <div>
@@ -125,7 +125,7 @@ function AdminAnalytics() {
                     </div>
                 </div>
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: '#ecfdf5', color: '#10b981' }}>
+                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--success-pale)', color: 'var(--accent-emerald)' }}>
                         <Target size={20} />
                     </div>
                     <div>
@@ -134,7 +134,7 @@ function AdminAnalytics() {
                     </div>
                 </div>
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: '#fff7ed', color: '#f97316' }}>
+                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--warning-pale)', color: 'var(--accent-orange)' }}>
                         <Flame size={20} />
                     </div>
                     <div>
@@ -143,7 +143,7 @@ function AdminAnalytics() {
                     </div>
                 </div>
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: '#f5f3ff', color: '#8b5cf6' }}>
+                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--accent-purple-pale)', color: 'var(--accent-purple)' }}>
                         <Award size={20} />
                     </div>
                     <div>
@@ -167,15 +167,15 @@ function AdminAnalytics() {
                             <AreaChart data={monthlyData} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="usersGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15} />
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.15} />
+                                        <stop offset="95%" stopColor="var(--accent-blue)" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f4" vertical={false} />
-                                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca0b0' }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca0b0' }} />
-                                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e5ea', borderRadius: 8, fontSize: '0.8rem', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
-                                <Area type="monotone" dataKey="users" stroke="#3b82f6" strokeWidth={2} fill="url(#usersGrad)" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
+                                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
+                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
+                                <Area type="monotone" dataKey="users" stroke="var(--accent-blue)" strokeWidth={2} fill="url(#usersGrad)" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -193,13 +193,13 @@ function AdminAnalytics() {
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={activeUsersData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f4" vertical={false} />
-                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca0b0' }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca0b0' }} />
-                                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e5ea', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
+                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
+                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
-                                <Bar dataKey="active" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Active Users" />
-                                <Bar dataKey="new" fill="#10b981" radius={[4, 4, 0, 0]} name="New Users" />
+                                <Bar dataKey="active" fill="var(--accent-blue)" radius={[4, 4, 0, 0]} name="Active Users" />
+                                <Bar dataKey="new" fill="var(--accent-emerald)" radius={[4, 4, 0, 0]} name="New Users" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -214,12 +214,12 @@ function AdminAnalytics() {
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={completionData} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f4" horizontal={false} />
-                                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca0b0' }} />
-                                <YAxis type="category" dataKey="world" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca0b0' }} width={60} />
-                                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e5ea', borderRadius: 8, fontSize: '0.8rem' }} />
-                                <Bar dataKey="completed" fill="#10b981" radius={[0, 4, 4, 0]} name="Completed" stackId="a" />
-                                <Bar dataKey="started" fill="#fbbf24" radius={[0, 4, 4, 0]} name="In Progress" stackId="a" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" horizontal={false} />
+                                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
+                                <YAxis type="category" dataKey="world" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} width={60} />
+                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <Bar dataKey="completed" fill="var(--accent-emerald)" radius={[0, 4, 4, 0]} name="Completed" stackId="a" />
+                                <Bar dataKey="started" fill="var(--accent-amber)" radius={[0, 4, 4, 0]} name="In Progress" stackId="a" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -250,7 +250,7 @@ function AdminAnalytics() {
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
-                                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e5ea', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
                             </PieChart>
                         </ResponsiveContainer>
@@ -266,11 +266,11 @@ function AdminAnalytics() {
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={streakData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f4" vertical={false} />
-                                <XAxis dataKey="streak" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca0b0' }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca0b0' }} />
-                                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e5ea', borderRadius: 8, fontSize: '0.8rem' }} />
-                                <Bar dataKey="users" fill="#f97316" radius={[4, 4, 0, 0]} name="Users" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
+                                <XAxis dataKey="streak" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'var(--stone)' }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
+                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <Bar dataKey="users" fill="var(--accent-orange)" radius={[4, 4, 0, 0]} name="Users" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -314,11 +314,11 @@ function AdminAnalytics() {
                     <div style={{ padding: '1.25rem' }}>
                         <div style={{ display: 'grid', gap: '1rem' }}>
                             {[
-                                { label: 'Daily Active Users', value: `${Math.floor(totalUsers * 0.15)}`, sub: `${((totalUsers * 0.15 / Math.max(totalUsers, 1)) * 100).toFixed(0)}% of total`, color: '#3b82f6' },
-                                { label: 'Weekly Active Users', value: `${Math.floor(totalUsers * 0.45)}`, sub: `${((totalUsers * 0.45 / Math.max(totalUsers, 1)) * 100).toFixed(0)}% of total`, color: '#10b981' },
-                                { label: 'Avg. Session Duration', value: '12 min', sub: 'Per user per day', color: '#f59e0b' },
-                                { label: 'Retention (7-day)', value: '68%', sub: 'Users returning within 7 days', color: '#8b5cf6' },
-                                { label: 'Content Engagement', value: '4.2', sub: 'Avg. items per session', color: '#ec4899' },
+                                { label: 'Daily Active Users', value: `${Math.floor(totalUsers * 0.15)}`, sub: `${((totalUsers * 0.15 / Math.max(totalUsers, 1)) * 100).toFixed(0)}% of total`, color: 'var(--accent-blue)' },
+                                { label: 'Weekly Active Users', value: `${Math.floor(totalUsers * 0.45)}`, sub: `${((totalUsers * 0.45 / Math.max(totalUsers, 1)) * 100).toFixed(0)}% of total`, color: 'var(--accent-emerald)' },
+                                { label: 'Avg. Session Duration', value: '12 min', sub: 'Per user per day', color: 'var(--warning)' },
+                                { label: 'Retention (7-day)', value: '68%', sub: 'Users returning within 7 days', color: 'var(--accent-purple)' },
+                                { label: 'Content Engagement', value: '4.2', sub: 'Avg. items per session', color: 'var(--accent-pink)' },
                             ].map(item => (
                                 <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid var(--admin-border-light)' }}>
                                     <div style={{ width: 4, height: 32, borderRadius: 2, background: item.color, flexShrink: 0 }} />

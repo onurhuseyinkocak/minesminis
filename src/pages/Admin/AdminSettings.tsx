@@ -291,7 +291,7 @@ function AdminSettings() {
                                         {settings.maintenanceMode ? 'Active' : 'Inactive'}
                                     </span>
                                     {settings.maintenanceMode && (
-                                        <div className="adm-toggle-desc" style={{ color: '#dc2626' }}>
+                                        <div className="adm-toggle-desc" style={{ color: 'var(--accent-red)' }}>
                                             Site is currently in maintenance mode
                                         </div>
                                     )}

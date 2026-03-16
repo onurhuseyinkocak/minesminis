@@ -184,12 +184,12 @@ function Worksheets() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Vocabulary': return '#6366f1';
-      case 'Grammar': return '#10b981';
-      case 'Reading': return '#f59e0b';
-      case 'Writing': return '#ec4899';
-      case 'Phonics': return '#8b5cf6';
-      default: return '#6366f1';
+      case 'Vocabulary': return 'var(--accent-indigo)';
+      case 'Grammar': return 'var(--accent-emerald)';
+      case 'Reading': return 'var(--warning)';
+      case 'Writing': return 'var(--accent-pink)';
+      case 'Phonics': return 'var(--accent-purple)';
+      default: return 'var(--accent-indigo)';
     }
   };
 
@@ -200,7 +200,7 @@ function Worksheets() {
         icon={FileText}
         title="Printable Fun"
         description="Learning beyond the screen - download, print, and play!"
-        iconColor="#10b981"
+        iconColor="var(--accent-emerald)"
         filterSlot={
           <div className="modern-tabs">
             <button

@@ -219,7 +219,7 @@ const ReportsManager: React.FC = () => {
                 .report-admin-card {
                     background: white;
                     border-radius: 16px;
-                    border: 1px solid #e2e8f0;
+                    border: 1px solid var(--cloud);
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
@@ -230,7 +230,7 @@ const ReportsManager: React.FC = () => {
                 }
                 .report-card-header {
                     padding: 12px 16px;
-                    border-bottom: 1px solid #f1f5f9;
+                    border-bottom: 1px solid var(--mist);
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
@@ -245,16 +245,16 @@ const ReportsManager: React.FC = () => {
                     font-weight: 700;
                 }
                 .status-badge.open {
-                    background: #fef2f2;
-                    color: #ef4444;
+                    background: var(--error-pale);
+                    color: var(--error);
                 }
                 .status-badge.resolved {
-                    background: #f0fdf4;
-                    color: #22c55e;
+                    background: var(--success-pale);
+                    color: var(--accent-green);
                 }
                 .report-date {
                     font-size: 0.75rem;
-                    color: #94a3b8;
+                    color: var(--stone);
                 }
                 .report-card-body {
                     padding: 16px;
@@ -264,7 +264,7 @@ const ReportsManager: React.FC = () => {
                     font-size: 0.95rem;
                     line-height: 1.5;
                     margin: 0 0 16px;
-                    color: #1e293b;
+                    color: var(--ink);
                     font-weight: 500;
                 }
 .report-metadata {
@@ -277,15 +277,15 @@ const ReportsManager: React.FC = () => {
                     align-items: center;
                     gap: 6px;
                     font-size: 0.8rem;
-                    color: #64748b;
+                    color: var(--slate);
                 }
                 .metadata-item a {
-                    color: #6366f1;
+                    color: var(--accent-indigo);
                     text-decoration: none;
                 }
                 .report-card-actions {
                     padding: 12px 16px;
-                    background: #f8fafc;
+                    background: var(--snow);
                     display: flex;
                     gap: 8px;
                 }
@@ -296,7 +296,7 @@ const ReportsManager: React.FC = () => {
                     justify-content: center;
                     gap: 8px;
                     padding: 8px;
-                    background: #22c55e;
+                    background: var(--accent-green);
                     color: white;
                     border: none;
                     border-radius: 8px;
@@ -306,8 +306,8 @@ const ReportsManager: React.FC = () => {
                 }
                 .delete-action-btn {
                     padding: 8px;
-                    background: #f1f5f9;
-                    color: #ef4444;
+                    background: var(--mist);
+                    color: var(--error);
                     border: none;
                     border-radius: 8px;
                     cursor: pointer;

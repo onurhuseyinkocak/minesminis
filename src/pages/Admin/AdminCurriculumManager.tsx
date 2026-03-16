@@ -42,18 +42,18 @@ interface Activity {
 
 // Default worlds from brand doc
 const DEFAULT_WORLDS: World[] = [
-    { id: 'w1', order: 1, name: 'Hello World', nameEn: 'Hello World', emoji: '\u{1F44B}', color: '#f59e0b', description: 'Greetings, introductions, basic pleasantries', ageRange: '1-3', lessonCount: 0 },
-    { id: 'w2', order: 2, name: 'My Body', nameEn: 'My Body', emoji: '\u{1F9D2}', color: '#ef4444', description: 'Body parts, senses, physical descriptions', ageRange: '2-4', lessonCount: 0 },
-    { id: 'w3', order: 3, name: 'Colors & Shapes', nameEn: 'Colors & Shapes', emoji: '\u{1F308}', color: '#8b5cf6', description: 'Colors, basic shapes, patterns', ageRange: '2-4', lessonCount: 0 },
-    { id: 'w4', order: 4, name: 'Animals', nameEn: 'Animals', emoji: '\u{1F981}', color: '#10b981', description: 'Farm, wild, pets, habitats', ageRange: '3-5', lessonCount: 0 },
-    { id: 'w5', order: 5, name: 'My Family', nameEn: 'My Family', emoji: '\u{1F46A}', color: '#ec4899', description: 'Family members, relationships', ageRange: '3-5', lessonCount: 0 },
-    { id: 'w6', order: 6, name: 'Food & Drinks', nameEn: 'Food & Drinks', emoji: '\u{1F34E}', color: '#f97316', description: 'Fruits, vegetables, meals, preferences', ageRange: '4-6', lessonCount: 0 },
-    { id: 'w7', order: 7, name: 'My Home', nameEn: 'My Home', emoji: '\u{1F3E0}', color: '#3b82f6', description: 'Rooms, furniture, household items', ageRange: '4-6', lessonCount: 0 },
-    { id: 'w8', order: 8, name: 'Clothes', nameEn: 'Clothes', emoji: '\u{1F455}', color: '#14b8a6', description: 'Clothing, weather-related dressing', ageRange: '5-7', lessonCount: 0 },
-    { id: 'w9', order: 9, name: 'Nature', nameEn: 'Nature', emoji: '\u{1F333}', color: '#22c55e', description: 'Weather, seasons, plants, environment', ageRange: '5-7', lessonCount: 0 },
-    { id: 'w10', order: 10, name: 'School', nameEn: 'School', emoji: '\u{1F3EB}', color: '#6366f1', description: 'Classroom objects, subjects, school life', ageRange: '6-8', lessonCount: 0 },
-    { id: 'w11', order: 11, name: 'City & Transport', nameEn: 'City & Transport', emoji: '\u{1F68C}', color: '#a855f7', description: 'Vehicles, places, directions', ageRange: '7-9', lessonCount: 0 },
-    { id: 'w12', order: 12, name: 'Adventures', nameEn: 'Adventures', emoji: '\u{1F30D}', color: '#d946ef', description: 'Travel, countries, cultures, advanced topics', ageRange: '8-10', lessonCount: 0 },
+    { id: 'w1', order: 1, name: 'Hello World', nameEn: 'Hello World', emoji: '\u{1F44B}', color: 'var(--warning)', description: 'Greetings, introductions, basic pleasantries', ageRange: '1-3', lessonCount: 0 },
+    { id: 'w2', order: 2, name: 'My Body', nameEn: 'My Body', emoji: '\u{1F9D2}', color: 'var(--error)', description: 'Body parts, senses, physical descriptions', ageRange: '2-4', lessonCount: 0 },
+    { id: 'w3', order: 3, name: 'Colors & Shapes', nameEn: 'Colors & Shapes', emoji: '\u{1F308}', color: 'var(--accent-purple)', description: 'Colors, basic shapes, patterns', ageRange: '2-4', lessonCount: 0 },
+    { id: 'w4', order: 4, name: 'Animals', nameEn: 'Animals', emoji: '\u{1F981}', color: 'var(--accent-emerald)', description: 'Farm, wild, pets, habitats', ageRange: '3-5', lessonCount: 0 },
+    { id: 'w5', order: 5, name: 'My Family', nameEn: 'My Family', emoji: '\u{1F46A}', color: 'var(--accent-pink)', description: 'Family members, relationships', ageRange: '3-5', lessonCount: 0 },
+    { id: 'w6', order: 6, name: 'Food & Drinks', nameEn: 'Food & Drinks', emoji: '\u{1F34E}', color: 'var(--accent-orange)', description: 'Fruits, vegetables, meals, preferences', ageRange: '4-6', lessonCount: 0 },
+    { id: 'w7', order: 7, name: 'My Home', nameEn: 'My Home', emoji: '\u{1F3E0}', color: 'var(--accent-blue)', description: 'Rooms, furniture, household items', ageRange: '4-6', lessonCount: 0 },
+    { id: 'w8', order: 8, name: 'Clothes', nameEn: 'Clothes', emoji: '\u{1F455}', color: 'var(--accent-teal)', description: 'Clothing, weather-related dressing', ageRange: '5-7', lessonCount: 0 },
+    { id: 'w9', order: 9, name: 'Nature', nameEn: 'Nature', emoji: '\u{1F333}', color: 'var(--accent-green)', description: 'Weather, seasons, plants, environment', ageRange: '5-7', lessonCount: 0 },
+    { id: 'w10', order: 10, name: 'School', nameEn: 'School', emoji: '\u{1F3EB}', color: 'var(--accent-indigo)', description: 'Classroom objects, subjects, school life', ageRange: '6-8', lessonCount: 0 },
+    { id: 'w11', order: 11, name: 'City & Transport', nameEn: 'City & Transport', emoji: '\u{1F68C}', color: 'var(--accent-violet)', description: 'Vehicles, places, directions', ageRange: '7-9', lessonCount: 0 },
+    { id: 'w12', order: 12, name: 'Adventures', nameEn: 'Adventures', emoji: '\u{1F30D}', color: 'var(--accent-fuchsia)', description: 'Travel, countries, cultures, advanced topics', ageRange: '8-10', lessonCount: 0 },
 ];
 
 // Sample lessons for demo
@@ -123,7 +123,7 @@ function AdminCurriculumManager() {
 
     const [isWorldModal, setIsWorldModal] = useState(false);
     const [editingWorld, setEditingWorld] = useState<World | null>(null);
-    const [worldForm, setWorldForm] = useState({ name: '', nameEn: '', emoji: '', color: '#f59e0b', description: '', ageRange: '3-5' });
+    const [worldForm, setWorldForm] = useState({ name: '', nameEn: '', emoji: '', color: 'var(--warning)', description: '', ageRange: '3-5' });
 
     // Load from Supabase (if available)
     useEffect(() => {
@@ -138,7 +138,7 @@ function AdminCurriculumManager() {
                 setWorlds(worldsData.map((w: Record<string, unknown>) => ({
                     id: String(w.id), order: Number(w.order), name: String(w.name),
                     nameEn: String(w.name_en || w.name), emoji: String(w.emoji || ''),
-                    color: String(w.color || '#6366f1'), description: String(w.description || ''),
+                    color: String(w.color || 'var(--accent-indigo)'), description: String(w.description || ''),
                     ageRange: String(w.age_range || ''), lessonCount: Number(w.lesson_count || 0)
                 })));
             }
@@ -172,7 +172,7 @@ function AdminCurriculumManager() {
     // ---- World CRUD ----
     const openAddWorld = () => {
         setEditingWorld(null);
-        setWorldForm({ name: '', nameEn: '', emoji: '', color: '#f59e0b', description: '', ageRange: '3-5' });
+        setWorldForm({ name: '', nameEn: '', emoji: '', color: 'var(--warning)', description: '', ageRange: '3-5' });
         setIsWorldModal(true);
     };
 
@@ -348,7 +348,7 @@ function AdminCurriculumManager() {
                                                 <div className="adm-lesson-name">
                                                     {lesson.title}
                                                     {lesson.status === 'draft' && (
-                                                        <span style={{ marginLeft: 6, fontSize: '0.65rem', padding: '1px 6px', borderRadius: 100, background: '#fffbeb', color: '#d97706', fontWeight: 600 }}>DRAFT</span>
+                                                        <span style={{ marginLeft: 6, fontSize: '0.65rem', padding: '1px 6px', borderRadius: 100, background: 'var(--warning-pale)', color: 'var(--primary-dark)', fontWeight: 600 }}>DRAFT</span>
                                                     )}
                                                 </div>
                                                 <div className="adm-lesson-details">

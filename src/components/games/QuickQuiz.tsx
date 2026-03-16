@@ -194,7 +194,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned }
             animate={{ width: `${(timeLeft / TIMER_DURATION) * 100}%` }}
             transition={{ duration: 0.3 }}
             style={{
-              backgroundColor: timeLeft <= 3 ? '#e74c3c' : 'var(--qq-primary)',
+              backgroundColor: timeLeft <= 3 ? 'var(--error)' : 'var(--qq-primary)',
             }}
           />
         </div>

@@ -164,10 +164,10 @@ const Landing = () => {
   const animatedSchools = useAnimatedCounter(50, 1200, trustInView);
 
   const worlds = [
-    { emoji: '🌍', name: t.world1, desc: t.world1Desc, age: t.world1Age, bg: '#E8F5E9' },
-    { emoji: '🏠', name: t.world2, desc: t.world2Desc, age: t.world2Age, bg: '#FFF3E0' },
-    { emoji: '🦁', name: t.world3, desc: t.world3Desc, age: t.world3Age, bg: '#E3F2FD' },
-    { emoji: '📖', name: t.world4, desc: t.world4Desc, age: t.world4Age, bg: '#FCE4EC' },
+    { emoji: '🌍', name: t.world1, desc: t.world1Desc, age: t.world1Age, bg: 'var(--success-pale)' },
+    { emoji: '🏠', name: t.world2, desc: t.world2Desc, age: t.world2Age, bg: 'var(--warning-pale)' },
+    { emoji: '🦁', name: t.world3, desc: t.world3Desc, age: t.world3Age, bg: 'var(--info-pale)' },
+    { emoji: '📖', name: t.world4, desc: t.world4Desc, age: t.world4Age, bg: 'var(--error-pale)' },
   ];
 
   const howSteps = [

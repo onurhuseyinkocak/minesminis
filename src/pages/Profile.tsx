@@ -88,7 +88,7 @@ const Profile: React.FC = () => {
           <div className="stat-card xp-focused">
             <div className="stat-header">
               <h3>My XP Progress</h3>
-              <Star size={20} fill="#f59e0b" color="#f59e0b" />
+              <Star size={20} fill="var(--warning)" color="var(--warning)" />
             </div>
             <div className="xp-details">
               <XPBar />
@@ -99,7 +99,7 @@ const Profile: React.FC = () => {
           <div className="stat-card">
             <div className="stat-header">
               <h3>My Trophies</h3>
-              <Clock size={20} color="#6366f1" />
+              <Clock size={20} color="var(--accent-indigo)" />
             </div>
             <div className="activity-list">
               <div className="activity-item">
@@ -121,7 +121,7 @@ const Profile: React.FC = () => {
         <section className="profile-badges-section">
           <div className="section-header">
             <h3>My Badges</h3>
-            <Trophy size={24} color="#f59e0b" />
+            <Trophy size={24} color="var(--warning)" />
           </div>
           <div className="badges-grid">
             {explorerBadges.length > 0 ? (

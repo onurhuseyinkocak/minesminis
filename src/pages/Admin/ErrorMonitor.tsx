@@ -106,28 +106,28 @@ function ErrorMonitor() {
 
       {/* Stats Cards */}
       <div className="stats-grid" style={{ marginBottom: '1.5rem' }}>
-        <div className="stat-card" style={{ '--stat-color': '#ef4444', '--stat-bg': '#fef2f2' } as React.CSSProperties}>
+        <div className="stat-card" style={{ '--stat-color': 'var(--error)', '--stat-bg': 'var(--error-pale)' } as React.CSSProperties}>
           <div className="stat-icon"><AlertTriangle size={24} /></div>
           <div className="stat-info">
             <span className="stat-value">{stats.bySeverity.critical}</span>
             <span className="stat-label">Kritik</span>
           </div>
         </div>
-        <div className="stat-card" style={{ '--stat-color': '#f97316', '--stat-bg': '#fff7ed' } as React.CSSProperties}>
+        <div className="stat-card" style={{ '--stat-color': 'var(--accent-orange)', '--stat-bg': 'var(--warning-pale)' } as React.CSSProperties}>
           <div className="stat-icon"><AlertTriangle size={24} /></div>
           <div className="stat-info">
             <span className="stat-value">{stats.bySeverity.high}</span>
             <span className="stat-label">Yuksek</span>
           </div>
         </div>
-        <div className="stat-card" style={{ '--stat-color': '#3b82f6', '--stat-bg': '#eff6ff' } as React.CSSProperties}>
+        <div className="stat-card" style={{ '--stat-color': 'var(--accent-blue)', '--stat-bg': 'var(--info-pale)' } as React.CSSProperties}>
           <div className="stat-icon"><Bug size={24} /></div>
           <div className="stat-info">
             <span className="stat-value">{stats.unresolved}</span>
             <span className="stat-label">Cozulmemis</span>
           </div>
         </div>
-        <div className="stat-card" style={{ '--stat-color': '#10b981', '--stat-bg': '#ecfdf5' } as React.CSSProperties}>
+        <div className="stat-card" style={{ '--stat-color': 'var(--accent-emerald)', '--stat-bg': 'var(--success-pale)' } as React.CSSProperties}>
           <div className="stat-icon"><Clock size={24} /></div>
           <div className="stat-info">
             <span className="stat-value">{stats.last24h}</span>
@@ -156,7 +156,7 @@ function ErrorMonitor() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '0.75rem', fontWeight: 800,
                 }}>{e.count}</span>
-                <span style={{ flex: 1, fontSize: '0.82rem', fontWeight: 500, color: '#334155' }}>
+                <span style={{ flex: 1, fontSize: '0.82rem', fontWeight: 500, color: 'var(--charcoal)' }}>
                   {e.message}
                 </span>
                 <span style={{
@@ -177,7 +177,7 @@ function ErrorMonitor() {
           <div className="table-actions" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
             {/* Search */}
             <div style={{ position: 'relative' }}>
-              <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+              <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--stone)' }} />
               <input
                 type="text" placeholder="Hata ara..."
                 value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
@@ -189,7 +189,7 @@ function ErrorMonitor() {
             <select
               value={severityFilter}
               onChange={(e) => setSeverityFilter(e.target.value as ErrorSeverity | 'all')}
-              style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem', cursor: 'pointer' }}
+              style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: '1px solid var(--cloud)', fontSize: '0.8rem', cursor: 'pointer' }}
             >
               <option value="all">Tum Seviyeler</option>
               <option value="critical">Kritik</option>
@@ -203,7 +203,7 @@ function ErrorMonitor() {
             <select
               value={resolvedFilter}
               onChange={(e) => setResolvedFilter(e.target.value as 'all' | 'unresolved' | 'resolved')}
-              style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem', cursor: 'pointer' }}
+              style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: '1px solid var(--cloud)', fontSize: '0.8rem', cursor: 'pointer' }}
             >
               <option value="all">Tumunu Goster</option>
               <option value="unresolved">Cozulmemis</option>
@@ -215,10 +215,10 @@ function ErrorMonitor() {
               onClick={() => setAutoRefresh(!autoRefresh)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '4px',
-                padding: '0.4rem 0.7rem', borderRadius: '8px', border: '1px solid #e2e8f0',
-                background: autoRefresh ? '#ecfdf5' : 'white', cursor: 'pointer',
+                padding: '0.4rem 0.7rem', borderRadius: '8px', border: '1px solid var(--cloud)',
+                background: autoRefresh ? 'var(--success-pale)' : 'white', cursor: 'pointer',
                 fontSize: '0.8rem', fontWeight: 600,
-                color: autoRefresh ? '#059669' : '#64748b',
+                color: autoRefresh ? 'var(--success)' : 'var(--slate)',
               }}
             >
               <RefreshCw size={14} className={autoRefresh ? 'spin-slow' : ''} />
@@ -242,18 +242,18 @@ function ErrorMonitor() {
         <div style={{ padding: '0 1rem 1rem' }}>
           {logs.length === 0 ? (
             <div className="no-data" style={{ padding: '3rem' }}>
-              <CheckCircle size={48} style={{ opacity: 0.3, color: '#22c55e' }} />
-              <p style={{ color: '#64748b', marginTop: '1rem' }}>Hata bulunamadi - Her sey yolunda!</p>
+              <CheckCircle size={48} style={{ opacity: 0.3, color: 'var(--accent-green)' }} />
+              <p style={{ color: 'var(--slate)', marginTop: '1rem' }}>Hata bulunamadi - Her sey yolunda!</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {logs.map((log) => (
                 <div key={log.id} style={{
-                  border: `1px solid ${log.resolved ? '#e2e8f0' : SEVERITY_COLORS[log.severity] + '30'}`,
+                  border: `1px solid ${log.resolved ? 'var(--cloud)' : SEVERITY_COLORS[log.severity] + '30'}`,
                   borderRadius: '12px',
                   overflow: 'hidden',
                   opacity: log.resolved ? 0.6 : 1,
-                  background: log.resolved ? '#f8fafc' : 'white',
+                  background: log.resolved ? 'var(--snow)' : 'white',
                 }}>
                   {/* Header row */}
                   <div
@@ -277,7 +277,7 @@ function ErrorMonitor() {
                     {/* Message */}
                     <span style={{
                       flex: 1, fontSize: '0.82rem', fontWeight: 500,
-                      color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis',
+                      color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                     }}>
                       {log.message}
@@ -296,12 +296,12 @@ function ErrorMonitor() {
                     )}
 
                     {/* Time */}
-                    <span style={{ fontSize: '0.72rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--stone)', whiteSpace: 'nowrap' }}>
                       {timeAgo(log.lastSeen)}
                     </span>
 
                     {/* Resolved indicator */}
-                    {log.resolved && <CheckCircle size={14} style={{ color: '#22c55e' }} />}
+                    {log.resolved && <CheckCircle size={14} style={{ color: 'var(--accent-green)' }} />}
 
                     {/* Expand icon */}
                     {expandedId === log.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -310,35 +310,35 @@ function ErrorMonitor() {
                   {/* Expanded details */}
                   {expandedId === log.id && (
                     <div style={{
-                      padding: '0.75rem 1rem 1rem', borderTop: '1px solid #f1f5f9',
-                      background: '#f8fafc', fontSize: '0.8rem',
+                      padding: '0.75rem 1rem 1rem', borderTop: '1px solid var(--mist)',
+                      background: 'var(--snow)', fontSize: '0.8rem',
                     }}>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
-                          <Globe size={14} /> Sayfa: <strong style={{ color: '#334155' }}>{log.page || '-'}</strong>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--slate)' }}>
+                          <Globe size={14} /> Sayfa: <strong style={{ color: 'var(--charcoal)' }}>{log.page || '-'}</strong>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
-                          <Monitor size={14} /> Kaynak: <strong style={{ color: '#334155' }}>{log.component || '-'}</strong>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--slate)' }}>
+                          <Monitor size={14} /> Kaynak: <strong style={{ color: 'var(--charcoal)' }}>{log.component || '-'}</strong>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
-                          <Clock size={14} /> Ilk: <strong style={{ color: '#334155' }}>{new Date(log.firstSeen).toLocaleString('tr-TR')}</strong>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--slate)' }}>
+                          <Clock size={14} /> Ilk: <strong style={{ color: 'var(--charcoal)' }}>{new Date(log.firstSeen).toLocaleString('tr-TR')}</strong>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
-                          <User size={14} /> User: <strong style={{ color: '#334155' }}>{log.userId || 'Anonim'}</strong>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--slate)' }}>
+                          <User size={14} /> User: <strong style={{ color: 'var(--charcoal)' }}>{log.userId || 'Anonim'}</strong>
                         </div>
                       </div>
 
                       {/* Stack trace */}
                       {log.stack && (
                         <details style={{ marginBottom: '0.75rem' }}>
-                          <summary style={{ cursor: 'pointer', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>
+                          <summary style={{ cursor: 'pointer', fontWeight: 600, color: 'var(--slate)', marginBottom: '0.5rem' }}>
                             Stack Trace
                           </summary>
                           <pre style={{
-                            background: '#f3f4f6', color: '#374151', padding: '0.75rem',
+                            background: 'var(--mist)', color: 'var(--charcoal)', padding: '0.75rem',
                             borderRadius: '8px', fontSize: '0.72rem', overflow: 'auto',
                             maxHeight: '200px', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-                            border: '1px solid #e5e7eb',
+                            border: '1px solid var(--cloud)',
                           }}>
                             {log.stack}
                           </pre>
@@ -348,11 +348,11 @@ function ErrorMonitor() {
                       {/* Metadata */}
                       {log.metadata && Object.keys(log.metadata).length > 0 && (
                         <details style={{ marginBottom: '0.75rem' }}>
-                          <summary style={{ cursor: 'pointer', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>
+                          <summary style={{ cursor: 'pointer', fontWeight: 600, color: 'var(--slate)', marginBottom: '0.5rem' }}>
                             Metadata
                           </summary>
                           <pre style={{
-                            background: '#f1f5f9', color: '#334155', padding: '0.75rem',
+                            background: 'var(--mist)', color: 'var(--charcoal)', padding: '0.75rem',
                             borderRadius: '8px', fontSize: '0.72rem', overflow: 'auto',
                           }}>
                             {JSON.stringify(log.metadata, null, 2)}
@@ -362,8 +362,8 @@ function ErrorMonitor() {
 
                       {/* Full message */}
                       <div style={{
-                        background: '#fef2f2', padding: '0.75rem', borderRadius: '8px',
-                        color: '#991b1b', fontSize: '0.78rem', marginBottom: '0.75rem',
+                        background: 'var(--error-pale)', padding: '0.75rem', borderRadius: '8px',
+                        color: 'var(--accent-red-dark)', fontSize: '0.78rem', marginBottom: '0.75rem',
                         wordBreak: 'break-word',
                       }}>
                         {log.message}
@@ -377,7 +377,7 @@ function ErrorMonitor() {
                             style={{
                               display: 'flex', alignItems: 'center', gap: '4px',
                               padding: '0.4rem 0.8rem', borderRadius: '8px', border: 'none',
-                              background: '#22c55e', color: 'white', fontSize: '0.78rem',
+                              background: 'var(--accent-green)', color: 'white', fontSize: '0.78rem',
                               fontWeight: 600, cursor: 'pointer',
                             }}
                           >
@@ -398,7 +398,7 @@ function ErrorMonitor() {
                           }}
                           style={{
                             display: 'flex', alignItems: 'center', gap: '4px',
-                            padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid #e2e8f0',
+                            padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--cloud)',
                             background: 'white', fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer',
                           }}
                         >

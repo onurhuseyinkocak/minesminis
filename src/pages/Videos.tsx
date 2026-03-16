@@ -19,18 +19,18 @@ type Video = {
 
 const gradeInfo: Record<string, { color: string; gradient: string; emoji: string }> = {
   '2nd Grade': {
-    color: '#22c55e',
-    gradient: 'linear-gradient(135deg, #22c55e, #16a34a)',
+    color: 'var(--mimi-green)',
+    gradient: 'linear-gradient(135deg, var(--mimi-green), var(--mimi-green-dark))',
     emoji: '🌱'
   },
   '3rd Grade': {
-    color: '#3b82f6',
-    gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+    color: 'var(--accent-blue)',
+    gradient: 'linear-gradient(135deg, var(--accent-blue), var(--info))',
     emoji: '⭐'
   },
   '4th Grade': {
-    color: '#8b5cf6',
-    gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+    color: 'var(--accent-purple)',
+    gradient: 'linear-gradient(135deg, var(--accent-purple), var(--accent-purple-light))',
     emoji: '🚀'
   }
 };
@@ -74,7 +74,7 @@ function Videos() {
         icon={Play}
         title="Cinema Club"
         description="Binge-watch and learn with our curated English videos!"
-        iconColor="#ef4444"
+        iconColor="var(--error)"
         filterSlot={
           <div className="modern-tabs">
             {grades.map((grade) => (
@@ -110,7 +110,7 @@ function Videos() {
         >
           <div className="section-header">
             <div className="section-title">
-              <Star size={24} className="star-icon" color="#fbbf24" fill="#fbbf24" />
+              <Star size={24} className="star-icon" color="var(--primary-light)" fill="var(--primary-light)" />
               <h2>Most Popular</h2>
             </div>
             <p className="section-subtitle">Kids love these videos!</p>
@@ -212,7 +212,7 @@ function Videos() {
                 </div>
 
                 <div className="video-content">
-                  <span className="video-grade" style={{ background: 'var(--bg-orange-soft)', color: 'var(--primary-orange-dark)' }}>
+                  <span className="video-grade" style={{ background: 'var(--primary-pale)', color: 'var(--primary-dark)' }}>
                     {gradeInfo[video.grade]?.emoji} {video.grade}
                   </span>
                   <h3 className="video-title">{video.title}</h3>

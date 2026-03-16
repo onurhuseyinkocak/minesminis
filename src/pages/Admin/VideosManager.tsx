@@ -189,7 +189,7 @@ function VideosManager() {
                     <h2>{filteredVideos.length} Video</h2>
                     <div className="table-actions">
                         <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--stone)' }} />
                             <input
                                 type="text"
                                 placeholder="Video ara..."
@@ -216,7 +216,7 @@ function VideosManager() {
                             {grade === 'all' ? '🎯 Tümü' : `${gradeInfo[grade]?.emoji || '📚'} ${grade}`}
                         </button>
                     ))}
-                    <span style={{ margin: '0 0.5rem', color: '#cbd5e1' }}>|</span>
+                    <span style={{ margin: '0 0.5rem', color: 'var(--cloud)' }}>|</span>
                     {types.map(type => (
                         <button
                             key={type}
@@ -265,8 +265,8 @@ function VideosManager() {
                                 <td>
                                     <div>
                                         <strong>{video.title}</strong>
-                                        {video.isPopular && <span style={{ marginLeft: '8px', color: '#fbbf24' }}>⭐</span>}
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{video.description}</div>
+                                        {video.isPopular && <span style={{ marginLeft: '8px', color: 'var(--accent-amber)' }}>⭐</span>}
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--slate)' }}>{video.description}</div>
                                     </div>
                                 </td>
                                 <td>
@@ -338,7 +338,7 @@ function VideosManager() {
                                             {fetchingMeta ? '...' : 'Otomatik Çek'}
                                         </button>
                                     </div>
-                                    <small style={{ color: '#94a3b8', fontSize: '0.75rem' }}>URL yapıştırıp "Otomatik Çek" ile başlık, açıklama ve süre gelir</small>
+                                    <small style={{ color: 'var(--stone)', fontSize: '0.75rem' }}>URL yapıştırıp "Otomatik Çek" ile başlık, açıklama ve süre gelir</small>
                                 </div>
 
                                 <div className="form-group">

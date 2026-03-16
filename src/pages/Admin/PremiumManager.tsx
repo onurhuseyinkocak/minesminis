@@ -223,34 +223,34 @@ function PremiumManager() {
     return (
         <div className="admin-page">
             <div className="admin-header">
-                <h1><Crown size={28} style={{ color: '#f59e0b' }} /> Premium Yönetimi</h1>
+                <h1><Crown size={28} style={{ color: 'var(--warning)' }} /> Premium Yönetimi</h1>
                 <p>Premium üyelikleri ve planları yönetin</p>
             </div>
 
             {/* Stats Cards */}
             <div className="stats-grid" style={{ marginBottom: '1.5rem' }}>
-                <div className="stat-card" style={{ '--stat-color': '#f59e0b', '--stat-bg': '#fffbeb' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--warning)', '--stat-bg': 'var(--warning-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Crown size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{premiumUsers.length}</span>
                         <span className="stat-label">Premium Üye</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#10b981', '--stat-bg': '#ecfdf5' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--accent-emerald)', '--stat-bg': 'var(--success-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><TrendingUp size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">₺{totalRevenue.toLocaleString()}</span>
                         <span className="stat-label">Tahmini Gelir</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#8b5cf6', '--stat-bg': '#f5f3ff' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--accent-purple)', '--stat-bg': 'var(--accent-purple-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Gift size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{lifetimeMembers}</span>
                         <span className="stat-label">Ömür Boyu Üye</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#ef4444', '--stat-bg': '#fef2f2' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--error)', '--stat-bg': 'var(--error-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Calendar size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{expiringThisMonth}</span>
@@ -282,7 +282,7 @@ function PremiumManager() {
                         <h2>{filteredUsers.length} Premium Üye</h2>
                         <div className="table-actions">
                             <div style={{ position: 'relative' }}>
-                                <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                                <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--stone)' }} />
                                 <input
                                     type="text"
                                     placeholder="Üye ara..."
@@ -323,11 +323,11 @@ function PremiumManager() {
                                                 <strong>{user.display_name}</strong>
                                             </div>
                                         </td>
-                                        <td style={{ color: '#64748b' }}>{user.email}</td>
+                                        <td style={{ color: 'var(--slate)' }}>{user.email}</td>
                                         <td>
                                             <span style={{
-                                                background: '#fef3c7',
-                                                color: '#d97706',
+                                                background: 'var(--warning-pale)',
+                                                color: 'var(--primary-dark)',
                                                 padding: '0.25rem 0.75rem',
                                                 borderRadius: '100px',
                                                 fontSize: '0.75rem',
@@ -339,7 +339,7 @@ function PremiumManager() {
                                         <td>{getPremiumUntil(user) ? new Date(getPremiumUntil(user)!).toLocaleDateString('tr-TR') : '-'}</td>
                                         <td>
                                             <span style={{
-                                                color: isExpired ? '#ef4444' : isExpiringSoon ? '#f59e0b' : '#22c55e',
+                                                color: isExpired ? 'var(--error)' : isExpiringSoon ? 'var(--warning)' : 'var(--accent-green)',
                                                 fontWeight: 600
                                             }}>
                                                 {isExpired ? 'Süresi Doldu' : `${daysRemaining} gün`}
@@ -357,7 +357,7 @@ function PremiumManager() {
                                                     style={{
                                                         padding: '0.4rem',
                                                         borderRadius: '6px',
-                                                        border: '1px solid #e2e8f0',
+                                                        border: '1px solid var(--cloud)',
                                                         fontSize: '0.8rem',
                                                         cursor: 'pointer'
                                                     }}
@@ -413,8 +413,8 @@ function PremiumManager() {
                             <div
                                 key={plan.id}
                                 style={{
-                                    background: plan.is_popular ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : 'white',
-                                    border: plan.is_popular ? '2px solid #f59e0b' : '1px solid #e2e8f0',
+                                    background: plan.is_popular ? 'linear-gradient(135deg, var(--warning-pale) 0%, var(--accent-amber) 100%)' : 'white',
+                                    border: plan.is_popular ? '2px solid var(--warning)' : '1px solid var(--cloud)',
                                     borderRadius: '12px',
                                     padding: '1.5rem',
                                     position: 'relative'
@@ -425,7 +425,7 @@ function PremiumManager() {
                                         position: 'absolute',
                                         top: '-10px',
                                         right: '10px',
-                                        background: '#f59e0b',
+                                        background: 'var(--warning)',
                                         color: 'white',
                                         padding: '0.25rem 0.75rem',
                                         borderRadius: '100px',
@@ -435,16 +435,16 @@ function PremiumManager() {
                                         ⭐ POPÜLER
                                     </span>
                                 )}
-                                <h3 style={{ margin: '0 0 0.5rem', color: '#1e293b' }}>{plan.name}</h3>
-                                <p style={{ fontSize: '2rem', fontWeight: 700, color: '#6366f1', margin: '0.5rem 0' }}>
+                                <h3 style={{ margin: '0 0 0.5rem', color: 'var(--ink)' }}>{plan.name}</h3>
+                                <p style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--accent-indigo)', margin: '0.5rem 0' }}>
                                     ₺{plan.price}
-                                    <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 400 }}>
+                                    <span style={{ fontSize: '0.875rem', color: 'var(--slate)', fontWeight: 400 }}>
                                         /{plan.duration_months === 1 ? 'ay' : plan.duration_months === 12 ? 'yıl' : `${plan.duration_months} ay`}
                                     </span>
                                 </p>
                                 <ul style={{ listStyle: 'none', padding: 0, margin: '1rem 0' }}>
                                     {plan.features.map((feature, i) => (
-                                        <li key={i} style={{ padding: '0.25rem 0', color: '#475569', fontSize: '0.875rem' }}>
+                                        <li key={i} style={{ padding: '0.25rem 0', color: 'var(--slate)', fontSize: '0.875rem' }}>
                                             ✓ {feature}
                                         </li>
                                     ))}

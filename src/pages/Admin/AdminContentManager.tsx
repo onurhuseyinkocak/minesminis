@@ -632,12 +632,12 @@ function AdminContentManager() {
                                                 alt={video.title}
                                                 className="adm-thumb"
                                             />
-                                            <Play size={12} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: '#fff', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }} />
+                                            <Play size={12} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'var(--white)', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }} />
                                         </div>
                                     </td>
                                     <td>
                                         <strong>{video.title}</strong>
-                                        {video.isPopular && <span style={{ marginLeft: 6, fontSize: '0.7rem', color: '#f59e0b', fontWeight: 600 }}>POPULAR</span>}
+                                        {video.isPopular && <span style={{ marginLeft: 6, fontSize: '0.7rem', color: 'var(--warning)', fontWeight: 600 }}>POPULAR</span>}
                                     </td>
                                     <td style={{ fontSize: '0.775rem' }}>{video.grade}</td>
                                     <td><span className="adm-level-badge intermediate">{video.category}</span></td>

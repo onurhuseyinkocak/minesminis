@@ -242,7 +242,7 @@ function WordsManager() {
                     <h2>{filteredWords.length} Kelime</h2>
                     <div className="table-actions">
                         <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--stone)' }} />
                             <input
                                 type="text"
                                 placeholder="Kelime ara..."
@@ -252,7 +252,7 @@ function WordsManager() {
                                 style={{ paddingLeft: '40px' }}
                             />
                         </div>
-                        <button className="add-btn" style={{ background: '#10b981' }} onClick={exportWords}>
+                        <button className="add-btn" style={{ background: 'var(--accent-emerald)' }} onClick={exportWords}>
                             <Download size={18} />
                             Dışa Aktar
                         </button>
@@ -286,7 +286,7 @@ function WordsManager() {
                         </button>
                     ))}
                     {categories.length > 10 && (
-                        <span style={{ color: '#64748b', fontSize: '0.8rem' }}>+{categories.length - 10} daha...</span>
+                        <span style={{ color: 'var(--slate)', fontSize: '0.8rem' }}>+{categories.length - 10} daha...</span>
                     )}
                 </div>
 
@@ -405,7 +405,7 @@ function WordsManager() {
                                             {enriching ? '...' : 'Otomatik Doldur'}
                                         </button>
                                     </div>
-                                    <small style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Kelime yazıp tıklayın — Türkçe, emoji, örnek cümle otomatik gelir. İsterseniz değiştirebilirsiniz.</small>
+                                    <small style={{ color: 'var(--stone)', fontSize: '0.75rem' }}>Kelime yazıp tıklayın — Türkçe, emoji, örnek cümle otomatik gelir. İsterseniz değiştirebilirsiniz.</small>
                                 </div>
 
                                 <div className="form-group">

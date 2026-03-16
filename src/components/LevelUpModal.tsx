@@ -14,7 +14,7 @@ const LevelUpModal: React.FC = () => {
     useEffect(() => {
         if (showLevelUp) {
             // Generate confetti
-            const colors = ['#fbbf24', '#6366f1', '#22c55e', '#f97316', '#ec4899', '#8b5cf6'];
+            const colors = ['var(--accent-amber)', 'var(--accent-indigo)', 'var(--accent-green)', 'var(--accent-orange)', 'var(--accent-pink)', 'var(--accent-purple)'];
             const pieces = Array.from({ length: 50 }, (_, i) => ({
                 id: i,
                 left: Math.random() * 100,

@@ -266,7 +266,7 @@ const Words: React.FC = () => {
         icon={BookOpen}
         title="Smart Dictionary"
         description="Learn English words made just for kids!"
-        iconColor="#fbbf24"
+        iconColor="var(--accent-amber)"
         filterSlot={
           <div className="modern-tabs">
             <select
@@ -330,14 +330,14 @@ const Words: React.FC = () => {
 
         <div className="library-stats-container">
           <div className="stat-box learned">
-            <Trophy className="stat-icon" size={20} color="#fbbf24" />
+            <Trophy className="stat-icon" size={20} color="var(--accent-amber)" />
             <div className="stat-info">
               <span className="stat-value">{learnedWords.size}</span>
               <span className="stat-label">Learned</span>
             </div>
           </div>
           <div className="stat-box favorite">
-            <Star className="stat-icon" size={20} color="#f43f5e" />
+            <Star className="stat-icon" size={20} color="var(--accent-rose)" />
             <div className="stat-info">
               <span className="stat-value">{favoriteWords.size}</span>
               <span className="stat-label">Favorites</span>

@@ -201,12 +201,12 @@ function WorksheetsManager() {
 
     const getCategoryColor = (category: string) => {
         switch (category) {
-            case 'Vocabulary': return '#6366f1';
-            case 'Grammar': return '#10b981';
-            case 'Reading': return '#f59e0b';
-            case 'Writing': return '#ec4899';
-            case 'Phonics': return '#8b5cf6';
-            default: return '#6366f1';
+            case 'Vocabulary': return 'var(--accent-indigo)';
+            case 'Grammar': return 'var(--accent-emerald)';
+            case 'Reading': return 'var(--warning)';
+            case 'Writing': return 'var(--accent-pink)';
+            case 'Phonics': return 'var(--accent-purple)';
+            default: return 'var(--accent-indigo)';
         }
     };
 
@@ -222,7 +222,7 @@ function WorksheetsManager() {
                     <h2>{filteredWorksheets.length} Çalışma Kağıdı</h2>
                     <div className="table-actions">
                         <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--stone)' }} />
                             <input
                                 type="text"
                                 placeholder="Çalışma kağıdı ara..."
@@ -297,7 +297,7 @@ function WorksheetsManager() {
                                 <td>
                                     <div>
                                         <strong>{ws.title}</strong>
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{ws.description}</div>
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--slate)' }}>{ws.description}</div>
                                     </div>
                                 </td>
                                 <td>
@@ -321,7 +321,7 @@ function WorksheetsManager() {
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: '4px',
-                                            color: '#6366f1',
+                                            color: 'var(--accent-indigo)',
                                             textDecoration: 'none'
                                         }}
                                     >
@@ -429,7 +429,7 @@ function WorksheetsManager() {
                                             {uploading ? 'Yükleniyor...' : 'PDF / JPEG / PNG Yükle'}
                                             <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileUpload} disabled={uploading} style={{ display: 'none' }} />
                                         </label>
-                                        <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>veya URL girin:</span>
+                                        <span style={{ color: 'var(--stone)', fontSize: '0.85rem' }}>veya URL girin:</span>
                                     </div>
                                     <input
                                         type="url"

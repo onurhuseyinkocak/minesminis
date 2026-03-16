@@ -33,10 +33,41 @@
 
   /* ---- SEMANTIC ---- */
   --success: #43A047;
+  --success-light: #66BB6A;
+  --success-pale: #E8F5E9;
   --warning: #FB8C00;
+  --warning-light: #FFA726;
+  --warning-pale: #FFF3E0;
   --error: #E53935;
+  --error-light: #EF5350;
   --error-soft: #FFCDD2;
+  --error-pale: #FCE4EC;
   --info: #1E88E5;
+  --info-light: #42A5F5;
+  --info-pale: #E3F2FD;
+  --info-soft: #BBDEFB;
+
+  /* ---- ACCENT / CATEGORY COLORS ---- */
+  --accent-purple: #8b5cf6;
+  --accent-purple-light: #a78bfa;
+  --accent-purple-pale: #EDE7F6;
+  --accent-indigo: #6366f1;
+  --accent-indigo-pale: #E8EAF6;
+  --accent-pink: #ec4899;
+  --accent-pink-pale: #FCE4EC;
+  --accent-teal: #14b8a6;
+  --accent-blue: #3b82f6;
+  --accent-blue-dark: #2563eb;
+  --accent-emerald: #10b981;
+  --accent-green: #22c55e;
+  --accent-green-dark: #16a34a;
+  --accent-orange: #f97316;
+  --accent-violet: #a855f7;
+  --accent-fuchsia: #d946ef;
+  --accent-amber: #fbbf24;
+  --accent-rose: #f43f5e;
+  --accent-red: #dc2626;
+  --accent-red-dark: #991b1b;
 
   /* ---- NEUTRALS ---- */
   --ink: #1A1A2E;
@@ -893,6 +924,34 @@ h1, h2, h3 {
 
   --primary-glow: rgba(232, 163, 23, 0.2);
   --error-soft: rgba(229, 57, 53, 0.15);
+  --error-pale: rgba(229, 57, 53, 0.10);
+  --success-pale: rgba(67, 160, 71, 0.12);
+  --success-light: #81C784;
+  --warning-pale: rgba(251, 140, 0, 0.12);
+  --warning-light: #FFB74D;
+  --info-pale: rgba(30, 136, 229, 0.12);
+  --info-soft: rgba(30, 136, 229, 0.18);
+  --info-light: #64B5F6;
+  --accent-purple: #a78bfa;
+  --accent-purple-light: #c4b5fd;
+  --accent-purple-pale: rgba(139, 92, 246, 0.12);
+  --accent-indigo: #818cf8;
+  --accent-indigo-pale: rgba(99, 102, 241, 0.12);
+  --accent-pink: #f472b6;
+  --accent-pink-pale: rgba(236, 72, 153, 0.12);
+  --accent-teal: #2dd4bf;
+  --accent-blue: #60a5fa;
+  --accent-blue-dark: #3b82f6;
+  --accent-emerald: #34d399;
+  --accent-green: #4ade80;
+  --accent-green-dark: #22c55e;
+  --accent-orange: #fb923c;
+  --accent-violet: #c084fc;
+  --accent-fuchsia: #e879f9;
+  --accent-amber: #fcd34d;
+  --accent-rose: #fb7185;
+  --accent-red: #ef4444;
+  --accent-red-dark: #b91c1c;
 
   --focus-ring: 0 0 0 3px rgba(245, 204, 92, 0.35);
 }

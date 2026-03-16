@@ -46,26 +46,26 @@ export class ErrorBoundary extends React.Component<Props, State> {
           flexDirection: 'column',
           padding: '2rem',
           textAlign: 'center',
-          backgroundColor: '#f8f9fa',
+          backgroundColor: 'var(--bg-page)',
           fontFamily: 'system-ui, -apple-system, sans-serif',
         }}>
           <div style={{
             maxWidth: '500px',
             padding: '2rem',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--bg-card)',
             borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            boxShadow: 'var(--shadow-md)',
           }}>
             <h1 style={{
               fontSize: '2rem',
-              color: '#d32f2f',
+              color: 'var(--error)',
               marginBottom: '1rem',
             }}>
               🚨 Something went wrong
             </h1>
             <p style={{
               fontSize: '1rem',
-              color: '#666',
+              color: 'var(--text-secondary)',
               marginBottom: '1.5rem',
               lineHeight: '1.6',
             }}>
@@ -75,7 +75,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               <details style={{
                 marginBottom: '1.5rem',
                 padding: '1rem',
-                backgroundColor: '#f5f5f5',
+                backgroundColor: 'var(--bg-muted)',
                 borderRadius: '4px',
                 textAlign: 'left',
               }}>
@@ -85,7 +85,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 <pre style={{
                   overflow: 'auto',
                   fontSize: '0.85rem',
-                  color: '#d32f2f',
+                  color: 'var(--error)',
                   whiteSpace: 'pre-wrap',
                   wordBreak: 'break-word',
                 }}>
@@ -107,7 +107,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 }}
                 style={{
                   padding: '0.75rem 1.5rem',
-                  backgroundColor: '#6C5CE7',
+                  backgroundColor: 'var(--accent-indigo)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
@@ -116,8 +116,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   cursor: 'pointer',
                   transition: 'background-color 0.3s',
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#5A4BD1')}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#6C5CE7')}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-purple)')}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-indigo)')}
               >
                 🔄 Refresh Page
               </button>
@@ -125,7 +125,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 href="/"
                 style={{
                   padding: '0.75rem 1.5rem',
-                  backgroundColor: '#6B7280',
+                  backgroundColor: 'var(--slate)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
@@ -136,8 +136,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   display: 'inline-block',
                   transition: 'background-color 0.3s',
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4B5563')}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#6B7280')}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--charcoal)')}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--slate)')}
               >
                 🏠 Go Home
               </a>

@@ -272,7 +272,7 @@ const DailyChallenge: React.FC = () => {
                     flex-direction: column;
                     align-items: center;
                     gap: 4px;
-                    background: linear-gradient(135deg, #FCD34D, #F59E0B);
+                    background: linear-gradient(135deg, var(--accent-amber), var(--warning));
                     color: white;
                     padding: 10px 14px;
                     border-radius: 16px;
@@ -321,12 +321,12 @@ const DailyChallenge: React.FC = () => {
                 }
 
                 .progress-fill-premium.ready {
-                    background: linear-gradient(90deg, #10B981, #059669);
+                    background: linear-gradient(90deg, var(--accent-emerald), var(--success));
                     box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
                 }
 
                 .progress-fill-premium.done {
-                    background: #64748B;
+                    background: var(--slate);
                 }
 
                 .claim-btn {
@@ -334,7 +334,7 @@ const DailyChallenge: React.FC = () => {
                     padding: 16px;
                     border-radius: 16px;
                     border: none;
-                    background: linear-gradient(135deg, #6366F1 0%, #A855F7 50%, #EC4899 100%);
+                    background: linear-gradient(135deg, var(--accent-indigo) 0%, var(--accent-violet) 50%, var(--accent-pink) 100%);
                     background-size: 200% auto;
                     color: white;
                     font-weight: 800;
@@ -369,7 +369,7 @@ const DailyChallenge: React.FC = () => {
                 }
 
                 .claim-btn.pulse {
-                    background: linear-gradient(135deg, #10B981, #059669);
+                    background: linear-gradient(135deg, var(--accent-emerald), var(--success));
                     animation: subtlePulse 2s infinite;
                     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
                 }
@@ -385,7 +385,7 @@ const DailyChallenge: React.FC = () => {
                     align-items: center;
                     justify-content: center;
                     gap: 10px;
-                    color: #10B981;
+                    color: var(--accent-emerald);
                     font-weight: 800;
                     padding: 12px;
                 }

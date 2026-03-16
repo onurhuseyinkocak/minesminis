@@ -20,8 +20,8 @@ const StudentDashboard: React.FC = () => {
       icon: '🎮',
       path: '/games',
       className: 'games',
-      color: '#6366F1',
-      bg: 'rgba(99, 102, 241, 0.1)',
+      color: 'var(--accent-indigo)',
+      bg: 'var(--accent-indigo-pale)',
       description: 'Test your skills!'
     },
     {
@@ -29,8 +29,8 @@ const StudentDashboard: React.FC = () => {
       icon: '📖',
       path: '/words',
       className: 'words',
-      color: '#10B981',
-      bg: 'rgba(16, 185, 129, 0.1)',
+      color: 'var(--accent-emerald)',
+      bg: 'var(--success-pale)',
       description: 'Learn new things'
     },
     {
@@ -38,8 +38,8 @@ const StudentDashboard: React.FC = () => {
       icon: '🎬',
       path: '/videos',
       className: 'videos',
-      color: '#F59E0B',
-      bg: 'rgba(245, 158, 11, 0.1)',
+      color: 'var(--primary)',
+      bg: 'var(--primary-pale)',
       description: 'Stories & More'
     },
     {
@@ -47,8 +47,8 @@ const StudentDashboard: React.FC = () => {
       icon: '📝',
       path: '/worksheets',
       className: 'worksheets',
-      color: '#EC4899',
-      bg: 'rgba(236, 72, 153, 0.1)',
+      color: 'var(--accent-pink)',
+      bg: 'var(--accent-pink-pale)',
       description: 'Practice more'
     },
   ];

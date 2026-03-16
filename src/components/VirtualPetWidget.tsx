@@ -156,7 +156,7 @@ const VirtualPetWidget: React.FC = () => {
           }
 
           .creator-header { margin-bottom: 30px; }
-          .magic-icon { color: #F59E0B; margin-bottom: 10px; animation: bounce 2s infinite; }
+          .magic-icon { color: var(--warning); margin-bottom: 10px; animation: bounce 2s infinite; }
           .creator-header h2 { font-size: 2rem; font-weight: 900; margin: 0; color: var(--text-dark); }
           .creator-header p { color: var(--text-muted); font-weight: 600; margin-top: 5px; }
 
@@ -248,7 +248,7 @@ const VirtualPetWidget: React.FC = () => {
           .arşa-pet-input:focus { border-color: var(--primary); background: var(--bg-card); }
 
           .summon-btn-premium {
-              background: linear-gradient(135deg, #6366F1, #4F46E5);
+              background: linear-gradient(135deg, var(--accent-indigo), var(--accent-indigo));
               color: white;
               padding: 18px;
               border-radius: 16px;
@@ -381,8 +381,8 @@ const VirtualPetWidget: React.FC = () => {
         
         .rename-input-box { display: flex; align-items: center; gap: 4px; }
         .rename-input-box input { background: var(--bg-soft); border: 1px solid var(--primary); color: var(--text-dark); padding: 4px 8px; border-radius: 8px; width: 120px; font-size: 1rem; outline: none; }
-        .save-btn { color: #10B981; background: none; border: none; cursor: pointer; }
-        .cancel-btn { color: #EF4444; background: none; border: none; cursor: pointer; }
+        .save-btn { color: var(--accent-emerald); background: none; border: none; cursor: pointer; }
+        .cancel-btn { color: var(--error); background: none; border: none; cursor: pointer; }
 
         .mood-tag { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
         .pet-stats-container { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
@@ -390,15 +390,15 @@ const VirtualPetWidget: React.FC = () => {
         .stat-label { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); letter-spacing: 0.05em; }
         .stat-bar-outer { height: 10px; background: var(--bg-soft); border-radius: 10px; overflow: hidden; border: 1px solid var(--glass-border); }
         .stat-bar-inner { height: 100%; border-radius: 10px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .stat-bar-inner.happiness { background: linear-gradient(90deg, #F87171, #EF4444); }
-        .stat-bar-inner.energy { background: linear-gradient(90deg, #FBBF24, #F59E0B); }
-        .stat-bar-inner.xp { background: linear-gradient(90deg, #818CF8, #6366F1); }
+        .stat-bar-inner.happiness { background: linear-gradient(90deg, var(--error-light), var(--error)); }
+        .stat-bar-inner.energy { background: linear-gradient(90deg, var(--accent-amber), var(--warning)); }
+        .stat-bar-inner.xp { background: linear-gradient(90deg, var(--accent-indigo), var(--accent-indigo)); }
         .stat-num { font-size: 0.8rem; font-weight: 700; text-align: right; color: var(--text-dark); }
         
         .pet-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .action-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; border: none; border-radius: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s; color: white; }
-        .action-btn.feed { background: linear-gradient(135deg, #F97316, #EA580C); box-shadow: 0 4px 15px rgba(234, 88, 12, 0.2); }
-        .action-btn.play { background: linear-gradient(135deg, #06B6D4, #0891B2); box-shadow: 0 4px 15px rgba(8, 145, 178, 0.2); }
+        .action-btn.feed { background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange)); box-shadow: 0 4px 15px rgba(234, 88, 12, 0.2); }
+        .action-btn.play { background: linear-gradient(135deg, var(--accent-teal), var(--accent-teal)); box-shadow: 0 4px 15px rgba(8, 145, 178, 0.2); }
         .action-btn:hover { transform: translateY(-3px); }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }

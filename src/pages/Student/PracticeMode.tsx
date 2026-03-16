@@ -82,10 +82,10 @@ const FILTER_TABS = [
 ];
 
 const MASTERY_CONFIG: Record<MasteryLevel, { label: string; color: string; bg: string }> = {
-  mastered: { label: 'Mastered', color: '#43A047', bg: 'rgba(67, 160, 71, 0.1)' },
-  reviewing: { label: 'Reviewing', color: '#E8A317', bg: 'rgba(232, 163, 23, 0.1)' },
-  learning: { label: 'Learning', color: '#1E88E5', bg: 'rgba(30, 136, 229, 0.1)' },
-  new: { label: 'New', color: '#9393A8', bg: 'rgba(147, 147, 168, 0.1)' },
+  mastered: { label: 'Mastered', color: 'var(--success)', bg: 'var(--success-pale)' },
+  reviewing: { label: 'Reviewing', color: 'var(--primary)', bg: 'var(--primary-pale)' },
+  learning: { label: 'Learning', color: 'var(--info)', bg: 'var(--info-pale)' },
+  new: { label: 'New', color: 'var(--stone)', bg: 'var(--bg-muted)' },
 };
 
 const ENCOURAGEMENTS = [
@@ -364,19 +364,19 @@ const PracticeMode: React.FC = () => {
           <h3 className="pm-summary__title">Your Progress</h3>
           <div className="pm-summary__stats">
             <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: '#43A047' }}>{stats.mastered}</span>
+              <span className="pm-summary__stat-value" style={{ color: 'var(--success)' }}>{stats.mastered}</span>
               <span className="pm-summary__stat-label">Mastered</span>
             </div>
             <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: '#E8A317' }}>{stats.reviewing}</span>
+              <span className="pm-summary__stat-value" style={{ color: 'var(--primary)' }}>{stats.reviewing}</span>
               <span className="pm-summary__stat-label">Reviewing</span>
             </div>
             <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: '#1E88E5' }}>{stats.learning}</span>
+              <span className="pm-summary__stat-value" style={{ color: 'var(--info)' }}>{stats.learning}</span>
               <span className="pm-summary__stat-label">Learning</span>
             </div>
             <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: '#9393A8' }}>{stats.new}</span>
+              <span className="pm-summary__stat-value" style={{ color: 'var(--stone)' }}>{stats.new}</span>
               <span className="pm-summary__stat-label">New</span>
             </div>
           </div>

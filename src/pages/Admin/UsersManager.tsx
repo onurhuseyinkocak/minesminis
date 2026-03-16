@@ -26,7 +26,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmLabel
                     <h3>{title}</h3>
                     <p>{message}</p>
                 </div>
-                <div className="modal-footer" style={{ borderTop: '1px solid #e5e7eb', gap: '0.75rem' }}>
+                <div className="modal-footer" style={{ borderTop: '1px solid var(--cloud)', gap: '0.75rem' }}>
                     <button type="button" className="cancel-btn" onClick={onClose}>İptal</button>
                     <button type="button" className={`save-btn ${btnClass}`} onClick={onConfirm} disabled={loading}>
                         {loading ? 'İşleniyor...' : confirmLabel}
@@ -248,7 +248,7 @@ function UsersManager() {
                     <br />
                     <small>Şifre: <code>{password}</code></small>
                     <br />
-                    <small style={{ color: '#f59e0b' }}>⚠️ Bu şifreyi kaydedin!</small>
+                    <small style={{ color: 'var(--warning)' }}>⚠️ Bu şifreyi kaydedin!</small>
                 </div>,
                 { duration: 10000 }
             );
@@ -339,28 +339,28 @@ function UsersManager() {
 
             {/* Stats Cards */}
             <div className="stats-grid" style={{ marginBottom: '1.5rem' }}>
-                <div className="stat-card" style={{ '--stat-color': '#8b5cf6', '--stat-bg': '#f5f3ff' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--accent-purple)', '--stat-bg': 'var(--accent-purple-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Users size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{users.length}</span>
                         <span className="stat-label">Toplam Kullanıcı</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#f59e0b', '--stat-bg': '#fffbeb' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--warning)', '--stat-bg': 'var(--warning-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Crown size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{premiumCount}</span>
                         <span className="stat-label">Premium Üye</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#ec4899', '--stat-bg': '#fdf2f8' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--accent-pink)', '--stat-bg': 'var(--accent-pink-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Shield size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{adminCount}</span>
                         <span className="stat-label">Admin</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#10b981', '--stat-bg': '#ecfdf5' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--accent-emerald)', '--stat-bg': 'var(--success-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Star size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{teacherCount}</span>
@@ -374,7 +374,7 @@ function UsersManager() {
                     <h2>{filteredUsers.length} Kullanıcı</h2>
                     <div className="table-actions">
                         <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--stone)' }} />
                             <input
                                 type="text"
                                 placeholder="Kullanıcı ara..."
@@ -403,7 +403,7 @@ function UsersManager() {
                                     role === 'teacher' ? '⭐ Öğretmen' : '📚 Öğrenci'}
                         </button>
                     ))}
-                    <span style={{ margin: '0 0.5rem', color: '#cbd5e1' }}>|</span>
+                    <span style={{ margin: '0 0.5rem', color: 'var(--cloud)' }}>|</span>
                     {['all', 'premium', 'free'].map(type => (
                         <button
                             key={type}
@@ -437,7 +437,7 @@ function UsersManager() {
                                         <strong>{user.display_name || 'İsimsiz'}</strong>
                                     </div>
                                 </td>
-                                <td style={{ color: '#64748b' }}>{user.email}</td>
+                                <td style={{ color: 'var(--slate)' }}>{user.email}</td>
                                 <td>
                                     <select
                                         value={user.role}
@@ -450,7 +450,7 @@ function UsersManager() {
                                         style={{
                                             padding: '0.4rem 0.6rem',
                                             borderRadius: '6px',
-                                            border: '1px solid #e2e8f0',
+                                            border: '1px solid var(--cloud)',
                                             fontSize: '0.8rem',
                                             cursor: 'pointer',
                                             fontWeight: 600
@@ -478,31 +478,31 @@ function UsersManager() {
                                             cursor: 'pointer',
                                             fontSize: '0.75rem',
                                             fontWeight: 600,
-                                            background: isUserPremium(user) ? '#fef3c7' : '#f1f5f9',
-                                            color: isUserPremium(user) ? '#d97706' : '#64748b'
+                                            background: isUserPremium(user) ? 'var(--warning-pale)' : 'var(--mist)',
+                                            color: isUserPremium(user) ? 'var(--primary-dark)' : 'var(--slate)'
                                         }}
                                     >
                                         <Crown size={14} />
                                         {isUserPremium(user) ? 'Premium' : 'Ücretsiz'}
                                     </button>
                                     {isUserPremium(user) && getUserPremiumUntil(user) && (
-                                        <small style={{ display: 'block', color: '#94a3b8', fontSize: '0.7rem', marginTop: '2px' }}>
+                                        <small style={{ display: 'block', color: 'var(--stone)', fontSize: '0.7rem', marginTop: '2px' }}>
                                             {new Date(getUserPremiumUntil(user)!).toLocaleDateString('tr-TR')} 'e kadar
                                         </small>
                                     )}
                                 </td>
                                 <td>
-                                    <span style={{ fontWeight: 600, color: '#f59e0b' }}>
+                                    <span style={{ fontWeight: 600, color: 'var(--warning)' }}>
                                         ⭐ {user.points || 0}
                                     </span>
                                 </td>
                                 <td>
                                     {user.is_online ? (
-                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#22c55e' }}>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-green)' }}>
                                             <CheckCircle size={14} /> Çevrimiçi
                                         </span>
                                     ) : (
-                                        <span style={{ color: '#94a3b8' }}>Çevrimdışı</span>
+                                        <span style={{ color: 'var(--stone)' }}>Çevrimdışı</span>
                                     )}
                                 </td>
                                 <td>
@@ -549,7 +549,7 @@ function UsersManager() {
                                         placeholder="kullanici@ornek.com"
                                         required
                                     />
-                                    <small style={{ color: '#64748b' }}>
+                                    <small style={{ color: 'var(--slate)' }}>
                                         Bu adrese hoş geldin maili ve otomatik şifre gönderilecek
                                     </small>
                                 </div>
@@ -584,7 +584,7 @@ function UsersManager() {
                                             onChange={(e) => setNewUserData({ ...newUserData, is_premium: e.target.checked })}
                                             style={{ width: 'auto' }}
                                         />
-                                        <Crown size={16} style={{ color: '#f59e0b' }} />
+                                        <Crown size={16} style={{ color: 'var(--warning)' }} />
                                         Premium Üyelik Ver
                                     </label>
                                 </div>
@@ -606,16 +606,16 @@ function UsersManager() {
                                 )}
 
                                 <div style={{
-                                    background: '#fef3c7',
+                                    background: 'var(--warning-pale)',
                                     padding: '1rem',
                                     borderRadius: '8px',
                                     marginTop: '1rem'
                                 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#92400e', marginBottom: '0.5rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-dark)', marginBottom: '0.5rem' }}>
                                         <Key size={16} />
                                         <strong>Otomatik Şifre</strong>
                                     </div>
-                                    <p style={{ color: '#a16207', fontSize: '0.85rem', margin: 0 }}>
+                                    <p style={{ color: 'var(--primary-dark)', fontSize: '0.85rem', margin: 0 }}>
                                         Kullanıcı oluşturulduğunda otomatik şifre üretilecek ve ekranda gösterilecek.
                                         Bu şifreyi kaydedin veya kullanıcıya iletin.
                                     </p>

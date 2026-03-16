@@ -108,14 +108,14 @@ const BadgeCollection: React.FC = () => {
 
         .badge-progress {
           font-size: 1.1rem;
-          color: #64748B;
+          color: var(--slate);
           margin-bottom: 16px;
         }
 
         .progress-bar {
           width: 100%;
           height: 12px;
-          background: #E5E7EB;
+          background: var(--cloud);
           border-radius: 20px;
           overflow: hidden;
         }
@@ -135,7 +135,7 @@ const BadgeCollection: React.FC = () => {
 
         .badge-filters button {
           padding: 10px 20px;
-          border: 2px solid #E5E7EB;
+          border: 2px solid var(--cloud);
           background: white;
           border-radius: 12px;
           cursor: pointer;
@@ -195,7 +195,7 @@ const BadgeCollection: React.FC = () => {
         }
 
         .badge-card p {
-          color: #64748B;
+          color: var(--slate);
           font-size: 0.9rem;
           margin-bottom: 12px;
         }
@@ -208,7 +208,7 @@ const BadgeCollection: React.FC = () => {
 
         .locked-text {
           font-size: 0.85rem;
-          color: #94A3B8;
+          color: var(--stone);
           font-weight: 600;
         }
 

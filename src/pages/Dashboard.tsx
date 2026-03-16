@@ -257,26 +257,26 @@ export default function Dashboard() {
           ================================================================ */}
       <motion.div className="stats-row" variants={itemVariants}>
         <div className="stat-card">
-          <div className="stat-icon xp"><Trophy size={20} color="#E8A317" /></div>
+          <div className="stat-icon xp"><Trophy size={20} color="var(--primary)" /></div>
           <span className="stat-number">{stats.xp.toLocaleString()}</span>
           <span className="stat-label">Total XP</span>
           <span className="stat-sub">Level {stats.level} &middot; {xpProgress}%</span>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon words"><BookOpen size={20} color="#4CAF50" /></div>
+          <div className="stat-icon words"><BookOpen size={20} color="var(--mimi-green)" /></div>
           <span className="stat-number">{stats.wordsLearned}</span>
           <span className="stat-label">Words Learned</span>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon streak"><Flame size={20} color="#FB8C00" /></div>
+          <div className="stat-icon streak"><Flame size={20} color="var(--warning)" /></div>
           <span className="stat-number">{stats.streakDays}</span>
           <span className="stat-label">Streak Days</span>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon lessons"><GraduationCap size={20} color="#1E88E5" /></div>
+          <div className="stat-icon lessons"><GraduationCap size={20} color="var(--info)" /></div>
           <span className="stat-number">{stats.gamesPlayed + stats.worksheetsCompleted}</span>
           <span className="stat-label">Lessons Done</span>
         </div>
@@ -287,7 +287,7 @@ export default function Dashboard() {
           ================================================================ */}
       <motion.div className="daily-challenge" variants={itemVariants}>
         <div className="daily-challenge-icon">
-          <Sparkles size={24} color="#FB8C00" />
+          <Sparkles size={24} color="var(--warning)" />
         </div>
         <div className="daily-challenge-content">
           <h3 className="daily-challenge-title">{todaysChallenge.title}</h3>
@@ -331,28 +331,28 @@ export default function Dashboard() {
       <motion.div className="quick-actions-grid" variants={itemVariants}>
         <Link to="/worlds" className="quick-action-card worlds">
           <div className="quick-action-icon">
-            <Globe size={24} color="#2E7D32" />
+            <Globe size={24} color="var(--mimi-green-dark)" />
           </div>
           <span className="quick-action-label">Explore Worlds</span>
         </Link>
 
         <Link to="/practice" className="quick-action-card practice">
           <div className="quick-action-icon">
-            <Pencil size={24} color="#1E88E5" />
+            <Pencil size={24} color="var(--info)" />
           </div>
           <span className="quick-action-label">Practice Words</span>
         </Link>
 
         <Link to="/games" className="quick-action-card games">
           <div className="quick-action-icon">
-            <Gamepad2 size={24} color="#FB8C00" />
+            <Gamepad2 size={24} color="var(--warning)" />
           </div>
           <span className="quick-action-label">Play Games</span>
         </Link>
 
         <Link to="/story" className="quick-action-card story">
           <div className="quick-action-icon">
-            <BookHeart size={24} color="#E91E63" />
+            <BookHeart size={24} color="var(--accent-pink)" />
           </div>
           <span className="quick-action-label">Mimi's Story</span>
         </Link>
@@ -373,7 +373,7 @@ export default function Dashboard() {
                 dataKey="day"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#5C5C7A', fontSize: 12, fontFamily: 'Inter' }}
+                tick={{ fill: 'var(--slate)', fontSize: 12, fontFamily: 'Inter' }}
               />
               <YAxis hide />
               <Tooltip
@@ -391,7 +391,7 @@ export default function Dashboard() {
                 {weeklyData.map((entry, index) => (
                   <Cell
                     key={index}
-                    fill={entry.xp > 0 ? '#E8A317' : '#EEEEF5'}
+                    fill={entry.xp > 0 ? 'var(--primary)' : 'var(--mist)'}
                     fillOpacity={entry.xp > 0 ? 1 : 0.5}
                   />
                 ))}

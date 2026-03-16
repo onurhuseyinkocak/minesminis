@@ -65,10 +65,10 @@ const WEEKLY_ACTIVITY = [
 ];
 
 const VOCABULARY_MASTERY = [
-  { name: 'Mastered', value: 42, color: '#43A047' },
-  { name: 'Reviewing', value: 18, color: '#E8A317' },
-  { name: 'Learning', value: 25, color: '#1E88E5' },
-  { name: 'New', value: 15, color: '#D4D4E0' },
+  { name: 'Mastered', value: 42, color: 'var(--success)' },
+  { name: 'Reviewing', value: 18, color: 'var(--primary)' },
+  { name: 'Learning', value: 25, color: 'var(--info)' },
+  { name: 'New', value: 15, color: 'var(--cloud)' },
 ];
 
 const RECENT_ACHIEVEMENTS = [
@@ -122,29 +122,29 @@ const ParentDashboard: React.FC = () => {
       label: 'Words Learned',
       value: stats.wordsLearned || 85,
       icon: <BookOpen size={22} />,
-      color: '#1A6B5A',
-      bg: 'rgba(26, 107, 90, 0.1)',
+      color: 'var(--secondary)',
+      bg: 'var(--secondary-pale)',
     },
     {
       label: 'Current Level',
       value: stats.level || 5,
       icon: <Star size={22} />,
-      color: '#E8A317',
-      bg: 'rgba(232, 163, 23, 0.1)',
+      color: 'var(--primary)',
+      bg: 'var(--primary-pale)',
     },
     {
       label: 'Streak Days',
       value: stats.streakDays || 12,
       icon: <Flame size={22} />,
-      color: '#E53935',
-      bg: 'rgba(229, 57, 53, 0.1)',
+      color: 'var(--error)',
+      bg: 'var(--error-pale)',
     },
     {
       label: 'Time This Week',
       value: '2.6h',
       icon: <Clock size={22} />,
-      color: '#1E88E5',
-      bg: 'rgba(30, 136, 229, 0.1)',
+      color: 'var(--info)',
+      bg: 'var(--info-pale)',
     },
   ], [stats]);
 
@@ -314,18 +314,18 @@ const ParentDashboard: React.FC = () => {
                     dataKey="day"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#5C5C7A', fontSize: 13, fontFamily: 'Inter' }}
+                    tick={{ fill: 'var(--slate)', fontSize: 13, fontFamily: 'Inter' }}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#9393A8', fontSize: 12, fontFamily: 'Inter' }}
+                    tick={{ fill: 'var(--stone)', fontSize: 12, fontFamily: 'Inter' }}
                     width={32}
                   />
                   <Tooltip
                     contentStyle={{
-                      background: '#fff',
-                      border: '1px solid #D4D4E0',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--cloud)',
                       borderRadius: 12,
                       fontFamily: 'Inter',
                       fontSize: 13,
@@ -336,7 +336,7 @@ const ParentDashboard: React.FC = () => {
                     {WEEKLY_ACTIVITY.map((entry, idx) => (
                       <Cell
                         key={idx}
-                        fill={entry.minutes >= 25 ? '#1A6B5A' : entry.minutes >= 15 ? '#2A9D8F' : '#D4D4E0'}
+                        fill={entry.minutes >= 25 ? 'var(--secondary)' : entry.minutes >= 15 ? 'var(--secondary-light)' : 'var(--cloud)'}
                       />
                     ))}
                   </Bar>
@@ -371,8 +371,8 @@ const ParentDashboard: React.FC = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: '#fff',
-                      border: '1px solid #D4D4E0',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--cloud)',
                       borderRadius: 12,
                       fontFamily: 'Inter',
                       fontSize: 13,

@@ -204,26 +204,26 @@ function AdminDashboard() {
                             <AreaChart data={growthData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#d4930d" stopOpacity={0.15} />
-                                        <stop offset="95%" stopColor="#d4930d" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="var(--primary-dark)" stopOpacity={0.15} />
+                                        <stop offset="95%" stopColor="var(--primary-dark)" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f4" vertical={false} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis
                                     dataKey="month"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 11, fill: '#9ca0b0' }}
+                                    tick={{ fontSize: 11, fill: 'var(--stone)' }}
                                 />
                                 <YAxis
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 11, fill: '#9ca0b0' }}
+                                    tick={{ fontSize: 11, fill: 'var(--stone)' }}
                                 />
                                 <Tooltip
                                     contentStyle={{
-                                        background: '#fff',
-                                        border: '1px solid #e2e5ea',
+                                        background: 'var(--white)',
+                                        border: '1px solid var(--cloud)',
                                         borderRadius: 8,
                                         fontSize: '0.8rem',
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
@@ -232,7 +232,7 @@ function AdminDashboard() {
                                 <Area
                                     type="monotone"
                                     dataKey="users"
-                                    stroke="#d4930d"
+                                    stroke="var(--primary-dark)"
                                     strokeWidth={2}
                                     fill="url(#growthGrad)"
                                 />
@@ -268,7 +268,7 @@ function AdminDashboard() {
                                         <strong>{user.display_name || 'Anonymous'}</strong>
                                         {' '}registered
                                         {(user.settings?.is_premium as boolean) && (
-                                            <Crown size={12} style={{ color: '#f59e0b', marginLeft: 4, verticalAlign: 'middle' }} />
+                                            <Crown size={12} style={{ color: 'var(--warning)', marginLeft: 4, verticalAlign: 'middle' }} />
                                         )}
                                     </div>
                                     <div className="adm-activity-time">
@@ -294,8 +294,8 @@ function AdminDashboard() {
                     <div className="adm-card-body no-pad">
                         <div className="adm-inventory-grid">
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: '#fffbeb' }}>
-                                    <Gamepad2 size={18} style={{ color: '#f59e0b' }} />
+                                <div className="adm-inventory-icon" style={{ background: 'var(--warning-pale)' }}>
+                                    <Gamepad2 size={18} style={{ color: 'var(--warning)' }} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{gamesCount}</div>
@@ -303,8 +303,8 @@ function AdminDashboard() {
                                 </div>
                             </div>
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: '#fef2f2' }}>
-                                    <Video size={18} style={{ color: '#ef4444' }} />
+                                <div className="adm-inventory-icon" style={{ background: 'var(--error-pale)' }}>
+                                    <Video size={18} style={{ color: 'var(--error)' }} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{videosCount}</div>
@@ -312,8 +312,8 @@ function AdminDashboard() {
                                 </div>
                             </div>
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: '#ecfdf5' }}>
-                                    <BookOpen size={18} style={{ color: '#10b981' }} />
+                                <div className="adm-inventory-icon" style={{ background: 'var(--success-pale)' }}>
+                                    <BookOpen size={18} style={{ color: 'var(--accent-emerald)' }} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{wordsCount}</div>
@@ -321,8 +321,8 @@ function AdminDashboard() {
                                 </div>
                             </div>
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: '#f5f3ff' }}>
-                                    <FileText size={18} style={{ color: '#8b5cf6' }} />
+                                <div className="adm-inventory-icon" style={{ background: 'var(--accent-purple-pale)' }}>
+                                    <FileText size={18} style={{ color: 'var(--accent-purple)' }} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{worksheetsCount}</div>
