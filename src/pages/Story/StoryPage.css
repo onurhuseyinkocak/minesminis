@@ -262,6 +262,14 @@
   line-height: 1.35;
 }
 
+/* ── Stats & Inventory Panel variants ── */
+.story-page__stats-panel {
+  /* Inherits from .story-page__panel */
+}
+.story-page__inventory-panel {
+  /* Inherits from .story-page__panel */
+}
+
 /* ── Choice Result Feedback ── */
 .story-page__feedback {
   position: fixed;

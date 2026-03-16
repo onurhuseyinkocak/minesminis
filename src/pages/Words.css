@@ -608,6 +608,11 @@
   color: #E53935;
 }
 
+/* ── Learned state ── */
+.word-card-mini.learned {
+  border-left: 3px solid var(--success);
+}
+
 /* ── Empty State ── */
 .empty-state {
   display: flex;

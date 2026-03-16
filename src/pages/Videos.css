@@ -434,6 +434,37 @@
   }
 }
 
+/* ── Library Search (Videos page) ── */
+.library-search-wrapper {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto 24px;
+}
+.library-search-input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border: 2px solid var(--cloud);
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: var(--font-body);
+  background: var(--white);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 48px;
+}
+.library-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.15);
+}
+.library-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--stone);
+  pointer-events: none;
+}
+
 /* ── Smart Board / Large Screens ── */
 @media (min-width: 1600px) {
   .popular-section,

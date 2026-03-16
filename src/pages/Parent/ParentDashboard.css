@@ -65,6 +65,16 @@
 
 .pd-header-link:hover { background: rgba(245, 204, 92, 0.25); }
 
+/* ── Header left group ────────────────────────────────────── */
+
+.pd-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
 /* ── Child selector ───────────────────────────────────────── */
 
 .pd-child-selector { position: relative; margin-top: 16px; }
@@ -370,6 +380,20 @@
 }
 
 .pd-settings-link:hover { color: #2A9D8F; text-decoration: underline; }
+
+/* ── Bottom-row card wrappers ─────────────────────────────── */
+
+.pd-achievements-card {
+  min-height: 280px;
+}
+
+.pd-strengths-card {
+  min-height: 280px;
+}
+
+.pd-reco-card {
+  min-height: 280px;
+}
 
 /* ── Dark mode ────────────────────────────────────────────── */
 

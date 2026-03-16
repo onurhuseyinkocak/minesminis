@@ -163,7 +163,7 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--bg-page);
+  background: var(--gradient-warm);
   color: var(--text-body);
   line-height: 1.6;
   overflow-x: hidden;
@@ -174,6 +174,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(180deg, #FFF8E7 0%, #FEFCF5 30%, #F8F8FC 100%);
 }
 
 img, picture, video, canvas, svg {
@@ -193,13 +194,13 @@ button {
 }
 
 a {
-  color: var(--secondary);
+  color: var(--primary-dark);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--secondary-light);
+  color: var(--primary);
 }
 
 a, button, [role="button"], input[type="submit"], input[type="button"] {
@@ -772,6 +773,80 @@ input::placeholder, textarea::placeholder {
     min-height: var(--touch-target);
     min-width: var(--touch-target);
   }
+}
+
+/* ==========================================================================
+   SHARED UTILITY: Modern Tabs
+   ========================================================================== */
+
+.modern-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  background: var(--mist);
+  border-radius: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.modern-tab {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--slate);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 44px;
+}
+.modern-tab:hover {
+  background: rgba(232, 163, 23, 0.08);
+  color: var(--charcoal);
+}
+.modern-tab.active {
+  background: var(--white);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ==========================================================================
+   SHARED UTILITY: mm-card
+   ========================================================================== */
+
+.mm-card {
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.mm-card--elevated {
+  box-shadow: var(--shadow-md);
+}
+.mm-card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ==========================================================================
+   GLOBAL VISUAL POLISH
+   ========================================================================== */
+
+/* Global card hover enhancement */
+[class*="-card"]:not([class*="modal"]) {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Ensure all pages have warm feel */
+main, [role="main"] {
+  background: transparent;
+}
+
+/* Global heading warmth */
+h1, h2, h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
 }
 
 /* ==========================================================================
