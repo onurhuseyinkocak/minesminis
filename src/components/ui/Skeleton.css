@@ -1,0 +1,54 @@
+.mm-skeleton {
+  background-color: var(--color-mist, #EEEEF5);
+  position: relative;
+  overflow: hidden;
+}
+
+.mm-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: mm-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes mm-skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Variants */
+.mm-skeleton--text {
+  height: 16px;
+  border-radius: var(--radius-sm, 8px);
+  width: 100%;
+}
+
+.mm-skeleton--circle {
+  border-radius: var(--radius-full, 9999px);
+}
+
+.mm-skeleton--rect {
+  border-radius: var(--radius-sm, 8px);
+}
+
+.mm-skeleton--card {
+  border-radius: var(--radius-md, 12px);
+  min-height: 120px;
+}
+
+/* Spacing between multiple skeletons */
+.mm-skeleton-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 8px);
+}

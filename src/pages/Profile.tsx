@@ -1,0 +1,171 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../config/supabase';
+import {
+  Settings,
+  Trophy,
+  Star,
+  Clock,
+  UserCircle,
+  X,
+  Camera
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useGamification } from '../contexts/GamificationContext';
+import XPBar from '../components/XPBar';
+import toast from 'react-hot-toast';
+
+const Profile: React.FC = () => {
+  const { user, userProfile, refreshUserProfile } = useAuth();
+  const { stats, allBadges } = useGamification();
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editDisplayName, setEditDisplayName] = useState('');
+
+  const explorerBadges = allBadges.filter(b => (stats.badges || []).includes(b.id));
+
+  useEffect(() => {
+    if (userProfile?.display_name) {
+      setEditDisplayName(userProfile.display_name);
+    }
+  }, [userProfile]);
+
+  const handleUpdateProfile = async () => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ display_name: editDisplayName })
+        .eq('id', user.uid);
+
+      if (error) throw error;
+      await refreshUserProfile();
+      toast.success('Profile updated! 🎉');
+      setShowEditModal(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
+  };
+
+  if (!user) return <div className="profile-loading">Please sign in to view your backpack!</div>;
+
+  return (
+    <div className="profile-container">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="profile-content"
+      >
+        <header className="profile-hero">
+          <div className="profile-avatar-large">
+            <UserCircle size={100} className="avatar-vector" />
+            <button className="change-avatar-btn" title="Coming Soon!">
+              <Camera size={20} />
+            </button>
+          </div>
+
+          <div className="profile-main-info">
+            <div className="name-row">
+              <h1>{userProfile?.display_name || 'My Space'}</h1>
+              <button
+                className="edit-profile-btn"
+                onClick={() => setShowEditModal(true)}
+              >
+                <Settings size={20} />
+                <span>Edit Profile</span>
+              </button>
+            </div>
+
+            <div className="level-badge">
+              <Trophy size={20} />
+              <span>Level {stats.level} Explorer</span>
+            </div>
+          </div>
+        </header>
+
+        <section className="profile-stats-grid">
+          <div className="stat-card xp-focused">
+            <div className="stat-header">
+              <h3>My XP Progress</h3>
+              <Star size={20} fill="#f59e0b" color="#f59e0b" />
+            </div>
+            <div className="xp-details">
+              <XPBar />
+              <p className="xp-text">{stats.xp} XP collected so far!</p>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-header">
+              <h3>My Trophies</h3>
+              <Clock size={20} color="#6366f1" />
+            </div>
+            <div className="activity-list">
+              <div className="activity-item">
+                <span className="activity-dot"></span>
+                <span className="activity-desc">Words Learned: {stats.wordsLearned || 0}</span>
+              </div>
+              <div className="activity-item">
+                <span className="activity-dot"></span>
+                <span className="activity-desc">Games Played: {stats.gamesPlayed || 0}</span>
+              </div>
+              <div className="activity-item">
+                <span className="activity-dot"></span>
+                <span className="activity-desc">Videos Watched: {stats.videosWatched || 0}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="profile-badges-section">
+          <div className="section-header">
+            <h3>My Badges</h3>
+            <Trophy size={24} color="#f59e0b" />
+          </div>
+          <div className="badges-grid">
+            {explorerBadges.length > 0 ? (
+              explorerBadges.map((badge, i) => (
+                <div key={i} className="badge-item">
+                  <div className="badge-circle">{badge.icon}</div>
+                  <span>{badge.name}</span>
+                </div>
+              ))
+            ) : (
+              <div className="no-badges">
+                <p>Keep learning to earn your first badge! 🌟</p>
+              </div>
+            )}
+          </div>
+        </section>
+      </motion.div>
+
+      {showEditModal && (
+        <div className="edit-modal-overlay">
+          <div className="edit-modal">
+            <div className="edit-modal-header">
+              <h2>Kid Profile Editor 🎨</h2>
+              <button onClick={() => setShowEditModal(false)}><X size={24} /></button>
+            </div>
+            <div className="edit-modal-body">
+              <div className="edit-field">
+                <label>What should we call you?</label>
+                <input
+                  type="text"
+                  value={editDisplayName}
+                  onChange={(e) => setEditDisplayName(e.target.value)}
+                  placeholder="Enter your explorer name"
+                />
+              </div>
+            </div>
+            <div className="edit-modal-footer">
+              <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Back</button>
+              <button className="save-btn" onClick={handleUpdateProfile}>Save Name</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Profile;

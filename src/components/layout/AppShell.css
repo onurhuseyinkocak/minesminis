@@ -1,0 +1,205 @@
+/* ============================================
+   APP SHELL - Student/Child View Layout
+   Premium, breathing, responsive
+   ============================================ */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg-page);
+  color: var(--text-dark);
+  transition: background var(--transition-base);
+}
+
+.app-shell__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 72px; /* desktop nav height */
+  width: 100%;
+}
+
+.app-shell__content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-3xl);
+}
+
+/* --- Desktop sidebar layout --- */
+@media (min-width: 1024px) {
+  .app-shell--with-sidebar {
+    flex-direction: row;
+  }
+
+  .app-shell--with-sidebar .app-shell__sidebar {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-light);
+    padding: var(--spacing-lg) 0;
+    overflow-y: auto;
+    z-index: 40;
+    transition: transform var(--transition-base), width var(--transition-base);
+  }
+
+  .app-shell--with-sidebar .app-shell__main {
+    margin-left: 240px;
+  }
+
+  .app-shell__sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    color: var(--text-medium);
+    text-decoration: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 0;
+    transition: background var(--transition-fast), color var(--transition-fast);
+    position: relative;
+  }
+
+  .app-shell__sidebar-link:hover {
+    background: var(--bg-soft);
+    color: var(--text-dark);
+  }
+
+  .app-shell__sidebar-link.active {
+    color: var(--primary);
+    background: var(--primary-pale);
+  }
+
+  .app-shell__sidebar-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background: var(--primary);
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  }
+}
+
+/* --- Mobile: bottom navigation --- */
+.app-shell__bottom-nav {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .app-shell__main {
+    padding-top: 64px; /* mobile nav height */
+    padding-bottom: 68px; /* bottom nav height + safe area */
+  }
+
+  .app-shell__content {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-xl);
+  }
+
+  .app-shell__sidebar {
+    display: none;
+  }
+
+  .app-shell__bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-light);
+    z-index: 900;
+    padding: 0 var(--spacing-xs);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .app-shell__bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-decoration: none;
+    color: var(--text-light);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+  }
+
+  .app-shell__bottom-nav-item svg {
+    width: 22px;
+    height: 22px;
+    transition: transform var(--transition-fast);
+  }
+
+  .app-shell__bottom-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .app-shell__bottom-nav-item.active {
+    color: var(--primary);
+  }
+
+  .app-shell__bottom-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 0 0 var(--radius-full) var(--radius-full);
+  }
+
+  .app-shell__bottom-nav-item.active svg {
+    transform: scale(1.1);
+  }
+}
+
+/* --- Tablet tweaks --- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .app-shell__content {
+    padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-2xl);
+    max-width: 768px;
+  }
+}
+
+/* --- Smart Board --- */
+@media (min-width: 1920px) {
+  .app-shell__content {
+    max-width: var(--container-wide);
+    padding: var(--spacing-xl) var(--spacing-2xl) var(--spacing-3xl);
+  }
+}
+
+/* --- Dark mode --- */
+[data-theme="dark"] .app-shell {
+  background: var(--bg-page);
+}
+
+[data-theme="dark"] .app-shell__bottom-nav {
+  background: rgba(26, 26, 46, 0.92);
+  border-top-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .app-shell__sidebar {
+  background: var(--bg-card);
+  border-right-color: rgba(255, 255, 255, 0.06);
+}

@@ -1,0 +1,516 @@
+/* ==========================================================================
+   ONBOARDING PAGE — MinesMinis v4
+   Multi-step wizard with premium feel
+   ========================================================================== */
+
+.onboarding-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  background: var(--gradient-warm);
+  font-family: var(--font-body);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle background */
+.onboarding-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 85%, rgba(76, 175, 80, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 85% 15%, rgba(232, 163, 23, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(26, 107, 90, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Main card */
+.onboarding-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 720px;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-2xl) var(--space-xl);
+  overflow: hidden;
+}
+
+/* ---- Progress Bar ---- */
+.onboarding-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: var(--space-2xl);
+}
+
+.onboarding-progress-step {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.onboarding-progress-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  border: 2px solid var(--cloud);
+  background: var(--white);
+  color: var(--stone);
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+}
+
+.onboarding-progress-dot.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--white);
+  box-shadow: 0 2px 12px rgba(232, 163, 23, 0.3);
+}
+
+.onboarding-progress-dot.completed {
+  border-color: var(--success);
+  background: var(--success);
+  color: var(--white);
+}
+
+.onboarding-progress-line {
+  width: 48px;
+  height: 2px;
+  background: var(--cloud);
+  transition: background var(--transition-base);
+}
+
+.onboarding-progress-line.active {
+  background: var(--success);
+}
+
+/* ---- Step Content ---- */
+.onboarding-step {
+  text-align: center;
+}
+
+.onboarding-step-emoji {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: var(--space-md);
+}
+
+.onboarding-step h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(22px, 3vw, 28px);
+  color: var(--ink);
+  margin: 0 0 var(--space-xs);
+}
+
+.onboarding-step .onboarding-step-sub {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-xl);
+  line-height: 1.5;
+}
+
+/* ---- Age Group Cards ---- */
+.onboarding-age-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.onboarding-age-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--space-md);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  min-height: var(--touch-target-lg);
+}
+
+.onboarding-age-card:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.onboarding-age-card.selected {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.15);
+}
+
+.onboarding-age-emoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.onboarding-age-range {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+}
+
+.onboarding-age-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ---- Mimi Introduction (Step 2) ---- */
+.onboarding-mimi-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.onboarding-mimi-large {
+  font-size: 120px;
+  line-height: 1;
+  filter: drop-shadow(0 8px 24px rgba(76, 175, 80, 0.2));
+}
+
+.onboarding-mimi-speech {
+  background: var(--mist);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  max-width: 420px;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+.onboarding-mimi-speech::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--mist);
+}
+
+.onboarding-mimi-facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.onboarding-mimi-fact {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 12px;
+  background: var(--white);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--secondary);
+  border: 1px solid var(--border-light);
+}
+
+/* ---- Avatar Grid (Step 3) ---- */
+.onboarding-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.onboarding-avatar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--mist);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+}
+
+.onboarding-avatar-btn:hover {
+  background: var(--white);
+  border-color: var(--cloud);
+  transform: scale(1.05);
+}
+
+.onboarding-avatar-btn.selected {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.15);
+}
+
+.onboarding-avatar-btn .avatar-emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.onboarding-avatar-btn .avatar-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ---- World Preview (Step 4) ---- */
+.onboarding-world-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.onboarding-world-card {
+  width: 100%;
+  max-width: 440px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 2px solid var(--border-light);
+}
+
+.onboarding-world-visual {
+  height: 180px;
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.onboarding-world-emoji {
+  font-size: 72px;
+}
+
+.onboarding-world-badge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--secondary);
+  backdrop-filter: blur(8px);
+}
+
+.onboarding-world-info {
+  padding: var(--space-lg);
+  text-align: left;
+}
+
+.onboarding-world-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+  margin: 0 0 var(--space-xs);
+}
+
+.onboarding-world-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 var(--space-sm);
+}
+
+.onboarding-world-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.onboarding-world-topic {
+  padding: 3px 10px;
+  background: var(--mist);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--slate);
+}
+
+/* User summary */
+.onboarding-user-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--mist);
+  border-radius: var(--radius-lg);
+}
+
+.onboarding-user-summary-emoji {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.onboarding-user-summary-info {
+  text-align: left;
+}
+
+.onboarding-user-summary-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.onboarding-user-summary-detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
+/* ---- Navigation Buttons ---- */
+.onboarding-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.onboarding-skip {
+  text-align: center;
+  margin-top: var(--space-md);
+}
+
+.onboarding-skip button {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: var(--space-sm);
+}
+
+.onboarding-skip button:hover {
+  color: var(--text-secondary);
+}
+
+/* ---- Celebration Overlay ---- */
+.onboarding-celebration {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: var(--z-modal);
+  gap: var(--space-lg);
+  text-align: center;
+  padding: var(--space-xl);
+}
+
+.onboarding-celebration-emoji {
+  font-size: 100px;
+  line-height: 1;
+}
+
+.onboarding-celebration h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.onboarding-celebration p {
+  font-size: 18px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .onboarding-page {
+    padding: var(--space-md);
+    padding-top: var(--space-xl);
+  }
+
+  .onboarding-card {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .onboarding-age-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .onboarding-avatar-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .onboarding-progress-line {
+    width: 24px;
+  }
+
+  .onboarding-progress-dot {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .onboarding-mimi-large {
+    font-size: 80px;
+  }
+}
+
+/* Smart board */
+@media (min-width: 1600px) {
+  .onboarding-card {
+    max-width: 840px;
+    padding: var(--space-3xl) var(--space-2xl);
+  }
+
+  .onboarding-age-card {
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .onboarding-avatar-btn {
+    padding: var(--space-md);
+  }
+
+  .onboarding-avatar-btn .avatar-emoji {
+    font-size: 40px;
+  }
+}

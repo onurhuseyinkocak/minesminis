@@ -1,0 +1,91 @@
+.mm-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 4px);
+  width: 100%;
+}
+
+.mm-progress__track {
+  width: 100%;
+  background-color: var(--color-mist, #EEEEF5);
+  border-radius: var(--radius-full, 9999px);
+  overflow: hidden;
+}
+
+/* Sizes */
+.mm-progress--sm .mm-progress__track {
+  height: 6px;
+}
+
+.mm-progress--md .mm-progress__track {
+  height: 10px;
+}
+
+.mm-progress--lg .mm-progress__track {
+  height: 16px;
+}
+
+/* Fill */
+.mm-progress__fill {
+  height: 100%;
+  border-radius: var(--radius-full, 9999px);
+  transition: width 500ms ease-out;
+  min-width: 0;
+}
+
+/* Variants */
+.mm-progress--default .mm-progress__fill {
+  background: linear-gradient(90deg, var(--color-honey, #E8A317), var(--color-honey-light, #F5CC5C));
+}
+
+.mm-progress--success .mm-progress__fill {
+  background: linear-gradient(90deg, var(--color-success, #43A047), #66BB6A);
+}
+
+.mm-progress--warning .mm-progress__fill {
+  background: linear-gradient(90deg, var(--color-warning, #FB8C00), #FFA726);
+}
+
+/* Animated shimmer */
+.mm-progress--animated .mm-progress__fill {
+  background-size: 200% 100%;
+  animation: mm-progress-shimmer 2s linear infinite;
+}
+
+.mm-progress--default.mm-progress--animated .mm-progress__fill {
+  background: linear-gradient(
+    90deg,
+    var(--color-honey, #E8A317) 0%,
+    var(--color-honey-light, #F5CC5C) 50%,
+    var(--color-honey, #E8A317) 100%
+  );
+  background-size: 200% 100%;
+}
+
+.mm-progress--success.mm-progress--animated .mm-progress__fill {
+  background: linear-gradient(90deg, #43A047 0%, #66BB6A 50%, #43A047 100%);
+  background-size: 200% 100%;
+}
+
+.mm-progress--warning.mm-progress--animated .mm-progress__fill {
+  background: linear-gradient(90deg, #FB8C00 0%, #FFA726 50%, #FB8C00 100%);
+  background-size: 200% 100%;
+}
+
+@keyframes mm-progress-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Label */
+.mm-progress__label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-charcoal, #2D2D44);
+  text-align: right;
+}

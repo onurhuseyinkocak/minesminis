@@ -1,0 +1,221 @@
+/* ============================================================
+   WORLD MAP PAGE
+   ============================================================ */
+
+.world-map-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--mm-space-6) var(--mm-space-4);
+}
+
+/* Header */
+.world-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mm-space-4);
+  margin-bottom: var(--mm-space-8);
+}
+
+.world-map-title {
+  font-size: var(--mm-font-size-3xl);
+  font-weight: 800;
+  color: var(--mm-color-neutral-900);
+  margin: 0;
+}
+
+.world-map-subtitle {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-2);
+  font-size: var(--mm-font-size-lg);
+  color: var(--mm-color-neutral-500);
+  margin: var(--mm-space-1) 0 0;
+}
+
+.world-map-mimi__avatar {
+  font-size: 3rem;
+  display: block;
+  animation: mimi-bounce 2s ease-in-out infinite;
+}
+
+@keyframes mimi-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Grid */
+.world-map-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--mm-space-4);
+}
+
+@media (min-width: 540px) {
+  .world-map-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 860px) {
+  .world-map-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1120px) {
+  .world-map-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Card link wrapper */
+.world-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+.world-card-link--locked {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* ============================================================
+   WORLD CARD
+   ============================================================ */
+
+.world-card {
+  overflow: hidden;
+  border-radius: var(--mm-radius-xl);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.world-card--current {
+  box-shadow:
+    0 0 0 3px var(--mm-color-warning-400),
+    0 4px 20px rgba(245, 158, 11, 0.25);
+}
+
+.world-card--locked {
+  filter: grayscale(0.5);
+}
+
+.world-card-link:hover .world-card:not(.world-card--locked) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Card top (gradient area) */
+.world-card__top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  overflow: hidden;
+}
+
+.world-card__icon {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+}
+
+.world-card__lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.35);
+  color: var(--mm-color-neutral-600);
+}
+
+.world-card__current-badge,
+.world-card__complete-badge {
+  position: absolute;
+  top: var(--mm-space-2);
+  right: var(--mm-space-2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--mm-font-size-xs);
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--mm-radius-full);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--mm-color-neutral-800);
+}
+
+/* Card body */
+.world-card__body {
+  flex: 1;
+  padding: var(--mm-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-2);
+}
+
+.world-card__name {
+  font-size: var(--mm-font-size-lg);
+  font-weight: 700;
+  margin: 0;
+  color: var(--mm-color-neutral-900);
+}
+
+.world-card__theme {
+  font-size: var(--mm-font-size-sm);
+  color: var(--mm-color-neutral-500);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.world-card__progress-row {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-1);
+}
+
+.world-card__lesson-count {
+  font-size: var(--mm-font-size-xs);
+  color: var(--mm-color-neutral-400);
+  font-weight: 600;
+}
+
+.world-card__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--mm-font-size-sm);
+  font-weight: 700;
+  color: var(--mm-color-primary-600);
+  margin-top: var(--mm-space-1);
+}
+
+/* ============================================================
+   SMART-BOARD FRIENDLY
+   ============================================================ */
+
+@media (min-width: 1600px) {
+  .world-map-title {
+    font-size: 2.5rem;
+  }
+
+  .world-card__top {
+    height: 140px;
+  }
+
+  .world-card__icon {
+    font-size: 4rem;
+  }
+
+  .world-card__name {
+    font-size: var(--mm-font-size-xl);
+  }
+}

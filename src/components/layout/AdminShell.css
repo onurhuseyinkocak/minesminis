@@ -1,0 +1,401 @@
+/* ============================================
+   ADMIN SHELL - Professional, Operational
+   Deep Teal / Ink sidebar, clean white content
+   ============================================ */
+
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #F8F8FC; /* Snow */
+  color: #2D2D44; /* Charcoal */
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- Sidebar --- */
+.admin-shell__sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  background: linear-gradient(180deg, #1A1A2E 0%, #134D42 100%);
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: width var(--transition-base);
+  overflow: hidden;
+}
+
+.admin-shell__sidebar.collapsed {
+  width: 72px;
+}
+
+.admin-shell__sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 72px;
+}
+
+.admin-shell__sidebar-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.admin-shell__sidebar-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.admin-shell__sidebar.collapsed .admin-shell__sidebar-title {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.admin-shell__sidebar-subtitle {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.admin-shell__sidebar.collapsed .admin-shell__sidebar-subtitle {
+  opacity: 0;
+}
+
+/* --- Sidebar Navigation --- */
+.admin-shell__sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.admin-shell__sidebar-section {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.admin-shell__sidebar-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  padding: 8px 8px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.admin-shell__sidebar.collapsed .admin-shell__sidebar-section-label {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-shell__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+  font-size: 14px;
+  transition: color var(--transition-fast), background var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+}
+
+.admin-shell__nav-item svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.admin-shell__nav-item:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-shell__nav-item.active {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-shell__nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: #E8A317; /* Honey Amber */
+  border-radius: 0 3px 3px 0;
+}
+
+.admin-shell__sidebar.collapsed .admin-shell__nav-item {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.admin-shell__nav-label {
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.admin-shell__sidebar.collapsed .admin-shell__nav-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+/* --- Collapse Toggle --- */
+.admin-shell__collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  transition: color var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.admin-shell__collapse-btn:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.admin-shell__collapse-btn svg {
+  transition: transform var(--transition-base);
+}
+
+.admin-shell__sidebar.collapsed .admin-shell__collapse-btn svg {
+  transform: rotate(180deg);
+}
+
+.admin-shell__collapse-label {
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.admin-shell__sidebar.collapsed .admin-shell__collapse-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+/* --- Main Area --- */
+.admin-shell__body {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left var(--transition-base);
+}
+
+.admin-shell__sidebar.collapsed ~ .admin-shell__body {
+  margin-left: 72px;
+}
+
+/* --- Header --- */
+.admin-shell__header {
+  position: sticky;
+  top: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-xl);
+  background: #FFFFFF;
+  border-bottom: 1px solid #EEEEF5; /* Mist */
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.admin-shell__header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.admin-shell__header-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #1A1A2E; /* Ink */
+}
+
+.admin-shell__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.admin-shell__header-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5C5C7A; /* Slate */
+  position: relative;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.admin-shell__header-btn:hover {
+  background: #EEEEF5;
+  color: #1A1A2E;
+}
+
+.admin-shell__notification-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #E53935; /* Error */
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+}
+
+.admin-shell__header-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1A6B5A, #2A9D8F); /* Deep Teal gradient */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.admin-shell__header-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2D2D44;
+}
+
+/* --- Content --- */
+.admin-shell__content {
+  flex: 1;
+  padding: var(--spacing-xl);
+  max-width: 1400px;
+  width: 100%;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1023px) {
+  .admin-shell__sidebar {
+    transform: translateX(-100%);
+    z-index: 1100;
+    width: 280px;
+  }
+
+  .admin-shell__sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .admin-shell__sidebar.collapsed {
+    width: 280px;
+  }
+
+  .admin-shell__body {
+    margin-left: 0 !important;
+  }
+
+  .admin-shell__mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.5);
+    z-index: 1099;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+  }
+
+  .admin-shell__mobile-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .admin-shell__header {
+    padding: 0 var(--spacing-md);
+  }
+
+  .admin-shell__content {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-shell__header-name {
+    display: none;
+  }
+
+  .admin-shell__content {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* --- Dark Mode --- */
+[data-theme="dark"] .admin-shell {
+  background: #1A1A2E;
+  color: #D4D4E0;
+}
+
+[data-theme="dark"] .admin-shell__header {
+  background: #2D2D44;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .admin-shell__header-title {
+  color: #EEEEF5;
+}
+
+[data-theme="dark"] .admin-shell__header-btn {
+  color: #9393A8;
+}
+
+[data-theme="dark"] .admin-shell__header-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #EEEEF5;
+}

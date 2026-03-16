@@ -1,0 +1,313 @@
+/* ============================================================
+   WORLD DETAIL PAGE
+   ============================================================ */
+
+.world-detail-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--mm-space-4) var(--mm-space-4) var(--mm-space-10);
+}
+
+.world-detail-page--not-found {
+  text-align: center;
+  padding-top: var(--mm-space-16);
+}
+
+/* Back link */
+.world-detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mm-space-2);
+  font-size: var(--mm-font-size-sm);
+  font-weight: 600;
+  color: var(--mm-color-neutral-500);
+  text-decoration: none;
+  margin-bottom: var(--mm-space-4);
+  transition: color 0.2s;
+}
+
+.world-detail-back:hover {
+  color: var(--mm-color-primary-600);
+}
+
+/* ============================================================
+   WORLD HEADER
+   ============================================================ */
+
+.world-detail-header {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-6);
+  padding: var(--mm-space-6) var(--mm-space-8);
+  border-radius: var(--mm-radius-2xl);
+  color: #fff;
+  margin-bottom: var(--mm-space-8);
+}
+
+.world-detail-header__icon {
+  font-size: 4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+}
+
+.world-detail-header__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.world-detail-header__name {
+  font-size: var(--mm-font-size-2xl);
+  font-weight: 800;
+  margin: 0 0 var(--mm-space-1);
+}
+
+.world-detail-header__theme {
+  font-size: var(--mm-font-size-base);
+  opacity: 0.85;
+  margin: 0 0 var(--mm-space-3);
+}
+
+.world-detail-header__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-1);
+  max-width: 300px;
+}
+
+.world-detail-header__progress .mm-progress__track {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.world-detail-header__progress .mm-progress__fill {
+  background: #fff;
+}
+
+.world-detail-header__progress .mm-progress__label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.world-detail-header__count {
+  font-size: var(--mm-font-size-xs);
+  opacity: 0.75;
+}
+
+/* ============================================================
+   SECTION TITLES
+   ============================================================ */
+
+.world-detail-section-title {
+  font-size: var(--mm-font-size-xl);
+  font-weight: 700;
+  color: var(--mm-color-neutral-800);
+  margin: 0 0 var(--mm-space-4);
+}
+
+/* ============================================================
+   VOCABULARY PREVIEW
+   ============================================================ */
+
+.world-detail-vocab {
+  margin-bottom: var(--mm-space-8);
+}
+
+.world-detail-vocab__scroll {
+  display: flex;
+  gap: var(--mm-space-3);
+  overflow-x: auto;
+  padding-bottom: var(--mm-space-2);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.vocab-preview-card {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mm-space-2);
+  width: 96px;
+  padding: var(--mm-space-3) var(--mm-space-2);
+  background: var(--mm-color-neutral-50);
+  border-radius: var(--mm-radius-xl);
+  border: 1px solid var(--mm-color-neutral-100);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.vocab-preview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.vocab-preview-card__emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.vocab-preview-card__word {
+  font-size: var(--mm-font-size-sm);
+  font-weight: 600;
+  color: var(--mm-color-neutral-700);
+  text-align: center;
+}
+
+/* ============================================================
+   LESSON LIST
+   ============================================================ */
+
+.world-detail-lessons__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-3);
+}
+
+/* Card link wrappers */
+.lesson-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.lesson-card-link--locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Lesson card */
+.lesson-card {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-4);
+}
+
+.lesson-card--available {
+  border-left: 4px solid var(--mm-color-primary-500);
+}
+
+.lesson-card--completed {
+  border-left: 4px solid var(--mm-color-success-500);
+  background: var(--mm-color-success-50);
+}
+
+.lesson-card--locked {
+  border-left: 4px solid var(--mm-color-neutral-200);
+}
+
+/* Number circle */
+.lesson-card__number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--mm-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--mm-font-size-lg);
+  font-weight: 800;
+  background: var(--mm-color-neutral-100);
+  color: var(--mm-color-neutral-600);
+}
+
+.lesson-card__number--done {
+  background: var(--mm-color-success-500);
+  color: #fff;
+}
+
+.lesson-card--available .lesson-card__number {
+  background: var(--mm-color-primary-100);
+  color: var(--mm-color-primary-700);
+}
+
+/* Info */
+.lesson-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.lesson-card__title {
+  font-size: var(--mm-font-size-base);
+  font-weight: 700;
+  margin: 0 0 var(--mm-space-1);
+  color: var(--mm-color-neutral-800);
+}
+
+.lesson-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mm-space-2);
+}
+
+.lesson-card__duration,
+.lesson-card__xp {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--mm-font-size-xs);
+  color: var(--mm-color-neutral-400);
+  font-weight: 500;
+}
+
+/* Status area */
+.lesson-card__status {
+  flex-shrink: 0;
+}
+
+.lesson-card__done-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--mm-font-size-sm);
+  font-weight: 700;
+  color: var(--mm-color-success-600);
+}
+
+.lesson-card__lock-icon {
+  color: var(--mm-color-neutral-300);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 600px) {
+  .world-detail-header {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--mm-space-5);
+  }
+
+  .world-detail-header__progress {
+    max-width: 100%;
+  }
+
+  .lesson-card {
+    flex-wrap: wrap;
+  }
+
+  .lesson-card__status {
+    width: 100%;
+    margin-top: var(--mm-space-2);
+  }
+}
+
+/* Smart-board friendly */
+@media (min-width: 1600px) {
+  .world-detail-header__icon {
+    font-size: 5rem;
+  }
+
+  .world-detail-header__name {
+    font-size: var(--mm-font-size-3xl);
+  }
+
+  .lesson-card__title {
+    font-size: var(--mm-font-size-lg);
+  }
+
+  .lesson-card__number {
+    width: 52px;
+    height: 52px;
+    font-size: var(--mm-font-size-xl);
+  }
+}

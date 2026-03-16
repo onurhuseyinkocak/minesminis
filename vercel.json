@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/admin/(.*)",
+      "destination": "/api/admin-route?path=$1"
+    },
+    {
+      "source": "/((?!api/)(?!assets/)(?!images/)[^.]*)",
+      "destination": "/index.html"
+    }
+  ]
+}

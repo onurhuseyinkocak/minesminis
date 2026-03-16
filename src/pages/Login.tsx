@@ -1,0 +1,286 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../contexts/AuthContext';
+import { Languages, LogIn, UserPlus, Mail, Lock } from 'lucide-react';
+import { Button, Input, Tabs } from '../components/ui';
+import './Login.css';
+
+type Lang = 'en' | 'tr';
+
+const content = {
+  en: {
+    title: 'Welcome Back',
+    titleJoin: 'Create Account',
+    sub: 'Sign in to continue your adventure.',
+    subJoin: 'Join MinesMinis and start learning!',
+    tabLogin: 'Login',
+    tabJoin: 'Sign Up',
+    email: 'Email',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    passwordHint: 'At least 6 characters',
+    submitLogin: 'Sign In',
+    submitJoin: 'Create Account',
+    or: 'or',
+    googleBtn: 'Continue with Google',
+    hintLogin: "Don't have an account?",
+    hintJoin: 'Already have an account?',
+    signUp: 'Sign up',
+    login: 'Sign in',
+    errorPasswordMatch: 'Passwords do not match',
+    errorAlreadyRegistered: 'This email is already registered. Please sign in.',
+    errorInvalidLogin: 'Invalid email or password.',
+    errorGeneric: 'An error occurred. Please try again.',
+    sideTagline: 'Little Words, Big Worlds',
+    sideSub: 'Premium English education for children ages 1-10',
+  },
+  tr: {
+    title: 'Tekrar Hosgeldin',
+    titleJoin: 'Hesap Olustur',
+    sub: 'Macerana devam etmek icin giris yap.',
+    subJoin: "MinesMinis'e katil ve ogrenmeye basla!",
+    tabLogin: 'Giris Yap',
+    tabJoin: 'Kayit Ol',
+    email: 'E-posta',
+    password: 'Sifre',
+    confirmPassword: 'Sifre Tekrar',
+    passwordHint: 'En az 6 karakter',
+    submitLogin: 'Giris Yap',
+    submitJoin: 'Hesap Olustur',
+    or: 'veya',
+    googleBtn: 'Google ile devam et',
+    hintLogin: 'Hesabin yok mu?',
+    hintJoin: 'Zaten hesabin var mi?',
+    signUp: 'Kayit ol',
+    login: 'Giris yap',
+    errorPasswordMatch: 'Sifreler eslemiyor',
+    errorAlreadyRegistered: 'Bu e-posta zaten kayitli. Lutfen giris yapin.',
+    errorInvalidLogin: 'Gecersiz e-posta veya sifre.',
+    errorGeneric: 'Bir hata olustu. Lutfen tekrar deneyin.',
+    sideTagline: 'Kucuk Kelimeler, Buyuk Dunyalar',
+    sideSub: '1-10 yas arasi cocuklar icin premium Ingilizce egitimi',
+  },
+};
+
+const Login: React.FC = () => {
+  const [lang, setLang] = useState<Lang>('en');
+  const t = content[lang];
+
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp, signInWithGoogle } = useAuth();
+
+  const handleGoogleLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) {
+        if (error.message?.includes('popup-closed') || error.message?.includes('cancelled')) {
+          // User closed popup, silently ignore
+        } else {
+          setError(t.errorGeneric);
+        }
+      }
+    } catch {
+      setError(t.errorGeneric);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!isLogin && password !== confirmPassword) {
+      setError(t.errorPasswordMatch);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = isLogin
+        ? await signIn(email, password)
+        : await signUp(email, password);
+
+      if (error) {
+        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+          setError(t.errorAlreadyRegistered);
+          setIsLogin(true);
+        } else if (error.message.includes('Invalid login credentials')) {
+          setError(t.errorInvalidLogin);
+        } else {
+          setError(error.message);
+        }
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message?.includes('already registered')) {
+        setError(t.errorAlreadyRegistered);
+        setIsLogin(true);
+      } else {
+        setError(t.errorGeneric);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const activeTab = isLogin ? 'login' : 'signup';
+  const tabs = [
+    { id: 'login', label: t.tabLogin, icon: <LogIn size={16} /> },
+    { id: 'signup', label: t.tabJoin, icon: <UserPlus size={16} /> },
+  ];
+
+  return (
+    <div className="login-page">
+      {/* Language toggle */}
+      <div className="login-lang-toggle">
+        <Languages size={16} />
+        <button className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
+        <button className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
+      </div>
+
+      <motion.div
+        className="login-container"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        {/* Side Panel */}
+        <div className="login-side">
+          <motion.div
+            className="login-side-mimi"
+            animate={{ y: [0, -6, 0] }}
+            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+          >
+            🐉
+          </motion.div>
+          <div>
+            <h1 className="login-side-brand">MinesMinis</h1>
+            <p className="login-side-tagline">{t.sideTagline}<br />{t.sideSub}</p>
+          </div>
+        </div>
+
+        {/* Form Panel */}
+        <div className="login-form-panel">
+          <div className="login-header">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h2>{isLogin ? t.title : t.titleJoin}</h2>
+                <p>{isLogin ? t.sub : t.subJoin}</p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div className="login-tabs">
+            <Tabs
+              tabs={tabs}
+              activeTab={activeTab}
+              onChange={(id) => {
+                setIsLogin(id === 'login');
+                setError('');
+              }}
+              variant="pill"
+            />
+          </div>
+
+          <form onSubmit={handleSubmit} className="login-form">
+            <Input
+              label={t.email}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              disabled={loading}
+              icon={<Mail size={18} />}
+              size="lg"
+            />
+
+            <Input
+              label={t.password}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              disabled={loading}
+              minLength={6}
+              icon={<Lock size={18} />}
+              size="lg"
+            />
+
+            {!isLogin && (
+              <>
+                <Input
+                  label={t.confirmPassword}
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  disabled={loading}
+                  minLength={6}
+                  icon={<Lock size={18} />}
+                  size="lg"
+                />
+                <span className="login-password-hint">{t.passwordHint}</span>
+              </>
+            )}
+
+            {error && <div className="login-error">{error}</div>}
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={loading}
+              icon={isLogin ? <LogIn size={18} /> : <UserPlus size={18} />}
+            >
+              {isLogin ? t.submitLogin : t.submitJoin}
+            </Button>
+
+            <div className="login-divider"><span>{t.or}</span></div>
+
+            <button
+              type="button"
+              className="login-google-btn"
+              onClick={handleGoogleLogin}
+              disabled={loading}
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              {t.googleBtn}
+            </button>
+
+            <p className="login-toggle">
+              {isLogin ? (
+                <>{t.hintLogin}<button type="button" onClick={() => { setIsLogin(false); setError(''); }}>{t.signUp}</button></>
+              ) : (
+                <>{t.hintJoin}<button type="button" onClick={() => { setIsLogin(true); setError(''); }}>{t.login}</button></>
+              )}
+            </p>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Login;

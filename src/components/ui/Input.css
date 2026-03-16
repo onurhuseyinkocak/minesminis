@@ -1,0 +1,116 @@
+.mm-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 4px);
+  width: 100%;
+}
+
+.mm-input-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-charcoal, #2D2D44);
+  margin-bottom: 2px;
+}
+
+.mm-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mm-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 var(--space-md, 16px);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--color-ink, #1A1A2E);
+  background-color: var(--color-white, #FFFFFF);
+  border: 1.5px solid var(--color-cloud, #D4D4E0);
+  border-radius: var(--radius-sm, 8px);
+  outline: none;
+  transition: all 200ms ease-out;
+  -webkit-appearance: none;
+}
+
+.mm-input::placeholder {
+  color: var(--color-stone, #9393A8);
+}
+
+.mm-input:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-slate, #5C5C7A);
+}
+
+.mm-input:focus {
+  border-color: var(--color-honey, #E8A317);
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.15);
+}
+
+.mm-input:disabled {
+  background-color: var(--color-mist, #EEEEF5);
+  color: var(--color-stone, #9393A8);
+  cursor: not-allowed;
+}
+
+/* Sizes */
+.mm-input--sm {
+  height: 40px;
+  font-size: 13px;
+}
+
+.mm-input--md {
+  height: 44px;
+  font-size: 14px;
+}
+
+.mm-input--lg {
+  height: 52px;
+  font-size: 15px;
+}
+
+/* With icon */
+.mm-input--has-icon {
+  padding-left: 44px;
+}
+
+.mm-input-icon {
+  position: absolute;
+  left: var(--space-md, 16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-slate, #5C5C7A);
+  pointer-events: none;
+  width: 20px;
+  height: 20px;
+}
+
+.mm-input:focus ~ .mm-input-icon,
+.mm-input:focus + .mm-input-icon {
+  color: var(--color-honey, #E8A317);
+}
+
+/* Error state */
+.mm-input--error {
+  border-color: var(--color-error, #E53935);
+}
+
+.mm-input--error:focus {
+  border-color: var(--color-error, #E53935);
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.15);
+}
+
+.mm-input-error-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--color-error, #E53935);
+  margin-top: 2px;
+}
+
+.mm-input-helper-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--color-slate, #5C5C7A);
+  margin-top: 2px;
+}

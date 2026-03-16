@@ -1,0 +1,184 @@
+.sentence-scramble {
+  --ss-primary: var(--color-honey-amber, #E8A317);
+  --ss-secondary: var(--color-deep-teal, #1A6B5A);
+  --ss-success: var(--color-mimi-green, #4CAF50);
+  --ss-bg: var(--color-surface, #ffffff);
+  --ss-text: var(--color-text-primary, #1a1a2e);
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.sentence-scramble__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sentence-scramble__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--ss-secondary);
+  margin: 0;
+}
+
+.sentence-scramble__hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(232, 163, 23, 0.12);
+  color: var(--ss-primary);
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  justify-content: center;
+}
+
+.sentence-scramble__dropzone {
+  min-height: 120px;
+  border: 3px dashed rgba(26, 107, 90, 0.25);
+  border-radius: 16px;
+}
+
+.sentence-scramble__dropzone-label {
+  font-size: 1rem;
+  color: rgba(26, 26, 46, 0.5);
+  margin: 0 0 0.75rem;
+  text-align: center;
+}
+
+.sentence-scramble__placed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  min-height: 56px;
+}
+
+.sentence-scramble__chip {
+  padding: 0.75rem 1.25rem;
+  min-height: 56px;
+  border-radius: 14px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 3px solid transparent;
+  font-family: inherit;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sentence-scramble__chip:focus-visible {
+  outline: 3px solid var(--ss-primary);
+  outline-offset: 2px;
+}
+
+.sentence-scramble__chip--available {
+  background: var(--ss-bg);
+  border-color: var(--ss-secondary);
+  color: var(--ss-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sentence-scramble__chip--available:hover:not(:disabled) {
+  background: var(--ss-secondary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 107, 90, 0.25);
+}
+
+.sentence-scramble__chip--placed {
+  background: rgba(26, 107, 90, 0.1);
+  border-color: var(--ss-secondary);
+  color: var(--ss-secondary);
+}
+
+.sentence-scramble__chip--placed:hover {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+.sentence-scramble__available {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.sentence-scramble__feedback {
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sentence-scramble__feedback--correct {
+  background: rgba(76, 175, 80, 0.12);
+  color: var(--ss-success);
+}
+
+.sentence-scramble__feedback--wrong {
+  background: rgba(232, 163, 23, 0.12);
+  color: var(--ss-primary);
+}
+
+.sentence-scramble__actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Results */
+.sentence-scramble__results {
+  text-align: center;
+}
+
+.sentence-scramble__results-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sentence-scramble__big-emoji {
+  font-size: 4rem;
+}
+
+.sentence-scramble__results-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ss-secondary);
+  margin: 0;
+}
+
+.sentence-scramble__results-score {
+  font-size: 1.25rem;
+  color: var(--ss-text);
+  margin: 0;
+}
+
+/* Smart board */
+@media (min-width: 1024px) {
+  .sentence-scramble__chip {
+    min-height: 68px;
+    padding: 1rem 1.75rem;
+    font-size: 1.5rem;
+  }
+
+  .sentence-scramble__dropzone {
+    min-height: 140px;
+  }
+}

@@ -1,0 +1,337 @@
+/* ============================================================
+   Admin Curriculum Manager
+   ============================================================ */
+
+.adm-curriculum {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.adm-curriculum-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--admin-text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.adm-curriculum-header p {
+  font-size: 0.85rem;
+  color: var(--admin-text-secondary);
+  margin: 0.25rem 0 0;
+}
+
+/* ---- Worlds Grid ---- */
+.adm-worlds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.adm-world-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--admin-transition);
+}
+
+.adm-world-card:hover {
+  border-color: var(--admin-primary);
+  box-shadow: var(--admin-shadow);
+}
+
+.adm-world-card.active {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 2px rgba(212, 147, 13, 0.15);
+}
+
+.adm-world-banner {
+  height: 8px;
+  width: 100%;
+}
+
+.adm-world-body {
+  padding: 1rem 1.25rem;
+}
+
+.adm-world-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--admin-text);
+  margin: 0 0 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adm-world-title span {
+  font-size: 1.25rem;
+}
+
+.adm-world-meta {
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.adm-world-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ---- Lessons Panel ---- */
+.adm-curriculum-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.adm-worlds-list {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  overflow: hidden;
+}
+
+.adm-worlds-list-header {
+  padding: 0.875rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--admin-text);
+  border-bottom: 1px solid var(--admin-border);
+  background: var(--admin-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adm-world-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--admin-border-light);
+  cursor: pointer;
+  transition: background var(--admin-transition);
+}
+
+.adm-world-item:last-child {
+  border-bottom: none;
+}
+
+.adm-world-item:hover {
+  background: var(--admin-bg);
+}
+
+.adm-world-item.active {
+  background: var(--admin-primary-light);
+}
+
+.adm-world-item-color {
+  width: 6px;
+  height: 32px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.adm-world-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-world-item-name {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--admin-text);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.adm-world-item-count {
+  font-size: 0.7rem;
+  color: var(--admin-text-muted);
+}
+
+/* ---- Lessons Detail ---- */
+.adm-lessons-panel {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  overflow: hidden;
+}
+
+.adm-lessons-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adm-lessons-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--admin-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adm-lessons-list {
+  padding: 0.5rem 0;
+}
+
+.adm-lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--admin-border-light);
+  transition: background var(--admin-transition);
+}
+
+.adm-lesson-row:last-child {
+  border-bottom: none;
+}
+
+.adm-lesson-row:hover {
+  background: var(--admin-bg);
+}
+
+.adm-lesson-order {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--admin-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--admin-text-muted);
+  flex-shrink: 0;
+}
+
+.adm-lesson-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-lesson-name {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.adm-lesson-details {
+  font-size: 0.7rem;
+  color: var(--admin-text-muted);
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 2px;
+}
+
+.adm-lesson-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.adm-drag-handle {
+  cursor: grab;
+  color: var(--admin-text-muted);
+  padding: 0.25rem;
+}
+
+.adm-drag-handle:hover {
+  color: var(--admin-text-secondary);
+}
+
+/* ---- Activity Preview ---- */
+.adm-activities-section {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--admin-border);
+}
+
+.adm-activities-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--admin-text);
+  margin-bottom: 0.75rem;
+}
+
+.adm-activity-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  margin: 0.25rem 0.25rem 0.25rem 0;
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: 100px;
+  font-size: 0.725rem;
+  font-weight: 500;
+  color: var(--admin-text-secondary);
+}
+
+/* ---- Vocabulary Section ---- */
+.adm-vocab-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--admin-border);
+}
+
+.adm-vocab-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.625rem;
+  background: var(--admin-primary-light);
+  border: 1px solid rgba(212, 147, 13, 0.2);
+  border-radius: 6px;
+  font-size: 0.725rem;
+  font-weight: 500;
+  color: var(--admin-primary);
+}
+
+/* ---- Empty State ---- */
+.adm-curriculum-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  color: var(--admin-text-muted);
+  text-align: center;
+}
+
+.adm-curriculum-empty svg {
+  opacity: 0.3;
+  margin-bottom: 0.75rem;
+}
+
+.adm-curriculum-empty p {
+  font-size: 0.85rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+  .adm-curriculum-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .adm-worlds-grid {
+    grid-template-columns: 1fr;
+  }
+}
