@@ -288,10 +288,8 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .classroom-shell { background: var(--ink); color: var(--mist); }
-  .classroom-shell__topbar { background: var(--charcoal); border-bottom-color: rgba(255, 255, 255, 0.06); }
-  .classroom-shell__lesson-name { color: var(--stone); }
-  .classroom-shell__control { background: var(--charcoal); border-color: var(--slate); color: var(--cloud); }
-  .classroom-shell__control:hover { background: var(--charcoal); }
-}
+[data-theme="dark"] .classroom-shell { background: var(--ink); color: var(--mist); }
+[data-theme="dark"] .classroom-shell__topbar { background: var(--charcoal); border-bottom-color: rgba(255, 255, 255, 0.06); }
+[data-theme="dark"] .classroom-shell__lesson-name { color: var(--stone); }
+[data-theme="dark"] .classroom-shell__control { background: var(--charcoal); border-color: var(--slate); color: var(--cloud); }
+[data-theme="dark"] .classroom-shell__control:hover { background: var(--charcoal); }

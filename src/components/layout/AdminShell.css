@@ -360,23 +360,21 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .admin-shell {
-    background: var(--ink);
-    color: var(--cloud);
-  }
+[data-theme="dark"] .admin-shell {
+  background: var(--ink);
+  color: var(--cloud);
+}
 
-  .admin-shell__header {
-    background: var(--charcoal);
-    border-bottom-color: rgba(255, 255, 255, 0.06);
-  }
+[data-theme="dark"] .admin-shell__header {
+  background: var(--charcoal);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
 
-  .admin-shell__header-title { color: var(--mist); }
+[data-theme="dark"] .admin-shell__header-title { color: var(--mist); }
 
-  .admin-shell__header-btn { color: var(--stone); }
+[data-theme="dark"] .admin-shell__header-btn { color: var(--stone); }
 
-  .admin-shell__header-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--mist);
-  }
+[data-theme="dark"] .admin-shell__header-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--mist);
 }

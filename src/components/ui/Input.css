@@ -148,24 +148,22 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .mm-input-label {
-    color: var(--cloud);
-  }
+[data-theme="dark"] .mm-input-label {
+  color: var(--cloud);
+}
 
-  .mm-input {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.12);
-    color: var(--mist);
-  }
+[data-theme="dark"] .mm-input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--mist);
+}
 
-  .mm-input::placeholder {
-    color: rgba(255, 255, 255, 0.35);
-  }
+[data-theme="dark"] .mm-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
 
-  .mm-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.2);
-    background: rgba(255, 255, 255, 0.08);
-  }
+[data-theme="dark"] .mm-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }

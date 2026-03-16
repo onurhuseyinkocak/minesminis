@@ -41,9 +41,7 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .mm-skeleton {
-    background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.06) 75%);
-    background-size: 200% 100%;
-  }
+[data-theme="dark"] .mm-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
 }

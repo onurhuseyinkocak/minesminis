@@ -219,13 +219,11 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .mm-button--ghost {
-    color: var(--cloud);
-  }
+[data-theme="dark"] .mm-button--ghost {
+  color: var(--cloud);
+}
 
-  .mm-button--ghost:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--primary-light);
-  }
+[data-theme="dark"] .mm-button--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--primary-light);
 }

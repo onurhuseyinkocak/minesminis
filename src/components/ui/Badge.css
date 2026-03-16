@@ -77,9 +77,7 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .mm-badge--default {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--cloud);
-  }
+[data-theme="dark"] .mm-badge--default {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cloud);
 }

@@ -161,22 +161,20 @@ body.mm-modal-open {
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .mm-modal {
-    background: var(--charcoal);
-  }
+[data-theme="dark"] .mm-modal {
+  background: var(--charcoal);
+}
 
-  .mm-modal__title {
-    color: var(--mist);
-  }
+[data-theme="dark"] .mm-modal__title {
+  color: var(--mist);
+}
 
-  .mm-modal__close {
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--stone);
-  }
+[data-theme="dark"] .mm-modal__close {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--stone);
+}
 
-  .mm-modal__close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--mist);
-  }
+[data-theme="dark"] .mm-modal__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--mist);
 }

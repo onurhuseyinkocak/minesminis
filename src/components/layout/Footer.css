@@ -68,11 +68,9 @@
   .footer__links { gap: var(--space-md); }
 }
 
-@media (prefers-color-scheme: dark) {
-  .footer {
-    background: var(--ink);
-    border-top-color: rgba(255, 255, 255, 0.06);
-  }
-
-  .footer__link:hover { color: var(--primary-light); }
+[data-theme="dark"] .footer {
+  background: var(--ink);
+  border-top-color: rgba(255, 255, 255, 0.06);
 }
+
+[data-theme="dark"] .footer__link:hover { color: var(--primary-light); }

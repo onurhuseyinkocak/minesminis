@@ -73,12 +73,10 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .mm-progress__track {
-    background: rgba(255, 255, 255, 0.08);
-  }
+[data-theme="dark"] .mm-progress__track {
+  background: rgba(255, 255, 255, 0.08);
+}
 
-  .mm-progress__label {
-    color: var(--stone);
-  }
+[data-theme="dark"] .mm-progress__label {
+  color: var(--stone);
 }

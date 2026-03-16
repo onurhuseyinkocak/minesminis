@@ -12,10 +12,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-xl);
-  background: rgba(255, 255, 255, 0.80);
+  background: var(--bg-elevated);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(238, 238, 245, 0.6);
+  border-bottom: 1px solid var(--border-light);
   z-index: var(--z-sticky);
   transition:
     background var(--transition-slow),
@@ -25,7 +25,7 @@
 
 .topnav--scrolled {
   box-shadow: var(--shadow-sm);
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--bg-card);
 }
 
 /* -- Logo ------------------------------------------------------------- */
@@ -360,19 +360,17 @@
 
 /* -- Dark mode -------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .topnav {
-    background: rgba(26, 26, 46, 0.82);
-    border-bottom-color: rgba(255, 255, 255, 0.06);
-  }
-
-  .topnav--scrolled {
-    background: rgba(26, 26, 46, 0.95);
-  }
-
-  .topnav__link:hover { background: rgba(255, 255, 255, 0.06); }
-  .topnav__mobile-menu { background: var(--ink); }
-  .topnav__mobile-overlay.open { background: rgba(0, 0, 0, 0.6); }
-  .topnav__hamburger { color: var(--mist); }
-  .topnav__hamburger:hover { background: rgba(255, 255, 255, 0.06); }
+[data-theme="dark"] .topnav {
+  background: rgba(26, 26, 46, 0.82);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
 }
+
+[data-theme="dark"] .topnav--scrolled {
+  background: rgba(26, 26, 46, 0.95);
+}
+
+[data-theme="dark"] .topnav__link:hover { background: rgba(255, 255, 255, 0.06); }
+[data-theme="dark"] .topnav__mobile-menu { background: var(--ink); }
+[data-theme="dark"] .topnav__mobile-overlay.open { background: rgba(0, 0, 0, 0.6); }
+[data-theme="dark"] .topnav__hamburger { color: var(--mist); }
+[data-theme="dark"] .topnav__hamburger:hover { background: rgba(255, 255, 255, 0.06); }
