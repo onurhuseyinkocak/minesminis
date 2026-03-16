@@ -1,0 +1,202 @@
+/* ============================================================
+   SplashScreen.css — Loading screen with brand colors
+   Design System: Honey Amber / Deep Teal palette
+   ============================================================ */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(1.02);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.splash.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.splash.hide {
+  opacity: 0;
+  transform: scale(0.97);
+  pointer-events: none;
+}
+
+/* Background */
+.splash-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, var(--color-ink) 0%, #0f0f22 50%, #0c1c18 100%);
+  z-index: -1;
+}
+
+.splash-bg::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 163, 23, 0.12) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Center Content */
+.splash-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  animation: splashFloat 2s ease-in-out infinite alternate;
+}
+
+@keyframes splashFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-6px); }
+}
+
+/* Logo */
+.logo-box {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 3px rgba(232, 163, 23, 0.3),
+    0 0 40px rgba(232, 163, 23, 0.15),
+    var(--shadow-xl);
+  animation: logoPulse 2s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.3), 0 0 40px rgba(232, 163, 23, 0.15), var(--shadow-xl); }
+  50% { box-shadow: 0 0 0 5px rgba(232, 163, 23, 0.4), 0 0 60px rgba(232, 163, 23, 0.25), var(--shadow-xl); }
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Brand Text */
+.brand {
+  font-family: 'Nunito', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.brand span {
+  color: var(--secondary);
+}
+
+.tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: var(--color-stone);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+/* Loading Bar */
+.loader {
+  width: 200px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  margin-top: var(--space-md);
+}
+
+.loader-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+  background-size: 200% 100%;
+  animation: loaderSlide 1.5s ease-in-out infinite;
+}
+
+@keyframes loaderSlide {
+  0% {
+    width: 0%;
+    background-position: 0% 0;
+  }
+  50% {
+    width: 70%;
+    background-position: 100% 0;
+  }
+  100% {
+    width: 100%;
+    background-position: 0% 0;
+  }
+}
+
+/* Credits Footer */
+.credits {
+  position: absolute;
+  bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--color-slate);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+}
+
+.credits p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.credits .role {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-stone);
+}
+
+.credits strong {
+  color: var(--color-cloud);
+  font-weight: 600;
+}
+
+.credits .dot {
+  color: var(--color-slate);
+  font-size: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .logo-box {
+    width: 96px;
+    height: 96px;
+  }
+
+  .brand {
+    font-size: 1.75rem;
+  }
+
+  .loader {
+    width: 160px;
+  }
+
+  .credits {
+    bottom: 28px;
+    gap: var(--space-sm);
+    font-size: 0.75rem;
+  }
+}

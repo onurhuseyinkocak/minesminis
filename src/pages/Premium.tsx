@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Crown, Check, Star, Sparkles, Zap, MessageCircle, Gamepad2, BookOpen, Trophy } from 'lucide-react';
+import './Premium.css';
 
 const premiumFeatures = [
   { icon: <MessageCircle size={32} strokeWidth={2.5} />, title: 'Unlimited Chat with Mimi', description: 'Practice English as much as you want with our AI dragon Mimi!' },

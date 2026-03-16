@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import './DailyReward.css';
 import { useGamification } from '../contexts/GamificationContext';
 
 const DailyReward: React.FC = () => {

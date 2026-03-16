@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { BookOpen, Volume2, Star, Trophy, Sparkles, Search } from "lucide-react";
 import ContentPageHeader from '../components/ContentPageHeader';
+import './Words.css';
 import { supabase } from '../config/supabase';
 import { kidsWords as fallbackWords } from '../data/wordsData';
 

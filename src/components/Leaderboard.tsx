@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './Leaderboard.css';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { Trophy, Crown, Star, ChevronRight, Clock } from 'lucide-react';

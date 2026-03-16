@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import './BadgeShowcase.css';
 import { useGamification, Badge } from '../contexts/GamificationContext';
 
 interface BadgeShowcaseProps {

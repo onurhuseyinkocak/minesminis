@@ -5,6 +5,7 @@ import { fallbackGames } from '../data/fallbackData';
 import toast from 'react-hot-toast';
 import { Gamepad2, Sparkles, BookOpen, Library, GraduationCap, Target, Heart, Play, X } from 'lucide-react';
 import ContentPageHeader from '../components/ContentPageHeader';
+import './Games.css';
 
 type Game = {
   id: string;

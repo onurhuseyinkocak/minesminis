@@ -19,6 +19,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import ContentPageHeader from '../components/ContentPageHeader';
+import './Worksheets.css';
 
 type Worksheet = {
   id: string;

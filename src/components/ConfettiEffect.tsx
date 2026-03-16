@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './ConfettiEffect.css';
 
 interface ConfettiEffectProps {
   isActive?: boolean;

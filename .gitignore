@@ -27,3 +27,4 @@ dist-ssr
 server/.env
 !.env.example
 server/uploads
+.vercel

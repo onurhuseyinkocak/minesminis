@@ -1,4 +1,5 @@
 import React from 'react';
+import './FloatingThemeToggle.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';

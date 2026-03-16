@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import './XPBar.css';
 import { useGamification } from '../contexts/GamificationContext';
 
 interface XPBarProps {

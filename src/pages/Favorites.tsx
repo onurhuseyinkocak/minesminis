@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
+import './Favorites.css';
 
 interface Favorite {
   id: string;

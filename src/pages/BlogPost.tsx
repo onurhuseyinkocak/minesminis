@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import './Blog.css';
 import { ArrowLeft } from 'lucide-react';
 
 function sanitizeHtml(html: string): string {

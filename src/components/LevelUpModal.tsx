@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import './LevelUpModal.css';
 import { useGamification } from '../contexts/GamificationContext';
 
 const LevelUpModal: React.FC = () => {

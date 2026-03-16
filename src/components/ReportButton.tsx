@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './ReportButton.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, Send, X, Bug } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';

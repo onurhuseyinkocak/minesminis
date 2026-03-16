@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import XPBar from '../components/XPBar';
 import toast from 'react-hot-toast';
+import './Profile.css';
 
 const Profile: React.FC = () => {
   const { user, userProfile, refreshUserProfile } = useAuth();

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Star, Clock, Users, Music, BookOpen, Heart, Search, X } from 'lucide-react';
 import ContentPageHeader from '../components/ContentPageHeader';
+import './Videos.css';
 import { videoStore } from '../data/videoStore';
 
 type Video = {

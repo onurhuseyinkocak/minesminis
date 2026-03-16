@@ -26,6 +26,7 @@ import type { MusicKey, SFXKey } from '../../data/soundLibrary';
 import StoryScene from '../../components/Story/StoryScene';
 import StoryNarrator from '../../components/Story/StoryNarrator';
 import StoryChoices from '../../components/Story/StoryChoices';
+import './StoryPage.css';
 
 const StoryPage: React.FC = () => {
   const navigate = useNavigate();
