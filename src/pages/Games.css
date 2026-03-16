@@ -24,7 +24,7 @@
   padding: var(--space-sm) var(--space-lg);
   border-radius: var(--radius-full);
   border: 1.5px solid var(--border-light);
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bg-elevated);
   backdrop-filter: blur(8px);
   color: var(--text-secondary);
   font-family: var(--font-display);
@@ -39,8 +39,8 @@
 .modern-tab:hover {
   border-color: var(--primary);
   color: var(--primary-dark);
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 8px var(--primary-glow);
+  background: var(--primary-pale);
+  box-shadow: var(--shadow-sm);
 }
 
 .modern-tab:active {
@@ -243,7 +243,7 @@
 
 /* ── Game Info ── */
 .game-info {
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-md) var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);

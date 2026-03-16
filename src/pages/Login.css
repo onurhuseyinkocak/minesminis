@@ -133,7 +133,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 40%);
+  background: radial-gradient(circle at 30% 70%, var(--primary-glow) 0%, transparent 40%);
   pointer-events: none;
 }
 
@@ -151,7 +151,7 @@
 .login-side-mimi {
   font-size: 100px;
   line-height: 1;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 8px 24px var(--primary-glow));
   position: relative;
   z-index: 1;
 }

@@ -885,6 +885,14 @@ h1, h2, h3 {
 
   --gradient-hero: linear-gradient(160deg, var(--ink) 0%, var(--charcoal) 40%, var(--ink) 100%);
   --gradient-warm: linear-gradient(135deg, #2A2520 0%, #332A20 50%, #3A3020 100%);
+  --gradient-mimi: linear-gradient(180deg, #1B3A2A 0%, #1A3025 100%);
+  --gradient-sky: linear-gradient(180deg, #1A2A3A 0%, #1A2535 30%, #1A2030 100%);
+  --gradient-primary: linear-gradient(135deg, #C4880F 0%, #E8A317 100%);
+  --gradient-secondary: linear-gradient(135deg, #134D42 0%, #1A6B5A 100%);
+  --gradient-premium: linear-gradient(135deg, #0E0E1A 0%, #1A1A2E 100%);
+
+  --primary-glow: rgba(232, 163, 23, 0.2);
+  --error-soft: rgba(229, 57, 53, 0.15);
 
   --focus-ring: 0 0 0 3px rgba(245, 204, 92, 0.35);
 }

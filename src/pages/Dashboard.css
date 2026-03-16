@@ -22,7 +22,7 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-lg);
-  background: var(--bg-card);
+  background: var(--primary-pale);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
   position: relative;
@@ -476,7 +476,7 @@
   box-shadow: var(--shadow-sm);
 }
 .stat-icon.streak {
-  background: var(--primary-pale);
+  background: var(--error-soft);
   box-shadow: var(--shadow-sm);
 }
 .stat-icon.lessons {

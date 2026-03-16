@@ -236,11 +236,11 @@
   width: 340px;
   height: 340px;
   border-radius: 50%;
-  background: var(--bg-muted);
+  background: var(--primary-pale);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed var(--border-light);
+  border: 2px dashed var(--primary-light);
 }
 
 .landing-hero-mimi::before {
@@ -624,8 +624,8 @@
 }
 
 .landing-feature-icon--blue {
-  background: var(--info);
-  color: var(--text-on-primary);
+  background: var(--secondary-pale);
+  color: var(--info);
 }
 
 .landing-feature-card:has(.landing-feature-icon--blue)::before {
