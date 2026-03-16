@@ -4,8 +4,8 @@ export const registerServiceWorker = () => {
             const swUrl = '/service-worker.js';
             navigator.serviceWorker
                 .register(swUrl)
-                .then((registration) => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                .then(() => {
+                    // ServiceWorker registered successfully
                 })
                 .catch((error) => {
                     console.error('ServiceWorker registration failed: ', error);

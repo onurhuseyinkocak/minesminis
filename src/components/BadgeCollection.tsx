@@ -15,10 +15,12 @@ const BadgeCollection: React.FC = () => {
     const earned = userBadges.filter(b => b.earned).length;
     const total = userBadges.length;
     const percentage = (earned / total) * 100;
+    let confettiTimer: ReturnType<typeof setTimeout> | undefined;
     if (percentage >= 25 && percentage % 25 < 5) {
       setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
+      confettiTimer = setTimeout(() => setShowConfetti(false), 3000);
     }
+    return () => { if (confettiTimer) clearTimeout(confettiTimer); };
   }, []);
 
   const filteredBadges = badges.filter(badge => {
@@ -136,7 +138,8 @@ const BadgeCollection: React.FC = () => {
         .badge-filters button {
           padding: 10px 20px;
           border: 2px solid var(--cloud);
-          background: white;
+          background: var(--bg-card);
+          color: var(--text-body);
           border-radius: 12px;
           cursor: pointer;
           font-weight: 600;
@@ -156,7 +159,7 @@ const BadgeCollection: React.FC = () => {
         }
 
         .badge-card {
-          background: white;
+          background: var(--bg-card);
           border-radius: 16px;
           padding: 24px;
           text-align: center;
@@ -227,7 +230,7 @@ const BadgeCollection: React.FC = () => {
         }
 
         .badge-celebration {
-          background: white;
+          background: var(--bg-card);
           border-radius: 24px;
           padding: 48px;
           text-align: center;

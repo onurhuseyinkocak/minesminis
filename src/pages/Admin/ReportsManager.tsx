@@ -217,7 +217,7 @@ const ReportsManager: React.FC = () => {
                     margin-top: 20px;
                 }
                 .report-admin-card {
-                    background: white;
+                    background: var(--bg-card);
                     border-radius: 16px;
                     border: 1px solid var(--cloud);
                     overflow: hidden;

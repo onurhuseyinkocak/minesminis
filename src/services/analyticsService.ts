@@ -1,17 +1,17 @@
 export const analyticsService = {
-  trackLogin(method: string) {
-    console.log('Analytics: login', { method });
+  trackLogin(_method: string) {
+    // TODO: integrate real analytics (e.g. Firebase Analytics)
   },
 
-  trackPageView(pageName: string) {
-    console.log('Analytics: page_view', { page_name: pageName });
+  trackPageView(_pageName: string) {
+    // TODO: integrate real analytics
   },
 
-  trackFavorite(materialType: string) {
-    console.log('Analytics: add_to_favorites', { material_type: materialType });
+  trackFavorite(_materialType: string) {
+    // TODO: integrate real analytics
   },
 
-  trackShare(postType: string) {
-    console.log('Analytics: share', { post_type: postType });
+  trackShare(_postType: string) {
+    // TODO: integrate real analytics
   },
 };

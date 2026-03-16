@@ -855,7 +855,7 @@ input::placeholder, textarea::placeholder {
    ========================================================================== */
 
 .mm-card {
-  background: var(--white);
+  background: var(--bg-card);
   border-radius: 16px;
   box-shadow: var(--shadow-card);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -969,10 +969,40 @@ h1, h2, h3 {
   color: var(--text-body);
 }
 
+[data-theme="dark"] #root {
+  background: linear-gradient(180deg, var(--ink) 0%, var(--charcoal) 30%, var(--ink) 100%);
+}
+
 [data-theme="dark"] ::-webkit-scrollbar-track { background: var(--charcoal); }
 [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #4A4A65; }
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #5A5A75; }
 [data-theme="dark"] ::selection { background: var(--primary-dark); color: var(--white); }
+
+/* Dark overrides for shared utilities */
+[data-theme="dark"] .mm-card {
+  background: var(--bg-card);
+}
+[data-theme="dark"] .modern-tabs {
+  background: var(--bg-soft);
+}
+[data-theme="dark"] .modern-tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+}
+[data-theme="dark"] .modern-tab.active {
+  background: var(--bg-card);
+  color: var(--primary-light);
+}
+[data-theme="dark"] .badge-success {
+  background: var(--success-pale);
+}
+[data-theme="dark"] .badge-warning {
+  background: var(--warning-pale);
+}
+[data-theme="dark"] .skeleton {
+  background: linear-gradient(90deg, var(--bg-soft) 25%, var(--bg-muted) 50%, var(--bg-soft) 75%);
+  background-size: 200% 100%;
+}
 
 /* ==========================================================================
    10. PRINT STYLES

@@ -68,7 +68,7 @@ const LivingBearImages: React.FC<LivingBearImagesProps> = ({ onMascotClick, onHo
         });
 
         mascotRoaming.startRoaming();
-        console.log('🎨 Living AI Mascot is now active on your website!');
+        // Living AI Mascot activated
 
         return () => {
             unsubscribe();

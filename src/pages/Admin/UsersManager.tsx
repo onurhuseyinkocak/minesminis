@@ -253,9 +253,7 @@ function UsersManager() {
                 { duration: 10000 }
             );
 
-            // In production: Send welcome email with password
-            console.log('Welcome email would be sent to:', newUserData.email);
-            console.log('With password:', password);
+            // TODO: In production, send welcome email with credentials
 
             setIsModalOpen(false);
             setNewUserData({

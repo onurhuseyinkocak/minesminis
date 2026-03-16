@@ -174,7 +174,7 @@ function AdminAnalytics() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
-                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
                                 <Area type="monotone" dataKey="users" stroke="var(--accent-blue)" strokeWidth={2} fill="url(#usersGrad)" />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -196,7 +196,7 @@ function AdminAnalytics() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
-                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
                                 <Bar dataKey="active" fill="var(--accent-blue)" radius={[4, 4, 0, 0]} name="Active Users" />
                                 <Bar dataKey="new" fill="var(--accent-emerald)" radius={[4, 4, 0, 0]} name="New Users" />
@@ -217,7 +217,7 @@ function AdminAnalytics() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" horizontal={false} />
                                 <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
                                 <YAxis type="category" dataKey="world" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} width={60} />
-                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Bar dataKey="completed" fill="var(--accent-emerald)" radius={[0, 4, 4, 0]} name="Completed" stackId="a" />
                                 <Bar dataKey="started" fill="var(--accent-amber)" radius={[0, 4, 4, 0]} name="In Progress" stackId="a" />
                             </BarChart>
@@ -250,7 +250,7 @@ function AdminAnalytics() {
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
-                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
                             </PieChart>
                         </ResponsiveContainer>
@@ -269,7 +269,7 @@ function AdminAnalytics() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="streak" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'var(--stone)' }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
-                                <Tooltip contentStyle={{ background: 'var(--white)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Bar dataKey="users" fill="var(--accent-orange)" radius={[4, 4, 0, 0]} name="Users" />
                             </BarChart>
                         </ResponsiveContainer>

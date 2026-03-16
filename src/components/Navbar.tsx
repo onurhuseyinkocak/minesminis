@@ -25,19 +25,19 @@ const NAV_ITEMS = [
   { to: "/games", icon: Gamepad2, label: "Games" },
   { to: "/words", icon: BookOpen, label: "Words" },
   { to: "/videos", icon: Video, label: "Videos" },
-  { to: "/worksheets", icon: FileText, label: "Sheets" },
+  { to: "/story", icon: FileText, label: "Stories" },
 ] as const;
 
 const TAB_ITEMS_BEFORE = [
   { to: "/", icon: Home, label: "Home" },
-  { to: "/ataturk", icon: Shield, label: "Ataturk" },
+  { to: "/blog", icon: Shield, label: "Blog" },
   { to: "/login", icon: UserCircle, label: "Login" },
 ];
 
 const TAB_ITEMS_AFTER = [
   { to: "/dashboard", icon: Home, label: "Home" },
   { to: "/games", icon: Gamepad2, label: "Games" },
-  { to: "/favorites", icon: Heart, label: "Favs" },
+  { to: "/words", icon: Heart, label: "Words" },
   { to: "/profile", icon: UserCircle, label: "Profile" },
 ];
 
@@ -100,11 +100,11 @@ function Navbar() {
             <>
               <XPBar compact />
               <Link
-                to="/favorites"
-                className={`nav-icon-btn ${isActive("/favorites") ? "active" : ""}`}
-                title="Favorites"
+                to="/words"
+                className={`nav-icon-btn ${isActive("/words") ? "active" : ""}`}
+                title="Words"
               >
-                <Heart size={18} />
+                <BookOpen size={18} />
               </Link>
               <Link
                 to="/profile"
@@ -122,7 +122,7 @@ function Navbar() {
                 </Link>
               )}
               <Link
-                to="/parent-dashboard"
+                to="/parent"
                 className="nav-icon-btn"
                 title="Parents"
               >
@@ -182,10 +182,10 @@ function Navbar() {
                 </Link>
               ))}
               <div className="nav-mobile-divider" />
-              <Link to="/favorites" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>
-                <Heart size={20} /> <span>Favorites</span>
+              <Link to="/words" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>
+                <BookOpen size={20} /> <span>Words</span>
               </Link>
-              <Link to="/parent-dashboard" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>
+              <Link to="/parent" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>
                 <ShieldCheck size={20} /> <span>Parents</span>
               </Link>
               {isAdmin && (

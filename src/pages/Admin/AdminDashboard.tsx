@@ -222,7 +222,7 @@ function AdminDashboard() {
                                 />
                                 <Tooltip
                                     contentStyle={{
-                                        background: 'var(--white)',
+                                        background: 'var(--bg-card)',
                                         border: '1px solid var(--cloud)',
                                         borderRadius: 8,
                                         fontSize: '0.8rem',

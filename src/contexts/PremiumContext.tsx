@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components -- context file: exports Provider + usePremium */
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 import { getApiBase } from '../utils/apiBase';
 
@@ -273,7 +273,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <PremiumContext.Provider
-      value={{
+      value={useMemo(() => ({
         isPremium,
         plan,
         subscriptionStatus,
@@ -282,7 +282,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
         checkoutUrl,
         customerPortalUrl,
         refreshSubscription,
-      }}
+      }), [isPremium, plan, subscriptionStatus, expiresAt, isLoading, checkoutUrl, customerPortalUrl, refreshSubscription])}
     >
       {children}
     </PremiumContext.Provider>

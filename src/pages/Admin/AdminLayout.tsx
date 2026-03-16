@@ -23,7 +23,7 @@ import AdminSettings from './AdminSettings';
 import './AdminLayout.css';
 
 const ADMIN_SESSION_KEY = 'admin_session';
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Wealthy*520';
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || '';
 
 const navSections = [
     {
@@ -60,6 +60,10 @@ function AdminLayout() {
 
     const handlePasswordLogin = () => {
         setLoginError('');
+        if (!ADMIN_PASSWORD) {
+            setLoginError('Admin password not configured. Contact administrator.');
+            return;
+        }
         if (password === ADMIN_PASSWORD) {
             sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
             setIsAdmin(true);

@@ -179,9 +179,9 @@ describe('Navbar Component', () => {
     renderNavbar();
     // Nav links appear in both desktop nav and possibly mobile bottom bar
     expect(screen.getAllByText('Games').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('Words')).toBeInTheDocument();
-    expect(screen.getByText('Videos')).toBeInTheDocument();
-    expect(screen.getByText('Sheets')).toBeInTheDocument();
+    expect(screen.getAllByText('Words').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Videos').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Stories').length).toBeGreaterThanOrEqual(1);
   });
 
   it('shows admin icon for admin users', () => {
@@ -227,7 +227,7 @@ describe('Navbar Component', () => {
     renderNavbar();
     fireEvent.click(screen.getByLabelText('Menu'));
     // Mobile menu should now be visible with links
-    expect(screen.getByText('Favorites')).toBeInTheDocument();
+    expect(screen.getAllByText('Words').length).toBeGreaterThanOrEqual(1);
   });
 
   it('shows user profile name when authenticated', () => {
@@ -253,13 +253,13 @@ describe('Navbar Component', () => {
     expect(mockSignOut).toHaveBeenCalledTimes(1);
   });
 
-  it('favorites link is present for authenticated user', () => {
+  it('words link is present for authenticated user', () => {
     mockAuthValue.user = { uid: 'u1', email: 'test@test.com' };
     mockAuthValue.userProfile = { display_name: 'User' };
     renderNavbar();
-    const favLink = screen.getByTitle('Favorites');
-    expect(favLink).toBeInTheDocument();
-    expect(favLink.getAttribute('href')).toBe('/favorites');
+    const wordsLink = screen.getByTitle('Words');
+    expect(wordsLink).toBeInTheDocument();
+    expect(wordsLink.getAttribute('href')).toBe('/words');
   });
 
   it('profile link is present for authenticated user', () => {
@@ -291,6 +291,6 @@ describe('Navbar Component', () => {
     unmount();
 
     renderNavbar();
-    expect(screen.getByText('Favs')).toBeInTheDocument();
+    expect(screen.getAllByText('Words').length).toBeGreaterThanOrEqual(1);
   });
 });

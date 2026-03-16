@@ -32,7 +32,7 @@ const Footer = () => {
               <Link to="/games"><Gamepad2 size={15} /> Games</Link>
               <Link to="/words"><BookOpen size={15} /> Words</Link>
               <Link to="/videos"><Video size={15} /> Videos</Link>
-              <Link to="/worksheets"><FileText size={15} /> Sheets</Link>
+              <Link to="/story"><FileText size={15} /> Stories</Link>
             </nav>
 
             <div className="footer-social">

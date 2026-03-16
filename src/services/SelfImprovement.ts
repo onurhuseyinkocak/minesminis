@@ -38,8 +38,8 @@ class SelfImprovementService {
     }
 
     // 2. GENERATE: Propose a fix (would call AI in real implementation)
-    public async generatePatch(issue: AnimationIssue): Promise<OptimizationPatch | null> {
-        console.log("Generating patch for:", issue);
+    public async generatePatch(_issue: AnimationIssue): Promise<OptimizationPatch | null> {
+        // Generating patch for issue
         // Mock response
         return {
             id: `patch-${Date.now()}`,
@@ -50,14 +50,14 @@ class SelfImprovementService {
     }
 
     // 3. VALIDATE: Run sandboxed tests (would run Playwright in real implementation)
-    public async validatePatch(patch: OptimizationPatch): Promise<boolean> {
-        console.log("Validating patch:", patch.id);
+    public async validatePatch(_patch: OptimizationPatch): Promise<boolean> {
+        // Validating patch
         return true; // Mock success
     }
 
     // 4. APPLY: Apply the patch (controlled environment only)
-    public async applyPatch(patch: OptimizationPatch): Promise<void> {
-        console.log("Applying patch:", patch.id);
+    public async applyPatch(_patch: OptimizationPatch): Promise<void> {
+        // Applying patch
         // In a real app, this would write to fs or trigger a PR
     }
 }

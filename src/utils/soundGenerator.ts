@@ -14,7 +14,7 @@ function getContext(): AudioContext {
 
 /** Soft ambient music loop - doesn't overpower */
 /** @param _ reserved for future use (e.g. theme) */
-export function playAmbientMusic(_: string): () => void { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function playAmbientMusic(_: string): () => void {
   const ctx = getContext();
   const gain = ctx.createGain();
   gain.gain.value = 0.15;
@@ -182,7 +182,7 @@ export function playPageTurn(): void {
 
 /** Child-friendly ambient music loop - major chords, warm tone */
 /** @param _ reserved for future use */
-export function createAmbientLoop(_: string): { stop: () => void } { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function createAmbientLoop(_: string): { stop: () => void } {
   const ctx = getContext();
   const masterGain = ctx.createGain();
   masterGain.gain.value = 0;

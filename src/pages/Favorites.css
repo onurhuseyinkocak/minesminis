@@ -330,3 +330,19 @@
     font-size: 1.125rem;
   }
 }
+
+/* ==========================================================================
+   DARK MODE OVERRIDES
+   ========================================================================== */
+
+[data-theme="dark"] .favorite-type-badge {
+  background: rgba(26, 26, 46, 0.85);
+}
+
+[data-theme="dark"] .remove-favorite-btn {
+  background: rgba(26, 26, 46, 0.85);
+}
+
+[data-theme="dark"] .favorite-card {
+  background: var(--bg-card);
+}

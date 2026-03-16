@@ -1,9 +1,13 @@
 import { getSupabase, getEnvStatus, getSupabaseUnavailableResponse } from './_lib/admin.js';
+import crypto from 'crypto';
 
 function checkAuth(req) {
   const pw = req.headers['x-admin-password'];
-  const adminPass = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Wealthy*520';
-  return pw && String(pw).trim() === adminPass;
+  const adminPass = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || '';
+  if (!adminPass || !pw) return false;
+  const input = String(pw).trim();
+  if (input.length !== adminPass.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(input), Buffer.from(adminPass));
 }
 
 export default async function handler(req, res) {

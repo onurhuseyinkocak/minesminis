@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 type ViewDirection = 'front' | 'left' | 'right';
 
@@ -9,25 +9,35 @@ interface ProfessorPawsProps {
   onClick?: () => void;
 }
 
-const ProfessorPaws: React.FC<ProfessorPawsProps> = ({ 
-  bearState, 
+const ProfessorPaws: React.FC<ProfessorPawsProps> = ({
+  bearState,
   viewDirection = 'front',
   isHovered = false,
-  onClick 
+  onClick
 }) => {
   const [blink, setBlink] = useState(false);
   const [mouthOpen, setMouthOpen] = useState(false);
+  const blinkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const blinkLoop = () => {
+      if (cancelled) return;
       if (bearState !== 'sleeping') {
         setBlink(true);
-        setTimeout(() => setBlink(false), 150);
+        blinkTimerRef.current = setTimeout(() => {
+          if (!cancelled) setBlink(false);
+        }, 150);
       }
-      setTimeout(blinkLoop, 3000 + Math.random() * 2000);
+      blinkTimerRef.current = setTimeout(() => {
+        if (!cancelled) blinkLoop();
+      }, 3000 + Math.random() * 2000);
     };
-    const timeout = setTimeout(blinkLoop, 2000);
-    return () => clearTimeout(timeout);
+    blinkTimerRef.current = setTimeout(blinkLoop, 2000);
+    return () => {
+      cancelled = true;
+      if (blinkTimerRef.current) clearTimeout(blinkTimerRef.current);
+    };
   }, [bearState]);
 
   useEffect(() => {

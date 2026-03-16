@@ -3,6 +3,7 @@
 // HARDENED WITH ENTERPRISE SECURITY
 // ============================================================
 
+import crypto from 'crypto';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -133,12 +134,13 @@ const getAdminSupabase = async () => {
   return adminSupabaseClient;
 };
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Wealthy*520';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || '';
+if (!ADMIN_PASSWORD) console.warn('⚠️ ADMIN_PASSWORD not set – password-based admin auth disabled');
 
 const { verifyIdToken, isFirebaseAdminReady } = await import('./firebaseAdmin.js');
 const requireAdminAuth = async (req, res, next) => {
   const passwordHeader = req.headers['x-admin-password'];
-  if (passwordHeader && String(passwordHeader).trim() === ADMIN_PASSWORD) {
+  if (ADMIN_PASSWORD && passwordHeader && String(passwordHeader).trim().length === ADMIN_PASSWORD.length && crypto.timingSafeEqual(Buffer.from(String(passwordHeader).trim()), Buffer.from(ADMIN_PASSWORD))) {
     req.adminUid = 'admin-password';
     return next();
   }

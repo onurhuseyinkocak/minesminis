@@ -413,7 +413,7 @@ function PremiumManager() {
                             <div
                                 key={plan.id}
                                 style={{
-                                    background: plan.is_popular ? 'linear-gradient(135deg, var(--warning-pale) 0%, var(--accent-amber) 100%)' : 'white',
+                                    background: plan.is_popular ? 'linear-gradient(135deg, var(--warning-pale) 0%, var(--accent-amber) 100%)' : 'var(--bg-card)',
                                     border: plan.is_popular ? '2px solid var(--warning)' : '1px solid var(--cloud)',
                                     borderRadius: '12px',
                                     padding: '1.5rem',

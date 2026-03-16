@@ -20,8 +20,8 @@ const NAV_ITEMS = [
   { path: '/', label: 'Home', icon: Home },
   { path: '/worlds', label: 'Worlds', icon: Globe },
   { path: '/games', label: 'Games', icon: Gamepad2 },
-  { path: '/dictionary', label: 'Dictionary', icon: BookOpen },
-  { path: '/stories', label: 'Stories', icon: BookText },
+  { path: '/words', label: 'Dictionary', icon: BookOpen },
+  { path: '/story', label: 'Stories', icon: BookText },
 ];
 
 export default function TopNav({

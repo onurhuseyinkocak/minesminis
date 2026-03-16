@@ -3,7 +3,11 @@
 
 export default async function handler(req, res) {
     // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5000').split(',');
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -20,6 +24,22 @@ export default async function handler(req, res) {
 
         if (!messages || !Array.isArray(messages)) {
             return res.status(400).json({ error: 'Messages array required' });
+        }
+
+        // Input validation: limit message count and content length
+        if (messages.length > 20) {
+            return res.status(400).json({ error: 'Too many messages (max 20)' });
+        }
+        for (const msg of messages) {
+            if (!msg.role || !msg.content || typeof msg.content !== 'string') {
+                return res.status(400).json({ error: 'Invalid message format' });
+            }
+            if (!['user', 'assistant', 'system'].includes(msg.role)) {
+                return res.status(400).json({ error: 'Invalid message role' });
+            }
+            if (msg.content.length > 2000) {
+                return res.status(400).json({ error: 'Message content too long (max 2000 chars)' });
+            }
         }
 
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;

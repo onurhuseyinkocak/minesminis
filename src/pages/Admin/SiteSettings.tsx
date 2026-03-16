@@ -237,7 +237,7 @@ function SiteSettings() {
         }
 
         .settings-card {
-          background: white;
+          background: var(--bg-card);
           border-radius: 16px;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
           border: 1px solid var(--cloud);

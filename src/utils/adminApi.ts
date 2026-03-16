@@ -5,7 +5,7 @@ import { auth } from '../config/firebase';
 import { getApiBase } from './apiBase';
 
 const ADMIN_SESSION_KEY = 'admin_session';
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Wealthy*520';
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || '';
 
 /**
  * Returns headers for admin API: şifre ile giriş yapıldıysa X-Admin-Password, yoksa Bearer token.

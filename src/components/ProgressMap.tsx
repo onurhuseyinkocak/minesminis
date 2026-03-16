@@ -287,7 +287,7 @@ const ProgressMap: React.FC = () => {
                 }
 
                 .adventure-node.unlocked .platform-top {
-                    background: white;
+                    background: var(--bg-card);
                     border-color: var(--accent-indigo);
                     box-shadow: 0 10px 0 var(--accent-indigo), 0 20px 40px rgba(99, 102, 241, 0.2);
                 }

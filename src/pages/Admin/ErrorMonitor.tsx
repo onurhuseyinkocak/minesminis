@@ -216,7 +216,7 @@ function ErrorMonitor() {
               style={{
                 display: 'flex', alignItems: 'center', gap: '4px',
                 padding: '0.4rem 0.7rem', borderRadius: '8px', border: '1px solid var(--cloud)',
-                background: autoRefresh ? 'var(--success-pale)' : 'white', cursor: 'pointer',
+                background: autoRefresh ? 'var(--success-pale)' : 'var(--bg-card)', cursor: 'pointer',
                 fontSize: '0.8rem', fontWeight: 600,
                 color: autoRefresh ? 'var(--success)' : 'var(--slate)',
               }}
@@ -253,7 +253,7 @@ function ErrorMonitor() {
                   borderRadius: '12px',
                   overflow: 'hidden',
                   opacity: log.resolved ? 0.6 : 1,
-                  background: log.resolved ? 'var(--snow)' : 'white',
+                  background: log.resolved ? 'var(--bg-muted)' : 'var(--bg-card)',
                 }}>
                   {/* Header row */}
                   <div
@@ -399,7 +399,7 @@ function ErrorMonitor() {
                           style={{
                             display: 'flex', alignItems: 'center', gap: '4px',
                             padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--cloud)',
-                            background: 'white', fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer',
+                            background: 'var(--bg-card)', fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer', color: 'var(--text-body)',
                           }}
                         >
                           Kopyala

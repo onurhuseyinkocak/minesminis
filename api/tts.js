@@ -3,7 +3,11 @@
 
 export default async function handler(req, res) {
     // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5000').split(',');
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -18,9 +22,17 @@ export default async function handler(req, res) {
     try {
         const { text, voice = 'nova' } = req.body;
 
-        if (!text) {
+        if (!text || typeof text !== 'string') {
             return res.status(400).json({ error: 'Text is required' });
         }
+
+        if (text.length > 4000) {
+            return res.status(400).json({ error: 'Text too long (max 4000 chars)' });
+        }
+
+        // Validate voice parameter
+        const validVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'onyx', 'nova', 'sage', 'shimmer'];
+        const safeVoice = validVoices.includes(voice) ? voice : 'nova';
 
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -40,7 +52,7 @@ export default async function handler(req, res) {
             body: JSON.stringify({
                 model: 'tts-1',
                 input: text.slice(0, 4000), // Max 4000 chars
-                voice: voice,
+                voice: safeVoice,
                 response_format: 'mp3'
             })
         });

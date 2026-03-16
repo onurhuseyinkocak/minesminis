@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components -- context file: exports Provider + useAuth */
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import {
   User,
   createUserWithEmailAndPassword,
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [showProfileSetup, setShowProfileSetup] = useState(false);
   const [hasSkippedSetup, setHasSkippedSetup] = useState(false);
 
-  const refreshUserProfile = async () => {
+  const refreshUserProfile = useCallback(async () => {
     if (!user) return;
     setProfileLoading(true);
     try {
@@ -56,40 +56,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setProfileLoading(false);
     }
-  };
+  }, [user]);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = useCallback(async (email: string, password: string) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       return { error: null };
     } catch (error) {
       return { error: error as Error };
     }
-  };
+  }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       return { error: null };
     } catch (error) {
       return { error: error as Error };
     }
-  };
+  }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = useCallback(async () => {
     try {
       await signInWithPopup(auth, googleProvider);
       return { error: null };
     } catch (error) {
       return { error: error as Error };
     }
-  };
+  }, []);
 
-  const signInWithGoogleRedirect = async () => {
+  const signInWithGoogleRedirect = useCallback(async () => {
     await signInWithRedirect(auth, googleProvider);
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       await firebaseSignOut(auth);
     } catch (error) {
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUserProfile(null);
       setShowProfileSetup(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -163,7 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const isAdmin = !!user && isAdminEmail(user.email ?? undefined);
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     userProfile,
     isAdmin,
@@ -180,7 +180,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signInWithGoogle,
     signInWithGoogleRedirect,
     signOut,
-  };
+  }), [user, userProfile, isAdmin, loading, profileLoading, showProfileSetup, hasSkippedSetup, refreshUserProfile, signUp, signIn, signInWithGoogle, signInWithGoogleRedirect, signOut]);
 
   return (
     <AuthContext.Provider value={value}>

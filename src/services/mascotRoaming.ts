@@ -204,7 +204,7 @@ class MascotRoamingService {
     startRoaming(): void {
         if (this.isRoaming) return;
         this.isRoaming = true;
-        console.log('🤖 AI Mascot is now ALIVE and making its own decisions!');
+        // AI Mascot roaming started
         this.scheduleNextAction();
         this.scheduleRandomBubble();
         this.scheduleMouseFollow();

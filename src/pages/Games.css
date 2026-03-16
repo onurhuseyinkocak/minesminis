@@ -420,3 +420,15 @@
     height: 220px;
   }
 }
+
+/* ==========================================================================
+   DARK MODE OVERRIDES
+   ========================================================================== */
+
+[data-theme="dark"] .game-fav-btn {
+  background: rgba(26, 26, 46, 0.85);
+}
+
+[data-theme="dark"] .game-card {
+  background: var(--bg-card);
+}

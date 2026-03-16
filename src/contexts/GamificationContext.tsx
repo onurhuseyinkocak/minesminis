@@ -4,7 +4,7 @@
  * Core gamification system for MinesMinis
  */
 /* eslint-disable react-refresh/only-export-components -- context file: exports Provider + useGamification + types */
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
 
@@ -387,7 +387,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
         if (lastReset < mostRecentMonday) {
             // Weekly reset needed!
-            console.log('Weekly reset triggered!');
+            // Weekly reset triggered
 
             // 1. If user was #1 (we'd need to check the full leaderboard here, 
             // but for simplicity in this context we'll assume a winner check)
@@ -595,7 +595,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     // ==================== ACTIVITY TRACKING ====================
 
     const trackActivity = async (type: string, metadata?: Record<string, unknown>) => {
-        console.log(`Tracking activity: ${type}`, metadata);
+        // Activity tracked: type + metadata logged in dev only
+        if (import.meta.env.DEV) console.debug(`Tracking activity: ${type}`, metadata);
         const newStats = { ...stats };
         switch (type) {
             case 'word_learned':
@@ -639,7 +640,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user and loading state are ready
     }, [user, loading]);
 
-    const value: GamificationContextType = {
+    const value: GamificationContextType = useMemo(() => ({
         stats,
         loading,
         addXP,
@@ -658,7 +659,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         showLevelUp,
         newLevel,
         dismissLevelUp,
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- functions are stable within render; adding them causes infinite loops
+    }), [stats, loading, canClaimDaily, showLevelUp, newLevel]);
 
     return (
         <GamificationContext.Provider value={value}>

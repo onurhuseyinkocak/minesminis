@@ -22,9 +22,9 @@ export default function Footer() {
             </Link>
           </li>
           <li>
-            <Link to="/contact" className="footer__link">
+            <a href="mailto:info@minesminis.com" className="footer__link">
               Contact
-            </Link>
+            </a>
           </li>
         </ul>
       </div>

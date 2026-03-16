@@ -1221,3 +1221,31 @@
     font-size: 18px;
   }
 }
+
+/* ==========================================================================
+   DARK MODE OVERRIDES
+   ========================================================================== */
+
+[data-theme="dark"] .quick-action-icon {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .continue-card {
+  background: linear-gradient(160deg, var(--bg-card) 0%, rgba(232, 163, 23, 0.08) 60%, rgba(255, 213, 79, 0.04) 100%);
+}
+
+[data-theme="dark"] .quick-action-card.lessons {
+  background: linear-gradient(160deg, rgba(76, 175, 80, 0.08) 0%, rgba(76, 175, 80, 0.03) 100%);
+}
+
+[data-theme="dark"] .quick-action-card.videos {
+  background: linear-gradient(160deg, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0.03) 100%);
+}
+
+[data-theme="dark"] .quick-action-card.games {
+  background: linear-gradient(160deg, rgba(251, 191, 36, 0.08) 0%, rgba(251, 191, 36, 0.03) 100%);
+}
+
+[data-theme="dark"] .quick-action-card.story {
+  background: linear-gradient(160deg, rgba(236, 72, 153, 0.08) 0%, rgba(236, 72, 153, 0.03) 100%);
+}

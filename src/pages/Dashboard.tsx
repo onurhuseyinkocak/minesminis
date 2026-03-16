@@ -379,11 +379,13 @@ export default function Dashboard() {
               <Tooltip
                 cursor={{ fill: 'rgba(232,163,23,0.08)' }}
                 contentStyle={{
+                  background: 'var(--bg-card)',
                   borderRadius: 12,
-                  border: 'none',
-                  boxShadow: '0 4px 12px rgba(26,26,46,0.12)',
+                  border: '1px solid var(--border-light)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
                   fontFamily: 'Inter',
                   fontSize: 13,
+                  color: 'var(--text-body)',
                 }}
                 formatter={(value) => value != null ? [`${value} XP`, 'Earned'] : ['', 'Earned']}
               />
