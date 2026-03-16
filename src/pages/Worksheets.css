@@ -89,7 +89,7 @@
 /* ── Worksheet Card ── */
 .worksheet-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-card);
   transition: all var(--transition-base);
@@ -98,7 +98,7 @@
 }
 
 .worksheet-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -173,6 +173,11 @@
 .favorite-btn.favorited {
   color: var(--error);
   background: var(--error-soft);
+}
+
+.favorite-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* ── Worksheet Info ── */
@@ -271,6 +276,11 @@
   background: var(--bg-muted);
 }
 
+.worksheet-actions .action-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
 /* ── Empty State ── */
 .worksheets-empty {
   display: flex;
@@ -281,8 +291,9 @@
 }
 
 .worksheets-empty .empty-icon {
-  font-size: 3rem;
+  font-size: 3.5rem;
   margin-bottom: var(--space-md);
+  line-height: 1;
 }
 
 .worksheets-empty h3 {
@@ -326,7 +337,7 @@
   align-items: center;
   gap: 10px;
   padding: var(--space-md);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
   text-decoration: none;
   color: var(--text-body);
@@ -334,13 +345,18 @@
   font-size: 0.9375rem;
   font-weight: 600;
   transition: all var(--transition-fast);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .resource-link:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
   color: var(--primary);
+}
+
+.resource-link:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .resource-icon {

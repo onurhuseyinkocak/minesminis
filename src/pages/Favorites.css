@@ -73,6 +73,11 @@
   background: var(--bg-elevated);
 }
 
+.filter-tab:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .filter-tab.active {
   background: var(--gradient-primary);
   color: var(--text-on-primary);
@@ -161,7 +166,7 @@
 .favorite-card {
   position: relative;
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-card);
   transition: all var(--transition-base);
@@ -170,7 +175,7 @@
 }
 
 .favorite-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -270,6 +275,12 @@
 .remove-favorite-btn:hover {
   transform: scale(1.12);
   background: var(--error-soft);
+}
+
+.remove-favorite-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  opacity: 1;
 }
 
 /* ── Responsive ── */

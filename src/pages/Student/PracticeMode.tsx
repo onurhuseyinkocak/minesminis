@@ -233,8 +233,8 @@ const PracticeMode: React.FC = () => {
       {/* ---- WORD GRID ---- */}
       {filteredWords.length === 0 ? (
         <div className="pm-empty">
-          <span className="pm-empty__emoji">🔍</span>
-          <p className="pm-empty__text">No words match this filter. Try a different one!</p>
+          <span className="pm-empty__emoji">🐉</span>
+          <p className="pm-empty__text">Mimi could not find any words here. Try a different filter!</p>
         </div>
       ) : (
         <div className="pm-grid">

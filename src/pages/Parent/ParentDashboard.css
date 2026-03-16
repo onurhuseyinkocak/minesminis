@@ -67,6 +67,11 @@
 
 .pd-header-link:hover { background: rgba(245, 204, 92, 0.25); }
 
+.pd-header-link:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
 /* ── Header left group ────────────────────────────────────── */
 
 .pd-header__left {
@@ -99,6 +104,11 @@
 
 .pd-child-selector__btn:hover { background: rgba(255, 255, 255, 0.18); }
 
+.pd-child-selector__btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .pd-child-selector__dropdown {
   position: absolute;
   top: calc(100% + 6px);
@@ -106,7 +116,7 @@
   min-width: 220px;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   z-index: 50;
   overflow: hidden;
@@ -127,6 +137,11 @@
 
 .pd-child-selector__option:hover { background: var(--bg-elevated); }
 .pd-child-selector__option.active { background: var(--primary-pale); }
+
+.pd-child-selector__option:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: -2px;
+}
 
 .pd-child-name {
   display: block;
@@ -382,6 +397,11 @@
 }
 
 .pd-settings-link:hover { color: var(--secondary-light); text-decoration: underline; }
+
+.pd-settings-link:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
 
 /* ── Bottom-row card wrappers ─────────────────────────────── */
 

@@ -153,10 +153,10 @@ const Favorites: React.FC = () => {
           </div>
         ) : filteredFavorites.length === 0 ? (
           <div className="favorites-empty">
-            <div className="empty-state-icon">💝</div>
-            <h2>No Favorites Yet</h2>
-            <p>Start adding your favorite games, words, worksheets, and videos!</p>
-            <p className="hint">Click the ❤️ icon on any item to add it here</p>
+            <div className="empty-state-icon">🐉</div>
+            <h2>No Treasures Yet!</h2>
+            <p>Mimi is waiting to help you collect your favorite games, words, worksheets, and videos!</p>
+            <p className="hint">Tap the heart icon on any item to add it here</p>
           </div>
         ) : (
           <div className="favorites-grid">

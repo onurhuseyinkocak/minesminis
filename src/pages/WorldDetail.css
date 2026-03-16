@@ -69,39 +69,41 @@
   transform: translateX(-3px);
 }
 
-/* ---- WORLD HEADER BANNER ---- */
+/* ---- WORLD HEADER BANNER — Full-width immersive gradient ---- */
 .world-detail-header {
   display: flex;
   align-items: center;
   gap: var(--space-xl);
-  padding: var(--space-xl);
+  padding: var(--space-2xl) var(--space-xl);
   border-radius: var(--radius-xl);
   color: var(--text-on-primary);
   margin-bottom: var(--space-xl);
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
+  min-height: 140px;
 }
 
+/* Decorative light orbs for depth */
 .world-detail-header::before {
   content: '';
   position: absolute;
   top: -50%;
-  right: -20%;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+  right: -15%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .world-detail-header::after {
   content: '';
   position: absolute;
-  bottom: -30%;
-  left: -10%;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  bottom: -40%;
+  left: -8%;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -109,7 +111,7 @@
   font-size: 4.5rem;
   line-height: 1;
   flex-shrink: 0;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
   z-index: 1;
   animation: icon-float 4s ease-in-out infinite;
 }
@@ -130,13 +132,13 @@
   font-size: 28px;
   font-weight: 800;
   margin: 0 0 var(--space-xs);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .world-detail-header__theme {
   font-family: var(--font-body);
-  font-size: 14px;
-  opacity: 0.88;
+  font-size: 15px;
+  opacity: 0.9;
   margin: 0 0 var(--space-md);
   line-height: 1.4;
 }
@@ -167,8 +169,8 @@
 .world-detail-header__count {
   font-family: var(--font-body);
   font-size: 13px;
-  opacity: 0.75;
-  font-weight: 500;
+  opacity: 0.8;
+  font-weight: 600;
 }
 
 /* ---- SECTION TITLES ---- */
@@ -183,7 +185,7 @@
   gap: var(--space-sm);
 }
 
-/* ---- VOCABULARY PREVIEW ---- */
+/* ---- VOCABULARY PREVIEW — Attractive horizontal scroll ---- */
 .world-detail-vocab {
   margin-bottom: var(--space-xl);
 }
@@ -192,9 +194,10 @@
   display: flex;
   gap: var(--space-md);
   overflow-x: auto;
-  padding: var(--space-sm) var(--space-xs) var(--space-md);
+  padding: var(--space-sm) var(--space-xs) var(--space-lg);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  scroll-snap-type: x proximity;
 }
 
 .world-detail-vocab__scroll::-webkit-scrollbar {
@@ -207,8 +210,8 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
-  width: 100px;
-  padding: var(--space-md) var(--space-md);
+  width: 104px;
+  padding: var(--space-lg) var(--space-md);
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -216,6 +219,7 @@
   cursor: default;
   position: relative;
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 .vocab-preview-card::after {
@@ -231,7 +235,7 @@
 }
 
 .vocab-preview-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px) scale(1.03);
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -240,13 +244,13 @@
 }
 
 .vocab-preview-card__emoji {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   line-height: 1;
   transition: transform var(--transition-base);
 }
 
 .vocab-preview-card:hover .vocab-preview-card__emoji {
-  transform: scale(1.12);
+  transform: scale(1.18) rotate(-5deg);
 }
 
 .vocab-preview-card__word {
@@ -295,15 +299,27 @@
   border-radius: var(--radius-lg);
   padding: var(--space-md) var(--space-md);
   box-shadow: var(--shadow-card);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
   position: relative;
   overflow: hidden;
 }
 
-/* Available lesson: primary left accent */
+/* Available lesson: amber/warm accent — inviting */
 .lesson-card--available {
-  border-left: 5px solid var(--primary);
+  border-left: 5px solid var(--accent-amber);
   background: var(--bg-card);
+}
+
+.lesson-card--available::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(90deg, var(--warning-pale), transparent);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .lesson-card--available::after {
@@ -314,20 +330,32 @@
   bottom: 0;
   width: 80px;
   background: linear-gradient(90deg, transparent, var(--primary-pale));
-  opacity: 0.3;
+  opacity: 0.25;
   pointer-events: none;
 }
 
 .lesson-card-link:not(.lesson-card-link--locked):hover .lesson-card--available {
   transform: translateY(-3px) translateX(2px);
   box-shadow: var(--shadow-card-hover);
-  border-left-color: var(--primary-dark);
+  border-left-color: var(--accent-orange);
 }
 
-/* Completed lesson: green accent */
+/* Completed lesson: green accent — satisfied feel */
 .lesson-card--completed {
   border-left: 5px solid var(--mimi-green);
   background: var(--bg-card);
+}
+
+.lesson-card--completed::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(90deg, var(--success-pale), transparent);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .lesson-card--completed::after {
@@ -338,15 +366,16 @@
   bottom: 0;
   width: 60px;
   background: linear-gradient(90deg, transparent, var(--mimi-green-light));
-  opacity: 0.3;
+  opacity: 0.2;
   pointer-events: none;
 }
 
-/* Locked lesson: muted */
+/* Locked lesson: clearly muted */
 .lesson-card--locked {
   border-left: 5px solid var(--border-light);
   opacity: 0.5;
   background: var(--bg-muted);
+  filter: grayscale(0.3);
 }
 
 /* Number circle */
@@ -366,21 +395,28 @@
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
+/* Available lesson number — warm amber accent */
 .lesson-card--available .lesson-card__number {
-  background: var(--primary-pale);
+  background: var(--warning-pale);
   color: var(--primary-dark);
   box-shadow: var(--shadow-sm);
 }
 
 .lesson-card-link:hover .lesson-card--available .lesson-card__number {
-  transform: scale(1.08);
+  transform: scale(1.1);
   box-shadow: var(--shadow-md);
 }
 
+/* Completed number — green check */
 .lesson-card__number--done {
   background: var(--gradient-secondary) !important;
   color: var(--text-on-primary) !important;
   box-shadow: var(--shadow-sm) !important;
+}
+
+/* Locked number */
+.lesson-card--locked .lesson-card__number {
+  opacity: 0.5;
 }
 
 /* Info */
@@ -445,9 +481,10 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--mimi-green);
-  background: var(--mimi-green-light);
+  background: var(--success-pale);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
 }
 
 .lesson-card__done-badge svg {
@@ -456,6 +493,7 @@
 
 .lesson-card__lock-icon {
   color: var(--border-medium);
+  opacity: 0.6;
 }
 
 /* ==========================================================================
@@ -471,7 +509,7 @@
   .world-detail-header {
     flex-direction: column;
     text-align: center;
-    padding: var(--space-lg);
+    padding: var(--space-xl) var(--space-lg);
     gap: var(--space-md);
   }
 
@@ -547,7 +585,7 @@
   }
 
   .world-detail-header {
-    padding: 28px var(--space-xl);
+    padding: var(--space-xl) var(--space-xl);
   }
 }
 
@@ -559,9 +597,10 @@
   }
 
   .world-detail-header {
-    padding: var(--space-2xl) var(--space-3xl);
+    padding: var(--space-3xl) var(--space-3xl);
     gap: var(--space-xl);
     border-radius: var(--radius-xl);
+    min-height: 180px;
   }
 
   .world-detail-header__icon {
@@ -601,12 +640,12 @@
   }
 
   .vocab-preview-card {
-    width: 110px;
+    width: 116px;
     padding: var(--space-lg) var(--space-md);
   }
 
   .vocab-preview-card__emoji {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
   }
 
   .vocab-preview-card__word {

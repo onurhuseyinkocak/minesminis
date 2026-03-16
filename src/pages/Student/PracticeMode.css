@@ -100,7 +100,7 @@
 .pm-world-select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-pale);
+  box-shadow: var(--focus-ring);
 }
 
 /* ── Word grid ────────────────────────────────────────────── */
@@ -123,8 +123,8 @@
 }
 
 .pm-word-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .pm-word-card__top {
@@ -261,6 +261,11 @@
 
 .pm-modal__close:hover { background: var(--bg-muted); color: var(--text-primary); }
 
+.pm-modal__close:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .pm-modal__emoji {
   font-size: 64px;
   line-height: 1;
@@ -300,6 +305,11 @@
 }
 
 .pm-modal__pronounce:hover { background: rgba(232, 163, 23, 0.12); }
+
+.pm-modal__pronounce:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
 
 .pm-modal__example {
   width: 100%;

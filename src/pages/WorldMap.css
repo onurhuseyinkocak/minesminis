@@ -138,53 +138,60 @@
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
   transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+              box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 0.3s var(--transition-base);
   position: relative;
 }
 
-/* Current world golden glow */
+/* Current world golden glow — strong and unmistakable */
 .world-card--current {
-  box-shadow: 0 0 0 3px var(--primary-light), var(--shadow-glow);
+  box-shadow: 0 0 0 3px var(--primary), var(--shadow-glow);
 }
 
 .world-card--current::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -1px;
   border-radius: var(--radius-xl);
   border: 2px solid var(--primary);
   pointer-events: none;
-  animation: golden-glow-pulse 3s ease-in-out infinite;
-  opacity: 0.7;
+  animation: golden-glow-pulse 2.5s ease-in-out infinite;
   z-index: 5;
 }
 
 @keyframes golden-glow-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.7; }
+  0%, 100% {
+    box-shadow: 0 0 12px var(--primary-glow);
+    opacity: 0.5;
+  }
+  50% {
+    box-shadow: 0 0 24px var(--primary-glow);
+    opacity: 1;
+  }
 }
 
-/* Locked world */
+/* Locked world — clearly muted and desaturated */
 .world-card--locked {
-  opacity: 0.55;
-  filter: grayscale(0.45) saturate(0.7);
+  opacity: 0.6;
+  filter: grayscale(0.8) saturate(0.5);
 }
 
-/* Hover for unlocked cards */
+/* Hover for unlocked cards — lift with bigger shadow */
 .world-card-link:not(.world-card-link--locked):hover .world-card {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
   box-shadow: var(--shadow-card-hover);
 }
 
+/* Current world keeps golden glow on hover, just stronger */
 .world-card-link:not(.world-card-link--locked):hover .world-card--current {
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 0 0 3px var(--primary), 0 12px 32px rgba(232, 163, 23, 0.35);
 }
 
 .world-card-link:not(.world-card-link--locked):active .world-card {
   transform: translateY(-2px);
 }
 
-/* Card gradient top */
+/* Card gradient top — 120px colorful area */
 .world-card__top {
   position: relative;
   display: flex;
@@ -194,30 +201,43 @@
   overflow: hidden;
 }
 
+/* Decorative circles for depth */
+.world-card__top::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -15%;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
 .world-card__top::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 24px;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.05));
+  height: 28px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.08));
   pointer-events: none;
 }
 
+/* Emoji icon — 48px large */
 .world-card__icon {
-  font-size: 3.2rem;
+  font-size: 3rem;
   line-height: 1;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.2));
   transition: transform var(--transition-base);
   z-index: 1;
 }
 
 .world-card-link:not(.world-card-link--locked):hover .world-card__icon {
-  transform: scale(1.12) rotate(-5deg);
+  transform: scale(1.15) rotate(-5deg);
 }
 
-/* Lock overlay */
+/* Lock overlay — darker, more obvious */
 .world-card__lock-overlay {
   position: absolute;
   inset: 0;
@@ -225,14 +245,15 @@
   align-items: center;
   justify-content: center;
   background: var(--bg-elevated);
-  opacity: 0.7;
-  backdrop-filter: blur(2px);
+  opacity: 0.75;
+  backdrop-filter: blur(3px);
   color: var(--text-muted);
   z-index: 2;
 }
 
 .world-card__lock-overlay svg {
   filter: drop-shadow(var(--shadow-sm));
+  opacity: 0.7;
 }
 
 /* Badges on card top */
@@ -257,6 +278,12 @@
   background: var(--bg-elevated);
   color: var(--primary-dark);
   box-shadow: var(--shadow-sm);
+  animation: badge-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes badge-shimmer {
+  0%, 100% { box-shadow: var(--shadow-sm); }
+  50% { box-shadow: var(--shadow-md), 0 0 8px var(--primary-glow); }
 }
 
 .world-card__current-badge svg {
@@ -336,7 +363,7 @@
 }
 
 .world-card-link:hover .world-card__go svg {
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 /* ==========================================================================

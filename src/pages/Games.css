@@ -103,7 +103,7 @@
   font-family: var(--font-body);
   color: var(--text-secondary);
   font-size: 1rem;
-  margin: 0 0 4px;
+  margin: 0 0 var(--space-xs);
   line-height: 1.6;
 }
 
@@ -150,14 +150,14 @@
 
 .game-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-card-hover);
 }
 
 /* ── Favorite Button ── */
 .game-favorite-btn {
   position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
+  top: var(--space-sm);
+  right: var(--space-sm);
   z-index: 10;
   width: var(--touch-target);
   height: var(--touch-target);
@@ -186,15 +186,16 @@
 
 .game-favorite-btn.favorited {
   background: var(--error-soft);
+  box-shadow: 0 2px 12px rgba(229, 57, 53, 0.25);
 }
 
-/* ── Thumbnail ── */
+/* ── Thumbnail — fixed 200px height ── */
 .game-thumbnail {
   position: relative;
-  aspect-ratio: 16 / 10;
+  height: 200px;
   overflow: hidden;
   cursor: pointer;
-  transition: opacity var(--transition-fast);
+  background: linear-gradient(135deg, var(--accent-indigo-pale), var(--bg-muted));
 }
 
 .game-thumbnail img {
@@ -208,11 +209,11 @@
   transform: scale(1.06);
 }
 
-/* ── Play Overlay ── */
+/* ── Play Overlay — dark gradient + circle ── */
 .game-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 30%, rgba(26, 26, 46, 0.55) 100%);
+  background: linear-gradient(180deg, transparent 20%, rgba(26, 26, 46, 0.55) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,25 +226,27 @@
 }
 
 .play-icon {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--radius-full);
-  background: var(--gradient-primary);
+  background: rgba(26, 26, 46, 0.65);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-on-primary);
-  box-shadow: 0 6px 24px var(--primary-glow);
-  transition: transform var(--transition-fast);
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: transform var(--transition-fast), background var(--transition-fast);
 }
 
 .game-card:hover .play-icon {
   transform: scale(1.1);
+  background: rgba(26, 26, 46, 0.8);
 }
 
-/* ── Game Info ── */
+/* ── Game Info — 24px padding ── */
 .game-info {
-  padding: var(--space-md) var(--space-md) var(--space-lg);
+  padding: var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
@@ -265,7 +268,7 @@
 .game-type-badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px var(--space-md);
+  padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   color: var(--white);
   font-family: var(--font-display);
@@ -279,9 +282,9 @@
 .game-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
-  background: rgba(26, 26, 46, 0.85);
-  backdrop-filter: blur(8px);
+  z-index: var(--z-modal);
+  background: rgba(26, 26, 46, 0.88);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -295,7 +298,7 @@
   background: var(--bg-elevated);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4);
   animation: gamesModalSlideUp 300ms ease;
 }
 
@@ -381,12 +384,24 @@
     font-size: 0.8125rem;
     min-height: 40px;
   }
+
+  .game-thumbnail {
+    height: 160px;
+  }
+
+  .game-info {
+    padding: var(--space-md);
+  }
 }
 
 @media (max-width: 480px) {
   .games-grid {
     grid-template-columns: 1fr;
     gap: var(--space-md);
+  }
+
+  .game-thumbnail {
+    height: 180px;
   }
 }
 
@@ -401,7 +416,7 @@
     font-size: 1.125rem;
   }
 
-  .game-info {
-    padding: var(--space-md) var(--space-md) var(--space-lg);
+  .game-thumbnail {
+    height: 220px;
   }
 }

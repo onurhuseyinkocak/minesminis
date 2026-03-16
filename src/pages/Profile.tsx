@@ -133,7 +133,8 @@ const Profile: React.FC = () => {
               ))
             ) : (
               <div className="no-badges">
-                <p>Keep learning to earn your first badge! 🌟</p>
+                <span className="no-badges-emoji">🐉</span>
+                <p>Mimi says: Keep exploring to earn your first badge!</p>
               </div>
             )}
           </div>

@@ -1,6 +1,7 @@
 /* ==========================================================================
    LOGIN PAGE — MinesMinis Premium
-   Split layout: branded side panel + clean form. Token-based colors.
+   Split layout: rich branded side panel + elevated form card.
+   All values via var() design tokens.
    ========================================================================== */
 
 .login-page {
@@ -15,17 +16,18 @@
   overflow: hidden;
 }
 
-/* Decorative blobs */
+/* Decorative background blobs */
 .login-page::before {
   content: '';
   position: absolute;
   top: -20%;
   left: -10%;
-  width: 500px;
-  height: 500px;
+  width: 560px;
+  height: 560px;
   border-radius: 50%;
-  background: var(--primary-glow);
+  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
   pointer-events: none;
+  animation: login-blob-drift 12s ease-in-out infinite alternate;
 }
 
 .login-page::after {
@@ -33,20 +35,26 @@
   position: absolute;
   bottom: -20%;
   right: -10%;
-  width: 600px;
-  height: 600px;
+  width: 640px;
+  height: 640px;
   border-radius: 50%;
-  background: var(--secondary-pale);
-  opacity: 0.3;
+  background: radial-gradient(circle, var(--secondary-pale) 0%, transparent 70%);
+  opacity: 0.4;
   pointer-events: none;
+  animation: login-blob-drift 15s ease-in-out infinite alternate-reverse;
 }
 
-/* Language toggle */
+@keyframes login-blob-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -20px) scale(1.05); }
+}
+
+/* ---- Language toggle (top-right pill) ---- */
 .login-lang-toggle {
   position: fixed;
   top: var(--space-md);
   right: var(--space-md);
-  z-index: 100;
+  z-index: var(--z-dropdown);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -99,30 +107,38 @@
   box-shadow: var(--shadow-button);
 }
 
-/* ---- Card Container ---- */
+/* ==========================================================================
+   CARD CONTAINER — split into side + form
+   ========================================================================== */
 .login-container {
   position: relative;
   z-index: 1;
   display: flex;
   gap: 0;
-  max-width: 920px;
+  max-width: 940px;
   width: 100%;
   border-radius: var(--radius-xl);
   background: var(--bg-card);
-  box-shadow: var(--shadow-xl);
+  box-shadow:
+    var(--shadow-xl),
+    0 0 0 1px rgba(26, 26, 46, 0.04);
   overflow: hidden;
 }
 
-/* ---- Side Brand Panel ---- */
+/* ==========================================================================
+   SIDE BRAND PANEL — multi-layer deep teal + radial amber glow
+   ========================================================================== */
 .login-side {
-  width: 340px;
-  min-height: 560px;
+  width: 360px;
+  min-height: 580px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-3xl) 36px;
-  background: var(--gradient-secondary);
+  padding: var(--space-3xl) var(--space-xl);
+  /* Multi-layer gradient: deep teal base with directional depth */
+  background:
+    linear-gradient(180deg, var(--secondary) 0%, var(--secondary-dark) 100%);
   color: var(--text-on-primary);
   text-align: center;
   gap: var(--space-lg);
@@ -131,69 +147,98 @@
   overflow: hidden;
 }
 
+/* Layer 1: Radial amber glow from center-bottom — warm highlight */
 .login-side::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at 30% 70%, var(--primary-glow) 0%, transparent 40%);
+  bottom: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at 50% 80%,
+    rgba(232, 163, 23, 0.28) 0%,
+    rgba(232, 163, 23, 0.12) 30%,
+    transparent 65%
+  );
   pointer-events: none;
+  z-index: 0;
 }
 
+/* Layer 2: Soft diagonal teal-to-transparent for depth */
 .login-side::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
-  height: 60%;
-  background: linear-gradient(to top, var(--secondary-dark) 0%, transparent 100%);
-  opacity: 0.15;
+  bottom: 0;
+  background:
+    linear-gradient(
+      200deg,
+      rgba(42, 157, 143, 0.25) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      to top,
+      var(--secondary-dark) 0%,
+      transparent 40%
+    );
+  opacity: 0.6;
   pointer-events: none;
+  z-index: 0;
 }
 
+/* Mimi mascot — floating with golden drop-shadow */
 .login-side-mimi {
-  font-size: 100px;
+  font-size: 108px;
   line-height: 1;
-  filter: drop-shadow(0 8px 24px var(--primary-glow));
+  filter: drop-shadow(0 8px 28px rgba(232, 163, 23, 0.45));
   position: relative;
   z-index: 1;
 }
 
+/* Brand name — white with subtle amber text-shadow */
 .login-side-brand {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 30px;
+  font-size: 32px;
   margin: 0;
   position: relative;
   z-index: 1;
   letter-spacing: -0.01em;
-  text-shadow: 0 2px 8px var(--primary-glow);
+  text-shadow:
+    0 2px 12px rgba(232, 163, 23, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
+/* Tagline — soft white, readable against teal */
 .login-side-tagline {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 15px;
-  opacity: 0.8;
-  line-height: 1.6;
+  opacity: 0.85;
+  line-height: 1.7;
   margin: 0;
   position: relative;
   z-index: 1;
-  max-width: 240px;
+  max-width: 260px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* ---- Form Panel ---- */
+/* ==========================================================================
+   FORM PANEL — clean, generous spacing
+   ========================================================================== */
 .login-form-panel {
   flex: 1;
-  padding: var(--space-3xl) var(--space-2xl);
+  padding: var(--space-3xl) var(--space-xl);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+/* Header: title + subtitle */
 .login-header {
   margin-bottom: var(--space-lg);
 }
@@ -203,7 +248,7 @@
   font-weight: 800;
   font-size: 28px;
   color: var(--text-primary);
-  margin: 0 0 6px;
+  margin: 0 0 var(--space-sm);
   letter-spacing: -0.01em;
 }
 
@@ -214,16 +259,35 @@
   line-height: 1.5;
 }
 
-/* Tabs */
+/* Tab switcher */
 .login-tabs {
   margin-bottom: var(--space-lg);
 }
 
-/* Form */
+/* Form layout */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+/* Force input fields to 52px height with amber focus ring */
+.login-form .ui-input-wrapper input,
+.login-form input[type="email"],
+.login-form input[type="password"],
+.login-form input[type="text"] {
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+}
+
+.login-form .ui-input-wrapper input:focus,
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus,
+.login-form input[type="text"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  outline: none;
 }
 
 /* Password hint */
@@ -234,11 +298,11 @@
   padding-left: 2px;
 }
 
-/* Error message */
+/* Error message with shake */
 .login-error {
   background: var(--error-soft);
   color: var(--error);
-  padding: var(--space-md) var(--space-md);
+  padding: var(--space-md);
   border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 500;
@@ -256,7 +320,7 @@
   80% { transform: translateX(2px); }
 }
 
-/* Divider */
+/* ---- OR divider ---- */
 .login-divider {
   display: flex;
   align-items: center;
@@ -275,15 +339,15 @@
   background: linear-gradient(90deg, transparent, var(--border-light), transparent);
 }
 
-/* Google OAuth button */
+/* ---- Google OAuth button — white card, distinct from primary ---- */
 .login-google-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: var(--space-sm);
   width: 100%;
-  padding: 14px var(--space-lg);
-  border: 1.5px solid var(--border-medium);
+  padding: var(--space-md) var(--space-lg);
+  border: 1.5px solid var(--border-light);
   border-radius: var(--radius-md);
   background: var(--bg-card);
   font-family: var(--font-display);
@@ -291,20 +355,21 @@
   font-size: 15px;
   color: var(--text-body);
   cursor: pointer;
-  transition: var(--transition-fast);
-  min-height: var(--touch-target);
+  transition: var(--transition-base);
+  min-height: 52px;
+  box-shadow: var(--shadow-sm);
 }
 
 .login-google-btn:hover:not(:disabled) {
   background: var(--bg-muted);
   border-color: var(--border-medium);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .login-google-btn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: none;
+  box-shadow: var(--shadow-sm);
 }
 
 .login-google-btn:disabled {
@@ -313,15 +378,16 @@
 }
 
 .login-google-btn:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  border-color: var(--primary);
 }
 
 .login-google-btn svg {
   flex-shrink: 0;
 }
 
-/* Toggle link */
+/* ---- Toggle link (already have account / don't have account) ---- */
 .login-toggle {
   text-align: center;
   font-size: 14px;
@@ -349,11 +415,15 @@
 }
 
 .login-toggle button:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.25);
 }
 
-/* ---- Responsive ---- */
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+/* Tablet / mobile */
 @media (max-width: 768px) {
   .login-page {
     padding: var(--space-md);
@@ -370,7 +440,7 @@
   .login-side {
     width: 100%;
     min-height: auto;
-    padding: 28px var(--space-lg);
+    padding: var(--space-xl) var(--space-lg);
     flex-direction: row;
     gap: var(--space-md);
     align-items: center;
@@ -390,7 +460,7 @@
   }
 
   .login-form-panel {
-    padding: 28px var(--space-lg) var(--space-xl);
+    padding: var(--space-xl) var(--space-lg);
   }
 
   .login-header h2 {
@@ -398,39 +468,45 @@
   }
 }
 
+/* Small phone */
 @media (max-width: 380px) {
   .login-form-panel {
-    padding: var(--space-lg) var(--space-md) 28px;
+    padding: var(--space-lg) var(--space-md) var(--space-xl);
   }
 
   .login-google-btn {
-    padding: var(--space-md) var(--space-md);
+    padding: var(--space-md);
     font-size: 14px;
+    min-height: var(--touch-target-lg);
   }
 }
 
-/* Smart board / large screens */
+/* Large screens / smart board */
 @media (min-width: 1600px) {
   .login-container {
-    max-width: 1000px;
+    max-width: 1020px;
     border-radius: var(--radius-xl);
   }
 
   .login-side {
-    width: 400px;
-    padding: 56px var(--space-2xl);
+    width: 420px;
+    padding: var(--space-3xl) var(--space-2xl);
   }
 
   .login-side-mimi {
-    font-size: 120px;
+    font-size: 128px;
   }
 
   .login-side-brand {
-    font-size: 34px;
+    font-size: 36px;
+  }
+
+  .login-side-tagline {
+    font-size: 16px;
   }
 
   .login-form-panel {
-    padding: 56px var(--space-3xl);
+    padding: var(--space-3xl);
   }
 
   .login-header h2 {
@@ -438,8 +514,8 @@
   }
 
   .login-google-btn {
-    padding: var(--space-md) 28px;
+    padding: var(--space-md) var(--space-xl);
     font-size: 16px;
-    min-height: 52px;
+    min-height: 56px;
   }
 }

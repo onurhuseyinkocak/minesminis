@@ -155,7 +155,7 @@
 
 /* ── Features Section ── */
 .features-section {
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-3xl);
   text-align: center;
 }
 
@@ -192,7 +192,7 @@
 /* ── Feature Card ── */
 .feature-card {
   padding: var(--space-xl) var(--space-lg);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   text-align: center;
   transition: all var(--transition-base);
 }
@@ -204,7 +204,7 @@
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -238,7 +238,7 @@
 
 /* ── Comparison Section ── */
 .comparison-section {
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-3xl);
   text-align: center;
 }
 
@@ -252,9 +252,9 @@
 
 .comparison-table {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card);
 }
 
 .comparison-header {
@@ -326,7 +326,7 @@
   text-align: center;
   padding: var(--space-xl);
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
 }
 

@@ -50,7 +50,8 @@ export default function Blog() {
         <div className="blog-loading">Yükleniyor...</div>
       ) : posts.length === 0 ? (
         <div className="blog-empty">
-          <p>Henüz yayınlanmış blog yazısı yok.</p>
+          <span className="blog-empty-emoji">🐉</span>
+          <p>Mimi henuz bir yazi hazirlamadi. Yakinda burada olacak!</p>
         </div>
       ) : (
         <div className="blog-list">

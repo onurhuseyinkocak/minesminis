@@ -34,18 +34,30 @@
   background: var(--bg-card);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-2xl);
 }
 
 /* ── Avatar ── */
 .profile-avatar-large {
   position: relative;
   flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 0 3px var(--primary),
+    0 0 0 6px var(--primary-pale),
+    0 4px 16px var(--primary-glow);
+  background: linear-gradient(135deg, var(--primary-pale), rgba(245, 204, 92, 0.08));
 }
 
 .avatar-vector {
   color: var(--primary);
-  opacity: 0.85;
+  width: 64px;
+  height: 64px;
 }
 
 .change-avatar-btn {
@@ -135,11 +147,12 @@
   gap: var(--space-sm);
   padding: var(--space-sm) 18px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--primary-pale), rgba(245, 204, 92, 0.12));
-  color: var(--primary-dark);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
   font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
+  box-shadow: 0 2px 8px var(--primary-glow);
 }
 
 /* ── Stats Grid ── */
@@ -147,14 +160,22 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-2xl);
 }
 
 .stat-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-lg);
   box-shadow: var(--shadow-card);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .stat-card.xp-focused {
@@ -287,13 +308,25 @@
 .no-badges {
   grid-column: 1 / -1;
   text-align: center;
-  padding: var(--space-xl);
+  padding: var(--space-2xl) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.no-badges-emoji {
+  font-size: 3rem;
+  line-height: 1;
 }
 
 .no-badges p {
   font-family: var(--font-body);
   font-size: 0.9375rem;
   color: var(--text-muted);
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.55;
 }
 
 /* ── Edit Modal ── */

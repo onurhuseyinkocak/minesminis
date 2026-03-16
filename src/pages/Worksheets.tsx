@@ -338,9 +338,9 @@ function Worksheets() {
 
       {filteredWorksheets.length === 0 && (
         <div className="worksheets-empty">
-          <div className="empty-icon">📝</div>
+          <div className="empty-icon">🐉</div>
           <h3>No worksheets found</h3>
-          <p>Try changing the filters to see more worksheets!</p>
+          <p>Mimi could not find any worksheets with these filters. Try a different combination!</p>
         </div>
       )}
 

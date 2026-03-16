@@ -239,7 +239,7 @@ export default function Pricing() {
                 key={plan.id}
                 className={`plan-card ${plan.highlight ? 'plan-card--highlight' : ''} ${isCurrent ? 'plan-card--current' : ''}`}
               >
-                {plan.badge && isYearly && (
+                {plan.badge && (
                   <div className="plan-badge">{plan.badge}</div>
                 )}
 

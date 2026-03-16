@@ -138,21 +138,28 @@
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .plan-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .plan-card--highlight {
   border-color: var(--primary);
-  box-shadow: 0 4px 16px var(--primary-glow);
+  box-shadow:
+    0 0 0 1px var(--primary),
+    0 4px 24px var(--primary-glow),
+    0 0 48px rgba(232, 163, 23, 0.10);
 }
 
 .plan-card--highlight:hover {
-  box-shadow: 0 12px 36px var(--primary-glow);
+  box-shadow:
+    0 0 0 1px var(--primary),
+    0 12px 40px var(--primary-glow),
+    0 0 64px rgba(232, 163, 23, 0.15);
+  transform: translateY(-4px);
 }
 
 .plan-card--current {
@@ -342,7 +349,7 @@
 
 .pricing-faq {
   max-width: 720px;
-  margin: 0 auto var(--space-2xl);
+  margin: 0 auto var(--space-3xl);
 }
 
 .pricing-faq h2 {
@@ -362,9 +369,9 @@
 
 .faq-item {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
   transition: box-shadow var(--transition-fast);
 }
 
@@ -416,7 +423,7 @@
   padding: var(--space-2xl);
   background: var(--bg-card);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .pricing-cta-section p {
