@@ -271,13 +271,6 @@ const Landing: React.FC = () => {
             </Link>
 
             <div className="magic-hero__title-row">
-              <motion.div
-                className="magic-hero__wave"
-                animate={{ rotate: [0, 14, -8, 14, 0] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-              >
-                👋
-              </motion.div>
 
               <motion.h1
                 className="magic-hero__title"
@@ -424,16 +417,14 @@ const Landing: React.FC = () => {
         <motion.h2
           className="magic-features__title"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          animate={{ opacity: 1, y: 0 }}
         >
           <span className="magic-features__emoji">🎪</span> {t.featuresTitle}
         </motion.h2>
         <motion.p
           className="magic-features__sub"
           initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-50px" }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
           {t.featuresSub}
@@ -445,8 +436,7 @@ const Landing: React.FC = () => {
               key={f.title}
               className="magic-feature-card"
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
               whileHover={{ y: -8, scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
               style={{ '--card-color': f.color } as React.CSSProperties}
@@ -473,8 +463,7 @@ const Landing: React.FC = () => {
         <div className="magic-stats__inner">
           <motion.div
             className="magic-stats__item"
-            whileInView={{ scale: [0.5, 1.1, 1] }}
-            viewport={{ once: true }}
+            animate={{ scale: [0.5, 1.1, 1] }}
             transition={{ duration: 0.6 }}
           >
             <span className="magic-stats__number">1,000+</span>
@@ -482,8 +471,7 @@ const Landing: React.FC = () => {
           </motion.div>
           <motion.div
             className="magic-stats__item"
-            whileInView={{ scale: [0.5, 1.1, 1] }}
-            viewport={{ once: true }}
+            animate={{ scale: [0.5, 1.1, 1] }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <span className="magic-stats__number">12</span>
@@ -491,8 +479,7 @@ const Landing: React.FC = () => {
           </motion.div>
           <motion.div
             className="magic-stats__item"
-            whileInView={{ scale: [0.5, 1.1, 1] }}
-            viewport={{ once: true }}
+            animate={{ scale: [0.5, 1.1, 1] }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <span className="magic-stats__number">120+</span>
@@ -505,9 +492,8 @@ const Landing: React.FC = () => {
       <section className="magic-cta">
         <motion.div
           className="magic-cta__card"
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           initial={{ opacity: 0, y: 20 }}
-          viewport={{ once: true }}
         >
           <h2>{lang === 'en' ? 'Ready for the Adventure?' : 'Maceraya Hazır mısın?'}</h2>
           <p>{lang === 'en' ? 'Mimi and friends are waiting for you!' : 'Mimi ve arkadaşları seni bekliyor!'}</p>
