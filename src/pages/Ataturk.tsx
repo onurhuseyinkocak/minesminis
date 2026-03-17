@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Heart, BookOpen, Award, Globe, Users, Sparkles, Quote, Languages, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Star, Heart, BookOpen, Award, Globe, Users, Sparkles, Quote, Languages, Zap, ArrowLeft } from 'lucide-react';
 
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
 import ataturkMilitary from '@assets/ataturk_images/ataturk-military.png';
@@ -107,6 +108,12 @@ function Ataturk() {
 
   return (
     <div className="ataturk-page">
+      {/* Back Button */}
+      <Link to="/" className="ataturk-back-btn">
+        <ArrowLeft size={18} />
+        <span>Home</span>
+      </Link>
+
       {/* Language Toggle */}
       <motion.div
         className="language-toggle"
@@ -436,6 +443,30 @@ function Ataturk() {
       </motion.section>
 
       <style>{`
+        .ataturk-back-btn {
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          z-index: 100;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          background: rgba(255,255,255,0.1);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 999px;
+          color: rgba(255,255,255,0.8);
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 14px;
+          transition: all 0.2s;
+        }
+        .ataturk-back-btn:hover {
+          background: rgba(255,255,255,0.2);
+          color: white;
+        }
+
         .ataturk-page {
           min-height: 100vh;
           background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 100%);

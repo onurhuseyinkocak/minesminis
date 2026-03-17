@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, Rocket, ArrowRight, X, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
@@ -111,6 +111,7 @@ const Landing: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Roaming Mimi state
+  const constraintsRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 85, y: 75 });
   const [animationState, setAnimationState] = useState<AnimationState>('idle');
   const [speechBubble, setSpeechBubble] = useState<{ message: string; duration: number } | null>(null);
@@ -243,6 +244,7 @@ const Landing: React.FC = () => {
                 duration: 3 + Math.random() * 4,
                 repeat: Infinity,
                 delay: Math.random() * 5,
+                ease: 'easeInOut',
               }}
               style={{ left: `${Math.random() * 100}%` }}
             >
@@ -279,7 +281,7 @@ const Landing: React.FC = () => {
                 className="magic-hero__title"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
                 {t.heroTitle}
               </motion.h1>
@@ -450,8 +452,8 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ delay: i * 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+              whileHover={{ y: -8, scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
               style={{ '--card-color': f.color } as React.CSSProperties}
             >
               <div className="magic-feature-card__icon">
@@ -512,13 +514,6 @@ const Landing: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           viewport={{ once: true }}
         >
-          <motion.div
-            className="magic-cta__mimi"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
-            🐲
-          </motion.div>
           <h2>{lang === 'en' ? 'Ready for the Adventure?' : 'Maceraya Hazır mısın?'}</h2>
           <p>{lang === 'en' ? 'Mimi and friends are waiting for you!' : 'Mimi ve arkadaşları seni bekliyor!'}</p>
           <Link to="/login" className="magic-btn magic-btn--primary magic-btn--large">
@@ -544,36 +539,46 @@ const Landing: React.FC = () => {
       </footer>
 
       {/* ===== ROAMING MIMI ===== */}
-      <motion.div
-        className="landing-v2-mimi"
-        style={{
-          left: `${position.x}%`,
-          top: `${position.y}%`,
-          transform: 'translate(-50%, -50%)',
-          transition: animationState === 'following'
-            ? 'left 0.3s ease-out, top 0.3s ease-out'
-            : (animationState === 'walking' || animationState === 'goingHome')
-              ? 'left 4s cubic-bezier(0.25, 0.1, 0.25, 1), top 4s cubic-bezier(0.25, 0.1, 0.25, 1)'
-              : 'none',
-        }}
-      >
-        <div
-          className="landing-v2-mimi-click"
-          onClick={handleMimiClick}
-          onMouseEnter={() => { setIsHovered(true); mascotRoaming.onHover(); }}
-          onMouseLeave={() => setIsHovered(false)}
+      <div ref={constraintsRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9998 }}>
+        <motion.div
+          className="landing-v2-mimi"
+          drag
+          dragConstraints={constraintsRef}
+          dragElastic={0.1}
+          whileDrag={{ scale: 1.15 }}
+          onDragStart={() => mascotRoaming.stopRoaming()}
+          onDragEnd={() => mascotRoaming.startRoaming()}
+          style={{
+            position: 'absolute',
+            left: `${position.x}%`,
+            top: `${position.y}%`,
+            cursor: 'grab',
+            pointerEvents: 'auto',
+            transition: animationState === 'following'
+              ? 'left 0.3s ease-out, top 0.3s ease-out'
+              : (animationState === 'walking' || animationState === 'goingHome')
+                ? 'left 4s cubic-bezier(0.25, 0.1, 0.25, 1), top 4s cubic-bezier(0.25, 0.1, 0.25, 1)'
+                : 'none',
+          }}
         >
-          {speechBubble && (
-            <div className="landing-v2-mimi-bubble">{speechBubble.message}</div>
-          )}
-          <UnifiedMascot
-            id="mimi_dragon"
-            state={mapState(animationState)}
-            isHovered={isHovered}
-            size={100}
-          />
-        </div>
-      </motion.div>
+          <div
+            className="landing-v2-mimi-click"
+            onClick={handleMimiClick}
+            onMouseEnter={() => { setIsHovered(true); mascotRoaming.onHover(); }}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            {speechBubble && (
+              <div className="landing-v2-mimi-bubble">{speechBubble.message}</div>
+            )}
+            <UnifiedMascot
+              id="mimi_dragon"
+              state={mapState(animationState)}
+              isHovered={isHovered}
+              size={100}
+            />
+          </div>
+        </motion.div>
+      </div>
 
       {/* ===== MIMI MODAL ===== */}
       <AnimatePresence>
