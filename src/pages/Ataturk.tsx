@@ -206,8 +206,8 @@ function Ataturk() {
       <motion.section
         className="gallery-strip"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
       >
         <div className="gallery-scroll">
           {[ataturkMilitary, ataturkSoldier, ataturkCommander, ataturkSaluting, ataturkPortrait2, ataturkHorse].map((img, i) => (
@@ -230,9 +230,8 @@ function Ataturk() {
       <motion.section
         className="intro-section"
         initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
       >
         <div className="intro-content">
           <motion.img
@@ -258,9 +257,8 @@ function Ataturk() {
       <motion.section
         className="quotes-section"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
       >
         <div className="quotes-header">
           <motion.img
@@ -299,9 +297,8 @@ function Ataturk() {
       <motion.section
         className="timeline-section"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.7 }}
       >
         <h2>
           <Sparkles size={28} />
@@ -358,9 +355,8 @@ function Ataturk() {
       <motion.section
         className="reforms-section"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.8 }}
       >
         <div className="reforms-header">
           <motion.img
@@ -401,9 +397,8 @@ function Ataturk() {
       <motion.section
         className="legacy-section"
         initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.9 }}
       >
         <div className="legacy-content">
           <motion.img
@@ -433,17 +428,16 @@ function Ataturk() {
       <motion.section
         className="footer-banner"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 1.0 }}
       >
         <motion.img
           src={ataturkSilhouette}
           alt="Atatürk"
           className="footer-silhouette"
           initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.1 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 0.1 }}
+          transition={{ duration: 1, delay: 1.2 }}
         />
         <div className="banner-content">
           <h3>{t.footerMain}</h3>
