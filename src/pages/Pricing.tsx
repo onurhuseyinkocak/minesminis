@@ -167,7 +167,10 @@ export default function Pricing() {
     }
 
     const variantId = isYearly ? plan.yearlyVariantId : plan.monthlyVariantId;
-    if (!variantId) return;
+    if (!variantId) {
+      navigate('/premium');
+      return;
+    }
 
     setLoadingPlan(plan.id);
     const url = await checkoutUrl(variantId);

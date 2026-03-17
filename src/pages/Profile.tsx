@@ -60,7 +60,11 @@ const Profile: React.FC = () => {
         <header className="profile-hero">
           <div className="profile-avatar-large">
             <UserCircle size={100} className="avatar-vector" />
-            <button className="change-avatar-btn" title="Coming Soon!">
+            <button
+              className="change-avatar-btn"
+              title="Avatar upload coming soon!"
+              onClick={() => toast('Avatar upload coming soon!', { icon: '🐉' })}
+            >
               <Camera size={20} />
             </button>
           </div>

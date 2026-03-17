@@ -466,8 +466,8 @@ const Landing: React.FC = () => {
             animate={{ scale: [0.5, 1.1, 1] }}
             transition={{ duration: 0.6 }}
           >
-            <span className="magic-stats__number">1,000+</span>
-            <span className="magic-stats__label">{lang === 'en' ? 'Happy Learners' : 'Mutlu \u00d6\u011frenci'}</span>
+            <span className="magic-stats__number">6</span>
+            <span className="magic-stats__label">{lang === 'en' ? 'Activity Types' : 'Aktivite T\u00fcr\u00fc'}</span>
           </motion.div>
           <motion.div
             className="magic-stats__item"
@@ -482,8 +482,8 @@ const Landing: React.FC = () => {
             animate={{ scale: [0.5, 1.1, 1] }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="magic-stats__number">120+</span>
-            <span className="magic-stats__label">{lang === 'en' ? 'Fun Lessons' : 'E\u011flenceli Ders'}</span>
+            <span className="magic-stats__number">400+</span>
+            <span className="magic-stats__label">{lang === 'en' ? 'Words to Learn' : '\u00d6\u011frenilecek Kelime'}</span>
           </motion.div>
         </div>
       </section>

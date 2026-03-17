@@ -48,7 +48,7 @@ interface WordCard {
 }
 
 // ============================================================
-// MOCK DATA
+// SAMPLE DATA — shown until real progress is synced
 // ============================================================
 
 const MOCK_WORDS: WordCard[] = [

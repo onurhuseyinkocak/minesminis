@@ -8,7 +8,7 @@ const CookiePolicy: React.FC = () => {
       <div className="legal-container">
         <Link to="/" className="legal-back"><ArrowLeft size={18} /> Back</Link>
         <h1><Cookie size={28} /> Cookie Policy</h1>
-        <p className="legal-updated">Last updated: {new Date().toLocaleDateString('en-GB')}</p>
+        <p className="legal-updated">Last updated: 01/03/2025</p>
 
         <section>
           <h2>1. What Are Cookies</h2>
@@ -26,7 +26,7 @@ const CookiePolicy: React.FC = () => {
 
         <section>
           <h2>3. Third-Party Cookies</h2>
-          <p>We may use services (e.g. Firebase, Stripe, analytics) that set their own cookies. These are subject to their respective privacy policies.</p>
+          <p>We may use services (e.g. Firebase, Supabase, Lemon Squeezy, analytics) that set their own cookies. These are subject to their respective privacy policies.</p>
         </section>
 
         <section>

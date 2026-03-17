@@ -56,11 +56,11 @@ interface Activity {
 }
 
 // ============================================================
-// MOCK LESSON DATA
+// DEMO LESSON DATA — shown until real classroom data is connected
 // ============================================================
 
-const MOCK_CLASS_NAME = 'Class 2-A';
-const MOCK_LESSON_TITLE = 'Animals - Lesson 3';
+const MOCK_CLASS_NAME = 'Demo Classroom';
+const MOCK_LESSON_TITLE = 'Animals - Demo Lesson';
 
 const MOCK_STUDENTS = [
   'Elif', 'Ahmet', 'Zeynep', 'Can', 'Defne',
@@ -359,12 +359,7 @@ const ClassroomMode: React.FC = () => {
       {/* ---- TOP BAR ---- */}
       <header className="cm-topbar">
         <div className="cm-topbar__left">
-          <img
-            src="/mimi-logo.svg"
-            alt="MinesMinis"
-            className="cm-topbar__logo"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
+          <span className="cm-topbar__logo-text" role="img" aria-label="MinesMinis">🐉</span>
           <span className="cm-topbar__class">{MOCK_CLASS_NAME}</span>
           <span className="cm-topbar__divider" />
           <span className="cm-topbar__lesson">{MOCK_LESSON_TITLE}</span>

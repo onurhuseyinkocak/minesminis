@@ -8,7 +8,7 @@ const PrivacyPolicy: React.FC = () => {
       <div className="legal-container">
         <Link to="/" className="legal-back"><ArrowLeft size={18} /> Back</Link>
         <h1><Shield size={28} /> Privacy Policy</h1>
-        <p className="legal-updated">Last updated: {new Date().toLocaleDateString('en-GB')}</p>
+        <p className="legal-updated">Last updated: 01/03/2025</p>
 
         <section>
           <h2>1. Introduction</h2>
@@ -38,7 +38,7 @@ const PrivacyPolicy: React.FC = () => {
 
         <section>
           <h2>4. Children&apos;s Privacy</h2>
-          <p>MinesMinis is designed for children aged 5–12. We comply with applicable children&apos;s privacy laws (e.g. COPPA). Parental consent is required for children under 13. We do not sell personal information.</p>
+          <p>MinesMinis is designed for children aged 1–10. We comply with applicable children&apos;s privacy laws (e.g. COPPA). Parental consent is required for children under 13. We do not sell personal information.</p>
         </section>
 
         <section>

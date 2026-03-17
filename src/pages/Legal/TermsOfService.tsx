@@ -8,7 +8,7 @@ const TermsOfService: React.FC = () => {
       <div className="legal-container">
         <Link to="/" className="legal-back"><ArrowLeft size={18} /> Back</Link>
         <h1><FileText size={28} /> Terms of Service</h1>
-        <p className="legal-updated">Last updated: {new Date().toLocaleDateString('en-GB')}</p>
+        <p className="legal-updated">Last updated: 01/03/2025</p>
 
         <section>
           <h2>1. Acceptance</h2>
@@ -32,7 +32,7 @@ const TermsOfService: React.FC = () => {
 
         <section>
           <h2>4. Premium Subscription</h2>
-          <p>Premium features may require a paid subscription. Fees, cancellation, and refunds are governed by our payment provider (Stripe). Subscriptions auto-renew unless cancelled.</p>
+          <p>Premium features may require a paid subscription. Fees, cancellation, and refunds are governed by our payment provider (Lemon Squeezy). Subscriptions auto-renew unless cancelled.</p>
         </section>
 
         <section>

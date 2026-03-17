@@ -98,18 +98,16 @@ function getCurrentLessonData(userId: string) {
   };
 }
 
-/** Generate demo weekly XP data */
-function getWeeklyXPData(totalXP: number) {
+/** Generate weekly XP placeholder — shows only today's session XP */
+function getWeeklyXPData(weeklyXP: number) {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const today = new Date().getDay(); // 0=Sun
   const todayIdx = today === 0 ? 6 : today - 1;
 
   return days.map((day, i) => {
-    if (i > todayIdx) return { day, xp: 0 };
-    // Distribute XP with some randomness for visual appeal
-    const base = Math.max(10, Math.floor(totalXP / 14));
-    const variance = Math.floor(base * 0.6 * Math.random());
-    return { day, xp: i === todayIdx ? base + variance + 5 : base + variance };
+    // Only show XP for today — we don't have per-day history yet
+    if (i === todayIdx) return { day, xp: weeklyXP };
+    return { day, xp: 0 };
   });
 }
 

@@ -46,36 +46,31 @@ import { Avatar } from '../../components/ui/Avatar';
 import './ParentDashboard.css';
 
 // ============================================================
-// MOCK DATA (replace with real data when API is ready)
+// DEMO DATA — shown until real child profiles are connected
 // ============================================================
 
 const MOCK_CHILDREN = [
-  { id: '1', name: 'Elif', avatar: '', level: 5, age: 7 },
-  { id: '2', name: 'Can', avatar: '', level: 3, age: 5 },
+  { id: '1', name: 'Demo Child', avatar: '', level: 1, age: 7 },
 ];
 
 const WEEKLY_ACTIVITY = [
-  { day: 'Mon', minutes: 22, xp: 85 },
-  { day: 'Tue', minutes: 18, xp: 60 },
-  { day: 'Wed', minutes: 30, xp: 120 },
-  { day: 'Thu', minutes: 12, xp: 45 },
-  { day: 'Fri', minutes: 25, xp: 95 },
-  { day: 'Sat', minutes: 35, xp: 140 },
-  { day: 'Sun', minutes: 15, xp: 50 },
+  { day: 'Mon', minutes: 0, xp: 0 },
+  { day: 'Tue', minutes: 0, xp: 0 },
+  { day: 'Wed', minutes: 0, xp: 0 },
+  { day: 'Thu', minutes: 0, xp: 0 },
+  { day: 'Fri', minutes: 0, xp: 0 },
+  { day: 'Sat', minutes: 0, xp: 0 },
+  { day: 'Sun', minutes: 0, xp: 0 },
 ];
 
 const VOCABULARY_MASTERY = [
-  { name: 'Mastered', value: 42, color: 'var(--success)' },
-  { name: 'Reviewing', value: 18, color: 'var(--primary)' },
-  { name: 'Learning', value: 25, color: 'var(--info)' },
-  { name: 'New', value: 15, color: 'var(--cloud)' },
+  { name: 'Mastered', value: 0, color: 'var(--success)' },
+  { name: 'Reviewing', value: 0, color: 'var(--primary)' },
+  { name: 'Learning', value: 0, color: 'var(--info)' },
+  { name: 'New', value: 0, color: 'var(--cloud)' },
 ];
 
-const RECENT_ACHIEVEMENTS = [
-  { id: '1', name: 'Word Explorer', icon: '🔤', description: 'Learned 50 new words', date: '2 days ago' },
-  { id: '2', name: 'Week Warrior', icon: '🔥', description: '7-day streak completed', date: '4 days ago' },
-  { id: '3', name: 'Quiz Master', icon: '🏆', description: 'Scored 100% on Animals quiz', date: '1 week ago' },
-];
+const RECENT_ACHIEVEMENTS: { id: string; name: string; icon: string; description: string; date: string }[] = [];
 
 const STRENGTHS = [
   { label: 'Colors & Shapes', type: 'strength' as const },
@@ -141,7 +136,7 @@ const ParentDashboard: React.FC = () => {
     },
     {
       label: 'Time This Week',
-      value: '2.6h',
+      value: '--',
       icon: <Clock size={22} />,
       color: 'var(--info)',
       bg: 'var(--info-pale)',
@@ -185,6 +180,20 @@ const ParentDashboard: React.FC = () => {
 
   return (
     <div className="pd">
+      {/* ---- DEMO BANNER ---- */}
+      <div style={{
+        background: 'var(--primary-pale)',
+        border: '1px solid var(--primary)',
+        borderRadius: 12,
+        padding: '12px 20px',
+        marginBottom: 20,
+        fontSize: 14,
+        color: 'var(--primary-dark)',
+        textAlign: 'center',
+      }}>
+        This is a preview of the Parent Dashboard. Real child data will appear once multi-child profiles are available.
+      </div>
+
       {/* ---- HEADER ---- */}
       <div className="pd-header">
         <div className="pd-header__left">
@@ -289,7 +298,7 @@ const ParentDashboard: React.FC = () => {
                 <TrendingUp size={20} /> Current Progress
               </h3>
               <p className="pd-progress-card__meta">
-                World 2: Animals &middot; Lesson 4 of 8
+                Learning journey in progress
               </p>
             </div>
             <Badge variant="info">In Progress</Badge>
@@ -404,7 +413,11 @@ const ParentDashboard: React.FC = () => {
               <Award size={20} /> Recent Achievements
             </h3>
             <div className="pd-achievements-list">
-              {RECENT_ACHIEVEMENTS.map(a => (
+              {RECENT_ACHIEVEMENTS.length === 0 ? (
+                <p style={{ color: 'var(--text-muted)', fontSize: 14, padding: '16px 0' }}>
+                  No achievements yet. Start learning to earn badges!
+                </p>
+              ) : RECENT_ACHIEVEMENTS.map(a => (
                 <div key={a.id} className="pd-achievement">
                   <span className="pd-achievement__icon">{a.icon}</span>
                   <div className="pd-achievement__info">
