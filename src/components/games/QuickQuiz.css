@@ -1,6 +1,12 @@
 /* ==========================================================================
    QUICK QUIZ — MinesMinis Design System v4
+   Fast-paced quiz game with timer pressure and streak rewards
    ========================================================================== */
+
+/* Custom token for quiz primary color */
+.quick-quiz {
+  --qq-primary: var(--secondary);
+}
 
 .quick-quiz {
   display: flex;
@@ -9,12 +15,16 @@
   padding: var(--space-lg);
   max-width: 700px;
   margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
 }
+
+/* -- Header ----------------------------------------------------------- */
 
 .quick-quiz__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-md);
 }
 
 .quick-quiz__title {
@@ -23,6 +33,7 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .quick-quiz__meta {
@@ -30,6 +41,8 @@
   gap: var(--space-sm);
   align-items: center;
 }
+
+/* -- Timer ------------------------------------------------------------ */
 
 .quick-quiz__timer {
   display: flex;
@@ -59,7 +72,10 @@
   min-width: 2.5rem;
   text-align: right;
   font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
 }
+
+/* -- Question card ---------------------------------------------------- */
 
 .quick-quiz__question { text-align: center; }
 
@@ -73,7 +89,7 @@
 .quick-quiz__emoji {
   font-size: 4rem;
   line-height: 1;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.08));
 }
 
 .quick-quiz__prompt-text {
@@ -82,7 +98,10 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+  line-height: 1.4;
 }
+
+/* -- Options ---------------------------------------------------------- */
 
 .quick-quiz__options {
   display: flex;
@@ -116,9 +135,13 @@
 
 .quick-quiz__option:hover:not(:disabled) {
   border-color: var(--secondary-light);
-  background: rgba(26, 107, 90, 0.03);
+  background: var(--secondary-pale);
   transform: translateX(4px);
   box-shadow: var(--shadow-md);
+}
+
+.quick-quiz__option:active:not(:disabled) {
+  transform: translateX(2px) scale(0.98);
 }
 
 .quick-quiz__option:focus-visible {
@@ -133,13 +156,13 @@
 
 .quick-quiz__option--correct {
   border-color: var(--mimi-green);
-  background: rgba(76, 175, 80, 0.08);
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.10);
+  background: var(--success-pale);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
 }
 
 .quick-quiz__option--wrong {
   border-color: var(--error);
-  background: rgba(229, 57, 53, 0.05);
+  background: var(--error-pale);
   animation: qq-shake 0.4s ease;
 }
 
@@ -149,11 +172,13 @@
   75% { transform: translateX(-5px); }
 }
 
+/* -- Option label (letter circle) ------------------------------------- */
+
 .quick-quiz__option-label {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-full);
-  background: rgba(26, 107, 90, 0.08);
+  background: var(--secondary-pale);
   color: var(--secondary);
   display: flex;
   align-items: center;
@@ -161,7 +186,9 @@
   font-weight: 800;
   font-size: 0.9rem;
   flex-shrink: 0;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .quick-quiz__option--correct .quick-quiz__option-label {
@@ -176,6 +203,8 @@
 
 .quick-quiz__option-text { font-size: 1.15rem; }
 
+/* -- Feedback --------------------------------------------------------- */
+
 .quick-quiz__feedback {
   text-align: center;
   font-family: var(--font-display);
@@ -186,15 +215,17 @@
 }
 
 .quick-quiz__feedback--correct {
-  background: rgba(76, 175, 80, 0.10);
+  background: var(--success-pale);
   color: var(--mimi-green-dark);
 }
 
 .quick-quiz__feedback--wrong,
 .quick-quiz__feedback--timeout {
-  background: rgba(232, 163, 23, 0.10);
+  background: var(--warning-pale);
   color: var(--primary-dark);
 }
+
+/* -- Results ---------------------------------------------------------- */
 
 .quick-quiz__results { text-align: center; }
 
@@ -205,7 +236,10 @@
   gap: var(--space-md);
 }
 
-.quick-quiz__trophy { color: var(--primary); }
+.quick-quiz__trophy {
+  color: var(--primary);
+  animation: celebrate 0.6s ease-out;
+}
 
 .quick-quiz__results-title {
   font-family: var(--font-display);
@@ -213,16 +247,68 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .quick-quiz__results-score {
   font-size: 1.15rem;
   color: var(--text-body);
   margin: 0;
+  line-height: 1.6;
 }
 
+/* -- Responsive ------------------------------------------------------- */
+
 @media (min-width: 1024px) {
-  .quick-quiz__option { min-height: 76px; padding: var(--space-lg) var(--space-xl); font-size: 1.3rem; }
+  .quick-quiz__option {
+    min-height: 76px;
+    padding: var(--space-lg) var(--space-xl);
+    font-size: 1.3rem;
+  }
   .quick-quiz__emoji { font-size: 5rem; }
   .quick-quiz__prompt-text { font-size: 1.5rem; }
+}
+
+@media (max-width: 768px) {
+  .quick-quiz { padding: var(--space-md); }
+  .quick-quiz__title { font-size: 1.5rem; }
+  .quick-quiz__option { min-height: 56px; font-size: 1rem; }
+  .quick-quiz__emoji { font-size: 3.5rem; }
+}
+
+@media (min-width: 1600px) {
+  .quick-quiz { max-width: 800px; }
+  .quick-quiz__option {
+    min-height: 84px;
+    font-size: 1.4rem;
+  }
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .quick-quiz__option {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .quick-quiz__option:hover:not(:disabled) {
+  border-color: var(--secondary);
+  background: var(--secondary-pale);
+}
+
+[data-theme="dark"] .quick-quiz__option-label {
+  background: var(--secondary-pale);
+}
+
+[data-theme="dark"] .quick-quiz__timer-bar {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .quick-quiz__feedback--correct {
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .quick-quiz__feedback--wrong,
+[data-theme="dark"] .quick-quiz__feedback--timeout {
+  background: var(--warning-pale);
 }

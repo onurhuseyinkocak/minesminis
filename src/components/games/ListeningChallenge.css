@@ -1,5 +1,6 @@
 /* ==========================================================================
    LISTENING CHALLENGE — MinesMinis Design System v4
+   Audio-driven picking game with large emoji cards and clear feedback
    ========================================================================== */
 
 .listening-challenge {
@@ -9,12 +10,16 @@
   padding: var(--space-lg);
   max-width: 750px;
   margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
 }
+
+/* -- Header ----------------------------------------------------------- */
 
 .listening-challenge__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-md);
 }
 
 .listening-challenge__title {
@@ -23,13 +28,16 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
+
+/* -- Speaker card ----------------------------------------------------- */
 
 .listening-challenge__speaker {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
   text-align: center;
 }
 
@@ -39,6 +47,7 @@
   font-weight: 600;
   color: var(--text-body);
   margin: 0;
+  line-height: 1.5;
 }
 
 .listening-challenge__play-btn {
@@ -46,6 +55,8 @@
   min-height: 72px;
   font-size: 1.3rem !important;
 }
+
+/* -- Feedback --------------------------------------------------------- */
 
 .listening-challenge__feedback {
   text-align: center;
@@ -57,14 +68,17 @@
 }
 
 .listening-challenge__feedback--correct {
-  background: rgba(76, 175, 80, 0.10);
+  background: var(--success-pale);
   color: var(--mimi-green-dark);
+  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12);
 }
 
 .listening-challenge__feedback--wrong {
-  background: rgba(232, 163, 23, 0.10);
+  background: var(--warning-pale);
   color: var(--primary-dark);
 }
+
+/* -- Option grid ------------------------------------------------------ */
 
 .listening-challenge__options {
   display: grid;
@@ -85,8 +99,8 @@
   cursor: pointer;
   transition:
     border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast),
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
     background var(--transition-fast);
   font-family: var(--font-display);
   box-shadow: var(--shadow-card);
@@ -94,8 +108,12 @@
 
 .listening-challenge__option:hover:not(:disabled) {
   border-color: var(--secondary-light);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+.listening-challenge__option:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.97);
 }
 
 .listening-challenge__option:focus-visible {
@@ -107,13 +125,13 @@
 
 .listening-challenge__option--correct {
   border-color: var(--mimi-green);
-  background: rgba(76, 175, 80, 0.06);
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
+  background: var(--success-pale);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
 }
 
 .listening-challenge__option--wrong {
   border-color: var(--primary);
-  background: rgba(232, 163, 23, 0.05);
+  background: var(--primary-pale);
   animation: lc-shake 0.4s ease;
 }
 
@@ -123,10 +141,17 @@
   75% { transform: translateX(-5px); }
 }
 
+/* -- Emoji + label ---------------------------------------------------- */
+
 .listening-challenge__option-emoji {
   font-size: 3.5rem;
   line-height: 1;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.06));
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.08));
+  transition: transform var(--transition-fast);
+}
+
+.listening-challenge__option:hover:not(:disabled) .listening-challenge__option-emoji {
+  transform: scale(1.08);
 }
 
 .listening-challenge__option-label {
@@ -135,6 +160,8 @@
   color: var(--text-body);
 }
 
+/* -- Prompt ----------------------------------------------------------- */
+
 .listening-challenge__prompt-listen {
   text-align: center;
   font-family: var(--font-display);
@@ -142,7 +169,10 @@
   color: var(--text-muted);
   font-weight: 600;
   margin: 0;
+  animation: pulse 2s ease-in-out infinite;
 }
+
+/* -- Results ---------------------------------------------------------- */
 
 .listening-challenge__results { text-align: center; }
 
@@ -153,7 +183,10 @@
   gap: var(--space-md);
 }
 
-.listening-challenge__results-icon { color: var(--primary); }
+.listening-challenge__results-icon {
+  color: var(--primary);
+  animation: celebrate 0.6s ease-out;
+}
 
 .listening-challenge__results-title {
   font-family: var(--font-display);
@@ -161,17 +194,78 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .listening-challenge__results-score {
   font-size: 1.15rem;
   color: var(--text-body);
   margin: 0;
+  line-height: 1.6;
 }
 
+/* -- Responsive ------------------------------------------------------- */
+
 @media (min-width: 1024px) {
-  .listening-challenge__option { min-height: 160px; padding: var(--space-xl) var(--space-lg); }
+  .listening-challenge__option {
+    min-height: 160px;
+    padding: var(--space-xl) var(--space-lg);
+  }
   .listening-challenge__option-emoji { font-size: 5rem; }
   .listening-challenge__option-label { font-size: 1.3rem; }
-  .listening-challenge__play-btn { min-width: 260px; min-height: 88px; font-size: 1.5rem !important; }
+  .listening-challenge__play-btn {
+    min-width: 260px;
+    min-height: 88px;
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .listening-challenge { padding: var(--space-md); }
+  .listening-challenge__title { font-size: 1.5rem; }
+  .listening-challenge__option {
+    min-height: 100px;
+    padding: var(--space-md) var(--space-sm);
+  }
+  .listening-challenge__option-emoji { font-size: 2.5rem; }
+  .listening-challenge__option-label { font-size: 0.9rem; }
+}
+
+@media (min-width: 1600px) {
+  .listening-challenge { max-width: 850px; }
+  .listening-challenge__option {
+    min-height: 180px;
+    border-radius: var(--radius-xl);
+  }
+  .listening-challenge__option-emoji { font-size: 5.5rem; }
+  .listening-challenge__option-label { font-size: 1.4rem; }
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .listening-challenge__option {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .listening-challenge__option:hover:not(:disabled) {
+  border-color: var(--secondary);
+}
+
+[data-theme="dark"] .listening-challenge__option--correct {
+  background: var(--success-pale);
+  border-color: var(--mimi-green);
+}
+
+[data-theme="dark"] .listening-challenge__option--wrong {
+  background: var(--primary-pale);
+  border-color: var(--primary-light);
+}
+
+[data-theme="dark"] .listening-challenge__feedback--correct {
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .listening-challenge__feedback--wrong {
+  background: var(--warning-pale);
 }

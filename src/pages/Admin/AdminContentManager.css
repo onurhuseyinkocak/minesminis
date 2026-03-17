@@ -1,5 +1,7 @@
 /* ==========================================================================
-   Admin Content Manager — MinesMinis Design System v4
+   Admin Content Manager — MinesMinis Premium Design System V2
+   Tabbed CRUD, forms, tables
+   ZERO hex colors. Token-only.
    ========================================================================== */
 
 .adm-content {
@@ -9,6 +11,7 @@
 }
 
 .adm-content-header h1 {
+  font-family: var(--admin-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -54,8 +57,9 @@
 .adm-tab:hover { color: var(--admin-text); background: var(--admin-bg); }
 
 .adm-tab.active {
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: var(--white);
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-tab-count {
@@ -63,7 +67,7 @@
   font-weight: 700;
   padding: 2px var(--space-xs);
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--glass-shine);
 }
 
 .adm-tab:not(.active) .adm-tab-count {
@@ -108,6 +112,7 @@
   background: var(--primary-pale);
   border-color: var(--primary);
   color: var(--primary);
+  font-weight: 600;
 }
 
 /* ---- Content Table ---- */
@@ -128,7 +133,7 @@
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--admin-text-muted);
   text-align: left;
   border-bottom: 1px solid var(--admin-border);
@@ -160,8 +165,8 @@
 }
 
 .adm-thumb-emoji {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,9 +185,9 @@
   font-weight: 600;
 }
 
-.adm-level-badge.beginner     { background: rgba(76, 175, 80, 0.10); color: var(--success); }
-.adm-level-badge.intermediate { background: rgba(232, 163, 23, 0.10); color: var(--primary-dark); }
-.adm-level-badge.advanced     { background: rgba(229, 57, 53, 0.10); color: var(--error); }
+.adm-level-badge.beginner     { background: var(--success-soft); color: var(--success); }
+.adm-level-badge.intermediate { background: var(--primary-pale); color: var(--primary-dark); }
+.adm-level-badge.advanced     { background: var(--error-soft); color: var(--error); }
 
 .adm-content-pagination {
   display: flex;

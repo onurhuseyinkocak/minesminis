@@ -1,5 +1,7 @@
 /* ==========================================================================
-   Admin Analytics — MinesMinis Design System v4
+   Admin Analytics — MinesMinis Premium Design System V2
+   Charts, metrics, data cards
+   ZERO hex colors. Token-only.
    ========================================================================== */
 
 .adm-analytics {
@@ -9,6 +11,7 @@
 }
 
 .adm-analytics-header h1 {
+  font-family: var(--admin-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -34,6 +37,11 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
+  transition: box-shadow var(--admin-transition);
+}
+
+.adm-analytics-chart:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-analytics-chart.full {
@@ -49,6 +57,7 @@
 }
 
 .adm-analytics-chart-title {
+  font-family: var(--admin-font-heading);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--admin-text);
@@ -81,11 +90,18 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  transition: transform var(--admin-transition),
+              box-shadow var(--admin-transition);
+}
+
+.adm-analytics-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .adm-analytics-stat-icon {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
@@ -94,6 +110,7 @@
 }
 
 .adm-analytics-stat-val {
+  font-family: var(--admin-font-heading);
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -111,27 +128,30 @@
   gap: var(--space-md);
   padding: var(--space-sm) var(--space-lg);
   border-bottom: 1px solid var(--admin-border-light);
+  transition: background var(--admin-transition);
 }
 
 .adm-top-item:last-child { border-bottom: none; }
+.adm-top-item:hover { background: var(--admin-bg); }
 
 .adm-top-rank {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-full);
   background: var(--admin-bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--admin-font-heading);
   font-size: 0.7rem;
   font-weight: 700;
   color: var(--admin-text-muted);
   flex-shrink: 0;
 }
 
-.adm-top-rank.gold   { background: rgba(232, 163, 23, 0.10); color: var(--primary-dark); }
+.adm-top-rank.gold   { background: var(--primary-pale); color: var(--primary-dark); }
 .adm-top-rank.silver { background: var(--bg-muted); color: var(--text-secondary); }
-.adm-top-rank.bronze { background: rgba(251, 140, 0, 0.10); color: var(--warning); }
+.adm-top-rank.bronze { background: var(--warning-soft); color: var(--warning); }
 
 .adm-top-name {
   flex: 1;
@@ -141,6 +161,7 @@
 }
 
 .adm-top-value {
+  font-family: var(--admin-font-heading);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--admin-text-secondary);

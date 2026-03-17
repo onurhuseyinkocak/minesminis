@@ -1,5 +1,7 @@
 /* ==========================================================================
-   Admin Curriculum Manager — MinesMinis Design System v4
+   Admin Curriculum Manager — MinesMinis Premium Design System V2
+   World/lesson management
+   ZERO hex colors. Token-only.
    ========================================================================== */
 
 .adm-curriculum {
@@ -9,6 +11,7 @@
 }
 
 .adm-curriculum-header h1 {
+  font-family: var(--admin-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -36,10 +39,16 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
+  transition: box-shadow var(--admin-transition);
+}
+
+.adm-worlds-list:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-worlds-list-header {
   padding: var(--space-md);
+  font-family: var(--admin-font-heading);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--admin-text);
@@ -57,16 +66,21 @@
   padding: var(--space-md);
   border-bottom: 1px solid var(--admin-border-light);
   cursor: pointer;
-  transition: background var(--admin-transition);
+  transition: background var(--admin-transition),
+              transform var(--admin-transition);
 }
 
 .adm-world-item:last-child { border-bottom: none; }
-.adm-world-item:hover { background: var(--admin-bg); }
-.adm-world-item.active { background: var(--primary-pale); }
+.adm-world-item:hover { background: var(--admin-bg); transform: translateX(2px); }
+
+.adm-world-item.active {
+  background: var(--primary-pale);
+  border-left: 3px solid var(--primary);
+}
 
 .adm-world-item-color {
   width: 6px;
-  height: 32px;
+  height: 34px;
   border-radius: var(--space-xs);
   flex-shrink: 0;
 }
@@ -93,6 +107,11 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
+  transition: box-shadow var(--admin-transition);
+}
+
+.adm-lessons-panel:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-lessons-header {
@@ -104,6 +123,7 @@
 }
 
 .adm-lessons-title {
+  font-family: var(--admin-font-heading);
   font-size: 1rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -127,13 +147,14 @@
 .adm-lesson-row:hover { background: var(--admin-bg); }
 
 .adm-lesson-order {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius-sm);
   background: var(--admin-bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--admin-font-heading);
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--admin-text-muted);
@@ -168,6 +189,7 @@
 }
 
 .adm-activities-title {
+  font-family: var(--admin-font-heading);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--admin-text);
@@ -186,6 +208,11 @@
   font-size: 0.725rem;
   font-weight: 500;
   color: var(--admin-text-secondary);
+  transition: border-color var(--admin-transition);
+}
+
+.adm-activity-chip:hover {
+  border-color: var(--primary-light);
 }
 
 /* ---- Vocabulary ---- */
@@ -203,7 +230,7 @@
   gap: var(--space-xs);
   padding: 5px var(--space-sm);
   background: var(--primary-pale);
-  border: 1px solid rgba(232, 163, 23, 0.2);
+  border: 1px solid var(--primary-light);
   border-radius: var(--radius-sm);
   font-size: 0.725rem;
   font-weight: 500;

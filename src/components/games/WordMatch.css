@@ -1,5 +1,6 @@
 /* ==========================================================================
    WORD MATCH — MinesMinis Design System v4
+   Child-friendly matching game with delightful card interactions
    ========================================================================== */
 
 .word-match {
@@ -9,12 +10,16 @@
   padding: var(--space-lg);
   max-width: 800px;
   margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
 }
+
+/* -- Header ----------------------------------------------------------- */
 
 .word-match__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-md);
 }
 
 .word-match__title {
@@ -23,7 +28,10 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
+
+/* -- Feedback --------------------------------------------------------- */
 
 .word-match__feedback {
   text-align: center;
@@ -39,15 +47,17 @@
 }
 
 .word-match__feedback--correct {
-  background: rgba(76, 175, 80, 0.12);
+  background: var(--success-pale);
   color: var(--mimi-green-dark);
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.10);
+  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12);
 }
 
 .word-match__feedback--wrong {
-  background: rgba(232, 163, 23, 0.12);
+  background: var(--warning-pale);
   color: var(--primary-dark);
 }
+
+/* -- Board ------------------------------------------------------------ */
 
 .word-match__board {
   display: flex;
@@ -63,6 +73,8 @@
   flex: 1;
   max-width: 340px;
 }
+
+/* -- Cards ------------------------------------------------------------ */
 
 .word-match__card {
   display: flex;
@@ -81,17 +93,21 @@
   color: var(--text-primary);
   transition:
     border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast),
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
     background var(--transition-fast);
   text-align: left;
   width: 100%;
 }
 
 .word-match__card:hover:not(:disabled) {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-3px);
   border-color: var(--cloud);
+}
+
+.word-match__card:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98);
 }
 
 .word-match__card:focus-visible {
@@ -101,15 +117,18 @@
 
 .word-match__card--selected {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow), var(--shadow-md);
+  box-shadow:
+    0 0 0 3px var(--primary-glow),
+    var(--shadow-md);
   background: var(--primary-pale);
 }
 
 .word-match__card--matched {
   border-color: var(--mimi-green);
-  background: rgba(76, 175, 80, 0.06);
-  opacity: 0.65;
+  background: var(--success-pale);
+  opacity: 0.6;
   pointer-events: none;
+  transform: scale(0.97);
 }
 
 .word-match__card--flash {
@@ -118,7 +137,7 @@
 
 @keyframes wm-flash {
   0%, 100% { background: var(--bg-card); }
-  50% { background: rgba(76, 175, 80, 0.20); }
+  50% { background: var(--success-pale); }
 }
 
 .word-match__card:disabled { cursor: default; }
@@ -133,6 +152,8 @@
   font-size: 1.2rem;
 }
 
+/* -- Results ---------------------------------------------------------- */
+
 .word-match__results { text-align: center; }
 
 .word-match__results-content {
@@ -142,7 +163,10 @@
   gap: var(--space-md);
 }
 
-.word-match__results-emoji { font-size: 4rem; }
+.word-match__results-emoji {
+  font-size: 4.5rem;
+  animation: celebrate 0.6s ease-out;
+}
 
 .word-match__results-title {
   font-family: var(--font-display);
@@ -150,13 +174,17 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .word-match__results-score {
   font-size: 1.15rem;
   color: var(--text-body);
   margin: 0;
+  line-height: 1.6;
 }
+
+/* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1024px) {
   .word-match__card {
@@ -168,7 +196,47 @@
   .word-match__card-text { font-size: 1.4rem; }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .word-match { padding: var(--space-md); }
   .word-match__board { flex-direction: column; gap: var(--space-md); }
   .word-match__column { max-width: 100%; }
+  .word-match__title { font-size: 1.5rem; }
+}
+
+@media (min-width: 1600px) {
+  .word-match { max-width: 900px; }
+  .word-match__card {
+    min-height: 96px;
+    font-size: 1.5rem;
+  }
+  .word-match__card-emoji { font-size: 3rem; }
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .word-match__card {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .word-match__card:hover:not(:disabled) {
+  border-color: var(--border-medium);
+}
+
+[data-theme="dark"] .word-match__card--selected {
+  border-color: var(--primary-light);
+  background: var(--primary-pale);
+}
+
+[data-theme="dark"] .word-match__card--matched {
+  border-color: var(--mimi-green);
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .word-match__feedback--correct {
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .word-match__feedback--wrong {
+  background: var(--warning-pale);
 }

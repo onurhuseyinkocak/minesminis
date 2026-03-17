@@ -1,6 +1,7 @@
 /* ============================================================
-   DailyReward.css — Token-based daily login rewards modal
-   MinesMinis Design System
+   DailyReward.css — Floating trigger + 7-day reward modal
+   MinesMinis Premium Design System V2
+   ZERO hex colors. Token-only.
    ============================================================ */
 
 /* ---- Floating Trigger Button ---- */
@@ -9,22 +10,30 @@
   bottom: 92px;
   right: 20px;
   z-index: 80;
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius-full);
   border: 2px solid var(--border-light);
   background: var(--bg-elevated);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
   box-shadow: var(--shadow-md);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: var(--touch-target);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+[data-theme="dark"] .daily-reward-trigger {
+  border-color: var(--border-medium);
 }
 
 .daily-reward-trigger:hover {
-  transform: scale(1.08);
+  transform: scale(1.1) translateY(-2px);
   border-color: var(--primary);
   box-shadow: var(--shadow-lg);
 }
@@ -41,7 +50,7 @@
 
 @keyframes triggerPulse {
   0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow), var(--shadow-md); }
-  50% { box-shadow: 0 0 0 12px transparent, var(--shadow-md); }
+  50% { box-shadow: 0 0 0 14px transparent, var(--shadow-md); }
 }
 
 .trigger-icon {
@@ -76,9 +85,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--overlay-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   animation: drOverlayIn 0.25s ease;
   padding: var(--space-md);
 }
@@ -102,6 +111,10 @@
   overflow: hidden;
 }
 
+[data-theme="dark"] .daily-reward-modal {
+  border-color: var(--border-medium);
+}
+
 @keyframes drModalIn {
   from { opacity: 0; transform: scale(0.9) translateY(20px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
@@ -122,7 +135,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
 }
 
 .daily-reward-modal .close-btn:hover {
@@ -173,23 +187,26 @@
   padding: var(--space-sm) var(--space-xs);
   border-radius: var(--radius-md);
   background: var(--bg-muted);
-  border: 1px solid var(--border-light);
-  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  border: 1.5px solid var(--border-light);
+  transition: transform var(--transition-fast),
+              border-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background var(--transition-fast);
 }
 
 .reward-day.past {
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
 .reward-day.current {
   border-color: var(--primary);
   background: var(--primary-pale);
   box-shadow: 0 0 0 1px var(--primary-glow), var(--shadow-md);
-  transform: scale(1.06);
+  transform: scale(1.08);
 }
 
 .reward-day.future {
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 .reward-day.special {
@@ -240,11 +257,12 @@
   cursor: pointer;
   min-height: 52px;
   box-shadow: var(--shadow-lg);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast);
 }
 
 .claim-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-xl);
 }
 
@@ -254,7 +272,7 @@
 }
 
 .claim-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 

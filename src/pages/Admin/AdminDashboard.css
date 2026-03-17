@@ -1,5 +1,7 @@
 /* ==========================================================================
-   Admin Dashboard — MinesMinis Design System v4
+   Admin Dashboard — MinesMinis Premium Design System V2
+   Metrics grid, charts, quick actions
+   ZERO hex colors. Token-only.
    ========================================================================== */
 
 .adm-dash {
@@ -15,6 +17,7 @@
 }
 
 .adm-dash-header h1 {
+  font-family: var(--admin-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -53,16 +56,18 @@
 .adm-action-btn:hover {
   background: var(--admin-bg);
   border-color: var(--border-medium);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-action-btn.primary {
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: var(--white);
   border-color: var(--primary);
 }
 
 .adm-action-btn.primary:hover {
-  background: var(--primary-dark);
+  box-shadow: var(--shadow-md);
 }
 
 /* ---- Metrics Grid ---- */
@@ -80,6 +85,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  transition: transform var(--admin-transition),
+              box-shadow var(--admin-transition);
+}
+
+.adm-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .adm-metric-top {
@@ -89,18 +101,18 @@
 }
 
 .adm-metric-icon {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.adm-metric-icon.blue   { background: rgba(30, 136, 229, 0.10); color: var(--info); }
-.adm-metric-icon.green  { background: rgba(76, 175, 80, 0.10); color: var(--success); }
-.adm-metric-icon.amber  { background: rgba(232, 163, 23, 0.10); color: var(--primary); }
-.adm-metric-icon.purple { background: rgba(139, 92, 246, 0.10); color: rgba(139, 92, 246, 1); }
+.adm-metric-icon.blue   { background: var(--info-soft); color: var(--info); }
+.adm-metric-icon.green  { background: var(--success-soft); color: var(--success); }
+.adm-metric-icon.amber  { background: var(--primary-pale); color: var(--primary); }
+.adm-metric-icon.purple { background: var(--secondary-pale); color: var(--secondary); }
 
 .adm-metric-change {
   display: inline-flex;
@@ -113,16 +125,17 @@
 }
 
 .adm-metric-change.up {
-  background: rgba(76, 175, 80, 0.10);
+  background: var(--success-soft);
   color: var(--success);
 }
 
 .adm-metric-change.down {
-  background: rgba(229, 57, 53, 0.10);
+  background: var(--error-soft);
   color: var(--error);
 }
 
 .adm-metric-value {
+  font-family: var(--admin-font-heading);
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -149,6 +162,11 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
+  transition: box-shadow var(--admin-transition);
+}
+
+.adm-card:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-card-header {
@@ -160,6 +178,7 @@
 }
 
 .adm-card-title {
+  font-family: var(--admin-font-heading);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--admin-text);
@@ -200,7 +219,7 @@
 .adm-activity-dot.green  { background: var(--success); }
 .adm-activity-dot.blue   { background: var(--info); }
 .adm-activity-dot.amber  { background: var(--primary); }
-.adm-activity-dot.purple { background: rgba(139, 92, 246, 1); }
+.adm-activity-dot.purple { background: var(--secondary); }
 
 .adm-activity-content { flex: 1; min-width: 0; }
 
@@ -230,24 +249,28 @@
   padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--admin-border-light);
   border-right: 1px solid var(--admin-border-light);
+  transition: background var(--admin-transition);
 }
 
+.adm-inventory-item:hover { background: var(--admin-bg); }
 .adm-inventory-item:nth-child(2n) { border-right: none; }
 .adm-inventory-item:nth-last-child(-n+2) { border-bottom: none; }
 
 .adm-inventory-icon {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
+  background: var(--admin-bg);
 }
 
 .adm-inventory-info { flex: 1; }
 
 .adm-inventory-count {
+  font-family: var(--admin-font-heading);
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -285,6 +308,8 @@
 .adm-quick-btn:hover {
   border-color: var(--primary);
   background: var(--primary-pale);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-quick-btn svg { color: var(--primary); }
@@ -297,9 +322,11 @@
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--admin-border-light);
+  transition: background var(--admin-transition);
 }
 
 .adm-health-bar:last-child { border-bottom: none; }
+.adm-health-bar:hover { background: var(--admin-bg); }
 
 .adm-health-label {
   flex: 1;
@@ -315,8 +342,8 @@
   border-radius: var(--radius-full);
 }
 
-.adm-health-status.ok { background: rgba(76, 175, 80, 0.10); color: var(--success); }
-.adm-health-status.warn { background: rgba(251, 140, 0, 0.10); color: var(--warning); }
+.adm-health-status.ok { background: var(--success-soft); color: var(--success); }
+.adm-health-status.warn { background: var(--warning-soft); color: var(--warning); }
 
 /* ---- Empty / Loading ---- */
 .adm-empty {

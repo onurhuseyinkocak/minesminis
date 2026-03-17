@@ -263,13 +263,15 @@ const Landing = () => {
             transition={{ delay: 0.4, duration: 0.7 }}
           >
             <div className="landing-hero-mimi">
-              <motion.span
-                className="landing-hero-mimi-emoji"
+              <motion.img
+                src="/src/assets/bear/mimi_mascot_4k.png"
+                alt="Mimi the Dragon"
+                className="landing-hero-mimi-img"
+                style={{ width: 220, height: 220, objectFit: 'contain', filter: 'drop-shadow(0 8px 24px rgba(126,217,87,0.3))' }}
                 animate={{ y: [0, -8, 0] }}
                 transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-              >
-                🐉
-              </motion.span>
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
               <span className="landing-hero-float">✨</span>
               <span className="landing-hero-float">⭐</span>
               <span className="landing-hero-float">🌟</span>
@@ -432,13 +434,15 @@ const Landing = () => {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <motion.div
+          <motion.img
+            src="/src/assets/bear/mimi_mascot_4k.png"
+            alt="Mimi the Dragon"
             className="landing-cta-mimi"
+            style={{ width: 100, height: 100, objectFit: 'contain' }}
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-          >
-            🐉
-          </motion.div>
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
           <h2 className="landing-cta-title">{t.ctaTitle}</h2>
           <p className="landing-cta-sub">{t.ctaSub}</p>
           <Link to="/login">

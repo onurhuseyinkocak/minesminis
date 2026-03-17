@@ -1,6 +1,6 @@
 /* ==========================================================================
    BUTTON — MinesMinis Design System v4
-   All colors via var() tokens. No hardcoded hex.
+   Warm, premium, child-friendly buttons with rich interaction states
    ========================================================================== */
 
 .mm-button {
@@ -16,15 +16,21 @@
   line-height: 1;
   white-space: nowrap;
   text-decoration: none;
+  letter-spacing: 0.01em;
   transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background var(--transition-fast),
-    opacity var(--transition-fast);
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    background var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-fast),
+    opacity var(--transition-fast),
+    filter var(--transition-fast);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   outline: none;
   min-height: var(--touch-target);
+  border-radius: var(--radius-md);
+  isolation: isolate;
 }
 
 /* -- Sizes ------------------------------------------------------------ */
@@ -35,6 +41,7 @@
   font-size: 0.8125rem;
   border-radius: var(--radius-sm);
   gap: 6px;
+  min-height: var(--btn-height-sm);
 }
 
 .mm-button--md {
@@ -58,33 +65,43 @@
   font-size: 1.125rem;
   border-radius: var(--radius-lg);
   gap: var(--space-sm);
+  letter-spacing: 0.02em;
 }
 
-/* -- Primary — Amber gradient + shadow -------------------------------- */
+/* -- Primary — Rich amber gradient with depth ------------------------- */
 
 .mm-button--primary {
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 55%, var(--primary-dark) 100%);
   color: var(--ink);
   box-shadow:
     var(--shadow-button),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .mm-button--primary:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:
     var(--shadow-button-hover),
-    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  filter: brightness(1.06);
 }
 
 .mm-button--primary:active:not(:disabled) {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(0.97);
   box-shadow:
     0 1px 4px var(--primary-glow),
-    inset 0 1px 2px rgba(0, 0, 0, 0.08);
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  filter: brightness(0.97);
 }
 
-/* -- Secondary — Teal gradient ---------------------------------------- */
+.mm-button--primary:focus-visible {
+  outline: none;
+  box-shadow:
+    var(--focus-ring),
+    var(--shadow-button);
+}
+
+/* -- Secondary — Deep teal gradient ----------------------------------- */
 
 .mm-button--secondary {
   background: var(--gradient-secondary);
@@ -97,12 +114,19 @@
 .mm-button--secondary:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:
-    0 6px 20px rgba(26, 107, 90, 0.35),
+    0 8px 24px rgba(26, 107, 90, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  filter: brightness(1.06);
 }
 
 .mm-button--secondary:active:not(:disabled) {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 1px 4px rgba(26, 107, 90, 0.2);
+}
+
+.mm-button--secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.35);
 }
 
 /* -- Ghost ------------------------------------------------------------ */
@@ -113,19 +137,24 @@
 }
 
 .mm-button--ghost:hover:not(:disabled) {
-  background: rgba(232, 163, 23, 0.08);
+  background: var(--primary-pale);
   color: var(--primary-dark);
 }
 
 .mm-button--ghost:active:not(:disabled) {
-  background: rgba(232, 163, 23, 0.14);
+  background: rgba(232, 163, 23, 0.16);
   transform: scale(0.97);
+}
+
+.mm-button--ghost:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 /* -- Danger ----------------------------------------------------------- */
 
 .mm-button--danger {
-  background: var(--error);
+  background: linear-gradient(135deg, var(--error-light) 0%, var(--error) 100%);
   color: var(--white);
   box-shadow:
     0 2px 8px rgba(229, 57, 53, 0.25),
@@ -135,20 +164,27 @@
 .mm-button--danger:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:
-    0 6px 20px rgba(229, 57, 53, 0.35),
+    0 8px 24px rgba(229, 57, 53, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  filter: brightness(1.06);
 }
 
 .mm-button--danger:active:not(:disabled) {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(0.97);
+}
+
+.mm-button--danger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.35);
 }
 
 /* -- States ----------------------------------------------------------- */
 
 .mm-button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none;
+  filter: grayscale(0.3);
 }
 
 .mm-button--loading {
@@ -160,21 +196,6 @@
   width: 100%;
 }
 
-/* -- Focus ------------------------------------------------------------ */
-
-.mm-button:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.mm-button--secondary:focus-visible {
-  box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.3);
-}
-
-.mm-button--danger:focus-visible {
-  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.3);
-}
-
 /* -- Icon ------------------------------------------------------------- */
 
 .mm-button__icon {
@@ -182,6 +203,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.mm-button:hover:not(:disabled) .mm-button__icon {
+  transform: scale(1.08);
 }
 
 /* -- Loading spinner -------------------------------------------------- */
@@ -217,6 +243,29 @@
   to { transform: rotate(360deg); }
 }
 
+/* -- Responsive ------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .mm-button--xl {
+    height: 52px;
+    padding: 0 var(--space-xl);
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .mm-button--lg {
+    height: 60px;
+    padding: 0 var(--space-2xl);
+    font-size: 1.0625rem;
+  }
+  .mm-button--xl {
+    height: 68px;
+    padding: 0 var(--space-3xl);
+    font-size: 1.25rem;
+  }
+}
+
 /* -- Dark mode -------------------------------------------------------- */
 
 [data-theme="dark"] .mm-button--ghost {
@@ -226,4 +275,8 @@
 [data-theme="dark"] .mm-button--ghost:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.08);
   color: var(--primary-light);
+}
+
+[data-theme="dark"] .mm-button--primary {
+  color: var(--white);
 }

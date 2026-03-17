@@ -1,5 +1,7 @@
 /* ==========================================================================
-   Admin Settings — MinesMinis Design System v4
+   Admin Settings — MinesMinis Premium Design System V2
+   Settings form sections
+   ZERO hex colors. Token-only.
    ========================================================================== */
 
 .adm-settings {
@@ -16,6 +18,7 @@
 }
 
 .adm-settings-header h1 {
+  font-family: var(--admin-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -35,6 +38,11 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
+  transition: box-shadow var(--admin-transition);
+}
+
+.adm-settings-section:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-settings-section-header {
@@ -51,6 +59,7 @@
 }
 
 .adm-settings-section-title {
+  font-family: var(--admin-font-heading);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--admin-text);
@@ -84,6 +93,7 @@
   font-size: 0.7rem;
   color: var(--admin-text-muted);
   margin-top: var(--space-xs);
+  line-height: 1.4;
 }
 
 .adm-settings-input input,
@@ -93,19 +103,21 @@
   padding: var(--space-sm) var(--space-md);
   font-family: var(--admin-font);
   font-size: 0.85rem;
-  border: 1px solid var(--admin-border);
+  border: 1.5px solid var(--admin-border);
   border-radius: var(--radius-sm);
   background: var(--admin-surface);
   color: var(--admin-text);
   outline: none;
   box-sizing: border-box;
-  transition: border-color var(--admin-transition);
+  transition: border-color var(--admin-transition),
+              box-shadow var(--admin-transition);
 }
 
 .adm-settings-input input:focus,
 .adm-settings-input select:focus,
 .adm-settings-input textarea:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-pale);
 }
 
 .adm-settings-input textarea {
@@ -122,8 +134,8 @@
 
 .adm-toggle {
   position: relative;
-  width: 40px;
-  height: 22px;
+  width: 42px;
+  height: 24px;
   flex-shrink: 0;
 }
 
@@ -138,7 +150,7 @@
   position: absolute;
   inset: 0;
   background: var(--admin-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition: background var(--transition-fast);
 }
@@ -150,8 +162,8 @@
 .adm-toggle-track::after {
   content: '';
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background: var(--white);
   border-radius: var(--radius-full);
   top: 3px;
@@ -167,11 +179,13 @@
 .adm-toggle-label {
   font-size: 0.8rem;
   color: var(--admin-text);
+  font-weight: 500;
 }
 
 .adm-toggle-desc {
   font-size: 0.7rem;
   color: var(--admin-text-muted);
+  line-height: 1.4;
 }
 
 /* ---- Save Bar ---- */
@@ -179,6 +193,7 @@
   display: flex;
   justify-content: flex-end;
   padding: var(--space-md) 0;
+  gap: var(--space-sm);
 }
 
 /* ---- API Key Input ---- */
@@ -188,6 +203,9 @@
 
 .adm-api-key-input input {
   padding-right: var(--space-3xl);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
 }
 
 .adm-api-key-toggle {
@@ -200,6 +218,11 @@
   cursor: pointer;
   color: var(--admin-text-muted);
   padding: var(--space-xs);
+  transition: color var(--admin-transition);
+}
+
+.adm-api-key-toggle:hover {
+  color: var(--primary);
 }
 
 /* ---- Responsive ---- */

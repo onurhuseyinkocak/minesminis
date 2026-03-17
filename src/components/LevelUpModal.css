@@ -1,6 +1,7 @@
 /* ============================================================
-   LevelUpModal.css — Token-based level up celebration overlay
-   MinesMinis Design System
+   LevelUpModal.css — Celebration overlay with confetti
+   MinesMinis Premium Design System V2
+   ZERO hex colors. Token-only.
    ============================================================ */
 
 /* ---- Overlay ---- */
@@ -11,9 +12,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--overlay-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   animation: luOverlayIn 0.3s ease;
   padding: var(--space-md);
 }
@@ -74,6 +75,10 @@
   text-align: center;
 }
 
+[data-theme="dark"] .level-up-modal {
+  border-color: var(--border-medium);
+}
+
 @keyframes luModalIn {
   0% { opacity: 0; transform: scale(0.6) translateY(40px); }
   60% { transform: scale(1.04) translateY(-4px); }
@@ -86,18 +91,18 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 320px;
-  height: 320px;
+  width: 340px;
+  height: 340px;
   border-radius: var(--radius-full);
   background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
-  filter: blur(40px);
+  filter: blur(45px);
   pointer-events: none;
   animation: glowPulse 2.5s ease-in-out infinite;
 }
 
 @keyframes glowPulse {
   0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
 }
 
 /* ---- Content ---- */
@@ -210,11 +215,12 @@
   cursor: pointer;
   min-height: var(--touch-target);
   box-shadow: var(--shadow-lg);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast);
 }
 
 .continue-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-xl);
 }
 
@@ -224,7 +230,7 @@
 }
 
 .continue-btn:hover .btn-arrow {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 .continue-btn:focus-visible {

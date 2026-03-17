@@ -1,5 +1,6 @@
 /* ==========================================================================
    TABS — MinesMinis Design System v4
+   Polished tab navigation with underline and pill variants
    ========================================================================== */
 
 .mm-tabs {
@@ -102,10 +103,61 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  opacity: 0.6;
+  opacity: 0.55;
   transition: opacity var(--transition-fast);
 }
 
 .mm-tab--active .mm-tab__icon {
   opacity: 1;
+}
+
+.mm-tab:hover .mm-tab__icon {
+  opacity: 0.8;
+}
+
+/* -- Responsive ------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .mm-tab {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.8125rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .mm-tab {
+    padding: var(--space-md) var(--space-xl);
+    font-size: 0.9375rem;
+  }
+  .mm-tabs--pill .mm-tab {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 0.875rem;
+  }
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .mm-tabs {
+  border-bottom-color: var(--border-light);
+}
+
+[data-theme="dark"] .mm-tabs--pill {
+  background: var(--bg-soft);
+}
+
+[data-theme="dark"] .mm-tab:hover {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .mm-tabs--pill .mm-tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .mm-tabs--pill .mm-tab--active {
+  background: var(--bg-card);
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .mm-tab--active {
+  color: var(--primary-light);
 }

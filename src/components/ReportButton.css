@@ -1,6 +1,7 @@
 /* ============================================================
-   ReportButton.css — Token-based floating bug report FAB + modal
-   MinesMinis Design System
+   ReportButton.css — Floating bug report FAB + modal
+   MinesMinis Premium Design System V2
+   ZERO hex colors. Token-only.
    ============================================================ */
 
 /* ---- FAB ---- */
@@ -12,10 +13,10 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--border-light);
+  border: 1.5px solid var(--border-light);
   background: var(--bg-elevated);
-  backdrop-filter: blur(16px) saturate(1.6);
-  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -23,12 +24,23 @@
   min-height: var(--touch-target);
   min-width: var(--touch-target);
   box-shadow: var(--shadow-md);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+[data-theme="dark"] .report-fab {
+  border-color: var(--border-medium);
 }
 
 .report-fab:hover {
   border-color: var(--error);
   box-shadow: var(--shadow-lg);
+  transform: scale(1.08);
+}
+
+.report-fab:active {
+  transform: scale(0.95);
 }
 
 .report-fab:focus-visible {
@@ -57,7 +69,13 @@
   background: var(--error);
   border-radius: var(--radius-full);
   z-index: 3;
-  box-shadow: 0 0 6px var(--error-soft);
+  box-shadow: 0 0 8px var(--error-soft);
+  animation: reportDotPulse 2s ease-in-out infinite;
+}
+
+@keyframes reportDotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 /* ---- Modal Overlay ---- */
@@ -65,13 +83,19 @@
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: var(--overlay-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding: var(--space-md);
+  animation: reportOverlayIn 0.2s ease;
+}
+
+@keyframes reportOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (min-width: 640px) {
@@ -90,6 +114,16 @@
   padding: var(--space-lg);
   box-shadow: var(--shadow-xl);
   color: var(--text-primary);
+  animation: reportModalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="dark"] .report-modal {
+  border-color: var(--border-medium);
+}
+
+@keyframes reportModalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ---- Modal Header ---- */
@@ -130,7 +164,8 @@
   color: var(--text-secondary);
   min-height: var(--touch-target);
   min-width: var(--touch-target);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
 }
 
 .report-modal-header .close-btn:hover {
@@ -171,7 +206,7 @@
 }
 
 .info-value {
-  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   color: var(--primary);
   background: var(--primary-pale);
@@ -183,14 +218,15 @@
   width: 100%;
   min-height: 100px;
   padding: var(--space-md);
-  border: 1px solid var(--border-light);
+  border: 1.5px solid var(--border-light);
   border-radius: var(--radius-md);
   background: var(--bg-elevated);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 0.85rem;
   resize: vertical;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
   outline: none;
   line-height: 1.6;
 }
@@ -226,12 +262,13 @@
   font-weight: 800;
   cursor: pointer;
   min-height: var(--touch-target);
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast);
   box-shadow: var(--shadow-md);
 }
 
 .submit-report-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -244,7 +281,7 @@
 .spinner-small {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--border-light);
   border-top-color: var(--white);
   border-radius: var(--radius-full);
   animation: reportSpin 0.6s linear infinite;

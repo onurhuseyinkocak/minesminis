@@ -1,31 +1,32 @@
 /* ==========================================================================
    BADGE — MinesMinis Design System v4
+   Compact, polished status indicators with semantic color variants
    ========================================================================== */
 
 .mm-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-xs);
   font-family: var(--font-display);
   font-weight: 700;
   border-radius: var(--radius-full);
   white-space: nowrap;
   line-height: 1;
   letter-spacing: 0.01em;
+  vertical-align: middle;
+  transition: transform var(--transition-fast);
 }
 
 /* -- Sizes ------------------------------------------------------------ */
 
 .mm-badge--sm {
-  height: 22px;
-  padding: 0 var(--space-sm);
+  padding: 3px 10px;
   font-size: 0.6875rem;
 }
 
 .mm-badge--md {
-  height: 28px;
-  padding: 0 var(--space-md);
-  font-size: 0.8125rem;
+  padding: 5px 14px;
+  font-size: 0.8rem;
 }
 
 /* -- Icon ------------------------------------------------------------- */
@@ -45,39 +46,78 @@
 /* -- Variants --------------------------------------------------------- */
 
 .mm-badge--default {
-  background: var(--bg-muted);
-  color: var(--text-secondary);
-}
-
-.mm-badge--success {
-  background: rgba(76, 175, 80, 0.12);
-  color: var(--mimi-green-dark);
-}
-
-.mm-badge--warning {
-  background: rgba(232, 163, 23, 0.12);
+  background: var(--primary-pale);
   color: var(--primary-dark);
 }
 
+.mm-badge--success {
+  background: var(--success-pale);
+  color: var(--success);
+}
+
+.mm-badge--warning {
+  background: var(--warning-pale);
+  color: var(--warning);
+}
+
 .mm-badge--error {
-  background: rgba(229, 57, 53, 0.10);
+  background: var(--error-pale);
   color: var(--error);
 }
 
 .mm-badge--info {
-  background: rgba(30, 136, 229, 0.10);
+  background: var(--info-pale);
   color: var(--info);
 }
 
 .mm-badge--premium {
-  background: linear-gradient(135deg, rgba(245, 204, 92, 0.20) 0%, rgba(232, 163, 23, 0.20) 100%);
+  background: linear-gradient(135deg, rgba(245, 204, 92, 0.22) 0%, rgba(232, 163, 23, 0.22) 100%);
   color: var(--primary-dark);
-  box-shadow: inset 0 0 0 1px rgba(232, 163, 23, 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(232, 163, 23, 0.2),
+    0 1px 4px rgba(232, 163, 23, 0.12);
+}
+
+/* -- Responsive ------------------------------------------------------- */
+
+@media (min-width: 1600px) {
+  .mm-badge--md {
+    padding: 6px 16px;
+    font-size: 0.875rem;
+  }
 }
 
 /* -- Dark mode -------------------------------------------------------- */
 
 [data-theme="dark"] .mm-badge--default {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--cloud);
+  background: var(--primary-pale);
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .mm-badge--success {
+  background: var(--success-pale);
+  color: var(--success-light);
+}
+
+[data-theme="dark"] .mm-badge--warning {
+  background: var(--warning-pale);
+  color: var(--warning-light);
+}
+
+[data-theme="dark"] .mm-badge--error {
+  background: var(--error-pale);
+  color: var(--error-light);
+}
+
+[data-theme="dark"] .mm-badge--info {
+  background: var(--info-pale);
+  color: var(--info-light);
+}
+
+[data-theme="dark"] .mm-badge--premium {
+  background: linear-gradient(135deg, rgba(232, 163, 23, 0.15) 0%, rgba(255, 213, 79, 0.18) 100%);
+  color: var(--mimi-gold);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 213, 79, 0.15),
+    0 1px 4px rgba(0, 0, 0, 0.2);
 }

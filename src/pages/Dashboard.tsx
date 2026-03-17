@@ -37,6 +37,7 @@ import {
 
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
+import UnifiedMascot from '../components/UnifiedMascot';
 import './Dashboard.css';
 
 // ============================================================
@@ -190,7 +191,13 @@ export default function Dashboard() {
           A. MIMI GREETING BAR
           ================================================================ */}
       <motion.div className="greeting-bar" variants={itemVariants}>
-        <div className="greeting-mimi" title="Mimi">🐲</div>
+        <div className="greeting-mimi" title="Mimi">
+          <UnifiedMascot
+            id={(userProfile?.settings?.mascotId as string) || 'mimi_dragon'}
+            state="idle"
+            size={64}
+          />
+        </div>
         <div className="greeting-content">
           <p className="greeting-text">{greeting}</p>
           <p className="greeting-date">{dateStr}</p>

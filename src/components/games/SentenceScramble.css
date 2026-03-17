@@ -1,5 +1,6 @@
 /* ==========================================================================
    SENTENCE SCRAMBLE — MinesMinis Design System v4
+   Drag-and-drop word chips for sentence building with satisfying snaps
    ========================================================================== */
 
 .sentence-scramble {
@@ -9,12 +10,16 @@
   padding: var(--space-lg);
   max-width: 750px;
   margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
 }
+
+/* -- Header ----------------------------------------------------------- */
 
 .sentence-scramble__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-md);
 }
 
 .sentence-scramble__title {
@@ -23,28 +28,35 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
+
+/* -- Hint ------------------------------------------------------------- */
 
 .sentence-scramble__hint {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-lg);
-  background: linear-gradient(135deg, rgba(232, 163, 23, 0.08) 0%, rgba(245, 204, 92, 0.12) 100%);
+  background: var(--primary-pale);
   color: var(--primary-dark);
   border-radius: var(--radius-md);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
   justify-content: center;
-  border: 1px solid rgba(232, 163, 23, 0.12);
+  border: 1px solid rgba(232, 163, 23, 0.15);
+  box-shadow: var(--shadow-sm);
 }
+
+/* -- Dropzone --------------------------------------------------------- */
 
 .sentence-scramble__dropzone {
   min-height: 120px;
-  border: 2.5px dashed rgba(26, 107, 90, 0.20);
+  border: 2.5px dashed var(--secondary-pale);
   border-radius: var(--radius-lg);
   background: rgba(26, 107, 90, 0.02);
+  transition: border-color var(--transition-fast);
 }
 
 .sentence-scramble__dropzone-label {
@@ -61,7 +73,10 @@
   gap: var(--space-sm);
   justify-content: center;
   min-height: 56px;
+  align-items: center;
 }
+
+/* -- Word chips ------------------------------------------------------- */
 
 .sentence-scramble__chip {
   padding: var(--space-md) var(--space-lg);
@@ -75,7 +90,7 @@
   transition:
     background var(--transition-fast),
     color var(--transition-fast),
-    transform var(--transition-fast),
+    transform var(--transition-base),
     box-shadow var(--transition-fast),
     border-color var(--transition-fast);
   display: flex;
@@ -99,20 +114,26 @@
   background: var(--gradient-secondary);
   color: var(--white);
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(26, 107, 90, 0.25);
+  box-shadow: 0 8px 20px rgba(26, 107, 90, 0.25);
+}
+
+.sentence-scramble__chip--available:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.95);
 }
 
 .sentence-scramble__chip--placed {
-  background: rgba(26, 107, 90, 0.08);
+  background: var(--secondary-pale);
   border-color: var(--secondary-light);
   color: var(--secondary);
 }
 
 .sentence-scramble__chip--placed:hover {
-  background: var(--error-soft);
+  background: var(--error-pale);
   border-color: var(--error);
   color: var(--error);
 }
+
+/* -- Available words -------------------------------------------------- */
 
 .sentence-scramble__available {
   display: flex;
@@ -120,6 +141,8 @@
   gap: var(--space-md);
   justify-content: center;
 }
+
+/* -- Feedback --------------------------------------------------------- */
 
 .sentence-scramble__feedback {
   text-align: center;
@@ -135,20 +158,25 @@
 }
 
 .sentence-scramble__feedback--correct {
-  background: rgba(76, 175, 80, 0.10);
+  background: var(--success-pale);
   color: var(--mimi-green-dark);
+  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12);
 }
 
 .sentence-scramble__feedback--wrong {
-  background: rgba(232, 163, 23, 0.10);
+  background: var(--warning-pale);
   color: var(--primary-dark);
 }
+
+/* -- Actions ---------------------------------------------------------- */
 
 .sentence-scramble__actions {
   display: flex;
   justify-content: center;
   gap: var(--space-md);
 }
+
+/* -- Results ---------------------------------------------------------- */
 
 .sentence-scramble__results { text-align: center; }
 
@@ -159,7 +187,10 @@
   gap: var(--space-md);
 }
 
-.sentence-scramble__big-emoji { font-size: 4rem; }
+.sentence-scramble__big-emoji {
+  font-size: 4.5rem;
+  animation: celebrate 0.6s ease-out;
+}
 
 .sentence-scramble__results-title {
   font-family: var(--font-display);
@@ -167,15 +198,63 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .sentence-scramble__results-score {
   font-size: 1.15rem;
   color: var(--text-body);
   margin: 0;
+  line-height: 1.6;
 }
 
+/* -- Responsive ------------------------------------------------------- */
+
 @media (min-width: 1024px) {
-  .sentence-scramble__chip { min-height: 64px; padding: var(--space-md) var(--space-xl); font-size: 1.4rem; }
+  .sentence-scramble__chip {
+    min-height: 64px;
+    padding: var(--space-md) var(--space-xl);
+    font-size: 1.4rem;
+  }
   .sentence-scramble__dropzone { min-height: 140px; }
+}
+
+@media (max-width: 768px) {
+  .sentence-scramble { padding: var(--space-md); }
+  .sentence-scramble__title { font-size: 1.5rem; }
+  .sentence-scramble__chip { min-height: 44px; font-size: 1rem; padding: var(--space-sm) var(--space-md); }
+}
+
+@media (min-width: 1600px) {
+  .sentence-scramble { max-width: 850px; }
+  .sentence-scramble__chip { min-height: 72px; font-size: 1.5rem; }
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .sentence-scramble__chip--available {
+  background: var(--bg-card);
+  border-color: var(--secondary);
+}
+
+[data-theme="dark"] .sentence-scramble__chip--placed {
+  background: var(--secondary-pale);
+}
+
+[data-theme="dark"] .sentence-scramble__dropzone {
+  border-color: rgba(42, 157, 143, 0.15);
+  background: rgba(26, 107, 90, 0.04);
+}
+
+[data-theme="dark"] .sentence-scramble__hint {
+  background: var(--primary-pale);
+  border-color: rgba(232, 163, 23, 0.1);
+}
+
+[data-theme="dark"] .sentence-scramble__feedback--correct {
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .sentence-scramble__feedback--wrong {
+  background: var(--warning-pale);
 }

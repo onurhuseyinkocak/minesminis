@@ -1,5 +1,6 @@
 /* ==========================================================================
    AVATAR — MinesMinis Design System v4
+   Warm, inviting profile avatars with glow ring and premium fallback
    ========================================================================== */
 
 .mm-avatar {
@@ -12,22 +13,43 @@
   flex-shrink: 0;
   background: var(--gradient-warm);
   box-shadow:
-    0 0 0 2.5px var(--primary-glow),
+    0 0 0 2.5px rgba(232, 163, 23, 0.2),
     var(--shadow-sm);
   user-select: none;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
+
+.mm-avatar:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 0 3px var(--primary-glow),
+    var(--shadow-md);
+}
+
+/* -- Sizes ------------------------------------------------------------ */
 
 .mm-avatar--sm { width: 32px; height: 32px; }
 .mm-avatar--md { width: 40px; height: 40px; }
 .mm-avatar--lg { width: 56px; height: 56px; }
 .mm-avatar--xl { width: 80px; height: 80px; }
 
+/* -- Image ------------------------------------------------------------ */
+
 .mm-avatar__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform var(--transition-base);
 }
+
+.mm-avatar:hover .mm-avatar__image {
+  transform: scale(1.05);
+}
+
+/* -- Fallback --------------------------------------------------------- */
 
 .mm-avatar__fallback {
   display: flex;
@@ -36,13 +58,36 @@
   width: 100%;
   height: 100%;
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--primary-dark);
   background: var(--gradient-warm);
   line-height: 1;
+  text-transform: uppercase;
 }
 
 .mm-avatar--sm .mm-avatar__fallback { font-size: 0.75rem; }
 .mm-avatar--md .mm-avatar__fallback { font-size: 0.875rem; }
 .mm-avatar--lg .mm-avatar__fallback { font-size: 1.25rem; }
 .mm-avatar--xl .mm-avatar__fallback { font-size: 1.75rem; }
+
+/* -- Responsive ------------------------------------------------------- */
+
+@media (min-width: 1600px) {
+  .mm-avatar--md { width: 44px; height: 44px; }
+  .mm-avatar--lg { width: 64px; height: 64px; }
+  .mm-avatar--xl { width: 96px; height: 96px; }
+  .mm-avatar--xl .mm-avatar__fallback { font-size: 2rem; }
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .mm-avatar {
+  box-shadow:
+    0 0 0 2.5px rgba(232, 163, 23, 0.15),
+    var(--shadow-sm);
+}
+
+[data-theme="dark"] .mm-avatar__fallback {
+  background: var(--gradient-warm);
+  color: var(--primary-light);
+}

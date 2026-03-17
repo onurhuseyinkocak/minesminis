@@ -6,6 +6,8 @@ import { userService } from '../services/userService';
 import toast from 'react-hot-toast';
 import { ArrowLeft, ArrowRight, Rocket, Check } from 'lucide-react';
 import { Button } from '../components/ui';
+import UnifiedMascot from '../components/UnifiedMascot';
+import { GLINTS, GLINT_IDS } from '../config/GlintsConfig';
 import './Onboarding.css';
 
 const AGE_GROUPS = [
@@ -39,7 +41,7 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? -280 : 280, opacity: 0 }),
 };
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 const Onboarding: React.FC = () => {
   const { user, refreshUserProfile, setHasSkippedSetup } = useAuth();
@@ -49,6 +51,7 @@ const Onboarding: React.FC = () => {
   const [direction, setDirection] = useState(1);
   const [ageGroup, setAgeGroup] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('');
+  const [selectedMascot, setSelectedMascot] = useState('mimi_dragon');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const lang: 'en' | 'tr' = 'en'; // Can be extended with language toggle
@@ -71,7 +74,8 @@ const Onboarding: React.FC = () => {
   const canProceed = () => {
     if (step === 1) return !!ageGroup;
     if (step === 2) return true; // Mimi intro, always can proceed
-    if (step === 3) return !!selectedAvatar;
+    if (step === 3) return !!selectedMascot; // Mascot selection
+    if (step === 4) return !!selectedAvatar;
     return true;
   };
 
@@ -93,11 +97,11 @@ const Onboarding: React.FC = () => {
         displayName: user.displayName || 'Explorer',
         grade: gradeMap[ageGroup] || 'primary',
         avatar_emoji: selectedAvatar || '🦊',
-        mascotId: 'mimi_dragon',
+        mascotId: selectedMascot,
       });
 
       const { createPet } = await import('../services/petService');
-      await createPet(user.uid, 'mimi_dragon', user.displayName || 'Explorer');
+      await createPet(user.uid, selectedMascot, user.displayName || 'Explorer');
 
       await refreshUserProfile();
       toast.success(lang === 'en' ? 'Welcome to MinesMinis!' : "MinesMinis'e hosgeldin!");
@@ -217,10 +221,10 @@ const Onboarding: React.FC = () => {
               <div className="onboarding-mimi-intro">
                 <motion.div
                   className="onboarding-mimi-large"
-                  animate={{ y: [0, -10, 0], rotate: [0, 2, -2, 0] }}
+                  animate={{ y: [0, -10, 0] }}
                   transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
                 >
-                  🐉
+                  <UnifiedMascot id="mimi_dragon" state="waving" size={160} />
                 </motion.div>
 
                 <div className="onboarding-mimi-speech">
@@ -246,10 +250,84 @@ const Onboarding: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Step 3: Avatar Picker */}
+          {/* Step 3: Choose Your Mascot Companion */}
           {step === 3 && (
             <motion.div
               key="step3"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="onboarding-step"
+            >
+              <div className="onboarding-step-emoji">🌟</div>
+              <h2>{lang === 'en' ? 'Choose Your Companion!' : 'Yol Arkadasini Sec!'}</h2>
+              <p className="onboarding-step-sub">
+                {lang === 'en'
+                  ? 'Each companion has unique powers to help you learn!'
+                  : 'Her yol arkadasinin ogrenmene yardimci olacak ozel gucleri var!'}
+              </p>
+
+              <div className="onboarding-mascot-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, margin: '24px 0' }}>
+                {GLINT_IDS.map((gId) => {
+                  const g = GLINTS[gId];
+                  const isSelected = selectedMascot === gId;
+                  return (
+                    <motion.button
+                      key={gId}
+                      type="button"
+                      className={`onboarding-mascot-card ${isSelected ? 'selected' : ''}`}
+                      onClick={() => setSelectedMascot(gId)}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: 16,
+                        borderRadius: 16,
+                        border: isSelected ? `3px solid ${g.color}` : '2px solid var(--border-light)',
+                        background: isSelected ? `${g.color}15` : 'var(--bg-card)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxShadow: isSelected ? `0 0 20px ${g.glowColor}` : 'var(--shadow-sm)',
+                      }}
+                    >
+                      <UnifiedMascot id={gId} state={isSelected ? 'dancing' : 'idle'} size={80} />
+                      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--text-primary)' }}>{g.name}</span>
+                      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12, color: g.color }}>{lang === 'en' ? g.titleEn : g.title}</span>
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-secondary)', textAlign: 'center' }}>
+                        {lang === 'en' ? g.benefitEn : g.benefit}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              <div className="onboarding-actions">
+                <Button variant="ghost" size="lg" onClick={prevStep} icon={<ArrowLeft size={18} />}>
+                  {lang === 'en' ? 'Back' : 'Geri'}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={nextStep}
+                  disabled={!canProceed()}
+                  icon={<ArrowRight size={18} />}
+                >
+                  {lang === 'en' ? 'Continue' : 'Devam Et'}
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 4: Avatar Picker */}
+          {step === 4 && (
+            <motion.div
+              key="step4"
               custom={direction}
               variants={slideVariants}
               initial="enter"
@@ -299,10 +377,10 @@ const Onboarding: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Step 4: Your First World Awaits */}
-          {step === 4 && (
+          {/* Step 5: Your First World Awaits */}
+          {step === 5 && (
             <motion.div
-              key="step4"
+              key="step5"
               custom={direction}
               variants={slideVariants}
               initial="enter"
@@ -327,7 +405,7 @@ const Onboarding: React.FC = () => {
                       {user?.displayName || (lang === 'en' ? 'Explorer' : 'Kasif')}
                     </p>
                     <p className="onboarding-user-summary-detail">
-                      🐉 Mimi &middot; {AGE_GROUPS.find(g => g.value === ageGroup)?.range || ''} {lang === 'en' ? 'years' : 'yas'}
+                      {GLINTS[selectedMascot]?.name || 'Mimi'} &middot; {AGE_GROUPS.find(g => g.value === ageGroup)?.range || ''} {lang === 'en' ? 'years' : 'yas'}
                     </p>
                   </div>
                 </div>

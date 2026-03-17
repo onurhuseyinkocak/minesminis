@@ -1,5 +1,7 @@
 /* ==========================================================================
-   Admin Users Manager — MinesMinis Design System v4
+   Admin Users Manager — MinesMinis Premium Design System V2
+   Data table, search, filters, detail panel
+   ZERO hex colors. Token-only.
    ========================================================================== */
 
 .adm-users {
@@ -15,6 +17,7 @@
 }
 
 .adm-users-header h1 {
+  font-family: var(--admin-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -43,11 +46,18 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  transition: transform var(--admin-transition),
+              box-shadow var(--admin-transition);
+}
+
+.adm-users-stat:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-users-stat-icon {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
@@ -56,6 +66,7 @@
 }
 
 .adm-users-stat-val {
+  font-family: var(--admin-font-heading);
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -86,7 +97,7 @@
 
 .adm-search-input svg {
   position: absolute;
-  left: 10px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--admin-text-muted);
@@ -94,32 +105,39 @@
 
 .adm-search-input input {
   width: 100%;
-  padding: var(--space-sm) var(--space-md) var(--space-sm) 36px;
+  padding: var(--space-sm) var(--space-md) var(--space-sm) 38px;
   font-family: var(--admin-font);
   font-size: 0.8rem;
-  border: 1px solid var(--admin-border);
+  border: 1.5px solid var(--admin-border);
   border-radius: var(--radius-sm);
   background: var(--admin-bg);
   color: var(--admin-text);
   outline: none;
   box-sizing: border-box;
-  transition: border-color var(--admin-transition);
+  transition: border-color var(--admin-transition),
+              box-shadow var(--admin-transition);
 }
 
 .adm-search-input input:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-pale);
 }
 
 .adm-filter-select {
   padding: var(--space-sm) var(--space-md);
   font-family: var(--admin-font);
   font-size: 0.8rem;
-  border: 1px solid var(--admin-border);
+  border: 1.5px solid var(--admin-border);
   border-radius: var(--radius-sm);
   background: var(--admin-bg);
   color: var(--admin-text);
   cursor: pointer;
   outline: none;
+  transition: border-color var(--admin-transition);
+}
+
+.adm-filter-select:focus {
+  border-color: var(--primary);
 }
 
 /* ---- Table ---- */
@@ -150,7 +168,7 @@
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--admin-text-muted);
   text-align: left;
   border-bottom: 1px solid var(--admin-border);
@@ -180,8 +198,8 @@
 }
 
 .adm-user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-sm);
   background: var(--admin-bg);
   display: flex;
@@ -216,12 +234,12 @@
   white-space: nowrap;
 }
 
-.adm-badge.student  { background: rgba(30, 136, 229, 0.10); color: var(--info); }
-.adm-badge.teacher  { background: rgba(139, 92, 246, 0.10); color: rgba(139, 92, 246, 1); }
-.adm-badge.admin    { background: rgba(229, 57, 53, 0.10); color: var(--error); }
-.adm-badge.premium  { background: rgba(232, 163, 23, 0.10); color: var(--primary-dark); }
+.adm-badge.student  { background: var(--info-soft); color: var(--info); }
+.adm-badge.teacher  { background: var(--secondary-pale); color: var(--secondary); }
+.adm-badge.admin    { background: var(--error-soft); color: var(--error); }
+.adm-badge.premium  { background: var(--primary-pale); color: var(--primary-dark); }
 .adm-badge.free     { background: var(--admin-bg); color: var(--admin-text-muted); }
-.adm-badge.online   { background: rgba(76, 175, 80, 0.10); color: var(--success); }
+.adm-badge.online   { background: var(--success-soft); color: var(--success); }
 .adm-badge.offline  { background: var(--admin-bg); color: var(--admin-text-muted); }
 
 .adm-role-select {
@@ -242,8 +260,8 @@
 }
 
 .adm-icon-btn {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -258,6 +276,7 @@
 .adm-icon-btn:hover {
   background: var(--admin-bg);
   color: var(--admin-text);
+  transform: translateY(-1px);
 }
 
 .adm-icon-btn.danger:hover {
@@ -297,12 +316,14 @@
 .adm-page-btn:hover:not(:disabled) {
   background: var(--admin-bg);
   color: var(--admin-text);
+  transform: translateY(-1px);
 }
 
 .adm-page-btn.active {
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: var(--white);
   border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-page-btn:disabled { opacity: 0.4; cursor: default; }
@@ -311,7 +332,7 @@
 .adm-panel-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--overlay-bg);
   z-index: var(--z-overlay);
   animation: adm-fade-in 0.15s ease;
 }
@@ -344,6 +365,7 @@
 }
 
 .adm-panel-header h3 {
+  font-family: var(--admin-font-heading);
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
@@ -363,7 +385,7 @@
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--admin-text-muted);
   margin-bottom: var(--space-xs);
 }
@@ -378,7 +400,7 @@
 .adm-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--overlay-bg);
   z-index: var(--z-modal);
   display: flex;
   align-items: center;
@@ -404,6 +426,7 @@
 }
 
 .adm-modal-header h3 {
+  font-family: var(--admin-font-heading);
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
@@ -432,19 +455,21 @@
   padding: var(--space-sm) var(--space-md);
   font-family: var(--admin-font);
   font-size: 0.85rem;
-  border: 1px solid var(--admin-border);
+  border: 1.5px solid var(--admin-border);
   border-radius: var(--radius-sm);
   background: var(--admin-surface);
   color: var(--admin-text);
   outline: none;
   box-sizing: border-box;
-  transition: border-color var(--admin-transition);
+  transition: border-color var(--admin-transition),
+              box-shadow var(--admin-transition);
 }
 
 .adm-form-group input:focus,
 .adm-form-group select:focus,
 .adm-form-group textarea:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-pale);
 }
 
 .adm-form-group small {
@@ -464,6 +489,7 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
+  accent-color: var(--primary);
 }
 
 .adm-modal-footer {
@@ -491,9 +517,9 @@
   transition: all var(--admin-transition);
 }
 
-.adm-btn:hover { background: var(--admin-bg); }
-.adm-btn.primary { background: var(--primary); color: var(--white); border-color: var(--primary); }
-.adm-btn.primary:hover { background: var(--primary-dark); }
+.adm-btn:hover { background: var(--admin-bg); transform: translateY(-1px); }
+.adm-btn.primary { background: var(--gradient-primary); color: var(--white); border-color: var(--primary); }
+.adm-btn.primary:hover { box-shadow: var(--shadow-md); }
 .adm-btn.danger { background: var(--error); color: var(--white); border-color: var(--error); }
 .adm-btn.danger:hover { opacity: 0.9; }
 .adm-btn:disabled { opacity: 0.5; cursor: default; }
@@ -509,11 +535,11 @@
   margin: 0 auto var(--space-md);
 }
 
-.adm-confirm-icon.warning { background: rgba(232, 163, 23, 0.10); color: var(--primary); }
+.adm-confirm-icon.warning { background: var(--primary-pale); color: var(--primary); }
 .adm-confirm-icon.danger { background: var(--error-soft); color: var(--error); }
 
 .adm-confirm-text { text-align: center; }
-.adm-confirm-text h4 { font-size: 1rem; font-weight: 600; color: var(--admin-text); margin: 0 0 var(--space-sm); }
+.adm-confirm-text h4 { font-family: var(--admin-font-heading); font-size: 1rem; font-weight: 600; color: var(--admin-text); margin: 0 0 var(--space-sm); }
 .adm-confirm-text p { font-size: 0.85rem; color: var(--admin-text-secondary); margin: 0; line-height: 1.5; }
 
 .adm-no-data {

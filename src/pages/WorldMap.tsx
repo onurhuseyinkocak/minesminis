@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Check, ChevronRight, Sparkles } from 'lucide-react';
 import { Card, ProgressBar } from '../components/ui';
+import UnifiedMascot from '../components/UnifiedMascot';
 import './WorldMap.css';
 
 // ============================================================
@@ -94,9 +95,7 @@ const WorldMap = () => {
           </p>
         </div>
         <div className="world-map-mimi">
-          <span className="world-map-mimi__avatar" aria-hidden="true">
-            🐉
-          </span>
+          <UnifiedMascot id="mimi_dragon" state="waving" size={80} />
         </div>
       </div>
 

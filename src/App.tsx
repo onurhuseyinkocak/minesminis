@@ -26,6 +26,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const PrivacyPolicy = lazy(() => import("./pages/Legal/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/Legal/TermsOfService"));
 const CookiePolicy = lazy(() => import("./pages/Legal/CookiePolicy"));
+const Ataturk = lazy(() => import("./pages/Ataturk"));
 
 // Protected – Student
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -181,6 +182,7 @@ function AppRoutes() {
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/cookies" element={<CookiePolicy />} />
+            <Route path="/ataturk" element={<Ataturk />} />
 
             {/* ── Onboarding (protected, no shell) ──────────────── */}
             <Route

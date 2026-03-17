@@ -1,14 +1,11 @@
 /* ==========================================================================
-   LESSON PLAYER — Lesson Play Page
-   MinesMinis Premium — All colors via design tokens.
-   Smart board optimized, large touch targets, clean activity area.
+   LESSON PLAYER — MinesMinis Design System v4.0
+   Sticky topbar, large activity area, Mimi bubble, celebration screen.
+   ZERO hex. All var() tokens. Smart-board optimized.
    ========================================================================== */
 
-/* ---- PAGE LAYOUT ---- */
+/* ---- PAGE ---- */
 .lesson-player-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 var(--space-md);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -18,132 +15,114 @@
 .lesson-player-page--not-found {
   align-items: center;
   justify-content: center;
-  text-align: center;
   gap: var(--space-lg);
+  text-align: center;
 }
 
 .lesson-player-page--not-found h2 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 24px;
-  color: var(--text-body);
+  font-size: 1.5rem;
+  color: var(--text-primary);
 }
 
 /* ==========================================================================
-   STICKY TOP BAR — Prominent progress bar
+   TOP BAR (Sticky)
    ========================================================================== */
-
 .lesson-player-topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) 0;
-  position: sticky;
-  top: 0;
-  background: var(--bg-elevated);
-  z-index: 20;
-  backdrop-filter: blur(12px);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  border-bottom: 1px solid var(--border-light);
 }
 
-.lesson-player-topbar::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: calc(-1 * var(--space-md));
-  right: calc(-1 * var(--space-md));
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
-}
-
-.lesson-player-topbar__back,
-.lesson-player-topbar__skip {
+.lesson-player-topbar__back {
+  all: unset;
+  cursor: pointer;
+  width: var(--touch-target);
+  height: var(--touch-target);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--touch-target);
-  height: var(--touch-target);
-  border: none;
-  border-radius: var(--radius-lg);
-  background: var(--bg-muted);
+  border-radius: 50%;
   color: var(--text-secondary);
-  cursor: pointer;
-  transition: var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast);
   flex-shrink: 0;
 }
 
-.lesson-player-topbar__back:hover,
-.lesson-player-topbar__skip:hover {
-  background: var(--border-light);
-  color: var(--text-primary);
-  transform: scale(1.05);
-}
-
-.lesson-player-topbar__back:active,
-.lesson-player-topbar__skip:active {
-  transform: scale(0.97);
-}
-
 .lesson-player-topbar__back:hover {
-  color: var(--primary);
-  background: var(--primary-pale);
-}
-
-.lesson-player-topbar__back:focus-visible,
-.lesson-player-topbar__skip:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
+  background: var(--bg-muted);
+  color: var(--text-primary);
 }
 
 .lesson-player-topbar__center {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 4px;
   min-width: 0;
 }
 
 .lesson-player-topbar__title {
   font-family: var(--font-display);
-  font-size: 15px;
   font-weight: 700;
+  font-size: 0.95rem;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Make progress bar more prominent in topbar */
-.lesson-player-topbar__center .mm-progress__track {
-  height: 8px;
-  border-radius: var(--radius-sm);
-}
-
 .lesson-player-topbar__count {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  font-weight: 600;
-  margin-top: 2px;
+  text-align: right;
+}
+
+.lesson-player-topbar__skip {
+  all: unset;
+  cursor: pointer;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-muted);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.lesson-player-topbar__skip:hover {
+  background: var(--bg-muted);
+  color: var(--text-primary);
 }
 
 /* ==========================================================================
-   MAIN ACTIVITY AREA — Centered and spacious
+   MAIN ACTIVITY AREA
    ========================================================================== */
-
 .lesson-player-main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: var(--space-xl);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
   gap: var(--space-lg);
-  padding: var(--space-xl) 0;
-  overflow: hidden;
 }
 
 /* ---- ACTIVITY CARD ---- */
 .lesson-activity {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
+  width: 100%;
 }
 
 .lesson-activity__header {
@@ -151,764 +130,283 @@
   align-items: center;
   gap: var(--space-md);
   padding-bottom: var(--space-md);
-  border-bottom: 3px solid transparent;
-  position: relative;
-}
-
-.lesson-activity__header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: var(--radius-sm);
-  opacity: 0.2;
+  margin-bottom: var(--space-lg);
+  border-bottom: 3px solid var(--border-light);
 }
 
 .lesson-activity__icon {
   width: 56px;
   height: 56px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.lesson-activity__icon::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
-  pointer-events: none;
+  box-shadow: var(--shadow-sm);
 }
 
 .lesson-activity__title {
   font-family: var(--font-display);
-  font-size: 24px;
   font-weight: 800;
-  margin: 0;
+  font-size: 1.5rem;
   color: var(--text-primary);
-  line-height: 1.2;
 }
 
 .lesson-activity__type {
-  font-family: var(--font-body);
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-transform: capitalize;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  margin-top: 2px;
 }
 
-/* ---- ACTIVITY CONTENT (placeholder area) ---- */
+/* ---- ACTIVITY CONTENT ---- */
 .lesson-activity__content {
-  flex: 1;
-  border-radius: var(--radius-xl) !important;
-  border: none !important;
-  background: var(--bg-card) !important;
-  box-shadow: var(--shadow-card) !important;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .lesson-activity__instructions {
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: 1.1rem;
   color: var(--text-body);
-  line-height: 1.7;
-  margin: 0 0 var(--space-lg);
-  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: var(--space-xl);
+  max-width: 520px;
 }
 
 .lesson-activity__placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--space-3xl) var(--space-lg);
-  background: var(--bg-muted);
-  border-radius: var(--radius-lg);
-  border: 2px dashed var(--border-medium);
-  text-align: center;
-  transition: border-color var(--transition-base);
-  min-height: 200px;
-}
-
-.lesson-activity__placeholder:hover {
-  border-color: var(--primary-light);
+  gap: var(--space-md);
 }
 
 .lesson-activity__placeholder-icon {
-  margin-bottom: var(--space-md);
-  opacity: 0.4;
-  transition: opacity var(--transition-base), transform var(--transition-base);
-}
-
-.lesson-activity__placeholder:hover .lesson-activity__placeholder-icon {
-  opacity: 0.6;
-  transform: scale(1.08);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--bg-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lesson-activity__placeholder-text {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 0.9rem;
   color: var(--text-muted);
-  margin: 0;
   font-style: italic;
 }
 
 /* ==========================================================================
-   MIMI ENCOURAGEMENT BUBBLE — Warm and friendly
+   MIMI ENCOURAGEMENT BUBBLE
    ========================================================================== */
-
 .lesson-player-mimi {
   display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md) var(--space-lg);
-  background: var(--primary-pale);
-  border-radius: var(--radius-xl);
-  position: relative;
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  border: 1px solid var(--primary-glow);
-}
-
-.lesson-player-mimi::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  width: 80px;
-  height: 80px;
-  background: var(--primary-glow);
-  pointer-events: none;
-  border-radius: 50%;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 480px;
 }
 
 .lesson-player-mimi__avatar {
-  font-size: 2.4rem;
+  font-size: 2rem;
   line-height: 1;
   flex-shrink: 0;
-  animation: mimi-wiggle 3s ease-in-out infinite;
-  filter: drop-shadow(0 2px 4px var(--shadow-glow));
-}
-
-@keyframes mimi-wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-8deg) scale(1.05); }
-  75% { transform: rotate(8deg) scale(1.05); }
+  filter: drop-shadow(0 2px 6px var(--primary-glow));
 }
 
 .lesson-player-mimi__bubble {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--primary-dark);
-  line-height: 1.4;
+  background: var(--primary-pale);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  border-top-left-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-body);
+  line-height: 1.5;
+  box-shadow: var(--shadow-sm);
 }
 
 /* ==========================================================================
-   BOTTOM NAVIGATION BAR — Large and clear for smart board
+   BOTTOM NAVIGATION BAR
    ========================================================================== */
-
 .lesson-player-bottombar {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) 0 var(--space-lg);
-  position: sticky;
-  bottom: 0;
-  background: var(--bg-elevated);
-  z-index: 20;
-  backdrop-filter: blur(8px);
-}
-
-.lesson-player-bottombar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: calc(-1 * var(--space-md));
-  right: calc(-1 * var(--space-md));
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-light);
+  box-shadow: 0 -2px 8px var(--shadow-sm);
 }
 
 .lesson-player-bottombar__spacer {
   flex: 1;
 }
 
-/* Make bottom bar buttons large for touch / smart board */
-.lesson-player-bottombar .mm-btn {
-  min-height: 52px;
-  padding: var(--space-md) var(--space-xl);
-  font-size: 16px;
-  border-radius: var(--radius-lg);
-}
-
-.lesson-player-bottombar .mm-btn--primary {
-  box-shadow: var(--shadow-button);
-}
-
-.lesson-player-bottombar .mm-btn--primary:hover {
-  box-shadow: var(--shadow-button-hover);
-  transform: translateY(-2px);
-}
-
-.lesson-player-bottombar .mm-btn--primary:active {
-  transform: translateY(0);
-}
-
-.lesson-player-bottombar .mm-btn--primary:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
-}
-
 /* ==========================================================================
-   COMPLETION CELEBRATION SCREEN — Confetti, trophy, big XP
+   COMPLETION / CELEBRATION SCREEN
    ========================================================================== */
-
 .lesson-complete {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--space-3xl) var(--space-lg);
-  gap: var(--space-lg);
-  position: relative;
-  overflow: hidden;
+  padding: var(--space-3xl) var(--space-xl);
+  flex: 1;
+  gap: var(--space-md);
 }
 
-/* Confetti particles background */
-.lesson-complete::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 10% 20%, var(--primary-glow) 0%, transparent 40%),
-    radial-gradient(circle at 90% 30%, rgba(76, 175, 80, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 50% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
-  pointer-events: none;
-  animation: celebration-bg 4s ease-in-out infinite alternate;
-}
-
-@keyframes celebration-bg {
-  0% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-/* Confetti emoji burst */
 .lesson-complete__confetti {
-  font-size: 3.2rem;
-  letter-spacing: 0.4em;
-  animation: confetti-pop 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  filter: drop-shadow(var(--shadow-sm));
-  z-index: 1;
-  position: relative;
+  font-size: 2rem;
+  letter-spacing: var(--space-sm);
+  line-height: 1;
+  margin-bottom: var(--space-sm);
 }
 
-@keyframes confetti-pop {
-  0% { transform: scale(0) rotate(-15deg); opacity: 0; }
-  50% { transform: scale(1.3) rotate(5deg); }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-
-/* Floating confetti particles */
-.lesson-complete__confetti::before,
-.lesson-complete__confetti::after {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  animation: confetti-float 3s ease-in-out infinite;
-}
-
-.lesson-complete__confetti::before {
-  left: -30px;
-  top: 10px;
-  background: var(--primary);
-  animation-delay: 0.3s;
-}
-
-.lesson-complete__confetti::after {
-  right: -30px;
-  top: 5px;
-  background: var(--mimi-green);
-  animation-delay: 0.6s;
-}
-
-@keyframes confetti-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
-  50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
-}
-
-/* Trophy — large, golden, glowing */
 .lesson-complete__trophy {
-  color: var(--primary);
-  animation: trophy-glow 2s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 20px var(--primary-glow));
-  z-index: 1;
-  position: relative;
-}
-
-.lesson-complete__trophy::after {
-  content: '';
-  position: absolute;
-  inset: -16px;
-  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
-  z-index: -1;
-  animation: trophy-ring 2.5s ease-in-out infinite;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-}
-
-@keyframes trophy-ring {
-  0%, 100% { transform: scale(0.8); opacity: 0.3; }
-  50% { transform: scale(1.3); opacity: 0.6; }
-}
-
-@keyframes trophy-glow {
-  0% {
-    transform: translateY(0) scale(1);
-    filter: drop-shadow(0 0 16px var(--primary-glow));
-  }
-  100% {
-    transform: translateY(-12px) scale(1.08);
-    filter: drop-shadow(0 0 32px var(--primary-glow));
-  }
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-on-primary);
+  box-shadow: var(--shadow-glow), var(--shadow-lg);
+  margin-bottom: var(--space-md);
 }
 
 .lesson-complete__title {
   font-family: var(--font-display);
-  font-size: 36px;
   font-weight: 800;
-  margin: 0;
-  line-height: 1.2;
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--mimi-gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  z-index: 1;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  color: var(--text-primary);
 }
 
 .lesson-complete__subtitle {
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 1.05rem;
   color: var(--text-secondary);
-  margin: 0;
-  line-height: 1.5;
-  z-index: 1;
+  max-width: 400px;
 }
 
-/* XP Display — big, prominent, pulsing */
 .lesson-complete__xp {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-lg) var(--space-2xl);
+  gap: var(--space-sm);
   background: var(--primary-pale);
+  padding: var(--space-md) var(--space-xl);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-lg);
-  animation: xp-pulse 2s ease-in-out infinite;
-  z-index: 1;
-  border: 2px solid var(--primary-glow);
-}
-
-@keyframes xp-pulse {
-  0%, 100% { box-shadow: var(--shadow-md); transform: scale(1); }
-  50% { box-shadow: 0 8px 32px var(--primary-glow); transform: scale(1.04); }
-}
-
-.lesson-complete__xp svg {
-  color: var(--primary);
-  filter: drop-shadow(var(--shadow-sm));
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .lesson-complete__xp-value {
   font-family: var(--font-display);
-  font-size: 28px;
   font-weight: 800;
-  color: var(--primary-dark);
+  font-size: 1.5rem;
+  color: var(--primary);
 }
 
-/* Mimi celebration */
 .lesson-complete__mimi {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
-  margin: var(--space-sm) 0;
-  padding: var(--space-lg) var(--space-xl);
-  background: var(--success-pale);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  z-index: 1;
-  border: 1px solid rgba(76, 175, 80, 0.2);
+  gap: var(--space-md);
+  background: var(--bg-muted);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  max-width: 400px;
+  margin-top: var(--space-sm);
 }
 
 .lesson-complete__mimi-avatar {
-  font-size: 3.5rem;
-  animation: mimi-celebrate 1.5s ease-in-out infinite;
-  filter: drop-shadow(var(--shadow-sm));
-}
-
-@keyframes mimi-celebrate {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.15) rotate(-10deg); }
-  75% { transform: scale(1.15) rotate(10deg); }
+  font-size: 2.5rem;
+  flex-shrink: 0;
 }
 
 .lesson-complete__mimi p {
-  font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--mimi-green-dark);
-  margin: 0;
-  line-height: 1.4;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-body);
+  line-height: 1.5;
+  text-align: left;
 }
 
-/* Action buttons */
 .lesson-complete__actions {
   display: flex;
   gap: var(--space-md);
   flex-wrap: wrap;
   justify-content: center;
   margin-top: var(--space-md);
-  z-index: 1;
 }
 
-.lesson-complete__actions .mm-btn {
-  min-height: 56px;
-  padding: var(--space-md) var(--space-xl);
-  font-size: 16px;
-  border-radius: var(--radius-lg);
+/* ==========================================================================
+   DARK MODE
+   ========================================================================== */
+[data-theme="dark"] .lesson-player-topbar {
+  background: var(--bg-card);
+  border-bottom-color: var(--border-light);
 }
 
-.lesson-complete__actions .mm-btn--primary {
-  box-shadow: var(--shadow-button);
+[data-theme="dark"] .lesson-player-bottombar {
+  background: var(--bg-card);
+  border-top-color: var(--border-light);
 }
 
-.lesson-complete__actions .mm-btn--primary:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
+[data-theme="dark"] .lesson-player-mimi__bubble {
+  background: var(--bg-muted);
+}
+
+[data-theme="dark"] .lesson-complete__mimi {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
 }
 
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
-
-/* ---- Mobile ---- */
-@media (max-width: 600px) {
-  .lesson-player-page {
-    padding: 0 var(--space-md);
-  }
-
+@media (max-width: 768px) {
   .lesson-player-topbar {
-    gap: var(--space-sm);
-    padding: var(--space-md) 0;
-  }
-
-  .lesson-player-topbar__back,
-  .lesson-player-topbar__skip {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-  }
-
-  .lesson-player-topbar__title {
-    font-size: 14px;
+    padding: var(--space-sm) var(--space-md);
   }
 
   .lesson-player-main {
-    padding: var(--space-lg) 0;
-    gap: var(--space-lg);
-  }
-
-  .lesson-activity__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-lg);
-  }
-
-  .lesson-activity__title {
-    font-size: 20px;
-  }
-
-  .lesson-activity__type {
-    font-size: 12px;
-  }
-
-  .lesson-activity__instructions {
-    font-size: 16px;
-    line-height: 1.6;
-  }
-
-  .lesson-activity__placeholder {
-    padding: var(--space-xl) var(--space-lg);
-    min-height: 160px;
-  }
-
-  .lesson-player-mimi {
     padding: var(--space-md);
-    gap: var(--space-md);
-  }
-
-  .lesson-player-mimi__avatar {
-    font-size: 2rem;
-  }
-
-  .lesson-player-mimi__bubble {
-    font-size: 14px;
   }
 
   .lesson-player-bottombar {
-    padding: var(--space-md) 0 var(--space-lg);
-    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
   }
 
-  .lesson-player-bottombar .mm-btn {
-    min-height: var(--touch-target);
-    padding: var(--space-md) var(--space-lg);
-    font-size: 14px;
+  .lesson-activity__title {
+    font-size: 1.2rem;
+  }
+
+  .lesson-activity__icon {
+    width: 44px;
+    height: 44px;
   }
 
   .lesson-complete {
     padding: var(--space-xl) var(--space-md);
-    gap: var(--space-md);
   }
+}
 
-  .lesson-complete__confetti {
-    font-size: 2.2rem;
-  }
-
-  .lesson-complete__trophy svg {
-    width: 52px;
-    height: 52px;
-  }
-
-  .lesson-complete__title {
-    font-size: 26px;
-  }
-
-  .lesson-complete__subtitle {
-    font-size: 14px;
-  }
-
-  .lesson-complete__xp {
-    padding: var(--space-md) var(--space-xl);
-  }
-
-  .lesson-complete__xp-value {
-    font-size: 22px;
-  }
-
-  .lesson-complete__mimi-avatar {
-    font-size: 2.8rem;
-  }
-
-  .lesson-complete__mimi p {
-    font-size: 16px;
-  }
-
+@media (max-width: 480px) {
   .lesson-complete__actions {
     flex-direction: column;
     width: 100%;
-    gap: var(--space-md);
   }
 
   .lesson-complete__actions .mm-btn {
     width: 100%;
-    justify-content: center;
-    min-height: 52px;
-  }
-}
-
-/* ---- Tablet ---- */
-@media (min-width: 601px) and (max-width: 1023px) {
-  .lesson-player-page {
-    padding: 0 var(--space-lg);
-  }
-
-  .lesson-activity__instructions {
-    font-size: 16px;
-  }
-}
-
-/* ---- Smart Board / Large Screens ---- */
-@media (min-width: 1200px) {
-  .lesson-player-page {
-    max-width: 1000px;
-    padding: 0 var(--space-xl);
-  }
-
-  .lesson-player-topbar {
-    padding: var(--space-lg) 0;
-    gap: var(--space-md);
-  }
-
-  .lesson-player-topbar__back,
-  .lesson-player-topbar__skip {
-    width: 52px;
-    height: 52px;
-    border-radius: var(--radius-lg);
-  }
-
-  .lesson-player-topbar__title {
-    font-size: 16px;
-  }
-
-  .lesson-player-topbar__count {
-    font-size: 13px;
-  }
-
-  .lesson-player-main {
-    padding: var(--space-xl) 0;
-    gap: var(--space-xl);
-  }
-
-  .lesson-activity__header {
-    gap: var(--space-lg);
-  }
-
-  .lesson-activity__icon {
-    width: 64px;
-    height: 64px;
-    border-radius: var(--radius-lg);
-  }
-
-  .lesson-activity__title {
-    font-size: 28px;
-  }
-
-  .lesson-activity__type {
-    font-size: 14px;
-  }
-
-  .lesson-activity__instructions {
-    font-size: 20px;
-    line-height: 1.7;
-  }
-
-  .lesson-activity__placeholder {
-    padding: 56px var(--space-xl);
-    min-height: 260px;
-  }
-
-  .lesson-activity__placeholder-text {
-    font-size: 16px;
-  }
-
-  .lesson-player-mimi {
-    padding: var(--space-lg);
-    gap: var(--space-md);
-  }
-
-  .lesson-player-mimi__avatar {
-    font-size: 2.8rem;
-  }
-
-  .lesson-player-mimi__bubble {
-    font-size: 18px;
-  }
-
-  .lesson-player-bottombar {
-    padding: var(--space-lg) 0 var(--space-xl);
-    gap: var(--space-md);
-  }
-
-  .lesson-player-bottombar .mm-btn {
-    min-height: 56px;
-    padding: var(--space-md) var(--space-xl);
-    font-size: 18px;
-    border-radius: var(--radius-lg);
-  }
-
-  .lesson-complete__title {
-    font-size: 44px;
-  }
-
-  .lesson-complete__subtitle {
-    font-size: 18px;
-  }
-
-  .lesson-complete__xp-value {
-    font-size: 32px;
-  }
-
-  .lesson-complete__mimi p {
-    font-size: 20px;
-  }
-
-  .lesson-complete__actions .mm-btn {
-    min-height: 60px;
-    padding: var(--space-md) var(--space-3xl);
-    font-size: 18px;
-  }
-}
-
-/* ---- Ultra-wide / Projector ---- */
-@media (min-width: 1600px) {
-  .lesson-player-page {
-    max-width: 1120px;
-  }
-
-  .lesson-player-topbar__back,
-  .lesson-player-topbar__skip {
-    width: 60px;
-    height: 60px;
-  }
-
-  .lesson-activity__icon {
-    width: 72px;
-    height: 72px;
-    border-radius: var(--radius-xl);
-  }
-
-  .lesson-activity__title {
-    font-size: 32px;
-  }
-
-  .lesson-activity__instructions {
-    font-size: 24px;
-  }
-
-  .lesson-player-mimi__bubble {
-    font-size: 20px;
-  }
-
-  .lesson-player-mimi__avatar {
-    font-size: 3.2rem;
-  }
-
-  .lesson-complete__trophy svg {
-    width: 80px;
-    height: 80px;
-  }
-
-  .lesson-complete__title {
-    font-size: 52px;
-  }
-
-  .lesson-complete__xp-value {
-    font-size: 36px;
-  }
-
-  .lesson-complete__mimi-avatar {
-    font-size: 4rem;
-  }
-
-  .lesson-player-bottombar .mm-btn {
-    min-height: 64px;
-    padding: var(--space-lg) var(--space-3xl);
-    font-size: 20px;
   }
 }

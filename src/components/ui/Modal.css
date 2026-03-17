@@ -1,6 +1,15 @@
 /* ==========================================================================
    MODAL — MinesMinis Design System v4
+   Glassmorphic overlay with satisfying spring animations
    ========================================================================== */
+
+/* -- Body lock -------------------------------------------------------- */
+
+body.mm-modal-open {
+  overflow: hidden;
+}
+
+/* -- Overlay ---------------------------------------------------------- */
 
 .mm-modal-overlay {
   position: fixed;
@@ -10,9 +19,9 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-lg);
-  background: rgba(26, 26, 46, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(26, 26, 46, 0.5);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -25,23 +34,21 @@
   visibility: visible;
 }
 
-body.mm-modal-open {
-  overflow: hidden;
-}
-
 /* -- Panel ------------------------------------------------------------ */
 
 .mm-modal {
   position: relative;
   background: var(--bg-card);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
+  box-shadow:
+    var(--shadow-xl),
+    0 0 0 1px rgba(26, 26, 46, 0.05);
   max-height: calc(100vh - var(--space-2xl));
   display: flex;
   flex-direction: column;
   overflow: hidden;
   outline: none;
-  transform: translateY(24px) scale(0.97);
+  transform: translateY(24px) scale(0.96);
   opacity: 0;
   transition:
     transform var(--transition-spring),
@@ -85,6 +92,7 @@ body.mm-modal-open {
   color: var(--text-primary);
   margin: 0;
   line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
 /* -- Close button ----------------------------------------------------- */
@@ -95,8 +103,10 @@ body.mm-modal-open {
   justify-content: center;
   width: 36px;
   height: 36px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   background: var(--bg-muted);
   color: var(--text-secondary);
   font-size: 1rem;
@@ -105,18 +115,18 @@ body.mm-modal-open {
   transition:
     background var(--transition-fast),
     color var(--transition-fast),
-    transform var(--transition-fast);
+    transform var(--transition-base);
   flex-shrink: 0;
 }
 
 .mm-modal__close:hover {
-  background: var(--mist);
-  color: var(--text-primary);
-  transform: scale(1.05);
+  background: var(--error-pale);
+  color: var(--error);
+  transform: rotate(90deg);
 }
 
 .mm-modal__close:active {
-  transform: scale(0.95);
+  transform: rotate(90deg) scale(0.92);
 }
 
 .mm-modal__close:focus-visible {
@@ -130,11 +140,12 @@ body.mm-modal-open {
   padding: var(--space-lg) var(--space-xl) var(--space-xl);
   overflow-y: auto;
   flex: 1;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* -- Mobile bottom-sheet ---------------------------------------------- */
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .mm-modal-overlay {
     padding: 0;
     align-items: flex-end;
@@ -159,22 +170,36 @@ body.mm-modal-open {
   }
 }
 
+@media (min-width: 1600px) {
+  .mm-modal--md { max-width: 640px; }
+  .mm-modal--lg { max-width: 840px; }
+  .mm-modal__title { font-size: 1.375rem; }
+  .mm-modal__body { padding: var(--space-xl) var(--space-2xl) var(--space-2xl); }
+}
+
 /* -- Dark mode -------------------------------------------------------- */
 
+[data-theme="dark"] .mm-modal-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
 [data-theme="dark"] .mm-modal {
-  background: var(--charcoal);
+  background: var(--bg-card);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 [data-theme="dark"] .mm-modal__title {
-  color: var(--mist);
+  color: var(--text-primary);
 }
 
 [data-theme="dark"] .mm-modal__close {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--stone);
+  background: var(--bg-soft);
+  color: var(--text-muted);
 }
 
 [data-theme="dark"] .mm-modal__close:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--mist);
+  background: var(--error-pale);
+  color: var(--error-light);
 }

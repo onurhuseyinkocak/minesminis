@@ -1,6 +1,7 @@
 /* ============================================================
-   SplashScreen.css — Token-based premium loading screen
-   MinesMinis Design System
+   SplashScreen.css — Fullscreen dark loading with brand glow
+   MinesMinis Premium Design System V2
+   ZERO hex colors. Token-only.
    ============================================================ */
 
 .splash {
@@ -27,7 +28,7 @@
   pointer-events: none;
 }
 
-/* Background */
+/* ---- Background ---- */
 .splash-bg {
   position: absolute;
   inset: 0;
@@ -38,32 +39,38 @@
 .splash-bg::before {
   content: '';
   position: absolute;
-  top: 15%;
+  top: 12%;
   left: 50%;
   transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
+  width: 640px;
+  height: 640px;
   border-radius: var(--radius-full);
-  background: radial-gradient(circle, var(--primary-glow) 0%, rgba(0, 0, 0, 0) 70%);
-  filter: blur(60px);
+  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+  filter: blur(70px);
   pointer-events: none;
+  animation: splashGlowPulse 3s ease-in-out infinite alternate;
 }
 
 .splash-bg::after {
   content: '';
   position: absolute;
-  bottom: 20%;
+  bottom: 18%;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px;
-  height: 400px;
+  width: 420px;
+  height: 420px;
   border-radius: var(--radius-full);
-  background: radial-gradient(circle, rgba(42, 157, 143, 0.1) 0%, transparent 70%);
-  filter: blur(50px);
+  background: radial-gradient(circle, var(--secondary-glow) 0%, transparent 70%);
+  filter: blur(55px);
   pointer-events: none;
 }
 
-/* Center Content */
+@keyframes splashGlowPulse {
+  0% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+/* ---- Center Content ---- */
 .splash-center {
   display: flex;
   flex-direction: column;
@@ -74,18 +81,18 @@
 
 @keyframes splashFloat {
   0% { transform: translateY(0); }
-  100% { transform: translateY(-8px); }
+  100% { transform: translateY(-10px); }
 }
 
-/* Logo */
+/* ---- Logo ---- */
 .logo-box {
-  width: 120px;
-  height: 120px;
+  width: 124px;
+  height: 124px;
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow:
     0 0 0 3px var(--primary-glow),
-    0 0 40px var(--primary-glow),
+    0 0 50px var(--primary-glow),
     var(--shadow-xl);
   animation: logoPulse 2.5s ease-in-out infinite;
 }
@@ -94,13 +101,13 @@
   0%, 100% {
     box-shadow:
       0 0 0 3px var(--primary-glow),
-      0 0 40px var(--primary-glow),
+      0 0 50px var(--primary-glow),
       var(--shadow-xl);
   }
   50% {
     box-shadow:
       0 0 0 5px var(--primary-light),
-      0 0 80px var(--primary-glow),
+      0 0 90px var(--primary-glow),
       var(--shadow-xl);
   }
 }
@@ -111,7 +118,7 @@
   object-fit: cover;
 }
 
-/* Brand Text */
+/* ---- Brand Text ---- */
 .brand {
   font-family: var(--font-display);
   font-size: 2.5rem;
@@ -119,7 +126,7 @@
   color: var(--primary);
   letter-spacing: -0.02em;
   margin: 0;
-  text-shadow: 0 0 40px var(--primary-glow);
+  text-shadow: 0 0 50px var(--primary-glow);
 }
 
 .brand span {
@@ -131,18 +138,19 @@
   font-size: 1rem;
   color: var(--text-muted);
   margin: 0;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   font-weight: 500;
+  text-transform: uppercase;
 }
 
-/* Loading Bar */
+/* ---- Loading Bar ---- */
 .loader {
-  width: 220px;
+  width: 240px;
   height: 4px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--border-light);
   overflow: hidden;
-  margin-top: var(--space-md);
+  margin-top: var(--space-lg);
 }
 
 .loader-bar {
@@ -151,6 +159,7 @@
   background: linear-gradient(90deg, var(--primary), var(--mimi-green), var(--primary));
   background-size: 200% 100%;
   animation: loaderSlide 1.8s ease-in-out infinite;
+  box-shadow: 0 0 12px var(--primary-glow);
 }
 
 @keyframes loaderSlide {
@@ -159,7 +168,7 @@
   100% { width: 100%; background-position: 0% 0; }
 }
 
-/* Credits Footer */
+/* ---- Credits Footer ---- */
 .credits {
   position: absolute;
   bottom: 44px;
@@ -198,7 +207,7 @@
   opacity: 0.5;
 }
 
-/* Responsive */
+/* ---- Responsive ---- */
 @media (max-width: 480px) {
   .logo-box {
     width: 96px;
@@ -215,7 +224,7 @@
   }
 
   .loader {
-    width: 160px;
+    width: 180px;
   }
 
   .credits {

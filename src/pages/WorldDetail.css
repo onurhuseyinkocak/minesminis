@@ -1,15 +1,14 @@
 /* ==========================================================================
-   WORLD DETAIL — Individual World Page
-   MinesMinis Premium — All colors via design tokens.
+   WORLD DETAIL — MinesMinis Design System v4.0
+   World header banner, lesson list, vocabulary chips.
+   ZERO hex. All var() tokens.
    ========================================================================== */
 
-/* ---- PAGE LAYOUT ---- */
+/* ---- PAGE ---- */
 .world-detail-page {
-  max-width: 960px;
+  max-width: var(--container-max);
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-lg) 80px;
-  min-height: 100vh;
-  background: var(--bg-page);
+  padding: var(--space-lg) var(--space-xl) var(--space-3xl);
 }
 
 .world-detail-page--not-found {
@@ -17,16 +16,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding-top: 120px;
+  min-height: 60vh;
   gap: var(--space-lg);
+  text-align: center;
 }
 
 .world-detail-page--not-found h2 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 24px;
-  color: var(--text-body);
+  font-size: 1.5rem;
+  color: var(--text-primary);
 }
 
 /* ---- BACK LINK ---- */
@@ -34,260 +33,181 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  font-family: var(--font-body);
-  font-size: 14px;
+  font-family: var(--font-display);
   font-weight: 600;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   text-decoration: none;
   margin-bottom: var(--space-lg);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  transition: var(--transition-fast);
-  background: transparent;
-  min-height: var(--touch-target);
+  transition: color var(--transition-fast);
 }
 
 .world-detail-back:hover {
   color: var(--primary);
-  background: var(--primary-pale);
 }
 
-.world-detail-back:active {
-  background: var(--primary-pale);
-}
-
-.world-detail-back:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
-}
-
-.world-detail-back svg {
-  transition: transform var(--transition-fast);
-}
-
-.world-detail-back:hover svg {
-  transform: translateX(-3px);
-}
-
-/* ---- WORLD HEADER BANNER — Full-width immersive gradient ---- */
+/* ==========================================================================
+   WORLD HEADER BANNER
+   ========================================================================== */
 .world-detail-header {
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl) var(--space-xl);
   display: flex;
   align-items: center;
   gap: var(--space-xl);
-  padding: var(--space-2xl) var(--space-xl);
-  border-radius: var(--radius-xl);
-  color: var(--text-on-primary);
   margin-bottom: var(--space-xl);
+  color: var(--white);
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
-  min-height: 140px;
 }
 
-/* Decorative light orbs for depth */
-.world-detail-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -15%;
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-
+/* Subtle overlay for text contrast */
 .world-detail-header::after {
   content: '';
   position: absolute;
-  bottom: -40%;
-  left: -8%;
-  width: 240px;
-  height: 240px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, var(--bg-card));
+  opacity: 0.1;
   pointer-events: none;
 }
 
 .world-detail-header__icon {
-  font-size: 4.5rem;
+  font-size: 4rem;
   line-height: 1;
-  flex-shrink: 0;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+  position: relative;
   z-index: 1;
-  animation: icon-float 4s ease-in-out infinite;
-}
-
-@keyframes icon-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-6px) rotate(3deg); }
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px var(--primary-glow));
 }
 
 .world-detail-header__info {
   flex: 1;
   min-width: 0;
+  position: relative;
   z-index: 1;
 }
 
 .world-detail-header__name {
   font-family: var(--font-display);
-  font-size: 28px;
   font-weight: 800;
-  margin: 0 0 var(--space-xs);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: var(--white);
+  margin-bottom: 4px;
 }
 
 .world-detail-header__theme {
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 1rem;
+  color: var(--white);
   opacity: 0.9;
-  margin: 0 0 var(--space-md);
-  line-height: 1.4;
+  margin-bottom: var(--space-md);
 }
 
 .world-detail-header__progress {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  max-width: 320px;
-}
-
-/* Override progress bar colors inside header */
-.world-detail-header__progress .mm-progress__track {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
-}
-
-.world-detail-header__progress .mm-progress__fill {
-  background: var(--white);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
-}
-
-.world-detail-header__progress .mm-progress__label {
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 700;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
 }
 
 .world-detail-header__count {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 0.85rem;
+  color: var(--white);
   opacity: 0.8;
-  font-weight: 600;
+  white-space: nowrap;
 }
 
-/* ---- SECTION TITLES ---- */
+/* ==========================================================================
+   SECTION TITLE
+   ========================================================================== */
 .world-detail-section-title {
   font-family: var(--font-display);
-  font-size: 20px;
   font-weight: 700;
+  font-size: 1.2rem;
   color: var(--text-primary);
-  margin: 0 0 var(--space-md);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
 }
 
-/* ---- VOCABULARY PREVIEW — Attractive horizontal scroll ---- */
+/* ==========================================================================
+   VOCABULARY PREVIEW (horizontal scroll chips)
+   ========================================================================== */
 .world-detail-vocab {
   margin-bottom: var(--space-xl);
 }
 
 .world-detail-vocab__scroll {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   overflow-x: auto;
-  padding: var(--space-sm) var(--space-xs) var(--space-lg);
+  padding-bottom: var(--space-sm);
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  scroll-snap-type: x proximity;
 }
 
 .world-detail-vocab__scroll::-webkit-scrollbar {
-  display: none;
+  height: 4px;
+}
+
+.world-detail-vocab__scroll::-webkit-scrollbar-track {
+  background: var(--mist);
+  border-radius: var(--radius-full);
+}
+
+.world-detail-vocab__scroll::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: var(--radius-full);
 }
 
 .vocab-preview-card {
-  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
-  width: 104px;
-  padding: var(--space-lg) var(--space-md);
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
   box-shadow: var(--shadow-card);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-  cursor: default;
-  position: relative;
-  overflow: hidden;
-  scroll-snap-align: start;
-}
-
-.vocab-preview-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-  opacity: 0;
-  transition: opacity var(--transition-base);
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .vocab-preview-card:hover {
-  transform: translateY(-6px) scale(1.03);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
 }
 
-.vocab-preview-card:hover::after {
-  opacity: 1;
-}
-
 .vocab-preview-card__emoji {
-  font-size: 2.4rem;
-  line-height: 1;
-  transition: transform var(--transition-base);
-}
-
-.vocab-preview-card:hover .vocab-preview-card__emoji {
-  transform: scale(1.18) rotate(-5deg);
+  font-size: 1.25rem;
 }
 
 .vocab-preview-card__word {
   font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-body);
-  text-align: center;
-  line-height: 1.2;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  white-space: nowrap;
 }
 
-/* ---- LESSON LIST ---- */
-.world-detail-lessons {
-  margin-bottom: var(--space-xl);
-}
-
+/* ==========================================================================
+   LESSON LIST
+   ========================================================================== */
 .world-detail-lessons__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
-/* Card link wrappers */
+/* ---- LESSON CARD LINK ---- */
 .lesson-card-link {
   text-decoration: none;
   color: inherit;
   display: block;
-  outline: none;
-}
-
-.lesson-card-link:focus-visible .lesson-card {
-  outline: var(--focus-ring);
-  outline-offset: 3px;
+  border-radius: var(--radius-lg);
 }
 
 .lesson-card-link--locked {
-  cursor: not-allowed;
+  cursor: default;
+  pointer-events: none;
 }
 
 /* ---- LESSON CARD ---- */
@@ -295,131 +215,56 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md) var(--space-md);
-  box-shadow: var(--shadow-card);
-  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
-  position: relative;
-  overflow: hidden;
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow var(--transition-base);
 }
 
-/* Available lesson: amber/warm accent — inviting */
-.lesson-card--available {
-  border-left: 5px solid var(--accent-amber);
-  background: var(--bg-card);
-}
-
-.lesson-card--available::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 40px;
-  background: linear-gradient(90deg, var(--warning-pale), transparent);
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.lesson-card--available::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  background: linear-gradient(90deg, transparent, var(--primary-pale));
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-.lesson-card-link:not(.lesson-card-link--locked):hover .lesson-card--available {
-  transform: translateY(-3px) translateX(2px);
+.lesson-card-link:hover .lesson-card--available {
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
-  border-left-color: var(--accent-orange);
 }
 
-/* Completed lesson: green accent — satisfied feel */
+/* Status-based left border */
+.lesson-card--available {
+  border-left: 4px solid var(--primary);
+}
+
 .lesson-card--completed {
-  border-left: 5px solid var(--mimi-green);
-  background: var(--bg-card);
+  border-left: 4px solid var(--success);
 }
 
-.lesson-card--completed::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 40px;
-  background: linear-gradient(90deg, var(--success-pale), transparent);
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.lesson-card--completed::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 60px;
-  background: linear-gradient(90deg, transparent, var(--mimi-green-light));
-  opacity: 0.2;
-  pointer-events: none;
-}
-
-/* Locked lesson: clearly muted */
 .lesson-card--locked {
-  border-left: 5px solid var(--border-light);
-  opacity: 0.5;
-  background: var(--bg-muted);
-  filter: grayscale(0.3);
+  border-left: 4px solid var(--mist);
+  opacity: 0.65;
 }
 
-/* Number circle */
+/* ---- LESSON NUMBER ---- */
 .lesson-card__number {
-  flex-shrink: 0;
-  width: var(--touch-target);
-  height: var(--touch-target);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 800;
-  background: var(--bg-muted);
+  font-weight: 700;
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  background: var(--bg-muted);
+  flex-shrink: 0;
+  transition: all var(--transition-base);
 }
 
-/* Available lesson number — warm amber accent */
 .lesson-card--available .lesson-card__number {
-  background: var(--warning-pale);
+  background: var(--primary-pale);
   color: var(--primary-dark);
-  box-shadow: var(--shadow-sm);
 }
 
-.lesson-card-link:hover .lesson-card--available .lesson-card__number {
-  transform: scale(1.1);
-  box-shadow: var(--shadow-md);
-}
-
-/* Completed number — green check */
 .lesson-card__number--done {
-  background: var(--gradient-secondary) !important;
-  color: var(--text-on-primary) !important;
-  box-shadow: var(--shadow-sm) !important;
+  background: var(--success-pale);
+  color: var(--success);
 }
 
-/* Locked number */
-.lesson-card--locked .lesson-card__number {
-  opacity: 0.5;
-}
-
-/* Info */
+/* ---- LESSON INFO ---- */
 .lesson-card__info {
   flex: 1;
   min-width: 0;
@@ -427,11 +272,10 @@
 
 .lesson-card__title {
   font-family: var(--font-display);
-  font-size: 16px;
   font-weight: 700;
-  margin: 0 0 6px;
+  font-size: 1rem;
   color: var(--text-primary);
-  line-height: 1.3;
+  margin-bottom: 4px;
 }
 
 .lesson-card--locked .lesson-card__title {
@@ -440,33 +284,22 @@
 
 .lesson-card__meta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-sm);
+  flex-wrap: wrap;
 }
 
 .lesson-card__duration,
 .lesson-card__xp {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 4px;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 0.78rem;
   color: var(--text-muted);
-  font-weight: 500;
 }
 
-.lesson-card__duration svg,
-.lesson-card__xp svg {
-  opacity: 0.7;
-}
-
-.lesson-card__xp svg {
-  color: var(--primary);
-  opacity: 0.8;
-}
-
-/* Status area */
+/* ---- LESSON STATUS ---- */
 .lesson-card__status {
   flex-shrink: 0;
   display: flex;
@@ -474,216 +307,58 @@
 }
 
 .lesson-card__done-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 4px;
   font-family: var(--font-display);
-  font-size: 14px;
   font-weight: 700;
-  color: var(--mimi-green);
+  font-size: 0.8rem;
+  color: var(--success);
   background: var(--success-pale);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm);
-}
-
-.lesson-card__done-badge svg {
-  color: var(--mimi-green-dark);
 }
 
 .lesson-card__lock-icon {
-  color: var(--border-medium);
-  opacity: 0.6;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   DARK MODE
+   ========================================================================== */
+[data-theme="dark"] .world-detail-header::after {
+  opacity: 0.05;
+}
+
+[data-theme="dark"] .vocab-preview-card {
+  background: var(--bg-card);
 }
 
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
-
-/* ---- Mobile ---- */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .world-detail-page {
-    padding: var(--space-md) var(--space-md) var(--space-3xl);
+    padding: var(--space-md);
   }
 
   .world-detail-header {
     flex-direction: column;
     text-align: center;
-    padding: var(--space-xl) var(--space-lg);
-    gap: var(--space-md);
-  }
-
-  .world-detail-header__icon {
-    font-size: 3.5rem;
-  }
-
-  .world-detail-header__name {
-    font-size: 24px;
-  }
-
-  .world-detail-header__theme {
-    font-size: 14px;
+    padding: var(--space-lg);
   }
 
   .world-detail-header__progress {
-    max-width: 100%;
-    align-items: center;
-  }
-
-  .world-detail-header__count {
-    text-align: center;
-  }
-
-  .vocab-preview-card {
-    width: 88px;
-    padding: var(--space-md) var(--space-sm);
-  }
-
-  .vocab-preview-card__emoji {
-    font-size: 1.8rem;
-  }
-
-  .vocab-preview-card__word {
-    font-size: 12px;
+    justify-content: center;
   }
 
   .lesson-card {
     flex-wrap: wrap;
-    padding: var(--space-md);
-    gap: var(--space-md);
-  }
-
-  .lesson-card__number {
-    width: 40px;
-    height: 40px;
-    font-size: 14px;
-  }
-
-  .lesson-card__title {
-    font-size: 14px;
   }
 
   .lesson-card__status {
     width: 100%;
     justify-content: flex-end;
-    margin-top: var(--space-xs);
-  }
-
-  .lesson-card__meta {
-    gap: var(--space-sm);
-  }
-
-  .world-detail-section-title {
-    font-size: 18px;
-  }
-}
-
-/* ---- Tablet ---- */
-@media (min-width: 601px) and (max-width: 1023px) {
-  .world-detail-page {
-    padding: var(--space-lg) var(--space-md) var(--space-3xl);
-  }
-
-  .world-detail-header {
-    padding: var(--space-xl) var(--space-xl);
-  }
-}
-
-/* ---- Smart Board / Large Screens ---- */
-@media (min-width: 1200px) {
-  .world-detail-page {
-    max-width: 1080px;
-    padding: var(--space-xl) var(--space-xl) 80px;
-  }
-
-  .world-detail-header {
-    padding: var(--space-3xl) var(--space-3xl);
-    gap: var(--space-xl);
-    border-radius: var(--radius-xl);
-    min-height: 180px;
-  }
-
-  .world-detail-header__icon {
-    font-size: 5.5rem;
-  }
-
-  .world-detail-header__name {
-    font-size: 36px;
-  }
-
-  .world-detail-header__theme {
-    font-size: 16px;
-  }
-
-  .lesson-card {
-    padding: var(--space-lg);
-    gap: var(--space-lg);
-  }
-
-  .lesson-card__number {
-    width: 52px;
-    height: 52px;
-    font-size: 20px;
-  }
-
-  .lesson-card__title {
-    font-size: 18px;
-  }
-
-  .lesson-card__meta {
-    gap: var(--space-md);
-  }
-
-  .lesson-card__duration,
-  .lesson-card__xp {
-    font-size: 13px;
-  }
-
-  .vocab-preview-card {
-    width: 116px;
-    padding: var(--space-lg) var(--space-md);
-  }
-
-  .vocab-preview-card__emoji {
-    font-size: 2.8rem;
-  }
-
-  .vocab-preview-card__word {
-    font-size: 14px;
-  }
-
-  .world-detail-section-title {
-    font-size: 24px;
-    margin-bottom: var(--space-lg);
-  }
-}
-
-/* ---- Ultra-wide / Projector ---- */
-@media (min-width: 1600px) {
-  .world-detail-page {
-    max-width: 1200px;
-  }
-
-  .world-detail-header__icon {
-    font-size: 6rem;
-  }
-
-  .world-detail-header__name {
-    font-size: 40px;
-  }
-
-  .lesson-card__number {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-  }
-
-  .lesson-card__title {
-    font-size: 20px;
-  }
-
-  .lesson-card {
-    padding: var(--space-lg) var(--space-xl);
-    border-radius: var(--radius-xl);
+    margin-top: var(--space-sm);
   }
 }

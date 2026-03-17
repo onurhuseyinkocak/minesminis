@@ -1,5 +1,6 @@
 /* ==========================================================================
    CLASSROOM SHELL — MinesMinis Design System v4
+   Immersive classroom mode with fullscreen and teacher controls
    ========================================================================== */
 
 .classroom-shell {
@@ -56,6 +57,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
 .classroom-shell__lesson-name {
@@ -85,7 +87,7 @@
   font-variant-numeric: tabular-nums;
   color: var(--secondary);
   padding: 6px var(--space-lg);
-  background: rgba(26, 107, 90, 0.08);
+  background: var(--secondary-pale);
   border-radius: var(--radius-md);
   min-width: 140px;
   justify-content: center;
@@ -113,6 +115,8 @@
   justify-content: center;
   width: 52px;
   height: 52px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   border: 2px solid var(--border-light);
   background: var(--bg-card);
   border-radius: var(--radius-md);
@@ -121,7 +125,8 @@
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
-    transform 0.1s ease;
+    transform 0.1s ease,
+    box-shadow var(--transition-fast);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -130,9 +135,10 @@
 .classroom-shell__control:hover {
   background: var(--mist);
   border-color: var(--stone);
+  box-shadow: var(--shadow-sm);
 }
 
-.classroom-shell__control:active { transform: scale(0.95); }
+.classroom-shell__control:active { transform: scale(0.93); }
 
 .classroom-shell__control:focus-visible {
   outline: none;
@@ -147,7 +153,8 @@
 }
 
 .classroom-shell__control--primary:hover {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: var(--shadow-button-hover);
+  filter: brightness(1.05);
 }
 
 .classroom-shell.high-contrast .classroom-shell__control {
@@ -193,8 +200,9 @@
   top: 50%;
   transform: translateY(-50%);
   width: 64px;
-  background: rgba(26, 26, 46, 0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(26, 26, 46, 0.94);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-radius: var(--radius-lg);
   padding: var(--space-md) var(--space-sm);
   display: flex;
@@ -203,11 +211,14 @@
   gap: var(--space-sm);
   z-index: var(--z-dropdown);
   box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .classroom-shell__teacher-btn {
   width: 48px;
   height: 48px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   border: none;
   background: rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
@@ -216,26 +227,33 @@
   align-items: center;
   justify-content: center;
   color: rgba(255, 255, 255, 0.8);
-  transition: background var(--transition-fast), color var(--transition-fast), transform 0.1s ease;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform 0.1s ease;
 }
 
 .classroom-shell__teacher-btn svg { width: 24px; height: 24px; }
 
 .classroom-shell__teacher-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
   color: var(--white);
 }
 
-.classroom-shell__teacher-btn:active { transform: scale(0.92); }
+.classroom-shell__teacher-btn:active { transform: scale(0.9); }
 
 .classroom-shell__teacher-btn:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  box-shadow: 0 0 0 2px rgba(232, 163, 23, 0.5);
 }
 
 .classroom-shell__teacher-btn--active {
   background: var(--primary);
   color: var(--white);
+}
+
+.classroom-shell__teacher-btn--active:hover {
+  background: var(--primary-dark);
 }
 
 .classroom-shell__teacher-divider {
@@ -245,17 +263,36 @@
   margin: var(--space-xs) 0;
 }
 
-/* -- Smart Board (1920px+) -------------------------------------------- */
+/* -- Smart Board (1600px+) -------------------------------------------- */
+
+@media (min-width: 1600px) {
+  .classroom-shell__topbar { height: 80px; }
+  .classroom-shell__class-name { font-size: 1.5rem; }
+  .classroom-shell__lesson-name { font-size: 1.125rem; }
+  .classroom-shell__timer { font-size: 2rem; min-width: 160px; }
+  .classroom-shell__control { width: 56px; height: 56px; }
+}
 
 @media (min-width: 1920px) {
   .classroom-shell__topbar { height: 88px; padding: 0 var(--space-2xl); }
   .classroom-shell__class-name { font-size: 1.75rem; }
   .classroom-shell__lesson-name { font-size: 1.25rem; }
-  .classroom-shell__timer { font-size: 2.25rem; padding: var(--space-sm) var(--space-xl); min-width: 180px; border-radius: var(--radius-lg); }
+  .classroom-shell__timer {
+    font-size: 2.25rem;
+    padding: var(--space-sm) var(--space-xl);
+    min-width: 180px;
+    border-radius: var(--radius-lg);
+  }
   .classroom-shell__timer svg { width: 36px; height: 36px; }
   .classroom-shell__control { width: 64px; height: 64px; border-radius: var(--radius-lg); }
   .classroom-shell__control svg { width: 32px; height: 32px; }
-  .classroom-shell__teacher-panel { width: 80px; right: var(--space-lg); padding: var(--space-md); gap: var(--space-md); border-radius: var(--radius-xl); }
+  .classroom-shell__teacher-panel {
+    width: 80px;
+    right: var(--space-lg);
+    padding: var(--space-md);
+    gap: var(--space-md);
+    border-radius: var(--radius-xl);
+  }
   .classroom-shell__teacher-btn { width: 56px; height: 56px; border-radius: var(--radius-lg); }
   .classroom-shell__teacher-btn svg { width: 28px; height: 28px; }
 }
@@ -263,33 +300,76 @@
 /* -- Tablet ----------------------------------------------------------- */
 
 @media (max-width: 1023px) {
-  .classroom-shell__topbar { height: var(--nav-height); padding: 0 var(--space-md); gap: var(--space-sm); }
+  .classroom-shell__topbar {
+    height: var(--nav-height);
+    padding: 0 var(--space-md);
+    gap: var(--space-sm);
+  }
   .classroom-shell__class-name { font-size: 1.125rem; }
   .classroom-shell__lesson-name { display: none; }
-  .classroom-shell__timer { font-size: 1.375rem; min-width: 110px; padding: var(--space-xs) var(--space-md); }
+  .classroom-shell__timer {
+    font-size: 1.375rem;
+    min-width: 110px;
+    padding: var(--space-xs) var(--space-md);
+  }
   .classroom-shell__control { width: var(--touch-target); height: var(--touch-target); }
   .classroom-shell__control svg { width: 22px; height: 22px; }
   .classroom-shell__teacher-panel {
-    bottom: var(--space-md); right: var(--space-md); top: auto; transform: none;
-    flex-direction: row; width: auto; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-lg);
+    bottom: var(--space-md);
+    right: var(--space-md);
+    top: auto;
+    transform: none;
+    flex-direction: row;
+    width: auto;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-lg);
   }
-  .classroom-shell__teacher-divider { width: 1px; height: 28px; margin: 0 var(--space-xs); }
+  .classroom-shell__teacher-divider {
+    width: 1px;
+    height: 28px;
+    margin: 0 var(--space-xs);
+  }
 }
 
 /* -- Mobile ----------------------------------------------------------- */
 
-@media (max-width: 640px) {
-  .classroom-shell__topbar { flex-wrap: wrap; height: auto; padding: var(--space-sm); gap: var(--space-xs); }
+@media (max-width: 768px) {
+  .classroom-shell__topbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: var(--space-sm);
+    gap: var(--space-xs);
+  }
   .classroom-shell__topbar-left { width: 100%; gap: var(--space-sm); }
   .classroom-shell__topbar-center { flex: 1; }
   .classroom-shell__main { padding: var(--space-md); }
-  .classroom-shell__teacher-panel { bottom: var(--space-sm); right: var(--space-sm); }
+  .classroom-shell__teacher-panel {
+    bottom: var(--space-sm);
+    right: var(--space-sm);
+  }
 }
 
 /* -- Dark mode -------------------------------------------------------- */
 
-[data-theme="dark"] .classroom-shell { background: var(--ink); color: var(--mist); }
-[data-theme="dark"] .classroom-shell__topbar { background: var(--charcoal); border-bottom-color: rgba(255, 255, 255, 0.06); }
-[data-theme="dark"] .classroom-shell__lesson-name { color: var(--stone); }
-[data-theme="dark"] .classroom-shell__control { background: var(--charcoal); border-color: var(--slate); color: var(--cloud); }
-[data-theme="dark"] .classroom-shell__control:hover { background: var(--charcoal); }
+[data-theme="dark"] .classroom-shell {
+  background: var(--ink);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .classroom-shell__topbar {
+  background: var(--charcoal);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .classroom-shell__lesson-name { color: var(--text-muted); }
+
+[data-theme="dark"] .classroom-shell__control {
+  background: var(--charcoal);
+  border-color: var(--border-light);
+  color: var(--cloud);
+}
+
+[data-theme="dark"] .classroom-shell__control:hover {
+  background: var(--bg-soft);
+  border-color: var(--border-medium);
+}

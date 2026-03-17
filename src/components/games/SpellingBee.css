@@ -1,5 +1,6 @@
 /* ==========================================================================
    SPELLING BEE — MinesMinis Design System v4
+   Engaging letter tile spelling game with satisfying slot fills
    ========================================================================== */
 
 .spelling-bee {
@@ -9,12 +10,16 @@
   padding: var(--space-lg);
   max-width: 700px;
   margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
 }
+
+/* -- Header ----------------------------------------------------------- */
 
 .spelling-bee__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-md);
 }
 
 .spelling-bee__title {
@@ -23,7 +28,10 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
+
+/* -- Prompt card ------------------------------------------------------ */
 
 .spelling-bee__prompt {
   display: flex;
@@ -36,7 +44,7 @@
 .spelling-bee__big-emoji {
   font-size: 4.5rem;
   line-height: 1;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.08));
 }
 
 .spelling-bee__turkish {
@@ -47,20 +55,25 @@
   margin: 0;
 }
 
+/* -- Hint ------------------------------------------------------------- */
+
 .spelling-bee__hint {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-lg);
-  background: linear-gradient(135deg, rgba(232, 163, 23, 0.08) 0%, rgba(245, 204, 92, 0.12) 100%);
+  background: var(--primary-pale);
   color: var(--primary-dark);
   border-radius: var(--radius-md);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
   justify-content: center;
-  border: 1px solid rgba(232, 163, 23, 0.12);
+  border: 1px solid rgba(232, 163, 23, 0.15);
+  box-shadow: var(--shadow-sm);
 }
+
+/* -- Answer slots ----------------------------------------------------- */
 
 .spelling-bee__answer {
   display: flex;
@@ -72,7 +85,7 @@
 .spelling-bee__slot {
   width: 56px;
   height: 64px;
-  border: 3px dashed rgba(26, 107, 90, 0.25);
+  border: 3px dashed var(--secondary-pale);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -89,20 +102,26 @@
 .spelling-bee__slot--filled {
   border-style: solid;
   border-color: var(--secondary);
-  background: rgba(26, 107, 90, 0.04);
-  box-shadow: 0 2px 8px rgba(26, 107, 90, 0.08);
+  background: var(--secondary-pale);
+  box-shadow: 0 2px 8px rgba(26, 107, 90, 0.1);
+  animation: sb-fill 200ms ease-out;
+}
+
+@keyframes sb-fill {
+  from { transform: scale(0.85); }
+  to { transform: scale(1); }
 }
 
 .spelling-bee__slot--correct {
   border-color: var(--mimi-green);
-  background: rgba(76, 175, 80, 0.10);
+  background: var(--success-pale);
   color: var(--mimi-green-dark);
-  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.15);
+  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.18);
 }
 
 .spelling-bee__slot--wrong {
   border-color: var(--primary);
-  background: rgba(232, 163, 23, 0.08);
+  background: var(--primary-pale);
   animation: sb-shake 0.4s ease;
 }
 
@@ -112,6 +131,8 @@
   75% { transform: translateX(-5px); }
 }
 
+/* -- Sentence / feedback ---------------------------------------------- */
+
 .spelling-bee__sentence {
   text-align: center;
   font-family: var(--font-body);
@@ -120,6 +141,7 @@
   font-weight: 500;
   font-style: italic;
   margin: 0;
+  padding: var(--space-sm) 0;
 }
 
 .spelling-bee__try-again {
@@ -130,6 +152,8 @@
   font-weight: 700;
   margin: 0;
 }
+
+/* -- Letter tiles ----------------------------------------------------- */
 
 .spelling-bee__tiles {
   display: flex;
@@ -157,7 +181,8 @@
     background var(--transition-fast),
     color var(--transition-fast),
     transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
   box-shadow: var(--shadow-card);
 }
 
@@ -165,7 +190,11 @@
   background: var(--gradient-secondary);
   color: var(--white);
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(26, 107, 90, 0.25);
+  box-shadow: 0 8px 20px rgba(26, 107, 90, 0.25);
+}
+
+.spelling-bee__tile:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.95);
 }
 
 .spelling-bee__tile:focus-visible {
@@ -174,16 +203,20 @@
 }
 
 .spelling-bee__tile--used {
-  opacity: 0.2;
+  opacity: 0.15;
   pointer-events: none;
-  transform: scale(0.9);
+  transform: scale(0.88);
 }
+
+/* -- Actions ---------------------------------------------------------- */
 
 .spelling-bee__actions {
   display: flex;
   justify-content: center;
   gap: var(--space-md);
 }
+
+/* -- Results ---------------------------------------------------------- */
 
 .spelling-bee__results { text-align: center; }
 
@@ -200,16 +233,56 @@
   font-weight: 800;
   color: var(--secondary);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .spelling-bee__results-score {
   font-size: 1.15rem;
   color: var(--text-body);
   margin: 0;
+  line-height: 1.6;
 }
+
+/* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1024px) {
   .spelling-bee__tile { width: 80px; height: 88px; font-size: 2.25rem; }
   .spelling-bee__slot { width: 68px; height: 76px; font-size: 2.25rem; }
   .spelling-bee__big-emoji { font-size: 6rem; }
+}
+
+@media (max-width: 768px) {
+  .spelling-bee { padding: var(--space-md); }
+  .spelling-bee__title { font-size: 1.5rem; }
+  .spelling-bee__tile { width: 52px; height: 60px; font-size: 1.5rem; }
+  .spelling-bee__slot { width: 48px; height: 56px; font-size: 1.5rem; }
+  .spelling-bee__big-emoji { font-size: 3.5rem; }
+}
+
+@media (min-width: 1600px) {
+  .spelling-bee { max-width: 800px; }
+  .spelling-bee__tile { width: 88px; height: 96px; font-size: 2.5rem; }
+  .spelling-bee__slot { width: 76px; height: 84px; font-size: 2.5rem; }
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .spelling-bee__slot {
+  background: var(--bg-card);
+  border-color: rgba(42, 157, 143, 0.2);
+}
+
+[data-theme="dark"] .spelling-bee__slot--filled {
+  background: var(--secondary-pale);
+  border-color: var(--secondary);
+}
+
+[data-theme="dark"] .spelling-bee__tile {
+  background: var(--bg-card);
+  border-color: var(--secondary);
+}
+
+[data-theme="dark"] .spelling-bee__hint {
+  background: var(--primary-pale);
+  border-color: rgba(232, 163, 23, 0.1);
 }

@@ -1,13 +1,16 @@
 /* ==========================================================================
    PROGRESS BAR — MinesMinis Design System v4
+   Smooth, animated progress with gradient fills and shimmer effect
    ========================================================================== */
 
 .mm-progress {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
   width: 100%;
 }
+
+/* -- Track ------------------------------------------------------------ */
 
 .mm-progress__track {
   flex: 1;
@@ -19,7 +22,9 @@
 
 .mm-progress--sm .mm-progress__track { height: 6px; }
 .mm-progress--md .mm-progress__track { height: 10px; }
-.mm-progress--lg .mm-progress__track { height: 14px; }
+.mm-progress--lg .mm-progress__track { height: 16px; }
+
+/* -- Fill ------------------------------------------------------------- */
 
 .mm-progress__fill {
   height: 100%;
@@ -50,7 +55,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.4) 50%,
     transparent 100%
   );
   animation: mm-progress-shimmer 2s ease-in-out infinite;
@@ -61,6 +66,8 @@
   100% { transform: translateX(200%); }
 }
 
+/* -- Label ------------------------------------------------------------ */
+
 .mm-progress__label {
   font-family: var(--font-display);
   font-size: 0.8125rem;
@@ -69,6 +76,15 @@
   min-width: 36px;
   text-align: right;
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -- Responsive ------------------------------------------------------- */
+
+@media (min-width: 1600px) {
+  .mm-progress--md .mm-progress__track { height: 12px; }
+  .mm-progress--lg .mm-progress__track { height: 18px; }
+  .mm-progress__label { font-size: 0.875rem; }
 }
 
 /* -- Dark mode -------------------------------------------------------- */
@@ -78,5 +94,14 @@
 }
 
 [data-theme="dark"] .mm-progress__label {
-  color: var(--stone);
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .mm-progress--animated .mm-progress__fill::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
 }

@@ -1,616 +1,307 @@
 /* ==========================================================================
-   ONBOARDING PAGE — MinesMinis Premium
-   Multi-step wizard with amber progress, large touchable cards,
-   enchanting Mimi intro, clean avatar grid, exciting world preview.
-   All values via var() design tokens.
+   ONBOARDING PAGE — MinesMinis Design System v4.0
+   Multi-step wizard: age, Mimi, avatar, world preview.
+   ZERO hex. All var() tokens.
    ========================================================================== */
 
+/* ---- PAGE ---- */
 .onboarding-page {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: var(--space-xl);
   background: var(--gradient-warm);
-  font-family: var(--font-body);
-  position: relative;
-  overflow: hidden;
 }
 
-/* Decorative background shapes */
-.onboarding-page::before {
-  content: '';
-  position: absolute;
-  top: -30%;
-  right: -15%;
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
-  pointer-events: none;
-  animation: onboarding-blob-drift 14s ease-in-out infinite alternate;
-}
-
-.onboarding-page::after {
-  content: '';
-  position: absolute;
-  bottom: -25%;
-  left: -10%;
-  width: 440px;
-  height: 440px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--secondary-pale) 0%, transparent 70%);
-  opacity: 0.35;
-  pointer-events: none;
-  animation: onboarding-blob-drift 18s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes onboarding-blob-drift {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(25px, -15px) scale(1.04); }
-}
-
-/* ==========================================================================
-   MAIN CARD
-   ========================================================================== */
+/* ---- MAIN CARD ---- */
 .onboarding-card {
-  position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 720px;
+  max-width: 580px;
   background: var(--bg-card);
   border-radius: var(--radius-xl);
-  box-shadow:
-    var(--shadow-xl),
-    0 0 0 1px rgba(26, 26, 46, 0.04);
-  padding: var(--space-3xl) var(--space-2xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
   overflow: hidden;
-}
-
-/* Top gradient bar — animated amber-teal shimmer */
-.onboarding-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--primary),
-    var(--primary-light),
-    var(--secondary-light),
-    var(--primary)
-  );
-  background-size: 300% 100%;
-  animation: onboarding-gradient-shift 6s ease-in-out infinite;
-}
-
-@keyframes onboarding-gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  position: relative;
 }
 
 /* ==========================================================================
-   PROGRESS INDICATOR — amber-based dot system
-   Completed = amber filled, Current = amber ring pulse, Future = gray
+   PROGRESS DOTS
    ========================================================================== */
 .onboarding-progress {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
 }
 
 .onboarding-progress-step {
   display: flex;
   align-items: center;
-  gap: 0;
 }
 
-/* Dot base */
+.onboarding-progress-line {
+  width: 48px;
+  height: 3px;
+  background: var(--mist);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-base);
+  margin: 0 var(--space-xs);
+}
+
+.onboarding-progress-line.active {
+  background: var(--gradient-primary);
+}
+
 .onboarding-progress-dot {
-  width: var(--touch-target);
-  height: var(--touch-target);
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 15px;
-  border: 2.5px solid var(--border-light);
-  background: var(--bg-card);
+  font-size: 0.85rem;
+  background: var(--mist);
   color: var(--text-muted);
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all var(--transition-base);
   flex-shrink: 0;
-  position: relative;
 }
 
-/* Current step: amber ring (not filled) with pulse glow */
 .onboarding-progress-dot.active {
-  border-color: var(--primary);
-  background: var(--primary-pale);
-  color: var(--primary-dark);
-  box-shadow:
-    0 0 0 4px var(--primary-glow),
-    var(--shadow-button);
+  background: var(--bg-card);
+  color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary), 0 0 0 6px var(--primary-glow);
 }
 
-/* Completed step: amber filled solid */
 .onboarding-progress-dot.completed {
-  border-color: var(--primary);
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: var(--text-on-primary);
   box-shadow: var(--shadow-button);
 }
 
-.onboarding-progress-dot.completed svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 3;
-}
-
-/* Connector line */
-.onboarding-progress-line {
-  width: 56px;
-  height: 3px;
-  background: var(--border-light);
-  border-radius: var(--radius-full);
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.onboarding-progress-line.active {
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
-}
-
 /* ==========================================================================
-   STEP CONTENT — shared layout
+   STEP CONTENT
    ========================================================================== */
 .onboarding-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  gap: var(--space-md);
+  min-height: 380px;
 }
 
 .onboarding-step-emoji {
-  font-size: 64px;
+  font-size: 3rem;
   line-height: 1;
-  margin-bottom: var(--space-md);
-  display: block;
 }
 
 .onboarding-step h2 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(24px, 3.5vw, 30px);
+  font-size: 1.6rem;
   color: var(--text-primary);
-  margin: 0 0 var(--space-sm);
-  letter-spacing: -0.01em;
 }
 
-.onboarding-step .onboarding-step-sub {
-  font-size: 16px;
+.onboarding-step-sub {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  margin: 0 0 var(--space-xl);
-  line-height: 1.6;
-  max-width: 420px;
-  margin-left: auto;
-  margin-right: auto;
+  line-height: 1.5;
+  max-width: 400px;
 }
 
 /* ==========================================================================
-   STEP 1: AGE GROUP CARDS — 72px+ height, 24px radius, hover lift
+   AGE CARDS (Step 1)
    ========================================================================== */
 .onboarding-age-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
-  margin-bottom: var(--space-xl);
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  max-width: 420px;
 }
 
 .onboarding-age-card {
+  all: unset;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--space-sm);
-  padding: var(--space-lg) var(--space-md);
-  border: 2.5px solid var(--border-light);
-  border-radius: var(--radius-xl);
-  background: var(--bg-card);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   min-height: 120px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Soft amber wash on hover/select */
-.onboarding-age-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at 50% 100%,
-    var(--primary-glow) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-md);
+  transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-card);
 }
 
 .onboarding-age-card:hover {
-  border-color: var(--primary-light);
   transform: translateY(-4px);
   box-shadow: var(--shadow-card-hover);
+  border-color: var(--primary-light);
 }
 
-.onboarding-age-card:hover::before {
-  opacity: 1;
-}
-
-.onboarding-age-card:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--primary-glow);
-  border-color: var(--primary);
-}
-
-/* Selected state: amber ring glow */
 .onboarding-age-card.selected {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow), var(--shadow-card-hover);
   background: var(--primary-pale);
-  box-shadow:
-    0 0 0 4px var(--primary-glow),
-    var(--shadow-button);
-  transform: translateY(-2px);
-}
-
-.onboarding-age-card.selected::before {
-  opacity: 1;
 }
 
 .onboarding-age-emoji {
-  font-size: 44px;
-  line-height: 1;
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s ease;
-}
-
-.onboarding-age-card:hover .onboarding-age-emoji,
-.onboarding-age-card.selected .onboarding-age-emoji {
-  transform: scale(1.1);
+  font-size: 2rem;
 }
 
 .onboarding-age-range {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 22px;
+  font-size: 1.25rem;
   color: var(--text-primary);
-  position: relative;
-  z-index: 1;
 }
 
 .onboarding-age-label {
-  font-size: 13px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
   color: var(--text-secondary);
   font-weight: 500;
-  position: relative;
-  z-index: 1;
-}
-
-.onboarding-age-card.selected .onboarding-age-range {
-  color: var(--primary-dark);
 }
 
 /* ==========================================================================
-   STEP 2: MIMI INTRODUCTION — enchanting golden glow
+   MIMI INTRO (Step 2)
    ========================================================================== */
 .onboarding-mimi-intro {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  width: 100%;
 }
 
-/* Large Mimi with golden drop-shadow */
 .onboarding-mimi-large {
-  font-size: 128px;
+  font-size: 5rem;
   line-height: 1;
-  filter: drop-shadow(0 12px 36px rgba(232, 163, 23, 0.4));
+  filter: drop-shadow(0 8px 24px var(--primary-glow));
 }
 
-/* Speech bubble */
 .onboarding-mimi-speech {
-  background: var(--secondary-pale);
-  border-radius: var(--radius-xl);
-  padding: var(--space-lg) var(--space-xl);
-  max-width: 440px;
-  position: relative;
-  font-size: 16px;
-  line-height: 1.7;
+  background: var(--bg-muted);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
   color: var(--text-body);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  line-height: 1.6;
+  text-align: left;
+  position: relative;
+  max-width: 420px;
 }
 
-/* Speech bubble arrow */
 .onboarding-mimi-speech::before {
   content: '';
   position: absolute;
-  top: -12px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-bottom: 14px solid var(--secondary-pale);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--bg-muted);
 }
 
-/* Mimi facts pills */
 .onboarding-mimi-facts {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: var(--space-sm);
   margin-top: var(--space-md);
 }
 
 .onboarding-mimi-fact {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 6px var(--space-md);
-  background: var(--bg-card);
-  border-radius: var(--radius-full);
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--secondary);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-light);
-  transition: all 0.2s ease;
-}
-
-.onboarding-mimi-fact:hover {
-  transform: scale(1.06);
-  box-shadow: var(--shadow-md);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--primary-dark);
+  background: var(--primary-pale);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
 }
 
 /* ==========================================================================
-   STEP 3: AVATAR PICKER — clean grid, amber selected ring
+   AVATAR GRID (Step 3)
    ========================================================================== */
 .onboarding-avatar-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-sm);
-  margin-bottom: var(--space-xl);
-  max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  max-width: 420px;
 }
 
 .onboarding-avatar-btn {
+  all: unset;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-md) var(--space-sm);
-  border: 2.5px solid transparent;
-  border-radius: var(--radius-lg);
+  gap: 4px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
   background: var(--bg-muted);
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  min-width: var(--touch-target);
-  min-height: var(--touch-target);
-  position: relative;
 }
 
 .onboarding-avatar-btn:hover {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-card-hover);
-}
-
-.onboarding-avatar-btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--primary-glow);
-  border-color: var(--primary);
-}
-
-/* Selected: amber ring glow */
-.onboarding-avatar-btn.selected {
-  border-color: var(--primary);
   background: var(--primary-pale);
-  box-shadow:
-    0 0 0 4px var(--primary-glow),
-    var(--shadow-button);
-  transform: translateY(-3px);
+  transform: scale(1.08);
 }
 
-/* Checkmark badge on selected avatar */
-.onboarding-avatar-btn.selected::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--primary);
-  border: 2.5px solid var(--bg-card);
-  box-shadow: var(--shadow-sm);
+.onboarding-avatar-btn.selected {
+  background: var(--primary-pale);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow), var(--shadow-glow);
+  transform: scale(1.05);
 }
 
 .onboarding-avatar-btn .avatar-emoji {
-  font-size: 34px;
+  font-size: 2rem;
   line-height: 1;
-  transition: transform 0.2s ease;
-}
-
-.onboarding-avatar-btn:hover .avatar-emoji {
-  transform: scale(1.12);
 }
 
 .onboarding-avatar-btn .avatar-name {
-  font-size: 11px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.7rem;
   color: var(--text-secondary);
-  font-weight: 500;
 }
 
 .onboarding-avatar-btn.selected .avatar-name {
   color: var(--primary-dark);
-  font-weight: 700;
 }
 
 /* ==========================================================================
-   STEP 4: YOUR FIRST WORLD — excitement builder
+   WORLD PREVIEW (Step 4)
    ========================================================================== */
-.onboarding-world-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
-}
-
-.onboarding-world-card {
-  width: 100%;
-  max-width: 460px;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  transition: all 0.3s ease;
-}
-
-.onboarding-world-card:hover {
-  box-shadow: var(--shadow-xl);
-  transform: translateY(-2px);
-}
-
-/* Visual hero area with gradient overlay */
-.onboarding-world-visual {
-  height: 180px;
-  background:
-    radial-gradient(
-      ellipse at 50% 60%,
-      var(--primary-glow) 0%,
-      transparent 60%
-    ),
-    var(--secondary-pale);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Bottom fade into card body */
-.onboarding-world-visual::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 48px;
-  background: linear-gradient(to bottom, transparent, var(--bg-card));
-}
-
-.onboarding-world-emoji {
-  font-size: 80px;
-  filter: drop-shadow(0 6px 16px rgba(232, 163, 23, 0.3));
-}
-
-.onboarding-world-badge {
-  position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
-  padding: 6px var(--space-md);
-  background: var(--bg-elevated);
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--primary-dark);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-light);
-}
-
-.onboarding-world-info {
-  padding: var(--space-lg) var(--space-xl);
-  text-align: left;
-}
-
-.onboarding-world-name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 22px;
-  color: var(--text-primary);
-  margin: 0 0 var(--space-sm);
-}
-
-.onboarding-world-desc {
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.65;
-  margin: 0 0 var(--space-md);
-}
-
-.onboarding-world-topics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-
-.onboarding-world-topic {
-  padding: 6px var(--space-md);
-  background: var(--primary-pale);
-  border-radius: var(--radius-full);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--primary-dark);
-  letter-spacing: 0.01em;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
-}
-
-.onboarding-world-topic:hover {
-  transform: scale(1.06);
-  border-color: var(--primary-light);
-  box-shadow: var(--shadow-sm);
-}
-
-/* User summary card */
 .onboarding-user-summary {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-  padding: var(--space-md) var(--space-lg);
   background: var(--primary-pale);
-  border-radius: var(--radius-xl);
-  border: 1.5px solid var(--primary-light);
-  max-width: 360px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  width: 100%;
+  max-width: 400px;
 }
 
 .onboarding-user-summary-emoji {
-  font-size: 52px;
-  line-height: 1;
+  font-size: 2.5rem;
 }
 
 .onboarding-user-summary-info {
@@ -620,159 +311,159 @@
 .onboarding-user-summary-name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 18px;
+  font-size: 1rem;
   color: var(--text-primary);
-  margin: 0;
 }
 
 .onboarding-user-summary-detail {
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
   color: var(--text-secondary);
-  margin: var(--space-xs) 0 0;
+}
+
+.onboarding-world-preview {
+  width: 100%;
+  max-width: 420px;
+}
+
+.onboarding-world-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  border: 2px solid var(--primary-light);
+}
+
+.onboarding-world-visual {
+  background: var(--gradient-primary);
+  padding: var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 100px;
+}
+
+.onboarding-world-emoji {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.onboarding-world-badge {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: var(--bg-card);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.onboarding-world-info {
+  padding: var(--space-lg);
+}
+
+.onboarding-world-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.onboarding-world-desc {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+.onboarding-world-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.onboarding-world-topic {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--secondary-dark);
+  background: var(--secondary-pale);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
 }
 
 /* ==========================================================================
-   NAVIGATION ACTIONS
+   ACTIONS & SKIP
    ========================================================================== */
 .onboarding-actions {
   display: flex;
+  align-items: center;
   justify-content: center;
   gap: var(--space-md);
-  margin-top: var(--space-xl);
-}
-
-/* Skip link */
-.onboarding-skip {
-  text-align: center;
+  width: 100%;
   margin-top: var(--space-md);
 }
 
+.onboarding-skip {
+  margin-top: var(--space-md);
+  text-align: center;
+}
+
 .onboarding-skip button {
-  border: none;
-  background: none;
-  color: var(--text-muted);
-  font-size: 14px;
+  all: unset;
   cursor: pointer;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-sm);
-  transition: var(--transition-base);
-  font-weight: 500;
-  min-height: var(--touch-target);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
 }
 
 .onboarding-skip button:hover {
   color: var(--text-secondary);
-  background: var(--bg-muted);
-}
-
-.onboarding-skip button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  text-decoration: underline;
 }
 
 /* ==========================================================================
-   CELEBRATION OVERLAY (if used)
+   DARK MODE
    ========================================================================== */
-.onboarding-celebration {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-elevated);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: var(--z-modal);
-  gap: var(--space-lg);
-  text-align: center;
-  padding: var(--space-xl);
+[data-theme="dark"] .onboarding-page {
+  background: var(--gradient-premium);
 }
 
-.onboarding-celebration-emoji {
-  font-size: 100px;
-  line-height: 1;
+[data-theme="dark"] .onboarding-card {
+  background: var(--bg-card);
 }
 
-.onboarding-celebration h2 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 32px;
-  color: var(--text-primary);
-  margin: 0;
+[data-theme="dark"] .onboarding-mimi-speech {
+  background: var(--bg-muted);
 }
 
-.onboarding-celebration p {
-  font-size: 18px;
-  color: var(--text-secondary);
-  margin: 0;
+[data-theme="dark"] .onboarding-age-card {
+  background: var(--bg-muted);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .onboarding-age-card.selected {
+  background: var(--bg-card);
 }
 
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
-
-/* Mobile */
 @media (max-width: 600px) {
   .onboarding-page {
     padding: var(--space-md);
-    padding-top: var(--space-lg);
+    align-items: flex-start;
+    padding-top: var(--space-2xl);
   }
 
-  .onboarding-card {
-    padding: var(--space-xl) var(--space-md);
-    border-radius: var(--radius-xl);
-  }
-
-  .onboarding-age-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm);
-  }
-
-  .onboarding-age-card {
-    padding: var(--space-md);
-    min-height: 96px;
-  }
-
-  .onboarding-avatar-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-sm);
-  }
-
-  .onboarding-progress-line {
-    width: 28px;
-  }
-
-  .onboarding-progress-dot {
-    width: 38px;
-    height: 38px;
-    font-size: 14px;
-  }
-
-  .onboarding-mimi-large {
-    font-size: 88px;
-  }
-
-  .onboarding-mimi-speech {
-    padding: var(--space-md);
-    font-size: 15px;
-  }
-
-  .onboarding-world-info {
-    padding: var(--space-md);
-  }
-
-  .onboarding-step h2 {
-    font-size: 22px;
-  }
-
-  .onboarding-actions {
-    flex-wrap: wrap;
-  }
-}
-
-/* Small phone */
-@media (max-width: 380px) {
   .onboarding-card {
     padding: var(--space-lg) var(--space-md);
   }
@@ -781,56 +472,11 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .onboarding-mimi-large {
-    font-size: 72px;
-  }
-
-  .onboarding-age-card {
-    min-height: 80px;
-    border-radius: var(--radius-lg);
-  }
-}
-
-/* Large screens / smart board */
-@media (min-width: 1600px) {
-  .onboarding-card {
-    max-width: 840px;
-    padding: 56px var(--space-3xl);
-    border-radius: var(--radius-xl);
-  }
-
-  .onboarding-age-card {
-    padding: var(--space-xl) var(--space-lg);
-    min-height: 140px;
-  }
-
-  .onboarding-age-emoji {
-    font-size: 52px;
-  }
-
-  .onboarding-age-range {
-    font-size: 24px;
-  }
-
-  .onboarding-avatar-btn {
-    padding: var(--space-md);
-  }
-
-  .onboarding-avatar-btn .avatar-emoji {
-    font-size: 42px;
-  }
-
-  .onboarding-progress-dot {
-    width: 48px;
-    height: 48px;
-    font-size: 18px;
+  .onboarding-step {
+    min-height: auto;
   }
 
   .onboarding-progress-line {
-    width: 64px;
-  }
-
-  .onboarding-mimi-large {
-    font-size: 148px;
+    width: 28px;
   }
 }

@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Admin Layout — MinesMinis Design System v4
-   Uses global design tokens. No hardcoded hex.
+   Admin Layout — MinesMinis Premium Design System V2
+   Dark sidebar + light content, login screen
+   ZERO hex colors. Token-only.
    ========================================================================== */
 
 /* -- Admin-specific aliases mapped to global tokens -- */
@@ -18,7 +19,7 @@
   --admin-nav-bg: var(--ink);
   --admin-nav-text: var(--stone);
   --admin-nav-active: var(--white);
-  --admin-nav-hover: rgba(255, 255, 255, 0.06);
+  --admin-nav-hover: var(--border-light);
   --admin-nav-accent: var(--primary);
   --admin-radius: var(--radius-sm);
   --admin-radius-lg: var(--radius-md);
@@ -26,8 +27,9 @@
   --admin-shadow: var(--shadow-md);
   --admin-shadow-lg: var(--shadow-lg);
   --admin-font: var(--font-body);
+  --admin-font-heading: var(--font-display);
   --admin-transition: var(--transition-fast);
-  --admin-sidebar-width: 240px;
+  --admin-sidebar-width: 248px;
 }
 
 /* ---- Login Screen ---- */
@@ -38,8 +40,8 @@
 }
 
 .adm-login-visual {
-  flex: 0 0 420px;
-  background: var(--admin-nav-bg);
+  flex: 0 0 440px;
+  background: linear-gradient(180deg, var(--admin-nav-bg), var(--secondary-dark));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,14 +56,28 @@
   position: absolute;
   top: -40%;
   right: -30%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(232, 163, 23, 0.12) 0%, transparent 70%);
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
   pointer-events: none;
+  filter: blur(20px);
+}
+
+.adm-login-visual::after {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  left: -20%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--secondary-glow) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(30px);
 }
 
 .adm-login-brand {
   color: var(--white);
+  font-family: var(--admin-font-heading);
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -69,9 +85,12 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
+  position: relative;
+  z-index: 1;
 }
 
 .adm-login-brand small {
+  font-family: var(--admin-font);
   font-size: 0.85rem;
   font-weight: 400;
   color: var(--admin-nav-text);
@@ -79,9 +98,9 @@
 }
 
 .adm-login-brand-mark {
-  width: 48px;
-  height: 48px;
-  background: var(--primary);
+  width: 52px;
+  height: 52px;
+  background: var(--gradient-primary);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -90,6 +109,7 @@
   font-weight: 800;
   font-size: 1.25rem;
   margin-bottom: var(--space-md);
+  box-shadow: var(--shadow-lg);
 }
 
 .adm-login-form-side {
@@ -107,6 +127,7 @@
 }
 
 .adm-login-box h2 {
+  font-family: var(--admin-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--admin-text);
@@ -137,18 +158,19 @@
   padding: var(--space-md) var(--space-md) var(--space-md) 42px;
   font-family: var(--admin-font);
   font-size: 0.9rem;
-  border: 1px solid var(--admin-border);
+  border: 1.5px solid var(--admin-border);
   border-radius: var(--admin-radius);
   background: var(--admin-surface);
   color: var(--admin-text);
-  transition: border-color var(--admin-transition), box-shadow var(--admin-transition);
+  transition: border-color var(--admin-transition),
+              box-shadow var(--admin-transition);
   outline: none;
   box-sizing: border-box;
 }
 
 .adm-input-group input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  box-shadow: 0 0 0 3px var(--primary-pale);
 }
 
 .adm-login-error {
@@ -158,12 +180,13 @@
   padding: var(--space-sm) var(--space-md);
   background: var(--error-soft);
   border-radius: var(--admin-radius);
+  border-left: 3px solid var(--error);
 }
 
 .adm-login-submit {
   width: 100%;
   padding: var(--space-md) var(--space-lg);
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: var(--white);
   font-family: var(--admin-font);
   font-size: 0.9rem;
@@ -171,12 +194,14 @@
   border: none;
   border-radius: var(--admin-radius);
   cursor: pointer;
-  transition: background var(--admin-transition);
-  box-shadow: var(--shadow-button);
+  transition: transform var(--admin-transition),
+              box-shadow var(--admin-transition);
+  box-shadow: var(--shadow-md);
 }
 
 .adm-login-submit:hover {
-  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
 }
 
 /* ---- Shell Layout ---- */
@@ -194,11 +219,12 @@
   left: 0;
   bottom: 0;
   width: var(--admin-sidebar-width);
-  background: var(--admin-nav-bg);
+  background: linear-gradient(180deg, var(--admin-nav-bg), var(--secondary-dark));
   display: flex;
   flex-direction: column;
   z-index: var(--z-dropdown);
   transition: transform var(--transition-base);
+  box-shadow: var(--shadow-lg);
 }
 
 .adm-sidebar-brand {
@@ -211,9 +237,9 @@
 }
 
 .adm-sidebar-brand-mark {
-  width: 32px;
-  height: 32px;
-  background: var(--primary);
+  width: 34px;
+  height: 34px;
+  background: var(--gradient-primary);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
@@ -222,9 +248,11 @@
   font-weight: 800;
   font-size: 0.875rem;
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-sidebar-brand-text {
+  font-family: var(--admin-font-heading);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -232,6 +260,7 @@
 
 .adm-sidebar-brand-text small {
   display: block;
+  font-family: var(--admin-font);
   font-size: 0.65rem;
   font-weight: 400;
   color: var(--admin-nav-text);
@@ -250,10 +279,10 @@
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--admin-nav-text);
   padding: var(--space-lg) var(--space-sm) var(--space-sm);
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .adm-nav-link {
@@ -267,7 +296,7 @@
   font-size: 0.8125rem;
   font-weight: 500;
   transition: all var(--admin-transition);
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 .adm-nav-link:hover {
@@ -276,8 +305,9 @@
 }
 
 .adm-nav-link.active {
-  background: rgba(232, 163, 23, 0.12);
+  background: var(--primary-pale);
   color: var(--admin-nav-accent);
+  font-weight: 600;
 }
 
 .adm-nav-link.active svg {
@@ -286,7 +316,7 @@
 
 .adm-sidebar-footer {
   padding: var(--space-md);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border-light);
 }
 
 .adm-sidebar-footer-link {
@@ -314,6 +344,7 @@
 
 .adm-sidebar-footer-link.danger:hover {
   color: var(--error);
+  background: var(--error-soft);
 }
 
 /* ---- Main Content ---- */
@@ -337,6 +368,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: var(--shadow-sm);
 }
 
 .adm-hamburger {
@@ -365,7 +397,7 @@
   padding: var(--space-xs) var(--space-sm);
   font-size: 0.7rem;
   font-weight: 600;
-  background: rgba(76, 175, 80, 0.10);
+  background: var(--success-soft);
   color: var(--success);
   border-radius: var(--radius-full);
 }
@@ -376,6 +408,12 @@
   height: 6px;
   background: var(--success);
   border-radius: var(--radius-full);
+  animation: topbarDotPulse 2s ease-in-out infinite;
+}
+
+@keyframes topbarDotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 /* ---- Content Body ---- */
@@ -393,7 +431,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--overlay-bg);
   z-index: 99;
 }
 
