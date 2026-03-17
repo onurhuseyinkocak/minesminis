@@ -120,17 +120,17 @@ function AppRoutes() {
 
   const authReady = !loading;
   const profileReady = !user || !profileLoading;
-  const showContent = authReady && (profileReady || isSetupRoute);
+  const showContent = authReady && profileReady;
 
   const isSetupCompleted = userProfile?.settings?.setup_completed === true;
-  const mustGoToSetup = !!user && !isAdmin && !isSetupRoute && !isSetupCompleted && !hasSkippedSetup;
+  const mustGoToSetup = !!user && !isAdmin && !isSetupRoute && !isSetupCompleted && !hasSkippedSetup && profileReady;
 
   useEffect(() => {
     if (mustGoToSetup) navigate("/setup", { replace: true });
   }, [mustGoToSetup, navigate]);
 
-  // While auth / profile is loading, show a minimal loading state
-  if (!showContent || mustGoToSetup) {
+  // While auth or profile is loading, show loader — prevents flash of onboarding
+  if (!showContent) {
     return <PageLoader />;
   }
 

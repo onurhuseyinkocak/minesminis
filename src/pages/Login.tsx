@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Languages, LogIn, UserPlus, Mail, Lock } from 'lucide-react';
+import { Languages, LogIn, UserPlus, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { Button, Input, Tabs } from '../components/ui';
 import './Login.css';
 
@@ -156,6 +157,12 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-page">
+      {/* Back to landing */}
+      <Link to="/" className="login-back-btn">
+        <ArrowLeft size={18} />
+        <span>{lang === 'tr' ? 'Ana Sayfa' : 'Home'}</span>
+      </Link>
+
       {/* Language toggle */}
       <div className="login-lang-toggle">
         <Languages size={16} />
