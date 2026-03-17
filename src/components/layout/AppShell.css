@@ -1,6 +1,6 @@
 /* ==========================================================================
-   APP SHELL — MinesMinis Design System v4
-   Main application layout with responsive sidebar + bottom nav
+   APP SHELL — LibreUIUX / MinesMinis Design System
+   Glass nav, bottom tabs, 200ms ease-out transitions
    ========================================================================== */
 
 .app-shell {
@@ -8,9 +8,9 @@
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--gradient-warm);
+  background: var(--bg-page);
   color: var(--text-primary);
-  transition: background var(--transition-slow);
+  transition: background 400ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 /* -- Main area -------------------------------------------------------- */
@@ -44,15 +44,16 @@
     left: 0;
     bottom: 0;
     width: 240px;
-    background: var(--bg-card);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-right: 1px solid var(--border-light);
     padding: var(--space-lg) 0;
     overflow-y: auto;
     z-index: 40;
     transition:
-      transform var(--transition-slow),
-      width var(--transition-slow);
-    box-shadow: 1px 0 0 var(--border-light);
+      transform 200ms cubic-bezier(0.33, 1, 0.68, 1),
+      width 200ms cubic-bezier(0.33, 1, 0.68, 1);
   }
 
   .app-shell--with-sidebar .app-shell__main {
@@ -70,11 +71,11 @@
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 0.9375rem;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     transition:
-      background var(--transition-fast),
-      color var(--transition-fast),
-      transform var(--transition-fast);
+      background 200ms cubic-bezier(0.33, 1, 0.68, 1),
+      color 200ms cubic-bezier(0.33, 1, 0.68, 1),
+      transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
     position: relative;
     min-height: var(--touch-target);
   }
@@ -82,11 +83,12 @@
   .app-shell__sidebar-link:hover {
     background: var(--bg-muted);
     color: var(--text-body);
+    transform: translateY(-1px);
   }
 
   .app-shell__sidebar-link:focus-visible {
     outline: none;
-    box-shadow: var(--focus-ring);
+    box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
   }
 
   .app-shell__sidebar-link.active {
@@ -133,14 +135,14 @@
     left: 0;
     right: 0;
     height: 72px;
-    background: var(--bg-elevated);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--border-light);
     z-index: 900;
     padding: 0 var(--space-xs);
     padding-bottom: env(safe-area-inset-bottom, 0);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    box-shadow: 0 -2px 12px rgba(26, 26, 46, 0.06);
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.06);
   }
 
   .app-shell__bottom-nav-item {
@@ -156,8 +158,8 @@
     font-weight: 600;
     font-size: 0.625rem;
     transition:
-      color var(--transition-fast),
-      transform var(--transition-fast);
+      color 200ms cubic-bezier(0.33, 1, 0.68, 1),
+      transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
     -webkit-tap-highlight-color: transparent;
     position: relative;
     min-height: var(--touch-target);
@@ -166,16 +168,16 @@
   .app-shell__bottom-nav-item svg {
     width: 22px;
     height: 22px;
-    transition: transform var(--transition-fast);
+    transition: transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
   }
 
   .app-shell__bottom-nav-item:active {
-    transform: scale(0.9);
+    transform: scale(0.98);
   }
 
   .app-shell__bottom-nav-item:focus-visible {
     outline: none;
-    box-shadow: var(--focus-ring);
+    box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
     border-radius: var(--radius-sm);
   }
 
@@ -196,7 +198,7 @@
   }
 
   .app-shell__bottom-nav-item.active svg {
-    transform: scale(1.15);
+    transform: scale(1.1);
   }
 }
 
@@ -231,13 +233,17 @@
 }
 
 [data-theme="dark"] .app-shell__bottom-nav {
-  background: rgba(26, 26, 46, 0.94);
+  background: rgba(26, 26, 46, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-top-color: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] .app-shell--with-sidebar .app-shell__sidebar {
-  background: var(--bg-card);
+  background: rgba(45, 45, 68, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-right-color: rgba(255, 255, 255, 0.06);
 }
 

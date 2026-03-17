@@ -1,6 +1,6 @@
 /* ==========================================================================
-   AVATAR — MinesMinis Design System v4
-   Warm, inviting profile avatars with glow ring and premium fallback
+   AVATAR — LibreUIUX / MinesMinis Design System
+   Circle shape, subtle ring, soft shadow
    ========================================================================== */
 
 .mm-avatar {
@@ -13,19 +13,19 @@
   flex-shrink: 0;
   background: var(--gradient-warm);
   box-shadow:
-    0 0 0 2.5px rgba(232, 163, 23, 0.2),
-    var(--shadow-sm);
+    0 0 0 2px rgba(212, 148, 13, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1);
   user-select: none;
   transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+    transform 200ms cubic-bezier(0.33, 1, 0.68, 1),
+    box-shadow 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .mm-avatar:hover {
-  transform: scale(1.05);
+  transform: translateY(-1px);
   box-shadow:
-    0 0 0 3px var(--primary-glow),
-    var(--shadow-md);
+    0 0 0 3px rgba(212, 148, 13, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* -- Sizes ------------------------------------------------------------ */
@@ -42,11 +42,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform var(--transition-base);
+  transition: transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .mm-avatar:hover .mm-avatar__image {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 /* -- Fallback --------------------------------------------------------- */
@@ -83,8 +83,8 @@
 
 [data-theme="dark"] .mm-avatar {
   box-shadow:
-    0 0 0 2.5px rgba(232, 163, 23, 0.15),
-    var(--shadow-sm);
+    0 0 0 2px rgba(212, 148, 13, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="dark"] .mm-avatar__fallback {

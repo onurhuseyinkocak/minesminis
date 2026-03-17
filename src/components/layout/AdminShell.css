@@ -1,6 +1,6 @@
 /* ==========================================================================
-   ADMIN SHELL — MinesMinis Design System v4
-   Premium admin layout with dark sidebar and clean content area
+   ADMIN SHELL — LibreUIUX / MinesMinis Design System
+   Dark sidebar, clean content area, 200ms ease-out transitions
    ========================================================================== */
 
 .admin-shell {
@@ -25,7 +25,7 @@
   display: flex;
   flex-direction: column;
   z-index: var(--z-dropdown);
-  transition: width var(--transition-base);
+  transition: width 200ms cubic-bezier(0.33, 1, 0.68, 1);
   overflow: hidden;
   border-right: 1px solid rgba(255, 255, 255, 0.04);
 }
@@ -45,7 +45,7 @@
 .admin-shell__sidebar-logo {
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,7 @@
   font-size: 1.0625rem;
   white-space: nowrap;
   opacity: 1;
-  transition: opacity var(--transition-fast);
+  transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
   letter-spacing: -0.01em;
 }
 
@@ -76,7 +76,7 @@
   font-weight: 600;
   white-space: nowrap;
   opacity: 1;
-  transition: opacity var(--transition-fast);
+  transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .admin-shell__sidebar.collapsed .admin-shell__sidebar-subtitle { opacity: 0; }
@@ -124,8 +124,8 @@
   font-weight: 500;
   font-size: 0.875rem;
   transition:
-    color var(--transition-fast),
-    background var(--transition-fast);
+    color 200ms cubic-bezier(0.33, 1, 0.68, 1),
+    background 200ms cubic-bezier(0.33, 1, 0.68, 1);
   white-space: nowrap;
   position: relative;
   min-height: var(--touch-target);
@@ -140,7 +140,7 @@
 
 .admin-shell__nav-item:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(232, 163, 23, 0.4);
+  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
   border-radius: var(--radius-sm);
 }
 
@@ -168,7 +168,7 @@
 
 .admin-shell__nav-label {
   opacity: 1;
-  transition: opacity var(--transition-fast);
+  transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .admin-shell__sidebar.collapsed .admin-shell__nav-label {
@@ -192,7 +192,7 @@
   font-size: 0.8125rem;
   font-family: var(--font-body);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  transition: color var(--transition-fast);
+  transition: color 200ms cubic-bezier(0.33, 1, 0.68, 1);
   white-space: nowrap;
   flex-shrink: 0;
   min-height: var(--touch-target);
@@ -202,11 +202,11 @@
 
 .admin-shell__collapse-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(232, 163, 23, 0.4);
+  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
 }
 
 .admin-shell__collapse-btn svg {
-  transition: transform var(--transition-base);
+  transition: transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .admin-shell__sidebar.collapsed .admin-shell__collapse-btn svg {
@@ -215,7 +215,7 @@
 
 .admin-shell__collapse-label {
   opacity: 1;
-  transition: opacity var(--transition-fast);
+  transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .admin-shell__sidebar.collapsed .admin-shell__collapse-label {
@@ -232,7 +232,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  transition: margin-left var(--transition-base);
+  transition: margin-left 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .admin-shell__sidebar.collapsed ~ .admin-shell__body { margin-left: 72px; }
@@ -242,17 +242,17 @@
 .admin-shell__header {
   position: sticky;
   top: 0;
-  height: var(--nav-height);
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-xl);
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-light);
   z-index: 50;
   flex-shrink: 0;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .admin-shell__header-left {
@@ -263,7 +263,7 @@
 
 .admin-shell__header-title {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 1.125rem;
   color: var(--text-primary);
   margin: 0;
@@ -283,7 +283,7 @@
   min-height: var(--touch-target);
   border: none;
   background: transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -291,8 +291,8 @@
   color: var(--text-secondary);
   position: relative;
   transition:
-    background var(--transition-fast),
-    color var(--transition-fast);
+    background 200ms cubic-bezier(0.33, 1, 0.68, 1),
+    color 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .admin-shell__header-btn:hover {
@@ -302,7 +302,7 @@
 
 .admin-shell__header-btn:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
 }
 
 .admin-shell__notification-dot {
@@ -330,12 +330,12 @@
   font-weight: 700;
   font-size: 0.875rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(26, 107, 90, 0.20);
-  transition: transform var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .admin-shell__header-avatar:hover {
-  transform: scale(1.08);
+  transform: translateY(-1px);
 }
 
 .admin-shell__header-name {
@@ -366,7 +366,7 @@
     transform: translateX(-100%);
     z-index: 1100;
     width: 280px;
-    transition: transform var(--transition-spring);
+    transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .admin-shell__sidebar.mobile-open { transform: translateX(0); }
@@ -377,13 +377,13 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(26, 26, 46, 0.5);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     z-index: 1099;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--transition-base);
+    transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
   }
 
   .admin-shell__mobile-overlay.open {
@@ -415,7 +415,9 @@
 }
 
 [data-theme="dark"] .admin-shell__header {
-  background: rgba(45, 45, 68, 0.9);
+  background: rgba(45, 45, 68, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 

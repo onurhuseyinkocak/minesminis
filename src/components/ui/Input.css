@@ -1,6 +1,6 @@
 /* ==========================================================================
-   INPUT — MinesMinis Design System v4
-   Warm, accessible form inputs with generous spacing and clear states
+   INPUT — LibreUIUX / MinesMinis Design System
+   Muted bg, 8px radius, amber focus ring, 48px height
    ========================================================================== */
 
 .mm-input-wrapper {
@@ -15,7 +15,7 @@
 .mm-input-label {
   font-family: var(--font-display);
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 1.4;
   margin-bottom: 2px;
@@ -39,14 +39,14 @@
   font-size: 0.9375rem;
   font-weight: 400;
   color: var(--text-primary);
-  background: var(--bg-card);
-  border: 2px solid var(--border-light);
-  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
   outline: none;
   transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background var(--transition-fast);
+    border-color 200ms cubic-bezier(0.33, 1, 0.68, 1),
+    box-shadow 200ms cubic-bezier(0.33, 1, 0.68, 1),
+    background 200ms cubic-bezier(0.33, 1, 0.68, 1);
   -webkit-appearance: none;
   appearance: none;
 }
@@ -57,16 +57,14 @@
 }
 
 .mm-input:hover:not(:disabled):not(:focus):not(.mm-input--error) {
-  border-color: var(--stone);
-  background: var(--snow);
+  border-color: var(--border-light);
+  background: var(--bg-card);
 }
 
 .mm-input:focus {
   border-color: var(--primary);
-  box-shadow:
-    var(--focus-ring),
-    var(--shadow-sm);
-  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  background: var(--bg-card);
 }
 
 .mm-input:disabled {
@@ -89,14 +87,14 @@
   height: var(--btn-height);
   padding: 0 var(--space-md);
   font-size: 0.9375rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 .mm-input--lg {
   height: var(--input-height);
   padding: 0 var(--space-lg);
   font-size: 1rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 /* -- Icon ------------------------------------------------------------- */
@@ -114,7 +112,7 @@
   align-items: center;
   color: var(--text-muted);
   pointer-events: none;
-  transition: color var(--transition-fast);
+  transition: color 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .mm-input:focus ~ .mm-input-icon,
@@ -130,7 +128,7 @@
 
 .mm-input--error:focus {
   border-color: var(--error);
-  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.18);
+  box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.2);
 }
 
 .mm-input-error-text {
@@ -143,7 +141,7 @@
   gap: var(--space-xs);
   line-height: 1.4;
   padding-left: 2px;
-  animation: mm-input-error-enter 200ms ease-out;
+  animation: mm-input-error-enter 200ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 @keyframes mm-input-error-enter {
@@ -194,7 +192,7 @@
 
 [data-theme="dark"] .mm-input {
   background: var(--bg-soft);
-  border-color: var(--border-light);
+  border-color: transparent;
   color: var(--text-primary);
 }
 
@@ -203,12 +201,12 @@
 }
 
 [data-theme="dark"] .mm-input:hover:not(:disabled):not(:focus):not(.mm-input--error) {
-  border-color: var(--border-medium);
+  border-color: var(--border-light);
   background: var(--bg-muted);
 }
 
 [data-theme="dark"] .mm-input:focus {
   border-color: var(--primary-light);
-  box-shadow: var(--focus-ring);
+  box-shadow: 0 0 0 4px rgba(232, 163, 23, 0.15);
   background: var(--bg-card);
 }

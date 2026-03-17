@@ -1,14 +1,14 @@
 /* ==========================================================================
-   SKELETON — MinesMinis Design System v4
-   Warm shimmer loading placeholders
+   SKELETON — LibreUIUX / MinesMinis Design System
+   Shimmer loading placeholders with warm tones
    ========================================================================== */
 
 .mm-skeleton {
   background: linear-gradient(
     90deg,
-    var(--mist) 25%,
-    var(--snow) 37%,
-    var(--mist) 63%
+    var(--bg-muted) 25%,
+    var(--bg-card) 37%,
+    var(--bg-muted) 63%
   );
   background-size: 200% 100%;
   animation: mm-skeleton-shimmer 1.6s ease-in-out infinite;
@@ -28,11 +28,11 @@
 }
 
 .mm-skeleton--rect {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 .mm-skeleton--card {
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   min-height: 140px;
 }
 

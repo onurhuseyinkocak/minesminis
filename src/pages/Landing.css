@@ -1,11 +1,11 @@
 /* ==========================================================================
-   LANDING PAGE — MinesMinis Design System v4.0
-   Extraordinary premium landing. ZERO hex colors. All var() tokens.
+   LANDING PAGE — LibreUIUX Methodology
+   Clean, minimal, purposeful. ZERO hex. All var() tokens.
    ========================================================================== */
 
 /* ---- PAGE ---- */
 .landing-page {
-  background: var(--gradient-warm);
+  background: var(--bg-page);
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -20,9 +20,11 @@
   align-items: center;
   gap: var(--space-xs);
   background: var(--bg-card);
+  backdrop-filter: blur(12px);
   border-radius: var(--radius-full);
   padding: var(--space-xs) var(--space-sm);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
   font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-muted);
@@ -37,7 +39,7 @@
   font-family: var(--font-display);
   font-size: 12px;
   color: var(--text-muted);
-  transition: var(--transition-fast);
+  transition: all 200ms ease-out;
 }
 
 .landing-lang-toggle button.active {
@@ -45,7 +47,7 @@
   color: var(--text-on-primary);
 }
 
-/* ---- NAVBAR ---- */
+/* ---- NAVBAR (glassmorphism) ---- */
 .landing-nav {
   display: flex;
   align-items: center;
@@ -81,8 +83,9 @@
    HERO SECTION
    ========================================================================== */
 .landing-hero {
-  padding: var(--space-2xl) var(--space-xl) 100px;
+  padding: var(--space-2xl) var(--space-xl) var(--space-3xl);
   position: relative;
+  background: var(--gradient-hero);
 }
 
 .landing-hero-inner {
@@ -112,16 +115,17 @@
   font-size: 0.85rem;
   color: var(--primary-dark);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
   width: fit-content;
 }
 
 .landing-hero-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(3rem, 6vw, 5rem);
-  line-height: 1.1;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.08;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .landing-hero-title .highlight {
@@ -133,7 +137,7 @@
 
 .landing-hero-sub {
   font-family: var(--font-body);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: var(--text-secondary);
   line-height: 1.7;
   max-width: 520px;
@@ -166,7 +170,8 @@
   align-items: center;
   background: var(--bg-card);
   border-radius: 50%;
-  box-shadow: var(--shadow-xl), 0 0 60px var(--primary-glow);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
 }
 
 .landing-hero-mimi-emoji {
@@ -200,7 +205,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .landing-section-tag {
@@ -212,30 +217,32 @@
   font-size: 0.85rem;
   color: var(--primary-dark);
   background: var(--primary-pale);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
 }
 
 .landing-section-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
   color: var(--text-primary);
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .landing-section-sub {
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--text-secondary);
   line-height: 1.6;
+  max-width: 540px;
 }
 
 /* ==========================================================================
-   WORLDS PREVIEW
+   WORLDS PREVIEW — 64px section gap
    ========================================================================== */
 .landing-worlds {
-  padding: 100px var(--space-xl);
+  padding: var(--space-3xl) var(--space-xl);
   background: var(--bg-page);
 }
 
@@ -252,42 +259,44 @@
 
 .landing-world-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
-  transition: transform var(--transition-spring), box-shadow var(--transition-base);
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
   cursor: pointer;
 }
 
 .landing-world-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .landing-world-visual {
-  height: 140px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3.5rem;
+  font-size: 3rem;
   position: relative;
 }
 
 .landing-world-info {
-  padding: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
 }
 
 .landing-world-name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   color: var(--text-primary);
   margin-bottom: var(--space-xs);
+  line-height: 1.3;
 }
 
 .landing-world-desc {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
   line-height: 1.5;
   margin-bottom: var(--space-sm);
@@ -296,19 +305,20 @@
 .landing-world-age {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--primary-dark);
   background: var(--primary-pale);
   padding: 2px var(--space-sm);
   border-radius: var(--radius-full);
+  display: inline-block;
 }
 
 /* ==========================================================================
-   HOW IT WORKS
+   HOW IT WORKS — 64px section gap
    ========================================================================== */
 .landing-how {
-  padding: 100px var(--space-xl);
-  background: var(--gradient-warm);
+  padding: var(--space-3xl) var(--space-xl);
+  background: var(--bg-page);
 }
 
 .landing-how-inner {
@@ -319,7 +329,7 @@
 .landing-how-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-xl);
+  gap: var(--space-lg);
   position: relative;
 }
 
@@ -351,60 +361,62 @@
   align-items: center;
   text-align: center;
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
   padding: var(--space-xl) var(--space-lg);
-  transition: transform var(--transition-spring), box-shadow var(--transition-base);
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
   position: relative;
   z-index: 1;
 }
 
 .landing-how-step:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .landing-how-number {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--gradient-primary);
   color: var(--text-on-primary);
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-button);
+  box-shadow: var(--shadow-sm);
   margin-bottom: var(--space-md);
 }
 
 .landing-how-icon {
-  font-size: 2.5rem;
-  margin-bottom: var(--space-md);
+  font-size: 2rem;
+  margin-bottom: var(--space-sm);
 }
 
 .landing-how-step h3 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--text-primary);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  line-height: 1.3;
 }
 
 .landing-how-step p {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
   line-height: 1.5;
 }
 
 /* ==========================================================================
-   FEATURES
+   FEATURES — 64px section gap, icon in colored circle (48px)
    ========================================================================== */
 .landing-features {
-  padding: 100px var(--space-xl);
+  padding: var(--space-3xl) var(--space-xl);
   background: var(--bg-page);
 }
 
@@ -421,21 +433,22 @@
 
 .landing-feature-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
   padding: var(--space-xl);
   text-align: center;
-  transition: transform var(--transition-spring), box-shadow var(--transition-base);
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
 }
 
 .landing-feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .landing-feature-icon {
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -466,23 +479,24 @@
 .landing-feature-card h3 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--text-primary);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  line-height: 1.3;
 }
 
 .landing-feature-card p {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
   line-height: 1.5;
 }
 
 /* ==========================================================================
-   TRUST / SOCIAL PROOF
+   TRUST / SOCIAL PROOF — dark bg, large stat numbers
    ========================================================================== */
 .landing-trust {
-  padding: 100px var(--space-xl);
+  padding: var(--space-3xl) var(--space-xl);
   background: var(--gradient-premium);
 }
 
@@ -495,9 +509,10 @@
 .landing-trust-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   color: var(--text-on-dark);
   margin-bottom: var(--space-2xl);
+  line-height: 1.2;
 }
 
 .landing-trust-stats {
@@ -511,7 +526,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .landing-trust-stat-number {
@@ -524,27 +539,28 @@
 
 .landing-trust-stat-label {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--stone);
   font-weight: 500;
 }
 
 /* ==========================================================================
-   BOTTOM CTA
+   BOTTOM CTA — warm bg section
    ========================================================================== */
 .landing-cta {
-  padding: 100px var(--space-xl) 80px;
+  padding: var(--space-3xl) var(--space-xl);
   background: var(--gradient-warm);
 }
 
 .landing-cta-inner {
-  max-width: 600px;
+  max-width: 560px;
   margin: 0 auto;
   text-align: center;
   background: var(--bg-card);
-  border-radius: var(--radius-xl);
-  padding: var(--space-3xl) var(--space-xl);
-  box-shadow: var(--shadow-lg), 0 0 80px var(--primary-glow);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl) var(--space-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -559,16 +575,17 @@
 .landing-cta-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .landing-cta-sub {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
 .landing-cta a {
@@ -579,26 +596,27 @@
    DARK MODE
    ========================================================================== */
 [data-theme="dark"] .landing-page {
-  background: var(--gradient-premium);
-}
-
-[data-theme="dark"] .landing-worlds,
-[data-theme="dark"] .landing-features {
   background: var(--bg-page);
 }
 
+[data-theme="dark"] .landing-worlds,
+[data-theme="dark"] .landing-features,
 [data-theme="dark"] .landing-how {
   background: var(--bg-page);
 }
 
+[data-theme="dark"] .landing-hero {
+  background: var(--gradient-hero);
+}
+
 [data-theme="dark"] .landing-hero-mimi {
   background: var(--bg-card);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg);
 }
 
 [data-theme="dark"] .landing-cta-inner {
   background: var(--bg-card);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 [data-theme="dark"] .landing-lang-toggle {

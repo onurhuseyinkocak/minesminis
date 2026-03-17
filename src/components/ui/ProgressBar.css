@@ -1,6 +1,6 @@
 /* ==========================================================================
-   PROGRESS BAR — MinesMinis Design System v4
-   Smooth, animated progress with gradient fills and shimmer effect
+   PROGRESS BAR — LibreUIUX / MinesMinis Design System
+   Amber gradient fill, 8px track, smooth transitions
    ========================================================================== */
 
 .mm-progress {
@@ -20,16 +20,16 @@
   position: relative;
 }
 
-.mm-progress--sm .mm-progress__track { height: 6px; }
-.mm-progress--md .mm-progress__track { height: 10px; }
-.mm-progress--lg .mm-progress__track { height: 16px; }
+.mm-progress--sm .mm-progress__track { height: 4px; }
+.mm-progress--md .mm-progress__track { height: 8px; }
+.mm-progress--lg .mm-progress__track { height: 14px; }
 
 /* -- Fill ------------------------------------------------------------- */
 
 .mm-progress__fill {
   height: 100%;
   border-radius: var(--radius-full);
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 600ms cubic-bezier(0.33, 1, 0.68, 1);
   position: relative;
   min-width: 4px;
 }
@@ -43,7 +43,7 @@
 }
 
 .mm-progress--warning .mm-progress__fill {
-  background: linear-gradient(90deg, var(--primary-light) 0%, var(--warning) 60%, var(--primary-dark) 100%);
+  background: linear-gradient(90deg, var(--warning-light) 0%, var(--warning) 100%);
 }
 
 /* -- Shimmer animation ------------------------------------------------ */
@@ -55,7 +55,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.35) 50%,
     transparent 100%
   );
   animation: mm-progress-shimmer 2s ease-in-out infinite;
@@ -82,8 +82,8 @@
 /* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1600px) {
-  .mm-progress--md .mm-progress__track { height: 12px; }
-  .mm-progress--lg .mm-progress__track { height: 18px; }
+  .mm-progress--md .mm-progress__track { height: 10px; }
+  .mm-progress--lg .mm-progress__track { height: 16px; }
   .mm-progress__label { font-size: 0.875rem; }
 }
 
@@ -101,7 +101,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.18) 50%,
     transparent 100%
   );
 }

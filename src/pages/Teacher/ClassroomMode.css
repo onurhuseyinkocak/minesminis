@@ -1,28 +1,32 @@
-/* ============================================================
-   CLASSROOM MODE — MinesMinis Premium Page
-   Dark projection mode, huge elements, keyboard nav
-   ============================================================ */
+/* ==========================================================================
+   CLASSROOM MODE — MinesMinis Design System v4.0
+   Dark projection mode, huge elements, keyboard nav.
+   ZERO hex colors. All var() tokens.
+   ========================================================================== */
 
+/* ---- CONTAINER ---- */
 .cm {
+  position: relative;
   min-height: 100vh;
   background: var(--ink);
   color: var(--text-on-dark);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  font-family: var(--font-body);
   user-select: none;
 }
 
-/* ── Top Bar ── */
+/* ---- TOP BAR ---- */
 .cm-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--space-sm) var(--space-lg);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(26, 26, 46, 0.85);
   backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   z-index: var(--z-sticky);
-  min-height: 56px;
 }
 
 .cm-topbar__left {
@@ -38,22 +42,21 @@
 
 .cm-topbar__class {
   font-family: var(--font-display);
+  font-size: 15px;
   font-weight: 700;
-  font-size: 0.95rem;
   color: var(--white);
 }
 
 .cm-topbar__divider {
   width: 1px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .cm-topbar__lesson {
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--text-on-dark);
-  opacity: 0.7;
+  font-size: 14px;
+  color: var(--cloud);
 }
 
 .cm-topbar__center {
@@ -61,19 +64,17 @@
   align-items: center;
 }
 
-/* ── Timer ── */
 .cm-timer {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.08);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--white);
-  letter-spacing: 0.05em;
+  color: var(--cloud);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .cm-topbar__right {
@@ -82,40 +83,37 @@
   gap: var(--space-xs);
 }
 
-/* ── Control Buttons ── */
+/* ---- CONTROL BUTTONS ---- */
 .cm-ctrl-btn {
-  width: var(--touch-target);
-  height: var(--touch-target);
-  border-radius: var(--radius-full);
-  border: none;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cloud);
   cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .cm-ctrl-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: scale(1.08);
-}
-
-.cm-ctrl-btn:active {
-  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
 }
 
 .cm-ctrl-btn--sidebar {
-  background: var(--primary);
-  color: var(--text-on-primary);
+  background: var(--primary-glow);
+  color: var(--primary-light);
 }
 
 .cm-ctrl-btn--sidebar:hover {
-  background: var(--primary-dark);
+  background: var(--primary);
+  color: var(--white);
 }
 
-/* ── Main Content ── */
+/* ---- MAIN ---- */
 .cm-main {
   flex: 1;
   display: flex;
@@ -126,250 +124,236 @@
   position: relative;
 }
 
-/* ── Activity Label ── */
 .cm-activity-label {
-  display: inline-flex;
+  position: absolute;
+  top: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.06);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text-on-dark);
-  opacity: 0.6;
-  margin-bottom: var(--space-xl);
+  color: var(--stone);
+  font-family: var(--font-body);
+  font-size: 13px;
 }
 
-/* ── Vocabulary View — Huge Elements ── */
+/* ---- VOCABULARY SLIDE ---- */
 .cm-vocab {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
 .cm-vocab__emoji {
-  font-size: 6rem;
+  font-size: 100px;
   line-height: 1;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 8px 24px rgba(26, 26, 46, 0.4));
 }
 
 .cm-vocab__english {
   font-family: var(--font-display);
+  font-size: 72px;
   font-weight: 800;
-  font-size: 4.5rem;
   color: var(--white);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  margin: 0;
+  letter-spacing: -1px;
 }
 
 .cm-vocab__turkish {
   font-family: var(--font-body);
-  font-size: 2rem;
-  color: var(--text-on-dark);
-  opacity: 0.6;
+  font-size: 28px;
+  color: var(--cloud);
+  margin: 0;
 }
 
-/* ── Pronounce Button ── */
 .cm-pronounce-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-md) var(--space-xl);
+  border: 2px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-full);
-  border: 2px solid var(--primary);
-  background: rgba(232, 163, 23, 0.12);
-  color: var(--primary-light);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white);
   font-family: var(--font-display);
+  font-size: 18px;
   font-weight: 700;
-  font-size: 1.125rem;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  margin-top: var(--space-lg);
+  transition: all var(--transition-base);
 }
 
 .cm-pronounce-btn:hover {
   background: var(--primary);
-  color: var(--text-on-primary);
+  border-color: var(--primary);
   box-shadow: var(--shadow-glow);
 }
 
-/* ── Quiz View ── */
+/* ---- QUIZ SLIDE ---- */
 .cm-quiz {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-xl);
-  max-width: 800px;
   width: 100%;
+  max-width: 800px;
+  gap: var(--space-xl);
 }
 
 .cm-quiz__question {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 2.5rem;
+  font-size: 40px;
+  font-weight: 700;
   color: var(--white);
-  line-height: 1.2;
+  margin: 0;
+  line-height: 1.3;
 }
 
 .cm-quiz__options {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-md);
   width: 100%;
-  max-width: 640px;
 }
 
 .cm-quiz__option {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-lg) var(--space-xl);
-  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
   border: 2px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--white);
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.375rem;
+  font-size: 22px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-base);
   text-align: left;
 }
 
 .cm-quiz__option:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.02);
+  border-color: var(--primary-light);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cm-quiz__option--correct {
+  border-color: var(--success) !important;
+  background: var(--success-soft) !important;
+}
+
+.cm-quiz__option--wrong {
+  border-color: var(--error) !important;
+  background: var(--error-pale) !important;
+  color: var(--error) !important;
 }
 
 .cm-quiz__option-letter {
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
-.cm-quiz__option--correct {
-  border-color: var(--success);
-  background: rgba(67, 160, 71, 0.15);
-}
-
-.cm-quiz__option--correct .cm-quiz__option-letter {
-  background: var(--success);
-  color: var(--white);
-}
-
-.cm-quiz__option--wrong {
-  border-color: var(--error);
-  background: rgba(229, 57, 53, 0.15);
-}
-
-.cm-quiz__option--wrong .cm-quiz__option-letter {
-  background: var(--error);
-  color: var(--white);
-}
-
-/* ── Quiz Feedback ── */
 .cm-quiz__feedback {
   font-family: var(--font-display);
+  font-size: 24px;
   font-weight: 700;
-  font-size: 1.5rem;
+  margin: 0;
   padding: var(--space-md) var(--space-xl);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-full);
 }
 
 .cm-quiz__feedback.correct {
-  color: var(--success-light);
-  background: rgba(67, 160, 71, 0.12);
+  color: var(--success);
+  background: var(--success-soft);
 }
 
 .cm-quiz__feedback.wrong {
   color: var(--error-light);
-  background: rgba(229, 57, 53, 0.12);
+  background: var(--error-pale);
 }
 
-/* ── Story View ── */
+/* ---- STORY SLIDE ---- */
 .cm-story {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-xl);
   max-width: 800px;
+  gap: var(--space-xl);
 }
 
 .cm-story__mimi {
-  font-size: 4rem;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  font-size: 72px;
+  line-height: 1;
 }
 
 .cm-story__text {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 2rem;
-  color: var(--text-on-dark);
-  line-height: 1.6;
+  font-family: var(--font-body);
+  font-size: 28px;
+  color: var(--cloud);
+  margin: 0;
+  line-height: 1.7;
 }
 
 .cm-story__highlight {
   color: var(--primary-light);
-  font-weight: 800;
-  padding: 0 2px;
-  border-bottom: 3px solid var(--primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--primary-glow);
 }
 
-/* ── Footer — Progress Dots ── */
+/* ---- FOOTER DOTS ---- */
 .cm-footer {
+  padding: var(--space-md) var(--space-xl);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
-  background: rgba(0, 0, 0, 0.3);
 }
 
 .cm-dots {
   display: flex;
   gap: var(--space-xs);
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 .cm-dot {
   width: 10px;
   height: 10px;
-  border-radius: var(--radius-full);
   border: none;
-  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
   cursor: pointer;
   transition: all var(--transition-fast);
   padding: 0;
 }
 
-.cm-dot:hover {
-  background: rgba(255, 255, 255, 0.35);
-  transform: scale(1.3);
+.cm-dot--done {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .cm-dot--active {
-  background: var(--primary);
-  box-shadow: 0 0 8px rgba(232, 163, 23, 0.5);
-  transform: scale(1.3);
+  background: var(--primary-light);
+  width: 24px;
+  box-shadow: 0 0 8px var(--primary-glow);
 }
 
-.cm-dot--done {
-  background: var(--primary-light);
-  opacity: 0.6;
+.cm-dot:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .cm-footer__activity-labels {
@@ -378,99 +362,95 @@
 }
 
 .cm-footer__label {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--text-on-dark);
-  opacity: 0.4;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transition: opacity var(--transition-fast);
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--stone);
+  transition: color var(--transition-fast);
 }
 
 .cm-footer__label--active {
-  opacity: 1;
   color: var(--primary-light);
+  font-weight: 600;
 }
 
-/* ── Teacher Sidebar Overlay ── */
+/* ---- SIDEBAR OVERLAY ---- */
 .cm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
   z-index: var(--z-overlay);
+  background: rgba(26, 26, 46, 0.5);
 }
 
-/* ── Teacher Sidebar ── */
+/* ---- SIDEBAR ---- */
 .cm-sidebar {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   width: 320px;
-  max-width: 90vw;
+  z-index: calc(var(--z-overlay) + 1);
   background: var(--charcoal);
-  box-shadow: var(--shadow-xl);
-  z-index: var(--z-modal);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
 }
 
 .cm-sidebar__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-lg);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .cm-sidebar__header h3 {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.125rem;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--white);
+  margin: 0;
 }
 
 .cm-sidebar__close {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  border: none;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-on-dark);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cloud);
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .cm-sidebar__close:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
 }
 
-/* ── Sidebar Sections ── */
+/* ---- SIDEBAR SECTIONS ---- */
 .cm-sidebar__section {
-  padding: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .cm-sidebar__section h4 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--text-on-dark);
-  opacity: 0.6;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: var(--space-md);
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--stone);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 var(--space-md);
 }
 
-/* ── Quick Actions ── */
+/* ---- SIDEBAR ACTIONS ---- */
 .cm-sidebar__actions {
   display: flex;
   flex-direction: column;
@@ -483,26 +463,27 @@
   gap: var(--space-sm);
   width: 100%;
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.04);
-  color: var(--text-on-dark);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.85rem;
+  color: var(--cloud);
+  font-family: var(--font-body);
+  font-size: 14px;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .cm-sidebar__action:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary-light);
+  color: var(--white);
 }
 
-/* ── Activity Switcher ── */
+/* ---- SIDEBAR ACTIVITIES ---- */
 .cm-sidebar__activities {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .cm-sidebar__activity {
@@ -511,15 +492,15 @@
   gap: var(--space-sm);
   width: 100%;
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
+  border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--text-on-dark);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.85rem;
+  color: var(--cloud);
+  font-family: var(--font-body);
+  font-size: 14px;
   cursor: pointer;
   transition: all var(--transition-fast);
+  text-align: left;
 }
 
 .cm-sidebar__activity:hover {
@@ -527,81 +508,74 @@
 }
 
 .cm-sidebar__activity.active {
-  background: var(--primary);
-  color: var(--text-on-primary);
-  border-color: var(--primary);
+  background: var(--primary-glow);
+  color: var(--primary-light);
+  font-weight: 600;
 }
 
 .cm-sidebar__activity-type {
-  font-size: 1.125rem;
+  font-size: 18px;
 }
 
 .cm-sidebar__activity-count {
   margin-left: auto;
-  padding: 2px var(--space-sm);
+  font-size: 12px;
+  color: var(--stone);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px var(--space-sm);
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.1);
-  font-size: 0.7rem;
-  font-weight: 700;
 }
 
-.cm-sidebar__activity.active .cm-sidebar__activity-count {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* ── Student List ── */
+/* ---- SIDEBAR STUDENTS ---- */
 .cm-sidebar__students {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-sm);
 }
 
 .cm-sidebar__student {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  color: var(--text-on-dark);
-  opacity: 0.75;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+  color: var(--cloud);
 }
 
 .cm-sidebar__student-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: var(--radius-full);
   background: var(--success);
-  flex-shrink: 0;
 }
 
-/* ── Responsive ── */
+/* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
   .cm-topbar {
-    padding: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
   }
 
-  .cm-topbar__lesson {
-    display: none;
-  }
-
+  .cm-topbar__lesson,
   .cm-topbar__divider {
     display: none;
   }
 
   .cm-vocab__emoji {
-    font-size: 4rem;
+    font-size: 64px;
   }
 
   .cm-vocab__english {
-    font-size: 3rem;
+    font-size: 48px;
   }
 
   .cm-vocab__turkish {
-    font-size: 1.5rem;
+    font-size: 22px;
   }
 
   .cm-quiz__question {
-    font-size: 1.5rem;
+    font-size: 26px;
   }
 
   .cm-quiz__options {
@@ -610,42 +584,29 @@
 
   .cm-quiz__option {
     padding: var(--space-md);
-    font-size: 1.125rem;
+    font-size: 18px;
   }
 
   .cm-story__text {
-    font-size: 1.375rem;
+    font-size: 20px;
   }
 
   .cm-sidebar {
-    width: 280px;
+    width: 85vw;
+  }
+
+  .cm-main {
+    padding: var(--space-md);
   }
 }
 
-@media (max-width: 480px) {
-  .cm-vocab__english {
-    font-size: 2.25rem;
-  }
-
-  .cm-quiz__question {
-    font-size: 1.25rem;
-  }
-
-  .cm-story__text {
-    font-size: 1.125rem;
-  }
-
-  .cm-ctrl-btn {
-    width: 36px;
-    height: 36px;
-  }
+/* ---- FULLSCREEN ---- */
+.cm:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
 }
 
-/* ── Fullscreen overrides ── */
 .cm:fullscreen {
-  background: var(--ink);
-}
-
-.cm:fullscreen .cm-topbar {
-  background: rgba(0, 0, 0, 0.6);
+  width: 100vw;
+  height: 100vh;
 }

@@ -1,7 +1,6 @@
 /* ==========================================================================
-   LOGIN PAGE — MinesMinis Design System v4.0
-   Split layout: branded side panel + form panel.
-   ZERO hex. All var() tokens.
+   LOGIN PAGE — LibreUIUX Methodology
+   Split: teal left panel, white right form. ZERO hex. All var() tokens.
    ========================================================================== */
 
 /* ---- PAGE ---- */
@@ -11,7 +10,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-xl);
-  background: var(--gradient-warm);
+  background: var(--bg-page);
   position: relative;
 }
 
@@ -25,9 +24,11 @@
   align-items: center;
   gap: var(--space-xs);
   background: var(--bg-card);
+  backdrop-filter: blur(12px);
   border-radius: var(--radius-full);
   padding: var(--space-xs) var(--space-sm);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
   font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-muted);
@@ -42,7 +43,7 @@
   font-family: var(--font-display);
   font-size: 12px;
   color: var(--text-muted);
-  transition: var(--transition-fast);
+  transition: all 200ms ease-out;
 }
 
 .login-lang-toggle button.active {
@@ -57,14 +58,15 @@
   width: 100%;
   max-width: 880px;
   background: var(--bg-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
   overflow: hidden;
   min-height: 560px;
 }
 
 /* ==========================================================================
-   SIDE PANEL (Teal gradient + Mimi)
+   SIDE PANEL (Teal gradient)
    ========================================================================== */
 .login-side {
   background: var(--gradient-secondary);
@@ -79,12 +81,12 @@
   overflow: hidden;
 }
 
-/* Decorative radial glow */
+/* Subtle decorative glow */
 .login-side::before {
   content: '';
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 240px;
+  height: 240px;
   border-radius: 50%;
   background: var(--primary-glow);
   top: 50%;
@@ -92,6 +94,7 @@
   transform: translate(-50%, -50%);
   filter: blur(80px);
   pointer-events: none;
+  opacity: 0.6;
 }
 
 .login-side-mimi {
@@ -99,7 +102,6 @@
   line-height: 1;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 8px 24px var(--primary-glow));
 }
 
 .login-side-brand {
@@ -113,10 +115,10 @@
 
 .login-side-tagline {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-on-dark);
   line-height: 1.6;
-  opacity: 0.9;
+  opacity: 0.85;
   position: relative;
   z-index: 1;
 }
@@ -138,15 +140,17 @@
 .login-header h2 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.75rem;
+  font-size: 1.625rem;
   color: var(--text-primary);
   margin-bottom: var(--space-xs);
+  line-height: 1.2;
 }
 
 .login-header p {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 /* ---- TABS ---- */
@@ -177,6 +181,7 @@
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
   border-left: 3px solid var(--error);
+  line-height: 1.5;
 }
 
 /* ---- DIVIDER ---- */
@@ -203,7 +208,7 @@
   letter-spacing: 0.05em;
 }
 
-/* ---- GOOGLE BUTTON ---- */
+/* ---- GOOGLE BUTTON (distinct with icon) ---- */
 .login-google-btn {
   display: flex;
   align-items: center;
@@ -212,14 +217,14 @@
   width: 100%;
   height: var(--btn-height);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-primary);
   cursor: pointer;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  transition: all 200ms ease-out;
 }
 
 .login-google-btn:hover {
@@ -247,7 +252,7 @@
   color: var(--primary);
   font-weight: 600;
   margin-left: var(--space-xs);
-  transition: color var(--transition-fast);
+  transition: color 200ms ease-out;
 }
 
 .login-toggle button:hover {
@@ -259,12 +264,12 @@
    DARK MODE
    ========================================================================== */
 [data-theme="dark"] .login-page {
-  background: var(--gradient-premium);
+  background: var(--bg-page);
 }
 
 [data-theme="dark"] .login-container {
   background: var(--bg-card);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 [data-theme="dark"] .login-google-btn {

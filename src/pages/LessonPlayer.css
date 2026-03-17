@@ -1,33 +1,28 @@
 /* ==========================================================================
-   LESSON PLAYER — MinesMinis Design System v4.0
-   Sticky topbar, large activity area, Mimi bubble, celebration screen.
+   LESSON PLAYER — LibreUIUX Methodology
+   Sticky progress bar, centered activity, celebration.
    ZERO hex. All var() tokens. Smart-board optimized.
    ========================================================================== */
 
 /* ---- PAGE ---- */
 .lesson-player-page {
+  max-width: 800px;
+  margin: 0 auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-page);
+  padding: 0 var(--space-lg);
 }
 
 .lesson-player-page--not-found {
   align-items: center;
   justify-content: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   text-align: center;
 }
 
-.lesson-player-page--not-found h2 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--text-primary);
-}
-
 /* ==========================================================================
-   TOP BAR (Sticky)
+   TOP BAR — sticky progress bar
    ========================================================================== */
 .lesson-player-topbar {
   position: sticky;
@@ -36,44 +31,47 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) var(--space-xl);
-  background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  padding: var(--space-md) 0;
+  background: var(--bg-page);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-light);
+  margin-bottom: var(--space-md);
 }
 
 .lesson-player-topbar__back {
-  all: unset;
-  cursor: pointer;
-  width: var(--touch-target);
-  height: var(--touch-target);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
   color: var(--text-secondary);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  cursor: pointer;
+  transition: all 200ms ease-out;
   flex-shrink: 0;
 }
 
 .lesson-player-topbar__back:hover {
-  background: var(--bg-muted);
   color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .lesson-player-topbar__center {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
   min-width: 0;
 }
 
 .lesson-player-topbar__title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-primary);
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -83,46 +81,44 @@
   font-family: var(--font-body);
   font-size: 0.75rem;
   color: var(--text-muted);
-  text-align: right;
 }
 
 .lesson-player-topbar__skip {
-  all: unset;
-  cursor: pointer;
-  width: var(--touch-target);
-  height: var(--touch-target);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
   color: var(--text-muted);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  cursor: pointer;
+  transition: all 200ms ease-out;
   flex-shrink: 0;
 }
 
 .lesson-player-topbar__skip:hover {
-  background: var(--bg-muted);
-  color: var(--text-primary);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ==========================================================================
-   MAIN ACTIVITY AREA
+   MAIN ACTIVITY AREA — centered
    ========================================================================== */
 .lesson-player-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--space-xl);
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
   gap: var(--space-lg);
+  padding-bottom: var(--space-xl);
 }
 
-/* ---- ACTIVITY CARD ---- */
+/* ---- ACTIVITY ---- */
 .lesson-activity {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
 .lesson-activity__header {
@@ -130,120 +126,83 @@
   align-items: center;
   gap: var(--space-md);
   padding-bottom: var(--space-md);
-  margin-bottom: var(--space-lg);
-  border-bottom: 3px solid var(--border-light);
+  border-bottom: 2px solid var(--border-light);
 }
 
 .lesson-activity__icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: var(--shadow-sm);
 }
 
 .lesson-activity__title {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.5rem;
+  font-weight: 700;
+  font-size: 1.15rem;
   color: var(--text-primary);
+  line-height: 1.3;
 }
 
 .lesson-activity__type {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
   color: var(--text-muted);
   text-transform: capitalize;
 }
 
-/* ---- ACTIVITY CONTENT ---- */
 .lesson-activity__content {
   min-height: 280px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
 
-.lesson-activity__instructions {
-  font-family: var(--font-body);
-  font-size: 1.1rem;
-  color: var(--text-body);
-  line-height: 1.6;
-  margin-bottom: var(--space-xl);
-  max-width: 520px;
-}
-
-.lesson-activity__placeholder {
+/* ---- FALLBACK ACTIVITY ---- */
+.fallback-activity {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
-}
-
-.lesson-activity__placeholder-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--bg-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lesson-activity__placeholder-text {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  font-style: italic;
 }
 
 /* ==========================================================================
-   MIMI ENCOURAGEMENT BUBBLE
+   MIMI ENCOURAGEMENT
    ========================================================================== */
 .lesson-player-mimi {
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);
-  width: 100%;
-  max-width: 480px;
+  padding: var(--space-md);
+  background: var(--bg-muted);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
 }
 
 .lesson-player-mimi__avatar {
-  font-size: 2rem;
+  font-size: 1.75rem;
   line-height: 1;
   flex-shrink: 0;
-  filter: drop-shadow(0 2px 6px var(--primary-glow));
 }
 
 .lesson-player-mimi__bubble {
-  background: var(--primary-pale);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-lg);
-  border-top-left-radius: 4px;
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-body);
   line-height: 1.5;
-  box-shadow: var(--shadow-sm);
 }
 
 /* ==========================================================================
-   BOTTOM NAVIGATION BAR
+   BOTTOM NAVIGATION
    ========================================================================== */
 .lesson-player-bottombar {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) var(--space-xl);
-  background: var(--bg-card);
+  padding: var(--space-md) 0 var(--space-lg);
   border-top: 1px solid var(--border-light);
-  box-shadow: 0 -2px 8px var(--shadow-sm);
+  margin-top: auto;
 }
 
 .lesson-player-bottombar__spacer {
@@ -251,90 +210,87 @@
 }
 
 /* ==========================================================================
-   COMPLETION / CELEBRATION SCREEN
+   COMPLETION CELEBRATION
    ========================================================================== */
 .lesson-complete {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  padding: var(--space-3xl) var(--space-xl);
-  flex: 1;
   gap: var(--space-md);
+  padding: var(--space-3xl) var(--space-xl);
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 .lesson-complete__confetti {
   font-size: 2rem;
   letter-spacing: var(--space-sm);
-  line-height: 1;
-  margin-bottom: var(--space-sm);
+  animation: celebrate 0.8s ease-out;
 }
 
 .lesson-complete__trophy {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  background: var(--gradient-primary);
+  background: var(--primary-pale);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-on-primary);
-  box-shadow: var(--shadow-glow), var(--shadow-lg);
-  margin-bottom: var(--space-md);
+  color: var(--primary);
+  margin-bottom: var(--space-sm);
 }
 
 .lesson-complete__title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-size: 1.75rem;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .lesson-complete__subtitle {
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  max-width: 400px;
+  line-height: 1.5;
 }
 
 .lesson-complete__xp {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
   background: var(--primary-pale);
-  padding: var(--space-md) var(--space-xl);
   border-radius: var(--radius-full);
   color: var(--primary-dark);
-  box-shadow: var(--shadow-sm);
 }
 
 .lesson-complete__xp-value {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.5rem;
-  color: var(--primary);
+  font-size: 1.25rem;
 }
 
 .lesson-complete__mimi {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  background: var(--bg-muted);
   padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-lg);
-  max-width: 400px;
-  margin-top: var(--space-sm);
+  background: var(--bg-muted);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
 }
 
 .lesson-complete__mimi-avatar {
-  font-size: 2.5rem;
+  font-size: 2rem;
+  line-height: 1;
   flex-shrink: 0;
 }
 
 .lesson-complete__mimi p {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-body);
   line-height: 1.5;
   text-align: left;
@@ -352,61 +308,56 @@
    DARK MODE
    ========================================================================== */
 [data-theme="dark"] .lesson-player-topbar {
-  background: var(--bg-card);
-  border-bottom-color: var(--border-light);
+  background: var(--bg-page);
 }
 
-[data-theme="dark"] .lesson-player-bottombar {
-  background: var(--bg-card);
-  border-top-color: var(--border-light);
-}
-
-[data-theme="dark"] .lesson-player-mimi__bubble {
-  background: var(--bg-muted);
+[data-theme="dark"] .lesson-player-mimi {
+  background: var(--bg-soft);
 }
 
 [data-theme="dark"] .lesson-complete__mimi {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
+  background: var(--bg-soft);
 }
 
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 @media (max-width: 768px) {
-  .lesson-player-topbar {
-    padding: var(--space-sm) var(--space-md);
+  .lesson-player-page {
+    padding: 0 var(--space-md);
   }
 
-  .lesson-player-main {
-    padding: var(--space-md);
-  }
-
-  .lesson-player-bottombar {
-    padding: var(--space-sm) var(--space-md);
-  }
-
-  .lesson-activity__title {
-    font-size: 1.2rem;
-  }
-
-  .lesson-activity__icon {
-    width: 44px;
-    height: 44px;
+  .lesson-activity__header {
+    flex-direction: column;
+    text-align: center;
   }
 
   .lesson-complete {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-2xl) var(--space-md);
+  }
+
+  .lesson-complete__actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
-@media (max-width: 480px) {
-  .lesson-complete__actions {
-    flex-direction: column;
-    width: 100%;
+/* ---- Smart board / large screens ---- */
+@media (min-width: 1920px) {
+  .lesson-player-page {
+    max-width: 960px;
   }
 
-  .lesson-complete__actions .mm-btn {
-    width: 100%;
+  .lesson-activity__icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .lesson-activity__title {
+    font-size: 1.35rem;
+  }
+
+  .lesson-activity__content {
+    min-height: 360px;
   }
 }

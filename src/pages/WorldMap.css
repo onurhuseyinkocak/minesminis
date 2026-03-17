@@ -1,6 +1,6 @@
 /* ==========================================================================
-   WORLD MAP — MinesMinis Design System v4.0
-   12-world grid with colored gradient tops, current glow, locked states.
+   WORLD MAP — LibreUIUX Methodology
+   12 world cards, colored top gradient, current/locked states.
    ZERO hex. All var() tokens.
    ========================================================================== */
 
@@ -8,7 +8,7 @@
 .world-map-page {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-xl) var(--space-3xl);
+  padding: var(--space-lg) var(--space-lg) var(--space-2xl);
 }
 
 /* ==========================================================================
@@ -24,84 +24,97 @@
 
 .world-map-header__text {
   flex: 1;
+  min-width: 0;
 }
 
 .world-map-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   color: var(--text-primary);
+  line-height: 1.2;
   margin-bottom: var(--space-xs);
 }
 
 .world-map-subtitle {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .world-map-mimi {
   flex-shrink: 0;
 }
 
-.world-map-mimi__avatar {
-  font-size: 3.5rem;
-  display: block;
-  filter: drop-shadow(0 4px 12px var(--primary-glow));
-}
-
 /* ==========================================================================
-   GRID
+   GRID — responsive, clean
    ========================================================================== */
 .world-map-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-lg);
 }
 
-/* ---- CARD LINK ---- */
+/* ---- CARD LINK WRAPPER ---- */
 .world-card-link {
+  display: block;
   text-decoration: none;
   color: inherit;
-  display: block;
-  border-radius: var(--radius-lg);
-  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow var(--transition-base);
+  border-radius: var(--radius-md);
+  transition: transform 200ms ease-out;
 }
 
 .world-card-link:hover {
-  transform: translateY(-4px) scale(1.02);
-}
-
-.world-card-link:hover .world-card {
-  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
 }
 
 .world-card-link--locked {
   cursor: default;
-  pointer-events: none;
+  opacity: 0.65;
 }
 
-/* ---- WORLD CARD ---- */
+.world-card-link--locked:hover {
+  transform: none;
+}
+
+/* ==========================================================================
+   WORLD CARD — 12px radius, colored top gradient, border + shadow-sm
+   ========================================================================== */
 .world-card {
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: box-shadow var(--transition-base);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease-out;
+  background: var(--bg-card);
 }
 
+.world-card-link:hover .world-card {
+  box-shadow: var(--shadow-md);
+}
+
+/* ---- Current: amber ring ---- */
+.world-card--current {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-glow), var(--shadow-sm);
+}
+
+/* ---- Locked: grayscale ---- */
 .world-card--locked {
-  filter: grayscale(0.8);
+  filter: grayscale(0.5);
+}
+
+.world-card--locked .world-card__top {
   opacity: 0.6;
 }
 
-.world-card--current {
-  box-shadow: 0 0 0 3px var(--primary), 0 0 20px var(--primary-glow), var(--shadow-card);
-}
-
-/* ---- GRADIENT TOP ---- */
+/* ---- CARD TOP (colored gradient) ---- */
 .world-card__top {
-  height: 120px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,11 +123,10 @@
 }
 
 .world-card__icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   line-height: 1;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 2px 8px var(--shadow-sm));
 }
 
 .world-card__lock-overlay {
@@ -124,25 +136,25 @@
   align-items: center;
   justify-content: center;
   background: var(--bg-muted);
-  z-index: 2;
+  opacity: 0.7;
   color: var(--text-muted);
+  z-index: 2;
 }
 
 .world-card__current-badge {
   position: absolute;
   top: var(--space-sm);
   right: var(--space-sm);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: var(--bg-card);
-  padding: 4px var(--space-sm);
-  border-radius: var(--radius-full);
+  gap: var(--space-xs);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.72rem;
-  color: var(--primary-dark);
-  box-shadow: var(--shadow-sm);
+  font-size: 0.7rem;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
   z-index: 2;
 }
 
@@ -150,38 +162,39 @@
   position: absolute;
   top: var(--space-sm);
   right: var(--space-sm);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: var(--success);
-  padding: 4px var(--space-sm);
-  border-radius: var(--radius-full);
+  gap: var(--space-xs);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
+  background: var(--success);
   color: var(--white);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
   z-index: 2;
 }
 
 /* ---- CARD BODY ---- */
 .world-card__body {
-  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
 }
 
 .world-card__name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  line-height: 1.3;
+  margin-bottom: 2px;
 }
 
 .world-card__theme {
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
-  margin-bottom: var(--space-md);
   line-height: 1.4;
+  margin-bottom: var(--space-sm);
 }
 
 .world-card__progress-row {
@@ -193,30 +206,34 @@
 
 .world-card__lesson-count {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
 }
 
 .world-card__go {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--primary);
-  transition: gap var(--transition-fast);
+  transition: color 200ms ease-out;
 }
 
 .world-card-link:hover .world-card__go {
-  gap: var(--space-sm);
+  color: var(--primary-dark);
 }
 
 /* ==========================================================================
    DARK MODE
    ========================================================================== */
-[data-theme="dark"] .world-card__current-badge {
+[data-theme="dark"] .world-card {
   background: var(--bg-card);
+}
+
+[data-theme="dark"] .world-card__lock-overlay {
+  background: var(--bg-soft);
 }
 
 /* ==========================================================================
@@ -224,26 +241,36 @@
    ========================================================================== */
 @media (max-width: 768px) {
   .world-map-page {
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-md) var(--space-xl);
+  }
+
+  .world-map-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-md);
   }
 
   .world-map-header {
     flex-direction: column;
     text-align: center;
+    gap: var(--space-md);
   }
 
   .world-map-subtitle {
     justify-content: center;
   }
-
-  .world-map-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--space-md);
-  }
 }
 
 @media (max-width: 480px) {
   .world-map-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+
+  .world-card__top {
+    height: 80px;
+  }
+
+  .world-card__body {
+    padding: var(--space-sm) var(--space-md);
   }
 }
