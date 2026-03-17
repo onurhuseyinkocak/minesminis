@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sparkles, Rocket, Book, Zap, Gamepad2, Video, FileText, Trophy, ArrowRight, X, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { Sparkles, Rocket, Book, Zap, Gamepad2, Video, FileText, Trophy, ArrowRight, X, ChevronLeft, ChevronRight, BookOpen, Menu } from 'lucide-react';
 import UnifiedMascot, { MascotState } from '../components/UnifiedMascot';
 import { mascotRoaming } from '../services/mascotRoaming';
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
@@ -104,8 +104,9 @@ const Landing: React.FC = () => {
   const [lang, setLang] = useState<Lang>('en');
   const t = content[lang];
 
-  // Mimi modal (on click → show info, redirect to login)
+  // Mimi modal (on click -> show info, redirect to login)
   const [showMimiModal, setShowMimiModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Roaming Mimi state
   const [position, setPosition] = useState({ x: 85, y: 75 });
@@ -204,7 +205,21 @@ const Landing: React.FC = () => {
             <Link to="/login" className="landing-navbar__cta">
               {t.loginBtn} <ArrowRight size={16} />
             </Link>
+            <button className="landing-navbar__hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
+          {mobileMenuOpen && (
+            <div className="landing-navbar__mobile-menu">
+              <a href="#features" onClick={() => setMobileMenuOpen(false)}>{lang === 'en' ? 'Features' : 'Özellikler'}</a>
+              <a href="#characters" onClick={() => setMobileMenuOpen(false)}>{lang === 'en' ? 'Characters' : 'Karakterler'}</a>
+              <Link to="/pricing" onClick={() => setMobileMenuOpen(false)}>{lang === 'en' ? 'Pricing' : 'Fiyatlar'}</Link>
+              <Link to="/ataturk" onClick={() => setMobileMenuOpen(false)}>Atatürk</Link>
+              <Link to="/login" className="landing-navbar__cta" onClick={() => setMobileMenuOpen(false)}>
+                {t.loginBtn} <ArrowRight size={16} />
+              </Link>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -413,6 +428,7 @@ const Landing: React.FC = () => {
             <Link to="/privacy">{lang === 'en' ? 'Privacy' : 'Gizlilik'}</Link>
             <Link to="/terms">{lang === 'en' ? 'Terms' : 'Şartlar'}</Link>
             <Link to="/blog">Blog</Link>
+            {/* Blog link kept in footer only - blog page exists but may be empty */}
           </div>
           <p className="landing-footer__copy">&copy; 2026 MinesMinis</p>
         </div>

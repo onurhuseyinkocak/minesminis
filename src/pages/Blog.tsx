@@ -43,15 +43,15 @@ export default function Blog() {
     <div className="blog-page">
       <header className="blog-header">
         <h1>Blog</h1>
-        <p>İngilizce öğrenme ipuçları ve MinesMinis haberleri</p>
+        <p>English learning tips & MinesMinis news / İngilizce öğrenme ipuçları ve MinesMinis haberleri</p>
       </header>
 
       {loading ? (
-        <div className="blog-loading">Yükleniyor...</div>
+        <div className="blog-loading">Loading... / Yükleniyor...</div>
       ) : posts.length === 0 ? (
         <div className="blog-empty">
           <span className="blog-empty-emoji">🐉</span>
-          <p>Mimi henuz bir yazi hazirlamadi. Yakinda burada olacak!</p>
+          <p>Mimi hasn't written anything yet. Coming soon! / Mimi henuz bir yazi hazirlamadi. Yakinda burada olacak!</p>
         </div>
       ) : (
         <div className="blog-list">

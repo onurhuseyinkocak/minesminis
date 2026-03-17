@@ -201,6 +201,34 @@
   margin-top: calc(-1 * var(--space-sm));
 }
 
+.login-forgot-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-top: -4px;
+  text-align: left;
+  transition: opacity 0.2s;
+}
+
+.login-forgot-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.login-reset-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-soft, #f8f9fa);
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--border-light);
+}
+
 /* ---- ERROR ---- */
 .login-error {
   background: var(--error-pale);

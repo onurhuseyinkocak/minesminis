@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Languages, LogIn, UserPlus, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { Button, Input, Tabs } from '../components/ui';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import toast from 'react-hot-toast';
 import './Login.css';
 
 type Lang = 'en' | 'tr';
@@ -32,6 +35,11 @@ const content = {
     errorAlreadyRegistered: 'This email is already registered. Please sign in.',
     errorInvalidLogin: 'Invalid email or password.',
     errorGeneric: 'An error occurred. Please try again.',
+    forgotPassword: 'Forgot password?',
+    resetSent: 'Password reset email sent!',
+    resetEmailLabel: 'Enter your email',
+    sendResetLink: 'Send Reset Link',
+    backToLogin: 'Back to login',
     sideTagline: 'Little Words, Big Worlds',
     sideSub: 'Premium English education for children ages 1-10',
   },
@@ -58,6 +66,11 @@ const content = {
     errorAlreadyRegistered: 'Bu e-posta zaten kayitli. Lutfen giris yapin.',
     errorInvalidLogin: 'Gecersiz e-posta veya sifre.',
     errorGeneric: 'Bir hata olustu. Lutfen tekrar deneyin.',
+    forgotPassword: 'Sifremi unuttum?',
+    resetSent: 'Sifre sifirlama e-postasi gonderildi!',
+    resetEmailLabel: 'E-posta adresinizi girin',
+    sendResetLink: 'Sifirlama Linki Gonder',
+    backToLogin: 'Girise don',
     sideTagline: 'Kucuk Kelimeler, Buyuk Dunyalar',
     sideSub: '1-10 yas arasi cocuklar icin premium Ingilizce egitimi',
   },
@@ -73,7 +86,24 @@ const Login: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   const { signIn, signUp, signInWithGoogle } = useAuth();
+
+  const handlePasswordReset = async () => {
+    if (!resetEmail) return;
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      toast.success(t.resetSent);
+      setResetMode(false);
+      setResetEmail('');
+    } catch {
+      toast.error(t.errorGeneric);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
     setError('');
@@ -245,6 +275,49 @@ const Login: React.FC = () => {
               icon={<Lock size={18} />}
               size="lg"
             />
+
+            {isLogin && !resetMode && (
+              <button
+                type="button"
+                className="login-forgot-link"
+                onClick={() => { setResetMode(true); setResetEmail(email); setError(''); }}
+              >
+                {t.forgotPassword}
+              </button>
+            )}
+
+            {resetMode && (
+              <div className="login-reset-box">
+                <Input
+                  label={t.resetEmailLabel}
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  disabled={loading}
+                  icon={<Mail size={18} />}
+                  size="lg"
+                />
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  loading={loading}
+                  onClick={handlePasswordReset}
+                >
+                  {t.sendResetLink}
+                </Button>
+                <button
+                  type="button"
+                  className="login-forgot-link"
+                  onClick={() => setResetMode(false)}
+                >
+                  {t.backToLogin}
+                </button>
+              </div>
+            )}
 
             {!isLogin && (
               <>

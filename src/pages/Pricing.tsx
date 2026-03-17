@@ -278,7 +278,7 @@ export default function Pricing() {
                 <button
                   type="button"
                   className={`plan-cta ${plan.highlight ? 'plan-cta--primary' : ''} ${isCurrent ? 'plan-cta--current' : ''}`}
-                  disabled={subLoading || isLoadingThis || (isFree && !isCurrent)}
+                  disabled={subLoading || isLoadingThis}
                   onClick={() => {
                     if (isFree) {
                       if (!user) navigate('/login');
