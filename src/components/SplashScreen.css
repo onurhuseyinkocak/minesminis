@@ -7,7 +7,7 @@
 .splash {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,6 +15,7 @@
   opacity: 0;
   transform: scale(1.02);
   transition: opacity 0.5s ease, transform 0.5s ease;
+  background: linear-gradient(160deg, #0F172A 0%, #0F172A 40%, #2E7D32 100%);
 }
 
 .splash.show {
@@ -28,12 +29,19 @@
   pointer-events: none;
 }
 
+
 /* ---- Background ---- */
 .splash-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, var(--ink) 0%, var(--ink) 40%, var(--mimi-green-dark) 100%);
-  z-index: -1;
+  background: linear-gradient(160deg, #0F172A 0%, #0F172A 40%, #2E7D32 100%);
+  z-index: 0;
+}
+
+.splash-center,
+.splash .credits {
+  position: relative;
+  z-index: 1;
 }
 
 .splash-bg::before {
@@ -44,10 +52,11 @@
   transform: translateX(-50%);
   width: 640px;
   height: 640px;
-  border-radius: var(--radius-full);
-  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, transparent 70%);
   filter: blur(70px);
   pointer-events: none;
+  z-index: 0;
   animation: splashGlowPulse 3s ease-in-out infinite alternate;
 }
 
@@ -59,10 +68,11 @@
   transform: translateX(-50%);
   width: 420px;
   height: 420px;
-  border-radius: var(--radius-full);
-  background: radial-gradient(circle, var(--secondary-glow) 0%, transparent 70%);
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(13, 92, 77, 0.3) 0%, transparent 70%);
   filter: blur(55px);
   pointer-events: none;
+  z-index: 0;
 }
 
 @keyframes splashGlowPulse {

@@ -324,6 +324,15 @@ function App() {
     setShowSplash(false);
   };
 
+  // Hide animated background blobs during splash
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (root) {
+      if (showSplash) root.classList.add('splash-active');
+      else root.classList.remove('splash-active');
+    }
+  }, [showSplash]);
+
   return (
     <ErrorBoundary>
       <ThemeProvider>
