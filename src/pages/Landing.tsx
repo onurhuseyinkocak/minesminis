@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sparkles, Rocket, Book, Zap, Gamepad2, Video, FileText, Trophy, Languages, ArrowRight, X, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { Sparkles, Rocket, Book, Zap, Gamepad2, Video, FileText, Trophy, ArrowRight, X, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import UnifiedMascot, { MascotState } from '../components/UnifiedMascot';
 import { mascotRoaming } from '../services/mascotRoaming';
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
@@ -171,49 +171,56 @@ const Landing: React.FC = () => {
       else goPrev();
     }
   };
+
   const features = [
     { icon: Gamepad2, title: t.featGames, desc: t.featGamesDesc, color: '#8b5cf6', emoji: '🎮', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' },
     { icon: Book, title: t.featWords, desc: t.featWordsDesc, color: '#f59e0b', emoji: '📚', gradient: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)' },
     { icon: Video, title: t.featVideos, desc: t.featVideosDesc, color: '#ef4444', emoji: '📺', gradient: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)' },
     { icon: FileText, title: t.featSheets, desc: t.featSheetsDesc, color: '#14b8a6', emoji: '📝', gradient: 'linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%)' },
     { icon: Trophy, title: t.featProgress, desc: t.featProgressDesc, color: '#ec4899', emoji: '🏆', gradient: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)' },
-    { icon: BookOpen, title: t.featStories, desc: t.featStoriesDesc, color: '#8b5cf6', emoji: '📖', gradient: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)' },
-  ];
-
-  const funCards = [
-    { emoji: '🌈', text: lang === 'en' ? 'Lots of fun!' : 'Bolca eğlence!' },
-    { emoji: '✨', text: lang === 'en' ? 'Learn and play' : 'Öğren ve oyna' },
-    { emoji: '🎯', text: lang === 'en' ? 'New words every day' : 'Her gün yeni kelimeler' },
-    { emoji: '🦋', text: lang === 'en' ? 'Friendly friends' : 'Sevimli arkadaşlar' },
+    { icon: BookOpen, title: t.featStories, desc: t.featStoriesDesc, color: '#6366f1', emoji: '📖', gradient: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)' },
   ];
 
   return (
     <div className="landing-v2">
-      {/* Language toggle */}
-      <motion.div
-        className="landing-v2-lang"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
-        <Languages size={16} />
-        <button className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
-        <button className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
-      </motion.div>
+      {/* ===== NAVBAR ===== */}
+      <nav className="landing-navbar">
+        <div className="landing-navbar__inner">
+          <Link to="/" className="landing-navbar__logo">
+            <Sparkles size={22} />
+            <span>Mines<strong>Minis</strong></span>
+          </Link>
+          <div className="landing-navbar__links">
+            <a href="#features">{lang === 'en' ? 'Features' : 'Özellikler'}</a>
+            <a href="#characters">{lang === 'en' ? 'Characters' : 'Karakterler'}</a>
+            <Link to="/pricing">{lang === 'en' ? 'Pricing' : 'Fiyatlar'}</Link>
+            <Link to="/ataturk">Atatürk</Link>
+          </div>
+          <div className="landing-navbar__right">
+            <div className="landing-navbar__lang">
+              <button className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
+              <button className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
+            </div>
+            <Link to="/login" className="landing-navbar__cta">
+              {t.loginBtn} <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-      {/* Hero + Glints - single grid, equal cells */}
-      <section className="landing-v2-hero-grid landing-v2-unified-grid">
+      {/* ===== HERO ===== */}
+      <section className="landing-hero">
         <div className="hero-glow" />
-        {/* Left: Hero (compact) */}
-        <div className="hero-cell">
-          <div className="hero-content">
+        <div className="landing-hero__inner">
+          {/* Left: text */}
+          <div className="landing-hero__text">
             <Link to="/ataturk" className="landing-v2-ataturk-badge">
               <img src={ataturkFormal} alt="" />
               <div>
                 <span className="badge-label">{t.ataturkBadge}</span>
                 <span className="badge-name">{t.ataturkTitle}</span>
               </div>
-              <ArrowRight size={18} />
+              <ArrowRight size={16} />
             </Link>
 
             <motion.h1
@@ -241,176 +248,177 @@ const Landing: React.FC = () => {
               <Link to="/login" className="hero-cta-btn">
                 <Rocket size={20} /> {t.heroCta}
               </Link>
+              <a href="#features" className="hero-ghost-btn">
+                {lang === 'en' ? 'Learn more' : 'Daha fazla'} <ArrowRight size={16} />
+              </a>
             </motion.div>
           </div>
-        </div>
 
-        {/* Right: Glints carousel - animasyonlu, peek, sohbet balonu */}
-        <div className="glints-cell">
-          <h3 className="glints-cell-title">
-            <Sparkles size={18} /> {t.glintsTitle}
-          </h3>
-          <p className="glints-cell-sub">{t.glintsSub}</p>
+          {/* Right: Glints carousel */}
+          <div className="glints-cell" id="characters">
+            <h3 className="glints-cell-title">
+              <Sparkles size={18} /> {t.glintsTitle}
+            </h3>
+            <p className="glints-cell-sub">{t.glintsSub}</p>
 
-          <div className="glints-carousel">
-            <button
-              type="button"
-              className="glints-nav prev"
-              onClick={goPrev}
-              aria-label="Previous"
-            >
-              <ChevronLeft size={24} />
-            </button>
+            <div className="glints-carousel">
+              <button
+                type="button"
+                className="glints-nav prev"
+                onClick={goPrev}
+                aria-label="Previous"
+              >
+                <ChevronLeft size={24} />
+              </button>
 
-            <div
-              className="glints-carousel-track"
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-            >
-              {glintList.map((g, idx) => {
-                const offset = (idx - activeGlintIndex + glintList.length) % glintList.length;
-                const isPrev = offset === glintList.length - 1;
-                const isActive = offset === 0;
-                const isNext = offset === 1;
-                const visible = isPrev || isActive || isNext;
+              <div
+                className="glints-carousel-track"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                {glintList.map((g, idx) => {
+                  const offset = (idx - activeGlintIndex + glintList.length) % glintList.length;
+                  const isPrev = offset === glintList.length - 1;
+                  const isActive = offset === 0;
+                  const isNext = offset === 1;
+                  const visible = isPrev || isActive || isNext;
 
-                if (!visible) return null;
+                  if (!visible) return null;
 
-                return (
-                  <motion.div
-                    key={g.id}
-                    className={`glint-slide ${isActive ? 'active' : ''} ${isPrev ? 'prev' : ''} ${isNext ? 'next' : ''}`}
-                    style={{ '--glint-color': g.color } as React.CSSProperties}
-                    initial={false}
-                    animate={{
-                      x: isPrev ? -130 : isNext ? 130 : 0,
-                      y: '-50%',
-                      scale: isActive ? 1 : 0.78,
-                      opacity: isActive ? 1 : 0.55,
-                      zIndex: isActive ? 3 : isPrev ? 1 : 2,
-                    }}
-                    transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                  >
-                    {isActive && (
-                      <motion.div
-                        className="glint-speech-bubble"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        {g.story}
-                      </motion.div>
-                    )}
+                  return (
                     <motion.div
-                      className="glint-visual"
-                      animate={{ y: [0, -6, 0] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                      key={g.id}
+                      className={`glint-slide ${isActive ? 'active' : ''} ${isPrev ? 'prev' : ''} ${isNext ? 'next' : ''}`}
+                      style={{ '--glint-color': g.color } as React.CSSProperties}
+                      initial={false}
+                      animate={{
+                        x: isPrev ? -130 : isNext ? 130 : 0,
+                        y: '-50%',
+                        scale: isActive ? 1 : 0.78,
+                        opacity: isActive ? 1 : 0.55,
+                        zIndex: isActive ? 3 : isPrev ? 1 : 2,
+                      }}
+                      transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                     >
-                      <div className="glint-glow" style={{ backgroundColor: g.color }} />
-                      <UnifiedMascot id={g.id} state="idle" size={isActive ? 140 : 90} />
-                    </motion.div>
-                    <span className="glint-slide-name">{g.name}</span>
-                    <span className="glint-slide-benefit">{g.benefit}</span>
-                    {isActive && (
-                      <button
-                        type="button"
-                        className="glint-select-hint"
-                        onClick={() => navigate('/login')}
+                      {isActive && (
+                        <motion.div
+                          className="glint-speech-bubble"
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          {g.story}
+                        </motion.div>
+                      )}
+                      <motion.div
+                        className="glint-visual"
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                       >
-                        {t.loginBtn} →
-                      </button>
-                    )}
-                  </motion.div>
-                );
-              })}
+                        <div className="glint-glow" style={{ backgroundColor: g.color }} />
+                        <UnifiedMascot id={g.id} state="idle" size={isActive ? 140 : 90} />
+                      </motion.div>
+                      <span className="glint-slide-name">{g.name}</span>
+                      <span className="glint-slide-benefit">{g.benefit}</span>
+                      {isActive && (
+                        <button
+                          type="button"
+                          className="glint-select-hint"
+                          onClick={() => navigate('/login')}
+                        >
+                          {t.loginBtn} →
+                        </button>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                className="glints-nav next"
+                onClick={goNext}
+                aria-label="Next"
+              >
+                <ChevronRight size={24} />
+              </button>
             </div>
 
-            <button
-              type="button"
-              className="glints-nav next"
-              onClick={goNext}
-              aria-label="Next"
-            >
-              <ChevronRight size={24} />
-            </button>
-          </div>
-
-          <div className="glints-dots">
-            {glintList.map((g, idx) => (
-              <button
-                key={g.id}
-                type="button"
-                className={`dot ${idx === activeGlintIndex ? 'active' : ''}`}
-                style={{ backgroundColor: idx === activeGlintIndex ? g.color : undefined }}
-                onClick={() => setActiveGlintIndex(idx)}
-                aria-label={g.name}
-              />
-            ))}
+            <div className="glints-dots">
+              {glintList.map((g, idx) => (
+                <button
+                  key={g.id}
+                  type="button"
+                  className={`dot ${idx === activeGlintIndex ? 'active' : ''}`}
+                  style={{ backgroundColor: idx === activeGlintIndex ? g.color : undefined }}
+                  onClick={() => setActiveGlintIndex(idx)}
+                  aria-label={g.name}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features - premium cards */}
-      <section className="landing-v2-features">
+      {/* ===== FEATURES ===== */}
+      <section className="landing-features" id="features">
         <h2 className="section-title">{t.featuresTitle}</h2>
         <p className="section-sub">{t.featuresSub}</p>
-        <div className="features-grid features-grid-premium">
+        <div className="features-grid">
           {features.map((f, i) => (
             <motion.div
               key={f.title}
-              className="feature-card feature-card-premium"
+              className="feature-card"
               style={{ '--accent': f.color, '--gradient': f.gradient } as React.CSSProperties}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
             >
-              <div className="feature-icon-premium">
-                <f.icon size={32} strokeWidth={2.5} />
+              <div className="feature-card__icon" style={{ background: f.gradient }}>
+                <span className="feature-card__emoji">{f.emoji}</span>
               </div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </motion.div>
           ))}
         </div>
-
-        {/* Fun cards grid */}
-        <div className="fun-cards-grid">
-          {funCards.map((c, i) => (
-            <motion.div
-              key={c.text}
-              className="fun-card"
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 + i * 0.05 }}
-            >
-              <span className="fun-card-emoji">{c.emoji}</span>
-              <span className="fun-card-text">{c.text}</span>
-            </motion.div>
-          ))}
-        </div>
       </section>
 
-      {/* Bottom CTA - login centered */}
-      <section className="landing-v2-bottom-cta">
+      {/* ===== CTA SECTION ===== */}
+      <section className="landing-cta-section">
         <motion.div
-          className="bottom-cta-box"
+          className="landing-cta-section__inner"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <Zap size={28} />
+          <Zap size={32} />
           <h3>{lang === 'en' ? 'Ready to start?' : 'Başlamaya hazır mısın?'}</h3>
-          <div className="bottom-cta-btn-wrap">
-            <Link to="/login" className="bottom-cta-btn">
-              {t.loginBtn} <ArrowRight size={18} />
-            </Link>
-          </div>
+          <p>{lang === 'en' ? 'Join thousands of kids learning English the fun way.' : 'Eğlenceli yoldan İngilizce öğrenen binlerce çocuğa katıl.'}</p>
+          <Link to="/login" className="landing-cta-section__btn">
+            {t.loginBtn} <ArrowRight size={18} />
+          </Link>
         </motion.div>
       </section>
 
-      {/* Roaming Mimi - clickable, redirects to login */}
+      {/* ===== FOOTER ===== */}
+      <footer className="landing-footer">
+        <div className="landing-footer__inner">
+          <div className="landing-footer__brand">
+            <Sparkles size={18} /> Mines<strong>Minis</strong>
+            <p>{lang === 'en' ? 'Premium English for kids ages 1-10' : '1-10 yaş arası çocuklar için premium İngilizce'}</p>
+          </div>
+          <div className="landing-footer__links">
+            <Link to="/privacy">{lang === 'en' ? 'Privacy' : 'Gizlilik'}</Link>
+            <Link to="/terms">{lang === 'en' ? 'Terms' : 'Şartlar'}</Link>
+            <Link to="/blog">Blog</Link>
+          </div>
+          <p className="landing-footer__copy">&copy; 2026 MinesMinis</p>
+        </div>
+      </footer>
+
+      {/* ===== ROAMING MIMI ===== */}
       <motion.div
         className="landing-v2-mimi"
         style={{
@@ -442,7 +450,7 @@ const Landing: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Mimi click modal - info + redirect to login */}
+      {/* ===== MIMI MODAL ===== */}
       <AnimatePresence>
         {showMimiModal && (
           <motion.div
