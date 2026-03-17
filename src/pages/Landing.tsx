@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sparkles, Rocket, Book, Zap, Gamepad2, Video, FileText, Trophy, ArrowRight, X, ChevronLeft, ChevronRight, BookOpen, Menu } from 'lucide-react';
+import { Sparkles, Rocket, ArrowRight, X, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import UnifiedMascot, { MascotState } from '../components/UnifiedMascot';
 import { mascotRoaming } from '../services/mascotRoaming';
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
@@ -15,11 +15,11 @@ const content = {
   en: {
     mimiBubble: 'Hi! I\'m Mimi 👋 Login to play with me!',
     mimiClickTitle: 'Come play with Mimi! 🐲',
-    mimiClickMsg: 'Login to start your English adventure. Games, videos, words — all waiting for you!',
+    mimiClickMsg: 'Login to start your English adventure. Games, videos, words \u2014 all waiting for you!',
     heroTitle: 'Learn English with MinesMinis',
     heroSub: 'Fun games, videos, words and worksheets. Your child learns step by step.',
-    heroCta: 'Login to start',
-    featuresTitle: 'What you can do here',
+    heroCta: 'Start the Adventure',
+    featuresTitle: 'Magical Activities',
     featuresSub: 'Everything your child needs to learn English in a fun way.',
     featGames: 'Games',
     featGamesDesc: 'Play fun learning games',
@@ -36,34 +36,34 @@ const content = {
     glintsTitle: 'The Glints',
     glintsSub: 'Choose your learning buddy. Each one gives you special powers on the site.',
     ataturkBadge: 'Our Beloved Leader',
-    ataturkTitle: 'Mustafa Kemal Atatürk',
+    ataturkTitle: 'Mustafa Kemal Atat\u00fcrk',
     loginBtn: 'Login',
   },
   tr: {
     mimiBubble: 'Merhaba! Ben Mimi 👋 Benimle oynamak için giriş yap!',
     mimiClickTitle: 'Mimi ile oynayalım! 🐲',
-    mimiClickMsg: 'İngilizce macerana başlamak için giriş yap. Oyunlar, videolar, kelimeler — hepsi seni bekliyor!',
-    heroTitle: 'MinesMinis ile İngilizce Öğren',
-    heroSub: 'Eğlenceli oyunlar, videolar, kelimeler ve çalışma sayfaları. Çocuğunuz adım adım öğrenir.',
-    heroCta: 'Başlamak için giriş yap',
-    featuresTitle: 'Burada neler yapabilirsiniz',
-    featuresSub: 'Çocuğunuzun eğlenceli İngilizce öğrenmesi için ihtiyaç duyduğu her şey.',
+    mimiClickMsg: '\u0130ngilizce macerana başlamak için giriş yap. Oyunlar, videolar, kelimeler \u2014 hepsi seni bekliyor!',
+    heroTitle: 'MinesMinis ile \u0130ngilizce \u00d6\u011fren',
+    heroSub: 'E\u011flenceli oyunlar, videolar, kelimeler ve çalışma sayfaları. \u00c7ocu\u011funuz adım adım \u00f6\u011frenir.',
+    heroCta: 'Maceraya Başla',
+    featuresTitle: 'Sihirli Aktiviteler',
+    featuresSub: '\u00c7ocu\u011funuzun e\u011flenceli \u0130ngilizce \u00f6\u011frenmesi için ihtiyaç duydu\u011fu her şey.',
     featGames: 'Oyunlar',
-    featGamesDesc: 'Eğlenceli öğrenme oyunları oyna',
+    featGamesDesc: 'E\u011flenceli \u00f6\u011frenme oyunları oyna',
     featWords: 'Kelimeler',
-    featWordsDesc: 'Yeni kelimeler öğren',
+    featWordsDesc: 'Yeni kelimeler \u00f6\u011fren',
     featVideos: 'Videolar',
-    featVideosDesc: 'Öğrenme videoları izle',
-    featSheets: 'Çalışma Sayfaları',
-    featSheetsDesc: 'Çalışma sayfalarıyla pratik yap',
-    featProgress: 'İlerleme',
-    featProgressDesc: 'İlerlemeni takip et',
+    featVideosDesc: '\u00d6\u011frenme videoları izle',
+    featSheets: '\u00c7alışma Sayfaları',
+    featSheetsDesc: '\u00c7alışma sayfalarıyla pratik yap',
+    featProgress: '\u0130lerleme',
+    featProgressDesc: '\u0130lerlemeni takip et',
     featStories: 'Hikayeler',
-    featStoriesDesc: 'Günlük hikayeler dinle',
+    featStoriesDesc: 'G\u00fcnl\u00fck hikayeler dinle',
     glintsTitle: 'Glintler',
-    glintsSub: 'Öğrenme arkadaşını seç. Her biri sitede sana özel güçler verir.',
+    glintsSub: '\u00d6\u011frenme arkadaşını seç. Her biri sitede sana \u00f6zel g\u00fcçler verir.',
     ataturkBadge: 'Sevgili Liderimiz',
-    ataturkTitle: 'Mustafa Kemal Atatürk',
+    ataturkTitle: 'Mustafa Kemal Atat\u00fcrk',
     loginBtn: 'Giriş Yap',
   },
 };
@@ -98,6 +98,8 @@ const mapState = (state: AnimationState): MascotState => {
       return 'idle';
   }
 };
+
+const PARTICLES = ['⭐','✨','🌟','💫','🎈','🦋','🌈','🎵','📚','🎮'];
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
@@ -174,16 +176,16 @@ const Landing: React.FC = () => {
   };
 
   const features = [
-    { Icon: Gamepad2, title: t.featGames, desc: t.featGamesDesc, color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' },
-    { Icon: Book, title: t.featWords, desc: t.featWordsDesc, color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)' },
-    { Icon: Video, title: t.featVideos, desc: t.featVideosDesc, color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)' },
-    { Icon: FileText, title: t.featSheets, desc: t.featSheetsDesc, color: '#14b8a6', gradient: 'linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%)' },
-    { Icon: Trophy, title: t.featProgress, desc: t.featProgressDesc, color: '#ec4899', gradient: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)' },
-    { Icon: BookOpen, title: t.featStories, desc: t.featStoriesDesc, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)' },
+    { emoji: '🎮', title: t.featGames, desc: t.featGamesDesc, color: '#8b5cf6' },
+    { emoji: '📚', title: t.featWords, desc: t.featWordsDesc, color: '#f59e0b' },
+    { emoji: '🎥', title: t.featVideos, desc: t.featVideosDesc, color: '#ef4444' },
+    { emoji: '📝', title: t.featSheets, desc: t.featSheetsDesc, color: '#14b8a6' },
+    { emoji: '🏆', title: t.featProgress, desc: t.featProgressDesc, color: '#ec4899' },
+    { emoji: '📖', title: t.featStories, desc: t.featStoriesDesc, color: '#6366f1' },
   ];
 
   return (
-    <div className="landing-v2">
+    <div className="magic-landing">
       {/* ===== NAVBAR ===== */}
       <nav className="landing-navbar">
         <div className="landing-navbar__inner">
@@ -192,10 +194,10 @@ const Landing: React.FC = () => {
             <span>Mines<strong>Minis</strong></span>
           </Link>
           <div className="landing-navbar__links">
-            <a href="#features">{lang === 'en' ? 'Features' : 'Özellikler'}</a>
+            <a href="#features">{lang === 'en' ? 'Features' : '\u00d6zellikler'}</a>
             <a href="#characters">{lang === 'en' ? 'Characters' : 'Karakterler'}</a>
             <Link to="/pricing">{lang === 'en' ? 'Pricing' : 'Fiyatlar'}</Link>
-            <Link to="/ataturk">Atatürk</Link>
+            <Link to="/ataturk">Atat\u00fcrk</Link>
           </div>
           <div className="landing-navbar__right">
             <div className="landing-navbar__lang">
@@ -211,10 +213,10 @@ const Landing: React.FC = () => {
           </div>
           {mobileMenuOpen && (
             <div className="landing-navbar__mobile-menu">
-              <a href="#features" onClick={() => setMobileMenuOpen(false)}>{lang === 'en' ? 'Features' : 'Özellikler'}</a>
+              <a href="#features" onClick={() => setMobileMenuOpen(false)}>{lang === 'en' ? 'Features' : '\u00d6zellikler'}</a>
               <a href="#characters" onClick={() => setMobileMenuOpen(false)}>{lang === 'en' ? 'Characters' : 'Karakterler'}</a>
               <Link to="/pricing" onClick={() => setMobileMenuOpen(false)}>{lang === 'en' ? 'Pricing' : 'Fiyatlar'}</Link>
-              <Link to="/ataturk" onClick={() => setMobileMenuOpen(false)}>Atatürk</Link>
+              <Link to="/ataturk" onClick={() => setMobileMenuOpen(false)}>Atat\u00fcrk</Link>
               <Link to="/login" className="landing-navbar__cta" onClick={() => setMobileMenuOpen(false)}>
                 {t.loginBtn} <ArrowRight size={16} />
               </Link>
@@ -223,12 +225,38 @@ const Landing: React.FC = () => {
         </div>
       </nav>
 
-      {/* ===== HERO ===== */}
-      <section className="landing-hero">
-        <div className="hero-glow" />
-        <div className="landing-hero__inner">
+      {/* ===== HERO — "Mimi Welcomes You" ===== */}
+      <section className="magic-hero">
+        {/* Floating emoji particles */}
+        <div className="magic-hero__particles">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <motion.span
+              key={i}
+              className="magic-hero__particle"
+              initial={{ opacity: 0, y: 100 }}
+              animate={{
+                opacity: [0, 1, 0],
+                y: [-20, -200],
+                x: Math.random() * 40 - 20,
+              }}
+              transition={{
+                duration: 3 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+              }}
+              style={{ left: `${Math.random() * 100}%` }}
+            >
+              {PARTICLES[i % 10]}
+            </motion.span>
+          ))}
+        </div>
+
+        <div className="magic-hero__glow" />
+
+        <div className="magic-hero__content">
           {/* Left: text */}
-          <div className="landing-hero__text">
+          <div className="magic-hero__text">
+            {/* Ataturk badge */}
             <Link to="/ataturk" className="landing-v2-ataturk-badge">
               <img src={ataturkFormal} alt="" />
               <div>
@@ -238,38 +266,57 @@ const Landing: React.FC = () => {
               <ArrowRight size={14} />
             </Link>
 
-            <motion.h1
-              className="hero-title"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {t.heroTitle}
-            </motion.h1>
+            <div className="magic-hero__title-row">
+              <motion.div
+                className="magic-hero__wave"
+                animate={{ rotate: [0, 14, -8, 14, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+              >
+                👋
+              </motion.div>
+
+              <motion.h1
+                className="magic-hero__title"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                {t.heroTitle}
+              </motion.h1>
+            </div>
+
             <motion.p
-              className="hero-sub"
+              className="magic-hero__sub"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              transition={{ delay: 0.3 }}
             >
               {t.heroSub}
             </motion.p>
+
             <motion.div
-              className="hero-cta-row"
+              className="magic-hero__cta"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.5 }}
             >
-              <Link to="/login" className="hero-cta-btn">
+              <Link to="/login" className="magic-btn magic-btn--primary">
                 <Rocket size={20} /> {t.heroCta}
+                <motion.span
+                  className="magic-btn__sparkle"
+                  animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  \u2728
+                </motion.span>
               </Link>
-              <a href="#features" className="hero-ghost-btn">
+              <a href="#features" className="magic-btn magic-btn--ghost">
                 {lang === 'en' ? 'Learn more' : 'Daha fazla'} <ArrowRight size={16} />
               </a>
             </motion.div>
           </div>
 
-          {/* Right: Glints carousel */}
+          {/* Right: Glints carousel — KEPT AS IS */}
           <div className="glints-cell" id="characters">
             <h3 className="glints-cell-title">
               <Sparkles size={18} /> {t.glintsTitle}
@@ -341,7 +388,7 @@ const Landing: React.FC = () => {
                           className="glint-select-hint"
                           onClick={() => navigate('/login')}
                         >
-                          {t.loginBtn} →
+                          {t.loginBtn} \u2192
                         </button>
                       )}
                     </motion.div>
@@ -375,44 +422,107 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* ===== FEATURES ===== */}
-      <section className="landing-features" id="features">
-        <h2 className="section-title">{t.featuresTitle}</h2>
-        <p className="section-sub">{t.featuresSub}</p>
-        <div className="features-grid">
+      {/* ===== FEATURES — "Magical Activities" ===== */}
+      <section className="magic-features" id="features">
+        <motion.h2
+          className="magic-features__title"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <span className="magic-features__emoji">🎪</span> {t.featuresTitle}
+        </motion.h2>
+        <motion.p
+          className="magic-features__sub"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+        >
+          {t.featuresSub}
+        </motion.p>
+
+        <div className="magic-features__grid">
           {features.map((f, i) => (
             <motion.div
               key={f.title}
-              className="feature-card"
-              style={{ '--accent': f.color, '--gradient': f.gradient } as React.CSSProperties}
-              initial={{ opacity: 0, y: 24 }}
+              className="magic-feature-card"
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -8, scale: 1.02 }}
+              style={{ '--card-color': f.color } as React.CSSProperties}
             >
-              <div className="feature-card__icon" style={{ background: f.gradient }}>
-                <f.Icon size={26} color="white" />
+              <div className="magic-feature-card__icon">
+                <motion.span
+                  className="magic-feature-card__emoji"
+                  animate={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+                >
+                  {f.emoji}
+                </motion.span>
               </div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
+              <div className="magic-feature-card__glow" />
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ===== CTA SECTION ===== */}
-      <section className="landing-cta-section">
+      {/* ===== SOCIAL PROOF — Stats ===== */}
+      <section className="magic-stats">
+        <div className="magic-stats__inner">
+          <motion.div
+            className="magic-stats__item"
+            whileInView={{ scale: [0.5, 1.1, 1] }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="magic-stats__number">1,000+</span>
+            <span className="magic-stats__label">{lang === 'en' ? 'Happy Learners' : 'Mutlu \u00d6\u011frenci'}</span>
+          </motion.div>
+          <motion.div
+            className="magic-stats__item"
+            whileInView={{ scale: [0.5, 1.1, 1] }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <span className="magic-stats__number">12</span>
+            <span className="magic-stats__label">{lang === 'en' ? 'Magical Worlds' : 'Sihirli D\u00fcnya'}</span>
+          </motion.div>
+          <motion.div
+            className="magic-stats__item"
+            whileInView={{ scale: [0.5, 1.1, 1] }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <span className="magic-stats__number">120+</span>
+            <span className="magic-stats__label">{lang === 'en' ? 'Fun Lessons' : 'E\u011flenceli Ders'}</span>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ===== CTA — "Start Your Magic Journey" ===== */}
+      <section className="magic-cta">
         <motion.div
-          className="landing-cta-section__inner"
-          initial={{ opacity: 0, y: 16 }}
+          className="magic-cta__card"
           whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
           viewport={{ once: true }}
         >
-          <Zap size={32} />
-          <h3>{lang === 'en' ? 'Ready to start?' : 'Başlamaya hazır mısın?'}</h3>
-          <p>{lang === 'en' ? 'Join thousands of kids learning English the fun way.' : 'Eğlenceli yoldan İngilizce öğrenen binlerce çocuğa katıl.'}</p>
-          <Link to="/login" className="landing-cta-section__btn">
-            {t.loginBtn} <ArrowRight size={18} />
+          <motion.div
+            className="magic-cta__mimi"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            🐲
+          </motion.div>
+          <h2>{lang === 'en' ? 'Ready for the Adventure?' : 'Maceraya Hazır mısın?'}</h2>
+          <p>{lang === 'en' ? 'Mimi and friends are waiting for you!' : 'Mimi ve arkadaşları seni bekliyor!'}</p>
+          <Link to="/login" className="magic-btn magic-btn--primary magic-btn--large">
+            {t.heroCta} <ArrowRight size={20} />
           </Link>
         </motion.div>
       </section>
@@ -422,13 +532,12 @@ const Landing: React.FC = () => {
         <div className="landing-footer__inner">
           <div className="landing-footer__brand">
             <Sparkles size={18} /> Mines<strong>Minis</strong>
-            <p>{lang === 'en' ? 'Premium English for kids ages 1-10' : '1-10 yaş arası çocuklar için premium İngilizce'}</p>
+            <p>{lang === 'en' ? 'Premium English for kids ages 1-10' : '1-10 yaş arası çocuklar için premium \u0130ngilizce'}</p>
           </div>
           <div className="landing-footer__links">
             <Link to="/privacy">{lang === 'en' ? 'Privacy' : 'Gizlilik'}</Link>
-            <Link to="/terms">{lang === 'en' ? 'Terms' : 'Şartlar'}</Link>
+            <Link to="/terms">{lang === 'en' ? 'Terms' : '\u015eartlar'}</Link>
             <Link to="/blog">Blog</Link>
-            {/* Blog link kept in footer only - blog page exists but may be empty */}
           </div>
           <p className="landing-footer__copy">&copy; 2026 MinesMinis</p>
         </div>
