@@ -26,7 +26,7 @@ export default function AppShell({
   showBottomNav = true,
 }: AppShellProps) {
   const location = useLocation();
-  const { userProfile } = useAuth();
+  const { userProfile, signOut } = useAuth();
   const { stats, getXPProgress } = useGamification();
 
   const xpPercent = getXPProgress();
@@ -43,6 +43,7 @@ export default function AppShell({
         avatarUrl={String(userProfile?.settings?.avatar_emoji || userProfile?.avatar_url || '')}
         xpPercent={xpPercent}
         streak={stats?.streakDays || 0}
+        onLogout={signOut}
       />
 
       {showSidebar && (

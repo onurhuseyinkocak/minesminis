@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X } from 'lucide-react';
+import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings } from 'lucide-react';
 import './TopNav.css';
 
 interface TopNavProps {
@@ -14,6 +14,8 @@ interface TopNavProps {
   xpLabel?: string;
   /** Current streak count */
   streak?: number;
+  /** Logout handler */
+  onLogout?: () => void;
 }
 
 const NAV_ITEMS = [
@@ -30,11 +32,14 @@ export default function TopNav({
   xpPercent = 0,
   xpLabel = 'XP',
   streak = 0,
+  onLogout,
 }: TopNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
@@ -63,6 +68,17 @@ export default function TopNav({
   }, [mobileOpen]);
 
   const handleOverlayClick = useCallback(() => setMobileOpen(false), []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    if (dropdownOpen) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
 
   const isEmoji = avatarUrl && !avatarUrl.startsWith('http') && !avatarUrl.startsWith('/');
   const initials = userName
@@ -118,20 +134,53 @@ export default function TopNav({
             <span>{xpLabel}</span>
           </div>
 
-          <button
-            className="topnav__avatar"
-            aria-label="Open profile"
-            type="button"
-            onClick={() => navigate('/profile')}
-          >
-            {isEmoji ? (
-              <span className="topnav__avatar-emoji">{avatarUrl}</span>
-            ) : avatarUrl ? (
-              <img src={avatarUrl} alt={userName || 'User avatar'} />
-            ) : (
-              initials
+          <div className="topnav__avatar-wrapper" ref={dropdownRef}>
+            <button
+              className="topnav__avatar"
+              aria-label="User menu"
+              type="button"
+              onClick={() => setDropdownOpen(prev => !prev)}
+              aria-expanded={dropdownOpen}
+            >
+              {isEmoji ? (
+                <span className="topnav__avatar-emoji">{avatarUrl}</span>
+              ) : avatarUrl ? (
+                <img src={avatarUrl} alt={userName || 'User avatar'} />
+              ) : (
+                initials
+              )}
+            </button>
+            {dropdownOpen && (
+              <div className="topnav__dropdown">
+                <div className="topnav__dropdown-header">
+                  <span className="topnav__dropdown-name">{userName || 'User'}</span>
+                </div>
+                <button
+                  className="topnav__dropdown-item"
+                  onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
+                >
+                  <User size={16} /> Profile
+                </button>
+                <button
+                  className="topnav__dropdown-item"
+                  onClick={() => { setDropdownOpen(false); navigate('/pricing'); }}
+                >
+                  <Settings size={16} /> Plans
+                </button>
+                {onLogout && (
+                  <>
+                    <div className="topnav__dropdown-divider" />
+                    <button
+                      className="topnav__dropdown-item topnav__dropdown-item--danger"
+                      onClick={() => { setDropdownOpen(false); onLogout(); }}
+                    >
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </>
+                )}
+              </div>
             )}
-          </button>
+          </div>
 
           {/* Hamburger (mobile) */}
           <button
@@ -206,6 +255,17 @@ export default function TopNav({
               <span className="topnav__streak-icon">🔥</span>
               <span>{streak} day streak</span>
             </div>
+          )}
+          <Link to="/profile" className="topnav__mobile-link" onClick={() => setMobileOpen(false)}>
+            <User size={22} /> <span>Profile</span>
+          </Link>
+          {onLogout && (
+            <button
+              className="topnav__mobile-logout"
+              onClick={() => { setMobileOpen(false); onLogout(); }}
+            >
+              <LogOut size={20} /> Logout
+            </button>
           )}
         </div>
       </div>
