@@ -4,57 +4,21 @@
  *
  * Route: /worlds
  * Displays all 12 curriculum worlds in a responsive grid.
- * World 1 is always unlocked; the rest are locked.
+ * Uses real curriculum data and progress tracking.
  */
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Check, ChevronRight, Sparkles } from 'lucide-react';
 import { Card, ProgressBar } from '../components/ui';
 import UnifiedMascot from '../components/UnifiedMascot';
+import { useAuth } from '../contexts/AuthContext';
+import { WORLDS } from '../data/curriculum';
+import {
+  isWorldUnlocked,
+  getWorldCompletionCount,
+  getCurrentLesson,
+} from '../data/progressTracker';
 import './WorldMap.css';
-
-// ============================================================
-// WORLDS DATA (inline — mirrors AdminCurriculumManager worlds)
-// ============================================================
-
-interface WorldInfo {
-  id: string;
-  order: number;
-  name: string;
-  emoji: string;
-  color: string;
-  theme: string;
-  lessonTotal: number;
-}
-
-const WORLDS: WorldInfo[] = [
-  { id: 'w1',  order: 1,  name: 'Hello World',       emoji: '\u{1F44B}', color: 'var(--primary)', theme: 'Greetings & introductions',          lessonTotal: 10 },
-  { id: 'w2',  order: 2,  name: 'My Body',            emoji: '\u{1F9D2}', color: 'var(--error)', theme: 'Body parts & senses',                lessonTotal: 10 },
-  { id: 'w3',  order: 3,  name: 'Colors & Shapes',    emoji: '\u{1F308}', color: 'var(--accent-purple)', theme: 'Colors, shapes & patterns',          lessonTotal: 10 },
-  { id: 'w4',  order: 4,  name: 'Animals',            emoji: '\u{1F981}', color: 'var(--accent-emerald)', theme: 'Farm, wild & pet animals',            lessonTotal: 10 },
-  { id: 'w5',  order: 5,  name: 'My Family',          emoji: '\u{1F46A}', color: 'var(--accent-pink)', theme: 'Family members & relationships',      lessonTotal: 10 },
-  { id: 'w6',  order: 6,  name: 'Food & Drinks',      emoji: '\u{1F34E}', color: 'var(--accent-orange)', theme: 'Fruits, vegetables & meals',          lessonTotal: 10 },
-  { id: 'w7',  order: 7,  name: 'My Home',            emoji: '\u{1F3E0}', color: 'var(--accent-blue)', theme: 'Rooms, furniture & items',            lessonTotal: 10 },
-  { id: 'w8',  order: 8,  name: 'Clothes',            emoji: '\u{1F455}', color: 'var(--accent-teal)', theme: 'Clothing & weather dressing',         lessonTotal: 10 },
-  { id: 'w9',  order: 9,  name: 'Nature',             emoji: '\u{1F333}', color: 'var(--accent-green)', theme: 'Weather, seasons & plants',           lessonTotal: 10 },
-  { id: 'w10', order: 10, name: 'School',             emoji: '\u{1F3EB}', color: 'var(--accent-indigo)', theme: 'Classroom objects & school life',     lessonTotal: 10 },
-  { id: 'w11', order: 11, name: 'City & Transport',   emoji: '\u{1F68C}', color: 'var(--accent-violet)', theme: 'Vehicles, places & directions',       lessonTotal: 10 },
-  { id: 'w12', order: 12, name: 'Adventures',         emoji: '\u{1F30D}', color: 'var(--accent-fuchsia)', theme: 'Travel, countries & cultures',        lessonTotal: 10 },
-];
-
-// Placeholder progress (World 1: 30%, rest: 0%)
-function getWorldProgress(worldId: string): { completed: number; total: number } {
-  if (worldId === 'w1') return { completed: 3, total: 10 };
-  return { completed: 0, total: 10 };
-}
-
-function isWorldUnlocked(worldId: string): boolean {
-  return worldId === 'w1';
-}
-
-function isCurrentWorld(worldId: string): boolean {
-  return worldId === 'w1';
-}
 
 // ============================================================
 // ANIMATION VARIANTS
@@ -83,6 +47,10 @@ const cardVariants = {
 // ============================================================
 
 const WorldMap = () => {
+  const { user } = useAuth();
+  const userId = user?.uid || 'guest';
+  const currentLessonInfo = getCurrentLesson(userId);
+
   return (
     <div className="world-map-page">
       {/* Header */}
@@ -107,10 +75,11 @@ const WorldMap = () => {
         animate="visible"
       >
         {WORLDS.map((world) => {
-          const progress = getWorldProgress(world.id);
-          const unlocked = isWorldUnlocked(world.id);
-          const current = isCurrentWorld(world.id);
-          const pct = Math.round((progress.completed / progress.total) * 100);
+          const completed = getWorldCompletionCount(userId, world.id);
+          const total = world.lessons.length;
+          const unlocked = isWorldUnlocked(userId, world.id);
+          const current = currentLessonInfo?.worldId === world.id;
+          const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
           return (
             <motion.div key={world.id} variants={cardVariants}>
@@ -122,7 +91,7 @@ const WorldMap = () => {
                 >
                   <WorldCard
                     world={world}
-                    progress={progress}
+                    progress={{ completed, total }}
                     pct={pct}
                     unlocked
                     current={current}
@@ -132,7 +101,7 @@ const WorldMap = () => {
                 <div className="world-card-link world-card-link--locked" aria-label={`${world.name} - Locked`}>
                   <WorldCard
                     world={world}
-                    progress={progress}
+                    progress={{ completed, total }}
                     pct={pct}
                     unlocked={false}
                     current={false}
@@ -152,7 +121,7 @@ const WorldMap = () => {
 // ============================================================
 
 interface WorldCardProps {
-  world: WorldInfo;
+  world: (typeof WORLDS)[number];
   progress: { completed: number; total: number };
   pct: number;
   unlocked: boolean;
@@ -181,7 +150,7 @@ function WorldCard({ world, progress, pct, unlocked, current }: WorldCardProps) 
             : 'var(--bg-muted)',
         }}
       >
-        <span className="world-card__icon">{world.emoji}</span>
+        <span className="world-card__icon">{world.icon}</span>
         {!unlocked && (
           <span className="world-card__lock-overlay">
             <Lock size={28} />
