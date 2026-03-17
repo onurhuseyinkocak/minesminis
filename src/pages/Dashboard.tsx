@@ -74,6 +74,7 @@ function getCurrentLessonData(userId: string) {
     const firstWorld = WORLDS[0];
     return {
       worldName: firstWorld?.name || 'Hello World',
+      worldTheme: firstWorld?.theme || '',
       worldIcon: firstWorld?.icon || '',
       lessonName: 'All caught up!',
       currentLesson: firstWorld?.lessons.length || 10,
@@ -88,6 +89,7 @@ function getCurrentLessonData(userId: string) {
 
   return {
     worldName: world?.name || 'Unknown World',
+    worldTheme: world?.theme || '',
     worldIcon: world?.icon || '',
     lessonName: lesson?.title || 'Next Lesson',
     currentLesson: completedCount + 1,
@@ -264,6 +266,9 @@ export default function Dashboard() {
         <div className="continue-world-icon">{lesson.worldIcon}</div>
         <div className="continue-info">
           <div className="continue-world-name">{lesson.worldName}</div>
+          {lesson.worldTheme && (
+            <div className="continue-world-theme">{lesson.worldTheme}</div>
+          )}
           <h2 className="continue-lesson-name">{lesson.lessonName}</h2>
           <div className="continue-progress-row">
             <div className="continue-progress-bar">

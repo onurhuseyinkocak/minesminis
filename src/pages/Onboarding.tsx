@@ -11,10 +11,10 @@ import { GLINTS, GLINT_IDS } from '../config/GlintsConfig';
 import './Onboarding.css';
 
 const AGE_GROUPS = [
-  { value: 'toddler', range: '1-3', emoji: '🧒', label: 'Toddler', labelTr: 'Bebek' },
-  { value: 'preschool', range: '4-6', emoji: '🧒', label: 'Preschool', labelTr: 'Okul Oncesi' },
-  { value: 'early_primary', range: '7-8', emoji: '👧', label: 'Early Primary', labelTr: 'Ilk Okul' },
-  { value: 'late_primary', range: '9-10', emoji: '👦', label: 'Late Primary', labelTr: 'Ilk Okul+' },
+  { value: 'toddler', range: '1-3', emoji: '🧒', label: 'Toddler', labelTr: 'Bebek', color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.08)' },
+  { value: 'preschool', range: '4-6', emoji: '🧒', label: 'Preschool', labelTr: 'Okul Oncesi', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.08)' },
+  { value: 'early_primary', range: '7-8', emoji: '👧', label: 'Early Primary', labelTr: 'Ilk Okul', color: '#14b8a6', bgColor: 'rgba(20, 184, 166, 0.08)' },
+  { value: 'late_primary', range: '9-10', emoji: '👦', label: 'Late Primary', labelTr: 'Ilk Okul+', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.08)' },
 ];
 
 const AVATARS = [
@@ -172,12 +172,17 @@ const Onboarding: React.FC = () => {
                     key={ag.value}
                     type="button"
                     className={`onboarding-age-card ${ageGroup === ag.value ? 'selected' : ''}`}
+                    style={{
+                      borderColor: ageGroup === ag.value ? ag.color : undefined,
+                      background: ageGroup === ag.value ? ag.bgColor : undefined,
+                      boxShadow: ageGroup === ag.value ? `0 0 0 3px ${ag.color}25` : undefined,
+                    }}
                     onClick={() => setAgeGroup(ag.value)}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
                     <span className="onboarding-age-emoji">{ag.emoji}</span>
-                    <span className="onboarding-age-range">{ag.range}</span>
+                    <span className="onboarding-age-range" style={{ color: ag.color }}>{ag.range}</span>
                     <span className="onboarding-age-label">
                       {lang === 'en' ? ag.label : ag.labelTr}
                     </span>
@@ -195,6 +200,12 @@ const Onboarding: React.FC = () => {
                 >
                   {lang === 'en' ? 'Continue' : 'Devam Et'}
                 </Button>
+              </div>
+
+              <div className="onboarding-skip">
+                <button type="button" onClick={handleSkip}>
+                  {lang === 'en' ? 'Skip for now' : 'Simdilik atla'}
+                </button>
               </div>
             </motion.div>
           )}

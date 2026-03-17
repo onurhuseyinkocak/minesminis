@@ -160,8 +160,8 @@
 .landing-v2-ataturk-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 5px 12px;
   background: linear-gradient(135deg, #0a0a1a 0%, #16213e 60%, #1a365d 100%);
   border-radius: 100px;
   text-decoration: none;
@@ -169,7 +169,7 @@
   margin-bottom: 24px;
   border: 1.5px solid rgba(220, 38, 38, 0.3);
   transition: transform 0.3s, box-shadow 0.3s;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
 .landing-v2-ataturk-badge:hover {
@@ -178,14 +178,14 @@
 }
 
 .landing-v2-ataturk-badge img {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   border-radius: 50%;
 }
 
 .landing-v2-ataturk-badge .badge-label {
-  font-size: 0.65rem;
+  font-size: 0.55rem;
   font-weight: 700;
   color: #fca5a5;
   text-transform: uppercase;
@@ -193,7 +193,7 @@
 }
 
 .landing-v2-ataturk-badge .badge-name {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -273,7 +273,7 @@
   font-size: 1rem;
   border-radius: 100px;
   text-decoration: none;
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border, var(--border-light));
   transition: all 0.25s;
 }
 
@@ -285,7 +285,7 @@
 
 [data-theme="dark"] .hero-ghost-btn {
   color: rgba(255, 255, 255, 0.85);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 [data-theme="dark"] .hero-ghost-btn:hover {
@@ -520,11 +520,41 @@
   border-color: transparent;
 }
 
+/* ===== SECTION TRANSITIONS ===== */
+.landing-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--bg-soft, #f8f9fa));
+  pointer-events: none;
+}
+
+[data-theme="dark"] .landing-hero::after {
+  background: linear-gradient(to bottom, transparent, #0f0f1a);
+}
+
+.landing-features::before {
+  content: '';
+  display: block;
+  height: 40px;
+  margin-top: -40px;
+  background: linear-gradient(to bottom, var(--bg-soft, #f8f9fa), transparent);
+  pointer-events: none;
+}
+
+[data-theme="dark"] .landing-features::before {
+  background: linear-gradient(to bottom, #0f0f1a, transparent);
+}
+
 /* ===== FEATURES ===== */
 .landing-features {
   padding: 100px 24px 80px;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
 }
 
 .section-title {
@@ -582,18 +612,18 @@
 }
 
 .feature-card__icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: white;
 }
 
-.feature-card__emoji {
-  font-size: 32px;
-  line-height: 1;
+.feature-card__icon svg {
+  flex-shrink: 0;
 }
 
 .feature-card h3 {

@@ -112,13 +112,13 @@ describe('Curriculum Data', () => {
   // --------------------------------------------------
   describe('getWorldById', () => {
     it('returns the correct world for a valid ID', () => {
-      const world = getWorldById('world-1');
+      const world = getWorldById('w1');
       expect(world).toBeDefined();
       expect(world!.name).toBe('Hello World');
     });
 
     it('returns undefined for an unknown ID', () => {
-      expect(getWorldById('world-99')).toBeUndefined();
+      expect(getWorldById('w99')).toBeUndefined();
     });
 
     it('returns each world correctly', () => {
@@ -132,18 +132,18 @@ describe('Curriculum Data', () => {
 
   describe('getLessonById', () => {
     it('returns the correct lesson', () => {
-      const lesson = getLessonById('world-1', 'w1-l1');
+      const lesson = getLessonById('w1', 'w1-l1');
       expect(lesson).toBeDefined();
       expect(lesson!.id).toBe('w1-l1');
-      expect(lesson!.worldId).toBe('world-1');
+      expect(lesson!.worldId).toBe('w1');
     });
 
     it('returns undefined for an unknown lesson ID', () => {
-      expect(getLessonById('world-1', 'w1-l99')).toBeUndefined();
+      expect(getLessonById('w1', 'w1-l99')).toBeUndefined();
     });
 
     it('returns undefined for an unknown world ID', () => {
-      expect(getLessonById('world-99', 'w1-l1')).toBeUndefined();
+      expect(getLessonById('w99', 'w1-l1')).toBeUndefined();
     });
   });
 

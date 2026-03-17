@@ -33,6 +33,8 @@ import { useGamification } from '../contexts/GamificationContext';
 import { GameSelector } from '../components/games';
 import { getLessonById, getWorldById, getWorldVocabulary } from '../data/curriculum';
 import type { Activity, VocabularyWord } from '../data/curriculum';
+import { completeLesson } from '../data/progressTracker';
+import { useAuth } from '../contexts/AuthContext';
 import './LessonPlayer.css';
 
 // ============================================================
@@ -190,8 +192,8 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
       <div
         onClick={handleFlip}
         style={{
-          background: 'var(--surface-elevated, #fff)',
-          borderRadius: '1rem',
+          background: 'var(--bg-card)',
+          borderRadius: 'var(--radius-md)',
           padding: '2rem',
           textAlign: 'center',
           cursor: 'pointer',
@@ -201,8 +203,8 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
           alignItems: 'center',
           justifyContent: 'center',
           gap: '0.75rem',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-          border: '2px solid var(--border, #e0e0e0)',
+          boxShadow: 'var(--shadow-sm)',
+          border: '2px solid var(--border-light)',
           transition: 'transform 0.2s',
         }}
       >
@@ -211,7 +213,7 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
 
         {flipped ? (
           <>
-            <span style={{ fontSize: '1.4rem', color: 'var(--accent-emerald, #10b981)', fontWeight: 600 }}>
+            <span style={{ fontSize: '1.4rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>
               {word.turkish}
             </span>
             {word.phonetic && (
@@ -238,8 +240,8 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
           style={{
             padding: '0.75rem 1.5rem',
             borderRadius: '0.75rem',
-            border: '2px solid var(--border, #e0e0e0)',
-            background: 'var(--surface, #fff)',
+            border: '2px solid var(--border-light)',
+            background: 'var(--bg-card)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -255,8 +257,8 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
           style={{
             padding: '0.75rem 1.5rem',
             borderRadius: '0.75rem',
-            border: '2px solid var(--border, #e0e0e0)',
-            background: 'var(--surface, #fff)',
+            border: '2px solid var(--border-light)',
+            background: 'var(--bg-card)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -273,8 +275,8 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
             padding: '0.75rem 1.5rem',
             borderRadius: '0.75rem',
             border: 'none',
-            background: 'var(--primary, #6366f1)',
-            color: '#fff',
+            background: 'var(--primary)',
+            color: 'var(--text-on-primary)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -299,6 +301,8 @@ const LessonPlayer = () => {
   const { worldId = '', lessonId = '' } = useParams<{ worldId: string; lessonId: string }>();
   const navigate = useNavigate();
   const { addXP } = useGamification();
+  const { user } = useAuth();
+  const userId = user?.uid || 'guest';
 
   // Load real lesson data from curriculum
   const lesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
@@ -352,24 +356,18 @@ const LessonPlayer = () => {
         const totalXP = lesson.xpReward || 30;
         addXP(totalXP, 'lesson_completed', { lessonId, worldId });
 
-        // Save progress to localStorage
+        // Save progress via progressTracker (unlocks next lesson/world)
         try {
-          const progressKey = `minesminis_progress_${worldId}`;
-          const existing = JSON.parse(localStorage.getItem(progressKey) || '{}');
           const totalScore = [...activityScores, { score, total }].reduce((a, s) => a + s.score, 0);
           const totalPossible = [...activityScores, { score, total }].reduce((a, s) => a + s.total, 0);
-          existing[lessonId] = {
-            completedAt: new Date().toISOString(),
-            xpEarned: totalXP,
-            accuracy: totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100,
-          };
-          localStorage.setItem(progressKey, JSON.stringify(existing));
+          const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
+          completeLesson(userId, lessonId, worldId, totalXP, accuracy);
         } catch {
           // localStorage might be unavailable
         }
       }
     }, 1500);
-  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores]);
+  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId]);
 
   const handleXpEarned = useCallback((xp: number) => {
     addXP(xp, 'activity_completed', { lessonId, worldId });

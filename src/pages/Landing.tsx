@@ -173,12 +173,12 @@ const Landing: React.FC = () => {
   };
 
   const features = [
-    { icon: Gamepad2, title: t.featGames, desc: t.featGamesDesc, color: '#8b5cf6', emoji: '🎮', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' },
-    { icon: Book, title: t.featWords, desc: t.featWordsDesc, color: '#f59e0b', emoji: '📚', gradient: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)' },
-    { icon: Video, title: t.featVideos, desc: t.featVideosDesc, color: '#ef4444', emoji: '📺', gradient: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)' },
-    { icon: FileText, title: t.featSheets, desc: t.featSheetsDesc, color: '#14b8a6', emoji: '📝', gradient: 'linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%)' },
-    { icon: Trophy, title: t.featProgress, desc: t.featProgressDesc, color: '#ec4899', emoji: '🏆', gradient: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)' },
-    { icon: BookOpen, title: t.featStories, desc: t.featStoriesDesc, color: '#6366f1', emoji: '📖', gradient: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)' },
+    { Icon: Gamepad2, title: t.featGames, desc: t.featGamesDesc, color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' },
+    { Icon: Book, title: t.featWords, desc: t.featWordsDesc, color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)' },
+    { Icon: Video, title: t.featVideos, desc: t.featVideosDesc, color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)' },
+    { Icon: FileText, title: t.featSheets, desc: t.featSheetsDesc, color: '#14b8a6', gradient: 'linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%)' },
+    { Icon: Trophy, title: t.featProgress, desc: t.featProgressDesc, color: '#ec4899', gradient: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)' },
+    { Icon: BookOpen, title: t.featStories, desc: t.featStoriesDesc, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)' },
   ];
 
   return (
@@ -220,7 +220,7 @@ const Landing: React.FC = () => {
                 <span className="badge-label">{t.ataturkBadge}</span>
                 <span className="badge-name">{t.ataturkTitle}</span>
               </div>
-              <ArrowRight size={16} />
+              <ArrowRight size={14} />
             </Link>
 
             <motion.h1
@@ -376,7 +376,7 @@ const Landing: React.FC = () => {
               transition={{ delay: i * 0.08, duration: 0.5 }}
             >
               <div className="feature-card__icon" style={{ background: f.gradient }}>
-                <span className="feature-card__emoji">{f.emoji}</span>
+                <f.Icon size={26} color="white" />
               </div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>

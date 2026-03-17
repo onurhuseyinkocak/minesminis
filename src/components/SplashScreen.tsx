@@ -11,13 +11,13 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
 
   useEffect(() => {
     const showTimer = setTimeout(() => setShow(true), 50);
+    let completeTimer: ReturnType<typeof setTimeout> | undefined;
 
     const timer = setTimeout(() => {
       setFadeOut(true);
       completeTimer = setTimeout(onComplete, 400);
     }, 1800);
 
-    let completeTimer: ReturnType<typeof setTimeout> | undefined;
     return () => {
       clearTimeout(showTimer);
       clearTimeout(timer);

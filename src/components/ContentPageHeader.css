@@ -1,0 +1,124 @@
+/* ==========================================================================
+   CONTENT PAGE HEADER — MinesMinis Design System v4.0
+   Shared header for Games, Words, Videos, Worksheets pages.
+   Glass card with icon, title, filters, and optional actions slot.
+   ZERO hex colors. All var() tokens.
+   ========================================================================== */
+
+/* ---- OUTER WRAPPER ---- */
+.library-header-container {
+  width: 100%;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 72px; /* below TopNav */
+  z-index: var(--z-sticky);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- GLASS INNER ---- */
+.library-header-glass {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ---- TOP ROW: icon + title + actions ---- */
+.library-header-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* ---- TITLE SECTION ---- */
+.library-title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* ---- ICON BOX ---- */
+.library-icon-box {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-xs);
+}
+
+/* ---- TEXT BOX ---- */
+.library-text-box h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.library-text-box p {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ---- ACTIONS SECTION (search bars, stat boxes, etc.) ---- */
+.library-actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- FILTER SECTION (tabs, selects) ---- */
+.library-filter-section {
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border-light);
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 768px) {
+  .library-header-container {
+    top: 60px;
+    position: sticky;
+  }
+
+  .library-header-glass {
+    padding: var(--space-md);
+  }
+
+  .library-header-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .library-actions-section {
+    width: 100%;
+  }
+
+  .library-icon-box {
+    width: 44px;
+    height: 44px;
+  }
+
+  .library-text-box h1 {
+    font-size: 18px;
+  }
+
+  .library-text-box p {
+    font-size: 13px;
+  }
+}

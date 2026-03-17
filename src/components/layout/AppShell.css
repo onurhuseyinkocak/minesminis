@@ -26,9 +26,8 @@
 .app-shell__content {
   flex: 1;
   width: 100%;
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-lg) var(--space-3xl);
+  /* Each page manages its own max-width, padding, and spacing.
+     AppShell only provides the flex column structure. */
 }
 
 /* -- Desktop sidebar layout ------------------------------------------- */
@@ -120,10 +119,6 @@
     padding-bottom: 76px;
   }
 
-  .app-shell__content {
-    padding: var(--space-md) var(--space-md) var(--space-xl);
-  }
-
   .app-shell__sidebar {
     display: none;
   }
@@ -202,27 +197,11 @@
   }
 }
 
-/* -- Tablet ----------------------------------------------------------- */
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .app-shell__content {
-    padding: var(--space-lg) var(--space-xl) var(--space-2xl);
-    max-width: 768px;
-  }
-}
-
-/* -- Smart Board ------------------------------------------------------ */
+/* -- Smart Board (max-width only, no padding — pages manage their own) -- */
 
 @media (min-width: 1600px) {
   .app-shell__content {
     max-width: var(--container-wide);
-    padding: var(--space-xl) var(--space-2xl) var(--space-3xl);
-  }
-}
-
-@media (min-width: 1920px) {
-  .app-shell__content {
-    padding: var(--space-2xl) var(--space-2xl) var(--space-3xl);
   }
 }
 

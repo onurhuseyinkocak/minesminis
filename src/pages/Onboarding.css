@@ -136,6 +136,8 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-lg) var(--space-md);
+  min-height: 120px;
+  justify-content: center;
   background: var(--bg-card);
   border: 2px solid var(--border-light);
   border-radius: var(--radius-md);
@@ -448,7 +450,7 @@
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .onboarding-page {
     padding: var(--space-md);
     align-items: flex-start;
