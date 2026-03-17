@@ -31,6 +31,9 @@ export interface Database {
           points: number;
           badges: string[];
           streak_days: number;
+          level: number;
+          xp: number;
+          weekly_xp: number;
           last_login: string;
           is_online: boolean;
           settings: Record<string, unknown>;
@@ -48,6 +51,9 @@ export interface Database {
           points?: number;
           badges?: string[];
           streak_days?: number;
+          level?: number;
+          xp?: number;
+          weekly_xp?: number;
           last_login?: string;
           is_online?: boolean;
           settings?: Record<string, unknown>;
@@ -65,6 +71,9 @@ export interface Database {
           points?: number;
           badges?: string[];
           streak_days?: number;
+          level?: number;
+          xp?: number;
+          weekly_xp?: number;
           last_login?: string;
           is_online?: boolean;
           settings?: Record<string, unknown>;

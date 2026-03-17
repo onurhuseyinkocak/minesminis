@@ -120,21 +120,21 @@ const ParentDashboard: React.FC = () => {
   const overviewCards = useMemo(() => [
     {
       label: 'Words Learned',
-      value: stats.wordsLearned || 85,
+      value: stats.wordsLearned ?? 85,
       icon: <BookOpen size={22} />,
       color: 'var(--secondary)',
       bg: 'var(--secondary-pale)',
     },
     {
       label: 'Current Level',
-      value: stats.level || 5,
+      value: stats.level ?? 5,
       icon: <Star size={22} />,
       color: 'var(--primary)',
       bg: 'var(--primary-pale)',
     },
     {
       label: 'Streak Days',
-      value: stats.streakDays || 12,
+      value: stats.streakDays ?? 12,
       icon: <Flame size={22} />,
       color: 'var(--error)',
       bg: 'var(--error-pale)',

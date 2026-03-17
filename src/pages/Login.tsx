@@ -109,17 +109,35 @@ const Login: React.FC = () => {
         : await signUp(email, password);
 
       if (error) {
-        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+        const code = (error as { code?: string }).code ?? '';
+        const msg = error.message ?? '';
+        if (
+          code === 'auth/email-already-in-use' ||
+          msg.includes('already registered') ||
+          msg.includes('already exists')
+        ) {
           setError(t.errorAlreadyRegistered);
           setIsLogin(true);
-        } else if (error.message.includes('Invalid login credentials')) {
+        } else if (
+          code === 'auth/invalid-credential' ||
+          code === 'auth/wrong-password' ||
+          code === 'auth/user-not-found' ||
+          msg.includes('Invalid login credentials')
+        ) {
           setError(t.errorInvalidLogin);
+        } else if (code === 'auth/too-many-requests') {
+          setError(lang === 'en' ? 'Too many attempts. Please try again later.' : 'Cok fazla deneme. Lutfen daha sonra tekrar deneyin.');
+        } else if (code === 'auth/weak-password') {
+          setError(lang === 'en' ? 'Password is too weak. Use at least 6 characters.' : 'Sifre cok zayif. En az 6 karakter kullanin.');
+        } else if (code === 'auth/invalid-email') {
+          setError(lang === 'en' ? 'Invalid email address.' : 'Gecersiz e-posta adresi.');
         } else {
-          setError(error.message);
+          setError(msg || t.errorGeneric);
         }
       }
     } catch (err: unknown) {
-      if (err instanceof Error && err.message?.includes('already registered')) {
+      const code = (err as { code?: string }).code ?? '';
+      if (code === 'auth/email-already-in-use' || (err instanceof Error && err.message?.includes('already registered'))) {
         setError(t.errorAlreadyRegistered);
         setIsLogin(true);
       } else {

@@ -5,6 +5,7 @@ import { BookOpen, Volume2, Star, Trophy, Sparkles, Search } from "lucide-react"
 import ContentPageHeader from '../components/ContentPageHeader';
 import './Words.css';
 import { supabase } from '../config/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import { kidsWords as fallbackWords } from '../data/wordsData';
 
 interface WordDefinition {
@@ -39,7 +40,27 @@ interface KidsWord {
   example_audio_url?: string | null;
 }
 
+const LS_LEARNED_KEY = 'mimi_learned_words';
+
+function loadLearnedFromLS(): Set<string> {
+  try {
+    const raw = localStorage.getItem(LS_LEARNED_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveLearnedToLS(words: Set<string>) {
+  try {
+    localStorage.setItem(LS_LEARNED_KEY, JSON.stringify([...words]));
+  } catch {
+    // storage full - silently ignore
+  }
+}
+
 const Words: React.FC = () => {
+  const { user } = useAuth();
   const [searchWord, setSearchWord] = useState<string>("");
   const [wordData, setWordData] = useState<WordDefinition | null>(null);
   const [turkishTranslation, setTurkishTranslation] = useState<string>("");
@@ -48,7 +69,7 @@ const Words: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<'all' | 'beginner' | 'intermediate' | 'advanced'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedGrade, setSelectedGrade] = useState<number | 'all'>('all');
-  const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set());
+  const [learnedWords, setLearnedWords] = useState<Set<string>>(loadLearnedFromLS);
   const [favoriteWords, setFavoriteWords] = useState<Set<string>>(new Set());
   const [isLoadingAudio, setIsLoadingAudio] = useState<boolean>(false);
 
@@ -93,6 +114,33 @@ const Words: React.FC = () => {
   useEffect(() => {
     fetchKidsWords();
   }, []);
+
+  // Load favorites from Supabase when user is available
+  useEffect(() => {
+    if (!user) {
+      setFavoriteWords(new Set());
+      return;
+    }
+
+    const loadFavorites = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('favorites')
+          .select('item_id')
+          .eq('user_id', user.uid)
+          .eq('item_type', 'word');
+
+        if (error) throw error;
+        setFavoriteWords(new Set(data.map(f => f.item_id)));
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error loading word favorites:', error);
+        }
+      }
+    };
+
+    loadFavorites();
+  }, [user]);
 
   const fetchKidsWords = async () => {
     try {
@@ -223,18 +271,57 @@ const Words: React.FC = () => {
       toast.success('Awesome! Word learned! 🌟');
     }
     setLearnedWords(newLearned);
+    saveLearnedToLS(newLearned);
   };
 
-  const toggleFavorite = (word: string) => {
-    const newFavorites = new Set(favoriteWords);
-    if (newFavorites.has(word)) {
-      newFavorites.delete(word);
-      toast.success('Removed from favorites! ⭐');
-    } else {
-      newFavorites.add(word);
-      toast.success('Added to favorites! ❤️');
+  const toggleFavorite = async (word: string) => {
+    if (!user) {
+      toast.error('Please sign in to add favorites!');
+      return;
     }
-    setFavoriteWords(newFavorites);
+
+    const isFavorite = favoriteWords.has(word);
+
+    try {
+      if (isFavorite) {
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .eq('user_id', user.uid)
+          .eq('item_id', word)
+          .eq('item_type', 'word');
+
+        if (error) throw error;
+
+        setFavoriteWords(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(word);
+          return newSet;
+        });
+        toast.success('Removed from favorites! ⭐');
+      } else {
+        const kidsWord = kidsWords.find(w => w.word === word);
+        const { error } = await supabase
+          .from('favorites')
+          .insert({
+            user_id: user.uid,
+            item_type: 'word',
+            item_id: word,
+            item_name: word,
+            item_image: kidsWord?.image_url || null
+          });
+
+        if (error) throw error;
+
+        setFavoriteWords(prev => new Set(prev).add(word));
+        toast.success('Added to favorites! ❤️');
+      }
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Error toggling word favorite:', error);
+      }
+      toast.error('Failed to update favorites');
+    }
   };
 
   const getPartOfSpeechEmoji = (pos: string) => {

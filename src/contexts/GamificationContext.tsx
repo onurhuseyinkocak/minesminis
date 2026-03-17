@@ -260,6 +260,12 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                         lastDailyClaim: (settingsObj.last_daily_claim as string) || prev.lastDailyClaim,
                         lastWeeklyReset: (settingsObj.last_weekly_reset as string) || prev.lastWeeklyReset,
                         mascotId: (settingsObj.mascotId as string) || 'mimi_dragon',
+                        // Restore activity counters from server settings (fallback to local)
+                        wordsLearned: (settingsObj.wordsLearned as number) ?? prev.wordsLearned ?? 0,
+                        gamesPlayed: (settingsObj.gamesPlayed as number) ?? prev.gamesPlayed ?? 0,
+                        videosWatched: (settingsObj.videosWatched as number) ?? prev.videosWatched ?? 0,
+                        worksheetsCompleted: (settingsObj.worksheetsCompleted as number) ?? prev.worksheetsCompleted ?? 0,
+                        dailyChallengesCompleted: (settingsObj.dailyChallengesCompleted as number) ?? prev.dailyChallengesCompleted ?? 0,
                     };
 
                     // Save the merged result back to local
@@ -343,14 +349,17 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         // Track activity
         await trackActivity('xp_earned', { amount: totalXP, reason, streakBonus });
 
-        // Try to sync with server
+        // Try to sync with server (XP + weekly_xp via settings JSONB)
         if (user?.uid) {
             try {
+                const { data: curr } = await supabase.from('users').select('settings').eq('id', user.uid).maybeSingle();
+                const settings = { ...((curr?.settings || {}) as Record<string, unknown>), weekly_xp: newWeeklyXP };
                 await supabase
                     .from('users')
                     .update({
                         xp: newXP,
                         points: newXP,
+                        settings,
                     })
                     .eq('id', user.uid);
             } catch (error) {
@@ -619,8 +628,23 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         setStats(newStats);
         saveStatsLocally(newStats);
 
-        // Daily challenge tracking stored locally (no dedicated DB table)
-        // Could be moved to a DB table in the future
+        // Sync activity counters to server via settings JSONB
+        if (user?.uid) {
+            try {
+                const { data: curr } = await supabase.from('users').select('settings').eq('id', user.uid).maybeSingle();
+                const settings = {
+                    ...((curr?.settings || {}) as Record<string, unknown>),
+                    wordsLearned: newStats.wordsLearned,
+                    gamesPlayed: newStats.gamesPlayed,
+                    videosWatched: newStats.videosWatched,
+                    worksheetsCompleted: newStats.worksheetsCompleted,
+                    dailyChallengesCompleted: newStats.dailyChallengesCompleted,
+                };
+                await supabase.from('users').update({ settings }).eq('id', user.uid);
+            } catch (error) {
+                console.error('Error syncing activity counters:', error);
+            }
+        }
 
         // Check for new badges
         await checkAndAwardBadges();
