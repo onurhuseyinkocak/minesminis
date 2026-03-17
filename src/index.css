@@ -69,6 +69,16 @@
   --accent-red: #dc2626;
   --accent-red-dark: #991b1b;
 
+  /* ---- SOFT SEMANTIC (for badges/backgrounds) ---- */
+  --success-soft: rgba(67, 160, 71, 0.12);
+  --warning-soft: rgba(251, 140, 0, 0.12);
+  --secondary-glow: rgba(13, 92, 77, 0.3);
+  --shadow-color: rgba(26, 26, 46, 0.08);
+
+  /* ---- MISC TOKENS ---- */
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --radius-xs: 4px;
+
   /* ---- STORY WORLD COLORS ---- */
   --world-forest: #2D5A27;
   --world-ocean: #1A5276;
@@ -940,6 +950,11 @@ h1, h2, h3 {
   --info-pale: rgba(30, 136, 229, 0.12);
   --info-soft: rgba(30, 136, 229, 0.18);
   --info-light: #64B5F6;
+  --success-soft: rgba(67, 160, 71, 0.15);
+  --warning-soft: rgba(251, 140, 0, 0.15);
+  --secondary-glow: rgba(26, 138, 120, 0.2);
+  --shadow-color: rgba(0, 0, 0, 0.25);
+
   --accent-purple: #a78bfa;
   --accent-purple-light: #c4b5fd;
   --accent-purple-pale: rgba(139, 92, 246, 0.12);
