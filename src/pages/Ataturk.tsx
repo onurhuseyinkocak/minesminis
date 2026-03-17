@@ -215,8 +215,7 @@ function Ataturk() {
               key={i}
               className="gallery-item"
               initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ scale: 1.05, y: -10 }}
             >
@@ -239,8 +238,7 @@ function Ataturk() {
             alt="Atatürk"
             className="intro-image ataturk-photo"
             initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, x: 0 }}
           />
           <div className="intro-text">
             <div className="intro-icon">
@@ -266,8 +264,7 @@ function Ataturk() {
             alt="Atatürk"
             className="quotes-portrait ataturk-photo"
             initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, scale: 1 }}
           />
           <h2>
             <Quote size={28} />
@@ -280,8 +277,7 @@ function Ataturk() {
               key={index}
               className="quote-card"
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.15 }}
               whileHover={{ y: -5 }}
             >
@@ -311,16 +307,14 @@ function Ataturk() {
             alt="Atatürk on Horse"
             className="timeline-img-left ataturk-photo"
             initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, x: 0 }}
           />
           <motion.img
             src={ataturkRepublic}
             alt="Atatürk Republic"
             className="timeline-img-right ataturk-photo"
             initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, x: 0 }}
           />
         </div>
 
@@ -332,8 +326,7 @@ function Ataturk() {
                 key={index}
                 className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.2 }}
               >
                 <div className="timeline-content">
@@ -364,8 +357,7 @@ function Ataturk() {
             alt="Turkish Flag with Atatürk"
             className="reforms-flag ataturk-photo"
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
           />
           <h2>
             <Award size={28} />
@@ -380,8 +372,7 @@ function Ataturk() {
               key={index}
               className="reform-card"
               initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -8, scale: 1.02 }}
             >
@@ -406,8 +397,7 @@ function Ataturk() {
             alt="Atatürk Saluting"
             className="legacy-image ataturk-photo"
             initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, scale: 1 }}
           />
           <div className="legacy-text">
             <h2>

@@ -1,460 +1,480 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import {
-  Languages, ArrowRight, Star, BookOpen, Shield, Monitor,
-  Gamepad2, Sparkles, GraduationCap, Heart,
-} from 'lucide-react';
-import { Button } from '../components/ui';
-import Footer from '../components/layout/Footer';
-import mimiImage from '../assets/bear/mimi_mascot_4k.png';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
+import { Sparkles, Rocket, Book, Zap, Gamepad2, Video, FileText, Trophy, Languages, ArrowRight, X, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import UnifiedMascot, { MascotState } from '../components/UnifiedMascot';
+import { mascotRoaming } from '../services/mascotRoaming';
+import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';
+import { GLINTS } from '../config/GlintsConfig';
 import './Landing.css';
 
 type Lang = 'en' | 'tr';
+type AnimationState = 'idle' | 'walking' | 'dancing' | 'celebrating' | 'waving' | 'sleeping' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping' | 'following' | 'goingHome';
 
 const content = {
   en: {
-    navCta: 'Get Started',
-    heroBadge: 'Premium English for Ages 1-10',
-    heroTitle1: 'Little Words,',
-    heroTitle2: 'Big Worlds',
-    heroSub: 'A magical English learning journey guided by Mimi the dragon. Curriculum-based, research-backed, and designed for curious little minds.',
-    heroCta: 'Start Your Adventure',
-    heroSecondary: 'Learn More',
-    worldsTag: 'Explore Worlds',
-    worldsTitle: 'Every World is a New Adventure',
-    worldsSub: 'From first words to confident sentences, Mimi guides your child through themed worlds full of games, stories, and discovery.',
-    world1: 'Hello World',
-    world1Desc: 'First words, greetings, colors and numbers',
-    world1Age: 'Ages 1-3',
-    world2: 'My Family',
-    world2Desc: 'Family members, home, daily routines',
-    world2Age: 'Ages 3-5',
-    world3: 'Animal Kingdom',
-    world3Desc: 'Animals, nature, habitats and sounds',
-    world3Age: 'Ages 4-7',
-    world4: 'Story Town',
-    world4Desc: 'Reading, storytelling, creative expression',
-    world4Age: 'Ages 6-10',
-    howTag: 'How It Works',
-    howTitle: 'Start Learning in 3 Simple Steps',
-    howStep1: 'Choose Age Group',
-    howStep1Desc: 'We tailor the experience to your child\'s level and learning style.',
-    howStep2: 'Meet Mimi',
-    howStep2Desc: 'Your child\'s friendly dragon guide who makes learning feel like play.',
-    howStep3: 'Start the Adventure',
-    howStep3Desc: 'Explore worlds, play games, and watch English skills blossom.',
-    featTag: 'Why MinesMinis',
-    featTitle: 'Built for Real Learning',
-    feat1: 'Curriculum-Based',
-    feat1Desc: 'Aligned with national education standards. Every game teaches purposefully.',
-    feat2: 'Smart Board Ready',
-    feat2Desc: 'Works beautifully on classroom smart boards with large touch targets.',
-    feat3: 'Safe for Kids',
-    feat3Desc: 'No ads, no external links, no data collection. COPPA compliant.',
-    feat4: 'Fun & Engaging',
-    feat4Desc: 'Games, stories, songs and rewards that keep children motivated.',
-    trustTitle: 'Trusted by Parents & Teachers',
-    trustStat1: '1,000+',
-    trustLabel1: 'Active Learners',
-    trustStat2: '50+',
-    trustLabel2: 'Schools',
-    trustStat3: '4.9',
-    trustLabel3: 'Parent Rating',
-    ctaTitle: 'Ready to Begin the Adventure?',
-    ctaSub: 'Join thousands of families learning English the fun way with Mimi.',
-    ctaBtn: 'Start Free Today',
+    mimiBubble: 'Hi! I\'m Mimi 👋 Login to play with me!',
+    mimiClickTitle: 'Come play with Mimi! 🐲',
+    mimiClickMsg: 'Login to start your English adventure. Games, videos, words — all waiting for you!',
+    heroTitle: 'Learn English with MinesMinis',
+    heroSub: 'Fun games, videos, words and worksheets. Your child learns step by step.',
+    heroCta: 'Login to start',
+    featuresTitle: 'What you can do here',
+    featuresSub: 'Everything your child needs to learn English in a fun way.',
+    featGames: 'Games',
+    featGamesDesc: 'Play fun learning games',
+    featWords: 'Words',
+    featWordsDesc: 'Learn new words',
+    featVideos: 'Videos',
+    featVideosDesc: 'Watch learning videos',
+    featSheets: 'Worksheets',
+    featSheetsDesc: 'Practice with worksheets',
+    featProgress: 'Progress',
+    featProgressDesc: 'Track your progress',
+    featStories: 'Stories',
+    featStoriesDesc: 'Listen to daily stories',
+    glintsTitle: 'The Glints',
+    glintsSub: 'Choose your learning buddy. Each one gives you special powers on the site.',
+    ataturkBadge: 'Our Beloved Leader',
+    ataturkTitle: 'Mustafa Kemal Atatürk',
+    loginBtn: 'Login',
   },
   tr: {
-    navCta: 'Basla',
-    heroBadge: '1-10 Yas Arasi Premium Ingilizce',
-    heroTitle1: 'Kucuk Kelimeler,',
-    heroTitle2: 'Buyuk Dunyalar',
-    heroSub: 'Ejderha Mimi rehberliginde sihirli bir Ingilizce ogrenme yolculugu. Mufredata dayali, arastirmalarla desteklenmis ve merakli kucuk beyinler icin tasarlanmis.',
-    heroCta: 'Maceraya Basla',
-    heroSecondary: 'Daha Fazla',
-    worldsTag: 'Dunyelari Kesfet',
-    worldsTitle: 'Her Dunya Yeni Bir Macera',
-    worldsSub: 'Ilk kelimelerden guveni cumlelerine, Mimi cocugunuzu oyunlar, hikayeler ve kesflerle dolu tematik dunyalarda yonlendirir.',
-    world1: 'Merhaba Dunya',
-    world1Desc: 'Ilk kelimeler, selamlasmalar, renkler ve sayilar',
-    world1Age: '1-3 Yas',
-    world2: 'Ailem',
-    world2Desc: 'Aile uyeleri, ev, gunluk rutinler',
-    world2Age: '3-5 Yas',
-    world3: 'Hayvanlar Alemi',
-    world3Desc: 'Hayvanlar, doga, yasam alanlari ve sesler',
-    world3Age: '4-7 Yas',
-    world4: 'Hikaye Kasabasi',
-    world4Desc: 'Okuma, hikaye anlatma, yaratici ifade',
-    world4Age: '6-10 Yas',
-    howTag: 'Nasil Calisir',
-    howTitle: '3 Basit Adimda Ogrenmeye Basla',
-    howStep1: 'Yas Grubunu Sec',
-    howStep1Desc: 'Deneyimi cocugunuzun seviyesine ve ogrenme tarzina gore uyarliyoruz.',
-    howStep2: 'Mimi ile Tanis',
-    howStep2Desc: 'Cocugunuzun ogrenmeyi oyun gibi hissettiren sevimli ejderha rehberi.',
-    howStep3: 'Maceraya Basla',
-    howStep3Desc: 'Dunyelari kesfet, oyunlar oyna ve Ingilizce becerilerin cicelenmesini izle.',
-    featTag: 'Neden MinesMinis',
-    featTitle: 'Gercek Ogrenme Icin Tasarlandi',
-    feat1: 'Mufredata Dayali',
-    feat1Desc: 'Ulusal egitim standartlariyla uyumlu. Her oyun amacli ogretir.',
-    feat2: 'Akilli Tahta Uyumlu',
-    feat2Desc: 'Sinif akilli tahtalarinda buyuk dokunma hedefleriyle harika calisir.',
-    feat3: 'Cocuklar Icin Guvenli',
-    feat3Desc: 'Reklam yok, harici link yok, veri toplama yok. COPPA uyumlu.',
-    feat4: 'Eglenceli & Ilgi Cekici',
-    feat4Desc: 'Cocuklari motive eden oyunlar, hikayeler, sarkilar ve oduller.',
-    trustTitle: 'Ebeveynler ve Ogretmenler Tarafindan Guveniliyor',
-    trustStat1: '1.000+',
-    trustLabel1: 'Aktif Ogrenci',
-    trustStat2: '50+',
-    trustLabel2: 'Okul',
-    trustStat3: '4.9',
-    trustLabel3: 'Ebeveyn Puani',
-    ctaTitle: 'Maceraya Baslamaya Hazir misin?',
-    ctaSub: 'Mimi ile eglenceli yoldan Ingilizce ogrenen binlerce aileye katil.',
-    ctaBtn: 'Ucretsiz Basla',
+    mimiBubble: 'Merhaba! Ben Mimi 👋 Benimle oynamak için giriş yap!',
+    mimiClickTitle: 'Mimi ile oynayalım! 🐲',
+    mimiClickMsg: 'İngilizce macerana başlamak için giriş yap. Oyunlar, videolar, kelimeler — hepsi seni bekliyor!',
+    heroTitle: 'MinesMinis ile İngilizce Öğren',
+    heroSub: 'Eğlenceli oyunlar, videolar, kelimeler ve çalışma sayfaları. Çocuğunuz adım adım öğrenir.',
+    heroCta: 'Başlamak için giriş yap',
+    featuresTitle: 'Burada neler yapabilirsiniz',
+    featuresSub: 'Çocuğunuzun eğlenceli İngilizce öğrenmesi için ihtiyaç duyduğu her şey.',
+    featGames: 'Oyunlar',
+    featGamesDesc: 'Eğlenceli öğrenme oyunları oyna',
+    featWords: 'Kelimeler',
+    featWordsDesc: 'Yeni kelimeler öğren',
+    featVideos: 'Videolar',
+    featVideosDesc: 'Öğrenme videoları izle',
+    featSheets: 'Çalışma Sayfaları',
+    featSheetsDesc: 'Çalışma sayfalarıyla pratik yap',
+    featProgress: 'İlerleme',
+    featProgressDesc: 'İlerlemeni takip et',
+    featStories: 'Hikayeler',
+    featStoriesDesc: 'Günlük hikayeler dinle',
+    glintsTitle: 'Glintler',
+    glintsSub: 'Öğrenme arkadaşını seç. Her biri sitede sana özel güçler verir.',
+    ataturkBadge: 'Sevgili Liderimiz',
+    ataturkTitle: 'Mustafa Kemal Atatürk',
+    loginBtn: 'Giriş Yap',
   },
 };
 
-/* Animated counter hook */
-const useAnimatedCounter = (target: number, duration: number, inView: boolean) => {
-  const [count, setCount] = useState(0);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    if (!inView || hasAnimated.current) return;
-    hasAnimated.current = true;
-    const steps = 60;
-    const stepTime = duration / steps;
-    let current = 0;
-    const increment = target / steps;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(current));
-      }
-    }, stepTime);
-    return () => clearInterval(timer);
-  }, [inView, target, duration]);
-
-  return count;
+const mapState = (state: AnimationState): MascotState => {
+  switch (state) {
+    case 'following':
+    case 'walking':
+    case 'goingHome':
+      return 'walking';
+    case 'singing':
+      return 'laughing';
+    case 'surprised':
+      return 'surprised';
+    case 'jumping':
+      return 'jumping';
+    case 'celebrating':
+      return 'celebrating';
+    case 'dancing':
+      return 'dancing';
+    case 'sleeping':
+      return 'sleeping';
+    case 'waving':
+      return 'waving';
+    case 'laughing':
+      return 'laughing';
+    case 'thinking':
+      return 'thinking';
+    case 'love':
+      return 'love';
+    default:
+      return 'idle';
+  }
 };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
-  }),
-};
-
-const Landing = () => {
-  const [lang, setLang] = useState<Lang>('tr');
+const Landing: React.FC = () => {
+  const navigate = useNavigate();
+  const [lang, setLang] = useState<Lang>('en');
   const t = content[lang];
 
-  const trustRef = useRef<HTMLDivElement>(null);
-  const trustInView = useInView(trustRef, { once: true });
-  const animatedLearners = useAnimatedCounter(1000, 1500, trustInView);
-  const animatedSchools = useAnimatedCounter(50, 1200, trustInView);
+  // Mimi modal (on click → show info, redirect to login)
+  const [showMimiModal, setShowMimiModal] = useState(false);
 
-  const worlds = [
-    { emoji: '🌍', name: t.world1, desc: t.world1Desc, age: t.world1Age, bg: 'var(--success-pale)' },
-    { emoji: '🏠', name: t.world2, desc: t.world2Desc, age: t.world2Age, bg: 'var(--warning-pale)' },
-    { emoji: '🦁', name: t.world3, desc: t.world3Desc, age: t.world3Age, bg: 'var(--info-pale)' },
-    { emoji: '📖', name: t.world4, desc: t.world4Desc, age: t.world4Age, bg: 'var(--error-pale)' },
-  ];
+  // Roaming Mimi state
+  const [position, setPosition] = useState({ x: 85, y: 75 });
+  const [animationState, setAnimationState] = useState<AnimationState>('idle');
+  const [speechBubble, setSpeechBubble] = useState<{ message: string; duration: number } | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const howSteps = [
-    { icon: '🎂', title: t.howStep1, desc: t.howStep1Desc },
-    { icon: '🐉', title: t.howStep2, desc: t.howStep2Desc },
-    { icon: '🚀', title: t.howStep3, desc: t.howStep3Desc },
-  ];
+  useEffect(() => {
+    const initialState = mascotRoaming.getCurrentState();
+    setPosition({ ...initialState.position });
+    setAnimationState(initialState.state as AnimationState);
+    setSpeechBubble(initialState.bubble);
 
+    const unsubscribe = mascotRoaming.onChange((newPos, newState, _, newBubble) => {
+      setPosition({ ...newPos });
+      setAnimationState(newState as AnimationState);
+      setSpeechBubble(newBubble);
+    });
+
+    mascotRoaming.startRoaming();
+
+    return () => {
+      unsubscribe();
+      mascotRoaming.stopRoaming();
+    };
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const x = (e.clientX / window.innerWidth) * 100;
+    const y = (e.clientY / window.innerHeight) * 100;
+    mascotRoaming.updateMousePosition(x, y);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [handleMouseMove]);
+
+  const handleMimiClick = () => {
+    mascotRoaming.triggerCelebration();
+    setShowMimiModal(true);
+  };
+
+  const handleGoToLogin = () => {
+    setShowMimiModal(false);
+    navigate('/login');
+  };
+
+  const glintList = Object.values(GLINTS);
+  const [activeGlintIndex, setActiveGlintIndex] = useState(0);
+  const touchStartX = React.useRef(0);
+
+  const goPrev = () => setActiveGlintIndex((i) => (i - 1 + glintList.length) % glintList.length);
+  const goNext = () => setActiveGlintIndex((i) => (i + 1) % glintList.length);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) {
+      if (dx > 0) goNext();
+      else goPrev();
+    }
+  };
   const features = [
-    { icon: <GraduationCap size={28} />, title: t.feat1, desc: t.feat1Desc, variant: 'amber' as const },
-    { icon: <Monitor size={28} />, title: t.feat2, desc: t.feat2Desc, variant: 'teal' as const },
-    { icon: <Shield size={28} />, title: t.feat3, desc: t.feat3Desc, variant: 'green' as const },
-    { icon: <Gamepad2 size={28} />, title: t.feat4, desc: t.feat4Desc, variant: 'blue' as const },
+    { icon: Gamepad2, title: t.featGames, desc: t.featGamesDesc, color: '#8b5cf6', emoji: '🎮', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' },
+    { icon: Book, title: t.featWords, desc: t.featWordsDesc, color: '#f59e0b', emoji: '📚', gradient: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)' },
+    { icon: Video, title: t.featVideos, desc: t.featVideosDesc, color: '#ef4444', emoji: '📺', gradient: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)' },
+    { icon: FileText, title: t.featSheets, desc: t.featSheetsDesc, color: '#14b8a6', emoji: '📝', gradient: 'linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%)' },
+    { icon: Trophy, title: t.featProgress, desc: t.featProgressDesc, color: '#ec4899', emoji: '🏆', gradient: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)' },
+    { icon: BookOpen, title: t.featStories, desc: t.featStoriesDesc, color: '#8b5cf6', emoji: '📖', gradient: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)' },
+  ];
+
+  const funCards = [
+    { emoji: '🌈', text: lang === 'en' ? 'Lots of fun!' : 'Bolca eğlence!' },
+    { emoji: '✨', text: lang === 'en' ? 'Learn and play' : 'Öğren ve oyna' },
+    { emoji: '🎯', text: lang === 'en' ? 'New words every day' : 'Her gün yeni kelimeler' },
+    { emoji: '🦋', text: lang === 'en' ? 'Friendly friends' : 'Sevimli arkadaşlar' },
   ];
 
   return (
-    <div className="landing-page">
-      {/* Language Toggle */}
-      <div className="landing-lang-toggle">
+    <div className="landing-v2">
+      {/* Language toggle */}
+      <motion.div
+        className="landing-v2-lang"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
         <Languages size={16} />
         <button className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
         <button className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
-      </div>
+      </motion.div>
 
-      {/* Navbar */}
-      <nav className="landing-nav">
-        <Link to="/" className="landing-nav-brand">
-          <Sparkles size={24} color="var(--primary)" />
-          <span className="landing-nav-logo">Mines<span>Minis</span></span>
-        </Link>
-        <Link to="/login" className="landing-nav-cta">
-          <Button variant="primary" size="sm" icon={<ArrowRight size={16} />}>
-            {t.navCta}
-          </Button>
-        </Link>
-      </nav>
-
-      {/* ===== HERO ===== */}
-      <section className="landing-hero">
-        <div className="landing-hero-inner">
-          <div className="landing-hero-text">
-            <motion.div
-              className="landing-hero-badge"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-            >
-              <Star size={14} /> {t.heroBadge}
-            </motion.div>
+      {/* Hero + Glints - single grid, equal cells */}
+      <section className="landing-v2-hero-grid landing-v2-unified-grid">
+        <div className="hero-glow" />
+        {/* Left: Hero (compact) */}
+        <div className="hero-cell">
+          <div className="hero-content">
+            <Link to="/ataturk" className="landing-v2-ataturk-badge">
+              <img src={ataturkFormal} alt="" />
+              <div>
+                <span className="badge-label">{t.ataturkBadge}</span>
+                <span className="badge-name">{t.ataturkTitle}</span>
+              </div>
+              <ArrowRight size={18} />
+            </Link>
 
             <motion.h1
-              className="landing-hero-title"
-              initial={{ opacity: 0, y: 30 }}
+              className="hero-title"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ duration: 0.6 }}
             >
-              {t.heroTitle1}<br />
-              <span className="highlight">{t.heroTitle2}</span>
+              {t.heroTitle}
             </motion.h1>
-
             <motion.p
-              className="landing-hero-sub"
+              className="hero-sub"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
               {t.heroSub}
             </motion.p>
-
             <motion.div
-              className="landing-hero-actions"
+              className="hero-cta-row"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.4 }}
             >
-              <Link to="/login">
-                <Button variant="primary" size="lg" icon={<ArrowRight size={20} />}>
-                  {t.heroCta}
-                </Button>
+              <Link to="/login" className="hero-cta-btn">
+                <Rocket size={20} /> {t.heroCta}
               </Link>
-              <a href="#how-it-works">
-                <Button variant="ghost" size="lg" icon={<BookOpen size={20} />}>
-                  {t.heroSecondary}
-                </Button>
-              </a>
             </motion.div>
           </div>
+        </div>
 
-          <motion.div
-            className="landing-hero-illustration"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.7 }}
-          >
-            <div className="landing-hero-mimi">
-              <motion.img
-                src={mimiImage}
-                alt="Mimi the Dragon"
-                className="landing-hero-mimi-img"
-                style={{ width: 220, height: 220, objectFit: 'contain', filter: 'drop-shadow(0 8px 24px rgba(126,217,87,0.3))' }}
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+        {/* Right: Glints carousel - animasyonlu, peek, sohbet balonu */}
+        <div className="glints-cell">
+          <h3 className="glints-cell-title">
+            <Sparkles size={18} /> {t.glintsTitle}
+          </h3>
+          <p className="glints-cell-sub">{t.glintsSub}</p>
+
+          <div className="glints-carousel">
+            <button
+              type="button"
+              className="glints-nav prev"
+              onClick={goPrev}
+              aria-label="Previous"
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            <div
+              className="glints-carousel-track"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              {glintList.map((g, idx) => {
+                const offset = (idx - activeGlintIndex + glintList.length) % glintList.length;
+                const isPrev = offset === glintList.length - 1;
+                const isActive = offset === 0;
+                const isNext = offset === 1;
+                const visible = isPrev || isActive || isNext;
+
+                if (!visible) return null;
+
+                return (
+                  <motion.div
+                    key={g.id}
+                    className={`glint-slide ${isActive ? 'active' : ''} ${isPrev ? 'prev' : ''} ${isNext ? 'next' : ''}`}
+                    style={{ '--glint-color': g.color } as React.CSSProperties}
+                    initial={false}
+                    animate={{
+                      x: isPrev ? -130 : isNext ? 130 : 0,
+                      y: '-50%',
+                      scale: isActive ? 1 : 0.78,
+                      opacity: isActive ? 1 : 0.55,
+                      zIndex: isActive ? 3 : isPrev ? 1 : 2,
+                    }}
+                    transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                  >
+                    {isActive && (
+                      <motion.div
+                        className="glint-speech-bubble"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        {g.story}
+                      </motion.div>
+                    )}
+                    <motion.div
+                      className="glint-visual"
+                      animate={{ y: [0, -6, 0] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <div className="glint-glow" style={{ backgroundColor: g.color }} />
+                      <UnifiedMascot id={g.id} state="idle" size={isActive ? 140 : 90} />
+                    </motion.div>
+                    <span className="glint-slide-name">{g.name}</span>
+                    <span className="glint-slide-benefit">{g.benefit}</span>
+                    {isActive && (
+                      <button
+                        type="button"
+                        className="glint-select-hint"
+                        onClick={() => navigate('/login')}
+                      >
+                        {t.loginBtn} →
+                      </button>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              className="glints-nav next"
+              onClick={goNext}
+              aria-label="Next"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+
+          <div className="glints-dots">
+            {glintList.map((g, idx) => (
+              <button
+                key={g.id}
+                type="button"
+                className={`dot ${idx === activeGlintIndex ? 'active' : ''}`}
+                style={{ backgroundColor: idx === activeGlintIndex ? g.color : undefined }}
+                onClick={() => setActiveGlintIndex(idx)}
+                aria-label={g.name}
               />
-              <span className="landing-hero-float">✨</span>
-              <span className="landing-hero-float">⭐</span>
-              <span className="landing-hero-float">🌟</span>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===== WORLDS PREVIEW ===== */}
-      <section className="landing-worlds">
-        <div className="landing-worlds-inner">
-          <div className="landing-section-header">
-            <motion.div className="landing-section-tag" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <BookOpen size={16} /> {t.worldsTag}
-            </motion.div>
-            <motion.h2 className="landing-section-title" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}>
-              {t.worldsTitle}
-            </motion.h2>
-            <motion.p className="landing-section-sub" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}>
-              {t.worldsSub}
-            </motion.p>
-          </div>
-
-          <div className="landing-worlds-grid">
-            {worlds.map((w, i) => (
-              <motion.div
-                key={w.name}
-                className="landing-world-card mm-card mm-card--elevated"
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={i}
-              >
-                <div className="landing-world-visual" style={{ background: w.bg }}>
-                  {w.emoji}
-                </div>
-                <div className="landing-world-info">
-                  <h3 className="landing-world-name">{w.name}</h3>
-                  <p className="landing-world-desc">{w.desc}</p>
-                  <span className="landing-world-age">{w.age}</span>
-                </div>
-              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ===== HOW IT WORKS ===== */}
-      <section className="landing-how" id="how-it-works">
-        <div className="landing-how-inner">
-          <div className="landing-section-header">
-            <motion.div className="landing-section-tag" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <Heart size={16} /> {t.howTag}
+      {/* Features - premium cards */}
+      <section className="landing-v2-features">
+        <h2 className="section-title">{t.featuresTitle}</h2>
+        <p className="section-sub">{t.featuresSub}</p>
+        <div className="features-grid features-grid-premium">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.title}
+              className="feature-card feature-card-premium"
+              style={{ '--accent': f.color, '--gradient': f.gradient } as React.CSSProperties}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08, duration: 0.5 }}
+            >
+              <div className="feature-icon-premium">
+                <f.icon size={32} strokeWidth={2.5} />
+              </div>
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
             </motion.div>
-            <motion.h2 className="landing-section-title" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}>
-              {t.howTitle}
-            </motion.h2>
-          </div>
-
-          <div className="landing-how-grid">
-            <div className="landing-how-connector" />
-            <div className="landing-how-connector" />
-            {howSteps.map((s, i) => (
-              <motion.div
-                key={s.title}
-                className="landing-how-step"
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={i}
-              >
-                <div className="landing-how-number">{i + 1}</div>
-                <div className="landing-how-icon">{s.icon}</div>
-                <h3>{s.title}</h3>
-                <p>{s.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+          ))}
         </div>
-      </section>
 
-      {/* ===== FEATURES ===== */}
-      <section className="landing-features">
-        <div className="landing-features-inner">
-          <div className="landing-section-header">
-            <motion.div className="landing-section-tag" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <Sparkles size={16} /> {t.featTag}
+        {/* Fun cards grid */}
+        <div className="fun-cards-grid">
+          {funCards.map((c, i) => (
+            <motion.div
+              key={c.text}
+              className="fun-card"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 + i * 0.05 }}
+            >
+              <span className="fun-card-emoji">{c.emoji}</span>
+              <span className="fun-card-text">{c.text}</span>
             </motion.div>
-            <motion.h2 className="landing-section-title" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}>
-              {t.featTitle}
-            </motion.h2>
-          </div>
-
-          <div className="landing-features-grid">
-            {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                className="landing-feature-card"
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={i}
-              >
-                <div className={`landing-feature-icon landing-feature-icon--${f.variant}`}>
-                  {f.icon}
-                </div>
-                <h3>{f.title}</h3>
-                <p>{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* ===== SOCIAL PROOF ===== */}
-      <section className="landing-trust" ref={trustRef}>
-        <div className="landing-trust-inner">
-          <motion.h2
-            className="landing-trust-title"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {t.trustTitle}
-          </motion.h2>
-          <motion.div
-            className="landing-trust-stats"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            custom={1}
-          >
-            <div className="landing-trust-stat">
-              <span className="landing-trust-stat-number">{animatedLearners.toLocaleString()}+</span>
-              <span className="landing-trust-stat-label">{t.trustLabel1}</span>
-            </div>
-            <div className="landing-trust-stat">
-              <span className="landing-trust-stat-number">{animatedSchools}+</span>
-              <span className="landing-trust-stat-label">{t.trustLabel2}</span>
-            </div>
-            <div className="landing-trust-stat">
-              <span className="landing-trust-stat-number">{t.trustStat3}</span>
-              <span className="landing-trust-stat-label">{t.trustLabel3}</span>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===== BOTTOM CTA ===== */}
-      <section className="landing-cta">
+      {/* Bottom CTA - login centered */}
+      <section className="landing-v2-bottom-cta">
         <motion.div
-          className="landing-cta-inner"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
+          className="bottom-cta-box"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <motion.img
-            src={mimiImage}
-            alt="Mimi the Dragon"
-            className="landing-cta-mimi"
-            style={{ width: 100, height: 100, objectFit: 'contain' }}
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-          <h2 className="landing-cta-title">{t.ctaTitle}</h2>
-          <p className="landing-cta-sub">{t.ctaSub}</p>
-          <Link to="/login">
-            <Button variant="primary" size="lg" icon={<ArrowRight size={20} />}>
-              {t.ctaBtn}
-            </Button>
-          </Link>
+          <Zap size={28} />
+          <h3>{lang === 'en' ? 'Ready to start?' : 'Başlamaya hazır mısın?'}</h3>
+          <div className="bottom-cta-btn-wrap">
+            <Link to="/login" className="bottom-cta-btn">
+              {t.loginBtn} <ArrowRight size={18} />
+            </Link>
+          </div>
         </motion.div>
       </section>
 
-      <Footer />
+      {/* Roaming Mimi - clickable, redirects to login */}
+      <motion.div
+        className="landing-v2-mimi"
+        style={{
+          left: `${position.x}%`,
+          top: `${position.y}%`,
+          transform: 'translate(-50%, -50%)',
+          transition: animationState === 'following'
+            ? 'left 0.3s ease-out, top 0.3s ease-out'
+            : (animationState === 'walking' || animationState === 'goingHome')
+              ? 'left 4s cubic-bezier(0.25, 0.1, 0.25, 1), top 4s cubic-bezier(0.25, 0.1, 0.25, 1)'
+              : 'none',
+        }}
+      >
+        <div
+          className="landing-v2-mimi-click"
+          onClick={handleMimiClick}
+          onMouseEnter={() => { setIsHovered(true); mascotRoaming.onHover(); }}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {speechBubble && (
+            <div className="landing-v2-mimi-bubble">{speechBubble.message}</div>
+          )}
+          <UnifiedMascot
+            id="mimi_dragon"
+            state={mapState(animationState)}
+            isHovered={isHovered}
+            size={100}
+          />
+        </div>
+      </motion.div>
+
+      {/* Mimi click modal - info + redirect to login */}
+      <AnimatePresence>
+        {showMimiModal && (
+          <motion.div
+            className="landing-v2-mimi-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowMimiModal(false)}
+          >
+            <motion.div
+              className="landing-v2-mimi-modal"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="modal-close" onClick={() => setShowMimiModal(false)} aria-label="Close">
+                <X size={22} />
+              </button>
+              <div className="modal-mascot">
+                <UnifiedMascot id="mimi_dragon" state="celebrating" size={100} />
+              </div>
+              <h3>{t.mimiClickTitle}</h3>
+              <p>{t.mimiClickMsg}</p>
+              <button className="modal-login-btn" onClick={handleGoToLogin}>
+                {t.loginBtn} <ArrowRight size={18} />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
