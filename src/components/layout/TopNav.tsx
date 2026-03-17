@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X } from 'lucide-react';
 import './TopNav.css';
 
@@ -32,6 +32,7 @@ export default function TopNav({
   streak = 0,
 }: TopNavProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -63,6 +64,7 @@ export default function TopNav({
 
   const handleOverlayClick = useCallback(() => setMobileOpen(false), []);
 
+  const isEmoji = avatarUrl && !avatarUrl.startsWith('http') && !avatarUrl.startsWith('/');
   const initials = userName
     ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : '?';
@@ -120,8 +122,11 @@ export default function TopNav({
             className="topnav__avatar"
             aria-label="Open profile"
             type="button"
+            onClick={() => navigate('/profile')}
           >
-            {avatarUrl ? (
+            {isEmoji ? (
+              <span className="topnav__avatar-emoji">{avatarUrl}</span>
+            ) : avatarUrl ? (
               <img src={avatarUrl} alt={userName || 'User avatar'} />
             ) : (
               initials
@@ -188,7 +193,9 @@ export default function TopNav({
 
         <div className="topnav__mobile-user">
           <div className="topnav__avatar" style={{ width: 40, height: 40, fontSize: 15 }}>
-            {avatarUrl ? (
+            {isEmoji ? (
+              <span className="topnav__avatar-emoji">{avatarUrl}</span>
+            ) : avatarUrl ? (
               <img src={avatarUrl} alt={userName || 'User avatar'} />
             ) : (
               initials

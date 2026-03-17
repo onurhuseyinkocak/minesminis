@@ -40,7 +40,7 @@ export default function AppShell({
     <div className={`app-shell ${showSidebar ? 'app-shell--with-sidebar' : ''}`}>
       <TopNav
         userName={userProfile?.display_name || ''}
-        avatarUrl={userProfile?.avatar_url || ''}
+        avatarUrl={String(userProfile?.settings?.avatar_emoji || userProfile?.avatar_url || '')}
         xpPercent={xpPercent}
         streak={stats?.streakDays || 0}
       />
