@@ -430,7 +430,7 @@ const Landing: React.FC = () => {
           className="magic-features__title"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
         >
           <span className="magic-features__emoji">🎪</span> {t.featuresTitle}
         </motion.h2>
@@ -438,7 +438,7 @@ const Landing: React.FC = () => {
           className="magic-features__sub"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ delay: 0.1 }}
         >
           {t.featuresSub}
@@ -451,7 +451,7 @@ const Landing: React.FC = () => {
               className="magic-feature-card"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
               whileHover={{ y: -8, scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
               style={{ '--card-color': f.color } as React.CSSProperties}
@@ -534,7 +534,7 @@ const Landing: React.FC = () => {
             <Link to="/terms">{lang === 'en' ? 'Terms' : '\u015eartlar'}</Link>
             <Link to="/blog">Blog</Link>
           </div>
-          <p className="landing-footer__copy">&copy; 2026 MinesMinis</p>
+          <p className="landing-footer__copy">&copy; {new Date().getFullYear()} MinesMinis</p>
         </div>
       </footer>
 

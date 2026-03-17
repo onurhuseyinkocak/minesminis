@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import './Blog.css';
 
@@ -41,6 +42,9 @@ export default function Blog() {
 
   return (
     <div className="blog-page">
+      <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '24px', color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+        <ArrowLeft size={18} /> Home
+      </Link>
       <header className="blog-header">
         <h1>Blog</h1>
         <p>English learning tips & MinesMinis news / İngilizce öğrenme ipuçları ve MinesMinis haberleri</p>

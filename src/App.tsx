@@ -310,14 +310,12 @@ function AppContent() {
 function App() {
   const [showSplash, setShowSplash] = useState(() => {
     if (typeof window !== "undefined") {
-      const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-      const navigationType = navigationEntries.length > 0 ? navigationEntries[0].type : "navigate";
-      if (navigationType === "reload" || navigationType === "navigate") {
-        return true;
-      }
-      return false;
+      const seen = sessionStorage.getItem("mm_splash_seen");
+      if (seen) return false;
+      sessionStorage.setItem("mm_splash_seen", "1");
+      return true;
     }
-    return true;
+    return false;
   });
 
   const handleSplashComplete = () => {
