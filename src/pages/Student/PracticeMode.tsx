@@ -198,7 +198,7 @@ const PracticeMode: React.FC = () => {
           <Button
             variant="primary"
             icon={<Zap size={18} />}
-            onClick={() => navigate('/quiz')}
+            onClick={() => navigate('/games')}
           >
             Quick Quiz
           </Button>

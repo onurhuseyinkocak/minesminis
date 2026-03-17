@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Globe, Gamepad2, BookOpen, BookText } from 'lucide-react';
 import TopNav from './TopNav';
+import { useAuth } from '../../contexts/AuthContext';
+import { useGamification } from '../../contexts/GamificationContext';
 import './AppShell.css';
 
 interface AppShellProps {
@@ -24,6 +26,10 @@ export default function AppShell({
   showBottomNav = true,
 }: AppShellProps) {
   const location = useLocation();
+  const { userProfile } = useAuth();
+  const { stats, getXPProgress } = useGamification();
+
+  const xpPercent = getXPProgress();
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
@@ -32,7 +38,12 @@ export default function AppShell({
 
   return (
     <div className={`app-shell ${showSidebar ? 'app-shell--with-sidebar' : ''}`}>
-      <TopNav />
+      <TopNav
+        userName={userProfile?.display_name || ''}
+        avatarUrl={userProfile?.avatar_url || ''}
+        xpPercent={xpPercent}
+        streak={stats?.streakDays || 0}
+      />
 
       {showSidebar && (
         <aside className="app-shell__sidebar" aria-label="Main navigation">

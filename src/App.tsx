@@ -42,6 +42,8 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Premium = lazy(() => import("./pages/Premium"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Worksheets = lazy(() => import("./pages/Worksheets"));
+const Favorites = lazy(() => import("./pages/Favorites"));
 
 // Protected – Parent / Teacher
 const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
@@ -207,6 +209,8 @@ function AppRoutes() {
             <Route path="/profile" element={<StudentRoute><Profile /></StudentRoute>} />
             <Route path="/premium" element={<StudentRoute><Premium /></StudentRoute>} />
             <Route path="/premium/success" element={<StudentRoute><Premium /></StudentRoute>} />
+            <Route path="/worksheets" element={<StudentRoute><Worksheets /></StudentRoute>} />
+            <Route path="/favorites" element={<StudentRoute><Favorites /></StudentRoute>} />
             <Route path="/pricing" element={<Pricing />} />
 
             {/* ── Parent / Teacher (protected + AppShell) ────────── */}
@@ -268,6 +272,17 @@ function AppContent() {
           <DailyReward />
           <LevelUpModal />
         </Suspense>
+      )}
+
+      {/* Floating chat button */}
+      {user && !isAdminRoute && !isSetupRoute && (
+        <button
+          className="floating-chat-btn"
+          onClick={() => setShowChat(true)}
+          aria-label="Chat with Mimi"
+        >
+          🐉
+        </button>
       )}
 
       {/* Chat modal */}

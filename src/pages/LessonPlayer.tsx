@@ -25,6 +25,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { Button, ProgressBar, Card } from '../components/ui';
+import { useGamification } from '../contexts/GamificationContext';
 import './LessonPlayer.css';
 
 // ============================================================
@@ -182,6 +183,7 @@ const celebrationVariants = {
 const LessonPlayer = () => {
   const { worldId = '', lessonId = '' } = useParams<{ worldId: string; lessonId: string }>();
   const navigate = useNavigate();
+  const { addXP } = useGamification();
 
   const lesson = useMemo(() => getLessonData(worldId, lessonId), [worldId, lessonId]);
 
@@ -200,8 +202,9 @@ const LessonPlayer = () => {
       setCurrentIndex((prev) => prev + 1);
     } else {
       setCompleted(true);
+      addXP(lesson.totalXP || 30, 'lesson_completed', { lessonId, worldId });
     }
-  }, [currentIndex, totalActivities, lesson]);
+  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId]);
 
   const handleSkip = useCallback(() => {
     handleNext();

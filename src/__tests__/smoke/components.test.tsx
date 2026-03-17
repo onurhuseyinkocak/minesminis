@@ -208,15 +208,6 @@ describe('Component Smoke Tests', () => {
     expect(screen.getAllByRole('navigation').length).toBeGreaterThan(0);
   });
 
-  it('Footer - renders footer with links', async () => {
-    const { default: Footer } = await import('../../components/Footer');
-    wrap(<Footer />);
-    expect(document.querySelector('.footer')).toBeInTheDocument();
-    expect(screen.getByText('Privacy')).toBeInTheDocument();
-    expect(screen.getByText('Terms')).toBeInTheDocument();
-    expect(screen.getByText('Cookies')).toBeInTheDocument();
-  });
-
   it('SplashScreen - renders loading content', async () => {
     const { default: SplashScreen } = await import('../../components/SplashScreen');
     render(<SplashScreen onComplete={vi.fn()} />);

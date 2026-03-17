@@ -3,17 +3,17 @@
  * Ses efektleri ve müzik: Web Audio API ile üretilir, dosya gerektirmez.
  */
 
-import {
-  playBirds,
-  playFootsteps,
-  playMagicSparkle,
-  playGiggle,
-  playSneeze,
-  playSlideWhistle,
-  playBoing,
-  playPageTurn,
-  createAmbientLoop,
-} from '../utils/soundGenerator';
+// Sound generator stubs (original soundGenerator util was removed)
+const noop = () => {};
+const playBirds = noop;
+const playFootsteps = noop;
+const playMagicSparkle = noop;
+const playGiggle = noop;
+const playSneeze = noop;
+const playSlideWhistle = noop;
+const playBoing = noop;
+const playPageTurn = noop;
+const createAmbientLoop = (_key: string) => ({ stop: noop });
 
 export type MusicKey = 'cheerfulMorning' | 'funPlayful' | 'magicForest' | 'calmEnding' | 'softAdventure';
 export type SFXKey = 'birdsMorning' | 'forestAmbient' | 'footstepsGrass' | 'splashWater' | 'magicSparkle' | 'giggle' | 'sneeze' | 'slideWhistle' | 'boing' | 'pageTurn';

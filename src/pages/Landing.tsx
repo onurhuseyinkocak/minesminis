@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../components/ui';
 import Footer from '../components/layout/Footer';
+import mimiImage from '../assets/bear/mimi_mascot_4k.png';
 import './Landing.css';
 
 type Lang = 'en' | 'tr';
@@ -264,7 +265,7 @@ const Landing = () => {
           >
             <div className="landing-hero-mimi">
               <motion.img
-                src="/src/assets/bear/mimi_mascot_4k.png"
+                src={mimiImage}
                 alt="Mimi the Dragon"
                 className="landing-hero-mimi-img"
                 style={{ width: 220, height: 220, objectFit: 'contain', filter: 'drop-shadow(0 8px 24px rgba(126,217,87,0.3))' }}
@@ -435,7 +436,7 @@ const Landing = () => {
           viewport={{ once: true }}
         >
           <motion.img
-            src="/src/assets/bear/mimi_mascot_4k.png"
+            src={mimiImage}
             alt="Mimi the Dragon"
             className="landing-cta-mimi"
             style={{ width: 100, height: 100, objectFit: 'contain' }}
