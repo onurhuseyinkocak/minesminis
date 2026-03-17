@@ -20,7 +20,7 @@ type Game = {
 function Games() {
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState<string>('grade2');
+  const [activeSection, setActiveSection] = useState<string>('all');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const { user } = useAuth();
 
@@ -57,27 +57,39 @@ function Games() {
         .eq('user_id', user.uid)
         .eq('item_type', 'game');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading favorites:', error.message);
+        // Table may not exist yet — silently ignore
+        return;
+      }
 
-      const favoriteIds = new Set(data.map(fav => fav.item_id));
+      const favoriteIds = new Set((data || []).map(fav => fav.item_id));
       setFavorites(favoriteIds);
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error loading favorites:', error);
-      }
+      console.error('Error loading favorites:', error);
     }
   };
 
   const selectedGameData = games.find(game => game.id === selectedGame);
 
   const getActiveGames = (): Game[] => {
+    if (activeSection === 'all') return games;
     return games.filter(game => {
       const grade = (game as Game & { target_audience?: string }).target_audience ?? game.category;
-      return (activeSection === 'primary' && (grade === 'primary' || grade === '1')) ||
-        (activeSection === 'grade2' && grade === '2') ||
-        (activeSection === 'grade3' && grade === '3') ||
-        (activeSection === 'grade4' && grade === '4') ||
-        game.category === activeSection;
+      const g = grade?.toLowerCase().trim() ?? '';
+      if (activeSection === 'primary') {
+        return g === 'primary' || g === '1' || g === '1st grade' || g === 'grade1';
+      }
+      if (activeSection === 'grade2') {
+        return g === '2' || g === '2nd grade' || g === 'grade2' || g === 'grade 2';
+      }
+      if (activeSection === 'grade3') {
+        return g === '3' || g === '3rd grade' || g === 'grade3' || g === 'grade 3';
+      }
+      if (activeSection === 'grade4') {
+        return g === '4' || g === '4th grade' || g === 'grade4' || g === 'grade 4';
+      }
+      return game.category === activeSection;
     });
   };
 
@@ -125,10 +137,8 @@ function Games() {
         toast.success('Added to favorites!');
       }
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error toggling favorite:', error);
-      }
-      toast.error('Failed to update favorites');
+      console.error('Error toggling favorite:', error);
+      toast.error('Could not save favorite. Please try again later.');
     }
   };
 
@@ -152,6 +162,12 @@ function Games() {
         iconColor="var(--accent-indigo)"
         filterSlot={
           <div className="modern-tabs">
+            <button
+              onClick={() => setActiveSection('all')}
+              className={`modern-tab ${activeSection === 'all' ? 'active' : ''}`}
+            >
+              <Gamepad2 size={18} /> All Games
+            </button>
             <button
               onClick={() => setActiveSection('primary')}
               className={`modern-tab ${activeSection === 'primary' ? 'active' : ''}`}

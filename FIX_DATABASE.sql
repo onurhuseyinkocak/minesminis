@@ -150,6 +150,20 @@ END $$;
 
 -- ========== BLOCK 6: CREATE MISSING TABLES ==========
 
+CREATE TABLE IF NOT EXISTS favorites (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id text NOT NULL,
+    item_type text NOT NULL DEFAULT 'game',
+    item_id text NOT NULL,
+    item_name text,
+    item_image text,
+    created_at timestamptz DEFAULT now(),
+    UNIQUE(user_id, item_type, item_id)
+);
+
+ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all for favorites" ON favorites FOR ALL USING (true) WITH CHECK (true);
+
 CREATE TABLE IF NOT EXISTS pets (
     id text PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     name text NOT NULL DEFAULT 'Pet',

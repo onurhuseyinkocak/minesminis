@@ -111,6 +111,7 @@ const Landing: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Roaming Mimi state
+  const dragDistance = useRef(0);
   const constraintsRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 85, y: 75 });
   const [animationState, setAnimationState] = useState<AnimationState>('idle');
@@ -149,6 +150,7 @@ const Landing: React.FC = () => {
   }, [handleMouseMove]);
 
   const handleMimiClick = () => {
+    if (dragDistance.current > 5) return; // was a drag, not a click
     mascotRoaming.triggerCelebration();
     setShowMimiModal(true);
   };
@@ -304,13 +306,6 @@ const Landing: React.FC = () => {
             >
               <Link to="/login" className="magic-btn magic-btn--primary">
                 <Rocket size={20} /> {t.heroCta}
-                <motion.span
-                  className="magic-btn__sparkle"
-                  animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  \u2728
-                </motion.span>
               </Link>
               <a href="#features" className="magic-btn magic-btn--ghost">
                 {lang === 'en' ? 'Learn more' : 'Daha fazla'} <ArrowRight size={16} />
@@ -547,7 +542,8 @@ const Landing: React.FC = () => {
           dragElastic={0.1}
           whileDrag={{ scale: 1.15 }}
           onDragStart={() => mascotRoaming.stopRoaming()}
-          onDragEnd={() => mascotRoaming.startRoaming()}
+          onDrag={(_e: any, info: any) => { dragDistance.current = Math.abs(info.offset.x) + Math.abs(info.offset.y); }}
+          onDragEnd={() => { setTimeout(() => { dragDistance.current = 0; }, 100); mascotRoaming.startRoaming(); }}
           style={{
             position: 'absolute',
             left: `${position.x}%`,

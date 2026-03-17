@@ -198,6 +198,7 @@
   pointer-events: none;
   z-index: 0;
   bottom: 0;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 /* Hero content grid */
@@ -698,6 +699,8 @@
   font-size: 56px;
   display: inline-block;
   line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 .magic-feature-card h3 {
