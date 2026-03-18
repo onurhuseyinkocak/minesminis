@@ -52,6 +52,9 @@ const ClassroomMode = lazy(() => import("./pages/Teacher/ClassroomMode"));
 // Admin
 const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
 
+// 404
+const NotFound = lazy(() => import("./pages/NotFound"));
+
 // Gamification overlays
 const DailyReward = lazy(() => import("./components/DailyReward"));
 const LevelUpModal = lazy(() => import("./components/LevelUpModal"));
@@ -63,7 +66,9 @@ const ChatHome = lazy(() => import("./components/ChatHome"));
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    navigator.serviceWorker.register("/sw.js").catch((err) => {
+      console.warn("Service worker registration failed:", err);
+    });
   });
 }
 
@@ -218,7 +223,7 @@ function AppRoutes() {
             <Route path="/classroom" element={<StudentRoute><ClassroomMode /></StudentRoute>} />
 
             {/* ── Catch-all ──────────────────────────────────────── */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </Suspense>

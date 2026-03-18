@@ -269,10 +269,7 @@ app.post('/api/tts',
   }
 );
 
-// Health check - frontend can verify backend is up
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true, message: 'Backend running' });
-});
+// (duplicate health check removed — see /api/health above)
 
 // Blog Generate Endpoint - admin only
 app.post('/api/blog/generate',
@@ -506,9 +503,8 @@ app.post('/api/chat',
 // ADMIN SECURITY ENDPOINTS
 // ============================================================
 
-// Get security status (admin only - would need auth in production)
-app.get('/api/admin/security-status', (req, res) => {
-  // In production, add authentication check here
+// Get security status (admin only)
+app.get('/api/admin/security-status', requireAdminAuth, (req, res) => {
   const status = security.getSecurityStatus();
   res.json(status);
 });

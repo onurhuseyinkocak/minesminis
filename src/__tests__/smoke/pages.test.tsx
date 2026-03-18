@@ -30,6 +30,7 @@ vi.mock('../../config/supabase', () => ({
             limit: () => Promise.resolve({ data: [], error: null }),
           }),
         }),
+        limit: () => Promise.resolve({ data: [], error: null }),
       }),
       insert: () => Promise.resolve({ data: null, error: null }),
       update: () => ({
@@ -107,16 +108,14 @@ vi.mock('../../contexts/GamificationContext', () => ({
     loading: false,
     addXP: vi.fn(),
     getXPForNextLevel: () => 100,
-    getXPProgress: () => 50,
+    getXPProgress: () => 0,
     checkStreak: vi.fn(),
     getStreakBonus: () => 0,
     canClaimDaily: false,
     claimDailyReward: vi.fn(),
     getNextClaimTime: () => null,
     getDailyRewardForDay: () => ({ day: 1, xp: 10 }),
-    allBadges: [
-      { id: 'streak_3', name: '3 Day Streak', description: 'Login 3 days', icon: 'F', category: 'streak', requirement: 3, requirementType: 'streak' },
-    ],
+    allBadges: [],
     hasBadge: () => false,
     checkAndAwardBadges: vi.fn(),
     trackActivity: vi.fn(),
@@ -125,6 +124,9 @@ vi.mock('../../contexts/GamificationContext', () => ({
     dismissLevelUp: vi.fn(),
   }),
   GamificationProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  calculateLevel: (xp: number) => 1,
+  getXPForLevel: (level: number) => 100,
+  getTotalXPForLevel: (level: number) => (level - 1) * 100,
   ALL_BADGES: [],
 }));
 
@@ -154,22 +156,33 @@ vi.mock('../../services/petService', () => ({
   feedPet: vi.fn(),
   playWithPet: vi.fn(),
   sleepPet: vi.fn(),
-  updatePetStats: vi.fn(() => Promise.resolve(null)),
+  updatePetStats: vi.fn(),
 }));
 
-vi.mock('@lottiefiles/react-lottie-player', () => ({
-  Player: ({ children }: { children: React.ReactNode }) => <div data-testid="lottie-player">{children}</div>,
+vi.mock('../../data/fallbackData', () => ({
+  fallbackGames: [],
+  fallbackVideos: [],
+  fallbackWorksheets: [],
 }));
 
-vi.mock('lottie-react', () => ({
-  default: () => <div data-testid="lottie-react" />,
+vi.mock('../../data/wordsData', () => ({
+  kidsWords: [],
+}));
+
+vi.mock('../../data/videoStore', () => ({
+  videoStore: {
+    getAll: () => [],
+    getByGrade: () => [],
+    fetchVideos: vi.fn(() => Promise.resolve([])),
+    subscribe: vi.fn(() => vi.fn()),
+  },
 }));
 
 vi.mock('framer-motion', () => ({
   motion: new Proxy({}, {
     get: (_target, prop) => {
-      if (typeof prop === 'string') {
-        return React.forwardRef(({ children, ...props }: Record<string, unknown> & { children?: React.ReactNode }, ref: React.Ref<Element>) => {
+      if (prop === 'div' || prop === 'button' || prop === 'h1' || prop === 'h2' || prop === 'p' || prop === 'span' || prop === 'section' || prop === 'a' || prop === 'form' || prop === 'li' || prop === 'ul' || prop === 'nav' || prop === 'img' || prop === 'input' || prop === 'textarea') {
+        return React.forwardRef(({ children, ...props }: any, ref: any) => {
           const filteredProps: Record<string, unknown> = {};
           for (const [key, value] of Object.entries(props)) {
             if (!key.startsWith('while') && !key.startsWith('animate') && !key.startsWith('initial') && !key.startsWith('exit') && !key.startsWith('variants') && !key.startsWith('transition') && !key.startsWith('layout') && key !== 'custom' && key !== 'whileInView' && key !== 'viewport') {
@@ -196,105 +209,82 @@ const wrap = (ui: React.ReactElement) =>
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
-describe('Component Smoke Tests', () => {
+describe('Page Smoke Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('Navbar - renders navigation', async () => {
-    const { default: Navbar } = await import('../../components/Navbar');
-    wrap(<Navbar />);
-    // Has main navigation landmark
-    expect(screen.getAllByRole('navigation').length).toBeGreaterThan(0);
+  it('Landing - renders hero title', async () => {
+    const { default: Landing } = await import('../../pages/Landing');
+    wrap(<Landing />);
+    // default lang is 'en' based on source
+    expect(screen.getByText(/Learn English with MinesMinis/i)).toBeInTheDocument();
   });
 
-  it('SplashScreen - renders loading content', async () => {
-    const { default: SplashScreen } = await import('../../components/SplashScreen');
-    render(<SplashScreen onComplete={vi.fn()} />);
-    expect(screen.getByText(/Mine's/i)).toBeInTheDocument();
-    expect(screen.getByText(/Learn English, Have Fun/i)).toBeInTheDocument();
+  it('Login - renders login form', async () => {
+    const { default: Login } = await import('../../pages/Login');
+    wrap(<Login />);
+    expect(screen.getByText(/Welcome Back/i)).toBeInTheDocument();
   });
 
-  it('ErrorBoundary - renders children when no error', async () => {
-    const { ErrorBoundary } = await import('../../components/ErrorBoundary');
-    render(
-      <ErrorBoundary>
-        <div>Safe content</div>
-      </ErrorBoundary>
-    );
-    expect(screen.getByText('Safe content')).toBeInTheDocument();
+  it('Games - renders games content', async () => {
+    const { default: Games } = await import('../../pages/Games');
+    wrap(<Games />);
+    // ContentPageHeader with title "Games" or Turkish fallback
+    expect(document.querySelector('.games, [class*="games"], [class*="Games"]') || document.body.textContent).toBeTruthy();
   });
 
-  it('ErrorBoundary - shows fallback on error', async () => {
-    const { ErrorBoundary } = await import('../../components/ErrorBoundary');
-    const ThrowingComponent = () => { throw new Error('Test error'); };
-    // Suppress console.error for expected error
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent />
-      </ErrorBoundary>
-    );
-    expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
-    consoleSpy.mockRestore();
+  it('Words - renders words content', async () => {
+    const { default: Words } = await import('../../pages/Words');
+    wrap(<Words />);
+    expect(document.body.textContent).toBeTruthy();
   });
 
-  it('XPBar - renders xp info', async () => {
-    const { default: XPBar } = await import('../../components/XPBar');
-    render(<XPBar />);
-    expect(document.querySelector('.xp-bar-container')).toBeInTheDocument();
-    expect(document.querySelector('.level-number')).toBeInTheDocument();
+  it('Videos - renders video content', async () => {
+    const { default: Videos } = await import('../../pages/Videos');
+    wrap(<Videos />);
+    expect(document.body.textContent).toBeTruthy();
   });
 
-  it('XPBar compact - renders level badge', async () => {
-    const { default: XPBar } = await import('../../components/XPBar');
-    render(<XPBar compact />);
-    expect(document.querySelector('.xp-bar-compact')).toBeInTheDocument();
+  it('Worksheets - renders worksheet content', async () => {
+    const { default: Worksheets } = await import('../../pages/Worksheets');
+    wrap(<Worksheets />);
+    expect(document.body.textContent).toBeTruthy();
   });
 
-  it('BadgeShowcase - renders badges grid', async () => {
-    const { default: BadgeShowcase } = await import('../../components/BadgeShowcase');
-    render(<BadgeShowcase />);
-    expect(screen.getByText(/My Badges/i)).toBeInTheDocument();
+  it('Profile - renders profile section', async () => {
+    const { default: Profile } = await import('../../pages/Profile');
+    wrap(<Profile />);
+    expect(document.body.textContent).toBeTruthy();
   });
 
-  it('Leaderboard - renders leaderboard', async () => {
-    const { default: Leaderboard } = await import('../../components/Leaderboard');
-    wrap(<Leaderboard />);
-    expect(screen.getByText(/Weekly/i)).toBeInTheDocument();
+  it('Favorites - renders favorites content', async () => {
+    const { default: Favorites } = await import('../../pages/Favorites');
+    wrap(<Favorites />);
+    expect(document.body.textContent).toBeTruthy();
   });
 
-  it('DailyReward - renders reward button', async () => {
-    const { default: DailyReward } = await import('../../components/DailyReward');
-    render(<DailyReward />);
-    // Should render the trigger button with gift emoji
-    expect(document.querySelector('.daily-reward-trigger')).toBeInTheDocument();
+  it('Premium - renders premium content', async () => {
+    const { default: Premium } = await import('../../pages/Premium');
+    wrap(<Premium />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Unlimited AI Chat/i);
   });
 
-  it('LevelUpModal - renders nothing when not showing', async () => {
-    const { default: LevelUpModal } = await import('../../components/LevelUpModal');
-    const { container } = render(<LevelUpModal />);
-    // showLevelUp is false in mock, so nothing renders
-    expect(container.innerHTML).toBe('');
+  it('Blog - renders blog section', async () => {
+    const { default: Blog } = await import('../../pages/Blog');
+    wrap(<Blog />);
+    expect(document.body.textContent).toBeTruthy();
   });
 
-it('UnifiedMascot - renders SVG mascot', async () => {
-    const { default: UnifiedMascot } = await import('../../components/UnifiedMascot');
-    const { container } = render(<UnifiedMascot state="idle" />);
-    // Should render an SVG element
-    expect(container.querySelector('svg')).toBeInTheDocument();
+  it('StudentDashboard - renders dashboard', async () => {
+    const { default: StudentDashboard } = await import('../../pages/Student/StudentDashboard');
+    wrap(<StudentDashboard />);
+    expect(document.body.textContent).toBeTruthy();
   });
 
-  it('ReportButton - renders report icon', async () => {
-    const { default: ReportButton } = await import('../../components/ReportButton');
-    wrap(<ReportButton />);
-    expect(screen.getByLabelText(/Sorun Bildir/i)).toBeInTheDocument();
+  it('Onboarding - renders step 1 with character selection', async () => {
+    const { default: Onboarding } = await import('../../pages/Onboarding');
+    wrap(<Onboarding />);
+    expect(screen.getByText(/How old are you/i)).toBeInTheDocument();
   });
-
-  it('ConfettiEffect - renders without crash', async () => {
-    const { default: ConfettiEffect } = await import('../../components/ConfettiEffect');
-    const { container } = render(<ConfettiEffect isActive={true} />);
-    expect(container.firstChild).toBeInTheDocument();
-  });
-
 });

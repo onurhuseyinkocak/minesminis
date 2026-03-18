@@ -1,11 +1,16 @@
+import crypto from 'crypto';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
   }
   const pw = req.headers['x-admin-password'];
-  const adminPass = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Wealthy*520';
-  if (!pw || String(pw).trim() !== adminPass) return res.status(401).json({ error: 'Unauthorized' });
+  const adminPass = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || '';
+  if (!pw || !adminPass) return res.status(401).json({ error: 'Unauthorized' });
+  const a = Buffer.from(String(pw).trim());
+  const b = Buffer.from(adminPass);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return res.status(401).json({ error: 'Unauthorized' });
   const { word } = req.body || {};
   if (!word || typeof word !== 'string') return res.status(400).json({ error: 'word gerekli' });
   const w = word.trim().toLowerCase();

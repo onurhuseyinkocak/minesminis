@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
 
 // Read env at runtime (Vercel injects env when function runs; module-level const can be empty at cold start)
 function getEnv() {
   return {
-    adminPassword: process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Wealthy*520',
+    adminPassword: process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || '',
     supabaseUrl: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
     supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || '',
   };
@@ -36,8 +37,11 @@ let supabaseInstance = null;
 export function checkAdmin(req) {
   const pw = req.headers['x-admin-password'];
   const { adminPassword } = getEnv();
-  if (pw && String(pw).trim() === adminPassword) return true;
-  return false;
+  if (!pw || !adminPassword) return false;
+  const a = Buffer.from(String(pw).trim());
+  const b = Buffer.from(adminPassword);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
 }
 
 export function getSupabase() {

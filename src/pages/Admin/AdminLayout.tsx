@@ -11,7 +11,15 @@ import {
     ExternalLink,
     Lock,
     GraduationCap,
-    Package
+    Package,
+    Gamepad2,
+    FileSpreadsheet,
+    PenTool,
+    Bot,
+    Crown,
+    Search,
+    AlertTriangle,
+    FileBarChart
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import AdminDashboard from './AdminDashboard';
@@ -20,6 +28,14 @@ import AdminContentManager from './AdminContentManager';
 import AdminCurriculumManager from './AdminCurriculumManager';
 import AdminAnalytics from './AdminAnalytics';
 import AdminSettings from './AdminSettings';
+import AdminMimi from './AdminMimi';
+import BlogManager from './BlogManager';
+import ErrorMonitor from './ErrorMonitor';
+import GamesManager from './GamesManager';
+import PremiumManager from './PremiumManager';
+import ReportsManager from './ReportsManager';
+import SEOManager from './SEOManager';
+import WorksheetsManager from './WorksheetsManager';
 import './AdminLayout.css';
 
 const ADMIN_SESSION_KEY = 'admin_session';
@@ -39,11 +55,24 @@ const navSections = [
             { path: '/admin/users', icon: Users, label: 'Users' },
             { path: '/admin/content', icon: Package, label: 'Content' },
             { path: '/admin/curriculum', icon: GraduationCap, label: 'Curriculum' },
+            { path: '/admin/games', icon: Gamepad2, label: 'Games' },
+            { path: '/admin/worksheets', icon: FileSpreadsheet, label: 'Worksheets' },
+        ]
+    },
+    {
+        label: 'Content',
+        items: [
+            { path: '/admin/blog', icon: PenTool, label: 'Blog' },
+            { path: '/admin/mimi', icon: Bot, label: 'Mimi (AI Chat)' },
+            { path: '/admin/premium', icon: Crown, label: 'Premium' },
         ]
     },
     {
         label: 'System',
         items: [
+            { path: '/admin/seo', icon: Search, label: 'SEO' },
+            { path: '/admin/errors', icon: AlertTriangle, label: 'Error Monitor' },
+            { path: '/admin/reports', icon: FileBarChart, label: 'Reports' },
             { path: '/admin/settings', icon: Settings, label: 'Settings' },
         ]
     }
@@ -201,6 +230,14 @@ function AdminLayout() {
                         <Route path="content" element={<AdminContentManager />} />
                         <Route path="curriculum" element={<AdminCurriculumManager />} />
                         <Route path="analytics" element={<AdminAnalytics />} />
+                        <Route path="games" element={<GamesManager />} />
+                        <Route path="worksheets" element={<WorksheetsManager />} />
+                        <Route path="blog" element={<BlogManager />} />
+                        <Route path="mimi" element={<AdminMimi />} />
+                        <Route path="premium" element={<PremiumManager />} />
+                        <Route path="seo" element={<SEOManager />} />
+                        <Route path="errors" element={<ErrorMonitor />} />
+                        <Route path="reports" element={<ReportsManager />} />
                         <Route path="settings" element={<AdminSettings />} />
                     </Routes>
                 </div>

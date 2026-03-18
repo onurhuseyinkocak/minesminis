@@ -256,8 +256,8 @@ export function sanitizeInput(input) {
             .replace(/[&<>"']/g, (char) => {
                 const escapeMap = {
                     '&': '&amp;',
-                    '<': '<',
-                    '>': '>',
+                    '<': '&lt;',
+                    '>': '&gt;',
                     '"': '&quot;',
                     "'": '&#x27;',
                 };
