@@ -361,6 +361,9 @@ const Onboarding: React.FC = () => {
           displayName: user.displayName || 'Parent',
         });
 
+        // Save time limit to localStorage so TimeGuardedRoute can read it
+        localStorage.setItem('mimi_daily_time_limit', String(dailyTimeLimit));
+
         const userId = user.uid ?? (user as unknown as { id?: string }).id;
         if (userId) {
           await userService.updateUserProfile(userId, {

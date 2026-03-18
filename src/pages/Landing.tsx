@@ -20,6 +20,7 @@ import {
   Layers,
 } from 'lucide-react';
 import UnifiedMascot, { MascotState } from '../components/UnifiedMascot';
+import BackgroundGradientAnimation from '../components/ui/BackgroundGradientAnimation';
 import { mascotRoaming } from '../services/mascotRoaming';
 import './Landing.css';
 
@@ -342,55 +343,60 @@ const Landing: React.FC = () => {
 
       {/* ===== SECTION 1: HERO ===== */}
       <section className="landing-hero">
-        <div className="landing-hero__inner">
-          <div className="landing-hero__text">
+        <BackgroundGradientAnimation
+          containerClassName="landing-hero__gradient"
+          interactive={true}
+        >
+          <div className="landing-hero__inner">
+            <div className="landing-hero__text">
+              <motion.div
+                className="landing-hero__badge"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <BookOpen size={14} />
+                <span>{t.heroBadge}</span>
+              </motion.div>
+
+              <h1 className="landing-hero__title">
+                {t.heroTitle}
+              </h1>
+
+              <p className="landing-hero__sub">
+                {t.heroSub}
+              </p>
+
+              <motion.div
+                className="landing-hero__actions"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <Link to="/login" className="landing-btn landing-btn--primary">
+                  {t.heroCtaPrimary} <ArrowRight size={18} />
+                </Link>
+                <a href="#how-it-works" className="landing-btn landing-btn--outline">
+                  <Play size={16} /> {t.heroCtaSecondary}
+                </a>
+              </motion.div>
+            </div>
+
             <motion.div
-              className="landing-hero__badge"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              className="landing-hero__visual"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
             >
-              <BookOpen size={14} />
-              <span>{t.heroBadge}</span>
-            </motion.div>
-
-            <h1 className="landing-hero__title">
-              {t.heroTitle}
-            </h1>
-
-            <p className="landing-hero__sub">
-              {t.heroSub}
-            </p>
-
-            <motion.div
-              className="landing-hero__actions"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Link to="/login" className="landing-btn landing-btn--primary">
-                {t.heroCtaPrimary} <ArrowRight size={18} />
-              </Link>
-              <a href="#how-it-works" className="landing-btn landing-btn--outline">
-                <Play size={16} /> {t.heroCtaSecondary}
-              </a>
+              <div className="landing-hero__orb">
+                <div className="landing-hero__orb-inner" />
+              </div>
+              <div className="landing-hero__mascot">
+                <UnifiedMascot id="mimi_dragon" state="waving" size={160} />
+              </div>
             </motion.div>
           </div>
-
-          <motion.div
-            className="landing-hero__visual"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
-            <div className="landing-hero__orb">
-              <div className="landing-hero__orb-inner" />
-            </div>
-            <div className="landing-hero__mascot">
-              <UnifiedMascot id="mimi_dragon" state="waving" size={160} />
-            </div>
-          </motion.div>
-        </div>
+        </BackgroundGradientAnimation>
       </section>
 
       {/* ===== SECTION 2: METHOD ===== */}

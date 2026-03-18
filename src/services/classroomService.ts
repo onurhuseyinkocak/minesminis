@@ -5,6 +5,7 @@
  */
 
 import { syncCreateClassroom, syncJoinClassroom } from './supabaseSync';
+import { supabase } from '../config/supabase';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -207,6 +208,10 @@ export function removeStudent(classroomId: string, studentId: string): boolean {
     teacherClassrooms[idx] = classroom;
     saveClassrooms(classroom.teacherId, teacherClassrooms);
   }
+
+  // Sync to Supabase (fire-and-forget)
+  try { supabase.from('classroom_students').delete().eq('classroom_join_code', classroom.joinCode).eq('student_id', studentId).then(() => {}); } catch {}
+
   return true;
 }
 
@@ -224,6 +229,10 @@ export function assignPhonicsGroup(classroomId: string, group: number): boolean 
     teacherClassrooms[idx] = classroom;
     saveClassrooms(classroom.teacherId, teacherClassrooms);
   }
+
+  // Sync to Supabase (fire-and-forget)
+  try { supabase.from('classrooms').update({ phonics_group_assigned: group }).eq('join_code', classroom.joinCode).then(() => {}); } catch {}
+
   return true;
 }
 
@@ -280,9 +289,16 @@ export function getStudentClassroom(): {
 /** Delete a classroom */
 export function deleteClassroom(teacherId: string, classroomId: string): boolean {
   const classrooms = loadClassrooms(teacherId);
+  const classroom = classrooms.find((c) => c.id === classroomId);
   const filtered = classrooms.filter((c) => c.id !== classroomId);
   if (filtered.length === classrooms.length) return false;
   saveClassrooms(teacherId, filtered);
+
+  // Sync to Supabase (fire-and-forget)
+  if (classroom) {
+    try { supabase.from('classrooms').delete().eq('join_code', classroom.joinCode).then(() => {}); } catch {}
+  }
+
   return true;
 }
 

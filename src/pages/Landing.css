@@ -236,6 +236,13 @@
   background: #0C0F1A;
 }
 
+.landing-hero__gradient {
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+}
+
 .landing-hero__inner {
   max-width: 1120px;
   width: 100%;

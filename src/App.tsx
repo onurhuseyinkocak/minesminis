@@ -249,7 +249,8 @@ function TimeGuardedRoute({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  const dailyLimit = (userProfile?.settings?.dailyTimeLimit as number) || 60;
+  const savedLimit = parseInt(localStorage.getItem('mimi_daily_time_limit') || '0');
+  const dailyLimit = savedLimit || (userProfile?.settings?.dailyTimeLimit as number) || 60;
   const todayMinutes = getTodayMinutes();
 
   if (todayMinutes >= dailyLimit) {

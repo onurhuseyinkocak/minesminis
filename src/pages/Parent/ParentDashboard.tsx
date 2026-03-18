@@ -65,7 +65,7 @@ import './ParentDashboard.css';
 // CONSTANTS
 // ============================================================
 
-const DAILY_TIME_LIMIT = 30; // minutes
+const DEFAULT_DAILY_TIME_LIMIT = 30; // minutes
 
 const PHASE_LABELS: Record<number, string> = {
   1: 'Little Ears',
@@ -442,7 +442,8 @@ const ChildOverviewCard: React.FC<{
   currentPhase: number;
   currentGroup: number;
   phonicsPercent: number;
-}> = ({ child, streakDays, todayMinutes, currentPhase, currentGroup, phonicsPercent }) => {
+  dailyLimit: number;
+}> = ({ child, streakDays, todayMinutes, currentPhase, currentGroup, phonicsPercent, dailyLimit }) => {
   const phaseLabel = PHASE_LABELS[currentPhase] || `Phase ${currentPhase}`;
 
   return (
@@ -493,11 +494,11 @@ const ChildOverviewCard: React.FC<{
           <div className="pd-hero-time-bar">
             <div
               className="pd-hero-time-fill"
-              style={{ width: `${Math.min(100, (todayMinutes / DAILY_TIME_LIMIT) * 100)}%` }}
+              style={{ width: `${Math.min(100, (todayMinutes / dailyLimit) * 100)}%` }}
             />
           </div>
           <span className="pd-hero-time-label">
-            {todayMinutes} / {DAILY_TIME_LIMIT} min
+            {todayMinutes} / {dailyLimit} min
           </span>
         </div>
       </div>
@@ -889,6 +890,8 @@ const ParentDashboard: React.FC = () => {
   }, [localRecentActivities, supabaseActivities]);
   const todayMinutes = useMemo(() => getTodayMinutes(scopedUserId), [scopedUserId]);
 
+  const dailyLimit = (userProfile?.settings?.dailyTimeLimit as number) || DEFAULT_DAILY_TIME_LIMIT;
+
   const insights = useMemo(
     () => buildInsights(phonicsProgress, activeChildStats.streakDays, weeklySummary),
     [phonicsProgress, activeChildStats.streakDays, weeklySummary],
@@ -943,9 +946,7 @@ const ParentDashboard: React.FC = () => {
     toast.success('Report downloaded!');
   }, [activeChild, parentName, mastered, totalSounds, phonicsPercent, strongest, needsPractice, learningProgress, weeklySummary, activeChildStats, insights, recentActivities]);
 
-  const handleEmailReport = useCallback(() => {
-    toast.success('Email report feature coming soon! Use Download for now.');
-  }, []);
+  // handleEmailReport removed — button is now statically disabled with "Coming Soon" label
 
   if (loading) {
     return (
@@ -1032,6 +1033,7 @@ const ParentDashboard: React.FC = () => {
           currentPhase={learningProgress.phase}
           currentGroup={learningProgress.group}
           phonicsPercent={phonicsPercent}
+          dailyLimit={dailyLimit}
         />
       </motion.div>
 
@@ -1095,9 +1097,10 @@ const ParentDashboard: React.FC = () => {
               variant="secondary"
               size="md"
               icon={<Mail size={16} />}
-              onClick={handleEmailReport}
+              disabled
+              style={{ opacity: 0.5, cursor: 'not-allowed' }}
             >
-              Email Report
+              Email Report (Coming Soon)
             </Button>
             <Link to="/profile">
               <Button variant="ghost" size="md" icon={<Settings size={16} />}>

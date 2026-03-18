@@ -418,7 +418,7 @@ const LessonPlayer = () => {
             duration: Math.round(totalActivities * 60), // ~60s per activity estimate
             accuracy,
             xpEarned: totalXP,
-          });
+          }, user?.uid);
 
           // Sync progress to classroom (for teacher dashboard)
           syncStudentProgress(totalXP);

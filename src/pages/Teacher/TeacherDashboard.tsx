@@ -4,14 +4,16 @@
  * and getting-started guidance for new teachers.
  */
 
-import React, { useMemo, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
 import { WORLDS } from '../../data/curriculum';
 import {
   getClassrooms,
+  type Classroom,
 } from '../../services/classroomService';
+import { fetchTeacherClassrooms } from '../../services/supabaseSync';
 import ClassroomManager from './ClassroomManager';
 import {
   BookOpen,
@@ -36,11 +38,39 @@ const TeacherDashboard: React.FC = () => {
   const { stats, loading } = useGamification();
   const teacherId = user?.uid || '';
 
+  // Role check: only teachers and admins allowed
+  if (userProfile?.role !== 'teacher' && !isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   const [activeTab, setActiveTab] = useState<'overview' | 'classrooms'>('overview');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [sbClassrooms, setSbClassrooms] = useState<Classroom[]>([]);
 
-  // Load classrooms
-  const classrooms = useMemo(() => getClassrooms(teacherId), [teacherId]);
+  // Load classrooms from localStorage
+  const localClassrooms = useMemo(() => getClassrooms(teacherId), [teacherId]);
+
+  // Supabase fallback: if localStorage is empty, try Supabase
+  useEffect(() => {
+    if (localClassrooms.length === 0 && teacherId) {
+      fetchTeacherClassrooms(teacherId).then(data => {
+        if (data.length > 0) {
+          setSbClassrooms(data.map(d => ({
+            id: d.id,
+            teacherId,
+            name: d.name,
+            gradeLevel: d.grade_level || '',
+            joinCode: d.join_code,
+            phonicsGroupAssigned: d.phonics_group_assigned,
+            students: [],
+            createdAt: d.created_at,
+          })));
+        }
+      });
+    }
+  }, [localClassrooms.length, teacherId]);
+
+  const classrooms = localClassrooms.length > 0 ? localClassrooms : sbClassrooms;
 
   // Quick stats
   const totalStudents = useMemo(
@@ -132,7 +162,7 @@ const TeacherDashboard: React.FC = () => {
           <div className="td-stats-grid">
             <div className="td-stat-card">
               <div className="td-stat-icon" style={{ background: '#6366F1' }}>
-                <GraduationCap size={22} color="white" />
+                <GraduationCap size={22} color="#F1F5F9" />
               </div>
               <div className="td-stat-info">
                 <div className="td-stat-value">{classrooms.length}</div>
@@ -141,7 +171,7 @@ const TeacherDashboard: React.FC = () => {
             </div>
             <div className="td-stat-card">
               <div className="td-stat-icon" style={{ background: '#10B981' }}>
-                <Users size={22} color="white" />
+                <Users size={22} color="#F1F5F9" />
               </div>
               <div className="td-stat-info">
                 <div className="td-stat-value">{totalStudents}</div>
@@ -150,7 +180,7 @@ const TeacherDashboard: React.FC = () => {
             </div>
             <div className="td-stat-card">
               <div className="td-stat-icon" style={{ background: '#F59E0B' }}>
-                <Award size={22} color="white" />
+                <Award size={22} color="#F1F5F9" />
               </div>
               <div className="td-stat-info">
                 <div className="td-stat-value">{activeToday}</div>
@@ -159,7 +189,7 @@ const TeacherDashboard: React.FC = () => {
             </div>
             <div className="td-stat-card">
               <div className="td-stat-icon" style={{ background: '#EC4899' }}>
-                <BookOpen size={22} color="white" />
+                <BookOpen size={22} color="#F1F5F9" />
               </div>
               <div className="td-stat-info">
                 <div className="td-stat-value">{WORLDS.length}</div>
@@ -206,7 +236,7 @@ const TeacherDashboard: React.FC = () => {
             </h2>
             <div className="td-actions-grid">
               <button className="td-action-card" onClick={handleQuickCreate}>
-                <div className="td-action-icon" style={{ background: '#EEF2FF' }}>
+                <div className="td-action-icon" style={{ background: 'rgba(99,102,241,0.15)' }}>
                   <Plus size={22} color="#6366F1" />
                 </div>
                 <span className="td-action-label">Create Classroom</span>
@@ -215,19 +245,19 @@ const TeacherDashboard: React.FC = () => {
                 className="td-action-card"
                 onClick={() => setActiveTab('classrooms')}
               >
-                <div className="td-action-icon" style={{ background: '#F0FDF4' }}>
+                <div className="td-action-icon" style={{ background: 'rgba(16,185,129,0.15)' }}>
                   <BarChart3 size={22} color="#10B981" />
                 </div>
                 <span className="td-action-label">View Reports</span>
               </button>
               <Link to="/words" className="td-action-card" style={{ textDecoration: 'none' }}>
-                <div className="td-action-icon" style={{ background: '#FFF7ED' }}>
+                <div className="td-action-icon" style={{ background: 'rgba(245,158,11,0.15)' }}>
                   <BookOpen size={22} color="#F59E0B" />
                 </div>
                 <span className="td-action-label">Browse Content</span>
               </Link>
               <Link to="/games" className="td-action-card" style={{ textDecoration: 'none' }}>
-                <div className="td-action-icon" style={{ background: '#FDF2F8' }}>
+                <div className="td-action-icon" style={{ background: 'rgba(236,72,153,0.15)' }}>
                   <Gamepad2 size={22} color="#EC4899" />
                 </div>
                 <span className="td-action-label">Games Library</span>
@@ -235,13 +265,13 @@ const TeacherDashboard: React.FC = () => {
               {isAdmin && (
                 <>
                   <Link to="/admin/words" className="td-action-card" style={{ textDecoration: 'none' }}>
-                    <div className="td-action-icon" style={{ background: '#F5F3FF' }}>
+                    <div className="td-action-icon" style={{ background: 'rgba(139,92,246,0.15)' }}>
                       <FileText size={22} color="#8B5CF6" />
                     </div>
                     <span className="td-action-label">Manage Words</span>
                   </Link>
                   <Link to="/admin/videos" className="td-action-card" style={{ textDecoration: 'none' }}>
-                    <div className="td-action-icon" style={{ background: '#ECFDF5' }}>
+                    <div className="td-action-icon" style={{ background: 'rgba(5,150,105,0.15)' }}>
                       <Video size={22} color="#059669" />
                     </div>
                     <span className="td-action-label">Manage Videos</span>
@@ -485,9 +515,9 @@ const TeacherDashboard: React.FC = () => {
         }
         .td-share-card {
           padding: 16px 20px;
-          background: linear-gradient(135deg, #EEF2FF, #F0F9FF);
+          background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(56,189,248,0.08));
           border-radius: 14px;
-          border: 1px solid #C7D2FE;
+          border: 1px solid var(--border-light, #C7D2FE);
         }
         .td-share-name {
           font-weight: 700;
@@ -515,7 +545,7 @@ const TeacherDashboard: React.FC = () => {
         }
         .td-share-copy {
           border: none;
-          background: white;
+          background: var(--bg-card, #1C2236);
           border-radius: 6px;
           padding: 4px 8px;
           cursor: pointer;
@@ -524,11 +554,11 @@ const TeacherDashboard: React.FC = () => {
         }
         .td-share-copy:hover {
           background: var(--primary, #6366F1);
-          color: white;
+          color: #F1F5F9;
         }
         .td-share-copy--done {
           background: #10B981;
-          color: white;
+          color: #F1F5F9;
         }
         .td-share-students {
           display: flex;

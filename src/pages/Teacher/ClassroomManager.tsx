@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { WORLDS } from '../../data/curriculum';
 import {
@@ -48,8 +49,13 @@ const GRADE_LEVELS = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const ClassroomManager: React.FC = () => {
-  const { user } = useAuth();
+  const { user, userProfile, isAdmin } = useAuth();
   const teacherId = user?.uid || '';
+
+  // Role check: only teachers and admins allowed
+  if (userProfile?.role !== 'teacher' && !isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -322,7 +328,7 @@ const ClassroomManager: React.FC = () => {
                           {leaderboard.map((student, index) => (
                             <div key={student.id} className="cm-lb-row">
                               <span className="cm-lb-rank">
-                                {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                                {index === 0 ? <Trophy size={18} color="#F59E0B" /> : index === 1 ? <Trophy size={18} color="#94A3B8" /> : index === 2 ? <Trophy size={18} color="#CD7F32" /> : `#${index + 1}`}
                               </span>
                               <span className="cm-lb-avatar">{student.avatar || '🧒'}</span>
                               <span className="cm-lb-name">{student.name}</span>
@@ -522,16 +528,16 @@ const ClassroomManager: React.FC = () => {
           font-weight: 500;
         }
         .cm-badge--grade {
-          background: #EEF2FF;
-          color: #4338CA;
+          background: rgba(99,102,241,0.15);
+          color: var(--text-body, #4338CA);
         }
         .cm-badge--students {
-          background: #F0FDF4;
-          color: #166534;
+          background: rgba(16,185,129,0.15);
+          color: var(--text-body, #166534);
         }
         .cm-badge--world {
-          background: #FFF7ED;
-          color: #9A3412;
+          background: rgba(245,158,11,0.15);
+          color: var(--text-body, #9A3412);
         }
         .cm-card-actions {
           display: flex;
@@ -558,11 +564,11 @@ const ClassroomManager: React.FC = () => {
           transition: all 0.15s;
         }
         .cm-code-btn:hover {
-          background: #EEF2FF;
+          background: rgba(99,102,241,0.15);
           border-color: var(--primary, #6366F1);
         }
         .cm-code-btn--copied {
-          background: #F0FDF4;
+          background: rgba(34,197,94,0.15);
           border-color: #22C55E;
           color: #166534;
         }
@@ -580,9 +586,9 @@ const ClassroomManager: React.FC = () => {
           gap: 16px;
           padding: 20px;
           margin: 20px 0;
-          background: linear-gradient(135deg, #EEF2FF, #F0F9FF);
+          background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(56,189,248,0.08));
           border-radius: 12px;
-          border: 1px solid #C7D2FE;
+          border: 1px solid var(--border-light, #C7D2FE);
         }
         .cm-share-label {
           color: var(--text-muted, #64748B);
@@ -603,7 +609,7 @@ const ClassroomManager: React.FC = () => {
           padding: 8px 16px;
           border: 1px solid #C7D2FE;
           border-radius: 8px;
-          background: white;
+          background: var(--bg-card, #1C2236);
           color: var(--primary, #6366F1);
           font-weight: 600;
           font-size: 0.85rem;
@@ -613,7 +619,7 @@ const ClassroomManager: React.FC = () => {
         }
         .cm-share-copy:hover {
           background: var(--primary, #6366F1);
-          color: white;
+          color: #F1F5F9;
         }
 
         /* Sections */
@@ -786,7 +792,7 @@ const ClassroomManager: React.FC = () => {
         }
         .cm-delete-btn:hover {
           background: #DC2626;
-          color: white;
+          color: #F1F5F9;
         }
 
         /* Modal */

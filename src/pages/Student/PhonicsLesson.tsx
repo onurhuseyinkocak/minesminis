@@ -18,6 +18,7 @@ import { getPlantForSound, getPlantStage } from '../../data/gardenData';
 import { LS_MASTERED_SOUNDS } from '../../config/storageKeys';
 import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
 import { syncStudentProgress, getStudentClassroom, updateStudentProgress as updateClassroomProgress } from '../../services/classroomService';
+import { useAuth } from '../../contexts/AuthContext';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -135,6 +136,7 @@ function getKeywords(sound: PhonicsSound): { word: string; emoji: string }[] {
 function PhonicsLesson() {
   const { soundId } = useParams<{ soundId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const data = useMemo(() => (soundId ? getSoundData(soundId) : null), [soundId]);
   const [stepIndex, setStepIndex] = useState(0);
@@ -665,7 +667,7 @@ function PhonicsLesson() {
         accuracy: 100,
         xpEarned: totalXP,
         soundId: soundId!,
-      });
+      }, user?.uid);
 
       // Sync progress to classroom (for teacher dashboard)
       syncStudentProgress(totalXP);

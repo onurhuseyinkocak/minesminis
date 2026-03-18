@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, CheckCircle, RefreshCw } from 'lucide-react';
 import { useGamification } from '../contexts/GamificationContext';
+import { useAuth } from '../contexts/AuthContext';
 import { logActivity } from '../services/activityLogger';
 
 interface ChallengeData {
@@ -44,6 +45,7 @@ function getDailyFallback(): ChallengeData {
 
 const DailyChallenge: React.FC = () => {
   const { addXP, trackActivity } = useGamification();
+  const { user } = useAuth();
   const [challenge, setChallenge] = useState<ChallengeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -114,7 +116,7 @@ const DailyChallenge: React.FC = () => {
         duration: 30, // ~30 seconds for a challenge
         accuracy: 100,
         xpEarned: 25,
-      });
+      }, user?.uid);
     }
   };
 
