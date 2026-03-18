@@ -111,6 +111,7 @@ vi.mock('../../services/userService', () => ({
   userService: {
     getUserProfile: vi.fn(() => Promise.resolve(null)),
     createOrUpdateUserProfile: vi.fn(() => Promise.resolve()),
+    updateUserProfile: vi.fn(() => Promise.resolve()),
   },
 }));
 
@@ -158,44 +159,42 @@ beforeEach(async () => {
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 describe('Onboarding Page', () => {
-  it('renders step 1: age selection title', () => {
+  it('renders step 1: role selection with title', () => {
     renderOnboarding();
-    expect(screen.getByText(/How old are you/i)).toBeInTheDocument();
+    expect(screen.getByText('Who are you?')).toBeInTheDocument();
   });
 
-  it('renders 4 age group cards', () => {
+  it('renders three role options', () => {
     renderOnboarding();
-    expect(screen.getByText('Toddler')).toBeInTheDocument();
-    expect(screen.getByText('Preschool')).toBeInTheDocument();
-    expect(screen.getByText('Early Primary')).toBeInTheDocument();
-    expect(screen.getByText('Late Primary')).toBeInTheDocument();
+    expect(screen.getByText('Student')).toBeInTheDocument();
+    expect(screen.getByText('Teacher')).toBeInTheDocument();
+    expect(screen.getByText('Parent')).toBeInTheDocument();
   });
 
-  it('next button is disabled until age group is selected', () => {
+  it('shows role subtitles', () => {
     renderOnboarding();
-    const nextBtn = screen.getByText(/Continue/i);
-    expect(nextBtn.closest('button')).toBeDisabled();
+    expect(screen.getByText('I want to learn English!')).toBeInTheDocument();
+    expect(screen.getByText('I teach English to children')).toBeInTheDocument();
+    expect(screen.getByText('My child is learning English')).toBeInTheDocument();
   });
 
-  it('next button enables after selecting an age group', () => {
+  it('continue button is disabled until role is selected', () => {
     renderOnboarding();
-    fireEvent.click(screen.getByText('Toddler'));
-    const nextBtn = screen.getByText(/Continue/i);
-    expect(nextBtn.closest('button')).not.toBeDisabled();
+    const continueBtn = screen.getByText(/Continue/i);
+    expect(continueBtn.closest('button')).toBeDisabled();
   });
 
-  it('advances to step 2 when clicking next after age selection', () => {
+  it('continue button enables after selecting a role', () => {
     renderOnboarding();
-    fireEvent.click(screen.getByText('Toddler'));
-    fireEvent.click(screen.getByText(/Continue/i));
-    // Step 2 should show "Meet Mimi!" (not step 1 "How old are you?")
-    expect(screen.getByText(/Meet Mimi/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Student'));
+    const continueBtn = screen.getByText(/Continue/i);
+    expect(continueBtn.closest('button')).not.toBeDisabled();
   });
 
-  it('renders progress dots', () => {
+  it('renders progress dots (1 dot when no role selected)', () => {
     renderOnboarding();
-    // Progress dots: should show 5 step indicators
-    expect(document.querySelectorAll('.onboarding-progress-dot').length).toBe(5);
+    const dots = document.querySelectorAll('.onboarding-progress-dot');
+    expect(dots.length).toBeGreaterThanOrEqual(1);
   });
 
   it('first progress dot is active', () => {
@@ -204,57 +203,89 @@ describe('Onboarding Page', () => {
     expect(dots[0].classList.contains('active')).toBe(true);
   });
 
-  it('step 2: shows Meet Mimi intro', () => {
+  it('skip button is present', () => {
     renderOnboarding();
-    fireEvent.click(screen.getByText('Toddler'));
-    fireEvent.click(screen.getByText(/Continue/i));
-    // Step 2 shows Mimi intro speech
-    const body = document.body.textContent || '';
-    expect(body).toMatch(/dragon friend|Mimi/);
+    expect(screen.getByText('Skip for now')).toBeInTheDocument();
   });
 
-  it('can navigate back from step 2 to step 1', () => {
+  // ── Student path ──────────────────────────────────────────────────────────
+
+  it('clicking Student then Continue shows age selection', () => {
     renderOnboarding();
-    fireEvent.click(screen.getByText('Toddler'));
+    fireEvent.click(screen.getByText('Student'));
     fireEvent.click(screen.getByText(/Continue/i));
-    // Find and click back button
-    const backBtn = screen.getByText(/Back/i);
-    fireEvent.click(backBtn);
-    expect(screen.getByText(/How old are you/i)).toBeInTheDocument();
+    expect(screen.getByText('How old are you?')).toBeInTheDocument();
   });
 
-  it('step 3: shows companion selection', () => {
+  it('student age selection shows 4 age groups with phase names', () => {
     renderOnboarding();
-    // Go to step 3: select age -> next -> next (step 2 "Let's Go!")
-    fireEvent.click(screen.getByText('Toddler'));
+    fireEvent.click(screen.getByText('Student'));
     fireEvent.click(screen.getByText(/Continue/i));
-    fireEvent.click(screen.getByText(/Let's Go/i));
-    // Step 3 should show "Choose Your Companion!"
-    expect(screen.getByText(/Choose Your Companion/i)).toBeInTheDocument();
+    expect(screen.getByText('Little Ears')).toBeInTheDocument();
+    expect(screen.getByText('Word Builders')).toBeInTheDocument();
+    expect(screen.getByText('Story Makers')).toBeInTheDocument();
+    expect(screen.getByText('Young Explorers')).toBeInTheDocument();
   });
 
-  it('step 3: shows all 4 mascot characters', () => {
+  it('can navigate back from student age to role selection', () => {
     renderOnboarding();
-    fireEvent.click(screen.getByText('Toddler'));
+    fireEvent.click(screen.getByText('Student'));
     fireEvent.click(screen.getByText(/Continue/i));
-    fireEvent.click(screen.getByText(/Let's Go/i));
-    // All 4 mascot names should be visible
-    expect(screen.getByText('Mimi')).toBeInTheDocument();
-    expect(screen.getByText('Nova')).toBeInTheDocument();
-    expect(screen.getByText('Bubbles')).toBeInTheDocument();
-    expect(screen.getByText('Sparky')).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/Back/i));
+    expect(screen.getByText('Who are you?')).toBeInTheDocument();
   });
 
-  it('each mascot shows power info', () => {
+  // ── Teacher path ──────────────────────────────────────────────────────────
+
+  it('clicking Teacher then Continue shows school info', () => {
     renderOnboarding();
-    fireEvent.click(screen.getByText('Toddler'));
+    fireEvent.click(screen.getByText('Teacher'));
     fireEvent.click(screen.getByText(/Continue/i));
-    fireEvent.click(screen.getByText(/Let's Go/i));
-    const body = document.body.textContent || '';
-    // English power/benefit text from GLINTS config
-    expect(body).toContain('Guardian of Harmony');
-    expect(body).toContain('Star Explorer');
-    expect(body).toContain('Ocean Sorcerer');
-    expect(body).toContain('Electric Genius');
+    expect(screen.getByText('About You')).toBeInTheDocument();
+    expect(screen.getByText(/School/i)).toBeInTheDocument();
+  });
+
+  it('teacher About You shows grade level chips', () => {
+    renderOnboarding();
+    fireEvent.click(screen.getByText('Teacher'));
+    fireEvent.click(screen.getByText(/Continue/i));
+    expect(screen.getByText('Pre-K')).toBeInTheDocument();
+    expect(screen.getByText('Kindergarten')).toBeInTheDocument();
+    expect(screen.getByText('1st Grade')).toBeInTheDocument();
+  });
+
+  it('teacher About You shows student count options', () => {
+    renderOnboarding();
+    fireEvent.click(screen.getByText('Teacher'));
+    fireEvent.click(screen.getByText(/Continue/i));
+    expect(screen.getByText('1-10')).toBeInTheDocument();
+    expect(screen.getByText('11-25')).toBeInTheDocument();
+    expect(screen.getByText('26-40')).toBeInTheDocument();
+    expect(screen.getByText('40+')).toBeInTheDocument();
+  });
+
+  // ── Parent path ───────────────────────────────────────────────────────────
+
+  it('clicking Parent then Continue shows add child form', () => {
+    renderOnboarding();
+    fireEvent.click(screen.getByText('Parent'));
+    fireEvent.click(screen.getByText(/Continue/i));
+    expect(screen.getByText('Add Your Child')).toBeInTheDocument();
+    expect(screen.getByText('Child 1')).toBeInTheDocument();
+  });
+
+  it('parent add child form has name input and age select', () => {
+    renderOnboarding();
+    fireEvent.click(screen.getByText('Parent'));
+    fireEvent.click(screen.getByText(/Continue/i));
+    expect(screen.getByPlaceholderText("Child's name")).toBeInTheDocument();
+    expect(screen.getByText('Age...')).toBeInTheDocument();
+  });
+
+  it('parent can see Add Another Child button', () => {
+    renderOnboarding();
+    fireEvent.click(screen.getByText('Parent'));
+    fireEvent.click(screen.getByText(/Continue/i));
+    expect(screen.getByText(/Add Another Child/i)).toBeInTheDocument();
   });
 });

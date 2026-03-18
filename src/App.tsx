@@ -36,6 +36,8 @@ const WorldDetail = lazy(() => import("./pages/WorldDetail"));
 const LessonPlayer = lazy(() => import("./pages/LessonPlayer"));
 const Games = lazy(() => import("./pages/Games"));
 const PracticeMode = lazy(() => import("./pages/Student/PracticeMode"));
+const PlacementTest = lazy(() => import("./pages/Student/PlacementTest"));
+const PhonicsLesson = lazy(() => import("./pages/Student/PhonicsLesson"));
 const Words = lazy(() => import("./pages/Words"));
 const Videos = lazy(() => import("./pages/Videos"));
 const StoryPage = lazy(() => import("./pages/Story/StoryPage"));
@@ -49,6 +51,7 @@ const Favorites = lazy(() => import("./pages/Favorites"));
 // Protected – Parent / Teacher
 const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
 const ClassroomMode = lazy(() => import("./pages/Teacher/ClassroomMode"));
+const ClassroomManager = lazy(() => import("./pages/Teacher/ClassroomManager"));
 
 // Admin
 const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
@@ -309,11 +312,14 @@ function AppRoutes() {
             <Route path="/premium/success" element={<StudentRoute><Premium /></StudentRoute>} />
             <Route path="/worksheets" element={<StudentRoute><Worksheets /></StudentRoute>} />
             <Route path="/favorites" element={<StudentRoute><Favorites /></StudentRoute>} />
+            <Route path="/placement" element={<ProtectedRoute><PlacementTest /></ProtectedRoute>} />
+            <Route path="/phonics/:soundId" element={<StudentRoute><PhonicsLesson /></StudentRoute>} />
             <Route path="/pricing" element={<Pricing />} />
 
             {/* ── Parent / Teacher (protected + AppShell) ────────── */}
             <Route path="/parent" element={<StudentRoute><ParentDashboard /></StudentRoute>} />
             <Route path="/classroom" element={<StudentRoute><ClassroomMode /></StudentRoute>} />
+            <Route path="/teacher/classrooms" element={<StudentRoute><ClassroomManager /></StudentRoute>} />
 
             {/* ── Catch-all ──────────────────────────────────────── */}
             <Route path="*" element={<NotFound />} />

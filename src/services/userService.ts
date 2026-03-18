@@ -3,7 +3,7 @@ import { supabase } from '../config/supabase';
 export interface UserProfile {
   id: string;
   email: string;
-  role: 'teacher' | 'student';
+  role: 'teacher' | 'student' | 'parent';
   display_name: string;
   avatar_url: string | null;
   bio: string;
@@ -25,7 +25,7 @@ export const userService = {
   async createOrUpdateUserProfile(
     user: { uid?: string; id?: string; email?: string | null },
     profileData: {
-      role: 'teacher' | 'student';
+      role: 'teacher' | 'student' | 'parent';
       displayName: string;
       grade?: string;
       subjects?: string[];

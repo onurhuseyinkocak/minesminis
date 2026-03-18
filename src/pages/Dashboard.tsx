@@ -6,7 +6,7 @@
  * Sections: Greeting → Continue Learning → Stats → Daily Challenge →
  *           Achievements → Quick Actions → Weekly Progress
  */
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -25,7 +25,9 @@ import {
   BarChart3,
   ChevronRight,
   RefreshCw,
+  Users,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import {
   BarChart,
   Bar,
@@ -40,6 +42,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
 import UnifiedMascot from '../components/UnifiedMascot';
 import { WORLDS, getWorldById, getLessonById } from '../data/curriculum';
+import { joinClassroom, getStudentClassroom } from '../services/classroomService';
 import {
   getCurrentLesson as getTrackerCurrentLesson,
   getWorldCompletionCount,
@@ -169,6 +172,11 @@ export default function Dashboard() {
     allBadges,
   } = useGamification();
 
+  // Join classroom state
+  const [joinCode, setJoinCode] = useState('');
+  const [joinLoading, setJoinLoading] = useState(false);
+  const myClassroom = useMemo(() => getStudentClassroom(), []);
+
   // Derived
   const displayName = userProfile?.display_name || user?.displayName || 'Adventurer';
   const greeting = useMemo(() => getGreeting(displayName), [displayName]);
@@ -193,6 +201,27 @@ export default function Dashboard() {
   const handleClaim = useCallback(async () => {
     await claimDailyReward();
   }, [claimDailyReward]);
+
+  // Join classroom
+  const handleJoinClassroom = useCallback(() => {
+    if (!joinCode.trim() || joinCode.trim().length !== 6) {
+      toast.error('Please enter a 6-character code');
+      return;
+    }
+    setJoinLoading(true);
+    const result = joinClassroom(joinCode.trim(), {
+      id: userId,
+      name: displayName,
+      avatar: (userProfile?.settings?.mascotId as string) || '🧒',
+    });
+    setJoinLoading(false);
+    if (result.success) {
+      toast.success(`Joined ${result.classroomName}!`);
+      setJoinCode('');
+    } else {
+      toast.error(result.error || 'Could not join classroom');
+    }
+  }, [joinCode, userId, displayName, userProfile]);
 
   // ---- Loading ----
   if (loading) {
@@ -426,6 +455,49 @@ export default function Dashboard() {
           </div>
           <span className="quick-action-label">Mimi's Story</span>
         </Link>
+      </motion.div>
+
+      {/* ================================================================
+          F2. JOIN A CLASSROOM
+          ================================================================ */}
+      <motion.div className="join-classroom-card" variants={itemVariants}>
+        <div className="join-classroom-icon">
+          <Users size={22} color="var(--primary)" />
+        </div>
+        <div className="join-classroom-content">
+          {myClassroom ? (
+            <>
+              <h3 className="join-classroom-title">My Classroom</h3>
+              <p className="join-classroom-desc">{myClassroom.classroomName}</p>
+            </>
+          ) : (
+            <>
+              <h3 className="join-classroom-title">Join a Classroom</h3>
+              <p className="join-classroom-desc">Enter your teacher's 6-character code</p>
+            </>
+          )}
+        </div>
+        {!myClassroom && (
+          <div className="join-classroom-form">
+            <input
+              type="text"
+              className="join-classroom-input"
+              placeholder="ABC123"
+              maxLength={6}
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === 'Enter' && handleJoinClassroom()}
+              style={{ textTransform: 'uppercase', letterSpacing: '3px' }}
+            />
+            <button
+              className="join-classroom-btn"
+              onClick={handleJoinClassroom}
+              disabled={joinLoading}
+            >
+              {joinLoading ? '...' : 'Join'}
+            </button>
+          </div>
+        )}
       </motion.div>
 
       {/* ================================================================

@@ -20,7 +20,7 @@ interface GameProps {
   onWrongAnswer?: () => void;
 }
 
-type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation';
+type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading';
 
 // Lazy imports to keep bundle size down
 const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GameProps>>> = {
@@ -30,6 +30,11 @@ const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GamePr
   'sentence-scramble': React.lazy(() => import('./SentenceScramble').then((m) => ({ default: m.SentenceScramble }))),
   'listening-challenge': React.lazy(() => import('./ListeningChallenge').then((m) => ({ default: m.ListeningChallenge }))),
   'pronunciation': React.lazy(() => import('./PronunciationGame').then((m) => ({ default: m.PronunciationGame }))),
+  'blending': React.lazy(() => import('../phonics/BlendingBoard').then((m) => ({ default: m.BlendingBoard as unknown as React.FC<GameProps> }))),
+  'segmenting': React.lazy(() => import('../phonics/SegmentingBoard').then((m) => ({ default: m.SegmentingBoard as unknown as React.FC<GameProps> }))),
+  'tpr': React.lazy(() => import('../phonics/TPRActivity').then((m) => ({ default: m.TPRActivity as unknown as React.FC<GameProps> }))),
+  'sound-intro': React.lazy(() => import('../phonics/SoundCard').then((m) => ({ default: m.SoundCard as unknown as React.FC<GameProps> }))),
+  'reading': React.lazy(() => import('../phonics/DecodableReader').then((m) => ({ default: m.DecodableReader as unknown as React.FC<GameProps> }))),
 };
 
 const GAME_TYPE_MAP: Record<string, GameType> = {
@@ -51,6 +56,21 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
   'pronunciation': 'pronunciation',
   'Pronunciation': 'pronunciation',
   'PronunciationGame': 'pronunciation',
+  'blending': 'blending',
+  'Blending': 'blending',
+  'BlendingBoard': 'blending',
+  'segmenting': 'segmenting',
+  'Segmenting': 'segmenting',
+  'SegmentingBoard': 'segmenting',
+  'tpr': 'tpr',
+  'TPR': 'tpr',
+  'TPRActivity': 'tpr',
+  'sound-intro': 'sound-intro',
+  'soundintro': 'sound-intro',
+  'SoundCard': 'sound-intro',
+  'reading': 'reading',
+  'Reading': 'reading',
+  'DecodableReader': 'reading',
 };
 
 export interface GameSelectorProps extends GameProps {

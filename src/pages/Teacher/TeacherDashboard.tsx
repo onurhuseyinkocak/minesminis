@@ -1,38 +1,79 @@
 /**
  * TEACHER DASHBOARD PAGE
- * Shows real platform data from GamificationContext and curriculum.
- * Links to admin tools. No hardcoded placeholder numbers.
+ * Teacher-focused dashboard with classroom overview, quick actions,
+ * and getting-started guidance for new teachers.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
 import { WORLDS } from '../../data/curriculum';
-import { BookOpen, Award, TrendingUp, Gamepad2, Video, FileText, Globe, Layers, Settings, BarChart3 } from 'lucide-react';
+import {
+  getClassrooms,
+  createClassroom,
+  type Classroom,
+} from '../../services/classroomService';
+import ClassroomManager from './ClassroomManager';
+import {
+  BookOpen,
+  Award,
+  Users,
+  Gamepad2,
+  Video,
+  FileText,
+  Settings,
+  Plus,
+  GraduationCap,
+  Lightbulb,
+  Copy,
+  Check,
+  BarChart3,
+  Layers,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const TeacherDashboard: React.FC = () => {
-  const { userProfile, isAdmin } = useAuth();
+  const { user, userProfile, isAdmin } = useAuth();
   const { stats, loading } = useGamification();
+  const teacherId = user?.uid || '';
 
-  // Derive real curriculum stats
-  const curriculumStats = useMemo(() => {
-    const totalLessons = WORLDS.reduce((sum, w) => sum + w.lessons.length, 0);
-    const totalVocabulary = WORLDS.reduce((sum, w) => sum + w.vocabulary.length, 0);
-    const totalActivities = WORLDS.reduce(
-      (sum, w) => sum + w.lessons.reduce((ls, l) => ls + l.activities.length, 0),
+  const [activeTab, setActiveTab] = useState<'overview' | 'classrooms'>('overview');
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  // Load classrooms
+  const classrooms = useMemo(() => getClassrooms(teacherId), [teacherId]);
+
+  // Quick stats
+  const totalStudents = useMemo(
+    () => classrooms.reduce((sum, c) => sum + c.students.length, 0),
+    [classrooms],
+  );
+  const activeToday = useMemo(() => {
+    const today = new Date().toDateString();
+    return classrooms.reduce(
+      (sum, c) =>
+        sum +
+        c.students.filter(
+          (s) => new Date(s.lastActive).toDateString() === today,
+        ).length,
       0,
     );
-    return { totalWorlds: WORLDS.length, totalLessons, totalVocabulary, totalActivities };
+  }, [classrooms]);
+
+  // Copy join code
+  const handleCopyCode = useCallback((code: string) => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopiedCode(code);
+      toast.success('Join code copied!');
+      setTimeout(() => setCopiedCode(null), 2000);
+    });
   }, []);
 
-  // Stats cards from real data
-  const statCards = useMemo(() => [
-    { icon: BookOpen, label: 'Words Learned', value: String(stats.wordsLearned), color: '#6366F1' },
-    { icon: Gamepad2, label: 'Games Played', value: String(stats.gamesPlayed), color: '#10B981' },
-    { icon: Video, label: 'Videos Watched', value: String(stats.videosWatched), color: '#F59E0B' },
-    { icon: FileText, label: 'Worksheets Done', value: String(stats.worksheetsCompleted), color: '#EC4899' },
-  ], [stats.wordsLearned, stats.gamesPlayed, stats.videosWatched, stats.worksheetsCompleted]);
+  // Quick-create classroom
+  const handleQuickCreate = useCallback(() => {
+    setActiveTab('classrooms');
+  }, []);
 
   if (loading) {
     return (
@@ -42,322 +83,659 @@ const TeacherDashboard: React.FC = () => {
     );
   }
 
+  const hasClassrooms = classrooms.length > 0;
+
   return (
     <div className="teacher-dashboard">
-      <div className="dashboard-header">
+      {/* ─── HEADER ─── */}
+      <div className="td-header">
         <div>
-          <h1 className="glow-text">Welcome back, {userProfile?.display_name || 'Teacher'}!</h1>
-          <p className="dashboard-subtitle">
-            Level {stats.level} &mdash; {stats.xp.toLocaleString()} XP &mdash; {stats.streakDays}-day streak
+          <h1 className="td-welcome">
+            Welcome back, {userProfile?.display_name || 'Teacher'}!
+          </h1>
+          <p className="td-subtitle">
+            Level {stats.level} &middot; {stats.xp.toLocaleString()} XP &middot;{' '}
+            {stats.streakDays}-day streak
           </p>
         </div>
-        {isAdmin && (
-          <Link to="/admin" style={{ textDecoration: 'none' }}>
-            <button className="premium-btn premium-btn-primary">
-              <Settings size={16} style={{ marginRight: 6 }} />
-              Admin Panel
-            </button>
-          </Link>
-        )}
+        <div className="td-header-actions">
+          {isAdmin && (
+            <Link to="/admin" style={{ textDecoration: 'none' }}>
+              <button className="td-btn td-btn--secondary">
+                <Settings size={16} />
+                Admin Panel
+              </button>
+            </Link>
+          )}
+        </div>
       </div>
 
-      {/* ---- STATS CARDS (real data) ---- */}
-      <div className="stats-grid">
-        {statCards.map((stat, index) => (
-          <div key={index} className="stat-card premium-card">
-            <div className="stat-icon" style={{ background: stat.color }}>
-              <stat.icon size={24} color="white" />
-            </div>
-            <div className="stat-info">
-              <div className="stat-value">{stat.value}</div>
-              <div className="stat-label">{stat.label}</div>
-            </div>
-          </div>
-        ))}
+      {/* ─── TAB SWITCHER ─── */}
+      <div className="td-tabs">
+        <button
+          className={`td-tab ${activeTab === 'overview' ? 'td-tab--active' : ''}`}
+          onClick={() => setActiveTab('overview')}
+        >
+          <BarChart3 size={16} />
+          Overview
+        </button>
+        <button
+          className={`td-tab ${activeTab === 'classrooms' ? 'td-tab--active' : ''}`}
+          onClick={() => setActiveTab('classrooms')}
+        >
+          <GraduationCap size={16} />
+          Classrooms
+        </button>
       </div>
 
-      <div className="dashboard-grid">
-        {/* ---- QUICK ACTIONS ---- */}
-        <div className="dashboard-section premium-card">
-          <h2><BarChart3 size={20} style={{ marginRight: 8 }} />Quick Actions</h2>
-          <div className="quick-actions">
-            {isAdmin && (
-              <>
-                <Link to="/admin/words" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-primary">
-                    <BookOpen size={16} style={{ marginRight: 6 }} />
-                    Manage Words
-                  </button>
-                </Link>
-                <Link to="/admin/games" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-secondary">
-                    <Gamepad2 size={16} style={{ marginRight: 6 }} />
-                    Manage Games
-                  </button>
-                </Link>
-                <Link to="/admin/videos" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-primary">
-                    <Video size={16} style={{ marginRight: 6 }} />
-                    Manage Videos
-                  </button>
-                </Link>
-                <Link to="/admin/worksheets" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-secondary">
-                    <FileText size={16} style={{ marginRight: 6 }} />
-                    Manage Worksheets
-                  </button>
-                </Link>
-              </>
-            )}
-            {!isAdmin && (
-              <>
-                <Link to="/words" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-primary">
-                    <BookOpen size={16} style={{ marginRight: 6 }} />
-                    Browse Words
-                  </button>
-                </Link>
-                <Link to="/games" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-secondary">
-                    <Gamepad2 size={16} style={{ marginRight: 6 }} />
-                    Play Games
-                  </button>
-                </Link>
-                <Link to="/videos" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-primary">
-                    <Video size={16} style={{ marginRight: 6 }} />
-                    Watch Videos
-                  </button>
-                </Link>
-                <Link to="/classroom" style={{ textDecoration: 'none' }}>
-                  <button className="action-btn premium-btn premium-btn-secondary">
-                    <Layers size={16} style={{ marginRight: 6 }} />
-                    Classroom Mode
-                  </button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* ---- STUDENT ACTIVITY ---- */}
-        <div className="dashboard-section premium-card">
-          <h2><TrendingUp size={20} style={{ marginRight: 8 }} />Student Activity</h2>
-          <div className="student-activity" style={{ padding: '20px', textAlign: 'center' }}>
-            <p style={{ color: '#64748B', fontSize: '0.95rem', marginBottom: 12 }}>
-              Student activity tracking coming soon.
-            </p>
-            <p style={{ color: '#94A3B8', fontSize: '0.85rem' }}>
-              Real-time monitoring of student progress and online status will be available in a future update.
-            </p>
-          </div>
-        </div>
-
-        {/* ---- CURRICULUM OVERVIEW (real data from curriculum.ts) ---- */}
-        <div className="dashboard-section premium-card">
-          <h2><Globe size={20} style={{ marginRight: 8 }} />Curriculum Overview</h2>
-          <div className="curriculum-overview">
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Worlds</span>
-              <span className="curriculum-stat-value">{curriculumStats.totalWorlds}</span>
+      {activeTab === 'overview' ? (
+        <>
+          {/* ─── QUICK STATS ─── */}
+          <div className="td-stats-grid">
+            <div className="td-stat-card">
+              <div className="td-stat-icon" style={{ background: '#6366F1' }}>
+                <GraduationCap size={22} color="white" />
+              </div>
+              <div className="td-stat-info">
+                <div className="td-stat-value">{classrooms.length}</div>
+                <div className="td-stat-label">Classrooms</div>
+              </div>
             </div>
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Lessons</span>
-              <span className="curriculum-stat-value">{curriculumStats.totalLessons}</span>
+            <div className="td-stat-card">
+              <div className="td-stat-icon" style={{ background: '#10B981' }}>
+                <Users size={22} color="white" />
+              </div>
+              <div className="td-stat-info">
+                <div className="td-stat-value">{totalStudents}</div>
+                <div className="td-stat-label">Total Students</div>
+              </div>
             </div>
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Vocabulary Words</span>
-              <span className="curriculum-stat-value">{curriculumStats.totalVocabulary}</span>
+            <div className="td-stat-card">
+              <div className="td-stat-icon" style={{ background: '#F59E0B' }}>
+                <Award size={22} color="white" />
+              </div>
+              <div className="td-stat-info">
+                <div className="td-stat-value">{activeToday}</div>
+                <div className="td-stat-label">Active Today</div>
+              </div>
             </div>
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Activities</span>
-              <span className="curriculum-stat-value">{curriculumStats.totalActivities}</span>
-            </div>
-
-            <div style={{ marginTop: 16 }}>
-              <p style={{ color: '#64748B', fontSize: '0.85rem', fontWeight: 600, marginBottom: 8 }}>
-                Worlds:
-              </p>
-              <div className="world-chips">
-                {WORLDS.map(w => (
-                  <span key={w.id} className="world-chip" style={{ background: w.color + '22', color: w.color, border: `1px solid ${w.color}44` }}>
-                    {w.icon} {w.name}
-                  </span>
-                ))}
+            <div className="td-stat-card">
+              <div className="td-stat-icon" style={{ background: '#EC4899' }}>
+                <BookOpen size={22} color="white" />
+              </div>
+              <div className="td-stat-info">
+                <div className="td-stat-value">{WORLDS.length}</div>
+                <div className="td-stat-label">Worlds Available</div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ---- CONTENT STATS ---- */}
-        <div className="dashboard-section premium-card">
-          <h2><Award size={20} style={{ marginRight: 8 }} />Platform Stats</h2>
-          <div className="curriculum-overview">
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Your Level</span>
-              <span className="curriculum-stat-value">{stats.level}</span>
+          {/* ─── SHARE YOUR CODE (if classrooms exist) ─── */}
+          {hasClassrooms && (
+            <div className="td-share-section">
+              <h2>
+                <Copy size={18} />
+                Share Your Classroom Code
+              </h2>
+              <div className="td-share-codes">
+                {classrooms.map((c) => (
+                  <div key={c.id} className="td-share-card">
+                    <div className="td-share-name">{c.name}</div>
+                    <div className="td-share-grade">{c.gradeLevel}</div>
+                    <div className="td-share-code-row">
+                      <span className="td-share-code">{c.joinCode}</span>
+                      <button
+                        className={`td-share-copy ${copiedCode === c.joinCode ? 'td-share-copy--done' : ''}`}
+                        onClick={() => handleCopyCode(c.joinCode)}
+                      >
+                        {copiedCode === c.joinCode ? <Check size={14} /> : <Copy size={14} />}
+                      </button>
+                    </div>
+                    <div className="td-share-students">
+                      <Users size={12} /> {c.students.length} students
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Total XP</span>
-              <span className="curriculum-stat-value">{stats.xp.toLocaleString()}</span>
-            </div>
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Weekly XP</span>
-              <span className="curriculum-stat-value">{stats.weekly_xp.toLocaleString()}</span>
-            </div>
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Streak</span>
-              <span className="curriculum-stat-value">{stats.streakDays} days</span>
-            </div>
-            <div className="curriculum-stat-row">
-              <span className="curriculum-stat-label">Badges Earned</span>
-              <span className="curriculum-stat-value">{stats.badges.length}</span>
+          )}
+
+          {/* ─── QUICK ACTIONS ─── */}
+          <div className="td-section">
+            <h2>
+              <Layers size={18} />
+              Quick Actions
+            </h2>
+            <div className="td-actions-grid">
+              <button className="td-action-card" onClick={handleQuickCreate}>
+                <div className="td-action-icon" style={{ background: '#EEF2FF' }}>
+                  <Plus size={22} color="#6366F1" />
+                </div>
+                <span className="td-action-label">Create Classroom</span>
+              </button>
+              <button
+                className="td-action-card"
+                onClick={() => setActiveTab('classrooms')}
+              >
+                <div className="td-action-icon" style={{ background: '#F0FDF4' }}>
+                  <BarChart3 size={22} color="#10B981" />
+                </div>
+                <span className="td-action-label">View Reports</span>
+              </button>
+              <Link to="/words" className="td-action-card" style={{ textDecoration: 'none' }}>
+                <div className="td-action-icon" style={{ background: '#FFF7ED' }}>
+                  <BookOpen size={22} color="#F59E0B" />
+                </div>
+                <span className="td-action-label">Browse Content</span>
+              </Link>
+              <Link to="/games" className="td-action-card" style={{ textDecoration: 'none' }}>
+                <div className="td-action-icon" style={{ background: '#FDF2F8' }}>
+                  <Gamepad2 size={22} color="#EC4899" />
+                </div>
+                <span className="td-action-label">Games Library</span>
+              </Link>
+              {isAdmin && (
+                <>
+                  <Link to="/admin/words" className="td-action-card" style={{ textDecoration: 'none' }}>
+                    <div className="td-action-icon" style={{ background: '#F5F3FF' }}>
+                      <FileText size={22} color="#8B5CF6" />
+                    </div>
+                    <span className="td-action-label">Manage Words</span>
+                  </Link>
+                  <Link to="/admin/videos" className="td-action-card" style={{ textDecoration: 'none' }}>
+                    <div className="td-action-icon" style={{ background: '#ECFDF5' }}>
+                      <Video size={22} color="#059669" />
+                    </div>
+                    <span className="td-action-label">Manage Videos</span>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
-        </div>
-      </div>
+
+          {/* ─── GETTING STARTED (no classrooms) ─── */}
+          {!hasClassrooms && (
+            <div className="td-getting-started">
+              <div className="td-gs-icon">
+                <Lightbulb size={36} color="#F59E0B" />
+              </div>
+              <h2>Getting Started</h2>
+              <p>Welcome to MinesMinis! Here's how to set up your classroom:</p>
+              <div className="td-gs-steps">
+                <div className="td-gs-step">
+                  <span className="td-gs-num">1</span>
+                  <div>
+                    <strong>Create a Classroom</strong>
+                    <p>Click "Create Classroom" and enter a name and grade level.</p>
+                  </div>
+                </div>
+                <div className="td-gs-step">
+                  <span className="td-gs-num">2</span>
+                  <div>
+                    <strong>Share the Join Code</strong>
+                    <p>Give students the 6-character code so they can join your class.</p>
+                  </div>
+                </div>
+                <div className="td-gs-step">
+                  <span className="td-gs-num">3</span>
+                  <div>
+                    <strong>Assign a Phonics Group</strong>
+                    <p>Select which world/unit your class should focus on.</p>
+                  </div>
+                </div>
+                <div className="td-gs-step">
+                  <span className="td-gs-num">4</span>
+                  <div>
+                    <strong>Track Progress</strong>
+                    <p>View student progress, leaderboards, and activity right here.</p>
+                  </div>
+                </div>
+              </div>
+              <button className="td-gs-cta" onClick={handleQuickCreate}>
+                <Plus size={18} />
+                Create Your First Classroom
+              </button>
+            </div>
+          )}
+
+          {/* ─── MY CLASSROOMS PREVIEW (if any) ─── */}
+          {hasClassrooms && (
+            <div className="td-section">
+              <div className="td-section-header">
+                <h2>
+                  <GraduationCap size={18} />
+                  My Classrooms
+                </h2>
+                <button
+                  className="td-btn td-btn--link"
+                  onClick={() => setActiveTab('classrooms')}
+                >
+                  View All
+                </button>
+              </div>
+              <div className="td-classroom-preview">
+                {classrooms.slice(0, 3).map((c) => (
+                  <div
+                    key={c.id}
+                    className="td-preview-card"
+                    onClick={() => setActiveTab('classrooms')}
+                  >
+                    <div className="td-preview-name">{c.name}</div>
+                    <div className="td-preview-meta">
+                      <span>{c.gradeLevel}</span>
+                      <span>
+                        <Users size={12} /> {c.students.length}
+                      </span>
+                    </div>
+                    <div className="td-preview-world">
+                      {WORLDS[c.phonicsGroupAssigned - 1]?.icon}{' '}
+                      {WORLDS[c.phonicsGroupAssigned - 1]?.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        /* ─── CLASSROOMS TAB ─── */
+        <ClassroomManager />
+      )}
 
       <style>{`
         .teacher-dashboard {
-          padding: 40px;
+          padding: 32px 40px;
           max-width: 1400px;
           margin: 0 auto;
         }
 
-        .dashboard-header {
+        /* Header */
+        .td-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 32px;
-        }
-
-        .dashboard-subtitle {
-          color: #64748B;
-          font-size: 1.1rem;
-          margin-top: 8px;
-        }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 24px;
-          margin-bottom: 32px;
-        }
-
-        .stat-card {
-          display: flex;
-          align-items: center;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
           gap: 16px;
         }
+        .td-welcome {
+          font-size: 1.6rem;
+          font-weight: 700;
+          color: var(--text-heading, #1e293b);
+        }
+        .td-subtitle {
+          color: var(--text-muted, #64748B);
+          font-size: 1rem;
+          margin-top: 4px;
+        }
+        .td-header-actions {
+          display: flex;
+          gap: 10px;
+        }
+        .td-btn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 18px;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          cursor: pointer;
+          border: none;
+          transition: all 0.2s;
+        }
+        .td-btn--secondary {
+          background: var(--bg-card, #fff);
+          color: var(--text-body, #334155);
+          border: 1px solid var(--border-light, #e2e8f0);
+        }
+        .td-btn--secondary:hover {
+          background: var(--bg-hover, #f1f5f9);
+        }
+        .td-btn--link {
+          background: none;
+          color: var(--primary, #6366F1);
+          padding: 4px 8px;
+          font-size: 0.85rem;
+        }
+        .td-btn--link:hover {
+          text-decoration: underline;
+        }
 
-        .stat-icon {
-          width: 56px;
-          height: 56px;
+        /* Tabs */
+        .td-tabs {
+          display: flex;
+          gap: 4px;
+          margin-bottom: 28px;
+          background: var(--bg-hover, #f1f5f9);
+          border-radius: 12px;
+          padding: 4px;
+          width: fit-content;
+        }
+        .td-tab {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 10px;
+          background: transparent;
+          color: var(--text-muted, #64748B);
+          font-weight: 600;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .td-tab--active {
+          background: var(--bg-card, #fff);
+          color: var(--primary, #6366F1);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        /* Stats Grid */
+        .td-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 16px;
+          margin-bottom: 28px;
+        }
+        .td-stat-card {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 20px;
+          background: var(--bg-card, #fff);
+          border-radius: 14px;
+          border: 1px solid var(--border-light, #e2e8f0);
+        }
+        .td-stat-icon {
+          width: 48px;
+          height: 48px;
           border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
         }
-
-        .stat-value {
-          font-size: 2rem;
+        .td-stat-value {
+          font-size: 1.6rem;
           font-weight: 700;
+          color: var(--text-heading, #1e293b);
           font-family: var(--font-heading);
         }
-
-        .stat-label {
-          color: #64748B;
-          font-size: 0.9rem;
+        .td-stat-label {
+          color: var(--text-muted, #64748B);
+          font-size: 0.85rem;
         }
 
-        .dashboard-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 24px;
+        /* Share Section */
+        .td-share-section {
+          margin-bottom: 28px;
         }
-
-        .dashboard-section h2 {
-          font-size: 1.25rem;
-          margin-bottom: 20px;
+        .td-share-section h2 {
           display: flex;
           align-items: center;
+          gap: 8px;
+          font-size: 1.1rem;
+          margin-bottom: 14px;
+          color: var(--text-heading, #1e293b);
         }
-
-        .quick-actions {
+        .td-share-codes {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
           gap: 12px;
         }
-
-        .quick-actions a {
-          display: block;
+        .td-share-card {
+          padding: 16px 20px;
+          background: linear-gradient(135deg, #EEF2FF, #F0F9FF);
+          border-radius: 14px;
+          border: 1px solid #C7D2FE;
         }
-
-        .action-btn {
-          width: 100%;
-          justify-content: center;
+        .td-share-name {
+          font-weight: 700;
+          font-size: 0.95rem;
+          margin-bottom: 2px;
+          color: var(--text-heading, #1e293b);
+        }
+        .td-share-grade {
+          font-size: 0.8rem;
+          color: var(--text-muted, #64748B);
+          margin-bottom: 10px;
+        }
+        .td-share-code-row {
           display: flex;
           align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+        .td-share-code {
+          font-family: 'JetBrains Mono', 'SF Mono', monospace;
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: var(--primary, #6366F1);
+          letter-spacing: 3px;
+        }
+        .td-share-copy {
+          border: none;
+          background: white;
+          border-radius: 6px;
+          padding: 4px 8px;
+          cursor: pointer;
+          color: var(--primary, #6366F1);
+          transition: all 0.15s;
+        }
+        .td-share-copy:hover {
+          background: var(--primary, #6366F1);
+          color: white;
+        }
+        .td-share-copy--done {
+          background: #10B981;
+          color: white;
+        }
+        .td-share-students {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.8rem;
+          color: var(--text-muted, #64748B);
         }
 
-        .curriculum-overview {
-          padding: 4px 0;
+        /* Section */
+        .td-section {
+          margin-bottom: 28px;
         }
-
-        .curriculum-stat-row {
+        .td-section h2 {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 1.1rem;
+          margin-bottom: 14px;
+          color: var(--text-heading, #1e293b);
+        }
+        .td-section-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 10px 0;
-          border-bottom: 1px solid #f1f5f9;
+          margin-bottom: 14px;
+        }
+        .td-section-header h2 {
+          margin-bottom: 0;
         }
 
-        .curriculum-stat-row:last-child {
-          border-bottom: none;
+        /* Quick Actions */
+        .td-actions-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+          gap: 12px;
+        }
+        .td-action-card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          padding: 20px 12px;
+          background: var(--bg-card, #fff);
+          border-radius: 14px;
+          border: 1px solid var(--border-light, #e2e8f0);
+          cursor: pointer;
+          transition: all 0.2s;
+          color: var(--text-heading, #1e293b);
+        }
+        .td-action-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+          border-color: var(--primary, #6366F1);
+        }
+        .td-action-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .td-action-label {
+          font-weight: 600;
+          font-size: 0.85rem;
+          text-align: center;
         }
 
-        .curriculum-stat-label {
-          color: #64748B;
+        /* Getting Started */
+        .td-getting-started {
+          background: var(--bg-card, #fff);
+          border-radius: 16px;
+          border: 1px solid var(--border-light, #e2e8f0);
+          padding: 36px;
+          margin-bottom: 28px;
+          text-align: center;
+        }
+        .td-gs-icon {
+          margin-bottom: 12px;
+        }
+        .td-getting-started h2 {
+          font-size: 1.3rem;
+          margin-bottom: 8px;
+          color: var(--text-heading, #1e293b);
+        }
+        .td-getting-started > p {
+          color: var(--text-muted, #64748B);
+          margin-bottom: 24px;
+        }
+        .td-gs-steps {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 16px;
+          text-align: left;
+          margin-bottom: 28px;
+        }
+        .td-gs-step {
+          display: flex;
+          gap: 12px;
+          padding: 16px;
+          background: var(--bg-hover, #f8fafc);
+          border-radius: 12px;
+        }
+        .td-gs-num {
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          border-radius: 50%;
+          background: var(--primary, #6366F1);
+          color: white;
+          font-weight: 700;
           font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .td-gs-step strong {
+          display: block;
+          margin-bottom: 4px;
+          font-size: 0.9rem;
+          color: var(--text-heading, #1e293b);
+        }
+        .td-gs-step p {
+          color: var(--text-muted, #64748B);
+          font-size: 0.82rem;
+          margin: 0;
+        }
+        .td-gs-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 28px;
+          border: none;
+          border-radius: 12px;
+          background: var(--primary, #6366F1);
+          color: white;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .td-gs-cta:hover {
+          background: var(--primary-dark, #4F46E5);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
         }
 
-        .curriculum-stat-value {
+        /* Classroom Preview */
+        .td-classroom-preview {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          gap: 12px;
+        }
+        .td-preview-card {
+          padding: 16px 20px;
+          background: var(--bg-card, #fff);
+          border-radius: 14px;
+          border: 1px solid var(--border-light, #e2e8f0);
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .td-preview-card:hover {
+          border-color: var(--primary, #6366F1);
+          box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .td-preview-name {
           font-weight: 700;
           font-size: 1rem;
-          color: #1e293b;
+          margin-bottom: 6px;
+          color: var(--text-heading, #1e293b);
         }
-
-        .world-chips {
+        .td-preview-meta {
           display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-
-        .world-chip {
-          padding: 4px 10px;
-          border-radius: 20px;
+          gap: 12px;
           font-size: 0.8rem;
-          font-weight: 500;
-          white-space: nowrap;
+          color: var(--text-muted, #64748B);
+          margin-bottom: 6px;
+        }
+        .td-preview-meta span {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .td-preview-world {
+          font-size: 0.82rem;
+          color: var(--text-body, #334155);
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
           .teacher-dashboard {
-            padding: 20px;
+            padding: 20px 16px;
           }
-
-          .dashboard-header {
+          .td-header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 16px;
           }
-
-          .quick-actions {
+          .td-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .td-gs-steps {
             grid-template-columns: 1fr;
           }
-
-          .stats-grid {
+          .td-actions-grid {
             grid-template-columns: repeat(2, 1fr);
           }
         }

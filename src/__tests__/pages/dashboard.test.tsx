@@ -58,8 +58,20 @@ vi.mock('lucide-react', () => {
     BarChart3: icon,
     ChevronRight: icon,
     RefreshCw: icon,
+    Users: icon,
   };
 });
+
+// Mock classroomService
+vi.mock('../../services/classroomService', () => ({
+  joinClassroom: vi.fn(() => ({ success: false })),
+  getStudentClassroom: vi.fn(() => null),
+}));
+
+// Mock spacedRepetition
+vi.mock('../../data/spacedRepetition', () => ({
+  getDueWords: vi.fn(() => []),
+}));
 
 // Mock recharts
 vi.mock('recharts', () => ({

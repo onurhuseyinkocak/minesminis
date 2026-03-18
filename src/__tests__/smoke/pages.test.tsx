@@ -218,7 +218,7 @@ describe('Page Smoke Tests', () => {
     const { default: Landing } = await import('../../pages/Landing');
     wrap(<Landing />);
     // default lang is 'en' based on source
-    expect(screen.getByText(/Learn English with MinesMinis/i)).toBeInTheDocument();
+    expect(screen.getByText(/Montessori \+ Phonics English Learning/i)).toBeInTheDocument();
   });
 
   it('Login - renders login form', async () => {
@@ -285,6 +285,6 @@ describe('Page Smoke Tests', () => {
   it('Onboarding - renders step 1 with character selection', async () => {
     const { default: Onboarding } = await import('../../pages/Onboarding');
     wrap(<Onboarding />);
-    expect(screen.getByText(/How old are you/i)).toBeInTheDocument();
+    expect(screen.getByText(/Who are you/i)).toBeInTheDocument();
   });
 });
