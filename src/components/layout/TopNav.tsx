@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked } from 'lucide-react';
 import './TopNav.css';
 
 interface TopNavProps {
@@ -19,11 +19,17 @@ interface TopNavProps {
 }
 
 const NAV_ITEMS = [
-  { path: '/', label: 'Home', icon: Home },
-  { path: '/worlds', label: 'Worlds', icon: Globe },
+  { path: '/dashboard', label: 'Home', icon: Home },
+  { path: '/worlds', label: 'Learn', icon: Globe },
   { path: '/games', label: 'Games', icon: Gamepad2 },
-  { path: '/words', label: 'Dictionary', icon: BookOpen },
+  { path: '/words', label: 'Library', icon: BookOpen },
   { path: '/story', label: 'Stories', icon: BookText },
+];
+
+/** Extra nav items shown in mobile slide-out menu */
+const EXTRA_NAV_ITEMS = [
+  { path: '/garden', label: 'Garden', icon: Flower2 },
+  { path: '/reading', label: 'Reading', icon: BookMarked },
 ];
 
 export default function TopNav({
@@ -42,7 +48,7 @@ export default function TopNav({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
+    if (path === '/dashboard') return location.pathname === '/' || location.pathname === '/dashboard';
     return location.pathname.startsWith(path);
   };
 
@@ -227,6 +233,18 @@ export default function TopNav({
 
         <ul className="topnav__mobile-links">
           {NAV_ITEMS.map(({ path, label, icon: Icon }) => (
+            <li key={path}>
+              <Link
+                to={path}
+                className={`topnav__mobile-link ${isActive(path) ? 'active' : ''}`}
+                onClick={() => setMobileOpen(false)}
+              >
+                <Icon size={22} />
+                <span>{label}</span>
+              </Link>
+            </li>
+          ))}
+          {EXTRA_NAV_ITEMS.map(({ path, label, icon: Icon }) => (
             <li key={path}>
               <Link
                 to={path}

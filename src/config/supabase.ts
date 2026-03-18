@@ -22,7 +22,7 @@ export interface Database {
         Row: {
           id: string;
           email: string;
-          role: 'teacher' | 'student';
+          role: 'teacher' | 'student' | 'parent';
           display_name: string;
           avatar_url: string | null;
           bio: string;
@@ -42,7 +42,7 @@ export interface Database {
         Insert: {
           id: string;
           email: string;
-          role: 'teacher' | 'student';
+          role: 'teacher' | 'student' | 'parent';
           display_name: string;
           avatar_url?: string | null;
           bio?: string;

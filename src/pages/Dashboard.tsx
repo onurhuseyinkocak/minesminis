@@ -180,14 +180,14 @@ export default function Dashboard() {
   const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
   const [dueWords, setDueWords] = useState(() => getDueWords());
   const [nextAction, setNextAction] = useState(() => getNextAction());
-  const [todayMin, setTodayMin] = useState(() => getTodayMinutes());
+  const [todayMin, setTodayMin] = useState(() => getTodayMinutes(user?.uid));
 
   useEffect(() => {
     const onFocus = () => {
       setLesson(getCurrentLessonData(userId));
       setDueWords(getDueWords());
       setNextAction(getNextAction());
-      setTodayMin(getTodayMinutes());
+      setTodayMin(getTodayMinutes(userId));
     };
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);

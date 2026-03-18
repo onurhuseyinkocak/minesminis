@@ -13,6 +13,8 @@ import {
 import { auth, googleProvider } from '../config/firebase';
 import { isAdminEmail } from '../config/adminEmails';
 import { userService, UserProfile } from '../services/userService';
+import { setLearningPathUser } from '../services/learningPathService';
+import { setSpacedRepetitionUser } from '../data/spacedRepetition';
 
 interface AuthContextType {
   user: User | null;
@@ -135,6 +137,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadUserProfile = async () => {
       if (user) {
+        // Scope localStorage keys per user for learning data
+        setLearningPathUser(user.uid);
+        setSpacedRepetitionUser(user.uid);
         setProfileLoading(true);
         try {
           const profile = await userService.getUserProfile(user.uid);

@@ -20,6 +20,7 @@ import { LS_MASTERED_SOUNDS } from '../../config/storageKeys';
 import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
 import { syncStudentProgress, getStudentClassroom, updateStudentProgress as updateClassroomProgress } from '../../services/classroomService';
 import { useAuth } from '../../contexts/AuthContext';
+import { useGamification } from '../../contexts/GamificationContext';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -138,6 +139,7 @@ function PhonicsLesson() {
   const { soundId } = useParams<{ soundId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { addXP } = useGamification();
 
   const data = useMemo(() => (soundId ? getSoundData(soundId) : null), [soundId]);
   const [stepIndex, setStepIndex] = useState(0);
@@ -173,6 +175,68 @@ function PhonicsLesson() {
       setStepIndex((s) => s - 1);
     }
   }, [stepIndex]);
+
+  // ── Celebrate side-effects (moved out of renderCelebrate to obey Rules of Hooks) ──
+  useEffect(() => {
+    if (currentStep !== 'celebrate' || !soundId) return;
+
+    const totalXP = xpEarned + 50; // base completion XP
+
+    try {
+      const existing = JSON.parse(localStorage.getItem(LS_MASTERED_SOUNDS) || '[]') as string[];
+      if (!existing.includes(soundId)) {
+        existing.push(soundId);
+        localStorage.setItem(LS_MASTERED_SOUNDS, JSON.stringify(existing));
+      }
+    } catch {
+      // ignore
+    }
+
+    // Record mastery via learning path service (score 100 for completion)
+    recordSoundMastery(soundId, 100, user?.uid);
+
+    // Record activity in adaptive engine
+    if (user?.uid) {
+      setActiveUser(user.uid);
+      recordActivity({
+        soundId: soundId,
+        activityType: 'phonics-lesson',
+        correct: true,
+        responseTimeMs: (stepIndex + 1) * 45000,
+        totalQuestions: STEPS.length,
+        correctAnswers: STEPS.length,
+      });
+    }
+
+    SFX.celebration();
+
+    // Update garden plant growth
+    updatePlantGrowth(soundId, 100);
+    // Award water drops for completing a lesson
+    addWaterDrops(3);
+
+    // Actually award XP via GamificationContext (BUG 2 fix)
+    addXP(totalXP, 'phonics_lesson');
+
+    // Log this phonics lesson for the activity logger
+    logActivity({
+      type: 'phonics',
+      title: `Learned the "${data?.sound.grapheme || soundId}" sound`,
+      duration: Math.round((stepIndex + 1) * 45), // ~45s per step estimate
+      accuracy: 100,
+      xpEarned: totalXP,
+      soundId: soundId,
+    }, user?.uid);
+
+    // Sync progress to classroom (for teacher dashboard)
+    syncStudentProgress(totalXP);
+
+    // Sync phonics mastery per sound to classroom
+    const membership = getStudentClassroom();
+    if (membership && soundId) {
+      updateClassroomProgress(membership.classroomId, membership.studentId, soundId, 100);
+    }
+  }, [currentStep, soundId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Not found ──
   if (!data) {
@@ -639,60 +703,6 @@ function PhonicsLesson() {
 
   const renderCelebrate = () => {
     const totalXP = xpEarned + 50; // base completion XP
-
-    // Save mastery to localStorage (both legacy key and new learning path)
-    useEffect(() => {
-      try {
-        const existing = JSON.parse(localStorage.getItem(LS_MASTERED_SOUNDS) || '[]') as string[];
-        if (!existing.includes(soundId!)) {
-          existing.push(soundId!);
-          localStorage.setItem(LS_MASTERED_SOUNDS, JSON.stringify(existing));
-        }
-      } catch {
-        // ignore
-      }
-      // Record mastery via learning path service (score 100 for completion)
-      recordSoundMastery(soundId!, 100, user?.uid);
-
-      // Record activity in adaptive engine
-      if (user?.uid) {
-        setActiveUser(user.uid);
-        recordActivity({
-          soundId: soundId!,
-          activityType: 'phonics-lesson',
-          correct: true,
-          responseTimeMs: (stepIndex + 1) * 45000,
-          totalQuestions: STEPS.length,
-          correctAnswers: STEPS.length,
-        });
-      }
-
-      SFX.celebration();
-
-      // Update garden plant growth
-      updatePlantGrowth(soundId!, 100);
-      // Award water drops for completing a lesson
-      addWaterDrops(3);
-
-      // Log this phonics lesson for the activity logger
-      logActivity({
-        type: 'phonics',
-        title: `Learned the "${sound.grapheme}" sound`,
-        duration: Math.round((stepIndex + 1) * 45), // ~45s per step estimate
-        accuracy: 100,
-        xpEarned: totalXP,
-        soundId: soundId!,
-      }, user?.uid);
-
-      // Sync progress to classroom (for teacher dashboard)
-      syncStudentProgress(totalXP);
-
-      // Sync phonics mastery per sound to classroom
-      const membership = getStudentClassroom();
-      if (membership && soundId) {
-        updateClassroomProgress(membership.classroomId, membership.studentId, soundId, 100);
-      }
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Get garden plant info for this sound
     const gardenPlant = getPlantForSound(soundId!);

@@ -178,15 +178,29 @@ export function getConfidenceLevel(score: number): ConfidenceLevel {
 }
 
 // ============================================================
-// PERSISTENCE (localStorage)
+// PERSISTENCE (localStorage) — user-scoped
 // ============================================================
 
 const LS_SR_KEY = 'mimi_spaced_repetition';
 
+let _srActiveUserId: string | null = null;
+
+/**
+ * Set the active user ID so spaced repetition data is scoped per user.
+ * Call this from AuthContext when a user logs in.
+ */
+export function setSpacedRepetitionUser(userId: string): void {
+  _srActiveUserId = userId;
+}
+
+function getScopedSRKey(): string {
+  return _srActiveUserId ? `${LS_SR_KEY}_${_srActiveUserId}` : LS_SR_KEY;
+}
+
 /** Load all word progress entries from localStorage */
 export function loadAllProgress(): WordProgress[] {
   try {
-    const raw = localStorage.getItem(LS_SR_KEY);
+    const raw = localStorage.getItem(getScopedSRKey());
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -196,7 +210,7 @@ export function loadAllProgress(): WordProgress[] {
 /** Save all word progress entries to localStorage */
 function saveAllProgress(entries: WordProgress[]): void {
   try {
-    localStorage.setItem(LS_SR_KEY, JSON.stringify(entries));
+    localStorage.setItem(getScopedSRKey(), JSON.stringify(entries));
   } catch {
     // storage full — silently ignore
   }

@@ -59,12 +59,38 @@ export interface LearningProgress {
 const MASTERY_THRESHOLD = 80;
 
 // ============================================================
+// USER-SCOPED STORAGE
+// ============================================================
+
+let _activeUserId: string | null = null;
+
+/**
+ * Set the active user ID so all localStorage keys are scoped per user.
+ * Call this from AuthContext when a user logs in.
+ */
+export function setLearningPathUser(userId: string): void {
+  _activeUserId = userId;
+}
+
+/**
+ * Get the active user ID (for use by other modules like spacedRepetition).
+ */
+export function getActiveUserId(): string | null {
+  return _activeUserId;
+}
+
+/** Return a user-scoped localStorage key */
+function getKey(base: string): string {
+  return _activeUserId ? `${base}_${_activeUserId}` : base;
+}
+
+// ============================================================
 // LOCAL STORAGE HELPERS
 // ============================================================
 
 function getPlacementResult(): number | null {
   try {
-    const val = localStorage.getItem(LS_PLACEMENT_RESULT);
+    const val = localStorage.getItem(getKey(LS_PLACEMENT_RESULT));
     if (val === null) return null;
     const num = parseInt(val, 10);
     return isNaN(num) ? null : num;
@@ -75,7 +101,7 @@ function getPlacementResult(): number | null {
 
 function getPhonicsmastery(): Record<string, SoundMasteryRecord> {
   try {
-    const raw = localStorage.getItem(LS_PHONICS_MASTERY);
+    const raw = localStorage.getItem(getKey(LS_PHONICS_MASTERY));
     if (!raw) return {};
     return JSON.parse(raw) as Record<string, SoundMasteryRecord>;
   } catch {
@@ -85,7 +111,7 @@ function getPhonicsmastery(): Record<string, SoundMasteryRecord> {
 
 function savePhonicsmastery(data: Record<string, SoundMasteryRecord>): void {
   try {
-    localStorage.setItem(LS_PHONICS_MASTERY, JSON.stringify(data));
+    localStorage.setItem(getKey(LS_PHONICS_MASTERY), JSON.stringify(data));
   } catch {
     // ignore
   }
@@ -93,7 +119,7 @@ function savePhonicsmastery(data: Record<string, SoundMasteryRecord>): void {
 
 function getCurrentSoundId(): string | null {
   try {
-    return localStorage.getItem(LS_CURRENT_SOUND);
+    return localStorage.getItem(getKey(LS_CURRENT_SOUND));
   } catch {
     return null;
   }
@@ -101,7 +127,7 @@ function getCurrentSoundId(): string | null {
 
 function setCurrentSoundId(soundId: string): void {
   try {
-    localStorage.setItem(LS_CURRENT_SOUND, soundId);
+    localStorage.setItem(getKey(LS_CURRENT_SOUND), soundId);
   } catch {
     // ignore
   }
@@ -109,7 +135,7 @@ function setCurrentSoundId(soundId: string): void {
 
 function isDailyChallengeCompletedToday(): boolean {
   try {
-    const stored = localStorage.getItem(LS_DAILY_CHALLENGE_DATE);
+    const stored = localStorage.getItem(getKey(LS_DAILY_CHALLENGE_DATE));
     if (!stored) return false;
     const today = new Date().toISOString().slice(0, 10);
     return stored === today;
@@ -362,7 +388,7 @@ export function getNextAction(): NextAction {
     const currentSound = getCurrentPhonicsSound();
     const completedGroup = currentSound?.group ?? 1;
     const availableBooks = getBooksForGroup(completedGroup);
-    const readBooksRaw = localStorage.getItem(LS_READ_BOOKS);
+    const readBooksRaw = localStorage.getItem(getKey(LS_READ_BOOKS));
     const readBooksMap: Record<string, unknown> = readBooksRaw ? JSON.parse(readBooksRaw) : {};
     const unreadBooks = availableBooks.filter((b) => !readBooksMap[b.id]);
     if (unreadBooks.length > 0) {
