@@ -84,6 +84,7 @@ vi.mock('../../services/learningPathService', () => ({
     route: '/worlds/little-ears/p1-u1',
     description: 'Practice the snake sound!',
   })),
+  getCurrentPhonicsSound: vi.fn(() => ({ id: 'g1_s', group: 1, grapheme: 's' })),
 }));
 
 // Mock soundLibrary
@@ -234,9 +235,9 @@ describe('Dashboard Page', () => {
     expect(screen.getByText('Play lessons to unlock badges and rewards!')).toBeInTheDocument();
   });
 
-  it('shows Today section with Daily Challenge', () => {
+  it('shows Today section with Play Games', () => {
     renderDashboard();
     expect(screen.getByText('Today')).toBeInTheDocument();
-    expect(screen.getByText('Daily Challenge')).toBeInTheDocument();
+    expect(screen.getByText('Play Games')).toBeInTheDocument();
   });
 });
