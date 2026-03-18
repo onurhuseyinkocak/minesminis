@@ -17,7 +17,7 @@ import { logActivity } from '../../services/activityLogger';
 import { getPlantForSound, getPlantStage } from '../../data/gardenData';
 import { LS_MASTERED_SOUNDS } from '../../config/storageKeys';
 import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
-import { syncStudentProgress } from '../../services/classroomService';
+import { syncStudentProgress, getStudentClassroom, updateStudentProgress as updateClassroomProgress } from '../../services/classroomService';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -669,6 +669,12 @@ function PhonicsLesson() {
 
       // Sync progress to classroom (for teacher dashboard)
       syncStudentProgress(totalXP);
+
+      // Sync phonics mastery per sound to classroom
+      const membership = getStudentClassroom();
+      if (membership && soundId) {
+        updateClassroomProgress(membership.classroomId, membership.studentId, soundId, 100);
+      }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Get garden plant info for this sound

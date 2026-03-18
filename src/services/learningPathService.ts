@@ -323,7 +323,7 @@ export function getNextAction(): NextAction {
       title: "Today's Challenge",
       titleTr: 'Gunun Gorevleri',
       emoji: '\u2B50',
-      route: '/dashboard',
+      route: '/games',
       description: 'Complete your daily challenge and earn bonus XP!',
     };
   }

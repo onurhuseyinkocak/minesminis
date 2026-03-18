@@ -350,7 +350,8 @@ function PlacementTest() {
           timestamp: new Date().toISOString(),
         };
         setResult(res);
-        localStorage.setItem(LS_PLACEMENT_RESULT, JSON.stringify(res));
+        localStorage.setItem(LS_PLACEMENT_RESULT, String(res.group));
+        localStorage.setItem('mimi_placement_detail', JSON.stringify(res));
         setShowStarBurst(true);
         setTimeout(() => setShowStarBurst(false), 1500);
         setScreen('result');
