@@ -5,6 +5,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MimiMascot from './MimiMascot';
 
 export interface MimiGuideProps {
   message: string;
@@ -111,21 +112,21 @@ export default function MimiGuide({
               fontSize: 28,
               flexShrink: 0,
               boxShadow: '0 4px 14px rgba(124, 58, 237, 0.35)',
-              border: '3px solid #fff',
+              border: '3px solid var(--bg-card, #1C2236)',
             }}
           >
-            {'\u{1F432}'}
+            <MimiMascot size={32} mood="happy" />
           </motion.div>
 
           {/* Speech bubble */}
           <div
             style={{
-              background: '#fff',
+              background: 'var(--bg-card, #1C2236)',
               borderRadius: 16,
               padding: '12px 16px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
               position: 'relative',
-              border: '2px solid #e9d5ff',
+              border: '2px solid rgba(167, 139, 250, 0.3)',
             }}
           >
             <p
@@ -133,7 +134,7 @@ export default function MimiGuide({
                 margin: 0,
                 fontSize: 14,
                 fontWeight: 600,
-                color: '#1f2937',
+                color: 'var(--text-primary, #F1F5F9)',
                 lineHeight: 1.45,
                 fontFamily: 'Nunito, sans-serif',
               }}
@@ -145,7 +146,7 @@ export default function MimiGuide({
                 style={{
                   margin: '4px 0 0',
                   fontSize: 12,
-                  color: '#6b7280',
+                  color: 'var(--text-secondary, #94A3B8)',
                   lineHeight: 1.4,
                   fontFamily: 'Nunito, sans-serif',
                 }}
@@ -162,9 +163,9 @@ export default function MimiGuide({
                 marginTop: 8,
                 padding: '4px 12px',
                 borderRadius: 8,
-                border: '1.5px solid #d8b4fe',
-                background: '#f5f3ff',
-                color: '#7c3aed',
+                border: '1.5px solid rgba(167, 139, 250, 0.4)',
+                background: 'rgba(124, 58, 237, 0.15)',
+                color: '#a78bfa',
                 fontSize: 12,
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -184,7 +185,7 @@ export default function MimiGuide({
                 height: 0,
                 borderLeft: '8px solid transparent',
                 borderRight: '8px solid transparent',
-                borderTop: '8px solid #fff',
+                borderTop: '8px solid var(--bg-card, #1C2236)',
               }}
             />
           </div>

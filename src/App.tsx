@@ -14,6 +14,7 @@ import { isOnline, onOnlineStatusChange } from "./utils/offlineManager";
 import { getNextAction } from "./services/learningPathService";
 import { getTodayMinutes } from "./services/activityLogger";
 
+import MimiMascot from "./components/MimiMascot";
 import "./App.css";
 
 // Initialize error logging
@@ -516,7 +517,7 @@ function AppContent() {
           onClick={() => setShowChat(true)}
           aria-label="Chat with Mimi"
         >
-          🐉
+          <MimiMascot size={28} mood="happy" />
         </button>
       )}
 

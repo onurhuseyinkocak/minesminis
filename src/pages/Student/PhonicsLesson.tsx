@@ -10,6 +10,7 @@ import { getSongByGroup } from '../../data/phonicsSongs';
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../../data/phonics';
 import type { PhonicsSound, PhonicsGroup } from '../../data/phonics';
 import MimiGuide from '../../components/MimiGuide';
+import MimiMascot from '../../components/MimiMascot';
 import { SFX } from '../../data/soundLibrary';
 import { advanceToNextSound, recordSoundMastery } from '../../services/learningPathService';
 import { logActivity } from '../../services/activityLogger';
@@ -220,7 +221,7 @@ function PhonicsLesson() {
       </Button>
 
       <div style={styles.mimiBox}>
-        <span style={{ fontSize: '2rem' }}>🐉</span>
+        <MimiMascot size={40} mood="happy" />
         <p style={styles.mimiText}>
           {sound.story}
         </p>

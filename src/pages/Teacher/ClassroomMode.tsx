@@ -6,6 +6,7 @@
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MimiMascot from '../../components/MimiMascot';
 import {
   ChevronLeft,
   ChevronRight,
@@ -326,7 +327,7 @@ const ClassroomMode: React.FC = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="cm-story__mimi">🐉</div>
+            <div className="cm-story__mimi"><MimiMascot size={48} mood="happy" /></div>
             <p className="cm-story__text">
               {slide.highlight
                 ? slide.text.split(slide.highlight).map((part, i, arr) => (
@@ -359,7 +360,7 @@ const ClassroomMode: React.FC = () => {
       {/* ---- TOP BAR ---- */}
       <header className="cm-topbar">
         <div className="cm-topbar__left">
-          <span className="cm-topbar__logo-text" role="img" aria-label="MinesMinis">🐉</span>
+          <span className="cm-topbar__logo-text" role="img" aria-label="MinesMinis"><MimiMascot size={28} mood="happy" animate={false} /></span>
           <span className="cm-topbar__class">{MOCK_CLASS_NAME}</span>
           <span className="cm-topbar__divider" />
           <span className="cm-topbar__lesson">{MOCK_LESSON_TITLE}</span>

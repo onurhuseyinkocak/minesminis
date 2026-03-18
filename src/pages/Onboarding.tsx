@@ -13,7 +13,7 @@ import {
   Volume2, Lock as LockIcon, CheckCircle, MapPin, Settings, UserPlus,
 } from 'lucide-react';
 import { Button } from '../components/ui';
-import UnifiedMascot from '../components/UnifiedMascot';
+import MimiMascot from '../components/MimiMascot';
 import './Onboarding.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -637,7 +637,7 @@ const Onboarding: React.FC = () => {
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
         >
-          <UnifiedMascot id="mimi_dragon" state="waving" size={160} />
+          <MimiMascot size={160} mood="waving" />
         </motion.div>
 
         <div className="onboarding-mimi-speech">

@@ -4,6 +4,7 @@ import { supabase } from '../config/supabase';
 import { fallbackWorksheets } from '../data/fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
 import toast from 'react-hot-toast';
+import MimiMascot from '../components/MimiMascot';
 import {
   Printer,
   Heart,
@@ -350,7 +351,7 @@ function Worksheets() {
 
       {filteredWorksheets.length === 0 && (
         <div className="worksheets-empty">
-          <div className="empty-icon">🐉</div>
+          <div className="empty-icon"><MimiMascot size={64} mood="thinking" /></div>
           <h3>No worksheets found</h3>
           <p>Mimi could not find any worksheets with these filters. Try a different combination!</p>
         </div>

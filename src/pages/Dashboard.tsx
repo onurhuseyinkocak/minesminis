@@ -17,12 +17,12 @@ import {
   BookOpen,
   Video,
   Music,
-  Clock,
   CheckCircle,
   Target,
   School,
   Award,
   Loader2,
+  Gift,
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -76,6 +76,47 @@ function getPhaseInfo(): { name: string; unitLabel: string } {
     name: phase?.name || 'Little Ears',
     unitLabel: `${phase?.name || 'Little Ears'} -- Unit 1`,
   };
+}
+
+// ============================================================
+// PROGRESS RING COMPONENT
+// ============================================================
+
+function ProgressRing({
+  value,
+  max,
+  label,
+  colorClass,
+}: {
+  value: number;
+  max: number;
+  label: string;
+  colorClass: string;
+}) {
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+  const pct = max > 0 ? Math.min(value / max, 1) : 0;
+  const offset = circumference * (1 - pct);
+
+  return (
+    <div className="dash-today__stat">
+      <div className="dash-today__stat-ring">
+        <svg viewBox="0 0 44 44">
+          <circle className="dash-today__stat-ring-bg" cx="22" cy="22" r={radius} />
+          <circle
+            className={`dash-today__stat-ring-fill ${colorClass}`}
+            cx="22"
+            cy="22"
+            r={radius}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+          />
+        </svg>
+        <span className="dash-today__stat-value">{value}</span>
+      </div>
+      <span className="dash-today__stat-label">{label}</span>
+    </div>
+  );
 }
 
 // ============================================================
@@ -168,6 +209,9 @@ export default function Dashboard() {
   const phaseInfo = useMemo(() => getPhaseInfo(), []);
   const xpProgress = getXPProgress();
 
+  // Today's completions
+  const todayCompletions = stats.gamesPlayed + stats.worksheetsCompleted;
+
   // Recent badges (last 6 earned)
   const recentBadges = useMemo(() => {
     return stats.badges
@@ -230,7 +274,7 @@ export default function Dashboard() {
         <div className="dash-hero__content">
           <span className="dash-hero__badge">{phaseInfo.unitLabel}</span>
           <h1 className="dash-hero__title">{nextAction.title}</h1>
-          <p className="dash-hero__subtitle">{nextAction.description}</p>
+          <p className="dash-hero__subtitle">Tap play to start</p>
           <div className="dash-hero__progress">
             <div className="dash-hero__progress-track">
               <div
@@ -244,7 +288,7 @@ export default function Dashboard() {
           </div>
         </div>
         <Link to={nextAction.route} className="dash-hero__play" aria-label="Start lesson">
-          <Play size={28} strokeWidth={2.5} />
+          <Play size={36} strokeWidth={2.5} />
         </Link>
       </motion.section>
 
@@ -260,7 +304,7 @@ export default function Dashboard() {
             onClick={() => SFX.click()}
           >
             <div className="dash-action__icon">
-              <Icon size={24} />
+              <Icon size={28} />
             </div>
             <span className="dash-action__label">{label}</span>
           </Link>
@@ -268,22 +312,26 @@ export default function Dashboard() {
       </motion.nav>
 
       {/* ============================================================
-          TODAY'S PROGRESS
+          TODAY'S PROGRESS -- visual progress rings
           ============================================================ */}
       <motion.section className="dash-today" variants={itemVariants}>
         <span className="dash-today__label">Today</span>
         <div className="dash-today__stats">
-          <div className="dash-today__stat">
-            <Clock size={16} />
-            <span>12 min</span>
-          </div>
-          <div className="dash-today__stat">
-            <CheckCircle size={16} />
-            <span>{stats.gamesPlayed + stats.worksheetsCompleted}</span>
-          </div>
+          <ProgressRing
+            value={12}
+            max={30}
+            label="min"
+            colorClass="dash-today__stat-ring-fill--time"
+          />
+          <ProgressRing
+            value={todayCompletions}
+            max={Math.max(todayCompletions, 5)}
+            label="done"
+            colorClass="dash-today__stat-ring-fill--done"
+          />
         </div>
         <Link to="/games" className="dash-today__challenge">
-          <Target size={14} />
+          <Target size={16} />
           <span>Daily Challenge</span>
         </Link>
       </motion.section>
@@ -305,7 +353,14 @@ export default function Dashboard() {
             )}
           </div>
         ) : (
-          <p className="dash-achievements__empty">Complete lessons to earn badges</p>
+          <div className="dash-achievements__empty">
+            <div className="dash-achievements__empty-icon">
+              <Gift size={28} />
+            </div>
+            <p className="dash-achievements__empty-text">
+              Play lessons to unlock badges and rewards!
+            </p>
+          </div>
         )}
       </motion.section>
 

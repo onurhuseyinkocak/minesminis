@@ -5,6 +5,7 @@
  */
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MimiMascot from './MimiMascot';
 
 export interface MimiTooltipProps {
   message: string;
@@ -139,7 +140,7 @@ export default function MimiTooltip({
                 position: 'relative',
               }}
             >
-              <span style={{ marginRight: 4 }}>{'\u{1F432}'}</span>
+              <MimiMascot size={14} mood="happy" animate={false} />
               {message}
 
               {/* Arrow */}

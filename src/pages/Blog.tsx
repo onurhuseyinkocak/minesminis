@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '../config/supabase';
+import MimiMascot from '../components/MimiMascot';
 import './Blog.css';
 
 interface BlogPost {
@@ -54,7 +55,7 @@ export default function Blog() {
         <div className="blog-loading">Loading... / Yükleniyor...</div>
       ) : posts.length === 0 ? (
         <div className="blog-empty">
-          <span className="blog-empty-emoji">🐉</span>
+          <span className="blog-empty-emoji"><MimiMascot size={48} mood="thinking" /></span>
           <p>Mimi hasn't written anything yet. Coming soon! / Mimi henuz bir yazi hazirlamadi. Yakinda burada olacak!</p>
         </div>
       ) : (

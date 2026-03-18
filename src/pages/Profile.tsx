@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import XPBar from '../components/XPBar';
 import toast from 'react-hot-toast';
+import MimiMascot from '../components/MimiMascot';
 import MimiGuide from '../components/MimiGuide';
 import './Profile.css';
 
@@ -138,7 +139,7 @@ const Profile: React.FC = () => {
               ))
             ) : (
               <div className="no-badges">
-                <span className="no-badges-emoji">🐉</span>
+                <span className="no-badges-emoji"><MimiMascot size={48} mood="waving" /></span>
                 <p>Mimi says: Keep exploring to earn your first badge!</p>
               </div>
             )}

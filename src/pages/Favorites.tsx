@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
+import MimiMascot from '../components/MimiMascot';
 import './Favorites.css';
 
 interface Favorite {
@@ -153,7 +154,7 @@ const Favorites: React.FC = () => {
           </div>
         ) : filteredFavorites.length === 0 ? (
           <div className="favorites-empty">
-            <div className="empty-state-icon">🐉</div>
+            <div className="empty-state-icon"><MimiMascot size={64} mood="waving" /></div>
             <h2>No Treasures Yet!</h2>
             <p>Mimi is waiting to help you collect your favorite games, words, worksheets, and videos!</p>
             <p className="hint">Tap the heart icon on any item to add it here</p>

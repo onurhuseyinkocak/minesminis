@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import MimiMascot from '../MimiMascot';
 import './EmptyState.css';
 
 export interface EmptyStateProps {
@@ -31,7 +32,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       )}
       {mimiMessage && (
         <div className="mm-empty-state__mimi" role="status">
-          <span aria-hidden="true">🐉</span>
+          <span aria-hidden="true"><MimiMascot size={24} mood="happy" animate={false} /></span>
           <span>{mimiMessage}</span>
         </div>
       )}

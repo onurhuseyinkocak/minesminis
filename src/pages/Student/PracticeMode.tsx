@@ -6,6 +6,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MimiMascot from '../../components/MimiMascot';
 import {
   Sparkles,
   Filter,
@@ -182,7 +183,7 @@ const PracticeMode: React.FC = () => {
             animate={{ scale: 1 }}
             transition={{ type: 'spring', damping: 12, stiffness: 200 }}
           >
-            🐉
+            <MimiMascot size={40} mood="excited" />
           </motion.div>
           <div>
             <h1 className="pm-header__title">Practice Time!</h1>
@@ -233,7 +234,7 @@ const PracticeMode: React.FC = () => {
       {/* ---- WORD GRID ---- */}
       {filteredWords.length === 0 ? (
         <div className="pm-empty">
-          <span className="pm-empty__emoji">🐉</span>
+          <span className="pm-empty__emoji"><MimiMascot size={48} mood="thinking" /></span>
           <p className="pm-empty__text">Mimi could not find any words here. Try a different filter!</p>
         </div>
       ) : (

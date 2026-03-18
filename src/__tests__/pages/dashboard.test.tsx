@@ -56,8 +56,13 @@ vi.mock('lucide-react', () => {
     School: icon,
     Award: icon,
     Loader2: icon,
+    Gift: icon,
   };
 });
+
+vi.mock('../../components/MimiMascot', () => ({
+  default: () => <span />,
+}));
 
 // Mock classroomService
 vi.mock('../../services/classroomService', () => ({
@@ -226,7 +231,7 @@ describe('Dashboard Page', () => {
 
   it('shows no-badges message when no badges earned', () => {
     renderDashboard();
-    expect(screen.getByText('Complete lessons to earn badges')).toBeInTheDocument();
+    expect(screen.getByText('Play lessons to unlock badges and rewards!')).toBeInTheDocument();
   });
 
   it('shows Today section with Daily Challenge', () => {
