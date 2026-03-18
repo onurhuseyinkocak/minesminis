@@ -818,7 +818,7 @@ function PhonicsLesson() {
       </AnimatePresence>
 
       <MimiGuide
-        message="Listen carefully, then try saying the sound! \u{1F3A4}"
+        message="Listen carefully, then try saying the sound!"
         messageTr="Dikkatlice dinle, sonra sesi soylemeyi dene!"
         showOnce="mimi_guide_phonics"
         position="bottom-left"

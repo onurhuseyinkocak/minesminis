@@ -173,7 +173,7 @@ const Profile: React.FC = () => {
       )}
 
       <MimiGuide
-        message="This is your profile! You can change your avatar here! \u{1F3A8}"
+        message="This is your profile! You can change your avatar here!"
         messageTr="Bu senin profilin! Avatarini buradan degistirebilirsin!"
         showOnce="mimi_guide_profile"
         position="bottom-left"

@@ -13,15 +13,13 @@ function NotFound() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontFamily: "'Nunito', sans-serif",
-                background: 'linear-gradient(135deg, #FFF8E7 0%, #E0F5F0 100%)',
+                background: '#0C0F1A',
                 padding: '2rem',
                 textAlign: 'center',
             }}
         >
             <div
                 style={{
-                    fontSize: '6rem',
-                    lineHeight: 1,
                     marginBottom: '0.5rem',
                     animation: 'float 3s ease-in-out infinite',
                 }}
@@ -33,7 +31,7 @@ function NotFound() {
                 style={{
                     fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                     fontWeight: 800,
-                    color: '#1A6B5A',
+                    color: '#F1F5F9',
                     margin: '0.5rem 0',
                 }}
             >
@@ -45,7 +43,7 @@ function NotFound() {
             <p
                 style={{
                     fontSize: 'clamp(1rem, 2.5vw, 1.35rem)',
-                    color: '#555',
+                    color: '#94A3B8',
                     maxWidth: '420px',
                     marginBottom: '2rem',
                     fontWeight: 600,
@@ -65,11 +63,11 @@ function NotFound() {
                     fontWeight: 700,
                     fontFamily: "'Nunito', sans-serif",
                     color: '#fff',
-                    background: 'linear-gradient(135deg, #1A6B5A, #238c73)',
+                    background: '#E8A317',
                     border: 'none',
                     borderRadius: '999px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 14px rgba(26,107,90,0.35)',
+                    boxShadow: '0 4px 14px rgba(232,163,23,0.35)',
                     transition: 'transform 0.15s ease, box-shadow 0.15s ease',
                 }}
                 onMouseEnter={(e) => {

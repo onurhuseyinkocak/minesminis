@@ -478,7 +478,7 @@ const Words: React.FC = () => {
       </div>
 
       <MimiGuide
-        message="Tap a word to hear how it sounds! \u{1F50A}"
+        message="Tap a word to hear how it sounds!"
         messageTr="Bir kelimeye dokun ve nasil soylendini duy!"
         showOnce="mimi_guide_words"
       />
