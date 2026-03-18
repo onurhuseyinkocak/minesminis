@@ -663,7 +663,7 @@ function Ataturk() {
 
         .hero-content-col .highlight {
           display: block;
-          background: linear-gradient(90deg, var(--accent-amber), var(--warning), #ffffff);
+          background: linear-gradient(90deg, var(--accent-amber), var(--warning), #0C0F1A);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;

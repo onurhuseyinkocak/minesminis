@@ -460,7 +460,7 @@ const ClassroomManager: React.FC = () => {
         .cm-empty {
           text-align: center;
           padding: 60px 20px;
-          background: var(--bg-card, #fff);
+          background: var(--bg-card, #1C2236);
           border-radius: 16px;
           border: 2px dashed var(--border-light, #e2e8f0);
         }
@@ -481,7 +481,7 @@ const ClassroomManager: React.FC = () => {
           gap: 16px;
         }
         .cm-card {
-          background: var(--bg-card, #fff);
+          background: var(--bg-card, #1C2236);
           border-radius: 16px;
           border: 1px solid var(--border-light, #e2e8f0);
           overflow: hidden;
@@ -554,7 +554,7 @@ const ClassroomManager: React.FC = () => {
           padding: 6px 14px;
           border: 1px solid var(--border-light, #e2e8f0);
           border-radius: 8px;
-          background: var(--bg-card, #fff);
+          background: var(--bg-card, #1C2236);
           font-family: 'JetBrains Mono', 'SF Mono', monospace;
           font-size: 0.9rem;
           font-weight: 600;
@@ -643,7 +643,7 @@ const ClassroomManager: React.FC = () => {
           border: 1px solid var(--border-light, #e2e8f0);
           border-radius: 10px;
           font-size: 0.9rem;
-          background: var(--bg-card, #fff);
+          background: var(--bg-card, #1C2236);
           color: var(--text-body, #334155);
           outline: none;
           transition: border-color 0.2s;
@@ -807,7 +807,7 @@ const ClassroomManager: React.FC = () => {
           padding: 20px;
         }
         .cm-modal {
-          background: var(--bg-card, #fff);
+          background: var(--bg-card, #1C2236);
           border-radius: 20px;
           width: 100%;
           max-width: 460px;
@@ -866,7 +866,7 @@ const ClassroomManager: React.FC = () => {
           padding: 10px 20px;
           border: 1px solid var(--border-light, #e2e8f0);
           border-radius: 10px;
-          background: var(--bg-card, #fff);
+          background: var(--bg-card, #1C2236);
           color: var(--text-body, #334155);
           font-weight: 500;
           cursor: pointer;

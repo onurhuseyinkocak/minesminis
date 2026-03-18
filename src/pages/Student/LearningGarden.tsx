@@ -196,7 +196,7 @@ function LearningGarden() {
                       style={{
                         ...styles.plantCell,
                         borderColor: isBlooming ? plant.color : isStarted ? '#D1D5DB' : '#E5E7EB',
-                        backgroundColor: isBlooming ? `${plant.color}15` : '#FFFFFF',
+                        backgroundColor: isBlooming ? `${plant.color}15` : '#1C2236',
                       }}
                       whileTap={{ scale: 0.9 }}
                       animate={
@@ -428,7 +428,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: '0.75rem',
     padding: '1rem 1.25rem',
-    background: 'rgba(255,255,255,0.85)',
+    background: 'rgba(255,255,255,0.08)',
     backdropFilter: 'blur(10px)',
     borderBottom: '1px solid #D1FAE5',
     position: 'sticky' as const,
@@ -476,7 +476,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     gap: '1.5rem',
     padding: '0.75rem 1rem',
-    background: 'rgba(255,255,255,0.7)',
+    background: 'rgba(255,255,255,0.05)',
   },
   statItem: {
     display: 'flex',
@@ -532,7 +532,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0.4rem 0.2rem',
     borderRadius: '0.75rem',
     border: '2px solid #E5E7EB',
-    background: '#FFFFFF',
+    background: '#1C2236',
     cursor: 'pointer',
     fontFamily: 'Nunito, sans-serif',
     aspectRatio: '1',
@@ -572,7 +572,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1rem',
   },
   plantModal: {
-    background: '#fff',
+    background: '#1C2236',
     borderRadius: '1.5rem',
     padding: '1.5rem',
     maxWidth: '360px',

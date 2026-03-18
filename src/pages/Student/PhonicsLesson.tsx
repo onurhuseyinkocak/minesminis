@@ -13,6 +13,7 @@ import MimiGuide from '../../components/MimiGuide';
 import MimiMascot from '../../components/MimiMascot';
 import { SFX } from '../../data/soundLibrary';
 import { advanceToNextSound, recordSoundMastery } from '../../services/learningPathService';
+import { setActiveUser, recordActivity } from '../../services/adaptiveEngine';
 import { logActivity } from '../../services/activityLogger';
 import { getPlantForSound, getPlantStage } from '../../data/gardenData';
 import { LS_MASTERED_SOUNDS } from '../../config/storageKeys';
@@ -652,6 +653,20 @@ function PhonicsLesson() {
       }
       // Record mastery via learning path service (score 100 for completion)
       recordSoundMastery(soundId!, 100, user?.uid);
+
+      // Record activity in adaptive engine
+      if (user?.uid) {
+        setActiveUser(user.uid);
+        recordActivity({
+          soundId: soundId!,
+          activityType: 'phonics-lesson',
+          correct: true,
+          responseTimeMs: (stepIndex + 1) * 45000,
+          totalQuestions: STEPS.length,
+          correctAnswers: STEPS.length,
+        });
+      }
+
       SFX.celebration();
 
       // Update garden plant growth

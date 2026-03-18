@@ -242,7 +242,7 @@ const ReadingLibrary: React.FC = () => {
                           </div>
                         )}
                         {isLocked && (
-                          <Lock size={16} style={{ color: '#FFF', marginTop: 4 }} />
+                          <Lock size={16} style={{ color: '#F1F5F9', marginTop: 4 }} />
                         )}
                       </motion.button>
                     );
@@ -341,7 +341,7 @@ const styles: Record<string, React.CSSProperties> = {
   shelfGroupNum: {
     fontSize: 12,
     fontWeight: 800,
-    color: '#FFF',
+    color: '#F1F5F9',
     backgroundColor: '#1A6B5A',
     padding: '2px 8px',
     borderRadius: 8,
@@ -404,7 +404,7 @@ const styles: Record<string, React.CSSProperties> = {
   bookSpineTitle: {
     fontSize: 10,
     fontWeight: 800,
-    color: '#FFF',
+    color: '#F1F5F9',
     textAlign: 'center',
     lineHeight: 1.2,
     textShadow: '0 1px 2px rgba(0,0,0,0.3)',

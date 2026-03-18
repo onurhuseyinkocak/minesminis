@@ -327,7 +327,7 @@ const AddChildModal: React.FC<AddChildModalProps> = ({ open, onClose, onAdd }) =
             transition={{ duration: 0.25 }}
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: 'var(--bg-card, #fff)', borderRadius: 20, padding: 28,
+              background: 'var(--bg-card, #1C2236)', borderRadius: 20, padding: 28,
               width: '100%', maxWidth: 420,
               boxShadow: '0 20px 60px rgba(0,0,0,0.18)', position: 'relative',
             }}
