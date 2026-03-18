@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { fallbackGames } from '../data/fallbackData';
+import { getCachedData, setCachedData } from '../utils/offlineManager';
 import toast from 'react-hot-toast';
 import { Gamepad2, Sparkles, BookOpen, Library, GraduationCap, Target, Heart, Play, X } from 'lucide-react';
 import ContentPageHeader from '../components/ContentPageHeader';
@@ -33,17 +34,27 @@ function Games() {
   }, [user]);
 
   const fetchGames = async () => {
+    // Try localStorage cache for instant load
+    const cached = getCachedData<Game[]>('games');
+
     try {
       const { data, error } = await supabase
         .from('games')
         .select('*');
 
       if (error) throw error;
-      setGames((data && data.length > 0) ? (data as Game[]) : fallbackGames as Game[]);
+      const result = (data && data.length > 0) ? (data as Game[]) : fallbackGames as Game[];
+      setGames(result);
+      // Persist to localStorage (TTL: 6 hours)
+      setCachedData('games', result, 6 * 60 * 60 * 1000);
     } catch (error) {
-      console.error('Error fetching games, using fallback:', error);
-      toast.error('Oyunlar yüklenirken sorun oluştu. Varsayılan liste gösteriliyor.');
-      setGames(fallbackGames as Game[]);
+      console.error('Error fetching games:', error);
+      if (cached && cached.length > 0) {
+        setGames(cached);
+      } else {
+        toast.error('Oyunlar yüklenirken sorun oluştu. Varsayılan liste gösteriliyor.');
+        setGames(fallbackGames as Game[]);
+      }
     }
   };
 

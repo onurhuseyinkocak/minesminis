@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { PremiumProvider } from "./contexts/PremiumContext";
 import { GamificationProvider } from "./contexts/GamificationContext";
@@ -10,6 +10,7 @@ import SplashScreen from "./components/SplashScreen";
 import { AppShell } from "./components/layout";
 import { sendMessageToAI } from "./services/aiService";
 import { errorLogger } from "./services/errorLogger";
+import { isOnline, onOnlineStatusChange } from "./utils/offlineManager";
 
 import "./App.css";
 
@@ -95,6 +96,98 @@ function PageLoader() {
       <div className="page-loader__spinner" />
     </div>
   );
+}
+
+/** Offline/online status banner */
+function OfflineBanner() {
+  const [online, setOnline] = useState(isOnline);
+  const [showBackOnline, setShowBackOnline] = useState(false);
+  const wasOffline = useRef(false);
+
+  const handleStatusChange = useCallback((status: boolean) => {
+    setOnline(status);
+    if (status && wasOffline.current) {
+      setShowBackOnline(true);
+      setTimeout(() => setShowBackOnline(false), 3000);
+    }
+    wasOffline.current = !status;
+  }, []);
+
+  useEffect(() => {
+    const unsub = onOnlineStatusChange(handleStatusChange);
+    return unsub;
+  }, [handleStatusChange]);
+
+  if (showBackOnline) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 9999,
+          background: "#10b981",
+          color: "#fff",
+          textAlign: "center",
+          padding: "8px 16px",
+          fontSize: "14px",
+          fontWeight: 500,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
+          animation: "slideDown 0.3s ease",
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+          <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+          <line x1="12" y1="20" x2="12.01" y2="20" />
+        </svg>
+        Back online!
+      </div>
+    );
+  }
+
+  if (!online) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 9999,
+          background: "#f59e0b",
+          color: "#78350f",
+          textAlign: "center",
+          padding: "8px 16px",
+          fontSize: "14px",
+          fontWeight: 500,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
+          animation: "slideDown 0.3s ease",
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="1" y1="1" x2="23" y2="23" />
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+          <path d="M10.71 5.05A16 16 0 0 1 22.56 9" />
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+          <line x1="12" y1="20" x2="12.01" y2="20" />
+        </svg>
+        You're offline. Some features may be limited.
+      </div>
+    );
+  }
+
+  return null;
 }
 
 /** Wrapper that requires authentication; redirects to /login otherwise */
@@ -269,6 +362,7 @@ function AppContent() {
 
   return (
     <>
+      <OfflineBanner />
       <AppRoutes />
 
       {/* Gamification overlays for authenticated users */}

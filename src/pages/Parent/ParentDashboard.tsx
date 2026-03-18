@@ -3,11 +3,12 @@
  * Premium parent-facing view of child progress.
  * Data-rich, professional, warm — not childish.
  * Uses real data from AuthContext and GamificationContext.
+ * Supports multiple child profiles (up to 4) via localStorage.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen,
   TrendingUp,
@@ -23,6 +24,11 @@ import {
   Shield,
   Lightbulb,
   Users,
+  Plus,
+  X,
+  Trash2,
+  ChevronDown,
+  UserPlus,
 } from 'lucide-react';
 import {
   BarChart,
@@ -43,6 +49,17 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import {
+  ChildProfile,
+  getChildren,
+  addChild,
+  removeChild,
+  switchActiveChild,
+  getActiveChildId,
+  AVATARS,
+  AGE_GROUPS,
+  MAX_CHILDREN,
+} from '../../services/childProfileService';
 import './ParentDashboard.css';
 
 // ============================================================
@@ -151,7 +168,395 @@ function buildRecommendations(stats: {
 }
 
 // ============================================================
-// COMPONENT
+// "DEFAULT CHILD" — maps logged-in user's own stats to a ChildProfile shape
+// ============================================================
+
+const DEFAULT_CHILD_ID = '__default__';
+
+function makeDefaultChild(
+  parentId: string,
+  displayName: string,
+  gamificationStats: {
+    xp: number;
+    level: number;
+    wordsLearned: number;
+    gamesPlayed: number;
+    streakDays: number;
+  },
+): ChildProfile {
+  return {
+    id: DEFAULT_CHILD_ID,
+    name: displayName || 'Learner',
+    age_group: '',
+    avatar: '🌟',
+    parent_id: parentId,
+    created_at: '',
+    xp: gamificationStats.xp,
+    level: gamificationStats.level,
+    words_learned: gamificationStats.wordsLearned,
+    games_played: gamificationStats.gamesPlayed,
+    streak_days: gamificationStats.streakDays,
+  };
+}
+
+// ============================================================
+// ADD CHILD MODAL (inline component)
+// ============================================================
+
+interface AddChildModalProps {
+  open: boolean;
+  onClose: () => void;
+  onAdd: (data: { name: string; age_group: string; avatar: string }) => void;
+}
+
+const AddChildModal: React.FC<AddChildModalProps> = ({ open, onClose, onAdd }) => {
+  const [name, setName] = useState('');
+  const [ageGroup, setAgeGroup] = useState('6-8');
+  const [avatar, setAvatar] = useState(AVATARS[0]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = name.trim();
+    if (!trimmed) {
+      toast.error('Please enter a name.');
+      return;
+    }
+    if (trimmed.length > 30) {
+      toast.error('Name must be 30 characters or fewer.');
+      return;
+    }
+    onAdd({ name: trimmed, age_group: ageGroup, avatar });
+    setName('');
+    setAgeGroup('6-8');
+    setAvatar(AVATARS[0]);
+  };
+
+  if (!open) return null;
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="pd-modal-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(0,0,0,0.45)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            transition={{ duration: 0.25 }}
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'var(--bg-card, #fff)',
+              borderRadius: 20,
+              padding: 28,
+              width: '100%',
+              maxWidth: 420,
+              boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
+              position: 'relative',
+            }}
+          >
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              style={{
+                position: 'absolute',
+                top: 14,
+                right: 14,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-muted)',
+                padding: 4,
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <h2 style={{ margin: '0 0 4px', fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
+              Add Child Profile
+            </h2>
+            <p style={{ margin: '0 0 20px', fontSize: 14, color: 'var(--text-muted)' }}>
+              Create a learner profile to track progress separately.
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              {/* Name */}
+              <label style={{ display: 'block', marginBottom: 14 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
+                  Name
+                </span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="e.g. Mimi"
+                  maxLength={30}
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: 10,
+                    border: '1.5px solid var(--cloud, #e0e0e0)',
+                    fontSize: 15,
+                    outline: 'none',
+                    fontFamily: 'inherit',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </label>
+
+              {/* Age Group */}
+              <label style={{ display: 'block', marginBottom: 14 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
+                  Age Group
+                </span>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {AGE_GROUPS.map(ag => (
+                    <button
+                      key={ag}
+                      type="button"
+                      onClick={() => setAgeGroup(ag)}
+                      style={{
+                        flex: 1,
+                        padding: '8px 0',
+                        borderRadius: 10,
+                        border: ageGroup === ag ? '2px solid var(--primary)' : '1.5px solid var(--cloud, #e0e0e0)',
+                        background: ageGroup === ag ? 'var(--primary-pale, #eff6ff)' : 'transparent',
+                        color: ageGroup === ag ? 'var(--primary)' : 'var(--text-secondary)',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      {ag}
+                    </button>
+                  ))}
+                </div>
+              </label>
+
+              {/* Avatar Picker */}
+              <label style={{ display: 'block', marginBottom: 20 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>
+                  Avatar
+                </span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {AVATARS.map(a => (
+                    <button
+                      key={a}
+                      type="button"
+                      onClick={() => setAvatar(a)}
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 12,
+                        border: avatar === a ? '2.5px solid var(--primary)' : '1.5px solid var(--cloud, #e0e0e0)',
+                        background: avatar === a ? 'var(--primary-pale, #eff6ff)' : 'transparent',
+                        fontSize: 22,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      {a}
+                    </button>
+                  ))}
+                </div>
+              </label>
+
+              <Button type="submit" variant="primary" size="md" style={{ width: '100%' }}>
+                <UserPlus size={16} style={{ marginRight: 6 }} />
+                Add Child
+              </Button>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// ============================================================
+// CHILD SELECTOR BAR
+// ============================================================
+
+interface ChildSelectorProps {
+  children: ChildProfile[];
+  activeChildId: string;
+  onSelect: (id: string) => void;
+  onAddClick: () => void;
+  onRemove: (id: string, name: string) => void;
+  canAdd: boolean;
+}
+
+const ChildSelector: React.FC<ChildSelectorProps> = ({
+  children: childList,
+  activeChildId,
+  onSelect,
+  onAddClick,
+  onRemove,
+  canAdd,
+}) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        flexWrap: 'wrap',
+        marginBottom: 20,
+      }}
+    >
+      {childList.map(child => {
+        const isActive = child.id === activeChildId;
+        const isDefault = child.id === DEFAULT_CHILD_ID;
+        return (
+          <div key={child.id} style={{ position: 'relative' }}>
+            <button
+              onClick={() => onSelect(child.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '8px 16px',
+                borderRadius: 12,
+                border: isActive ? '2px solid var(--primary)' : '1.5px solid var(--cloud, #e0e0e0)',
+                background: isActive ? 'var(--primary-pale, #eff6ff)' : 'var(--bg-card, #fff)',
+                color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
+                fontWeight: isActive ? 700 : 500,
+                fontSize: 14,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                transition: 'all 0.15s',
+              }}
+            >
+              <span style={{ fontSize: 18 }}>{child.avatar}</span>
+              <span>{child.name}</span>
+              {isDefault && (
+                <span style={{ fontSize: 11, opacity: 0.7 }}>(You)</span>
+              )}
+            </button>
+            {!isDefault && (
+              <button
+                onClick={e => { e.stopPropagation(); onRemove(child.id, child.name); }}
+                title={`Remove ${child.name}`}
+                style={{
+                  position: 'absolute',
+                  top: -6,
+                  right: -6,
+                  width: 20,
+                  height: 20,
+                  borderRadius: '50%',
+                  border: '1.5px solid var(--error, #ef4444)',
+                  background: 'var(--bg-card, #fff)',
+                  color: 'var(--error, #ef4444)',
+                  fontSize: 10,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
+                }}
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+        );
+      })}
+
+      {canAdd && (
+        <button
+          onClick={onAddClick}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '8px 14px',
+            borderRadius: 12,
+            border: '1.5px dashed var(--primary, #3b82f6)',
+            background: 'transparent',
+            color: 'var(--primary, #3b82f6)',
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            transition: 'all 0.15s',
+          }}
+        >
+          <Plus size={16} />
+          Add Child
+        </button>
+      )}
+    </div>
+  );
+};
+
+// ============================================================
+// SETUP WIZARD (shown when no children exist yet)
+// ============================================================
+
+interface SetupWizardProps {
+  parentName: string;
+  onAddChild: () => void;
+  onSkip: () => void;
+}
+
+const SetupWizard: React.FC<SetupWizardProps> = ({ parentName, onAddChild, onSkip }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      style={{
+        background: 'var(--bg-card, #fff)',
+        borderRadius: 20,
+        padding: 40,
+        textAlign: 'center',
+        maxWidth: 520,
+        margin: '40px auto',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+      }}
+    >
+      <div style={{ fontSize: 48, marginBottom: 16 }}>👨‍👩‍👧‍👦</div>
+      <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>
+        Welcome, {parentName}!
+      </h2>
+      <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 24, lineHeight: 1.6 }}>
+        Set up child profiles to track each learner&apos;s progress individually.
+        Your family plan supports up to {MAX_CHILDREN} children.
+      </p>
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Button variant="primary" size="md" onClick={onAddChild}>
+          <UserPlus size={16} style={{ marginRight: 6 }} />
+          Add First Child
+        </Button>
+        <Button variant="ghost" size="md" onClick={onSkip}>
+          Skip for now
+        </Button>
+      </div>
+    </motion.div>
+  );
+};
+
+// ============================================================
+// MAIN COMPONENT
 // ============================================================
 
 const fadeUp = {
@@ -164,16 +569,134 @@ const fadeUp = {
 };
 
 const ParentDashboard: React.FC = () => {
-  const { userProfile, isAdmin } = useAuth();
+  const { user, userProfile, isAdmin } = useAuth();
   const { stats, getXPProgress, loading } = useGamification();
 
+  const parentId = user?.uid || '';
   const parentName = userProfile?.display_name || 'Parent';
-  const childName = userProfile?.display_name || 'Learner';
 
-  // Derived data from real stats
-  const weeklyActivity = useMemo(() => buildWeeklyActivity(stats.weekly_xp), [stats.weekly_xp]);
+  // ---- Multi-child state ----
+  const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([]);
+  const [activeChildId, setActiveChildId] = useState<string>(DEFAULT_CHILD_ID);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showSetupWizard, setShowSetupWizard] = useState(false);
 
-  const vocabularyMastery = useMemo(() => buildVocabularyMastery(stats.wordsLearned), [stats.wordsLearned]);
+  // Load children from localStorage on mount and when parentId changes
+  useEffect(() => {
+    if (!parentId) return;
+    const saved = getChildren(parentId);
+    setChildProfiles(saved);
+
+    const savedActive = getActiveChildId();
+    if (savedActive && (saved.some(c => c.id === savedActive) || savedActive === DEFAULT_CHILD_ID)) {
+      setActiveChildId(savedActive);
+    } else {
+      setActiveChildId(DEFAULT_CHILD_ID);
+    }
+
+    // Show setup wizard if no children have been added and user hasn't dismissed it
+    const dismissed = localStorage.getItem(`mimi_setup_dismissed_${parentId}`);
+    if (saved.length === 0 && !dismissed) {
+      setShowSetupWizard(true);
+    }
+  }, [parentId]);
+
+  // Build the full list: default child (user's own stats) + added children
+  const defaultChild = useMemo(
+    () => makeDefaultChild(parentId, parentName, stats),
+    [parentId, parentName, stats],
+  );
+
+  const allChildren = useMemo(
+    () => [defaultChild, ...childProfiles],
+    [defaultChild, childProfiles],
+  );
+
+  const activeChild = useMemo(
+    () => allChildren.find(c => c.id === activeChildId) || defaultChild,
+    [allChildren, activeChildId, defaultChild],
+  );
+
+  // Are we viewing the default (user's own) stats?
+  const isDefaultChild = activeChild.id === DEFAULT_CHILD_ID;
+
+  // Stats to display: either from gamification context (default) or from child profile
+  const displayStats = useMemo(() => {
+    if (isDefaultChild) {
+      return {
+        xp: stats.xp,
+        weekly_xp: stats.weekly_xp,
+        level: stats.level,
+        wordsLearned: stats.wordsLearned,
+        gamesPlayed: stats.gamesPlayed,
+        videosWatched: stats.videosWatched,
+        worksheetsCompleted: stats.worksheetsCompleted,
+        streakDays: stats.streakDays,
+        badges: stats.badges,
+      };
+    }
+    // For added children, map from ChildProfile
+    return {
+      xp: activeChild.xp,
+      weekly_xp: 0,
+      level: activeChild.level,
+      wordsLearned: activeChild.words_learned,
+      gamesPlayed: activeChild.games_played,
+      videosWatched: 0,
+      worksheetsCompleted: 0,
+      streakDays: activeChild.streak_days,
+      badges: [] as string[],
+    };
+  }, [isDefaultChild, stats, activeChild]);
+
+  const childName = activeChild.name;
+
+  // ---- Handlers ----
+  const handleSelectChild = useCallback((id: string) => {
+    setActiveChildId(id);
+    switchActiveChild(id);
+  }, []);
+
+  const handleAddChild = useCallback((data: { name: string; age_group: string; avatar: string }) => {
+    if (!parentId) return;
+    try {
+      addChild(parentId, data);
+      const updated = getChildren(parentId);
+      setChildProfiles(updated);
+      setShowAddModal(false);
+      setShowSetupWizard(false);
+      toast.success(`${data.name}'s profile created!`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to add child.';
+      toast.error(msg);
+    }
+  }, [parentId]);
+
+  const handleRemoveChild = useCallback((childId: string, name: string) => {
+    if (!parentId) return;
+    const confirmed = window.confirm(`Remove ${name}'s profile? This cannot be undone.`);
+    if (!confirmed) return;
+    removeChild(parentId, childId);
+    const updated = getChildren(parentId);
+    setChildProfiles(updated);
+    if (activeChildId === childId) {
+      setActiveChildId(DEFAULT_CHILD_ID);
+      switchActiveChild(DEFAULT_CHILD_ID);
+    }
+    toast.success(`${name}'s profile removed.`);
+  }, [parentId, activeChildId]);
+
+  const handleDismissSetup = useCallback(() => {
+    setShowSetupWizard(false);
+    if (parentId) {
+      localStorage.setItem(`mimi_setup_dismissed_${parentId}`, 'true');
+    }
+  }, [parentId]);
+
+  // ---- Derived data ----
+  const weeklyActivity = useMemo(() => buildWeeklyActivity(displayStats.weekly_xp), [displayStats.weekly_xp]);
+
+  const vocabularyMastery = useMemo(() => buildVocabularyMastery(displayStats.wordsLearned), [displayStats.wordsLearned]);
 
   const totalWords = useMemo(
     () => vocabularyMastery.reduce((s, v) => s + v.value, 0),
@@ -182,59 +705,63 @@ const ParentDashboard: React.FC = () => {
 
   const earnedBadges = useMemo(() => {
     return ALL_BADGES
-      .filter(b => stats.badges.includes(b.id))
+      .filter(b => displayStats.badges.includes(b.id))
       .map(b => ({
         id: b.id,
         name: b.name,
         icon: b.icon,
         description: b.description,
-        date: '', // No per-badge date tracking yet
+        date: '',
       }));
-  }, [stats.badges]);
+  }, [displayStats.badges]);
 
   const { strengths, focus: areasToFocus } = useMemo(
-    () => deriveStrengthsAndFocus(stats),
-    [stats],
+    () => deriveStrengthsAndFocus(displayStats),
+    [displayStats],
   );
 
   const recommendations = useMemo(
-    () => buildRecommendations(stats),
-    [stats],
+    () => buildRecommendations(displayStats),
+    [displayStats],
   );
 
-  const progressPercent = useMemo(() => getXPProgress(), [getXPProgress, stats.xp]);
+  const progressPercent = useMemo(() => {
+    if (isDefaultChild) return getXPProgress();
+    // Simple progress for child profiles: (xp % 100) as percentage towards next level
+    const xpForLevel = activeChild.level * 100;
+    return Math.min(100, Math.round((activeChild.xp % xpForLevel) / xpForLevel * 100));
+  }, [isDefaultChild, getXPProgress, activeChild, stats.xp]);
 
-  // Overview stats cards
   const overviewCards = useMemo(() => [
     {
       label: 'Words Learned',
-      value: stats.wordsLearned,
+      value: displayStats.wordsLearned,
       icon: <BookOpen size={22} />,
       color: 'var(--secondary)',
       bg: 'var(--secondary-pale)',
     },
     {
       label: 'Current Level',
-      value: stats.level,
+      value: displayStats.level,
       icon: <Star size={22} />,
       color: 'var(--primary)',
       bg: 'var(--primary-pale)',
     },
     {
       label: 'Streak Days',
-      value: stats.streakDays,
+      value: displayStats.streakDays,
       icon: <Flame size={22} />,
       color: 'var(--error)',
       bg: 'var(--error-pale)',
     },
     {
       label: 'Total XP',
-      value: stats.xp.toLocaleString(),
+      value: displayStats.xp.toLocaleString(),
       icon: <TrendingUp size={22} />,
       color: 'var(--info)',
       bg: 'var(--info-pale)',
     },
-  ], [stats]);
+  ], [displayStats]);
 
   const handleDownloadReport = () => {
     const report = [
@@ -245,14 +772,14 @@ const ParentDashboard: React.FC = () => {
       `Date: ${new Date().toLocaleDateString()}`,
       ``,
       `Overview:`,
-      `- Level: ${stats.level}`,
-      `- XP: ${stats.xp}`,
-      `- Weekly XP: ${stats.weekly_xp}`,
-      `- Words Learned: ${stats.wordsLearned}`,
-      `- Games Played: ${stats.gamesPlayed}`,
-      `- Videos Watched: ${stats.videosWatched}`,
-      `- Worksheets Completed: ${stats.worksheetsCompleted}`,
-      `- Streak: ${stats.streakDays} days`,
+      `- Level: ${displayStats.level}`,
+      `- XP: ${displayStats.xp}`,
+      `- Weekly XP: ${displayStats.weekly_xp}`,
+      `- Words Learned: ${displayStats.wordsLearned}`,
+      `- Games Played: ${displayStats.gamesPlayed}`,
+      `- Videos Watched: ${displayStats.videosWatched}`,
+      `- Worksheets Completed: ${displayStats.worksheetsCompleted}`,
+      `- Streak: ${displayStats.streakDays} days`,
       ``,
       `Badges Earned: ${earnedBadges.length > 0 ? earnedBadges.map(b => b.name).join(', ') : 'None yet'}`,
       ``,
@@ -283,26 +810,42 @@ const ParentDashboard: React.FC = () => {
     );
   }
 
+  // ---- Setup wizard (first-time experience) ----
+  if (showSetupWizard && childProfiles.length === 0) {
+    return (
+      <div className="pd">
+        <SetupWizard
+          parentName={parentName}
+          onAddChild={() => { setShowSetupWizard(false); setShowAddModal(true); }}
+          onSkip={handleDismissSetup}
+        />
+        <AddChildModal
+          open={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onAdd={handleAddChild}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="pd">
-      {/* ---- MULTI-CHILD NOTE ---- */}
-      <div style={{
-        background: 'var(--info-pale, #e8f4fd)',
-        border: '1px solid var(--info, #3b82f6)',
-        borderRadius: 12,
-        padding: '10px 20px',
-        marginBottom: 20,
-        fontSize: 14,
-        color: 'var(--info-dark, #1e40af)',
-        textAlign: 'center',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-      }}>
-        <Users size={16} />
-        Multi-child profiles coming soon. Currently showing your learner&apos;s progress.
-      </div>
+      {/* ---- CHILD SELECTOR ---- */}
+      <ChildSelector
+        childList={allChildren}
+        activeChildId={activeChildId}
+        onSelect={handleSelectChild}
+        onAddClick={() => setShowAddModal(true)}
+        onRemove={handleRemoveChild}
+        canAdd={childProfiles.length < MAX_CHILDREN}
+      />
+
+      {/* ---- ADD CHILD MODAL ---- */}
+      <AddChildModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onAdd={handleAddChild}
+      />
 
       {/* ---- HEADER ---- */}
       <div className="pd-header">
@@ -317,6 +860,7 @@ const ParentDashboard: React.FC = () => {
           </motion.h1>
           <p className="pd-header__subtitle">
             Here is how <strong>{childName}</strong> is progressing
+            {!isDefaultChild && <span style={{ fontSize: 12, marginLeft: 8, color: 'var(--text-muted)' }}>({activeChild.age_group} yrs)</span>}
           </p>
         </div>
 
@@ -374,10 +918,10 @@ const ParentDashboard: React.FC = () => {
                 <TrendingUp size={20} /> Current Progress
               </h3>
               <p className="pd-progress-card__meta">
-                Level {stats.level} &mdash; {stats.xp.toLocaleString()} XP total
+                Level {displayStats.level} &mdash; {displayStats.xp.toLocaleString()} XP total
               </p>
             </div>
-            <Badge variant="info">Level {stats.level}</Badge>
+            <Badge variant="info">Level {displayStats.level}</Badge>
           </div>
           <ProgressBar value={progressPercent} variant="default" size="lg" showLabel animated />
         </Card>
@@ -392,8 +936,8 @@ const ParentDashboard: React.FC = () => {
               <BarChart3 size={20} /> Weekly Activity
             </h3>
             <p className="pd-chart-subtitle">
-              {stats.weekly_xp > 0
-                ? `${stats.weekly_xp} XP earned this week`
+              {displayStats.weekly_xp > 0
+                ? `${displayStats.weekly_xp} XP earned this week`
                 : 'No activity this week yet'}
             </p>
             <div className="pd-chart-container">

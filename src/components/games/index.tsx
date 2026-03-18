@@ -5,6 +5,7 @@ export { SpellingBee } from './SpellingBee';
 export { QuickQuiz } from './QuickQuiz';
 export { SentenceScramble } from './SentenceScramble';
 export { ListeningChallenge } from './ListeningChallenge';
+export { PronunciationGame } from './PronunciationGame';
 
 interface WordItem {
   english: string;
@@ -19,7 +20,7 @@ interface GameProps {
   onWrongAnswer?: () => void;
 }
 
-type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge';
+type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation';
 
 // Lazy imports to keep bundle size down
 const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GameProps>>> = {
@@ -28,6 +29,7 @@ const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GamePr
   'quick-quiz': React.lazy(() => import('./QuickQuiz').then((m) => ({ default: m.QuickQuiz }))),
   'sentence-scramble': React.lazy(() => import('./SentenceScramble').then((m) => ({ default: m.SentenceScramble }))),
   'listening-challenge': React.lazy(() => import('./ListeningChallenge').then((m) => ({ default: m.ListeningChallenge }))),
+  'pronunciation': React.lazy(() => import('./PronunciationGame').then((m) => ({ default: m.PronunciationGame }))),
 };
 
 const GAME_TYPE_MAP: Record<string, GameType> = {
@@ -46,6 +48,9 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
   'listening-challenge': 'listening-challenge',
   'listeningchallenge': 'listening-challenge',
   'ListeningChallenge': 'listening-challenge',
+  'pronunciation': 'pronunciation',
+  'Pronunciation': 'pronunciation',
+  'PronunciationGame': 'pronunciation',
 };
 
 export interface GameSelectorProps extends GameProps {

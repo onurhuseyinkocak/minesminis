@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import { BookOpen, Volume2, Star, Trophy, Sparkles, Search, RefreshCw } from "lucide-react";
+import { BookOpen, Volume2, Star, Trophy, Sparkles, Search, RefreshCw, Mic } from "lucide-react";
 import ContentPageHeader from '../components/ContentPageHeader';
 import './Words.css';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { kidsWords as fallbackWords } from '../data/wordsData';
 import { getDueWords, updateWordProgress, type WordProgress } from '../data/spacedRepetition';
+import { SFX } from '../data/soundLibrary';
 
 interface WordDefinition {
   word: string;
@@ -81,6 +82,8 @@ const Words: React.FC = () => {
   const [learnedWords, setLearnedWords] = useState<Set<string>>(loadLearnedFromLS);
   const [favoriteWords, setFavoriteWords] = useState<Set<string>>(new Set());
   const [isLoadingAudio, setIsLoadingAudio] = useState<boolean>(false);
+  const [pronunciationWord, setPronunciationWord] = useState<string | null>(null);
+  const [pronunciationResult, setPronunciationResult] = useState<Record<string, 'correct' | 'wrong' | 'listening'>>({});
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
@@ -300,6 +303,69 @@ const Words: React.FC = () => {
     } else if (wordObj.example) {
       speakWord(wordObj.example);
     }
+  };
+
+  const startPronunciation = (wordText: string) => {
+    const SRConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SRConstructor) {
+      toast.error("Your browser doesn't support speech recognition. Try Chrome!");
+      return;
+    }
+
+    if (pronunciationWord === wordText) {
+      // already listening for this word, ignore
+      return;
+    }
+
+    setPronunciationWord(wordText);
+    setPronunciationResult((prev) => ({ ...prev, [wordText]: 'listening' }));
+
+    const recognition = new SRConstructor();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = event.results[0]?.[0]?.transcript?.trim().toLowerCase() || '';
+      const target = wordText.trim().toLowerCase();
+
+      if (transcript === target) {
+        setPronunciationResult((prev) => ({ ...prev, [wordText]: 'correct' }));
+        SFX.correct();
+        toast.success(`Perfect pronunciation! "${wordText}"`);
+      } else {
+        setPronunciationResult((prev) => ({ ...prev, [wordText]: 'wrong' }));
+        SFX.wrong();
+        toast.error(`You said "${transcript}" - Expected "${wordText}"`);
+      }
+      setPronunciationWord(null);
+
+      // Clear result after 3 seconds
+      setTimeout(() => {
+        setPronunciationResult((prev) => {
+          const next = { ...prev };
+          delete next[wordText];
+          return next;
+        });
+      }, 3000);
+    };
+
+    recognition.onerror = () => {
+      setPronunciationWord(null);
+      setPronunciationResult((prev) => {
+        const next = { ...prev };
+        delete next[wordText];
+        return next;
+      });
+      toast.error('Could not hear you. Try again!');
+    };
+
+    recognition.onend = () => {
+      setPronunciationWord(null);
+    };
+
+    recognition.start();
   };
 
   const toggleLearned = (word: string) => {
@@ -745,6 +811,31 @@ const Words: React.FC = () => {
                             <Volume2 size={12} />
                           </button>
                         )}
+                        <button
+                          className={`mini-audio-btn ${pronunciationResult[word.word] === 'listening' ? 'listening' : ''}`}
+                          onClick={(e) => { e.stopPropagation(); startPronunciation(word.word); }}
+                          title="Practice pronunciation"
+                          style={{
+                            background: pronunciationResult[word.word] === 'correct'
+                              ? 'var(--accent-emerald, #10b981)'
+                              : pronunciationResult[word.word] === 'wrong'
+                              ? 'var(--accent-rose, #f43f5e)'
+                              : pronunciationResult[word.word] === 'listening'
+                              ? 'var(--accent-amber, #f59e0b)'
+                              : undefined,
+                            color: pronunciationResult[word.word] ? '#fff' : undefined,
+                            transition: 'all 0.3s ease',
+                          }}
+                          disabled={pronunciationWord === word.word}
+                        >
+                          {pronunciationResult[word.word] === 'correct' ? (
+                            <span style={{ fontSize: '12px' }}>&#10003;</span>
+                          ) : pronunciationResult[word.word] === 'wrong' ? (
+                            <span style={{ fontSize: '12px' }}>&#10007;</span>
+                          ) : (
+                            <Mic size={14} />
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>

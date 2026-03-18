@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { usePremium } from '../contexts/PremiumContext';
 import {
@@ -142,11 +143,26 @@ const FAQ_ITEMS = [
 export default function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { plan: currentPlan, subscriptionStatus, checkoutUrl, customerPortalUrl, isLoading: subLoading } = usePremium();
+  const { plan: currentPlan, subscriptionStatus, checkoutUrl, customerPortalUrl, refreshSubscription, isLoading: subLoading } = usePremium();
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isYearly, setIsYearly] = useState(true);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Handle checkout return status
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status === 'success') {
+      toast.success('Payment successful! Your subscription is being activated.');
+      refreshSubscription();
+      setSearchParams({}, { replace: true });
+    } else if (status === 'cancelled') {
+      toast('Checkout cancelled. You can subscribe anytime.', { icon: '\u{2139}\u{FE0F}' });
+      setSearchParams({}, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isCurrentPlan = (planId: string) =>
     currentPlan === planId && subscriptionStatus === 'active';
@@ -162,22 +178,38 @@ export default function Pricing() {
       setLoadingPlan(plan.id);
       const url = await customerPortalUrl();
       setLoadingPlan(null);
-      if (url) window.open(url, '_blank');
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        toast.error('Could not open subscription portal. Please try again.');
+      }
       return;
     }
 
     const variantId = isYearly ? plan.yearlyVariantId : plan.monthlyVariantId;
     if (!variantId) {
-      navigate('/premium');
+      toast('Payment system is being configured. Please check back soon!', { icon: '\u{1F6E0}\u{FE0F}' });
       return;
     }
 
     setLoadingPlan(plan.id);
-    const url = await checkoutUrl(variantId);
+
+    // Try server-side checkout first; fall back to hosted checkout URL
+    let url = await checkoutUrl(variantId);
+
+    if (!url) {
+      // Fallback: direct Lemon Squeezy hosted checkout
+      const params = new URLSearchParams();
+      params.set('checkout[custom][user_id]', user.uid);
+      if (user.email) params.set('checkout[email]', user.email);
+      if (user.displayName) params.set('checkout[name]', user.displayName);
+      url = `https://minesminis.lemonsqueezy.com/buy/${variantId}?${params.toString()}`;
+    }
+
     setLoadingPlan(null);
 
     if (url) {
-      window.location.href = url;
+      window.open(url, '_blank');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isYearly, checkoutUrl, customerPortalUrl, navigate, currentPlan, subscriptionStatus]);

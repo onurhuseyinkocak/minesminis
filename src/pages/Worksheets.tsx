@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { fallbackWorksheets } from '../data/fallbackData';
+import { getCachedData, setCachedData } from '../utils/offlineManager';
 import toast from 'react-hot-toast';
 import {
   Printer,
@@ -51,6 +52,9 @@ function Worksheets() {
   }, [user]);
 
   const fetchWorksheets = async () => {
+    // Try localStorage cache for instant load
+    const cached = getCachedData<Worksheet[]>('worksheets');
+
     try {
       const { data, error } = await supabase
         .from('worksheets')
@@ -58,8 +62,9 @@ function Worksheets() {
 
       if (error) throw error;
 
+      let result: Worksheet[];
       if (data && data.length > 0) {
-        setWorksheets(data.map(ws => ({
+        result = data.map(ws => ({
           id: ws.id,
           title: ws.title,
           description: ws.description,
@@ -68,13 +73,20 @@ function Worksheets() {
           thumbnail_url: ws.thumbnail_url,
           external_url: ws.file_url,
           source: 'MinesMinis'
-        })));
+        }));
+      } else {
+        result = fallbackWorksheets;
+      }
+      setWorksheets(result);
+      // Persist to localStorage (TTL: 6 hours)
+      setCachedData('worksheets', result, 6 * 60 * 60 * 1000);
+    } catch (error) {
+      console.error('Error fetching worksheets:', error);
+      if (cached && cached.length > 0) {
+        setWorksheets(cached);
       } else {
         setWorksheets(fallbackWorksheets);
       }
-    } catch (error) {
-      console.error('Error fetching worksheets, using fallback:', error);
-      setWorksheets(fallbackWorksheets);
     }
   };
 

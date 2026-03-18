@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { usePremium } from '../contexts/PremiumContext';
 import { Crown, Check, Star, Sparkles, Zap, MessageCircle, Gamepad2, BookOpen, Trophy } from 'lucide-react';
 import './Premium.css';
 
@@ -15,6 +16,7 @@ const premiumFeatures = [
 export default function Premium() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isPremium, plan, subscriptionStatus, isLoading } = usePremium();
 
   return (
     <div className="premium-page">
@@ -24,8 +26,12 @@ export default function Premium() {
             <Sparkles size={20} />
             <span>Premium</span>
           </div>
-          <h1>Unlimited AI Chat with Mimi!</h1>
-          <p>All educational content is free. Premium will unlock unlimited English practice with Mimi — coming soon!</p>
+          <h1>{isPremium ? 'You\'re Premium!' : 'Unlimited AI Chat with Mimi!'}</h1>
+          <p>
+            {isPremium
+              ? 'Thank you for being a Premium member! Enjoy unlimited access to all features.'
+              : 'Upgrade to Premium to unlock unlimited English practice with Mimi and all educational content.'}
+          </p>
           <div className="hero-sparkles">
             <Sparkles className="sparkle-1" size={24} />
             <Sparkles className="sparkle-2" size={20} />
@@ -33,18 +39,37 @@ export default function Premium() {
           </div>
         </div>
 
-        <div className="premium-coming-soon-card">
-          <Crown size={48} className="coming-soon-icon" />
-          <h2>Payment system coming soon</h2>
-          <p>We are preparing a safe and easy way to upgrade. Until then, enjoy all free games, words, videos, and worksheets!</p>
-          <button type="button" className="back-btn" onClick={() => navigate(user ? '/games' : '/')}>
-            Back to {user ? 'Games' : 'Home'}
-          </button>
-        </div>
+        {isLoading ? (
+          <div className="premium-coming-soon-card">
+            <Crown size={48} className="coming-soon-icon" />
+            <h2>Loading your subscription...</h2>
+          </div>
+        ) : isPremium ? (
+          <div className="premium-coming-soon-card">
+            <Crown size={48} className="coming-soon-icon" />
+            <h2>Active {plan.charAt(0).toUpperCase() + plan.slice(1)} Plan</h2>
+            <p>
+              You have full access to all worlds, unlimited Mimi chat, educational games, progress tracking, and more.
+              {subscriptionStatus === 'active' && ' Your subscription is active.'}
+            </p>
+            <button type="button" className="back-btn" onClick={() => navigate('/dashboard')}>
+              Go to Dashboard
+            </button>
+          </div>
+        ) : (
+          <div className="premium-coming-soon-card">
+            <Crown size={48} className="coming-soon-icon" />
+            <h2>Upgrade to Premium</h2>
+            <p>Unlock unlimited Mimi chat, all 12 worlds, progress tracking, achievement badges, and an ad-free experience!</p>
+            <button type="button" className="back-btn" onClick={() => navigate('/pricing')}>
+              View Plans &amp; Pricing
+            </button>
+          </div>
+        )}
 
         <div className="features-section animate-up" style={{ animationDelay: '0.2s' }}>
           <div className="section-badge">✨ Premium Perks</div>
-          <h2>Why Choose Premium? (Coming Soon)</h2>
+          <h2>Why Choose Premium?</h2>
           <div className="features-grid">
             {premiumFeatures.map((feature, index) => (
               <div key={index} className="feature-card glass-morphism">

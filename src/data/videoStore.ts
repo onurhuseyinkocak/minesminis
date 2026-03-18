@@ -1,5 +1,6 @@
 import { supabase } from '../config/supabase';
 import { fallbackVideos } from './fallbackData';
+import { getCachedData, setCachedData } from '../utils/offlineManager';
 
 export type Video = {
     id: string;
@@ -17,8 +18,11 @@ export type Video = {
 let videosCache: Video[] = [];
 
 export const videoStore = {
-    // Get all videos
+    // Get all videos — tries Supabase first, falls back to localStorage cache, then fallback data
     async fetchVideos(): Promise<Video[]> {
+        // Try localStorage cache first for instant load
+        const cached = getCachedData<Video[]>('videos');
+
         try {
             const { data, error } = await supabase
                 .from('videos')
@@ -43,11 +47,21 @@ export const videoStore = {
                 })) as Video[];
             }
 
+            // Persist to localStorage (TTL: 6 hours)
+            setCachedData('videos', videosCache, 6 * 60 * 60 * 1000);
+
             window.dispatchEvent(new CustomEvent('videosUpdated', { detail: videosCache }));
             return videosCache;
         } catch (error) {
-            console.error('Error fetching videos from Supabase, using fallback:', error);
-            videosCache = fallbackVideos as Video[];
+            console.error('Error fetching videos from Supabase:', error);
+
+            // Use localStorage cache if available
+            if (cached && cached.length > 0) {
+                videosCache = cached;
+            } else {
+                videosCache = fallbackVideos as Video[];
+            }
+
             window.dispatchEvent(new CustomEvent('videosUpdated', { detail: videosCache }));
             return videosCache;
         }

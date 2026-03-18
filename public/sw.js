@@ -1,96 +1,215 @@
-// MinesMinis Service Worker
-// For PWA functionality
+// MinesMinis Service Worker v2
+// Enhanced PWA with offline support
 
-const CACHE_NAME = 'minesminis-v1';
-const STATIC_ASSETS = [
+const CACHE_NAME = 'minesminis-v2';
+const STATIC_CACHE = 'minesminis-static-v2';
+const API_CACHE = 'minesminis-api-v2';
+
+// App shell files to precache on install
+const APP_SHELL = [
     '/',
     '/index.html',
     '/manifest.json',
     '/images/mine-logo.jpg',
 ];
 
-// Install event
+// Static asset extensions — cache-first strategy
+const STATIC_EXTENSIONS = [
+    '.js', '.css', '.woff', '.woff2', '.ttf', '.eot',
+    '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico',
+];
+
+// API paths to cache with network-first + stale-while-revalidate
+const CACHEABLE_API_PATTERNS = [
+    { pattern: /\/api\/daily-challenge/, ttl: 24 * 60 * 60 * 1000 },
+    { pattern: /\/api\/story\/today/, ttl: 24 * 60 * 60 * 1000 },
+];
+
+// Paths to never cache
+const SKIP_CACHE_PATTERNS = [
+    /\/auth\//,
+    /\/admin/,
+    /supabase\.co\/auth/,
+    /supabase\.co\/rest\/v1\/rpc/,
+];
+
+function isStaticAsset(url) {
+    return STATIC_EXTENSIONS.some((ext) => url.pathname.endsWith(ext));
+}
+
+function shouldSkipCache(url) {
+    const fullUrl = url.href;
+    return SKIP_CACHE_PATTERNS.some((pattern) => pattern.test(fullUrl));
+}
+
+function getCacheableApiConfig(url) {
+    const fullUrl = url.href;
+    return CACHEABLE_API_PATTERNS.find((entry) => entry.pattern.test(fullUrl)) || null;
+}
+
+// Install event — precache app shell
 self.addEventListener('install', (event) => {
-    console.log('Service Worker: Installing...');
+    console.log('Service Worker v2: Installing...');
 
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            console.log('Service Worker: Caching static assets');
-            return cache.addAll(STATIC_ASSETS);
+        caches.open(STATIC_CACHE).then((cache) => {
+            console.log('Service Worker: Precaching app shell');
+            return cache.addAll(APP_SHELL);
         })
     );
 
-    // Skip waiting to activate immediately
     self.skipWaiting();
 });
 
-// Activate event
+// Activate event — clean up old caches
 self.addEventListener('activate', (event) => {
-    console.log('Service Worker: Activated');
+    console.log('Service Worker v2: Activated');
 
-    // Clean up old caches
+    const validCaches = [CACHE_NAME, STATIC_CACHE, API_CACHE];
+
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('Service Worker: Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
+                cacheNames.map((name) => {
+                    if (!validCaches.includes(name)) {
+                        console.log('Service Worker: Deleting old cache:', name);
+                        return caches.delete(name);
                     }
                 })
             );
         })
     );
 
-    // Claim clients immediately
     self.clients.claim();
 });
 
-// Fetch event - Network first, fallback to cache
+// Fetch event — strategy varies by request type
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') return;
+    const { request } = event;
+    const url = new URL(request.url);
 
-    // Skip API requests
-    if (event.request.url.includes('/api/')) return;
+    // Skip non-GET requests (POST, PUT, DELETE, etc.)
+    if (request.method !== 'GET') return;
 
-    event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                // Cache successful responses
-                if (response.ok) {
-                    const responseClone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseClone);
-                    });
-                }
-                return response;
-            })
-            .catch(() => {
-                // Fallback to cache
-                return caches.match(event.request).then((response) => {
-                    if (response) {
-                        return response;
-                    }
+    // Skip requests that should never be cached
+    if (shouldSkipCache(url)) return;
 
-                    // Fallback to index.html for navigation requests
-                    if (event.request.mode === 'navigate') {
-                        return caches.match('/index.html');
-                    }
+    // Strategy 1: Cache-first for static assets (JS, CSS, images, fonts)
+    if (isStaticAsset(url)) {
+        event.respondWith(cacheFirst(request, STATIC_CACHE));
+        return;
+    }
 
-                    return new Response('Offline - Content not available', {
-                        status: 503,
-                        statusText: 'Service Unavailable',
-                        headers: new Headers({
-                            'Content-Type': 'text/plain',
-                        }),
-                    });
-                });
-            })
-    );
+    // Strategy 2: Network-first with stale-while-revalidate for cacheable API routes
+    const apiConfig = getCacheableApiConfig(url);
+    if (apiConfig) {
+        event.respondWith(networkFirstWithTTL(request, API_CACHE, apiConfig.ttl));
+        return;
+    }
+
+    // Strategy 3: Network-first for everything else (HTML navigation, etc.)
+    event.respondWith(networkFirst(request));
 });
 
-// Push notification event
+// ─── Caching strategies ──────────────────────────────────────────────────────
+
+/**
+ * Cache-first: try cache, fall back to network (and update cache).
+ */
+async function cacheFirst(request, cacheName) {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            const cache = await caches.open(cacheName);
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch {
+        return new Response('Offline - Asset not available', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' },
+        });
+    }
+}
+
+/**
+ * Network-first with TTL: try network, cache the response with a timestamp.
+ * If network fails, serve from cache if within TTL.
+ * Also does stale-while-revalidate: returns stale immediately, refreshes in background.
+ */
+async function networkFirstWithTTL(request, cacheName, ttl) {
+    const cache = await caches.open(cacheName);
+
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            // Store response with timestamp header
+            const headers = new Headers(response.headers);
+            headers.set('sw-cache-time', Date.now().toString());
+            const timedResponse = new Response(await response.clone().blob(), {
+                status: response.status,
+                statusText: response.statusText,
+                headers,
+            });
+            cache.put(request, timedResponse);
+        }
+        return response;
+    } catch {
+        // Network failed — try cache
+        const cached = await cache.match(request);
+        if (cached) {
+            const cacheTime = parseInt(cached.headers.get('sw-cache-time') || '0', 10);
+            const age = Date.now() - cacheTime;
+            if (age < ttl) {
+                return cached;
+            }
+        }
+
+        // Even if expired, return stale data rather than nothing
+        if (cached) return cached;
+
+        return new Response(JSON.stringify({ error: 'Offline', offline: true }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }
+}
+
+/**
+ * Network-first: try network, fall back to cache, ultimate fallback to cached index.html.
+ */
+async function networkFirst(request) {
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+
+        // For navigation requests, serve cached index.html (SPA handles routing)
+        if (request.mode === 'navigate') {
+            const fallback = await caches.match('/index.html');
+            if (fallback) return fallback;
+        }
+
+        return new Response('Offline - Content not available', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' },
+        });
+    }
+}
+
+// ─── Push notifications ──────────────────────────────────────────────────────
+
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'New notification from MinesMinis!',
@@ -112,13 +231,10 @@ self.addEventListener('push', (event) => {
     );
 });
 
-// Notification click event
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
     if (event.action === 'explore') {
-        event.waitUntil(
-            clients.openWindow('/')
-        );
+        event.waitUntil(clients.openWindow('/'));
     }
 });
