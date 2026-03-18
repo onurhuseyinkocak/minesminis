@@ -233,7 +233,7 @@
 }
 
 [data-theme="dark"] .landing-hero {
-  background: var(--slate-950);
+  background: #0C0F1A;
 }
 
 .landing-hero__inner {
@@ -348,7 +348,7 @@
 }
 
 [data-theme="dark"] .landing-method {
-  background: var(--slate-900);
+  background: #151929;
 }
 
 .landing-method__inner {
@@ -430,7 +430,7 @@
 }
 
 [data-theme="dark"] .landing-audience {
-  background: var(--slate-950);
+  background: #0C0F1A;
 }
 
 .landing-audience__inner {
@@ -537,7 +537,7 @@
 }
 
 [data-theme="dark"] .landing-stats {
-  background: var(--slate-900);
+  background: #151929;
 }
 
 .landing-stats__inner {
@@ -589,7 +589,7 @@
 }
 
 [data-theme="dark"] .landing-cta {
-  background: var(--slate-950);
+  background: #0C0F1A;
 }
 
 .landing-cta__inner {
