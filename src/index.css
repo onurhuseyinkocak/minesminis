@@ -282,7 +282,7 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--gradient-warm);
+  background: var(--bg-page);
   color: var(--text-body);
   line-height: 1.5;
   overflow-x: hidden;
@@ -293,7 +293,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #F0F4FF 0%, #E8EEFF 40%, #F5E6FF 100%);
+  background: linear-gradient(180deg, #0F172A 0%, #1E293B 30%, #0F172A 100%);
   position: relative;
 }
 

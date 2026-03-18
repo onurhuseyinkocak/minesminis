@@ -43,7 +43,7 @@
     left: 0;
     bottom: 0;
     width: 240px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(12, 15, 26, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-right: 1px solid var(--border-light);
@@ -130,7 +130,7 @@
     left: 0;
     right: 0;
     height: 72px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(12, 15, 26, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--border-light);

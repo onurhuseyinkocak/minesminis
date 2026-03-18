@@ -42,7 +42,7 @@
   position: absolute;
   width: 120px;
   height: 50px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 50px;
   filter: blur(2px);
 }
@@ -51,7 +51,7 @@
 .journey-cloud::after {
   content: '';
   position: absolute;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 50%;
 }
 

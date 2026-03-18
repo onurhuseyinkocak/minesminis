@@ -1,88 +1,42 @@
 /**
  * THEME CONTEXT
- * Dark Mode & Theme Management for MinesMinis
+ * MinesMinis — DARK MODE ONLY
  */
 /* eslint-disable react-refresh/only-export-components -- context file: exports Provider + useTheme */
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-type Theme = 'light' | 'dark' | 'system';
+import { createContext, useContext, useEffect, ReactNode } from 'react';
 
 interface ThemeContextType {
-    theme: Theme;
-    effectiveTheme: 'light' | 'dark';
-    setTheme: (theme: Theme) => void;
+    theme: 'dark';
+    effectiveTheme: 'dark';
+    setTheme: (theme: string) => void;
     toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setThemeState] = useState<Theme>('light');
-    const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
-
-    // Load theme from localStorage
+    // Force dark mode on mount — no light mode exists
     useEffect(() => {
-        const savedTheme = localStorage.getItem('mm_theme') as Theme | null;
-        if (savedTheme) {
-            setThemeState(savedTheme);
-        } else {
-            // Check system preference
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            setThemeState('system');
-            setEffectiveTheme(prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('mm_theme', 'dark');
+
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', '#0C0F1A');
         }
     }, []);
 
-    // Listen for system theme changes
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-        const handleChange = (e: MediaQueryListEvent) => {
-            if (theme === 'system') {
-                setEffectiveTheme(e.matches ? 'dark' : 'light');
-            }
-        };
-
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
-    }, [theme]);
-
-    // Apply theme
-    useEffect(() => {
-        let effective: 'light' | 'dark';
-
-        if (theme === 'system') {
-            effective = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        } else {
-            effective = theme;
-        }
-
-        setEffectiveTheme(effective);
-
-        // Apply to document
-        document.documentElement.setAttribute('data-theme', effective);
-        document.body.classList.remove('light-theme', 'dark-theme');
-        document.body.classList.add(`${effective}-theme`);
-
-        // Update meta theme-color
-        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-        if (metaThemeColor) {
-            metaThemeColor.setAttribute('content', effective === 'dark' ? '#13111C' : '#6C5CE7');
-        }
-    }, [theme]);
-
-    const setTheme = (newTheme: Theme) => {
-        setThemeState(newTheme);
-        localStorage.setItem('mm_theme', newTheme);
-    };
-
-    const toggleTheme = () => {
-        const newTheme = effectiveTheme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
+    const value: ThemeContextType = {
+        theme: 'dark',
+        effectiveTheme: 'dark',
+        setTheme: () => {},    // no-op, always dark
+        toggleTheme: () => {}, // no-op, always dark
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, effectiveTheme, setTheme, toggleTheme }}>
+        <ThemeContext.Provider value={value}>
             {children}
         </ThemeContext.Provider>
     );
