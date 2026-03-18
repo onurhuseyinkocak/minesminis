@@ -4,6 +4,8 @@ import { supabase } from '../config/supabase';
 import { fallbackGames } from '../data/fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
 import { kidsWords } from '../data/wordsData';
+import { getCurrentPhonicsSound } from '../services/learningPathService';
+import { PHONICS_GROUPS } from '../data/phonics';
 import toast from 'react-hot-toast';
 import { X, Play, Dice5, Type, Puzzle, Headphones, PenTool, BookOpen } from 'lucide-react';
 import { GameSelector } from '../components/games/index';
@@ -52,7 +54,20 @@ const INTERNAL_GAMES: InternalGame[] = [
 ];
 
 function getGameWords() {
-  // Pick 8 random words from kidsWords to use in games
+  const currentSound = getCurrentPhonicsSound();
+  if (currentSound) {
+    // Get blendable words from current phonics group
+    const group = PHONICS_GROUPS.find(g => g.group === currentSound.group);
+    if (group && group.blendableWords.length >= 4) {
+      // Map blendable words to game format
+      return group.blendableWords.slice(0, 8).map(w => ({
+        english: w,
+        turkish: '',
+        emoji: '',
+      }));
+    }
+  }
+  // Fallback to random if no phonics context
   const shuffled = [...kidsWords].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 8).map(w => ({
     english: w.word,
@@ -103,11 +118,11 @@ function Games() {
     if (activeCategory === 'all') return INTERNAL_GAMES;
     const map: Record<GameCategory, string[]> = {
       all: [],
-      letters: ['pronunciation', 'blending'],
-      puzzles: ['word-match', 'segmenting'],
-      listening: ['quick-quiz', 'pronunciation'],
-      spelling: ['spelling-bee', 'blending'],
-      reading: ['word-match', 'quick-quiz'],
+      letters: ['spelling-bee', 'pronunciation', 'blending'],
+      puzzles: ['word-match', 'segmenting', 'blending'],
+      listening: ['pronunciation', 'blending'],
+      spelling: ['spelling-bee', 'word-writing'],
+      reading: ['word-match', 'quick-quiz', 'segmenting'],
     };
     return INTERNAL_GAMES.filter(g => map[activeCategory].includes(g.id));
   };

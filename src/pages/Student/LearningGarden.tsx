@@ -419,7 +419,7 @@ function LearningGarden() {
 const styles: Record<string, React.CSSProperties> = {
   container: {
     minHeight: '100vh',
-    background: 'linear-gradient(180deg, #ECFDF5 0%, #D1FAE5 50%, #A7F3D0 100%)',
+    background: 'linear-gradient(180deg, rgba(16,185,129,0.05) 0%, rgba(16,185,129,0.08) 50%, rgba(16,185,129,0.1) 100%)',
     fontFamily: 'Nunito, sans-serif',
     paddingBottom: '2rem',
   },

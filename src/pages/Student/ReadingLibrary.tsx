@@ -270,7 +270,7 @@ export default ReadingLibrary;
 const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
-    backgroundColor: '#FFF9F0',
+    backgroundColor: '#151929',
     fontFamily: 'Nunito, sans-serif',
     paddingBottom: 80,
   },
@@ -279,8 +279,8 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: 12,
     padding: '16px 20px',
-    backgroundColor: '#FFF',
-    borderBottom: '1px solid #F3F4F6',
+    backgroundColor: '#1C2236',
+    borderBottom: '1px solid #2A3050',
     position: 'sticky',
     top: 0,
     zIndex: 10,
@@ -290,17 +290,17 @@ const styles: Record<string, React.CSSProperties> = {
     height: 40,
     borderRadius: '50%',
     border: '1px solid #E5E7EB',
-    backgroundColor: '#FFF',
+    backgroundColor: '#1C2236',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#6B7280',
+    color: '#94A3B8',
   },
   title: {
     fontSize: 22,
     fontWeight: 900,
-    color: '#1F2937',
+    color: '#F1F5F9',
     margin: 0,
   },
   subtitle: {
@@ -349,7 +349,7 @@ const styles: Record<string, React.CSSProperties> = {
   shelfGroupName: {
     fontSize: 14,
     fontWeight: 700,
-    color: '#374151',
+    color: '#F1F5F9',
   },
   shelfSounds: {
     fontSize: 12,
@@ -363,7 +363,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    backgroundColor: '#FFF8EE',
+    backgroundColor: '#0F1320',
     borderRadius: 12,
     padding: '12px 12px 0',
     boxShadow: 'inset 0 -2px 8px rgba(0,0,0,0.06)',
