@@ -21,7 +21,9 @@
     "gate:build": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:migrate": "node scripts/run-migration.mjs",
+    "db:migrate:dry": "node scripts/run-migration.mjs --dry"
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
