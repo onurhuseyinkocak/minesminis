@@ -8,6 +8,7 @@ import './LevelUpModal.css';
 import { useGamification } from '../contexts/GamificationContext';
 import { StarBurst, StreakFlame } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
+import { getGardenStats } from '../services/gardenService';
 
 const LevelUpModal: React.FC = () => {
     const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
@@ -88,6 +89,17 @@ const LevelUpModal: React.FC = () => {
 
                     <p className="level-up-message">
                         Amazing work! Keep learning to unlock more rewards! 🎉
+                        {(() => {
+                            const gardenStats = getGardenStats();
+                            if (gardenStats.blooming > 0) {
+                                return (
+                                    <span style={{ display: 'block', marginTop: '0.3rem', fontSize: '0.85em' }}>
+                                        🌱 Your garden has {gardenStats.blooming} blooming plant{gardenStats.blooming !== 1 ? 's' : ''}!
+                                    </span>
+                                );
+                            }
+                            return null;
+                        })()}
                     </p>
 
                     <button className="continue-btn" onClick={dismissLevelUp}>

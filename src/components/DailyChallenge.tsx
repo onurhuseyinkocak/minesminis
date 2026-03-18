@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, CheckCircle, RefreshCw } from 'lucide-react';
 import { useGamification } from '../contexts/GamificationContext';
+import { logActivity } from '../services/activityLogger';
 
 interface ChallengeData {
   id: string;
@@ -105,6 +106,15 @@ const DailyChallenge: React.FC = () => {
       // Award XP
       await addXP(25, 'daily_challenge');
       await trackActivity('daily_challenge');
+
+      // Log for parent dashboard analytics
+      logActivity({
+        type: 'challenge',
+        title: `Daily Challenge: ${challenge.word}`,
+        duration: 30, // ~30 seconds for a challenge
+        accuracy: 100,
+        xpEarned: 25,
+      });
     }
   };
 

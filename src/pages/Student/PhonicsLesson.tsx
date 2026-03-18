@@ -1,19 +1,26 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, ArrowRight, ArrowLeft, Sparkles, Mic, BookOpen } from 'lucide-react';
+import { Volume2, ArrowRight, ArrowLeft, Sparkles, Mic, BookOpen, PenTool } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../../components/ui';
 import { BlendingBoard } from '../../components/phonics/BlendingBoard';
+import { LetterTracing } from '../../components/phonics/LetterTracing';
+import { SongPlayer } from '../../components/phonics/SongPlayer';
+import { getSongByGroup } from '../../data/phonicsSongs';
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../../data/phonics';
 import type { PhonicsSound, PhonicsGroup } from '../../data/phonics';
 import MimiGuide from '../../components/MimiGuide';
 import { advanceToNextSound, recordSoundMastery } from '../../services/learningPathService';
+import { logActivity } from '../../services/activityLogger';
+import { getPlantForSound, getPlantStage } from '../../data/gardenData';
+import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
+import type { PlantGrowthEvent } from '../../services/gardenService';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
-type LessonStep = 'hear' | 'do' | 'see' | 'build' | 'break' | 'read' | 'celebrate';
+type LessonStep = 'hear' | 'do' | 'see' | 'build' | 'break' | 'write' | 'read' | 'sing' | 'celebrate';
 
-const STEPS: LessonStep[] = ['hear', 'do', 'see', 'build', 'break', 'read', 'celebrate'];
+const STEPS: LessonStep[] = ['hear', 'do', 'see', 'build', 'break', 'write', 'read', 'sing', 'celebrate'];
 
 const STEP_LABELS: Record<LessonStep, string> = {
   hear: 'Hear It',
@@ -21,7 +28,9 @@ const STEP_LABELS: Record<LessonStep, string> = {
   see: 'See It',
   build: 'Build It',
   break: 'Break It',
+  write: 'Write It',
   read: 'Read It',
+  sing: 'Sing It',
   celebrate: 'Celebrate!',
 };
 
@@ -463,6 +472,37 @@ function PhonicsLesson() {
     );
   };
 
+  const renderWrite = () => {
+    const grapheme = sound.grapheme.toLowerCase();
+    const firstLetter = grapheme.charAt(0);
+
+    return (
+      <motion.div
+        key="write"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        style={styles.stepContent}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
+          <PenTool size={20} color="#1A6B5A" />
+          <p style={{ ...styles.stepDesc, margin: 0 }}>Trace the letter with your finger!</p>
+        </div>
+
+        <LetterTracing
+          letter={firstLetter}
+          onComplete={(accuracy) => {
+            setXpEarned((prev) => prev + Math.round(accuracy * 0.2));
+            if (accuracy >= 40) {
+              setTimeout(goNext, 1200);
+            }
+          }}
+          difficulty="guided"
+        />
+      </motion.div>
+    );
+  };
+
   const renderRead = () => {
     const decodableText = group.decodableText;
     const words = decodableText.split(/\s+/);
@@ -515,6 +555,47 @@ function PhonicsLesson() {
     );
   };
 
+  const renderSing = () => {
+    const groupSong = getSongByGroup(sound.group);
+
+    if (!groupSong) {
+      // No song for this group — skip to next step
+      return (
+        <motion.div
+          key="sing-skip"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          style={styles.stepContent}
+        >
+          <p style={styles.stepDesc}>No song available yet for this group.</p>
+          <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
+            Continue
+          </Button>
+        </motion.div>
+      );
+    }
+
+    return (
+      <motion.div
+        key="sing"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        style={styles.stepContent}
+      >
+        <SongPlayer
+          song={groupSong}
+          mode="singalong"
+          onComplete={() => {
+            setXpEarned((prev) => prev + 25);
+            goNext();
+          }}
+        />
+      </motion.div>
+    );
+  };
+
   const renderCelebrate = () => {
     const totalXP = xpEarned + 50; // base completion XP
 
@@ -532,7 +613,26 @@ function PhonicsLesson() {
       }
       // Record mastery via learning path service (score 100 for completion)
       recordSoundMastery(soundId!, 100);
+
+      // Update garden plant growth
+      updatePlantGrowth(soundId!, 100);
+      // Award water drops for completing a lesson
+      addWaterDrops(3);
+
+      // Log this phonics lesson for the activity logger
+      logActivity({
+        type: 'phonics',
+        title: `Learned the "${sound.grapheme}" sound`,
+        duration: Math.round((stepIndex + 1) * 45), // ~45s per step estimate
+        accuracy: 100,
+        xpEarned: totalXP,
+        soundId: soundId!,
+      });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Get garden plant info for this sound
+    const gardenPlant = getPlantForSound(soundId!);
+    const plantStage = gardenPlant ? getPlantStage(gardenPlant, 100) : null;
 
     // Find next sound and check if group is complete
     const currentGroup = PHONICS_GROUPS.find((g) => g.sounds.some((s) => s.id === soundId));
@@ -597,6 +697,11 @@ function PhonicsLesson() {
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{totalXP} XP earned!
             </Badge>
+            {gardenPlant && plantStage && (
+              <p style={{ fontSize: '0.95rem', color: '#1A6B5A', margin: 0, fontWeight: 700 }}>
+                Your {gardenPlant.emoji} grew! It&apos;s now {plantStage.name === 'flowering' ? 'fully bloomed' : `a ${plantStage.name}`}!
+              </p>
+            )}
             <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>
               Sound &quot;{sound.grapheme}&quot; added to your mastery chart
             </p>
@@ -680,7 +785,9 @@ function PhonicsLesson() {
         {currentStep === 'see' && renderSee()}
         {currentStep === 'build' && renderBuild()}
         {currentStep === 'break' && renderBreak()}
+        {currentStep === 'write' && renderWrite()}
         {currentStep === 'read' && renderRead()}
+        {currentStep === 'sing' && renderSing()}
         {currentStep === 'celebrate' && renderCelebrate()}
       </AnimatePresence>
 

@@ -4,4 +4,8 @@ export { SegmentingBoard } from './SegmentingBoard';
 export { TPRActivity } from './TPRActivity';
 export { DecodableReader } from './DecodableReader';
 export { PhonicsChart } from './PhonicsChart';
+export { LetterTracing } from './LetterTracing';
+export { WordWriting } from './WordWriting';
+export { SongPlayer } from './SongPlayer';
+export { BookReader } from './BookReader';
 export type { PhonicsSound, TPRCommand } from './types';

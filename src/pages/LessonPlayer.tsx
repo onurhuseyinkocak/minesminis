@@ -38,6 +38,7 @@ import { completeLesson } from '../data/progressTracker';
 import { updateWordProgress } from '../data/spacedRepetition';
 import { useAuth } from '../contexts/AuthContext';
 import { SFX } from '../data/soundLibrary';
+import { logActivity } from '../services/activityLogger';
 import './LessonPlayer.css';
 
 // ============================================================
@@ -408,6 +409,15 @@ const LessonPlayer = () => {
           const totalPossible = [...activityScores, { score, total }].reduce((a, s) => a + s.total, 0);
           const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
           completeLesson(userId, lessonId, worldId, totalXP, accuracy);
+
+          // Log activity for parent dashboard analytics
+          logActivity({
+            type: 'game',
+            title: lesson.title || `Lesson: ${lessonId}`,
+            duration: Math.round(totalActivities * 60), // ~60s per activity estimate
+            accuracy,
+            xpEarned: totalXP,
+          });
         } catch {
           // localStorage might be unavailable
         }

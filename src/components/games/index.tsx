@@ -20,7 +20,7 @@ interface GameProps {
   onWrongAnswer?: () => void;
 }
 
-type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading';
+type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing';
 
 // Lazy imports to keep bundle size down
 const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GameProps>>> = {
@@ -35,6 +35,8 @@ const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GamePr
   'tpr': React.lazy(() => import('../phonics/TPRActivity').then((m) => ({ default: m.TPRActivity as unknown as React.FC<GameProps> }))),
   'sound-intro': React.lazy(() => import('../phonics/SoundCard').then((m) => ({ default: m.SoundCard as unknown as React.FC<GameProps> }))),
   'reading': React.lazy(() => import('../phonics/DecodableReader').then((m) => ({ default: m.DecodableReader as unknown as React.FC<GameProps> }))),
+  'letter-tracing': React.lazy(() => import('../phonics/LetterTracing').then((m) => ({ default: m.LetterTracing as unknown as React.FC<GameProps> }))),
+  'word-writing': React.lazy(() => import('../phonics/WordWriting').then((m) => ({ default: m.WordWriting as unknown as React.FC<GameProps> }))),
 };
 
 const GAME_TYPE_MAP: Record<string, GameType> = {
@@ -71,6 +73,12 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
   'reading': 'reading',
   'Reading': 'reading',
   'DecodableReader': 'reading',
+  'letter-tracing': 'letter-tracing',
+  'lettertracing': 'letter-tracing',
+  'LetterTracing': 'letter-tracing',
+  'word-writing': 'word-writing',
+  'wordwriting': 'word-writing',
+  'WordWriting': 'word-writing',
 };
 
 export interface GameSelectorProps extends GameProps {

@@ -1,6 +1,8 @@
 /* ==========================================================================
-   PARENT DASHBOARD — MinesMinis Design System v4.0
-   Data display, charts, warm amber accents. ZERO hex colors. All var() tokens.
+   PARENT ANALYTICS DASHBOARD — MinesMinis Design System v5.0
+   Comprehensive analytics layout with phonics mastery, timelines,
+   insights, breakdowns, and activity feeds.
+   All var() tokens. Zero hex colors.
    ========================================================================== */
 
 /* ---- CONTAINER ---- */
@@ -12,6 +14,63 @@
   margin: 0 auto;
 }
 
+/* ---- CHILD SELECTOR TABS ---- */
+.pd-child-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+
+.pd-child-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--cloud, #e0e0e0);
+  background: var(--bg-card, #fff);
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.pd-child-tab--active {
+  border-color: var(--primary);
+  background: var(--primary-pale, #eff6ff);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.pd-child-tab--add {
+  border-style: dashed;
+  border-color: var(--primary, #3b82f6);
+  color: var(--primary, #3b82f6);
+  font-weight: 600;
+}
+
+.pd-child-tab-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--error, #ef4444);
+  background: var(--bg-card, #fff);
+  color: var(--error, #ef4444);
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
 /* ---- HEADER ---- */
 .pd-header {
   display: flex;
@@ -19,7 +78,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-md);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-lg);
 }
 
 .pd-header__title {
@@ -67,126 +126,6 @@
   color: var(--secondary);
 }
 
-/* ---- CHILD SELECTOR ---- */
-.pd-child-selector {
-  position: relative;
-  margin-top: var(--space-md);
-}
-
-.pd-child-selector__btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.pd-child-selector__btn:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.pd-child-selector__dropdown {
-  position: absolute;
-  top: calc(100% + var(--space-xs));
-  left: 0;
-  min-width: 220px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  z-index: var(--z-dropdown);
-  overflow: hidden;
-}
-
-.pd-child-selector__option {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-  text-align: left;
-}
-
-.pd-child-selector__option:hover {
-  background: var(--bg-muted);
-}
-
-.pd-child-selector__option.active {
-  background: var(--primary-pale);
-}
-
-.pd-child-name {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.pd-child-meta {
-  display: block;
-  font-family: var(--font-body);
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-/* ---- OVERVIEW CARDS ---- */
-.pd-overview {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
-  margin-bottom: var(--space-xl);
-}
-
-.pd-overview__card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.pd-overview__icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  flex-shrink: 0;
-}
-
-.pd-overview__info {
-  display: flex;
-  flex-direction: column;
-}
-
-.pd-overview__value {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1;
-}
-
-.pd-overview__label {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-top: var(--space-xs);
-}
-
 /* ---- SECTION TITLE ---- */
 .pd-section-title {
   display: flex;
@@ -196,38 +135,150 @@
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0;
+  margin: 0 0 var(--space-sm);
 }
 
-/* ---- PROGRESS CARD ---- */
-.pd-progress-card {
-  margin-bottom: var(--space-xl);
-}
-
-.pd-progress-card__header {
+/* ---- SECTION 1: CHILD OVERVIEW HERO ---- */
+.pd-overview-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-md);
+  gap: var(--space-xl);
+  flex-wrap: wrap;
 }
 
-.pd-progress-card__meta {
+.pd-hero-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.pd-hero-avatar {
+  font-size: 48px;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+}
+
+.pd-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pd-hero-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.pd-hero-age {
   font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-muted);
-  margin: var(--space-xs) 0 0;
 }
 
-/* ---- CHARTS ROW ---- */
+.pd-hero-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.pd-hero-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.pd-hero-ring {
+  flex-shrink: 0;
+}
+
+.pd-hero-streak {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pd-hero-streak-count {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.pd-hero-streak-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.pd-hero-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+}
+
+.pd-hero-time-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--cloud, #e5e7eb);
+  overflow: hidden;
+}
+
+.pd-hero-time-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--primary, #3b82f6);
+  transition: width 0.6s ease;
+}
+
+.pd-hero-time-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ---- SECTION 2: PHONICS MASTERY ---- */
+.pd-phonics-summary {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  padding: var(--space-md) var(--space-lg);
+  margin-top: var(--space-sm);
+  border-top: 1px solid var(--cloud, #e5e7eb);
+}
+
+.pd-phonics-stat {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.pd-phonics-stat strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ---- CHARTS ROW (used for insights + breakdown) ---- */
 .pd-charts {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
 }
 
 .pd-chart-card {
-  min-height: 320px;
+  min-height: 280px;
 }
 
 .pd-chart-subtitle {
@@ -237,198 +288,268 @@
   margin: var(--space-xs) 0 var(--space-md);
 }
 
-.pd-chart-container {
-  width: 100%;
+/* ---- SECTION 3: WEEKLY TIMELINE ---- */
+.pd-timeline {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 180px;
+  padding: var(--space-md) 0;
 }
 
-/* ---- DONUT CHART ---- */
-.pd-donut-container {
+.pd-timeline-day {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
+  max-width: 60px;
 }
 
-.pd-donut-legend {
+.pd-timeline-bar-container {
+  flex: 1;
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm) var(--space-lg);
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pd-timeline-bar {
+  width: 70%;
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.6s ease;
+}
+
+.pd-timeline-icons {
+  display: flex;
+  gap: 2px;
+  min-height: 18px;
+}
+
+.pd-timeline-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+.pd-timeline-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pd-timeline-minutes {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--secondary, #10b981);
+}
+
+/* ---- SECTION 4: INSIGHTS ---- */
+.pd-insights-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
   margin-top: var(--space-md);
 }
 
-.pd-donut-legend__item {
+.pd-insight-card {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-fast);
 }
 
-.pd-donut-legend__dot {
+.pd-insight-card:hover {
+  transform: translateX(4px);
+}
+
+.pd-insight-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.pd-insight-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-body);
+  line-height: 1.4;
+}
+
+/* ---- SECTION 5: ACTIVITY BREAKDOWN ---- */
+.pd-breakdown {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-md) 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pd-breakdown-pie {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pd-breakdown-pie-center {
+  position: absolute;
+  inset: 20%;
+  background: var(--bg-card, #fff);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pd-breakdown-total {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.pd-breakdown-total-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.pd-breakdown-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pd-breakdown-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pd-breakdown-dot {
   width: 10px;
   height: 10px;
   border-radius: var(--radius-full);
   flex-shrink: 0;
 }
 
-.pd-donut-legend__name {
+.pd-breakdown-type {
   font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-secondary);
+  min-width: 100px;
 }
 
-.pd-donut-legend__value {
+.pd-breakdown-pct {
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-/* ---- BOTTOM ROW ---- */
-.pd-bottom {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-lg);
-}
-
-/* ---- ACHIEVEMENTS ---- */
-.pd-achievements-list {
+/* ---- SECTION 6: ACTIVITY FEED ---- */
+.pd-feed {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 4px;
   margin-top: var(--space-md);
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-.pd-achievement {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
-  border-radius: var(--radius-sm);
-  background: var(--bg-muted);
-  transition: background var(--transition-fast);
-}
-
-.pd-achievement:hover {
-  background: var(--primary-pale);
-}
-
-.pd-achievement__icon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.pd-achievement__info {
-  flex: 1;
-  min-width: 0;
-}
-
-.pd-achievement__name {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.pd-achievement__desc {
-  display: block;
-  font-family: var(--font-body);
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.pd-achievement__date {
-  font-family: var(--font-body);
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-/* ---- STRENGTHS ---- */
-.pd-strengths-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
-}
-
-.pd-strength-item {
+.pd-feed-item {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
-  font-family: var(--font-body);
-  font-size: 14px;
+  background: var(--bg-muted);
+  transition: background var(--transition-fast);
 }
 
-.pd-strength-item--good {
-  background: var(--success-pale);
-  color: var(--success);
+.pd-feed-item:hover {
+  background: var(--primary-pale);
 }
 
-.pd-strength-item--focus {
-  background: var(--warning-pale);
-  color: var(--warning);
+.pd-feed-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
 }
 
-/* ---- RECOMMENDATIONS ---- */
-.pd-reco-list {
+.pd-feed-content {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
 }
 
-.pd-reco-item {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: flex-start;
-  padding: var(--space-sm);
-  border-radius: var(--radius-sm);
-  background: var(--bg-muted);
-}
-
-.pd-reco-icon {
-  color: var(--primary);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.pd-reco-item p {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--text-body);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.pd-settings-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  margin-top: var(--space-md);
-  font-family: var(--font-body);
+.pd-feed-title {
+  font-family: var(--font-display);
   font-size: 13px;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color var(--transition-fast);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.pd-settings-link:hover {
-  color: var(--primary);
+.pd-feed-meta {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.pd-feed-time {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---- SECTION 7: REPORT ACTIONS ---- */
+.pd-report-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-md);
 }
 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 1024px) {
-  .pd-overview {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .pd-charts {
     grid-template-columns: 1fr;
   }
 
-  .pd-bottom {
-    grid-template-columns: 1fr;
+  .pd-overview-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pd-hero-right {
+    width: 100%;
+    justify-content: space-around;
   }
 }
 
@@ -445,12 +566,19 @@
     font-size: 22px;
   }
 
-  .pd-overview {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-sm);
+  .pd-timeline {
+    height: 140px;
   }
 
-  .pd-overview__value {
-    font-size: 20px;
+  .pd-breakdown {
+    flex-direction: column;
+  }
+
+  .pd-report-actions {
+    flex-direction: column;
+  }
+
+  .pd-report-actions > * {
+    width: 100%;
   }
 }

@@ -10,6 +10,7 @@
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../data/phonics';
 import type { PhonicsSound } from '../data/phonics';
 import { getDueWords } from '../data/spacedRepetition';
+import { getBooksForGroup } from '../data/readingLibrary';
 
 // ============================================================
 // TYPES
@@ -22,7 +23,8 @@ export interface NextAction {
     | 'game'
     | 'daily-challenge'
     | 'placement-test'
-    | 'celebration';
+    | 'celebration'
+    | 'reading';
   title: string;
   titleTr: string;
   emoji: string;
@@ -342,6 +344,24 @@ export function getNextAction(): NextAction {
 
   // 5. Current sound mastered — check if group is complete
   if (isCurrentGroupComplete()) {
+    // 5a. Group complete → recommend reading books for this group
+    const currentSound = getCurrentPhonicsSound();
+    const completedGroup = currentSound?.group ?? 1;
+    const availableBooks = getBooksForGroup(completedGroup);
+    const readBooksRaw = localStorage.getItem('mimi_read_books');
+    const readBooksMap: Record<string, unknown> = readBooksRaw ? JSON.parse(readBooksRaw) : {};
+    const unreadBooks = availableBooks.filter((b) => !readBooksMap[b.id]);
+    if (unreadBooks.length > 0) {
+      return {
+        type: 'reading',
+        title: 'Read a Story!',
+        titleTr: 'Bir Hikaye Oku!',
+        emoji: '\uD83D\uDCDA',
+        route: '/reading',
+        description: `You have ${unreadBooks.length} new books to read! Practice your sounds with stories.`,
+      };
+    }
+
     // 6. Group complete → celebration then advance
     const next = advanceToNextSound();
     if (next) {

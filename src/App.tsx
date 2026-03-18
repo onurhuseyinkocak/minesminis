@@ -39,6 +39,8 @@ const Games = lazy(() => import("./pages/Games"));
 const PracticeMode = lazy(() => import("./pages/Student/PracticeMode"));
 const PlacementTest = lazy(() => import("./pages/Student/PlacementTest"));
 const PhonicsLesson = lazy(() => import("./pages/Student/PhonicsLesson"));
+const SongsPage = lazy(() => import("./pages/Student/SongsPage"));
+const LearningGarden = lazy(() => import("./pages/Student/LearningGarden"));
 const Words = lazy(() => import("./pages/Words"));
 const Videos = lazy(() => import("./pages/Videos"));
 const StoryPage = lazy(() => import("./pages/Story/StoryPage"));
@@ -48,6 +50,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Worksheets = lazy(() => import("./pages/Worksheets"));
 const Favorites = lazy(() => import("./pages/Favorites"));
+const ReadingLibrary = lazy(() => import("./pages/Student/ReadingLibrary"));
 
 // Protected – Parent / Teacher
 const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
@@ -315,6 +318,10 @@ function AppRoutes() {
             <Route path="/favorites" element={<StudentRoute><Favorites /></StudentRoute>} />
             <Route path="/placement" element={<ProtectedRoute><PlacementTest /></ProtectedRoute>} />
             <Route path="/phonics/:soundId" element={<StudentRoute><PhonicsLesson /></StudentRoute>} />
+            <Route path="/songs" element={<StudentRoute><SongsPage /></StudentRoute>} />
+            <Route path="/garden" element={<StudentRoute><LearningGarden /></StudentRoute>} />
+            <Route path="/reading" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
+            <Route path="/reading/:bookId" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/pricing" element={<Pricing />} />
 
             {/* ── Parent / Teacher (protected + AppShell) ────────── */}

@@ -7,7 +7,7 @@
 // --- TYPES ---
 
 export interface UnitActivity {
-  type: 'sound-intro' | 'blending' | 'segmenting' | 'word-match' | 'listening' | 'pronunciation' | 'tpr' | 'reading' | 'spelling' | 'story';
+  type: 'sound-intro' | 'blending' | 'segmenting' | 'word-match' | 'listening' | 'pronunciation' | 'tpr' | 'reading' | 'spelling' | 'story' | 'song';
   title: string;
   titleTr: string;
   description: string;
@@ -86,6 +86,7 @@ const phase1Units: LearningUnit[] = [
       { type: 'sound-intro', title: 'Mouse Squeaks', titleTr: 'Fare Ciyakliyor', description: 'Learn the /i/ sound like a little mouse.', xp: 10, duration: 3 },
       { type: 'sound-intro', title: 'Birthday Puffs', titleTr: 'Dogum Gunu Uflemeleri', description: 'Learn the /p/ sound by blowing candles.', xp: 10, duration: 3 },
       { type: 'sound-intro', title: 'Airplane Flies', titleTr: 'Ucak Ucuyor', description: 'Learn the /n/ sound like an airplane.', xp: 10, duration: 3 },
+      { type: 'song', title: 'Sound Safari Song', titleTr: 'Ses Safarisi Sarkisi', description: 'Sing the Group 1 song and learn all 6 sounds!', xp: 25, duration: 5 },
       { type: 'listening', title: 'Sound Safari', titleTr: 'Ses Safarisi', description: 'Identify all 6 Group 1 sounds in a listening game.', xp: 20, duration: 5 },
       { type: 'blending', title: 'Blend It Up', titleTr: 'Karistir', description: 'Blend new words: pin, nap, tin, nip, sip, pan.', xp: 20, duration: 5 },
       { type: 'segmenting', title: 'Break It Apart', titleTr: 'Parcalara Ayir', description: 'Hear a word and break it into sounds: p-i-n.', xp: 20, duration: 5 },

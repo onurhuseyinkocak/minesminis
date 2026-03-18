@@ -266,6 +266,10 @@ export default function Dashboard() {
           <span className="kid-quick-emoji">{'\u{1F4DD}'}</span>
           <span className="kid-quick-label">Sheets</span>
         </Link>
+        <Link to="/songs" className="kid-quick-btn kid-quick-songs">
+          <span className="kid-quick-emoji">{'\u{1F3B5}'}</span>
+          <span className="kid-quick-label">Songs</span>
+        </Link>
       </motion.div>
 
       {/* ================================================================

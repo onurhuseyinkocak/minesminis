@@ -45,12 +45,30 @@ const StudentDashboard: React.FC = () => {
     },
     {
       title: 'FUN SHEETS',
-      icon: '📝',
+      icon: '\uD83D\uDCDD',
       path: '/worksheets',
       className: 'worksheets',
       color: '#EC4899',
       bg: 'rgba(236, 72, 153, 0.1)',
       description: 'Practice more'
+    },
+    {
+      title: 'MY GARDEN',
+      icon: '\uD83C\uDF31',
+      path: '/garden',
+      className: 'garden',
+      color: '#16A34A',
+      bg: 'rgba(22, 163, 74, 0.1)',
+      description: 'Watch it grow!'
+    },
+    {
+      title: 'READING',
+      icon: '\uD83D\uDCDA',
+      path: '/reading',
+      className: 'reading',
+      color: '#8B5CF6',
+      bg: 'rgba(139, 92, 246, 0.1)',
+      description: 'Read stories!'
     },
   ];
 
