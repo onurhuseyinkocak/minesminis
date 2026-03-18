@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/userService';
+import { createClassroom } from '../services/classroomService';
 import toast from 'react-hot-toast';
+import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import { ArrowLeft, ArrowRight, Rocket, Check, Plus, Trash2 } from 'lucide-react';
 import { Button } from '../components/ui';
 import UnifiedMascot from '../components/UnifiedMascot';
@@ -311,6 +313,9 @@ const Onboarding: React.FC = () => {
           });
         }
 
+        // Save placement result to localStorage so learningPathService can read it
+        localStorage.setItem(LS_PLACEMENT_RESULT, String(startingPhonicsGroup));
+
         const { createPet } = await import('../services/petService');
         await createPet(user.uid, 'mimi_dragon', user.displayName || 'Explorer');
       }
@@ -338,6 +343,14 @@ const Onboarding: React.FC = () => {
             },
           });
         }
+
+        // Create classroom in localStorage so it appears in ClassroomManager
+        if (classroomName && classroomGrade) {
+          const teacherUid = user.uid ?? (user as unknown as { id?: string }).id;
+          if (teacherUid) {
+            createClassroom(teacherUid, classroomName, classroomGrade);
+          }
+        }
       }
 
       if (role === 'parent') {
@@ -362,7 +375,7 @@ const Onboarding: React.FC = () => {
 
       await refreshUserProfile();
       toast.success('Welcome to MinesMinis!');
-      navigate('/dashboard');
+      navigate(role === 'teacher' ? '/teacher' : '/dashboard');
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Please try again.';
       toast.error(`Oops! ${msg}`, { duration: 6000 });

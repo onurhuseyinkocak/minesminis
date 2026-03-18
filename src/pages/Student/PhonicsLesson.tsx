@@ -16,6 +16,7 @@ import { getPlantForSound, getPlantStage } from '../../data/gardenData';
 import { LS_MASTERED_SOUNDS } from '../../config/storageKeys';
 import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
 import type { PlantGrowthEvent } from '../../services/gardenService';
+import { syncStudentProgress } from '../../services/classroomService';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -91,12 +92,32 @@ function getSegmentingWords(sound: PhonicsSound, group: PhonicsGroup): string[] 
   return words.slice(3, 6).length >= 3 ? words.slice(3, 6) : words.slice(0, 3);
 }
 
+/** Word-to-emoji mapping for keyword cards */
+const WORD_EMOJI: Record<string, string> = {
+  sun: '\u2600\uFE0F', sit: '\uD83E\uDE91', sat: '\uD83E\uDE91', sip: '\uD83E\uDD64', sad: '\uD83D\uDE22', six: '6\uFE0F\u20E3', set: '\uD83C\uDFAF', see: '\uD83D\uDC40',
+  ant: '\uD83D\uDC1C', at: '\uD83D\uDCCD', and: '\u2795', apple: '\uD83C\uDF4E', add: '\u2795',
+  tap: '\uD83D\uDC46', tin: '\uD83E\uDD6B', ten: '\uD83D\uDD1F', top: '\uD83D\uDD1D', tip: '\uD83D\uDCA1',
+  in: '\uD83D\uDCE5', it: '\uD83D\uDC49', is: '\u2705', ink: '\uD83D\uDD8A\uFE0F',
+  pan: '\uD83C\uDF73', pin: '\uD83D\uDCCC', pat: '\u270B', pen: '\uD83D\uDD8A\uFE0F', pig: '\uD83D\uDC37', pot: '\uD83C\uDF6F',
+  nap: '\uD83D\uDE34', net: '\uD83E\uDD45', nit: '\uD83D\uDD0D', nut: '\uD83E\uDD5C', nod: '\uD83D\uDC4D',
+  cat: '\uD83D\uDC31', cup: '\u2615', cap: '\uD83E\uDDE2', car: '\uD83D\uDE97', can: '\uD83E\uDD6B',
+  hat: '\uD83C\uDFA9', hen: '\uD83D\uDC14', hit: '\uD83D\uDCA5', hot: '\uD83D\uDD25', hut: '\uD83D\uDED6',
+  red: '\uD83D\uDD34', run: '\uD83C\uDFC3', rat: '\uD83D\uDC00', rug: '\uD83D\uDFEB', rip: '\uD83D\uDC94',
+  man: '\uD83D\uDC68', map: '\uD83D\uDDFA\uFE0F', mat: '\uD83E\uDDF9', mud: '\uD83D\uDCA9', mix: '\uD83D\uDD04',
+  dog: '\uD83D\uDC15', dad: '\uD83D\uDC68', dig: '\u26CF\uFE0F', dot: '\u26AB', dip: '\uD83E\uDED5',
+  got: '\u2705', gun: '\uD83D\uDD2B', gum: '\uD83E\uDEE7', gap: '\uD83D\uDD73\uFE0F', gas: '\u26FD',
+  on: '\uD83D\uDD1B', off: '\uD83D\uDCF4', odd: '\uD83E\uDD14', ox: '\uD83D\uDC02',
+  up: '\u2B06\uFE0F', us: '\uD83D\uDC65', bus: '\uD83D\uDE8C', bug: '\uD83D\uDC1B', bun: '\uD83C\uDF5E', but: '\u27A1\uFE0F',
+  log: '\uD83E\uDEB5', lip: '\uD83D\uDC44', leg: '\uD83E\uDDB5', lot: '\uD83D\uDCE6', lid: '\uD83E\uDED9',
+  fun: '\uD83C\uDF89', fog: '\uD83C\uDF2B\uFE0F', fig: '\uD83E\uDED8', fit: '\uD83D\uDCAA', fan: '\uD83C\uDF00',
+  big: '\uD83C\uDFD4\uFE0F', bed: '\uD83D\uDECF\uFE0F', bat: '\uD83E\uDD87', box: '\uD83D\uDCE6', bit: '\uD83D\uDD39',
+};
+
 /** Get keywords with emojis from the sound */
 function getKeywords(sound: PhonicsSound): { word: string; emoji: string }[] {
-  // The existing data has keywords as string[] — map to simple emoji/word objects
   return sound.keywords.slice(0, 6).map((word) => ({
     word,
-    emoji: sound.mnemonicEmoji,
+    emoji: WORD_EMOJI[word.toLowerCase()] || sound.mnemonicEmoji,
   }));
 }
 
@@ -628,6 +649,9 @@ function PhonicsLesson() {
         xpEarned: totalXP,
         soundId: soundId!,
       });
+
+      // Sync progress to classroom (for teacher dashboard)
+      syncStudentProgress(totalXP);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Get garden plant info for this sound

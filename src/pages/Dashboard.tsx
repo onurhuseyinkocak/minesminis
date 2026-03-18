@@ -13,7 +13,7 @@
  *   4. Daily Section — horizontal scroll
  *   5. Achievements Bar — bottom badges + level
  */
-import { useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
@@ -31,6 +31,8 @@ import {
 import { getDueWords } from '../data/spacedRepetition';
 import { getNextAction } from '../services/learningPathService';
 import { getTotalUnwatchedCount } from '../data/phonicsVideos';
+import { getTodayMinutes } from '../services/activityLogger';
+import { joinClassroom, getStudentClassroom } from '../services/classroomService';
 import './Dashboard.css';
 
 // ============================================================
@@ -134,16 +136,57 @@ export default function Dashboard() {
     allBadges,
   } = useGamification();
 
+  // Daily time limit enforcement
+  const dailyLimit = (userProfile?.settings?.dailyTimeLimit as number) || 60; // minutes
+  const todayMinutes = useMemo(() => getTodayMinutes(), []);
+  const timeLimitExceeded = todayMinutes >= dailyLimit;
+
   // Derived
   const displayName = userProfile?.display_name || user?.displayName || 'Adventurer';
   const userId = user?.uid || 'guest';
-  const lesson = useMemo(() => getCurrentLessonData(userId), [userId]);
+  // Live-update these values when the page regains focus (e.g. after a lesson)
+  const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
+  const [dueWords, setDueWords] = useState(() => getDueWords());
+  const [nextAction, setNextAction] = useState(() => getNextAction());
+
+  useEffect(() => {
+    const onFocus = () => {
+      setLesson(getCurrentLessonData(userId));
+      setDueWords(getDueWords());
+      setNextAction(getNextAction());
+    };
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [userId]);
+
+  // Classroom join state
+  const [joinCode, setJoinCode] = useState('');
+  const [joinError, setJoinError] = useState('');
+  const [joinedClassroom, setJoinedClassroom] = useState<string | null>(() => {
+    const membership = getStudentClassroom();
+    return membership?.classroomName ?? null;
+  });
+
+  const handleJoinClassroom = useCallback(() => {
+    if (!joinCode.trim()) return;
+    const result = joinClassroom(joinCode.trim(), {
+      id: userId,
+      name: displayName,
+      avatar: (userProfile?.settings?.avatar_emoji as string) || '\uD83E\uDD8A',
+    });
+    if (result.success) {
+      setJoinedClassroom(result.classroomName || 'Classroom');
+      setJoinCode('');
+      setJoinError('');
+    } else {
+      setJoinError(result.error || 'Could not join classroom.');
+    }
+  }, [joinCode, userId, displayName, userProfile]);
+
   const lessonProgress = Math.round((lesson.currentLesson / lesson.totalLessons) * 100);
   const todaysChallenge = useMemo(() => getTodaysChallenge(), []);
   const phaseInfo = useMemo(() => getPhaseInfo(), []);
   const xpProgress = getXPProgress();
-  const dueWords = useMemo(() => getDueWords(), []);
-  const nextAction = useMemo(() => getNextAction(), []);
   const unwatchedVideoCount = useMemo(() => getTotalUnwatchedCount(), []);
 
   // Recent badges (last 6 earned)
@@ -168,6 +211,34 @@ export default function Dashboard() {
           <div className="kid-loading-bounce">{'\u{1F432}'}</div>
           <p className="kid-loading-text">Loading...</p>
         </div>
+      </div>
+    );
+  }
+
+  // ---- Time's Up overlay ----
+  if (timeLimitExceeded) {
+    return (
+      <div className="kid-dashboard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', textAlign: 'center', padding: '32px 24px', gap: 16 }}>
+        <div style={{ fontSize: 72 }}>{'\u{1F31F}'}</div>
+        <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+          Great job today!
+        </h1>
+        <p style={{ fontSize: 18, color: 'var(--text-secondary)', margin: 0, maxWidth: 360 }}>
+          You learned for <strong>{todayMinutes} minutes</strong> today. Come back tomorrow for more fun!
+        </p>
+        <div style={{ display: 'flex', gap: 24, marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ background: 'var(--primary-pale, #eff6ff)', borderRadius: 16, padding: '16px 24px', textAlign: 'center' }}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary)' }}>{todayMinutes} min</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Time Learned</div>
+          </div>
+          <div style={{ background: 'var(--success-pale, #ecfdf5)', borderRadius: 16, padding: '16px 24px', textAlign: 'center' }}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--secondary, #10b981)' }}>{stats.xp.toLocaleString()} XP</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Total XP</div>
+          </div>
+        </div>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 8 }}>
+          Daily limit: {dailyLimit} minutes
+        </p>
       </div>
     );
   }
@@ -310,6 +381,58 @@ export default function Dashboard() {
           </Link>
         )}
       </motion.div>
+
+      {/* ================================================================
+          4b. JOIN CLASSROOM — compact card for students
+          ================================================================ */}
+      {!joinedClassroom ? (
+        <motion.div className="kid-join-classroom" variants={itemVariants} style={{
+          display: 'flex', alignItems: 'center', gap: '0.5rem',
+          padding: '0.75rem 1rem', background: '#f0f9ff', borderRadius: '1rem',
+          border: '2px solid #bae6fd',
+        }}>
+          <span style={{ fontSize: '1.3rem' }}>{'\u{1F3EB}'}</span>
+          <input
+            type="text"
+            placeholder="Class code"
+            value={joinCode}
+            onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(''); }}
+            maxLength={6}
+            style={{
+              flex: 1, padding: '0.4rem 0.6rem', borderRadius: '0.5rem',
+              border: '2px solid #e0e0e0', fontFamily: 'monospace', fontSize: '1rem',
+              fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase',
+              minWidth: 0,
+            }}
+          />
+          <button
+            type="button"
+            onClick={handleJoinClassroom}
+            disabled={joinCode.trim().length < 4}
+            style={{
+              padding: '0.4rem 0.8rem', borderRadius: '0.5rem', border: 'none',
+              background: joinCode.trim().length >= 4 ? '#1A6B5A' : '#ccc',
+              color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+              whiteSpace: 'nowrap' as const,
+            }}
+          >
+            Join
+          </button>
+          {joinError && (
+            <span style={{ fontSize: '0.75rem', color: '#ef4444', whiteSpace: 'nowrap' as const }}>{joinError}</span>
+          )}
+        </motion.div>
+      ) : (
+        <motion.div variants={itemVariants} style={{
+          display: 'flex', alignItems: 'center', gap: '0.5rem',
+          padding: '0.5rem 1rem', background: '#f0fdf4', borderRadius: '0.75rem',
+          fontSize: '0.85rem', color: '#1A6B5A', fontWeight: 600,
+        }}>
+          <span>{'\u{1F3EB}'}</span>
+          <span>{joinedClassroom}</span>
+          <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#10b981' }}>{'\u2705'} Joined</span>
+        </motion.div>
+      )}
 
       {/* ================================================================
           5. ACHIEVEMENTS BAR — badges + level progress

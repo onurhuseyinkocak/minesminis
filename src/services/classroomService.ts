@@ -170,6 +170,7 @@ export function joinClassroom(
       classroomName: classroom.name,
       joinCode: classroom.joinCode,
       teacherId: classroom.teacherId,
+      studentId: student.id,
       joinedAt: new Date().toISOString(),
     }),
   );
@@ -250,6 +251,7 @@ export function getStudentClassroom(): {
   classroomName: string;
   joinCode: string;
   teacherId: string;
+  studentId: string;
   joinedAt: string;
 } | null {
   try {
@@ -267,4 +269,31 @@ export function deleteClassroom(teacherId: string, classroomId: string): boolean
   if (filtered.length === classrooms.length) return false;
   saveClassrooms(teacherId, filtered);
   return true;
+}
+
+/** Sync student progress to the classroom entry (for local demo mode).
+ *  Call this after a student completes an activity so the teacher dashboard updates.
+ *  @param earnedXP - XP earned in this activity (added to existing total) */
+export function syncStudentProgress(earnedXP: number): void {
+  const membership = getStudentClassroom();
+  if (!membership || !membership.studentId) return;
+
+  // Update the student's XP and lastActive in the classroom
+  const all = loadAllClassrooms();
+  const classroom = all.find((c) => c.id === membership.classroomId);
+  if (!classroom) return;
+
+  const student = classroom.students.find((s) => s.id === membership.studentId);
+  if (!student) return;
+
+  student.xp = (student.xp || 0) + earnedXP;
+  student.lastActive = new Date().toISOString();
+
+  // Save back
+  const teacherClassrooms = loadClassrooms(classroom.teacherId);
+  const idx = teacherClassrooms.findIndex((c) => c.id === classroom.id);
+  if (idx !== -1) {
+    teacherClassrooms[idx] = classroom;
+    saveClassrooms(classroom.teacherId, teacherClassrooms);
+  }
 }

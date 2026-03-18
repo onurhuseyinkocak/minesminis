@@ -56,6 +56,7 @@ const ReadingLibrary = lazy(() => import("./pages/Student/ReadingLibrary"));
 const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
 const ClassroomMode = lazy(() => import("./pages/Teacher/ClassroomMode"));
 const ClassroomManager = lazy(() => import("./pages/Teacher/ClassroomManager"));
+const TeacherDashboard = lazy(() => import("./pages/Teacher/TeacherDashboard"));
 
 // Admin
 const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
@@ -226,6 +227,8 @@ function AppRoutes() {
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isSetupRoute = location.pathname === "/setup";
+  const isTeacher = userProfile?.role === "teacher";
+  const isParent = userProfile?.role === "parent";
 
   const authReady = !loading;
   const profileReady = !user || !profileLoading;
@@ -272,7 +275,7 @@ function AppRoutes() {
               path="/"
               element={
                 user ? (
-                  <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />
+                  <Navigate to={isAdmin ? "/admin" : isParent ? "/parent" : isTeacher ? "/teacher" : "/dashboard"} replace />
                 ) : (
                   <Landing />
                 )
@@ -282,7 +285,7 @@ function AppRoutes() {
               path="/login"
               element={
                 user ? (
-                  <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />
+                  <Navigate to={isAdmin ? "/admin" : isParent ? "/parent" : isTeacher ? "/teacher" : "/dashboard"} replace />
                 ) : (
                   <Login />
                 )
@@ -328,9 +331,11 @@ function AppRoutes() {
             <Route path="/reading/:bookId" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/pricing" element={<Pricing />} />
 
-            {/* ── Parent / Teacher (protected + AppShell) ────────── */}
-            <Route path="/parent" element={<StudentRoute><ParentDashboard /></StudentRoute>} />
+            {/* ── Parent (protected, no student AppShell) ────────── */}
+            <Route path="/parent" element={<ProtectedRoute><ParentDashboard /></ProtectedRoute>} />
+            {/* ── Teacher (protected + AppShell) ─────────────────── */}
             <Route path="/classroom" element={<StudentRoute><ClassroomMode /></StudentRoute>} />
+            <Route path="/teacher" element={<StudentRoute><TeacherDashboard /></StudentRoute>} />
             <Route path="/teacher/classrooms" element={<StudentRoute><ClassroomManager /></StudentRoute>} />
 
             {/* ── Catch-all ──────────────────────────────────────── */}
@@ -436,7 +441,8 @@ function AppContent() {
     }
 
     if (user && isSetupCompleted && isSetupRoute) {
-      navigate("/dashboard");
+      const role = userProfile?.role;
+      navigate(role === "parent" ? "/parent" : role === "teacher" ? "/teacher" : "/dashboard");
     }
   }, [user, userProfile, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileLoading, navigate, isAdmin]);
 

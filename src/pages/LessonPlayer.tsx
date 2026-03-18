@@ -39,6 +39,7 @@ import { updateWordProgress } from '../data/spacedRepetition';
 import { useAuth } from '../contexts/AuthContext';
 import { SFX } from '../data/soundLibrary';
 import { logActivity } from '../services/activityLogger';
+import { syncStudentProgress } from '../services/classroomService';
 import './LessonPlayer.css';
 
 // ============================================================
@@ -418,6 +419,9 @@ const LessonPlayer = () => {
             accuracy,
             xpEarned: totalXP,
           });
+
+          // Sync progress to classroom (for teacher dashboard)
+          syncStudentProgress(totalXP);
         } catch {
           // localStorage might be unavailable
         }

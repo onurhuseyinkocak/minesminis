@@ -42,9 +42,13 @@ function generateId(): string {
   return `act_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function loadLogs(): ActivityLog[] {
+function getStorageKey(userId?: string): string {
+  return userId ? `${STORAGE_KEY}_${userId}` : STORAGE_KEY;
+}
+
+function loadLogs(userId?: string): ActivityLog[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(getStorageKey(userId));
     if (!raw) return [];
     return JSON.parse(raw) as ActivityLog[];
   } catch {
@@ -52,11 +56,11 @@ function loadLogs(): ActivityLog[] {
   }
 }
 
-function saveLogs(logs: ActivityLog[]): void {
+function saveLogs(logs: ActivityLog[], userId?: string): void {
   try {
     // Keep only the most recent entries
     const trimmed = logs.slice(-MAX_LOG_ENTRIES);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+    localStorage.setItem(getStorageKey(userId), JSON.stringify(trimmed));
   } catch {
     // localStorage might be full or unavailable
   }
@@ -93,17 +97,19 @@ export function logActivity(
 
 /**
  * Get the most recent activities, newest first.
+ * If userId is provided, reads from per-user scoped storage.
  */
-export function getRecentActivities(limit = 10): ActivityLog[] {
-  const logs = loadLogs();
+export function getRecentActivities(limit = 10, userId?: string): ActivityLog[] {
+  const logs = loadLogs(userId);
   return logs.slice(-limit).reverse();
 }
 
 /**
  * Get activity data for the last 7 days (for weekly timeline chart).
+ * If userId is provided, reads from per-user scoped storage.
  */
-export function getWeeklyActivityData(): DayActivity[] {
-  const logs = loadLogs();
+export function getWeeklyActivityData(userId?: string): DayActivity[] {
+  const logs = loadLogs(userId);
   const now = new Date();
   const days: DayActivity[] = [];
 
@@ -134,9 +140,10 @@ export function getWeeklyActivityData(): DayActivity[] {
 /**
  * Get time breakdown by activity type (for pie chart).
  * Returns seconds spent in each category.
+ * If userId is provided, reads from per-user scoped storage.
  */
-export function getActivityBreakdown(): Record<string, number> {
-  const logs = loadLogs();
+export function getActivityBreakdown(userId?: string): Record<string, number> {
+  const logs = loadLogs(userId);
   const breakdown: Record<string, number> = {
     phonics: 0,
     game: 0,
@@ -157,9 +164,10 @@ export function getActivityBreakdown(): Record<string, number> {
 
 /**
  * Get total minutes spent today.
+ * If userId is provided, reads from per-user scoped storage.
  */
-export function getTodayMinutes(): number {
-  const logs = loadLogs();
+export function getTodayMinutes(userId?: string): number {
+  const logs = loadLogs(userId);
   const today = toDateKey(new Date());
   const todayLogs = logs.filter((l) => l.timestamp.slice(0, 10) === today);
   const totalSeconds = todayLogs.reduce((sum, l) => sum + l.duration, 0);
@@ -168,13 +176,14 @@ export function getTodayMinutes(): number {
 
 /**
  * Get total minutes and sessions for the current week.
+ * If userId is provided, reads from per-user scoped storage.
  */
-export function getWeeklySummary(): {
+export function getWeeklySummary(userId?: string): {
   totalMinutes: number;
   sessionCount: number;
   previousWeekMinutes: number;
 } {
-  const logs = loadLogs();
+  const logs = loadLogs(userId);
   const now = new Date();
 
   // Current week (last 7 days)

@@ -131,15 +131,19 @@ function makeDefaultChild(
   };
 }
 
-/** Read phonics mastery from localStorage for PhonicsChart */
-function getPhonicsProgressMap(): Record<string, number> {
+/** Read phonics mastery from localStorage for PhonicsChart.
+ *  If childId is provided and not the default, reads from a per-child scoped key. */
+function getPhonicsProgressMap(childId?: string): Record<string, number> {
   try {
-    const raw = localStorage.getItem(LS_PHONICS_MASTERY);
+    const key = childId && childId !== DEFAULT_CHILD_ID
+      ? `${LS_PHONICS_MASTERY}_${childId}`
+      : LS_PHONICS_MASTERY;
+    const raw = localStorage.getItem(key);
     if (!raw) return {};
     const data = JSON.parse(raw) as Record<string, { mastery: number }>;
     const map: Record<string, number> = {};
-    for (const [key, val] of Object.entries(data)) {
-      map[key] = val.mastery ?? 0;
+    for (const [k, val] of Object.entries(data)) {
+      map[k] = val.mastery ?? 0;
     }
     return map;
   } catch {
@@ -788,8 +792,12 @@ const ParentDashboard: React.FC = () => {
     toast.success(`${name}'s profile removed.`);
   }, [parentId, activeChildId]);
 
-  // ---- Derived data ----
-  const phonicsProgress = useMemo(() => getPhonicsProgressMap(), []);
+  // ---- Derived data (scoped by active child) ----
+  // For the default child (logged-in user), use global keys (undefined userId).
+  // For added children, scope by child ID.
+  const scopedUserId = activeChildId === DEFAULT_CHILD_ID ? undefined : activeChildId;
+
+  const phonicsProgress = useMemo(() => getPhonicsProgressMap(activeChildId), [activeChildId]);
   const learningProgress = useMemo(() => getProgress(), []);
   const { mastered, total: totalSounds } = useMemo(() => countMastered(phonicsProgress), [phonicsProgress]);
   const phonicsPercent = useMemo(
@@ -801,11 +809,11 @@ const ParentDashboard: React.FC = () => {
     [phonicsProgress],
   );
 
-  const weeklyData = useMemo(() => getWeeklyActivityData(), []);
-  const weeklySummary = useMemo(() => getWeeklySummary(), []);
-  const activityBreakdown = useMemo(() => getActivityBreakdown(), []);
-  const recentActivities = useMemo(() => getRecentActivities(10), []);
-  const todayMinutes = useMemo(() => getTodayMinutes(), []);
+  const weeklyData = useMemo(() => getWeeklyActivityData(scopedUserId), [scopedUserId]);
+  const weeklySummary = useMemo(() => getWeeklySummary(scopedUserId), [scopedUserId]);
+  const activityBreakdown = useMemo(() => getActivityBreakdown(scopedUserId), [scopedUserId]);
+  const recentActivities = useMemo(() => getRecentActivities(10, scopedUserId), [scopedUserId]);
+  const todayMinutes = useMemo(() => getTodayMinutes(scopedUserId), [scopedUserId]);
 
   const insights = useMemo(
     () => buildInsights(phonicsProgress, stats.streakDays, weeklySummary),
