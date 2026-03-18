@@ -8,6 +8,7 @@ import './DailyReward.css';
 import { useGamification } from '../contexts/GamificationContext';
 import { ConfettiRain, FloatingEmoji } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
+import { Gift, CheckCircle, Star, Sparkles, Flame } from 'lucide-react';
 
 const DailyReward: React.FC = () => {
     const {
@@ -105,7 +106,7 @@ const DailyReward: React.FC = () => {
                 className={`daily-reward-trigger ${canClaimDaily ? 'available' : ''}`}
                 onClick={() => setIsOpen(true)}
             >
-                <span className="trigger-icon">🎁</span>
+                <span className="trigger-icon"><Gift size={20} /></span>
                 {canClaimDaily && <span className="trigger-badge">!</span>}
             </button>
         );
@@ -121,7 +122,7 @@ const DailyReward: React.FC = () => {
                 <button className="close-btn" onClick={() => setIsOpen(false)}>✕</button>
 
                 <div className="modal-header">
-                    <h2>🎁 Daily Rewards</h2>
+                    <h2><Gift size={20} style={{ display: 'inline', verticalAlign: 'middle' }} /> Daily Rewards</h2>
                     <p>Come back every day for amazing rewards!</p>
                 </div>
 
@@ -139,7 +140,7 @@ const DailyReward: React.FC = () => {
                             >
                                 <div className="day-label">Day {day}</div>
                                 <div className="reward-icon">
-                                    {isPast ? '✅' : reward.special ? '🌟' : '🎁'}
+                                    {isPast ? <CheckCircle size={20} /> : reward.special ? <Star size={20} /> : <Gift size={20} />}
                                 </div>
                                 <div className="reward-xp">{reward.xp} XP</div>
                                 {reward.badge && (
@@ -153,7 +154,7 @@ const DailyReward: React.FC = () => {
                 {claimed && claimedReward ? (
                     <div className="claimed-section">
                         <div className="claimed-animation">
-                            <span className="claimed-icon">🎉</span>
+                            <span className="claimed-icon"><Sparkles size={20} /></span>
                             <h3>Reward Claimed!</h3>
                             <p className="claimed-xp">+{claimedReward.xp} XP</p>
                             {claimedReward.badge && (
@@ -179,7 +180,7 @@ const DailyReward: React.FC = () => {
                         ) : (
                             <>
                                 <span>Claim Today's Reward</span>
-                                <span className="claim-emoji">🎁</span>
+                                <span className="claim-emoji"><Gift size={20} /></span>
                             </>
                         )}
                     </button>
@@ -191,7 +192,7 @@ const DailyReward: React.FC = () => {
                 )}
 
                 <div className="streak-display">
-                    <span className="streak-fire">🔥</span>
+                    <span className="streak-fire"><Flame size={20} /></span>
                     <span className="streak-text">{stats.streakDays} Day Streak</span>
                 </div>
             </div>

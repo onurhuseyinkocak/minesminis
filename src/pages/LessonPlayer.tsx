@@ -101,12 +101,12 @@ const SUPPORTED_GAME_TYPES = new Set([
 // ============================================================
 
 const ENCOURAGEMENTS = [
-  { text: 'You\'re doing great!', emoji: '\u{1F31F}' },
-  { text: 'Keep going, you can do it!', emoji: '\u{1F4AA}' },
-  { text: 'Wonderful! I\'m proud of you!', emoji: '\u{1F60D}' },
-  { text: 'Almost there, keep it up!', emoji: '\u{1F680}' },
-  { text: 'You\'re a superstar!', emoji: '\u{2B50}' },
-  { text: 'Amazing work, friend!', emoji: '\u{1F389}' },
+  { text: 'You\'re doing great!', icon: 'star' },
+  { text: 'Keep going, you can do it!', icon: 'star' },
+  { text: 'Wonderful! I\'m proud of you!', icon: 'star' },
+  { text: 'Almost there, keep it up!', icon: 'star' },
+  { text: 'You\'re a superstar!', icon: 'star' },
+  { text: 'Amazing work, friend!', icon: 'star' },
 ];
 
 function getEncouragement(index: number) {
@@ -732,7 +732,7 @@ const LessonPlayer = () => {
         <div className="lesson-player-mimi">
           <span className="lesson-player-mimi__avatar">{'\u{1F431}'}</span>
           <div className="lesson-player-mimi__bubble">
-            <span>{encouragement.emoji}</span> {encouragement.text}
+            <Star size={16} /> {encouragement.text}
           </div>
         </div>
       </div>

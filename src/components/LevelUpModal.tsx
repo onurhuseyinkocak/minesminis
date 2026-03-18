@@ -9,6 +9,7 @@ import { useGamification } from '../contexts/GamificationContext';
 import { StarBurst, StreakFlame } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
 import { getGardenStats } from '../services/gardenService';
+import { Star, Sprout } from 'lucide-react';
 
 const LevelUpModal: React.FC = () => {
     const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
@@ -68,9 +69,9 @@ const LevelUpModal: React.FC = () => {
 
                 <div className="level-up-content">
                     <div className="stars-container">
-                        <span className="star star-1">⭐</span>
-                        <span className="star star-2">⭐</span>
-                        <span className="star star-3">⭐</span>
+                        <span className="star star-1"><Star size={20} /></span>
+                        <span className="star star-2"><Star size={20} /></span>
+                        <span className="star star-3"><Star size={20} /></span>
                     </div>
 
                     <h2 className="level-up-title">LEVEL UP!</h2>
@@ -88,13 +89,13 @@ const LevelUpModal: React.FC = () => {
                     )}
 
                     <p className="level-up-message">
-                        Amazing work! Keep learning to unlock more rewards! 🎉
+                        Amazing work! Keep learning to unlock more rewards!
                         {(() => {
                             const gardenStats = getGardenStats();
                             if (gardenStats.blooming > 0) {
                                 return (
-                                    <span style={{ display: 'block', marginTop: '0.3rem', fontSize: '0.85em' }}>
-                                        🌱 Your garden has {gardenStats.blooming} blooming plant{gardenStats.blooming !== 1 ? 's' : ''}!
+                                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', marginTop: '0.3rem', fontSize: '0.85em' }}>
+                                        <Sprout size={20} /> Your garden has {gardenStats.blooming} blooming plant{gardenStats.blooming !== 1 ? 's' : ''}!
                                     </span>
                                 );
                             }

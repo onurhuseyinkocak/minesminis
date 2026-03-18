@@ -175,7 +175,7 @@
 .story-scene__particles--snow .story-scene__particle {
   width: 5px;
   height: 5px;
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
   animation: particle-snow 6s linear infinite;
 }
 
@@ -189,7 +189,7 @@
 .story-scene__particles--stars .story-scene__particle {
   width: 3px;
   height: 3px;
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
   animation: particle-star 3s ease-in-out infinite;
 }
 

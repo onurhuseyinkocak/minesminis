@@ -49,7 +49,7 @@ const Leaderboard: React.FC = () => {
             const { data, error } = await supabase
                 .from('users')
                 .select('id, display_name, avatar_url, settings, level')
-                .order('xp', { ascending: false })
+                .order('weekly_xp', { ascending: false })
                 .limit(5);
 
             if (error) throw error;
