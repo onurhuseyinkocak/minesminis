@@ -6,7 +6,12 @@ import { userService } from '../services/userService';
 import { createClassroom } from '../services/classroomService';
 import toast from 'react-hot-toast';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
-import { ArrowLeft, ArrowRight, Rocket, Check, Plus, Trash2 } from 'lucide-react';
+import {
+  ArrowLeft, ArrowRight, Rocket, Check, Plus, Trash2,
+  GraduationCap, Users, Heart,
+  Baby, User, BookOpen, Globe,
+  Volume2, Lock as LockIcon, CheckCircle, MapPin, Settings, UserPlus,
+} from 'lucide-react';
 import { Button } from '../components/ui';
 import UnifiedMascot from '../components/UnifiedMascot';
 import './Onboarding.css';
@@ -22,17 +27,17 @@ interface ChildEntry {
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
-const ROLE_CARDS: { value: UserRole; emoji: string; title: string; subtitle: string }[] = [
-  { value: 'student', emoji: '\uD83C\uDF92', title: 'Student', subtitle: 'I want to learn English!' },
-  { value: 'teacher', emoji: '\uD83D\uDC69\u200D\uD83C\uDFEB', title: 'Teacher', subtitle: 'I teach English to children' },
-  { value: 'parent', emoji: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', title: 'Parent', subtitle: 'My child is learning English' },
+const ROLE_CARDS: { value: UserRole; icon: React.ReactNode; title: string; subtitle: string; detail: string; color: string }[] = [
+  { value: 'student', icon: <GraduationCap size={28} />, title: 'Student', subtitle: "I'm learning English", detail: 'Ages 3-10', color: 'var(--primary)' },
+  { value: 'teacher', icon: <Users size={28} />, title: 'Teacher', subtitle: 'I teach English', detail: 'Classroom tools', color: 'var(--secondary, var(--primary))' },
+  { value: 'parent', icon: <Heart size={28} />, title: 'Parent', subtitle: 'My child is learning', detail: 'Track progress', color: 'var(--accent, var(--primary))' },
 ];
 
-const STUDENT_AGE_GROUPS = [
-  { value: '3-5', label: 'Phase 1', phase: 'Little Ears', emoji: '\uD83D\uDC76', color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.08)' },
-  { value: '5-7', label: 'Phase 2', phase: 'Word Builders', emoji: '\uD83E\uDDD2', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.08)' },
-  { value: '7-9', label: 'Phase 3', phase: 'Story Makers', emoji: '\uD83D\uDC67', color: '#14b8a6', bgColor: 'rgba(20, 184, 166, 0.08)' },
-  { value: '9-10', label: 'Phase 4', phase: 'Young Explorers', emoji: '\uD83D\uDC66', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.08)' },
+const STUDENT_AGE_GROUPS: { value: string; label: string; phase: string; icon: React.ReactNode; color: string }[] = [
+  { value: '3-5', label: 'Ages 3-5', phase: 'Little Ears', icon: <Baby size={24} />, color: 'var(--primary)' },
+  { value: '5-7', label: 'Ages 5-7', phase: 'Word Builders', icon: <User size={24} />, color: 'var(--primary)' },
+  { value: '7-9', label: 'Ages 7-9', phase: 'Story Makers', icon: <BookOpen size={24} />, color: 'var(--primary)' },
+  { value: '9-10', label: 'Ages 9-10', phase: 'Young Explorers', icon: <Globe size={24} />, color: 'var(--primary)' },
 ];
 
 const PLACEMENT_QUESTIONS = [
@@ -77,9 +82,9 @@ const PLACEMENT_QUESTIONS = [
     title: 'Read this word',
     instruction: 'What does "cat" mean?',
     options: [
-      { label: '\uD83D\uDC31 A cat', value: 'correct' },
-      { label: '\uD83D\uDC36 A dog', value: 'wrong1' },
-      { label: '\uD83D\uDC26 A bird', value: 'wrong2' },
+      { label: 'A small furry animal', value: 'correct' },
+      { label: 'A loyal pet that barks', value: 'wrong1' },
+      { label: 'A creature that flies', value: 'wrong2' },
     ],
     correct: 'correct',
     skill: 'decoding',
@@ -87,7 +92,7 @@ const PLACEMENT_QUESTIONS = [
   {
     id: 5,
     title: 'Read this sentence',
-    instruction: '"The sun is hot." — Is this TRUE or FALSE?',
+    instruction: '"The sun is hot." -- Is this TRUE or FALSE?',
     options: [
       { label: 'True', value: 'correct' },
       { label: 'False', value: 'wrong1' },
@@ -110,21 +115,20 @@ const PHONICS_GROUPS = [
 const GRADE_LEVELS = ['Pre-K', 'Kindergarten', '1st Grade', '2nd Grade', '3rd Grade', '4th Grade'];
 const STUDENT_RANGES = ['1-10', '11-25', '26-40', '40+'];
 
-const CHILD_AVATARS = [
-  '\uD83E\uDD8A', '\uD83D\uDC3C', '\uD83E\uDD81', '\uD83D\uDC30',
-  '\uD83E\uDD84', '\uD83D\uDC38', '\uD83E\uDD8B', '\uD83D\uDC31',
-  '\uD83D\uDC36', '\uD83D\uDC3B', '\uD83E\uDD89', '\uD83D\uDC19',
+const CHILD_AVATAR_COLORS = [
+  'var(--primary)', 'var(--secondary, #14b8a6)', 'var(--accent, #f59e0b)',
+  'var(--error, #ef4444)', 'var(--info, #3b82f6)', 'var(--warning, #8b5cf6)',
 ];
+
+const CHILD_AVATAR_INITIALS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'];
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 function computePhonicsGroup(score: number, ageGroup: string): number {
-  // score: 0-5 correct answers
   if (score <= 1) return 1;
   if (score === 2) return ageGroup === '3-5' ? 1 : 2;
   if (score === 3) return ageGroup === '9-10' ? 4 : 3;
   if (score === 4) return ageGroup === '9-10' ? 5 : 4;
-  // score === 5
   const ageMap: Record<string, number> = { '3-5': 3, '5-7': 4, '7-9': 5, '9-10': 6 };
   return ageMap[ageGroup] ?? 5;
 }
@@ -184,7 +188,7 @@ const Onboarding: React.FC = () => {
   const [selectedPhonicsGroup, setSelectedPhonicsGroup] = useState(1);
 
   // Parent state
-  const [children, setChildren] = useState<ChildEntry[]>([{ name: '', age: '', avatar: '\uD83E\uDD8A' }]);
+  const [children, setChildren] = useState<ChildEntry[]>([{ name: '', age: '', avatar: 'A' }]);
   const [dailyTimeLimit, setDailyTimeLimit] = useState(30);
   const [weeklyEmails, setWeeklyEmails] = useState(true);
 
@@ -214,7 +218,6 @@ const Onboarding: React.FC = () => {
     if (currentQuestion < PLACEMENT_QUESTIONS.length - 1) {
       setCurrentQuestion((c) => c + 1);
     } else {
-      // Calculate score
       let score = 0;
       PLACEMENT_QUESTIONS.forEach((q) => {
         if (updated[q.id] === q.correct) score++;
@@ -239,7 +242,7 @@ const Onboarding: React.FC = () => {
 
   const addChild = () => {
     if (children.length < 4) {
-      setChildren((prev) => [...prev, { name: '', age: '', avatar: '\uD83E\uDD8A' }]);
+      setChildren((prev) => [...prev, { name: '', age: '', avatar: 'A' }]);
     }
   };
 
@@ -256,8 +259,8 @@ const Onboarding: React.FC = () => {
     if (role === 'student') {
       if (step === 2) return !!ageGroup;
       if (step === 3) return placementDone;
-      if (step === 4) return true; // Meet Mimi
-      if (step === 5) return true; // Learning path
+      if (step === 4) return true;
+      if (step === 5) return true;
     }
 
     if (role === 'teacher') {
@@ -291,18 +294,17 @@ const Onboarding: React.FC = () => {
           role: 'student',
           displayName: user.displayName || 'Explorer',
           grade: gradeMap[ageGroup] || 'primary',
-          avatar_emoji: '\uD83E\uDD8A',
+          avatar_emoji: 'A',
           mascotId: 'mimi_dragon',
         });
 
-        // Save extra student data in settings via updateUserProfile
         const userId = user.uid ?? (user as unknown as { id?: string }).id;
         if (userId) {
           await userService.updateUserProfile(userId, {
             settings: {
               setup_completed: true,
               setup_date: new Date().toISOString(),
-              avatar_emoji: '\uD83E\uDD8A',
+              avatar_emoji: 'A',
               mascotId: 'mimi_dragon',
               startingPhonicsGroup,
               ageGroup,
@@ -313,7 +315,6 @@ const Onboarding: React.FC = () => {
           });
         }
 
-        // Save placement result to localStorage so learningPathService can read it
         localStorage.setItem(LS_PLACEMENT_RESULT, String(startingPhonicsGroup));
 
         const { createPet } = await import('../services/petService');
@@ -344,7 +345,6 @@ const Onboarding: React.FC = () => {
           });
         }
 
-        // Create classroom in localStorage so it appears in ClassroomManager
         if (classroomName && classroomGrade) {
           const teacherUid = user.uid ?? (user as unknown as { id?: string }).id;
           if (teacherUid) {
@@ -399,10 +399,10 @@ const Onboarding: React.FC = () => {
             )}
             <motion.div
               className={`onboarding-progress-dot ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
-              animate={isActive ? { scale: [1, 1.1, 1] } : {}}
+              animate={isActive ? { scale: [1, 1.08, 1] } : {}}
               transition={{ repeat: Infinity, duration: 2 }}
             >
-              {isCompleted ? <Check size={16} /> : s}
+              {isCompleted ? <Check size={14} /> : s}
             </motion.div>
           </div>
         );
@@ -433,7 +433,7 @@ const Onboarding: React.FC = () => {
     );
   };
 
-  // ── Step 1: Role Selection (shared) ────────────────────────────────────────
+  // ── Step 1: Role Selection ────────────────────────────────────────────────
 
   const renderRoleSelection = () => (
     <motion.div
@@ -446,9 +446,8 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <div className="onboarding-step-emoji">{'\uD83D\uDC4B'}</div>
-      <h2>Who are you?</h2>
-      <p className="onboarding-step-sub">Choose how you will use MinesMinis</p>
+      <h2>How will you use MinesMinis?</h2>
+      <p className="onboarding-step-sub">Choose your role to get a personalized experience</p>
 
       <div className="onboarding-role-grid">
         {ROLE_CARDS.map((r) => (
@@ -457,12 +456,17 @@ const Onboarding: React.FC = () => {
             type="button"
             className={`onboarding-role-card ${role === r.value ? 'selected' : ''}`}
             onClick={() => setRole(r.value)}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <span className="onboarding-role-emoji">{r.emoji}</span>
-            <span className="onboarding-role-title">{r.title}</span>
-            <span className="onboarding-role-subtitle">{r.subtitle}</span>
+            <span className="onboarding-role-icon-wrap" style={{ background: role === r.value ? 'var(--primary)' : 'var(--bg-muted)' }}>
+              <span style={{ color: role === r.value ? 'var(--text-on-primary)' : 'var(--primary)' }}>{r.icon}</span>
+            </span>
+            <div className="onboarding-role-text">
+              <span className="onboarding-role-title">{r.title}</span>
+              <span className="onboarding-role-subtitle">{r.subtitle}</span>
+              <span className="onboarding-role-detail">{r.detail}</span>
+            </div>
           </motion.button>
         ))}
       </div>
@@ -498,9 +502,8 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <div className="onboarding-step-emoji">{'\uD83C\uDF82'}</div>
-      <h2>How old are you?</h2>
-      <p className="onboarding-step-sub">This helps us pick the perfect learning phase for you!</p>
+      <h2>What's your age group?</h2>
+      <p className="onboarding-step-sub">This helps us pick the perfect learning phase for you</p>
 
       <div className="onboarding-age-grid">
         {STUDENT_AGE_GROUPS.map((ag) => (
@@ -508,17 +511,14 @@ const Onboarding: React.FC = () => {
             key={ag.value}
             type="button"
             className={`onboarding-age-card ${ageGroup === ag.value ? 'selected' : ''}`}
-            style={{
-              borderColor: ageGroup === ag.value ? ag.color : undefined,
-              background: ageGroup === ag.value ? ag.bgColor : undefined,
-              boxShadow: ageGroup === ag.value ? `0 0 0 3px ${ag.color}25` : undefined,
-            }}
             onClick={() => setAgeGroup(ag.value)}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <span className="onboarding-age-emoji">{ag.emoji}</span>
-            <span className="onboarding-age-range" style={{ color: ag.color }}>{ag.value}</span>
+            <span className="onboarding-age-icon-wrap">
+              {ag.icon}
+            </span>
+            <span className="onboarding-age-range">{ag.label}</span>
             <span className="onboarding-age-label">{ag.phase}</span>
           </motion.button>
         ))}
@@ -541,7 +541,9 @@ const Onboarding: React.FC = () => {
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           className="onboarding-step"
         >
-          <div className="onboarding-step-emoji">{'\u2705'}</div>
+          <div className="onboarding-step-icon-large onboarding-step-icon-success">
+            <CheckCircle size={40} />
+          </div>
           <h2>Great job!</h2>
           <p className="onboarding-step-sub">
             Based on your answers, we recommend starting at <strong>Phonics {PHONICS_GROUPS[startingPhonicsGroup - 1].name}</strong>
@@ -570,9 +572,8 @@ const Onboarding: React.FC = () => {
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="onboarding-step"
       >
-        <div className="onboarding-step-emoji">{'\uD83E\uDDE9'}</div>
         <h2>{q.title}</h2>
-        <p className="onboarding-step-sub">{q.instruction}</p>
+        <p className="onboarding-step-sub onboarding-step-sub-large">{q.instruction}</p>
 
         <div className="onboarding-placement-progress">
           {PLACEMENT_QUESTIONS.map((_, i) => (
@@ -584,18 +585,24 @@ const Onboarding: React.FC = () => {
         </div>
 
         <div className="onboarding-placement-options">
-          {q.options.map((opt) => (
-            <motion.button
-              key={opt.value}
-              type="button"
-              className={`onboarding-placement-option ${placementAnswers[q.id] === opt.value ? 'selected' : ''}`}
-              onClick={() => handlePlacementAnswer(q.id, opt.value)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {opt.label}
-            </motion.button>
-          ))}
+          {q.options.map((opt) => {
+            const isSelected = placementAnswers[q.id] === opt.value;
+            return (
+              <motion.button
+                key={opt.value}
+                type="button"
+                className={`onboarding-placement-option ${isSelected ? 'selected' : ''}`}
+                onClick={() => handlePlacementAnswer(q.id, opt.value)}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+              >
+                <span className="onboarding-placement-option-indicator">
+                  {isSelected ? <Check size={16} /> : null}
+                </span>
+                <span>{opt.label}</span>
+              </motion.button>
+            );
+          })}
         </div>
 
         <div className="onboarding-actions">
@@ -637,9 +644,9 @@ const Onboarding: React.FC = () => {
           Hi there! I&apos;m Mimi, your dragon friend! I&apos;ll help you learn English through fun games,
           exciting stories, and magical adventures. Ready to explore?
           <div className="onboarding-mimi-facts">
-            <span className="onboarding-mimi-fact">{'\uD83D\uDD25'} Dragon Fire</span>
-            <span className="onboarding-mimi-fact">{'\u2B50'} +20% Stars</span>
-            <span className="onboarding-mimi-fact">{'\uD83D\uDC9A'} Always Friendly</span>
+            <span className="onboarding-mimi-fact"><Volume2 size={14} /> Dragon Fire</span>
+            <span className="onboarding-mimi-fact"><Check size={14} /> +20% Stars</span>
+            <span className="onboarding-mimi-fact"><Heart size={14} /> Always Friendly</span>
           </div>
         </div>
       </div>
@@ -664,7 +671,9 @@ const Onboarding: React.FC = () => {
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="onboarding-step"
       >
-        <div className="onboarding-step-emoji">{'\uD83D\uDDFA\uFE0F'}</div>
+        <div className="onboarding-step-icon-large">
+          <MapPin size={32} />
+        </div>
         <h2>Your Learning Path</h2>
         <p className="onboarding-step-sub">
           Starting in {phase?.phase || 'Phase 1'} with {group.name}
@@ -672,7 +681,7 @@ const Onboarding: React.FC = () => {
 
         <div className="onboarding-path-units">
           <div className="onboarding-path-unit current">
-            <span className="onboarding-path-unit-icon">{'\uD83D\uDD0A'}</span>
+            <span className="onboarding-path-unit-icon"><Volume2 size={20} /></span>
             <div className="onboarding-path-unit-info">
               <strong>{group.name}</strong>
               <span>{group.sounds}</span>
@@ -681,7 +690,7 @@ const Onboarding: React.FC = () => {
           </div>
           {nextGroups.map((ng) => (
             <div key={ng.id} className="onboarding-path-unit upcoming">
-              <span className="onboarding-path-unit-icon">{'\uD83D\uDD12'}</span>
+              <span className="onboarding-path-unit-icon"><LockIcon size={20} /></span>
               <div className="onboarding-path-unit-info">
                 <strong>{ng.name}</strong>
                 <span>{ng.sounds}</span>
@@ -690,7 +699,7 @@ const Onboarding: React.FC = () => {
           ))}
         </div>
 
-        {renderNavActions({ nextLabel: "Let's Begin!", isLast: true })}
+        {renderNavActions({ nextLabel: 'Begin Learning', isLast: true })}
       </motion.div>
     );
   };
@@ -708,7 +717,9 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <div className="onboarding-step-emoji">{'\uD83C\uDFEB'}</div>
+      <div className="onboarding-step-icon-large">
+        <UserPlus size={32} />
+      </div>
       <h2>About You</h2>
       <p className="onboarding-step-sub">Tell us a bit about your teaching</p>
 
@@ -733,6 +744,7 @@ const Onboarding: React.FC = () => {
               className={`onboarding-chip ${teacherGrades.includes(gl) ? 'selected' : ''}`}
               onClick={() => toggleGrade(gl)}
             >
+              {teacherGrades.includes(gl) && <Check size={14} />}
               {gl}
             </button>
           ))}
@@ -749,6 +761,7 @@ const Onboarding: React.FC = () => {
               className={`onboarding-chip ${studentCount === sr ? 'selected' : ''}`}
               onClick={() => setStudentCount(sr)}
             >
+              {studentCount === sr && <Check size={14} />}
               {sr}
             </button>
           ))}
@@ -770,7 +783,9 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <div className="onboarding-step-emoji">{'\uD83C\uDFE0'}</div>
+      <div className="onboarding-step-icon-large">
+        <Users size={32} />
+      </div>
       <h2>Create First Classroom</h2>
       <p className="onboarding-step-sub">Set up a classroom so students can join</p>
 
@@ -822,7 +837,9 @@ const Onboarding: React.FC = () => {
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="onboarding-step"
       >
-        <div className="onboarding-step-emoji">{'\uD83C\uDFAF'}</div>
+        <div className="onboarding-step-icon-large">
+          <BookOpen size={32} />
+        </div>
         <h2>Choose Starting Point</h2>
         <p className="onboarding-step-sub">Select which Phonics Group your class should start with. You can change this anytime.</p>
 
@@ -837,6 +854,9 @@ const Onboarding: React.FC = () => {
               whileTap={{ scale: 0.99 }}
             >
               <div className="onboarding-phonics-item-header">
+                <span className="onboarding-phonics-item-check">
+                  {selectedPhonicsGroup === pg.id ? <Check size={16} /> : null}
+                </span>
                 <strong>{pg.name}</strong>
                 <span className="onboarding-phonics-item-sounds">{pg.sounds}</span>
                 {pg.id === recommended && (
@@ -866,7 +886,9 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <div className="onboarding-step-emoji">{'\uD83D\uDC67'}</div>
+      <div className="onboarding-step-icon-large">
+        <Heart size={32} />
+      </div>
       <h2>Add Your Child</h2>
       <p className="onboarding-step-sub">Tell us about your child (up to 4)</p>
 
@@ -906,16 +928,23 @@ const Onboarding: React.FC = () => {
             </div>
 
             <div className="onboarding-child-avatars">
-              {CHILD_AVATARS.map((av) => (
-                <button
-                  key={av}
-                  type="button"
-                  className={`onboarding-child-avatar-btn ${child.avatar === av ? 'selected' : ''}`}
-                  onClick={() => updateChild(idx, 'avatar', av)}
-                >
-                  {av}
-                </button>
-              ))}
+              {CHILD_AVATAR_INITIALS.map((initial, i) => {
+                const bgColor = CHILD_AVATAR_COLORS[i % CHILD_AVATAR_COLORS.length];
+                return (
+                  <button
+                    key={initial}
+                    type="button"
+                    className={`onboarding-child-avatar-btn ${child.avatar === initial ? 'selected' : ''}`}
+                    onClick={() => updateChild(idx, 'avatar', initial)}
+                    style={{
+                      background: child.avatar === initial ? bgColor : 'var(--bg-card)',
+                      color: child.avatar === initial ? 'var(--text-on-primary)' : 'var(--text-secondary)',
+                    }}
+                  >
+                    {initial}
+                  </button>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -942,7 +971,9 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <div className="onboarding-step-emoji">{'\u2699\uFE0F'}</div>
+      <div className="onboarding-step-icon-large">
+        <Settings size={32} />
+      </div>
       <h2>Preferences</h2>
       <p className="onboarding-step-sub">Set up daily limits and notifications</p>
 
@@ -979,7 +1010,8 @@ const Onboarding: React.FC = () => {
       </div>
 
       <div className="onboarding-ready-banner">
-        {'\uD83C\uDF89'} Your dashboard is ready!
+        <CheckCircle size={20} />
+        <span>Your dashboard is ready!</span>
       </div>
 
       {renderNavActions({ nextLabel: "Let's Start!", isLast: true })}

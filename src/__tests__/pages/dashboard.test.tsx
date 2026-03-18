@@ -43,22 +43,19 @@ vi.mock('framer-motion', () => {
 vi.mock('lucide-react', () => {
   const icon = () => <span />;
   return {
-    Trophy: icon,
-    BookOpen: icon,
-    Flame: icon,
-    GraduationCap: icon,
-    Globe: icon,
-    Pencil: icon,
-    Gamepad2: icon,
-    BookHeart: icon,
-    Award: icon,
     Play: icon,
-    Sparkles: icon,
-    Gift: icon,
-    BarChart3: icon,
-    ChevronRight: icon,
-    RefreshCw: icon,
-    Users: icon,
+    Flame: icon,
+    Star: icon,
+    Gamepad2: icon,
+    BookOpen: icon,
+    Video: icon,
+    Music: icon,
+    Clock: icon,
+    CheckCircle: icon,
+    Target: icon,
+    School: icon,
+    Award: icon,
+    Loader2: icon,
   };
 });
 
@@ -79,10 +76,25 @@ vi.mock('../../services/learningPathService', () => ({
     type: 'phonics-lesson',
     title: 'Learn the /s/ sound',
     titleTr: '/s/ sesini ogren',
-    emoji: '\uD83D\uDC0D',
     route: '/worlds/little-ears/p1-u1',
     description: 'Practice the snake sound!',
   })),
+}));
+
+// Mock soundLibrary
+vi.mock('../../data/soundLibrary', () => ({
+  SFX: {
+    click: vi.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
+    levelUp: vi.fn(),
+    badge: vi.fn(),
+  },
+}));
+
+// Mock MimiGuide component
+vi.mock('../../components/MimiGuide', () => ({
+  default: () => null,
 }));
 
 // Mock AuthContext
@@ -154,8 +166,7 @@ describe('Dashboard Page', () => {
 
   it('renders without crashing', () => {
     renderDashboard();
-    // The dashboard should render the kid-dashboard container
-    expect(document.querySelector('.kid-dashboard')).toBeTruthy();
+    expect(document.querySelector('.dash')).toBeTruthy();
   });
 
   it('renders top bar with user name', () => {
@@ -180,17 +191,17 @@ describe('Dashboard Page', () => {
     expect(screen.getByText('Learn the /s/ sound')).toBeInTheDocument();
   });
 
-  it('renders PLAY button', () => {
+  it('renders play button with aria-label', () => {
     renderDashboard();
-    expect(screen.getByText('PLAY')).toBeInTheDocument();
+    expect(screen.getByLabelText('Start lesson')).toBeInTheDocument();
   });
 
-  it('shows quick action buttons (Games, Words, Videos, Sheets)', () => {
+  it('shows quick action buttons (Games, Words, Videos, Songs)', () => {
     renderDashboard();
     expect(screen.getByText('Games')).toBeInTheDocument();
     expect(screen.getByText('Words')).toBeInTheDocument();
     expect(screen.getByText('Videos')).toBeInTheDocument();
-    expect(screen.getByText('Sheets')).toBeInTheDocument();
+    expect(screen.getByText('Songs')).toBeInTheDocument();
   });
 
   it('quick actions link to correct routes', () => {
@@ -204,33 +215,23 @@ describe('Dashboard Page', () => {
     const videosLink = screen.getByText('Videos').closest('a');
     expect(videosLink).toHaveAttribute('href', '/videos');
 
-    const sheetsLink = screen.getByText('Sheets').closest('a');
-    expect(sheetsLink).toHaveAttribute('href', '/worksheets');
+    const songsLink = screen.getByText('Songs').closest('a');
+    expect(songsLink).toHaveAttribute('href', '/songs');
   });
 
-  it('shows achievements section with level', () => {
+  it('shows achievements section heading', () => {
     renderDashboard();
-    expect(screen.getByText(/Level 5/)).toBeInTheDocument();
+    expect(screen.getByText('Achievements')).toBeInTheDocument();
   });
 
   it('shows no-badges message when no badges earned', () => {
     renderDashboard();
-    expect(screen.getByText(/Play to earn badges/)).toBeInTheDocument();
+    expect(screen.getByText('Complete lessons to earn badges')).toBeInTheDocument();
   });
 
-  it('shows daily challenge section', () => {
+  it('shows Today section with Daily Challenge', () => {
     renderDashboard();
-    // One of the daily challenge titles should be present
-    const challengeTitles = [
-      'Learn 5 words',
-      'Play 3 games',
-      'Watch a video',
-      'Do a worksheet',
-      'Review words',
-      'Explore worlds',
-      'Earn 50 XP',
-    ];
-    const found = challengeTitles.some((t) => screen.queryByText(t));
-    expect(found).toBe(true);
+    expect(screen.getByText('Today')).toBeInTheDocument();
+    expect(screen.getByText('Daily Challenge')).toBeInTheDocument();
   });
 });

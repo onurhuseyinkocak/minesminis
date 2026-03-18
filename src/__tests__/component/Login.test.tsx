@@ -127,31 +127,30 @@ describe('Login Page', () => {
   it('shows email and password inputs', () => {
     renderLogin();
     expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument();
-    // Password fields (visible is the login one)
     const pwFields = screen.getAllByPlaceholderText(/••••••••/);
     expect(pwFields.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('shows login and sign up tabs', () => {
+  it('shows Sign In and Create Account tabs', () => {
     renderLogin();
-    // "Login" tab and "Sign Up" tab
-    expect(screen.getByText('Login')).toBeInTheDocument();
-    expect(screen.getByText('Sign Up')).toBeInTheDocument();
+    // "Sign In" appears in both tab and submit button, so use getAllByText
+    expect(screen.getAllByText('Sign In').length).toBeGreaterThanOrEqual(1);
+    // "Create Account" appears in tab
+    expect(screen.getAllByText('Create Account').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('switches to signup form on Sign Up tab click', async () => {
+  it('switches to signup form on Create Account tab click', async () => {
     renderLogin();
-    const joinTab = screen.getByText('Sign Up');
-    fireEvent.click(joinTab);
-    // Confirm Password should now appear
+    // Click the first "Create Account" (the tab)
+    const joinTabs = screen.getAllByText('Create Account');
+    fireEvent.click(joinTabs[0]);
     expect(screen.getByText('Confirm Password')).toBeInTheDocument();
   });
 
-  it('switches back to login form on Login tab click', () => {
+  it('switches back to login form on Sign In tab click', () => {
     renderLogin();
-    fireEvent.click(screen.getByText('Sign Up'));
-    // Click the Login tab
-    fireEvent.click(screen.getByText('Login'));
+    fireEvent.click(screen.getAllByText('Create Account')[0]);
+    fireEvent.click(screen.getAllByText('Sign In')[0]);
     expect(screen.queryByText('Confirm Password')).not.toBeInTheDocument();
   });
 
@@ -171,7 +170,7 @@ describe('Login Page', () => {
 
   it('shows confirm password in signup mode', () => {
     renderLogin();
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getAllByText('Create Account')[0]);
     const pwFields = screen.getAllByPlaceholderText(/••••••••/);
     expect(pwFields.length).toBe(2);
   });
@@ -190,7 +189,7 @@ describe('Login Page', () => {
     });
   });
 
-  it('shows language toggle (EN/TR)', () => {
+  it('shows language toggle (EN | TR)', () => {
     renderLogin();
     expect(screen.getByText('EN')).toBeInTheDocument();
     expect(screen.getByText('TR')).toBeInTheDocument();
@@ -222,7 +221,7 @@ describe('Login Page', () => {
 
   it('shows hint text with link to login in signup mode', () => {
     renderLogin();
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getAllByText('Create Account')[0]);
     expect(screen.getByText(/Already have an account/i)).toBeInTheDocument();
   });
 
@@ -235,9 +234,18 @@ describe('Login Page', () => {
 
   it('submit button shows Create Account text in signup mode', () => {
     renderLogin();
-    fireEvent.click(screen.getByText('Sign Up'));
+    fireEvent.click(screen.getAllByText('Create Account')[0]);
     const submitBtns = screen.getAllByRole('button');
     const signupSubmit = submitBtns.find(b => b.getAttribute('type') === 'submit');
     expect(signupSubmit?.textContent).toContain('Create Account');
+  });
+
+  it('shows side panel with feature list', () => {
+    renderLogin();
+    expect(screen.getByText('MinesMinis')).toBeInTheDocument();
+    expect(screen.getByText('English learning that works')).toBeInTheDocument();
+    expect(screen.getByText('42 phonics sounds')).toBeInTheDocument();
+    expect(screen.getByText('Research-backed method')).toBeInTheDocument();
+    expect(screen.getByText('Free to start')).toBeInTheDocument();
   });
 });

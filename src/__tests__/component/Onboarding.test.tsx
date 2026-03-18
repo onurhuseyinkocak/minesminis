@@ -161,7 +161,7 @@ beforeEach(async () => {
 describe('Onboarding Page', () => {
   it('renders step 1: role selection with title', () => {
     renderOnboarding();
-    expect(screen.getByText('Who are you?')).toBeInTheDocument();
+    expect(screen.getByText('How will you use MinesMinis?')).toBeInTheDocument();
   });
 
   it('renders three role options', () => {
@@ -173,9 +173,9 @@ describe('Onboarding Page', () => {
 
   it('shows role subtitles', () => {
     renderOnboarding();
-    expect(screen.getByText('I want to learn English!')).toBeInTheDocument();
-    expect(screen.getByText('I teach English to children')).toBeInTheDocument();
-    expect(screen.getByText('My child is learning English')).toBeInTheDocument();
+    expect(screen.getByText("I'm learning English")).toBeInTheDocument();
+    expect(screen.getByText('I teach English')).toBeInTheDocument();
+    expect(screen.getByText('My child is learning')).toBeInTheDocument();
   });
 
   it('continue button is disabled until role is selected', () => {
@@ -214,7 +214,7 @@ describe('Onboarding Page', () => {
     renderOnboarding();
     fireEvent.click(screen.getByText('Student'));
     fireEvent.click(screen.getByText(/Continue/i));
-    expect(screen.getByText('How old are you?')).toBeInTheDocument();
+    expect(screen.getByText("What's your age group?")).toBeInTheDocument();
   });
 
   it('student age selection shows 4 age groups with phase names', () => {
@@ -232,7 +232,7 @@ describe('Onboarding Page', () => {
     fireEvent.click(screen.getByText('Student'));
     fireEvent.click(screen.getByText(/Continue/i));
     fireEvent.click(screen.getByText(/Back/i));
-    expect(screen.getByText('Who are you?')).toBeInTheDocument();
+    expect(screen.getByText('How will you use MinesMinis?')).toBeInTheDocument();
   });
 
   // ── Teacher path ──────────────────────────────────────────────────────────

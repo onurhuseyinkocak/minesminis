@@ -1,6 +1,6 @@
 /* ==========================================================================
-   LOGIN PAGE — LibreUIUX Methodology
-   Split: teal left panel, white right form. ZERO hex. All var() tokens.
+   LOGIN PAGE — Premium Split Layout
+   Left brand panel + Right form panel. ZERO hex. All var() tokens.
    ========================================================================== */
 
 /* ---- BACK BUTTON ---- */
@@ -43,7 +43,7 @@
   position: relative;
 }
 
-/* ---- LANGUAGE TOGGLE ---- */
+/* ---- LANGUAGE TOGGLE (pill style) ---- */
 .login-lang-toggle {
   position: fixed;
   top: var(--space-md);
@@ -51,33 +51,40 @@
   z-index: var(--z-sticky);
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 0;
   background: var(--bg-card);
   backdrop-filter: blur(12px);
   border-radius: var(--radius-full);
-  padding: var(--space-xs) var(--space-sm);
+  padding: 3px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-light);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 13px;
-  color: var(--text-muted);
 }
 
 .login-lang-toggle button {
   all: unset;
   cursor: pointer;
-  padding: 2px var(--space-sm);
+  padding: 4px 14px;
   border-radius: var(--radius-full);
   font-weight: 600;
   font-family: var(--font-display);
   font-size: 12px;
   color: var(--text-muted);
   transition: all 200ms ease-out;
+  line-height: 1.5;
 }
 
 .login-lang-toggle button.active {
-  background: var(--gradient-primary);
+  background: var(--primary);
   color: var(--text-on-primary);
+}
+
+.login-lang-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border-light);
+  flex-shrink: 0;
 }
 
 /* ---- CONTAINER ---- */
@@ -95,17 +102,16 @@
 }
 
 /* ==========================================================================
-   SIDE PANEL (Teal gradient)
+   SIDE PANEL (Subtle primary-light background)
    ========================================================================== */
 .login-side {
-  background: var(--gradient-secondary);
+  background: var(--primary-pale);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: var(--space-2xl);
   text-align: center;
-  gap: var(--space-xl);
   position: relative;
   overflow: hidden;
 }
@@ -114,42 +120,72 @@
 .login-side::before {
   content: '';
   position: absolute;
-  width: 240px;
-  height: 240px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   background: var(--primary-glow);
-  top: 50%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
-  filter: blur(80px);
+  filter: blur(100px);
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
-.login-side-mimi {
-  font-size: 5rem;
-  line-height: 1;
+.login-side-content {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
 }
 
 .login-side-brand {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2rem;
-  color: var(--white);
-  position: relative;
-  z-index: 1;
+  font-size: 2.25rem;
+  color: var(--primary-dark);
+  letter-spacing: -0.02em;
 }
 
 .login-side-tagline {
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--text-on-dark);
+  font-size: 1rem;
+  color: var(--text-secondary);
   line-height: 1.6;
-  opacity: 0.85;
-  position: relative;
-  z-index: 1;
+}
+
+.login-side-features {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-md) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  text-align: left;
+}
+
+.login-side-feature {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-body);
+  line-height: 1.5;
+}
+
+.login-side-feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
@@ -160,6 +196,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: var(--bg-card);
 }
 
 .login-header {
@@ -182,7 +219,7 @@
   line-height: 1.5;
 }
 
-/* ---- TABS ---- */
+/* ---- TABS (underline style) ---- */
 .login-tabs {
   margin-bottom: var(--space-lg);
 }
@@ -212,6 +249,7 @@
   margin-top: -4px;
   text-align: left;
   transition: opacity 0.2s;
+  font-family: var(--font-body);
 }
 
 .login-forgot-link:hover {
@@ -223,14 +261,17 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px;
-  background: var(--bg-soft, #f8f9fa);
-  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-md);
+  background: var(--bg-muted);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-light);
 }
 
 /* ---- ERROR ---- */
 .login-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
   background: var(--error-pale);
   color: var(--error);
   font-family: var(--font-body);
@@ -239,6 +280,11 @@
   border-radius: var(--radius-sm);
   border-left: 3px solid var(--error);
   line-height: 1.5;
+}
+
+.login-error-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
 /* ---- DIVIDER ---- */
@@ -265,7 +311,7 @@
   letter-spacing: 0.05em;
 }
 
-/* ---- GOOGLE BUTTON (distinct with icon) ---- */
+/* ---- GOOGLE BUTTON ---- */
 .login-google-btn {
   display: flex;
   align-items: center;
@@ -329,6 +375,14 @@
   box-shadow: var(--shadow-md);
 }
 
+[data-theme="dark"] .login-side {
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .login-side-brand {
+  color: var(--primary);
+}
+
 [data-theme="dark"] .login-google-btn {
   background: var(--bg-muted);
   border-color: var(--border-light);
@@ -355,16 +409,7 @@
   }
 
   .login-side {
-    padding: var(--space-xl);
-    gap: var(--space-md);
-  }
-
-  .login-side-mimi {
-    font-size: 3.5rem;
-  }
-
-  .login-side-brand {
-    font-size: 1.5rem;
+    display: none;
   }
 
   .login-form-panel {

@@ -131,27 +131,27 @@ beforeEach(async () => {
 describe('Landing Page', () => {
   it('renders hero title in default language (EN)', () => {
     renderLanding();
-    expect(screen.getByText('Montessori + Phonics English Learning')).toBeInTheDocument();
+    expect(screen.getByText('English Learning That Actually Works')).toBeInTheDocument();
   });
 
-  it('shows three role CTA buttons', () => {
+  it('shows audience tabs: Students, Teachers, Parents', () => {
     renderLanding();
-    expect(screen.getAllByText(/I'm a Student/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/I'm a Teacher/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/I'm a Parent/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Students')).toBeInTheDocument();
+    expect(screen.getByText('Teachers')).toBeInTheDocument();
+    expect(screen.getByText('Parents')).toBeInTheDocument();
   });
 
   it('language toggle switches content to Turkish', () => {
     renderLanding();
     fireEvent.click(screen.getByText('TR'));
-    expect(screen.getByText('Montessori + Fonetik \u0130ngilizce \u00d6\u011frenme')).toBeInTheDocument();
+    expect(screen.getByText('Gercekten Ise Yarayan Ingilizce Ogrenme')).toBeInTheDocument();
   });
 
   it('language toggle switches back to English', () => {
     renderLanding();
     fireEvent.click(screen.getByText('TR'));
     fireEvent.click(screen.getByText('EN'));
-    expect(screen.getByText('Montessori + Phonics English Learning')).toBeInTheDocument();
+    expect(screen.getByText('English Learning That Actually Works')).toBeInTheDocument();
   });
 
   it('renders language toggle buttons', () => {
@@ -160,75 +160,55 @@ describe('Landing Page', () => {
     expect(screen.getByText('TR')).toBeInTheDocument();
   });
 
-  it('renders How It Works section with 4 phases', () => {
+  it('renders method section with 4 phase cards', () => {
     renderLanding();
-    // "How It Works" appears in both nav and section heading
-    expect(screen.getAllByText('How It Works').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('Little Ears')).toBeInTheDocument();
-    expect(screen.getByText('Word Builders')).toBeInTheDocument();
-    expect(screen.getByText('Story Makers')).toBeInTheDocument();
-    expect(screen.getByText('Young Explorers')).toBeInTheDocument();
+    expect(screen.getByText('A proven path to English fluency')).toBeInTheDocument();
+    expect(screen.getByText('Sound Discovery')).toBeInTheDocument();
+    expect(screen.getByText('Word Building')).toBeInTheDocument();
+    expect(screen.getByText('Reading & Stories')).toBeInTheDocument();
+    expect(screen.getByText('Independence')).toBeInTheDocument();
   });
 
-  it('renders For Each Role tabbed section', () => {
+  it('renders audience section with tab content', () => {
     renderLanding();
-    expect(screen.getByText('Built for Everyone')).toBeInTheDocument();
-    expect(screen.getByText('For Students')).toBeInTheDocument();
-    expect(screen.getByText('For Teachers')).toBeInTheDocument();
-    expect(screen.getByText('For Parents')).toBeInTheDocument();
+    expect(screen.getByText('Built for everyone who cares about learning')).toBeInTheDocument();
+    expect(screen.getByText('Students')).toBeInTheDocument();
+    expect(screen.getByText('Teachers')).toBeInTheDocument();
+    expect(screen.getByText('Parents')).toBeInTheDocument();
   });
 
-  it('role tabs switch content', () => {
+  it('audience tabs switch content', () => {
     renderLanding();
-    // Default tab is student
-    expect(screen.getByText('42 English sounds with fun actions')).toBeInTheDocument();
+    // Default tab is students
+    expect(screen.getByText('42 phonics sounds with actions')).toBeInTheDocument();
     // Click teacher tab
-    fireEvent.click(screen.getByText('For Teachers'));
-    expect(screen.getByText('Free classroom management tool')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Teachers'));
+    expect(screen.getByText('Free classroom management')).toBeInTheDocument();
     // Click parent tab
-    fireEvent.click(screen.getByText('For Parents'));
-    expect(screen.getByText(/See exactly which sounds your child has mastered/)).toBeInTheDocument();
-  });
-
-  it('renders Methodology section', () => {
-    renderLanding();
-    expect(screen.getByText('Research-Backed Methods That Work')).toBeInTheDocument();
-    expect(screen.getByText('Synthetic Phonics')).toBeInTheDocument();
-    expect(screen.getByText('Montessori Learning')).toBeInTheDocument();
-    expect(screen.getByText('Total Physical Response')).toBeInTheDocument();
-    expect(screen.getByText('Comprehensible Input')).toBeInTheDocument();
-    expect(screen.getByText('Spaced Repetition')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Parents'));
+    expect(screen.getByText('Real-time learning analytics')).toBeInTheDocument();
   });
 
   it('shows stats section with correct numbers', () => {
     renderLanding();
-    // Stats numbers may appear in multiple places, so use getAllByText
     expect(screen.getAllByText('42').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('English Sounds')).toBeInTheDocument();
+    expect(screen.getByText('Phonics Sounds')).toBeInTheDocument();
+    expect(screen.getByText('14')).toBeInTheDocument();
+    expect(screen.getByText('Decodable Books')).toBeInTheDocument();
+    expect(screen.getByText('7')).toBeInTheDocument();
+    expect(screen.getByText('Song Lessons')).toBeInTheDocument();
     expect(screen.getAllByText('4').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Learning Phases')).toBeInTheDocument();
-    expect(screen.getByText('400+')).toBeInTheDocument();
-    expect(screen.getByText('Words to Learn')).toBeInTheDocument();
   });
 
-  it('shows glint characters in carousel', () => {
+  it('bottom CTA section exists with Create Free Account', () => {
     renderLanding();
-    const glintSlides = document.querySelectorAll('.glint-slide');
-    expect(glintSlides.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Create Free Account')).toBeInTheDocument();
   });
 
-  it('bottom CTA section exists with role buttons', () => {
+  it('CTA section has correct title', () => {
     renderLanding();
-    expect(screen.getByText('Ready to Start?')).toBeInTheDocument();
-  });
-
-  it('CTA role buttons link to /login', () => {
-    renderLanding();
-    const roleBtns = document.querySelectorAll('a.magic-role-btn');
-    expect(roleBtns.length).toBeGreaterThanOrEqual(3);
-    roleBtns.forEach((btn) => {
-      expect(btn.getAttribute('href')).toBe('/login');
-    });
+    expect(screen.getByText("Ready to start your child's English journey?")).toBeInTheDocument();
   });
 
   it('navbar login button links to /login', () => {
@@ -237,5 +217,15 @@ describe('Landing Page', () => {
       (el) => el.closest('a')?.getAttribute('href') === '/login'
     );
     expect(loginLink).toBeTruthy();
+  });
+
+  it('hero has Start Learning CTA', () => {
+    renderLanding();
+    expect(screen.getByText('Start Learning')).toBeInTheDocument();
+  });
+
+  it('hero has See How It Works link', () => {
+    renderLanding();
+    expect(screen.getByText('See How It Works')).toBeInTheDocument();
   });
 });

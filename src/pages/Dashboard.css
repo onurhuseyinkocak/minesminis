@@ -1,631 +1,691 @@
 /* ==========================================================================
-   KID DASHBOARD — Ultra-Simple for Ages 3-10
-   Big visuals, minimal text, one clear action at a time.
-   Min touch target: 48px. Min font: 18px labels, 24px headings.
-   Border radius 20px+. Bright colors. Shadows for depth.
+   DASHBOARD -- Premium Child-Friendly Layout
+   Uses design-system.css variables. Zero emoji. Lucide icons only.
    ========================================================================== */
 
-/* ---- PAGE ---- */
-.kid-dashboard {
+/* ---- PAGE CONTAINER ---- */
+.dash {
   max-width: 600px;
   margin: 0 auto;
-  padding: 12px 16px 32px;
+  padding: var(--space-3) var(--space-4) var(--space-8);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
   min-height: 100dvh;
 }
 
 /* ---- LOADING ---- */
-.kid-loading {
+.dash-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 70vh;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
-.kid-loading-bounce {
-  font-size: 4rem;
-  animation: kidBounce 1s ease-in-out infinite;
+.dash-loading-spinner {
+  color: var(--color-primary, var(--primary));
+  animation: dashSpin 0.8s linear infinite;
 }
 
-.kid-loading-text {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 700;
-  font-size: 20px;
-  color: var(--text-secondary);
+@keyframes dashSpin {
+  to { transform: rotate(360deg); }
 }
 
-@keyframes kidBounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-16px) scale(1.1); }
+.dash-loading-text {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-lg, 1.125rem);
+  color: var(--color-text-secondary, var(--text-secondary));
 }
 
 /* ==========================================================================
-   1. TOP BAR — slim, one line
+   TOP BAR -- 56px, clean white, subtle border
    ========================================================================== */
-.kid-topbar {
+.dash-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: var(--bg-card, #fff);
-  border-radius: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--border-light, #eee);
+  height: 56px;
+  padding: 0 var(--space-4);
+  background: var(--color-bg-card, var(--bg-card, #fff));
+  border-bottom: 1px solid var(--color-border-subtle, var(--border-light, #eee));
+  border-radius: var(--radius-xl, 16px);
 }
 
-.kid-topbar-left {
+.dash-topbar__left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   min-width: 0;
 }
 
-.kid-topbar-avatar {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  overflow: hidden;
+.dash-topbar__mimi {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-primary-light, var(--primary-pale, #FFFBEB));
+  color: var(--color-primary, var(--primary, #E8A317));
+  flex-shrink: 0;
 }
 
-.kid-topbar-name {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--text-primary, #1a1a2e);
+.dash-topbar__name {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-base, 1rem);
+  color: var(--color-text, var(--text-primary));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 140px;
 }
 
-.kid-topbar-right {
+.dash-topbar__right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   flex-shrink: 0;
 }
 
-.kid-topbar-streak,
-.kid-topbar-xp {
+.dash-topbar__stat {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 20px;
-  min-height: 40px;
-}
-
-.kid-topbar-streak {
-  background: rgba(255, 152, 0, 0.12);
-}
-
-.kid-topbar-xp {
-  background: rgba(255, 215, 0, 0.15);
-}
-
-.kid-topbar-streak-num,
-.kid-topbar-xp-num {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--text-primary, #1a1a2e);
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full, 9999px);
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text, var(--text-primary));
   line-height: 1;
 }
 
-/* ==========================================================================
-   2. HERO CARD — Continue Learning (60% viewport, THE main CTA)
-   ========================================================================== */
-.kid-hero {
-  position: relative;
+.dash-topbar__stat--streak {
+  background: rgba(245, 158, 11, 0.1);
+  color: #D97706;
+}
+
+.dash-topbar__stat--xp {
+  background: rgba(234, 179, 8, 0.1);
+  color: #B45309;
+}
+
+.dash-topbar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-secondary, var(--secondary, #0D5C4D));
+  color: var(--color-text-inverse, #fff);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 32px 24px 28px;
-  background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
-  border-radius: 28px;
-  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-  min-height: 50vh;
   justify-content: center;
-  gap: 12px;
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-extrabold, 800);
+  font-size: var(--text-sm, 0.875rem);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   HERO -- Continue Learning
+   ========================================================================== */
+.dash-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-6) var(--space-6) var(--space-7, var(--space-8));
+  background: var(--color-primary-light, var(--primary-pale, #FFFBEB));
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-radius: var(--radius-2xl, 20px);
+  position: relative;
   overflow: hidden;
+  min-height: 160px;
 }
 
-/* Subtle background sparkle */
-.kid-hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -30%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.kid-hero-emoji {
-  font-size: 4.5rem;
-  line-height: 1;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-  animation: kidFloat 3s ease-in-out infinite;
-}
-
-@keyframes kidFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.kid-hero-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.kid-hero-phase {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 600;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.75);
-  letter-spacing: 0.03em;
-  margin: 0;
-}
-
-.kid-hero-title {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 900;
-  font-size: 28px;
-  color: #fff;
-  line-height: 1.2;
-  margin: 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  max-width: 90%;
-}
-
-/* Progress ring */
-.kid-hero-progress {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 4px 0;
-}
-
-.kid-hero-ring {
-  width: 80px;
-  height: 80px;
-  transform: rotate(-90deg);
-}
-
-.kid-hero-ring-bg {
-  stroke: rgba(255, 255, 255, 0.2);
-}
-
-.kid-hero-ring-fill {
-  stroke: #FFD93D;
-  transition: stroke-dashoffset 0.6s ease-out;
-}
-
-.kid-hero-ring-label {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 900;
-  font-size: 18px;
-  color: #fff;
-}
-
-/* PLAY button */
-.kid-hero-play {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 40px;
-  background: #FFD93D;
-  color: #1a1a2e;
-  border-radius: 60px;
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 900;
-  font-size: 24px;
-  text-decoration: none;
-  box-shadow: 0 6px 20px rgba(255, 217, 61, 0.4);
-  transition: all 150ms ease-out;
-  min-height: 56px;
-  letter-spacing: 0.04em;
-}
-
-.kid-hero-play:hover {
-  transform: scale(1.06);
-  box-shadow: 0 8px 28px rgba(255, 217, 61, 0.5);
-}
-
-.kid-hero-play:active {
-  transform: scale(0.97);
-}
-
-/* ==========================================================================
-   3. QUICK ACTIONS — 4 big icon buttons in a row
-   ========================================================================== */
-.kid-quick-actions {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.kid-quick-btn {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 16px 8px;
-  border-radius: 24px;
-  text-decoration: none;
-  min-height: 96px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border: 2px solid transparent;
-  transition: all 150ms ease-out;
-}
-
-.kid-quick-badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 10px;
-  background: var(--error, #ef4444);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
-}
-
-.kid-quick-btn:hover {
-  transform: scale(1.06);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-}
-
-.kid-quick-btn:active {
-  transform: scale(0.95);
-}
-
-.kid-quick-emoji {
-  font-size: 2.2rem;
-  line-height: 1;
-}
-
-.kid-quick-label {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 800;
-  font-size: 14px;
-  line-height: 1;
-  color: var(--text-primary, #1a1a2e);
-}
-
-/* Individual colors */
-.kid-quick-games {
-  background: linear-gradient(145deg, #FFF3E0, #FFE0B2);
-  border-color: #FFB74D;
-}
-
-.kid-quick-words {
-  background: linear-gradient(145deg, #E8F5E9, #C8E6C9);
-  border-color: #66BB6A;
-}
-
-.kid-quick-videos {
-  background: linear-gradient(145deg, #E3F2FD, #BBDEFB);
-  border-color: #42A5F5;
-}
-
-.kid-quick-sheets {
-  background: linear-gradient(145deg, #FCE4EC, #F8BBD0);
-  border-color: #EC407A;
-}
-
-/* ==========================================================================
-   4. DAILY SECTION — horizontal scroll
-   ========================================================================== */
-.kid-daily-scroll {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 4px 0 8px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  scroll-snap-type: x mandatory;
-}
-
-.kid-daily-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.kid-daily-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-width: 140px;
-  max-width: 160px;
-  padding: 20px 16px;
-  border-radius: 24px;
-  text-decoration: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border: 2px solid transparent;
-  flex-shrink: 0;
-  scroll-snap-align: start;
-  transition: all 150ms ease-out;
-  cursor: pointer;
-  text-align: center;
-  /* Reset button styles */
-  font-family: inherit;
-}
-
-.kid-daily-card:hover {
-  transform: scale(1.04);
-}
-
-.kid-daily-card:active {
-  transform: scale(0.96);
-}
-
-.kid-daily-card-emoji {
-  font-size: 2.2rem;
-  line-height: 1;
-}
-
-.kid-daily-card-title {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 800;
-  font-size: 15px;
-  color: var(--text-primary, #1a1a2e);
-  line-height: 1.2;
-}
-
-.kid-daily-card-xp {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--text-secondary, #666);
-  line-height: 1;
-}
-
-/* Card colors */
-.kid-daily-challenge {
-  background: linear-gradient(145deg, #FFFDE7, #FFF9C4);
-  border-color: #FFD54F;
-}
-
-.kid-daily-reward {
-  background: linear-gradient(145deg, #F3E5F5, #E1BEE7);
-  border-color: #AB47BC;
-}
-
-.kid-daily-review {
-  background: linear-gradient(145deg, #E0F7FA, #B2EBF2);
-  border-color: #26C6DA;
-}
-
-/* Gift bounce animation */
-.kid-gift-bounce {
-  animation: kidGiftBounce 0.8s ease-in-out infinite;
-}
-
-@keyframes kidGiftBounce {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.15) rotate(-8deg); }
-  75% { transform: scale(1.15) rotate(8deg); }
-}
-
-/* ==========================================================================
-   5. ACHIEVEMENTS BAR — badges + level progress
-   ========================================================================== */
-.kid-achievements {
-  background: var(--bg-card, #fff);
-  border-radius: 24px;
-  padding: 16px 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--border-light, #eee);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* Level bar */
-.kid-level-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.kid-level-label {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 800;
-  font-size: 16px;
-  color: var(--text-primary, #1a1a2e);
-  white-space: nowrap;
-  min-width: 60px;
-}
-
-.kid-level-track {
+.dash-hero__content {
   flex: 1;
-  height: 12px;
-  background: var(--bg-muted, #f0f0f0);
-  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.dash-hero__badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-primary, var(--primary, #E8A317));
+  color: var(--color-text-inverse, #fff);
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-semibold, 600);
+  font-size: var(--text-xs, 0.75rem);
+  border-radius: var(--radius-full, 9999px);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.dash-hero__title {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-extrabold, 800);
+  font-size: var(--text-2xl, 1.5rem);
+  color: var(--color-text, var(--text-primary));
+  line-height: var(--leading-tight, 1.25);
+  margin: 0;
+}
+
+.dash-hero__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text-secondary, var(--text-secondary));
+  line-height: var(--leading-normal, 1.5);
+  margin: 0;
+}
+
+.dash-hero__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.dash-hero__progress-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-bg-muted, var(--bg-muted, #E7E5E4));
+  border-radius: var(--radius-full, 9999px);
   overflow: hidden;
 }
 
-.kid-level-fill {
+.dash-hero__progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #FFD93D, #FF6B6B);
-  border-radius: 20px;
+  background: var(--color-primary, var(--primary, #E8A317));
+  border-radius: var(--radius-full, 9999px);
   transition: width 0.5s ease-out;
 }
 
-.kid-level-pct {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--text-secondary, #666);
-  min-width: 36px;
-  text-align: right;
+.dash-hero__progress-label {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-semibold, 600);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-muted, var(--text-muted));
+  white-space: nowrap;
 }
 
-/* Badges scroll */
-.kid-badges-scroll {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 4px 0;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.kid-badges-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.kid-badge {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(145deg, #FFF9C4, #FFE082);
+/* Play button */
+.dash-hero__play {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-primary, var(--primary, #E8A317));
+  color: var(--color-text-inverse, #fff);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border: 2px solid #FFD54F;
-  transition: transform 150ms ease-out;
+  text-decoration: none;
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08)),
+    0 0 0 0 rgba(245, 158, 11, 0);
+  transition: transform var(--transition-fast, 150ms ease),
+    box-shadow var(--transition-fast, 150ms ease);
 }
 
-.kid-badge:hover {
-  transform: scale(1.12);
+.dash-hero__play:hover {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.1)),
+    0 0 20px rgba(245, 158, 11, 0.25);
 }
 
-.kid-badge-icon {
-  font-size: 1.6rem;
+.dash-hero__play:active {
+  transform: scale(0.96);
+}
+
+/* ==========================================================================
+   QUICK ACTIONS -- 4 equal cards
+   ========================================================================== */
+.dash-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.dash-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  background: var(--color-bg-card, var(--bg-card, #fff));
+  border: 1px solid var(--color-border-subtle, var(--border-light, #eee));
+  border-radius: var(--radius-xl, 16px);
+  text-decoration: none;
+  transition: transform var(--transition-fast, 150ms ease),
+    box-shadow var(--transition-fast, 150ms ease);
+  min-height: 88px;
+}
+
+.dash-action:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.dash-action:active {
+  transform: scale(0.96);
+}
+
+.dash-action__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg, 12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-action__label {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text, var(--text-primary));
   line-height: 1;
 }
 
-.kid-no-badges {
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--text-muted, #999);
-  text-align: center;
-  padding: 8px;
+/* Icon background colors per action */
+.dash-qa--games .dash-action__icon {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.dash-qa--words .dash-action__icon {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.dash-qa--videos .dash-action__icon {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+.dash-qa--songs .dash-action__icon {
+  background: #FCE4EC;
+  color: #AD1457;
+}
+
+/* ==========================================================================
+   TODAY'S PROGRESS
+   ========================================================================== */
+.dash-today {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-bg-card, var(--bg-card, #fff));
+  border: 1px solid var(--color-border-subtle, var(--border-light, #eee));
+  border-radius: var(--radius-xl, 16px);
+}
+
+.dash-today__label {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text, var(--text-primary));
+}
+
+.dash-today__stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.dash-today__stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-body);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text-secondary, var(--text-secondary));
+}
+
+.dash-today__stat svg {
+  color: var(--color-text-muted, var(--text-muted));
+}
+
+.dash-today__challenge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-semibold, 600);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-primary, var(--primary, #E8A317));
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity var(--transition-fast, 150ms ease);
+}
+
+.dash-today__challenge:hover {
+  opacity: 0.75;
+}
+
+/* ==========================================================================
+   ACHIEVEMENTS
+   ========================================================================== */
+.dash-achievements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-card, var(--bg-card, #fff));
+  border: 1px solid var(--color-border-subtle, var(--border-light, #eee));
+  border-radius: var(--radius-xl, 16px);
+}
+
+.dash-achievements__heading {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text, var(--text-primary));
   margin: 0;
+}
+
+.dash-achievements__scroll {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.dash-achievements__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.dash-achievements__badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  min-width: 64px;
+}
+
+.dash-achievements__badge svg {
+  width: 36px;
+  height: 36px;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--color-primary-light, var(--primary-pale, #FFFBEB));
+  color: var(--color-primary, var(--primary, #E8A317));
+}
+
+.dash-achievements__badge-name {
+  font-family: var(--font-body);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-secondary, var(--text-secondary));
+  text-align: center;
+  line-height: 1.2;
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-achievements__empty {
+  font-family: var(--font-body);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text-muted, var(--text-muted));
+  margin: 0;
+}
+
+/* ==========================================================================
+   CLASSROOM
+   ========================================================================== */
+.dash-classroom {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-subtle, var(--bg-soft, #F5F5F4));
+  border: 1px solid var(--color-border-subtle, var(--border-light, #eee));
+  border-radius: var(--radius-xl, 16px);
+  flex-wrap: wrap;
+}
+
+.dash-classroom__icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-secondary-light, var(--secondary-pale, #E8F5F1));
+  color: var(--color-secondary, var(--secondary, #0D5C4D));
+  flex-shrink: 0;
+}
+
+.dash-classroom__label {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-semibold, 600);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text, var(--text-primary));
+}
+
+.dash-classroom__form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.dash-classroom__input {
+  width: 90px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border, var(--border, #E5E5E5));
+  border-radius: var(--radius-md, 8px);
+  font-family: var(--font-body);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--weight-bold, 700);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-text, var(--text-primary));
+  background: var(--color-bg-card, #fff);
+}
+
+.dash-classroom__input:focus {
+  outline: none;
+  border-color: var(--color-primary, var(--primary));
+  box-shadow: 0 0 0 3px var(--color-primary-light, rgba(232, 163, 23, 0.15));
+}
+
+.dash-classroom__input::placeholder {
+  color: var(--color-text-muted, var(--text-muted));
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.dash-classroom__btn {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-secondary, var(--secondary, #0D5C4D));
+  color: var(--color-text-inverse, #fff);
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-sm, 0.875rem);
+  cursor: pointer;
+  transition: background var(--transition-fast, 150ms ease);
+  white-space: nowrap;
+}
+
+.dash-classroom__btn:hover:not(:disabled) {
+  background: var(--color-secondary-hover, #15574A);
+}
+
+.dash-classroom__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dash-classroom__error {
+  width: 100%;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-error, var(--error, #EF4444));
+  padding-left: var(--space-12, 48px);
+}
+
+/* Joined state */
+.dash-classroom--joined {
+  background: var(--color-success-light, #F0FDF4);
+  border-color: rgba(34, 197, 94, 0.2);
+  color: var(--color-secondary, var(--secondary, #0D5C4D));
+}
+
+.dash-classroom__name {
+  font-family: var(--font-heading, var(--font-display));
+  font-weight: var(--weight-semibold, 600);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-secondary, var(--secondary, #0D5C4D));
+}
+
+.dash-classroom__check {
+  margin-left: auto;
+  color: var(--color-success, #22C55E);
+}
+
+/* ==========================================================================
+   ADMIN LINK
+   ========================================================================== */
+.dash-admin {
+  text-align: center;
+  padding: var(--space-2) 0;
+}
+
+.dash-admin__link {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-muted, var(--text-muted));
+  text-decoration: underline;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast, 150ms ease);
+}
+
+.dash-admin__link:hover {
+  opacity: 1;
 }
 
 /* ==========================================================================
    DARK MODE
    ========================================================================== */
-[data-theme="dark"] .kid-topbar,
-[data-theme="dark"] .kid-achievements {
-  background: var(--bg-card);
+[data-theme="dark"] .dash-topbar,
+[data-theme="dark"] .dash-today,
+[data-theme="dark"] .dash-achievements,
+[data-theme="dark"] .dash-action {
+  background: var(--color-bg-card, var(--bg-card));
+  border-color: var(--color-border, var(--border));
 }
 
-[data-theme="dark"] .kid-topbar-name,
-[data-theme="dark"] .kid-topbar-streak-num,
-[data-theme="dark"] .kid-topbar-xp-num,
-[data-theme="dark"] .kid-quick-label,
-[data-theme="dark"] .kid-daily-card-title,
-[data-theme="dark"] .kid-level-label {
-  color: var(--text-primary);
+[data-theme="dark"] .dash-hero {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.12);
 }
 
-[data-theme="dark"] .kid-quick-btn,
-[data-theme="dark"] .kid-daily-card {
-  opacity: 0.92;
+[data-theme="dark"] .dash-classroom {
+  background: var(--color-bg-subtle, var(--bg-soft));
+  border-color: var(--color-border, var(--border));
+}
+
+[data-theme="dark"] .dash-topbar__stat--streak,
+[data-theme="dark"] .dash-topbar__stat--xp {
+  background: rgba(245, 158, 11, 0.08);
 }
 
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 @media (max-width: 480px) {
-  .kid-dashboard {
-    padding: 8px 12px 24px;
-    gap: 12px;
+  .dash {
+    padding: var(--space-2) var(--space-3) var(--space-6);
+    gap: var(--space-3);
   }
 
-  .kid-hero {
-    min-height: 45vh;
-    padding: 24px 16px 24px;
-    border-radius: 24px;
+  .dash-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-5);
+    min-height: auto;
   }
 
-  .kid-hero-emoji {
-    font-size: 3.5rem;
+  .dash-hero__content {
+    align-items: center;
   }
 
-  .kid-hero-title {
-    font-size: 22px;
+  .dash-hero__play {
+    width: 56px;
+    height: 56px;
   }
 
-  .kid-hero-play {
-    padding: 14px 32px;
-    font-size: 20px;
+  .dash-actions {
+    gap: var(--space-2);
   }
 
-  .kid-quick-actions {
-    gap: 8px;
+  .dash-action {
+    padding: var(--space-3) var(--space-1);
+    min-height: 76px;
   }
 
-  .kid-quick-btn {
-    min-height: 80px;
-    padding: 12px 6px;
-    border-radius: 20px;
+  .dash-action__icon {
+    width: 38px;
+    height: 38px;
   }
 
-  .kid-quick-emoji {
-    font-size: 1.8rem;
+  .dash-action__icon svg {
+    width: 20px;
+    height: 20px;
   }
 
-  .kid-quick-label {
-    font-size: 12px;
+  .dash-action__label {
+    font-size: var(--text-xs, 0.75rem);
   }
 
-  .kid-daily-card {
-    min-width: 120px;
-    padding: 16px 12px;
+  .dash-today {
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
 
-  .kid-topbar-name {
+  .dash-today__challenge {
+    margin-left: 0;
+  }
+
+  .dash-classroom__form {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .dash-classroom__input {
+    flex: 1;
+  }
+
+  .dash-topbar__name {
     max-width: 100px;
-    font-size: 16px;
+    font-size: var(--text-sm, 0.875rem);
   }
 }
 
 @media (min-width: 768px) {
-  .kid-hero {
-    min-height: 55vh;
+  .dash-hero__title {
+    font-size: var(--text-3xl, 1.875rem);
   }
 
-  .kid-hero-title {
-    font-size: 32px;
+  .dash-hero__play {
+    width: 72px;
+    height: 72px;
   }
 
-  .kid-hero-emoji {
-    font-size: 5rem;
+  .dash-hero__play svg {
+    width: 32px;
+    height: 32px;
   }
 }

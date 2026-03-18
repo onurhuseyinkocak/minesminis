@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Languages, LogIn, UserPlus, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Check, LogIn, UserPlus, Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react';
 import { Button, Input, Tabs } from '../components/ui';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -17,8 +17,8 @@ const content = {
     titleJoin: 'Create Account',
     sub: 'Sign in to continue your adventure.',
     subJoin: 'Join MinesMinis and start learning!',
-    tabLogin: 'Login',
-    tabJoin: 'Sign Up',
+    tabLogin: 'Sign In',
+    tabJoin: 'Create Account',
     email: 'Email',
     password: 'Password',
     confirmPassword: 'Confirm Password',
@@ -40,8 +40,10 @@ const content = {
     resetEmailLabel: 'Enter your email',
     sendResetLink: 'Send Reset Link',
     backToLogin: 'Back to login',
-    sideTagline: 'Little Words, Big Worlds',
-    sideSub: 'Premium English education for children ages 1-10',
+    sideTagline: 'English learning that works',
+    featurePhonics: '42 phonics sounds',
+    featureMethod: 'Research-backed method',
+    featureFree: 'Free to start',
   },
   tr: {
     title: 'Tekrar Hosgeldin',
@@ -71,8 +73,10 @@ const content = {
     resetEmailLabel: 'E-posta adresinizi girin',
     sendResetLink: 'Sifirlama Linki Gonder',
     backToLogin: 'Girise don',
-    sideTagline: 'Kucuk Kelimeler, Buyuk Dunyalar',
-    sideSub: '1-10 yas arasi cocuklar icin premium Ingilizce egitimi',
+    sideTagline: 'Ise yarayan Ingilizce egitimi',
+    featurePhonics: '42 fonetik ses',
+    featureMethod: 'Arastirmaya dayali yontem',
+    featureFree: 'Ucretsiz baslangic',
   },
 };
 
@@ -181,8 +185,14 @@ const Login: React.FC = () => {
 
   const activeTab = isLogin ? 'login' : 'signup';
   const tabs = [
-    { id: 'login', label: t.tabLogin, icon: <LogIn size={16} /> },
-    { id: 'signup', label: t.tabJoin, icon: <UserPlus size={16} /> },
+    { id: 'login', label: t.tabLogin },
+    { id: 'signup', label: t.tabJoin },
+  ];
+
+  const features = [
+    t.featurePhonics,
+    t.featureMethod,
+    t.featureFree,
   ];
 
   return (
@@ -195,8 +205,8 @@ const Login: React.FC = () => {
 
       {/* Language toggle */}
       <div className="login-lang-toggle">
-        <Languages size={16} />
         <button className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
+        <span className="login-lang-divider" />
         <button className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
       </div>
 
@@ -208,16 +218,19 @@ const Login: React.FC = () => {
       >
         {/* Side Panel */}
         <div className="login-side">
-          <motion.div
-            className="login-side-mimi"
-            animate={{ y: [0, -6, 0] }}
-            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-          >
-            🐉
-          </motion.div>
-          <div>
+          <div className="login-side-content">
             <h1 className="login-side-brand">MinesMinis</h1>
-            <p className="login-side-tagline">{t.sideTagline}<br />{t.sideSub}</p>
+            <p className="login-side-tagline">{t.sideTagline}</p>
+            <ul className="login-side-features">
+              {features.map((feat, i) => (
+                <li key={i} className="login-side-feature">
+                  <span className="login-side-feature-icon">
+                    <Check size={16} />
+                  </span>
+                  <span>{feat}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
@@ -246,7 +259,7 @@ const Login: React.FC = () => {
                 setIsLogin(id === 'login');
                 setError('');
               }}
-              variant="pill"
+              variant="underline"
             />
           </div>
 
@@ -337,7 +350,12 @@ const Login: React.FC = () => {
               </>
             )}
 
-            {error && <div className="login-error">{error}</div>}
+            {error && (
+              <div className="login-error">
+                <AlertCircle size={16} className="login-error-icon" />
+                <span>{error}</span>
+              </div>
+            )}
 
             <Button
               type="submit"

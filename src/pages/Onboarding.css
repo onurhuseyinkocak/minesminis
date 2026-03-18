@@ -1,6 +1,6 @@
 /* ==========================================================================
-   ONBOARDING PAGE — LibreUIUX Methodology
-   Multi-path onboarding: Student, Teacher, Parent. ZERO hex. All var() tokens.
+   ONBOARDING PAGE — Premium Wizard
+   Clean step-by-step wizard with Lucide icons. ZERO hex. All var() tokens.
    ========================================================================== */
 
 /* ---- PAGE ---- */
@@ -16,7 +16,7 @@
 /* ---- MAIN CARD ---- */
 .onboarding-card {
   width: 100%;
-  max-width: 620px;
+  max-width: 640px;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
@@ -27,7 +27,7 @@
 }
 
 /* ==========================================================================
-   PROGRESS BAR
+   PROGRESS BAR (segmented dots with connecting lines)
    ========================================================================== */
 .onboarding-progress {
   display: flex;
@@ -95,10 +95,21 @@
   min-height: 340px;
 }
 
-.onboarding-step-emoji {
-  font-size: 2.5rem;
-  line-height: 1;
+.onboarding-step-icon-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  background: var(--primary-pale);
+  color: var(--primary-dark);
   margin-bottom: var(--space-xs);
+}
+
+.onboarding-step-icon-large.onboarding-step-icon-success {
+  background: var(--success-pale, var(--primary-pale));
+  color: var(--success, var(--primary));
 }
 
 .onboarding-step h2 {
@@ -118,31 +129,35 @@
   margin-bottom: var(--space-sm);
 }
 
+.onboarding-step-sub-large {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
 /* ==========================================================================
-   ROLE SELECTION (Step 1)
+   ROLE SELECTION (Step 1) — Vertical cards on mobile, horizontal on desktop
    ========================================================================== */
 .onboarding-role-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: var(--space-md);
   width: 100%;
-  max-width: 520px;
+  max-width: 480px;
   margin: var(--space-md) 0;
 }
 
 .onboarding-role-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-lg) var(--space-md);
-  min-height: 160px;
-  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-lg);
   background: var(--bg-card);
   border: 2px solid var(--border-light);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 200ms ease-out;
+  text-align: left;
 }
 
 .onboarding-role-card:hover {
@@ -156,9 +171,21 @@
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-.onboarding-role-emoji {
-  font-size: 2.5rem;
-  line-height: 1;
+.onboarding-role-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+  transition: all 200ms ease-out;
+}
+
+.onboarding-role-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .onboarding-role-title {
@@ -171,13 +198,20 @@
 
 .onboarding-role-subtitle {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.4;
 }
 
+.onboarding-role-detail {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 /* ==========================================================================
-   AGE CARDS
+   AGE CARDS — Clean cards with Lucide icons
    ========================================================================== */
 .onboarding-age-grid {
   display: grid;
@@ -192,7 +226,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
   padding: var(--space-lg) var(--space-md);
   min-height: 120px;
   justify-content: center;
@@ -214,15 +248,27 @@
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-.onboarding-age-emoji {
-  font-size: 2rem;
-  line-height: 1;
+.onboarding-age-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+  color: var(--primary);
+  transition: all 200ms ease-out;
+}
+
+.onboarding-age-card.selected .onboarding-age-icon-wrap {
+  background: var(--primary);
+  color: var(--text-on-primary);
 }
 
 .onboarding-age-range {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1rem;
   color: var(--text-primary);
   line-height: 1.2;
 }
@@ -234,7 +280,7 @@
 }
 
 /* ==========================================================================
-   PLACEMENT TEST
+   PLACEMENT TEST — Clean option buttons
    ========================================================================== */
 .onboarding-placement-progress {
   display: flex;
@@ -264,14 +310,14 @@
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   margin: var(--space-md) 0;
 }
 
 .onboarding-placement-option {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
   background: var(--bg-card);
   border: 2px solid var(--border-light);
@@ -282,6 +328,7 @@
   font-size: 1rem;
   color: var(--text-primary);
   transition: all 200ms ease-out;
+  text-align: left;
 }
 
 .onboarding-placement-option:hover {
@@ -293,6 +340,24 @@
   border-color: var(--primary);
   background: var(--primary-pale);
   box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.onboarding-placement-option-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  flex-shrink: 0;
+  transition: all 200ms ease-out;
+  color: var(--text-on-primary);
+}
+
+.onboarding-placement-option.selected .onboarding-placement-option-indicator {
+  background: var(--primary);
+  border-color: var(--primary);
 }
 
 .onboarding-question-counter {
@@ -341,7 +406,7 @@
 }
 
 /* ==========================================================================
-   MIMI INTRO
+   MIMI INTRO — Clean card style
    ========================================================================== */
 .onboarding-mimi-intro {
   display: flex;
@@ -377,6 +442,9 @@
 }
 
 .onboarding-mimi-fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 0.75rem;
@@ -420,9 +488,20 @@
 }
 
 .onboarding-path-unit-icon {
-  font-size: 1.5rem;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
   flex-shrink: 0;
+}
+
+.onboarding-path-unit.current .onboarding-path-unit-icon {
+  background: var(--primary);
+  color: var(--text-on-primary);
 }
 
 .onboarding-path-unit-info {
@@ -526,6 +605,9 @@
 }
 
 .onboarding-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: var(--space-xs) var(--space-md);
   font-family: var(--font-display);
   font-weight: 600;
@@ -619,6 +701,24 @@
   gap: var(--space-sm);
 }
 
+.onboarding-phonics-item-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  flex-shrink: 0;
+  transition: all 200ms ease-out;
+  color: var(--text-on-primary);
+}
+
+.onboarding-phonics-item.selected .onboarding-phonics-item-check {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
 .onboarding-phonics-item-header strong {
   font-family: var(--font-display);
   font-weight: 700;
@@ -647,10 +747,11 @@
   font-family: var(--font-body);
   font-size: 0.75rem;
   color: var(--text-muted);
+  padding-left: 30px;
 }
 
 /* ==========================================================================
-   PARENT — CHILDREN LIST
+   PARENT -- CHILDREN LIST (colored initials instead of emoji)
    ========================================================================== */
 .onboarding-children-list {
   display: flex;
@@ -706,10 +807,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
   width: 40px;
   height: 40px;
-  background: var(--bg-card);
   border: 2px solid var(--border-light);
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -722,7 +824,6 @@
 
 .onboarding-child-avatar-btn.selected {
   border-color: var(--primary);
-  background: var(--primary-pale);
   box-shadow: 0 0 0 2px var(--primary-glow);
 }
 
@@ -747,7 +848,7 @@
 }
 
 /* ==========================================================================
-   PARENT — PREFERENCES
+   PARENT -- PREFERENCES
    ========================================================================== */
 .onboarding-slider {
   width: 100%;
@@ -807,6 +908,10 @@
 }
 
 .onboarding-ready-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.1rem;
@@ -880,6 +985,10 @@
   background: var(--bg-elevated);
 }
 
+[data-theme="dark"] .onboarding-step-icon-large {
+  background: var(--bg-elevated);
+}
+
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
@@ -895,15 +1004,11 @@
   }
 
   .onboarding-role-grid {
-    grid-template-columns: 1fr;
     gap: var(--space-sm);
   }
 
   .onboarding-role-card {
-    flex-direction: row;
-    min-height: auto;
     padding: var(--space-md);
-    text-align: left;
   }
 
   .onboarding-age-grid {

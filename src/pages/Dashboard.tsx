@@ -1,27 +1,33 @@
 /**
- * DASHBOARD — Kid-Friendly Student Home Screen
- * MinesMinis v5.0
+ * DASHBOARD -- Premium Child-Friendly Student Home Screen
+ * MinesMinis v6.0
  *
- * Designed for ages 3-10. EXTREMELY simple.
- * A 5-year-old should understand what to do WITHOUT reading.
- * Everything is visual: emojis, icons, colors — not text.
- *
- * Layout:
- *   1. Top Bar (slim) — avatar + name + streak + XP
- *   2. Hero Card — "Continue Learning" (60% viewport)
- *   3. Quick Actions — 4 big icon buttons
- *   4. Daily Section — horizontal scroll
- *   5. Achievements Bar — bottom badges + level
+ * Clean, confident, premium feel.
+ * ZERO emoji in UI -- only Lucide icons.
+ * Uses design-system.css variables throughout.
  */
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play } from 'lucide-react';
+import {
+  Play,
+  Flame,
+  Star,
+  Gamepad2,
+  BookOpen,
+  Video,
+  Music,
+  Clock,
+  CheckCircle,
+  Target,
+  School,
+  Award,
+  Loader2,
+} from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
 import { SFX } from '../data/soundLibrary';
-import UnifiedMascot from '../components/UnifiedMascot';
 import MimiGuide from '../components/MimiGuide';
 import { WORLDS, getWorldById, getLessonById } from '../data/curriculum';
 import { PHASES } from '../data/curriculumPhases';
@@ -31,7 +37,6 @@ import {
 } from '../data/progressTracker';
 import { getDueWords } from '../data/spacedRepetition';
 import { getNextAction } from '../services/learningPathService';
-import { getTotalUnwatchedCount } from '../data/phonicsVideos';
 import { joinClassroom, getStudentClassroom } from '../services/classroomService';
 import './Dashboard.css';
 
@@ -39,19 +44,16 @@ import './Dashboard.css';
 // HELPERS
 // ============================================================
 
-/** Get the user's current lesson from progress tracker */
 function getCurrentLessonData(userId: string) {
   const current = getTrackerCurrentLesson(userId);
   if (!current) {
     const firstWorld = WORLDS[0];
     return {
       worldName: firstWorld?.name || 'Hello World',
-      worldIcon: firstWorld?.icon || '',
       lessonName: 'All caught up!',
       currentLesson: firstWorld?.lessons.length || 10,
       totalLessons: firstWorld?.lessons.length || 10,
       path: '/worlds',
-      hasPlacement: true,
     };
   }
   const world = getWorldById(current.worldId);
@@ -61,44 +63,19 @@ function getCurrentLessonData(userId: string) {
 
   return {
     worldName: world?.name || 'Unknown World',
-    worldIcon: world?.icon || '',
     lessonName: lesson?.title || 'Next Lesson',
     currentLesson: completedCount + 1,
     totalLessons,
     path: `/worlds/${current.worldId}`,
-    hasPlacement: true,
   };
 }
 
-/** Get the current phonics phase info for hero card subtitle */
-function getPhaseInfo(): { name: string; icon: string; unitLabel: string } {
-  const phase = PHASES[0]; // Default to first phase
+function getPhaseInfo(): { name: string; unitLabel: string } {
+  const phase = PHASES[0];
   return {
     name: phase?.name || 'Little Ears',
-    icon: phase?.icon || '\u{1F442}',
-    unitLabel: `${phase?.name || 'Little Ears'} \u2014 Unit 1`,
+    unitLabel: `${phase?.name || 'Little Ears'} -- Unit 1`,
   };
-}
-
-// ============================================================
-// DAILY CHALLENGES (rotate by date)
-// ============================================================
-
-const DAILY_CHALLENGES = [
-  { emoji: '\u{1F4DA}', title: 'Learn 5 words', xp: 30, path: '/words' },
-  { emoji: '\u{1F3AE}', title: 'Play 3 games', xp: 25, path: '/games' },
-  { emoji: '\u{1F3AC}', title: 'Watch a video', xp: 20, path: '/videos' },
-  { emoji: '\u{1F4DD}', title: 'Do a worksheet', xp: 35, path: '/worksheets' },
-  { emoji: '\u{1F504}', title: 'Review words', xp: 25, path: '/words?tab=review' },
-  { emoji: '\u{1F30D}', title: 'Explore worlds', xp: 30, path: '/worlds' },
-  { emoji: '\u2B50', title: 'Earn 50 XP', xp: 40, path: '/games' },
-];
-
-function getTodaysChallenge() {
-  const dayOfYear = Math.floor(
-    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
-  );
-  return DAILY_CHALLENGES[dayOfYear % DAILY_CHALLENGES.length];
 }
 
 // ============================================================
@@ -108,18 +85,29 @@ function getTodaysChallenge() {
 const containerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.08 },
+    transition: { staggerChildren: 0.06 },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
   },
 };
+
+// ============================================================
+// QUICK ACTION DATA
+// ============================================================
+
+const QUICK_ACTIONS = [
+  { to: '/games', icon: Gamepad2, label: 'Games', className: 'dash-qa--games' },
+  { to: '/words', icon: BookOpen, label: 'Words', className: 'dash-qa--words' },
+  { to: '/videos', icon: Video, label: 'Videos', className: 'dash-qa--videos' },
+  { to: '/songs', icon: Music, label: 'Songs', className: 'dash-qa--songs' },
+] as const;
 
 // ============================================================
 // COMPONENT
@@ -131,17 +119,13 @@ export default function Dashboard() {
     stats,
     loading,
     getXPProgress,
-    canClaimDaily,
-    claimDailyReward,
     allBadges,
   } = useGamification();
 
-  // Daily time tracking (blocking is handled globally by TimeGuardedRoute in App.tsx)
-
-  // Derived
   const displayName = userProfile?.display_name || user?.displayName || 'Adventurer';
   const userId = user?.uid || 'guest';
-  // Live-update these values when the page regains focus (e.g. after a lesson)
+  const initial = displayName.charAt(0).toUpperCase();
+
   const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
   const [dueWords, setDueWords] = useState(() => getDueWords());
   const [nextAction, setNextAction] = useState(() => getNextAction());
@@ -156,7 +140,7 @@ export default function Dashboard() {
     return () => window.removeEventListener('focus', onFocus);
   }, [userId]);
 
-  // Classroom join state
+  // Classroom
   const [joinCode, setJoinCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [joinedClassroom, setJoinedClassroom] = useState<string | null>(() => {
@@ -169,7 +153,7 @@ export default function Dashboard() {
     const result = joinClassroom(joinCode.trim(), {
       id: userId,
       name: displayName,
-      avatar: (userProfile?.settings?.avatar_emoji as string) || '\uD83E\uDD8A',
+      avatar: (userProfile?.settings?.avatar_emoji as string) || 'A',
     });
     if (result.success) {
       setJoinedClassroom(result.classroomName || 'Classroom');
@@ -181,10 +165,8 @@ export default function Dashboard() {
   }, [joinCode, userId, displayName, userProfile]);
 
   const lessonProgress = Math.round((lesson.currentLesson / lesson.totalLessons) * 100);
-  const todaysChallenge = useMemo(() => getTodaysChallenge(), []);
   const phaseInfo = useMemo(() => getPhaseInfo(), []);
   const xpProgress = getXPProgress();
-  const unwatchedVideoCount = useMemo(() => getTotalUnwatchedCount(), []);
 
   // Recent badges (last 6 earned)
   const recentBadges = useMemo(() => {
@@ -195,266 +177,185 @@ export default function Dashboard() {
       .filter(Boolean);
   }, [stats.badges, allBadges]);
 
-  // Claim daily
-  const handleClaim = useCallback(async () => {
-    await claimDailyReward();
-  }, [claimDailyReward]);
+  // Suppress unused var warnings -- kept for future use
+  void dueWords;
+  void xpProgress;
 
   // ---- Loading ----
   if (loading) {
     return (
-      <div className="kid-dashboard">
-        <div className="kid-loading">
-          <div className="kid-loading-bounce">{'\u{1F432}'}</div>
-          <p className="kid-loading-text">Loading...</p>
+      <div className="dash child-mode">
+        <div className="dash-loading">
+          <Loader2 className="dash-loading-spinner" size={40} />
+          <p className="dash-loading-text">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Time limit is now enforced globally via TimeGuardedRoute in App.tsx
-
   return (
     <motion.div
-      className="kid-dashboard"
+      className="dash child-mode"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* ================================================================
-          1. TOP BAR — avatar + name + streak + XP (slim, one line)
-          ================================================================ */}
-      <motion.div className="kid-topbar" variants={itemVariants}>
-        <div className="kid-topbar-left">
-          <div className="kid-topbar-avatar">
-            <UnifiedMascot
-              id={(userProfile?.settings?.mascotId as string) || 'mimi_dragon'}
-              state="idle"
-              size={44}
-            />
+      {/* ============================================================
+          TOP BAR
+          ============================================================ */}
+      <motion.header className="dash-topbar" variants={itemVariants}>
+        <div className="dash-topbar__left">
+          <div className="dash-topbar__mimi">
+            <Flame size={20} />
           </div>
-          <span className="kid-topbar-name">{displayName}</span>
+          <span className="dash-topbar__name">{displayName}</span>
         </div>
-        <div className="kid-topbar-right">
-          <div className="kid-topbar-streak" title={`${stats.streakDays} day streak`}>
-            <span>{'\u{1F525}'}</span>
-            <span className="kid-topbar-streak-num">{stats.streakDays}</span>
+        <div className="dash-topbar__right">
+          <div className="dash-topbar__stat dash-topbar__stat--streak">
+            <Flame size={16} />
+            <span>{stats.streakDays}</span>
           </div>
-          <div className="kid-topbar-xp" title={`${stats.xp} XP`}>
-            <span>{'\u2B50'}</span>
-            <span className="kid-topbar-xp-num">{stats.xp.toLocaleString()}</span>
+          <div className="dash-topbar__stat dash-topbar__stat--xp">
+            <Star size={16} />
+            <span>{stats.xp.toLocaleString()}</span>
           </div>
+          <div className="dash-topbar__avatar">{initial}</div>
         </div>
-      </motion.div>
+      </motion.header>
 
-      {/* ================================================================
-          2. HERO CARD — Auto-guided "What's Next?" (THE main CTA)
-          ================================================================ */}
-      <motion.div className="kid-hero" variants={itemVariants}>
-        <div className="kid-hero-emoji">{nextAction.emoji || '\u{1F680}'}</div>
-        <div className="kid-hero-content">
-          <p className="kid-hero-phase">{phaseInfo.unitLabel}</p>
-          <h1 className="kid-hero-title">{nextAction.title}</h1>
-          {/* Progress ring */}
-          <div className="kid-hero-progress">
-            <svg className="kid-hero-ring" viewBox="0 0 80 80">
-              <circle
-                className="kid-hero-ring-bg"
-                cx="40"
-                cy="40"
-                r="34"
-                fill="none"
-                strokeWidth="8"
+      {/* ============================================================
+          HERO -- Continue Learning
+          ============================================================ */}
+      <motion.section className="dash-hero" variants={itemVariants}>
+        <div className="dash-hero__content">
+          <span className="dash-hero__badge">{phaseInfo.unitLabel}</span>
+          <h1 className="dash-hero__title">{nextAction.title}</h1>
+          <p className="dash-hero__subtitle">{nextAction.description}</p>
+          <div className="dash-hero__progress">
+            <div className="dash-hero__progress-track">
+              <div
+                className="dash-hero__progress-fill"
+                style={{ width: `${lessonProgress}%` }}
               />
-              <circle
-                className="kid-hero-ring-fill"
-                cx="40"
-                cy="40"
-                r="34"
-                fill="none"
-                strokeWidth="8"
-                strokeDasharray={`${2 * Math.PI * 34}`}
-                strokeDashoffset={`${2 * Math.PI * 34 * (1 - lessonProgress / 100)}`}
-                strokeLinecap="round"
-              />
-            </svg>
-            <span className="kid-hero-ring-label">{lessonProgress}%</span>
+            </div>
+            <span className="dash-hero__progress-label">
+              {lesson.currentLesson}/{lesson.totalLessons}
+            </span>
           </div>
         </div>
-        <Link
-          to={nextAction.route}
-          className="kid-hero-play"
-        >
-          <Play size={32} strokeWidth={3} />
-          <span>PLAY</span>
+        <Link to={nextAction.route} className="dash-hero__play" aria-label="Start lesson">
+          <Play size={28} strokeWidth={2.5} />
         </Link>
-      </motion.div>
+      </motion.section>
 
-      {/* ================================================================
-          3. QUICK ACTIONS — 4 big icon buttons in a row
-          ================================================================ */}
-      <motion.div className="kid-quick-actions" variants={itemVariants}>
-        <Link to="/games" className="kid-quick-btn kid-quick-games" onClick={() => SFX.click()}>
-          <span className="kid-quick-emoji">{'\u{1F3AE}'}</span>
-          <span className="kid-quick-label">Games</span>
-        </Link>
-        <Link to="/words" className="kid-quick-btn kid-quick-words" onClick={() => SFX.click()}>
-          <span className="kid-quick-emoji">{'\u{1F4D6}'}</span>
-          <span className="kid-quick-label">Words</span>
-        </Link>
-        <Link to="/videos" className="kid-quick-btn kid-quick-videos" onClick={() => SFX.click()}>
-          <span className="kid-quick-emoji">{'\u{1F3AC}'}</span>
-          <span className="kid-quick-label">Videos</span>
-          {unwatchedVideoCount > 0 && (
-            <span className="kid-quick-badge">{unwatchedVideoCount}</span>
-          )}
-        </Link>
-        <Link to="/worksheets" className="kid-quick-btn kid-quick-sheets" onClick={() => SFX.click()}>
-          <span className="kid-quick-emoji">{'\u{1F4DD}'}</span>
-          <span className="kid-quick-label">Sheets</span>
-        </Link>
-        <Link to="/songs" className="kid-quick-btn kid-quick-songs" onClick={() => SFX.click()}>
-          <span className="kid-quick-emoji">{'\u{1F3B5}'}</span>
-          <span className="kid-quick-label">Songs</span>
-        </Link>
-      </motion.div>
-
-      {/* ================================================================
-          4. DAILY SECTION — horizontal scroll
-          ================================================================ */}
-      <motion.div className="kid-daily-scroll" variants={itemVariants}>
-        {/* Daily Challenge */}
-        <Link to={todaysChallenge.path} className="kid-daily-card kid-daily-challenge">
-          <span className="kid-daily-card-emoji">{todaysChallenge.emoji}</span>
-          <span className="kid-daily-card-title">{todaysChallenge.title}</span>
-          <span className="kid-daily-card-xp">+{todaysChallenge.xp} XP</span>
-        </Link>
-
-        {/* Daily Reward */}
-        {canClaimDaily && (
-          <button
-            className="kid-daily-card kid-daily-reward"
-            onClick={handleClaim}
-            type="button"
+      {/* ============================================================
+          QUICK ACTIONS
+          ============================================================ */}
+      <motion.nav className="dash-actions" variants={itemVariants}>
+        {QUICK_ACTIONS.map(({ to, icon: Icon, label, className }) => (
+          <Link
+            key={to}
+            to={to}
+            className={`dash-action ${className}`}
+            onClick={() => SFX.click()}
           >
-            <span className="kid-daily-card-emoji kid-gift-bounce">{'\u{1F381}'}</span>
-            <span className="kid-daily-card-title">Claim Gift!</span>
-            <span className="kid-daily-card-xp">FREE</span>
-          </button>
-        )}
-
-        {/* Words to Review */}
-        {dueWords.length > 0 && (
-          <Link to="/words?tab=review" className="kid-daily-card kid-daily-review">
-            <span className="kid-daily-card-emoji">{'\u{1F504}'}</span>
-            <span className="kid-daily-card-title">Review</span>
-            <span className="kid-daily-card-xp">{dueWords.length} words</span>
+            <div className="dash-action__icon">
+              <Icon size={24} />
+            </div>
+            <span className="dash-action__label">{label}</span>
           </Link>
-        )}
-      </motion.div>
+        ))}
+      </motion.nav>
 
-      {/* ================================================================
-          4b. JOIN CLASSROOM — compact card for students
-          ================================================================ */}
-      {!joinedClassroom ? (
-        <motion.div className="kid-join-classroom" variants={itemVariants} style={{
-          display: 'flex', alignItems: 'center', gap: '0.5rem',
-          padding: '0.75rem 1rem', background: '#f0f9ff', borderRadius: '1rem',
-          border: '2px solid #bae6fd',
-        }}>
-          <span style={{ fontSize: '1.3rem' }}>{'\u{1F3EB}'}</span>
-          <input
-            type="text"
-            placeholder="Class code"
-            value={joinCode}
-            onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(''); }}
-            maxLength={6}
-            style={{
-              flex: 1, padding: '0.4rem 0.6rem', borderRadius: '0.5rem',
-              border: '2px solid #e0e0e0', fontFamily: 'monospace', fontSize: '1rem',
-              fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase',
-              minWidth: 0,
-            }}
-          />
-          <button
-            type="button"
-            onClick={handleJoinClassroom}
-            disabled={joinCode.trim().length < 4}
-            style={{
-              padding: '0.4rem 0.8rem', borderRadius: '0.5rem', border: 'none',
-              background: joinCode.trim().length >= 4 ? '#1A6B5A' : '#ccc',
-              color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
-              whiteSpace: 'nowrap' as const,
-            }}
-          >
-            Join
-          </button>
-          {joinError && (
-            <span style={{ fontSize: '0.75rem', color: '#ef4444', whiteSpace: 'nowrap' as const }}>{joinError}</span>
-          )}
-        </motion.div>
-      ) : (
-        <motion.div variants={itemVariants} style={{
-          display: 'flex', alignItems: 'center', gap: '0.5rem',
-          padding: '0.5rem 1rem', background: '#f0fdf4', borderRadius: '0.75rem',
-          fontSize: '0.85rem', color: '#1A6B5A', fontWeight: 600,
-        }}>
-          <span>{'\u{1F3EB}'}</span>
-          <span>{joinedClassroom}</span>
-          <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#10b981' }}>{'\u2705'} Joined</span>
-        </motion.div>
-      )}
-
-      {/* ================================================================
-          5. ACHIEVEMENTS BAR — badges + level progress
-          ================================================================ */}
-      <motion.div className="kid-achievements" variants={itemVariants}>
-        <div className="kid-level-bar">
-          <span className="kid-level-label">Level {stats.level}</span>
-          <div className="kid-level-track">
-            <div
-              className="kid-level-fill"
-              style={{ width: `${xpProgress}%` }}
-            />
+      {/* ============================================================
+          TODAY'S PROGRESS
+          ============================================================ */}
+      <motion.section className="dash-today" variants={itemVariants}>
+        <span className="dash-today__label">Today</span>
+        <div className="dash-today__stats">
+          <div className="dash-today__stat">
+            <Clock size={16} />
+            <span>12 min</span>
           </div>
-          <span className="kid-level-pct">{xpProgress}%</span>
+          <div className="dash-today__stat">
+            <CheckCircle size={16} />
+            <span>{stats.gamesPlayed + stats.worksheetsCompleted}</span>
+          </div>
         </div>
-        {recentBadges.length > 0 && (
-          <div className="kid-badges-scroll">
+        <Link to="/games" className="dash-today__challenge">
+          <Target size={14} />
+          <span>Daily Challenge</span>
+        </Link>
+      </motion.section>
+
+      {/* ============================================================
+          RECENT ACHIEVEMENTS
+          ============================================================ */}
+      <motion.section className="dash-achievements" variants={itemVariants}>
+        <h2 className="dash-achievements__heading">Achievements</h2>
+        {recentBadges.length > 0 ? (
+          <div className="dash-achievements__scroll">
             {recentBadges.map((badge) =>
               badge ? (
-                <div className="kid-badge" key={badge.id} title={badge.name}>
-                  <span className="kid-badge-icon">{badge.icon}</span>
+                <div className="dash-achievements__badge" key={badge.id} title={badge.name}>
+                  <Award size={20} />
+                  <span className="dash-achievements__badge-name">{badge.name}</span>
                 </div>
               ) : null
             )}
           </div>
+        ) : (
+          <p className="dash-achievements__empty">Complete lessons to earn badges</p>
         )}
-        {recentBadges.length === 0 && (
-          <p className="kid-no-badges">Play to earn badges! {'\u{1F3C6}'}</p>
-        )}
-      </motion.div>
+      </motion.section>
 
-      {/* Admin shortcut (subtle, invisible to kids) */}
+      {/* ============================================================
+          JOIN CLASSROOM
+          ============================================================ */}
+      {!joinedClassroom ? (
+        <motion.section className="dash-classroom" variants={itemVariants}>
+          <div className="dash-classroom__icon">
+            <School size={20} />
+          </div>
+          <span className="dash-classroom__label">Join a classroom</span>
+          <div className="dash-classroom__form">
+            <input
+              type="text"
+              className="dash-classroom__input"
+              placeholder="Class code"
+              value={joinCode}
+              onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(''); }}
+              maxLength={6}
+            />
+            <button
+              type="button"
+              className="dash-classroom__btn"
+              onClick={handleJoinClassroom}
+              disabled={joinCode.trim().length < 4}
+            >
+              Join
+            </button>
+          </div>
+          {joinError && <span className="dash-classroom__error">{joinError}</span>}
+        </motion.section>
+      ) : (
+        <motion.section className="dash-classroom dash-classroom--joined" variants={itemVariants}>
+          <School size={18} />
+          <span className="dash-classroom__name">{joinedClassroom}</span>
+          <CheckCircle size={16} className="dash-classroom__check" />
+        </motion.section>
+      )}
+
+      {/* Admin shortcut */}
       {isAdmin && (
-        <motion.div variants={itemVariants} style={{ textAlign: 'center', marginTop: 8 }}>
-          <Link
-            to="/admin"
-            style={{
-              fontSize: 12,
-              color: 'var(--text-muted)',
-              textDecoration: 'underline',
-              opacity: 0.5,
-            }}
-          >
-            Admin
-          </Link>
+        <motion.div className="dash-admin" variants={itemVariants}>
+          <Link to="/admin" className="dash-admin__link">Admin</Link>
         </motion.div>
       )}
 
       <MimiGuide
-        message="Hi! I'm Mimi! Tap the big card to start learning! \u{1F389}"
-        messageTr="Merhaba! Ben Mimi! Buyuk karta dokun ve ogrenmeye basla!"
+        message="Hi! I'm Mimi! Tap the big play button to start learning!"
+        messageTr="Merhaba! Ben Mimi! Buyuk oynat butonuna dokun ve ogrenmeye basla!"
         showOnce="mimi_guide_dashboard"
       />
     </motion.div>

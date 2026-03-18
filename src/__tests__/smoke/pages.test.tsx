@@ -178,10 +178,22 @@ vi.mock('../../data/videoStore', () => ({
   },
 }));
 
+vi.mock('../../services/mascotRoaming', () => ({
+  mascotRoaming: {
+    getCurrentState: () => ({ position: { x: 50, y: 50 }, state: 'idle', bubble: null }),
+    onChange: () => vi.fn(),
+    startRoaming: vi.fn(),
+    stopRoaming: vi.fn(),
+    updateMousePosition: vi.fn(),
+    triggerCelebration: vi.fn(),
+    onHover: vi.fn(),
+  },
+}));
+
 vi.mock('framer-motion', () => ({
   motion: new Proxy({}, {
     get: (_target, prop) => {
-      if (prop === 'div' || prop === 'button' || prop === 'h1' || prop === 'h2' || prop === 'p' || prop === 'span' || prop === 'section' || prop === 'a' || prop === 'form' || prop === 'li' || prop === 'ul' || prop === 'nav' || prop === 'img' || prop === 'input' || prop === 'textarea') {
+      if (prop === 'div' || prop === 'button' || prop === 'h1' || prop === 'h2' || prop === 'p' || prop === 'span' || prop === 'section' || prop === 'a' || prop === 'form' || prop === 'li' || prop === 'ul' || prop === 'nav' || prop === 'img' || prop === 'input' || prop === 'textarea' || prop === 'header') {
         return React.forwardRef(({ children, ...props }: any, ref: any) => {
           const filteredProps: Record<string, unknown> = {};
           for (const [key, value] of Object.entries(props)) {
@@ -217,8 +229,7 @@ describe('Page Smoke Tests', () => {
   it('Landing - renders hero title', async () => {
     const { default: Landing } = await import('../../pages/Landing');
     wrap(<Landing />);
-    // default lang is 'en' based on source
-    expect(screen.getByText(/Montessori \+ Phonics English Learning/i)).toBeInTheDocument();
+    expect(screen.getByText('English Learning That Actually Works')).toBeInTheDocument();
   });
 
   it('Login - renders login form', async () => {
@@ -230,7 +241,6 @@ describe('Page Smoke Tests', () => {
   it('Games - renders games content', async () => {
     const { default: Games } = await import('../../pages/Games');
     wrap(<Games />);
-    // ContentPageHeader with title "Games" or Turkish fallback
     expect(document.querySelector('.games, [class*="games"], [class*="Games"]') || document.body.textContent).toBeTruthy();
   });
 
@@ -282,9 +292,9 @@ describe('Page Smoke Tests', () => {
     expect(document.body.textContent).toBeTruthy();
   });
 
-  it('Onboarding - renders step 1 with character selection', async () => {
+  it('Onboarding - renders step 1 with role selection', async () => {
     const { default: Onboarding } = await import('../../pages/Onboarding');
     wrap(<Onboarding />);
-    expect(screen.getByText(/Who are you/i)).toBeInTheDocument();
+    expect(screen.getByText('How will you use MinesMinis?')).toBeInTheDocument();
   });
 });
