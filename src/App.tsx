@@ -75,7 +75,11 @@ const ChatHome = lazy(() => import("./components/ChatHome"));
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch((err) => {
-      console.warn("Service worker registration failed:", err);
+      errorLogger.log({
+        severity: 'low',
+        message: `Service worker registration failed: ${err?.message || err}`,
+        component: 'App',
+      });
     });
   });
 }

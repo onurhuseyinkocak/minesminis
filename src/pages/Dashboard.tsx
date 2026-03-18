@@ -30,6 +30,7 @@ import {
 } from '../data/progressTracker';
 import { getDueWords } from '../data/spacedRepetition';
 import { getNextAction } from '../services/learningPathService';
+import { getTotalUnwatchedCount } from '../data/phonicsVideos';
 import './Dashboard.css';
 
 // ============================================================
@@ -143,6 +144,7 @@ export default function Dashboard() {
   const xpProgress = getXPProgress();
   const dueWords = useMemo(() => getDueWords(), []);
   const nextAction = useMemo(() => getNextAction(), []);
+  const unwatchedVideoCount = useMemo(() => getTotalUnwatchedCount(), []);
 
   // Recent badges (last 6 earned)
   const recentBadges = useMemo(() => {
@@ -261,6 +263,9 @@ export default function Dashboard() {
         <Link to="/videos" className="kid-quick-btn kid-quick-videos">
           <span className="kid-quick-emoji">{'\u{1F3AC}'}</span>
           <span className="kid-quick-label">Videos</span>
+          {unwatchedVideoCount > 0 && (
+            <span className="kid-quick-badge">{unwatchedVideoCount}</span>
+          )}
         </Link>
         <Link to="/worksheets" className="kid-quick-btn kid-quick-sheets">
           <span className="kid-quick-emoji">{'\u{1F4DD}'}</span>

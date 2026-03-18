@@ -11,6 +11,13 @@ import { ALL_SOUNDS, PHONICS_GROUPS } from '../data/phonics';
 import type { PhonicsSound } from '../data/phonics';
 import { getDueWords } from '../data/spacedRepetition';
 import { getBooksForGroup } from '../data/readingLibrary';
+import {
+  LS_PLACEMENT_RESULT,
+  LS_PHONICS_MASTERY,
+  LS_CURRENT_SOUND,
+  LS_DAILY_CHALLENGE_DATE,
+  LS_READ_BOOKS,
+} from '../config/storageKeys';
 
 // ============================================================
 // TYPES
@@ -48,10 +55,6 @@ export interface LearningProgress {
 // CONSTANTS
 // ============================================================
 
-const LS_PLACEMENT_RESULT = 'mimi_placement_result';
-const LS_PHONICS_MASTERY = 'mimi_phonics_mastery';
-const LS_CURRENT_SOUND = 'mimi_current_sound';
-const LS_DAILY_CHALLENGE_DATE = 'mimi_daily_challenge_date';
 const MASTERY_THRESHOLD = 80;
 
 // ============================================================
@@ -348,7 +351,7 @@ export function getNextAction(): NextAction {
     const currentSound = getCurrentPhonicsSound();
     const completedGroup = currentSound?.group ?? 1;
     const availableBooks = getBooksForGroup(completedGroup);
-    const readBooksRaw = localStorage.getItem('mimi_read_books');
+    const readBooksRaw = localStorage.getItem(LS_READ_BOOKS);
     const readBooksMap: Record<string, unknown> = readBooksRaw ? JSON.parse(readBooksRaw) : {};
     const unreadBooks = availableBooks.filter((b) => !readBooksMap[b.id]);
     if (unreadBooks.length > 0) {

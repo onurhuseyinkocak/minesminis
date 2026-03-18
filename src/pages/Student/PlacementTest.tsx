@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, ArrowRight, Sparkles, Star } from 'lucide-react';
 import { Button, Card, ProgressBar } from '../../components/ui';
 import MimiGuide from '../../components/MimiGuide';
+import { LS_PLACEMENT_RESULT } from '../../config/storageKeys';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -197,7 +198,7 @@ function PlacementTest() {
           timestamp: new Date().toISOString(),
         };
         setResult(res);
-        localStorage.setItem('mimi_placement_result', JSON.stringify(res));
+        localStorage.setItem(LS_PLACEMENT_RESULT, JSON.stringify(res));
         setScreen('result');
       }
     }, 2000);

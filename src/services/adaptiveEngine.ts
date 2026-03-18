@@ -1,9 +1,11 @@
 /**
- * ADAPTIVE AI LEARNING ENGINE
+ * ADAPTIVE LEARNING ENGINE
  * MinesMinis v4.0
  *
- * The brain of the platform — tracks everything and adapts in real-time.
- * Inspired by Duolingo's spaced repetition + Khan Academy's mastery learning.
+ * Data-driven adaptive learning engine. Uses statistical analysis of learner
+ * behavior patterns, spaced repetition (Leitner/SM-2 inspired), interleaved
+ * practice (Bjork's desirable difficulties), and confusion pair detection
+ * to optimize phonics instruction for Turkish-speaking children.
  *
  * Mastery = 40% accuracy + 20% speed + 20% consistency + 20% retention
  * Stores everything in localStorage key `mimi_learner_profile_{userId}`.
@@ -59,6 +61,13 @@ export interface LearnerProfile {
   _lastActivityType: string;
   _recentSessionAccuracies: number[]; // last 5 session accuracies
   _weekStartDate: string;
+  // --- NEW: Enhanced tracking ---
+  _recentActivityTypes: string[];     // last 5 activity types for rotation
+  _sessionTimestamps: string[];       // ISO timestamps of last 20 sessions (for time-of-day analysis)
+  _sessionAccuracyByHour: Record<string, { total: number; correct: number; count: number }>;
+  _confusionEvents: ConfusionEvent[]; // last 50 confusion events
+  _sessionStartTime: string;          // current session start (for pacing)
+  _masterySnapshots: MasterySnapshot[]; // last 20 mastery snapshots for plateau detection
 }
 
 export interface ActivityResult {
@@ -68,6 +77,9 @@ export interface ActivityResult {
   responseTimeMs: number;
   totalQuestions: number;
   correctAnswers: number;
+  // --- NEW: For confusion pair tracking ---
+  selectedAnswer?: string;  // what the child picked (when wrong)
+  correctAnswer?: string;   // what the correct answer was
 }
 
 export interface OptimalActivity {
@@ -77,6 +89,9 @@ export interface OptimalActivity {
   wordCount: number;
   timeLimit?: number;
   reason: string;
+  // --- NEW ---
+  interleavedSoundId?: string;  // secondary sound to mix in (interleaving)
+  suggestBreak?: boolean;       // child has been going 15+ minutes
 }
 
 export interface AdaptiveWord {
@@ -109,6 +124,59 @@ export interface LearnerInsight {
   description: string;
   descriptionTr: string;
   icon: string;
+}
+
+// --- NEW TYPES ---
+
+export interface ActivityTypeAnalysis {
+  activityType: string;
+  accuracy: number;          // 0-100
+  totalAttempts: number;
+  averageResponseTimeMs: number;
+  trend: 'improving' | 'declining' | 'stable';
+}
+
+export interface PlateauAlert {
+  soundId: string;
+  grapheme: string;
+  mastery: number;
+  sessionsStuck: number;
+  lastImprovement: string;   // ISO date
+  suggestedActivityType: string;
+  message: string;
+  messageTr: string;
+}
+
+export interface SmartInsight {
+  type: 'pattern' | 'prediction' | 'plateau' | 'strength' | 'suggestion';
+  title: string;
+  titleTr: string;
+  detail: string;
+  detailTr: string;
+  priority: 'high' | 'medium' | 'low';
+  actionRoute?: string;
+}
+
+export interface ConfusionPair {
+  sound1: string;
+  sound2: string;
+  confusionRate: number;     // 0-1, how often child picks wrong one
+  occurrences: number;
+  recommendation: string;
+  recommendationTr: string;
+}
+
+interface ConfusionEvent {
+  timestamp: string;
+  targetSound: string;       // what was correct
+  selectedSound: string;     // what child picked
+  activityType: string;
+}
+
+interface MasterySnapshot {
+  soundId: string;
+  mastery: number;
+  timestamp: string;
 }
 
 // ============================================================
@@ -144,6 +212,36 @@ const MAX_RECENT_ENTRIES = 10;
 
 const MASTERY_STRONG_THRESHOLD = 80;
 const MASTERY_WEAK_THRESHOLD = 40;
+
+/** Known confusion pairs for Turkish-speaking children learning English phonics */
+const KNOWN_CONFUSION_PAIRS: Array<[string, string, string, string]> = [
+  // [sound1, sound2, reason_en, reason_tr]
+  ['b', 'd', 'Mirror letters — visually similar', 'Ayna harfler — gorsel olarak benzer'],
+  ['p', 'b', 'Voicing difference — lips same position', 'Ses farki — dudaklar ayni pozisyonda'],
+  ['v', 'w', 'Turkish has no "w" sound', 'Turkcede "w" sesi yok'],
+  ['th', 't', 'Turkish has no "th" sound', 'Turkcede "th" sesi yok'],
+  ['i', 'e', 'Short vowel confusion', 'Kisa unlu karisikligi'],
+  ['u', 'o', 'Short vowel confusion', 'Kisa unlu karisikligi'],
+  ['sh', 's', 'Fricative confusion', 'Surtusmeli ses karisikligi'],
+  ['ch', 'j', 'Affricate confusion', 'Kapantili ses karisikligi'],
+  ['r', 'l', 'Liquid consonant confusion', 'Akici unsuz karisikligi'],
+  ['f', 'v', 'Voicing difference', 'Ses farki'],
+];
+
+/** Plateau detection: sessions without improvement threshold */
+const PLATEAU_SESSION_THRESHOLD = 5;
+
+/** Session pacing: suggest break after this many minutes */
+const SESSION_BREAK_THRESHOLD_MINUTES = 15;
+
+/** Max confusion events to store */
+const MAX_CONFUSION_EVENTS = 50;
+
+/** Max mastery snapshots to store */
+const MAX_MASTERY_SNAPSHOTS = 100;
+
+/** Max session timestamps to store for time-of-day analysis */
+const MAX_SESSION_TIMESTAMPS = 50;
 
 // ============================================================
 // CVC / CCVC / COMPLEX WORD BANKS PER SOUND
@@ -286,7 +384,15 @@ function loadProfile(userId: string): LearnerProfile {
   try {
     const raw = localStorage.getItem(getStorageKey(userId));
     if (raw) {
-      return JSON.parse(raw) as LearnerProfile;
+      const profile = JSON.parse(raw) as LearnerProfile;
+      // Migrate older profiles that lack new fields
+      if (!profile._recentActivityTypes) profile._recentActivityTypes = [];
+      if (!profile._sessionTimestamps) profile._sessionTimestamps = [];
+      if (!profile._sessionAccuracyByHour) profile._sessionAccuracyByHour = {};
+      if (!profile._confusionEvents) profile._confusionEvents = [];
+      if (!profile._sessionStartTime) profile._sessionStartTime = '';
+      if (!profile._masterySnapshots) profile._masterySnapshots = [];
+      return profile;
     }
   } catch {
     // corrupted data — reset
@@ -321,6 +427,13 @@ function createDefaultProfile(userId: string): LearnerProfile {
     _lastActivityType: '',
     _recentSessionAccuracies: [],
     _weekStartDate: getWeekStart(new Date()),
+    // New fields
+    _recentActivityTypes: [],
+    _sessionTimestamps: [],
+    _sessionAccuracyByHour: {},
+    _confusionEvents: [],
+    _sessionStartTime: '',
+    _masterySnapshots: [],
   };
 }
 
@@ -382,6 +495,30 @@ function isEvening(): boolean {
   return hour >= 18;
 }
 
+/** Extract sound char from soundId like "g1_s" -> "s", "g3_th" -> "th" */
+function soundIdToChar(soundId: string): string {
+  return soundId.replace(/^g\d+_/, '');
+}
+
+/**
+ * Linear regression slope on a series of values.
+ * Positive = improving, negative = declining, near-zero = stable.
+ */
+function linearSlope(values: number[]): number {
+  if (values.length < 2) return 0;
+  const n = values.length;
+  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+  for (let i = 0; i < n; i++) {
+    sumX += i;
+    sumY += values[i];
+    sumXY += i * values[i];
+    sumX2 += i * i;
+  }
+  const denominator = n * sumX2 - sumX * sumX;
+  if (denominator === 0) return 0;
+  return (n * sumXY - sumX * sumY) / denominator;
+}
+
 // ============================================================
 // ACTIVE USER STATE (module-level for current session)
 // ============================================================
@@ -407,7 +544,7 @@ export function getLearnerProfile(): LearnerProfile {
 // ============================================================
 
 /**
- * Sophisticated mastery calculation:
+ * Multi-factor mastery calculation:
  * 40% accuracy + 20% speed + 20% consistency + 20% retention
  */
 function calculateMastery(sound: SoundMasteryData): number {
@@ -487,13 +624,14 @@ function calculateNextReviewDate(mastery: number, consecutiveCorrect: number): s
 
 /**
  * Record an activity result. Updates mastery scores, adjusts difficulty,
- * tracks response time, updates weak/strong areas, and calculates
- * if the sound should be marked mastered.
+ * tracks response time, updates weak/strong areas, tracks confusion events,
+ * and stores mastery snapshots for plateau detection.
  */
 export function recordActivity(result: ActivityResult): void {
   const profile = loadProfile(_activeUserId);
   const now = new Date().toISOString();
   const today = now.slice(0, 10);
+  const currentHour = new Date().getHours().toString();
 
   // Ensure sound mastery data exists
   if (!profile.soundMastery[result.soundId]) {
@@ -549,6 +687,49 @@ export function recordActivity(result: ActivityResult): void {
 
   // --- Spaced repetition: next review date ---
   sound.nextReviewDate = calculateNextReviewDate(sound.mastery, sound.consecutiveCorrect);
+
+  // --- NEW: Track confusion events ---
+  if (!result.correct && result.selectedAnswer && result.correctAnswer) {
+    profile._confusionEvents.push({
+      timestamp: now,
+      targetSound: result.correctAnswer,
+      selectedSound: result.selectedAnswer,
+      activityType: result.activityType,
+    });
+    if (profile._confusionEvents.length > MAX_CONFUSION_EVENTS) {
+      profile._confusionEvents = profile._confusionEvents.slice(-MAX_CONFUSION_EVENTS);
+    }
+  }
+
+  // --- NEW: Store mastery snapshot for plateau detection ---
+  profile._masterySnapshots.push({
+    soundId: result.soundId,
+    mastery: sound.mastery,
+    timestamp: now,
+  });
+  if (profile._masterySnapshots.length > MAX_MASTERY_SNAPSHOTS) {
+    profile._masterySnapshots = profile._masterySnapshots.slice(-MAX_MASTERY_SNAPSHOTS);
+  }
+
+  // --- NEW: Track session timestamps for time-of-day analysis ---
+  profile._sessionTimestamps.push(now);
+  if (profile._sessionTimestamps.length > MAX_SESSION_TIMESTAMPS) {
+    profile._sessionTimestamps = profile._sessionTimestamps.slice(-MAX_SESSION_TIMESTAMPS);
+  }
+
+  // --- NEW: Track accuracy by hour ---
+  if (!profile._sessionAccuracyByHour[currentHour]) {
+    profile._sessionAccuracyByHour[currentHour] = { total: 0, correct: 0, count: 0 };
+  }
+  profile._sessionAccuracyByHour[currentHour].total += result.totalQuestions;
+  profile._sessionAccuracyByHour[currentHour].correct += result.correctAnswers;
+  profile._sessionAccuracyByHour[currentHour].count += 1;
+
+  // --- NEW: Track recent activity types for rotation ---
+  profile._recentActivityTypes.push(result.activityType);
+  if (profile._recentActivityTypes.length > 5) {
+    profile._recentActivityTypes = profile._recentActivityTypes.slice(-5);
+  }
 
   // --- Update profile-level metrics ---
   profile.totalSessions += 1;
@@ -655,23 +836,55 @@ export function recordActivity(result: ActivityResult): void {
 }
 
 // ============================================================
-// GET OPTIMAL ACTIVITY
+// SESSION PACING
 // ============================================================
 
 /**
- * Determines the optimal next activity using adaptive logic:
- * 1. If weak areas exist -> prioritize weakest sound
- * 2. If all current group sounds > 80% -> advance to next group
- * 3. Mix 70% new content + 30% review of weak areas
- * 4. Vary activity types (don't repeat same type twice)
- * 5. If accuracy dropping -> reduce difficulty
- * 6. If accuracy > 90% for 3 sessions -> increase difficulty
- * 7. Time-of-day optimization: shorter activities in evening
+ * Mark the start of a learning session for pacing tracking.
+ */
+export function startSession(): void {
+  const profile = loadProfile(_activeUserId);
+  profile._sessionStartTime = new Date().toISOString();
+  saveProfile(profile);
+}
+
+/**
+ * Check if the child should take a break (15+ minutes of continuous activity).
+ */
+function shouldSuggestBreak(profile: LearnerProfile): boolean {
+  if (!profile._sessionStartTime) return false;
+  const startTime = new Date(profile._sessionStartTime).getTime();
+  const now = Date.now();
+  const minutesElapsed = (now - startTime) / (1000 * 60);
+  return minutesElapsed >= SESSION_BREAK_THRESHOLD_MINUTES;
+}
+
+// ============================================================
+// GET OPTIMAL ACTIVITY (IMPROVED)
+// ============================================================
+
+/**
+ * Determines the optimal next activity using evidence-based strategies:
+ *
+ * 1. Session pacing — suggest break after 15+ minutes
+ * 2. Spacing effect — don't repeat sounds aced yesterday; wait 2+ days
+ * 3. Interleaving — mix old and new sounds (research: interleaved > blocked)
+ * 4. Desirable difficulty — sometimes slightly harder (Bjork's research)
+ * 5. Activity type rotation — avoid repeating from last 5 types
+ * 6. Confusion pair targeting — if b/d confused, create comparison activities
+ * 7. Weak area prioritization with smart scheduling
+ * 8. Time-of-day optimization
  */
 export function getOptimalActivity(): OptimalActivity {
   const profile = loadProfile(_activeUserId);
+  const now = new Date();
+  const nowIso = now.toISOString();
+  const todayStr = nowIso.slice(0, 10);
 
-  // --- Determine difficulty ---
+  // --- Session pacing: suggest break after 15+ minutes ---
+  const needsBreak = shouldSuggestBreak(profile);
+
+  // --- Determine base difficulty ---
   let difficulty: 'easy' | 'normal' | 'hard' = 'normal';
   if (profile.difficultyMultiplier < 0.8) {
     difficulty = 'easy';
@@ -679,20 +892,49 @@ export function getOptimalActivity(): OptimalActivity {
     difficulty = 'hard';
   }
 
-  // --- Check if accuracy is dropping ---
+  // Check if accuracy is dropping
   if (profile._recentSessionAccuracies.length >= 3) {
-    const recent = profile._recentSessionAccuracies;
-    const lastThree = recent.slice(-3);
+    const lastThree = profile._recentSessionAccuracies.slice(-3);
     const avg = lastThree.reduce((a, b) => a + b, 0) / lastThree.length;
     if (avg < 50) {
       difficulty = 'easy';
     }
   }
 
-  // --- Pick activity type (vary from last) ---
+  // --- Desirable difficulty (Bjork): occasionally bump up difficulty ---
+  // Only when child is in the "sweet spot" (60-85% accuracy range)
+  if (profile._recentSessionAccuracies.length >= 3) {
+    const recentAvg = profile._recentSessionAccuracies.slice(-3)
+      .reduce((a, b) => a + b, 0) / 3;
+    if (recentAvg >= 65 && recentAvg <= 85 && Math.random() < 0.25) {
+      // 25% chance to bump difficulty one level
+      if (difficulty === 'easy') difficulty = 'normal';
+      else if (difficulty === 'normal') difficulty = 'hard';
+    }
+  }
+
+  // --- Activity type rotation: avoid repeating from recent 5 ---
+  const recentTypes = profile._recentActivityTypes || [];
+  const typeFrequency: Record<string, number> = {};
+  for (const t of recentTypes) {
+    typeFrequency[t] = (typeFrequency[t] ?? 0) + 1;
+  }
+
+  // Score each activity type: prefer least-recently-used
   let activityType: string;
-  const availableTypes = ACTIVITY_TYPES.filter((t) => t !== profile._lastActivityType);
-  activityType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+  const scoredTypes = ACTIVITY_TYPES.map((t) => ({
+    type: t,
+    recentCount: typeFrequency[t] ?? 0,
+    // Also consider: pick the weakest activity type for this child
+    weaknessBonus: getWeakestActivityTypeBonus(profile, t),
+  }));
+  scoredTypes.sort((a, b) => {
+    // Primary: least recently used. Secondary: weakness bonus (higher = prefer)
+    const freqDiff = a.recentCount - b.recentCount;
+    if (freqDiff !== 0) return freqDiff;
+    return b.weaknessBonus - a.weaknessBonus;
+  });
+  activityType = scoredTypes[0].type;
 
   // --- Word count based on difficulty and time of day ---
   let wordCount: number;
@@ -723,12 +965,70 @@ export function getOptimalActivity(): OptimalActivity {
       timeLimit = 30;
   }
 
-  // --- 1. Prioritize weak areas (30% chance even if new content available) ---
+  // --- If needs break, return a fun/easy activity suggestion ---
+  if (needsBreak) {
+    const strongSounds = profile.strongAreas;
+    const funSoundId = strongSounds.length > 0
+      ? strongSounds[Math.floor(Math.random() * strongSounds.length)]
+      : ALL_SOUNDS[0]?.id ?? 'g1_s';
+    // Pick a "fun" activity type — listening or pronunciation (song-like)
+    const funTypes: ActivityType[] = ['listening', 'pronunciation'];
+    const funType = funTypes[Math.floor(Math.random() * funTypes.length)];
+    return {
+      soundId: funSoundId,
+      activityType: funType,
+      difficulty: 'easy',
+      wordCount: 3,
+      timeLimit: 15,
+      reason: 'Time for a fun break! You have been working hard.',
+      suggestBreak: true,
+    };
+  }
+
+  // --- Confusion pair targeting: if active confusions, create comparison activity ---
+  const confusions = getConfusionPairs();
+  const activeConfusion = confusions.find((c) => c.confusionRate >= 0.3 && c.occurrences >= 3);
+  if (activeConfusion && Math.random() < 0.35) {
+    // 35% chance to do a targeted confusion pair drill
+    const targetSoundId = findSoundIdByChar(activeConfusion.sound1);
+    const interleaveSoundId = findSoundIdByChar(activeConfusion.sound2);
+    return {
+      soundId: targetSoundId,
+      activityType: 'listening', // listening is best for distinguishing sounds
+      difficulty: 'normal',
+      wordCount: 6,
+      timeLimit,
+      reason: `Targeted practice: distinguishing '${activeConfusion.sound1}' from '${activeConfusion.sound2}'`,
+      interleavedSoundId: interleaveSoundId,
+    };
+  }
+
+  // --- Spacing effect: collect sounds that should NOT be repeated today ---
+  const spacedOutSounds = new Set<string>();
+  for (const [id, data] of Object.entries(profile.soundMastery)) {
+    if (data.lastPracticed) {
+      const daysSince = daysBetween(data.lastPracticed.slice(0, 10), todayStr);
+      // If aced (mastery > 80) yesterday, wait 2+ days before repeating
+      if (data.mastery >= 80 && daysSince < 2) {
+        spacedOutSounds.add(id);
+      }
+      // If aced (mastery > 60) today, don't repeat same day
+      if (data.mastery >= 60 && daysSince === 0) {
+        spacedOutSounds.add(id);
+      }
+    }
+  }
+
+  // --- 1. Prioritize weak areas ---
   if (profile.weakAreas.length > 0) {
+    // Filter out spaced-out sounds
+    const availableWeak = profile.weakAreas.filter((id) => !spacedOutSounds.has(id));
+    const weakPool = availableWeak.length > 0 ? availableWeak : profile.weakAreas;
+
     // Find the weakest sound
-    let weakestId = profile.weakAreas[0];
+    let weakestId = weakPool[0];
     let lowestMastery = Infinity;
-    for (const id of profile.weakAreas) {
+    for (const id of weakPool) {
       const m = profile.soundMastery[id];
       if (m && m.mastery < lowestMastery) {
         lowestMastery = m.mastery;
@@ -736,17 +1036,29 @@ export function getOptimalActivity(): OptimalActivity {
       }
     }
 
-    // Determine if we should review (30%) or only if no new content
-    const shouldReview = Math.random() < 0.3 || profile.weakAreas.length > 3;
+    // Find the weakest activity type for this sound to target it
+    const weakSound = profile.soundMastery[weakestId];
+    if (weakSound) {
+      const weakActivityType = findWeakestActivityForSound(weakSound);
+      if (weakActivityType) {
+        activityType = weakActivityType;
+      }
+    }
+
+    // Higher priority for weak areas: 50% chance (up from 30%) or if many weak areas
+    const shouldReview = Math.random() < 0.5 || profile.weakAreas.length > 3;
 
     if (shouldReview) {
+      // Interleaving: pick a strong sound to mix in
+      const interleavedId = pickInterleavedSound(profile, weakestId);
       return {
         soundId: weakestId,
         activityType,
-        difficulty: 'easy', // Weak area gets easier difficulty
+        difficulty: 'easy',
         wordCount: Math.max(3, wordCount - 1),
         timeLimit,
-        reason: 'Reviewing weak area',
+        reason: 'Reviewing weak area with interleaved practice',
+        interleavedSoundId: interleavedId ?? undefined,
       };
     }
   }
@@ -760,36 +1072,57 @@ export function getOptimalActivity(): OptimalActivity {
       difficulty: 'normal',
       wordCount,
       timeLimit,
-      reason: 'New sound',
+      reason: 'New sound — group mastered!',
     };
   }
 
-  // --- 3. Find sounds due for spaced repetition review ---
-  const now = new Date().toISOString();
+  // --- 3. Find sounds due for spaced repetition review (respect spacing) ---
   const dueForReview: string[] = [];
   for (const [id, data] of Object.entries(profile.soundMastery)) {
-    if (data.nextReviewDate && data.nextReviewDate <= now && data.mastery > 0) {
-      dueForReview.push(id);
+    if (data.nextReviewDate && data.nextReviewDate <= nowIso && data.mastery > 0) {
+      if (!spacedOutSounds.has(id)) {
+        dueForReview.push(id);
+      }
     }
   }
 
-  if (dueForReview.length > 0 && Math.random() < 0.3) {
-    // 30% chance to do a review of due items
+  if (dueForReview.length > 0 && Math.random() < 0.4) {
+    // 40% chance (up from 30%) to do a review of due items
     const reviewId = dueForReview[Math.floor(Math.random() * dueForReview.length)];
+    // Interleave a new or weak sound with the review
+    const interleavedId = pickInterleavedSound(profile, reviewId);
     return {
       soundId: reviewId,
       activityType,
       difficulty,
       wordCount,
       timeLimit,
-      reason: 'Mastery check',
+      reason: 'Spaced repetition review',
+      interleavedSoundId: interleavedId ?? undefined,
     };
   }
 
   // --- 4. Find the next unmastered sound in the current group ---
   if (currentGroupAdvance.nextUnmasteredSoundId) {
+    const nextId = currentGroupAdvance.nextUnmasteredSoundId;
+    // If this sound is spaced out, look for another
+    if (spacedOutSounds.has(nextId)) {
+      // Try to find any unmastered sound not spaced out
+      const alternative = findAlternativeUnmasteredSound(profile, spacedOutSounds);
+      if (alternative) {
+        return {
+          soundId: alternative,
+          activityType,
+          difficulty,
+          wordCount,
+          timeLimit,
+          reason: 'Continuing practice (spacing applied)',
+        };
+      }
+    }
+
     return {
-      soundId: currentGroupAdvance.nextUnmasteredSoundId,
+      soundId: nextId,
       activityType,
       difficulty,
       wordCount,
@@ -808,6 +1141,78 @@ export function getOptimalActivity(): OptimalActivity {
     timeLimit,
     reason: 'New sound',
   };
+}
+
+/**
+ * Find the weakest activity type for a given sound (to target practice).
+ */
+function findWeakestActivityForSound(sound: SoundMasteryData): ActivityType | null {
+  let weakest: ActivityType | null = null;
+  let lowestScore = Infinity;
+
+  for (const at of ACTIVITY_TYPES) {
+    const key = ACTIVITY_SCORE_KEYS[at] as keyof SoundMasteryData;
+    const score = sound[key] as number;
+    if (score < lowestScore) {
+      lowestScore = score;
+      weakest = at;
+    }
+  }
+
+  return weakest;
+}
+
+/**
+ * Get a bonus score for activity types the child is weak in (higher = more needed).
+ */
+function getWeakestActivityTypeBonus(profile: LearnerProfile, activityType: ActivityType): number {
+  let totalScore = 0;
+  let count = 0;
+  for (const data of Object.values(profile.soundMastery)) {
+    if (data.attempts > 0) {
+      const key = ACTIVITY_SCORE_KEYS[activityType] as keyof SoundMasteryData;
+      totalScore += data[key] as number;
+      count += 1;
+    }
+  }
+  if (count === 0) return 0;
+  const avgScore = totalScore / count;
+  // Invert: lower average score = higher bonus (more needed)
+  return 100 - avgScore;
+}
+
+/**
+ * Pick a sound to interleave with the primary sound.
+ * Interleaving research shows mixing old + new improves retention.
+ */
+function pickInterleavedSound(profile: LearnerProfile, primarySoundId: string): string | null {
+  // Pick a strong sound that the child has already mastered to interleave
+  const candidates = profile.strongAreas.filter((id) => id !== primarySoundId);
+  if (candidates.length === 0) return null;
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+/**
+ * Find an unmastered sound that is not in the spaced-out set.
+ */
+function findAlternativeUnmasteredSound(profile: LearnerProfile, spacedOut: Set<string>): string | null {
+  for (const group of PHONICS_GROUPS) {
+    for (const sound of group.sounds) {
+      const mastery = profile.soundMastery[sound.id]?.mastery ?? 0;
+      if (mastery < MASTERY_STRONG_THRESHOLD && !spacedOut.has(sound.id)) {
+        return sound.id;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Find a sound ID from a sound character (e.g., "th" -> "g4_th" or similar).
+ */
+function findSoundIdByChar(soundChar: string): string {
+  const match = ALL_SOUNDS.find((s) => soundIdToChar(s.id) === soundChar);
+  return match?.id ?? `g1_${soundChar}`;
 }
 
 /**
@@ -1046,7 +1451,7 @@ export function generateWeeklyReport(): WeeklyReport {
 }
 
 // ============================================================
-// LEARNER INSIGHTS
+// LEARNER INSIGHTS (original)
 // ============================================================
 
 /**
@@ -1163,6 +1568,447 @@ export function getLearnerInsights(): LearnerInsight[] {
       icon: 'medal',
     });
   }
+
+  return insights;
+}
+
+// ============================================================
+// STATISTICAL ANALYSIS — NEW
+// ============================================================
+
+/**
+ * Analyze performance broken down by activity type.
+ * Shows accuracy, speed, and trend for each activity type across all sounds.
+ */
+export function getActivityTypeAnalysis(): ActivityTypeAnalysis[] {
+  const profile = loadProfile(_activeUserId);
+  const results: ActivityTypeAnalysis[] = [];
+
+  for (const at of ACTIVITY_TYPES) {
+    const key = ACTIVITY_SCORE_KEYS[at] as keyof SoundMasteryData;
+    const scores: number[] = [];
+    let totalAttempts = 0;
+    let totalResponseTime = 0;
+    let responseTimeCount = 0;
+
+    for (const data of Object.values(profile.soundMastery)) {
+      if (data.attempts > 0) {
+        const score = data[key] as number;
+        scores.push(score);
+        totalAttempts += data.attempts;
+        if (data.averageResponseTimeMs > 0) {
+          totalResponseTime += data.averageResponseTimeMs;
+          responseTimeCount += 1;
+        }
+      }
+    }
+
+    const accuracy = scores.length > 0
+      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+      : 0;
+
+    const avgResponseTime = responseTimeCount > 0
+      ? Math.round(totalResponseTime / responseTimeCount)
+      : 0;
+
+    // Determine trend from mastery snapshots
+    const relevantSnapshots = profile._masterySnapshots
+      .filter((_s) => true) // all snapshots contribute to overall trend
+      .map((s) => s.mastery);
+    const slope = linearSlope(relevantSnapshots);
+    let trend: 'improving' | 'declining' | 'stable' = 'stable';
+    if (slope > 1.0) trend = 'improving';
+    else if (slope < -1.0) trend = 'declining';
+
+    results.push({
+      activityType: at,
+      accuracy,
+      totalAttempts,
+      averageResponseTimeMs: avgResponseTime,
+      trend,
+    });
+  }
+
+  return results;
+}
+
+/**
+ * Analyze time-of-day performance patterns.
+ * Returns the hour with the best and worst accuracy, plus a recommendation.
+ */
+export function getTimeOfDayAnalysis(): { bestHour: number; worstHour: number; recommendation: string } {
+  const profile = loadProfile(_activeUserId);
+  const hourData = profile._sessionAccuracyByHour;
+
+  let bestHour = 10; // sensible default
+  let bestAccuracy = -1;
+  let worstHour = 19;
+  let worstAccuracy = 101;
+
+  for (const [hourStr, data] of Object.entries(hourData)) {
+    if (data.count < 2) continue; // need at least 2 sessions at this hour to be meaningful
+    const accuracy = data.total > 0 ? (data.correct / data.total) * 100 : 0;
+    if (accuracy > bestAccuracy) {
+      bestAccuracy = accuracy;
+      bestHour = parseInt(hourStr, 10);
+    }
+    if (accuracy < worstAccuracy) {
+      worstAccuracy = accuracy;
+      worstHour = parseInt(hourStr, 10);
+    }
+  }
+
+  const formatHour = (h: number): string => {
+    if (h === 0) return '12am';
+    if (h < 12) return `${h}am`;
+    if (h === 12) return '12pm';
+    return `${h - 12}pm`;
+  };
+
+  let recommendation: string;
+  if (Object.keys(hourData).length < 3) {
+    recommendation = 'Not enough data yet. Keep practicing at different times to discover your best learning time!';
+  } else if (bestHour < 12) {
+    recommendation = `Your child performs best around ${formatHour(bestHour)}. Morning sessions are recommended for new sounds.`;
+  } else {
+    recommendation = `Your child performs best around ${formatHour(bestHour)}. Try to schedule practice sessions around this time.`;
+  }
+
+  return { bestHour, worstHour, recommendation };
+}
+
+/**
+ * Predict when a specific sound will reach 95% mastery based on current learning rate.
+ * Returns an ISO date string, or null if insufficient data or mastery is already at/above 95%.
+ */
+export function predictMasteryDate(soundId: string): string | null {
+  const profile = loadProfile(_activeUserId);
+  const sound = profile.soundMastery[soundId];
+
+  if (!sound || sound.attempts < 3) return null; // not enough data
+  if (sound.mastery >= 95) return null; // already mastered
+
+  // Calculate learning rate: mastery gained per session from snapshots
+  const snapshots = profile._masterySnapshots.filter((s) => s.soundId === soundId);
+  if (snapshots.length < 2) return null;
+
+  // Calculate slope: mastery points per snapshot (roughly per session)
+  const masteryValues = snapshots.map((s) => s.mastery);
+  const slope = linearSlope(masteryValues);
+
+  if (slope <= 0) {
+    // Not improving — can't predict
+    return null;
+  }
+
+  // How many more "sessions" needed to reach 95%
+  const remaining = 95 - sound.mastery;
+  const sessionsNeeded = Math.ceil(remaining / slope);
+
+  // Estimate: assume ~1 session per day on average (from their streak/frequency)
+  const sessionsPerDay = profile.totalSessions > 0 && profile.lastSessionDate
+    ? Math.max(0.3, profile.totalSessions / Math.max(1, daysBetween(
+        profile._sessionTimestamps[0] ?? profile.lastSessionDate,
+        new Date().toISOString()
+      )))
+    : 0.5; // conservative default
+
+  const daysNeeded = Math.ceil(sessionsNeeded / sessionsPerDay);
+  const predictedDate = new Date();
+  predictedDate.setDate(predictedDate.getDate() + daysNeeded);
+
+  return predictedDate.toISOString().slice(0, 10);
+}
+
+/**
+ * Detect learning plateaus: sounds where mastery hasn't improved in 5+ sessions.
+ */
+export function detectPlateaus(): PlateauAlert[] {
+  const profile = loadProfile(_activeUserId);
+  const alerts: PlateauAlert[] = [];
+
+  for (const [id, data] of Object.entries(profile.soundMastery)) {
+    if (data.attempts < 5 || data.mastery >= 95) continue; // skip new or mastered sounds
+
+    // Get snapshots for this sound
+    const snapshots = profile._masterySnapshots.filter((s) => s.soundId === id);
+    if (snapshots.length < PLATEAU_SESSION_THRESHOLD) continue;
+
+    // Check last N snapshots for improvement
+    const recentSnapshots = snapshots.slice(-PLATEAU_SESSION_THRESHOLD);
+    const masteryValues = recentSnapshots.map((s) => s.mastery);
+    const firstMastery = masteryValues[0];
+    const lastMastery = masteryValues[masteryValues.length - 1];
+    const improvement = lastMastery - firstMastery;
+
+    // Plateau: less than 3 points of improvement over threshold sessions
+    if (improvement < 3) {
+      const sound = ALL_SOUNDS.find((s) => s.id === id);
+      const grapheme = sound?.grapheme?.toUpperCase() ?? id;
+
+      // Find the weakest activity type for this sound to suggest
+      const weakActivity = findWeakestActivityForSound(data);
+      const activityNames: Record<string, string> = {
+        blending: 'blending',
+        segmenting: 'segmenting',
+        listening: 'listening',
+        pronunciation: 'pronunciation',
+        reading: 'reading',
+      };
+      const suggestedType = weakActivity ?? 'listening';
+      const suggestedName = activityNames[suggestedType] ?? suggestedType;
+
+      alerts.push({
+        soundId: id,
+        grapheme,
+        mastery: data.mastery,
+        sessionsStuck: recentSnapshots.length,
+        lastImprovement: recentSnapshots[0].timestamp,
+        suggestedActivityType: suggestedType,
+        message: `The '${grapheme}' sound hasn't improved in ${recentSnapshots.length} sessions. Try a different activity type: ${suggestedName}.`,
+        messageTr: `'${grapheme}' sesi ${recentSnapshots.length} oturumdur gelismiyor. Farkli bir aktivite tipi dene: ${suggestedName}.`,
+      });
+    }
+  }
+
+  // Sort by mastery (lowest first — most urgent)
+  alerts.sort((a, b) => a.mastery - b.mastery);
+
+  return alerts;
+}
+
+// ============================================================
+// CONFUSION PAIR DETECTION — NEW
+// ============================================================
+
+/**
+ * Detect confusion pairs from the child's actual error patterns.
+ * Combines observed data with known Turkish-English confusion pairs.
+ */
+export function getConfusionPairs(): ConfusionPair[] {
+  const profile = loadProfile(_activeUserId);
+  const events = profile._confusionEvents || [];
+
+  // Tally confusion events: count how often sound1 was confused with sound2
+  const confusionCounts: Record<string, { count: number; total: number }> = {};
+
+  for (const event of events) {
+    const pair = [event.targetSound, event.selectedSound].sort().join('|');
+    if (!confusionCounts[pair]) {
+      confusionCounts[pair] = { count: 0, total: 0 };
+    }
+    confusionCounts[pair].count += 1;
+  }
+
+  // Also count total attempts involving each sound pair for rate calculation
+  for (const event of events) {
+    const pair = [event.targetSound, event.selectedSound].sort().join('|');
+    confusionCounts[pair].total += 1;
+  }
+
+  const pairs: ConfusionPair[] = [];
+
+  // Build confusion pairs from observed data
+  for (const [pairKey, data] of Object.entries(confusionCounts)) {
+    const [sound1, sound2] = pairKey.split('|');
+    const confusionRate = data.total > 0 ? data.count / data.total : 0;
+
+    // Find known pair info for better recommendations
+    const knownPair = KNOWN_CONFUSION_PAIRS.find(
+      ([a, b]) => (a === sound1 && b === sound2) || (a === sound2 && b === sound1)
+    );
+
+    const recommendation = knownPair
+      ? `${knownPair[2]}. Practice side-by-side comparison with listening activities.`
+      : `Your child confuses '${sound1}' and '${sound2}'. Try minimal pair activities to distinguish them.`;
+
+    const recommendationTr = knownPair
+      ? `${knownPair[3]}. Yan yana karsilastirma ile dinleme aktiviteleri yap.`
+      : `Cocugunuz '${sound1}' ve '${sound2}' seslerini karistiriyor. Ayirt etmek icin minimal cift aktiviteleri dene.`;
+
+    pairs.push({
+      sound1,
+      sound2,
+      confusionRate,
+      occurrences: data.count,
+      recommendation,
+      recommendationTr,
+    });
+  }
+
+  // Also flag known Turkish-English confusion pairs that haven't been observed yet
+  // but where the child has low scores on both sounds
+  for (const [s1, s2, reasonEn, reasonTr] of KNOWN_CONFUSION_PAIRS) {
+    const pairKey = [s1, s2].sort().join('|');
+    if (confusionCounts[pairKey]) continue; // already observed
+
+    // Check if child has data on both sounds and struggles with either
+    const s1Id = findSoundIdByChar(s1);
+    const s2Id = findSoundIdByChar(s2);
+    const s1Data = profile.soundMastery[s1Id];
+    const s2Data = profile.soundMastery[s2Id];
+
+    if (s1Data && s2Data && (s1Data.mastery < 50 || s2Data.mastery < 50)) {
+      pairs.push({
+        sound1: s1,
+        sound2: s2,
+        confusionRate: 0, // predicted, not observed
+        occurrences: 0,
+        recommendation: `${reasonEn}. Watch for this common confusion — practice both sounds together.`,
+        recommendationTr: `${reasonTr}. Bu yaygin karisikliga dikkat edin — her iki sesi birlikte pratik yapin.`,
+      });
+    }
+  }
+
+  // Sort: observed confusions first (by rate), then predicted
+  pairs.sort((a, b) => {
+    if (a.occurrences > 0 && b.occurrences === 0) return -1;
+    if (a.occurrences === 0 && b.occurrences > 0) return 1;
+    return b.confusionRate - a.confusionRate;
+  });
+
+  return pairs;
+}
+
+// ============================================================
+// SMART INSIGHTS (parent-friendly) — NEW
+// ============================================================
+
+/**
+ * Generate data-driven, parent-friendly insights that go beyond simple metrics.
+ * Combines pattern detection, predictions, plateau alerts, and actionable suggestions.
+ */
+export function getSmartInsights(): SmartInsight[] {
+  const profile = loadProfile(_activeUserId);
+  const insights: SmartInsight[] = [];
+
+  // --- Time-of-day pattern ---
+  const hourData = profile._sessionAccuracyByHour;
+  const hourEntries = Object.entries(hourData).filter(([, d]) => d.count >= 2);
+  if (hourEntries.length >= 2) {
+    const timeAnalysis = getTimeOfDayAnalysis();
+    const formatHour = (h: number): string => {
+      if (h === 0) return '12am';
+      if (h < 12) return `${h}am`;
+      if (h === 12) return '12pm';
+      return `${h - 12}pm`;
+    };
+    insights.push({
+      type: 'pattern',
+      title: `Best learning time: ${formatHour(timeAnalysis.bestHour)}`,
+      titleTr: `En iyi ogrenme zamani: ${formatHour(timeAnalysis.bestHour)}`,
+      detail: timeAnalysis.recommendation,
+      detailTr: timeAnalysis.bestHour < 12
+        ? `Cocugunuz sabah ${formatHour(timeAnalysis.bestHour)} civarinda en iyi performansi gosteriyor. Yeni sesler icin sabah oturumlari onerilir.`
+        : `Cocugunuz ${formatHour(timeAnalysis.bestHour)} civarinda en iyi performansi gosteriyor. Pratik oturumlarini bu saatlere ayarlayin.`,
+      priority: 'medium',
+    });
+  }
+
+  // --- Activity type analysis: find weakest ---
+  const activityAnalysis = getActivityTypeAnalysis();
+  const weakestActivity = activityAnalysis
+    .filter((a) => a.totalAttempts > 0)
+    .sort((a, b) => a.accuracy - b.accuracy)[0];
+  const strongestActivity = activityAnalysis
+    .filter((a) => a.totalAttempts > 0)
+    .sort((a, b) => b.accuracy - a.accuracy)[0];
+
+  if (weakestActivity && strongestActivity && weakestActivity.activityType !== strongestActivity.activityType) {
+    const activityNameMap: Record<string, { en: string; tr: string }> = {
+      blending: { en: 'Blending', tr: 'Birlestirme' },
+      segmenting: { en: 'Segmenting', tr: 'Ayirma' },
+      listening: { en: 'Listening', tr: 'Dinleme' },
+      pronunciation: { en: 'Pronunciation', tr: 'Telaffuz' },
+      reading: { en: 'Reading', tr: 'Okuma' },
+    };
+    const weakName = activityNameMap[weakestActivity.activityType] ?? { en: weakestActivity.activityType, tr: weakestActivity.activityType };
+    const strongName = activityNameMap[strongestActivity.activityType] ?? { en: strongestActivity.activityType, tr: strongestActivity.activityType };
+
+    if (strongestActivity.accuracy - weakestActivity.accuracy > 20) {
+      insights.push({
+        type: 'suggestion',
+        title: `${weakName.en} needs more practice`,
+        titleTr: `${weakName.tr} daha fazla pratik istiyor`,
+        detail: `${weakName.en}: ${weakestActivity.accuracy}% accuracy vs ${strongName.en}: ${strongestActivity.accuracy}%. More ${weakName.en.toLowerCase()} activities are recommended.`,
+        detailTr: `${weakName.tr}: %${weakestActivity.accuracy} dogruluk vs ${strongName.tr}: %${strongestActivity.accuracy}. Daha fazla ${weakName.tr.toLowerCase()} aktivitesi onerilir.`,
+        priority: weakestActivity.accuracy < 50 ? 'high' : 'medium',
+        actionRoute: `/activities/${weakestActivity.activityType}`,
+      });
+    }
+  }
+
+  // --- Plateau alerts ---
+  const plateaus = detectPlateaus();
+  for (const plateau of plateaus.slice(0, 3)) { // max 3 plateau alerts
+    insights.push({
+      type: 'plateau',
+      title: `'${plateau.grapheme}' sound stuck at ${plateau.mastery}%`,
+      titleTr: `'${plateau.grapheme}' sesi %${plateau.mastery}'de takili`,
+      detail: plateau.message,
+      detailTr: plateau.messageTr,
+      priority: plateau.mastery < 40 ? 'high' : 'medium',
+      actionRoute: `/practice/${plateau.soundId}`,
+    });
+  }
+
+  // --- Mastery predictions for sounds in progress ---
+  const soundsInProgress = Object.entries(profile.soundMastery)
+    .filter(([, d]) => d.mastery > 20 && d.mastery < 80 && d.attempts >= 3)
+    .sort(([, a], [, b]) => b.mastery - a.mastery)
+    .slice(0, 3);
+
+  for (const [id, data] of soundsInProgress) {
+    const predictedDate = predictMasteryDate(id);
+    if (predictedDate) {
+      const sound = ALL_SOUNDS.find((s) => s.id === id);
+      const grapheme = sound?.grapheme?.toUpperCase() ?? id;
+      insights.push({
+        type: 'prediction',
+        title: `'${grapheme}' could be mastered by ${predictedDate}`,
+        titleTr: `'${grapheme}' ${predictedDate} tarihine kadar ogrenilecek`,
+        detail: `Currently at ${data.mastery}% mastery. At the current learning rate, full mastery (95%) is predicted by ${predictedDate}.`,
+        detailTr: `Simdi %${data.mastery} ustalik. Mevcut ogrenme hizinda, tam ustalik (%95) ${predictedDate} tarihine kadar bekleniyor.`,
+        priority: 'low',
+      });
+    }
+  }
+
+  // --- Confusion pair warnings ---
+  const confusions = getConfusionPairs();
+  const activeConfusions = confusions.filter((c) => c.confusionRate >= 0.3 && c.occurrences >= 3);
+  for (const confusion of activeConfusions.slice(0, 2)) {
+    insights.push({
+      type: 'pattern',
+      title: `Confusing '${confusion.sound1}' with '${confusion.sound2}'`,
+      titleTr: `'${confusion.sound1}' ile '${confusion.sound2}' karistiriliyor`,
+      detail: confusion.recommendation,
+      detailTr: confusion.recommendationTr,
+      priority: confusion.confusionRate >= 0.5 ? 'high' : 'medium',
+      actionRoute: `/practice/compare/${confusion.sound1}/${confusion.sound2}`,
+    });
+  }
+
+  // --- Strength highlight ---
+  if (profile.strongAreas.length >= 3) {
+    const recentlyMastered = profile.strongAreas.slice(-3);
+    const graphemes = recentlyMastered.map((id) => {
+      const sound = ALL_SOUNDS.find((s) => s.id === id);
+      return sound?.grapheme?.toUpperCase() ?? id;
+    });
+    insights.push({
+      type: 'strength',
+      title: `Strong sounds: ${graphemes.join(', ')}`,
+      titleTr: `Guclu sesler: ${graphemes.join(', ')}`,
+      detail: `These sounds are well mastered. They'll be used for interleaved review to strengthen retention.`,
+      detailTr: `Bu sesler iyi ogrenildi. Hatirlamayi guclendirilmek icin karisik tekrarda kullanilacak.`,
+      priority: 'low',
+    });
+  }
+
+  // Sort by priority
+  const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2 };
+  insights.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
   return insights;
 }

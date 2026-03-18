@@ -3,6 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, RotateCcw, Music, Volume2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button, Badge, ProgressBar } from '../ui';
 import type { PhonicsSong } from '../../data/phonicsSongs';
+import {
+  playFrequencyArray,
+  playNurseryMelody,
+  stopMelody,
+  startBackgroundRhythm,
+  stopBackgroundRhythm,
+} from '../../utils/melodyPlayer';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -157,6 +164,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [showAction, setShowAction] = useState(false);
+  const [melodyEnabled, setMelodyEnabled] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startTimeRef = useRef<number>(0);
   const elapsedBeforePauseRef = useRef<number>(0);
@@ -179,6 +187,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       window.speechSynthesis?.cancel();
+      stopMelody();
     };
   }, []);
 
@@ -191,11 +200,28 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
     isSpeakingRef.current = false;
   }, [song.style]);
 
+  const playLinemelody = useCallback(
+    (line: typeof song.lyrics[0], lineIdx: number) => {
+      if (!melodyEnabled) return;
+      // Use the line's custom melody if available, otherwise fall back to pattern
+      if (line.melody && line.melody.length > 0) {
+        // Calculate tempo so melody fits within ~60% of line duration
+        const tempo = Math.max(150, Math.floor((line.durationMs * 0.6) / line.melody.length));
+        playFrequencyArray(line.melody, tempo);
+      } else {
+        const tempoMap = { slow: 300, medium: 250, fast: 180 };
+        playNurseryMelody(lineIdx, tempoMap[song.tempo]);
+      }
+    },
+    [melodyEnabled, song.tempo],
+  );
+
   const advanceLine = useCallback(
     (lineIdx: number) => {
       if (lineIdx >= song.lyrics.length) {
         setIsPlaying(false);
         setIsFinished(true);
+        stopBackgroundRhythm();
         return;
       }
 
@@ -207,6 +233,9 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
         setShowAction(true);
         setTimeout(() => setShowAction(false), 2500);
       }
+
+      // Play melody for this line
+      playLinemelody(line, lineIdx);
 
       // In listen mode, TTS reads the line
       if (mode === 'listen') {
@@ -223,10 +252,11 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
         timerRef.current = setTimeout(() => {
           setIsPlaying(false);
           setIsFinished(true);
+          stopBackgroundRhythm();
         }, line.durationMs);
       }
     },
-    [song.lyrics, mode, speakLine],
+    [song.lyrics, mode, speakLine, playLinemelody],
   );
 
   const handlePlay = useCallback(() => {
@@ -240,21 +270,28 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
     setIsPlaying(true);
     startTimeRef.current = Date.now();
 
+    // Start background rhythm if melody is enabled
+    if (melodyEnabled) {
+      startBackgroundRhythm(60);
+    }
+
     // Start from the beginning or current position
     const startIdx = currentLineIdx < 0 ? 0 : currentLineIdx;
     advanceLine(startIdx);
-  }, [isFinished, currentLineIdx, advanceLine]);
+  }, [isFinished, currentLineIdx, advanceLine, melodyEnabled]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
     if (timerRef.current) clearTimeout(timerRef.current);
     window.speechSynthesis?.cancel();
+    stopMelody();
     elapsedBeforePauseRef.current += Date.now() - startTimeRef.current;
   }, []);
 
   const handleRestart = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
     window.speechSynthesis?.cancel();
+    stopMelody();
     setCurrentLineIdx(-1);
     setIsPlaying(false);
     setIsFinished(false);
@@ -487,6 +524,24 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
             disabled={!currentLine}
           >
             Repeat Line
+          </Button>
+          <Button
+            variant={melodyEnabled ? 'primary' : 'secondary'}
+            size="sm"
+            icon={<Music size={14} />}
+            onClick={() => {
+              setMelodyEnabled((prev) => {
+                if (prev) {
+                  stopMelody();
+                } else if (isPlaying) {
+                  startBackgroundRhythm(60);
+                }
+                return !prev;
+              });
+            }}
+            style={melodyEnabled ? { backgroundColor: '#E8A317', borderColor: '#E8A317' } : undefined}
+          >
+            {'\uD83C\uDFB5'} Music
           </Button>
         </div>
       </div>

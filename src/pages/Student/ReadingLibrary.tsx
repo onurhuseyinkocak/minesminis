@@ -6,11 +6,9 @@ import { READING_LIBRARY, getBookById } from '../../data/readingLibrary';
 import type { DecodableBook } from '../../data/readingLibrary';
 import { BookReader } from '../../components/phonics/BookReader';
 import { useGamification } from '../../contexts/GamificationContext';
+import { LS_READ_BOOKS, LS_PHONICS_MASTERY } from '../../config/storageKeys';
 
 // --- LOCAL STORAGE ---
-
-const LS_READ_BOOKS = 'mimi_read_books';
-const LS_PHONICS_MASTERY = 'mimi_phonics_mastery';
 
 interface ReadBookRecord {
   stars: number;

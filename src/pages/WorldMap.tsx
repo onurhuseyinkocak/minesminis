@@ -16,6 +16,7 @@ import UnifiedMascot from '../components/UnifiedMascot';
 import { useAuth } from '../contexts/AuthContext';
 import { PHASES, type LearningPhase, type LearningUnit } from '../data/curriculumPhases';
 import MimiGuide from '../components/MimiGuide';
+import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import './WorldMap.css';
 
 // ============================================================
@@ -70,7 +71,7 @@ function getUnitProgress(unit: LearningUnit, phaseIndex: number, unitIndex: numb
   // Check localStorage for placement result
   let startPhase = 0;
   try {
-    const placement = localStorage.getItem('mimi_placement_result');
+    const placement = localStorage.getItem(LS_PLACEMENT_RESULT);
     if (placement) {
       const parsed = JSON.parse(placement);
       if (parsed.phaseIndex !== undefined) startPhase = parsed.phaseIndex;

@@ -6,6 +6,7 @@ import UnifiedMascot from './UnifiedMascot';
 import { generateDynamicQuickReplies, getStarterReplies, QuickReply } from '../services/quickReplies';
 import { usePremium } from '../contexts/PremiumContext';
 import { GLINTS } from '../config/GlintsConfig';
+import { LS_CAVE_DAILY_USAGE } from '../config/storageKeys';
 
 interface ChatMessage {
     id: string;
@@ -38,7 +39,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     // Daily usage tracking
     const [dailyUsage, setDailyUsage] = useState(() => {
         const today = new Date().toDateString();
-        const stored = localStorage.getItem('mimi_cave_daily_usage');
+        const stored = localStorage.getItem(LS_CAVE_DAILY_USAGE);
         if (stored) {
             try {
                 const parsed = JSON.parse(stored);
@@ -54,7 +55,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
         const today = new Date().toDateString();
         const newCount = dailyUsage + 1;
         setDailyUsage(newCount);
-        localStorage.setItem('mimi_cave_daily_usage', JSON.stringify({ date: today, count: newCount }));
+        localStorage.setItem(LS_CAVE_DAILY_USAGE, JSON.stringify({ date: today, count: newCount }));
     };
 
     const canSendMessage = () => {

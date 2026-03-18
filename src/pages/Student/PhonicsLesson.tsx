@@ -13,6 +13,7 @@ import MimiGuide from '../../components/MimiGuide';
 import { advanceToNextSound, recordSoundMastery } from '../../services/learningPathService';
 import { logActivity } from '../../services/activityLogger';
 import { getPlantForSound, getPlantStage } from '../../data/gardenData';
+import { LS_MASTERED_SOUNDS } from '../../config/storageKeys';
 import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
 import type { PlantGrowthEvent } from '../../services/gardenService';
 
@@ -602,11 +603,10 @@ function PhonicsLesson() {
     // Save mastery to localStorage (both legacy key and new learning path)
     useEffect(() => {
       try {
-        const key = 'mimi_mastered_sounds';
-        const existing = JSON.parse(localStorage.getItem(key) || '[]') as string[];
+        const existing = JSON.parse(localStorage.getItem(LS_MASTERED_SOUNDS) || '[]') as string[];
         if (!existing.includes(soundId!)) {
           existing.push(soundId!);
-          localStorage.setItem(key, JSON.stringify(existing));
+          localStorage.setItem(LS_MASTERED_SOUNDS, JSON.stringify(existing));
         }
       } catch {
         // ignore

@@ -787,7 +787,7 @@ const Landing: React.FC = () => {
           dragElastic={0.1}
           whileDrag={{ scale: 1.15 }}
           onDragStart={() => mascotRoaming.stopRoaming()}
-          onDrag={(_e: any, info: any) => { dragDistance.current = Math.abs(info.offset.x) + Math.abs(info.offset.y); }}
+          onDrag={(_e: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number; y: number } }) => { dragDistance.current = Math.abs(info.offset.x) + Math.abs(info.offset.y); }}
           onDragEnd={() => { setTimeout(() => { dragDistance.current = 0; }, 100); mascotRoaming.startRoaming(); }}
           style={{
             position: 'absolute',

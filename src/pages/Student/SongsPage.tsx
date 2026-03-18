@@ -7,12 +7,13 @@ import { SongPlayer } from '../../components/phonics/SongPlayer';
 import { PHONICS_SONGS } from '../../data/phonicsSongs';
 import { PHONICS_GROUPS } from '../../data/phonics';
 import type { PhonicsSong } from '../../data/phonicsSongs';
+import { LS_MASTERED_SOUNDS, LS_SONG_PLAYS } from '../../config/storageKeys';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 function getMasteredSounds(): string[] {
   try {
-    return JSON.parse(localStorage.getItem('mimi_mastered_sounds') || '[]') as string[];
+    return JSON.parse(localStorage.getItem(LS_MASTERED_SOUNDS) || '[]') as string[];
   } catch {
     return [];
   }
@@ -41,7 +42,7 @@ function getUnlockedGroups(mastered: string[]): Set<number> {
 
 function getSongPlayData(): Record<string, { playCount: number; stars: number }> {
   try {
-    return JSON.parse(localStorage.getItem('mimi_song_plays') || '{}') as Record<string, { playCount: number; stars: number }>;
+    return JSON.parse(localStorage.getItem(LS_SONG_PLAYS) || '{}') as Record<string, { playCount: number; stars: number }>;
   } catch {
     return {};
   }
@@ -59,7 +60,7 @@ function recordSongPlay(songId: string) {
     else if (data[songId].playCount >= 3) data[songId].stars = 2;
     else if (data[songId].playCount >= 1) data[songId].stars = 1;
 
-    localStorage.setItem('mimi_song_plays', JSON.stringify(data));
+    localStorage.setItem(LS_SONG_PLAYS, JSON.stringify(data));
   } catch {
     // ignore
   }

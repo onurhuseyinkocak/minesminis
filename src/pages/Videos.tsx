@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Star, Clock, Users, Music, BookOpen, Heart, Search, X } from 'lucide-react';
+import { Play, Star, Clock, Users, Music, BookOpen, Heart, Search, X, Check, Lock, Eye } from 'lucide-react';
 import ContentPageHeader from '../components/ContentPageHeader';
 import './Videos.css';
 import { videoStore } from '../data/videoStore';
+import {
+  PHONICS_VIDEOS,
+  PHONICS_GROUP_LABELS,
+  getVideosForGroup,
+  getWatchedVideoIds,
+  markVideoWatched,
+  isVideoWatched,
+  type PhonicsVideo,
+} from '../data/phonicsVideos';
+import { useGamification } from '../contexts/GamificationContext';
 
 type Video = {
   id: string;
@@ -21,17 +31,17 @@ const gradeInfo: Record<string, { color: string; gradient: string; emoji: string
   '2nd Grade': {
     color: 'var(--mimi-green)',
     gradient: 'linear-gradient(135deg, var(--mimi-green), var(--mimi-green-dark))',
-    emoji: '🌱'
+    emoji: '\u{1F331}'
   },
   '3rd Grade': {
     color: 'var(--accent-blue)',
     gradient: 'linear-gradient(135deg, var(--accent-blue), var(--info))',
-    emoji: '⭐'
+    emoji: '\u2B50'
   },
   '4th Grade': {
     color: 'var(--accent-purple)',
     gradient: 'linear-gradient(135deg, var(--accent-purple), var(--accent-purple-light))',
-    emoji: '🚀'
+    emoji: '\u{1F680}'
   }
 };
 
@@ -41,11 +51,21 @@ const categoryIcons: Record<string, { icon: React.ReactNode; label: string }> = 
   story: { icon: <Heart size={14} />, label: 'Story' }
 };
 
+const phonicsTypeInfo: Record<PhonicsVideo['type'], { icon: React.ReactNode; label: string; color: string }> = {
+  song: { icon: <Music size={12} />, label: 'Song', color: 'var(--accent-orange)' },
+  lesson: { icon: <BookOpen size={12} />, label: 'Lesson', color: 'var(--accent-blue)' },
+  story: { icon: <Heart size={12} />, label: 'Story', color: 'var(--accent-purple)' },
+  review: { icon: <Eye size={12} />, label: 'Review', color: 'var(--mimi-green)' },
+};
+
 function Videos() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [watchedIds, setWatchedIds] = useState<string[]>([]);
+  const [expandedGroup, setExpandedGroup] = useState<number | null>(1);
+  const { addXP } = useGamification();
 
   useEffect(() => {
     videoStore.fetchVideos().then((list) => {
@@ -54,6 +74,7 @@ function Videos() {
     const unsubscribe = videoStore.subscribe((updatedVideos) => {
       setVideos(updatedVideos as unknown as Video[]);
     });
+    setWatchedIds(getWatchedVideoIds());
     return () => unsubscribe?.();
   }, []);
 
@@ -67,6 +88,22 @@ function Videos() {
   });
 
   const popularVideos = videos.filter(v => v.isPopular);
+
+  const handlePhonicsVideoClick = useCallback(async (video: PhonicsVideo) => {
+    setSelectedVideo(video.youtubeId);
+    const isFirstWatch = markVideoWatched(video.id);
+    if (isFirstWatch) {
+      setWatchedIds(getWatchedVideoIds());
+      try {
+        await addXP(10, 'Watched phonics video', { videoId: video.id, group: video.group });
+      } catch {
+        // XP award failed silently
+      }
+    }
+  }, [addXP]);
+
+  // Phonics groups 1-7
+  const phonicsGroups = [1, 2, 3, 4, 5, 6, 7];
 
   return (
     <div className="videos-page">
@@ -101,6 +138,135 @@ function Videos() {
         </div>
       </ContentPageHeader>
 
+      {/* ================================================================
+          PHONICS VIDEOS SECTION — Grouped by phonics group
+          ================================================================ */}
+      <motion.div
+        className="phonics-videos-section"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15 }}
+      >
+        <div className="section-header">
+          <div className="section-title">
+            <Music size={24} color="var(--accent-orange)" />
+            <h2>Phonics Videos</h2>
+          </div>
+          <p className="section-subtitle">Watch videos for each sound group</p>
+        </div>
+
+        <div className="phonics-groups-list">
+          {phonicsGroups.map((groupNum) => {
+            const groupVideos = getVideosForGroup(groupNum);
+            const isExpanded = expandedGroup === groupNum;
+            const watchedCount = groupVideos.filter((v) => watchedIds.includes(v.id)).length;
+            const allWatched = watchedCount === groupVideos.length;
+
+            return (
+              <motion.div
+                key={groupNum}
+                className={`phonics-group-block ${isExpanded ? 'expanded' : ''}`}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * groupNum }}
+              >
+                {/* Group Header — Clickable to expand/collapse */}
+                <button
+                  className="phonics-group-header"
+                  onClick={() => setExpandedGroup(isExpanded ? null : groupNum)}
+                  type="button"
+                >
+                  <div className="phonics-group-header-left">
+                    <span className="phonics-group-number">G{groupNum}</span>
+                    <div className="phonics-group-info">
+                      <h3>Group {groupNum}: {PHONICS_GROUP_LABELS[groupNum]}</h3>
+                      <span className="phonics-group-watched">
+                        {allWatched ? (
+                          <><Check size={14} /> All watched</>
+                        ) : (
+                          <>{watchedCount}/{groupVideos.length} watched</>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                  <span className={`phonics-group-chevron ${isExpanded ? 'open' : ''}`}>
+                    {'\u25BC'}
+                  </span>
+                </button>
+
+                {/* Group Videos — shown when expanded */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      className="phonics-group-videos"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <div className="phonics-videos-grid">
+                        {groupVideos.map((video, idx) => {
+                          const watched = watchedIds.includes(video.id);
+                          const typeInfo = phonicsTypeInfo[video.type];
+                          return (
+                            <motion.div
+                              key={video.id}
+                              className={`phonics-video-card ${watched ? 'watched' : ''}`}
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: idx * 0.06 }}
+                              onClick={() => handlePhonicsVideoClick(video)}
+                              whileHover={{ y: -4, scale: 1.02 }}
+                            >
+                              <div className="phonics-video-thumbnail">
+                                <img
+                                  src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+                                  alt={video.title}
+                                  loading="lazy"
+                                />
+                                <div className="phonics-video-overlay">
+                                  <Play size={28} fill="white" />
+                                </div>
+                                {watched && (
+                                  <span className="phonics-watched-badge">
+                                    <Check size={14} />
+                                  </span>
+                                )}
+                                <span className="phonics-duration-badge">
+                                  <Clock size={11} /> {video.duration}
+                                </span>
+                              </div>
+                              <div className="phonics-video-info">
+                                <div className="phonics-video-meta">
+                                  <span
+                                    className="phonics-type-badge"
+                                    style={{ background: typeInfo.color }}
+                                  >
+                                    {typeInfo.icon} {typeInfo.label}
+                                  </span>
+                                  <span className="phonics-age-badge">{video.ageRange}</span>
+                                </div>
+                                <h4 className="phonics-video-title">{video.title}</h4>
+                                {watched && (
+                                  <span className="phonics-xp-earned">+10 XP earned</span>
+                                )}
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* ================================================================
+          MORE VIDEOS — Grade-based (existing content)
+          ================================================================ */}
       {selectedGrade === 'All' && popularVideos.length > 0 && (
         <motion.div
           className="popular-section"
@@ -158,7 +324,7 @@ function Videos() {
           <div className="section-title">
             <Users size={24} color="var(--accent-orange)" />
             <h2>
-              {selectedGrade === 'All' ? 'All Videos' : `${selectedGrade} Videos`}
+              {selectedGrade === 'All' ? 'More Videos' : `${selectedGrade} Videos`}
             </h2>
           </div>
           <p className="video-count">{filteredVideos.length} videos available</p>

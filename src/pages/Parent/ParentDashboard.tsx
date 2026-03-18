@@ -62,6 +62,7 @@ import {
   getWeeklySummary,
 } from '../../services/activityLogger';
 import type { ActivityLog, DayActivity } from '../../services/activityLogger';
+import { LS_PHONICS_MASTERY } from '../../config/storageKeys';
 import './ParentDashboard.css';
 
 // ============================================================
@@ -133,7 +134,7 @@ function makeDefaultChild(
 /** Read phonics mastery from localStorage for PhonicsChart */
 function getPhonicsProgressMap(): Record<string, number> {
   try {
-    const raw = localStorage.getItem('mimi_phonics_mastery');
+    const raw = localStorage.getItem(LS_PHONICS_MASTERY);
     if (!raw) return {};
     const data = JSON.parse(raw) as Record<string, { mastery: number }>;
     const map: Record<string, number> = {};

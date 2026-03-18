@@ -6,6 +6,7 @@
 
 import { GARDEN_PLANTS, getPlantStage } from '../data/gardenData';
 import type { GardenPlant, PlantStage } from '../data/gardenData';
+import { LS_MASTERED_SOUNDS } from '../config/storageKeys';
 
 const STORAGE_KEY = 'mimi_garden_state';
 const WATER_KEY = 'mimi_water_drops';
@@ -170,7 +171,7 @@ export function waterPlant(soundId: string): boolean {
 /** Initialize garden from mastered sounds (for migration from existing data) */
 export function initGardenFromMasteredSounds(): void {
   try {
-    const mastered = JSON.parse(localStorage.getItem('mimi_mastered_sounds') || '[]') as string[];
+    const mastered = JSON.parse(localStorage.getItem(LS_MASTERED_SOUNDS) || '[]') as string[];
     if (mastered.length === 0) return;
 
     const state = getGardenState();
