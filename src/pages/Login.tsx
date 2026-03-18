@@ -95,7 +95,10 @@ const Login: React.FC = () => {
   const { signIn, signUp, signInWithGoogle } = useAuth();
 
   const handlePasswordReset = async () => {
-    if (!resetEmail) return;
+    if (!resetEmail.trim()) {
+      toast.error(lang === 'tr' ? 'Email adresi giriniz' : 'Please enter your email');
+      return;
+    }
     setLoading(true);
     try {
       await sendPasswordResetEmail(auth, resetEmail);
@@ -115,7 +118,8 @@ const Login: React.FC = () => {
     try {
       const { error } = await signInWithGoogle();
       if (error) {
-        if (error.message?.includes('popup-closed') || error.message?.includes('cancelled')) {
+        const code = (error as { code?: string }).code;
+        if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
           // User closed popup, silently ignore
         } else {
           setError(t.errorGeneric);
@@ -393,6 +397,14 @@ const Login: React.FC = () => {
               )}
             </p>
           </form>
+
+          <p style={{ fontSize: '12px', color: 'var(--text-muted, #888)', textAlign: 'center', marginTop: '16px', lineHeight: 1.5 }}>
+            {lang === 'tr' ? (
+              <>Kayit olarak, <Link to="/terms" style={{ color: 'var(--text-muted, #888)', textDecoration: 'underline' }}>Kullanim Sartlari</Link> ve <Link to="/privacy" style={{ color: 'var(--text-muted, #888)', textDecoration: 'underline' }}>Gizlilik Politikasi</Link>'ni kabul etmis olursunuz.</>
+            ) : (
+              <>By signing up, you agree to our <Link to="/terms" style={{ color: 'var(--text-muted, #888)', textDecoration: 'underline' }}>Terms of Service</Link> and <Link to="/privacy" style={{ color: 'var(--text-muted, #888)', textDecoration: 'underline' }}>Privacy Policy</Link>.</>
+            )}
+          </p>
         </div>
       </motion.div>
     </div>

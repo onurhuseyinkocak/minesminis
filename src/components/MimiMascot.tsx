@@ -166,8 +166,8 @@ const MimiMascot: React.FC<MimiMascotProps> = ({
       ) : (
         <>
           {/* Eye whites */}
-          <ellipse cx="83" cy="65" rx="12" ry="13" fill="#fff" stroke="#2E7D32" strokeWidth="1.5" />
-          <ellipse cx="117" cy="65" rx="12" ry="13" fill="#fff" stroke="#2E7D32" strokeWidth="1.5" />
+          <ellipse cx="83" cy="65" rx="12" ry="13" fill="#F0F4FF" stroke="#2E7D32" strokeWidth="1.5" />
+          <ellipse cx="117" cy="65" rx="12" ry="13" fill="#F0F4FF" stroke="#2E7D32" strokeWidth="1.5" />
 
           {/* Irises — golden amber */}
           <circle cx="85" cy="66" r="7" fill="#E8A317" />
@@ -178,10 +178,10 @@ const MimiMascot: React.FC<MimiMascotProps> = ({
           <circle cx="116" cy="66" r="3.5" fill="#1a1a1a" />
 
           {/* Highlights */}
-          <circle cx="89" cy="63" r="2" fill="#fff" opacity="0.9" />
-          <circle cx="119" cy="63" r="2" fill="#fff" opacity="0.9" />
-          <circle cx="84" cy="69" r="1" fill="#fff" opacity="0.5" />
-          <circle cx="114" cy="69" r="1" fill="#fff" opacity="0.5" />
+          <circle cx="89" cy="63" r="2" fill="#F0F4FF" opacity="0.9" />
+          <circle cx="119" cy="63" r="2" fill="#F0F4FF" opacity="0.9" />
+          <circle cx="84" cy="69" r="1" fill="#F0F4FF" opacity="0.5" />
+          <circle cx="114" cy="69" r="1" fill="#F0F4FF" opacity="0.5" />
         </>
       )}
 

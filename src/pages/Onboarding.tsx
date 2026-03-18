@@ -197,7 +197,9 @@ const Onboarding: React.FC = () => {
 
   const handleSkip = () => {
     setHasSkippedSetup(true);
-    navigate('/games');
+    if (role === 'teacher') navigate('/teacher');
+    else if (role === 'parent') navigate('/parent');
+    else navigate('/dashboard');
   };
 
   const nextStep = useCallback(() => {
@@ -308,9 +310,9 @@ const Onboarding: React.FC = () => {
               mascotId: 'mimi_dragon',
               startingPhonicsGroup,
               ageGroup,
-              placementScore: Object.values(placementAnswers).filter(
-                (a, i) => a === PLACEMENT_QUESTIONS[i]?.correct
-              ).length,
+              placementScore: PLACEMENT_QUESTIONS.filter(q =>
+              placementAnswers[q.id] === q.correct
+            ).length,
             },
           });
         }
