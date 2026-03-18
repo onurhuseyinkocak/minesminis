@@ -14,6 +14,7 @@ interface GameProps {
   words: WordItem[];
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
+  onWrongAnswer?: () => void;
 }
 
 function shuffleArray<T>(arr: T[]): T[] {
@@ -39,7 +40,7 @@ function generateRounds(words: WordItem[]): Round[] {
   });
 }
 
-export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned }) => {
+export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const rounds = useMemo(() => generateRounds(words), [words]);
   const [currentRound, setCurrentRound] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -79,6 +80,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
       onXpEarned?.(12);
     } else {
       setFeedback('wrong');
+      onWrongAnswer?.();
     }
 
     setTimeout(() => {

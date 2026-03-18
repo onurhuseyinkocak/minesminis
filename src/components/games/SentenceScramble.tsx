@@ -14,6 +14,7 @@ interface GameProps {
   words: WordItem[];
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
+  onWrongAnswer?: () => void;
 }
 
 interface SentenceData {
@@ -50,7 +51,7 @@ function generateSentences(wordItems: WordItem[]): SentenceData[] {
   });
 }
 
-export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned }) => {
+export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const sentences = useMemo(() => generateSentences(words), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [placed, setPlaced] = useState<string[]>([]);
@@ -115,6 +116,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
       }, 2000);
     } else {
       setFeedback('wrong');
+      onWrongAnswer?.();
       const attempts = failedAttempts + 1;
       setFailedAttempts(attempts);
       if (attempts >= 1) setShowHint(true);

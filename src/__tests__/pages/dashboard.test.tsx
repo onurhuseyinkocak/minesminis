@@ -57,6 +57,7 @@ vi.mock('lucide-react', () => {
     Gift: icon,
     BarChart3: icon,
     ChevronRight: icon,
+    RefreshCw: icon,
   };
 });
 

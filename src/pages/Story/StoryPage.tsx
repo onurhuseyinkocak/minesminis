@@ -10,7 +10,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
 import { WORLDS, TRAIT_NAMES } from '../../data/storyWorlds';
 import type { TraitId } from '../../data/storyWorlds';
-import type { StoryNode, StoryChoice } from '../../data/storyTemplates';
+import type { StoryNode, StoryChoice, VocabularyWord } from '../../data/storyTemplates';
 import { ALL_NODES } from '../../data/storyTemplates';
 import {
   createDefaultState,
@@ -22,6 +22,8 @@ import {
 import type { StoryState, ChoiceResult } from '../../data/storyEngine';
 import { initOrLoadStory, saveStoryState, resetStoryProgress } from '../../services/storyService';
 import { playMusic, stopMusic, playSFX } from '../../data/soundLibrary';
+import { updateWordProgress } from '../../data/spacedRepetition';
+import toast from 'react-hot-toast';
 import type { MusicKey, SFXKey } from '../../data/soundLibrary';
 import StoryScene from '../../components/Story/StoryScene';
 import StoryNarrator from '../../components/Story/StoryNarrator';
@@ -42,6 +44,7 @@ const StoryPage: React.FC = () => {
   const [showStats, setShowStats] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [choiceResult, setChoiceResult] = useState<ChoiceResult | null>(null);
+  const [vocabDismissed, setVocabDismissed] = useState(false);
 
   const musicStopRef = useRef<(() => void) | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
@@ -149,6 +152,7 @@ const StoryPage: React.FC = () => {
       setChoiceResult(null);
       setTransitioning(false);
       setShowChoices(false);
+      setVocabDismissed(false);
 
       // Debounced save
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
@@ -187,6 +191,21 @@ const StoryPage: React.FC = () => {
       </div>
     );
   }
+
+  // ─── TTS helper ───
+  const speakWord = (word: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.8;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const hasVocabulary = currentNode.vocabulary && currentNode.vocabulary.length > 0;
+  const showVocabCard = hasVocabulary && showChoices && !vocabDismissed;
+  const showChoiceButtons = showChoices && (!hasVocabulary || vocabDismissed);
 
   const world = WORLDS[storyState.currentWorld];
   const progress = getStoryProgress(storyState);
@@ -333,7 +352,40 @@ const StoryPage: React.FC = () => {
             onComplete={handleNarratorComplete}
           />
 
-          {showChoices && !transitioning && (
+          {showVocabCard && !transitioning && (
+            <div className="story-page__vocab-card">
+              <h4 className="story-page__vocab-title">New Words!</h4>
+              <div className="story-page__vocab-list">
+                {currentNode.vocabulary!.map((v) => (
+                  <div key={v.word} className="story-page__vocab-item">
+                    <span className="story-page__vocab-emoji">{v.emoji}</span>
+                    <span className="story-page__vocab-word">{v.word}</span>
+                    <span className="story-page__vocab-turkish">{v.turkish}</span>
+                    <button
+                      className="story-page__vocab-speak"
+                      onClick={() => speakWord(v.word)}
+                      title={`Listen: ${v.word}`}
+                    >
+                      <Volume2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                className="story-page__vocab-continue"
+                onClick={() => {
+                  const words = currentNode.vocabulary!;
+                  words.forEach((v) => updateWordProgress(v.word, true));
+                  toast.success(`${words.length} new word${words.length > 1 ? 's' : ''} added to your review list! \u{1F4DA}`);
+                  setVocabDismissed(true);
+                }}
+              >
+                Got it! Continue
+              </button>
+            </div>
+          )}
+
+          {showChoiceButtons && !transitioning && (
             <StoryChoices
               choices={currentNode.choices}
               onChoose={handleChoice}

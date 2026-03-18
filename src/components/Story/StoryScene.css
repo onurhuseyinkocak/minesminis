@@ -1,0 +1,237 @@
+/* ============================================
+   STORY SCENE - Parallax visual renderer
+   ============================================ */
+
+.story-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.story-scene--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Sky */
+.story-scene__sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.story-scene__gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* SVG Layer */
+.story-scene__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+/* Sun animation */
+.story-scene__sun {
+  animation: scene-sun-pulse 4s ease-in-out infinite;
+}
+
+@keyframes scene-sun-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+/* Cloud drift */
+.story-scene__clouds {
+  animation: scene-clouds-drift 20s linear infinite;
+}
+
+@keyframes scene-clouds-drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(60px); }
+}
+
+/* Moon glow */
+.story-scene__moon {
+  animation: scene-moon-glow 5s ease-in-out infinite;
+}
+
+@keyframes scene-moon-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Waves */
+.story-scene__waves {
+  animation: scene-waves 6s ease-in-out infinite;
+}
+
+@keyframes scene-waves {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-20px); }
+}
+
+/* Fish swim */
+.story-scene__fish {
+  animation: scene-fish-swim 8s ease-in-out infinite;
+}
+
+@keyframes scene-fish-swim {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(40px); }
+}
+
+/* Stars twinkle */
+.story-scene__stars-bg circle {
+  animation: scene-star-twinkle 3s ease-in-out infinite;
+}
+.story-scene__stars-bg circle:nth-child(even) {
+  animation-delay: 1.5s;
+}
+
+@keyframes scene-star-twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Trees sway */
+.story-scene__trees {
+  animation: scene-tree-sway 6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes scene-tree-sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(0.5deg); }
+  75% { transform: rotate(-0.5deg); }
+}
+
+/* Nebula pulse */
+.story-scene__nebula {
+  animation: scene-nebula-pulse 8s ease-in-out infinite;
+}
+
+@keyframes scene-nebula-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+/* ─── Particles ─── */
+.story-scene__particles {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.story-scene__particle {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+
+/* Fireflies */
+.story-scene__particles--fireflies .story-scene__particle {
+  width: 6px;
+  height: 6px;
+  background: #FFD93D;
+  box-shadow: 0 0 8px 2px rgba(255, 217, 61, 0.6);
+  animation: particle-firefly 4s ease-in-out infinite;
+}
+
+@keyframes particle-firefly {
+  0%, 100% { opacity: 0.2; transform: translate(0, 0); }
+  25% { opacity: 1; transform: translate(10px, -15px); }
+  50% { opacity: 0.6; transform: translate(-5px, -25px); }
+  75% { opacity: 0.9; transform: translate(15px, -10px); }
+}
+
+/* Bubbles */
+.story-scene__particles--bubbles .story-scene__particle {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: particle-bubble 5s ease-in-out infinite;
+}
+
+@keyframes particle-bubble {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-100px) scale(1.2); }
+}
+
+/* Snow */
+.story-scene__particles--snow .story-scene__particle {
+  width: 5px;
+  height: 5px;
+  background: white;
+  animation: particle-snow 6s linear infinite;
+}
+
+@keyframes particle-snow {
+  0% { opacity: 0; transform: translateY(-20px) translateX(0); }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(120px) translateX(30px); }
+}
+
+/* Stars */
+.story-scene__particles--stars .story-scene__particle {
+  width: 3px;
+  height: 3px;
+  background: white;
+  animation: particle-star 3s ease-in-out infinite;
+}
+
+@keyframes particle-star {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* Sand */
+.story-scene__particles--sand .story-scene__particle {
+  width: 3px;
+  height: 3px;
+  background: #D4AC0D;
+  opacity: 0.4;
+  animation: particle-sand 4s linear infinite;
+}
+
+@keyframes particle-sand {
+  0% { opacity: 0; transform: translate(0, 0); }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate(60px, 10px); }
+}
+
+/* ─── Content overlay ─── */
+.story-scene__content {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .story-scene {
+    min-height: 300px;
+    border-radius: var(--radius-lg);
+  }
+
+  .story-scene__content {
+    padding: 16px;
+  }
+}

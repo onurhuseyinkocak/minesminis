@@ -14,6 +14,7 @@ interface GameProps {
   words: WordItem[];
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
+  onWrongAnswer?: () => void;
 }
 
 interface MatchPair {
@@ -33,7 +34,7 @@ function shuffleArray<T>(arr: T[]): T[] {
   return shuffled;
 }
 
-export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned }) => {
+export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const roundSize = 3;
   const totalRounds = Math.ceil(Math.min(words.length, 6) / roundSize);
 
@@ -114,13 +115,14 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned }
       }, 1200);
     } else {
       setFeedback({ type: 'wrong' });
+      onWrongAnswer?.();
       setTimeout(() => {
         setFeedback(null);
         setSelectedLeft(null);
         setSelectedRight(null);
       }, 800);
     }
-  }, [pairs, round, totalRounds, score, totalAttempted, onComplete, onXpEarned, initRound]);
+  }, [pairs, round, totalRounds, score, totalAttempted, onComplete, onXpEarned, onWrongAnswer, initRound]);
 
   const handleLeftClick = (id: number) => {
     if (pairs[id]?.matched || feedback) return;

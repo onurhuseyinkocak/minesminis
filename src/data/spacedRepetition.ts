@@ -176,3 +176,56 @@ export function getConfidenceLevel(score: number): ConfidenceLevel {
   if (score <= 75) return 'reviewing';
   return 'mastered';
 }
+
+// ============================================================
+// PERSISTENCE (localStorage)
+// ============================================================
+
+const LS_SR_KEY = 'mimi_spaced_repetition';
+
+/** Load all word progress entries from localStorage */
+export function loadAllProgress(): WordProgress[] {
+  try {
+    const raw = localStorage.getItem(LS_SR_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Save all word progress entries to localStorage */
+function saveAllProgress(entries: WordProgress[]): void {
+  try {
+    localStorage.setItem(LS_SR_KEY, JSON.stringify(entries));
+  } catch {
+    // storage full — silently ignore
+  }
+}
+
+/**
+ * Update progress for a single word and persist.
+ * Creates initial progress if the word hasn't been seen before.
+ */
+export function updateWordProgress(wordId: string, wasCorrect: boolean): WordProgress {
+  const all = loadAllProgress();
+  const existing = all.find((p) => p.wordId === wordId);
+  const current = existing || createInitialProgress(wordId);
+  const updated = calculateNextReview(current, wasCorrect);
+
+  if (existing) {
+    const idx = all.indexOf(existing);
+    all[idx] = updated;
+  } else {
+    all.push(updated);
+  }
+
+  saveAllProgress(all);
+  return updated;
+}
+
+/**
+ * Get words currently due for review (convenience wrapper that loads from storage).
+ */
+export function getDueWords(limit: number = 20): WordProgress[] {
+  return getWordsForReview(loadAllProgress(), limit);
+}

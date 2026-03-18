@@ -16,6 +16,12 @@ export interface StoryChoice {
   itemReward?: string;
 }
 
+export interface VocabularyWord {
+  word: string;
+  turkish: string;
+  emoji: string;
+}
+
 export interface StoryNode {
   id: string;
   world: WorldId;
@@ -28,6 +34,7 @@ export interface StoryNode {
   sfx?: string[];
   choices: StoryChoice[];
   conditions?: { trait: TraitId; min?: number }[];
+  vocabulary?: VocabularyWord[];
 }
 
 // ─────────── FOREST NODES ───────────
@@ -42,6 +49,11 @@ const forestNodes: StoryNode[] = [
     text: 'The morning sun filters through the tall trees. {{name}} steps into a clearing full of colorful mushrooms. Each one glows a different color. A tiny path leads deeper into the woods, and a gentle stream sparkles nearby.',
     music: 'magicForest',
     sfx: ['birds', 'stream'],
+    vocabulary: [
+      { word: 'tree', turkish: 'ağaç', emoji: '🌳' },
+      { word: 'mushroom', turkish: 'mantar', emoji: '🍄' },
+      { word: 'path', turkish: 'patika', emoji: '🛤️' },
+    ],
     choices: [
       { id: 'f_s1', text: 'Follow the glowing mushrooms', emoji: '🍄', traitEffects: { curiosity: 3 }, xpReward: 5, nextTags: ['forest-explore'] },
       { id: 'f_s2', text: 'Walk to the sparkling stream', emoji: '💧', traitEffects: { wisdom: 2 }, xpReward: 5, nextTags: ['forest-lake'] },
@@ -57,6 +69,10 @@ const forestNodes: StoryNode[] = [
     text: 'The mushrooms lead {{name}} along a winding path. The trees grow taller and their leaves form a green ceiling above. Strange flowers open as {{name}} walks past them, releasing tiny sparkles into the air.',
     music: 'magicForest',
     sfx: ['footsteps', 'sparkle'],
+    vocabulary: [
+      { word: 'flower', turkish: 'çiçek', emoji: '🌸' },
+      { word: 'leaf', turkish: 'yaprak', emoji: '🍃' },
+    ],
     choices: [
       { id: 'f_e1a', text: 'Touch one of the sparkly flowers', emoji: '✨', traitEffects: { curiosity: 4 }, xpReward: 8, nextTags: ['forest-discovery'], itemReward: 'glowing_acorn' },
       { id: 'f_e1b', text: 'Keep walking quietly', emoji: '🚶', traitEffects: { wisdom: 3 }, xpReward: 5, nextTags: ['forest-deep'] },
@@ -86,6 +102,11 @@ const forestNodes: StoryNode[] = [
     text: 'The stream leads to a beautiful lake. Hundreds of fireflies dance above the water, creating patterns of light. A family of ducks swims peacefully, and on the far shore, {{name}} can see a cozy treehouse.',
     music: 'calmEnding',
     sfx: ['water', 'crickets'],
+    vocabulary: [
+      { word: 'river', turkish: 'nehir', emoji: '🏞️' },
+      { word: 'bird', turkish: 'kuş', emoji: '🐦' },
+      { word: 'bridge', turkish: 'köprü', emoji: '🌉' },
+    ],
     choices: [
       { id: 'f_l1a', text: 'Swim across to the treehouse', emoji: '🏊', traitEffects: { courage: 4 }, xpReward: 8, nextTags: ['forest-treehouse'] },
       { id: 'f_l1b', text: 'Watch the firefly patterns', emoji: '✨', traitEffects: { wisdom: 3, curiosity: 2 }, xpReward: 8, nextTags: ['forest-magic'] },
@@ -102,6 +123,10 @@ const forestNodes: StoryNode[] = [
     text: '"Hello there, young one!" Oliver the Owl lands softly on a branch. His big golden eyes look at {{name}} kindly. "I have been watching you explore. You have a good heart. Would you like to learn a forest secret?"',
     music: 'magicForest',
     sfx: ['owl'],
+    vocabulary: [
+      { word: 'owl', turkish: 'baykuş', emoji: '🦉' },
+      { word: 'branch', turkish: 'dal', emoji: '🌿' },
+    ],
     choices: [
       { id: 'f_enc1a', text: '"Yes please, teach me!"', emoji: '📚', traitEffects: { wisdom: 5 }, xpReward: 10, nextTags: ['forest-discovery'] },
       { id: 'f_enc1b', text: '"Can we be friends first?"', emoji: '🤝', traitEffects: { kindness: 5 }, xpReward: 10, nextTags: ['forest-friend'] },
@@ -241,6 +266,11 @@ const oceanNodes: StoryNode[] = [
     text: 'The portal opens on a beautiful beach. Crystal-clear water stretches to the horizon. {{name}} can see colorful fish swimming near the shore, and far away, something sparkles beneath the waves.',
     music: 'calmEnding',
     sfx: ['waves', 'seagulls'],
+    vocabulary: [
+      { word: 'fish', turkish: 'balık', emoji: '🐟' },
+      { word: 'wave', turkish: 'dalga', emoji: '🌊' },
+      { word: 'sand', turkish: 'kum', emoji: '🏖️' },
+    ],
     choices: [
       { id: 'o_s1', text: 'Dive into the water', emoji: '🏊', traitEffects: { courage: 4 }, xpReward: 8, nextTags: ['ocean-explore'] },
       { id: 'o_s2', text: 'Look for shells on the beach', emoji: '🐚', traitEffects: { curiosity: 3 }, xpReward: 5, nextTags: ['ocean-discovery'] },
@@ -256,6 +286,10 @@ const oceanNodes: StoryNode[] = [
     text: 'Under the water, everything is amazing! A garden of coral stretches in every direction — red, purple, yellow, orange. Fish of every color swim around {{name}} like a living rainbow.',
     music: 'calmEnding',
     sfx: ['bubbles', 'whale'],
+    vocabulary: [
+      { word: 'coral', turkish: 'mercan', emoji: '🪸' },
+      { word: 'shell', turkish: 'deniz kabuğu', emoji: '🐚' },
+    ],
     choices: [
       { id: 'o_e1a', text: 'Swim deeper', emoji: '⬇️', traitEffects: { courage: 4 }, xpReward: 8, nextTags: ['ocean-deep'] },
       { id: 'o_e1b', text: 'Follow a golden fish', emoji: '🐠', traitEffects: { curiosity: 4 }, xpReward: 8, nextTags: ['ocean-discovery'] },
@@ -272,6 +306,10 @@ const oceanNodes: StoryNode[] = [
     text: '"Hey hey hey!" Splash the Dolphin does a flip! "A land friend! I LOVE land friends! Want to ride on my back? I can show you the WHOLE ocean! Please please please?"',
     music: 'cheerfulMorning',
     sfx: ['dolphin', 'splash'],
+    vocabulary: [
+      { word: 'dolphin', turkish: 'yunus', emoji: '🐬' },
+      { word: 'boat', turkish: 'tekne', emoji: '⛵' },
+    ],
     choices: [
       { id: 'o_enc1a', text: '"Let\'s go! Show me everything!"', emoji: '🐬', traitEffects: { courage: 3, curiosity: 3 }, xpReward: 10, nextTags: ['ocean-explore'] },
       { id: 'o_enc1b', text: '"Can we visit the Sunken Ship?"', emoji: '🚢', traitEffects: { curiosity: 5 }, xpReward: 10, nextTags: ['ocean-ship'] },
@@ -301,6 +339,10 @@ const oceanNodes: StoryNode[] = [
     text: 'The Sunken Ship is an old pirate vessel covered in barnacles and seaweed. Captain Seahorse stands guard at the entrance. "Ahoy! Only the brave may enter. This ship holds ancient treasures — and ancient puzzles!"',
     music: 'softAdventure',
     sfx: ['creak', 'bubbles'],
+    vocabulary: [
+      { word: 'treasure', turkish: 'hazine', emoji: '💰' },
+      { word: 'ship', turkish: 'gemi', emoji: '🚢' },
+    ],
     choices: [
       { id: 'o_sh1a', text: 'Accept the challenge', emoji: '⚔️', traitEffects: { courage: 5 }, xpReward: 12, nextTags: ['ocean-discovery'], itemReward: 'pearl_necklace' },
       { id: 'o_sh1b', text: 'Ask about the ship\'s history', emoji: '📜', traitEffects: { wisdom: 5 }, xpReward: 10, nextTags: ['ocean-encounter'] },
@@ -380,6 +422,11 @@ const mountainNodes: StoryNode[] = [
     text: '{{name}} stands at the base of the tallest mountain in the world. Snow-capped peaks touch the clouds. A narrow bridge made of clouds stretches across a deep valley. An eagle circles overhead.',
     music: 'softAdventure',
     sfx: ['wind', 'eagle'],
+    vocabulary: [
+      { word: 'rock', turkish: 'kaya', emoji: '🪨' },
+      { word: 'eagle', turkish: 'kartal', emoji: '🦅' },
+      { word: 'cloud', turkish: 'bulut', emoji: '☁️' },
+    ],
     choices: [
       { id: 'm_s1', text: 'Cross the cloud bridge', emoji: '🌉', traitEffects: { courage: 5 }, xpReward: 10, nextTags: ['mountain-explore'] },
       { id: 'm_s2', text: 'Call out to the eagle', emoji: '🦅', traitEffects: { kindness: 3 }, xpReward: 5, nextTags: ['mountain-encounter'] },
@@ -395,6 +442,11 @@ const mountainNodes: StoryNode[] = [
     text: 'Above the clouds, everything is silent and beautiful. {{name}} can see the sun setting in brilliant orange and pink. Snow crystals float in the air like tiny diamonds. A stone staircase leads even higher.',
     music: 'calmEnding',
     sfx: ['wind', 'chimes'],
+    vocabulary: [
+      { word: 'snow', turkish: 'kar', emoji: '❄️' },
+      { word: 'wind', turkish: 'rüzgar', emoji: '💨' },
+      { word: 'climb', turkish: 'tırmanmak', emoji: '🧗' },
+    ],
     choices: [
       { id: 'm_e1a', text: 'Climb the stone stairs', emoji: '🪜', traitEffects: { courage: 4, curiosity: 2 }, xpReward: 10, nextTags: ['mountain-peak'] },
       { id: 'm_e1b', text: 'Catch snowflakes', emoji: '❄️', traitEffects: { kindness: 3 }, xpReward: 5, nextTags: ['mountain-discovery'] },
@@ -426,6 +478,10 @@ const mountainNodes: StoryNode[] = [
     text: 'Inside the mountain, a cavern glitters with ice crystals. Flake the Snow Bunny hops over. "Oh! You found my secret home! Look — each crystal plays a different musical note when you tap it!"',
     music: 'magicForest',
     sfx: ['chimes', 'sparkle'],
+    vocabulary: [
+      { word: 'cave', turkish: 'mağara', emoji: '🕳️' },
+      { word: 'peak', turkish: 'zirve', emoji: '🏔️' },
+    ],
     choices: [
       { id: 'm_c1a', text: 'Play a song on the crystals', emoji: '🎵', traitEffects: { curiosity: 4, wisdom: 2 }, xpReward: 12, nextTags: ['mountain-discovery'], itemReward: 'star_fragment' },
       { id: 'm_c1b', text: 'Ask Flake about the mountain', emoji: '🐇', traitEffects: { wisdom: 4 }, xpReward: 8, nextTags: ['mountain-encounter'] },
@@ -504,6 +560,11 @@ const spaceNodes: StoryNode[] = [
     text: 'The stars surround {{name}} in every direction! A friendly space station floats nearby with blinking lights and a sign: "Welcome to Station Alpha! Population: Awesome." A robot waves from the entrance.',
     music: 'softAdventure',
     sfx: ['beep', 'hum'],
+    vocabulary: [
+      { word: 'star', turkish: 'yıldız', emoji: '⭐' },
+      { word: 'moon', turkish: 'ay', emoji: '🌙' },
+      { word: 'planet', turkish: 'gezegen', emoji: '🪐' },
+    ],
     choices: [
       { id: 's_s1', text: 'Enter the space station', emoji: '🏠', traitEffects: { curiosity: 3 }, xpReward: 5, nextTags: ['space-station'] },
       { id: 's_s2', text: 'Float toward the asteroids', emoji: '☄️', traitEffects: { courage: 4 }, xpReward: 8, nextTags: ['space-explore'] },
@@ -535,6 +596,10 @@ const spaceNodes: StoryNode[] = [
     text: 'The asteroids are actually floating gardens! Each one has different plants growing on it — crystal flowers, rainbow grass, and trees with glowing fruit. It is like a park in space!',
     music: 'magicForest',
     sfx: ['sparkle', 'cosmic'],
+    vocabulary: [
+      { word: 'garden', turkish: 'bahçe', emoji: '🌻' },
+      { word: 'fruit', turkish: 'meyve', emoji: '🍎' },
+    ],
     choices: [
       { id: 's_e1a', text: 'Taste a glowing fruit', emoji: '🍎', traitEffects: { courage: 4, curiosity: 3 }, xpReward: 10, nextTags: ['space-discovery'], itemReward: 'fuel_crystal' },
       { id: 's_e1b', text: 'Plant a new seed', emoji: '🌱', traitEffects: { kindness: 5 }, xpReward: 10, nextTags: ['space-encounter'] },
@@ -613,6 +678,11 @@ const desertNodes: StoryNode[] = [
     text: 'Golden sand stretches in every direction under a brilliant blue sky. An oasis appears ahead — palm trees, cool water, and a colorful market with tents and flags fluttering in the breeze.',
     music: 'cheerfulMorning',
     sfx: ['wind', 'bells'],
+    vocabulary: [
+      { word: 'desert', turkish: 'çöl', emoji: '🏜️' },
+      { word: 'water', turkish: 'su', emoji: '💧' },
+      { word: 'sun', turkish: 'güneş', emoji: '☀️' },
+    ],
     choices: [
       { id: 'd_s1', text: 'Explore the market', emoji: '🏪', traitEffects: { curiosity: 3 }, xpReward: 5, nextTags: ['desert-market'] },
       { id: 'd_s2', text: 'Climb the tallest sand dune', emoji: '🏃', traitEffects: { courage: 4 }, xpReward: 8, nextTags: ['desert-explore'] },
@@ -673,6 +743,11 @@ const desertNodes: StoryNode[] = [
     text: 'The hidden temple is magnificent! Golden walls covered in beautiful paintings tell stories of ancient adventurers. In the center, three colored doors stand: red for courage, blue for wisdom, and green for kindness.',
     music: 'magicForest',
     sfx: ['echo', 'sparkle'],
+    vocabulary: [
+      { word: 'door', turkish: 'kapı', emoji: '🚪' },
+      { word: 'gold', turkish: 'altın', emoji: '✨' },
+      { word: 'wall', turkish: 'duvar', emoji: '🧱' },
+    ],
     choices: [
       { id: 'd_t1a', text: 'Open the red door', emoji: '🔴', traitEffects: { courage: 6 }, xpReward: 15, nextTags: ['desert-discovery'], itemReward: 'magic_lamp' },
       { id: 'd_t1b', text: 'Open the blue door', emoji: '🔵', traitEffects: { wisdom: 6 }, xpReward: 15, nextTags: ['desert-discovery'], itemReward: 'sand_clock' },

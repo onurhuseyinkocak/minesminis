@@ -16,6 +16,7 @@ interface GameProps {
   words: WordItem[];
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
+  onWrongAnswer?: () => void;
 }
 
 type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge';

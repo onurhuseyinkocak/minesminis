@@ -14,6 +14,7 @@ interface GameProps {
   words: WordItem[];
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
+  onWrongAnswer?: () => void;
 }
 
 interface Question {
@@ -61,7 +62,7 @@ function generateQuestions(words: WordItem[]): Question[] {
 
 const TIMER_DURATION = 10;
 
-export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned }) => {
+export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const questions = useMemo(() => generateQuestions(words), [words]);
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
@@ -131,6 +132,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned }
     } else {
       setStreak(0);
       setFeedback('wrong');
+      onWrongAnswer?.();
     }
 
     setTimeout(advanceQuestion, 1500);

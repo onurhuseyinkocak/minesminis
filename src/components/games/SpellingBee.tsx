@@ -14,6 +14,7 @@ interface GameProps {
   words: WordItem[];
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
+  onWrongAnswer?: () => void;
 }
 
 const EXAMPLE_SENTENCES: Record<string, string> = {
@@ -49,7 +50,7 @@ function generateLetterPool(word: string): string[] {
   return pool;
 }
 
-export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned }) => {
+export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const gameWords = useMemo(() => words.slice(0, 5), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typed, setTyped] = useState<string[]>([]);
@@ -127,6 +128,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
       }, 2000);
     } else {
       setFeedback('wrong');
+      onWrongAnswer?.();
       const newAttempts = wrongAttempts + 1;
       setWrongAttempts(newAttempts);
       if (newAttempts >= 2) setShowHint(true);

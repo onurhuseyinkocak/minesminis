@@ -288,6 +288,110 @@
   color: var(--primary-light);
 }
 
+/* ---- VOCABULARY CARD ---- */
+.story-page__vocab-card {
+  margin: var(--space-md) auto;
+  padding: var(--space-md) var(--space-lg);
+  max-width: 420px;
+  width: 100%;
+  background: rgba(26, 26, 46, 0.92);
+  backdrop-filter: blur(12px);
+  border: 2px solid var(--primary-light);
+  border-radius: var(--radius-lg);
+  animation: vocabSlideIn 400ms ease forwards;
+}
+
+@keyframes vocabSlideIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.story-page__vocab-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-light);
+  text-align: center;
+  margin: 0 0 var(--space-md) 0;
+}
+
+.story-page__vocab-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.story-page__vocab-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.story-page__vocab-emoji {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.story-page__vocab-word {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+  flex: 1;
+  text-transform: capitalize;
+}
+
+.story-page__vocab-turkish {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--stone);
+  flex-shrink: 0;
+}
+
+.story-page__vocab-speak {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--primary-glow);
+  border: 1px solid var(--primary-light);
+  color: var(--primary-light);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.story-page__vocab-speak:hover {
+  background: var(--primary-light);
+  color: var(--ink);
+}
+
+.story-page__vocab-continue {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--primary-light);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.story-page__vocab-continue:hover {
+  opacity: 0.85;
+}
+
 /* ---- MAIN SCENE ---- */
 .story-page__scene {
   flex: 1;

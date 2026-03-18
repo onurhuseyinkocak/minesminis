@@ -309,6 +309,97 @@
 }
 
 /* ==========================================================================
+   HEARTS DISPLAY (Top Bar)
+   ========================================================================== */
+.lesson-player-topbar__hearts {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 0 var(--space-xs);
+}
+
+.lesson-player-topbar__heart {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.lesson-player-topbar__heart--full {
+  animation: heartPulse 1s ease-in-out infinite;
+}
+
+.lesson-player-topbar__heart--empty {
+  opacity: 0.3;
+  transform: scale(0.85);
+}
+
+.lesson-player-topbar__hearts--shake .lesson-player-topbar__heart--full:last-of-type {
+  animation: heartShake 0.5s ease-in-out;
+}
+
+/* Hearts on completion screen */
+.lesson-complete__hearts {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+}
+
+.lesson-complete__heart {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.lesson-complete__heart--full {
+  animation: heartPulse 1.5s ease-in-out infinite;
+}
+
+.lesson-complete__heart--empty {
+  opacity: 0.25;
+}
+
+.lesson-complete__heart-bonus {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--accent-emerald);
+  margin-left: var(--space-xs);
+}
+
+/* Game Over hearts */
+.lesson-gameover__hearts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) 0;
+}
+
+.lesson-gameover__heart--empty {
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+
+/* ==========================================================================
+   HEART ANIMATIONS
+   ========================================================================== */
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes heartShake {
+  0% { transform: scale(1) rotate(0deg); }
+  15% { transform: scale(1.3) rotate(-10deg); }
+  30% { transform: scale(1.3) rotate(10deg); }
+  45% { transform: scale(1.3) rotate(-10deg); }
+  60% { transform: scale(1.1) rotate(5deg); }
+  75% { transform: scale(1.05) rotate(-3deg); }
+  100% { transform: scale(0.85) rotate(0deg); opacity: 0.3; }
+}
+
+/* ==========================================================================
    DARK MODE
    ========================================================================== */
 [data-theme="dark"] .lesson-player-topbar {

@@ -1,0 +1,104 @@
+/* ============================================
+   STORY NARRATOR - Glass text panel
+   ============================================ */
+
+.story-narrator {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.3s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.story-narrator:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Location badge */
+.story-narrator__location {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.story-narrator__location-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00B894;
+  display: inline-block;
+}
+
+/* NPC */
+.story-narrator__npc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.story-narrator__npc-emoji {
+  font-size: 1.4rem;
+}
+
+.story-narrator__npc-name {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #FFD93D;
+}
+
+/* Text */
+.story-narrator__text {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  font-weight: 500;
+  min-height: 3em;
+}
+
+/* Blinking cursor */
+.story-narrator__cursor {
+  display: inline-block;
+  animation: narrator-blink 0.7s step-end infinite;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@keyframes narrator-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Skip hint */
+.story-narrator__hint {
+  text-align: right;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .story-narrator {
+    padding: 16px 18px;
+  }
+
+  .story-narrator__text {
+    font-size: 0.95rem;
+  }
+}

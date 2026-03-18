@@ -27,6 +27,7 @@ import {
   Volume2,
   Eye,
   EyeOff,
+  Heart,
 } from 'lucide-react';
 import { Button, ProgressBar, Card } from '../components/ui';
 import { useGamification } from '../contexts/GamificationContext';
@@ -34,8 +35,17 @@ import { GameSelector } from '../components/games';
 import { getLessonById, getWorldById, getWorldVocabulary } from '../data/curriculum';
 import type { Activity, VocabularyWord } from '../data/curriculum';
 import { completeLesson } from '../data/progressTracker';
+import { updateWordProgress } from '../data/spacedRepetition';
 import { useAuth } from '../contexts/AuthContext';
+import { SFX } from '../data/soundLibrary';
 import './LessonPlayer.css';
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+
+const INITIAL_HEARTS = 3;
+const HEART_BONUS_XP = 10;
 
 // ============================================================
 // ACTIVITY TYPE CONFIG
@@ -328,6 +338,9 @@ const LessonPlayer = () => {
   const [direction, setDirection] = useState(1);
   const [completed, setCompleted] = useState(false);
   const [activityScores, setActivityScores] = useState<{ score: number; total: number }[]>([]);
+  const [hearts, setHearts] = useState(INITIAL_HEARTS);
+  const [gameOver, setGameOver] = useState(false);
+  const [heartLostIndex, setHeartLostIndex] = useState<number | null>(null);
 
   const totalActivities = lesson?.activities.length || 0;
   const progressPct = totalActivities > 0 ? Math.round(((currentIndex + (completed ? 1 : 0)) / totalActivities) * 100) : 0;
@@ -344,6 +357,12 @@ const LessonPlayer = () => {
       addXP(earnedXp, 'activity_completed', { lessonId, worldId, activityId: currentActivity?.id });
     }
 
+    // Update spaced repetition for each word used in this activity
+    const wasCorrect = total > 0 ? score / total >= 0.5 : true;
+    for (const w of activityWords) {
+      updateWordProgress(w.english, wasCorrect);
+    }
+
     // Auto-advance to next activity after a short delay
     setTimeout(() => {
       if (!lesson) return;
@@ -354,7 +373,12 @@ const LessonPlayer = () => {
         // Lesson complete
         setCompleted(true);
         const totalXP = lesson.xpReward || 30;
-        addXP(totalXP, 'lesson_completed', { lessonId, worldId });
+        // Heart bonus: +10 XP per remaining heart
+        setHearts((currentHearts) => {
+          const heartBonus = currentHearts * HEART_BONUS_XP;
+          addXP(totalXP + heartBonus, 'lesson_completed', { lessonId, worldId });
+          return currentHearts;
+        });
 
         // Save progress via progressTracker (unlocks next lesson/world)
         try {
@@ -372,6 +396,20 @@ const LessonPlayer = () => {
   const handleXpEarned = useCallback((xp: number) => {
     addXP(xp, 'activity_completed', { lessonId, worldId });
   }, [addXP, lessonId, worldId]);
+
+  const handleWrongAnswer = useCallback(() => {
+    SFX.wrong();
+    setHearts((prev) => {
+      const next = prev - 1;
+      if (next <= 0) {
+        setGameOver(true);
+      }
+      return Math.max(0, next);
+    });
+    // Trigger heart-lost animation
+    setHeartLostIndex(Date.now());
+    setTimeout(() => setHeartLostIndex(null), 600);
+  }, []);
 
   const handleSkip = useCallback(() => {
     if (!lesson) return;
@@ -396,6 +434,9 @@ const LessonPlayer = () => {
     setDirection(-1);
     setCompleted(false);
     setActivityScores([]);
+    setHearts(INITIAL_HEARTS);
+    setGameOver(false);
+    setHeartLostIndex(null);
   }, []);
 
   // Not found
@@ -413,11 +454,60 @@ const LessonPlayer = () => {
     );
   }
 
+  // ========== GAME OVER (out of hearts) ==========
+  if (gameOver) {
+    return (
+      <div className="lesson-player-page">
+        <motion.div
+          className="lesson-complete"
+          variants={celebrationVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <div className="lesson-gameover__hearts" aria-hidden="true">
+            <span className="lesson-gameover__heart lesson-gameover__heart--empty">
+              <Heart size={48} />
+            </span>
+          </div>
+          <h1 className="lesson-complete__title">Out of Hearts!</h1>
+          <p className="lesson-complete__subtitle">
+            Don&apos;t worry, practice makes perfect! Try again.
+          </p>
+
+          <div className="lesson-complete__mimi">
+            <span className="lesson-complete__mimi-avatar">{'\u{1F431}'}</span>
+            <p>You can do it! Let&apos;s try one more time!</p>
+          </div>
+
+          <div className="lesson-complete__actions">
+            <Button
+              variant="primary"
+              size="lg"
+              icon={<RotateCcw size={18} />}
+              onClick={handleRestart}
+            >
+              Try Again
+            </Button>
+            <Button
+              variant="ghost"
+              size="lg"
+              icon={<ArrowLeft size={18} />}
+              onClick={() => navigate(`/worlds/${worldId}`)}
+            >
+              Go Back
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   // ========== COMPLETION SCREEN ==========
   if (completed) {
     const totalScore = activityScores.reduce((a, s) => a + s.score, 0);
     const totalPossible = activityScores.reduce((a, s) => a + s.total, 0);
     const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
+    const heartBonusXp = hearts * HEART_BONUS_XP;
 
     return (
       <div className="lesson-player-page">
@@ -435,8 +525,23 @@ const LessonPlayer = () => {
           </div>
           <h1 className="lesson-complete__title">Lesson Complete!</h1>
           <p className="lesson-complete__subtitle">
-            Great job! You finished "{lesson.title}" - all {totalActivities} activities!
+            Great job! You finished &quot;{lesson.title}&quot; - all {totalActivities} activities!
           </p>
+
+          {/* Hearts remaining */}
+          <div className="lesson-complete__hearts">
+            {Array.from({ length: INITIAL_HEARTS }).map((_, i) => (
+              <span
+                key={i}
+                className={`lesson-complete__heart ${i < hearts ? 'lesson-complete__heart--full' : 'lesson-complete__heart--empty'}`}
+              >
+                <Heart size={28} fill={i < hearts ? 'var(--error)' : 'none'} color={i < hearts ? 'var(--error)' : 'var(--text-muted)'} />
+              </span>
+            ))}
+            {hearts > 0 && (
+              <span className="lesson-complete__heart-bonus">+{heartBonusXp} bonus XP</span>
+            )}
+          </div>
 
           {totalPossible > 0 && (
             <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
@@ -446,7 +551,7 @@ const LessonPlayer = () => {
 
           <div className="lesson-complete__xp">
             <Star size={24} />
-            <span className="lesson-complete__xp-value">+{lesson.xpReward} XP</span>
+            <span className="lesson-complete__xp-value">+{(lesson.xpReward || 0) + heartBonusXp} XP</span>
           </div>
 
           <div className="lesson-complete__mimi">
@@ -503,6 +608,18 @@ const LessonPlayer = () => {
           </span>
         </div>
 
+        {/* Hearts Display */}
+        <div className={`lesson-player-topbar__hearts${heartLostIndex !== null ? ' lesson-player-topbar__hearts--shake' : ''}`} aria-label={`${hearts} hearts remaining`}>
+          {Array.from({ length: INITIAL_HEARTS }).map((_, i) => (
+            <span
+              key={i}
+              className={`lesson-player-topbar__heart ${i < hearts ? 'lesson-player-topbar__heart--full' : 'lesson-player-topbar__heart--empty'}`}
+            >
+              <Heart size={20} fill={i < hearts ? 'var(--error)' : 'none'} color={i < hearts ? 'var(--error)' : 'var(--text-muted)'} />
+            </span>
+          ))}
+        </div>
+
         <button
           className="lesson-player-topbar__skip"
           onClick={handleSkip}
@@ -556,6 +673,7 @@ const LessonPlayer = () => {
                   words={activityWords}
                   onComplete={handleActivityComplete}
                   onXpEarned={handleXpEarned}
+                  onWrongAnswer={handleWrongAnswer}
                 />
               ) : currentActivity ? (
                 <FallbackActivity

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import { BookOpen, Volume2, Star, Trophy, Sparkles, Search } from "lucide-react";
+import { BookOpen, Volume2, Star, Trophy, Sparkles, Search, RefreshCw } from "lucide-react";
 import ContentPageHeader from '../components/ContentPageHeader';
 import './Words.css';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { kidsWords as fallbackWords } from '../data/wordsData';
+import { getDueWords, updateWordProgress, type WordProgress } from '../data/spacedRepetition';
 
 interface WordDefinition {
   word: string;
@@ -61,6 +63,13 @@ function saveLearnedToLS(words: Set<string>) {
 
 const Words: React.FC = () => {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<'words' | 'review'>(
+    searchParams.get('tab') === 'review' ? 'review' : 'words'
+  );
+  const [dueWords, setDueWords] = useState<WordProgress[]>([]);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [reviewRevealed, setReviewRevealed] = useState(false);
   const [searchWord, setSearchWord] = useState<string>("");
   const [wordData, setWordData] = useState<WordDefinition | null>(null);
   const [turkishTranslation, setTurkishTranslation] = useState<string>("");
@@ -114,6 +123,38 @@ const Words: React.FC = () => {
   useEffect(() => {
     fetchKidsWords();
   }, []);
+
+  // Load due words when review tab is active
+  useEffect(() => {
+    if (activeTab === 'review') {
+      setDueWords(getDueWords());
+      setReviewIndex(0);
+      setReviewRevealed(false);
+    }
+  }, [activeTab]);
+
+  const handleTabSwitch = (tab: 'words' | 'review') => {
+    setActiveTab(tab);
+    setSearchParams(tab === 'review' ? { tab: 'review' } : {});
+  };
+
+  const handleReviewAnswer = (wasCorrect: boolean) => {
+    const currentWord = dueWords[reviewIndex];
+    if (!currentWord) return;
+    updateWordProgress(currentWord.wordId, wasCorrect);
+    toast.success(wasCorrect ? 'Nice! Keep it up!' : 'No worries, you\'ll get it next time!');
+
+    if (reviewIndex < dueWords.length - 1) {
+      setReviewIndex((i) => i + 1);
+      setReviewRevealed(false);
+    } else {
+      // Reload due words (some may have been rescheduled)
+      setDueWords(getDueWords());
+      setReviewIndex(0);
+      setReviewRevealed(false);
+      toast.success('Review session complete!');
+    }
+  };
 
   // Load favorites from Supabase when user is available
   useEffect(() => {
@@ -268,6 +309,7 @@ const Words: React.FC = () => {
       toast.success('Removed from learned! 📚');
     } else {
       newLearned.add(word);
+      updateWordProgress(word, true);
       toast.success('Awesome! Word learned! 🌟');
     }
     setLearnedWords(newLearned);
@@ -356,6 +398,39 @@ const Words: React.FC = () => {
         iconColor="var(--accent-amber)"
         filterSlot={
           <div className="modern-tabs">
+            <button
+              className={`filter-select-modern ${activeTab === 'words' ? 'active-tab' : ''}`}
+              onClick={() => handleTabSwitch('words')}
+              style={{
+                background: activeTab === 'words' ? 'var(--primary)' : undefined,
+                color: activeTab === 'words' ? 'var(--text-on-primary, #fff)' : undefined,
+                cursor: 'pointer',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '0.5rem',
+                fontWeight: 600,
+              }}
+            >
+              All Words
+            </button>
+            <button
+              className={`filter-select-modern ${activeTab === 'review' ? 'active-tab' : ''}`}
+              onClick={() => handleTabSwitch('review')}
+              style={{
+                background: activeTab === 'review' ? 'var(--primary)' : undefined,
+                color: activeTab === 'review' ? 'var(--text-on-primary, #fff)' : undefined,
+                cursor: 'pointer',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '0.5rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+              }}
+            >
+              <RefreshCw size={14} /> Review Due
+            </button>
             <select
               id="grade-filter"
               value={selectedGrade}
@@ -512,7 +587,104 @@ const Words: React.FC = () => {
           </motion.div>
         )}
 
-        {!loading && !wordData && (
+        {!loading && !wordData && activeTab === 'review' && (
+          <motion.div
+            key="review-mode"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="words-grid"
+          >
+            <h2 className="section-title">
+              <RefreshCw className="section-icon" />
+              Review Due Words ({dueWords.length})
+            </h2>
+
+            {dueWords.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">{'\u2728'}</div>
+                <h3>All caught up!</h3>
+                <p>No words due for review right now. Keep learning new words!</p>
+              </div>
+            ) : (() => {
+              const currentDue = dueWords[reviewIndex];
+              const matchedWord = kidsWords.find((w) => w.word === currentDue?.wordId);
+              return (
+                <div style={{ maxWidth: '480px', margin: '0 auto' }}>
+                  <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                    Card {reviewIndex + 1} of {dueWords.length}
+                  </p>
+                  <div
+                    onClick={() => setReviewRevealed(true)}
+                    style={{
+                      background: 'var(--bg-card, #fff)',
+                      borderRadius: '1rem',
+                      padding: '2rem',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      minHeight: '200px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.75rem',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                      border: '2px solid var(--border-light, #e5e7eb)',
+                    }}
+                  >
+                    <span style={{ fontSize: '3rem' }}>{matchedWord?.emoji || '\uD83D\uDCDA'}</span>
+                    <span style={{ fontSize: '2rem', fontWeight: 700 }}>{currentDue?.wordId}</span>
+
+                    {reviewRevealed ? (
+                      <span style={{ fontSize: '1.4rem', color: 'var(--accent-emerald, #10b981)', fontWeight: 600 }}>
+                        {matchedWord?.turkish || '(no translation)'}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.9rem', color: 'var(--text-tertiary, #999)' }}>
+                        Tap to reveal translation
+                      </span>
+                    )}
+                  </div>
+
+                  {reviewRevealed && (
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1.5rem' }}>
+                      <button
+                        onClick={() => handleReviewAnswer(false)}
+                        style={{
+                          padding: '0.75rem 1.5rem',
+                          borderRadius: '0.75rem',
+                          border: '2px solid var(--border-light, #e5e7eb)',
+                          background: 'var(--bg-card, #fff)',
+                          cursor: 'pointer',
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                        }}
+                      >
+                        Need practice {'\uD83D\uDD04'}
+                      </button>
+                      <button
+                        onClick={() => handleReviewAnswer(true)}
+                        style={{
+                          padding: '0.75rem 1.5rem',
+                          borderRadius: '0.75rem',
+                          border: 'none',
+                          background: 'var(--primary, #6366f1)',
+                          color: 'var(--text-on-primary, #fff)',
+                          cursor: 'pointer',
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                        }}
+                      >
+                        Got it {'\u2705'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </motion.div>
+        )}
+
+        {!loading && !wordData && activeTab === 'words' && (
           <motion.div
             key="words-grid"
             initial={{ opacity: 0 }}

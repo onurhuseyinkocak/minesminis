@@ -1,0 +1,295 @@
+/* Student Dashboard */
+
+.student-dashboard-arşa {
+    min-height: 100vh;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Hero Section */
+.dashboard-hero-section {
+    width: 100%;
+}
+
+.hero-main-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-2xl);
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.hero-visual {
+    position: relative;
+    z-index: 2;
+}
+
+.dashboard-avatar-ring {
+    width: 140px;
+    height: 140px;
+    background: var(--bg-soft);
+    border-radius: var(--radius-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    border: 4px solid var(--primary);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-lg);
+}
+
+.dashboard-avatar-ring:hover {
+    transform: scale(1.05);
+}
+
+.edit-hint {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 800;
+    border: 3px solid var(--bg-card);
+}
+
+.experience-circle-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: var(--primary);
+    filter: blur(80px);
+    opacity: 0.08;
+    z-index: -1;
+}
+
+.dashboard-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--gradient-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-button);
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+}
+
+.dashboard-admin-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+}
+
+.hero-text-content {
+    flex: 1;
+}
+
+.arşa-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0 0 8px;
+    color: var(--text-dark);
+}
+
+.arşa-title span {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.arşa-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-medium);
+    font-weight: 500;
+    margin: 0;
+}
+
+.hero-pills-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.hero-pill {
+    background: var(--bg-soft);
+    border: 1px solid var(--border-light);
+    padding: 12px 20px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.hero-pill:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.hero-pill.xp-pill { border-bottom: 3px solid var(--primary); }
+.hero-pill.streak-pill { border-bottom: 3px solid var(--accent-coral); }
+.hero-pill.level-pill { border-bottom: 3px solid var(--accent-gold); }
+
+.pill-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.pill-val {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--text-dark);
+}
+
+.pill-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+}
+
+/* Quick Actions */
+.section-header-modern {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.section-header-modern h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text-dark);
+}
+
+.icon-star-spin {
+    color: var(--accent-gold);
+}
+
+.arşa-action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.arşa-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm);
+}
+
+.arşa-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+}
+
+.arşa-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+}
+
+.arşa-card-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.arşa-card-info p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--text-medium);
+    font-weight: 600;
+}
+
+/* Main Layout */
+.arşa-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+}
+
+.arşa-content-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.arşa-content-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.arşa-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+.arşa-map-container {
+    background: var(--bg-soft);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+}
+
+.full-width-section {
+    width: 100%;
+}
+
+/* Dark */
+[data-theme="dark"] .hero-main-card { background: var(--bg-card); border-color: var(--border-light); }
+[data-theme="dark"] .arşa-card { background: var(--bg-card); border-color: var(--border-light); }
+[data-theme="dark"] .arşa-section { background: var(--bg-card); border-color: var(--border-light); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .arşa-layout-grid { grid-template-columns: 1fr; }
+    .arşa-content-aside { order: -1; }
+    .hero-main-card { flex-direction: column; text-align: center; padding: 30px; }
+    .hero-pills-row { justify-content: center; flex-wrap: wrap; }
+    .arşa-title { font-size: 2rem; }
+}
+
+@media (max-width: 640px) {
+    .student-dashboard-arşa { padding: 20px; gap: 24px; }
+    .arşa-title { font-size: 1.75rem; }
+    .dashboard-avatar-ring { width: 100px; height: 100px; font-size: 3.5rem; }
+    .arşa-action-grid { grid-template-columns: 1fr; }
+}

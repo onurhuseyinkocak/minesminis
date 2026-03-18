@@ -24,6 +24,7 @@ import {
   Gift,
   BarChart3,
   ChevronRight,
+  RefreshCw,
 } from 'lucide-react';
 import {
   BarChart,
@@ -43,6 +44,7 @@ import {
   getCurrentLesson as getTrackerCurrentLesson,
   getWorldCompletionCount,
 } from '../data/progressTracker';
+import { getDueWords } from '../data/spacedRepetition';
 import './Dashboard.css';
 
 // ============================================================
@@ -332,6 +334,40 @@ export default function Dashboard() {
           Let's Go <ChevronRight size={16} />
         </Link>
       </motion.div>
+
+      {/* ================================================================
+          D2. WORDS TO REVIEW (Spaced Repetition)
+          ================================================================ */}
+      {(() => {
+        const dueWords = getDueWords();
+        return (
+          <motion.div className="daily-challenge" variants={itemVariants}>
+            <div className="daily-challenge-icon">
+              <RefreshCw size={24} color="var(--info)" />
+            </div>
+            <div className="daily-challenge-content">
+              {dueWords.length > 0 ? (
+                <>
+                  <h3 className="daily-challenge-title">Words to Review</h3>
+                  <p className="daily-challenge-desc">
+                    {'\uD83D\uDD04'} {dueWords.length} word{dueWords.length !== 1 ? 's' : ''} due for review
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="daily-challenge-title">Words to Review</h3>
+                  <p className="daily-challenge-desc">All caught up! {'\u2728'}</p>
+                </>
+              )}
+            </div>
+            {dueWords.length > 0 && (
+              <Link to="/words?tab=review" className="daily-challenge-btn">
+                Review <ChevronRight size={16} />
+              </Link>
+            )}
+          </motion.div>
+        );
+      })()}
 
       {/* ================================================================
           E. RECENT ACHIEVEMENTS
