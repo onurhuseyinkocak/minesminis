@@ -651,7 +651,7 @@ function PhonicsLesson() {
         // ignore
       }
       // Record mastery via learning path service (score 100 for completion)
-      recordSoundMastery(soundId!, 100);
+      recordSoundMastery(soundId!, 100, user?.uid);
       SFX.celebration();
 
       // Update garden plant growth

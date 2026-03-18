@@ -90,14 +90,14 @@ export function logActivity(
   activity: Omit<ActivityLog, 'id' | 'timestamp'>,
   userId?: string,
 ): void {
-  const logs = loadLogs();
+  const logs = loadLogs(userId);
   const entry: ActivityLog = {
     ...activity,
     id: generateId(),
     timestamp: new Date().toISOString(),
   };
   logs.push(entry);
-  saveLogs(logs);
+  saveLogs(logs, userId);
 
   // Sync to Supabase (fire-and-forget)
   if (userId) {
