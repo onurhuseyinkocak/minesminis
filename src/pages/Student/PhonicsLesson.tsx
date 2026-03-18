@@ -6,6 +6,8 @@ import { Button, Card, Badge, ProgressBar } from '../../components/ui';
 import { BlendingBoard } from '../../components/phonics/BlendingBoard';
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../../data/phonics';
 import type { PhonicsSound, PhonicsGroup } from '../../data/phonics';
+import MimiGuide from '../../components/MimiGuide';
+import { advanceToNextSound, recordSoundMastery } from '../../services/learningPathService';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -516,7 +518,7 @@ function PhonicsLesson() {
   const renderCelebrate = () => {
     const totalXP = xpEarned + 50; // base completion XP
 
-    // Save mastery to localStorage
+    // Save mastery to localStorage (both legacy key and new learning path)
     useEffect(() => {
       try {
         const key = 'mimi_mastered_sounds';
@@ -528,23 +530,42 @@ function PhonicsLesson() {
       } catch {
         // ignore
       }
+      // Record mastery via learning path service (score 100 for completion)
+      recordSoundMastery(soundId!, 100);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Find next sound
+    // Find next sound and check if group is complete
     const currentGroup = PHONICS_GROUPS.find((g) => g.sounds.some((s) => s.id === soundId));
-    let nextSoundId: string | null = null;
+    let nextSoundInGroup: PhonicsSound | null = null;
+    let isGroupComplete = false;
+
     if (currentGroup) {
       const idx = currentGroup.sounds.findIndex((s) => s.id === soundId);
       if (idx + 1 < currentGroup.sounds.length) {
-        nextSoundId = currentGroup.sounds[idx + 1].id;
+        nextSoundInGroup = currentGroup.sounds[idx + 1];
       } else {
-        // First sound of next group
+        // Last sound in group — check if it's the last group too
         const groupIdx = PHONICS_GROUPS.indexOf(currentGroup);
         if (groupIdx + 1 < PHONICS_GROUPS.length) {
-          nextSoundId = PHONICS_GROUPS[groupIdx + 1].sounds[0]?.id || null;
+          isGroupComplete = true;
+          // Next group's first sound
+          nextSoundInGroup = PHONICS_GROUPS[groupIdx + 1].sounds[0] || null;
+        } else {
+          isGroupComplete = true;
+          // All groups done
+          nextSoundInGroup = null;
         }
       }
     }
+
+    const handleNextSound = () => {
+      const next = advanceToNextSound();
+      if (next) {
+        navigate(`/phonics/${next.id}`);
+      } else {
+        navigate('/dashboard');
+      }
+    };
 
     return (
       <motion.div
@@ -559,14 +580,16 @@ function PhonicsLesson() {
           transition={{ repeat: Infinity, duration: 1.5 }}
           style={{ fontSize: '5rem', display: 'block', textAlign: 'center' }}
         >
-          🎉
+          {isGroupComplete ? '\uD83C\uDF89' : '\uD83C\uDF89'}
         </motion.span>
 
         <h2 style={{ textAlign: 'center', color: '#1A6B5A', margin: 0 }}>
-          Amazing work!
+          {isGroupComplete ? 'Group Complete!' : 'Amazing work!'}
         </h2>
         <p style={{ textAlign: 'center', color: '#666', margin: 0 }}>
-          You learned the &quot;{sound.grapheme}&quot; sound!
+          {isGroupComplete
+            ? `You mastered all sounds in ${currentGroup?.name || 'this group'}!`
+            : <>You learned the &quot;{sound.grapheme}&quot; sound!</>}
         </p>
 
         <Card variant="elevated" padding="lg">
@@ -581,17 +604,30 @@ function PhonicsLesson() {
         </Card>
 
         <div style={{ display: 'flex', gap: '0.75rem', flexDirection: 'column' }}>
-          {nextSoundId && (
+          {nextSoundInGroup ? (
             <Button
               variant="primary"
               size="lg"
               icon={<ArrowRight size={18} />}
-              onClick={() => navigate(`/phonics/${nextSoundId}`)}
+              onClick={handleNextSound}
               style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
               fullWidth
             >
-              Next Sound
+              Next Sound: {nextSoundInGroup.grapheme.toUpperCase()} {nextSoundInGroup.mnemonicEmoji}
             </Button>
+          ) : (
+            isGroupComplete && (
+              <Button
+                variant="primary"
+                size="lg"
+                icon={<Sparkles size={18} />}
+                onClick={() => navigate('/dashboard')}
+                style={{ backgroundColor: '#E8A317', borderColor: '#E8A317' }}
+                fullWidth
+              >
+                All Sounds Complete!
+              </Button>
+            )
           )}
           <Button
             variant="secondary"
@@ -647,6 +683,13 @@ function PhonicsLesson() {
         {currentStep === 'read' && renderRead()}
         {currentStep === 'celebrate' && renderCelebrate()}
       </AnimatePresence>
+
+      <MimiGuide
+        message="Listen carefully, then try saying the sound! \u{1F3A4}"
+        messageTr="Dikkatlice dinle, sonra sesi soylemeyi dene!"
+        showOnce="mimi_guide_phonics"
+        position="bottom-left"
+      />
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { AppShell } from "./components/layout";
 import { sendMessageToAI } from "./services/aiService";
 import { errorLogger } from "./services/errorLogger";
 import { isOnline, onOnlineStatusChange } from "./utils/offlineManager";
+import { getNextAction } from "./services/learningPathService";
 
 import "./App.css";
 
@@ -332,6 +333,68 @@ function AppRoutes() {
 
 // ─── App Content (auth-dependent overlays) ───────────────────────────────────
 
+function WhatsNextButton() {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const navigate = useNavigate();
+  const action = getNextAction();
+
+  return (
+    <div style={{ position: "fixed", bottom: 90, right: 20, zIndex: 900 }}>
+      {showTooltip && (
+        <button
+          onClick={() => {
+            setShowTooltip(false);
+            navigate(action.route);
+          }}
+          style={{
+            position: "absolute",
+            bottom: 52,
+            right: 0,
+            background: "#fff",
+            border: "2px solid #1A6B5A",
+            borderRadius: 14,
+            padding: "10px 16px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            whiteSpace: "nowrap",
+            cursor: "pointer",
+            fontSize: 14,
+            fontWeight: 600,
+            color: "#1A6B5A",
+            fontFamily: "Nunito, sans-serif",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
+          <span>Next: {action.title} {action.emoji}</span>
+        </button>
+      )}
+      <button
+        onClick={() => setShowTooltip((v) => !v)}
+        aria-label="What's next?"
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          border: "2px solid #1A6B5A",
+          background: "#f0fdf4",
+          color: "#1A6B5A",
+          fontSize: 20,
+          fontWeight: 800,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+          fontFamily: "Nunito, sans-serif",
+        }}
+      >
+        ?
+      </button>
+    </div>
+  );
+}
+
 function AppContent() {
   const [showChat, setShowChat] = useState(false);
   const location = useLocation();
@@ -388,6 +451,11 @@ function AppContent() {
         >
           🐉
         </button>
+      )}
+
+      {/* What's Next? floating button (students only) */}
+      {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
+        <WhatsNextButton />
       )}
 
       {/* Chat modal */}

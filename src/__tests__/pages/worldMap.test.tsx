@@ -30,10 +30,20 @@ vi.mock('lucide-react', () => {
   return {
     Lock: icon,
     Check: icon,
+    Star: icon,
     ChevronRight: icon,
     Sparkles: icon,
   };
 });
+
+// Mock AuthContext
+vi.mock('../../contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: { uid: 'test-uid', displayName: 'Ali' },
+    userProfile: null,
+    isAdmin: false,
+  }),
+}));
 
 // ============================================================
 // Tests
@@ -47,95 +57,44 @@ function renderWorldMap() {
   );
 }
 
-describe('WorldMap Page', () => {
-  it('renders the page title', () => {
+describe('WorldMap Page (Journey Path)', () => {
+  it('renders the phase name as title', () => {
     renderWorldMap();
-    expect(screen.getByText('Choose Your World')).toBeInTheDocument();
+    // "Little Ears" appears in the title AND as a tab label
+    const matches = screen.getAllByText('Little Ears');
+    expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders all 12 world cards', () => {
+  it('renders phase selector tabs for all 4 phases', () => {
     renderWorldMap();
-
-    const worldNames = [
-      'Hello World',
-      'My Family',
-      'Animal Kingdom',
-      'Rainbow Colors',
-      'Yummy Food',
-      'My Body',
-      'Nature Explorer',
-      'Toy Town',
-      'School Days',
-      'Around Town',
-      'Story Time',
-      'World Traveler',
-    ];
-
-    for (const name of worldNames) {
-      expect(screen.getByText(name)).toBeInTheDocument();
-    }
+    expect(screen.getByLabelText('Little Ears')).toBeInTheDocument();
+    expect(screen.getByLabelText('Word Builders')).toBeInTheDocument();
+    expect(screen.getByLabelText('Story Makers')).toBeInTheDocument();
+    expect(screen.getByLabelText('Young Explorers')).toBeInTheDocument();
   });
 
-  it('first world (Hello World) is unlocked and has a link', () => {
+  it('renders unit stops for phase 1 (6 units)', () => {
     renderWorldMap();
-    const link = screen.getByLabelText(/Hello World.*complete/);
-    expect(link).toBeInTheDocument();
-    expect(link.closest('a')).toHaveAttribute('href', '/worlds/w1');
+    // Phase 1 has 6 units — check a few unit titles
+    expect(screen.getByText(/Snake, Ant & Tennis/)).toBeInTheDocument();
+    expect(screen.getByText(/Mouse, Candles & Airplane/)).toBeInTheDocument();
+    expect(screen.getByText(/Lollipop, Flat Tire & Ball/)).toBeInTheDocument();
   });
 
-  it('first world shows "Continue" as it is the current world', () => {
+  it('shows progress percentage', () => {
     renderWorldMap();
-    expect(screen.getByText('Continue')).toBeInTheDocument();
+    expect(screen.getByText(/% complete/)).toBeInTheDocument();
   });
 
-  it('other worlds show locked state', () => {
+  it('first unit has current status', () => {
     renderWorldMap();
-    // Locked worlds have aria-label ending with "- Locked"
-    const lockedElements = screen.getAllByLabelText(/- Locked$/);
-    expect(lockedElements.length).toBe(11); // 12 total - 1 unlocked = 11 locked
+    const firstStop = screen.getByLabelText(/Snake, Ant & Tennis - current/);
+    expect(firstStop).toBeInTheDocument();
   });
 
-  it('locked worlds do not have anchor links', () => {
+  it('locked stops show locked status', () => {
     renderWorldMap();
-    const lockedElements = screen.getAllByLabelText(/- Locked$/);
-    for (const el of lockedElements) {
-      expect(el.tagName.toLowerCase()).not.toBe('a');
-    }
-  });
-
-  it('shows lesson count for each world', () => {
-    renderWorldMap();
-    // Each card shows "X/10 lessons"
-    const lessonCountElements = screen.getAllByText(/\/10 lessons/);
-    expect(lessonCountElements.length).toBe(12);
-  });
-
-  it('first world shows progress (0/10 in test env)', () => {
-    renderWorldMap();
-    // In test env localStorage is empty so completed=0 for all worlds
-    const zeroProgress = screen.getAllByText('0/10 lessons');
-    expect(zeroProgress.length).toBe(12);
-  });
-
-  it('locked worlds show 0/10 progress', () => {
-    renderWorldMap();
-    // All worlds show 0/10 in test env (no localStorage data)
-    const zeroProgress = screen.getAllByText('0/10 lessons');
-    expect(zeroProgress.length).toBeGreaterThanOrEqual(11);
-  });
-
-  it('shows each world theme description', () => {
-    renderWorldMap();
-    // Themes from actual curriculum data
-    expect(screen.getByText('Greetings & Introductions')).toBeInTheDocument();
-    expect(screen.getByText('Body & Health')).toBeInTheDocument();
-    expect(screen.getByText('Animals')).toBeInTheDocument();
-  });
-
-  it('shows subtitle with Mimi message', () => {
-    renderWorldMap();
-    expect(
-      screen.getByText(/Mimi is waiting for you/)
-    ).toBeInTheDocument();
+    const lockedStops = screen.getAllByLabelText(/- locked$/);
+    expect(lockedStops.length).toBeGreaterThan(0);
   });
 });

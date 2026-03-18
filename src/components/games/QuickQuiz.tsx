@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Timer, Zap, Trophy, Sparkles } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Card, Badge, ProgressBar, StreakFlame } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 import './QuickQuiz.css';
 
 interface WordItem {
@@ -125,13 +126,16 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setStreak((prev) => {
         const newStreak = prev + 1;
         if (newStreak > bestStreak) setBestStreak(newStreak);
+        if (newStreak >= 3) SFX.streak();
         return newStreak;
       });
       setFeedback('correct');
+      SFX.correct();
       onXpEarned?.(10 + streakBonus);
     } else {
       setStreak(0);
       setFeedback('wrong');
+      SFX.wrong();
       onWrongAnswer?.();
     }
 
@@ -181,6 +185,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
               {streak}x Streak!
             </Badge>
           )}
+          {streak >= 3 && <StreakFlame days={streak} />}
           <Badge variant="info">{currentQ + 1}/{questions.length}</Badge>
         </div>
       </div>

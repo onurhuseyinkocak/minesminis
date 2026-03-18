@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, ArrowRight, Sparkles, Star } from 'lucide-react';
 import { Button, Card, ProgressBar } from '../../components/ui';
+import MimiGuide from '../../components/MimiGuide';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -462,6 +463,12 @@ function PlacementTest() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <MimiGuide
+        message="Don't worry, there are no wrong answers! Just try your best! \u{1F4AA}"
+        messageTr="Endise etme, yanlis cevap yok! Sadece elinden gelenin en iyisini yap!"
+        showOnce="mimi_guide_placement"
+      />
     </div>
   );
 }

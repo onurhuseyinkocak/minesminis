@@ -27,3 +27,5 @@ export type { EmptyStateProps } from './EmptyState';
 
 export { Tabs } from './Tabs';
 export type { TabsProps, TabItem, TabsVariant } from './Tabs';
+
+export { StarBurst, ConfettiRain, FloatingEmoji, StreakFlame, XPPop, PerfectBadge } from './Celebrations';

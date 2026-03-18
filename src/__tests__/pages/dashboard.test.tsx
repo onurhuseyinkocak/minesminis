@@ -73,15 +73,16 @@ vi.mock('../../data/spacedRepetition', () => ({
   getDueWords: vi.fn(() => []),
 }));
 
-// Mock recharts
-vi.mock('recharts', () => ({
-  BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="bar-chart">{children}</div>,
-  Bar: () => <div />,
-  XAxis: () => <div />,
-  YAxis: () => <div />,
-  Tooltip: () => <div />,
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Cell: () => <div />,
+// Mock learningPathService
+vi.mock('../../services/learningPathService', () => ({
+  getNextAction: vi.fn(() => ({
+    type: 'phonics-lesson',
+    title: 'Learn the /s/ sound',
+    titleTr: '/s/ sesini ogren',
+    emoji: '\uD83D\uDC0D',
+    route: '/worlds/little-ears/p1-u1',
+    description: 'Practice the snake sound!',
+  })),
 }));
 
 // Mock AuthContext
@@ -151,90 +152,85 @@ describe('Dashboard Page', () => {
     vi.clearAllMocks();
   });
 
-  it('renders greeting with user name', () => {
+  it('renders without crashing', () => {
     renderDashboard();
-    // Greeting pattern: "Good morning/afternoon/evening, Ali!"
-    expect(screen.getByText(/Ali!/)).toBeInTheDocument();
+    // The dashboard should render the kid-dashboard container
+    expect(document.querySelector('.kid-dashboard')).toBeTruthy();
   });
 
-  it('shows XP stat card', () => {
+  it('renders top bar with user name', () => {
     renderDashboard();
-    // toLocaleString may or may not add comma depending on environment
+    expect(screen.getByText('Ali')).toBeInTheDocument();
+  });
+
+  it('shows XP in top bar', () => {
+    renderDashboard();
     const xpText = (1250).toLocaleString();
     expect(screen.getByText(xpText)).toBeInTheDocument();
-    expect(screen.getByText('Total XP')).toBeInTheDocument();
   });
 
-  it('shows words learned stat', () => {
+  it('shows streak in top bar', () => {
     renderDashboard();
-    expect(screen.getByText('42')).toBeInTheDocument();
-    expect(screen.getByText('Words Learned')).toBeInTheDocument();
-  });
-
-  it('shows streak stat', () => {
-    renderDashboard();
-    expect(screen.getByText('Streak Days')).toBeInTheDocument();
-    // The streak count appears in both the greeting bar and the stats row
     const streakElements = screen.getAllByText('7');
     expect(streakElements.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('shows continue learning card', () => {
+  it('renders hero card with next action title', () => {
     renderDashboard();
-    expect(screen.getByText('Hello World')).toBeInTheDocument();
-    expect(screen.getByText('Greetings & Introductions')).toBeInTheDocument();
-    expect(screen.getByText('Continue')).toBeInTheDocument();
+    expect(screen.getByText('Learn the /s/ sound')).toBeInTheDocument();
   });
 
-  it('shows lesson progress text', () => {
+  it('renders PLAY button', () => {
     renderDashboard();
-    // With no localStorage data, completedCount=0 so currentLesson=1
-    expect(screen.getByText(/Lesson \d+ of 10/)).toBeInTheDocument();
+    expect(screen.getByText('PLAY')).toBeInTheDocument();
   });
 
-  it('shows quick actions', () => {
+  it('shows quick action buttons (Games, Words, Videos, Sheets)', () => {
     renderDashboard();
-    expect(screen.getByText('Explore Worlds')).toBeInTheDocument();
-    expect(screen.getByText('Practice Words')).toBeInTheDocument();
-    expect(screen.getByText('Play Games')).toBeInTheDocument();
-    expect(screen.getByText("Mimi's Story")).toBeInTheDocument();
+    expect(screen.getByText('Games')).toBeInTheDocument();
+    expect(screen.getByText('Words')).toBeInTheDocument();
+    expect(screen.getByText('Videos')).toBeInTheDocument();
+    expect(screen.getByText('Sheets')).toBeInTheDocument();
   });
 
   it('quick actions link to correct routes', () => {
     renderDashboard();
-    const worldsLink = screen.getByText('Explore Worlds').closest('a');
-    expect(worldsLink).toHaveAttribute('href', '/worlds');
-
-    const gamesLink = screen.getByText('Play Games').closest('a');
+    const gamesLink = screen.getByText('Games').closest('a');
     expect(gamesLink).toHaveAttribute('href', '/games');
 
-    const practiceLink = screen.getByText('Practice Words').closest('a');
-    expect(practiceLink).toHaveAttribute('href', '/practice');
+    const wordsLink = screen.getByText('Words').closest('a');
+    expect(wordsLink).toHaveAttribute('href', '/words');
+
+    const videosLink = screen.getByText('Videos').closest('a');
+    expect(videosLink).toHaveAttribute('href', '/videos');
+
+    const sheetsLink = screen.getByText('Sheets').closest('a');
+    expect(sheetsLink).toHaveAttribute('href', '/worksheets');
+  });
+
+  it('shows achievements section with level', () => {
+    renderDashboard();
+    expect(screen.getByText(/Level 5/)).toBeInTheDocument();
+  });
+
+  it('shows no-badges message when no badges earned', () => {
+    renderDashboard();
+    expect(screen.getByText(/Play to earn badges/)).toBeInTheDocument();
   });
 
   it('shows daily challenge section', () => {
     renderDashboard();
     // One of the daily challenge titles should be present
     const challengeTitles = [
-      'Learn 5 new words',
+      'Learn 5 words',
       'Play 3 games',
-      'Watch a story video',
-      'Complete a worksheet',
-      'Practice 10 words',
-      'Explore a new world',
-      'Earn 50 XP today',
+      'Watch a video',
+      'Do a worksheet',
+      'Review words',
+      'Explore worlds',
+      'Earn 50 XP',
     ];
     const found = challengeTitles.some((t) => screen.queryByText(t));
     expect(found).toBe(true);
-  });
-
-  it('shows weekly progress chart', () => {
-    renderDashboard();
-    expect(screen.getByText('This Week')).toBeInTheDocument();
-  });
-
-  it('shows level and XP progress', () => {
-    renderDashboard();
-    expect(screen.getByText(/Level 5/)).toBeInTheDocument();
   });
 });

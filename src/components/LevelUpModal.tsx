@@ -6,10 +6,13 @@
 import React, { useEffect, useState } from 'react';
 import './LevelUpModal.css';
 import { useGamification } from '../contexts/GamificationContext';
+import { StarBurst, StreakFlame } from './ui/Celebrations';
+import { SFX } from '../data/soundLibrary';
 
 const LevelUpModal: React.FC = () => {
-    const { showLevelUp, newLevel, dismissLevelUp } = useGamification();
+    const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
     const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number; color: string }>>([]);
+    const [showStarBurst, setShowStarBurst] = useState(false);
 
     useEffect(() => {
         if (showLevelUp) {
@@ -22,6 +25,11 @@ const LevelUpModal: React.FC = () => {
                 color: colors[Math.floor(Math.random() * colors.length)],
             }));
             setConfetti(pieces);
+
+            // Trigger StarBurst + SFX
+            setShowStarBurst(true);
+            SFX.levelUp();
+            setTimeout(() => setShowStarBurst(false), 1500);
 
             // Auto dismiss after 4 seconds
             const timer = setTimeout(() => {
@@ -36,6 +44,9 @@ const LevelUpModal: React.FC = () => {
 
     return (
         <div className="level-up-overlay" onClick={dismissLevelUp}>
+            {/* StarBurst celebration */}
+            {showStarBurst && <StarBurst count={16} />}
+
             {/* Confetti */}
             <div className="confetti-container">
                 {confetti.map((piece) => (
@@ -67,6 +78,13 @@ const LevelUpModal: React.FC = () => {
                         <span className="level-label">You reached</span>
                         <span className="level-number">{newLevel}</span>
                     </div>
+
+                    {stats.streakDays >= 2 && (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', margin: '0.5rem 0' }}>
+                            <StreakFlame days={stats.streakDays} />
+                            <span style={{ fontWeight: 700, color: 'var(--accent-amber)' }}>{stats.streakDays} Day Streak!</span>
+                        </div>
+                    )}
 
                     <p className="level-up-message">
                         Amazing work! Keep learning to unlock more rewards! 🎉

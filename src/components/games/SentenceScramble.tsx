@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, RotateCcw, Lightbulb, Sparkles } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 import './SentenceScramble.css';
 
 interface WordItem {
@@ -97,6 +98,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
       setFeedback('correct');
       setScore((prev) => prev + 1);
       onXpEarned?.(15);
+      SFX.correct();
 
       if (window.speechSynthesis) {
         const utter = new SpeechSynthesisUtterance(correct);
@@ -116,6 +118,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
       }, 2000);
     } else {
       setFeedback('wrong');
+      SFX.wrong();
       onWrongAnswer?.();
       const attempts = failedAttempts + 1;
       setFailedAttempts(attempts);

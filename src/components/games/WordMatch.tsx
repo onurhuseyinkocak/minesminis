@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Sparkles } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Card, Badge, ProgressBar, FloatingEmoji } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 import './WordMatch.css';
 
 interface WordItem {
@@ -48,6 +49,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   const [score, setScore] = useState(0);
   const [totalAttempted, setTotalAttempted] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [floatingEmoji, setFloatingEmoji] = useState<string | null>(null);
 
   const initRound = useCallback((roundIndex: number) => {
     const start = roundIndex * roundSize;
@@ -78,6 +80,14 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setScore((prev) => prev + 1);
       setFeedback({ type: 'correct', pairId: leftId });
       onXpEarned?.(10);
+      SFX.correct();
+
+      // Floating emoji celebration
+      const matchedEmoji = pairs[leftId]?.emoji;
+      if (matchedEmoji) {
+        setFloatingEmoji(matchedEmoji);
+        setTimeout(() => setFloatingEmoji(null), 2200);
+      }
 
       // Speak the word
       if (window.speechSynthesis) {
@@ -170,6 +180,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
   return (
     <div className="word-match" role="application" aria-label="Word matching game">
+      {floatingEmoji && <FloatingEmoji emoji={floatingEmoji} count={5} />}
       <div className="word-match__header">
         <h2 className="word-match__title">Match the Words!</h2>
         <Badge variant="info">Round {round + 1}/{totalRounds}</Badge>

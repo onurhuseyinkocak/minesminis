@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import XPBar from '../components/XPBar';
 import toast from 'react-hot-toast';
+import MimiGuide from '../components/MimiGuide';
 import './Profile.css';
 
 const Profile: React.FC = () => {
@@ -170,6 +171,13 @@ const Profile: React.FC = () => {
           </div>
         </div>
       )}
+
+      <MimiGuide
+        message="This is your profile! You can change your avatar here! \u{1F3A8}"
+        messageTr="Bu senin profilin! Avatarini buradan degistirebilirsin!"
+        showOnce="mimi_guide_profile"
+        position="bottom-left"
+      />
     </div>
   );
 };

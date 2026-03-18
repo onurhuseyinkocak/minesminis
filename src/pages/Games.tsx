@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { fallbackGames } from '../data/fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
+import { kidsWords } from '../data/wordsData';
 import toast from 'react-hot-toast';
-import { Gamepad2, Sparkles, BookOpen, Library, GraduationCap, Target, Heart, Play, X } from 'lucide-react';
-import ContentPageHeader from '../components/ContentPageHeader';
+import { X, Play } from 'lucide-react';
+import { GameSelector } from '../components/games/index';
+import MimiGuide from '../components/MimiGuide';
 import './Games.css';
 
 type Game = {
@@ -18,23 +20,60 @@ type Game = {
   target_audience?: string;
 };
 
+type GameCategory = 'all' | 'letters' | 'puzzles' | 'listening' | 'spelling' | 'reading';
+
+interface InternalGame {
+  id: string;
+  type: string;
+  emoji: string;
+  title: string;
+  subtitle: string;
+  color: string;
+  difficulty: number; // 1-3 stars
+}
+
+const CATEGORIES: { id: GameCategory; emoji: string; label: string; color: string }[] = [
+  { id: 'all', emoji: '\uD83C\uDFB2', label: 'All', color: 'var(--accent-indigo)' },
+  { id: 'letters', emoji: '\uD83D\uDD24', label: 'Letters', color: 'var(--accent-teal)' },
+  { id: 'puzzles', emoji: '\uD83E\uDDE9', label: 'Puzzles', color: 'var(--accent-purple-light, #a78bfa)' },
+  { id: 'listening', emoji: '\uD83C\uDFB5', label: 'Listening', color: 'var(--accent-amber)' },
+  { id: 'spelling', emoji: '\u270D\uFE0F', label: 'Spelling', color: 'var(--accent-rose, #f43f5e)' },
+  { id: 'reading', emoji: '\uD83D\uDCD6', label: 'Reading', color: 'var(--success)' },
+];
+
+const INTERNAL_GAMES: InternalGame[] = [
+  { id: 'word-match', type: 'word-match', emoji: '\uD83D\uDD17', title: 'Word Match', subtitle: 'Match words to pictures!', color: 'var(--accent-teal)', difficulty: 1 },
+  { id: 'quick-quiz', type: 'quick-quiz', emoji: '\u26A1', title: 'Quick Quiz', subtitle: 'How fast can you answer?', color: 'var(--accent-amber)', difficulty: 2 },
+  { id: 'spelling-bee', type: 'spelling-bee', emoji: '\uD83D\uDC1D', title: 'Spelling Bee', subtitle: 'Spell the word!', color: 'var(--accent-rose, #f43f5e)', difficulty: 2 },
+  { id: 'pronunciation', type: 'pronunciation', emoji: '\uD83C\uDFA4', title: 'Say It!', subtitle: 'Practice speaking!', color: 'var(--accent-indigo)', difficulty: 1 },
+  { id: 'blending', type: 'blending', emoji: '\uD83E\uDDF1', title: 'Word Builder', subtitle: 'Build words from sounds!', color: 'var(--success)', difficulty: 2 },
+  { id: 'segmenting', type: 'segmenting', emoji: '\u2702\uFE0F', title: 'Sound Splitter', subtitle: 'Break words into sounds!', color: 'var(--accent-purple-light, #a78bfa)', difficulty: 3 },
+];
+
+function getGameWords() {
+  // Pick 8 random words from kidsWords to use in games
+  const shuffled = [...kidsWords].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 8).map(w => ({
+    english: w.word,
+    turkish: w.turkish,
+    emoji: w.emoji,
+  }));
+}
+
 function Games() {
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState<string>('all');
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [activeCategory, setActiveCategory] = useState<GameCategory>('all');
+  const [playingInternal, setPlayingInternal] = useState<InternalGame | null>(null);
+  const [gameWords, setGameWords] = useState(() => getGameWords());
   const { user } = useAuth();
 
   useEffect(() => {
     fetchGames();
-    if (user) {
-      loadFavorites();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user is available only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchGames = async () => {
-    // Try localStorage cache for instant load
     const cached = getCachedData<Game[]>('games');
 
     try {
@@ -45,226 +84,155 @@ function Games() {
       if (error) throw error;
       const result = (data && data.length > 0) ? (data as Game[]) : fallbackGames as Game[];
       setGames(result);
-      // Persist to localStorage (TTL: 6 hours)
       setCachedData('games', result, 6 * 60 * 60 * 1000);
     } catch (error) {
       console.error('Error fetching games:', error);
       if (cached && cached.length > 0) {
         setGames(cached);
       } else {
-        toast.error('Oyunlar yüklenirken sorun oluştu. Varsayılan liste gösteriliyor.');
+        toast.error('Oyunlar yuklenirken sorun olustu.');
         setGames(fallbackGames as Game[]);
       }
     }
   };
 
-  const loadFavorites = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('favorites')
-        .select('item_id')
-        .eq('user_id', user.uid)
-        .eq('item_type', 'game');
-
-      if (error) {
-        console.error('Error loading favorites:', error.message);
-        // Table may not exist yet — silently ignore
-        return;
-      }
-
-      const favoriteIds = new Set((data || []).map(fav => fav.item_id));
-      setFavorites(favoriteIds);
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-    }
-  };
-
   const selectedGameData = games.find(game => game.id === selectedGame);
 
-  const getActiveGames = (): Game[] => {
-    if (activeSection === 'all') return games;
-    return games.filter(game => {
-      const grade = (game as Game & { target_audience?: string }).target_audience ?? game.category;
-      const g = grade?.toLowerCase().trim() ?? '';
-      if (activeSection === 'primary') {
-        return g === 'primary' || g === '1' || g === '1st grade' || g === 'grade1';
-      }
-      if (activeSection === 'grade2') {
-        return g === '2' || g === '2nd grade' || g === 'grade2' || g === 'grade 2';
-      }
-      if (activeSection === 'grade3') {
-        return g === '3' || g === '3rd grade' || g === 'grade3' || g === 'grade 3';
-      }
-      if (activeSection === 'grade4') {
-        return g === '4' || g === '4th grade' || g === 'grade4' || g === 'grade 4';
-      }
-      return game.category === activeSection;
-    });
+  const getCategoryGames = (): InternalGame[] => {
+    if (activeCategory === 'all') return INTERNAL_GAMES;
+    const map: Record<GameCategory, string[]> = {
+      all: [],
+      letters: ['pronunciation', 'blending'],
+      puzzles: ['word-match', 'segmenting'],
+      listening: ['quick-quiz', 'pronunciation'],
+      spelling: ['spelling-bee', 'blending'],
+      reading: ['word-match', 'quick-quiz'],
+    };
+    return INTERNAL_GAMES.filter(g => map[activeCategory].includes(g.id));
   };
 
-  const activeGames = getActiveGames();
-
-  const handleToggleFavorite = async (game: Game) => {
-    if (!user) {
-      toast.error('Please sign in to add favorites!');
-      return;
-    }
-
-    const isFavorite = favorites.has(game.id);
-
-    try {
-      if (isFavorite) {
-        const { error } = await supabase
-          .from('favorites')
-          .delete()
-          .eq('user_id', user.uid)
-          .eq('item_id', game.id)
-          .eq('item_type', 'game');
-
-        if (error) throw error;
-
-        setFavorites(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(game.id);
-          return newSet;
-        });
-        toast.success('Removed from favorites!');
-      } else {
-        const { error } = await supabase
-          .from('favorites')
-          .insert({
-            user_id: user.uid,
-            item_type: 'game',
-            item_id: game.id,
-            item_name: game.title,
-            item_image: game.thumbnail_url
-          });
-
-        if (error) throw error;
-
-        setFavorites(prev => new Set(prev).add(game.id));
-        toast.success('Added to favorites!');
-      }
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-      toast.error('Could not save favorite. Please try again later.');
-    }
+  const handlePlayInternal = (game: InternalGame) => {
+    setGameWords(getGameWords());
+    setPlayingInternal(game);
   };
 
-  const getGameTypeColor = (description: string) => {
-    switch (description) {
-      case 'Maze Chase': return 'var(--accent-indigo)';
-      case 'Match Up': return 'var(--accent-teal)';
-      case 'Quiz': return 'var(--error)';
-      case 'Whack-a-Mole': return 'var(--primary-light)';
-      case 'Open Box': return 'var(--accent-purple-light)';
-      default: return 'var(--accent-indigo)';
-    }
+  const handleGameComplete = (score: number, total: number) => {
+    toast.success(`Great job! You got ${score} out of ${total}!`);
+    setPlayingInternal(null);
   };
+
+  const filteredInternal = getCategoryGames();
+
+  // If playing an internal game, show it full screen
+  if (playingInternal) {
+    return (
+      <div className="games-page">
+        <div className="internal-game-fullscreen">
+          <div className="internal-game-topbar">
+            <button className="back-btn-big" onClick={() => setPlayingInternal(null)}>
+              <X size={24} /> Back
+            </button>
+            <span className="game-topbar-title">
+              {playingInternal.emoji} {playingInternal.title}
+            </span>
+          </div>
+          <div className="internal-game-container">
+            <Suspense fallback={<div className="game-loading">Loading game...</div>}>
+              <GameSelector
+                type={playingInternal.type}
+                words={gameWords}
+                onComplete={handleGameComplete}
+              />
+            </Suspense>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="games-page">
-      <ContentPageHeader
-        icon={Gamepad2}
-        title="Arcade Hub"
-        description="Epic adventures and fun games await you!"
-        iconColor="var(--accent-indigo)"
-        filterSlot={
-          <div className="modern-tabs">
-            <button
-              onClick={() => setActiveSection('all')}
-              className={`modern-tab ${activeSection === 'all' ? 'active' : ''}`}
-            >
-              <Gamepad2 size={18} /> All Games
-            </button>
-            <button
-              onClick={() => setActiveSection('primary')}
-              className={`modern-tab ${activeSection === 'primary' ? 'active' : ''}`}
-            >
-              <Sparkles size={18} /> Primary School
-            </button>
-            <button
-              onClick={() => setActiveSection('grade2')}
-              className={`modern-tab ${activeSection === 'grade2' ? 'active' : ''}`}
-            >
-              <BookOpen size={18} /> 2nd Grade
-            </button>
-            <button
-              onClick={() => setActiveSection('grade3')}
-              className={`modern-tab ${activeSection === 'grade3' ? 'active' : ''}`}
-            >
-              <Library size={18} /> 3rd Grade
-            </button>
-            <button
-              onClick={() => setActiveSection('grade4')}
-              className={`modern-tab ${activeSection === 'grade4' ? 'active' : ''}`}
-            >
-              <GraduationCap size={18} /> 4th Grade
-            </button>
-          </div>
-        }
-      />
+      {/* Big fun header */}
+      <div className="games-hero">
+        <span className="games-hero-emoji">{'\uD83C\uDFAE'}</span>
+        <h1 className="games-hero-title">Let's Play!</h1>
+      </div>
+
+      {/* Category circles */}
+      <div className="category-circles">
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat.id}
+            className={`category-circle ${activeCategory === cat.id ? 'active' : ''}`}
+            onClick={() => setActiveCategory(cat.id)}
+            style={{ '--cat-color': cat.color } as React.CSSProperties}
+          >
+            <span className="category-circle-emoji">{cat.emoji}</span>
+            <span className="category-circle-label">{cat.label}</span>
+          </button>
+        ))}
+      </div>
 
       <div className="games-content">
-        {activeGames.length === 0 ? (
-          <div className="games-empty">
-            <div className="empty-icon"><Target size={48} /></div>
-            <h3>Coming Soon!</h3>
-            <p>New games for this grade are on the way! Check back soon!</p>
-            <p className="empty-suggestion">Try <strong>2nd Grade</strong> games in the meantime!</p>
-          </div>
-        ) : (
-          <div className="games-grid">
-            {activeGames.map((game) => (
-              <div
-                key={game.id}
-                className="game-card"
-              >
-                {user && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleFavorite(game);
-                    }}
-                    className={`game-favorite-btn ${favorites.has(game.id) ? 'favorited' : ''}`}
-                    title={favorites.has(game.id) ? "Remove from favorites" : "Add to favorites"}
-                  >
-                    {favorites.has(game.id) ? <Heart size={20} fill="var(--error)" color="var(--error)" /> : <Heart size={20} color="var(--cloud)" />}
-                  </button>
-                )}
+        {/* Featured Internal Games */}
+        <h2 className="games-section-title">{'\u2B50'} Our Games</h2>
+        <div className="featured-games-grid">
+          {filteredInternal.map(game => (
+            <button
+              key={game.id}
+              className="featured-game-card"
+              onClick={() => handlePlayInternal(game)}
+              style={{ '--card-color': game.color } as React.CSSProperties}
+            >
+              <span className="featured-emoji">{game.emoji}</span>
+              <h3 className="featured-title">{game.title}</h3>
+              <p className="featured-subtitle">{game.subtitle}</p>
+              <div className="difficulty-stars">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <span key={i} className={`star ${i < game.difficulty ? 'filled' : ''}`}>{'\u2B50'}</span>
+                ))}
+              </div>
+              <div className="play-now-btn">
+                <Play size={18} fill="white" /> Play!
+              </div>
+            </button>
+          ))}
+        </div>
 
+        {/* External Wordwall games */}
+        {games.length > 0 && (
+          <>
+            <h2 className="games-section-title">{'\uD83C\uDF1F'} More Games</h2>
+            <div className="external-games-grid">
+              {games.map((game) => (
                 <div
-                  className="game-thumbnail"
+                  key={game.id}
+                  className="external-game-card"
                   onClick={() => setSelectedGame(game.id)}
                 >
-                  <img
-                    src={game.thumbnail_url}
-                    alt={game.title}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%236366f1" width="400" height="300"/><text x="200" y="150" text-anchor="middle" fill="white" font-size="48">🎮</text></svg>';
-                    }}
-                  />
-                  <div className="game-overlay">
-                    <span className="play-icon"><Play size={32} fill="white" /></span>
+                  <div className="external-game-thumb">
+                    <img
+                      src={game.thumbnail_url}
+                      alt={game.title}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%236366f1" width="400" height="300"/><text x="200" y="150" text-anchor="middle" fill="white" font-size="48">\uD83C\uDFAE</text></svg>';
+                      }}
+                    />
+                    <div className="external-play-overlay">
+                      <span className="play-icon-circle"><Play size={28} fill="white" /></span>
+                    </div>
+                  </div>
+                  <div className="external-game-info">
+                    <h3>{game.title}</h3>
                   </div>
                 </div>
-                <div className="game-info">
-                  <h3>{game.title}</h3>
-                  <span
-                    className="game-type-badge"
-                    style={{ backgroundColor: getGameTypeColor(game.description) }}
-                  >
-                    {game.description}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
+      {/* External game modal */}
       {selectedGame && selectedGameData && (
         <div className="game-modal-overlay" onClick={() => setSelectedGame(null)}>
           <div className="game-modal" onClick={(e) => e.stopPropagation()}>
@@ -277,7 +245,6 @@ function Games() {
                 <X size={24} />
               </button>
             </div>
-
             <div className="game-iframe-container">
               <iframe
                 src={selectedGameData.url}
@@ -291,6 +258,13 @@ function Games() {
           </div>
         </div>
       )}
+
+      <MimiGuide
+        message="Tap a game to play! The golden \u2B50 one is next!"
+        messageTr="Oynamak icin bir oyuna dokun!"
+        showOnce="mimi_guide_worldmap"
+        position="bottom-left"
+      />
     </div>
   );
 }

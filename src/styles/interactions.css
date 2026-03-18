@@ -1,0 +1,73 @@
+/* ================================================================
+   MICRO-INTERACTIONS — Global utility classes
+   ================================================================ */
+
+/* Tap bounce feedback */
+.tap-bounce {
+  transition: transform 0.15s ease;
+}
+
+.tap-bounce:active {
+  transform: scale(0.95);
+}
+
+/* Hover lift with shadow */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Primary button micro-interactions */
+.mm-button--primary,
+.mm-button--secondary {
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.mm-button--primary:hover:not(:disabled),
+.mm-button--secondary:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.mm-button--primary:active:not(:disabled),
+.mm-button--secondary:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Tab switching smooth transition */
+.mm-tab {
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
+}
+
+/* Tab panel content fade */
+[role="tabpanel"] {
+  animation: tab-content-fade 0.3s ease-out;
+}
+
+@keyframes tab-content-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Interactive card entrance */
+.mm-card--interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mm-card--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.mm-card--interactive:active {
+  transform: scale(0.98);
+}

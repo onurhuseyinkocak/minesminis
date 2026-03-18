@@ -29,7 +29,7 @@ import {
   EyeOff,
   Heart,
 } from 'lucide-react';
-import { Button, ProgressBar, Card } from '../components/ui';
+import { Button, ProgressBar, Card, StarBurst, ConfettiRain, PerfectBadge, XPPop } from '../components/ui';
 import { useGamification } from '../contexts/GamificationContext';
 import { GameSelector } from '../components/games';
 import { getLessonById, getWorldById, getWorldVocabulary } from '../data/curriculum';
@@ -341,6 +341,10 @@ const LessonPlayer = () => {
   const [hearts, setHearts] = useState(INITIAL_HEARTS);
   const [gameOver, setGameOver] = useState(false);
   const [heartLostIndex, setHeartLostIndex] = useState<number | null>(null);
+  const [showStarBurst, setShowStarBurst] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showPerfect, setShowPerfect] = useState(false);
+  const [xpPopAmount, setXpPopAmount] = useState<number | null>(null);
 
   const totalActivities = lesson?.activities.length || 0;
   const progressPct = totalActivities > 0 ? Math.round(((currentIndex + (completed ? 1 : 0)) / totalActivities) * 100) : 0;
@@ -355,6 +359,24 @@ const LessonPlayer = () => {
     const earnedXp = Math.round(activityXp * scoreRatio);
     if (earnedXp > 0) {
       addXP(earnedXp, 'activity_completed', { lessonId, worldId, activityId: currentActivity?.id });
+    }
+
+    // Trigger celebration animations based on score
+    const pct = total > 0 ? Math.round((score / total) * 100) : 100;
+    if (pct >= 80) {
+      setShowStarBurst(true);
+      SFX.correct();
+      setTimeout(() => setShowStarBurst(false), 1500);
+    }
+    if (pct === 100) {
+      setShowConfetti(true);
+      setShowPerfect(true);
+      SFX.celebration();
+      setTimeout(() => { setShowConfetti(false); setShowPerfect(false); }, 3200);
+    }
+    if (earnedXp > 0) {
+      setXpPopAmount(earnedXp);
+      setTimeout(() => setXpPopAmount(null), 1800);
     }
 
     // Update spaced repetition for each word used in this activity
@@ -590,6 +612,12 @@ const LessonPlayer = () => {
 
   return (
     <div className="lesson-player-page">
+      {/* Celebration overlays */}
+      {showStarBurst && <StarBurst />}
+      {showConfetti && <ConfettiRain />}
+      {showPerfect && <PerfectBadge />}
+      {xpPopAmount !== null && <XPPop amount={xpPopAmount} />}
+
       {/* Top Bar */}
       <div className="lesson-player-topbar">
         <button

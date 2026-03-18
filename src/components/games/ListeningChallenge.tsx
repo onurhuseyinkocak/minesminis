@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Sparkles, Headphones } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 import './ListeningChallenge.css';
 
 interface WordItem {
@@ -78,8 +79,10 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
       setFeedback('correct');
       setScore((prev) => prev + 1);
       onXpEarned?.(12);
+      SFX.correct();
     } else {
       setFeedback('wrong');
+      SFX.wrong();
       onWrongAnswer?.();
     }
 

@@ -6,6 +6,8 @@
 import React, { useState, useEffect } from 'react';
 import './DailyReward.css';
 import { useGamification } from '../contexts/GamificationContext';
+import { ConfettiRain, FloatingEmoji } from './ui/Celebrations';
+import { SFX } from '../data/soundLibrary';
 
 const DailyReward: React.FC = () => {
     const {
@@ -22,6 +24,7 @@ const DailyReward: React.FC = () => {
     const [claimedReward, setClaimedReward] = useState<{ xp: number; badge?: string } | null>(null);
     const [countdown, setCountdown] = useState('');
     const [showCountdown, setShowCountdown] = useState(false);
+    const [showClaimCelebration, setShowClaimCelebration] = useState(false);
 
     // Initial countdown visibility
     useEffect(() => {
@@ -88,6 +91,9 @@ const DailyReward: React.FC = () => {
         if (reward) {
             setClaimedReward(reward);
             setClaimed(true);
+            setShowClaimCelebration(true);
+            SFX.celebration();
+            setTimeout(() => setShowClaimCelebration(false), 3000);
         }
 
         setClaiming(false);
@@ -109,6 +115,8 @@ const DailyReward: React.FC = () => {
 
     return (
         <div className="daily-reward-overlay" onClick={() => setIsOpen(false)}>
+            {showClaimCelebration && <ConfettiRain />}
+            {showClaimCelebration && <FloatingEmoji emoji={'\uD83C\uDF81'} count={8} />}
             <div className="daily-reward-modal" onClick={(e) => e.stopPropagation()}>
                 <button className="close-btn" onClick={() => setIsOpen(false)}>✕</button>
 

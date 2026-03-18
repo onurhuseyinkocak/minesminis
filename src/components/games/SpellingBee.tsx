@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Delete, Lightbulb, Volume2, Sparkles } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 import './SpellingBee.css';
 
 interface WordItem {
@@ -115,6 +116,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
       setFeedback('correct');
       setScore((prev) => prev + 1);
       onXpEarned?.(15);
+      SFX.correct();
       speak(currentWord.english);
 
       setTimeout(() => {
@@ -128,6 +130,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
       }, 2000);
     } else {
       setFeedback('wrong');
+      SFX.wrong();
       onWrongAnswer?.();
       const newAttempts = wrongAttempts + 1;
       setWrongAttempts(newAttempts);
