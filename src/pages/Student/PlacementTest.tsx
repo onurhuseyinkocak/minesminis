@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, ArrowRight, Sparkles, Star } from 'lucide-react';
 import { Button, Card, ProgressBar } from '../../components/ui';
+import { SFX } from '../../data/soundLibrary';
 import MimiGuide from '../../components/MimiGuide';
 import { LS_PLACEMENT_RESULT } from '../../config/storageKeys';
 
@@ -176,7 +177,12 @@ function PlacementTest() {
     const correct = value === question.correctValue;
     setSelectedValue(value);
     setIsCorrect(correct);
-    if (correct) setScore((s) => s + 1);
+    if (correct) {
+      setScore((s) => s + 1);
+      SFX.correct();
+    } else {
+      SFX.wrong();
+    }
     setAnswers((a) => [...a, correct]);
 
     // Show feedback briefly

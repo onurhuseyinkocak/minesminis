@@ -10,6 +10,7 @@ import { getSongByGroup } from '../../data/phonicsSongs';
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../../data/phonics';
 import type { PhonicsSound, PhonicsGroup } from '../../data/phonics';
 import MimiGuide from '../../components/MimiGuide';
+import { SFX } from '../../data/soundLibrary';
 import { advanceToNextSound, recordSoundMastery } from '../../services/learningPathService';
 import { logActivity } from '../../services/activityLogger';
 import { getPlantForSound, getPlantStage } from '../../data/gardenData';
@@ -151,6 +152,7 @@ function PhonicsLesson() {
 
   const goNext = useCallback(() => {
     if (stepIndex < STEPS.length - 1) {
+      SFX.click();
       setStepIndex((s) => s + 1);
     }
   }, [stepIndex]);
@@ -634,6 +636,7 @@ function PhonicsLesson() {
       }
       // Record mastery via learning path service (score 100 for completion)
       recordSoundMastery(soundId!, 100);
+      SFX.celebration();
 
       // Update garden plant growth
       updatePlantGrowth(soundId!, 100);

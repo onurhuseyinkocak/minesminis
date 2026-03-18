@@ -12,6 +12,7 @@ import { sendMessageToAI } from "./services/aiService";
 import { errorLogger } from "./services/errorLogger";
 import { isOnline, onOnlineStatusChange } from "./utils/offlineManager";
 import { getNextAction } from "./services/learningPathService";
+import { getTodayMinutes } from "./services/activityLogger";
 
 import "./App.css";
 
@@ -209,11 +210,60 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/** Time limit overlay shown when student exceeds daily limit */
+function TimeLimitOverlay({ minutes, limit }: { minutes: number; limit: number }) {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      justifyContent: 'center', minHeight: '70vh', textAlign: 'center',
+      padding: '32px 24px', gap: 16,
+    }}>
+      <div style={{ fontSize: 72 }}>{'\u{1F31F}'}</div>
+      <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+        Great job today!
+      </h1>
+      <p style={{ fontSize: 18, color: 'var(--text-secondary)', margin: 0, maxWidth: 360 }}>
+        You learned for <strong>{minutes} minutes</strong> today. Come back tomorrow for more fun!
+      </p>
+      <div style={{ display: 'flex', gap: 24, marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div style={{ background: 'var(--primary-pale, #eff6ff)', borderRadius: 16, padding: '16px 24px', textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary)' }}>{minutes} min</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Time Learned</div>
+        </div>
+      </div>
+      <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 8 }}>
+        Daily limit: {limit} minutes
+      </p>
+    </div>
+  );
+}
+
+/** Enforces daily time limit for student routes */
+function TimeGuardedRoute({ children }: { children: React.ReactNode }) {
+  const { userProfile } = useAuth();
+  const isStudent = !userProfile?.role || userProfile.role === 'student';
+
+  if (!isStudent) {
+    return <>{children}</>;
+  }
+
+  const dailyLimit = (userProfile?.settings?.dailyTimeLimit as number) || 60;
+  const todayMinutes = getTodayMinutes();
+
+  if (todayMinutes >= dailyLimit) {
+    return <TimeLimitOverlay minutes={todayMinutes} limit={dailyLimit} />;
+  }
+
+  return <>{children}</>;
+}
+
 /** Wraps protected student pages inside AppShell */
 function StudentRoute({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute>
-      <AppShell>{children}</AppShell>
+      <AppShell>
+        <TimeGuardedRoute>{children}</TimeGuardedRoute>
+      </AppShell>
     </ProtectedRoute>
   );
 }

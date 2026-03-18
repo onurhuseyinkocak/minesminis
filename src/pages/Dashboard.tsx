@@ -20,6 +20,7 @@ import { Play } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
+import { SFX } from '../data/soundLibrary';
 import UnifiedMascot from '../components/UnifiedMascot';
 import MimiGuide from '../components/MimiGuide';
 import { WORLDS, getWorldById, getLessonById } from '../data/curriculum';
@@ -136,10 +137,9 @@ export default function Dashboard() {
     allBadges,
   } = useGamification();
 
-  // Daily time limit enforcement
+  // Daily time tracking (blocking is handled globally by TimeGuardedRoute in App.tsx)
   const dailyLimit = (userProfile?.settings?.dailyTimeLimit as number) || 60; // minutes
   const todayMinutes = useMemo(() => getTodayMinutes(), []);
-  const timeLimitExceeded = todayMinutes >= dailyLimit;
 
   // Derived
   const displayName = userProfile?.display_name || user?.displayName || 'Adventurer';
@@ -215,33 +215,7 @@ export default function Dashboard() {
     );
   }
 
-  // ---- Time's Up overlay ----
-  if (timeLimitExceeded) {
-    return (
-      <div className="kid-dashboard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', textAlign: 'center', padding: '32px 24px', gap: 16 }}>
-        <div style={{ fontSize: 72 }}>{'\u{1F31F}'}</div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-          Great job today!
-        </h1>
-        <p style={{ fontSize: 18, color: 'var(--text-secondary)', margin: 0, maxWidth: 360 }}>
-          You learned for <strong>{todayMinutes} minutes</strong> today. Come back tomorrow for more fun!
-        </p>
-        <div style={{ display: 'flex', gap: 24, marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <div style={{ background: 'var(--primary-pale, #eff6ff)', borderRadius: 16, padding: '16px 24px', textAlign: 'center' }}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary)' }}>{todayMinutes} min</div>
-            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Time Learned</div>
-          </div>
-          <div style={{ background: 'var(--success-pale, #ecfdf5)', borderRadius: 16, padding: '16px 24px', textAlign: 'center' }}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--secondary, #10b981)' }}>{stats.xp.toLocaleString()} XP</div>
-            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Total XP</div>
-          </div>
-        </div>
-        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 8 }}>
-          Daily limit: {dailyLimit} minutes
-        </p>
-      </div>
-    );
-  }
+  // Time limit is now enforced globally via TimeGuardedRoute in App.tsx
 
   return (
     <motion.div
@@ -323,26 +297,26 @@ export default function Dashboard() {
           3. QUICK ACTIONS — 4 big icon buttons in a row
           ================================================================ */}
       <motion.div className="kid-quick-actions" variants={itemVariants}>
-        <Link to="/games" className="kid-quick-btn kid-quick-games">
+        <Link to="/games" className="kid-quick-btn kid-quick-games" onClick={() => SFX.click()}>
           <span className="kid-quick-emoji">{'\u{1F3AE}'}</span>
           <span className="kid-quick-label">Games</span>
         </Link>
-        <Link to="/words" className="kid-quick-btn kid-quick-words">
+        <Link to="/words" className="kid-quick-btn kid-quick-words" onClick={() => SFX.click()}>
           <span className="kid-quick-emoji">{'\u{1F4D6}'}</span>
           <span className="kid-quick-label">Words</span>
         </Link>
-        <Link to="/videos" className="kid-quick-btn kid-quick-videos">
+        <Link to="/videos" className="kid-quick-btn kid-quick-videos" onClick={() => SFX.click()}>
           <span className="kid-quick-emoji">{'\u{1F3AC}'}</span>
           <span className="kid-quick-label">Videos</span>
           {unwatchedVideoCount > 0 && (
             <span className="kid-quick-badge">{unwatchedVideoCount}</span>
           )}
         </Link>
-        <Link to="/worksheets" className="kid-quick-btn kid-quick-sheets">
+        <Link to="/worksheets" className="kid-quick-btn kid-quick-sheets" onClick={() => SFX.click()}>
           <span className="kid-quick-emoji">{'\u{1F4DD}'}</span>
           <span className="kid-quick-label">Sheets</span>
         </Link>
-        <Link to="/songs" className="kid-quick-btn kid-quick-songs">
+        <Link to="/songs" className="kid-quick-btn kid-quick-songs" onClick={() => SFX.click()}>
           <span className="kid-quick-emoji">{'\u{1F3B5}'}</span>
           <span className="kid-quick-label">Songs</span>
         </Link>

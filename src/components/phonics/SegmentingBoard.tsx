@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 
 interface SegmentingBoardProps {
   words: string[];
@@ -113,6 +114,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
       setTimeout(() => {
         setScore((prev) => prev + 1);
         setFeedback('correct');
+        SFX.correct();
       }, 1500);
 
       setTimeout(() => {

@@ -729,6 +729,8 @@ const ParentDashboard: React.FC = () => {
   const parentId = user?.uid || '';
   const parentName = userProfile?.display_name || 'Parent';
 
+  // ---- Per-child stats (Bug fix: use child's own stats, not logged-in user's) ----
+
   // ---- Multi-child state ----
   const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([]);
   const [activeChildId, setActiveChildId] = useState<string>(DEFAULT_CHILD_ID);
@@ -761,6 +763,29 @@ const ParentDashboard: React.FC = () => {
     () => allChildren.find((c) => c.id === activeChildId) || defaultChild,
     [allChildren, activeChildId, defaultChild],
   );
+
+  const activeChildStats = useMemo(() => {
+    if (activeChildId === DEFAULT_CHILD_ID) {
+      return {
+        xp: stats.xp,
+        level: stats.level,
+        streakDays: stats.streakDays,
+        wordsLearned: stats.wordsLearned,
+        gamesPlayed: stats.gamesPlayed,
+      };
+    }
+    const child = childProfiles.find(c => c.id === activeChildId);
+    if (child) {
+      return {
+        xp: child.xp || 0,
+        level: child.level || 1,
+        streakDays: child.streak_days || 0,
+        wordsLearned: child.words_learned || 0,
+        gamesPlayed: child.games_played || 0,
+      };
+    }
+    return { xp: 0, level: 1, streakDays: 0, wordsLearned: 0, gamesPlayed: 0 };
+  }, [activeChildId, stats, childProfiles]);
 
   // ---- Handlers ----
   const handleSelectChild = useCallback((id: string) => {
@@ -870,8 +895,8 @@ const ParentDashboard: React.FC = () => {
   const todayMinutes = useMemo(() => getTodayMinutes(scopedUserId), [scopedUserId]);
 
   const insights = useMemo(
-    () => buildInsights(phonicsProgress, stats.streakDays, weeklySummary),
-    [phonicsProgress, stats.streakDays, weeklySummary],
+    () => buildInsights(phonicsProgress, activeChildStats.streakDays, weeklySummary),
+    [phonicsProgress, activeChildStats.streakDays, weeklySummary],
   );
 
   // ---- Report generation ----
@@ -896,11 +921,11 @@ const ParentDashboard: React.FC = () => {
       `Compared to Last Week: ${weeklySummary.totalMinutes - weeklySummary.previousWeekMinutes >= 0 ? '+' : ''}${weeklySummary.totalMinutes - weeklySummary.previousWeekMinutes} minutes`,
       ``,
       `--- Stats ---`,
-      `Level: ${stats.level}`,
-      `Total XP: ${stats.xp}`,
-      `Streak: ${stats.streakDays} days`,
-      `Words Learned: ${stats.wordsLearned}`,
-      `Games Played: ${stats.gamesPlayed}`,
+      `Level: ${activeChildStats.level}`,
+      `Total XP: ${activeChildStats.xp}`,
+      `Streak: ${activeChildStats.streakDays} days`,
+      `Words Learned: ${activeChildStats.wordsLearned}`,
+      `Games Played: ${activeChildStats.gamesPlayed}`,
       ``,
       `--- Learning Insights ---`,
       ...insights.map((i) => `${i.icon} ${i.text}`),
@@ -921,7 +946,7 @@ const ParentDashboard: React.FC = () => {
     a.click();
     URL.revokeObjectURL(url);
     toast.success('Report downloaded!');
-  }, [activeChild, parentName, mastered, totalSounds, phonicsPercent, strongest, needsPractice, learningProgress, weeklySummary, stats, insights, recentActivities]);
+  }, [activeChild, parentName, mastered, totalSounds, phonicsPercent, strongest, needsPractice, learningProgress, weeklySummary, activeChildStats, insights, recentActivities]);
 
   const handleEmailReport = useCallback(() => {
     toast.success('Email report feature coming soon! Use Download for now.');
@@ -1007,7 +1032,7 @@ const ParentDashboard: React.FC = () => {
       <motion.div custom={0} initial="hidden" animate="visible" variants={fadeUp}>
         <ChildOverviewCard
           child={activeChild}
-          streakDays={stats.streakDays}
+          streakDays={activeChildStats.streakDays}
           todayMinutes={todayMinutes}
           currentPhase={learningProgress.phase}
           currentGroup={learningProgress.group}

@@ -375,7 +375,7 @@ const Onboarding: React.FC = () => {
 
       await refreshUserProfile();
       toast.success('Welcome to MinesMinis!');
-      navigate(role === 'teacher' ? '/teacher' : '/dashboard');
+      navigate(role === 'parent' ? '/parent' : role === 'teacher' ? '/teacher' : '/dashboard');
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Please try again.';
       toast.error(`Oops! ${msg}`, { duration: 6000 });

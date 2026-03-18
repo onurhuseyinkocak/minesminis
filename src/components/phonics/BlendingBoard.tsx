@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 
 interface BlendingBoardProps {
   words: string[];
@@ -111,6 +112,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
       setTimeout(() => {
         setScore((prev) => prev + 1);
         setFeedback('correct');
+        SFX.correct();
       }, 1500);
 
       setTimeout(() => {
