@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Music, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Badge } from '../../components/ui';

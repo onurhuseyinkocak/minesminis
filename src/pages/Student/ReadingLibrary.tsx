@@ -130,7 +130,7 @@ const ReadingLibrary: React.FC = () => {
     else if (ratio >= 0.6) stars = 2;
 
     saveReadBook(selectedBook.id, stars);
-    addXP(stars * 10);
+    addXP(stars * 10, 'Reading completion');
 
     setSelectedBook(null);
     if (bookId) {

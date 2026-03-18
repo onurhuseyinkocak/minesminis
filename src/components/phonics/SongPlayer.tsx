@@ -405,7 +405,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
         <div style={{ width: '100%' }}>
           <ProgressBar
             value={progressPct}
-            variant={isPlaying ? 'success' : 'info'}
+            variant={isPlaying ? 'success' : 'default'}
             size="sm"
             animated={isPlaying}
           />

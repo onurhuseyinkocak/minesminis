@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import { Button, Card, Badge } from '../ui';
+import { Card, Badge } from '../ui';
 import { LetterTracing } from './LetterTracing';
 import { SFX } from '../../data/soundLibrary';
 

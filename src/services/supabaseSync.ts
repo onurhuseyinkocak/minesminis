@@ -216,7 +216,7 @@ export async function fetchTeacherClassrooms(
 export async function fetchChildActivity(
   childId: string,
   limit = 20,
-): Promise<ReturnType<typeof fetchActivityLogs>> {
+): Promise<Awaited<ReturnType<typeof fetchActivityLogs>>> {
   return fetchActivityLogs(childId, limit);
 }
 

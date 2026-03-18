@@ -15,7 +15,6 @@ import {
   getClassLeaderboard,
   deleteClassroom,
   type Classroom,
-  type ClassroomStudent,
 } from '../../services/classroomService';
 import {
   Plus,

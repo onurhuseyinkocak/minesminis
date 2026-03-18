@@ -188,8 +188,6 @@ export function validateInput(
 export function detectMaliciousContent(input: string): boolean {
   if (!input) return false;
 
-  const lower = input.toLowerCase();
-
   const patterns = [
     /<script/i,
     /javascript\s*:/i,

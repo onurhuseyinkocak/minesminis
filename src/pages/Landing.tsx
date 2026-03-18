@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, X, ChevronLeft, ChevronRight, Menu, BookOpen, Ear, Globe, Blocks, Users, GraduationCap, BarChart3, Shield, Clock, Baby, Brain, Repeat, MessageCircle, CheckCircle } from 'lucide-react';
+import { Sparkles, ArrowRight, X, ChevronLeft, ChevronRight, Menu, BookOpen, Ear, Globe, Blocks, Users, GraduationCap, Shield, Brain, Repeat, MessageCircle, CheckCircle } from 'lucide-react';
 import UnifiedMascot, { MascotState } from '../components/UnifiedMascot';
 import { mascotRoaming } from '../services/mascotRoaming';
 import ataturkFormal from '@assets/ataturk_images/ataturk-formal.png';

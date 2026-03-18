@@ -11,8 +11,6 @@ import { useGamification } from '../../contexts/GamificationContext';
 import { WORLDS } from '../../data/curriculum';
 import {
   getClassrooms,
-  createClassroom,
-  type Classroom,
 } from '../../services/classroomService';
 import ClassroomManager from './ClassroomManager';
 import {

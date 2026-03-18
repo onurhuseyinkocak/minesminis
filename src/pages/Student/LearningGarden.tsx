@@ -39,7 +39,7 @@ function LearningGarden() {
   const [selectedPlant, setSelectedPlant] = useState<SelectedPlantInfo | null>(null);
   const [waterDrops, setWaterDrops] = useState(0);
   const [wateringPlant, setWateringPlant] = useState<string | null>(null);
-  const [justGrew, setJustGrew] = useState<string | null>(null);
+  const [justGrew, _setJustGrew] = useState<string | null>(null);
 
   // Initialize
   useEffect(() => {

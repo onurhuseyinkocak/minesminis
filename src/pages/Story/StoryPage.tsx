@@ -10,7 +10,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
 import { WORLDS, TRAIT_NAMES } from '../../data/storyWorlds';
 import type { TraitId } from '../../data/storyWorlds';
-import type { StoryNode, StoryChoice, VocabularyWord } from '../../data/storyTemplates';
+import type { StoryNode, StoryChoice } from '../../data/storyTemplates';
 import { ALL_NODES } from '../../data/storyTemplates';
 import {
   createDefaultState,

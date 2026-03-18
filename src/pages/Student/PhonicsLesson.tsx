@@ -16,7 +16,6 @@ import { logActivity } from '../../services/activityLogger';
 import { getPlantForSound, getPlantStage } from '../../data/gardenData';
 import { LS_MASTERED_SOUNDS } from '../../config/storageKeys';
 import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
-import type { PlantGrowthEvent } from '../../services/gardenService';
 import { syncStudentProgress } from '../../services/classroomService';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -390,7 +389,7 @@ function PhonicsLesson() {
       ) : (
         <BlendingBoard
           words={blendingWords}
-          onComplete={(score, total) => {
+          onComplete={(score, _total) => {
             setXpEarned((prev) => prev + score * 15);
             setBlendingDone(true);
           }}

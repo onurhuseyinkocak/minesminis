@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Star, Clock, Users, Music, BookOpen, Heart, Search, X, Check, Lock, Eye } from 'lucide-react';
+import { Play, Star, Clock, Users, Music, BookOpen, Heart, Search, X, Check, Eye } from 'lucide-react';
 import ContentPageHeader from '../components/ContentPageHeader';
 import './Videos.css';
 import { videoStore } from '../data/videoStore';
 import {
-  PHONICS_VIDEOS,
   PHONICS_GROUP_LABELS,
   getVideosForGroup,
   getWatchedVideoIds,
   markVideoWatched,
-  isVideoWatched,
   type PhonicsVideo,
 } from '../data/phonicsVideos';
 import { useGamification } from '../contexts/GamificationContext';

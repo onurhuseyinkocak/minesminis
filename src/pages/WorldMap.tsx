@@ -13,8 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Star, Check } from 'lucide-react';
 import { ProgressBar } from '../components/ui';
 import UnifiedMascot from '../components/UnifiedMascot';
-import { useAuth } from '../contexts/AuthContext';
-import { PHASES, type LearningPhase, type LearningUnit } from '../data/curriculumPhases';
+import { PHASES, type LearningUnit } from '../data/curriculumPhases';
 import MimiGuide from '../components/MimiGuide';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import './WorldMap.css';
@@ -163,10 +162,7 @@ const tooltipVariants = {
 // ============================================================
 
 const WorldMap = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
-  const _userId = user?.uid || 'guest';
-
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
   const [lockedTooltip, setLockedTooltip] = useState<string | null>(null);
 

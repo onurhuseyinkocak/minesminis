@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, ArrowRight, Volume2 } from 'lucide-react';
-import { Button, Card, Badge } from '../ui';
+import { Button, Badge } from '../ui';
 import { LETTER_PATHS } from '../../data/letterPaths';
 import { SFX } from '../../data/soundLibrary';
 

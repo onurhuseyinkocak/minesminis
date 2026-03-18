@@ -10,15 +10,11 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen,
-  TrendingUp,
   Flame,
   Clock,
   Settings,
   Download,
   Mail,
-  CheckCircle2,
-  AlertCircle,
-  Star,
   Award,
   BarChart3,
   Shield,
@@ -40,7 +36,6 @@ import { useGamification } from '../../contexts/GamificationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { ProgressBar } from '../../components/ui/ProgressBar';
 import { PhonicsChart } from '../../components/phonics/PhonicsChart';
 import {
   ChildProfile,
@@ -186,7 +181,7 @@ function findStrengthsAndWeaknesses(progress: Record<string, number>): {
 function buildInsights(
   phonicsProgress: Record<string, number>,
   streakDays: number,
-  weeklySummary: { totalMinutes: number; sessionCount: number; previousWeekMinutes: number },
+  _weeklySummary: { totalMinutes: number; sessionCount: number; previousWeekMinutes: number },
 ): { icon: string; text: string; type: 'success' | 'warning' | 'tip' | 'achievement' }[] {
   const insights: { icon: string; text: string; type: 'success' | 'warning' | 'tip' | 'achievement' }[] = [];
 

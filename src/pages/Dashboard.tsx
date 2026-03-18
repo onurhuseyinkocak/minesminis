@@ -32,7 +32,6 @@ import {
 import { getDueWords } from '../data/spacedRepetition';
 import { getNextAction } from '../services/learningPathService';
 import { getTotalUnwatchedCount } from '../data/phonicsVideos';
-import { getTodayMinutes } from '../services/activityLogger';
 import { joinClassroom, getStudentClassroom } from '../services/classroomService';
 import './Dashboard.css';
 
@@ -138,8 +137,6 @@ export default function Dashboard() {
   } = useGamification();
 
   // Daily time tracking (blocking is handled globally by TimeGuardedRoute in App.tsx)
-  const dailyLimit = (userProfile?.settings?.dailyTimeLimit as number) || 60; // minutes
-  const todayMinutes = useMemo(() => getTodayMinutes(), []);
 
   // Derived
   const displayName = userProfile?.display_name || user?.displayName || 'Adventurer';
