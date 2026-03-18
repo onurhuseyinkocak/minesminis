@@ -354,23 +354,13 @@ const Landing: React.FC = () => {
               <span>{t.heroBadge}</span>
             </motion.div>
 
-            <motion.h1
-              className="landing-hero__title"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
+            <h1 className="landing-hero__title">
               {t.heroTitle}
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              className="landing-hero__sub"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
-            >
+            <p className="landing-hero__sub">
               {t.heroSub}
-            </motion.p>
+            </p>
 
             <motion.div
               className="landing-hero__actions"
