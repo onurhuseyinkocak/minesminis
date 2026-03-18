@@ -14,6 +14,7 @@ import { isOnline, onOnlineStatusChange } from "./utils/offlineManager";
 import { getNextAction } from "./services/learningPathService";
 import { getTodayMinutes } from "./services/activityLogger";
 
+import { Star } from "lucide-react";
 import MimiMascot from "./components/MimiMascot";
 import "./App.css";
 
@@ -219,7 +220,7 @@ function TimeLimitOverlay({ minutes, limit }: { minutes: number; limit: number }
       justifyContent: 'center', minHeight: '70vh', textAlign: 'center',
       padding: '32px 24px', gap: 16,
     }}>
-      <div style={{ fontSize: 72 }}>{'\u{1F31F}'}</div>
+      <div style={{ fontSize: 72, color: 'var(--primary, #E8A317)' }}><Star size={72} /></div>
       <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
         Great job today!
       </h1>

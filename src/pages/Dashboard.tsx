@@ -36,7 +36,8 @@ import {
   getWorldCompletionCount,
 } from '../data/progressTracker';
 import { getDueWords } from '../data/spacedRepetition';
-import { getNextAction } from '../services/learningPathService';
+import { getNextAction, getCurrentPhonicsSound } from '../services/learningPathService';
+import { getTodayMinutes, getRecentActivities } from '../services/activityLogger';
 import { joinClassroom, getStudentClassroom } from '../services/classroomService';
 import './Dashboard.css';
 
@@ -71,10 +72,19 @@ function getCurrentLessonData(userId: string) {
 }
 
 function getPhaseInfo(): { name: string; unitLabel: string } {
-  const phase = PHASES[0];
+  const currentSound = getCurrentPhonicsSound();
+  if (!currentSound) {
+    const phase = PHASES[0];
+    return {
+      name: phase?.name || 'Little Ears',
+      unitLabel: `${phase?.name || 'Little Ears'} -- Unit 1`,
+    };
+  }
+  const phaseIdx = currentSound.group <= 3 ? 0 : currentSound.group <= 5 ? 1 : currentSound.group <= 6 ? 2 : 3;
+  const phase = PHASES[phaseIdx] || PHASES[0];
   return {
     name: phase?.name || 'Little Ears',
-    unitLabel: `${phase?.name || 'Little Ears'} -- Unit 1`,
+    unitLabel: `${phase?.name || 'Little Ears'} -- Group ${currentSound.group}`,
   };
 }
 
@@ -170,12 +180,14 @@ export default function Dashboard() {
   const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
   const [dueWords, setDueWords] = useState(() => getDueWords());
   const [nextAction, setNextAction] = useState(() => getNextAction());
+  const [todayMin, setTodayMin] = useState(() => getTodayMinutes());
 
   useEffect(() => {
     const onFocus = () => {
       setLesson(getCurrentLessonData(userId));
       setDueWords(getDueWords());
       setNextAction(getNextAction());
+      setTodayMin(getTodayMinutes());
     };
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
@@ -209,8 +221,13 @@ export default function Dashboard() {
   const phaseInfo = useMemo(() => getPhaseInfo(), []);
   const xpProgress = getXPProgress();
 
-  // Today's completions
-  const todayCompletions = stats.gamesPlayed + stats.worksheetsCompleted;
+  // Today's completions -- count activities logged today, not lifetime stats
+  const todayCompletions = useMemo(() => {
+    const todayPrefix = new Date().toISOString().slice(0, 10);
+    return getRecentActivities(50).filter(a =>
+      a.timestamp.startsWith(todayPrefix)
+    ).length;
+  }, []);
 
   // Recent badges (last 6 earned)
   const recentBadges = useMemo(() => {
@@ -318,7 +335,7 @@ export default function Dashboard() {
         <span className="dash-today__label">Today</span>
         <div className="dash-today__stats">
           <ProgressRing
-            value={12}
+            value={todayMin}
             max={30}
             label="min"
             colorClass="dash-today__stat-ring-fill--time"
@@ -332,7 +349,7 @@ export default function Dashboard() {
         </div>
         <Link to="/games" className="dash-today__challenge">
           <Target size={16} />
-          <span>Daily Challenge</span>
+          <span>Play Games</span>
         </Link>
       </motion.section>
 

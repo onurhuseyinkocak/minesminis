@@ -11,7 +11,7 @@ interface BlendingBoardProps {
 }
 
 function splitToSounds(word: string): string[] {
-  const digraphs = ['sh', 'ch', 'th', 'ng', 'ck', 'qu', 'ai', 'ee', 'oo', 'or', 'ar', 'er', 'ou', 'oi'];
+  const digraphs = ['sh', 'ch', 'th', 'ng', 'ck', 'qu', 'ai', 'ee', 'oo', 'or', 'ar', 'er', 'ou', 'oi', 'ue', 'ie', 'oa'];
   const sounds: string[] = [];
   let i = 0;
   while (i < word.length) {

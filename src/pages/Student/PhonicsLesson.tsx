@@ -79,16 +79,24 @@ function getSoundData(soundId: string): { sound: PhonicsSound; group: PhonicsGro
 
 /** Build blending words for a sound from the group's blendableWords */
 function getBlendingWords(sound: PhonicsSound, group: PhonicsGroup): string[] {
-  const grapheme = sound.grapheme.toLowerCase();
+  // For digraphs like "c/k", split and check each part
+  const graphemes = sound.grapheme.includes('/')
+    ? sound.grapheme.split('/')
+    : [sound.grapheme.toLowerCase()];
+
   return group.blendableWords
-    .filter((w) => w.toLowerCase().includes(grapheme))
+    .filter((w) => graphemes.some((g) => w.toLowerCase().includes(g.toLowerCase())))
     .slice(0, 3);
 }
 
 /** Build segmenting words (same logic, different slice) */
 function getSegmentingWords(sound: PhonicsSound, group: PhonicsGroup): string[] {
-  const grapheme = sound.grapheme.toLowerCase();
-  const words = group.blendableWords.filter((w) => w.toLowerCase().includes(grapheme));
+  // For digraphs like "c/k", split and check each part
+  const graphemes = sound.grapheme.includes('/')
+    ? sound.grapheme.split('/')
+    : [sound.grapheme.toLowerCase()];
+
+  const words = group.blendableWords.filter((w) => graphemes.some((g) => w.toLowerCase().includes(g.toLowerCase())));
   // Pick different words from blending if possible
   return words.slice(3, 6).length >= 3 ? words.slice(3, 6) : words.slice(0, 3);
 }
@@ -171,7 +179,7 @@ function PhonicsLesson() {
           <div style={{ textAlign: 'center' }}>
             <span style={{ fontSize: '3rem' }}>🔍</span>
             <h2 style={{ color: '#1A6B5A' }}>Sound not found</h2>
-            <p style={{ color: '#666' }}>We couldn&apos;t find this sound lesson.</p>
+            <p style={{ color: '#94A3B8' }}>We couldn&apos;t find this sound lesson.</p>
             <Button variant="primary" onClick={() => navigate('/dashboard')}>
               Back to Dashboard
             </Button>
@@ -277,7 +285,13 @@ function PhonicsLesson() {
               recognition.lang = 'en-US';
               recognition.interimResults = false;
               setIsListening(true);
-              recognition.onresult = () => setIsListening(false);
+              recognition.onresult = (event: SpeechRecognitionEvent) => {
+                const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                void transcript; // acknowledged
+                setIsListening(false);
+                // Any result = good effort for kids
+                SFX.correct();
+              };
               recognition.onerror = () => setIsListening(false);
               recognition.onend = () => setIsListening(false);
               recognition.start();
@@ -324,8 +338,8 @@ function PhonicsLesson() {
                 }}
                 style={{
                   ...styles.keywordCard,
-                  borderColor: clicked ? '#1A6B5A' : '#e0e0e0',
-                  backgroundColor: clicked ? '#f0fdf4' : '#fff',
+                  borderColor: clicked ? '#1A6B5A' : '#334155',
+                  backgroundColor: clicked ? 'rgba(34,197,94,0.1)' : '#1C2236',
                 }}
               >
                 <span style={{ fontSize: '1.5rem' }}>{kw.emoji}</span>
@@ -713,7 +727,7 @@ function PhonicsLesson() {
         <h2 style={{ textAlign: 'center', color: '#1A6B5A', margin: 0 }}>
           {isGroupComplete ? 'Group Complete!' : 'Amazing work!'}
         </h2>
-        <p style={{ textAlign: 'center', color: '#666', margin: 0 }}>
+        <p style={{ textAlign: 'center', color: '#94A3B8', margin: 0 }}>
           {isGroupComplete
             ? `You mastered all sounds in ${currentGroup?.name || 'this group'}!`
             : <>You learned the &quot;{sound.grapheme}&quot; sound!</>}
@@ -729,7 +743,7 @@ function PhonicsLesson() {
                 Your {gardenPlant.emoji} grew! It&apos;s now {plantStage.name === 'flowering' ? 'fully bloomed' : `a ${plantStage.name}`}!
               </p>
             )}
-            <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', margin: 0 }}>
               Sound &quot;{sound.grapheme}&quot; added to your mastery chart
             </p>
           </div>
@@ -798,7 +812,7 @@ function PhonicsLesson() {
               width: 10,
               height: 10,
               borderRadius: '50%',
-              backgroundColor: i < stepIndex ? '#10b981' : i === stepIndex ? '#1A6B5A' : '#e0e0e0',
+              backgroundColor: i < stepIndex ? '#10b981' : i === stepIndex ? '#1A6B5A' : '#334155',
               transition: 'background-color 0.3s',
             }}
           />
@@ -877,7 +891,7 @@ const styles: Record<string, React.CSSProperties> = {
   stepDesc: {
     fontSize: '1.1rem',
     fontWeight: 600,
-    color: '#555',
+    color: '#94A3B8',
     textAlign: 'center' as const,
     margin: 0,
   },
@@ -886,20 +900,20 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'flex-start',
     gap: '0.75rem',
     padding: '1rem',
-    background: '#f0fdf4',
+    background: 'rgba(34,197,94,0.1)',
     borderRadius: '1rem',
     width: '100%',
   },
   mimiText: {
     fontSize: '0.95rem',
-    color: '#333',
+    color: '#F1F5F9',
     fontStyle: 'italic',
     margin: 0,
     lineHeight: 1.5,
   },
   actionBox: {
     padding: '1.25rem',
-    background: '#FFF8E1',
+    background: 'rgba(232,163,23,0.1)',
     borderRadius: '1rem',
     width: '100%',
     textAlign: 'center' as const,
@@ -907,12 +921,12 @@ const styles: Record<string, React.CSSProperties> = {
   actionText: {
     fontSize: '1.15rem',
     fontWeight: 700,
-    color: '#333',
+    color: '#F1F5F9',
     margin: 0,
   },
   turkishNote: {
     fontSize: '0.85rem',
-    color: '#888',
+    color: '#64748B',
     fontStyle: 'italic',
     textAlign: 'center' as const,
     margin: 0,
@@ -930,8 +944,8 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.3rem',
     padding: '0.75rem 0.5rem',
     borderRadius: '0.75rem',
-    border: '2px solid #e0e0e0',
-    background: '#fff',
+    border: '2px solid #334155',
+    background: '#1C2236',
     cursor: 'pointer',
     fontFamily: 'Nunito, sans-serif',
     transition: 'all 0.2s',
@@ -944,7 +958,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '2rem',
     fontWeight: 800,
     color: '#1A6B5A',
-    background: '#f0fdf4',
+    background: 'rgba(34,197,94,0.1)',
     borderRadius: '1rem',
     border: '3px solid #1A6B5A',
     cursor: 'pointer',
@@ -960,7 +974,7 @@ const styles: Record<string, React.CSSProperties> = {
     height: '3.5rem',
     borderRadius: '0.75rem',
     border: '3px solid #E8A317',
-    backgroundColor: '#FFF8E1',
+    backgroundColor: 'rgba(232,163,23,0.1)',
     fontSize: '1.5rem',
     fontWeight: 800,
     color: '#E8A317',
@@ -975,7 +989,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     fontSize: '1.2rem',
     fontWeight: 600,
-    color: '#333',
+    color: '#F1F5F9',
     fontFamily: 'Nunito, sans-serif',
     padding: '0.15rem 0.3rem',
     borderRadius: '0.25rem',
