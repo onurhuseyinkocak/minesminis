@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import React from 'react';
 
@@ -129,41 +129,55 @@ describe('AdminLayout - Login Screen', () => {
     expect(screen.getByText('Administration')).toBeInTheDocument();
   });
 
-  it('shows error on wrong password', () => {
+  it('shows error on wrong password', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(null, { status: 403 }));
     renderLayout();
     const input = screen.getByPlaceholderText('Admin password');
     fireEvent.change(input, { target: { value: 'wrong' } });
     fireEvent.click(screen.getByText('Sign In'));
-    expect(screen.getByText('Invalid password. Please try again.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Invalid password. Please try again.')).toBeInTheDocument();
+    });
+    vi.restoreAllMocks();
   });
 
-  it('clears error when typing after failed login', () => {
+  it('clears error when typing after failed login', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(null, { status: 403 }));
     renderLayout();
     const input = screen.getByPlaceholderText('Admin password');
     fireEvent.change(input, { target: { value: 'wrong' } });
     fireEvent.click(screen.getByText('Sign In'));
-    expect(screen.getByText('Invalid password. Please try again.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Invalid password. Please try again.')).toBeInTheDocument();
+    });
     fireEvent.change(input, { target: { value: 'a' } });
     expect(screen.queryByText('Invalid password. Please try again.')).not.toBeInTheDocument();
+    vi.restoreAllMocks();
   });
 
-  it('authenticates with correct password and shows admin shell', () => {
+  it('authenticates with correct password and shows admin shell', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(JSON.stringify({ status: 'ok' }), { status: 200 }));
     renderLayout();
     const input = screen.getByPlaceholderText('Admin password');
     fireEvent.change(input, { target: { value: 'Wealthy*520' } });
     fireEvent.click(screen.getByText('Sign In'));
-    // Should now show the admin shell with topbar
-    expect(screen.queryByText('Welcome back')).not.toBeInTheDocument();
-    // Should have sessionStorage set
+    await waitFor(() => {
+      expect(screen.queryByText('Welcome back')).not.toBeInTheDocument();
+    });
     expect(sessionStorage.getItem('admin_session')).toBe('1');
+    vi.restoreAllMocks();
   });
 
-  it('supports Enter key to submit password', () => {
+  it('supports Enter key to submit password', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(JSON.stringify({ status: 'ok' }), { status: 200 }));
     renderLayout();
     const input = screen.getByPlaceholderText('Admin password');
     fireEvent.change(input, { target: { value: 'Wealthy*520' } });
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(sessionStorage.getItem('admin_session')).toBe('1');
+    await waitFor(() => {
+      expect(sessionStorage.getItem('admin_session')).toBe('1');
+    });
+    vi.restoreAllMocks();
   });
 
   it('uses adm-login CSS classes (no old admin-login classes)', () => {

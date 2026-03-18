@@ -5,16 +5,16 @@ import { auth } from '../config/firebase';
 import { getApiBase } from './apiBase';
 
 const ADMIN_SESSION_KEY = 'admin_session';
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || '';
 
 /**
  * Returns headers for admin API: şifre ile giriş yapıldıysa X-Admin-Password, yoksa Bearer token.
  */
 export async function getAdminAuthHeaders(): Promise<HeadersInit> {
   if (typeof window !== 'undefined' && sessionStorage.getItem(ADMIN_SESSION_KEY) === '1') {
+    const storedPw = sessionStorage.getItem('admin_pw') || '';
     return {
       'Content-Type': 'application/json',
-      'X-Admin-Password': ADMIN_PASSWORD,
+      'X-Admin-Password': storedPw,
     };
   }
   const user = auth.currentUser;

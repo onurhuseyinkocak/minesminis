@@ -39,7 +39,6 @@ import WorksheetsManager from './WorksheetsManager';
 import './AdminLayout.css';
 
 const ADMIN_SESSION_KEY = 'admin_session';
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || '';
 
 const navSections = [
     {
@@ -87,23 +86,32 @@ function AdminLayout() {
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState('');
 
-    const handlePasswordLogin = () => {
+    const handlePasswordLogin = async () => {
         setLoginError('');
-        if (!ADMIN_PASSWORD) {
-            setLoginError('Admin password not configured. Contact administrator.');
+        if (!password.trim()) {
+            setLoginError('Please enter the admin password');
             return;
         }
-        if (password === ADMIN_PASSWORD) {
-            sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-            setIsAdmin(true);
-            setPassword('');
-        } else {
-            setLoginError('Invalid password. Please try again.');
+        try {
+            const res = await fetch('/api/admin/health', {
+                headers: { 'X-Admin-Password': password.trim() }
+            });
+            if (res.ok) {
+                sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+                sessionStorage.setItem('admin_pw', password.trim());
+                setIsAdmin(true);
+                setPassword('');
+            } else {
+                setLoginError('Invalid password. Please try again.');
+            }
+        } catch {
+            setLoginError('Connection error. Please try again.');
         }
     };
 
     const handleLogout = () => {
         sessionStorage.removeItem(ADMIN_SESSION_KEY);
+        sessionStorage.removeItem('admin_pw');
         setIsAdmin(false);
         setPassword('');
         signOut();

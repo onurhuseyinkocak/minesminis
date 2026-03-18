@@ -410,15 +410,16 @@ function AdminMimi() {
                                     </div>
                                 )}
                                 <div className="message-content">
-                                    <div
-                                        className="message-text"
-                                        dangerouslySetInnerHTML={{
-                                            __html: message.content
-                                                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                                .replace(/\n/g, '<br />')
-                                                .replace(/• /g, '&bull; ')
-                                        }}
-                                    />
+                                    <p className="message-text">
+                                        {message.content.split('\n').map((line, i) => (
+                                            <span key={i}>
+                                                {line.split(/\*\*(.*?)\*\*/g).map((part, j) =>
+                                                    j % 2 === 1 ? <strong key={j}>{part}</strong> : part
+                                                )}
+                                                {i < message.content.split('\n').length - 1 && <br />}
+                                            </span>
+                                        ))}
+                                    </p>
                                     {message.role === 'assistant' && (
                                         <button
                                             className="message-copy-btn"

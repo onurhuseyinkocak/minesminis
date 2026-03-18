@@ -8,8 +8,8 @@ interface LeaderboardEntry {
     id: string;
     display_name: string;
     avatar_url: string | null;
-    settings: Record<string, unknown> | null;
     level: number;
+    xp: number;
 }
 
 const Leaderboard: React.FC = () => {
@@ -48,7 +48,7 @@ const Leaderboard: React.FC = () => {
             setLoading(true);
             const { data, error } = await supabase
                 .from('users')
-                .select('id, display_name, avatar_url, settings, level')
+                .select('id, display_name, avatar_url, level, xp')
                 .order('xp', { ascending: false })
                 .limit(5);
 
@@ -102,7 +102,7 @@ const Leaderboard: React.FC = () => {
                                 <span className="leader-lvl">Level {entry.level}</span>
                             </div>
                             <div className="leader-xp">
-                                <strong>{(entry.settings?.weekly_xp as number) || 0}</strong>
+                                <strong>{entry.xp || 0}</strong>
                                 <span>XP</span>
                             </div>
                         </div>
@@ -119,7 +119,7 @@ const Leaderboard: React.FC = () => {
                 <div className="user-context-action">
                     <div className="status-box">
                         <Star size={16} />
-                        <span>You have <strong>{(userProfile.settings as Record<string, unknown>)?.weekly_xp as number || 0}</strong> XP this week</span>
+                        <span>You have <strong>{userProfile.xp || 0}</strong> XP this week</span>
                     </div>
                     <ChevronRight size={18} />
                 </div>

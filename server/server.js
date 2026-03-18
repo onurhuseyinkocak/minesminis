@@ -83,10 +83,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin) || origin.endsWith('.replit.dev') || origin.endsWith('.repl.co')) {
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
@@ -95,7 +92,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Admin-Password'],
   maxAge: 86400, // 24 hours
 }));
 
@@ -502,6 +499,11 @@ app.post('/api/chat',
 // ============================================================
 // ADMIN SECURITY ENDPOINTS
 // ============================================================
+
+// Admin health check (used by login form to verify password server-side)
+app.get('/api/admin/health', requireAdminAuth, (req, res) => {
+  res.json({ status: 'ok', authenticated: true });
+});
 
 // Get security status (admin only)
 app.get('/api/admin/security-status', requireAdminAuth, (req, res) => {

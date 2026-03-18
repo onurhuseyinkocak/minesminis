@@ -3,6 +3,8 @@
 // ============================================================
 // This service now calls our secure backend proxy instead of OpenAI directly
 
+import { auth } from '../config/firebase';
+
 const getBackendUrl = () => {
     // Check if running in browser
     if (typeof window === 'undefined') {
@@ -90,10 +92,12 @@ export const sendMessageToAI = async (messages: ChatMessage[]): Promise<string> 
         ];
 
         // Call backend proxy
+        const token = await auth.currentUser?.getIdToken().catch(() => null);
         const response = await fetch(`${BACKEND_URL}/api/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
             },
             body: JSON.stringify({
                 messages: apiMessages

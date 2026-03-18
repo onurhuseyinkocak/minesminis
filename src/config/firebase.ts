@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getAnalytics, Analytics } from 'firebase/analytics';
+import type { Analytics } from 'firebase/analytics';
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
@@ -26,11 +26,10 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
 
-// Initialize Firebase Analytics (only in production/browser environment)
-let analytics: Analytics | null = null;
-if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
-    analytics = getAnalytics(app);
-}
+// Don't initialize analytics — COPPA compliance
+// Analytics should only be enabled after parental consent
+// analytics = getAnalytics(app);  // DISABLED
+const analytics: Analytics | null = null;
 export { analytics };
 
 // Initialize Google Auth Provider (no prompt = faster for returning users)
