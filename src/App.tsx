@@ -416,23 +416,23 @@ function WhatsNextButton() {
             position: "absolute",
             bottom: 52,
             right: 0,
-            background: "#fff",
-            border: "2px solid #1A6B5A",
+            background: "#1C2236",
+            border: "1px solid #334155",
             borderRadius: 14,
             padding: "10px 16px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
             whiteSpace: "nowrap",
             cursor: "pointer",
             fontSize: 14,
             fontWeight: 600,
-            color: "#1A6B5A",
+            color: "#F1F5F9",
             fontFamily: "Nunito, sans-serif",
             display: "flex",
             alignItems: "center",
             gap: 6,
           }}
         >
-          <span>Next: {action.title} {action.emoji}</span>
+          <span>Next: {action.title}</span>
         </button>
       )}
       <button
@@ -442,9 +442,9 @@ function WhatsNextButton() {
           width: 44,
           height: 44,
           borderRadius: "50%",
-          border: "2px solid #1A6B5A",
-          background: "#f0fdf4",
-          color: "#1A6B5A",
+          border: "1px solid #334155",
+          background: "#1C2236",
+          color: "#E8A317",
           fontSize: 20,
           fontWeight: 800,
           cursor: "pointer",

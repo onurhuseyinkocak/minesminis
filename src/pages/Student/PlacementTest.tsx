@@ -281,7 +281,7 @@ function PlacementTest() {
                 <Star size={20} color="#E8A317" fill="#E8A317" />
                 <span>{result.phaseLabel}</span>
               </div>
-              <p style={{ color: '#666', margin: '0.75rem 0 0', fontSize: '0.95rem' }}>
+              <p style={{ color: '#94A3B8', margin: '0.75rem 0 0', fontSize: '0.95rem' }}>
                 You got {result.score} out of {result.total} — great job!
               </p>
             </div>
@@ -396,7 +396,7 @@ function PlacementTest() {
                 <span style={{
                   fontSize: question.display.length > 5 ? '1.8rem' : '4rem',
                   fontWeight: 800,
-                  color: '#1A6B5A',
+                  color: '#E8A317',
                 }}>
                   {question.display}
                 </span>
@@ -457,9 +457,9 @@ function PlacementTest() {
                     backgroundColor:
                       selectedValue === opt.value
                         ? opt.value === question.correctValue
-                          ? '#ecfdf5'
-                          : '#fffbeb'
-                        : '#fff',
+                          ? 'rgba(34,197,94,0.15)'
+                          : 'rgba(232,163,23,0.15)'
+                        : '#1C2236',
                   }}
                 >
                   {opt.emoji && <span style={{ fontSize: '2rem' }}>{opt.emoji}</span>}
@@ -505,7 +505,7 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     gap: '1rem',
     padding: '2rem',
-    background: '#fff',
+    background: '#1C2236',
     borderRadius: '1.5rem',
     boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
     maxWidth: '420px',
@@ -516,20 +516,20 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: 'center' as const,
     fontSize: '2rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: '#E8A317',
     margin: 0,
   },
   introText: {
     textAlign: 'center' as const,
     fontSize: '1.1rem',
-    color: '#555',
+    color: '#94A3B8',
     lineHeight: 1.6,
     margin: 0,
   },
   introSubtext: {
     textAlign: 'center' as const,
     fontSize: '0.9rem',
-    color: '#999',
+    color: '#64748B',
     margin: 0,
   },
   questionCard: {
@@ -537,7 +537,7 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     gap: '1rem',
     padding: '1.5rem',
-    background: '#fff',
+    background: '#1C2236',
     borderRadius: '1.5rem',
     boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
     width: '100%',
@@ -549,7 +549,7 @@ const styles: Record<string, React.CSSProperties> = {
     textTransform: 'uppercase' as const,
     letterSpacing: '0.05em',
     color: '#E8A317',
-    background: '#FFF8E1',
+    background: 'rgba(232,163,23,0.1)',
     padding: '0.25rem 0.75rem',
     borderRadius: '1rem',
   },
@@ -557,7 +557,7 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: 'center' as const,
     fontSize: '1.5rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: '#E8A317',
     margin: 0,
   },
   displayArea: {
@@ -582,7 +582,7 @@ const styles: Record<string, React.CSSProperties> = {
     backgroundColor: '#E8F5E9',
     fontSize: '1.5rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: '#E8A317',
     cursor: 'pointer',
     fontFamily: 'Nunito, sans-serif',
     display: 'flex',
@@ -593,7 +593,7 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: 'center' as const,
     fontSize: '1.05rem',
     fontWeight: 600,
-    color: '#333',
+    color: '#F1F5F9',
     margin: 0,
   },
   optionsGrid: {
@@ -608,7 +608,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1rem 1.25rem',
     borderRadius: '1rem',
     border: '3px solid #e0e0e0',
-    background: '#fff',
+    background: '#1C2236',
     cursor: 'pointer',
     fontFamily: 'Nunito, sans-serif',
     transition: 'all 0.2s',
@@ -617,7 +617,7 @@ const styles: Record<string, React.CSSProperties> = {
   optionLabel: {
     fontSize: '1.2rem',
     fontWeight: 700,
-    color: '#333',
+    color: '#F1F5F9',
   },
   feedbackCard: {
     display: 'flex',
@@ -625,7 +625,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: '0.5rem',
     padding: '2rem',
-    background: '#fff',
+    background: '#1C2236',
     borderRadius: '1.5rem',
     boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
     width: '100%',
@@ -634,7 +634,7 @@ const styles: Record<string, React.CSSProperties> = {
   mimiSpeech: {
     fontSize: '0.95rem',
     fontStyle: 'italic',
-    color: '#888',
+    color: '#64748B',
     textAlign: 'center' as const,
     margin: 0,
   },
@@ -643,7 +643,7 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     gap: '1.25rem',
     padding: '2rem',
-    background: '#fff',
+    background: '#1C2236',
     borderRadius: '1.5rem',
     boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
     maxWidth: '420px',
@@ -654,13 +654,13 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: 'center' as const,
     fontSize: '2rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: '#E8A317',
     margin: 0,
   },
   resultText: {
     textAlign: 'center' as const,
     fontSize: '1.1rem',
-    color: '#555',
+    color: '#94A3B8',
     margin: 0,
   },
   resultBadge: {
@@ -669,7 +669,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.5rem',
     fontSize: '1.1rem',
     fontWeight: 700,
-    color: '#1A6B5A',
+    color: '#E8A317',
     background: '#f0fdf4',
     padding: '0.5rem 1rem',
     borderRadius: '1rem',
