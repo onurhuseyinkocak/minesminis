@@ -68,7 +68,7 @@ export default function Premium() {
         )}
 
         <div className="features-section animate-up" style={{ animationDelay: '0.2s' }}>
-          <div className="section-badge">✨ Premium Perks</div>
+          <div className="section-badge">Premium Perks</div>
           <h2>Why Choose Premium?</h2>
           <div className="features-grid">
             {premiumFeatures.map((feature, index) => (
@@ -106,13 +106,13 @@ export default function Premium() {
             </div>
             <div className="comparison-row">
               <div className="feature-col">Daily challenge</div>
-              <div className="free-col"><Check size={18} /></div>
-              <div className="premium-col"><Check size={18} /></div>
+              <div className="free-col">Limited</div>
+              <div className="premium-col"><Check size={18} /> Unlimited</div>
             </div>
             <div className="comparison-row">
               <div className="feature-col">Progress tracking</div>
-              <div className="free-col"><Check size={18} /></div>
-              <div className="premium-col"><Check size={18} /></div>
+              <div className="free-col">Basic</div>
+              <div className="premium-col"><Check size={18} /> Advanced</div>
             </div>
           </div>
         </div>

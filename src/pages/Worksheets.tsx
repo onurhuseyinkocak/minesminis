@@ -16,7 +16,8 @@ import {
   Music,
   Layout,
   ExternalLink,
-  FileText
+  FileText,
+  Gamepad2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
@@ -168,7 +169,7 @@ function Worksheets() {
       if (user) {
         await trackActivity('worksheet_completed', { worksheetId: worksheet.id, title: worksheet.title });
         await addXP(15, 'worksheet_completed');
-        toast.success(`You earned 15 XP for practicing! 🌟`);
+        toast.success('You earned 15 XP for practicing!');
       }
     } catch (err) {
       console.error('Error tracking activity:', err);
@@ -285,7 +286,7 @@ function Worksheets() {
                   src={worksheet.thumbnail_url || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300'}
                   alt={worksheet.title}
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect fill="%236366f1" width="300" height="200"/><text x="150" y="100" text-anchor="middle" fill="white" font-size="48">📄</text></svg>';
+                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect fill="%236366f1" width="300" height="200"/><text x="150" y="100" text-anchor="middle" fill="white" font-size="16">Worksheet</text></svg>';
                   }}
                 />
                 <div className="worksheet-overlay">
@@ -358,22 +359,22 @@ function Worksheets() {
       )}
 
       <div className="worksheets-resources">
-        <h3>🌐 More Free Resources</h3>
+        <h3>More Free Resources</h3>
         <div className="resources-grid">
           <a href="https://games4esl.com/esl-worksheets/" target="_blank" rel="noopener noreferrer" className="resource-link">
-            <span className="resource-icon">🎮</span>
+            <span className="resource-icon"><Gamepad2 size={20} /></span>
             <span>Games4ESL</span>
           </a>
           <a href="https://learnenglishkids.britishcouncil.org/print-make/worksheets" target="_blank" rel="noopener noreferrer" className="resource-link">
-            <span className="resource-icon">🇬🇧</span>
+            <span className="resource-icon"><BookOpen size={20} /></span>
             <span>British Council</span>
           </a>
           <a href="https://www.englishwsheets.com/" target="_blank" rel="noopener noreferrer" className="resource-link">
-            <span className="resource-icon">📄</span>
+            <span className="resource-icon"><FileText size={20} /></span>
             <span>EnglishWsheets</span>
           </a>
           <a href="https://www.english-4kids.com/worksheet.html" target="_blank" rel="noopener noreferrer" className="resource-link">
-            <span className="resource-icon">👶</span>
+            <span className="resource-icon"><GraduationCap size={20} /></span>
             <span>English-4Kids</span>
           </a>
         </div>

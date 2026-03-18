@@ -158,7 +158,7 @@ export default function Pricing() {
       refreshSubscription();
       setSearchParams({}, { replace: true });
     } else if (status === 'cancelled') {
-      toast('Checkout cancelled. You can subscribe anytime.', { icon: '\u{2139}\u{FE0F}' });
+      toast('Checkout cancelled. You can subscribe anytime.');
       setSearchParams({}, { replace: true });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,7 +188,7 @@ export default function Pricing() {
 
     const variantId = isYearly ? plan.yearlyVariantId : plan.monthlyVariantId;
     if (!variantId) {
-      toast('Payment system is being configured. Please check back soon!', { icon: '\u{1F6E0}\u{FE0F}' });
+      toast('Payment system is being configured. Please check back soon!');
       return;
     }
 
@@ -268,6 +268,8 @@ export default function Pricing() {
             const isCurrent = isCurrentPlan(plan.id);
             const isLoadingThis = loadingPlan === plan.id;
             const isFree = plan.id === 'free';
+            const variantId = isYearly ? plan.yearlyVariantId : plan.monthlyVariantId;
+            const variantMissing = !isFree && !isCurrent && !variantId;
 
             return (
               <div
@@ -313,7 +315,7 @@ export default function Pricing() {
                 <button
                   type="button"
                   className={`plan-cta ${plan.highlight ? 'plan-cta--primary' : ''} ${isCurrent ? 'plan-cta--current' : ''}`}
-                  disabled={subLoading || isLoadingThis}
+                  disabled={subLoading || isLoadingThis || variantMissing}
                   onClick={() => {
                     if (isFree) {
                       if (!user) navigate('/login');
@@ -329,6 +331,8 @@ export default function Pricing() {
                     <>Manage Plan <ExternalLink size={14} /></>
                   ) : isFree ? (
                     user ? 'Current Plan' : 'Get Started'
+                  ) : variantMissing ? (
+                    'Coming Soon'
                   ) : (
                     `Subscribe to ${plan.name}`
                   )}

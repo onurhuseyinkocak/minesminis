@@ -7,8 +7,7 @@ import {
   Star,
   Clock,
   UserCircle,
-  X,
-  Camera
+  X
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
@@ -42,7 +41,7 @@ const Profile: React.FC = () => {
 
       if (error) throw error;
       await refreshUserProfile();
-      toast.success('Profile updated! 🎉');
+      toast.success('Profile updated!');
       setShowEditModal(false);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -62,13 +61,6 @@ const Profile: React.FC = () => {
         <header className="profile-hero">
           <div className="profile-avatar-large">
             <UserCircle size={100} className="avatar-vector" />
-            <button
-              className="change-avatar-btn"
-              title="Avatar upload coming soon!"
-              onClick={() => toast('Avatar upload coming soon!', { icon: '🐉' })}
-            >
-              <Camera size={20} />
-            </button>
           </div>
 
           <div className="profile-main-info">
@@ -162,6 +154,7 @@ const Profile: React.FC = () => {
                   value={editDisplayName}
                   onChange={(e) => setEditDisplayName(e.target.value)}
                   placeholder="Enter your explorer name"
+                  maxLength={30}
                 />
               </div>
             </div>
