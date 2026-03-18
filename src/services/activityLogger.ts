@@ -2,7 +2,10 @@
  * ACTIVITY LOGGER SERVICE
  * Tracks all child learning activities in localStorage.
  * Used by the Parent Dashboard to show detailed analytics.
+ * Also syncs to Supabase for cross-device access.
  */
+
+import { syncActivityLog } from './supabaseSync';
 
 // ============================================================
 // TYPES
@@ -81,9 +84,11 @@ function toDateKey(date: Date): string {
 
 /**
  * Log a new activity. Called after lessons, games, challenges complete.
+ * Saves to localStorage (instant) and syncs to Supabase (async, cross-device).
  */
 export function logActivity(
   activity: Omit<ActivityLog, 'id' | 'timestamp'>,
+  userId?: string,
 ): void {
   const logs = loadLogs();
   const entry: ActivityLog = {
@@ -93,6 +98,18 @@ export function logActivity(
   };
   logs.push(entry);
   saveLogs(logs);
+
+  // Sync to Supabase (fire-and-forget)
+  if (userId) {
+    syncActivityLog(userId, {
+      type: activity.type,
+      title: activity.title,
+      duration: activity.duration,
+      accuracy: activity.accuracy,
+      xpEarned: activity.xpEarned,
+      soundId: activity.soundId,
+    });
+  }
 }
 
 /**

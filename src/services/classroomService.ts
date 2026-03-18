@@ -1,8 +1,10 @@
 /**
  * CLASSROOM SERVICE
  * LocalStorage-based classroom management for teachers.
- * No backend migration needed — everything stored in localStorage.
+ * Also syncs to Supabase for cross-device access.
  */
+
+import { syncCreateClassroom, syncJoinClassroom } from './supabaseSync';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -106,6 +108,16 @@ export function createClassroom(
   };
   classrooms.push(newClassroom);
   saveClassrooms(teacherId, classrooms);
+
+  // Sync to Supabase (fire-and-forget)
+  syncCreateClassroom(
+    teacherId,
+    name,
+    gradeLevel,
+    newClassroom.joinCode,
+    newClassroom.phonicsGroupAssigned,
+  );
+
   return newClassroom;
 }
 
@@ -174,6 +186,9 @@ export function joinClassroom(
       joinedAt: new Date().toISOString(),
     }),
   );
+
+  // Sync to Supabase (fire-and-forget)
+  syncJoinClassroom(classroom.joinCode, student.id);
 
   return { success: true, classroomName: classroom.name };
 }

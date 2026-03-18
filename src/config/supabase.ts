@@ -187,6 +187,183 @@ export interface Database {
           created_at: string;
         };
       };
+      activity_logs: {
+        Row: {
+          id: string;
+          user_id: string;
+          type: string;
+          title: string;
+          duration: number;
+          accuracy: number | null;
+          xp_earned: number;
+          sound_id: string | null;
+          metadata: Record<string, unknown>;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          type: string;
+          title: string;
+          duration?: number;
+          accuracy?: number | null;
+          xp_earned?: number;
+          sound_id?: string | null;
+          metadata?: Record<string, unknown>;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          type?: string;
+          title?: string;
+          duration?: number;
+          accuracy?: number | null;
+          xp_earned?: number;
+          sound_id?: string | null;
+          metadata?: Record<string, unknown>;
+          created_at?: string;
+        };
+      };
+      phonics_mastery: {
+        Row: {
+          id: string;
+          user_id: string;
+          sound_id: string;
+          mastery: number;
+          attempts: number;
+          correct_attempts: number;
+          last_practiced: string;
+          next_review: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          sound_id: string;
+          mastery?: number;
+          attempts?: number;
+          correct_attempts?: number;
+          last_practiced?: string;
+          next_review?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          sound_id?: string;
+          mastery?: number;
+          attempts?: number;
+          correct_attempts?: number;
+          last_practiced?: string;
+          next_review?: string | null;
+          created_at?: string;
+        };
+      };
+      classrooms: {
+        Row: {
+          id: string;
+          teacher_id: string;
+          name: string;
+          grade_level: string | null;
+          join_code: string;
+          phonics_group_assigned: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          teacher_id: string;
+          name: string;
+          grade_level?: string | null;
+          join_code: string;
+          phonics_group_assigned?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          teacher_id?: string;
+          name?: string;
+          grade_level?: string | null;
+          join_code?: string;
+          phonics_group_assigned?: number;
+          created_at?: string;
+        };
+      };
+      classroom_students: {
+        Row: {
+          id: string;
+          classroom_id: string;
+          student_id: string;
+          joined_at: string;
+        };
+        Insert: {
+          id?: string;
+          classroom_id: string;
+          student_id: string;
+          joined_at?: string;
+        };
+        Update: {
+          id?: string;
+          classroom_id?: string;
+          student_id?: string;
+          joined_at?: string;
+        };
+      };
+      parent_children: {
+        Row: {
+          id: string;
+          parent_id: string;
+          child_id: string;
+          relationship: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          parent_id: string;
+          child_id: string;
+          relationship?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          parent_id?: string;
+          child_id?: string;
+          relationship?: string;
+          created_at?: string;
+        };
+      };
+      garden_plants: {
+        Row: {
+          id: string;
+          user_id: string;
+          sound_id: string;
+          stage: string;
+          mastery: number;
+          water_drops: number;
+          last_watered: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          sound_id: string;
+          stage?: string;
+          mastery?: number;
+          water_drops?: number;
+          last_watered?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          sound_id?: string;
+          stage?: string;
+          mastery?: number;
+          water_drops?: number;
+          last_watered?: string | null;
+          created_at?: string;
+        };
+      };
     };
   };
 }

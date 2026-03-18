@@ -62,6 +62,7 @@ import {
   getWeeklySummary,
 } from '../../services/activityLogger';
 import type { ActivityLog, DayActivity } from '../../services/activityLogger';
+import { fetchChildActivity, fetchChildMastery } from '../../services/supabaseSync';
 import { LS_PHONICS_MASTERY } from '../../config/storageKeys';
 import './ParentDashboard.css';
 
@@ -792,12 +793,60 @@ const ParentDashboard: React.FC = () => {
     toast.success(`${name}'s profile removed.`);
   }, [parentId, activeChildId]);
 
+  // ---- Supabase cross-device fallback ----
+  const [supabaseActivities, setSupabaseActivities] = useState<ActivityLog[]>([]);
+  const [supabaseMastery, setSupabaseMastery] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    // If the active child is not the default and localStorage data is empty,
+    // try fetching from Supabase (cross-device scenario).
+    if (activeChildId === DEFAULT_CHILD_ID) return;
+
+    const localActivities = getRecentActivities(10, activeChildId);
+    const localMastery = getPhonicsProgressMap(activeChildId);
+
+    if (localActivities.length === 0) {
+      fetchChildActivity(activeChildId, 50).then((rows) => {
+        const mapped: ActivityLog[] = rows.map((r) => ({
+          id: r.id,
+          timestamp: r.created_at,
+          type: r.type as ActivityLog['type'],
+          title: r.title,
+          duration: r.duration,
+          accuracy: r.accuracy ?? undefined,
+          xpEarned: r.xp_earned,
+          soundId: r.sound_id ?? undefined,
+        }));
+        setSupabaseActivities(mapped);
+      });
+    } else {
+      setSupabaseActivities([]);
+    }
+
+    if (Object.keys(localMastery).length === 0) {
+      fetchChildMastery(activeChildId).then((data) => {
+        const map: Record<string, number> = {};
+        for (const [soundId, val] of Object.entries(data)) {
+          map[soundId] = val.mastery;
+        }
+        setSupabaseMastery(map);
+      });
+    } else {
+      setSupabaseMastery({});
+    }
+  }, [activeChildId]);
+
   // ---- Derived data (scoped by active child) ----
   // For the default child (logged-in user), use global keys (undefined userId).
   // For added children, scope by child ID.
   const scopedUserId = activeChildId === DEFAULT_CHILD_ID ? undefined : activeChildId;
 
-  const phonicsProgress = useMemo(() => getPhonicsProgressMap(activeChildId), [activeChildId]);
+  const localPhonicsProgress = useMemo(() => getPhonicsProgressMap(activeChildId), [activeChildId]);
+  // Merge: prefer localStorage, fall back to Supabase
+  const phonicsProgress = useMemo(() => {
+    if (Object.keys(localPhonicsProgress).length > 0) return localPhonicsProgress;
+    return supabaseMastery;
+  }, [localPhonicsProgress, supabaseMastery]);
   const learningProgress = useMemo(() => getProgress(), []);
   const { mastered, total: totalSounds } = useMemo(() => countMastered(phonicsProgress), [phonicsProgress]);
   const phonicsPercent = useMemo(
@@ -812,7 +861,12 @@ const ParentDashboard: React.FC = () => {
   const weeklyData = useMemo(() => getWeeklyActivityData(scopedUserId), [scopedUserId]);
   const weeklySummary = useMemo(() => getWeeklySummary(scopedUserId), [scopedUserId]);
   const activityBreakdown = useMemo(() => getActivityBreakdown(scopedUserId), [scopedUserId]);
-  const recentActivities = useMemo(() => getRecentActivities(10, scopedUserId), [scopedUserId]);
+  const localRecentActivities = useMemo(() => getRecentActivities(10, scopedUserId), [scopedUserId]);
+  // Merge: prefer localStorage, fall back to Supabase
+  const recentActivities = useMemo(() => {
+    if (localRecentActivities.length > 0) return localRecentActivities;
+    return supabaseActivities.slice(0, 10);
+  }, [localRecentActivities, supabaseActivities]);
   const todayMinutes = useMemo(() => getTodayMinutes(scopedUserId), [scopedUserId]);
 
   const insights = useMemo(

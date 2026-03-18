@@ -18,6 +18,7 @@ import {
   LS_DAILY_CHALLENGE_DATE,
   LS_READ_BOOKS,
 } from '../config/storageKeys';
+import { syncPhonicsMastery } from './supabaseSync';
 
 // ============================================================
 // TYPES
@@ -256,24 +257,34 @@ function isCurrentSoundMastered(): boolean {
 
 /**
  * Records mastery progress for a sound. Called after lesson completion.
+ * Saves to localStorage (instant) and syncs to Supabase (async, cross-device).
  */
-export function recordSoundMastery(soundId: string, score: number): void {
+export function recordSoundMastery(soundId: string, score: number, userId?: string): void {
   const mastery = getPhonicsmastery();
   const existing = mastery[soundId];
   const now = new Date().toISOString();
 
+  let newMastery: number;
+
   if (existing) {
     // Weighted average: 60% new score, 40% old mastery
-    existing.mastery = Math.min(100, Math.round(score * 0.6 + existing.mastery * 0.4));
+    newMastery = Math.min(100, Math.round(score * 0.6 + existing.mastery * 0.4));
+    existing.mastery = newMastery;
     existing.lastPracticed = now;
   } else {
+    newMastery = Math.min(100, score);
     mastery[soundId] = {
-      mastery: Math.min(100, score),
+      mastery: newMastery,
       lastPracticed: now,
     };
   }
 
   savePhonicsmastery(mastery);
+
+  // Sync to Supabase (fire-and-forget)
+  if (userId) {
+    syncPhonicsMastery(userId, soundId, newMastery, 0, 0);
+  }
 }
 
 // ============================================================
