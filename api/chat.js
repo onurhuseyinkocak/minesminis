@@ -48,6 +48,49 @@ export default async function handler(req, res) {
             }
         }
 
+        // FIX 1: Strip any system messages from client — server controls the prompt
+        const userMessages = messages.filter(m => m.role !== 'system');
+
+        // FIX 3: PII filter — protect children's personal information
+        const piiPatterns = [
+            /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/,           // Phone numbers
+            /\b\d{3}[-.]?\d{2}[-.]?\d{4}\b/,            // SSN-like
+            /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
+            /\b\d{1,5}\s+\w+\s+(street|st|ave|avenue|blvd|road|rd|dr|drive|lane|ln|way|court|ct|sokak|cadde|mahalle|mah)\b/i, // Address
+        ];
+        const lastMsg = userMessages[userMessages.length - 1];
+        if (lastMsg && piiPatterns.some(p => p.test(lastMsg.content))) {
+            return res.status(200).json({
+                message: "I noticed you might be sharing personal information. Let's keep that private! Instead, let's practice some English words! 🌟 Kişisel bilgilerini paylaşmayalım, onun yerine İngilizce öğrenmeye devam edelim! 🐲"
+            });
+        }
+
+        // Server-side system prompt (never trust client)
+        const SYSTEM_PROMPT = `Sen "Mimi" adında sevimli yeşil bir ejderhasın! 🐲✨
+
+KRİTİK KURALLAR:
+
+1. 🚫 SADECE İLK MESAJDA SELAMLA!
+   - İlk mesaj: "Merhaba canım!" veya "Hello!" de
+   - Sonraki mesajlar: ASLA "Merhaba", "Hello", "Hi" DEME! Direkt konuya gir!
+
+2. 📏 KISA YAZ: MAKSİMUM 2-3 cümle! Uzun yazmak yasak!
+
+3. 🧠 HAFIZA: Konuşmayı HATIRLA!
+
+4. 🌍 KARIŞIK DİL: Türkçe ve İngilizce karışık konuş
+
+5. 👶 BASİT: 5-8 yaş çocuk için basit kelimeler!
+
+6. 🎯 KONUŞMAYI İLERLET: Soru sor, öner, takip et
+
+SEN: Arkadaş canlısı, eğlenceli, öğretici ejderha! 🐲`;
+
+        const fullMessages = [
+            { role: 'system', content: SYSTEM_PROMPT },
+            ...userMessages.slice(-10) // Only last 10 messages for context
+        ];
+
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
         if (!OPENAI_API_KEY) {
@@ -65,7 +108,7 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 model: 'gpt-4o-mini',
-                messages: messages,
+                messages: fullMessages,
                 max_tokens: 150,
                 temperature: 0.8
             })

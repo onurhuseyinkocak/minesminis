@@ -72,9 +72,14 @@ const Words: React.FC = () => {
     if (!text || isLoadingAudio) return;
     setIsLoadingAudio(true);
     try {
+      const { auth: firebaseAuth } = await import('../config/firebase');
+      const token = await firebaseAuth.currentUser?.getIdToken().catch(() => null);
       const response = await fetch(`${BACKEND_URL}/api/tts`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ text })
       });
       if (!response.ok) throw new Error('TTS API failed');

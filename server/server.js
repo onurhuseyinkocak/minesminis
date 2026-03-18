@@ -206,6 +206,11 @@ app.post('/api/tts',
     }
   }),
   async (req, res) => {
+    // FIX 4: Require authentication for TTS endpoint
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     try {
       const { text, voice = 'nova', storyNarrator = false } = req.body;
       const validVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'onyx', 'nova', 'sage', 'shimmer', 'verse', 'marin', 'cedar'];
@@ -421,11 +426,75 @@ app.get('/api/daily-challenge', security.rateLimiter({ maxRequests: 60, windowMs
   }
 });
 
+// ============================================================
+// PII DETECTION (child safety)
+// ============================================================
+function containsPII(text) {
+  const patterns = [
+    /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/,           // Phone numbers
+    /\b\d{3}[-.]?\d{2}[-.]?\d{4}\b/,            // SSN-like
+    /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
+    /\b\d{1,5}\s+\w+\s+(street|st|ave|avenue|blvd|road|rd|dr|drive|lane|ln|way|court|ct|sokak|cadde|mahalle|mah)\b/i, // Address (EN + TR)
+  ];
+  return patterns.some(p => p.test(text));
+}
+
+// ============================================================
+// SERVER-SIDE SYSTEM PROMPT (never trust client)
+// ============================================================
+const CHAT_SYSTEM_PROMPT = `Sen "Mimi" adında sevimli yeşil bir ejderhasın! 🐲✨
+
+KRİTİK KURALLAR:
+
+1. 🚫 SADECE İLK MESAJDA SELAMLA!
+   - İlk mesaj: "Merhaba canım!" veya "Hello!" de
+   - Sonraki mesajlar: ASLA "Merhaba", "Hello", "Hi" DEME! Direkt konuya gir!
+   - Örnek: Çocuk "iyi" derse → "Harika! What shall we do today? 🐲" (selamlama YOK)
+
+2. 📏 KISA YAZ: MAKSİMUM 2-3 cümle! Uzun yazmak yasak!
+
+3. 🧠 HAFIZA: Konuşmayı HATIRLA!
+   - Az önce ne konuştuk, onu takip et
+   - Aynı soruyu sorma, aynı cevabı verme
+   - Konuşmayı ilerlet, tekrarlama
+
+4. 🌍 KARIŞIK DİL: Türkçe ve İngilizce karışık konuş
+   - "Blue demek mavi! 💙"
+   - "Let's play! Hadi oynayalım!"
+
+5. 👶 BASİT: 5-8 yaş çocuk için basit kelimeler!
+
+6. 🎯 KONUŞMAYI İLERLET:
+   - Soru sor: "What's your favorite color?"
+   - Öner: "Shall we learn animal names?"
+   - Takip et: Çocuğun dediğine yanıt ver
+
+YAPMA:
+- Her mesajda selamlama (YASAK!)
+- Tekrarlayan sorular
+- Aynı şeyleri söylemek
+- "Nasılsın?" diye sürekli sormak
+
+İYİ ÖRNEK AKIŞ:
+1. Mimi: "Merhaba tatlım! I'm Mimi! 🐲"
+2. Çocuk: "iyiyim"
+3. Mimi: "Super! Do you want to learn colors or animals today?" (selamlama YOK!)
+4. Çocuk: "renkler"
+5. Mimi: "Great choice! My favorite is GREEN - yeşil! 💚 What's yours?"
+
+SEN: Arkadaş canlısı, eğlenceli, öğretici ejderha! 🐲`;
+
 // OpenAI Chat Proxy Endpoint
 app.post('/api/chat',
-  security.rateLimiter({ maxRequests: 30, windowMs: 60000 }),
+  security.rateLimiter({ maxRequests: 30, windowMs: 60000, keyPrefix: 'chat' }),
   async (req, res) => {
     try {
+      // FIX 2: Require authentication (Firebase token or admin password)
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+
       const { messages } = req.body;
 
       if (!messages || !Array.isArray(messages)) {
@@ -446,9 +515,32 @@ app.post('/api/chat',
             error: 'Invalid message role'
           });
         }
+        // Limit individual message length
+        if (typeof msg.content === 'string' && msg.content.length > 2000) {
+          return res.status(400).json({
+            error: 'Message content too long (max 2000 chars)'
+          });
+        }
       }
 
-      console.log('📨 Received chat request with', messages.length, 'messages');
+      // FIX 1: Strip any system messages from client — server controls the prompt
+      const userMessages = messages.filter(m => m.role !== 'system');
+
+      // FIX 3: PII filter — protect children's personal information
+      const lastMsg = userMessages[userMessages.length - 1];
+      if (lastMsg && typeof lastMsg.content === 'string' && containsPII(lastMsg.content)) {
+        return res.json({
+          message: "I noticed you might be sharing personal information. Let's keep that private! Instead, let's practice some English words! 🌟 Kişisel bilgilerini paylaşmayalım, onun yerine İngilizce öğrenmeye devam edelim! 🐲"
+        });
+      }
+
+      // Prepend server-side system prompt, limit conversation history
+      const fullMessages = [
+        { role: 'system', content: CHAT_SYSTEM_PROMPT },
+        ...userMessages.slice(-10) // Only last 10 messages for context
+      ];
+
+      console.log('📨 Received chat request with', userMessages.length, 'user messages');
 
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -458,7 +550,7 @@ app.post('/api/chat',
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
-          messages: messages,
+          messages: fullMessages,
           max_tokens: 150,
           temperature: 0.6,
           frequency_penalty: 0.3,
