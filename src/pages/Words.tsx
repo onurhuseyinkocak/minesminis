@@ -383,7 +383,7 @@ const Words: React.FC = () => {
                 </div>
               ) : (() => {
                 const currentDue = dueWords[reviewIndex];
-                const matchedWord = kidsWords.find((w) => w.word === currentDue?.wordId);
+                const matchedWord = kidsWords.find((w) => w.word === currentDue?.wordId || w.id === currentDue?.wordId);
                 return (
                   <div className="review-container">
                     <p className="review-progress">

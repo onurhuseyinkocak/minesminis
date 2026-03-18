@@ -358,6 +358,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: [],
       actions: 'Pretend to steer a ship!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'AI-AI-AI the rain is falling, splashing everyone',
@@ -366,6 +367,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: ['ai'],
       actions: 'Cup your hand and feel the rain!',
+      melody: [392.00, 349.23, 329.63, 293.66, 261.63],
     },
     {
       text: 'J-j-j the jelly wobbles, wibbly wobbly fun',
@@ -374,6 +376,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: ['j'],
       actions: 'Wobble like a jelly!',
+      melody: [261.63, 329.63, 392.00, 329.63, 261.63],
     },
     {
       text: 'OA-OA-OA the goat is on a boat, sailing in the sun',
@@ -382,6 +385,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: ['oa'],
       actions: 'Pretend to row a boat!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'IE-IE-IE the kite is flying high, way up in the sky',
@@ -390,6 +394,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: ['ie'],
       actions: 'Hold a kite string and look up!',
+      melody: [261.63, 329.63, 392.00, 523.25, 659.25],
     },
     {
       text: 'EE-EE-EE the buzzy little bee, flying way up high',
@@ -398,6 +403,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: ['ee'],
       actions: 'Flap your arms like a bee!',
+      melody: [329.63, 293.66, 261.63, 293.66, 329.63],
     },
     {
       text: 'OR-OR-OR we row the boat to shore, resting by the corn',
@@ -406,6 +412,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: ['or'],
       actions: 'Row your imaginary oars!',
+      melody: [261.63, 261.63, 392.00, 392.00, 440.00, 440.00, 392.00],
     },
     {
       text: 'AI, J, OA, IE, EE, OR — long vowels are the best!',
@@ -414,6 +421,7 @@ const group4Song: PhonicsSong = {
       durationMs: 4500,
       highlightSounds: ['ai', 'j', 'oa', 'ie', 'ee', 'or'],
       actions: 'Give a thumbs up for each sound!',
+      melody: [261.63, 329.63, 392.00, 523.25],
     },
     {
       text: 'Rain and boats and bees, oh my — we sailed and passed the test!',
@@ -422,6 +430,7 @@ const group4Song: PhonicsSong = {
       durationMs: 5000,
       highlightSounds: ['ai', 'oa', 'ee', 'or'],
       actions: 'Take a bow from the ship!',
+      melody: [261.63, 329.63, 392.00, 392.00, 523.25],
     },
   ],
 };
@@ -444,6 +453,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: [],
       actions: 'Dance in place!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'Z-z-z the bee goes buzzing, zig-zag all the way',
@@ -452,6 +462,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['z'],
       actions: 'Flap your arms and zig-zag!',
+      melody: [261.63, 329.63, 392.00, 329.63, 261.63],
     },
     {
       text: 'W-w-w the wind is blowing, whoooosh across the bay',
@@ -460,6 +471,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['w'],
       actions: 'Blow and wave your arms like wind!',
+      melody: [523.25, 440.00, 392.00, 329.63, 261.63],
     },
     {
       text: 'NG-NG-NG the king is singing, ding dong ring the bell!',
@@ -468,6 +480,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['ng'],
       actions: 'Pretend to ring a big bell!',
+      melody: [392.00, 349.23, 329.63, 293.66, 261.63],
     },
     {
       text: 'V-v-v the van goes vroom vroom, racing really well',
@@ -476,6 +489,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['v'],
       actions: 'Hold a steering wheel and drive!',
+      melody: [261.63, 261.63, 392.00, 392.00, 440.00, 440.00, 392.00],
     },
     {
       text: 'OO-OO short says the book, look look look around',
@@ -484,6 +498,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['oo'],
       actions: 'Open an imaginary book!',
+      melody: [329.63, 293.66, 261.63, 293.66, 329.63],
     },
     {
       text: 'OO-OO long says the moon, howling wolf makes the sound',
@@ -492,6 +507,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['oo'],
       actions: 'Howl at the moon: ooooo!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'Z, W, NG, V, OO, OO — tricky sounds, we groove!',
@@ -500,6 +516,7 @@ const group5Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['z', 'w', 'ng', 'v', 'oo'],
       actions: 'Groove and snap fingers!',
+      melody: [261.63, 329.63, 392.00, 523.25],
     },
     {
       text: 'A king at the zoo sang a cool moon song, we love the zoo groove!',
@@ -508,6 +525,7 @@ const group5Song: PhonicsSong = {
       durationMs: 5000,
       highlightSounds: ['z', 'w', 'ng', 'v', 'oo'],
       actions: 'Final big dance move!',
+      melody: [261.63, 329.63, 392.00, 392.00, 523.25],
     },
   ],
 };
@@ -530,6 +548,7 @@ const group6Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: [],
       actions: 'Pretend to board a train!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'Y-y-y says yummy yogurt, hooray hooray hooray!',
@@ -538,6 +557,7 @@ const group6Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['y'],
       actions: 'Rub your tummy: yummy!',
+      melody: [261.63, 329.63, 392.00, 329.63, 261.63],
     },
     {
       text: 'X-x-x the fox is in a box, ks ks ks he says!',
@@ -546,22 +566,25 @@ const group6Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['x'],
       actions: 'Cross your arms like an X!',
+      melody: [392.00, 349.23, 329.63, 293.66, 261.63],
     },
     {
       text: 'CH-CH-CH the train goes choo-choo, chugging on its way',
-      textTr: 'C-C-C tren cuf-cuf gidiyor, yolunda ilerliyot',
+      textTr: '\u00C7-\u00C7-\u00C7 tren \u00E7uf-\u00E7uf gidiyor, yolunda ilerliyor',
       startMs: 12000,
       durationMs: 4000,
       highlightSounds: ['ch'],
       actions: 'Move your arms like train wheels!',
+      melody: [261.63, 261.63, 392.00, 392.00, 440.00, 440.00, 392.00],
     },
     {
       text: 'SH-SH-SH the baby sleeps, shh be quiet please!',
-      textTr: 'SS-SS-SS bebek uyuyor, sus sessiz ol lutfen!',
+      textTr: '\u015E-\u015E-\u015E bebek uyuyor, \u015Fus sessiz ol l\u00FCtfen!',
       startMs: 16000,
       durationMs: 4000,
       highlightSounds: ['sh'],
       actions: 'Finger on lips: shhhh!',
+      melody: [329.63, 293.66, 261.63, 293.66, 329.63],
     },
     {
       text: 'TH-TH-TH this and that, stick your tongue out with ease',
@@ -570,6 +593,7 @@ const group6Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['th'],
       actions: 'Stick tongue out between teeth!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'TH-TH-TH think of three, thin things upon the breeze',
@@ -578,22 +602,25 @@ const group6Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['th'],
       actions: 'Tap your head and think!',
+      melody: [523.25, 440.00, 392.00, 329.63, 261.63],
     },
     {
       text: 'Y, X, CH, SH, TH, TH — special sounds express!',
-      textTr: 'Y, X, CH, SH, TH, TH — ozel ses ekspresi!',
+      textTr: 'Y, X, \u00C7, \u015E, TH, TH — ozel ses ekspresi!',
       startMs: 28000,
       durationMs: 4000,
       highlightSounds: ['y', 'x', 'ch', 'sh', 'th'],
       actions: 'Choo-choo arms and chant!',
+      melody: [261.63, 329.63, 392.00, 523.25],
     },
     {
       text: 'The fox said shh and the train went choo, we are the very best!',
-      textTr: 'Tilki sus dedi ve tren cuf cuf gitti, biz en iyisiyiz!',
+      textTr: 'Tilki \u015Fus dedi ve tren \u00E7uf \u00E7uf gitti, biz en iyisiyiz!',
       startMs: 32000,
       durationMs: 5000,
       highlightSounds: ['y', 'x', 'ch', 'sh', 'th'],
       actions: 'Big cheer and take a bow!',
+      melody: [261.63, 329.63, 392.00, 392.00, 523.25],
     },
   ],
 };
@@ -616,6 +643,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: [],
       actions: 'March in place like an explorer!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'QU-QU-QU the queen says quick, the duck says quack behind',
@@ -624,6 +652,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['qu'],
       actions: 'Quack like a duck!',
+      melody: [261.63, 329.63, 392.00, 329.63, 261.63],
     },
     {
       text: 'OU-OU-OU ouch that hurts! A cloud rolls through the sky',
@@ -632,6 +661,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['ou'],
       actions: 'Say ouch and rub your finger!',
+      melody: [392.00, 349.23, 329.63, 293.66, 261.63],
     },
     {
       text: 'OI-OI-OI the pirate shouts, a golden coin nearby!',
@@ -640,6 +670,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['oi'],
       actions: 'Point like a pirate: oi!',
+      melody: [261.63, 261.63, 392.00, 392.00, 440.00, 440.00, 392.00],
     },
     {
       text: 'UE-UE-UE the sky is blue, a beautiful blue view',
@@ -648,6 +679,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['ue'],
       actions: 'Point out the window at the view!',
+      melody: [261.63, 293.66, 329.63, 349.23, 392.00],
     },
     {
       text: 'ER-ER-ER the mixer stirs, her butter turning too',
@@ -656,6 +688,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['er'],
       actions: 'Stir with an imaginary mixer!',
+      melody: [329.63, 293.66, 261.63, 293.66, 329.63],
     },
     {
       text: 'AR-AR-AR a pirate star, shining from afar',
@@ -664,6 +697,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['ar'],
       actions: 'Open mouth wide: ahhh-r!',
+      melody: [523.25, 440.00, 392.00, 329.63, 261.63],
     },
     {
       text: 'QU, OU, OI, UE, ER, AR — the final sounds are here!',
@@ -672,6 +706,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['qu', 'ou', 'oi', 'ue', 'er', 'ar'],
       actions: 'Stomp and clap for each sound!',
+      melody: [261.63, 329.63, 392.00, 523.25],
     },
     {
       text: 'We found the treasure, every sound! Now give a mighty cheer!',
@@ -680,6 +715,7 @@ const group7Song: PhonicsSong = {
       durationMs: 4000,
       highlightSounds: ['qu', 'ou', 'oi', 'ue', 'er', 'ar'],
       actions: 'Jump and shout: HOORAY!',
+      melody: [261.63, 329.63, 392.00, 392.00, 523.25],
     },
     {
       text: 'All 42 sounds we know, from s to ar and more — phonics champions forevermore!',
@@ -688,6 +724,7 @@ const group7Song: PhonicsSong = {
       durationMs: 6000,
       highlightSounds: [],
       actions: 'Victory dance!',
+      melody: [261.63, 329.63, 392.00, 523.25, 659.25],
     },
   ],
 };

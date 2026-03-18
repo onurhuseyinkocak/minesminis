@@ -50,8 +50,8 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
 
       recognition.onerror = () => {
         setIsListening(false);
-        setStep('done');
-        setTimeout(() => onComplete(), 1500);
+        setRecognized("Couldn't hear you. Try again!");
+        setStep('practice');
       };
 
       recognition.start();

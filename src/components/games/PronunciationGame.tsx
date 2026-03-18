@@ -68,7 +68,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
     const target = currentWord.english.trim().toLowerCase();
     const heard = spoken.trim().toLowerCase();
 
-    if (heard === target) {
+    if (heard === target || heard.includes(target)) {
       setFeedback('correct');
       setHeardText(spoken);
       SFX.correct();

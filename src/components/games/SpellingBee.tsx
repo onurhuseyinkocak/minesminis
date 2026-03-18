@@ -56,7 +56,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typed, setTyped] = useState<string[]>([]);
   const [letterPool, setLetterPool] = useState<string[]>([]);
-  const [usedIndices, setUsedIndices] = useState<Set<number>>(new Set());
+  const [usedIndices, setUsedIndices] = useState<number[]>([]);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -70,7 +70,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     if (!word) return;
     setLetterPool(generateLetterPool(word.english));
     setTyped([]);
-    setUsedIndices(new Set());
+    setUsedIndices([]);
     setWrongAttempts(0);
     setShowHint(false);
     setFeedback(null);
@@ -91,20 +91,15 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   }, []);
 
   const handleLetterTap = (letter: string, poolIndex: number) => {
-    if (feedback || usedIndices.has(poolIndex)) return;
+    if (feedback || usedIndices.includes(poolIndex)) return;
     setTyped((prev) => [...prev, letter]);
-    setUsedIndices((prev) => new Set(prev).add(poolIndex));
+    setUsedIndices((prev) => [...prev, poolIndex]);
   };
 
   const handleBackspace = () => {
     if (feedback || typed.length === 0) return;
-    const lastUsedIndex = Array.from(usedIndices).pop();
     setTyped((prev) => prev.slice(0, -1));
-    setUsedIndices((prev) => {
-      const next = new Set(prev);
-      if (lastUsedIndex !== undefined) next.delete(lastUsedIndex);
-      return next;
-    });
+    setUsedIndices((prev) => prev.slice(0, -1));
   };
 
   const handleSubmit = () => {
@@ -139,7 +134,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
       setTimeout(() => {
         setFeedback(null);
         setTyped([]);
-        setUsedIndices(new Set());
+        setUsedIndices([]);
       }, 800);
     }
   };
@@ -261,10 +256,10 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
               key={`${letter}-${i}`}
               className={[
                 'spelling-bee__tile',
-                usedIndices.has(i) && 'spelling-bee__tile--used',
+                usedIndices.includes(i) && 'spelling-bee__tile--used',
               ].filter(Boolean).join(' ')}
               onClick={() => handleLetterTap(letter, i)}
-              disabled={usedIndices.has(i) || !!feedback}
+              disabled={usedIndices.includes(i) || !!feedback}
               aria-label={`Letter ${letter}`}
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, scale: 0.5 }}

@@ -204,7 +204,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
     (line: typeof song.lyrics[0], lineIdx: number) => {
       if (!melodyEnabled) return;
       // Use the line's custom melody if available, otherwise fall back to pattern
-      if (line.melody && line.melody.length > 0) {
+      if (line.melody && Array.isArray(line.melody) && line.melody.length > 0) {
         // Calculate tempo so melody fits within ~60% of line duration
         const tempo = Math.max(150, Math.floor((line.durationMs * 0.6) / line.melody.length));
         playFrequencyArray(line.melody, tempo);

@@ -273,7 +273,7 @@ export function LetterTracing({
       setResult({ accuracy, message: 'Let\'s try again!', color: '#ef4444' });
     }
 
-    onComplete(accuracy);
+    // onComplete is called via the "Next Letter" button, not here
   }
 
   function handleReset() {

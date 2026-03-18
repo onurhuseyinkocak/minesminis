@@ -222,7 +222,7 @@ const phase2Units: LearningUnit[] = [
     vocabularyTheme: 'Garden & Bugs',
     tprCommands: ['Fly!', 'Buzz!', 'Peek!', 'Creep!', 'Reach!'],
     targetSentences: ['I see a bee.', 'The kite can fly.', 'The corn is tall.'],
-    decodableText: 'I can see three bees in the tree. A kite tied to a string floated free. The bee landed on corn. "Eeee!" said the bee. She tried to reach the seed. The fern is green and the forest is deep.',
+    decodableText: 'I can see three bees in the tree. A bee landed on a green seed. I need to feed the bees before it is morning. She tried to sort the corn for the barn. "Eee!" said the bee. The sun set behind the tall tree.',
     activities: [
       { type: 'sound-intro', title: 'Fly the Kite', titleTr: 'Ucurtma Ucur', description: 'Learn the /ie/ sound like a kite in the sky.', xp: 15, duration: 4 },
       { type: 'sound-intro', title: 'Buzzy Bee', titleTr: 'Vizildayan Ari', description: 'Learn the /ee/ sound like a happy bee.', xp: 15, duration: 4 },

@@ -252,6 +252,7 @@ function Games() {
                 height="100%"
                 frameBorder="0"
                 allowFullScreen
+                sandbox="allow-scripts allow-same-origin allow-popups"
                 title={selectedGameData.title}
               />
             </div>
