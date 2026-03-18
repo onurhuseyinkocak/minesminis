@@ -5,7 +5,7 @@ import { fallbackGames } from '../data/fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
 import { kidsWords } from '../data/wordsData';
 import toast from 'react-hot-toast';
-import { X, Play } from 'lucide-react';
+import { X, Play, Dice5, Type, Puzzle, Headphones, PenTool, BookOpen } from 'lucide-react';
 import { GameSelector } from '../components/games/index';
 import MimiGuide from '../components/MimiGuide';
 import './Games.css';
@@ -25,20 +25,21 @@ type GameCategory = 'all' | 'letters' | 'puzzles' | 'listening' | 'spelling' | '
 interface InternalGame {
   id: string;
   type: string;
-  emoji: string;
+  icon?: React.ReactNode;
+  emoji?: string;
   title: string;
   subtitle: string;
   color: string;
   difficulty: number; // 1-3 stars
 }
 
-const CATEGORIES: { id: GameCategory; emoji: string; label: string; color: string }[] = [
-  { id: 'all', emoji: '\uD83C\uDFB2', label: 'All', color: 'var(--accent-indigo)' },
-  { id: 'letters', emoji: '\uD83D\uDD24', label: 'Letters', color: 'var(--accent-teal)' },
-  { id: 'puzzles', emoji: '\uD83E\uDDE9', label: 'Puzzles', color: 'var(--accent-purple-light, #a78bfa)' },
-  { id: 'listening', emoji: '\uD83C\uDFB5', label: 'Listening', color: 'var(--accent-amber)' },
-  { id: 'spelling', emoji: '\u270D\uFE0F', label: 'Spelling', color: 'var(--accent-rose, #f43f5e)' },
-  { id: 'reading', emoji: '\uD83D\uDCD6', label: 'Reading', color: 'var(--success)' },
+const CATEGORIES: { id: GameCategory; icon: React.ReactNode; emoji?: string; label: string; color: string }[] = [
+  { id: 'all', icon: <Dice5 size={20} />, label: 'All', color: 'var(--accent-indigo)' },
+  { id: 'letters', icon: <Type size={20} />, label: 'Letters', color: 'var(--accent-teal)' },
+  { id: 'puzzles', icon: <Puzzle size={20} />, label: 'Puzzles', color: 'var(--accent-purple-light, #a78bfa)' },
+  { id: 'listening', icon: <Headphones size={20} />, label: 'Listening', color: 'var(--accent-amber)' },
+  { id: 'spelling', icon: <PenTool size={20} />, label: 'Spelling', color: 'var(--accent-rose, #f43f5e)' },
+  { id: 'reading', icon: <BookOpen size={20} />, label: 'Reading', color: 'var(--success)' },
 ];
 
 const INTERNAL_GAMES: InternalGame[] = [
