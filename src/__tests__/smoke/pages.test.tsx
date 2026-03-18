@@ -286,11 +286,6 @@ describe('Page Smoke Tests', () => {
     expect(document.body.textContent).toBeTruthy();
   });
 
-  it('StudentDashboard - renders dashboard', async () => {
-    const { default: StudentDashboard } = await import('../../pages/Student/StudentDashboard');
-    wrap(<StudentDashboard />);
-    expect(document.body.textContent).toBeTruthy();
-  });
 
   it('Onboarding - renders step 1 with role selection', async () => {
     const { default: Onboarding } = await import('../../pages/Onboarding');

@@ -96,7 +96,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
           }
 
           .avatar-picker-modal {
-            background: var(--bg-main, #fff);
+            background: var(--bg-main, #1C2236);
             border-radius: 24px;
             padding: 28px;
             width: 90%;

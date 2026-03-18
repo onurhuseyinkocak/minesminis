@@ -118,7 +118,7 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
               style={{
                 textAlign: 'center',
                 padding: '1rem',
-                backgroundColor: '#FFF8E1',
+                backgroundColor: 'rgba(232,163,23,0.12)',
                 borderRadius: '1rem',
                 width: '100%',
               }}

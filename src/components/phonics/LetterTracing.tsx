@@ -97,7 +97,7 @@ export function LetterTracing({
     ctx.font = 'bold 220px Nunito, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#e8e8e8';
+    ctx.fillStyle = '#334155';
     ctx.fillText(letterKey, CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 10);
     ctx.restore();
 

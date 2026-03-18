@@ -18,7 +18,7 @@ const JOLLY_PHONICS_GROUPS: string[][] = [
 
 function getMasteryColor(level: number): { bg: string; text: string; border: string } {
   if (level <= 0) return { bg: '#f0f0f0', text: '#999', border: '#ddd' };
-  if (level < 30) return { bg: '#FFF9C4', text: '#F9A825', border: '#FDD835' };
+  if (level < 30) return { bg: 'rgba(249,168,37,0.15)', text: '#F9A825', border: '#FDD835' };
   if (level < 70) return { bg: '#FFE0B2', text: '#E65100', border: '#FF9800' };
   return { bg: '#C8E6C9', text: '#2E7D32', border: '#4CAF50' };
 }
@@ -49,7 +49,7 @@ export const PhonicsChart: React.FC<PhonicsChartProps> = ({ progress, onSoundCli
       <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
         {[
           { label: 'Not started', color: '#f0f0f0', border: '#ddd' },
-          { label: 'Introduced', color: '#FFF9C4', border: '#FDD835' },
+          { label: 'Introduced', color: 'rgba(249,168,37,0.15)', border: '#FDD835' },
           { label: 'Practicing', color: '#FFE0B2', border: '#FF9800' },
           { label: 'Mastered', color: '#C8E6C9', border: '#4CAF50' },
         ].map((item) => (
