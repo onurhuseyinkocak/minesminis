@@ -1,4 +1,6 @@
 import React, { ReactNode } from 'react';
+import { AlertCircle, RotateCw, Home } from 'lucide-react';
+import { errorLogger } from '../services/errorLogger';
 
 interface Props {
   children: ReactNode;
@@ -29,7 +31,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    errorLogger.log({
+      severity: 'critical',
+      message: `ErrorBoundary caught an error: ${error.message}`,
+      stack: error.stack,
+      component: 'ErrorBoundary',
+      metadata: { componentStack: errorInfo.componentStack },
+    });
   }
 
   render() {
@@ -61,7 +69,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
               color: 'var(--error)',
               marginBottom: '1rem',
             }}>
-              🚨 Something went wrong
+              <AlertCircle size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.5rem' }} />
+              Something went wrong
             </h1>
             <p style={{
               fontSize: '1rem',
@@ -119,7 +128,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-purple)')}
                 onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-indigo)')}
               >
-                🔄 Refresh Page
+                <RotateCw size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} />
+                Refresh Page
               </button>
               <a
                 href="/"
@@ -139,7 +149,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--charcoal)')}
                 onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--slate)')}
               >
-                🏠 Go Home
+                <Home size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} />
+                Go Home
               </a>
             </div>
           </div>

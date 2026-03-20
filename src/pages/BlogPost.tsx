@@ -27,18 +27,26 @@ export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const fetchPost = useCallback(async () => {
+    setError(false);
     try {
-      const { data, error } = await supabase
+      const result = await supabase
         .from('blog_posts')
         .select('*')
         .eq('slug', slug)
         .not('published_at', 'is', null)
         .maybeSingle();
 
-      if (!error && data) setPost(data);
+      if (result.error) {
+        setError(true);
+        setPost(null);
+      } else {
+        setPost(result.data);
+      }
     } catch {
+      setError(true);
       setPost(null);
     } finally {
       setLoading(false);
@@ -51,6 +59,7 @@ export default function BlogPost() {
   }, [slug, fetchPost]);
 
   if (loading) return <div className="blog-page"><div className="blog-loading">Yükleniyor...</div></div>;
+  if (error) return <div className="blog-page"><div className="blog-empty"><p>Yazı yüklenirken bir hata oluştu.</p><Link to="/blog">← Bloga dön</Link></div></div>;
   if (!post) return <div className="blog-page"><div className="blog-empty"><p>Yazı bulunamadı.</p><Link to="/blog">← Bloga dön</Link></div></div>;
 
   return (

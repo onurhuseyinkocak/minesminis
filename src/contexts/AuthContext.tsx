@@ -15,6 +15,7 @@ import { isAdminEmail } from '../config/adminEmails';
 import { userService, UserProfile } from '../services/userService';
 import { setLearningPathUser } from '../services/learningPathService';
 import { setSpacedRepetitionUser } from '../data/spacedRepetition';
+import { errorLogger } from '../services/errorLogger';
 
 interface AuthContextType {
   user: User | null;
@@ -23,6 +24,7 @@ interface AuthContextType {
   setUserProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
   loading: boolean;
   profileLoading: boolean;
+  authTimeoutReached: boolean;
   showProfileSetup: boolean;
   setShowProfileSetup: (show: boolean) => void;
   hasSkippedSetup: boolean;
@@ -44,6 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [authTimeoutReached, setAuthTimeoutReached] = useState(false);
   const [showProfileSetup, setShowProfileSetup] = useState(false);
   const [hasSkippedSetup, setHasSkippedSetup] = useState(false);
 
@@ -54,7 +57,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const profile = await userService.getUserProfile(user.uid);
       setUserProfile(profile);
     } catch (err) {
-      console.error('Failed to refresh profile:', err);
+      errorLogger.log({
+        severity: 'high',
+        message: `Failed to refresh profile: ${err instanceof Error ? err.message : String(err)}`,
+        component: 'AuthContext.refreshUserProfile',
+      });
     } finally {
       setProfileLoading(false);
     }
@@ -95,7 +102,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await firebaseSignOut(auth);
     } catch (error) {
-      console.error('Sign out error:', error);
+      errorLogger.log({
+        severity: 'high',
+        message: `Sign out error: ${error instanceof Error ? error.message : String(error)}`,
+        component: 'AuthContext.signOut',
+      });
     } finally {
       // Force clear state to ensure UI updates even if network fails
       setUser(null);
@@ -107,8 +118,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let cancelled = false;
     const timeout = setTimeout(() => {
-      if (!cancelled) setLoading(false);
-    }, 5000);
+      if (!cancelled) {
+        // Don't clear loading — show a "Taking longer than expected..." message instead
+        setAuthTimeoutReached(true);
+        errorLogger.log({
+          severity: 'medium',
+          message: 'Auth initialization is taking longer than expected (8s timeout reached)',
+          component: 'AuthContext',
+        });
+      }
+    }, 8000);
 
     getRedirectResult(auth).catch(() => {});
 
@@ -116,13 +135,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       (firebaseUser) => {
         if (cancelled) return;
         clearTimeout(timeout);
+        setAuthTimeoutReached(false);
         setUser(firebaseUser);
         setLoading(false);
       },
       (error) => {
         if (cancelled) return;
         clearTimeout(timeout);
-        console.error('Auth state change error:', error);
+        errorLogger.log({
+          severity: 'high',
+          message: `Auth state change error: ${error instanceof Error ? error.message : String(error)}`,
+          component: 'AuthContext',
+        });
         setLoading(false);
       }
     );
@@ -151,7 +175,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setShowProfileSetup(true);
           }
         } catch (err) {
-          console.error('Failed to load user profile:', err);
+          errorLogger.log({
+            severity: 'high',
+            message: `Failed to load user profile: ${err instanceof Error ? err.message : String(err)}`,
+            component: 'AuthContext.loadUserProfile',
+          });
           if (!hasSkippedSetup) setShowProfileSetup(true);
         } finally {
           setProfileLoading(false);
@@ -175,6 +203,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUserProfile,
     loading,
     profileLoading,
+    authTimeoutReached,
     showProfileSetup,
     setShowProfileSetup,
     hasSkippedSetup,
@@ -185,7 +214,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signInWithGoogle,
     signInWithGoogleRedirect,
     signOut,
-  }), [user, userProfile, isAdmin, loading, profileLoading, showProfileSetup, hasSkippedSetup, refreshUserProfile, signUp, signIn, signInWithGoogle, signInWithGoogleRedirect, signOut]);
+  }), [user, userProfile, isAdmin, loading, profileLoading, authTimeoutReached, showProfileSetup, hasSkippedSetup, refreshUserProfile, signUp, signIn, signInWithGoogle, signInWithGoogleRedirect, signOut]);
 
   return (
     <AuthContext.Provider value={value}>

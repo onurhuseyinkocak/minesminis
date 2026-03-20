@@ -17,6 +17,8 @@ import { getTodayMinutes } from "./services/activityLogger";
 
 import { Star } from "lucide-react";
 import MimiMascot from "./components/MimiMascot";
+import { validateCurriculumData } from "./utils/dataValidation";
+import { LS_DAILY_TIME_LIMIT } from "./config/storageKeys";
 import "./App.css";
 
 // Initialize error logging
@@ -119,19 +121,24 @@ function OfflineBanner() {
   const [online, setOnline] = useState(isOnline);
   const [showBackOnline, setShowBackOnline] = useState(false);
   const wasOffline = useRef(false);
+  const backOnlineTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleStatusChange = useCallback((status: boolean) => {
     setOnline(status);
     if (status && wasOffline.current) {
       setShowBackOnline(true);
-      setTimeout(() => setShowBackOnline(false), 3000);
+      if (backOnlineTimerRef.current) clearTimeout(backOnlineTimerRef.current);
+      backOnlineTimerRef.current = setTimeout(() => setShowBackOnline(false), 3000);
     }
     wasOffline.current = !status;
   }, []);
 
   useEffect(() => {
     const unsub = onOnlineStatusChange(handleStatusChange);
-    return unsub;
+    return () => {
+      unsub();
+      if (backOnlineTimerRef.current) clearTimeout(backOnlineTimerRef.current);
+    };
   }, [handleStatusChange]);
 
   if (showBackOnline) {
@@ -250,7 +257,7 @@ function TimeGuardedRoute({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  const savedLimit = parseInt(localStorage.getItem('mimi_daily_time_limit') || '0');
+  const savedLimit = parseInt(localStorage.getItem(LS_DAILY_TIME_LIMIT) || '0');
   const dailyLimit = savedLimit || (userProfile?.settings?.dailyTimeLimit as number) || 60;
   const todayMinutes = getTodayMinutes();
 
@@ -377,7 +384,7 @@ function AppRoutes() {
             <Route path="/premium/success" element={<StudentRoute><Premium /></StudentRoute>} />
             <Route path="/worksheets" element={<StudentRoute><Worksheets /></StudentRoute>} />
             <Route path="/favorites" element={<StudentRoute><Favorites /></StudentRoute>} />
-            <Route path="/placement" element={<ProtectedRoute><PlacementTest /></ProtectedRoute>} />
+            <Route path="/placement" element={<ErrorBoundary><ProtectedRoute><PlacementTest /></ProtectedRoute></ErrorBoundary>} />
             <Route path="/phonics/:soundId" element={<StudentRoute><PhonicsLesson /></StudentRoute>} />
             <Route path="/songs" element={<StudentRoute><SongsPage /></StudentRoute>} />
             <Route path="/garden" element={<StudentRoute><LearningGarden /></StudentRoute>} />
@@ -386,7 +393,7 @@ function AppRoutes() {
             <Route path="/pricing" element={<Pricing />} />
 
             {/* ── Parent (protected, no student AppShell) ────────── */}
-            <Route path="/parent" element={<ProtectedRoute><ParentDashboard /></ProtectedRoute>} />
+            <Route path="/parent" element={<ErrorBoundary><ProtectedRoute><ParentDashboard /></ProtectedRoute></ErrorBoundary>} />
             {/* ── Teacher (protected + AppShell) ─────────────────── */}
             <Route path="/classroom" element={<StudentRoute><ClassroomMode /></StudentRoute>} />
             <Route path="/teacher" element={<StudentRoute><TeacherDashboard /></StudentRoute>} />
@@ -574,6 +581,16 @@ function App() {
       else root.classList.remove('splash-active');
     }
   }, [showSplash]);
+
+  // Validate curriculum and phonics data in development
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      const errors = validateCurriculumData();
+      if (errors.length > 0) {
+        console.warn('Data validation errors:', errors);
+      }
+    }
+  }, []);
 
   return (
     <ErrorBoundary>

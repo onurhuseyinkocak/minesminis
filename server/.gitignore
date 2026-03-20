@@ -1,3 +1,4 @@
 # server/.env dosyasını Git'e ekleme
 server/.env
 .env.production
+.vercel

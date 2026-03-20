@@ -7,6 +7,8 @@
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
+import { errorLogger } from '../services/errorLogger';
+import { LS_GAMIFICATION_PREFIX } from '../config/storageKeys';
 
 // ============================================================
 // TYPES
@@ -223,7 +225,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             setLoading(true);
 
             // 1. Try to load from localStorage first for immediate UI
-            const localStatsStr = localStorage.getItem(`gamification_${user.uid}`);
+            const localStatsStr = localStorage.getItem(`${LS_GAMIFICATION_PREFIX}${user.uid}`);
             let initialStats = DEFAULT_STATS;
 
             if (localStatsStr) {
@@ -234,7 +236,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     setStats(initialStats);
                     checkDailyClaim(initialStats.lastDailyClaim);
                 } catch (e) {
-                    console.error('Error parsing local stats:', e);
+                    errorLogger.log({
+                        severity: 'medium',
+                        message: `Error parsing local gamification stats: ${e instanceof Error ? e.message : String(e)}`,
+                        component: 'GamificationContext',
+                    });
                 }
             }
 
@@ -277,7 +283,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                 });
             }
         } catch (error) {
-            console.error('Error loading gamification stats:', error);
+            errorLogger.log({
+                severity: 'high',
+                message: `Error loading gamification stats: ${error instanceof Error ? error.message : String(error)}`,
+                component: 'GamificationContext',
+            });
         } finally {
             setLoading(false);
         }
@@ -285,7 +295,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
     const saveStatsLocally = (newStats: UserStats) => {
         if (user?.uid) {
-            localStorage.setItem(`gamification_${user.uid}`, JSON.stringify(newStats));
+            localStorage.setItem(`${LS_GAMIFICATION_PREFIX}${user.uid}`, JSON.stringify(newStats));
         }
     };
 
@@ -363,7 +373,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     })
                     .eq('id', user.uid);
             } catch (error) {
-                console.error('Error syncing XP:', error);
+                errorLogger.log({
+                    severity: 'high',
+                    message: `Error syncing XP: ${error instanceof Error ? error.message : String(error)}`,
+                    component: 'GamificationContext.addXP',
+                });
             }
         }
     };
@@ -418,7 +432,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     const settings = { ...((curr?.settings || {}) as Record<string, unknown>), weekly_xp: 0, last_weekly_reset: now.toISOString() };
                     await supabase.from('users').update({ settings }).eq('id', user.uid);
                 } catch (error) {
-                    console.error('Error syncing weekly reset:', error);
+                    errorLogger.log({
+                        severity: 'medium',
+                        message: `Error syncing weekly reset: ${error instanceof Error ? error.message : String(error)}`,
+                        component: 'GamificationContext.checkWeeklyReset',
+                    });
                 }
             }
         }
@@ -462,7 +480,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     })
                     .eq('id', user.uid);
             } catch (error) {
-                console.error('Error syncing streak:', error);
+                errorLogger.log({
+                    severity: 'medium',
+                    message: `Error syncing streak: ${error instanceof Error ? error.message : String(error)}`,
+                    component: 'GamificationContext.updateStreak',
+                });
             }
         }
 
@@ -504,7 +526,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                 const settings = { ...((curr?.settings || {}) as Record<string, unknown>), last_daily_claim: now.toISOString() };
                 await supabase.from('users').update({ settings }).eq('id', user.uid);
             } catch (error) {
-                console.error('Error syncing daily claim:', error);
+                errorLogger.log({
+                    severity: 'medium',
+                    message: `Error syncing daily claim: ${error instanceof Error ? error.message : String(error)}`,
+                    component: 'GamificationContext.claimDailyReward',
+                });
             }
         }
 
@@ -561,7 +587,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     .update({ badges: newBadges })
                     .eq('id', user.uid);
             } catch (error) {
-                console.error('Error syncing badges:', error);
+                errorLogger.log({
+                    severity: 'medium',
+                    message: `Error syncing badges: ${error instanceof Error ? error.message : String(error)}`,
+                    component: 'GamificationContext.awardBadge',
+                });
             }
         }
     };
@@ -642,7 +672,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                 };
                 await supabase.from('users').update({ settings }).eq('id', user.uid);
             } catch (error) {
-                console.error('Error syncing activity counters:', error);
+                errorLogger.log({
+                    severity: 'medium',
+                    message: `Error syncing activity counters: ${error instanceof Error ? error.message : String(error)}`,
+                    component: 'GamificationContext.trackActivity',
+                });
             }
         }
 

@@ -6,6 +6,7 @@
 
 // ── Placement & Learning Path ────────────────────────────────────────────────
 export const LS_PLACEMENT_RESULT = 'mimi_placement_result';
+export const LS_DAILY_TIME_LIMIT = 'mimi_daily_time_limit';
 export const LS_PHONICS_MASTERY = 'mimi_phonics_mastery';
 export const LS_CURRENT_SOUND = 'mimi_current_sound';
 export const LS_DAILY_CHALLENGE_DATE = 'mimi_daily_challenge_date';
@@ -27,6 +28,12 @@ export const SS_SPLASH_SEEN = 'mm_splash_seen';
 
 // ── Gamification ─────────────────────────────────────────────────────────────
 export const LS_GAMIFICATION_PREFIX = 'gamification_';
+
+// ── Pet System ────────────────────────────────────────────────────────────────
+export const LS_PET_PREFIX = 'pet_';
+
+// ── Badge System ──────────────────────────────────────────────────────────────
+export const LS_USER_BADGES = 'user_badges';
 
 // ── Offline Cache ────────────────────────────────────────────────────────────
 export const LS_OFFLINE_CACHE_PREFIX = 'mm_cache_';

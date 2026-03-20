@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabase';
+import { LS_PET_PREFIX } from '../config/storageKeys';
 
 // Virtual Pet System - gerçek hayvanlar: kedi, köpek, kuş
 export type PetType = 'cat' | 'dog' | 'bird';
@@ -73,7 +74,7 @@ export const createPet = async (userId: string, mascotOrType: string, customName
         });
     } catch {
         // pets table may not exist - store locally
-        localStorage.setItem(`pet_${newPet.id}`, JSON.stringify(newPet));
+        localStorage.setItem(`${LS_PET_PREFIX}${newPet.id}`, JSON.stringify(newPet));
     }
 
     return newPet;
@@ -88,7 +89,7 @@ export const getUserPet = async (userId: string): Promise<VirtualPet | null> => 
 
     if (error || !data) {
         // Fallback to localStorage
-        const local = localStorage.getItem(`pet_${userId}`);
+        const local = localStorage.getItem(`${LS_PET_PREFIX}${userId}`);
         if (local) {
             try { return JSON.parse(local); } catch { /* corrupted */ }
         }
@@ -130,19 +131,19 @@ export const savePet = async (pet: VirtualPet): Promise<void> => {
     } catch {
         // Fallback to localStorage
     }
-    localStorage.setItem(`pet_${pet.id}`, JSON.stringify(pet));
+    localStorage.setItem(`${LS_PET_PREFIX}${pet.id}`, JSON.stringify(pet));
 };
 
 export const renamePet = async (userId: string, newName: string): Promise<void> => {
     try {
         await supabase.from('pets').update({ name: newName }).eq('id', userId);
     } catch { /* table may not exist */ }
-    const local = localStorage.getItem(`pet_${userId}`);
+    const local = localStorage.getItem(`${LS_PET_PREFIX}${userId}`);
     if (local) {
         try {
             const pet = JSON.parse(local);
             pet.name = newName;
-            localStorage.setItem(`pet_${userId}`, JSON.stringify(pet));
+            localStorage.setItem(`${LS_PET_PREFIX}${userId}`, JSON.stringify(pet));
         } catch { /* corrupted */ }
     }
 };

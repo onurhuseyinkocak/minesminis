@@ -8,7 +8,7 @@ import './DailyReward.css';
 import { useGamification } from '../contexts/GamificationContext';
 import { ConfettiRain, FloatingEmoji } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
-import { Gift, CheckCircle, Star, Sparkles, Flame } from 'lucide-react';
+import { Gift, CheckCircle, Star, Sparkles, Flame, X } from 'lucide-react';
 
 const DailyReward: React.FC = () => {
     const {
@@ -83,6 +83,15 @@ const DailyReward: React.FC = () => {
         }
     }, [canClaimDaily, getNextClaimTime]);
 
+    const celebrationTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Cleanup celebration timer on unmount
+    React.useEffect(() => {
+        return () => {
+            if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+        };
+    }, []);
+
     const handleClaim = async () => {
         if (!canClaimDaily || claiming) return;
 
@@ -94,7 +103,8 @@ const DailyReward: React.FC = () => {
             setClaimed(true);
             setShowClaimCelebration(true);
             SFX.celebration();
-            setTimeout(() => setShowClaimCelebration(false), 3000);
+            if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+            celebrationTimerRef.current = setTimeout(() => setShowClaimCelebration(false), 3000);
         }
 
         setClaiming(false);
@@ -119,7 +129,7 @@ const DailyReward: React.FC = () => {
             {showClaimCelebration && <ConfettiRain />}
             {showClaimCelebration && <FloatingEmoji emoji={'\uD83C\uDF81'} count={8} />}
             <div className="daily-reward-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="close-btn" onClick={() => setIsOpen(false)}>✕</button>
+                <button className="close-btn" onClick={() => setIsOpen(false)}><X size={18} /></button>
 
                 <div className="modal-header">
                     <h2><Gift size={20} style={{ display: 'inline', verticalAlign: 'middle' }} /> Daily Rewards</h2>

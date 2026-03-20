@@ -4,6 +4,7 @@
 // This service now calls our secure backend proxy instead of OpenAI directly
 
 import { auth } from '../config/firebase';
+import { errorLogger } from './errorLogger';
 
 const getBackendUrl = () => {
     // Check if running in browser
@@ -64,7 +65,12 @@ export const sendMessageToAI = async (messages: ChatMessage[]): Promise<string> 
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('❌ Backend error:', response.status, errorData);
+            errorLogger.log({
+                severity: 'high',
+                message: `Backend error: ${response.status} ${errorData.error || 'Backend request failed'}`,
+                component: 'aiService',
+                metadata: { status: response.status, errorData },
+            });
             throw new Error(errorData.error || 'Backend request failed');
         }
 

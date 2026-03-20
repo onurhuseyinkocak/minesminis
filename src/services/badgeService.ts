@@ -1,4 +1,5 @@
 // Badge System - Achievement Tracking
+import { LS_USER_BADGES } from '../config/storageKeys';
 export interface Badge {
     id: string;
     name: string;
@@ -44,7 +45,7 @@ export const checkBadgeProgress = (
 };
 
 export const getUserBadges = (): Badge[] => {
-    const stored = localStorage.getItem('user_badges');
+    const stored = localStorage.getItem(LS_USER_BADGES);
     if (!stored) return AVAILABLE_BADGES;
     return JSON.parse(stored);
 };
@@ -58,7 +59,7 @@ export const awardBadge = (badgeId: string): Badge | null => {
     badge.earned = true;
     badge.earnedDate = new Date();
 
-    localStorage.setItem('user_badges', JSON.stringify(badges));
+    localStorage.setItem(LS_USER_BADGES, JSON.stringify(badges));
 
     // Show celebration animation
     showBadgeCelebration(badge);

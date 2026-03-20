@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabase';
+import { errorLogger } from './errorLogger';
 
 export interface UserProfile {
   id: string;
@@ -76,7 +77,12 @@ export const userService = {
       });
 
       if (error) {
-        console.error('CRITICAL: Error creating user profile in Supabase:', error);
+        errorLogger.log({
+          severity: 'critical',
+          message: `Error creating user profile in Supabase: ${error.message || 'Unknown database error'}`,
+          component: 'userService.createOrUpdateUserProfile',
+          metadata: { userId, error },
+        });
         throw new Error(`Failed to create your profile. Details: ${error.message || 'Unknown database error'}`);
       }
 
@@ -84,7 +90,11 @@ export const userService = {
         await this.awardPoints(userId, 10);
         await this.checkAndAwardAchievement(userId, 'first_steps');
       } catch (achievementError) {
-        console.error('Error awarding initial achievements:', achievementError);
+        errorLogger.log({
+          severity: 'medium',
+          message: `Error awarding initial achievements: ${achievementError instanceof Error ? achievementError.message : String(achievementError)}`,
+          component: 'userService.createOrUpdateUserProfile',
+        });
       }
     } else {
       const { error } = await supabase
@@ -93,7 +103,12 @@ export const userService = {
         .eq('id', userId);
 
       if (error) {
-        console.error('CRITICAL: Error updating user profile in Supabase:', error);
+        errorLogger.log({
+          severity: 'critical',
+          message: `Error updating user profile in Supabase: ${error.message || 'Unknown database error'}`,
+          component: 'userService.createOrUpdateUserProfile',
+          metadata: { userId, error },
+        });
         throw new Error(`Failed to update your profile. Details: ${error.message || 'Unknown database error'}`);
       }
     }
@@ -107,8 +122,12 @@ export const userService = {
       .maybeSingle();
 
     if (error) {
-      console.error(`ERROR: Failed to fetch profile for user ${uid}:`, error);
-      // Return null or handle as needed, but log the specific error
+      errorLogger.log({
+        severity: 'high',
+        message: `Failed to fetch profile for user ${uid}: ${error.message}`,
+        component: 'userService.getUserProfile',
+        metadata: { uid, error },
+      });
       return null;
     }
 
@@ -119,13 +138,25 @@ export const userService = {
     uid: string,
     updates: Partial<Omit<UserProfile, 'id' | 'email' | 'created_at'>>
   ) {
+    if (updates.display_name !== undefined) {
+      const trimmed = updates.display_name.trim();
+      if (trimmed.length === 0) throw new Error('Display name cannot be empty');
+      if (trimmed.length > 30) throw new Error('Display name must be 30 characters or fewer');
+      updates = { ...updates, display_name: trimmed };
+    }
+
     const { error } = await supabase
       .from('users')
       .update(updates)
       .eq('id', uid);
 
     if (error) {
-      console.error('Error updating user profile:', error);
+      errorLogger.log({
+        severity: 'high',
+        message: `Error updating user profile: ${error.message}`,
+        component: 'userService.updateUserProfile',
+        metadata: { uid, error },
+      });
       throw error;
     }
   },
@@ -166,7 +197,11 @@ export const userService = {
       .eq('following_id', userId);
 
     if (error) {
-      console.error('Error fetching followers:', error);
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error fetching followers: ${error.message}`,
+        component: 'userService.getFollowers',
+      });
       return [];
     }
 
@@ -180,7 +215,11 @@ export const userService = {
       .eq('follower_id', userId);
 
     if (error) {
-      console.error('Error fetching following:', error);
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error fetching following: ${error.message}`,
+        component: 'userService.getFollowing',
+      });
       return [];
     }
 
@@ -252,7 +291,11 @@ export const userService = {
       .limit(limit);
 
     if (error) {
-      console.error('Error fetching leaderboard:', error);
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error fetching leaderboard: ${error.message}`,
+        component: 'userService.getLeaderboard',
+      });
       return [];
     }
 

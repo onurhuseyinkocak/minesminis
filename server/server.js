@@ -40,10 +40,13 @@ const upload = multer({
     filename: (_, file, cb) => cb(null, `${Date.now()}-${(file.originalname || 'file').replace(/[^a-zA-Z0-9.-]/g, '_')}`)
   }),
   limits: { fileSize: 15 * 1024 * 1024 },
-  fileFilter: (_, file, cb) => {
-    const ext = (file.originalname || '').split('.').pop()?.toLowerCase();
-    if (['pdf', 'jpg', 'jpeg', 'png'].includes(ext || '')) cb(null, true);
-    else cb(new Error('Sadece PDF, JPEG, PNG kabul edilir'));
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    const allowed = { '.pdf': 'application/pdf', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png' };
+    if (!allowed[ext] || file.mimetype !== allowed[ext]) {
+      return cb(new Error('Invalid file type'));
+    }
+    cb(null, true);
   }
 });
 
@@ -108,6 +111,17 @@ app.use(express.urlencoded({
   extended: true,
   limit: '10kb'
 }));
+
+// ============================================================
+// INPUT VALIDATION HELPERS
+// ============================================================
+
+function validateString(val, maxLen = 200) {
+  return typeof val === 'string' && val.trim().length > 0 && val.length <= maxLen;
+}
+function validateUrl(val) {
+  try { new URL(val); return true; } catch { return false; }
+}
 
 // ============================================================
 // CSRF PROTECTION (Double-Submit Cookie Pattern)
@@ -347,6 +361,12 @@ if (!ELEVENLABS_API_KEY) {
 const rateLimiter = security.rateLimiter({ maxRequests: 30, windowMs: 60000, keyPrefix: 'tts-v2' });
 
 app.post('/api/tts-v2', rateLimiter, async (req, res) => {
+  // Require authentication for TTS endpoint
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ ok: false, error: 'Authentication required' });
+  }
+
   const { text } = req.body;
   if (!text || text.length > 500) {
     return res.status(400).json({ ok: false, error: 'Text required (max 500 chars)' });
@@ -611,6 +631,14 @@ app.get('/api/daily-challenge', security.rateLimiter({ maxRequests: 60, windowMs
     }
 
     const challenge = { id, title, description, target: template.target, type: template.type, rewardXP: template.rewardXP, icon: template.icon, _cachedAt: Date.now() };
+
+    // Enforce max cache size to prevent unbounded memory growth
+    if (dailyChallengeCache.size > 400) {
+      const entries = [...dailyChallengeCache.entries()];
+      entries.sort((a, b) => (a[1]._cachedAt || 0) - (b[1]._cachedAt || 0));
+      for (let i = 0; i < 100; i++) dailyChallengeCache.delete(entries[i][0]);
+    }
+
     dailyChallengeCache.set(dateStr, challenge);
     const { _cachedAt, ...responseChallenge } = challenge;
     res.json(responseChallenge);
@@ -947,7 +975,11 @@ app.post('/api/worksheets/upload', requireAdminAuth, security.rateLimiter({ maxR
   }
 });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: '1d' }));
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Content-Disposition', 'inline');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+}, express.static(path.join(__dirname, 'uploads'), { maxAge: '1d' }));
 
 // Admin API routes (requireAdminAuth applied via app.use('/api/admin', ...) above)
 app.post('/api/admin/words', security.rateLimiter({ maxRequests: 50, windowMs: 60000 }), async (req, res) => {
@@ -956,6 +988,8 @@ app.post('/api/admin/words', security.rateLimiter({ maxRequests: 50, windowMs: 6
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış. .env dosyasına VITE_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY ekleyin.' });
     const { word, turkish, level, category, emoji, example } = req.body;
     if (!word || !turkish) return res.status(400).json({ ok: false, error: 'word ve turkish gerekli' });
+    if (!validateString(word, 100)) return res.status(400).json({ ok: false, error: 'word geçersiz (max 100 karakter, boş olamaz)' });
+    if (!validateString(turkish, 200)) return res.status(400).json({ ok: false, error: 'turkish geçersiz (max 200 karakter)' });
     const { data, error } = await sb.from('words').insert({ word: String(word).trim(), turkish: String(turkish), level: level || 'beginner', category: category || 'Animals', emoji: emoji || '📚', example: example || null }).select().single();
     if (error) throw error;
     res.json(data);
@@ -998,6 +1032,8 @@ app.post('/api/admin/videos', security.rateLimiter({ maxRequests: 30, windowMs: 
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { youtube_id, title, description, thumbnail, duration, category, grade, isPopular } = req.body;
     if (!youtube_id || !title) return res.status(400).json({ ok: false, error: 'youtube_id ve title gerekli' });
+    if (!validateString(title, 200)) return res.status(400).json({ ok: false, error: 'title geçersiz (max 200 karakter)' });
+    if (thumbnail && !validateUrl(thumbnail)) return res.status(400).json({ ok: false, error: 'thumbnail geçerli bir URL olmalı' });
     const row = { youtube_id, title, description: description || '', thumbnail: thumbnail || '', duration: duration || '0:00', category: category || 'lesson' };
     if (grade != null) row.grade = grade;
     if (isPopular != null) row.is_popular = !!isPopular;
@@ -1015,6 +1051,8 @@ app.patch('/api/admin/videos/:id', security.rateLimiter({ maxRequests: 30, windo
     const sb = await getAdminSupabase();
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { youtube_id, title, description, thumbnail, duration, category, grade, isPopular } = req.body;
+    if (title != null && !validateString(title, 200)) return res.status(400).json({ ok: false, error: 'title geçersiz (max 200 karakter)' });
+    if (thumbnail != null && !validateUrl(thumbnail)) return res.status(400).json({ ok: false, error: 'thumbnail geçerli bir URL olmalı' });
     const row = {};
     if (youtube_id != null) row.youtube_id = youtube_id;
     if (title != null) row.title = title;
@@ -1052,6 +1090,8 @@ app.post('/api/admin/games', security.rateLimiter({ maxRequests: 30, windowMs: 6
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, url, category, thumbnail_url, description, target_audience } = req.body;
     if (!title || !url) return res.status(400).json({ ok: false, error: 'title ve url gerekli' });
+    if (!validateString(title, 200)) return res.status(400).json({ ok: false, error: 'title geçersiz (max 200 karakter)' });
+    if (!validateUrl(url)) return res.status(400).json({ ok: false, error: 'url geçerli bir URL olmalı' });
     const { data, error } = await sb.from('games').insert({ title, url, category: category || 'Quiz', thumbnail_url: thumbnail_url || null, description: description || '', target_audience: target_audience || '2' }).select('id').single();
     if (error) throw error;
     res.json(data);
@@ -1066,6 +1106,8 @@ app.patch('/api/admin/games/:id', security.rateLimiter({ maxRequests: 30, window
     const sb = await getAdminSupabase();
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, url, category, thumbnail_url, description, target_audience } = req.body;
+    if (title != null && !validateString(title, 200)) return res.status(400).json({ ok: false, error: 'title geçersiz (max 200 karakter)' });
+    if (url != null && !validateUrl(url)) return res.status(400).json({ ok: false, error: 'url geçerli bir URL olmalı' });
     const row = {};
     if (title != null) row.title = title;
     if (url != null) row.url = url;
@@ -1102,6 +1144,9 @@ app.post('/api/admin/worksheets', security.rateLimiter({ maxRequests: 30, window
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, description, category, grade, thumbnailUrl, externalUrl, source } = req.body;
     if (!title || !externalUrl) return res.status(400).json({ ok: false, error: 'title ve externalUrl (veya file_url) gerekli' });
+    if (!validateString(title, 200)) return res.status(400).json({ ok: false, error: 'title geçersiz (max 200 karakter)' });
+    if (!validateUrl(externalUrl)) return res.status(400).json({ ok: false, error: 'externalUrl geçerli bir URL olmalı' });
+    if (thumbnailUrl && !validateUrl(thumbnailUrl)) return res.status(400).json({ ok: false, error: 'thumbnailUrl geçerli bir URL olmalı' });
     const ext = (externalUrl.split('?')[0].split('.').pop() || 'html').toLowerCase();
     const fileType = ['pdf', 'jpg', 'jpeg', 'png'].includes(ext) ? ext : 'html';
     const fileName = (title || 'worksheet').replace(/\s+/g, '-').toLowerCase() + '.' + fileType;
@@ -1130,6 +1175,9 @@ app.patch('/api/admin/worksheets/:id', security.rateLimiter({ maxRequests: 30, w
     const sb = await getAdminSupabase();
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, description, category, grade, thumbnailUrl, externalUrl, source } = req.body;
+    if (title != null && !validateString(title, 200)) return res.status(400).json({ ok: false, error: 'title geçersiz (max 200 karakter)' });
+    if (externalUrl != null && !validateUrl(externalUrl)) return res.status(400).json({ ok: false, error: 'externalUrl geçerli bir URL olmalı' });
+    if (thumbnailUrl != null && !validateUrl(thumbnailUrl)) return res.status(400).json({ ok: false, error: 'thumbnailUrl geçerli bir URL olmalı' });
     const row = {};
     if (title != null) row.title = title;
     if (description != null) row.description = description;
@@ -1167,6 +1215,8 @@ app.post('/api/admin/blog', security.rateLimiter({ maxRequests: 30, windowMs: 60
     if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, slug, content, excerpt, meta_title, meta_description, published_at } = req.body;
     if (!title || !content) return res.status(400).json({ ok: false, error: 'title ve content gerekli' });
+    if (!validateString(title, 200)) return res.status(400).json({ ok: false, error: 'title geçersiz (max 200 karakter)' });
+    if (typeof content !== 'string' || content.trim().length === 0) return res.status(400).json({ ok: false, error: 'content boş olamaz' });
     const s = (slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-')).replace(/^-|-$/g, '');
     const row = {
       title: String(title),

@@ -30,6 +30,7 @@ import {
   Heart,
 } from 'lucide-react';
 import { Button, ProgressBar, Card, StarBurst, ConfettiRain, PerfectBadge, XPPop } from '../components/ui';
+import MimiMascot from '../components/MimiMascot';
 import { useGamification } from '../contexts/GamificationContext';
 import { GameSelector } from '../components/games';
 import { getLessonById, getWorldById, getWorldVocabulary } from '../data/curriculum';
@@ -536,7 +537,7 @@ const LessonPlayer = () => {
           </p>
 
           <div className="lesson-complete__mimi">
-            <span className="lesson-complete__mimi-avatar">{'\u{1F431}'}</span>
+            <span className="lesson-complete__mimi-avatar"><MimiMascot size={48} mood="sad" /></span>
             <p>{t('lesson.youCanDoIt')}</p>
           </div>
 

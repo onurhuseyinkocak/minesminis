@@ -60,6 +60,8 @@ export const grade2Games: Game[] = [
     }
 ];
 
+// Reserved for future use: general primary school games not tied to a specific grade.
+// Currently empty; populate when cross-grade content is available.
 export const primarySchoolGames: Game[] = [];
 
 export const grade3Games: Game[] = [
