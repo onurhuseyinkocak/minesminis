@@ -5,10 +5,16 @@ import './Blog.css';
 import { ArrowLeft } from 'lucide-react';
 
 function sanitizeHtml(html: string): string {
-  const div = document.createElement('div');
-  div.textContent = html;
-  // Allow only newlines→br conversion on the sanitized text
-  return div.innerHTML.replace(/\n/g, '<br />');
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  // Remove dangerous tags
+  doc.querySelectorAll('script, style, iframe, object, embed, form, input').forEach(el => el.remove());
+  // Remove event handlers and dangerous attributes
+  doc.querySelectorAll('*').forEach(el => {
+    Array.from(el.attributes).forEach(attr => {
+      if (attr.name.startsWith('on') || attr.name === 'srcdoc') el.removeAttribute(attr.name);
+    });
+  });
+  return doc.body.innerHTML;
 }
 
 interface BlogPostData {

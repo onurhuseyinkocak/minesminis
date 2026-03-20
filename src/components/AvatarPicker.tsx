@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/userService';
+import { errorLogger } from '../services/errorLogger';
 
 interface AvatarPickerProps {
   onClose: () => void;
@@ -43,7 +44,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
 
       onClose();
     } catch (error) {
-      console.error('Failed to update avatar:', error);
+      errorLogger.log({ severity: 'high', message: 'Failed to update avatar', component: 'AvatarPicker', metadata: { error: String(error) } });
     } finally {
       setSaving(false);
     }

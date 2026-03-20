@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, ArrowRight, Volume2 } from 'lucide-react';
 import { Button, Badge } from '../ui';
@@ -61,7 +61,7 @@ export function LetterTracing({
 
   const letterKey = letter.toLowerCase();
   const pathData = LETTER_PATHS[letterKey];
-  const guideDots = pathData?.guideDots ?? [];
+  const guideDots = useMemo(() => pathData?.guideDots ?? [], [pathData]);
 
   // Speak the letter sound on mount
   useEffect(() => {

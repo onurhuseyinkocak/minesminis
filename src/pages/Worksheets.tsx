@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
+import { errorLogger } from '../services/errorLogger';
 import { fallbackWorksheets } from '../data/fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
 import toast from 'react-hot-toast';
@@ -85,7 +86,7 @@ function Worksheets() {
       // Persist to localStorage (TTL: 6 hours)
       setCachedData('worksheets', result, 6 * 60 * 60 * 1000);
     } catch (error) {
-      console.error('Error fetching worksheets:', error);
+      errorLogger.log({ severity: 'high', message: 'Error fetching worksheets', component: 'Worksheets', metadata: { error: String(error) } });
       if (cached && cached.length > 0) {
         setWorksheets(cached);
       } else {
@@ -109,7 +110,7 @@ function Worksheets() {
       const favoriteIds = new Set(data.map(fav => fav.item_id));
       setFavorites(favoriteIds);
     } catch (error) {
-      console.error('Error loading favorites:', error);
+      errorLogger.log({ severity: 'medium', message: 'Error loading favorites', component: 'Worksheets', metadata: { error: String(error) } });
     }
   };
 
@@ -155,7 +156,7 @@ function Worksheets() {
         toast.success('Added to favorites!');
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      errorLogger.log({ severity: 'medium', message: 'Error toggling favorite', component: 'Worksheets', metadata: { error: String(error) } });
       toast.error('Failed to update favorites');
     }
   };
@@ -174,7 +175,7 @@ function Worksheets() {
         toast.success('You earned 15 XP for practicing!');
       }
     } catch (err) {
-      console.error('Error tracking activity:', err);
+      errorLogger.log({ severity: 'low', message: 'Error tracking activity', component: 'Worksheets', metadata: { error: String(err) } });
     }
   };
 

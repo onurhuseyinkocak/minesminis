@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { errorLogger } from '../services/errorLogger';
 import './ChatHome.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -169,7 +170,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
             updateQuickReplies(finalMessages);
 
         } catch (error) {
-            console.error("Chat Error:", error);
+            errorLogger.log({ severity: 'high', message: 'Chat Error', component: 'ChatHome', metadata: { error: String(error) } });
             const errorMsg = "Oops! I didn't catch that. Can you say it again? 👂";
             const errorMessage: ChatMessage = {
                 id: Date.now().toString(),

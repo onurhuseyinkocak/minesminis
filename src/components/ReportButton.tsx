@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { errorLogger } from '../services/errorLogger';
 
 const ReportButton: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +42,7 @@ const ReportButton: React.FC = () => {
             setReport('');
             setIsOpen(false);
         } catch (error) {
-            console.error('Error submitting report:', error);
+            errorLogger.log({ severity: 'high', message: 'Error submitting report', component: 'ReportButton', metadata: { error: String(error) } });
             // Even if table doesn't exist, we fallback to a simulated success for dev experience
             // if it's a "table not found" error. But let's assume it works.
             toast.error('Rapor gönderilemedi. Lütfen sonra tekrar deneyin.');

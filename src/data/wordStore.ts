@@ -2,6 +2,7 @@
 // This store persists word data in localStorage and syncs between components
 
 import { KidsWord, kidsWords as initialWords, TOTAL_WORDS_COUNT } from './wordsData';
+import { errorLogger } from '../services/errorLogger';
 
 const STORAGE_KEY = 'minesminis_words';
 
@@ -18,7 +19,7 @@ function loadWords(): KidsWord[] {
             return [...parsed, ...newInitialWords];
         }
     } catch (error) {
-        console.error('Error loading words from localStorage:', error);
+        errorLogger.log({ severity: 'low', message: 'Error loading words from localStorage', component: 'wordStore', metadata: { error: String(error) } });
     }
 
     return initialWords;
@@ -32,7 +33,7 @@ function saveWords(words: KidsWord[]): void {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(words));
         window.dispatchEvent(new CustomEvent('wordsUpdated', { detail: words }));
     } catch (error) {
-        console.error('Error saving words to localStorage:', error);
+        errorLogger.log({ severity: 'low', message: 'Error saving words to localStorage', component: 'wordStore', metadata: { error: String(error) } });
     }
 }
 

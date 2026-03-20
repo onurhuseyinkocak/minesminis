@@ -1,6 +1,7 @@
 import { supabase } from '../config/supabase';
 import { fallbackVideos } from './fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
+import { errorLogger } from '../services/errorLogger';
 
 export type Video = {
     id: string;
@@ -53,7 +54,7 @@ export const videoStore = {
             window.dispatchEvent(new CustomEvent('videosUpdated', { detail: videosCache }));
             return videosCache;
         } catch (error) {
-            console.error('Error fetching videos from Supabase:', error);
+            errorLogger.log({ severity: 'high', message: 'Error fetching videos from Supabase', component: 'videoStore', metadata: { error: String(error) } });
 
             // Use localStorage cache if available
             if (cached && cached.length > 0) {
@@ -90,7 +91,7 @@ export const videoStore = {
             if (error) throw error;
             await this.fetchVideos();
         } catch (error) {
-            console.error('Error adding video:', error);
+            errorLogger.log({ severity: 'high', message: 'Error adding video', component: 'videoStore', metadata: { error: String(error) } });
             throw error;
         }
     },
@@ -111,7 +112,7 @@ export const videoStore = {
             if (error) throw error;
             await this.fetchVideos();
         } catch (error) {
-            console.error('Error updating video:', error);
+            errorLogger.log({ severity: 'high', message: 'Error updating video', component: 'videoStore', metadata: { error: String(error) } });
             throw error;
         }
     },
@@ -127,7 +128,7 @@ export const videoStore = {
             if (error) throw error;
             await this.fetchVideos();
         } catch (error) {
-            console.error('Error deleting video:', error);
+            errorLogger.log({ severity: 'high', message: 'Error deleting video', component: 'videoStore', metadata: { error: String(error) } });
             throw error;
         }
     },

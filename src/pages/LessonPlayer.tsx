@@ -537,7 +537,7 @@ const LessonPlayer = () => {
           </p>
 
           <div className="lesson-complete__mimi">
-            <span className="lesson-complete__mimi-avatar"><MimiMascot size={48} mood="sad" /></span>
+            <span className="lesson-complete__mimi-avatar"><MimiMascot size={48} mood="thinking" /></span>
             <p>{t('lesson.youCanDoIt')}</p>
           </div>
 

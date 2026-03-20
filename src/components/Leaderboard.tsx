@@ -3,6 +3,7 @@ import './Leaderboard.css';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { Trophy, Crown, Star, ChevronRight, Clock } from 'lucide-react';
+import { errorLogger } from '../services/errorLogger';
 
 interface LeaderboardEntry {
     id: string;
@@ -55,7 +56,7 @@ const Leaderboard: React.FC = () => {
             if (error) throw error;
             setLeaders(data || []);
         } catch (error) {
-            console.error('Error fetching leaderboard:', error);
+            errorLogger.log({ severity: 'high', message: 'Error fetching leaderboard', component: 'Leaderboard', metadata: { error: String(error) } });
         } finally {
             setLoading(false);
         }

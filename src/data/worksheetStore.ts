@@ -2,6 +2,7 @@
 // This store persists worksheet data in localStorage and syncs between components
 
 import { Worksheet, worksheetsData as initialWorksheets } from './worksheetsData';
+import { errorLogger } from '../services/errorLogger';
 
 const STORAGE_KEY = 'minesminis_worksheets';
 
@@ -18,7 +19,7 @@ function loadWorksheets(): Worksheet[] {
             return [...parsed, ...newInitialWorksheets];
         }
     } catch (error) {
-        console.error('Error loading worksheets from localStorage:', error);
+        errorLogger.log({ severity: 'low', message: 'Error loading worksheets from localStorage', component: 'worksheetStore', metadata: { error: String(error) } });
     }
 
     return initialWorksheets;
@@ -32,7 +33,7 @@ function saveWorksheets(worksheets: Worksheet[]): void {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(worksheets));
         window.dispatchEvent(new CustomEvent('worksheetsUpdated', { detail: worksheets }));
     } catch (error) {
-        console.error('Error saving worksheets to localStorage:', error);
+        errorLogger.log({ severity: 'low', message: 'Error saving worksheets to localStorage', component: 'worksheetStore', metadata: { error: String(error) } });
     }
 }
 

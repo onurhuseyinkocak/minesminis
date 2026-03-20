@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 import { getApiBase } from '../utils/apiBase';
+import { errorLogger } from '../services/errorLogger';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -185,7 +186,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
       setExpiresAt(e);
       writeCache(p, s, e);
     } catch (err) {
-      console.warn('Subscription check failed:', err);
+      errorLogger.log({ severity: 'medium', message: 'Subscription check failed', component: 'PremiumContext', metadata: { error: String(err) } });
       // Fall back to cached data
       const cached = readCache();
       if (cached) {
@@ -239,7 +240,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       return data.url || null;
     } catch (err) {
-      console.error('Checkout error:', err);
+      errorLogger.log({ severity: 'high', message: 'Checkout error', component: 'PremiumContext', metadata: { error: String(err) } });
       return null;
     }
   }, [user, API]);
@@ -264,7 +265,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       return data.url || null;
     } catch (err) {
-      console.error('Portal error:', err);
+      errorLogger.log({ severity: 'high', message: 'Portal error', component: 'PremiumContext', metadata: { error: String(err) } });
       return null;
     }
   }, [user, API]);

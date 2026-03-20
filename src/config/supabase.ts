@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
+import { errorLogger } from '../services/errorLogger';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase credentials missing! Check your .env file.');
+  errorLogger.log({ severity: 'critical', message: 'Supabase credentials missing! Check your .env file.', component: 'supabase' });
 }
 
 export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '', {

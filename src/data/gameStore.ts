@@ -2,6 +2,7 @@
 // This store persists game data in localStorage and syncs between components
 
 import { Game, getAllGames } from './gamesData';
+import { errorLogger } from '../services/errorLogger';
 
 const STORAGE_KEY = 'minesminis_games';
 
@@ -19,7 +20,7 @@ function loadGames(): Game[] {
             return [...parsed, ...newInitialGames];
         }
     } catch (error) {
-        console.error('Error loading games from localStorage:', error);
+        errorLogger.log({ severity: 'low', message: 'Error loading games from localStorage', component: 'gameStore', metadata: { error: String(error) } });
     }
 
     return getAllGames();
@@ -33,7 +34,7 @@ function saveGames(games: Game[]): void {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
         window.dispatchEvent(new CustomEvent('gamesUpdated', { detail: games }));
     } catch (error) {
-        console.error('Error saving games to localStorage:', error);
+        errorLogger.log({ severity: 'low', message: 'Error saving games to localStorage', component: 'gameStore', metadata: { error: String(error) } });
     }
 }
 

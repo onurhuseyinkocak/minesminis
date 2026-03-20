@@ -198,7 +198,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
     const pitch = song.style === 'lullaby' ? 0.9 : song.style === 'chant' ? 1.2 : 1.1;
     await speak(line.text, rate, pitch);
     isSpeakingRef.current = false;
-  }, [song.style]);
+  }, [song]);
 
   const playLinemelody = useCallback(
     (line: typeof song.lyrics[0], lineIdx: number) => {
@@ -213,7 +213,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
         playNurseryMelody(lineIdx, tempoMap[song.tempo]);
       }
     },
-    [melodyEnabled, song.tempo],
+    [melodyEnabled, song],
   );
 
   const advanceLine = useCallback(
