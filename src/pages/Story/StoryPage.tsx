@@ -22,6 +22,7 @@ import {
 import type { StoryState, ChoiceResult } from '../../data/storyEngine';
 import { initOrLoadStory, saveStoryState, resetStoryProgress } from '../../services/storyService';
 import { playMusic, stopMusic, playSFX } from '../../data/soundLibrary';
+import { speak } from '../../services/ttsService';
 import { updateWordProgress } from '../../data/spacedRepetition';
 import toast from 'react-hot-toast';
 import type { MusicKey, SFXKey } from '../../data/soundLibrary';
@@ -200,13 +201,7 @@ const StoryPage = React.memo(() => {
 
   // ─── TTS helper ───
   const speakWord = (word: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.8;
-      window.speechSynthesis.speak(utterance);
-    }
+    speak(word, 0.9).catch(() => {/* fallback handled inside speak() */});
   };
 
   const hasVocabulary = currentNode.vocabulary && currentNode.vocabulary.length > 0;

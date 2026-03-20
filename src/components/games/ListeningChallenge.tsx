@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Sparkles, Headphones } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { speak } from '../../services/ttsService';
 import './ListeningChallenge.css';
 
 interface WordItem {
@@ -52,20 +53,13 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
 
   const round = rounds[currentRound];
 
-  const speak = useCallback((text: string) => {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      utter.rate = 0.65;
-      utter.pitch = 1.1;
-      window.speechSynthesis.speak(utter);
-    }
+  const speakWord = useCallback((text: string) => {
+    speak(text, 0.85).catch(() => {/* fallback handled inside speak() */});
   }, []);
 
   const handlePlay = () => {
     if (!round) return;
-    speak(round.correctWord.english);
+    speakWord(round.correctWord.english);
     setHasPlayed(true);
   };
 

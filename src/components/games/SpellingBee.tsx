@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Delete, Lightbulb, Volume2, Sparkles } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { speak } from '../../services/ttsService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import './SpellingBee.css';
 
@@ -82,14 +83,8 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     initWord(0);
   }, [initWord]);
 
-  const speak = useCallback((text: string) => {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      utter.rate = 0.7;
-      window.speechSynthesis.speak(utter);
-    }
+  const speakWord = useCallback((text: string) => {
+    speak(text, 0.9).catch(() => {/* fallback handled inside speak() */});
   }, []);
 
   const handleLetterTap = (letter: string, poolIndex: number) => {
@@ -114,7 +109,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
       setScore((prev) => prev + 1);
       onXpEarned?.(15);
       SFX.correct();
-      speak(currentWord.english);
+      speakWord(currentWord.english);
 
       setTimeout(() => {
         if (currentIndex + 1 < gameWords.length) {
@@ -197,7 +192,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           variant="ghost"
           size="lg"
           icon={<Volume2 size={24} />}
-          onClick={() => speak(currentWord.english)}
+          onClick={() => speakWord(currentWord.english)}
           aria-label="Listen to pronunciation"
         >
           {t('games.listen')}

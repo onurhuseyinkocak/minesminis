@@ -330,6 +330,69 @@ app.post('/api/tts',
 
 // (duplicate health check removed — see /api/health above)
 
+// ============================================================
+// FISH AUDIO TTS PROXY (word pronunciation, 30 req/min/IP)
+// ============================================================
+
+// Validate Fish Audio API key at startup
+const FISH_AUDIO_API_KEY = process.env.FISH_AUDIO_API_KEY;
+if (!FISH_AUDIO_API_KEY) {
+  console.warn('⚠️ FISH_AUDIO_API_KEY not set – Fish Audio TTS will return 503 (browser fallback will be used)');
+} else {
+  console.log('✅ Fish Audio API Key loaded');
+}
+
+app.post('/api/fish-tts',
+  security.rateLimiter({ maxRequests: 30, windowMs: 60000, keyPrefix: 'fish-tts' }),
+  async (req, res) => {
+    const { text, speed = 1.0 } = req.body || {};
+
+    if (!text || typeof text !== 'string' || text.trim().length === 0) {
+      return res.status(400).json({ ok: false, error: 'Text required' });
+    }
+    if (text.length > 500) {
+      return res.status(400).json({ ok: false, error: 'Text too long (max 500 chars)' });
+    }
+
+    if (!FISH_AUDIO_API_KEY) {
+      return res.status(503).json({ ok: false, error: 'TTS not configured' });
+    }
+
+    const safeSpeed = Math.min(Math.max(Number(speed) || 1.0, 0.5), 2.0);
+
+    try {
+      const response = await fetch('https://api.fish.audio/v1/tts', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${FISH_AUDIO_API_KEY}`,
+          'Content-Type': 'application/json',
+          'model': 's2-pro',
+        },
+        body: JSON.stringify({
+          text: text.trim(),
+          format: 'mp3',
+          mp3_bitrate: 128,
+          prosody: { speed: safeSpeed },
+          latency: 'balanced',
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => '');
+        console.error('❌ Fish Audio TTS error:', response.status, errText);
+        return res.status(502).json({ ok: false, error: 'TTS generation failed' });
+      }
+
+      res.set('Content-Type', 'audio/mpeg');
+      res.set('Cache-Control', 'public, max-age=86400'); // cache 24h on CDN/browser
+      response.body.pipe(res);
+    } catch (err) {
+      console.error('❌ Fish Audio TTS service error:', err);
+      res.status(500).json({ ok: false, error: 'TTS service error' });
+    }
+  }
+);
+
 // Blog Generate Endpoint - admin only
 app.post('/api/blog/generate',
   requireAdminAuth,

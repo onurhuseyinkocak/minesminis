@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Volume2, Mic, Sparkles } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { speak } from '../../services/ttsService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import './PronunciationGame.css';
 
@@ -45,12 +46,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   const isSupported = SRConstructor !== null;
 
   const speakWord = useCallback((text: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.8;
-    window.speechSynthesis.speak(utterance);
+    speak(text, 0.85).catch(() => {/* fallback handled inside speak() */});
   }, []);
 
   const goToNext = useCallback(() => {
