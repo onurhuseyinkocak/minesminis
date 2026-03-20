@@ -87,6 +87,11 @@ const forestNodes: StoryNode[] = [
     text: 'Seven enormous trees stand in a perfect circle. Their roots form natural seats, and in the center, a tiny fountain of golden water bubbles up from the ground. {{name}} can feel magic in the air.',
     music: 'magicForest',
     sfx: ['sparkle', 'water'],
+    vocabulary: [
+      { word: 'root', turkish: 'kök', emoji: '🌿' },
+      { word: 'magic', turkish: 'büyü', emoji: '✨' },
+      { word: 'circle', turkish: 'daire', emoji: '⭕' },
+    ],
     choices: [
       { id: 'f_e2a', text: 'Drink from the golden fountain', emoji: '🥤', traitEffects: { courage: 5 }, xpReward: 10, nextTags: ['forest-magic'] },
       { id: 'f_e2b', text: 'Sit on a root and rest', emoji: '🪵', traitEffects: { wisdom: 4 }, xpReward: 8, nextTags: ['forest-encounter'] },
@@ -324,6 +329,11 @@ const oceanNodes: StoryNode[] = [
     text: 'The deeper {{name}} goes, the darker it gets. But then — lights! Creatures that glow in the dark swim past. A giant jellyfish floats by like a living lantern, its tentacles trailing soft blue light.',
     music: 'softAdventure',
     sfx: ['bubbles', 'deep'],
+    vocabulary: [
+      { word: 'deep', turkish: 'derin', emoji: '🌊' },
+      { word: 'light', turkish: 'ışık', emoji: '💡' },
+      { word: 'jellyfish', turkish: 'denizanası', emoji: '🪼' },
+    ],
     choices: [
       { id: 'o_d1a', text: 'Follow the jellyfish', emoji: '🪼', traitEffects: { curiosity: 5 }, xpReward: 10, nextTags: ['ocean-discovery'] },
       { id: 'o_d1b', text: 'Look for the Pearl Palace', emoji: '🏰', traitEffects: { courage: 4, wisdom: 2 }, xpReward: 12, nextTags: ['ocean-palace'] },
@@ -446,6 +456,7 @@ const mountainNodes: StoryNode[] = [
       { word: 'snow', turkish: 'kar', emoji: '❄️' },
       { word: 'wind', turkish: 'rüzgar', emoji: '💨' },
       { word: 'climb', turkish: 'tırmanmak', emoji: '🧗' },
+      { word: 'staircase', turkish: 'merdiven', emoji: '🪜' },
     ],
     choices: [
       { id: 'm_e1a', text: 'Climb the stone stairs', emoji: '🪜', traitEffects: { courage: 4, curiosity: 2 }, xpReward: 10, nextTags: ['mountain-peak'] },
@@ -564,6 +575,8 @@ const spaceNodes: StoryNode[] = [
       { word: 'star', turkish: 'yıldız', emoji: '⭐' },
       { word: 'moon', turkish: 'ay', emoji: '🌙' },
       { word: 'planet', turkish: 'gezegen', emoji: '🪐' },
+      { word: 'rocket', turkish: 'roket', emoji: '🚀' },
+      { word: 'astronaut', turkish: 'astronot', emoji: '👨‍🚀' },
     ],
     choices: [
       { id: 's_s1', text: 'Enter the space station', emoji: '🏠', traitEffects: { curiosity: 3 }, xpReward: 5, nextTags: ['space-station'] },
@@ -581,6 +594,11 @@ const spaceNodes: StoryNode[] = [
     text: 'Inside the station, Beep the Robot rolls over excitedly. "SCANNING... SCANNING... NEW FRIEND DETECTED! Welcome! I have snacks, games, and a telescope that can see a million light years! What would you like?"',
     music: 'cheerfulMorning',
     sfx: ['beep', 'whir'],
+    vocabulary: [
+      { word: 'galaxy', turkish: 'galaksi', emoji: '🌌' },
+      { word: 'orbit', turkish: 'yörünge', emoji: '🔄' },
+      { word: 'sun', turkish: 'güneş', emoji: '☀️' },
+    ],
     choices: [
       { id: 's_st1a', text: 'Use the mega telescope', emoji: '🔭', traitEffects: { curiosity: 5 }, xpReward: 10, nextTags: ['space-discovery'] },
       { id: 's_st1b', text: 'Play a space game with Beep', emoji: '🎮', traitEffects: { kindness: 3, courage: 2 }, xpReward: 8, nextTags: ['space-encounter'] },
@@ -599,6 +617,7 @@ const spaceNodes: StoryNode[] = [
     vocabulary: [
       { word: 'garden', turkish: 'bahçe', emoji: '🌻' },
       { word: 'fruit', turkish: 'meyve', emoji: '🍎' },
+      { word: 'galaxy', turkish: 'galaksi', emoji: '🌌' },
     ],
     choices: [
       { id: 's_e1a', text: 'Taste a glowing fruit', emoji: '🍎', traitEffects: { courage: 4, curiosity: 3 }, xpReward: 10, nextTags: ['space-discovery'], itemReward: 'fuel_crystal' },
@@ -615,6 +634,11 @@ const spaceNodes: StoryNode[] = [
     text: 'Zyx the Alien floats down from a colorful nebula! Zyx has three eyes and purple skin, and speaks with a musical voice. "Greetings, Earth friend! I collect stories from every planet. Will you share yours?"',
     music: 'softAdventure',
     sfx: ['alien', 'sparkle'],
+    vocabulary: [
+      { word: 'astronaut', turkish: 'astronot', emoji: '👨‍🚀' },
+      { word: 'orbit', turkish: 'yörünge', emoji: '🔄' },
+      { word: 'rocket', turkish: 'roket', emoji: '🚀' },
+    ],
     choices: [
       { id: 's_enc1a', text: 'Tell Zyx about your adventures', emoji: '📖', traitEffects: { wisdom: 4, kindness: 3 }, xpReward: 12, nextTags: ['space-friend'] },
       { id: 's_enc1b', text: 'Ask Zyx about other planets', emoji: '🪐', traitEffects: { curiosity: 5 }, xpReward: 10, nextTags: ['space-discovery'] },
@@ -629,6 +653,11 @@ const spaceNodes: StoryNode[] = [
     text: 'On the moon, {{name}} discovers footprints that glow in the dark! They lead to a crater filled with moon dust that sparkles like diamonds. In the center, a crystal map shows the entire galaxy.',
     music: 'softAdventure',
     sfx: ['sparkle', 'hum'],
+    vocabulary: [
+      { word: 'moon', turkish: 'ay', emoji: '🌙' },
+      { word: 'star', turkish: 'yıldız', emoji: '⭐' },
+      { word: 'sun', turkish: 'güneş', emoji: '☀️' },
+    ],
     choices: [
       { id: 's_d1a', text: 'Study the galaxy map', emoji: '🗺️', traitEffects: { wisdom: 5, curiosity: 3 }, xpReward: 15, nextTags: ['space-portal'], itemReward: 'star_map' },
       { id: 's_d1b', text: 'Follow the glowing footprints', emoji: '👣', traitEffects: { courage: 4, curiosity: 3 }, xpReward: 12, nextTags: ['space-encounter'] },

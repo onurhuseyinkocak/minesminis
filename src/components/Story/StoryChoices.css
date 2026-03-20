@@ -54,10 +54,10 @@
 
 /* Selected state */
 .story-choice--selected {
-  background: rgba(108, 92, 231, 0.4) !important;
-  border-color: rgba(108, 92, 231, 0.6) !important;
+  background: rgba(245, 158, 11, 0.4) !important;
+  border-color: rgba(245, 158, 11, 0.6) !important;
   transform: translateX(10px) scale(1.02) !important;
-  box-shadow: 0 4px 24px rgba(108, 92, 231, 0.3) !important;
+  box-shadow: 0 4px 24px rgba(245, 158, 11, 0.3) !important;
 }
 
 /* Faded (non-selected after choosing) */

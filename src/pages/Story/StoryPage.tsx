@@ -30,7 +30,7 @@ import StoryNarrator from '../../components/Story/StoryNarrator';
 import StoryChoices from '../../components/Story/StoryChoices';
 import './StoryPage.css';
 
-const StoryPage: React.FC = () => {
+const StoryPage = React.memo(() => {
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
   const { addXP } = useGamification();
@@ -40,11 +40,15 @@ const StoryPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showChoices, setShowChoices] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    const saved = localStorage.getItem('mm_story_sound');
+    return saved === null ? true : saved === 'true';
+  });
   const [showStats, setShowStats] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [choiceResult, setChoiceResult] = useState<ChoiceResult | null>(null);
   const [vocabDismissed, setVocabDismissed] = useState(false);
+  const [vocabUpdating, setVocabUpdating] = useState(false);
 
   const musicStopRef = useRef<(() => void) | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
@@ -115,11 +119,13 @@ const StoryPage: React.FC = () => {
   // ─── Toggle sound ───
   const toggleSound = useCallback(() => {
     setSoundEnabled(prev => {
+      const next = !prev;
+      localStorage.setItem('mm_story_sound', String(next));
       if (prev) {
         stopMusic();
         musicStopRef.current = null;
       }
-      return !prev;
+      return next;
     });
   }, []);
 
@@ -230,7 +236,7 @@ const StoryPage: React.FC = () => {
     <div className="story-page">
       {/* Top bar */}
       <div className="story-page__topbar">
-        <button className="story-page__back" onClick={() => navigate(-1)}>
+        <button className="story-page__back" onClick={() => navigate(-1)} aria-label="Go back">
           <ArrowLeft size={20} />
         </button>
 
@@ -244,6 +250,7 @@ const StoryPage: React.FC = () => {
             className="story-page__icon-btn"
             onClick={() => setShowStats(!showStats)}
             title="Stats"
+            aria-label="View stats"
           >
             <Star size={18} />
           </button>
@@ -251,13 +258,14 @@ const StoryPage: React.FC = () => {
             className="story-page__icon-btn"
             onClick={() => setShowInventory(!showInventory)}
             title="Inventory"
+            aria-label="View inventory"
           >
             <Package size={18} />
           </button>
-          <button className="story-page__icon-btn" onClick={toggleSound} title="Sound">
+          <button className="story-page__icon-btn" onClick={toggleSound} title="Sound" aria-label="Toggle sound">
             {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
           </button>
-          <button className="story-page__icon-btn" onClick={handleReset} title="Restart">
+          <button className="story-page__icon-btn" onClick={handleReset} title="Restart" aria-label="Restart story">
             <RotateCcw size={18} />
           </button>
         </div>
@@ -373,14 +381,18 @@ const StoryPage: React.FC = () => {
               </div>
               <button
                 className="story-page__vocab-continue"
+                disabled={vocabUpdating}
                 onClick={() => {
+                  if (vocabUpdating) return;
+                  setVocabUpdating(true);
                   const words = currentNode.vocabulary!;
                   words.forEach((v) => updateWordProgress(v.word, true));
                   toast.success(`${words.length} new word${words.length > 1 ? 's' : ''} added to your review list! \u{1F4DA}`);
                   setVocabDismissed(true);
+                  setVocabUpdating(false);
                 }}
               >
-                Got it! Continue
+                {vocabUpdating ? 'Saving...' : 'Got it! Continue'}
               </button>
             </div>
           )}
@@ -395,6 +407,8 @@ const StoryPage: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+
+StoryPage.displayName = 'StoryPage';
 
 export default StoryPage;

@@ -350,6 +350,155 @@ const StoryScene: React.FC<StorySceneProps> = ({ background, children }) => {
           </g>
         )}
 
+        {/* Tall Trees */}
+        {config.elements.includes('tall-trees') && (
+          <g className="story-scene__tall-trees">
+            <rect x="80" y="280" width="18" height="200" rx="5" fill="#5C3D1E" />
+            <ellipse cx="89" cy="250" rx="55" ry="80" fill="#1A6B2F" />
+            <rect x="300" y="250" width="22" height="230" rx="5" fill="#5C3D1E" />
+            <ellipse cx="311" cy="215" rx="65" ry="90" fill="#228B3B" />
+            <rect x="950" y="260" width="20" height="220" rx="5" fill="#5C3D1E" />
+            <ellipse cx="960" cy="228" rx="58" ry="82" fill="#1A6B2F" />
+            <rect x="1100" y="270" width="16" height="210" rx="5" fill="#5C3D1E" />
+            <ellipse cx="1108" cy="240" rx="48" ry="72" fill="#228B3B" />
+          </g>
+        )}
+
+        {/* Vines */}
+        {config.elements.includes('vines') && (
+          <g className="story-scene__vines">
+            <path d="M50,0 Q60,60 45,120 Q55,180 40,240 Q50,300 45,370" fill="none" stroke="#3DA84F" strokeWidth="3" strokeLinecap="round" />
+            <path d="M60,0 Q70,50 55,100 Q65,150 50,200" fill="none" stroke="#2D8B3F" strokeWidth="2" strokeLinecap="round" />
+            <path d="M550,0 Q565,70 548,140 Q560,210 545,280 Q558,340 542,400" fill="none" stroke="#3DA84F" strokeWidth="3" strokeLinecap="round" />
+            <path d="M560,0 Q572,55 558,110 Q568,165 554,220" fill="none" stroke="#2D8B3F" strokeWidth="2" strokeLinecap="round" />
+            <path d="M1150,0 Q1162,65 1148,130 Q1158,195 1144,260 Q1155,320 1140,390" fill="none" stroke="#3DA84F" strokeWidth="3" strokeLinecap="round" />
+            <ellipse cx="50" cy="130" rx="8" ry="5" fill="#2D8B3F" transform="rotate(-20,50,130)" />
+            <ellipse cx="548" cy="150" rx="8" ry="5" fill="#2D8B3F" transform="rotate(15,548,150)" />
+            <ellipse cx="1148" cy="140" rx="8" ry="5" fill="#2D8B3F" transform="rotate(-10,1148,140)" />
+          </g>
+        )}
+
+        {/* Ferns */}
+        {config.elements.includes('ferns') && (
+          <g className="story-scene__ferns">
+            <g transform="translate(200, 490)">
+              {[-40,-25,-10,0,10,25,40].map((angle, i) => (
+                <ellipse key={i} cx="0" cy="-18" rx="5" ry="18"
+                  fill="#2D8B3F" transform={`rotate(${angle})`} opacity="0.9" />
+              ))}
+            </g>
+            <g transform="translate(600, 495)">
+              {[-40,-25,-10,0,10,25,40].map((angle, i) => (
+                <ellipse key={i} cx="0" cy="-16" rx="5" ry="16"
+                  fill="#3DA84F" transform={`rotate(${angle})`} opacity="0.9" />
+              ))}
+            </g>
+            <g transform="translate(1000, 490)">
+              {[-40,-25,-10,0,10,25,40].map((angle, i) => (
+                <ellipse key={i} cx="0" cy="-18" rx="5" ry="18"
+                  fill="#2D8B3F" transform={`rotate(${angle})`} opacity="0.9" />
+              ))}
+            </g>
+          </g>
+        )}
+
+        {/* Big Tree */}
+        {config.elements.includes('big-tree') && (
+          <g className="story-scene__big-tree">
+            <rect x="570" y="300" width="40" height="200" rx="8" fill="#6B3E1E" />
+            <rect x="570" y="370" width="-60" height="14" rx="6" fill="#6B3E1E" />
+            <rect x="610" y="350" width="65" height="14" rx="6" fill="#6B3E1E" />
+            <ellipse cx="590" cy="240" rx="110" ry="130" fill="#1A6B2F" />
+            <ellipse cx="570" cy="210" rx="80" ry="100" fill="#228B3B" />
+            <ellipse cx="620" cy="225" rx="90" ry="110" fill="#1A6B2F" />
+          </g>
+        )}
+
+        {/* Treehouse */}
+        {config.elements.includes('treehouse') && (
+          <g className="story-scene__treehouse">
+            <rect x="530" y="230" width="100" height="70" rx="6" fill="#8B5E3C" />
+            <polygon points="520,230 590,185 660,230" fill="#A0522D" />
+            <rect x="565" y="260" width="22" height="40" rx="3" fill="#6B3E1E" />
+            <rect x="540" y="245" width="18" height="16" rx="2" fill="#87CEEB" opacity="0.7" />
+            <rect x="600" y="245" width="18" height="16" rx="2" fill="#87CEEB" opacity="0.7" />
+            <rect x="586" y="297" width="4" height="60" fill="#8B5E3C" />
+          </g>
+        )}
+
+        {/* Bridge */}
+        {config.elements.includes('bridge') && (
+          <g className="story-scene__bridge">
+            <path d="M380,310 Q430,330 490,310" fill="none" stroke="#8B5E3C" strokeWidth="6" strokeLinecap="round" />
+            <line x1="390" y1="300" x2="393" y2="315" stroke="#8B5E3C" strokeWidth="3" />
+            <line x1="408" y1="294" x2="411" y2="313" stroke="#8B5E3C" strokeWidth="3" />
+            <line x1="426" y1="291" x2="429" y2="311" stroke="#8B5E3C" strokeWidth="3" />
+            <line x1="444" y1="291" x2="447" y2="311" stroke="#8B5E3C" strokeWidth="3" />
+            <line x1="462" y1="294" x2="465" y2="313" stroke="#8B5E3C" strokeWidth="3" />
+            <line x1="480" y1="300" x2="483" y2="315" stroke="#8B5E3C" strokeWidth="3" />
+            <path d="M386,298 Q430,282 482,298" fill="none" stroke="#A0522D" strokeWidth="3" strokeDasharray="4,3" />
+          </g>
+        )}
+
+        {/* Reeds */}
+        {config.elements.includes('reeds') && (
+          <g className="story-scene__reeds">
+            {[120,140,155,170,190,400,420,440,750,770,790].map((x, i) => (
+              <g key={i}>
+                <line x1={x} y1="500" x2={x + (i % 2 === 0 ? -3 : 3)} y2="430" stroke="#5B7A3F" strokeWidth="3" strokeLinecap="round" />
+                <ellipse cx={x + (i % 2 === 0 ? -3 : 3)} cy="426" rx="4" ry="10" fill="#7A5C2E" />
+              </g>
+            ))}
+          </g>
+        )}
+
+        {/* Lily Pads */}
+        {config.elements.includes('lily-pads') && (
+          <g className="story-scene__lily-pads">
+            <ellipse cx="200" cy="490" rx="28" ry="12" fill="#2D8B3F" opacity="0.85" />
+            <path d="M200,490 L200,478" fill="none" stroke="#2D8B3F" strokeWidth="1.5" />
+            <circle cx="200" cy="476" r="4" fill="#FF6B9D" />
+            <ellipse cx="420" cy="488" rx="22" ry="9" fill="#3DA84F" opacity="0.85" />
+            <ellipse cx="650" cy="493" rx="26" ry="11" fill="#2D8B3F" opacity="0.85" />
+            <path d="M650,493 L650,482" fill="none" stroke="#2D8B3F" strokeWidth="1.5" />
+            <circle cx="650" cy="480" r="4" fill="#FFD93D" />
+            <ellipse cx="880" cy="489" rx="20" ry="8" fill="#3DA84F" opacity="0.85" />
+          </g>
+        )}
+
+        {/* Stalactites */}
+        {config.elements.includes('stalactites') && (
+          <g className="story-scene__stalactites">
+            <polygon points="80,0 100,0 90,70" fill="#5A4A6A" opacity="0.9" />
+            <polygon points="140,0 165,0 152,55" fill="#4A3A5A" opacity="0.85" />
+            <polygon points="210,0 230,0 220,80" fill="#5A4A6A" opacity="0.9" />
+            <polygon points="290,0 308,0 299,60" fill="#4A3A5A" opacity="0.8" />
+            <polygon points="380,0 398,0 389,75" fill="#5A4A6A" opacity="0.85" />
+            <polygon points="600,0 622,0 611,65" fill="#4A3A5A" opacity="0.9" />
+            <polygon points="680,0 698,0 689,80" fill="#5A4A6A" opacity="0.85" />
+            <polygon points="800,0 820,0 810,70" fill="#4A3A5A" opacity="0.9" />
+            <polygon points="920,0 942,0 931,58" fill="#5A4A6A" opacity="0.8" />
+            <polygon points="1050,0 1068,0 1059,72" fill="#4A3A5A" opacity="0.85" />
+            <polygon points="1140,0 1162,0 1151,64" fill="#5A4A6A" opacity="0.9" />
+          </g>
+        )}
+
+        {/* Crystals */}
+        {config.elements.includes('crystals') && (
+          <g className="story-scene__crystals">
+            <polygon points="160,480 170,440 180,480" fill="#A78BFA" opacity="0.85" />
+            <polygon points="162,480 178,480 170,500" fill="#7C5CCC" opacity="0.7" />
+            <polygon points="280,470 293,425 306,470" fill="#60EFFF" opacity="0.8" />
+            <polygon points="282,470 304,470 293,492" fill="#38B2C8" opacity="0.7" />
+            <polygon points="500,475 511,438 522,475" fill="#FF9FE0" opacity="0.8" />
+            <polygon points="502,475 520,475 511,494" fill="#CC70B2" opacity="0.7" />
+            <polygon points="750,472 763,430 776,472" fill="#A78BFA" opacity="0.85" />
+            <polygon points="752,472 774,472 763,494" fill="#7C5CCC" opacity="0.7" />
+            <polygon points="950,478 961,442 972,478" fill="#60EFFF" opacity="0.8" />
+            <polygon points="952,478 970,478 961,498" fill="#38B2C8" opacity="0.7" />
+          </g>
+        )}
+
         {/* Ground plane */}
         <rect x="0" y="500" width="1200" height="100" fill={config.ground} opacity="0.9" />
       </svg>

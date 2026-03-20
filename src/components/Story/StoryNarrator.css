@@ -3,7 +3,7 @@
    ============================================ */
 
 .story-narrator {
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius-lg);
@@ -16,7 +16,7 @@
 }
 
 .story-narrator:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.78);
 }
 
 /* Location badge */
