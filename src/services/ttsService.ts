@@ -1,6 +1,7 @@
 /**
- * TTS Service — Fish Audio proxy with browser SpeechSynthesis fallback.
- * Audio blobs are cached in memory (text:speed → objectURL) to avoid re-fetching.
+ * TTS Service — ElevenLabs proxy (via /api/tts-v2) with browser SpeechSynthesis fallback.
+ * Server handles Supabase caching so the same text is never generated twice.
+ * Client-side memory cache (text → objectURL) avoids repeat network round-trips per session.
  */
 
 // ─── Cache ───────────────────────────────────────────────────────────────────
@@ -32,8 +33,9 @@ function speakFallback(text: string): void {
 // ─── Core speak function ──────────────────────────────────────────────────────
 
 /**
- * Speak text via Fish Audio TTS (proxied through server).
- * Falls back to browser SpeechSynthesis if Fish Audio is unavailable.
+ * Speak text via ElevenLabs TTS (proxied through /api/tts-v2).
+ * Server checks Supabase cache first; only calls ElevenLabs on cache miss.
+ * Falls back to browser SpeechSynthesis if the server is unavailable.
  */
 export async function speak(text: string, speed = 1.0): Promise<void> {
   const trimmed = text.trim();
@@ -52,10 +54,10 @@ export async function speak(text: string, speed = 1.0): Promise<void> {
         headers['X-CSRF-Token'] = csrfToken;
       }
 
-      const res = await fetch('/api/fish-tts', {
+      const res = await fetch('/api/tts-v2', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ text: trimmed, speed }),
+        body: JSON.stringify({ text: trimmed }),
       });
 
       if (!res.ok) {

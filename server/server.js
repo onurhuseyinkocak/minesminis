@@ -331,65 +331,127 @@ app.post('/api/tts',
 // (duplicate health check removed — see /api/health above)
 
 // ============================================================
-// FISH AUDIO TTS PROXY (word pronunciation, 30 req/min/IP)
+// ELEVENLABS TTS PROXY with Supabase Cache (word pronunciation)
+// Cache-first: checks tts_cache table, falls back to ElevenLabs API
+// After generation, saves audio to Supabase Storage + DB cache
 // ============================================================
 
-// Validate Fish Audio API key at startup
-const FISH_AUDIO_API_KEY = process.env.FISH_AUDIO_API_KEY;
-if (!FISH_AUDIO_API_KEY) {
-  console.warn('⚠️ FISH_AUDIO_API_KEY not set – Fish Audio TTS will return 503 (browser fallback will be used)');
+// Validate ElevenLabs API key at startup
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+if (!ELEVENLABS_API_KEY) {
+  console.warn('⚠️ ELEVENLABS_API_KEY not set – ElevenLabs TTS will return 503 (browser fallback will be used)');
 } else {
-  console.log('✅ Fish Audio API Key loaded');
+  console.log('✅ ElevenLabs API Key loaded');
 }
 
-app.post('/api/fish-tts',
-  security.rateLimiter({ maxRequests: 30, windowMs: 60000, keyPrefix: 'fish-tts' }),
-  async (req, res) => {
-    const { text, speed = 1.0 } = req.body || {};
+const rateLimiter = security.rateLimiter({ maxRequests: 30, windowMs: 60000, keyPrefix: 'tts-v2' });
 
-    if (!text || typeof text !== 'string' || text.trim().length === 0) {
-      return res.status(400).json({ ok: false, error: 'Text required' });
-    }
-    if (text.length > 500) {
-      return res.status(400).json({ ok: false, error: 'Text too long (max 500 chars)' });
-    }
+app.post('/api/tts-v2', rateLimiter, async (req, res) => {
+  const { text } = req.body;
+  if (!text || text.length > 500) {
+    return res.status(400).json({ ok: false, error: 'Text required (max 500 chars)' });
+  }
 
-    if (!FISH_AUDIO_API_KEY) {
-      return res.status(503).json({ ok: false, error: 'TTS not configured' });
-    }
+  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const voiceId = process.env.ELEVENLABS_VOICE_ID || 'JBFqnCBsd6RMkjVDRZzb';
+  if (!apiKey) return res.status(503).json({ ok: false, error: 'TTS not configured' });
 
-    const safeSpeed = Math.min(Math.max(Number(speed) || 1.0, 0.5), 2.0);
+  // 1. Check Supabase cache first
+  const textHash = crypto.createHash('md5').update(text.toLowerCase().trim()).digest('hex');
+  const sb = await getAdminSupabase();
 
+  if (sb) {
     try {
-      const response = await fetch('https://api.fish.audio/v1/tts', {
+      const { data } = await sb
+        .from('tts_cache')
+        .select('audio_url')
+        .eq('text_hash', textHash)
+        .maybeSingle();
+
+      if (data?.audio_url) {
+        // Serve from cache — redirect to stored audio
+        console.log('🎵 TTS cache hit:', text.substring(0, 30));
+        return res.redirect(302, data.audio_url);
+      }
+    } catch { /* cache miss, generate */ }
+  }
+
+  // 2. Generate with ElevenLabs
+  try {
+    console.log('🔊 ElevenLabs TTS generating:', text.substring(0, 50));
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+      {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${FISH_AUDIO_API_KEY}`,
           'Content-Type': 'application/json',
-          'model': 's2-pro',
+          'xi-api-key': apiKey
         },
         body: JSON.stringify({
           text: text.trim(),
-          format: 'mp3',
-          mp3_bitrate: 128,
-          prosody: { speed: safeSpeed },
-          latency: 'balanced',
-        }),
-      });
-
-      if (!response.ok) {
-        const errText = await response.text().catch(() => '');
-        console.error('❌ Fish Audio TTS error:', response.status, errText);
-        return res.status(502).json({ ok: false, error: 'TTS generation failed' });
+          model_id: 'eleven_multilingual_v2'
+        })
       }
+    );
 
-      res.set('Content-Type', 'audio/mpeg');
-      res.set('Cache-Control', 'public, max-age=86400'); // cache 24h on CDN/browser
-      response.body.pipe(res);
-    } catch (err) {
-      console.error('❌ Fish Audio TTS service error:', err);
-      res.status(500).json({ ok: false, error: 'TTS service error' });
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      console.error('❌ ElevenLabs TTS error:', response.status, errText);
+      return res.status(502).json({ ok: false, error: 'TTS generation failed' });
     }
+
+    const audioBuffer = Buffer.from(await response.arrayBuffer());
+
+    // 3. Save to Supabase Storage (if available)
+    if (sb) {
+      try {
+        const fileName = `tts/${textHash}.mp3`;
+        const { data: uploadData } = await sb.storage
+          .from('audio')
+          .upload(fileName, audioBuffer, {
+            contentType: 'audio/mpeg',
+            upsert: true
+          });
+
+        if (uploadData) {
+          const { data: urlData } = sb.storage
+            .from('audio')
+            .getPublicUrl(fileName);
+
+          // Save reference to DB
+          await sb.from('tts_cache').upsert({
+            text_hash: textHash,
+            text: text.trim().substring(0, 200),
+            audio_url: urlData.publicUrl,
+            created_at: new Date().toISOString()
+          }, { onConflict: 'text_hash' });
+
+          console.log('✅ TTS cached in Supabase:', textHash);
+        }
+      } catch (cacheErr) {
+        console.warn('⚠️ TTS cache save failed (still serving audio):', cacheErr.message);
+      }
+    }
+
+    // 4. Serve audio directly
+    res.set({
+      'Content-Type': 'audio/mpeg',
+      'Cache-Control': 'public, max-age=31536000', // 1 year (content-addressed)
+    });
+    res.send(audioBuffer);
+  } catch (err) {
+    console.error('❌ ElevenLabs TTS service error:', err);
+    res.status(500).json({ ok: false, error: 'TTS service error' });
+  }
+});
+
+// Legacy /api/fish-tts — kept for backward compatibility, proxies to /api/tts-v2
+app.post('/api/fish-tts',
+  security.rateLimiter({ maxRequests: 30, windowMs: 60000, keyPrefix: 'fish-tts' }),
+  (req, res) => {
+    // Forward to the new ElevenLabs-backed endpoint internally
+    req.url = '/api/tts-v2';
+    app._router.handle(req, res, () => {});
   }
 );
 
