@@ -619,13 +619,10 @@ const ActivityBreakdownChart: React.FC<{
 
   // Build conic-gradient segments
   const segments: { type: string; percent: number; color: string }[] = [];
-  let cumulative = 0;
-
   for (const [type, seconds] of Object.entries(breakdown)) {
     if (seconds <= 0) continue;
     const pct = (seconds / totalSeconds) * 100;
     segments.push({ type, percent: pct, color: ACTIVITY_TYPE_COLORS[type] || 'var(--cloud)' });
-    cumulative += pct;
   }
 
   // Build gradient string

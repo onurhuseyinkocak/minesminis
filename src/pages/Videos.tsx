@@ -12,6 +12,7 @@ import {
   type PhonicsVideo,
 } from '../data/phonicsVideos';
 import { useGamification } from '../contexts/GamificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 type Video = {
   id: string;
@@ -64,6 +65,7 @@ function Videos() {
   const [watchedIds, setWatchedIds] = useState<string[]>([]);
   const [expandedGroup, setExpandedGroup] = useState<number | null>(1);
   const { addXP } = useGamification();
+  const { t } = useLanguage();
 
   useEffect(() => {
     videoStore.fetchVideos().then((list) => {
@@ -76,7 +78,13 @@ function Videos() {
     return () => unsubscribe?.();
   }, []);
 
-  const grades = ['All', '2nd Grade', '3rd Grade', '4th Grade'];
+  const grades = ['All', '2nd Grade', '3rd Grade', '4th Grade'] as const;
+  const gradeLabels: Record<string, string> = {
+    'All': t('videos.all'),
+    '2nd Grade': t('videos.grade2'),
+    '3rd Grade': t('videos.grade3'),
+    '4th Grade': t('videos.grade4'),
+  };
 
   const filteredVideos = videos.filter(video => {
     const matchesGrade = selectedGrade === 'All' || video.grade === selectedGrade;
@@ -107,8 +115,8 @@ function Videos() {
     <div className="videos-page">
       <ContentPageHeader
         icon={Play}
-        title="Cinema Club"
-        description="Binge-watch and learn with our curated English videos!"
+        title={t('videos.title')}
+        description={t('videos.description')}
         iconColor="var(--error)"
         filterSlot={
           <div className="modern-tabs">
@@ -118,7 +126,7 @@ function Videos() {
                 onClick={() => setSelectedGrade(grade)}
                 className={`modern-tab ${selectedGrade === grade ? 'active' : ''}`}
               >
-                {grade}
+                {gradeLabels[grade]}
               </button>
             ))}
           </div>
@@ -127,7 +135,7 @@ function Videos() {
         <div className="library-search-wrapper">
           <input
             type="text"
-            placeholder="Search videos..."
+            placeholder={t('videos.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="library-search-input"
@@ -148,9 +156,9 @@ function Videos() {
         <div className="section-header">
           <div className="section-title">
             <Music size={24} color="var(--accent-orange)" />
-            <h2>Phonics Videos</h2>
+            <h2>{t('videos.phonicsTitle')}</h2>
           </div>
-          <p className="section-subtitle">Watch videos for each sound group</p>
+          <p className="section-subtitle">{t('videos.phonicsSubtitle')}</p>
         </div>
 
         <div className="phonics-groups-list">
@@ -180,9 +188,9 @@ function Videos() {
                       <h3>Group {groupNum}: {PHONICS_GROUP_LABELS[groupNum]}</h3>
                       <span className="phonics-group-watched">
                         {allWatched ? (
-                          <><Check size={14} /> All watched</>
+                          <><Check size={14} /> {t('videos.allWatched')}</>
                         ) : (
-                          <>{watchedCount}/{groupVideos.length} watched</>
+                          <>{watchedCount}/{groupVideos.length} {t('videos.watched')}</>
                         )}
                       </span>
                     </div>
@@ -246,7 +254,7 @@ function Videos() {
                                 </div>
                                 <h4 className="phonics-video-title">{video.title}</h4>
                                 {watched && (
-                                  <span className="phonics-xp-earned">+10 XP earned</span>
+                                  <span className="phonics-xp-earned">{t('videos.xpEarned')}</span>
                                 )}
                               </div>
                             </motion.div>
@@ -275,9 +283,9 @@ function Videos() {
           <div className="section-header">
             <div className="section-title">
               <Star size={24} className="star-icon" color="var(--primary-light)" fill="var(--primary-light)" />
-              <h2>Most Popular</h2>
+              <h2>{t('videos.mostPopular')}</h2>
             </div>
-            <p className="section-subtitle">Kids love these videos!</p>
+            <p className="section-subtitle">{t('videos.kidsLoveThese')}</p>
           </div>
 
           <div className="popular-scroll">
@@ -297,7 +305,7 @@ function Videos() {
                     <Play size={40} fill="white" />
                   </div>
                   <span className="popular-badge">
-                    <Star size={12} fill="currentColor" /> Popular
+                    <Star size={12} fill="currentColor" /> {t('videos.popular')}
                   </span>
                   <span className="duration-badge">
                     <Clock size={12} /> {video.duration}
@@ -322,10 +330,10 @@ function Videos() {
           <div className="section-title">
             <Users size={24} color="var(--accent-orange)" />
             <h2>
-              {selectedGrade === 'All' ? 'More Videos' : `${selectedGrade} Videos`}
+              {selectedGrade === 'All' ? t('videos.moreVideos') : `${gradeLabels[selectedGrade]}`}
             </h2>
           </div>
-          <p className="video-count">{filteredVideos.length} videos available</p>
+          <p className="video-count">{filteredVideos.length} {t('videos.videosAvailable')}</p>
         </div>
 
         <AnimatePresence mode="wait">

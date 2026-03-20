@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Volume2, Mic, Sparkles } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './PronunciationGame.css';
 
 interface WordItem {
@@ -26,6 +27,7 @@ function getSpeechRecognitionConstructor(): (new () => SpeechRecognition) | null
 }
 
 export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  const { t } = useLanguage();
   const roundWords = words.slice(0, WORDS_PER_ROUND);
   const total = roundWords.length;
 
@@ -145,8 +147,8 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
     return (
       <div className="pronunciation-game">
         <div className="pronunciation-game__unsupported">
-          <h2>Speech Recognition Unavailable</h2>
-          <p>Your browser doesn't support speech recognition. Try Chrome!</p>
+          <h2>{t('games.speechUnavailable')}</h2>
+          <p>{t('games.speechUnavailableMsg')}</p>
         </div>
       </div>
     );
@@ -167,10 +169,10 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
               {score >= total * 0.8 ? '\uD83C\uDF89' : score >= total * 0.5 ? '\uD83D\uDCAA' : '\uD83D\uDE0A'}
             </span>
             <h2 className="pronunciation-game__results-title">
-              {score >= total * 0.8 ? 'Amazing Pronunciation!' : score >= total * 0.5 ? 'Good Effort!' : 'Keep Practicing!'}
+              {score >= total * 0.8 ? t('games.amazingPronunciation') : score >= total * 0.5 ? t('games.goodEffort') : t('games.keepPracticing')}
             </h2>
             <p className="pronunciation-game__results-score">
-              You pronounced {score} out of {total} words correctly!
+              {t('games.youPronounced').replace('{score}', String(score)).replace('{total}', String(total))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
@@ -193,14 +195,14 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   return (
     <div className="pronunciation-game" role="application" aria-label="Pronunciation practice game">
       <div className="pronunciation-game__header">
-        <h2 className="pronunciation-game__title">Say the Word!</h2>
-        <Badge variant="info">Word {currentIndex + 1}/{total}</Badge>
+        <h2 className="pronunciation-game__title">{t('games.sayTheWord')}</h2>
+        <Badge variant="info">{t('games.word')} {currentIndex + 1}/{total}</Badge>
       </div>
 
       <ProgressBar value={progress} variant="success" size="md" animated />
 
       <p className="pronunciation-game__counter">
-        Score: {score}/{total}
+        {t('games.score')}: {score}/{total}
       </p>
 
       <motion.div
@@ -220,7 +222,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
             disabled={isListening}
             aria-label="Listen to pronunciation"
           >
-            <Volume2 size={20} /> Listen
+            <Volume2 size={20} /> {t('games.listen')}
           </button>
 
           {feedback !== 'correct' && (
@@ -229,7 +231,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
               onClick={isListening ? stopListening : startListening}
               aria-label={isListening ? 'Stop listening' : 'Start speaking'}
             >
-              <Mic size={20} /> {isListening ? 'Listening...' : 'Speak'}
+              <Mic size={20} /> {isListening ? t('games.listening') : t('games.speak')}
             </button>
           )}
         </div>
@@ -240,7 +242,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Perfect! Well done!
+            {t('games.perfectWellDone')}
           </motion.div>
         )}
 
@@ -250,10 +252,10 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div>Not quite right. Try again!</div>
+            <div>{t('games.notQuiteRight')}</div>
             {heardText && (
               <div className="pronunciation-game__heard">
-                You said: "<strong>{heardText}</strong>" — Expected: "<strong>{currentWord.english}</strong>"
+                {t('games.youSaid')} "<strong>{heardText}</strong>" — {t('games.expected')} "<strong>{currentWord.english}</strong>"
               </div>
             )}
             <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
@@ -261,14 +263,14 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
                 className="pronunciation-game__btn pronunciation-game__btn--try-again"
                 onClick={startListening}
               >
-                <Mic size={18} /> Try Again
+                <Mic size={18} /> {t('games.tryAgain')}
               </button>
               <button
                 className="pronunciation-game__btn pronunciation-game__btn--listen"
                 onClick={goToNext}
                 style={{ background: 'var(--text-secondary, #64748b)' }}
               >
-                Skip
+                {t('games.skip')}
               </button>
             </div>
           </motion.div>

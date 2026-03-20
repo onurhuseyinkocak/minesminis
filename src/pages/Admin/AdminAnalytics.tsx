@@ -163,7 +163,7 @@ function AdminAnalytics() {
                         <span style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)' }}>Last 12 months</span>
                     </div>
                     <div className="adm-analytics-chart-body">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <AreaChart data={monthlyData} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="usersGrad" x1="0" y1="0" x2="0" y2="1">
@@ -191,7 +191,7 @@ function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="adm-analytics-chart-body">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={activeUsersData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
@@ -212,7 +212,7 @@ function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="adm-analytics-chart-body">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={completionData} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" horizontal={false} />
                                 <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
@@ -235,7 +235,7 @@ function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="adm-analytics-chart-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <PieChart>
                                 <Pie
                                     data={masteryData}
@@ -264,7 +264,7 @@ function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="adm-analytics-chart-body">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={streakData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="streak" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'var(--stone)' }} />

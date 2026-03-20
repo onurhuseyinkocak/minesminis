@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Timer, Zap, Trophy, Sparkles } from 'lucide-react';
 import { Card, Badge, ProgressBar, StreakFlame } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './QuickQuiz.css';
 
 interface WordItem {
@@ -64,6 +65,7 @@ function generateQuestions(words: WordItem[]): Question[] {
 const TIMER_DURATION = 10;
 
 export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  const { t } = useLanguage();
   const questions = useMemo(() => generateQuestions(words), [words]);
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
@@ -84,7 +86,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     }
   }, []);
 
-  const advanceQuestion = useCallback(() => {
+  const advanceQuestion = useCallback((latestScore?: number) => {
     if (currentQ + 1 < questions.length) {
       setCurrentQ((prev) => prev + 1);
       setSelected(null);
@@ -92,7 +94,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setTimeLeft(TIMER_DURATION);
     } else {
       setCompleted(true);
-      onComplete(score, questions.length);
+      onComplete(latestScore ?? score, questions.length);
     }
   }, [currentQ, questions.length, score, onComplete]);
 
@@ -122,7 +124,8 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
     if (index === question.correctIndex) {
       const streakBonus = streak >= 2 ? 5 : 0;
-      setScore((prev) => prev + 1);
+      const newScore = score + 1;
+      setScore(newScore);
       setStreak((prev) => {
         const newStreak = prev + 1;
         if (newStreak > bestStreak) setBestStreak(newStreak);
@@ -132,14 +135,14 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setFeedback('correct');
       SFX.correct();
       onXpEarned?.(10 + streakBonus);
+      setTimeout(() => advanceQuestion(newScore), 1500);
     } else {
       setStreak(0);
       setFeedback('wrong');
       SFX.wrong();
       onWrongAnswer?.();
+      setTimeout(() => advanceQuestion(score), 1500);
     }
-
-    setTimeout(advanceQuestion, 1500);
   };
 
   const progress = (currentQ / questions.length) * 100;
@@ -155,13 +158,13 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             className="quick-quiz__results-content"
           >
             <Trophy size={48} className="quick-quiz__trophy" />
-            <h2 className="quick-quiz__results-title">Quiz Complete!</h2>
+            <h2 className="quick-quiz__results-title">{t('games.quizComplete')}</h2>
             <p className="quick-quiz__results-score">
-              {score} / {questions.length} correct
+              {score} / {questions.length} {t('games.xCorrect')}
             </p>
             {bestStreak >= 2 && (
               <Badge variant="warning" icon={<Zap size={14} />}>
-                Best Streak: {bestStreak}x
+                {t('games.bestStreak')} {bestStreak}x
               </Badge>
             )}
             <Badge variant="success" icon={<Sparkles size={14} />}>
@@ -178,11 +181,11 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   return (
     <div className="quick-quiz" role="application" aria-label="Quick quiz game">
       <div className="quick-quiz__header">
-        <h2 className="quick-quiz__title">Quick Quiz!</h2>
+        <h2 className="quick-quiz__title">{t('games.quickQuiz')}</h2>
         <div className="quick-quiz__meta">
           {streak >= 2 && (
             <Badge variant="warning" icon={<Zap size={14} />}>
-              {streak}x Streak!
+              {streak}x {t('games.streak')}
             </Badge>
           )}
           {streak >= 3 && <StreakFlame days={streak} />}
@@ -220,8 +223,8 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           </span>
           <p className="quick-quiz__prompt-text">
             {question.mode === 'en-to-tr'
-              ? `What is "${question.word.english}" in Turkish?`
-              : `What is this in English?`}
+              ? t('games.whatIsInTurkish').replace('{word}', question.word.english)
+              : t('games.whatIsInEnglish')}
           </p>
         </motion.div>
       </Card>
@@ -266,7 +269,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          Correct! 🌟 {streak >= 2 && `${streak}x streak!`}
+          {t('games.correct')} 🌟 {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
         </motion.div>
       )}
 
@@ -276,7 +279,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          The answer was: {question.options[question.correctIndex]} 💡
+          {t('games.theAnswerWas')} {question.options[question.correctIndex]} 💡
         </motion.div>
       )}
 
@@ -286,7 +289,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          Time's up! The answer was: {question.options[question.correctIndex]} ⏰
+          {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]} ⏰
         </motion.div>
       )}
     </div>

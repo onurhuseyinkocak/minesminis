@@ -1,5 +1,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../config/supabase';
 import { fallbackGames } from '../data/fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
@@ -7,7 +8,7 @@ import { kidsWords } from '../data/wordsData';
 import { getCurrentPhonicsSound } from '../services/learningPathService';
 import { PHONICS_GROUPS } from '../data/phonics';
 import toast from 'react-hot-toast';
-import { X, Play, Dice5, Type, Puzzle, Headphones, PenTool, BookOpen } from 'lucide-react';
+import { X, Play, Dice5, Type, Puzzle, Headphones, PenTool, BookOpen, Link, Zap, Bug, Mic, Blocks, Scissors, Gamepad2, Star, Sparkles } from 'lucide-react';
 import { GameSelector } from '../components/games/index';
 import MimiGuide from '../components/MimiGuide';
 import './Games.css';
@@ -36,21 +37,21 @@ interface InternalGame {
 }
 
 const CATEGORIES: { id: GameCategory; icon: React.ReactNode; emoji?: string; label: string; color: string }[] = [
-  { id: 'all', icon: <Dice5 size={20} />, label: 'All', color: 'var(--accent-indigo)' },
+  { id: 'all', icon: <Dice5 size={20} />, label: 'All', color: 'var(--primary)' },
   { id: 'letters', icon: <Type size={20} />, label: 'Letters', color: 'var(--accent-teal)' },
-  { id: 'puzzles', icon: <Puzzle size={20} />, label: 'Puzzles', color: 'var(--accent-purple-light, #a78bfa)' },
+  { id: 'puzzles', icon: <Puzzle size={20} />, label: 'Puzzles', color: 'var(--secondary-light, #2A9D8F)' },
   { id: 'listening', icon: <Headphones size={20} />, label: 'Listening', color: 'var(--accent-amber)' },
   { id: 'spelling', icon: <PenTool size={20} />, label: 'Spelling', color: 'var(--accent-rose, #f43f5e)' },
   { id: 'reading', icon: <BookOpen size={20} />, label: 'Reading', color: 'var(--success)' },
 ];
 
 const INTERNAL_GAMES: InternalGame[] = [
-  { id: 'word-match', type: 'word-match', emoji: '\uD83D\uDD17', title: 'Word Match', subtitle: 'Match words to pictures!', color: 'var(--accent-teal)', difficulty: 1 },
-  { id: 'quick-quiz', type: 'quick-quiz', emoji: '\u26A1', title: 'Quick Quiz', subtitle: 'How fast can you answer?', color: 'var(--accent-amber)', difficulty: 2 },
-  { id: 'spelling-bee', type: 'spelling-bee', emoji: '\uD83D\uDC1D', title: 'Spelling Bee', subtitle: 'Spell the word!', color: 'var(--accent-rose, #f43f5e)', difficulty: 2 },
-  { id: 'pronunciation', type: 'pronunciation', emoji: '\uD83C\uDFA4', title: 'Say It!', subtitle: 'Practice speaking!', color: 'var(--accent-indigo)', difficulty: 1 },
-  { id: 'blending', type: 'blending', emoji: '\uD83E\uDDF1', title: 'Word Builder', subtitle: 'Build words from sounds!', color: 'var(--success)', difficulty: 2 },
-  { id: 'segmenting', type: 'segmenting', emoji: '\u2702\uFE0F', title: 'Sound Splitter', subtitle: 'Break words into sounds!', color: 'var(--accent-purple-light, #a78bfa)', difficulty: 3 },
+  { id: 'word-match', type: 'word-match', icon: <Link size={28} />, title: 'Word Match', subtitle: 'Match words to pictures!', color: 'var(--accent-teal)', difficulty: 1 },
+  { id: 'quick-quiz', type: 'quick-quiz', icon: <Zap size={28} />, title: 'Quick Quiz', subtitle: 'How fast can you answer?', color: 'var(--accent-amber)', difficulty: 2 },
+  { id: 'spelling-bee', type: 'spelling-bee', icon: <Bug size={28} />, title: 'Spelling Bee', subtitle: 'Spell the word!', color: 'var(--accent-rose, #f43f5e)', difficulty: 2 },
+  { id: 'pronunciation', type: 'pronunciation', icon: <Mic size={28} />, title: 'Say It!', subtitle: 'Practice speaking!', color: 'var(--accent-indigo)', difficulty: 1 },
+  { id: 'blending', type: 'blending', icon: <Blocks size={28} />, title: 'Word Builder', subtitle: 'Build words from sounds!', color: 'var(--success)', difficulty: 2 },
+  { id: 'segmenting', type: 'segmenting', icon: <Scissors size={28} />, title: 'Sound Splitter', subtitle: 'Break words into sounds!', color: 'var(--secondary-light, #2A9D8F)', difficulty: 3 },
 ];
 
 function getGameWords() {
@@ -59,12 +60,16 @@ function getGameWords() {
     // Get blendable words from current phonics group
     const group = PHONICS_GROUPS.find(g => g.group === currentSound.group);
     if (group && group.blendableWords.length >= 4) {
-      // Map blendable words to game format
-      return group.blendableWords.slice(0, 8).map(w => ({
-        english: w,
-        turkish: '',
-        emoji: '',
-      }));
+      // Map blendable words to game format, looking up emoji/turkish from kidsWords
+      const mapped = group.blendableWords.slice(0, 8).map(w => {
+        const found = kidsWords.find(kw => kw.word === w);
+        return {
+          english: w,
+          turkish: found?.turkish || w,
+          emoji: found?.emoji || '',
+        };
+      });
+      return mapped;
     }
   }
   // Fallback to random if no phonics context
@@ -83,10 +88,10 @@ function Games() {
   const [playingInternal, setPlayingInternal] = useState<InternalGame | null>(null);
   const [gameWords, setGameWords] = useState(() => getGameWords());
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchGames();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchGames = async () => {
@@ -101,12 +106,11 @@ function Games() {
       const result = (data && data.length > 0) ? (data as Game[]) : fallbackGames as Game[];
       setGames(result);
       setCachedData('games', result, 6 * 60 * 60 * 1000);
-    } catch (error) {
-      console.error('Error fetching games:', error);
+    } catch {
       if (cached && cached.length > 0) {
         setGames(cached);
       } else {
-        toast.error('Oyunlar yuklenirken sorun olustu.');
+        toast.error('Oyunlar yüklenirken sorun oluştu.');
         setGames(fallbackGames as Game[]);
       }
     }
@@ -146,14 +150,14 @@ function Games() {
         <div className="internal-game-fullscreen">
           <div className="internal-game-topbar">
             <button className="back-btn-big" onClick={() => setPlayingInternal(null)}>
-              <X size={24} /> Back
+              <X size={24} /> {t('common.back')}
             </button>
             <span className="game-topbar-title">
-              {playingInternal.emoji} {playingInternal.title}
+              {playingInternal.icon} {playingInternal.title}
             </span>
           </div>
           <div className="internal-game-container">
-            <Suspense fallback={<div className="game-loading">Loading game...</div>}>
+            <Suspense fallback={<div className="game-loading">{t('games.loadingGame')}</div>}>
               <GameSelector
                 type={playingInternal.type}
                 words={gameWords}
@@ -170,8 +174,8 @@ function Games() {
     <div className="games-page">
       {/* Big fun header */}
       <div className="games-hero">
-        <span className="games-hero-emoji">{'\uD83C\uDFAE'}</span>
-        <h1 className="games-hero-title">Let's Play!</h1>
+        <span className="games-hero-emoji"><Gamepad2 size={48} /></span>
+        <h1 className="games-hero-title">{t('games.letsPlay')}</h1>
       </div>
 
       {/* Category circles */}
@@ -183,7 +187,7 @@ function Games() {
             onClick={() => setActiveCategory(cat.id)}
             style={{ '--cat-color': cat.color } as React.CSSProperties}
           >
-            <span className="category-circle-emoji">{cat.emoji}</span>
+            <span className="category-circle-emoji">{cat.icon}</span>
             <span className="category-circle-label">{cat.label}</span>
           </button>
         ))}
@@ -191,7 +195,7 @@ function Games() {
 
       <div className="games-content">
         {/* Featured Internal Games */}
-        <h2 className="games-section-title">{'\u2B50'} Our Games</h2>
+        <h2 className="games-section-title"><Star size={20} /> {t('games.ourGames')}</h2>
         <div className="featured-games-grid">
           {filteredInternal.map(game => (
             <button
@@ -200,12 +204,12 @@ function Games() {
               onClick={() => handlePlayInternal(game)}
               style={{ '--card-color': game.color } as React.CSSProperties}
             >
-              <span className="featured-emoji">{game.emoji}</span>
+              <span className="featured-emoji">{game.icon}</span>
               <h3 className="featured-title">{game.title}</h3>
               <p className="featured-subtitle">{game.subtitle}</p>
               <div className="difficulty-stars">
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} className={`star ${i < game.difficulty ? 'filled' : ''}`}>{'\u2B50'}</span>
+                  <span key={i} className={`star ${i < game.difficulty ? 'filled' : ''}`}><Star size={14} /></span>
                 ))}
               </div>
               <div className="play-now-btn">
@@ -218,7 +222,7 @@ function Games() {
         {/* External Wordwall games */}
         {games.length > 0 && (
           <>
-            <h2 className="games-section-title">{'\uD83C\uDF1F'} More Games</h2>
+            <h2 className="games-section-title"><Sparkles size={20} /> {t('games.moreGames')}</h2>
             <div className="external-games-grid">
               {games.map((game) => (
                 <div
@@ -231,7 +235,7 @@ function Games() {
                       src={game.thumbnail_url}
                       alt={game.title}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%236366f1" width="400" height="300"/><text x="200" y="150" text-anchor="middle" fill="white" font-size="48">\uD83C\uDFAE</text></svg>';
+                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%231a2332" width="400" height="300"/><text x="200" y="150" text-anchor="middle" fill="%23F59E0B" font-size="48">\uD83C\uDFAE</text></svg>';
                       }}
                     />
                     <div className="external-play-overlay">

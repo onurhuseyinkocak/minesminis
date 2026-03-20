@@ -3,9 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { useLanguage } from '../../contexts/LanguageContext';
+
+interface WordItem {
+  english: string;
+  turkish: string;
+  emoji: string;
+}
 
 interface SegmentingBoardProps {
-  words: string[];
+  words: WordItem[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
 }
@@ -44,7 +51,8 @@ function shuffleArray<T>(arr: T[]): T[] {
 }
 
 export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onComplete, onWrongAnswer }) => {
-  const gameWords = useMemo(() => words.slice(0, 5), [words]);
+  const { t } = useLanguage();
+  const gameWords = useMemo(() => words.slice(0, 5).map(w => typeof w === 'string' ? w : w.english), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sounds, setSounds] = useState<string[]>([]);
   const [options, setOptions] = useState<{ id: number; sound: string; used: boolean }[]>([]);
@@ -142,9 +150,9 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             style={{ textAlign: 'center' }}
           >
             <span style={{ fontSize: '4rem' }} role="img" aria-label="celebration">🎊</span>
-            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>Sound Smasher!</h2>
+            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>{t('games.soundSmasher')}</h2>
             <p style={{ fontSize: '1.1rem', color: '#555' }}>
-              {score} out of {gameWords.length} words segmented!
+              {t('games.wordsSegmented').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
@@ -169,7 +177,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
       aria-label="Sound segmenting game"
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>Break the Word!</h2>
+        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>{t('games.breakTheWord')}</h2>
         <Badge variant="info">{currentIndex + 1}/{gameWords.length}</Badge>
       </div>
 
@@ -202,14 +210,14 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             onClick={() => speak(currentWord, 0.8)}
             style={{ marginTop: '0.25rem' }}
           >
-            🔊 Listen
+            🔊 {t('games.listen')}
           </Button>
         </div>
       </Card>
 
       {/* Sound hint */}
       <p style={{ color: '#888', fontSize: '1rem', margin: 0, fontWeight: 600 }}>
-        This word has {sounds.length} sounds:{' '}
+        {t('games.thisWordHasSounds').replace('{count}', String(sounds.length))}{' '}
         {sounds.map((_, i) => (
           <span key={i} style={{ margin: '0 0.15rem' }}>
             {selected[i] ? (
@@ -262,7 +270,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             exit={{ opacity: 0 }}
             style={{ color: '#d32f2f', fontWeight: 600 }}
           >
-            Try another sound! 💪
+            {t('games.tryAnotherSound')} 💪
           </motion.div>
         )}
         {feedback === 'correct' && (
@@ -272,7 +280,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             exit={{ opacity: 0 }}
             style={{ color: '#1A6B5A', fontWeight: 700, fontSize: '1.1rem' }}
           >
-            You broke it! 🌟
+            {t('games.youBrokeIt')} 🌟
           </motion.div>
         )}
       </AnimatePresence>

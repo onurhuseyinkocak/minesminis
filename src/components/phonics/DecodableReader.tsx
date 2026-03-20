@@ -108,7 +108,7 @@ export const DecodableReader: React.FC<DecodableReaderProps> = ({ text, highligh
       recognition.start();
       // Auto-stop after 30 seconds (longer timeout for young readers)
       setTimeout(() => {
-        try { recognition.stop(); } catch (_e) { /* ignore */ }
+        try { recognition.stop(); } catch { /* ignore */ }
       }, 30000);
     } else {
       // Fallback: mark as done

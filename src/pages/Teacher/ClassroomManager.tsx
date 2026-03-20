@@ -52,11 +52,6 @@ const ClassroomManager: React.FC = () => {
   const { user, userProfile, isAdmin } = useAuth();
   const teacherId = user?.uid || '';
 
-  // Role check: only teachers and admins allowed
-  if (userProfile?.role !== 'teacher' && !isAdmin) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -143,6 +138,11 @@ const ClassroomManager: React.FC = () => {
       })),
     [],
   );
+
+  // Role check: only teachers and admins allowed (after all hooks)
+  if (userProfile?.role !== 'teacher' && !isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="classroom-manager">

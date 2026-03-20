@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
 import { SFX } from '../data/soundLibrary';
 import MimiGuide from '../components/MimiGuide';
@@ -153,12 +154,7 @@ const itemVariants = {
 // QUICK ACTION DATA
 // ============================================================
 
-const QUICK_ACTIONS = [
-  { to: '/games', icon: Gamepad2, label: 'Games', className: 'dash-qa--games' },
-  { to: '/words', icon: BookOpen, label: 'Words', className: 'dash-qa--words' },
-  { to: '/videos', icon: Video, label: 'Videos', className: 'dash-qa--videos' },
-  { to: '/songs', icon: Music, label: 'Songs', className: 'dash-qa--songs' },
-] as const;
+// QUICK_ACTIONS moved inside component to use t()
 
 // ============================================================
 // COMPONENT
@@ -166,12 +162,20 @@ const QUICK_ACTIONS = [
 
 export default function Dashboard() {
   const { user, userProfile, isAdmin } = useAuth();
+  const { t } = useLanguage();
   const {
     stats,
     loading,
     getXPProgress,
     allBadges,
   } = useGamification();
+
+  const QUICK_ACTIONS = [
+    { to: '/games', icon: Gamepad2, label: t('dashboard.games'), className: 'dash-qa--games' },
+    { to: '/words', icon: BookOpen, label: t('dashboard.words'), className: 'dash-qa--words' },
+    { to: '/videos', icon: Video, label: t('dashboard.videos'), className: 'dash-qa--videos' },
+    { to: '/songs', icon: Music, label: t('dashboard.songs'), className: 'dash-qa--songs' },
+  ];
 
   const displayName = userProfile?.display_name || user?.displayName || 'Adventurer';
   const userId = user?.uid || 'guest';
@@ -248,7 +252,7 @@ export default function Dashboard() {
       <div className="dash child-mode">
         <div className="dash-loading">
           <Loader2 className="dash-loading-spinner" size={40} />
-          <p className="dash-loading-text">Loading...</p>
+          <p className="dash-loading-text">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -291,7 +295,7 @@ export default function Dashboard() {
         <div className="dash-hero__content">
           <span className="dash-hero__badge">{phaseInfo.unitLabel}</span>
           <h1 className="dash-hero__title">{nextAction.title}</h1>
-          <p className="dash-hero__subtitle">Tap play to start</p>
+          <p className="dash-hero__subtitle">{t('dashboard.tapPlay')}</p>
           <div className="dash-hero__progress">
             <div className="dash-hero__progress-track">
               <div
@@ -332,7 +336,7 @@ export default function Dashboard() {
           TODAY'S PROGRESS -- visual progress rings
           ============================================================ */}
       <motion.section className="dash-today" variants={itemVariants}>
-        <span className="dash-today__label">Today</span>
+        <span className="dash-today__label">{t('dashboard.today')}</span>
         <div className="dash-today__stats">
           <ProgressRing
             value={todayMin}
@@ -349,7 +353,7 @@ export default function Dashboard() {
         </div>
         <Link to="/games" className="dash-today__challenge">
           <Target size={16} />
-          <span>Play Games</span>
+          <span>{t('dashboard.playGames')}</span>
         </Link>
       </motion.section>
 
@@ -357,7 +361,7 @@ export default function Dashboard() {
           RECENT ACHIEVEMENTS
           ============================================================ */}
       <motion.section className="dash-achievements" variants={itemVariants}>
-        <h2 className="dash-achievements__heading">Achievements</h2>
+        <h2 className="dash-achievements__heading">{t('dashboard.achievements')}</h2>
         {recentBadges.length > 0 ? (
           <div className="dash-achievements__scroll">
             {recentBadges.map((badge) =>
@@ -375,7 +379,7 @@ export default function Dashboard() {
               <Gift size={28} />
             </div>
             <p className="dash-achievements__empty-text">
-              Play lessons to unlock badges and rewards!
+              {t('dashboard.playLessonsToUnlock')}
             </p>
           </div>
         )}
@@ -389,7 +393,7 @@ export default function Dashboard() {
           <div className="dash-classroom__icon">
             <School size={20} />
           </div>
-          <span className="dash-classroom__label">Join a classroom</span>
+          <span className="dash-classroom__label">{t('dashboard.joinClassroom')}</span>
           <div className="dash-classroom__form">
             <input
               type="text"
@@ -405,7 +409,7 @@ export default function Dashboard() {
               onClick={handleJoinClassroom}
               disabled={joinCode.trim().length < 4}
             >
-              Join
+              {t('common.join')}
             </button>
           </div>
           {joinError && <span className="dash-classroom__error">{joinError}</span>}

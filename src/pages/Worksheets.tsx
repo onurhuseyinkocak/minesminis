@@ -22,6 +22,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import ContentPageHeader from '../components/ContentPageHeader';
+import { useLanguage } from '../contexts/LanguageContext';
 import './Worksheets.css';
 
 type Worksheet = {
@@ -44,6 +45,7 @@ function Worksheets() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const { user } = useAuth();
   const { trackActivity, addXP } = useGamification();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchWorksheets();
@@ -212,8 +214,8 @@ function Worksheets() {
     <div className="worksheets-page">
       <ContentPageHeader
         icon={FileText}
-        title="Printable Fun"
-        description="Learning beyond the screen - download, print, and play!"
+        title={t('worksheets.title')}
+        description={t('worksheets.description')}
         iconColor="var(--accent-emerald)"
         filterSlot={
           <div className="modern-tabs">
@@ -221,25 +223,25 @@ function Worksheets() {
               onClick={() => setActiveGrade('All')}
               className={`modern-tab ${activeGrade === 'All' ? 'active' : ''}`}
             >
-              All Grades
+              {t('worksheets.allGrades')}
             </button>
             <button
               onClick={() => setActiveGrade('2')}
               className={`modern-tab ${activeGrade === '2' ? 'active' : ''}`}
             >
-              2nd Grade
+              {t('worksheets.grade2')}
             </button>
             <button
               onClick={() => setActiveGrade('3')}
               className={`modern-tab ${activeGrade === '3' ? 'active' : ''}`}
             >
-              3rd Grade
+              {t('worksheets.grade3')}
             </button>
             <button
               onClick={() => setActiveGrade('4')}
               className={`modern-tab ${activeGrade === '4' ? 'active' : ''}`}
             >
-              4th Grade
+              {t('worksheets.grade4')}
             </button>
           </div>
         }
@@ -250,14 +252,14 @@ function Worksheets() {
           {/* Grade filter removed as it's now in ContentPageHeader */}
 
           <div className="filter-item">
-            <label htmlFor="category-filter">Subject:</label>
+            <label htmlFor="category-filter">{t('worksheets.subject')}:</label>
             <select
               id="category-filter"
               className="filter-select"
               value={activeCategory}
               onChange={(e) => setActiveCategory(e.target.value)}
             >
-              <option value="All">All Subjects</option>
+              <option value="All">{t('worksheets.allSubjects')}</option>
               {categories.slice(1).map(cat => (
                 <option key={cat} value={cat}>{cat}</option>
               ))}
@@ -267,7 +269,7 @@ function Worksheets() {
       </div>
 
       <div className="worksheets-count">
-        Showing <strong>{filteredWorksheets.length}</strong> worksheets
+        {t('worksheets.showing')} <strong>{filteredWorksheets.length}</strong> {t('worksheets.worksheetsLabel')}
       </div>
 
       <div className="worksheets-grid">
@@ -313,7 +315,7 @@ function Worksheets() {
               <div className="worksheet-info">
                 <div className="worksheet-grade">
                   {getGradeIcon(worksheet.grade)}
-                  <span>Grade {worksheet.grade}</span>
+                  <span>{t('worksheets.grade')} {worksheet.grade}</span>
                 </div>
                 <h3>{worksheet.title}</h3>
                 <p>{worksheet.description}</p>
@@ -332,7 +334,7 @@ function Worksheets() {
                   onClick={() => handleWorksheetAction(worksheet)}
                 >
                   <ExternalLink size={18} />
-                  <span>Open</span>
+                  <span>{t('worksheets.open')}</span>
                 </a>
                 <button
                   className="action-btn print-btn"
@@ -342,7 +344,7 @@ function Worksheets() {
                   }}
                 >
                   <Printer size={18} />
-                  <span>Print</span>
+                  <span>{t('worksheets.print')}</span>
                 </button>
               </div>
             </motion.div>
@@ -353,13 +355,13 @@ function Worksheets() {
       {filteredWorksheets.length === 0 && (
         <div className="worksheets-empty">
           <div className="empty-icon"><MimiMascot size={64} mood="thinking" /></div>
-          <h3>No worksheets found</h3>
-          <p>Mimi could not find any worksheets with these filters. Try a different combination!</p>
+          <h3>{t('worksheets.noWorksheetsFound')}</h3>
+          <p>{t('worksheets.noWorksheetsDesc')}</p>
         </div>
       )}
 
       <div className="worksheets-resources">
-        <h3>More Free Resources</h3>
+        <h3>{t('worksheets.moreResources')}</h3>
         <div className="resources-grid">
           <a href="https://games4esl.com/esl-worksheets/" target="_blank" rel="noopener noreferrer" className="resource-link">
             <span className="resource-icon"><Gamepad2 size={20} /></span>

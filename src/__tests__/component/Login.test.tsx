@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+
 import { MemoryRouter } from 'react-router-dom';
 import React from 'react';
 
@@ -83,7 +83,7 @@ vi.mock('framer-motion', () => ({
   motion: new Proxy({}, {
     get: (_target, prop) => {
       if (typeof prop === 'string') {
-        return React.forwardRef(({ children, ...props }: any, ref: any) => {
+        return React.forwardRef(({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }, ref: React.Ref<unknown>) => {
           const filteredProps: Record<string, unknown> = {};
           for (const [key, value] of Object.entries(props)) {
             if (!key.startsWith('while') && !key.startsWith('animate') && !key.startsWith('initial') && !key.startsWith('exit') && !key.startsWith('variants') && !key.startsWith('transition') && !key.startsWith('layout') && key !== 'custom') {

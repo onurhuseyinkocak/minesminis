@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Delete, Lightbulb, Volume2, Sparkles } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './SpellingBee.css';
 
 interface WordItem {
@@ -52,6 +53,7 @@ function generateLetterPool(word: string): string[] {
 }
 
 export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  const { t } = useLanguage();
   const gameWords = useMemo(() => words.slice(0, 5), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typed, setTyped] = useState<string[]>([]);
@@ -152,9 +154,9 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
             className="spelling-bee__results-content"
           >
             <span className="spelling-bee__big-emoji" role="img" aria-label="trophy">🏆</span>
-            <h2 className="spelling-bee__results-title">Spelling Star!</h2>
+            <h2 className="spelling-bee__results-title">{t('games.spellingStar')}</h2>
             <p className="spelling-bee__results-score">
-              {score} out of {gameWords.length} correct!
+              {t('games.outOfCorrect').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
@@ -172,7 +174,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   return (
     <div className="spelling-bee" role="application" aria-label="Spelling game">
       <div className="spelling-bee__header">
-        <h2 className="spelling-bee__title">Spell It!</h2>
+        <h2 className="spelling-bee__title">{t('games.spellIt')}</h2>
         <Badge variant="info">{currentIndex + 1}/{gameWords.length}</Badge>
       </div>
 
@@ -198,7 +200,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           onClick={() => speak(currentWord.english)}
           aria-label="Listen to pronunciation"
         >
-          Listen
+          {t('games.listen')}
         </Button>
       </Card>
 
@@ -209,7 +211,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           animate={{ opacity: 1, y: 0 }}
         >
           <Lightbulb size={18} />
-          Hint: starts with "{currentWord.english[0].toUpperCase()}"
+          {t('games.hintStartsWith').replace('{letter}', currentWord.english[0].toUpperCase())}
         </motion.div>
       )}
 
@@ -245,7 +247,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
         >
-          Almost! Try again! 💪
+          {t('games.almostTryAgain')} 💪
         </motion.p>
       )}
 
@@ -281,7 +283,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           disabled={typed.length === 0 || !!feedback}
           aria-label="Remove last letter"
         >
-          Back
+          {t('common.back')}
         </Button>
         <Button
           variant="primary"
@@ -289,7 +291,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           onClick={handleSubmit}
           disabled={typed.length !== currentWord.english.length || !!feedback}
         >
-          Check!
+          {t('games.check')}
         </Button>
       </div>
     </div>

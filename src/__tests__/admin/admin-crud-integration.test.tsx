@@ -5,8 +5,8 @@ import React from 'react';
 
 // ── Track all adminFetch calls ──────────────────────────────────────────────
 
-const adminFetchCalls: Array<{ url: string; options: any }> = [];
-const mockAdminFetch = vi.fn(async (url: string, options: any = {}) => {
+const adminFetchCalls: Array<{ url: string; options: Record<string, unknown> }> = [];
+const mockAdminFetch = vi.fn(async (url: string, options: Record<string, unknown> = {}) => {
   adminFetchCalls.push({ url, options });
   const method = options.method || 'GET';
 
@@ -42,7 +42,7 @@ const mockAdminFetch = vi.fn(async (url: string, options: any = {}) => {
 vi.mock('../../config/firebase', () => ({ auth: {}, googleProvider: {}, analytics: null }));
 
 // Supabase mock - returns sample data for listing
-const mockSupabaseData: Record<string, any[]> = {
+const mockSupabaseData: Record<string, unknown[]> = {
   games: [
     { id: 'g1', title: 'Test Game', url: 'https://example.com/game', category: 'Quiz', thumbnail_url: '', description: 'A game', target_audience: '2' },
   ],
@@ -60,10 +60,10 @@ const mockSupabaseData: Record<string, any[]> = {
 // Chainable Supabase mock that resolves to { data, error }
 const makeChainable = (table: string) => {
   const result = { data: mockSupabaseData[table] || [], error: null };
-  const chain: any = {
+  const chain: Record<string, unknown> = {
     ...Promise.resolve(result),
-    then: (fn: any) => Promise.resolve(result).then(fn),
-    catch: (fn: any) => Promise.resolve(result).catch(fn),
+    then: (fn: (val: typeof result) => unknown) => Promise.resolve(result).then(fn),
+    catch: (fn: (err: unknown) => unknown) => Promise.resolve(result).catch(fn),
     eq: () => chain,
     neq: () => chain,
     gt: () => chain,
@@ -149,7 +149,7 @@ vi.mock('../../data/videoStore', () => ({
     getByGrade: () => mockSupabaseData.videos,
     fetchVideos: vi.fn(() => Promise.resolve(mockSupabaseData.videos)),
     getVideos: () => mockSupabaseData.videos,
-    subscribe: vi.fn((cb: any) => { setTimeout(() => cb?.(mockSupabaseData.videos), 0); return vi.fn(); }),
+    subscribe: vi.fn((cb: ((videos: unknown[]) => void)) => { setTimeout(() => cb?.(mockSupabaseData.videos), 0); return vi.fn(); }),
     saveVideos: vi.fn(),
   },
   Video: {},
@@ -164,25 +164,25 @@ vi.mock('../../data/videosData', () => ({ gradeInfo: {} }));
 vi.mock('../../data/worksheetsData', () => ({ Worksheet: {}, categories: [], grades: [] }));
 
 vi.mock('../../utils/adminApi', () => ({
-  adminFetch: (...args: any[]) => mockAdminFetch(...args),
+  adminFetch: (...args: [string, Record<string, unknown>?]) => mockAdminFetch(...args),
   getAdminApiBase: () => 'http://localhost:3001',
   getAdminAuthHeaders: () => Promise.resolve({ 'X-Admin-Password': 'Wealthy*520' }),
 }));
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  LineChart: ({ children }: any) => <div>{children}</div>,
-  Line: () => null, BarChart: ({ children }: any) => <div>{children}</div>,
-  Bar: () => null, PieChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  LineChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Line: () => null, BarChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Bar: () => null, PieChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   Pie: () => null, Cell: () => null, XAxis: () => null, YAxis: () => null,
   CartesianGrid: () => null, Tooltip: () => null, Legend: () => null,
-  Area: () => null, AreaChart: ({ children }: any) => <div>{children}</div>,
+  Area: () => null, AreaChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('framer-motion', () => ({
   motion: new Proxy({}, {
     get: (_t, prop) => typeof prop === 'string'
-      ? React.forwardRef(({ children, ...p }: any, ref: any) => {
+      ? React.forwardRef(({ children, ...p }: { children?: React.ReactNode; [key: string]: unknown }, ref: React.Ref<unknown>) => {
           const fp: Record<string, unknown> = {};
           for (const [k, v] of Object.entries(p)) {
             if (!k.startsWith('while') && !k.startsWith('animate') && !k.startsWith('initial') && !k.startsWith('exit') && !k.startsWith('variants') && !k.startsWith('transition') && !k.startsWith('layout') && k !== 'custom' && k !== 'whileInView' && k !== 'viewport') fp[k] = v;

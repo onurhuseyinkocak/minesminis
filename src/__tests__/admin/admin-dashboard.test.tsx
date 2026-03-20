@@ -69,17 +69,17 @@ vi.mock('../../data/fallbackData', () => ({ fallbackGames: [{ id: '1' }, { id: '
 vi.mock('../../data/wordsData', () => ({ kidsWords: [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }] }));
 
 vi.mock('recharts', () => ({
-  AreaChart: ({ children }: any) => <div data-testid="area-chart">{children}</div>,
+  AreaChart: ({ children }: { children: React.ReactNode }) => <div data-testid="area-chart">{children}</div>,
   Area: () => <div />,
   XAxis: () => <div />,
   YAxis: () => <div />,
   CartesianGrid: () => <div />,
   Tooltip: () => <div />,
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('framer-motion', () => ({
-  motion: new Proxy({}, { get: (_t, prop) => typeof prop === 'string' ? React.forwardRef(({ children, ...p }: any, ref: any) => { const fp: Record<string, unknown> = {}; for (const [k, v] of Object.entries(p)) { if (!k.startsWith('while') && !k.startsWith('animate') && !k.startsWith('initial') && !k.startsWith('exit') && !k.startsWith('variants') && !k.startsWith('transition') && !k.startsWith('layout') && k !== 'custom' && k !== 'whileInView' && k !== 'viewport') fp[k] = v; } return React.createElement(prop as string, { ...fp, ref }, children); }) : undefined }),
+  motion: new Proxy({}, { get: (_t, prop) => typeof prop === 'string' ? React.forwardRef(({ children, ...p }: { children?: React.ReactNode; [key: string]: unknown }, ref: React.Ref<unknown>) => { const fp: Record<string, unknown> = {}; for (const [k, v] of Object.entries(p)) { if (!k.startsWith('while') && !k.startsWith('animate') && !k.startsWith('initial') && !k.startsWith('exit') && !k.startsWith('variants') && !k.startsWith('transition') && !k.startsWith('layout') && k !== 'custom' && k !== 'whileInView' && k !== 'viewport') fp[k] = v; } return React.createElement(prop as string, { ...fp, ref }, children); }) : undefined }),
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 

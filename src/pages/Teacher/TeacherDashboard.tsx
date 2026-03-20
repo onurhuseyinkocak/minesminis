@@ -38,11 +38,6 @@ const TeacherDashboard: React.FC = () => {
   const { stats, loading } = useGamification();
   const teacherId = user?.uid || '';
 
-  // Role check: only teachers and admins allowed
-  if (userProfile?.role !== 'teacher' && !isAdmin) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   const [activeTab, setActiveTab] = useState<'overview' | 'classrooms'>('overview');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [sbClassrooms, setSbClassrooms] = useState<Classroom[]>([]);
@@ -102,6 +97,11 @@ const TeacherDashboard: React.FC = () => {
   const handleQuickCreate = useCallback(() => {
     setActiveTab('classrooms');
   }, []);
+
+  // Role check: only teachers and admins allowed (after all hooks)
+  if (userProfile?.role !== 'teacher' && !isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   if (loading) {
     return (

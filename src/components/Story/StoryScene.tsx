@@ -319,7 +319,7 @@ const StoryScene: React.FC<StorySceneProps> = ({ background, children }) => {
           <g className="story-scene__nebula">
             <ellipse cx="600" cy="250" rx="300" ry="150" fill="#A78BFA" opacity="0.15" />
             <ellipse cx="500" cy="200" rx="200" ry="100" fill="#FF6B9D" opacity="0.1" />
-            <ellipse cx="700" cy="300" rx="250" ry="120" fill="#6C5CE7" opacity="0.12" />
+            <ellipse cx="700" cy="300" rx="250" ry="120" fill="#0D9488" opacity="0.12" />
           </g>
         )}
 

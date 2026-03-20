@@ -3,9 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { useLanguage } from '../../contexts/LanguageContext';
+
+interface WordItem {
+  english: string;
+  turkish: string;
+  emoji: string;
+}
 
 interface BlendingBoardProps {
-  words: string[];
+  words: WordItem[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
 }
@@ -43,7 +50,8 @@ interface SoundTile {
 }
 
 export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete, onWrongAnswer }) => {
-  const gameWords = useMemo(() => words.slice(0, 5), [words]);
+  const { t } = useLanguage();
+  const gameWords = useMemo(() => words.slice(0, 5).map(w => typeof w === 'string' ? w : w.english), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [tiles, setTiles] = useState<SoundTile[]>([]);
   const [strip, setStrip] = useState<(SoundTile | null)[]>([]);
@@ -140,9 +148,9 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             style={{ textAlign: 'center' }}
           >
             <span style={{ fontSize: '4rem' }} role="img" aria-label="celebration">🎉</span>
-            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>Blending Star!</h2>
+            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>{t('games.blendingStar')}</h2>
             <p style={{ fontSize: '1.1rem', color: '#555' }}>
-              {score} out of {gameWords.length} words blended!
+              {t('games.wordsBlended').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
@@ -167,7 +175,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
       aria-label="Sound blending game"
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>Blend the Sounds!</h2>
+        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>{t('games.blendTheSounds')}</h2>
         <Badge variant="info">{currentIndex + 1}/{gameWords.length}</Badge>
       </div>
 
@@ -235,7 +243,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
               fontSize: '1rem',
             }}
           >
-            Try another sound! 💪
+            {t('games.tryAnotherSound')} 💪
           </motion.div>
         )}
         {feedback === 'correct' && (
@@ -245,7 +253,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             exit={{ opacity: 0 }}
             style={{ color: '#1A6B5A', fontWeight: 700, fontSize: '1.1rem' }}
           >
-            Amazing! 🌟
+            {t('games.amazing')} 🌟
           </motion.div>
         )}
       </AnimatePresence>

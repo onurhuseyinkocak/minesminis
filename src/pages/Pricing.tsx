@@ -7,6 +7,7 @@ import {
   Crown, Check, Star, Sparkles, Users, GraduationCap,
   ChevronDown, ChevronUp, Loader2, ExternalLink,
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 import './Pricing.css';
 
 // ── Plan variant IDs (set these to your Lemon Squeezy variant IDs) ──────────
@@ -45,11 +46,11 @@ const PLANS: PlanDef[] = [
     monthlyVariantId: '',
     yearlyVariantId: '',
     features: [
-      '1 world to explore',
-      '5 lessons included',
-      'Basic educational games',
-      'Chat with Mimi (10/day)',
-      'Daily challenges',
+      'pricing.featureFree1',
+      'pricing.featureFree2',
+      'pricing.featureFree3',
+      'pricing.featureFree4',
+      'pricing.featureFree5',
     ],
   },
   {
@@ -61,15 +62,15 @@ const PLANS: PlanDef[] = [
     monthlyVariantId: VARIANT_IDS.premium_monthly,
     yearlyVariantId: VARIANT_IDS.premium_yearly,
     highlight: true,
-    badge: 'Most Popular',
+    badge: 'pricing.mostPopular',
     features: [
-      'All 12 worlds unlocked',
-      'Unlimited lessons',
-      'All educational games',
-      'Unlimited Mimi chat',
-      'Progress tracking',
-      'Achievement badges',
-      'Ad-free experience',
+      'pricing.featurePremium1',
+      'pricing.featurePremium2',
+      'pricing.featurePremium3',
+      'pricing.featurePremium4',
+      'pricing.featurePremium5',
+      'pricing.featurePremium6',
+      'pricing.featurePremium7',
     ],
   },
   {
@@ -81,12 +82,12 @@ const PLANS: PlanDef[] = [
     monthlyVariantId: VARIANT_IDS.family_monthly,
     yearlyVariantId: VARIANT_IDS.family_yearly,
     features: [
-      'Everything in Premium',
-      'Up to 4 children',
-      'Parent dashboard',
-      'Family progress overview',
-      'Individual profiles',
-      'Parental controls',
+      'pricing.featureFamily1',
+      'pricing.featureFamily2',
+      'pricing.featureFamily3',
+      'pricing.featureFamily4',
+      'pricing.featureFamily5',
+      'pricing.featureFamily6',
     ],
   },
   {
@@ -98,44 +99,26 @@ const PLANS: PlanDef[] = [
     monthlyVariantId: VARIANT_IDS.classroom_monthly,
     yearlyVariantId: VARIANT_IDS.classroom_yearly,
     features: [
-      'Everything in Premium',
-      'Up to 30 students',
-      'Teacher dashboard',
-      'Classroom / smart board mode',
-      'Student analytics',
-      'Assignment tracking',
-      'Bulk student management',
+      'pricing.featureClassroom1',
+      'pricing.featureClassroom2',
+      'pricing.featureClassroom3',
+      'pricing.featureClassroom4',
+      'pricing.featureClassroom5',
+      'pricing.featureClassroom6',
+      'pricing.featureClassroom7',
     ],
   },
 ];
 
 // ── FAQ data ─────────────────────────────────────────────────────────────────
 
-const FAQ_ITEMS = [
-  {
-    q: 'Can I cancel anytime?',
-    a: 'Yes! You can cancel your subscription anytime from your account settings. You will keep access until the end of your billing period.',
-  },
-  {
-    q: 'Is there a free trial?',
-    a: 'The Free plan lets you try MinesMinis with no time limit. Upgrade to Premium when you are ready for the full experience.',
-  },
-  {
-    q: 'How does the Family plan work?',
-    a: 'The Family plan allows up to 4 children to have their own profiles with individual progress tracking, all under one subscription managed by a parent.',
-  },
-  {
-    q: 'Can I switch between plans?',
-    a: 'Absolutely. You can upgrade, downgrade, or switch billing period anytime. Changes take effect at the start of your next billing cycle.',
-  },
-  {
-    q: 'What payment methods do you accept?',
-    a: 'We accept credit/debit cards, Apple Pay, Google Pay, and more through our secure payment partner Lemon Squeezy.',
-  },
-  {
-    q: 'Is my payment information safe?',
-    a: 'Yes. All payments are processed securely by Lemon Squeezy. We never store your card details on our servers.',
-  },
+const FAQ_KEYS = [
+  { q: 'pricing.faqQ1', a: 'pricing.faqA1' },
+  { q: 'pricing.faqQ2', a: 'pricing.faqA2' },
+  { q: 'pricing.faqQ3', a: 'pricing.faqA3' },
+  { q: 'pricing.faqQ4', a: 'pricing.faqA4' },
+  { q: 'pricing.faqQ5', a: 'pricing.faqA5' },
+  { q: 'pricing.faqQ6', a: 'pricing.faqA6' },
 ];
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -144,6 +127,14 @@ export default function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { plan: currentPlan, subscriptionStatus, checkoutUrl, customerPortalUrl, refreshSubscription, isLoading: subLoading } = usePremium();
+  const { t } = useLanguage();
+
+  const planNameMap: Record<string, string> = {
+    free: t('pricing.planFree'),
+    premium: t('pricing.planPremium'),
+    family: t('pricing.planFamily'),
+    classroom: t('pricing.planClassroom'),
+  };
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [isYearly, setIsYearly] = useState(true);
@@ -232,10 +223,10 @@ export default function Pricing() {
         <section className="pricing-hero">
           <div className="pricing-hero-badge">
             <Sparkles size={18} />
-            <span>Pricing</span>
+            <span>{t('pricing.badge')}</span>
           </div>
-          <h1>Choose your learning adventure</h1>
-          <p>Start free. Upgrade anytime to unlock the full MinesMinis experience.</p>
+          <h1>{t('pricing.title')}</h1>
+          <p>{t('pricing.subtitle')}</p>
         </section>
 
         {/* ── Billing toggle ──────────────────────────────────────── */}
@@ -245,15 +236,15 @@ export default function Pricing() {
             className={`toggle-btn ${!isYearly ? 'active' : ''}`}
             onClick={() => setIsYearly(false)}
           >
-            Monthly
+            {t('pricing.monthly')}
           </button>
           <button
             type="button"
             className={`toggle-btn ${isYearly ? 'active' : ''}`}
             onClick={() => setIsYearly(true)}
           >
-            Yearly
-            <span className="save-badge">Save up to 38%</span>
+            {t('pricing.yearly')}
+            <span className="save-badge">{t('pricing.saveUpTo')}</span>
           </button>
         </div>
 
@@ -277,28 +268,28 @@ export default function Pricing() {
                 className={`plan-card ${plan.highlight ? 'plan-card--highlight' : ''} ${isCurrent ? 'plan-card--current' : ''}`}
               >
                 {plan.badge && (
-                  <div className="plan-badge">{plan.badge}</div>
+                  <div className="plan-badge">{t(plan.badge)}</div>
                 )}
 
                 <div className="plan-icon">{plan.icon}</div>
-                <h3 className="plan-name">{plan.name}</h3>
+                <h3 className="plan-name">{planNameMap[plan.id] || plan.name}</h3>
 
                 <div className="plan-price">
                   {isFree ? (
-                    <span className="price-amount">Free</span>
+                    <span className="price-amount">{t('pricing.free')}</span>
                   ) : (
                     <>
                       <span className="price-amount">{formatPrice(price)}</span>
-                      <span className="price-period">/{isYearly ? 'year' : 'month'}</span>
+                      <span className="price-period">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                     </>
                   )}
                 </div>
 
                 {!isFree && isYearly && (
                   <div className="plan-per-month">
-                    {formatPrice(perMonth)}/month
+                    {formatPrice(perMonth)}{t('pricing.perMonth')}
                     {savings > 0 && (
-                      <span className="plan-savings">{savings}% off</span>
+                      <span className="plan-savings">{savings}% {t('pricing.off')}</span>
                     )}
                   </div>
                 )}
@@ -307,7 +298,7 @@ export default function Pricing() {
                   {plan.features.map((f, i) => (
                     <li key={i}>
                       <Check size={16} className="feature-check" />
-                      <span>{f}</span>
+                      <span>{t(f)}</span>
                     </li>
                   ))}
                 </ul>
@@ -328,13 +319,13 @@ export default function Pricing() {
                   {isLoadingThis ? (
                     <Loader2 size={18} className="spin" />
                   ) : isCurrent ? (
-                    <>Manage Plan <ExternalLink size={14} /></>
+                    <>{t('pricing.managePlan')} <ExternalLink size={14} /></>
                   ) : isFree ? (
-                    user ? 'Current Plan' : 'Get Started'
+                    user ? t('pricing.currentPlan') : t('pricing.getStarted')
                   ) : variantMissing ? (
-                    'Coming Soon'
+                    t('pricing.comingSoon')
                   ) : (
-                    `Subscribe to ${plan.name}`
+                    `${t('pricing.subscribeTo')} ${planNameMap[plan.id] || plan.name}`
                   )}
                 </button>
               </div>
@@ -344,9 +335,9 @@ export default function Pricing() {
 
         {/* ── FAQ ─────────────────────────────────────────────────── */}
         <section className="pricing-faq">
-          <h2>Frequently Asked Questions</h2>
+          <h2>{t('pricing.faq')}</h2>
           <div className="faq-list">
-            {FAQ_ITEMS.map((item, i) => (
+            {FAQ_KEYS.map((item, i) => (
               <div
                 key={i}
                 className={`faq-item ${openFaq === i ? 'faq-item--open' : ''}`}
@@ -356,12 +347,12 @@ export default function Pricing() {
                   className="faq-question"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  <span>{item.q}</span>
+                  <span>{t(item.q)}</span>
                   {openFaq === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </button>
                 {openFaq === i && (
                   <div className="faq-answer">
-                    <p>{item.a}</p>
+                    <p>{t(item.a)}</p>
                   </div>
                 )}
               </div>
@@ -372,13 +363,13 @@ export default function Pricing() {
         {/* ── CTA ─────────────────────────────────────────────────── */}
         {!user && (
           <section className="pricing-cta-section">
-            <p>Sign up to start learning English with MinesMinis today.</p>
+            <p>{t('pricing.signUpCta')}</p>
             <button
               type="button"
               className="pricing-cta-btn"
               onClick={() => navigate('/login', { state: { from: '/pricing' } })}
             >
-              Create Free Account
+              {t('pricing.createFreeAccount')}
             </button>
           </section>
         )}

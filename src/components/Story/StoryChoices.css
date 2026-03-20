@@ -103,7 +103,7 @@
 .story-choice__xp {
   font-size: 0.7rem;
   font-weight: 800;
-  color: #FFD93D;
+  color: var(--mimi-gold, #FFD54F);
   white-space: nowrap;
 }
 
@@ -114,7 +114,7 @@
   right: 8px;
   font-size: 0.6rem;
   font-weight: 800;
-  color: #00B894;
+  color: var(--secondary-light, #2A9D8F);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   animation: choice-item-pulse 2s ease-in-out infinite;

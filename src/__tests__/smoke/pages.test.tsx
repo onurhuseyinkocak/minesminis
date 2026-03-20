@@ -124,9 +124,9 @@ vi.mock('../../contexts/GamificationContext', () => ({
     dismissLevelUp: vi.fn(),
   }),
   GamificationProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  calculateLevel: (xp: number) => 1,
-  getXPForLevel: (level: number) => 100,
-  getTotalXPForLevel: (level: number) => (level - 1) * 100,
+  calculateLevel: (_xp: number) => 1,
+  getXPForLevel: (_level: number) => 100,
+  getTotalXPForLevel: (_level: number) => (_level - 1) * 100,
   ALL_BADGES: [],
 }));
 
@@ -194,7 +194,7 @@ vi.mock('framer-motion', () => ({
   motion: new Proxy({}, {
     get: (_target, prop) => {
       if (prop === 'div' || prop === 'button' || prop === 'h1' || prop === 'h2' || prop === 'p' || prop === 'span' || prop === 'section' || prop === 'a' || prop === 'form' || prop === 'li' || prop === 'ul' || prop === 'nav' || prop === 'img' || prop === 'input' || prop === 'textarea' || prop === 'header') {
-        return React.forwardRef(({ children, ...props }: any, ref: any) => {
+        return React.forwardRef(({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }, ref: React.Ref<unknown>) => {
           const filteredProps: Record<string, unknown> = {};
           for (const [key, value] of Object.entries(props)) {
             if (!key.startsWith('while') && !key.startsWith('animate') && !key.startsWith('initial') && !key.startsWith('exit') && !key.startsWith('variants') && !key.startsWith('transition') && !key.startsWith('layout') && key !== 'custom' && key !== 'whileInView' && key !== 'viewport') {

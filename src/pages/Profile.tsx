@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../config/supabase';
 import {
   Settings,
@@ -19,6 +21,7 @@ import './Profile.css';
 
 const Profile: React.FC = () => {
   const { user, userProfile, refreshUserProfile } = useAuth();
+  const { t } = useLanguage();
   const { stats, allBadges } = useGamification();
   const [showEditModal, setShowEditModal] = useState(false);
   const [editDisplayName, setEditDisplayName] = useState('');
@@ -49,7 +52,26 @@ const Profile: React.FC = () => {
     }
   };
 
-  if (!user) return <div className="profile-loading">Please sign in to view your backpack!</div>;
+  if (!user) return (
+    <div className="profile-loading" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+      <p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Please sign in to view your backpack!</p>
+      <Link
+        to="/login"
+        style={{
+          display: 'inline-block',
+          padding: '0.75rem 2rem',
+          background: 'var(--primary, #6c63ff)',
+          color: '#fff',
+          borderRadius: '12px',
+          textDecoration: 'none',
+          fontWeight: 600,
+          fontSize: '1rem',
+        }}
+      >
+        Sign In
+      </Link>
+    </div>
+  );
 
   return (
     <div className="profile-container">
@@ -71,7 +93,7 @@ const Profile: React.FC = () => {
                 onClick={() => setShowEditModal(true)}
               >
                 <Settings size={20} />
-                <span>Edit Profile</span>
+                <span>{t('profile.editProfile')}</span>
               </button>
             </div>
 
@@ -85,7 +107,7 @@ const Profile: React.FC = () => {
         <section className="profile-stats-grid">
           <div className="stat-card xp-focused">
             <div className="stat-header">
-              <h3>My XP Progress</h3>
+              <h3>{t('profile.myXpProgress')}</h3>
               <Star size={20} fill="var(--warning)" color="var(--warning)" />
             </div>
             <div className="xp-details">
@@ -96,21 +118,21 @@ const Profile: React.FC = () => {
 
           <div className="stat-card">
             <div className="stat-header">
-              <h3>My Trophies</h3>
+              <h3>{t('profile.myTrophies')}</h3>
               <Clock size={20} color="var(--accent-indigo)" />
             </div>
             <div className="activity-list">
               <div className="activity-item">
                 <span className="activity-dot"></span>
-                <span className="activity-desc">Words Learned: {stats.wordsLearned || 0}</span>
+                <span className="activity-desc">{t('profile.wordsLearned')}: {stats.wordsLearned || 0}</span>
               </div>
               <div className="activity-item">
                 <span className="activity-dot"></span>
-                <span className="activity-desc">Games Played: {stats.gamesPlayed || 0}</span>
+                <span className="activity-desc">{t('profile.gamesPlayed')}: {stats.gamesPlayed || 0}</span>
               </div>
               <div className="activity-item">
                 <span className="activity-dot"></span>
-                <span className="activity-desc">Videos Watched: {stats.videosWatched || 0}</span>
+                <span className="activity-desc">{t('profile.videosWatched')}: {stats.videosWatched || 0}</span>
               </div>
             </div>
           </div>
@@ -118,7 +140,7 @@ const Profile: React.FC = () => {
 
         <section className="profile-badges-section">
           <div className="section-header">
-            <h3>My Badges</h3>
+            <h3>{t('profile.myBadges')}</h3>
             <Trophy size={24} color="var(--warning)" />
           </div>
           <div className="badges-grid">
@@ -159,7 +181,7 @@ const Profile: React.FC = () => {
               </div>
             </div>
             <div className="edit-modal-footer">
-              <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Back</button>
+              <button className="cancel-btn" onClick={() => setShowEditModal(false)}>{t('common.back')}</button>
               <button className="save-btn" onClick={handleUpdateProfile}>Save Name</button>
             </div>
           </div>

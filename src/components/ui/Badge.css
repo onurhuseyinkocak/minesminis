@@ -115,6 +115,6 @@
 }
 
 [data-theme="dark"] .mm-badge--premium {
-  background: linear-gradient(135deg, #0E0E1A 0%, #2D2D44 100%);
+  background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-card) 100%);
   color: var(--mimi-gold);
 }

@@ -81,7 +81,7 @@ function getSoundData(soundId: string): { sound: PhonicsSound; group: PhonicsGro
 }
 
 /** Build blending words for a sound from the group's blendableWords */
-function getBlendingWords(sound: PhonicsSound, group: PhonicsGroup): string[] {
+function getBlendingWords(sound: PhonicsSound, group: PhonicsGroup): { english: string; turkish: string; emoji: string }[] {
   // For digraphs like "c/k", split and check each part
   const graphemes = sound.grapheme.includes('/')
     ? sound.grapheme.split('/')
@@ -89,7 +89,8 @@ function getBlendingWords(sound: PhonicsSound, group: PhonicsGroup): string[] {
 
   return group.blendableWords
     .filter((w) => graphemes.some((g) => w.toLowerCase().includes(g.toLowerCase())))
-    .slice(0, 3);
+    .slice(0, 3)
+    .map(w => ({ english: w, turkish: w, emoji: '' }));
 }
 
 /** Build segmenting words (same logic, different slice) */

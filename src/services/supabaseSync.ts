@@ -35,7 +35,7 @@ export async function syncActivityLog(
       xp_earned: activity.xpEarned,
       sound_id: activity.soundId ?? null,
     });
-  } catch (_e) {
+  } catch {
     // Silent fail — localStorage is primary, Supabase is backup
   }
 }
@@ -93,7 +93,7 @@ export async function syncPhonicsMastery(
       },
       { onConflict: 'user_id,sound_id' },
     );
-  } catch (_e) {
+  } catch {
     // Silent fail
   }
 }
@@ -149,7 +149,7 @@ export async function syncCreateClassroom(
       join_code: joinCode,
       phonics_group_assigned: phonicsGroup,
     });
-  } catch (_e) {
+  } catch {
     // Silent fail
   }
 }
@@ -180,7 +180,7 @@ export async function syncJoinClassroom(
     );
 
     return { classroomName: classroom.name };
-  } catch (_e) {
+  } catch {
     return null;
   }
 }

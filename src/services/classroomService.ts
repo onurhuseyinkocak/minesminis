@@ -210,7 +210,7 @@ export function removeStudent(classroomId: string, studentId: string): boolean {
   }
 
   // Sync to Supabase (fire-and-forget)
-  try { supabase.from('classroom_students').delete().eq('classroom_join_code', classroom.joinCode).eq('student_id', studentId).then(() => {}); } catch {}
+  try { supabase.from('classroom_students').delete().eq('classroom_join_code', classroom.joinCode).eq('student_id', studentId).then(() => {}); } catch { /* Supabase sync is best-effort; localStorage is primary */ }
 
   return true;
 }
@@ -231,7 +231,7 @@ export function assignPhonicsGroup(classroomId: string, group: number): boolean 
   }
 
   // Sync to Supabase (fire-and-forget)
-  try { supabase.from('classrooms').update({ phonics_group_assigned: group }).eq('join_code', classroom.joinCode).then(() => {}); } catch {}
+  try { supabase.from('classrooms').update({ phonics_group_assigned: group }).eq('join_code', classroom.joinCode).then(() => {}); } catch { /* Supabase sync is best-effort; localStorage is primary */ }
 
   return true;
 }
@@ -296,7 +296,7 @@ export function deleteClassroom(teacherId: string, classroomId: string): boolean
 
   // Sync to Supabase (fire-and-forget)
   if (classroom) {
-    try { supabase.from('classrooms').delete().eq('join_code', classroom.joinCode).then(() => {}); } catch {}
+    try { supabase.from('classrooms').delete().eq('join_code', classroom.joinCode).then(() => {}); } catch { /* Supabase sync is best-effort; localStorage is primary */ }
   }
 
   return true;

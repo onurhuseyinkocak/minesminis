@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { PremiumProvider } from "./contexts/PremiumContext";
 import { GamificationProvider } from "./contexts/GamificationContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ToastProvider } from "./components/ToastProvider";
 import SplashScreen from "./components/SplashScreen";
@@ -142,7 +143,7 @@ function OfflineBanner() {
           left: 0,
           right: 0,
           zIndex: 9999,
-          background: "#10b981",
+          background: "var(--success)",
           color: "#fff",
           textAlign: "center",
           padding: "8px 16px",
@@ -175,8 +176,8 @@ function OfflineBanner() {
           left: 0,
           right: 0,
           zIndex: 9999,
-          background: "#f59e0b",
-          color: "#78350f",
+          background: "var(--warning)",
+          color: "var(--warning-dark, #78350f)",
           textAlign: "center",
           padding: "8px 16px",
           fontSize: "14px",
@@ -419,8 +420,8 @@ function WhatsNextButton() {
             position: "absolute",
             bottom: 52,
             right: 0,
-            background: "#1C2236",
-            border: "1px solid #334155",
+            background: "var(--bg-elevated)",
+            border: "1px solid var(--glass-border, #334155)",
             borderRadius: 14,
             padding: "10px 16px",
             boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
@@ -428,7 +429,7 @@ function WhatsNextButton() {
             cursor: "pointer",
             fontSize: 14,
             fontWeight: 600,
-            color: "#F1F5F9",
+            color: "var(--text-primary)",
             fontFamily: "Nunito, sans-serif",
             display: "flex",
             alignItems: "center",
@@ -445,9 +446,9 @@ function WhatsNextButton() {
           width: 44,
           height: 44,
           borderRadius: "50%",
-          border: "1px solid #334155",
-          background: "#1C2236",
-          color: "#E8A317",
+          border: "1px solid var(--glass-border, #334155)",
+          background: "var(--bg-elevated)",
+          color: "var(--primary)",
           fontSize: 20,
           fontWeight: 800,
           cursor: "pointer",
@@ -580,15 +581,17 @@ function App() {
         {showSplash ? (
           <SplashScreen onComplete={handleSplashComplete} />
         ) : (
-          <AuthProvider>
-            <PremiumProvider>
-              <GamificationProvider>
-                <ToastProvider>
-                  <AppContent />
-                </ToastProvider>
-              </GamificationProvider>
-            </PremiumProvider>
-          </AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <PremiumProvider>
+                <GamificationProvider>
+                  <ToastProvider>
+                    <AppContent />
+                  </ToastProvider>
+                </GamificationProvider>
+              </PremiumProvider>
+            </AuthProvider>
+          </LanguageProvider>
         )}
       </ThemeProvider>
     </ErrorBoundary>

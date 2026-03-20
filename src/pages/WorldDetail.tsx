@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { Card, ProgressBar, Button, Badge } from '../components/ui';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { getWorldById } from '../data/curriculum';
 import type { Lesson } from '../data/curriculum';
 import {
@@ -79,6 +80,7 @@ const itemVariants = {
 const WorldDetail = () => {
   const { worldId } = useParams<{ worldId: string }>();
   const { user } = useAuth();
+  const { t, lang } = useLanguage();
   const userId = user?.uid || 'guest';
 
   const world = getWorldById(worldId || '');
@@ -86,9 +88,9 @@ const WorldDetail = () => {
   if (!world) {
     return (
       <div className="world-detail-page world-detail-page--not-found">
-        <h2>World not found</h2>
+        <h2>{t('worlds.notFound')}</h2>
         <Link to="/worlds">
-          <Button variant="secondary" icon={<ArrowLeft size={16} />}>Back to Worlds</Button>
+          <Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('worlds.backToWorlds')}</Button>
         </Link>
       </div>
     );
@@ -108,7 +110,7 @@ const WorldDetail = () => {
       {/* Back */}
       <Link to="/worlds" className="world-detail-back">
         <ArrowLeft size={18} />
-        All Worlds
+        {t('worlds.allWorlds')}
       </Link>
 
       {/* World Header */}
@@ -123,12 +125,12 @@ const WorldDetail = () => {
       >
         <span className="world-detail-header__icon">{world.icon}</span>
         <div className="world-detail-header__info">
-          <h1 className="world-detail-header__name">{world.name}</h1>
-          <p className="world-detail-header__theme">{world.theme}</p>
+          <h1 className="world-detail-header__name">{lang === 'tr' ? world.nameTr : world.name}</h1>
+          <p className="world-detail-header__theme">{lang === 'tr' ? world.descriptionTr : world.theme}</p>
           <div className="world-detail-header__progress">
             <ProgressBar value={progressPct} size="sm" variant="default" showLabel />
             <span className="world-detail-header__count">
-              {completedCount}/{world.lessons.length} lessons completed
+              {completedCount}/{world.lessons.length} {t('lesson.lessonsCompleted')}
             </span>
           </div>
         </div>
@@ -136,7 +138,7 @@ const WorldDetail = () => {
 
       {/* Vocabulary Preview */}
       <section className="world-detail-vocab">
-        <h2 className="world-detail-section-title">Vocabulary Preview</h2>
+        <h2 className="world-detail-section-title">{t('worlds.vocabularyPreview')}</h2>
         <div className="world-detail-vocab__scroll">
           {vocabPreview.map((v, i) => (
             <div key={i} className="vocab-preview-card">
@@ -149,7 +151,7 @@ const WorldDetail = () => {
 
       {/* Lesson List */}
       <section className="world-detail-lessons">
-        <h2 className="world-detail-section-title">Lessons</h2>
+        <h2 className="world-detail-section-title">{t('worlds.lessons')}</h2>
         <motion.div
           className="world-detail-lessons__list"
           variants={listVariants}
@@ -177,6 +179,8 @@ const WorldDetail = () => {
                       isAvailable={isAvail}
                       isCompleted={isCompleted}
                       isLocked={isLocked}
+                      t={t}
+                      lang={lang}
                     />
                   </Link>
                 ) : (
@@ -188,6 +192,8 @@ const WorldDetail = () => {
                       isAvailable={isAvail}
                       isCompleted={isCompleted}
                       isLocked={isLocked}
+                      t={t}
+                      lang={lang}
                     />
                   </div>
                 )}
@@ -211,9 +217,11 @@ interface LessonCardProps {
   isAvailable: boolean;
   isCompleted: boolean;
   isLocked: boolean;
+  t: (key: string) => string;
+  lang: string;
 }
 
-function LessonCard({ lesson, cfg, TypeIcon, isAvailable, isCompleted, isLocked }: LessonCardProps) {
+function LessonCard({ lesson, cfg, TypeIcon, isAvailable, isCompleted, isLocked, t, lang }: LessonCardProps) {
   return (
     <Card
       variant={isAvailable ? 'interactive' : 'default'}
@@ -234,7 +242,7 @@ function LessonCard({ lesson, cfg, TypeIcon, isAvailable, isCompleted, isLocked 
 
       {/* Info */}
       <div className="lesson-card__info">
-        <h3 className="lesson-card__title">{lesson.title}</h3>
+        <h3 className="lesson-card__title">{lang === 'tr' ? lesson.titleTr : lesson.title}</h3>
         <div className="lesson-card__meta">
           <Badge
             variant={cfg.variant as 'default' | 'success' | 'warning' | 'error' | 'info' | 'premium'}
@@ -256,12 +264,12 @@ function LessonCard({ lesson, cfg, TypeIcon, isAvailable, isCompleted, isLocked 
       <div className="lesson-card__status">
         {isAvailable && !isCompleted && (
           <Button variant="primary" size="sm" icon={<Play size={14} />}>
-            Start
+            {t('worlds.start')}
           </Button>
         )}
         {isCompleted && (
           <span className="lesson-card__done-badge">
-            <Check size={14} /> Done
+            <Check size={14} /> {t('worlds.complete')}
           </span>
         )}
         {isLocked && (

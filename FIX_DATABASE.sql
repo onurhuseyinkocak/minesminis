@@ -133,8 +133,10 @@ ALTER TABLE follows ADD CONSTRAINT follows_following_id_fkey FOREIGN KEY (follow
 ALTER TABLE user_achievements ADD CONSTRAINT user_achievements_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 ALTER TABLE posts ADD CONSTRAINT posts_author_id_fkey FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE;
 
--- ========== BLOCK 5: RE-CREATE RLS POLICIES ==========
--- Simple "allow all" policies for development
+-- ========== BLOCK 5: RE-ENABLE RLS (policies applied separately) ==========
+-- WARNING: Do NOT use "allow all" USING(true) policies in production!
+-- After running this file, apply proper RLS policies from:
+--   scripts/fix-rls-policies.sql
 
 DO $$
 DECLARE
@@ -144,7 +146,6 @@ BEGIN
         SELECT tablename FROM pg_tables WHERE schemaname = 'public'
     ) LOOP
         EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', tbl);
-        EXECUTE format('CREATE POLICY "Allow all for %s" ON public.%I FOR ALL USING (true) WITH CHECK (true)', tbl, tbl);
     END LOOP;
 END $$;
 
@@ -162,7 +163,7 @@ CREATE TABLE IF NOT EXISTS favorites (
 );
 
 ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow all for favorites" ON favorites FOR ALL USING (true) WITH CHECK (true);
+-- RLS policies for favorites are in scripts/fix-rls-policies.sql
 
 CREATE TABLE IF NOT EXISTS pets (
     id text PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
@@ -180,7 +181,7 @@ CREATE TABLE IF NOT EXISTS pets (
 );
 
 ALTER TABLE pets ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow all for pets" ON pets FOR ALL USING (true) WITH CHECK (true);
+-- RLS policies for pets are in scripts/fix-rls-policies.sql
 
 CREATE TABLE IF NOT EXISTS learn_audio (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -190,9 +191,10 @@ CREATE TABLE IF NOT EXISTS learn_audio (
 );
 
 ALTER TABLE learn_audio ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow all for learn_audio" ON learn_audio FOR ALL USING (true) WITH CHECK (true);
+-- RLS policies for learn_audio are in scripts/fix-rls-policies.sql
 
 -- ========== DONE ==========
 -- All user ID columns are now TEXT (compatible with Firebase UIDs)
 -- Missing tables created
--- RLS policies set to allow-all for development
+-- RLS is enabled but NO policies are created here.
+-- NEXT STEP: Run scripts/fix-rls-policies.sql to apply proper RLS policies.

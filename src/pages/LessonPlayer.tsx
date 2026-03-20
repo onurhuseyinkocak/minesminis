@@ -37,6 +37,7 @@ import type { Activity, VocabularyWord } from '../data/curriculum';
 import { completeLesson } from '../data/progressTracker';
 import { updateWordProgress } from '../data/spacedRepetition';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { SFX } from '../data/soundLibrary';
 import { logActivity } from '../services/activityLogger';
 import { syncStudentProgress } from '../services/classroomService';
@@ -94,23 +95,25 @@ const SUPPORTED_GAME_TYPES = new Set([
   'quick-quiz',
   'sentence-scramble',
   'listening-challenge',
+  'phonics-builder',
+  'story-choices',
 ]);
 
 // ============================================================
 // MIMI ENCOURAGEMENTS
 // ============================================================
 
-const ENCOURAGEMENTS = [
-  { text: 'You\'re doing great!', icon: 'star' },
-  { text: 'Keep going, you can do it!', icon: 'star' },
-  { text: 'Wonderful! I\'m proud of you!', icon: 'star' },
-  { text: 'Almost there, keep it up!', icon: 'star' },
-  { text: 'You\'re a superstar!', icon: 'star' },
-  { text: 'Amazing work, friend!', icon: 'star' },
+const ENCOURAGEMENT_KEYS = [
+  'lesson.encouragement1',
+  'lesson.encouragement2',
+  'lesson.encouragement3',
+  'lesson.encouragement4',
+  'lesson.encouragement5',
+  'lesson.encouragement6',
 ];
 
-function getEncouragement(index: number) {
-  return ENCOURAGEMENTS[index % ENCOURAGEMENTS.length];
+function getEncouragementKey(index: number) {
+  return ENCOURAGEMENT_KEYS[index % ENCOURAGEMENT_KEYS.length];
 }
 
 // ============================================================
@@ -153,7 +156,7 @@ interface FallbackActivityProps {
   onComplete: (score: number, total: number) => void;
 }
 
-function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps) {
+function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityProps & { t: (key: string) => string }) {
   const [currentCard, setCurrentCard] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [reviewedCount, setReviewedCount] = useState(0);
@@ -187,7 +190,7 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
   if (!word) {
     return (
       <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <p>No words to review.</p>
+        <p>{t('lesson.noWordsToReview')}</p>
       </div>
     );
   }
@@ -198,7 +201,7 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
         {activity.instructions}
       </p>
       <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', marginBottom: '1rem', fontSize: '0.8rem' }}>
-        Card {currentCard + 1} of {words.length}
+        {t('lesson.card')} {currentCard + 1} {t('lesson.of')} {words.length}
       </p>
 
       <div
@@ -241,7 +244,7 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
           </>
         ) : (
           <span style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)' }}>
-            Tap to reveal
+            {t('lesson.tapToReveal')}
           </span>
         )}
       </div>
@@ -262,7 +265,7 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
           }}
         >
           {flipped ? <EyeOff size={18} /> : <Eye size={18} />}
-          {flipped ? 'Hide' : 'Reveal'}
+          {flipped ? t('lesson.hide') : t('lesson.reveal')}
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); speakWord(); }}
@@ -279,7 +282,7 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
           }}
         >
           <Volume2 size={18} />
-          Listen
+          {t('lesson.listen')}
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); handleNextCard(); }}
@@ -297,7 +300,7 @@ function FallbackActivity({ activity, words, onComplete }: FallbackActivityProps
             fontWeight: 600,
           }}
         >
-          {currentCard < words.length - 1 ? 'Next' : 'Done'}
+          {currentCard < words.length - 1 ? t('lesson.next') : t('lesson.done')}
           <ChevronRight size={18} />
         </button>
       </div>
@@ -314,6 +317,7 @@ const LessonPlayer = () => {
   const navigate = useNavigate();
   const { addXP } = useGamification();
   const { user } = useAuth();
+  const { t, lang } = useLanguage();
   const userId = user?.uid || 'guest';
 
   // Load real lesson data from curriculum
@@ -427,7 +431,7 @@ const LessonPlayer = () => {
         }
       }
     }, 1500);
-  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId]);
+  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId, activityWords, user?.uid]);
 
   const handleXpEarned = useCallback((xp: number) => {
     addXP(xp, 'activity_completed', { lessonId, worldId });
@@ -454,9 +458,30 @@ const LessonPlayer = () => {
       setCurrentIndex((prev) => prev + 1);
     } else {
       setCompleted(true);
-      addXP(lesson.xpReward || 30, 'lesson_completed', { lessonId, worldId });
+      const totalXP = lesson.xpReward || 30;
+      addXP(totalXP, 'lesson_completed', { lessonId, worldId });
+
+      // Save progress so next lesson unlocks (same as handleActivityComplete for last activity)
+      try {
+        const totalScore = activityScores.reduce((a, s) => a + s.score, 0);
+        const totalPossible = activityScores.reduce((a, s) => a + s.total, 0);
+        const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
+        completeLesson(userId, lessonId, worldId, totalXP, accuracy);
+
+        logActivity({
+          type: 'game',
+          title: lesson.title || `Lesson: ${lessonId}`,
+          duration: Math.round(totalActivities * 60),
+          accuracy,
+          xpEarned: totalXP,
+        }, user?.uid);
+
+        syncStudentProgress(totalXP);
+      } catch {
+        // localStorage might be unavailable
+      }
     }
-  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId]);
+  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, activityScores, userId, user?.uid]);
 
   const handleBack = useCallback(() => {
     if (currentIndex > 0) {
@@ -479,12 +504,12 @@ const LessonPlayer = () => {
   if (!lesson) {
     return (
       <div className="lesson-player-page lesson-player-page--not-found">
-        <h2>Lesson not found</h2>
+        <h2>{t('lesson.notFound')}</h2>
         <p style={{ color: 'var(--text-secondary)', margin: '1rem 0' }}>
-          Could not find lesson "{lessonId}" in world "{worldId}".
+          {t('lesson.notFoundDesc')} &quot;{lessonId}&quot; {t('lesson.inWorld')} &quot;{worldId}&quot;.
         </p>
         <Link to={`/worlds/${worldId}`}>
-          <Button variant="secondary" icon={<ArrowLeft size={16} />}>Back to World</Button>
+          <Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('lesson.backToWorld')}</Button>
         </Link>
       </div>
     );
@@ -505,14 +530,14 @@ const LessonPlayer = () => {
               <Heart size={48} />
             </span>
           </div>
-          <h1 className="lesson-complete__title">Out of Hearts!</h1>
+          <h1 className="lesson-complete__title">{t('lesson.outOfHearts')}</h1>
           <p className="lesson-complete__subtitle">
-            Don&apos;t worry, practice makes perfect! Try again.
+            {t('lesson.dontWorry')}
           </p>
 
           <div className="lesson-complete__mimi">
             <span className="lesson-complete__mimi-avatar">{'\u{1F431}'}</span>
-            <p>You can do it! Let&apos;s try one more time!</p>
+            <p>{t('lesson.youCanDoIt')}</p>
           </div>
 
           <div className="lesson-complete__actions">
@@ -522,7 +547,7 @@ const LessonPlayer = () => {
               icon={<RotateCcw size={18} />}
               onClick={handleRestart}
             >
-              Try Again
+              {t('lesson.tryAgain')}
             </Button>
             <Button
               variant="ghost"
@@ -530,7 +555,7 @@ const LessonPlayer = () => {
               icon={<ArrowLeft size={18} />}
               onClick={() => navigate(`/worlds/${worldId}`)}
             >
-              Go Back
+              {t('lesson.goBack')}
             </Button>
           </div>
         </motion.div>
@@ -559,9 +584,9 @@ const LessonPlayer = () => {
           <div className="lesson-complete__trophy">
             <Trophy size={64} />
           </div>
-          <h1 className="lesson-complete__title">Lesson Complete!</h1>
+          <h1 className="lesson-complete__title">{t('lesson.complete')}</h1>
           <p className="lesson-complete__subtitle">
-            Great job! You finished &quot;{lesson.title}&quot; - all {totalActivities} activities!
+            {t('lesson.greatJob')} &quot;{lang === 'tr' ? lesson.titleTr : lesson.title}&quot; - {totalActivities} {t('lesson.allActivities')}
           </p>
 
           {/* Hearts remaining */}
@@ -575,13 +600,13 @@ const LessonPlayer = () => {
               </span>
             ))}
             {hearts > 0 && (
-              <span className="lesson-complete__heart-bonus">+{heartBonusXp} bonus XP</span>
+              <span className="lesson-complete__heart-bonus">+{heartBonusXp} {t('lesson.bonusXp')}</span>
             )}
           </div>
 
           {totalPossible > 0 && (
             <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
-              Accuracy: {accuracy}% ({totalScore}/{totalPossible})
+              {t('lesson.accuracy')}: {accuracy}% ({totalScore}/{totalPossible})
             </p>
           )}
 
@@ -592,7 +617,7 @@ const LessonPlayer = () => {
 
           <div className="lesson-complete__mimi">
             <span className="lesson-complete__mimi-avatar">{'\u{1F431}'}</span>
-            <p>I knew you could do it! You are amazing!</p>
+            <p>{t('lesson.iKnewYouCouldDoIt')}</p>
           </div>
 
           <div className="lesson-complete__actions">
@@ -602,7 +627,7 @@ const LessonPlayer = () => {
               icon={<Home size={18} />}
               onClick={() => navigate(`/worlds/${worldId}`)}
             >
-              Back to {world?.name || 'World'}
+              {t('lesson.backTo')} {lang === 'tr' ? (world?.nameTr || 'Dunya') : (world?.name || 'World')}
             </Button>
             <Button
               variant="ghost"
@@ -610,7 +635,7 @@ const LessonPlayer = () => {
               icon={<RotateCcw size={18} />}
               onClick={handleRestart}
             >
-              Play Again
+              {t('lesson.playAgain')}
             </Button>
           </div>
         </motion.div>
@@ -621,7 +646,7 @@ const LessonPlayer = () => {
   // ========== ACTIVE LESSON ==========
   const ActivityIcon = ACTIVITY_ICONS[currentActivity?.type || 'word-match'] || Gamepad2;
   const activityColor = ACTIVITY_COLORS[currentActivity?.type || 'word-match'] || 'var(--accent-emerald)';
-  const encouragement = getEncouragement(currentIndex);
+  const encouragementKey = getEncouragementKey(currentIndex);
   const isSupported = currentActivity ? SUPPORTED_GAME_TYPES.has(currentActivity.type) : false;
 
   return (
@@ -643,7 +668,7 @@ const LessonPlayer = () => {
         </button>
 
         <div className="lesson-player-topbar__center">
-          <span className="lesson-player-topbar__title">{lesson.title}</span>
+          <span className="lesson-player-topbar__title">{lang === 'tr' ? lesson.titleTr : lesson.title}</span>
           <ProgressBar value={progressPct} size="sm" animated />
           <span className="lesson-player-topbar__count">
             {currentIndex + 1} / {totalActivities}
@@ -679,7 +704,7 @@ const LessonPlayer = () => {
           color: 'var(--text-secondary)',
           fontSize: '0.85rem',
         }}>
-          {world && <span>{world.icon} {world.name} &bull; </span>}
+          {world && <span>{world.icon} {lang === 'tr' ? world.nameTr : world.name} &bull; </span>}
           {lesson.objective}
         </div>
       )}
@@ -722,6 +747,7 @@ const LessonPlayer = () => {
                   activity={currentActivity}
                   words={activityWords}
                   onComplete={handleActivityComplete}
+                  t={t}
                 />
               ) : null}
             </Card>
@@ -732,7 +758,7 @@ const LessonPlayer = () => {
         <div className="lesson-player-mimi">
           <span className="lesson-player-mimi__avatar">{'\u{1F431}'}</span>
           <div className="lesson-player-mimi__bubble">
-            <Star size={16} /> {encouragement.text}
+            <Star size={16} /> {t(encouragementKey)}
           </div>
         </div>
       </div>
@@ -746,7 +772,7 @@ const LessonPlayer = () => {
             icon={<ArrowLeft size={16} />}
             onClick={handleBack}
           >
-            Back
+            {t('lesson.back')}
           </Button>
         )}
         <div className="lesson-player-bottombar__spacer" />
@@ -756,7 +782,7 @@ const LessonPlayer = () => {
           icon={<ChevronRight size={18} />}
           onClick={handleSkip}
         >
-          {currentIndex < totalActivities - 1 ? 'Next' : 'Finish'}
+          {currentIndex < totalActivities - 1 ? t('lesson.next') : t('lesson.finish')}
         </Button>
       </div>
     </div>

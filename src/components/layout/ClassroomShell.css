@@ -20,7 +20,7 @@
 }
 
 .classroom-shell.high-contrast {
-  background: #000;
+  background: var(--bg-page, #0C0F1A);
   color: var(--white);
 }
 
@@ -39,7 +39,7 @@
 }
 
 .classroom-shell.high-contrast .classroom-shell__topbar {
-  background: #0a0a0a;
+  background: var(--bg-soft, #111827);
   border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 

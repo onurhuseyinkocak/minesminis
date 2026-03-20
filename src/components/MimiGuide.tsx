@@ -105,13 +105,13 @@ export default function MimiGuide({
               width: 52,
               height: 52,
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #a78bfa, #7c3aed)',
+              background: 'linear-gradient(135deg, var(--accent-purple-light), var(--accent-purple))',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: 28,
               flexShrink: 0,
-              boxShadow: '0 4px 14px rgba(124, 58, 237, 0.35)',
+              boxShadow: '0 4px 14px rgba(139, 92, 246, 0.35)',
               border: '3px solid var(--bg-card, #1C2236)',
             }}
           >
@@ -126,7 +126,7 @@ export default function MimiGuide({
               padding: '12px 16px',
               boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
               position: 'relative',
-              border: '2px solid rgba(167, 139, 250, 0.3)',
+              border: '2px solid var(--accent-purple-pale, rgba(167, 139, 250, 0.3))',
             }}
           >
             <p
@@ -163,9 +163,9 @@ export default function MimiGuide({
                 marginTop: 8,
                 padding: '4px 12px',
                 borderRadius: 8,
-                border: '1.5px solid rgba(167, 139, 250, 0.4)',
-                background: 'rgba(124, 58, 237, 0.15)',
-                color: '#a78bfa',
+                border: '1.5px solid var(--accent-purple-pale, rgba(167, 139, 250, 0.4))',
+                background: 'var(--accent-purple-pale, rgba(124, 58, 237, 0.15))',
+                color: 'var(--accent-purple-light)',
                 fontSize: 12,
                 fontWeight: 700,
                 cursor: 'pointer',

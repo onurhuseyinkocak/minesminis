@@ -83,7 +83,8 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (server-to-server, Vite proxy, curl)
+    if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
@@ -92,8 +93,8 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Admin-Password'],
-  maxAge: 86400, // 24 hours
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Admin-Password', 'X-CSRF-Token'],
+  maxAge: 3600, // 1 hour
 }));
 
 // JSON body parser with size limit
@@ -107,6 +108,61 @@ app.use(express.urlencoded({
   extended: true,
   limit: '10kb'
 }));
+
+// ============================================================
+// CSRF PROTECTION (Double-Submit Cookie Pattern)
+// ============================================================
+
+// Manual cookie parser (no dependency needed)
+function parseCookies(req) {
+  const header = req.headers.cookie || '';
+  const cookies = {};
+  header.split(';').forEach(pair => {
+    const idx = pair.indexOf('=');
+    if (idx > 0) {
+      const key = pair.substring(0, idx).trim();
+      const val = pair.substring(idx + 1).trim();
+      cookies[key] = decodeURIComponent(val);
+    }
+  });
+  return cookies;
+}
+
+// CSRF token endpoint — client calls this to get a token
+app.get('/api/csrf-token', (req, res) => {
+  const token = crypto.randomBytes(32).toString('hex');
+  res.cookie('csrf_token', token, {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: isProduction,
+    path: '/',
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  });
+  res.json({ ok: true, token });
+});
+
+// CSRF middleware for mutating requests (POST/PUT/PATCH/DELETE)
+function csrfProtection(req, res, next) {
+  // Safe methods are exempt
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+
+  // Exempt webhook endpoints (billing webhooks have their own signature verification)
+  if (req.path.includes('/webhook')) return next();
+
+  // Exempt health check
+  if (req.path === '/api/health') return next();
+
+  const cookies = parseCookies(req);
+  const cookieToken = cookies.csrf_token;
+  const headerToken = req.headers['x-csrf-token'];
+
+  if (!cookieToken || !headerToken || cookieToken !== headerToken) {
+    return res.status(403).json({ ok: false, error: 'Invalid CSRF token' });
+  }
+  next();
+}
+
+app.use(csrfProtection);
 
 // ============================================================
 // ADMIN AUTH & SUPABASE (must be before any route that uses them)
@@ -146,24 +202,24 @@ const requireAdminAuth = async (req, res, next) => {
   const token = raw && raw.startsWith('Bearer ') ? raw.slice(7).trim() : null;
   if (!token) {
     security.auditLog('ADMIN_API_NO_TOKEN', req);
-    return res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid Authorization header' });
+    return res.status(401).json({ ok: false, error: 'Missing or invalid Authorization header' });
   }
   if (!isFirebaseAdminReady()) {
-    return res.status(503).json({ error: 'Admin auth not configured', message: 'Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY or GOOGLE_APPLICATION_CREDENTIALS' });
+    return res.status(503).json({ ok: false, error: 'Admin auth not configured. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY or GOOGLE_APPLICATION_CREDENTIALS' });
   }
   const decoded = await verifyIdToken(token);
   if (!decoded || !decoded.uid) {
     security.auditLog('ADMIN_API_INVALID_TOKEN', req);
-    return res.status(403).json({ error: 'Forbidden', message: 'Invalid or expired token' });
+    return res.status(403).json({ ok: false, error: 'Invalid or expired token' });
   }
   const sb = await getAdminSupabase();
   if (!sb) {
-    return res.status(503).json({ error: 'Service unavailable', message: 'Database not configured' });
+    return res.status(503).json({ ok: false, error: 'Database not configured' });
   }
   const { data, error } = await sb.from('users').select('role, is_admin').eq('id', decoded.uid).maybeSingle();
   if (error || !data || (data.role !== 'admin' && data.is_admin !== true)) {
     security.auditLog('ADMIN_API_NOT_ADMIN', req, { uid: decoded.uid });
-    return res.status(403).json({ error: 'Forbidden', message: 'Admin access required' });
+    return res.status(403).json({ ok: false, error: 'Admin access required' });
   }
   req.adminUid = decoded.uid;
   next();
@@ -209,7 +265,7 @@ app.post('/api/tts',
     // FIX 4: Require authentication for TTS endpoint
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ error: 'Authentication required' });
+      return res.status(401).json({ ok: false, error: 'Authentication required' });
     }
     try {
       const { text, voice = 'nova', storyNarrator = false } = req.body;
@@ -246,8 +302,8 @@ app.post('/api/tts',
         const errorData = await response.json().catch(() => ({}));
         console.error('❌ OpenAI TTS Error:', response.status, errorData);
         return res.status(response.status).json({
-          error: 'OpenAI TTS Error',
-          details: errorData.error?.message || 'Unknown error'
+          ok: false,
+          error: errorData.error?.message || 'OpenAI TTS Error'
         });
       }
 
@@ -257,6 +313,7 @@ app.post('/api/tts',
       console.log('✅ TTS audio generated successfully');
 
       res.json({
+        ok: true,
         audio: base64Audio,
         format: 'mp3'
       });
@@ -264,8 +321,8 @@ app.post('/api/tts',
     } catch (error) {
       console.error('❌ TTS Server error:', error);
       res.status(500).json({
-        error: 'Internal server error',
-        details: 'An unexpected error occurred'
+        ok: false,
+        error: 'Internal server error'
       });
     }
   }
@@ -349,25 +406,35 @@ app.get('/api/story/today', (req, res) => {
     const storyFile = path.join(__dirname, 'data', 'dailyStory.json');
 
     if (!fs.existsSync(storyFile)) {
-      return res.status(404).json({ error: 'No daily story generated yet' });
+      return res.status(404).json({ ok: false, error: 'No daily story generated yet' });
     }
 
     const today = new Date().toISOString().slice(0, 10);
     const data = JSON.parse(fs.readFileSync(storyFile, 'utf8'));
 
     if (data.date !== today) {
-      return res.status(404).json({ error: 'Today\'s story not generated' });
+      return res.status(404).json({ ok: false, error: 'Today\'s story not generated' });
     }
 
-    res.json(data.story);
+    res.json({ ok: true, data: data.story });
   } catch (error) {
     console.error('Story API error:', error);
-    res.status(500).json({ error: 'Failed to load story' });
+    res.status(500).json({ ok: false, error: 'Failed to load story' });
   }
 });
 
 // Daily Challenge - günlük değişir, AI ile title/description üretir (cache per day)
 const dailyChallengeCache = new Map();
+// TTL cleanup: remove entries older than 24 hours, runs every hour
+const CHALLENGE_CACHE_TTL = 24 * 60 * 60 * 1000; // 24h in ms
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of dailyChallengeCache) {
+    if (value._cachedAt && now - value._cachedAt > CHALLENGE_CACHE_TTL) {
+      dailyChallengeCache.delete(key);
+    }
+  }
+}, 60 * 60 * 1000); // cleanup every hour
 const CHALLENGE_TEMPLATES = [
   { type: 'words', target: 5, rewardXP: 50, icon: '📖' },
   { type: 'words', target: 10, rewardXP: 100, icon: '🌟' },
@@ -382,7 +449,8 @@ app.get('/api/daily-challenge', security.rateLimiter({ maxRequests: 60, windowMs
   try {
     const dateStr = (req.query.date || new Date().toISOString().slice(0, 10)).toString().slice(0, 10);
     if (dailyChallengeCache.has(dateStr)) {
-      return res.json(dailyChallengeCache.get(dateStr));
+      const { _cachedAt, ...cached } = dailyChallengeCache.get(dateStr);
+      return res.json(cached);
     }
     const seed = dateStr.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
     const template = CHALLENGE_TEMPLATES[seed % CHALLENGE_TEMPLATES.length];
@@ -417,12 +485,13 @@ app.get('/api/daily-challenge', security.rateLimiter({ maxRequests: 60, windowMs
       }
     }
 
-    const challenge = { id, title, description, target: template.target, type: template.type, rewardXP: template.rewardXP, icon: template.icon };
+    const challenge = { id, title, description, target: template.target, type: template.type, rewardXP: template.rewardXP, icon: template.icon, _cachedAt: Date.now() };
     dailyChallengeCache.set(dateStr, challenge);
-    res.json(challenge);
+    const { _cachedAt, ...responseChallenge } = challenge;
+    res.json(responseChallenge);
   } catch (e) {
     console.error('Daily challenge error:', e);
-    res.status(500).json({ error: 'Failed to load daily challenge' });
+    res.status(500).json({ ok: false, error: 'Failed to load daily challenge' });
   }
 });
 
@@ -492,14 +561,14 @@ app.post('/api/chat',
       // FIX 2: Require authentication (Firebase token or admin password)
       const authHeader = req.headers.authorization;
       if (!authHeader) {
-        return res.status(401).json({ error: 'Authentication required' });
+        return res.status(401).json({ ok: false, error: 'Authentication required' });
       }
 
       const { messages } = req.body;
 
       if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({
-          error: 'Invalid request: messages array required'
+          ok: false, error: 'Invalid request: messages array required'
         });
       }
 
@@ -507,18 +576,18 @@ app.post('/api/chat',
       for (const msg of messages) {
         if (!msg.role || !msg.content) {
           return res.status(400).json({
-            error: 'Invalid message format'
+            ok: false, error: 'Invalid message format'
           });
         }
         if (!['user', 'assistant', 'system'].includes(msg.role)) {
           return res.status(400).json({
-            error: 'Invalid message role'
+            ok: false, error: 'Invalid message role'
           });
         }
         // Limit individual message length
         if (typeof msg.content === 'string' && msg.content.length > 2000) {
           return res.status(400).json({
-            error: 'Message content too long (max 2000 chars)'
+            ok: false, error: 'Message content too long (max 2000 chars)'
           });
         }
       }
@@ -563,9 +632,8 @@ app.post('/api/chat',
         console.error('❌ OpenAI API Error:', response.status, errorData);
 
         return res.status(response.status).json({
-          error: 'OpenAI API Error',
-          details: errorData.error?.message || 'Unknown error',
-          status: response.status
+          ok: false,
+          error: errorData.error?.message || 'OpenAI API Error'
         });
       }
 
@@ -581,8 +649,8 @@ app.post('/api/chat',
     } catch (error) {
       console.error('❌ Server error:', error);
       res.status(500).json({
-        error: 'Internal server error',
-        details: 'An unexpected error occurred'
+        ok: false,
+        error: 'Internal server error'
       });
     }
   }
@@ -692,10 +760,10 @@ app.post('/api/seo/apply', security.rateLimiter({ maxRequests: 20, windowMs: 600
 
 app.get('/api/youtube/metadata', security.rateLimiter({ maxRequests: 20, windowMs: 60000 }), async (req, res) => {
   const url = req.query.url || req.query.v;
-  if (!url) return res.status(400).json({ error: 'url gerekli' });
+  if (!url) return res.status(400).json({ ok: false, error: 'url gerekli' });
   const idMatch = String(url).match(/(?:v=|\/)([a-zA-Z0-9_-]{11})(?:\?|&|$)/) || (url.length === 11 ? [null, url] : null);
   const videoId = idMatch ? idMatch[1] : null;
-  if (!videoId) return res.status(400).json({ error: 'Geçersiz YouTube URL' });
+  if (!videoId) return res.status(400).json({ ok: false, error: 'Geçersiz YouTube URL' });
   const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
   try {
     let title = '';
@@ -738,19 +806,19 @@ app.get('/api/youtube/metadata', security.rateLimiter({ maxRequests: 20, windowM
     });
   } catch (e) {
     console.error('YouTube metadata error:', e);
-    res.status(500).json({ error: 'Video bilgileri alınamadı' });
+    res.status(500).json({ ok: false, error: 'Video bilgileri alınamadı' });
   }
 });
 
 app.post('/api/worksheets/upload', requireAdminAuth, security.rateLimiter({ maxRequests: 20, windowMs: 60000 }), upload.single('file'), (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'Dosya gerekli' });
+    if (!req.file) return res.status(400).json({ ok: false, error: 'Dosya gerekli' });
     const base = req.headers.origin || `${req.protocol}://${req.get('host')}`;
     const url = `${base.replace(/\/$/, '')}/uploads/worksheets/${req.file.filename}`;
-    res.json({ url, thumbnailUrl: /\.(jpg|jpeg|png)$/i.test(req.file.originalname || '') ? url : null });
+    res.json({ ok: true, url, thumbnailUrl: /\.(jpg|jpeg|png)$/i.test(req.file.originalname || '') ? url : null });
   } catch (e) {
     console.error('Worksheet upload error:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
@@ -760,51 +828,51 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: '1
 app.post('/api/admin/words', security.rateLimiter({ maxRequests: 50, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış. .env dosyasına VITE_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY ekleyin.' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış. .env dosyasına VITE_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY ekleyin.' });
     const { word, turkish, level, category, emoji, example } = req.body;
-    if (!word || !turkish) return res.status(400).json({ error: 'word ve turkish gerekli' });
+    if (!word || !turkish) return res.status(400).json({ ok: false, error: 'word ve turkish gerekli' });
     const { data, error } = await sb.from('words').insert({ word: String(word).trim(), turkish: String(turkish), level: level || 'beginner', category: category || 'Animals', emoji: emoji || '📚', example: example || null }).select().single();
     if (error) throw error;
     res.json(data);
   } catch (e) {
     console.error('Admin words insert:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.patch('/api/admin/words/:word', security.rateLimiter({ maxRequests: 50, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { turkish, level, category, emoji, example } = req.body;
     const { error } = await sb.from('words').update({ turkish, level, category, emoji, example }).eq('word', decodeURIComponent(req.params.word));
     if (error) throw error;
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin words update:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.delete('/api/admin/words/:word', security.rateLimiter({ maxRequests: 50, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { error } = await sb.from('words').delete().eq('word', decodeURIComponent(req.params.word));
     if (error) throw error;
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin words delete:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.post('/api/admin/videos', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { youtube_id, title, description, thumbnail, duration, category, grade, isPopular } = req.body;
-    if (!youtube_id || !title) return res.status(400).json({ error: 'youtube_id ve title gerekli' });
+    if (!youtube_id || !title) return res.status(400).json({ ok: false, error: 'youtube_id ve title gerekli' });
     const row = { youtube_id, title, description: description || '', thumbnail: thumbnail || '', duration: duration || '0:00', category: category || 'lesson' };
     if (grade != null) row.grade = grade;
     if (isPopular != null) row.is_popular = !!isPopular;
@@ -813,14 +881,14 @@ app.post('/api/admin/videos', security.rateLimiter({ maxRequests: 30, windowMs: 
     res.json(data);
   } catch (e) {
     console.error('Admin videos insert:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.patch('/api/admin/videos/:id', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { youtube_id, title, description, thumbnail, duration, category, grade, isPopular } = req.body;
     const row = {};
     if (youtube_id != null) row.youtube_id = youtube_id;
@@ -836,42 +904,42 @@ app.patch('/api/admin/videos/:id', security.rateLimiter({ maxRequests: 30, windo
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin videos update:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.delete('/api/admin/videos/:id', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { error } = await sb.from('videos').delete().eq('id', req.params.id);
     if (error) throw error;
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin videos delete:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.post('/api/admin/games', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, url, category, thumbnail_url, description, target_audience } = req.body;
-    if (!title || !url) return res.status(400).json({ error: 'title ve url gerekli' });
+    if (!title || !url) return res.status(400).json({ ok: false, error: 'title ve url gerekli' });
     const { data, error } = await sb.from('games').insert({ title, url, category: category || 'Quiz', thumbnail_url: thumbnail_url || null, description: description || '', target_audience: target_audience || '2' }).select('id').single();
     if (error) throw error;
     res.json(data);
   } catch (e) {
     console.error('Admin games insert:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.patch('/api/admin/games/:id', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, url, category, thumbnail_url, description, target_audience } = req.body;
     const row = {};
     if (title != null) row.title = title;
@@ -885,20 +953,20 @@ app.patch('/api/admin/games/:id', security.rateLimiter({ maxRequests: 30, window
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin games update:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.delete('/api/admin/games/:id', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { error } = await sb.from('games').delete().eq('id', req.params.id);
     if (error) throw error;
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin games delete:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
@@ -906,9 +974,9 @@ app.delete('/api/admin/games/:id', security.rateLimiter({ maxRequests: 30, windo
 app.post('/api/admin/worksheets', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, description, category, grade, thumbnailUrl, externalUrl, source } = req.body;
-    if (!title || !externalUrl) return res.status(400).json({ error: 'title ve externalUrl (veya file_url) gerekli' });
+    if (!title || !externalUrl) return res.status(400).json({ ok: false, error: 'title ve externalUrl (veya file_url) gerekli' });
     const ext = (externalUrl.split('?')[0].split('.').pop() || 'html').toLowerCase();
     const fileType = ['pdf', 'jpg', 'jpeg', 'png'].includes(ext) ? ext : 'html';
     const fileName = (title || 'worksheet').replace(/\s+/g, '-').toLowerCase() + '.' + fileType;
@@ -928,14 +996,14 @@ app.post('/api/admin/worksheets', security.rateLimiter({ maxRequests: 30, window
     res.json(data);
   } catch (e) {
     console.error('Admin worksheets insert:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.patch('/api/admin/worksheets/:id', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, description, category, grade, thumbnailUrl, externalUrl, source } = req.body;
     const row = {};
     if (title != null) row.title = title;
@@ -951,29 +1019,29 @@ app.patch('/api/admin/worksheets/:id', security.rateLimiter({ maxRequests: 30, w
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin worksheets update:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.delete('/api/admin/worksheets/:id', security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { error } = await sb.from('worksheets').delete().eq('id', req.params.id);
     if (error) throw error;
     res.json({ ok: true });
   } catch (e) {
     console.error('Admin worksheets delete:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.post('/api/admin/blog', security.rateLimiter({ maxRequests: 30, windowMs: 60000, keyPrefix: 'admin-blog' }), async (req, res) => {
   try {
     const sb = await getAdminSupabase();
-    if (!sb) return res.status(503).json({ error: 'Supabase yapılandırılmamış' });
+    if (!sb) return res.status(503).json({ ok: false, error: 'Supabase yapılandırılmamış' });
     const { title, slug, content, excerpt, meta_title, meta_description, published_at } = req.body;
-    if (!title || !content) return res.status(400).json({ error: 'title ve content gerekli' });
+    if (!title || !content) return res.status(400).json({ ok: false, error: 'title ve content gerekli' });
     const s = (slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-')).replace(/^-|-$/g, '');
     const row = {
       title: String(title),
@@ -990,15 +1058,15 @@ app.post('/api/admin/blog', security.rateLimiter({ maxRequests: 30, windowMs: 60
     res.json(data);
   } catch (e) {
     console.error('Admin blog insert:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
 app.post('/api/words/enrich', requireAdminAuth, security.rateLimiter({ maxRequests: 30, windowMs: 60000 }), async (req, res) => {
   const { word } = req.body;
-  if (!word || typeof word !== 'string') return res.status(400).json({ error: 'word gerekli' });
+  if (!word || typeof word !== 'string') return res.status(400).json({ ok: false, error: 'word gerekli' });
   const w = word.trim().toLowerCase();
-  if (!w) return res.status(400).json({ error: 'Kelime boş olamaz' });
+  if (!w) return res.status(400).json({ ok: false, error: 'Kelime boş olamaz' });
   try {
     const [turkishRes, openaiRes] = await Promise.all([
       fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(w)}&langpair=en|tr`).then(r => r.json()),
@@ -1032,7 +1100,7 @@ app.post('/api/words/enrich', requireAdminAuth, security.rateLimiter({ maxReques
     res.json({ turkish, emoji, example });
   } catch (e) {
     console.error('Words enrich error:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
@@ -1069,7 +1137,7 @@ if (isProduction) {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Not Found' });
+  res.status(404).json({ ok: false, error: 'Not Found' });
 });
 
 // Global error handler
@@ -1078,8 +1146,8 @@ app.use((err, req, res, next) => {
   security.auditLog('SERVER_ERROR', req, { error: err.message });
 
   res.status(500).json({
-    error: 'Internal Server Error',
-    message: isProduction ? 'An unexpected error occurred' : err.message
+    ok: false,
+    error: isProduction ? 'Internal Server Error' : err.message
   });
 });
 

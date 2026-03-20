@@ -3,6 +3,7 @@ import './Navbar.css';
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import {
   Gamepad2,
   Video,
@@ -21,31 +22,32 @@ import {
 } from "lucide-react";
 import XPBar from "./XPBar";
 
-const NAV_ITEMS = [
-  { to: "/games", icon: Gamepad2, label: "Games" },
-  { to: "/words", icon: BookOpen, label: "Words" },
-  { to: "/videos", icon: Video, label: "Videos" },
-  { to: "/story", icon: FileText, label: "Stories" },
-] as const;
-
-const TAB_ITEMS_BEFORE = [
-  { to: "/", icon: Home, label: "Home" },
-  { to: "/blog", icon: Shield, label: "Blog" },
-  { to: "/login", icon: UserCircle, label: "Login" },
-];
-
-const TAB_ITEMS_AFTER = [
-  { to: "/dashboard", icon: Home, label: "Home" },
-  { to: "/games", icon: Gamepad2, label: "Games" },
-  { to: "/words", icon: Heart, label: "Words" },
-  { to: "/profile", icon: UserCircle, label: "Profile" },
-];
-
 function Navbar() {
   const { user, userProfile, signOut, isAdmin } = useAuth();
   const { effectiveTheme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const NAV_ITEMS = [
+    { to: "/games", icon: Gamepad2, label: t('nav.games') },
+    { to: "/words", icon: BookOpen, label: t('nav.words') },
+    { to: "/videos", icon: Video, label: t('nav.videos') },
+    { to: "/story", icon: FileText, label: t('nav.stories') },
+  ];
+
+  const TAB_ITEMS_BEFORE = [
+    { to: "/", icon: Home, label: t('nav.home') },
+    { to: "/blog", icon: Shield, label: t('nav.blog') },
+    { to: "/login", icon: UserCircle, label: t('common.login') },
+  ];
+
+  const TAB_ITEMS_AFTER = [
+    { to: "/dashboard", icon: Home, label: t('nav.home') },
+    { to: "/games", icon: Gamepad2, label: t('nav.games') },
+    { to: "/words", icon: Heart, label: t('nav.words') },
+    { to: "/profile", icon: UserCircle, label: t('common.profile') },
+  ];
 
   const isActive = (path: string) => {
     const p = location.pathname;
@@ -102,36 +104,36 @@ function Navbar() {
               <Link
                 to="/words"
                 className={`nav-icon-btn ${isActive("/words") ? "active" : ""}`}
-                title="Words"
+                title={t('nav.words')}
               >
                 <BookOpen size={18} />
               </Link>
               <Link
                 to="/profile"
                 className={`nav-profile-btn ${isActive("/profile") ? "active" : ""}`}
-                title="Profile"
+                title={t('common.profile')}
               >
                 <UserCircle size={20} />
                 <span className="nav-profile-name">
-                  {userProfile?.display_name || "Profile"}
+                  {userProfile?.display_name || t('common.profile')}
                 </span>
               </Link>
               {isAdmin && (
-                <Link to="/admin" className="nav-icon-btn nav-admin-btn" title="Admin">
+                <Link to="/admin" className="nav-icon-btn nav-admin-btn" title={t('nav.admin')}>
                   <Shield size={18} />
                 </Link>
               )}
               <Link
                 to="/parent"
                 className="nav-icon-btn"
-                title="Parents"
+                title={t('nav.parents')}
               >
                 <ShieldCheck size={18} />
               </Link>
               <button
                 className="nav-icon-btn nav-logout-btn"
                 onClick={signOut}
-                title="Logout"
+                title={t('common.logout')}
               >
                 <LogOut size={18} />
               </button>
@@ -139,7 +141,7 @@ function Navbar() {
           ) : (
             <Link to="/login" className="nav-login-btn">
               <UserCircle size={18} />
-              <span>Login</span>
+              <span>{t('common.login')}</span>
             </Link>
           )}
 
@@ -163,7 +165,7 @@ function Navbar() {
             <div className="nav-mobile-header">
               <span className="nav-mobile-user">
                 <UserCircle size={24} />
-                {userProfile?.display_name || "Profile"}
+                {userProfile?.display_name || t('common.profile')}
               </span>
               <button className="nav-mobile-close" onClick={() => setMenuOpen(false)}>
                 <X size={20} />
@@ -183,14 +185,14 @@ function Navbar() {
               ))}
               <div className="nav-mobile-divider" />
               <Link to="/words" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>
-                <BookOpen size={20} /> <span>Words</span>
+                <BookOpen size={20} /> <span>{t('nav.words')}</span>
               </Link>
               <Link to="/parent" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>
-                <ShieldCheck size={20} /> <span>Parents</span>
+                <ShieldCheck size={20} /> <span>{t('nav.parents')}</span>
               </Link>
               {isAdmin && (
                 <Link to="/admin" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>
-                  <Shield size={20} /> <span>Admin Panel</span>
+                  <Shield size={20} /> <span>{t('nav.adminPanel')}</span>
                 </Link>
               )}
               <div className="nav-mobile-divider" />
@@ -198,7 +200,7 @@ function Navbar() {
                 className="nav-mobile-link nav-mobile-logout"
                 onClick={() => { signOut(); setMenuOpen(false); }}
               >
-                <LogOut size={20} /> <span>Logout</span>
+                <LogOut size={20} /> <span>{t('common.logout')}</span>
               </button>
             </nav>
           </div>

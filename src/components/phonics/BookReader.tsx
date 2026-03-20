@@ -99,7 +99,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
 
       recognition.start();
       setTimeout(() => {
-        try { recognition.stop(); } catch (_e) { /* ignore */ }
+        try { recognition.stop(); } catch { /* ignore */ }
       }, 10000);
     }
   }, []);

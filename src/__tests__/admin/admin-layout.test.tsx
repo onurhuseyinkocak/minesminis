@@ -88,9 +88,9 @@ vi.mock('../../data/wordStore', () => ({ wordStore: { getAll: () => [], getWords
 vi.mock('../../data/videosData', () => ({ gradeInfo: {} }));
 vi.mock('../../data/worksheetsData', () => ({ Worksheet: {}, categories: [], grades: [] }));
 vi.mock('../../utils/adminApi', () => ({ adminFetch: vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) })), getAdminApiBase: () => 'http://localhost:3001' }));
-vi.mock('recharts', () => ({ ResponsiveContainer: ({ children }: any) => <div>{children}</div>, LineChart: ({ children }: any) => <div>{children}</div>, Line: () => null, BarChart: ({ children }: any) => <div>{children}</div>, Bar: () => null, PieChart: ({ children }: any) => <div>{children}</div>, Pie: () => null, Cell: () => null, XAxis: () => null, YAxis: () => null, CartesianGrid: () => null, Tooltip: () => null, Legend: () => null, Area: () => null, AreaChart: ({ children }: any) => <div>{children}</div> }));
+vi.mock('recharts', () => ({ ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>, LineChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>, Line: () => null, BarChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>, Bar: () => null, PieChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>, Pie: () => null, Cell: () => null, XAxis: () => null, YAxis: () => null, CartesianGrid: () => null, Tooltip: () => null, Legend: () => null, Area: () => null, AreaChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
 vi.mock('framer-motion', () => ({
-  motion: new Proxy({}, { get: (_t, prop) => typeof prop === 'string' ? React.forwardRef(({ children, ...p }: any, ref: any) => { const fp: Record<string, unknown> = {}; for (const [k, v] of Object.entries(p)) { if (!k.startsWith('while') && !k.startsWith('animate') && !k.startsWith('initial') && !k.startsWith('exit') && !k.startsWith('variants') && !k.startsWith('transition') && !k.startsWith('layout') && k !== 'custom' && k !== 'whileInView' && k !== 'viewport') fp[k] = v; } return React.createElement(prop as string, { ...fp, ref }, children); }) : undefined }),
+  motion: new Proxy({}, { get: (_t, prop) => typeof prop === 'string' ? React.forwardRef(({ children, ...p }: { children?: React.ReactNode; [key: string]: unknown }, ref: React.Ref<unknown>) => { const fp: Record<string, unknown> = {}; for (const [k, v] of Object.entries(p)) { if (!k.startsWith('while') && !k.startsWith('animate') && !k.startsWith('initial') && !k.startsWith('exit') && !k.startsWith('variants') && !k.startsWith('transition') && !k.startsWith('layout') && k !== 'custom' && k !== 'whileInView' && k !== 'viewport') fp[k] = v; } return React.createElement(prop as string, { ...fp, ref }, children); }) : undefined }),
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useInView: () => false, useAnimation: () => ({ start: vi.fn(), stop: vi.fn() }),
 }));
@@ -293,8 +293,8 @@ describe('AdminLayout - Logout', () => {
     const logoutBtns = screen.getAllByText(/Sign Out/);
     // Mock window.location.href
     const originalHref = window.location.href;
-    delete (window as any).location;
-    (window as any).location = { href: originalHref };
+    delete (window as unknown as Record<string, unknown>).location;
+    (window as unknown as Record<string, unknown>).location = { href: originalHref };
 
     fireEvent.click(logoutBtns[0]);
 

@@ -166,13 +166,13 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
 
           .picker-item:hover {
             transform: scale(1.12);
-            border-color: #E8A317;
+            border-color: var(--primary);
             box-shadow: 0 4px 12px rgba(232, 163, 23, 0.25);
           }
 
           .picker-item.selected {
-            border-color: #1A6B5A;
-            background: rgba(26, 107, 90, 0.1);
+            border-color: var(--secondary);
+            background: var(--secondary-pale, rgba(26, 107, 90, 0.1));
             box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.2);
           }
 
