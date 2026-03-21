@@ -7,7 +7,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ArrowLeft, MapPin, Volume2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Volume2, BookOpen, RotateCcw } from 'lucide-react';
 import { speak } from '../services/ttsService';
 import './StoryReader.css';
 
@@ -123,6 +123,7 @@ export default function StoryReader() {
   const [sceneIndex, setSceneIndex] = useState(0);
   const [showChoices, setShowChoices] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [showCompletion, setShowCompletion] = useState(false);
 
   // Fetch story
   useEffect(() => {
@@ -146,7 +147,7 @@ export default function StoryReader() {
 
   const currentScene: StoryScene | undefined = story?.scenes?.[sceneIndex];
   const totalScenes = story?.scenes?.length ?? 0;
-  const progress = totalScenes > 1 ? ((sceneIndex) / (totalScenes - 1)) * 100 : 0;
+  const progress = totalScenes > 0 ? ((sceneIndex + 1) / totalScenes) * 100 : 0;
 
   const narrationText = currentScene
     ? (lang === 'tr'
@@ -256,7 +257,7 @@ export default function StoryReader() {
       </div>
 
       {/* Scene content */}
-      {currentScene && (
+      {!showCompletion && currentScene && (
         <div className={`story-reader__body ${transitioning ? 'story-reader__transitioning' : ''}`}>
 
           {/* Location badge */}
@@ -333,7 +334,7 @@ export default function StoryReader() {
       )}
 
       {/* Skip typewriter hint */}
-      {!done && (
+      {!showCompletion && !done && (
         <button
           className="story-reader__skip"
           onClick={e => { e.stopPropagation(); skip(); }}
@@ -343,8 +344,89 @@ export default function StoryReader() {
         </button>
       )}
 
+      {/* Completion Screen */}
+      {showCompletion && (
+        <div className="story-reader__completion">
+          <div className="story-reader__completion-confetti" aria-hidden="true">🎉🏆🌟</div>
+          <h2 className="story-reader__completion-title">
+            {lang === 'tr' ? 'Hikaye Bitti!' : 'Story Complete!'}
+          </h2>
+          {story && (
+            <p className="story-reader__completion-subtitle">
+              {lang === 'tr'
+                ? (story.title_tr ?? story.title)
+                : story.title}
+            </p>
+          )}
+          <div className="story-reader__completion-xp">
+            ⭐ +{Math.max(10, totalScenes * 5)} XP {lang === 'tr' ? 'kazandın!' : 'earned!'}
+          </div>
+
+          {/* Moral of the story */}
+          {story && (story.moral || story.moral_tr) && (
+            <div className="story-reader__completion-moral">
+              <div className="story-reader__completion-moral-label">
+                {lang === 'tr' ? '💡 Hikayenin Mesajı' : '💡 Moral of the Story'}
+              </div>
+              <p className="story-reader__completion-moral-text">
+                {lang === 'tr' ? (story.moral_tr ?? story.moral) : story.moral}
+              </p>
+            </div>
+          )}
+
+          {/* Vocabulary summary */}
+          {(() => {
+            const allVocab: VocabWord[] = [];
+            if (story?.vocabulary) allVocab.push(...story.vocabulary);
+            story?.scenes?.forEach(s => { if (s.vocabulary) allVocab.push(...s.vocabulary); });
+            const unique = allVocab.filter((v, i, arr) => arr.findIndex(x => x.word === v.word) === i);
+            if (unique.length === 0) return null;
+            return (
+              <div className="story-reader__completion-vocab">
+                <div className="story-reader__completion-vocab-title">
+                  📚 {lang === 'tr' ? `Öğrendiğin ${unique.length} Kelime` : `${unique.length} Words You Learned`}
+                </div>
+                <div className="story-reader__completion-vocab-list">
+                  {unique.map((v, i) => (
+                    <div key={i} className="story-reader__completion-vocab-chip">
+                      {v.emoji && <span>{v.emoji}</span>}
+                      <strong>{v.word}</strong>
+                      {(v.word_tr || v.turkish) && (
+                        <span>— {v.word_tr || v.turkish}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Action buttons */}
+          <div className="story-reader__completion-actions">
+            <button
+              className="story-reader__completion-btn-primary"
+              onClick={() => navigate('/stories')}
+            >
+              <BookOpen size={18} />
+              {lang === 'tr' ? 'Başka Hikaye Oku' : 'Read Another Story'}
+            </button>
+            <button
+              className="story-reader__completion-btn-secondary"
+              onClick={() => {
+                setShowCompletion(false);
+                setSceneIndex(0);
+                setShowChoices(false);
+              }}
+            >
+              <RotateCcw size={16} />
+              {lang === 'tr' ? 'Başa Dön' : 'Back to Stories'}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Choices */}
-      {showChoices && currentScene && (
+      {!showCompletion && showChoices && currentScene && (
         <div className="story-reader__choices" onClick={e => e.stopPropagation()}>
           {currentScene.choices && currentScene.choices.length > 0 ? (
             currentScene.choices.map((choice, i) => (
@@ -374,13 +456,13 @@ export default function StoryReader() {
               {lang === 'tr' ? 'Devam Et' : 'Continue'}
             </button>
           ) : (
-            // Last scene — back to grid
+            // Last scene — show completion screen
             <button
               className="story-reader__choice-btn"
-              onClick={() => navigate('/stories')}
+              onClick={() => setShowCompletion(true)}
             >
-              <span className="story-reader__choice-icon">🏠</span>
-              {lang === 'tr' ? 'Hikayelere Dön' : 'Back to Stories'}
+              <span className="story-reader__choice-icon">🎉</span>
+              {lang === 'tr' ? 'Hikayeyi Tamamla!' : 'Complete Story!'}
             </button>
           )}
         </div>

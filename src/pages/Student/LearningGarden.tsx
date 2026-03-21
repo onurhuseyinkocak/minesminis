@@ -39,7 +39,7 @@ function LearningGarden() {
   const [selectedPlant, setSelectedPlant] = useState<SelectedPlantInfo | null>(null);
   const [waterDrops, setWaterDrops] = useState(0);
   const [wateringPlant, setWateringPlant] = useState<string | null>(null);
-  const [justGrew, _setJustGrew] = useState<string | null>(null);
+  const [justGrew, setJustGrew] = useState<string | null>(null);
 
   // Initialize
   useEffect(() => {
@@ -98,17 +98,32 @@ function LearningGarden() {
     (soundId: string) => {
       if (waterDrops <= 0) return;
 
+      const prevState = getGardenState();
+      const prevMastery = prevState[soundId]?.mastery ?? 0;
       const success = waterPlant(soundId);
       if (success) {
+        const newState = getGardenState();
+        const newMastery = newState[soundId]?.mastery ?? 0;
+
         setWateringPlant(soundId);
         setWaterDrops(getWaterDrops());
-        setGardenState(getGardenState());
+        setGardenState(newState);
+
+        // Trigger growth animation if mastery stage changed
+        const plant = GARDEN_PLANTS.find((p) => p.soundId === soundId);
+        if (plant) {
+          const prevStage = getPlantStage(plant, prevMastery);
+          const newStageVal = getPlantStage(plant, newMastery);
+          if (prevStage.name !== newStageVal.name) {
+            setJustGrew(soundId);
+            setTimeout(() => setJustGrew(null), 1500);
+          }
+        }
+
         setTimeout(() => setWateringPlant(null), 1200);
 
         // Refresh selected plant info
-        const plant = GARDEN_PLANTS.find((p) => p.soundId === soundId);
         if (plant && selectedPlant) {
-          const newState = getGardenState();
           const s = newState[soundId];
           setSelectedPlant({
             ...selectedPlant,

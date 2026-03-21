@@ -93,66 +93,66 @@ const content = {
   },
   tr: {
     // Nav
-    navHow: 'Nasil Calisir',
-    navFor: 'Kimler Icin',
-    navStats: 'Sonuclar',
-    loginBtn: 'Giris Yap',
+    navHow: 'Nasıl Çalışır',
+    navFor: 'Kimler İçin',
+    navStats: 'Sonuçlar',
+    loginBtn: 'Giriş Yap',
     // Hero
-    heroBadge: 'Montessori + Fonetik Yontemi',
-    heroTitle: 'Gercekten Ise Yarayan Ingilizce Ogrenme',
-    heroSub: 'Turkiye\'deki 3-10 yas arasi cocuklar icin arastirmaya dayali fonetik. 42 ses. Bir ejderha arkadas.',
-    heroCtaPrimary: 'Ogrenmeye Basla',
-    heroCtaSecondary: 'Nasil Calistigini Gor',
+    heroBadge: 'Montessori + Fonetik Yöntemi',
+    heroTitle: 'Gerçekten İşe Yarayan İngilizce Öğrenme',
+    heroSub: 'Türkiye\'deki 3-10 yaş arası çocuklar için araştırmaya dayalı fonetik. 42 ses. Bir ejderha arkadaş.',
+    heroCtaPrimary: 'Öğrenmeye Başla',
+    heroCtaSecondary: 'Nasıl Çalıştığını Gör',
     // Method
-    methodTitle: 'Ingilizce akiciligina giden kanitlanmis yol',
-    phase1Title: 'Ses Kesfi',
-    phase1Age: '3-5 Yas',
-    phase1Desc: 'Cocuklar 42 Ingilizce fonemi tanir ve uretir',
+    methodTitle: 'İngilizce akıcılığına giden kanıtlanmış yol',
+    phase1Title: 'Ses Keşfi',
+    phase1Age: '3-5 Yaş',
+    phase1Desc: 'Çocuklar 42 İngilizce fonemi tanır ve üretir',
     phase2Title: 'Kelime Kurma',
-    phase2Age: '5-7 Yas',
-    phase2Desc: 'Sesleri kelimelere ve cumlelere harmanlama',
+    phase2Age: '5-7 Yaş',
+    phase2Desc: 'Sesleri kelimelere ve cümlelere harmanlama',
     phase3Title: 'Okuma & Hikayeler',
-    phase3Age: '7-9 Yas',
-    phase3Desc: 'Yalnizca ogrenilen seslerle okunabilir kitaplar',
-    phase4Title: 'Bagimsizlik',
-    phase4Age: '9-10 Yas',
-    phase4Desc: 'Ingilizce\'de guvenlice iletisim kurma',
+    phase3Age: '7-9 Yaş',
+    phase3Desc: 'Yalnızca öğrenilen seslerle okunabilir kitaplar',
+    phase4Title: 'Bağımsızlık',
+    phase4Age: '9-10 Yaş',
+    phase4Desc: 'İngilizce\'de güvenle iletişim kurma',
     // Audience
-    audienceTitle: 'Ogrenmeyi onemseyenler icin tasarlandi',
-    tabStudents: 'Ogrenciler',
-    tabTeachers: 'Ogretmenler',
+    audienceTitle: 'Öğrenmeyi önemseyen herkes için tasarlandı',
+    tabStudents: 'Öğrenciler',
+    tabTeachers: 'Öğretmenler',
     tabParents: 'Veliler',
     studentFeatures: [
       'Hareketlerle 42 fonetik ses',
-      'Etkilesimli harmanlama oyunlari',
-      'Okunabilir okuma kutuphanesi',
-      'Seninle buyuyen ogrenme bahcesi',
+      'Etkileşimli harmanlama oyunları',
+      'Okunabilir okuma kütüphanesi',
+      'Seninle büyüyen öğrenme bahçesi',
     ],
     teacherFeatures: [
-      'Ucretsiz sinif yonetimi',
-      'Ogrenciler icin katilim kodlari',
+      'Ücretsiz sınıf yönetimi',
+      'Öğrenciler için katılım kodları',
       'Fonetik ilerleme takibi',
-      'Mufredata uyumlu etkinlikler',
+      'Müfredata uyumlu etkinlikler',
     ],
     parentFeatures: [
-      'Gercek zamanli ogrenme analitikleri',
-      'Gunluk sure kontrolleri',
-      'Coklu cocuk destegi',
-      'Haftalik ilerleme raporlari',
+      'Gerçek zamanlı öğrenme analitiği',
+      'Günlük süre kontrolleri',
+      'Çoklu çocuk desteği',
+      'Haftalık ilerleme raporları',
     ],
     // Stats
     stat1Num: '42', stat1Label: 'Fonetik Ses',
     stat2Num: '14', stat2Label: 'Okunabilir Kitap',
-    stat3Num: '7', stat3Label: 'Sarki Dersi',
-    stat4Num: '4', stat4Label: 'Ogrenme Asamasi',
+    stat3Num: '7', stat3Label: 'Şarkı Dersi',
+    stat4Num: '4', stat4Label: 'Öğrenme Aşaması',
     // CTA
-    ctaTitle: 'Cocugunuzun Ingilizce yolculuguna baslamaya hazir misiniz?',
-    ctaSub: 'Baslamak ucretsiz. Kredi karti gerekmez.',
-    ctaBtn: 'Ucretsiz Hesap Olustur',
+    ctaTitle: 'Çocuğunuzun İngilizce yolculuğuna başlamaya hazır mısınız?',
+    ctaSub: 'Başlamak ücretsiz. Kredi kartı gerekmez.',
+    ctaBtn: 'Ücretsiz Hesap Oluştur',
     // Footer
-    footerTagline: '3-10 yas cocuklar icin Montessori + Fonetik Ingilizce',
+    footerTagline: '3-10 yaş çocuklar için Montessori + Fonetik İngilizce',
     footerPrivacy: 'Gizlilik',
-    footerTerms: 'Sartlar',
+    footerTerms: 'Şartlar',
   },
 };
 
@@ -620,11 +620,11 @@ const Landing: React.FC = () => {
               <div className="landing-modal__mascot">
                 <UnifiedMascot id="mimi_dragon" state="celebrating" size={100} />
               </div>
-              <h3>{lang === 'en' ? 'Come play with Mimi!' : 'Mimi ile oynayalim!'}</h3>
+              <h3>{lang === 'en' ? 'Come play with Mimi!' : 'Mimi ile oynayalım!'}</h3>
               <p>
                 {lang === 'en'
                   ? 'Login to start your English adventure. Games, videos, words -- all waiting for you!'
-                  : 'Ingilizce macerana baslamak icin giris yap. Oyunlar, videolar, kelimeler -- hepsi seni bekliyor!'}
+                  : 'İngilizce macerana başlamak için giriş yap. Oyunlar, videolar, kelimeler -- hepsi seni bekliyor!'}
               </p>
               <button className="landing-btn landing-btn--primary" onClick={handleGoToLogin}>
                 {t.loginBtn} <ArrowRight size={18} />

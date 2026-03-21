@@ -70,11 +70,11 @@ export default function StoriesGrid() {
       ) : stories.length === 0 ? (
         <div className="stories-empty">
           <Sparkles size={48} />
-          <p>{lang === 'tr' ? 'Henüz hikaye yok' : 'No stories yet'}</p>
+          <p>{lang === 'tr' ? 'Mimi henüz yeni hikayeler hazırlıyor!' : 'Mimi is preparing new stories!'}</p>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
             {lang === 'tr'
-              ? 'Yönetici panelinden ilk hikayeyi oluşturun.'
-              : 'Generate the first story from the admin panel.'}
+              ? 'Yakında burada olacak. 🌟'
+              : 'Coming soon. 🌟'}
           </p>
         </div>
       ) : (

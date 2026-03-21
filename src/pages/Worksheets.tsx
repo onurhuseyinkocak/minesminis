@@ -341,7 +341,12 @@ function Worksheets() {
                   className="action-btn print-btn"
                   onClick={() => {
                     handleWorksheetAction(worksheet);
-                    window.open(worksheet.external_url, '_blank');
+                    const win = window.open(worksheet.external_url, '_blank');
+                    if (win) {
+                      win.addEventListener('load', () => {
+                        try { win.print(); } catch { /* ignore */ }
+                      });
+                    }
                   }}
                 >
                   <Printer size={18} />

@@ -471,7 +471,7 @@ const styles: Record<string, React.CSSProperties> = {
   bookTitle: {
     fontSize: 18,
     fontWeight: 800,
-    color: '#1F2937',
+    color: '#F1F5F9',
   },
   pageIndicator: {
     fontSize: 14,
@@ -599,7 +599,7 @@ const styles: Record<string, React.CSSProperties> = {
   quizQuestion: {
     fontSize: 22,
     fontWeight: 800,
-    color: '#1F2937',
+    color: '#F1F5F9',
     textAlign: 'center',
     margin: 0,
   },
@@ -649,7 +649,7 @@ const styles: Record<string, React.CSSProperties> = {
   resultTitle: {
     fontSize: 28,
     fontWeight: 900,
-    color: '#1F2937',
+    color: '#F1F5F9',
     margin: 0,
     textAlign: 'center',
   },
