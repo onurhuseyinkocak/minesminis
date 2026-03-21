@@ -13,8 +13,6 @@ export type { BadgeProps, BadgeVariant, BadgeSize } from './Badge';
 export { Modal } from './Modal';
 export type { ModalProps, ModalSize } from './Modal';
 
-export { Avatar } from './Avatar';
-export type { AvatarProps, AvatarSize } from './Avatar';
 
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps, ProgressBarVariant, ProgressBarSize } from './ProgressBar';

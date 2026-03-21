@@ -33,7 +33,7 @@ function Navbar() {
     { to: "/games", icon: Gamepad2, label: t('nav.games') },
     { to: "/words", icon: BookOpen, label: t('nav.words') },
     { to: "/videos", icon: Video, label: t('nav.videos') },
-    { to: "/story", icon: FileText, label: t('nav.stories') },
+    { to: "/stories", icon: FileText, label: t('nav.stories') },
   ];
 
   const TAB_ITEMS_BEFORE = [

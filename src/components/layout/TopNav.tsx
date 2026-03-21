@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { path: '/worlds', label: 'Learn', icon: Globe },
   { path: '/games', label: 'Games', icon: Gamepad2 },
   { path: '/words', label: 'Library', icon: BookOpen },
-  { path: '/story', label: 'Stories', icon: BookText },
+  { path: '/stories', label: 'Stories', icon: BookText },
 ];
 
 /** Extra nav items shown in mobile slide-out menu */

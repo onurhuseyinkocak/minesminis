@@ -4,7 +4,7 @@
  * Supports: typewriter narration, choices, vocabulary, progress, i18n
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ArrowLeft, MapPin, Volume2 } from 'lucide-react';
@@ -16,28 +16,41 @@ import './StoryReader.css';
 interface VocabWord {
   word: string;
   word_tr?: string;
+  turkish?: string;
   emoji?: string;
   pronunciation?: string;
 }
 
 interface StoryScene {
-  id: string;
-  text: string;
+  id: number;
+  narration?: string;
+  narrationTr?: string;
+  text?: string;
   text_tr?: string;
+  sceneDescription?: string;
   location?: string;
-  characters?: Array<{ name: string; emoji?: string }>;
+  background?: string;
+  characters?: string[];
+  mood?: string;
+  soundEffects?: string[];
+  animations?: string[];
   sound_effect?: string;
   animation_cue?: string;
   vocabulary?: VocabWord[];
-  choices?: Array<{ id: string; text: string; text_tr?: string; next_scene_id: string }>;
+  choices?: Array<{ text: string; textTr?: string; text_tr?: string; leadsTo?: number; next_scene_id?: string }>;
 }
 
 interface Story {
   id: string;
   title: string;
-  title_tr: string;
+  title_tr?: string;
+  summary?: string;
+  summary_tr?: string;
+  moral?: string;
+  moral_tr?: string;
+  vocabulary?: VocabWord[];
   scenes: StoryScene[];
-  target_age: number[];
+  target_age?: number[];
 }
 
 // ─── Typewriter hook ─────────────────────────────────────────────────────────
@@ -136,7 +149,9 @@ export default function StoryReader() {
   const progress = totalScenes > 1 ? ((sceneIndex) / (totalScenes - 1)) * 100 : 0;
 
   const narrationText = currentScene
-    ? (lang === 'tr' && currentScene.text_tr ? currentScene.text_tr : currentScene.text)
+    ? (lang === 'tr'
+        ? (currentScene.narrationTr || currentScene.text_tr || currentScene.narration || currentScene.text || '')
+        : (currentScene.narration || currentScene.text || ''))
     : '';
 
   const bgClass = currentScene ? getBgClass(narrationText) : 'story-reader__bg-default';
@@ -152,14 +167,15 @@ export default function StoryReader() {
     setShowChoices(false);
   }, [sceneIndex]);
 
-  const handleChoiceClick = useCallback((choice: { next_scene_id: string }) => {
+  const handleChoiceClick = useCallback((choice: { next_scene_id?: string; leadsTo?: number }) => {
     if (transitioning) return;
     setTransitioning(true);
     setShowChoices(false);
 
-    // Find next scene by id, or advance by index
+    // Find next scene by id or leadsTo number
     setTimeout(() => {
-      const nextIdx = story?.scenes?.findIndex(s => s.id === choice.next_scene_id) ?? -1;
+      const targetId = choice.next_scene_id || String(choice.leadsTo);
+      const nextIdx = story?.scenes?.findIndex(s => String(s.id) === targetId) ?? -1;
       if (nextIdx !== -1) {
         setSceneIndex(nextIdx);
       } else if (sceneIndex + 1 < totalScenes) {
@@ -256,8 +272,7 @@ export default function StoryReader() {
             <div className="story-reader__characters">
               {currentScene.characters.map((char, i) => (
                 <div key={i} className="story-reader__char">
-                  {char.emoji && <span className="story-reader__char-emoji">{char.emoji}</span>}
-                  <span>{char.name}</span>
+                  <span>{typeof char === 'string' ? char : (char as { name?: string }).name || ''}</span>
                 </div>
               ))}
             </div>
@@ -289,18 +304,18 @@ export default function StoryReader() {
           )}
 
           {/* Vocabulary */}
-          {done && currentScene.vocabulary && currentScene.vocabulary.length > 0 && (
+          {done && ((currentScene.vocabulary && currentScene.vocabulary.length > 0) || (sceneIndex === 0 && story?.vocabulary && story.vocabulary.length > 0)) && (
             <div className="story-reader__vocab">
               <div className="story-reader__vocab-title">
                 {lang === 'tr' ? '📚 Yeni Kelimeler' : '📚 New Words'}
               </div>
               <div className="story-reader__vocab-list">
-                {currentScene.vocabulary.map((v, i) => (
+                {(currentScene.vocabulary || (sceneIndex === 0 ? story?.vocabulary : []) || []).map((v, i) => (
                   <div key={i} className="story-reader__vocab-item">
                     {v.emoji && <span>{v.emoji}</span>}
                     <span className="story-reader__vocab-word">{v.word}</span>
-                    {v.word_tr && (
-                      <span className="story-reader__vocab-tr">— {v.word_tr}</span>
+                    {(v.word_tr || v.turkish) && (
+                      <span className="story-reader__vocab-tr">— {v.word_tr || v.turkish}</span>
                     )}
                     <button
                       className="story-reader__vocab-speak"
@@ -334,12 +349,12 @@ export default function StoryReader() {
           {currentScene.choices && currentScene.choices.length > 0 ? (
             currentScene.choices.map((choice, i) => (
               <button
-                key={choice.id ?? i}
+                key={i}
                 className="story-reader__choice-btn"
                 onClick={() => handleChoiceClick(choice)}
               >
                 <span className="story-reader__choice-icon">{String.fromCharCode(65 + i)}</span>
-                {lang === 'tr' && choice.text_tr ? choice.text_tr : choice.text}
+                {lang === 'tr' ? (choice.textTr || choice.text_tr || choice.text) : choice.text}
               </button>
             ))
           ) : sceneIndex + 1 < totalScenes ? (
