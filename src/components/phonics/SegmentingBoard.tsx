@@ -4,6 +4,7 @@ import { Sparkles } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
+import './SegmentingBoard.css';
 
 interface WordItem {
   english: string;
@@ -141,17 +142,17 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
 
   if (completed) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem', fontFamily: 'Nunito, sans-serif' }}>
+      <div className="segmenting-board__complete">
         <Card variant="elevated" padding="xl">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
-            style={{ textAlign: 'center' }}
+            className="segmenting-board__complete-content"
           >
-            <span style={{ fontSize: '4rem' }} role="img" aria-label="celebration">🎊</span>
-            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>{t('games.soundSmasher')}</h2>
-            <p style={{ fontSize: '1.1rem', color: '#555' }}>
+            <span className="segmenting-board__complete-emoji" role="img" aria-label="celebration">🎊</span>
+            <h2 className="segmenting-board__complete-title">{t('games.soundSmasher')}</h2>
+            <p className="segmenting-board__complete-score">
               {t('games.wordsSegmented').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
@@ -165,19 +166,12 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
 
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1.25rem',
-        padding: '1.5rem',
-        fontFamily: 'Nunito, sans-serif',
-      }}
+      className="segmenting-board"
       role="application"
       aria-label="Sound segmenting game"
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>{t('games.breakTheWord')}</h2>
+      <div className="segmenting-board__header">
+        <h2 className="segmenting-board__title">{t('games.breakTheWord')}</h2>
         <Badge variant="info">{currentIndex + 1}/{gameWords.length}</Badge>
       </div>
 
@@ -185,21 +179,19 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
 
       {/* Word display */}
       <Card variant="elevated" padding="lg">
-        <div style={{ textAlign: 'center' }}>
+        <div className="segmenting-board__word-display">
           <motion.span
             key={currentWord}
             initial={{ scale: 0 }}
             animate={feedback === 'explode' ? { scale: [1, 1.3, 0], opacity: [1, 1, 0] } : { scale: 1 }}
             transition={feedback === 'explode' ? { duration: 0.6 } : { type: 'spring', stiffness: 300 }}
-            style={{ fontSize: '3.5rem', display: 'block' }}
+            className="segmenting-board__emoji"
           >
             {emoji}
           </motion.span>
 
           {feedback !== 'explode' && (
-            <motion.p
-              style={{ fontSize: '2rem', fontWeight: 800, color: '#1A6B5A', margin: '0.5rem 0 0' }}
-            >
+            <motion.p className="segmenting-board__word-text">
               {currentWord}
             </motion.p>
           )}
@@ -216,12 +208,12 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
       </Card>
 
       {/* Sound hint */}
-      <p style={{ color: '#888', fontSize: '1rem', margin: 0, fontWeight: 600 }}>
+      <p className="segmenting-board__hint">
         {t('games.thisWordHasSounds').replace('{count}', String(sounds.length))}{' '}
         {sounds.map((_, i) => (
-          <span key={i} style={{ margin: '0 0.15rem' }}>
+          <span key={i} className="segmenting-board__hint-slot">
             {selected[i] ? (
-              <span style={{ color: '#1A6B5A', fontWeight: 800 }}>{selected[i]}</span>
+              <span className="segmenting-board__hint-slot--filled">{selected[i]}</span>
             ) : (
               '_'
             )}
@@ -233,7 +225,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
       <AnimatePresence>
         {feedback === 'explode' && (
           <motion.div
-            style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}
+            className="segmenting-board__explode"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -244,15 +236,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0, y: [0, -20, 0] }}
                 transition={{ delay: i * 0.15, type: 'spring' }}
-                style={{
-                  display: 'inline-block',
-                  padding: '0.5rem 0.75rem',
-                  backgroundColor: '#E8A317',
-                  color: '#fff',
-                  borderRadius: '0.5rem',
-                  fontWeight: 800,
-                  fontSize: '1.3rem',
-                }}
+                className="segmenting-board__explode-piece"
               >
                 {s}
               </motion.span>
@@ -268,7 +252,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: [0, -8, 8, -8, 0] }}
             exit={{ opacity: 0 }}
-            style={{ color: '#d32f2f', fontWeight: 600 }}
+            className="segmenting-board__feedback--wrong"
           >
             {t('games.tryAnotherSound')} 💪
           </motion.div>
@@ -278,7 +262,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            style={{ color: '#1A6B5A', fontWeight: 700, fontSize: '1.1rem' }}
+            className="segmenting-board__feedback--correct"
           >
             {t('games.youBrokeIt')} 🌟
           </motion.div>
@@ -287,7 +271,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
 
       {/* Sound options */}
       <div
-        style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', justifyContent: 'center' }}
+        className="segmenting-board__options"
         role="group"
         aria-label="Sound options"
       >
@@ -301,19 +285,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
               opacity: opt.used ? 0.3 : 1,
               scale: opt.used ? 0.8 : 1,
             }}
-            style={{
-              width: '3.5rem',
-              height: '3.5rem',
-              borderRadius: '1rem',
-              border: 'none',
-              backgroundColor: opt.used ? '#e0e0e0' : '#E8A317',
-              color: opt.used ? '#999' : '#fff',
-              fontSize: '1.3rem',
-              fontWeight: 800,
-              fontFamily: 'Nunito, sans-serif',
-              cursor: opt.used ? 'default' : 'pointer',
-              boxShadow: opt.used ? 'none' : '0 4px 12px rgba(232,163,23,0.3)',
-            }}
+            className={`segmenting-board__option${opt.used ? ' segmenting-board__option--used' : ''}`}
             aria-label={`Sound: ${opt.sound}`}
           >
             {opt.sound}

@@ -138,7 +138,16 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
 
   const progress = ((currentIndex) / gameWords.length) * 100;
 
+  const handlePlayAgain = () => {
+    setCurrentIndex(0);
+    setScore(0);
+    setCompleted(false);
+    initWord(0);
+  };
+
   if (completed) {
+    const pct = gameWords.length > 0 ? Math.round((score / gameWords.length) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="spelling-bee">
         <Card variant="elevated" padding="xl" className="spelling-bee__results">
@@ -148,14 +157,27 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
             transition={{ type: 'spring', stiffness: 200 }}
             className="spelling-bee__results-content"
           >
-            <span className="spelling-bee__big-emoji" role="img" aria-label="trophy">🏆</span>
+            <span className="spelling-bee__big-emoji" role="img" aria-label="trophy">
+              {pct >= 90 ? '🏆' : pct >= 60 ? '🌟' : '👏'}
+            </span>
             <h2 className="spelling-bee__results-title">{t('games.spellingStar')}</h2>
             <p className="spelling-bee__results-score">
               {t('games.outOfCorrect').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
+            <div className="spelling-bee__results-stars" aria-label={`${stars} out of 3 stars`}>
+              {'⭐'.repeat(stars)}{'☆'.repeat(3 - stars)}
+            </div>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
             </Badge>
+            <div className="spelling-bee__results-actions">
+              <button className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => onComplete(score, gameWords.length)}>
+                {t('games.backToGames')}
+              </button>
+              <button className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain}>
+                {t('games.playAgain')}
+              </button>
+            </div>
           </motion.div>
         </Card>
       </div>

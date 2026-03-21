@@ -32,7 +32,21 @@ import {
   getWorldCompletionCount,
 } from '../data/progressTracker';
 import { getProgress } from '../data/progressTracker';
+import { PHASES, type LearningUnit, type LearningPhase } from '../data/curriculumPhases';
 import './WorldDetail.css';
+
+// ============================================================
+// CURRICULUM PHASE UNIT LOOKUP HELPERS
+// ============================================================
+
+/** Find a LearningUnit and its parent LearningPhase by unit ID (e.g. 'p1-u1') */
+function getUnitAndPhaseById(unitId: string): { unit: LearningUnit; phase: LearningPhase } | undefined {
+  for (const phase of PHASES) {
+    const unit = phase.units.find((u) => u.id === unitId);
+    if (unit) return { unit, phase };
+  }
+  return undefined;
+}
 
 // ============================================================
 // TYPE BADGE CONFIG
@@ -84,6 +98,14 @@ const WorldDetail = () => {
   const userId = user?.uid || 'guest';
 
   const world = getWorldById(worldId || '');
+
+  // If not found in the old World curriculum, try the new curriculumPhases system
+  const phaseUnitMatch = !world ? getUnitAndPhaseById(worldId || '') : undefined;
+
+  if (!world && phaseUnitMatch) {
+    // Render a unit detail view for the new curriculum phases system
+    return <UnitDetailView unit={phaseUnitMatch.unit} phase={phaseUnitMatch.phase} lang={lang} />;
+  }
 
   if (!world) {
     return (
@@ -277,6 +299,170 @@ function LessonCard({ lesson, cfg, TypeIcon, isAvailable, isCompleted, isLocked,
         )}
       </div>
     </Card>
+  );
+}
+
+// ============================================================
+// UNIT DETAIL VIEW — for new curriculumPhases units (p1-u1, p2-u3, etc.)
+// ============================================================
+
+interface UnitDetailViewProps {
+  unit: LearningUnit;
+  phase: LearningPhase;
+  lang: string;
+}
+
+function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
+  // Read progress from localStorage
+  let activitiesCompleted = 0;
+  try {
+    const raw = localStorage.getItem(`mimi_unit_progress_${unit.id}`);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      activitiesCompleted = parsed.activitiesCompleted || 0;
+    }
+  } catch { /* ignore */ }
+
+  const totalActivities = unit.activities.length;
+  const progressPct = totalActivities > 0 ? Math.round((activitiesCompleted / totalActivities) * 100) : 0;
+
+  const activityTypeConfig: Record<string, { label: string; icon: typeof Play }> = {
+    'sound-intro':    { label: 'Sound Intro', icon: Music },
+    'blending':       { label: 'Blending', icon: Layers },
+    'segmenting':     { label: 'Segmenting', icon: Layers },
+    'word-match':     { label: 'Word Match', icon: BookOpen },
+    'listening':      { label: 'Listening', icon: Mic },
+    'pronunciation':  { label: 'Pronunciation', icon: Mic },
+    'tpr':            { label: 'TPR Actions', icon: Play },
+    'reading':        { label: 'Reading', icon: BookOpen },
+    'spelling':       { label: 'Spelling', icon: BookOpen },
+    'story':          { label: 'Story', icon: BookOpen },
+    'song':           { label: 'Song', icon: Music },
+  };
+
+  return (
+    <div className="world-detail-page">
+      {/* Back */}
+      <Link to="/worlds" className="world-detail-back">
+        <ArrowLeft size={18} />
+        Back to World Map
+      </Link>
+
+      {/* Unit Header */}
+      <motion.div
+        className="world-detail-header"
+        style={{ background: `linear-gradient(135deg, ${phase.color}, ${phase.color}99)` }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <span className="world-detail-header__icon">{phase.icon}</span>
+        <div className="world-detail-header__info">
+          <h1 className="world-detail-header__name">
+            {lang === 'tr' ? unit.titleTr : unit.title}
+          </h1>
+          <p className="world-detail-header__theme">{phase.name} · Unit {unit.number}</p>
+          <div className="world-detail-header__progress">
+            <ProgressBar value={progressPct} size="sm" variant="default" showLabel />
+            <span className="world-detail-header__count">
+              {activitiesCompleted}/{totalActivities} activities completed
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Phonics Focus */}
+      {unit.phonicsFocus.length > 0 && (
+        <section className="world-detail-vocab">
+          <h2 className="world-detail-section-title">Phonics Focus</h2>
+          <div className="world-detail-vocab__scroll">
+            {unit.phonicsFocus.map((sound, i) => (
+              <div key={i} className="vocab-preview-card">
+                <span className="vocab-preview-card__emoji">🔤</span>
+                <span className="vocab-preview-card__word">{sound.replace(/^g\d+_/, '')}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Activities List */}
+      <section className="world-detail-lessons">
+        <h2 className="world-detail-section-title">Activities</h2>
+        <motion.div
+          className="world-detail-lessons__list"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {unit.activities.map((activity, idx) => {
+            const cfg = activityTypeConfig[activity.type] || activityTypeConfig['tpr'];
+            const ActivityIcon = cfg.icon;
+            const isDone = idx < activitiesCompleted;
+            const isCurrent = idx === activitiesCompleted;
+
+            return (
+              <motion.div key={idx} variants={itemVariants}>
+                <Card
+                  variant={isCurrent ? 'interactive' : 'default'}
+                  padding="md"
+                  className={[
+                    'lesson-card',
+                    isDone && 'lesson-card--completed',
+                    !isDone && !isCurrent && 'lesson-card--locked',
+                    isCurrent && 'lesson-card--available',
+                  ].filter(Boolean).join(' ')}
+                >
+                  {/* Number */}
+                  <div className={`lesson-card__number ${isDone ? 'lesson-card__number--done' : ''}`}>
+                    {isDone ? <Check size={18} /> : !isCurrent ? <Lock size={16} /> : idx + 1}
+                  </div>
+
+                  {/* Info */}
+                  <div className="lesson-card__info">
+                    <h3 className="lesson-card__title">
+                      {lang === 'tr' ? activity.titleTr : activity.title}
+                    </h3>
+                    <div className="lesson-card__meta">
+                      <Badge
+                        variant="info"
+                        size="sm"
+                        icon={<ActivityIcon size={12} />}
+                      >
+                        {cfg.label}
+                      </Badge>
+                      <span className="lesson-card__duration">
+                        <Clock size={12} /> {activity.duration} min
+                      </span>
+                      <span className="lesson-card__xp">
+                        <Star size={12} /> {activity.xp} XP
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Status */}
+                  <div className="lesson-card__status">
+                    {isCurrent && (
+                      <Button variant="primary" size="sm" icon={<Play size={14} />}>
+                        Start
+                      </Button>
+                    )}
+                    {isDone && (
+                      <span className="lesson-card__done-badge">
+                        <Check size={14} /> Done
+                      </span>
+                    )}
+                    {!isDone && !isCurrent && (
+                      <Lock size={18} className="lesson-card__lock-icon" />
+                    )}
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </section>
+    </div>
   );
 }
 

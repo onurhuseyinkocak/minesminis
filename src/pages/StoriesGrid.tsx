@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Book, Sparkles, Clock, Star } from 'lucide-react';
+import { Sparkles, Clock, Star } from 'lucide-react';
 import './StoriesGrid.css';
 
 interface StoryCard {
@@ -41,9 +41,17 @@ export default function StoriesGrid() {
   return (
     <div className="stories-grid-page">
       <div className="stories-grid-hero">
-        <Book size={48} />
+        <Sparkles size={20} className="stories-grid-hero__sparkle stories-grid-hero__sparkle--1" />
+        <Sparkles size={16} className="stories-grid-hero__sparkle stories-grid-hero__sparkle--2" />
+        <Sparkles size={14} className="stories-grid-hero__sparkle stories-grid-hero__sparkle--3" />
+        <span className="stories-grid-hero__icon" role="img" aria-label="story book">📚</span>
         <h1>{lang === 'tr' ? 'Hikayeler' : 'Stories'}</h1>
         <p>{lang === 'tr' ? "Mimi'nin büyülü hikayeleri" : "Mimi's Magical Stories"}</p>
+        <p className="stories-grid-hero__subtitle">
+          {lang === 'tr'
+            ? 'Bir hikaye seç ve maceraya başla!'
+            : 'Choose a story and start your adventure!'}
+        </p>
       </div>
 
       {loading ? (

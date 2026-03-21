@@ -4,6 +4,7 @@ import { Sparkles } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
+import './StoryChoicesGame.css';
 
 interface WordItem {
   english: string;
@@ -93,19 +94,19 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
 
   if (completed) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem', fontFamily: 'Nunito, sans-serif' }}>
+      <div className="story-choices-game__complete">
         <Card variant="elevated" padding="xl">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
-            style={{ textAlign: 'center' }}
+            className="story-choices-game__complete-content"
           >
-            <span style={{ fontSize: '4rem' }} role="img" aria-label="celebration">
+            <span className="story-choices-game__complete-emoji" role="img" aria-label="celebration">
               {score >= questions.length * 0.8 ? '🌟' : '👏'}
             </span>
-            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>{t('games.storyComplete')}</h2>
-            <p style={{ fontSize: '1.1rem', color: '#555' }}>
+            <h2 className="story-choices-game__complete-title">{t('games.storyComplete')}</h2>
+            <p className="story-choices-game__complete-score">
               {t('games.xOutOfYCorrect').replace('{score}', String(score)).replace('{total}', String(questions.length))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
@@ -121,21 +122,12 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
 
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1.25rem',
-        padding: '1.5rem',
-        fontFamily: 'Nunito, sans-serif',
-        maxWidth: '480px',
-        margin: '0 auto',
-      }}
+      className="story-choices-game"
       role="application"
       aria-label="Story choices game"
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>{t('games.chooseTranslation')}</h2>
+      <div className="story-choices-game__header">
+        <h2 className="story-choices-game__title">{t('games.chooseTranslation')}</h2>
         <Badge variant="info">{currentIndex + 1}/{questions.length}</Badge>
       </div>
 
@@ -147,12 +139,12 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
           key={currentIndex}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          style={{ textAlign: 'center' }}
+          className="story-choices-game__prompt"
         >
-          <span style={{ fontSize: '3rem', display: 'block', marginBottom: '0.5rem' }}>
+          <span className="story-choices-game__prompt-emoji">
             {question.word.emoji}
           </span>
-          <p style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1A6B5A', margin: 0 }}>
+          <p className="story-choices-game__prompt-word">
             {question.word.english}
           </p>
         </motion.div>
@@ -160,12 +152,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
 
       {/* Choices */}
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.75rem',
-          width: '100%',
-        }}
+        className="story-choices-game__choices"
         role="group"
         aria-label="Translation choices"
       >
@@ -175,19 +162,11 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
             const showCorrect = feedback !== null && choice.correct;
             const showWrong = feedback === 'wrong' && isSelected && !choice.correct;
 
-            let bgColor = '#fff';
-            let borderColor = '#e0e0e0';
-            let textColor = '#333';
-
-            if (showCorrect) {
-              bgColor = '#E8F5E9';
-              borderColor = '#1A6B5A';
-              textColor = '#1A6B5A';
-            } else if (showWrong) {
-              bgColor = '#FFEBEE';
-              borderColor = '#d32f2f';
-              textColor = '#d32f2f';
-            }
+            const choiceClass = [
+              'story-choices-game__choice',
+              showCorrect && 'story-choices-game__choice--correct',
+              showWrong && 'story-choices-game__choice--wrong',
+            ].filter(Boolean).join(' ');
 
             return (
               <motion.button
@@ -198,20 +177,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 whileTap={{ scale: 0.97 }}
-                style={{
-                  padding: '1rem 1.25rem',
-                  borderRadius: '1rem',
-                  border: `2px solid ${borderColor}`,
-                  backgroundColor: bgColor,
-                  color: textColor,
-                  fontSize: '1.15rem',
-                  fontWeight: 700,
-                  fontFamily: 'Nunito, sans-serif',
-                  cursor: feedback !== null ? 'default' : 'pointer',
-                  textAlign: 'left',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                  transition: 'background-color 0.2s, border-color 0.2s',
-                }}
+                className={choiceClass}
                 aria-label={`Choice: ${choice.text}`}
               >
                 {choice.text}
@@ -230,7 +196,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            style={{ color: '#1A6B5A', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}
+            className="story-choices-game__feedback--correct"
           >
             {t('games.correctWellDone')}
           </motion.p>
@@ -240,7 +206,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            style={{ color: '#d32f2f', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}
+            className="story-choices-game__feedback--wrong"
           >
             {t('games.notQuiteKeepGoing')}
           </motion.p>

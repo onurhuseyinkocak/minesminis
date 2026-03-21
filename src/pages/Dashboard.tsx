@@ -398,7 +398,7 @@ export default function Dashboard() {
             <input
               type="text"
               className="dash-classroom__input"
-              placeholder="Class code"
+              placeholder="Code"
               value={joinCode}
               onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(''); }}
               maxLength={6}

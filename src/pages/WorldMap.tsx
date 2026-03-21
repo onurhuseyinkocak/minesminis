@@ -104,7 +104,33 @@ function getUnitProgress(unit: LearningUnit, phaseIndex: number, unitIndex: numb
   }
 
   if (phaseIndex > startPhase && unitIndex === 0) {
-    // First unit in a later phase — check if prev phase last unit is completed
+    // First unit in a later phase — unlock if previous phase has enough completion.
+    // Condition: ALL units in prev phase completed OR >= 70% of prev phase units have 1+ star.
+    const prevPhase = PHASES[phaseIndex - 1];
+    if (prevPhase) {
+      const prevUnits = prevPhase.units;
+      let prevCompletedCount = 0;
+      let prevWithStarsCount = 0;
+      for (let pi = 0; pi < prevUnits.length; pi++) {
+        const pu = prevUnits[pi];
+        let puActivitiesCompleted = 0;
+        try {
+          const raw = localStorage.getItem(`mimi_unit_progress_${pu.id}`);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            puActivitiesCompleted = parsed.activitiesCompleted || 0;
+          }
+        } catch { /* ignore */ }
+        const puPct = pu.activities.length > 0 ? puActivitiesCompleted / pu.activities.length : 0;
+        if (puPct >= 1) prevCompletedCount++;
+        if (puPct >= 0.3) prevWithStarsCount++; // 0.3+ means at least 1 star
+      }
+      const allCompleted = prevCompletedCount === prevUnits.length;
+      const seventyPctWithStars = prevUnits.length > 0 && prevWithStarsCount / prevUnits.length >= 0.7;
+      if (allCompleted || seventyPctWithStars) {
+        return { status: activitiesCompleted > 0 ? 'current' : 'unlocked', starsEarned, activitiesCompleted, totalActivities };
+      }
+    }
     return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
   }
 
@@ -191,8 +217,8 @@ const WorldMap = () => {
         setTimeout(() => setLockedTooltip(null), 2000);
         return;
       }
-      // Navigate to first activity in unit
-      navigate(`/worlds/${phase.id}/${stop.unit.id}`);
+      // Navigate to unit detail — unit.id is used as the worldId param
+      navigate(`/worlds/${stop.unit.id}`);
     },
     [navigate, phase.id],
   );

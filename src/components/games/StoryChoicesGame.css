@@ -1,0 +1,150 @@
+/* ==========================================================================
+   STORY CHOICES GAME — MinesMinis
+   CSS extracted from inline styles — uses design-system tokens
+   ========================================================================== */
+
+/* ---- Container ---- */
+.story-choices-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ---- Header row ---- */
+.story-choices-game__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.story-choices-game__title {
+  color: var(--secondary, #1A6B5A);
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+/* ---- Prompt card content ---- */
+.story-choices-game__prompt {
+  text-align: center;
+}
+
+.story-choices-game__prompt-emoji {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.story-choices-game__prompt-word {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--secondary, #1A6B5A);
+  margin: 0;
+}
+
+/* ---- Choices list ---- */
+.story-choices-game__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* ---- Individual choice button ---- */
+.story-choices-game__choice {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  border: 2px solid #e0e0e0;
+  background-color: #fff;
+  color: #333;
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.story-choices-game__choice:disabled {
+  cursor: default;
+}
+
+.story-choices-game__choice--correct {
+  background-color: #E8F5E9;
+  border-color: var(--secondary, #1A6B5A);
+  color: var(--secondary, #1A6B5A);
+}
+
+.story-choices-game__choice--wrong {
+  background-color: #FFEBEE;
+  border-color: #d32f2f;
+  color: #d32f2f;
+}
+
+/* ---- Feedback text ---- */
+.story-choices-game__feedback--correct {
+  color: var(--secondary, #1A6B5A);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.story-choices-game__feedback--wrong {
+  color: #d32f2f;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* ---- Completed screen ---- */
+.story-choices-game__complete {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.story-choices-game__complete-content {
+  text-align: center;
+}
+
+.story-choices-game__complete-emoji {
+  font-size: 4rem;
+  display: block;
+}
+
+.story-choices-game__complete-title {
+  color: var(--secondary, #1A6B5A);
+  margin: 0.5rem 0;
+  font-size: 1.75rem;
+}
+
+.story-choices-game__complete-score {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* ---- Dark mode ---- */
+[data-theme="dark"] .story-choices-game__choice {
+  background-color: var(--bg-card);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .story-choices-game__choice--correct {
+  background-color: var(--success-pale);
+  border-color: var(--secondary, #1A6B5A);
+  color: var(--secondary, #1A6B5A);
+}
+
+[data-theme="dark"] .story-choices-game__choice--wrong {
+  background-color: rgba(211, 47, 47, 0.1);
+  border-color: #d32f2f;
+  color: #ef5350;
+}

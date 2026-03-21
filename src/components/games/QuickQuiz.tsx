@@ -147,7 +147,21 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
   const progress = (currentQ / questions.length) * 100;
 
+  const handlePlayAgain = () => {
+    clearTimer();
+    setCurrentQ(0);
+    setScore(0);
+    setStreak(0);
+    setBestStreak(0);
+    setSelected(null);
+    setFeedback(null);
+    setTimeLeft(TIMER_DURATION);
+    setCompleted(false);
+  };
+
   if (completed) {
+    const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="quick-quiz">
         <Card variant="elevated" padding="xl" className="quick-quiz__results">
@@ -157,11 +171,14 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             transition={{ type: 'spring', stiffness: 200 }}
             className="quick-quiz__results-content"
           >
-            <Trophy size={48} className="quick-quiz__trophy" />
+            <Trophy size={56} className="quick-quiz__trophy" />
             <h2 className="quick-quiz__results-title">{t('games.quizComplete')}</h2>
             <p className="quick-quiz__results-score">
               {score} / {questions.length} {t('games.xCorrect')}
             </p>
+            <div className="quick-quiz__results-stars" aria-label={`${stars} out of 3 stars`}>
+              {'⭐'.repeat(stars)}{'☆'.repeat(3 - stars)}
+            </div>
             {bestStreak >= 2 && (
               <Badge variant="warning" icon={<Zap size={14} />}>
                 {t('games.bestStreak')} {bestStreak}x
@@ -170,6 +187,14 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 10} XP
             </Badge>
+            <div className="quick-quiz__results-actions">
+              <button className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
+                {t('games.backToGames')}
+              </button>
+              <button className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
+                {t('games.playAgain')}
+              </button>
+            </div>
           </motion.div>
         </Card>
       </div>

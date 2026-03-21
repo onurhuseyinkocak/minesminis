@@ -4,6 +4,7 @@ import { Sparkles } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
+import './BlendingBoard.css';
 
 interface WordItem {
   english: string;
@@ -139,17 +140,17 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
 
   if (completed) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem', fontFamily: 'Nunito, sans-serif' }}>
+      <div className="blending-board__complete">
         <Card variant="elevated" padding="xl">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
-            style={{ textAlign: 'center' }}
+            className="blending-board__complete-content"
           >
-            <span style={{ fontSize: '4rem' }} role="img" aria-label="celebration">🎉</span>
-            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>{t('games.blendingStar')}</h2>
-            <p style={{ fontSize: '1.1rem', color: '#555' }}>
+            <span className="blending-board__complete-emoji" role="img" aria-label="celebration">🎉</span>
+            <h2 className="blending-board__complete-title">{t('games.blendingStar')}</h2>
+            <p className="blending-board__complete-score">
               {t('games.wordsBlended').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
@@ -163,19 +164,12 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
 
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1.25rem',
-        padding: '1.5rem',
-        fontFamily: 'Nunito, sans-serif',
-      }}
+      className="blending-board"
       role="application"
       aria-label="Sound blending game"
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>{t('games.blendTheSounds')}</h2>
+      <div className="blending-board__header">
+        <h2 className="blending-board__title">{t('games.blendTheSounds')}</h2>
         <Badge variant="info">{currentIndex + 1}/{gameWords.length}</Badge>
       </div>
 
@@ -183,37 +177,16 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
 
       {/* Blending strip */}
       <Card variant="elevated" padding="lg">
-        <div
-          style={{
-            display: 'flex',
-            gap: feedback === 'merged' ? '0px' : '0.75rem',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '4rem',
-            transition: 'gap 0.5s ease',
-          }}
-        >
+        <div className={`blending-board__strip${feedback === 'merged' ? ' blending-board__strip--merged' : ''}`}>
           {strip.map((tile, i) => (
             <motion.div
               key={i}
               layout
-              style={{
-                width: '3.5rem',
-                height: '3.5rem',
-                borderRadius: feedback === 'merged' ? '0.25rem' : '0.75rem',
-                border: tile ? '3px solid #1A6B5A' : '3px dashed #ccc',
-                backgroundColor: tile
-                  ? feedback === 'merged'
-                    ? '#1A6B5A'
-                    : '#E8F5E9'
-                  : '#fafafa',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1.4rem',
-                fontWeight: 700,
-                color: feedback === 'merged' ? '#fff' : '#1A6B5A',
-              }}
+              className={[
+                'blending-board__slot',
+                tile && feedback !== 'merged' && 'blending-board__slot--filled',
+                tile && feedback === 'merged' && 'blending-board__slot--merged',
+              ].filter(Boolean).join(' ')}
             >
               {tile?.sound || ''}
             </motion.div>
@@ -223,7 +196,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
           <motion.p
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 800, color: '#1A6B5A', margin: '0.5rem 0 0' }}
+            className="blending-board__merged-word"
           >
             {currentWord}!
           </motion.p>
@@ -237,11 +210,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: [0, -8, 8, -8, 0] }}
             exit={{ opacity: 0 }}
-            style={{
-              color: '#d32f2f',
-              fontWeight: 600,
-              fontSize: '1rem',
-            }}
+            className="blending-board__feedback--wrong"
           >
             {t('games.tryAnotherSound')} 💪
           </motion.div>
@@ -251,7 +220,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            style={{ color: '#1A6B5A', fontWeight: 700, fontSize: '1.1rem' }}
+            className="blending-board__feedback--correct"
           >
             {t('games.amazing')} 🌟
           </motion.div>
@@ -260,12 +229,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
 
       {/* Sound tiles */}
       <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-          justifyContent: 'center',
-        }}
+        className="blending-board__tiles"
         role="group"
         aria-label="Sound tiles"
       >
@@ -280,19 +244,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
               opacity: tile.placed ? 0.3 : 1,
               scale: tile.placed ? 0.8 : 1,
             }}
-            style={{
-              width: '4rem',
-              height: '4rem',
-              borderRadius: '1rem',
-              border: 'none',
-              backgroundColor: tile.placed ? '#e0e0e0' : '#E8A317',
-              color: tile.placed ? '#999' : '#fff',
-              fontSize: '1.5rem',
-              fontWeight: 800,
-              fontFamily: 'Nunito, sans-serif',
-              cursor: tile.placed ? 'default' : 'pointer',
-              boxShadow: tile.placed ? 'none' : '0 4px 12px rgba(232,163,23,0.3)',
-            }}
+            className={`blending-board__tile${tile.placed ? ' blending-board__tile--placed' : ''}`}
             aria-label={`Sound: ${tile.sound}`}
           >
             {tile.sound}

@@ -154,7 +154,17 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
   const progress = ((score) / Math.min(words.length, 6)) * 100;
 
+  const handlePlayAgain = () => {
+    setScore(0);
+    setTotalAttempted(0);
+    setRound(0);
+    setCompleted(false);
+    initRound(0);
+  };
+
   if (completed) {
+    const pct = totalAttempted > 0 ? Math.round((score / Math.min(words.length, 6)) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="word-match">
         <Card variant="elevated" padding="xl" className="word-match__results">
@@ -165,15 +175,26 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             className="word-match__results-content"
           >
             <span className="word-match__results-emoji" role="img" aria-label="celebration">
-              🎉
+              {pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '👏'}
             </span>
             <h2 className="word-match__results-title">{t('games.greatJob')}</h2>
             <p className="word-match__results-score">
               {t('games.youMatched').replace('{score}', String(score)).replace('{total}', String(totalAttempted))}
             </p>
+            <div className="word-match__results-stars" aria-label={`${stars} out of 3 stars`}>
+              {'⭐'.repeat(stars)}{'☆'.repeat(3 - stars)}
+            </div>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 10} XP
             </Badge>
+            <div className="word-match__results-actions">
+              <button className="word-match__results-btn word-match__results-btn--secondary" onClick={() => onComplete(score, totalAttempted)}>
+                {t('games.backToGames')}
+              </button>
+              <button className="word-match__results-btn word-match__results-btn--primary" onClick={handlePlayAgain}>
+                {t('games.playAgain')}
+              </button>
+            </div>
           </motion.div>
         </Card>
       </div>

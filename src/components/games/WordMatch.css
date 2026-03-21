@@ -184,6 +184,52 @@
   line-height: 1.6;
 }
 
+.word-match__results-stars {
+  font-size: 1.75rem;
+  letter-spacing: 0.1em;
+}
+
+.word-match__results-actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.word-match__results-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.word-match__results-btn:hover {
+  transform: translateY(-2px);
+}
+
+.word-match__results-btn:active {
+  transform: scale(0.97);
+}
+
+.word-match__results-btn--primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+}
+
+.word-match__results-btn--secondary {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .word-match__results-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
 /* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1024px) {
