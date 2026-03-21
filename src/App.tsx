@@ -50,6 +50,8 @@ const LearningGarden = lazy(() => import("./pages/Student/LearningGarden"));
 const Words = lazy(() => import("./pages/Words"));
 const Videos = lazy(() => import("./pages/Videos"));
 const StoryPage = lazy(() => import("./pages/Story/StoryPage"));
+const StoriesGrid = lazy(() => import("./pages/StoriesGrid"));
+const StoryReader = lazy(() => import("./pages/StoryReader"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Premium = lazy(() => import("./pages/Premium"));
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -379,6 +381,8 @@ function AppRoutes() {
             <Route path="/words" element={<StudentRoute><Words /></StudentRoute>} />
             <Route path="/videos" element={<StudentRoute><Videos /></StudentRoute>} />
             <Route path="/story" element={<StudentRoute><StoryPage /></StudentRoute>} />
+            <Route path="/stories" element={<StudentRoute><StoriesGrid /></StudentRoute>} />
+            <Route path="/stories/:id" element={<StudentRoute><StoryReader /></StudentRoute>} />
             <Route path="/profile" element={<StudentRoute><Profile /></StudentRoute>} />
             <Route path="/premium" element={<StudentRoute><Premium /></StudentRoute>} />
             <Route path="/premium/success" element={<StudentRoute><Premium /></StudentRoute>} />

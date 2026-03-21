@@ -19,7 +19,8 @@ import {
     Crown,
     Search,
     AlertTriangle,
-    FileBarChart
+    FileBarChart,
+    BookOpen
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import AdminDashboard from './AdminDashboard';
@@ -30,6 +31,7 @@ import AdminAnalytics from './AdminAnalytics';
 import AdminSettings from './AdminSettings';
 import AdminMimi from './AdminMimi';
 import BlogManager from './BlogManager';
+import StoryGenerator from './StoryGenerator';
 import ErrorMonitor from './ErrorMonitor';
 import GamesManager from './GamesManager';
 import PremiumManager from './PremiumManager';
@@ -62,6 +64,7 @@ const navSections = [
         label: 'Content',
         items: [
             { path: '/admin/blog', icon: PenTool, label: 'Blog' },
+            { path: '/admin/stories', icon: BookOpen, label: 'Story Generator' },
             { path: '/admin/mimi', icon: Bot, label: 'Mimi (AI Chat)' },
             { path: '/admin/premium', icon: Crown, label: 'Premium' },
         ]
@@ -241,6 +244,7 @@ function AdminLayout() {
                         <Route path="games" element={<GamesManager />} />
                         <Route path="worksheets" element={<WorksheetsManager />} />
                         <Route path="blog" element={<BlogManager />} />
+                        <Route path="stories" element={<StoryGenerator />} />
                         <Route path="mimi" element={<AdminMimi />} />
                         <Route path="premium" element={<PremiumManager />} />
                         <Route path="seo" element={<SEOManager />} />

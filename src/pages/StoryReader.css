@@ -1,0 +1,449 @@
+/* ==========================================================================
+   STORY READER PAGE — MinesMinis
+   Scene-by-scene reader with typewriter effect
+   ========================================================================== */
+
+.story-reader {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-page);
+  transition: background 0.8s ease;
+}
+
+/* ── Background ──────────────────────────────────────────────────────────── */
+
+.story-reader__bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+
+.story-reader__bg-forest {
+  background: radial-gradient(ellipse at bottom, #1a4a2e 0%, #0a1a12 100%);
+}
+
+.story-reader__bg-ocean {
+  background: radial-gradient(ellipse at bottom, #0a3d62 0%, #050f1a 100%);
+}
+
+.story-reader__bg-space {
+  background: radial-gradient(ellipse at center, #1a1a4e 0%, #0c0c2e 60%, #000010 100%);
+}
+
+.story-reader__bg-mountain {
+  background: radial-gradient(ellipse at top, #4a6572 0%, #2c3e50 60%, #1a2535 100%);
+}
+
+.story-reader__bg-desert {
+  background: radial-gradient(ellipse at top, #c8841c 0%, #7a4a1e 50%, #3a1e0a 100%);
+}
+
+.story-reader__bg-default {
+  background: radial-gradient(ellipse at center, #1a2332 0%, #0d1520 100%);
+}
+
+/* ── Topbar ──────────────────────────────────────────────────────────────── */
+
+.story-reader__topbar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.story-reader__back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.story-reader__back-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.story-reader__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Progress bar */
+.story-reader__progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.story-reader__progress-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.story-reader__progress-bar {
+  width: 80px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.story-reader__progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+/* ── Loading / Error ─────────────────────────────────────────────────────── */
+
+.story-reader__loading,
+.story-reader__error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+  position: relative;
+  z-index: 2;
+}
+
+.story-reader__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: srSpin 0.8s linear infinite;
+}
+
+@keyframes srSpin {
+  to { transform: rotate(360deg); }
+}
+
+.story-reader__error-btn {
+  padding: 0.625rem 1.5rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-display);
+  transition: opacity 0.2s;
+}
+
+.story-reader__error-btn:hover {
+  opacity: 0.85;
+}
+
+/* ── Scene Body ──────────────────────────────────────────────────────────── */
+
+.story-reader__body {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 6rem;
+  gap: 1.5rem;
+}
+
+/* Characters */
+.story-reader__characters {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.story-reader__char {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+  padding: 0.3rem 0.75rem 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.story-reader__char-emoji {
+  font-size: 1.1rem;
+}
+
+/* Location badge */
+.story-reader__location {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  align-self: flex-start;
+}
+
+/* Narration card */
+.story-reader__narration {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+}
+
+.story-reader__narration-text {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.75;
+  margin: 0;
+  min-height: 4rem;
+}
+
+.story-reader__cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--primary);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.75s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Sound / animation cues */
+.story-reader__cues {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.story-reader__cue {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem 0.6rem;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Vocabulary */
+.story-reader__vocab {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.5rem;
+  animation: srSlideUp 0.3s ease;
+}
+
+@keyframes srSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.story-reader__vocab-title {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.story-reader__vocab-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.story-reader__vocab-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.story-reader__vocab-word {
+  font-weight: 700;
+  color: white;
+}
+
+.story-reader__vocab-tr {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.82rem;
+}
+
+.story-reader__vocab-speak {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s;
+  margin-left: auto;
+}
+
+.story-reader__vocab-speak:hover {
+  color: var(--primary);
+}
+
+/* ── Choices ─────────────────────────────────────────────────────────────── */
+
+.story-reader__choices {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 60%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  max-width: 680px;
+  margin: 0 auto;
+  animation: srSlideUp 0.35s ease;
+}
+
+.story-reader__choice-btn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-lg);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  text-align: left;
+  line-height: 1.4;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.story-reader__choice-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: var(--primary);
+  transform: translateX(4px);
+}
+
+.story-reader__choice-btn:active {
+  transform: translateX(2px) scale(0.98);
+}
+
+.story-reader__choice-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+/* ── Skip button ─────────────────────────────────────────────────────────── */
+
+.story-reader__skip {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 30;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 99px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s, color 0.2s;
+}
+
+.story-reader__skip:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .story-reader__body {
+    padding: 1.25rem 1rem 5rem;
+  }
+
+  .story-reader__narration {
+    padding: 1.25rem;
+  }
+
+  .story-reader__choices {
+    padding: 1rem 1rem 1.25rem;
+  }
+
+  .story-reader__progress-bar {
+    width: 60px;
+  }
+}

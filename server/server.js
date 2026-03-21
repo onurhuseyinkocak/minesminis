@@ -1280,6 +1280,215 @@ app.post('/api/words/enrich', requireAdminAuth, security.rateLimiter({ maxReques
 });
 
 // ============================================================
+// STORY GENERATION & LIBRARY ROUTES
+// ============================================================
+
+// POST /api/admin/stories/generate — AI generates a complete story
+app.post('/api/admin/stories/generate',
+  security.rateLimiter({ maxRequests: 10, windowMs: 60000, keyPrefix: 'story-gen' }),
+  async (req, res) => {
+    try {
+      const { theme, characters, location, targetAge, vocabularyWords } = req.body;
+
+      if (!theme || typeof theme !== 'object') {
+        return res.status(400).json({ ok: false, error: 'theme object is required' });
+      }
+      if (!Array.isArray(characters) || characters.length === 0) {
+        return res.status(400).json({ ok: false, error: 'characters array is required' });
+      }
+      if (!location || typeof location !== 'object') {
+        return res.status(400).json({ ok: false, error: 'location object is required' });
+      }
+      if (!Array.isArray(targetAge) || targetAge.length !== 2) {
+        return res.status(400).json({ ok: false, error: 'targetAge [min, max] is required' });
+      }
+      if (!Array.isArray(vocabularyWords)) {
+        return res.status(400).json({ ok: false, error: 'vocabularyWords array is required' });
+      }
+
+      if (!OPENAI_API_KEY) {
+        return res.status(503).json({ ok: false, error: 'OpenAI API key not configured' });
+      }
+
+      const prompt = `You are a children's storybook author for kids ages ${targetAge[0]}-${targetAge[1]} learning English.
+
+Create a short interactive story (5-7 scenes) with these requirements:
+- Theme: ${theme.title} — ${theme.moral}
+- Characters: ${characters.map(c => c.name + ' (' + c.personality + ')').join(', ')}
+- Location: ${location.name} - ${location.ambiance}
+- Target vocabulary words to teach: ${vocabularyWords.join(', ')}
+- Each scene has: narration text (2-3 simple sentences), a scene description for illustration, and 2 choice options
+- Include sound effect cues like [SOUND: birds], [SOUND: splash], [SOUND: wind] etc.
+- Include animation cues like [ANIM: sparkle], [ANIM: bounce], [ANIM: wiggle] etc.
+- Keep language very simple, warm, and engaging for young children
+- Naturally embed vocabulary words in the narration
+- The story should have a clear moral/lesson
+- Include Turkish translations for key vocabulary in parentheses
+- Make the story fun, imaginative, and age-appropriate
+
+Return ONLY valid JSON with this exact structure:
+{
+  "title": "...",
+  "titleTr": "...",
+  "summary": "One or two sentence summary",
+  "summaryTr": "...",
+  "moral": "The lesson of the story",
+  "moralTr": "...",
+  "coverScene": "Describe an illustration for the cover",
+  "targetAge": [${targetAge[0]}, ${targetAge[1]}],
+  "vocabulary": [{"word": "...", "turkish": "...", "emoji": "..."}],
+  "scenes": [
+    {
+      "id": 1,
+      "narration": "Simple English narration 2-3 sentences",
+      "narrationTr": "Turkish translation",
+      "sceneDescription": "Visual description for illustration",
+      "background": "forest|ocean|mountain|space|desert|city|farm|castle",
+      "characters": ["character_id_1", "character_id_2"],
+      "mood": "happy|mysterious|exciting|calm|silly|magical|brave|cozy|adventurous",
+      "soundEffects": ["birds", "wind"],
+      "animations": ["sparkle", "bounce"],
+      "choices": [
+        {"text": "Choice text in English", "textTr": "Turkish translation", "leadsTo": 2},
+        {"text": "Choice text in English", "textTr": "Turkish translation", "leadsTo": 3}
+      ]
+    }
+  ]
+}`;
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+      let openAIResponse;
+      try {
+        openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.8,
+            response_format: { type: 'json_object' },
+            max_tokens: 4000,
+          }),
+          signal: controller.signal,
+        });
+      } catch (fetchErr) {
+        clearTimeout(timeout);
+        if (fetchErr.name === 'AbortError') {
+          return res.status(504).json({ ok: false, error: 'OpenAI request timed out after 30 seconds' });
+        }
+        throw fetchErr;
+      }
+      clearTimeout(timeout);
+
+      if (!openAIResponse.ok) {
+        const errBody = await openAIResponse.json().catch(() => ({}));
+        return res.status(502).json({ ok: false, error: errBody?.error?.message || 'OpenAI API error' });
+      }
+
+      const data = await openAIResponse.json();
+      const content = data.choices?.[0]?.message?.content;
+      if (!content) {
+        return res.status(502).json({ ok: false, error: 'Empty response from OpenAI' });
+      }
+
+      let story;
+      try {
+        story = JSON.parse(content);
+      } catch {
+        return res.status(502).json({ ok: false, error: 'Invalid JSON from OpenAI', raw: content.slice(0, 200) });
+      }
+
+      // Save to Supabase
+      const sb = await getAdminSupabase();
+      if (sb) {
+        const { data: saved, error: dbErr } = await sb.from('stories').insert({
+          title: story.title,
+          title_tr: story.titleTr,
+          summary: story.summary,
+          summary_tr: story.summaryTr,
+          moral: story.moral,
+          moral_tr: story.moralTr,
+          cover_scene: story.coverScene,
+          target_age: story.targetAge || targetAge,
+          vocabulary: story.vocabulary || [],
+          scenes: story.scenes || [],
+          status: 'published',
+          created_at: new Date().toISOString(),
+        }).select().single();
+
+        if (dbErr) {
+          console.error('Story DB save error:', dbErr.message);
+          return res.status(500).json({ ok: false, error: dbErr.message });
+        }
+        return res.json({ ok: true, story: saved });
+      }
+
+      // No DB: return the generated story directly
+      res.json({ ok: true, story });
+    } catch (e) {
+      console.error('Story generate error:', e);
+      res.status(500).json({ ok: false, error: e.message || 'Story generation failed' });
+    }
+  }
+);
+
+// GET /api/stories — list all published stories
+app.get('/api/stories',
+  security.rateLimiter({ maxRequests: 60, windowMs: 60000, keyPrefix: 'stories-list' }),
+  async (req, res) => {
+    try {
+      const sb = await getAdminSupabase();
+      if (!sb) return res.json({ ok: true, stories: [] });
+
+      const { data, error } = await sb
+        .from('stories')
+        .select('id, title, title_tr, summary, summary_tr, cover_scene, target_age, created_at')
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
+
+      if (error) return res.status(500).json({ ok: false, error: error.message });
+      res.json({ ok: true, stories: data || [] });
+    } catch (e) {
+      console.error('Stories list error:', e);
+      res.status(500).json({ ok: false, error: e.message || 'Failed to fetch stories' });
+    }
+  }
+);
+
+// GET /api/stories/:id — get full story with all scenes
+app.get('/api/stories/:id',
+  security.rateLimiter({ maxRequests: 60, windowMs: 60000, keyPrefix: 'story-get' }),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id || typeof id !== 'string' || id.length > 100) {
+        return res.status(400).json({ ok: false, error: 'Invalid story id' });
+      }
+
+      const sb = await getAdminSupabase();
+      if (!sb) return res.status(503).json({ ok: false, error: 'Database unavailable' });
+
+      const { data, error } = await sb
+        .from('stories')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) return res.status(404).json({ ok: false, error: 'Story not found' });
+      res.json({ ok: true, story: data });
+    } catch (e) {
+      console.error('Story get error:', e);
+      res.status(500).json({ ok: false, error: e.message || 'Failed to fetch story' });
+    }
+  }
+);
+
+// ============================================================
 // BILLING ROUTES (Lemon Squeezy)
 // ============================================================
 app.use('/api/billing', billingRoutes);
