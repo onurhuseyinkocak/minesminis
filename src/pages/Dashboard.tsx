@@ -1,9 +1,9 @@
 /**
- * DASHBOARD -- Premium Child-Friendly Student Home Screen
- * MinesMinis v6.0
+ * DASHBOARD -- Learning-Focused Student Home Screen
+ * MinesMinis v6.1
  *
- * Clean, confident, premium feel.
- * ZERO emoji in UI -- only Lucide icons.
+ * ONE primary action: Today's Lesson hero card.
+ * Everything else is secondary.
  * Uses design-system.css variables throughout.
  */
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -18,11 +18,11 @@ import {
   Video,
   Music,
   CheckCircle,
-  Target,
   School,
   Award,
   Loader2,
   Gift,
+  BookMarked,
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -40,6 +40,7 @@ import { getDueWords } from '../data/spacedRepetition';
 import { getNextAction, getCurrentPhonicsSound } from '../services/learningPathService';
 import { getTodayMinutes, getRecentActivities } from '../services/activityLogger';
 import { joinClassroom, getStudentClassroom } from '../services/classroomService';
+import { getTodayLesson, isDailyLessonCompletedToday } from '../services/dailyLessonService';
 import './Dashboard.css';
 
 // ============================================================
@@ -181,21 +182,46 @@ export default function Dashboard() {
   const userId = user?.uid || 'guest';
   const initial = displayName.charAt(0).toUpperCase();
 
+  // Daily lesson state
+  const today = new Date().toISOString().split('T')[0];
+  const [lessonDone, setLessonDone] = useState<boolean>(() =>
+    isDailyLessonCompletedToday(userId)
+  );
+
+  // Get today's lesson plan for word preview
+  const todayPlan = useMemo(() => getTodayLesson(userId), [userId]);
+
+  // Weekly progress: which of last 7 days has a completed lesson
+  const weeklyDots = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      const key = d.toISOString().split('T')[0];
+      const saved = localStorage.getItem(`mm_daily_${userId}_${key}`);
+      if (!saved) return false;
+      try { return JSON.parse(saved).completed === true; } catch { return false; }
+    });
+  }, [userId]);
+
+  // Words learned count from gamification stats
+  const learnedCount = stats.wordsLearned ?? 0;
+
   const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
   const [dueWords, setDueWords] = useState(() => getDueWords());
-  const [nextAction, setNextAction] = useState(() => getNextAction());
+  const [_nextAction, _setNextAction] = useState(() => getNextAction());
   const [todayMin, setTodayMin] = useState(() => getTodayMinutes(user?.uid));
 
   useEffect(() => {
     const onFocus = () => {
       setLesson(getCurrentLessonData(userId));
       setDueWords(getDueWords());
-      setNextAction(getNextAction());
+      _setNextAction(getNextAction());
       setTodayMin(getTodayMinutes(userId));
+      setLessonDone(isDailyLessonCompletedToday(userId));
     };
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
-  }, [userId]);
+  }, [userId, today]);
 
   // Classroom
   const [joinCode, setJoinCode] = useState('');
@@ -245,6 +271,9 @@ export default function Dashboard() {
   // Suppress unused var warnings -- kept for future use
   void dueWords;
   void xpProgress;
+  void todayMin;
+  void lessonProgress;
+  void phaseInfo;
 
   // ---- Loading ----
   if (loading) {
@@ -289,32 +318,82 @@ export default function Dashboard() {
       </motion.header>
 
       {/* ============================================================
-          HERO -- Continue Learning
+          DAILY LESSON HERO -- PRIMARY ACTION
           ============================================================ */}
-      <motion.section className="dash-hero" variants={itemVariants}>
-        <div className="dash-hero__content">
-          <span className="dash-hero__badge">{phaseInfo.unitLabel}</span>
-          <h1 className="dash-hero__title">{nextAction.title}</h1>
-          <p className="dash-hero__subtitle">{t('dashboard.tapPlay')}</p>
-          <div className="dash-hero__progress">
-            <div className="dash-hero__progress-track">
-              <div
-                className="dash-hero__progress-fill"
-                style={{ width: `${lessonProgress}%` }}
-              />
+      <motion.section
+        className={`dash-daily-lesson${lessonDone ? ' dash-daily-lesson--done' : ''}`}
+        variants={itemVariants}
+      >
+        {!lessonDone ? (
+          <>
+            <div className="dash-daily-lesson__icon-wrap">
+              <BookMarked size={36} strokeWidth={2} />
             </div>
-            <span className="dash-hero__progress-label">
-              {lesson.currentLesson}/{lesson.totalLessons}
-            </span>
-          </div>
-        </div>
-        <Link to={nextAction.route} className="dash-hero__play" aria-label="Start lesson">
-          <Play size={36} strokeWidth={2.5} />
-        </Link>
+            <div className="dash-daily-lesson__body">
+              <h2 className="dash-daily-lesson__title">{t('dashboard.todaysLesson')}</h2>
+              <p className="dash-daily-lesson__desc">{t('dashboard.learnFiveWords')}</p>
+              <div className="dash-daily-lesson__preview">
+                {todayPlan.newWords.slice(0, 5).map((w) => (
+                  <span key={w.word}>{w.word}</span>
+                ))}
+              </div>
+            </div>
+            <Link to="/daily-lesson" className="dash-daily-lesson__btn">
+              {t('dashboard.startLearning')}
+              <Play size={18} strokeWidth={2.5} />
+            </Link>
+          </>
+        ) : (
+          <>
+            <div className="dash-daily-lesson__icon-wrap dash-daily-lesson__icon-wrap--done">
+              <CheckCircle size={36} strokeWidth={2} />
+            </div>
+            <div className="dash-daily-lesson__body">
+              <h2 className="dash-daily-lesson__title">{t('dashboard.greatJobToday')}</h2>
+              <p className="dash-daily-lesson__desc">{t('dashboard.learnedFiveWords')}</p>
+            </div>
+            <div className="dash-daily-lesson__streak">
+              <Flame size={20} />
+              <span>{stats.streakDays} {t('dashboard.dayStreakLabel')}</span>
+            </div>
+          </>
+        )}
       </motion.section>
 
       {/* ============================================================
-          QUICK ACTIONS
+          WORDS I KNOW PROGRESS
+          ============================================================ */}
+      <motion.section className="dash-words-progress" variants={itemVariants}>
+        <div className="dash-words-progress__header">
+          <h3 className="dash-words-progress__title">{t('dashboard.wordsIKnow')}</h3>
+          <span className="dash-words-progress__count">{learnedCount} / 200</span>
+        </div>
+        <div className="dash-words-progress__track">
+          <div
+            className="dash-words-progress__fill"
+            style={{ width: `${Math.min((learnedCount / 200) * 100, 100)}%` }}
+          />
+        </div>
+      </motion.section>
+
+      {/* ============================================================
+          WEEKLY PROGRESS DOTS
+          ============================================================ */}
+      <motion.section className="dash-weekly" variants={itemVariants}>
+        <span className="dash-weekly__label">{t('dashboard.weeklyProgress')}</span>
+        <div className="dash-weekly__dots">
+          {weeklyDots.map((done, i) => (
+            <div
+              key={i}
+              className={`dash-weekly__dot${done ? ' dash-weekly__dot--done' : ''}`}
+              aria-label={done ? 'Completed' : 'Not completed'}
+            />
+          ))}
+        </div>
+      </motion.section>
+
+      {/* ============================================================
+          QUICK ACTIONS (secondary)
           ============================================================ */}
       <motion.nav className="dash-actions" variants={itemVariants}>
         {QUICK_ACTIONS.map(({ to, icon: Icon, label, className }) => (
@@ -333,17 +412,11 @@ export default function Dashboard() {
       </motion.nav>
 
       {/* ============================================================
-          TODAY'S PROGRESS -- visual progress rings
+          TODAY'S PROGRESS -- visual progress rings (secondary)
           ============================================================ */}
       <motion.section className="dash-today" variants={itemVariants}>
         <span className="dash-today__label">{t('dashboard.today')}</span>
         <div className="dash-today__stats">
-          <ProgressRing
-            value={todayMin}
-            max={30}
-            label="min"
-            colorClass="dash-today__stat-ring-fill--time"
-          />
           <ProgressRing
             value={todayCompletions}
             max={Math.max(todayCompletions, 5)}
@@ -351,9 +424,9 @@ export default function Dashboard() {
             colorClass="dash-today__stat-ring-fill--done"
           />
         </div>
-        <Link to="/games" className="dash-today__challenge">
-          <Target size={16} />
-          <span>{t('dashboard.playGames')}</span>
+        <Link to="/words" className="dash-today__challenge">
+          <BookOpen size={16} />
+          <span>{t('dashboard.wordsIKnow')}</span>
         </Link>
       </motion.section>
 

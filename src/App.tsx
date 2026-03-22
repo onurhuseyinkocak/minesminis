@@ -59,6 +59,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Worksheets = lazy(() => import("./pages/Worksheets"));
 const Favorites = lazy(() => import("./pages/Favorites"));
 const ReadingLibrary = lazy(() => import("./pages/Student/ReadingLibrary"));
+const DailyLesson = lazy(() => import("./pages/DailyLesson"));
 
 // Protected – Parent / Teacher
 const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
@@ -394,6 +395,7 @@ function AppRoutes() {
             <Route path="/garden" element={<StudentRoute><LearningGarden /></StudentRoute>} />
             <Route path="/reading" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/reading/:bookId" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
+            <Route path="/daily-lesson" element={<StudentRoute><DailyLesson /></StudentRoute>} />
             <Route path="/pricing" element={<Pricing />} />
 
             {/* ── Parent (protected, no student AppShell) ────────── */}
