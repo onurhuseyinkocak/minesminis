@@ -44,8 +44,7 @@ const Favorites: React.FC = () => {
       if (error) throw error;
 
       setFavorites(data || []);
-    } catch (error) {
-      console.error('Error loading favorites:', error);
+    } catch {
       toast.error('Failed to load favorites');
     } finally {
       setLoading(false);
@@ -63,8 +62,7 @@ const Favorites: React.FC = () => {
 
       setFavorites(prev => prev.filter(fav => fav.id !== favoriteId));
       toast.success('Removed from favorites!');
-    } catch (error) {
-      console.error('Error removing favorite:', error);
+    } catch {
       toast.error('Failed to remove favorite');
     }
   };

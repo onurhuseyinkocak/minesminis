@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { userService } from '../services/userService';
 import { createClassroom } from '../services/classroomService';
 import toast from 'react-hot-toast';
@@ -27,10 +28,10 @@ interface ChildEntry {
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
-const ROLE_CARDS: { value: UserRole; icon: React.ReactNode; title: string; subtitle: string; detail: string; color: string }[] = [
-  { value: 'student', icon: <GraduationCap size={28} />, title: 'Student', subtitle: "I'm learning English", detail: 'Ages 3-10', color: 'var(--primary)' },
-  { value: 'teacher', icon: <Users size={28} />, title: 'Teacher', subtitle: 'I teach English', detail: 'Classroom tools', color: 'var(--secondary, var(--primary))' },
-  { value: 'parent', icon: <Heart size={28} />, title: 'Parent', subtitle: 'My child is learning', detail: 'Track progress', color: 'var(--accent, var(--primary))' },
+const ROLE_CARDS_DATA: { value: UserRole; icon: React.ReactNode; title: string; titleTr: string; subtitle: string; subtitleTr: string; detail: string; detailTr: string; color: string }[] = [
+  { value: 'student', icon: <GraduationCap size={28} />, title: 'Student', titleTr: 'Öğrenci', subtitle: "I'm learning English", subtitleTr: 'İngilizce öğreniyorum', detail: 'Ages 3-10', detailTr: '3-10 yaş', color: 'var(--primary)' },
+  { value: 'teacher', icon: <Users size={28} />, title: 'Teacher', titleTr: 'Öğretmen', subtitle: 'I teach English', subtitleTr: 'İngilizce öğretiyorum', detail: 'Classroom tools', detailTr: 'Sınıf araçları', color: 'var(--secondary, var(--primary))' },
+  { value: 'parent', icon: <Heart size={28} />, title: 'Parent', titleTr: 'Ebeveyn', subtitle: 'My child is learning', subtitleTr: 'Çocuğum öğreniyor', detail: 'Track progress', detailTr: 'İlerlemeyi takip et', color: 'var(--accent, var(--primary))' },
 ];
 
 const STUDENT_AGE_GROUPS: { value: string; label: string; phase: string; icon: React.ReactNode; color: string }[] = [
@@ -163,6 +164,8 @@ const slideVariants = {
 
 const Onboarding: React.FC = () => {
   const { user, refreshUserProfile, setHasSkippedSetup } = useAuth();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
   const navigate = useNavigate();
 
   // Shared state
@@ -415,13 +418,14 @@ const Onboarding: React.FC = () => {
     </div>
   );
 
-  const renderNavActions = (opts?: { showBack?: boolean; nextLabel?: string; onNext?: () => void; isLast?: boolean }) => {
-    const { showBack = true, nextLabel = 'Continue', onNext, isLast = false } = opts || {};
+  const renderNavActions = (opts?: { showBack?: boolean; nextLabel?: string; nextLabelTr?: string; onNext?: () => void; isLast?: boolean }) => {
+    const { showBack = true, nextLabel = 'Continue', nextLabelTr, onNext, isLast = false } = opts || {};
+    const label = isTr ? (nextLabelTr || nextLabel) : nextLabel;
     return (
       <div className="onboarding-actions">
         {showBack && (
           <Button variant="ghost" size="lg" onClick={prevStep} icon={<ArrowLeft size={18} />}>
-            Back
+            {isTr ? 'Geri' : 'Back'}
           </Button>
         )}
         <Button
@@ -432,7 +436,7 @@ const Onboarding: React.FC = () => {
           loading={isLast ? isSubmitting : false}
           icon={isLast ? <Rocket size={18} /> : <ArrowRight size={18} />}
         >
-          {isLast ? (isSubmitting ? 'Preparing...' : nextLabel) : nextLabel}
+          {isLast ? (isSubmitting ? (isTr ? 'Hazırlanıyor...' : 'Preparing...') : label) : label}
         </Button>
       </div>
     );
@@ -451,11 +455,11 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <h2>How will you use MinesMinis?</h2>
-      <p className="onboarding-step-sub">Choose your role to get a personalized experience</p>
+      <h2>{isTr ? 'MinesMinis\'i nasıl kullanacaksın?' : 'How will you use MinesMinis?'}</h2>
+      <p className="onboarding-step-sub">{isTr ? 'Kişiselleştirilmiş deneyim için rolünü seç' : 'Choose your role to get a personalized experience'}</p>
 
       <div className="onboarding-role-grid">
-        {ROLE_CARDS.map((r) => (
+        {ROLE_CARDS_DATA.map((r) => (
           <motion.button
             key={r.value}
             type="button"
@@ -468,9 +472,9 @@ const Onboarding: React.FC = () => {
               <span style={{ color: role === r.value ? 'var(--text-on-primary)' : 'var(--primary)' }}>{r.icon}</span>
             </span>
             <div className="onboarding-role-text">
-              <span className="onboarding-role-title">{r.title}</span>
-              <span className="onboarding-role-subtitle">{r.subtitle}</span>
-              <span className="onboarding-role-detail">{r.detail}</span>
+              <span className="onboarding-role-title">{isTr ? r.titleTr : r.title}</span>
+              <span className="onboarding-role-subtitle">{isTr ? r.subtitleTr : r.subtitle}</span>
+              <span className="onboarding-role-detail">{isTr ? r.detailTr : r.detail}</span>
             </div>
           </motion.button>
         ))}
@@ -484,12 +488,12 @@ const Onboarding: React.FC = () => {
           disabled={!canProceed()}
           icon={<ArrowRight size={18} />}
         >
-          Continue
+          {isTr ? 'Devam' : 'Continue'}
         </Button>
       </div>
 
       <div className="onboarding-skip">
-        <button type="button" onClick={handleSkip}>Skip for now</button>
+        <button type="button" onClick={handleSkip}>{isTr ? 'Şimdilik geç' : 'Skip for now'}</button>
       </div>
     </motion.div>
   );
@@ -507,8 +511,8 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <h2>What's your age group?</h2>
-      <p className="onboarding-step-sub">This helps us pick the perfect learning phase for you</p>
+      <h2>{isTr ? 'Yaş grubun nedir?' : "What's your age group?"}</h2>
+      <p className="onboarding-step-sub">{isTr ? 'Sana en uygun öğrenme aşamasını seçmemize yardımcı olur' : 'This helps us pick the perfect learning phase for you'}</p>
 
       <div className="onboarding-age-grid">
         {STUDENT_AGE_GROUPS.map((ag) => (
@@ -529,7 +533,7 @@ const Onboarding: React.FC = () => {
         ))}
       </div>
 
-      {renderNavActions({ nextLabel: 'Continue' })}
+      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
     </motion.div>
   );
 
@@ -560,7 +564,7 @@ const Onboarding: React.FC = () => {
               <span className="onboarding-phonics-result-desc">{PHONICS_GROUPS[startingPhonicsGroup - 1].description}</span>
             </div>
           </div>
-          {renderNavActions({ nextLabel: 'Continue' })}
+          {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
         </motion.div>
       );
     }
@@ -656,7 +660,7 @@ const Onboarding: React.FC = () => {
         </div>
       </div>
 
-      {renderNavActions({ nextLabel: "Let's Go!" })}
+      {renderNavActions({ nextLabel: "Let's Go!", nextLabelTr: 'Haydi Başlayalım!' })}
     </motion.div>
   );
 
@@ -704,7 +708,7 @@ const Onboarding: React.FC = () => {
           ))}
         </div>
 
-        {renderNavActions({ nextLabel: 'Begin Learning', isLast: true })}
+        {renderNavActions({ nextLabel: 'Begin Learning', nextLabelTr: 'Öğrenmeye Başla', isLast: true })}
       </motion.div>
     );
   };
@@ -773,7 +777,7 @@ const Onboarding: React.FC = () => {
         </div>
       </div>
 
-      {renderNavActions({ nextLabel: 'Continue' })}
+      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
     </motion.div>
   );
 
@@ -825,7 +829,7 @@ const Onboarding: React.FC = () => {
         <p className="onboarding-join-code-hint">Students enter this code to join your classroom</p>
       </div>
 
-      {renderNavActions({ nextLabel: 'Continue' })}
+      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
     </motion.div>
   );
 
@@ -873,7 +877,7 @@ const Onboarding: React.FC = () => {
           ))}
         </div>
 
-        {renderNavActions({ nextLabel: "Let's Start!", isLast: true })}
+        {renderNavActions({ nextLabel: "Let's Start!", nextLabelTr: 'Başlayalım!', isLast: true })}
       </motion.div>
     );
   };
@@ -961,7 +965,7 @@ const Onboarding: React.FC = () => {
         </button>
       )}
 
-      {renderNavActions({ nextLabel: 'Continue' })}
+      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
     </motion.div>
   );
 

@@ -455,3 +455,27 @@
 
   .review-btn { min-width: auto; width: 100%; }
 }
+
+/* ---- GROUPED WORDS (More Words expanded view) ---- */
+.kid-words-grouped {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.kid-word-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.kid-word-group-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-xs) var(--space-sm);
+  border-left: 4px solid var(--primary);
+  margin: 0;
+}

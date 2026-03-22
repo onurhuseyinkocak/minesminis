@@ -504,7 +504,7 @@ export default function Dashboard() {
 
       <MimiGuide
         message="Hi! I'm Mimi! Tap the big play button to start learning!"
-        messageTr="Merhaba! Ben Mimi! Buyuk oynat butonuna dokun ve ogrenmeye basla!"
+        messageTr="Merhaba! Ben Mimi! Büyük oynat butonuna dokun ve öğrenmeye başla!"
         showOnce="mimi_guide_dashboard"
       />
     </motion.div>

@@ -253,6 +253,11 @@ const Words: React.FC = () => {
     ? kidsWords
     : kidsWords.filter(w => w.category === (categories[0] || 'Animals'));
 
+  // When showMoreWords, group words by category for display
+  const groupedByCategory: { category: string; words: KidsWord[] }[] = showMoreWords
+    ? categories.map(cat => ({ category: cat, words: kidsWords.filter(w => w.category === cat) }))
+    : [];
+
   const myWords = kidsWords.filter(w => learnedWords.has(w.word) || favoriteWords.has(w.word));
 
   const TABS: { id: TabType; emoji: string; label: string }[] = [
@@ -293,71 +298,133 @@ const Words: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <div className="kid-word-cards">
-                {displayWords.map((word, idx) => (
-                  <motion.div
-                    key={`${word.word}-${idx}`}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: Math.min(idx * 0.03, 0.6) }}
-                    className={`kid-word-card ${flippedCard === word.word ? 'flipped' : ''}`}
-                    onClick={() => setFlippedCard(flippedCard === word.word ? null : word.word)}
-                  >
-                    {flippedCard !== word.word ? (
-                      /* FRONT */
-                      <div className="kid-card-front">
-                        <div className="kid-card-visual">
-                          {word.image_url ? (
-                            <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
-                          ) : (
-                            <span className="kid-card-emoji">{word.emoji || '\uD83D\uDCD6'}</span>
-                          )}
-                        </div>
-                        <h3 className="kid-card-word">{word.word}</h3>
-                        <p className="kid-card-turkish">{word.turkish}</p>
+              {showMoreWords ? (
+                /* Grouped view when showing all words */
+                <div className="kid-words-grouped">
+                  {groupedByCategory.map(({ category, words: catWords }) => (
+                    <div key={category} className="kid-word-group">
+                      <h3 className="kid-word-group-title">{category}</h3>
+                      <div className="kid-word-cards">
+                        {catWords.map((word, idx) => (
+                          <motion.div
+                            key={`${word.word}-${idx}`}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: Math.min(idx * 0.03, 0.4) }}
+                            className={`kid-word-card ${flippedCard === word.word ? 'flipped' : ''}`}
+                            onClick={() => setFlippedCard(flippedCard === word.word ? null : word.word)}
+                          >
+                            {flippedCard !== word.word ? (
+                              <div className="kid-card-front">
+                                <div className="kid-card-visual">
+                                  {word.image_url ? (
+                                    <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
+                                  ) : (
+                                    <span className="kid-card-emoji">{word.emoji || '\uD83D\uDCD6'}</span>
+                                  )}
+                                </div>
+                                <h3 className="kid-card-word">{word.word}</h3>
+                                <p className="kid-card-turkish">{word.turkish}</p>
+                              </div>
+                            ) : (
+                              <div className="kid-card-back" onClick={(e) => e.stopPropagation()}>
+                                <span className="kid-card-emoji-sm">{word.emoji}</span>
+                                <h3 className="kid-card-word">{word.word}</h3>
+                                <div className="kid-card-actions">
+                                  <button className="kid-action-btn listen" onClick={() => playWordAudio(word)} disabled={isLoadingAudio}>
+                                    <Volume2 size={22} /> Listen
+                                  </button>
+                                  <button
+                                    className={`kid-action-btn speak ${pronunciationResult[word.word] === 'correct' ? 'correct' : pronunciationResult[word.word] === 'wrong' ? 'wrong' : pronunciationResult[word.word] === 'listening' ? 'listening-active' : ''}`}
+                                    onClick={() => startPronunciation(word.word)}
+                                    disabled={pronunciationWord === word.word}
+                                  >
+                                    <Mic size={22} /> Speak
+                                  </button>
+                                  <button
+                                    className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
+                                    onClick={() => toggleLearned(word.word)}
+                                  >
+                                    {learnedWords.has(word.word) ? '\u2705 Learned!' : '\u2705 I know this!'}
+                                  </button>
+                                </div>
+                                <button className="kid-card-close" onClick={() => setFlippedCard(null)}>Tap to close</button>
+                              </div>
+                            )}
+                          </motion.div>
+                        ))}
                       </div>
-                    ) : (
-                      /* BACK */
-                      <div className="kid-card-back" onClick={(e) => e.stopPropagation()}>
-                        <span className="kid-card-emoji-sm">{word.emoji}</span>
-                        <h3 className="kid-card-word">{word.word}</h3>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* Default view — first category only */
+                <div className="kid-word-cards">
+                  {displayWords.map((word, idx) => (
+                    <motion.div
+                      key={`${word.word}-${idx}`}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: Math.min(idx * 0.03, 0.6) }}
+                      className={`kid-word-card ${flippedCard === word.word ? 'flipped' : ''}`}
+                      onClick={() => setFlippedCard(flippedCard === word.word ? null : word.word)}
+                    >
+                      {flippedCard !== word.word ? (
+                        /* FRONT */
+                        <div className="kid-card-front">
+                          <div className="kid-card-visual">
+                            {word.image_url ? (
+                              <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
+                            ) : (
+                              <span className="kid-card-emoji">{word.emoji || '\uD83D\uDCD6'}</span>
+                            )}
+                          </div>
+                          <h3 className="kid-card-word">{word.word}</h3>
+                          <p className="kid-card-turkish">{word.turkish}</p>
+                        </div>
+                      ) : (
+                        /* BACK */
+                        <div className="kid-card-back" onClick={(e) => e.stopPropagation()}>
+                          <span className="kid-card-emoji-sm">{word.emoji}</span>
+                          <h3 className="kid-card-word">{word.word}</h3>
 
-                        <div className="kid-card-actions">
-                          <button
-                            className="kid-action-btn listen"
-                            onClick={() => playWordAudio(word)}
-                            disabled={isLoadingAudio}
-                          >
-                            <Volume2 size={22} /> Listen
-                          </button>
+                          <div className="kid-card-actions">
+                            <button
+                              className="kid-action-btn listen"
+                              onClick={() => playWordAudio(word)}
+                              disabled={isLoadingAudio}
+                            >
+                              <Volume2 size={22} /> Listen
+                            </button>
+
+                            <button
+                              className={`kid-action-btn speak ${pronunciationResult[word.word] === 'correct' ? 'correct' : pronunciationResult[word.word] === 'wrong' ? 'wrong' : pronunciationResult[word.word] === 'listening' ? 'listening-active' : ''}`}
+                              onClick={() => startPronunciation(word.word)}
+                              disabled={pronunciationWord === word.word}
+                            >
+                              <Mic size={22} /> Speak
+                            </button>
+
+                            <button
+                              className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
+                              onClick={() => toggleLearned(word.word)}
+                            >
+                              {learnedWords.has(word.word) ? '\u2705 Learned!' : '\u2705 I know this!'}
+                            </button>
+                          </div>
 
                           <button
-                            className={`kid-action-btn speak ${pronunciationResult[word.word] === 'correct' ? 'correct' : pronunciationResult[word.word] === 'wrong' ? 'wrong' : pronunciationResult[word.word] === 'listening' ? 'listening-active' : ''}`}
-                            onClick={() => startPronunciation(word.word)}
-                            disabled={pronunciationWord === word.word}
+                            className="kid-card-close"
+                            onClick={() => setFlippedCard(null)}
                           >
-                            <Mic size={22} /> Speak
-                          </button>
-
-                          <button
-                            className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
-                            onClick={() => toggleLearned(word.word)}
-                          >
-                            {learnedWords.has(word.word) ? '\u2705 Learned!' : '\u2705 I know this!'}
+                            Tap to close
                           </button>
                         </div>
-
-                        <button
-                          className="kid-card-close"
-                          onClick={() => setFlippedCard(null)}
-                        >
-                          Tap to close
-                        </button>
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
 
               {!showMoreWords && kidsWords.length > displayWords.length && (
                 <div className="more-words-row">
@@ -484,7 +551,7 @@ const Words: React.FC = () => {
 
       <MimiGuide
         message="Tap a word to hear how it sounds!"
-        messageTr="Bir kelimeye dokun ve nasil soylendini duy!"
+        messageTr="Bir kelimeye dokun ve nasıl söylendiğini duy!"
         showOnce="mimi_guide_words"
       />
     </div>

@@ -416,7 +416,7 @@ const WorldMap = () => {
 
       <MimiGuide
         message="Tap a game to play! The golden \u2B50 one is next!"
-        messageTr="Oynamak icin bir oyuna dokun! Yildizli olan siradasin!"
+        messageTr="Oynamak için bir oyuna dokun! Yıldızlı olan sıradasın!"
         showOnce="mimi_guide_worldmap"
         position="bottom-left"
       />

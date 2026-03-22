@@ -146,8 +146,9 @@ function Videos() {
 
       {/* ================================================================
           PHONICS VIDEOS SECTION — Grouped by phonics group
+          Only shown when no grade filter is active
           ================================================================ */}
-      <motion.div
+      {selectedGrade === 'All' && <motion.div
         className="phonics-videos-section"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -268,7 +269,7 @@ function Videos() {
             );
           })}
         </div>
-      </motion.div>
+      </motion.div>}
 
       {/* ================================================================
           MORE VIDEOS — Grade-based (existing content)

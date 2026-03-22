@@ -868,7 +868,7 @@ function PhonicsLesson() {
 
       <MimiGuide
         message="Listen carefully, then try saying the sound!"
-        messageTr="Dikkatlice dinle, sonra sesi soylemeyi dene!"
+        messageTr="Dikkatlice dinle, sonra sesi söylemeyi dene!"
         showOnce="mimi_guide_phonics"
         position="bottom-left"
       />

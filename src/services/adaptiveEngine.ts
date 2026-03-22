@@ -1468,9 +1468,9 @@ export function getLearnerInsights(): LearnerInsight[] {
       insights.push({
         type: 'milestone',
         title: `${milestone} Sessions Completed!`,
-        titleTr: `${milestone} Oturum Tamamlandi!`,
+        titleTr: `${milestone} Oturum Tamamlandı!`,
         description: `You've completed ${milestone} learning sessions. Amazing dedication!`,
-        descriptionTr: `${milestone} ogrenme oturumu tamamladin. Muhtesem bir azim!`,
+        descriptionTr: `${milestone} öğrenme oturumu tamamladın. Muhteşem bir azim!`,
         icon: 'trophy',
       });
     }
@@ -1490,9 +1490,9 @@ export function getLearnerInsights(): LearnerInsight[] {
     insights.push({
       type: 'achievement',
       title: `${profile.currentStreak}-Day Streak!`,
-      titleTr: `${profile.currentStreak} Gunluk Seri!`,
+      titleTr: `${profile.currentStreak} Günlük Seri!`,
       description: 'Keep going to build your streak even higher!',
-      descriptionTr: 'Serini daha da buyutmek icin devam et!',
+      descriptionTr: 'Serini daha da büyütmek için devam et!',
       icon: 'flame',
     });
   }
@@ -1503,9 +1503,9 @@ export function getLearnerInsights(): LearnerInsight[] {
     insights.push({
       type: 'achievement',
       title: `${masteredCount} Sounds Mastered`,
-      titleTr: `${masteredCount} Ses Ogrenildi`,
+      titleTr: `${masteredCount} Ses Öğrenildi`,
       description: `You've mastered ${masteredCount} out of ${ALL_SOUNDS.length} sounds!`,
-      descriptionTr: `${ALL_SOUNDS.length} sesten ${masteredCount} tanesini ogrendin!`,
+      descriptionTr: `${ALL_SOUNDS.length} sesten ${masteredCount} tanesini öğrendin!`,
       icon: 'star',
     });
   }
@@ -1517,9 +1517,9 @@ export function getLearnerInsights(): LearnerInsight[] {
     insights.push({
       type: 'struggle',
       title: `Let's Practice '${grapheme}'`,
-      titleTr: `'${grapheme}' Sesini Pratik Yapalim`,
+      titleTr: `'${grapheme}' Sesini Pratik Yapalım`,
       description: `The '${grapheme}' sound needs more practice. Try the blending activity!`,
-      descriptionTr: `'${grapheme}' sesi daha fazla pratik istiyor. Birlestirme aktivitesini dene!`,
+      descriptionTr: `'${grapheme}' sesi daha fazla pratik istiyor. Birleştirme aktivitesini dene!`,
       icon: 'target',
     });
   }
@@ -1529,9 +1529,9 @@ export function getLearnerInsights(): LearnerInsight[] {
     insights.push({
       type: 'recommendation',
       title: 'Ready for a Challenge?',
-      titleTr: 'Meydan Okumaya Hazir misin?',
+      titleTr: 'Meydan Okumaya Hazır mısın?',
       description: 'You\'re learning fast! Try harder activities to push yourself.',
-      descriptionTr: 'Hizli ogreniyorsun! Kendini zorlamak icin daha zor aktiviteleri dene.',
+      descriptionTr: 'Hızlı öğreniyorsun! Kendini zorlamak için daha zor aktiviteleri dene.',
       icon: 'rocket',
     });
   }
@@ -1540,8 +1540,8 @@ export function getLearnerInsights(): LearnerInsight[] {
   if (profile.totalSessions >= 10) {
     const preferred = profile.preferredActivityType;
     const activityNames: Record<string, { en: string; tr: string }> = {
-      blending: { en: 'Blending', tr: 'Birlestirme' },
-      segmenting: { en: 'Segmenting', tr: 'Ayirma' },
+      blending: { en: 'Blending', tr: 'Birleştirme' },
+      segmenting: { en: 'Segmenting', tr: 'Ayırma' },
       listening: { en: 'Listening', tr: 'Dinleme' },
       pronunciation: { en: 'Pronunciation', tr: 'Telaffuz' },
       reading: { en: 'Reading', tr: 'Okuma' },
@@ -1823,8 +1823,8 @@ export function getConfusionPairs(): ConfusionPair[] {
       : `Your child confuses '${sound1}' and '${sound2}'. Try minimal pair activities to distinguish them.`;
 
     const recommendationTr = knownPair
-      ? `${knownPair[3]}. Yan yana karsilastirma ile dinleme aktiviteleri yap.`
-      : `Cocugunuz '${sound1}' ve '${sound2}' seslerini karistiriyor. Ayirt etmek icin minimal cift aktiviteleri dene.`;
+      ? `${knownPair[3]}. Yan yana karşılaştırma ile dinleme aktiviteleri yap.`
+      : `Çocuğunuz '${sound1}' ve '${sound2}' seslerini karıştırıyor. Ayırt etmek için minimal çift aktiviteleri dene.`;
 
     pairs.push({
       sound1,
@@ -1896,11 +1896,11 @@ export function getSmartInsights(): SmartInsight[] {
     insights.push({
       type: 'pattern',
       title: `Best learning time: ${formatHour(timeAnalysis.bestHour)}`,
-      titleTr: `En iyi ogrenme zamani: ${formatHour(timeAnalysis.bestHour)}`,
+      titleTr: `En iyi öğrenme zamanı: ${formatHour(timeAnalysis.bestHour)}`,
       detail: timeAnalysis.recommendation,
       detailTr: timeAnalysis.bestHour < 12
-        ? `Cocugunuz sabah ${formatHour(timeAnalysis.bestHour)} civarinda en iyi performansi gosteriyor. Yeni sesler icin sabah oturumlari onerilir.`
-        : `Cocugunuz ${formatHour(timeAnalysis.bestHour)} civarinda en iyi performansi gosteriyor. Pratik oturumlarini bu saatlere ayarlayin.`,
+        ? `Çocuğunuz sabah ${formatHour(timeAnalysis.bestHour)} civarında en iyi performansı gösteriyor. Yeni sesler için sabah oturumları önerilir.`
+        : `Çocuğunuz ${formatHour(timeAnalysis.bestHour)} civarında en iyi performansı gösteriyor. Pratik oturumlarını bu saatlere ayarlayın.`,
       priority: 'medium',
     });
   }
@@ -1916,8 +1916,8 @@ export function getSmartInsights(): SmartInsight[] {
 
   if (weakestActivity && strongestActivity && weakestActivity.activityType !== strongestActivity.activityType) {
     const activityNameMap: Record<string, { en: string; tr: string }> = {
-      blending: { en: 'Blending', tr: 'Birlestirme' },
-      segmenting: { en: 'Segmenting', tr: 'Ayirma' },
+      blending: { en: 'Blending', tr: 'Birleştirme' },
+      segmenting: { en: 'Segmenting', tr: 'Ayırma' },
       listening: { en: 'Listening', tr: 'Dinleme' },
       pronunciation: { en: 'Pronunciation', tr: 'Telaffuz' },
       reading: { en: 'Reading', tr: 'Okuma' },
@@ -1931,7 +1931,7 @@ export function getSmartInsights(): SmartInsight[] {
         title: `${weakName.en} needs more practice`,
         titleTr: `${weakName.tr} daha fazla pratik istiyor`,
         detail: `${weakName.en}: ${weakestActivity.accuracy}% accuracy vs ${strongName.en}: ${strongestActivity.accuracy}%. More ${weakName.en.toLowerCase()} activities are recommended.`,
-        detailTr: `${weakName.tr}: %${weakestActivity.accuracy} dogruluk vs ${strongName.tr}: %${strongestActivity.accuracy}. Daha fazla ${weakName.tr.toLowerCase()} aktivitesi onerilir.`,
+        detailTr: `${weakName.tr}: %${weakestActivity.accuracy} doğruluk vs ${strongName.tr}: %${strongestActivity.accuracy}. Daha fazla ${weakName.tr.toLowerCase()} aktivitesi önerilir.`,
         priority: weakestActivity.accuracy < 50 ? 'high' : 'medium',
         actionRoute: `/activities/${weakestActivity.activityType}`,
       });
@@ -1966,9 +1966,9 @@ export function getSmartInsights(): SmartInsight[] {
       insights.push({
         type: 'prediction',
         title: `'${grapheme}' could be mastered by ${predictedDate}`,
-        titleTr: `'${grapheme}' ${predictedDate} tarihine kadar ogrenilecek`,
+        titleTr: `'${grapheme}' ${predictedDate} tarihine kadar öğrenilecek`,
         detail: `Currently at ${data.mastery}% mastery. At the current learning rate, full mastery (95%) is predicted by ${predictedDate}.`,
-        detailTr: `Simdi %${data.mastery} ustalik. Mevcut ogrenme hizinda, tam ustalik (%95) ${predictedDate} tarihine kadar bekleniyor.`,
+        detailTr: `Şimdi %${data.mastery} ustalık. Mevcut öğrenme hızında, tam ustalık (%95) ${predictedDate} tarihine kadar bekleniyor.`,
         priority: 'low',
       });
     }
@@ -1999,9 +1999,9 @@ export function getSmartInsights(): SmartInsight[] {
     insights.push({
       type: 'strength',
       title: `Strong sounds: ${graphemes.join(', ')}`,
-      titleTr: `Guclu sesler: ${graphemes.join(', ')}`,
+      titleTr: `Güçlü sesler: ${graphemes.join(', ')}`,
       detail: `These sounds are well mastered. They'll be used for interleaved review to strengthen retention.`,
-      detailTr: `Bu sesler iyi ogrenildi. Hatirlamayi guclendirilmek icin karisik tekrarda kullanilacak.`,
+      detailTr: `Bu sesler iyi öğrenildi. Hatırlamayı güçlendirmek için karışık tekrarda kullanılacak.`,
       priority: 'low',
     });
   }

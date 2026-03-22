@@ -282,7 +282,7 @@ function Games() {
 
       <MimiGuide
         message="Tap a game to play! The golden \u2B50 one is next!"
-        messageTr="Oynamak icin bir oyuna dokun!"
+        messageTr="Oynamak için bir oyuna dokun!"
         showOnce="mimi_guide_worldmap"
         position="bottom-left"
       />

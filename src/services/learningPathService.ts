@@ -151,7 +151,7 @@ function isDailyChallengeCompletedToday(): boolean {
 const GAME_ROUTES = [
   { route: '/games', title: 'Play a Game', titleTr: 'Oyun Oyna', emoji: '\uD83C\uDFAE' },
   { route: '/practice', title: 'Practice Words', titleTr: 'Kelime Pratigi', emoji: '\u270D\uFE0F' },
-  { route: '/words', title: 'Explore Words', titleTr: 'Kelimeleri Kesfedin', emoji: '\uD83D\uDCD6' },
+  { route: '/words', title: 'Explore Words', titleTr: 'Kelimeleri Keşfedin', emoji: '\uD83D\uDCD6' },
 ];
 
 // ============================================================
@@ -374,7 +374,7 @@ export function getNextAction(): NextAction {
       return {
         type: 'phonics-lesson',
         title: `Learn the "${current.grapheme.toUpperCase()}" sound`,
-        titleTr: `"${current.grapheme.toUpperCase()}" sesini ogren`,
+        titleTr: `"${current.grapheme.toUpperCase()}" sesini öğren`,
         emoji: current.mnemonicEmoji,
         route: `/phonics/${current.id}`,
         description: current.story,
@@ -431,7 +431,7 @@ export function getNextAction(): NextAction {
     return {
       type: 'phonics-lesson',
       title: `Learn the "${nextSound.grapheme.toUpperCase()}" sound`,
-      titleTr: `"${nextSound.grapheme.toUpperCase()}" sesini ogren`,
+      titleTr: `"${nextSound.grapheme.toUpperCase()}" sesini öğren`,
       emoji: nextSound.mnemonicEmoji,
       route: `/phonics/${nextSound.id}`,
       description: nextSound.story,

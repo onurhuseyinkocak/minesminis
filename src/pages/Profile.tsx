@@ -47,8 +47,7 @@ const Profile: React.FC = () => {
       await refreshUserProfile();
       toast.success('Profile updated!');
       setShowEditModal(false);
-    } catch (error) {
-      console.error('Error updating profile:', error);
+    } catch {
       toast.error('Failed to update profile');
     }
   };
@@ -191,7 +190,7 @@ const Profile: React.FC = () => {
 
       <MimiGuide
         message="This is your profile! You can change your avatar here!"
-        messageTr="Bu senin profilin! Avatarini buradan degistirebilirsin!"
+        messageTr="Bu senin profilin! Avatarını buradan değiştirebilirsin!"
         showOnce="mimi_guide_profile"
         position="bottom-left"
       />
