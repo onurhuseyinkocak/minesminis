@@ -1,0 +1,296 @@
+/* ==========================================================================
+   WEEKLY REPORT — MinesMinis Design System v5
+   Clean, professional parent-facing report card.
+   All var() tokens. Zero hex colors.
+   ========================================================================== */
+
+/* ---- PAGE WRAPPER ---- */
+.wr {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: var(--space-xl);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ---- HEADER ---- */
+.wr-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: var(--space-xl);
+}
+
+.wr-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.wr-back-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-pale, #eff6ff);
+}
+
+.wr-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(20px, 4vw, 26px);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ---- SUMMARY STATS ---- */
+.wr-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: var(--space-xl);
+}
+
+@media (min-width: 480px) {
+  .wr-summary {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.wr-stat {
+  background: var(--bg-card);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  border-radius: 16px;
+  padding: 20px 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s;
+}
+
+.wr-stat:hover {
+  transform: translateY(-2px);
+}
+
+.wr-stat__num {
+  font-size: clamp(24px, 5vw, 32px);
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.wr-stat__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---- SECTIONS ---- */
+.wr-section {
+  background: var(--bg-card);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.wr-section__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+}
+
+/* ---- DAILY BREAKDOWN ---- */
+.wr-days {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wr-day {
+  display: grid;
+  grid-template-columns: 24px 56px 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg-page);
+  border: 1.5px solid transparent;
+  transition: all 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.wr-day--done {
+  border-color: var(--secondary, #10b981);
+  background: var(--success-pale, #ecfdf5);
+}
+
+.wr-day__icon {
+  font-size: 16px;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.wr-day__date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.wr-day--done .wr-day__date {
+  color: var(--text-primary);
+}
+
+.wr-day__info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.wr-day__words {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.wr-day--done .wr-day__words {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.wr-day__score {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Score bar along the bottom of each completed day */
+.wr-day__bar {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--secondary, #10b981),
+    var(--primary, #3b82f6)
+  );
+  margin-top: 8px;
+  max-width: 100%;
+  transition: width 0.6s ease;
+}
+
+/* ---- WORDS GRID ---- */
+.wr-words-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wr-word-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: 100px;
+  background: var(--bg-page);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.wr-word-chip:hover {
+  border-color: var(--primary);
+  color: var(--text-primary);
+}
+
+.wr-word-chip__emoji {
+  font-size: 16px;
+}
+
+.wr-word-chip__english {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.wr-word-chip__sep {
+  color: var(--text-muted);
+  margin: 0 1px;
+}
+
+.wr-word-chip__turkish {
+  color: var(--text-secondary);
+}
+
+/* ---- EMPTY STATE ---- */
+.wr-empty {
+  text-align: center;
+  padding: 40px 24px;
+  background: var(--bg-card);
+  border: 1.5px dashed var(--cloud, #e5e7eb);
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.wr-empty p {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin: 0 0 16px;
+}
+
+.wr-cta-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.wr-cta-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ---- ENCOURAGEMENT BANNER ---- */
+.wr-encouragement {
+  text-align: center;
+  font-size: clamp(16px, 3.5vw, 20px);
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  border-radius: 20px;
+  padding: 24px;
+  margin-top: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}

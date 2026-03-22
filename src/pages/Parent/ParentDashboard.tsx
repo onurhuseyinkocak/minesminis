@@ -28,6 +28,7 @@ import {
   Zap,
   Calendar,
   Activity,
+  TrendingUp,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -1082,22 +1083,27 @@ const ParentDashboard: React.FC = () => {
             <Award size={20} /> Reports & Settings
           </h3>
           <div className="pd-report-actions">
+            <Link to="/parent/report">
+              <Button variant="primary" size="md" icon={<TrendingUp size={16} />}>
+                Weekly Report
+              </Button>
+            </Link>
             <Button
-              variant="primary"
+              variant="secondary"
               size="md"
               icon={<Download size={16} />}
               onClick={handleDownloadReport}
             >
-              Download Weekly Report
+              Download Report
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
               size="md"
               icon={<Mail size={16} />}
               disabled
               style={{ opacity: 0.5, cursor: 'not-allowed' }}
             >
-              Email Report (Coming Soon)
+              Email (Coming Soon)
             </Button>
             <Link to="/profile">
               <Button variant="ghost" size="md" icon={<Settings size={16} />}>

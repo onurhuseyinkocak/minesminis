@@ -67,6 +67,43 @@ function getDueReviewWords(limit: number): KidsWord[] {
     .slice(0, limit);
 }
 
+// ─── Adaptive difficulty ──────────────────────────────────────────────────────
+
+/**
+ * Look at the last 3 days' scores and return the optimal word count for today.
+ * - avg >= 90: kid is crushing it → 7 words
+ * - avg >= 70: normal pace        → 5 words
+ * - avg >= 50: struggling a bit   → 4 words
+ * - avg <  50: really struggling  → 3 words
+ * - no data:   default            → 5 words
+ */
+export function getAdaptiveWordCount(userId: string): number {
+  const scores: number[] = [];
+  for (let i = 1; i <= 3; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = dailyKey(userId, d.toISOString().split('T')[0]);
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved) as DailyLessonPlan;
+        if (data.score !== undefined) scores.push(data.score);
+      } catch {
+        // ignore parse errors
+      }
+    }
+  }
+
+  if (scores.length === 0) return 5; // default
+
+  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+
+  if (avg >= 90) return 7; // kid is crushing it — give more
+  if (avg >= 70) return 5; // normal pace
+  if (avg >= 50) return 4; // struggling a bit
+  return 3;                // really struggling — reduce load
+}
+
 // ─── Core plan builder ────────────────────────────────────────────────────────
 
 export function getTodayLesson(userId: string): DailyLessonPlan {
@@ -80,16 +117,19 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
     // ignore parse errors — build fresh
   }
 
-  // Pick 5 new words not yet learned
+  // Determine word count based on recent performance
+  const wordCount = getAdaptiveWordCount(userId);
+
+  // Pick new words not yet learned
   const learned = getLearnedWords(userId);
   const newWords = kidsWords
     .filter((w) => !learned.includes(w.word.toLowerCase()))
-    .slice(0, 5);
+    .slice(0, wordCount);
 
   // Fill with first words if everything is learned (demo users)
-  const safeNewWords = newWords.length >= 5
+  const safeNewWords = newWords.length >= wordCount
     ? newWords
-    : kidsWords.slice(0, 5);
+    : kidsWords.slice(0, wordCount);
 
   // Pick up to 5 review words due today
   const reviewWords = getDueReviewWords(5);

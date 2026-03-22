@@ -1,5 +1,5 @@
 /**
- * DAILY LESSON — Full-screen 5-phase structured learning flow
+ * DAILY LESSON — Full-screen 6-phase structured learning flow
  * MinesMinis — 15-minute daily lesson for vocabulary acquisition
  *
  * Phase 1: LISTEN  — See & hear each word card (TTS auto-play)
@@ -7,6 +7,7 @@
  * Phase 3: PLAY    — Word-match mini game
  * Phase 4: SPEAK   — Speech recognition pronunciation check
  * Phase 5: REVIEW  — Spaced-repetition multiple-choice quiz
+ * Phase 5.5: STORY — Mini story using today's words (before celebration)
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -33,7 +34,10 @@ const PHASES = [
   { id: 3, key: 'play',   emoji: '🎮', title: "Let's Play!",    subtitle: 'Match words to their meanings' },
   { id: 4, key: 'speak',  emoji: '🎤', title: 'Say It!',        subtitle: 'Press the mic and say the word' },
   { id: 5, key: 'review', emoji: '🧠', title: 'Remember?',      subtitle: 'Test what you learned today' },
+  { id: 6, key: 'story',  emoji: '📖', title: 'Mini Story!',    subtitle: 'See the words in a story' },
 ];
+
+const TOTAL_PHASES = PHASES.length; // 6
 
 const REVIEW_CHOICES = 3; // number of options per review question
 
@@ -701,6 +705,174 @@ function CelebrationScreen({
   );
 }
 
+// ─── Phase 5.5: STORY ─────────────────────────────────────────────────────────
+
+interface StoryPart {
+  text: string;
+  isWord: boolean;
+}
+
+interface StorySentence {
+  parts: StoryPart[];
+}
+
+interface MiniStory {
+  sentences: StorySentence[];
+  translation: string;
+}
+
+const STORY_TEMPLATES: Array<{ en: string; tr: string }> = [
+  {
+    en: 'In the morning, I see a {0}. The {1} is next to the {2}. I feel {3} because the {4} is beautiful!',
+    tr: 'Sabahleyin bir {0} görüyorum. {1}, {2} yanında duruyor. {3} hissediyorum çünkü {4} çok güzel!',
+  },
+  {
+    en: 'One day, {0} found a {1} near the {2}. The {3} was very happy. What a {4} adventure!',
+    tr: 'Bir gün, {0} {2} yakınında bir {1} buldu. {3} çok mutluydu. Ne {4} bir macera!',
+  },
+  {
+    en: 'The little {0} and the {1} went to find a {2}. They found a beautiful {3} and felt so {4}!',
+    tr: 'Küçük {0} ve {1} bir {2} aramaya gitti. Güzel bir {3} buldular ve çok {4} hissettiler!',
+  },
+  {
+    en: '{0} loves {1}. Every morning, {0} looks outside and sees a {2}. Today there is a {3} and everything is {4}!',
+    tr: '{0} {1} sever. Her sabah {0} dışarı bakar ve bir {2} görür. Bugün bir {3} var ve her şey {4}!',
+  },
+  {
+    en: 'Deep in the forest lived a {0}. The {0} had a friend called {1}. Together they searched for a {2}, a {3}, and a {4}.',
+    tr: 'Ormanın derinliklerinde bir {0} yaşıyordu. {0}\'un {1} adında bir dostu vardı. Birlikte bir {2}, {3} ve {4} aradılar.',
+  },
+  {
+    en: 'My favourite thing is {0}. I also like {1} very much. One sunny day I saw a {2}, a {3}, and a {4} all together!',
+    tr: 'En sevdiğim şey {0}. {1}\'ı da çok seviyorum. Güneşli bir günde bir {2}, {3} ve {4}\'ü birlikte gördüm!',
+  },
+  {
+    en: 'There was once a {0} who loved {1}. It lived near a big {2}. Every day it saw a {3} and felt {4}.',
+    tr: 'Bir zamanlar {1}\'ı seven bir {0} varmış. Büyük bir {2}\'ın yanında yaşıyordu. Her gün bir {3} görür ve {4} hissederdi.',
+  },
+  {
+    en: 'Look! A {0} is sitting on the {1}. Behind it you can see a {2}. The {3} is watching and feels {4}.',
+    tr: 'Bak! Bir {0} {1}\'ın üstünde oturuyor. Arkasında bir {2} görünüyor. {3} izliyor ve {4} hissediyor.',
+  },
+  {
+    en: 'The story begins with a {0} and a {1}. They walk past a {2} and meet a {3}. The end is {4}!',
+    tr: 'Hikaye bir {0} ve {1} ile başlar. Bir {2}\'ın yanından geçerler ve bir {3} ile karşılaşırlar. Son {4}!',
+  },
+  {
+    en: 'Imagine a world where {0} is magic. You find a {1} inside a {2}. A tiny {3} whispers something {4}.',
+    tr: '{0}\'ın sihirli olduğu bir dünya hayal et. Bir {2} içinde {1} bulursun. Minik bir {3} sana {4} bir şey fısıldar.',
+  },
+  {
+    en: 'On a rainy day, {0} stayed inside with {1}. They looked out the window and spotted a {2}. Then they saw a {3} and felt {4}.',
+    tr: 'Yağmurlu bir günde {0}, {1} ile içeride kaldı. Pencereden baktılar ve bir {2} fark ettiler. Sonra bir {3} gördüler ve {4} hissettiler.',
+  },
+  {
+    en: 'The brave {0} climbed to the top of a {1}. From there it could see a {2} and a {3}. The view was {4}!',
+    tr: 'Cesur {0} bir {1}\'ın tepesine tırmandı. Oradan bir {2} ve {3} görebildi. Manzara {4} idi!',
+  },
+];
+
+function generateMiniStory(words: KidsWord[]): MiniStory {
+  const template = STORY_TEMPLATES[Math.floor(Math.random() * STORY_TEMPLATES.length)];
+
+  // Build English and Turkish text by substituting word slots
+  let enText = template.en;
+  let trText = template.tr;
+  words.forEach((w, i) => {
+    enText = enText.replace(new RegExp(`\\{${i}\\}`, 'g'), w.word);
+    trText = trText.replace(new RegExp(`\\{${i}\\}`, 'g'), w.turkish);
+  });
+
+  const wordList = words.map((w) => w.word);
+
+  // Split English text into sentences, then parse each into highlight parts
+  const rawSentences = enText.split(/(?<=[.!?])\s+/).filter((s) => s.trim());
+  const sentences: StorySentence[] = rawSentences.map((sentence) => {
+    const parts: StoryPart[] = [];
+    let remaining = sentence;
+
+    // Greedy left-to-right match for word highlights
+    while (remaining.length > 0) {
+      let matched = false;
+      for (const w of wordList) {
+        const idx = remaining.toLowerCase().indexOf(w.toLowerCase());
+        if (idx === 0) {
+          parts.push({ text: remaining.slice(0, w.length), isWord: true });
+          remaining = remaining.slice(w.length);
+          matched = true;
+          break;
+        } else if (idx > 0) {
+          // Find the earliest match
+          const earliestIdx = wordList.reduce<number>((best, ww) => {
+            const i = remaining.toLowerCase().indexOf(ww.toLowerCase());
+            return i !== -1 && i < best ? i : best;
+          }, remaining.length);
+
+          parts.push({ text: remaining.slice(0, earliestIdx), isWord: false });
+          remaining = remaining.slice(earliestIdx);
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) {
+        parts.push({ text: remaining, isWord: false });
+        remaining = '';
+      }
+    }
+
+    return { parts };
+  });
+
+  return { sentences, translation: trText };
+}
+
+function PhaseStory({
+  words,
+  lang,
+  onComplete,
+}: {
+  words: KidsWord[];
+  lang: string;
+  onComplete: () => void;
+}) {
+  const [story] = useState<MiniStory>(() => generateMiniStory(words));
+
+  return (
+    <div className="dl-story">
+      <div className="dl-story__text">
+        {story.sentences.map((sentence, i) => (
+          <p key={i} className="dl-story__sentence">
+            {sentence.parts.map((part, j) =>
+              part.isWord ? (
+                <span
+                  key={j}
+                  className="dl-story__highlight"
+                  onClick={() => speak(part.text).catch(() => {})}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Hear ${part.text}`}
+                >
+                  {part.text}
+                </span>
+              ) : (
+                <span key={j}>{part.text}</span>
+              )
+            )}
+          </p>
+        ))}
+      </div>
+
+      <p className="dl-story__translation">{story.translation}</p>
+
+      <div className="dl-nav">
+        <button className="dl-btn dl-btn--primary" onClick={onComplete}>
+          {lang === 'tr' ? 'Devam Et →' : 'Continue →'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Levenshtein distance helper ─────────────────────────────────────────────
 
 function levenshtein(a: string, b: string): number {
@@ -724,7 +896,7 @@ function levenshtein(a: string, b: string): number {
 
 export default function DailyLesson() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { addXP, trackActivity } = useGamification();
   const navigate = useNavigate();
 
@@ -733,7 +905,7 @@ export default function DailyLesson() {
   // Load lesson plan once
   const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId));
 
-  // Phase state (1-5) + sub-step within phase
+  // Phase state (1-6) + sub-step within phase
   const [phase, setPhase] = useState(1);
   const [listenIndex, setListenIndex] = useState(0);
   const [seeIndex, setSeeIndex] = useState(0);
@@ -745,7 +917,7 @@ export default function DailyLesson() {
   // ── Navigation helpers ──────────────────────────────────────────────────────
 
   const advancePhase = useCallback(() => {
-    setPhase((p) => Math.min(p + 1, 5));
+    setPhase((p) => Math.min(p + 1, TOTAL_PHASES));
   }, []);
 
   // Phase 1 next
@@ -779,9 +951,9 @@ export default function DailyLesson() {
     [advancePhase]
   );
 
-  // Final completion
+  // Final completion — triggers after Story phase (phase 6) completes
   useEffect(() => {
-    if (phase > 5 && !celebrated) {
+    if (phase > TOTAL_PHASES && !celebrated) {
       setCelebrated(true);
 
       const avgScore = Math.round(
@@ -797,11 +969,11 @@ export default function DailyLesson() {
     }
   }, [phase, celebrated, userId, plan, addXP, trackActivity]);
 
-  const currentPhaseInfo = PHASES[Math.min(phase, 5) - 1];
+  const currentPhaseInfo = PHASES[Math.min(phase, TOTAL_PHASES) - 1];
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
-  if (phase > 5 && celebrated) {
+  if (phase > TOTAL_PHASES && celebrated) {
     const avgScore = Math.round(
       (scoresRef.current[3] + scoresRef.current[4] + scoresRef.current[5]) / 3
     );
@@ -831,9 +1003,9 @@ export default function DailyLesson() {
           <X size={20} />
         </button>
 
-        <PhaseDots current={phase} total={5} />
+        <PhaseDots current={phase} total={TOTAL_PHASES} />
 
-        <span className="dl-phase-label">{phase}/5</span>
+        <span className="dl-phase-label">{phase}/{TOTAL_PHASES}</span>
       </div>
 
       {/* ── Phase title ── */}
@@ -888,6 +1060,15 @@ export default function DailyLesson() {
             newWords={plan.newWords}
             reviewWords={plan.reviewWords}
             onComplete={handlePhaseComplete(5)}
+          />
+        )}
+
+        {/* ── Phase 6: STORY ── */}
+        {phase === 6 && (
+          <PhaseStory
+            words={plan.newWords}
+            lang={lang}
+            onComplete={advancePhase}
           />
         )}
       </div>
