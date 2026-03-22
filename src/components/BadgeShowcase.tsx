@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { Lock } from 'lucide-react';
 import './BadgeShowcase.css';
 import { useGamification, Badge } from '../contexts/GamificationContext';
 
@@ -91,7 +92,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                             onClick={() => setSelectedBadge(badge)}
                         >
                             <div className="badge-icon-large">
-                                {isEarned ? badge.icon : '🔒'}
+                                {isEarned ? badge.icon : <Lock size={16} />}
                             </div>
                             <div className="badge-info">
                                 <span className="badge-name">{badge.name}</span>
@@ -116,7 +117,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                         <button className="close-modal" onClick={() => setSelectedBadge(null)}>✕</button>
 
                         <div className={`modal-badge-icon ${hasBadge(selectedBadge.id) ? 'earned' : 'locked'}`}>
-                            {hasBadge(selectedBadge.id) ? selectedBadge.icon : '🔒'}
+                            {hasBadge(selectedBadge.id) ? selectedBadge.icon : <Lock size={16} />}
                         </div>
 
                         <h4 className="modal-badge-name">{selectedBadge.name}</h4>
@@ -126,7 +127,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                             {hasBadge(selectedBadge.id) ? (
                                 <span className="status-earned">✅ Earned!</span>
                             ) : (
-                                <span className="status-locked">🔒 Not yet earned</span>
+                                <span className="status-locked"><Lock size={14} /> Not yet earned</span>
                             )}
                         </div>
 

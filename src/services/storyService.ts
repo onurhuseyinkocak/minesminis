@@ -53,7 +53,7 @@ export async function loadStoryState(userId: string): Promise<StoryState | null>
 
     if (error) {
       // Table doesn't exist or connection issue - switch to localStorage
-      console.warn('Supabase story_progress unavailable, using localStorage:', error.message);
+      // Supabase story_progress unavailable — fall back to localStorage
       useLocalStorage = true;
       return loadFromLS(userId);
     }
@@ -110,7 +110,7 @@ export async function saveStoryState(state: StoryState): Promise<boolean> {
       .upsert(payload, { onConflict: 'user_id' });
 
     if (error) {
-      console.warn('Supabase save failed, using localStorage:', error.message);
+      // Supabase save failed — localStorage backup already stored above
       useLocalStorage = true;
       return true; // localStorage save already done above
     }
@@ -160,7 +160,7 @@ export async function resetStoryProgress(userId: string): Promise<boolean> {
       .eq('user_id', userId);
 
     if (error) {
-      console.warn('Supabase delete failed:', error.message);
+      // Supabase delete failed — localStorage already cleared above
       useLocalStorage = true;
     }
   } catch {

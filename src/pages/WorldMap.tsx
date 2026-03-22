@@ -220,7 +220,7 @@ const WorldMap = () => {
       // Navigate to unit detail — unit.id is used as the worldId param
       navigate(`/worlds/${stop.unit.id}`);
     },
-    [navigate, phase.id],
+    [navigate],
   );
 
   return (

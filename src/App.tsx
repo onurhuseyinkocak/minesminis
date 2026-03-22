@@ -595,7 +595,7 @@ function App() {
     if (import.meta.env.DEV) {
       const errors = validateCurriculumData();
       if (errors.length > 0) {
-        console.warn('Data validation errors:', errors);
+        errorLogger.log({ severity: 'low', message: 'Data validation errors', component: 'App', metadata: { errors } });
       }
     }
   }, []);

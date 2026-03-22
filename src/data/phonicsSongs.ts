@@ -95,7 +95,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'N-n-n says the newt, learning things at school',
-      textTr: 'N-n-n diyor semender, okulda ogreniyor',
+      textTr: 'N-n-n diyor semender, okulda öğreniyor',
       startMs: 24000,
       durationMs: 4000,
       highlightSounds: ['n'],
@@ -181,7 +181,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'R-r-r the lion roars for dinner, he wants more to eat',
-      textTr: 'R-r-r aslan akam yemegi icin kukreyor, daha fazla yemek istiyor',
+      textTr: 'R-r-r aslan akşam yemeği için kükreyor, daha fazla yemek istiyor',
       startMs: 16000,
       durationMs: 4000,
       highlightSounds: ['r'],

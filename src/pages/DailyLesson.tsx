@@ -355,7 +355,6 @@ function PhasePlay({
       setSelectedEn(null);
       setSelectedTr(null);
     }, 300);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEn, selectedTr]);
 
   useEffect(() => {

@@ -16,8 +16,7 @@ const firebaseConfig = {
 // Check if configuration is missing
 const hasConfig = Object.values(firebaseConfig).every(val => val !== '');
 if (!hasConfig) {
-    console.warn('⚠️ Firebase configuration is incomplete. Please add Firebase credentials to .env file.');
-    console.warn('See AUTH_SETUP.md for setup instructions.');
+    // Firebase config missing — will run in degraded mode (no auth)
 }
 
 // Initialize Firebase

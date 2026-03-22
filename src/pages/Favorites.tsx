@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
-import { Heart } from 'lucide-react';
+import { Heart, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MimiMascot from '../components/MimiMascot';
 import './Favorites.css';
@@ -70,7 +70,7 @@ const Favorites: React.FC = () => {
   if (!user) {
     return (
       <div className="favorites-empty">
-        <div className="empty-state-icon">🔒</div>
+        <div className="empty-state-icon"><Lock size={48} /></div>
         <h2>Please Sign In</h2>
         <p>Sign in to view and manage your favorite items</p>
       </div>
