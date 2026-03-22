@@ -28,7 +28,7 @@ import './DailyLesson.css';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const PHASES = [
+const PHASES_EN = [
   { id: 1, key: 'listen', emoji: '👂', title: 'New Words!',    subtitle: 'Tap a card to hear it again' },
   { id: 2, key: 'see',    emoji: '👀', title: 'Watch & Learn!', subtitle: 'See how each word is used' },
   { id: 3, key: 'play',   emoji: '🎮', title: "Let's Play!",    subtitle: 'Match words to their meanings' },
@@ -37,22 +37,42 @@ const PHASES = [
   { id: 6, key: 'story',  emoji: '📖', title: 'Mini Story!',    subtitle: 'See the words in a story' },
 ];
 
-const TOTAL_PHASES = PHASES.length; // 6
+const PHASES_TR = [
+  { id: 1, key: 'listen', emoji: '👂', title: 'Yeni Kelimeler!',    subtitle: 'Tekrar duymak için karta dokun' },
+  { id: 2, key: 'see',    emoji: '👀', title: 'İzle ve Öğren!',     subtitle: 'Her kelimenin nasıl kullanıldığını gör' },
+  { id: 3, key: 'play',   emoji: '🎮', title: 'Hadi Oynayalım!',    subtitle: 'Kelimeleri anlamlarıyla eşleştir' },
+  { id: 4, key: 'speak',  emoji: '🎤', title: 'Söyle!',             subtitle: 'Mikrofona bas ve kelimeyi söyle' },
+  { id: 5, key: 'review', emoji: '🧠', title: 'Hatırlıyor musun?',  subtitle: 'Bugün öğrendiklerini test et' },
+  { id: 6, key: 'story',  emoji: '📖', title: 'Mini Hikaye!',       subtitle: 'Kelimeleri bir hikayede gör' },
+];
+
+const TOTAL_PHASES = PHASES_EN.length; // 6
 
 const REVIEW_CHOICES = 3; // number of options per review question
 
 // Simple example sentences for context. Keyed by word, fallback generated.
 const EXAMPLE_SENTENCES: Record<string, { en: string; tr: string; highlight: string }> = {
-  cat:    { en: 'The CAT sits on the mat.',    tr: 'KEDİ paspasın üzerinde oturuyor.', highlight: 'CAT' },
-  dog:    { en: 'The DOG runs in the park.',   tr: 'KÖPEK parkta koşuyor.',            highlight: 'DOG' },
-  apple:  { en: 'I eat an APPLE every day.',   tr: 'Her gün bir ELMA yerim.',           highlight: 'APPLE' },
-  milk:   { en: 'She drinks MILK at night.',   tr: 'Geceleri SÜT içiyor.',             highlight: 'MILK' },
-  sun:    { en: 'The SUN is very bright.',     tr: 'GÜNEŞ çok parlıyor.',              highlight: 'SUN' },
-  red:    { en: 'RED is a warm colour.',       tr: 'KIRMIZI sıcak bir renk.',          highlight: 'RED' },
-  run:    { en: 'I love to RUN outside.',      tr: 'Dışarıda KOŞMAYI seviyorum.',      highlight: 'RUN' },
-  hat:    { en: 'She wears a big HAT.',        tr: 'Büyük bir ŞAPKA takıyor.',         highlight: 'HAT' },
-  cup:    { en: 'Fill the CUP with tea.',      tr: 'FİNCANı çayla doldur.',            highlight: 'CUP' },
-  map:    { en: 'Look at the MAP carefully.',  tr: 'HARİTAya dikkatle bak.',           highlight: 'MAP' },
+  cat:    { en: 'The CAT sits on the mat.',           tr: 'KEDİ paspasın üzerinde oturuyor.',  highlight: 'CAT' },
+  dog:    { en: 'The DOG runs in the park.',          tr: 'KÖPEK parkta koşuyor.',             highlight: 'DOG' },
+  apple:  { en: 'I eat an APPLE every day.',          tr: 'Her gün bir ELMA yerim.',            highlight: 'APPLE' },
+  milk:   { en: 'She drinks MILK at night.',          tr: 'Geceleri SÜT içiyor.',              highlight: 'MILK' },
+  sun:    { en: 'The SUN is bright today.',           tr: 'Bugün GÜNEŞ parlak.',               highlight: 'SUN' },
+  red:    { en: 'RED is a warm colour.',              tr: 'KIRMIZI sıcak bir renk.',           highlight: 'RED' },
+  run:    { en: 'I love to RUN fast!',                tr: 'Hızlı KOŞMAYI seviyorum!',          highlight: 'RUN' },
+  hat:    { en: 'Wear a HAT in the sun.',             tr: 'Güneşte ŞAPKA tak.',               highlight: 'HAT' },
+  cup:    { en: 'Fill the CUP with tea.',             tr: 'FİNCANı çayla doldur.',             highlight: 'CUP' },
+  map:    { en: 'Look at the MAP.',                   tr: 'Haritaya bak.',                     highlight: 'MAP' },
+  sat:    { en: 'The boy SAT on the chair.',          tr: 'Çocuk sandalyeye OTURDU.',          highlight: 'SAT' },
+  sit:    { en: 'Please SIT down here.',              tr: 'Lütfen buraya OTUR.',               highlight: 'SIT' },
+  sip:    { en: 'She took a small SIP of water.',     tr: 'Küçük bir YUDUM su aldı.',          highlight: 'SIP' },
+  tip:    { en: 'Be careful not to TIP over!',        tr: 'Devrilmemeye dikkat et!',           highlight: 'TIP' },
+  tap:    { en: 'TAP the screen to start.',           tr: 'Başlamak için ekrana DOKUN.',       highlight: 'TAP' },
+  pin:    { en: 'Put the PIN on the board.',          tr: 'İğneyi tahtaya TAK.',               highlight: 'PIN' },
+  pan:    { en: 'Cook in the PAN.',                   tr: 'Tavada pişir.',                     highlight: 'PAN' },
+  tin:    { en: 'Open the TIN can.',                  tr: 'Teneke kutuyu aç.',                 highlight: 'TIN' },
+  net:    { en: 'Catch with a NET.',                  tr: 'Ağ ile yakala.',                    highlight: 'NET' },
+  pen:    { en: 'Write with a PEN.',                  tr: 'Kalem ile yaz.',                    highlight: 'PEN' },
+  mat:    { en: 'Wipe your feet on the MAT.',         tr: 'Ayaklarını paspasta sil.',          highlight: 'MAT' },
 };
 
 function getSentence(word: KidsWord): { en: string; tr: string; highlight: string } {
@@ -60,8 +80,8 @@ function getSentence(word: KidsWord): { en: string; tr: string; highlight: strin
   if (EXAMPLE_SENTENCES[lower]) return EXAMPLE_SENTENCES[lower];
   const upper = word.word.toUpperCase();
   return {
-    en: `This is a ${upper}.`,
-    tr: `Bu bir ${word.turkish}.`,
+    en: `I can see a ${upper}.`,
+    tr: `Bir ${word.turkish} görüyorum.`,
     highlight: upper,
   };
 }
@@ -147,11 +167,13 @@ function PhaseListenStep({
   word,
   index,
   total,
+  lang,
   onNext,
 }: {
   word: KidsWord;
   index: number;
   total: number;
+  lang: string;
   onNext: () => void;
 }) {
   const [entering, setEntering] = useState(true);
@@ -184,16 +206,16 @@ function PhaseListenStep({
         <span className="dl-card__tr">{word.turkish}</span>
         <span className="dl-card__tap-hint">
           <Volume2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-          Tap to hear again
+          {lang === 'tr' ? 'Tekrar duymak için dokun' : 'Tap to hear again'}
         </span>
       </div>
 
       <div className="dl-nav">
         <button className="dl-btn dl-btn--primary" onClick={onNext}>
           {index < total - 1 ? (
-            <>Next <ChevronRight size={20} /></>
+            <>{lang === 'tr' ? 'İleri' : 'Next'} <ChevronRight size={20} /></>
           ) : (
-            <>Done <Check size={20} /></>
+            <>{lang === 'tr' ? 'Tamam' : 'Done'} <Check size={20} /></>
           )}
         </button>
       </div>
@@ -207,12 +229,14 @@ function PhaseSeeStep({
   word,
   index,
   total,
+  lang,
   onNext,
   onPrev,
 }: {
   word: KidsWord;
   index: number;
   total: number;
+  lang: string;
   onNext: () => void;
   onPrev: () => void;
 }) {
@@ -243,9 +267,9 @@ function PhaseSeeStep({
         )}
         <button className="dl-btn dl-btn--primary" onClick={onNext}>
           {index < total - 1 ? (
-            <>Next <ChevronRight size={20} /></>
+            <>{lang === 'tr' ? 'İleri' : 'Next'} <ChevronRight size={20} /></>
           ) : (
-            <>Done <Check size={20} /></>
+            <>{lang === 'tr' ? 'Tamam' : 'Done'} <Check size={20} /></>
           )}
         </button>
       </div>
@@ -409,9 +433,11 @@ function PhasePlay({
 
 function PhaseSpeak({
   words,
+  lang,
   onComplete,
 }: {
   words: KidsWord[];
+  lang: string;
   onComplete: (score: number) => void;
 }) {
   const [index, setIndex] = useState(0);
@@ -496,7 +522,7 @@ function PhaseSpeak({
   if (done) {
     return (
       <div className="dl-phase-subtitle" style={{ marginTop: 40 }}>
-        Done! Moving on...
+        {lang === 'tr' ? 'Bitti! Devam ediyoruz...' : 'Done! Moving on...'}
       </div>
     );
   }
@@ -515,7 +541,7 @@ function PhaseSpeak({
           onClick={speakCurrent}
           style={{ minHeight: 44, padding: '0 20px', fontSize: 14 }}
         >
-          <Volume2 size={16} /> Hear it
+          <Volume2 size={16} /> {lang === 'tr' ? 'Dinle' : 'Hear it'}
         </button>
 
         <button
@@ -528,7 +554,7 @@ function PhaseSpeak({
 
         {listening && (
           <span className="dl-phase-subtitle" style={{ fontSize: 13 }}>
-            Listening...
+            {lang === 'tr' ? 'Dinleniyor...' : 'Listening...'}
           </span>
         )}
 
@@ -548,9 +574,9 @@ function PhaseSpeak({
           disabled={listening}
         >
           {index < words.length - 1 ? (
-            <>Next word <ChevronRight size={20} /></>
+            <>{lang === 'tr' ? 'Sonraki kelime' : 'Next word'} <ChevronRight size={20} /></>
           ) : (
-            <>Finish <Check size={20} /></>
+            <>{lang === 'tr' ? 'Bitir' : 'Finish'} <Check size={20} /></>
           )}
         </button>
       </div>
@@ -969,6 +995,7 @@ export default function DailyLesson() {
     }
   }, [phase, celebrated, userId, plan, addXP, trackActivity]);
 
+  const PHASES = lang === 'tr' ? PHASES_TR : PHASES_EN;
   const currentPhaseInfo = PHASES[Math.min(phase, TOTAL_PHASES) - 1];
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -1023,6 +1050,7 @@ export default function DailyLesson() {
             word={plan.newWords[listenIndex]}
             index={listenIndex}
             total={plan.newWords.length}
+            lang={lang}
             onNext={handleListenNext}
           />
         )}
@@ -1033,6 +1061,7 @@ export default function DailyLesson() {
             word={plan.newWords[seeIndex]}
             index={seeIndex}
             total={plan.newWords.length}
+            lang={lang}
             onNext={handleSeeNext}
             onPrev={handleSeePrev}
           />
@@ -1050,6 +1079,7 @@ export default function DailyLesson() {
         {phase === 4 && (
           <PhaseSpeak
             words={plan.newWords.slice(0, 3)}
+            lang={lang}
             onComplete={handlePhaseComplete(4)}
           />
         )}
