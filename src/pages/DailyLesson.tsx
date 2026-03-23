@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, RotateCcw } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, RotateCcw, Lock } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -26,6 +26,7 @@ import {
   getTodayPhonicsSound,
   type DailyLessonPlan,
 } from '../services/dailyLessonService';
+import { getHomeworkWords } from '../services/homeworkService';
 import type { KidsWord } from '../data/wordsData';
 import './DailyLesson.css';
 
@@ -81,6 +82,35 @@ const EXAMPLE_SENTENCES: Record<string, { en: string; tr: string; highlight: str
   net:    { en: 'Catch with a NET.',                  tr: 'Ağ ile yakala.',                    highlight: 'NET' },
   pen:    { en: 'Write with a PEN.',                  tr: 'Kalem ile yaz.',                    highlight: 'PEN' },
   mat:    { en: 'Wipe your feet on the MAT.',         tr: 'Ayaklarını paspasta sil.',          highlight: 'MAT' },
+  // Animals
+  bird:   { en: 'A BIRD sings in the tree.',          tr: 'Ağaçta bir KUŞ şarkı söylüyor.',   highlight: 'BIRD' },
+  fish:   { en: 'The FISH swims in the pond.',        tr: 'BALIK gölette yüzüyor.',            highlight: 'FISH' },
+  frog:   { en: 'A FROG jumps into the pond.',        tr: 'Bir KURBAĞA gölete atlıyor.',      highlight: 'FROG' },
+  duck:   { en: 'The DUCK swims on the lake.',        tr: 'ÖRDEK gölde yüzüyor.',             highlight: 'DUCK' },
+  hen:    { en: 'The HEN lays a big egg.',            tr: 'TAVUK büyük bir yumurta yumurtluyor.', highlight: 'HEN' },
+  pig:    { en: 'The PIG rolls in the mud.',          tr: 'DOMUZ çamurda yuvarlanıyor.',      highlight: 'PIG' },
+  fox:    { en: 'The FOX is quick and clever.',       tr: 'TİLKİ hızlı ve zekidir.',          highlight: 'FOX' },
+  bug:    { en: 'A tiny BUG crawls on the leaf.',     tr: 'Küçük bir BÖCEK yaprakta sürünüyor.', highlight: 'BUG' },
+  // Objects
+  bed:    { en: 'I sleep in my BED at night.',        tr: 'Geceleri YATAĞIMDA uyuyorum.',     highlight: 'BED' },
+  bag:    { en: 'Put the books in your BAG.',         tr: 'Kitapları ÇANTANA koy.',           highlight: 'BAG' },
+  box:    { en: 'The toys are in the BOX.',           tr: 'Oyuncaklar KUTUDA.',               highlight: 'BOX' },
+  bus:    { en: 'We ride the BUS to school.',         tr: 'Okula OTOBÜSle gidiyoruz.',       highlight: 'BUS' },
+  van:    { en: 'Our family drives a big VAN.',       tr: 'Ailemiz büyük bir MİNİBÜS kullanıyor.', highlight: 'VAN' },
+  pot:    { en: 'Mum cooks soup in a POT.',           tr: 'Anne bir TENCEREDE çorba pişiriyor.', highlight: 'POT' },
+  mug:    { en: 'Dad drinks tea from a MUG.',         tr: 'Baba bir KUPADAN çay içiyor.',     highlight: 'MUG' },
+  lid:    { en: 'Put the LID on the jar.',            tr: 'Kavanozun KAPAĞINI kapat.',        highlight: 'LID' },
+  rug:    { en: 'The cat sleeps on the RUG.',         tr: 'Kedi HALININ üzerinde uyuyor.',    highlight: 'RUG' },
+  // Actions
+  hop:    { en: 'The rabbit can HOP far.',            tr: 'Tavşan uzağa ZIPLAYABİLİR.',      highlight: 'HOP' },
+  jog:    { en: 'We JOG in the park each day.',       tr: 'Her gün parkta KOŞUYORUZ.',        highlight: 'JOG' },
+  hug:    { en: 'Give your friend a big HUG.',        tr: 'Arkadaşını sıkıca SARIL.',         highlight: 'HUG' },
+  dig:    { en: 'We DIG a hole in the garden.',       tr: 'Bahçede bir delik KAZIYORUZ.',     highlight: 'DIG' },
+  cut:    { en: 'Use scissors to CUT the paper.',     tr: 'Kağıdı KESMEK için makas kullan.', highlight: 'CUT' },
+  fix:    { en: 'Dad can FIX the broken toy.',        tr: 'Baba kırık oyuncağı TAMİR EDEBİLİR.', highlight: 'FIX' },
+  zip:    { en: 'ZIP up your jacket.',                tr: 'Ceketinin FERMUARını çek.',        highlight: 'ZIP' },
+  wag:    { en: 'The dog will WAG its tail.',         tr: 'Köpek kuyruğunu SALLAYACAK.',      highlight: 'WAG' },
+  nod:    { en: 'NOD your head to say yes.',          tr: 'Evet demek için başını SALLA.',    highlight: 'NOD' },
 };
 
 const VERB_SUFFIXES = ['ed', 'ing', 'run', 'sit', 'sat', 'sip', 'tap', 'tip', 'hop', 'cut', 'let', 'put'];
@@ -228,7 +258,7 @@ function MontessoriNav({
               <span className="dl-phase-btn__progress">{progressLabel}</span>
             )}
             {isDone && <Check size={12} className="dl-phase-btn__check" />}
-            {isLocked && <span className="dl-phase-btn__lock">🔒</span>}
+            {isLocked && <span className="dl-phase-btn__lock"><Lock size={12} /></span>}
           </button>
         );
       })}
@@ -644,10 +674,10 @@ function PhaseSpeak({
 
       if (isClose) {
         setCorrectCount((c) => c + 1);
-        setFeedback({ msg: lang === 'tr' ? 'Mükemmel! 🌟' : 'Perfect! 🌟', good: true });
+        setFeedback({ msg: lang === 'tr' ? 'Mükemmel!' : 'Perfect!', good: true });
       } else {
         // Montessori: no "wrong" — gentle encouragement
-        setFeedback({ msg: lang === 'tr' ? 'İyi deneme! 🎤' : 'Good try! 🎤', good: true });
+        setFeedback({ msg: lang === 'tr' ? 'İyi deneme!' : 'Good try!', good: true });
       }
     };
 
@@ -1236,6 +1266,9 @@ export default function DailyLesson() {
 
   const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId));
 
+  // Homework words assigned by parent — injected into review phase
+  const [homeworkWords] = useState<KidsWord[]>(() => getHomeworkWords(userId));
+
   // Phonics: Sound of the Day
   const [todaySound] = useState(() => getTodayPhonicsSound(userId));
 
@@ -1506,7 +1539,15 @@ export default function DailyLesson() {
         {phase === 5 && (
           <PhaseReview
             newWords={plan.newWords}
-            reviewWords={plan.reviewWords}
+            reviewWords={[
+              ...plan.reviewWords,
+              // Inject homework words not already in today's lesson
+              ...homeworkWords.filter(
+                (hw) =>
+                  !plan.newWords.some((w) => w.word === hw.word) &&
+                  !plan.reviewWords.some((w) => w.word === hw.word),
+              ),
+            ]}
             lang={lang}
             onComplete={handlePhaseComplete(5)}
           />

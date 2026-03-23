@@ -527,6 +527,187 @@
   flex-shrink: 0;
 }
 
+/* ---- LESSON LEARNING INSIGHTS ---- */
+.parent-insights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.insight-card {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--cloud, #e5e7eb);
+  background: var(--bg-muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-body);
+  line-height: 1.5;
+  transition: transform var(--transition-fast);
+}
+
+.insight-card:hover {
+  transform: translateX(4px);
+}
+
+.insight-card strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.insight-card--positive {
+  background: var(--success-pale, #ecfdf5);
+  border-left-color: var(--secondary, #10b981);
+}
+
+.insight-card--attention {
+  background: var(--warning-pale, #fffbeb);
+  border-left-color: var(--warning, #f59e0b);
+}
+
+.insight-card--tip {
+  background: var(--primary-pale, #eff6ff);
+  border-left-color: var(--primary, #3b82f6);
+}
+
+/* ---- HOMEWORK SECTION ---- */
+.pd-homework-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.pd-homework-count {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-pale, #eff6ff);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--primary);
+}
+
+.pd-homework-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: var(--space-sm) 0;
+}
+
+.pd-homework-word-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  background: var(--bg-muted);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pd-homework-word-label {
+  text-transform: capitalize;
+}
+
+.pd-homework-remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: none;
+  color: var(--error, #ef4444);
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.pd-homework-remove-btn:hover {
+  opacity: 1;
+}
+
+/* ---- ASSIGN PANEL ---- */
+.pd-assign-panel {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.pd-assign-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pd-assign-select {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--cloud, #e5e7eb);
+  background: var(--bg-card);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.pd-assign-select:focus {
+  border-color: var(--primary);
+}
+
+.pd-assign-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pd-assign-word-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--primary, #3b82f6);
+  background: var(--bg-card);
+  color: var(--primary, #3b82f6);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pd-assign-word-btn:hover:not(:disabled) {
+  background: var(--primary-pale, #eff6ff);
+}
+
+.pd-assign-word-btn--assigned {
+  border-color: var(--secondary, #10b981);
+  color: var(--secondary, #10b981);
+  background: var(--success-pale, #ecfdf5);
+  cursor: default;
+  opacity: 0.75;
+}
+
 /* ---- SECTION 7: REPORT ACTIONS ---- */
 .pd-report-actions {
   display: flex;

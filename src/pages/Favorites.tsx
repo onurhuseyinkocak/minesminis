@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
-import { Heart, Lock } from 'lucide-react';
+import { Heart, Lock, HeartCrack } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MimiMascot from '../components/MimiMascot';
 import './Favorites.css';
@@ -183,7 +183,7 @@ const Favorites: React.FC = () => {
                   }}
                   title="Remove from favorites"
                 >
-                  💔
+                  <HeartCrack size={16} />
                 </button>
               </div>
             ))}

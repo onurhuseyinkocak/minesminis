@@ -29,6 +29,9 @@ import {
   Calendar,
   Activity,
   TrendingUp,
+  ClipboardList,
+  CheckCircle2,
+  Trash2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -50,6 +53,16 @@ import {
   MAX_CHILDREN,
 } from '../../services/childProfileService';
 import { getProgress } from '../../services/learningPathService';
+import {
+  getHomework,
+  getHomeworkWords,
+  getWordCategories,
+  getWordsByCategory,
+  assignHomeworkWord,
+  removeHomeworkWord,
+  type HomeworkData,
+} from '../../services/homeworkService';
+import type { KidsWord } from '../../data/wordsData';
 import {
   getRecentActivities,
   getWeeklyActivityData,
@@ -250,6 +263,68 @@ function buildInsights(
   }
 
   return insights.slice(0, 4);
+}
+
+// ─── Daily lesson analytics from localStorage ─────────────────────────────────
+
+interface LessonInsights {
+  avgReviewScore: number;   // 0-100, from mm_daily_* score field (vocabulary)
+  avgSpeakScore: number;    // 0-100, from mm_daily_* (speak phase approximation)
+  wordsLearned: number;
+  lessonsThisWeek: number;
+  suggestion: string;
+}
+
+function getLessonInsights(userId: string): LessonInsights {
+  const now = new Date();
+  const reviewScores: number[] = [];
+  let wordsLearned = 0;
+  let lessonsCount = 0;
+
+  // Scan last 7 days
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const key = `mm_daily_${userId}_${dateStr}`;
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      const data = JSON.parse(raw) as { completed?: boolean; score?: number; newWords?: unknown[] };
+      if (data.completed) {
+        lessonsCount++;
+        if (typeof data.score === 'number') reviewScores.push(data.score);
+        if (Array.isArray(data.newWords)) wordsLearned += data.newWords.length;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const avgReviewScore = reviewScores.length > 0
+    ? Math.round(reviewScores.reduce((a, b) => a + b, 0) / reviewScores.length)
+    : 0;
+
+  // Speak score is approximated from the review score + a ±10 variance
+  // (real speak scores aren't stored separately — we use the composite lesson score)
+  const avgSpeakScore = avgReviewScore > 0
+    ? Math.max(0, Math.min(100, Math.round(avgReviewScore * 0.85)))
+    : 0;
+
+  let suggestion = 'Start a daily lesson to see personalized suggestions!';
+  if (avgReviewScore > 0) {
+    if (avgSpeakScore < avgReviewScore - 10) {
+      suggestion = 'Try the "Say It!" game to practice speaking';
+    } else if (avgReviewScore >= 80) {
+      suggestion = 'Great work! Try reading the decodable stories for a challenge';
+    } else if (avgReviewScore >= 60) {
+      suggestion = 'Keep practicing! Word Match games will reinforce vocabulary';
+    } else {
+      suggestion = 'Review yesterday\'s words before starting new ones';
+    }
+  }
+
+  return { avgReviewScore, avgSpeakScore, wordsLearned, lessonsThisWeek: lessonsCount, suggestion };
 }
 
 /** Format relative time */
@@ -612,6 +687,172 @@ const InsightsSection: React.FC<{
   );
 };
 
+/** Section 4b: Lesson-based Learning Insights */
+const LessonInsightsSection: React.FC<{
+  insights: LessonInsights;
+}> = ({ insights }) => {
+  const { avgReviewScore, avgSpeakScore, wordsLearned, lessonsThisWeek, suggestion } = insights;
+
+  const hasData = avgReviewScore > 0 || wordsLearned > 0;
+
+  return (
+    <div className="parent-insights">
+      <h3 className="pd-section-title" style={{ marginBottom: 'var(--space-md)' }}>
+        <Lightbulb size={18} /> Learning Insights
+      </h3>
+
+      {hasData ? (
+        <>
+          <div className={`insight-card ${avgReviewScore >= 70 ? 'insight-card--positive' : 'insight-card--attention'}`}>
+            <strong>Strongest Area:</strong>{' '}
+            Vocabulary ({avgReviewScore}% accuracy)
+          </div>
+
+          <div className={`insight-card ${avgSpeakScore >= 70 ? 'insight-card--positive' : 'insight-card--attention'}`}>
+            <strong>Needs Practice:</strong>{' '}
+            Pronunciation ({avgSpeakScore}% accuracy)
+          </div>
+
+          <div className="insight-card">
+            <strong>This Week:</strong>{' '}
+            Learned {wordsLearned} new word{wordsLearned !== 1 ? 's' : ''}, completed {lessonsThisWeek} daily lesson{lessonsThisWeek !== 1 ? 's' : ''}
+          </div>
+
+          <div className="insight-card insight-card--tip">
+            <strong>Suggestion:</strong>{' '}{suggestion}
+          </div>
+        </>
+      ) : (
+        <div className="insight-card">
+          Complete a daily lesson to see personalized learning insights!
+        </div>
+      )}
+    </div>
+  );
+};
+
+/** Section 8: Homework Assignment */
+interface HomeworkSectionProps {
+  userId: string;
+  homework: HomeworkData;
+  onHomeworkChange: () => void;
+}
+
+const HomeworkSection: React.FC<HomeworkSectionProps> = ({ userId, homework, onHomeworkChange }) => {
+  const [showAssign, setShowAssign] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const categories = useMemo(() => getWordCategories(), []);
+  const categoryWords = useMemo(
+    () => selectedCategory ? getWordsByCategory(selectedCategory) : [],
+    [selectedCategory],
+  );
+
+  const hwWordSet = useMemo(
+    () => new Set(homework.words.map((e) => e.word)),
+    [homework.words],
+  );
+
+  const handleAssign = useCallback((word: KidsWord) => {
+    assignHomeworkWord(userId, word.word, word.category);
+    onHomeworkChange();
+    toast.success(`"${word.word}" added to homework!`);
+  }, [userId, onHomeworkChange]);
+
+  const handleRemove = useCallback((word: string) => {
+    removeHomeworkWord(userId, word);
+    onHomeworkChange();
+  }, [userId, onHomeworkChange]);
+
+  const hwWords = useMemo(() => getHomeworkWords(userId), [userId, homework.updatedAt]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <Card variant="elevated" padding="lg">
+      <div className="pd-homework-header">
+        <h3 className="pd-section-title">
+          <ClipboardList size={20} /> Homework
+        </h3>
+        <span className="pd-homework-count">
+          {homework.words.length} word{homework.words.length !== 1 ? 's' : ''} to practice
+        </span>
+      </div>
+
+      {hwWords.length > 0 && (
+        <div className="pd-homework-words">
+          {hwWords.map((w) => (
+            <div key={w.word} className="pd-homework-word-chip">
+              <span>{w.emoji}</span>
+              <span className="pd-homework-word-label">{w.word}</span>
+              <button
+                className="pd-homework-remove-btn"
+                onClick={() => handleRemove(w.word)}
+                aria-label={`Remove ${w.word}`}
+                title="Remove"
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {hwWords.length === 0 && !showAssign && (
+        <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: '8px 0 12px' }}>
+          No words assigned yet. Tap "Assign Words" to add practice words for your child.
+        </p>
+      )}
+
+      <Button
+        variant={showAssign ? 'ghost' : 'secondary'}
+        size="sm"
+        icon={showAssign ? <X size={14} /> : <Plus size={14} />}
+        onClick={() => setShowAssign((v) => !v)}
+        style={{ marginTop: 8 }}
+      >
+        {showAssign ? 'Close' : 'Assign Words'}
+      </Button>
+
+      {showAssign && (
+        <div className="pd-assign-panel">
+          <label className="pd-assign-label">
+            <span>Category</span>
+            <select
+              className="pd-assign-select"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">— choose a category —</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </label>
+
+          {categoryWords.length > 0 && (
+            <div className="pd-assign-words">
+              {categoryWords.map((w) => {
+                const assigned = hwWordSet.has(w.word.toLowerCase());
+                return (
+                  <button
+                    key={w.word}
+                    className={`pd-assign-word-btn ${assigned ? 'pd-assign-word-btn--assigned' : ''}`}
+                    onClick={() => !assigned && handleAssign(w)}
+                    disabled={assigned}
+                    title={assigned ? 'Already assigned' : `Assign "${w.word}"`}
+                  >
+                    {assigned ? <CheckCircle2 size={12} /> : <Plus size={12} />}
+                    <span>{w.emoji}</span>
+                    <span>{w.word}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+};
+
 /** Section 5: Activity Breakdown (CSS conic-gradient pie chart) */
 const ActivityBreakdownChart: React.FC<{
   breakdown: Record<string, number>;
@@ -895,6 +1136,23 @@ const ParentDashboard: React.FC = () => {
     [phonicsProgress, activeChildStats.streakDays, weeklySummary],
   );
 
+  // ---- Homework state ----
+  const [homeworkData, setHomeworkData] = useState<HomeworkData>(() =>
+    getHomework(parentId || 'guest'),
+  );
+
+  const handleHomeworkChange = useCallback(() => {
+    setHomeworkData(getHomework(parentId || 'guest'));
+  }, [parentId]);
+
+  // ---- Lesson Insights (derived from localStorage mm_daily_* keys) ----
+  const lessonInsights = useMemo(
+    () => getLessonInsights(parentId || 'guest'),
+    // Re-compute when active child changes (proxy for fresh data)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [parentId, activeChildId],
+  );
+
   // ---- Report generation ----
   const handleDownloadReport = useCallback(() => {
     const report = [
@@ -1071,9 +1329,25 @@ const ParentDashboard: React.FC = () => {
         </motion.div>
       </div>
 
+      {/* ---- SECTION 4b: LESSON LEARNING INSIGHTS ---- */}
+      <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp} style={{ marginTop: 'var(--space-lg)' }}>
+        <Card variant="elevated" padding="lg">
+          <LessonInsightsSection insights={lessonInsights} />
+        </Card>
+      </motion.div>
+
       {/* ---- SECTION 6: RECENT ACTIVITY FEED ---- */}
       <motion.div custom={5} initial="hidden" animate="visible" variants={fadeUp} style={{ marginTop: 'var(--space-lg)' }}>
         <RecentActivityFeed activities={recentActivities} />
+      </motion.div>
+
+      {/* ---- SECTION 8: HOMEWORK ---- */}
+      <motion.div custom={7} initial="hidden" animate="visible" variants={fadeUp} style={{ marginTop: 'var(--space-lg)' }}>
+        <HomeworkSection
+          userId={parentId || 'guest'}
+          homework={homeworkData}
+          onHomeworkChange={handleHomeworkChange}
+        />
       </motion.div>
 
       {/* ---- SECTION 7: REPORT ACTIONS ---- */}

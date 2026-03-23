@@ -216,6 +216,41 @@ export function getTodayPhonicsSound(
   };
 }
 
+// ─── Streak freeze ────────────────────────────────────────────────────────────
+
+/**
+ * Returns true if the user is eligible to use a streak freeze.
+ * One free miss allowed per 7-day rolling window.
+ */
+export function shouldFreezeStreak(userId: string): boolean {
+  const freezeKey = `mm_streak_freeze_${userId}`;
+  const lastFreeze = localStorage.getItem(freezeKey);
+  if (lastFreeze) {
+    const freezeDate = new Date(lastFreeze);
+    const now = new Date();
+    const daysDiff = Math.floor(
+      (now.getTime() - freezeDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    if (daysDiff < 7) return false; // already used this week
+  }
+  return true; // can freeze
+}
+
+/**
+ * Records that the user has consumed their streak freeze for this week.
+ * Call this when a missed day is forgiven instead of resetting the streak.
+ */
+export function useStreakFreeze(userId: string): void {
+  try {
+    localStorage.setItem(
+      `mm_streak_freeze_${userId}`,
+      new Date().toISOString(),
+    );
+  } catch {
+    // storage full — ignore
+  }
+}
+
 // ─── Total learned count ──────────────────────────────────────────────────────
 
 /**
