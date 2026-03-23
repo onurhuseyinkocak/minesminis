@@ -3,7 +3,7 @@
  * Celebration modal when user levels up
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './LevelUpModal.css';
 import { useGamification } from '../contexts/GamificationContext';
 import { StarBurst, StreakFlame } from './ui/Celebrations';
@@ -15,6 +15,7 @@ const LevelUpModal: React.FC = () => {
     const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
     const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number; color: string }>>([]);
     const [showStarBurst, setShowStarBurst] = useState(false);
+    const starBurstTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         if (showLevelUp) {
@@ -31,14 +32,20 @@ const LevelUpModal: React.FC = () => {
             // Trigger StarBurst + SFX
             setShowStarBurst(true);
             SFX.levelUp();
-            setTimeout(() => setShowStarBurst(false), 1500);
+            starBurstTimerRef.current = setTimeout(() => setShowStarBurst(false), 1500);
 
             // Auto dismiss after 4 seconds
             const timer = setTimeout(() => {
                 dismissLevelUp();
             }, 4000);
 
-            return () => clearTimeout(timer);
+            return () => {
+                clearTimeout(timer);
+                if (starBurstTimerRef.current) {
+                    clearTimeout(starBurstTimerRef.current);
+                    starBurstTimerRef.current = null;
+                }
+            };
         }
     }, [showLevelUp, dismissLevelUp]);
 

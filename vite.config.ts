@@ -49,6 +49,7 @@ export default defineConfig({
           'vendor-firebase': ['firebase/app', 'firebase/auth'],
           'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-ui': ['framer-motion', 'lucide-react', 'react-hot-toast'],
+          'vendor-recharts': ['recharts'],
         },
       },
     },

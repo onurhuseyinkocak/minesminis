@@ -97,7 +97,8 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 8px 12px;
+  padding: 10px 14px;
+  min-height: 44px;
   border: 2px solid var(--glass-border, #334155);
   border-radius: 999px; /* pill shape */
   background: var(--bg-elevated, #1e293b);
@@ -969,9 +970,9 @@
 
 /* ── ICON BUTTON (e.g. speaker in Review) ── */
 .dl-btn--icon {
-  width: 40px;
-  height: 40px;
-  min-height: 40px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
   border-radius: 50%;
   border: 1.5px solid var(--glass-border, #334155);
   background: var(--bg-elevated, #1e293b);
@@ -1007,7 +1008,7 @@
 
 /* ── PHASE NAV: MINI PROGRESS LABEL ── */
 .dl-phase-btn__progress {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   color: var(--text-muted, #64748b);
   position: absolute;
@@ -1037,5 +1038,5 @@
 /* Tiny screens: nav bar wraps nicely */
 @media (max-width: 400px) {
   .dl-montessori-nav { gap: 4px; padding: 6px 12px 4px; }
-  .dl-phase-btn { padding: 6px 8px; }
+  .dl-phase-btn { padding: 10px 8px; min-height: 44px; }
 }
