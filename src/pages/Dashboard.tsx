@@ -206,7 +206,7 @@ function WordOfTheDay() {
     <div className="dash-word-of-day">
       <span className="dash-wod__emoji">🌟</span>
       <div className="dash-wod__body">
-        <span className="dash-wod__label">{t('dashboard.wordOfTheDay')}</span>
+        <span className="dash-wod__label">{t('profile.wordOfTheDay')}</span>
         <strong className="dash-wod__word">{wod.word}</strong>
         <span className="dash-wod__tr">— {wod.tr}</span>
       </div>
