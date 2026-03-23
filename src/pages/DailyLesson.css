@@ -1,6 +1,6 @@
 /* ==========================================================================
-   DAILY LESSON -- Full-screen 5-phase learning flow
-   Kids app: large fonts, big touch targets, vivid colours.
+   DAILY LESSON -- Digital Montessori learning flow
+   Principles: prepared environment, sensorial, self-correcting, free repetition
    ========================================================================== */
 
 /* ── PAGE WRAPPER ── */
@@ -13,6 +13,7 @@
   overflow: hidden;
   z-index: 10;
   font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 1.1rem; /* Montessori: larger base font */
 }
 
 /* ── PHASE HEADER ── */
@@ -20,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px 10px;
+  padding: 16px 20px 10px;
   flex-shrink: 0;
 }
 
@@ -76,6 +77,103 @@
   text-align: right;
 }
 
+/* ── MONTESSORI PHASE NAV BAR ── */
+/* Appears below header; buttons unlock after Phase 1 complete */
+.dl-montessori-nav {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px 6px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none; /* hide scrollbar on FF */
+  -ms-overflow-style: none;
+}
+.dl-montessori-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.dl-phase-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 2px solid var(--glass-border, #334155);
+  border-radius: 999px; /* pill shape */
+  background: var(--bg-elevated, #1e293b);
+  color: var(--text-secondary, #94a3b8);
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s, opacity 0.15s;
+  position: relative;
+  flex-shrink: 0;
+}
+.dl-phase-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.dl-phase-btn__icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.dl-phase-btn__label {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+.dl-phase-btn__check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: var(--success, #22c55e);
+}
+.dl-phase-btn__lock {
+  font-size: 10px;
+  position: absolute;
+  top: 2px;
+  right: 4px;
+}
+
+/* Active phase: highlighted */
+.dl-phase-btn--active {
+  border-color: var(--primary, #f59e0b);
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--primary, #f59e0b);
+}
+
+/* Completed phase: soft green tint */
+.dl-phase-btn--done {
+  border-color: var(--success, #22c55e);
+  background: rgba(74, 222, 128, 0.08);
+  color: var(--success, #22c55e);
+}
+
+/* Active + done (currently active but already visited) */
+.dl-phase-btn--active.dl-phase-btn--done {
+  border-color: var(--primary, #f59e0b);
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--primary, #f59e0b);
+}
+
+/* Locked phase: dimmed, not clickable */
+.dl-phase-btn--locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.dl-phase-btn:disabled {
+  cursor: not-allowed;
+}
+
+/* Per-phase pastel accents */
+.dl-phase-btn:nth-child(1) { --phase-accent: #f59e0b; }  /* listen: amber */
+.dl-phase-btn:nth-child(2) { --phase-accent: #60a5fa; }  /* see: blue */
+.dl-phase-btn:nth-child(3) { --phase-accent: #34d399; }  /* play: green */
+.dl-phase-btn:nth-child(4) { --phase-accent: #f472b6; }  /* speak: pink */
+.dl-phase-btn:nth-child(5) { --phase-accent: #a78bfa; }  /* review: purple */
+.dl-phase-btn:nth-child(6) { --phase-accent: #fb923c; }  /* story: orange */
+
 /* ── CONTENT AREA ── */
 .dl-content {
   flex: 1;
@@ -83,62 +181,66 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 24px 24px;
+  padding: 0 24px 28px;
   overflow-y: auto;
-  gap: 20px;
+  gap: 24px; /* more whitespace — Montessori breathing room */
 }
 
-/* Phase title */
+/* Phase title — larger, bolder */
 .dl-phase-title {
-  font-size: 26px;
+  font-size: 2rem; /* Montessori: big headings */
   font-weight: 800;
   color: var(--text-primary, #f8fafc);
   text-align: center;
   margin: 0;
+  line-height: 1.2;
 }
 
 .dl-phase-subtitle {
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-secondary, #94a3b8);
   text-align: center;
   margin: 0;
 }
 
-/* ── WORD CARD ── */
+/* ── WORD CARD — Montessori: tangible, substantial ── */
 .dl-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 24px;
-  padding: 32px 40px;
+  border-radius: 28px; /* Montessori: very round, safe feeling */
+  padding: 40px 44px; /* more breathing room */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   cursor: pointer;
   width: 100%;
-  max-width: 340px;
-  transition: transform 0.15s, border-color 0.2s;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  max-width: 360px;
+  min-height: 200px; /* Montessori: substantial like a physical card */
+  transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
+  justify-content: center;
 }
 .dl-card:hover {
   transform: scale(1.02);
   border-color: var(--primary, #f59e0b);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(245, 158, 11, 0.2);
 }
 .dl-card:active {
   transform: scale(0.98);
 }
 
 .dl-card__emoji {
-  font-size: 56px;
+  font-size: 64px; /* bigger — more sensorial */
   line-height: 1;
   user-select: none;
 }
 
 .dl-card__word {
-  font-size: 36px;
+  font-size: 40px; /* Montessori: big and clear */
   font-weight: 900;
   color: var(--text-primary, #f8fafc);
   letter-spacing: -0.5px;
@@ -146,7 +248,7 @@
 }
 
 .dl-card__tr {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--primary, #f59e0b);
   text-align: center;
@@ -156,6 +258,9 @@
   font-size: 12px;
   color: var(--text-muted, #64748b);
   margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* Slide-in animation */
@@ -197,37 +302,41 @@
 .dl-sentence-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 24px;
-  padding: 28px 28px;
+  border-radius: 28px;
+  padding: 36px 32px;
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.2);
+  justify-content: center;
 }
 
 .dl-sentence-card__emoji {
-  font-size: 48px;
+  font-size: 52px;
   line-height: 1;
 }
 
 .dl-sentence {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-secondary, #94a3b8);
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .dl-sentence__highlight {
   color: var(--primary, #f59e0b);
   text-decoration: underline;
   text-underline-offset: 4px;
+  font-weight: 900;
 }
 
 .dl-sentence__tr {
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-muted, #64748b);
   text-align: center;
@@ -238,7 +347,7 @@
   display: flex;
   gap: 12px;
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
   justify-content: center;
 }
 
@@ -246,12 +355,12 @@
   min-height: 56px;
   padding: 0 28px;
   border: none;
-  border-radius: 16px;
+  border-radius: 18px; /* rounder — Montessori safe feel */
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 17px;
+  font-size: 1.05rem;
   font-weight: 800;
   cursor: pointer;
-  transition: transform 0.12s, opacity 0.12s;
+  transition: transform 0.12s, opacity 0.12s, background 0.15s;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -269,32 +378,67 @@
   color: var(--text-secondary, #94a3b8);
   border: 2px solid var(--glass-border, #334155);
 }
+/* Ghost button: subtle, for repeat/secondary actions */
+.dl-btn--ghost {
+  background: transparent;
+  color: var(--text-muted, #64748b);
+  border: 1.5px solid var(--glass-border, #334155);
+  font-size: 0.9rem;
+  min-height: 44px;
+}
+.dl-btn--ghost:hover {
+  border-color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, #94a3b8);
+}
+
+/* ── PHASE COMPLETE CARD ── */
+.dl-phase-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.dl-phase-complete__icon {
+  font-size: 64px;
+  line-height: 1;
+  animation: dlBounce 0.5s ease both;
+}
+
+.dl-phase-complete__msg {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+  margin: 0;
+}
 
 /* ── PHASE 3: PLAY ── */
 .dl-game-section {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .dl-match-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
 .dl-match-tile {
-  min-height: 56px;
-  padding: 12px 8px;
+  min-height: 64px; /* taller — more tangible */
+  padding: 14px 10px;
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 14px;
+  border-radius: 18px; /* Montessori round */
   background: var(--bg-elevated, #1e293b);
   color: var(--text-primary, #f8fafc);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   text-align: center;
@@ -303,28 +447,31 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
 .dl-match-tile:active { transform: scale(0.95); }
 .dl-match-tile--selected {
   border-color: var(--primary, #f59e0b);
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(245, 158, 11, 0.12);
 }
 .dl-match-tile--correct {
   border-color: var(--success, #22c55e);
-  background: rgba(34, 197, 94, 0.15);
+  background: rgba(74, 222, 128, 0.15); /* Montessori gentle green */
   color: var(--success, #22c55e);
   pointer-events: none;
 }
-.dl-match-tile--wrong {
-  border-color: var(--error, #ef4444);
-  background: rgba(239, 68, 68, 0.1);
-  animation: dlShake 0.3s ease;
+/* Montessori: "reveal" instead of "wrong" — warm amber hint, not harsh red */
+.dl-match-tile--reveal {
+  border-color: var(--success, #22c55e);
+  background: rgba(74, 222, 128, 0.18);
+  color: var(--success, #22c55e);
+  animation: dlRevealPulse 0.4s ease;
 }
 
-@keyframes dlShake {
-  0%, 100% { transform: translateX(0); }
-  25%       { transform: translateX(-6px); }
-  75%       { transform: translateX(6px); }
+@keyframes dlRevealPulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* Score chips */
@@ -352,26 +499,29 @@
 .dl-speak-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 24px;
-  padding: 32px 28px;
+  border-radius: 28px;
+  padding: 40px 32px;
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.2);
+  justify-content: center;
 }
 
 .dl-speak-word {
-  font-size: 42px;
+  font-size: 48px; /* large and clear for pronunciation */
   font-weight: 900;
   color: var(--text-primary, #f8fafc);
   letter-spacing: -1px;
 }
 
 .dl-mic-btn {
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: 3px solid var(--primary, #f59e0b);
   background: rgba(245, 158, 11, 0.12);
@@ -382,6 +532,7 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.12s, background 0.15s;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2);
 }
 .dl-mic-btn:hover  { background: rgba(245, 158, 11, 0.22); }
 .dl-mic-btn:active { transform: scale(0.9); }
@@ -392,21 +543,21 @@
 
 @keyframes dlPulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-  50%       { box-shadow: 0 0 0 16px rgba(245, 158, 11, 0); }
+  50%       { box-shadow: 0 0 0 20px rgba(245, 158, 11, 0); }
 }
 
 .dl-speak-feedback {
-  font-size: 20px;
+  font-size: 1.3rem;
   font-weight: 800;
   text-align: center;
   min-height: 28px;
 }
-.dl-speak-feedback--good    { color: var(--success, #22c55e); }
-.dl-speak-feedback--meh     { color: var(--warning, #f59e0b); }
+/* Montessori: all speak feedback is positive/encouraging */
+.dl-speak-feedback--good { color: var(--success, #22c55e); }
 
 /* ── PHASE 5: REVIEW ── */
 .dl-review-question {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-secondary, #94a3b8);
   text-align: center;
@@ -414,7 +565,7 @@
 }
 
 .dl-review-prompt-word {
-  font-size: 28px;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-primary, #f8fafc);
   text-align: center;
@@ -425,19 +576,19 @@
 .dl-review-choices {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px; /* more whitespace between choices */
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
 }
 
 .dl-choice-btn {
-  min-height: 56px;
+  min-height: 64px; /* taller, more tangible */
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 16px;
+  border-radius: 18px;
   background: var(--bg-elevated, #1e293b);
   color: var(--text-primary, #f8fafc);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s, transform 0.1s;
@@ -446,22 +597,24 @@
   justify-content: center;
   gap: 10px;
   padding: 0 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
 }
 .dl-choice-btn:active { transform: scale(0.98); }
 .dl-choice-btn--correct {
   border-color: var(--success, #22c55e);
-  background: rgba(34, 197, 94, 0.15);
+  background: rgba(74, 222, 128, 0.15); /* Montessori gentle green */
   color: var(--success, #22c55e);
   pointer-events: none;
 }
-.dl-choice-btn--wrong {
-  border-color: var(--error, #ef4444);
-  background: rgba(239, 68, 68, 0.08);
-  color: var(--error, #ef4444);
+/* Montessori: "reveal" not "wrong" — warm amber hint, not harsh red */
+.dl-choice-btn--reveal {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.1); /* warm amber — not red */
+  color: rgba(245, 158, 11, 0.8);
   pointer-events: none;
 }
 .dl-choice-btn--disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   pointer-events: none;
 }
 
@@ -472,8 +625,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  gap: 24px;
+  padding: 28px;
+  gap: 28px;
   text-align: center;
 }
 
@@ -490,14 +643,14 @@
 }
 
 .dl-celebration__title {
-  font-size: 34px;
+  font-size: 2.2rem;
   font-weight: 900;
   color: var(--text-primary, #f8fafc);
   margin: 0;
 }
 
 .dl-celebration__subtitle {
-  font-size: 17px;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-secondary, #94a3b8);
   margin: 0;
@@ -513,17 +666,18 @@
 .dl-stat-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 20px;
-  padding: 18px 24px;
+  border-radius: 24px;
+  padding: 20px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   min-width: 90px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .dl-stat-card__value {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 900;
   color: var(--primary, #f59e0b);
 }
@@ -561,6 +715,7 @@
 }
 
 /* ── FEEDBACK TOAST ── */
+/* Montessori: success = green, "almost" = warm amber (never red) */
 .dl-feedback {
   position: fixed;
   bottom: 100px;
@@ -569,7 +724,7 @@
   background: var(--success, #22c55e);
   color: #052e16;
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: 800;
   padding: 12px 28px;
   border-radius: 999px;
@@ -579,10 +734,11 @@
   animation: dlFeedbackIn 0.25s ease both;
   white-space: nowrap;
 }
-.dl-feedback--sad {
-  background: var(--warning, #f59e0b);
+/* "reveal" class: warm amber hint, gentle — replaces "sad"/"wrong" */
+.dl-feedback--reveal {
+  background: rgba(245, 158, 11, 0.9);
   color: #451a03;
-  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
 }
 
 @keyframes dlFeedbackIn {
@@ -593,8 +749,8 @@
 /* ── PROGRESS BAR ── */
 .dl-progress-bar {
   width: 100%;
-  max-width: 340px;
-  height: 6px;
+  max-width: 360px;
+  height: 8px; /* slightly taller */
   background: var(--bg-elevated, #1e293b);
   border-radius: 4px;
   overflow: hidden;
@@ -611,27 +767,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
 }
 
 .dl-story__text {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 24px;
-  padding: 28px 24px;
+  border-radius: 28px;
+  padding: 32px 28px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.18);
 }
 
 .dl-story__sentence {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-secondary, #94a3b8);
-  line-height: 1.7;
+  line-height: 1.8;
   text-align: center;
   margin: 0;
 }
@@ -640,8 +797,8 @@
   display: inline-block;
   background: rgba(245, 158, 11, 0.25);
   color: var(--primary, #f59e0b);
-  border-radius: 6px;
-  padding: 1px 6px;
+  border-radius: 8px;
+  padding: 2px 8px;
   font-weight: 900;
   cursor: pointer;
   border: 1.5px solid rgba(245, 158, 11, 0.45);
@@ -660,11 +817,11 @@
   font-weight: 600;
   color: var(--text-muted, #64748b);
   text-align: center;
-  line-height: 1.6;
+  line-height: 1.7;
   padding: 0 8px;
   margin: 0;
   border-top: 1px solid var(--glass-border, #334155);
-  padding-top: 16px;
+  padding-top: 18px;
 }
 
 /* ── CELEBRATION: STAR RATING ── */
@@ -676,7 +833,7 @@
 }
 
 .dl-star {
-  font-size: 48px;
+  font-size: 52px;
   line-height: 1;
   animation: dlStarPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
@@ -700,11 +857,11 @@
 /* ── CELEBRATION: WORD LIST ── */
 .dl-celebration__wordlist {
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .dl-celebration__wordlist-label {
@@ -719,7 +876,7 @@
 .dl-celebration__wordlist-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
 }
 
@@ -730,9 +887,9 @@
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
   border-radius: 999px;
-  padding: 6px 14px;
+  padding: 8px 16px;
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary, #f8fafc);
   cursor: pointer;
@@ -750,16 +907,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1.5px solid rgba(245, 158, 11, 0.3);
-  border-radius: 16px;
-  padding: 12px 20px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1.5px solid rgba(245, 158, 11, 0.25);
+  border-radius: 18px;
+  padding: 14px 22px;
   max-width: 300px;
   text-align: left;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-secondary, #94a3b8);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .dl-celebration__parent-share-icon {
@@ -769,9 +926,17 @@
 
 /* Responsive adjustments */
 @media (max-width: 360px) {
-  .dl-card__word { font-size: 28px; }
-  .dl-card__emoji { font-size: 44px; }
-  .dl-phase-title { font-size: 22px; }
-  .dl-btn { font-size: 15px; padding: 0 20px; }
+  .dl-card__word { font-size: 30px; }
+  .dl-card__emoji { font-size: 48px; }
+  .dl-phase-title { font-size: 1.6rem; }
+  .dl-btn { font-size: 0.95rem; padding: 0 20px; }
   .dl-story__sentence { font-size: 1.05rem; }
+  .dl-phase-btn__icon { font-size: 16px; }
+  .dl-phase-btn__label { font-size: 9px; }
+}
+
+/* Tiny screens: nav bar wraps nicely */
+@media (max-width: 400px) {
+  .dl-montessori-nav { gap: 4px; padding: 6px 12px 4px; }
+  .dl-phase-btn { padding: 6px 8px; }
 }

@@ -1,18 +1,19 @@
 /**
- * DAILY LESSON — Full-screen 6-phase structured learning flow
- * MinesMinis — 15-minute daily lesson for vocabulary acquisition
+ * DAILY LESSON — Digital Montessori 6-phase learning flow
+ * MinesMinis — Self-paced, self-correcting, multi-sensory vocabulary acquisition
  *
- * Phase 1: LISTEN  — See & hear each word card (TTS auto-play)
- * Phase 2: SEE     — Word in context sentence
- * Phase 3: PLAY    — Word-match mini game
- * Phase 4: SPEAK   — Speech recognition pronunciation check
- * Phase 5: REVIEW  — Spaced-repetition multiple-choice quiz
- * Phase 5.5: STORY — Mini story using today's words (before celebration)
+ * Montessori Principles Applied:
+ * - Self-paced: Free phase navigation after Phase 1 unlocks
+ * - Concrete before abstract: Hear → See → Read → Match → Speak → Review → Story
+ * - Self-correcting: Wrong answers reveal correct one (no "Wrong!" label)
+ * - Prepared environment: Clean, uncluttered, focused
+ * - Repetition freedom: Every phase has a "repeat" option
+ * - Sensorial: hear + see + touch + say on every interaction
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, RotateCcw } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -30,26 +31,26 @@ import './DailyLesson.css';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PHASES_EN = [
-  { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'Tap a card to hear it again' },
-  { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See how each word is used' },
-  { id: 3, key: 'play',   title: "Let's Play!",    subtitle: 'Match words to their meanings' },
-  { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'Press the mic and say the word' },
-  { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned today' },
-  { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story' },
+  { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'Tap a card to hear it', icon: '👂' },
+  { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See each word in context', icon: '👀' },
+  { id: 3, key: 'play',   title: "Let's Play!",    subtitle: 'Match words to meanings', icon: '🎮' },
+  { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'Press mic and say the word', icon: '🎤' },
+  { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned', icon: '🧠' },
+  { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story', icon: '📖' },
 ];
 
 const PHASES_TR = [
-  { id: 1, key: 'listen', title: 'Yeni Kelimeler!',    subtitle: 'Tekrar duymak için karta dokun' },
-  { id: 2, key: 'see',    title: 'İzle ve Öğren!',     subtitle: 'Her kelimenin nasıl kullanıldığını gör' },
-  { id: 3, key: 'play',   title: 'Hadi Oynayalım!',    subtitle: 'Kelimeleri anlamlarıyla eşleştir' },
-  { id: 4, key: 'speak',  title: 'Söyle!',             subtitle: 'Mikrofona bas ve kelimeyi söyle' },
-  { id: 5, key: 'review', title: 'Hatırlıyor musun?',  subtitle: 'Bugün öğrendiklerini test et' },
-  { id: 6, key: 'story',  title: 'Mini Hikaye!',       subtitle: 'Kelimeleri bir hikayede gör' },
+  { id: 1, key: 'listen', title: 'Yeni Kelimeler!',    subtitle: 'Duymak için karta dokun', icon: '👂' },
+  { id: 2, key: 'see',    title: 'İzle ve Öğren!',     subtitle: 'Her kelimeyi bağlamda gör', icon: '👀' },
+  { id: 3, key: 'play',   title: 'Hadi Oynayalım!',    subtitle: 'Kelimeleri eşleştir', icon: '🎮' },
+  { id: 4, key: 'speak',  title: 'Söyle!',             subtitle: 'Mikrofona bas ve söyle', icon: '🎤' },
+  { id: 5, key: 'review', title: 'Hatırlıyor musun?',  subtitle: 'Öğrendiklerini test et', icon: '🧠' },
+  { id: 6, key: 'story',  title: 'Mini Hikaye!',       subtitle: 'Kelimeleri hikayede gör', icon: '📖' },
 ];
 
 const TOTAL_PHASES = PHASES_EN.length; // 6
 
-const REVIEW_CHOICES = 3; // number of options per review question
+const REVIEW_CHOICES = 3;
 
 // Simple example sentences for context. Keyed by word, fallback generated.
 const EXAMPLE_SENTENCES: Record<string, { en: string; tr: string; highlight: string }> = {
@@ -76,12 +77,10 @@ const EXAMPLE_SENTENCES: Record<string, { en: string; tr: string; highlight: str
   mat:    { en: 'Wipe your feet on the MAT.',         tr: 'Ayaklarını paspasta sil.',          highlight: 'MAT' },
 };
 
-// Common English verb endings — used to pick a smarter fallback sentence
 const VERB_SUFFIXES = ['ed', 'ing', 'run', 'sit', 'sat', 'sip', 'tap', 'tip', 'hop', 'cut', 'let', 'put'];
 
 function looksLikeVerb(w: string): boolean {
   const lower = w.toLowerCase();
-  // Single-syllable CVC pattern typical of simple verbs, or known verb suffixes
   return VERB_SUFFIXES.includes(lower) || lower.endsWith('ed') || lower.endsWith('ing');
 }
 
@@ -139,15 +138,72 @@ function Confetti() {
 
 // ─── Phase dot indicator ──────────────────────────────────────────────────────
 
-function PhaseDots({ current, total }: { current: number; total: number }) {
+function PhaseDots({
+  current,
+  total,
+  completedPhases,
+}: {
+  current: number;
+  total: number;
+  completedPhases: Set<number>;
+}) {
   return (
     <div className="dl-dots">
       {Array.from({ length: total }, (_, i) => {
         const phaseNum = i + 1;
         let cls = 'dl-dot';
         if (phaseNum === current) cls += ' dl-dot--active';
-        else if (phaseNum < current) cls += ' dl-dot--done';
+        else if (completedPhases.has(phaseNum)) cls += ' dl-dot--done';
         return <div key={i} className={cls} />;
+      })}
+    </div>
+  );
+}
+
+// ─── Montessori Phase Nav Bar ─────────────────────────────────────────────────
+
+type PhaseInfo = { id: number; key: string; title: string; subtitle: string; icon: string };
+
+function MontessoriNav({
+  phases,
+  currentPhase,
+  completedPhases,
+  onSelectPhase,
+}: {
+  phases: PhaseInfo[];
+  currentPhase: number;
+  completedPhases: Set<number>;
+  onSelectPhase: (id: number) => void;
+}) {
+  const unlocked = completedPhases.has(1);
+
+  return (
+    <div className="dl-montessori-nav" role="navigation" aria-label="Lesson phases">
+      {phases.map((p) => {
+        const isActive = currentPhase === p.id;
+        const isDone = completedPhases.has(p.id);
+        const isLocked = p.id !== 1 && !unlocked;
+
+        let cls = 'dl-phase-btn';
+        if (isActive) cls += ' dl-phase-btn--active';
+        if (isDone) cls += ' dl-phase-btn--done';
+        if (isLocked) cls += ' dl-phase-btn--locked';
+
+        return (
+          <button
+            key={p.id}
+            className={cls}
+            onClick={() => !isLocked && onSelectPhase(p.id)}
+            disabled={isLocked}
+            aria-label={`${p.title}${isDone ? ' (completed)' : ''}${isLocked ? ' (locked)' : ''}`}
+            aria-current={isActive ? 'step' : undefined}
+          >
+            <span className="dl-phase-btn__icon">{p.icon}</span>
+            <span className="dl-phase-btn__label">{p.title}</span>
+            {isDone && <Check size={12} className="dl-phase-btn__check" />}
+            {isLocked && <span className="dl-phase-btn__lock">🔒</span>}
+          </button>
+        );
       })}
     </div>
   );
@@ -172,7 +228,7 @@ function CardDots({ current, total }: { current: number; total: number }) {
 
 function FeedbackToast({ message, sad }: { message: string; sad?: boolean }) {
   return (
-    <div className={`dl-feedback${sad ? ' dl-feedback--sad' : ''}`}>
+    <div className={`dl-feedback${sad ? ' dl-feedback--reveal' : ''}`}>
       {message}
     </div>
   );
@@ -197,7 +253,6 @@ function PhaseListenStep({
 
   useEffect(() => {
     setEntering(true);
-    // Auto-play TTS when card shows
     speak(word.word).catch(() => {});
     const t = setTimeout(() => setEntering(false), 400);
     return () => clearTimeout(t);
@@ -259,8 +314,17 @@ function PhaseSeeStep({
 }) {
   const sentence = getSentence(word);
 
-  // Split sentence to highlight the key word
   const parts = sentence.en.split(sentence.highlight);
+
+  const handleReadAgain = useCallback(() => {
+    speak(sentence.en).catch(() => {});
+  }, [sentence.en]);
+
+  // Auto-play sentence TTS when card loads
+  useEffect(() => {
+    speak(sentence.en).catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word.word]);
 
   return (
     <>
@@ -274,6 +338,16 @@ function PhaseSeeStep({
           {parts[1]}
         </p>
         <p className="dl-sentence__tr">{sentence.tr}</p>
+
+        {/* Montessori: Read Again button for repetition freedom */}
+        <button
+          className="dl-btn dl-btn--ghost"
+          onClick={handleReadAgain}
+          style={{ minHeight: 40, fontSize: 14 }}
+        >
+          <Volume2 size={16} />
+          {lang === 'tr' ? 'Tekrar Dinle' : 'Read Again'}
+        </button>
       </div>
 
       <div className="dl-nav">
@@ -306,12 +380,13 @@ interface MatchItem {
 
 function PhasePlay({
   words,
+  lang,
   onComplete,
 }: {
   words: KidsWord[];
+  lang: string;
   onComplete: (score: number) => void;
 }) {
-  // Build shuffled english + turkish tiles
   const buildTiles = useCallback((): MatchItem[] => {
     const english: MatchItem[] = words.map((w, i) => ({
       id: `en-${i}`,
@@ -327,7 +402,6 @@ function PhasePlay({
       wordIndex: i,
       matched: false,
     }));
-    // Shuffle turkish side
     for (let i = turkish.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [turkish[i], turkish[j]] = [turkish[j], turkish[i]];
@@ -338,16 +412,27 @@ function PhasePlay({
   const [tiles, setTiles] = useState<MatchItem[]>(buildTiles);
   const [selectedEn, setSelectedEn] = useState<MatchItem | null>(null);
   const [selectedTr, setSelectedTr] = useState<MatchItem | null>(null);
-  const [wrongPair, setWrongPair] = useState<[string, string] | null>(null);
+  const [revealCorrect, setRevealCorrect] = useState<string | null>(null); // id of the correct tile to briefly highlight
   const [matchedCount, setMatchedCount] = useState(0);
   const [showFeedback, setShowFeedback] = useState<{ msg: string; sad?: boolean } | null>(null);
+  const [allDone, setAllDone] = useState(false);
 
   const showFeedbackMsg = (msg: string, sad?: boolean) => {
     setShowFeedback({ msg, sad });
-    setTimeout(() => setShowFeedback(null), 1200);
+    setTimeout(() => setShowFeedback(null), 1400);
   };
 
-  // Check match when both sides selected
+  // Montessori: tap English tile → play TTS
+  const handleTile = (tile: MatchItem) => {
+    if (tile.matched) return;
+    if (tile.type === 'english') {
+      speak(tile.text.toLowerCase()).catch(() => {});
+      setSelectedEn((prev) => (prev?.id === tile.id ? null : tile));
+    } else {
+      setSelectedTr((prev) => (prev?.id === tile.id ? null : tile));
+    }
+  };
+
   useEffect(() => {
     if (!selectedEn || !selectedTr) return;
     const isMatch = selectedEn.wordIndex === selectedTr.wordIndex;
@@ -362,37 +447,65 @@ function PhasePlay({
         )
       );
       setMatchedCount((c) => c + 1);
-      showFeedbackMsg('Great match!');
+      showFeedbackMsg(lang === 'tr' ? 'Harika eşleşme! ✨' : 'Great match! ✨');
     } else {
+      // Montessori self-correcting: show the correct Turkish tile gently
       SFX.wrong();
-      setWrongPair([selectedEn.id, selectedTr.id]);
-      showFeedbackMsg('Try again!', true);
-      setTimeout(() => setWrongPair(null), 600);
+      // Find the correct Turkish tile for the selected English word
+      const correctTrId = `tr-${selectedEn.wordIndex}`;
+      setRevealCorrect(correctTrId);
+      showFeedbackMsg(
+        lang === 'tr' ? 'Neredeyse! Bak — bu doğru olan:' : 'Almost! Look — it\'s this one:',
+        true
+      );
+      setTimeout(() => setRevealCorrect(null), 1200);
     }
 
     setTimeout(() => {
       setSelectedEn(null);
       setSelectedTr(null);
     }, 300);
-  }, [selectedEn, selectedTr]);
+  }, [selectedEn, selectedTr, lang]);
 
   useEffect(() => {
     if (matchedCount === words.length) {
-      setTimeout(() => onComplete(100), 800);
+      setTimeout(() => setAllDone(true), 600);
     }
-  }, [matchedCount, words.length, onComplete]);
+  }, [matchedCount, words.length]);
 
-  const handleTile = (tile: MatchItem) => {
-    if (tile.matched) return;
-    if (tile.type === 'english') {
-      setSelectedEn((prev) => (prev?.id === tile.id ? null : tile));
-    } else {
-      setSelectedTr((prev) => (prev?.id === tile.id ? null : tile));
-    }
-  };
+  const handlePlayAgain = useCallback(() => {
+    setTiles(buildTiles());
+    setSelectedEn(null);
+    setSelectedTr(null);
+    setRevealCorrect(null);
+    setMatchedCount(0);
+    setAllDone(false);
+    setShowFeedback(null);
+  }, [buildTiles]);
 
   const englishTiles = tiles.filter((t) => t.type === 'english');
   const turkishTiles = tiles.filter((t) => t.type === 'turkish');
+
+  if (allDone) {
+    return (
+      <div className="dl-phase-complete">
+        <div className="dl-phase-complete__icon">🎉</div>
+        <p className="dl-phase-complete__msg">
+          {lang === 'tr' ? 'Tüm eşleşmeleri buldun!' : 'All matched!'}
+        </p>
+        <div className="dl-nav" style={{ flexDirection: 'column', gap: 10 }}>
+          {/* Montessori: Play Again for repetition freedom */}
+          <button className="dl-btn dl-btn--ghost" onClick={handlePlayAgain}>
+            <RotateCcw size={18} />
+            {lang === 'tr' ? 'Tekrar Oyna' : 'Play Again'}
+          </button>
+          <button className="dl-btn dl-btn--primary" onClick={() => onComplete(100)}>
+            {lang === 'tr' ? 'Devam Et' : 'Continue'} <ChevronRight size={20} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -408,10 +521,8 @@ function PhasePlay({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {englishTiles.map((tile) => {
               const isSelected = selectedEn?.id === tile.id;
-              const isWrong = wrongPair?.includes(tile.id);
               let cls = 'dl-match-tile';
               if (tile.matched) cls += ' dl-match-tile--correct';
-              else if (isWrong) cls += ' dl-match-tile--wrong';
               else if (isSelected) cls += ' dl-match-tile--selected';
               return (
                 <button key={tile.id} className={cls} onClick={() => handleTile(tile)}>
@@ -424,14 +535,15 @@ function PhasePlay({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {turkishTiles.map((tile) => {
               const isSelected = selectedTr?.id === tile.id;
-              const isWrong = wrongPair?.includes(tile.id);
+              const isRevealed = revealCorrect === tile.id;
               let cls = 'dl-match-tile';
               if (tile.matched) cls += ' dl-match-tile--correct';
-              else if (isWrong) cls += ' dl-match-tile--wrong';
+              else if (isRevealed) cls += ' dl-match-tile--reveal'; // Montessori gentle reveal
               else if (isSelected) cls += ' dl-match-tile--selected';
               return (
                 <button key={tile.id} className={cls} onClick={() => handleTile(tile)}>
                   {tile.matched && <Check size={14} />}
+                  {isRevealed && <span style={{ fontSize: 12 }}>✓</span>}
                   {tile.text}
                 </button>
               );
@@ -446,8 +558,6 @@ function PhasePlay({
 }
 
 // ─── Phase 4: SPEAK ───────────────────────────────────────────────────────────
-
-// SpeechRecognition type augmentation handled by existing global types
 
 function PhaseSpeak({
   words,
@@ -479,7 +589,7 @@ function PhaseSpeak({
   const startListening = useCallback(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
-      setFeedback({ msg: 'Great effort!', good: true });
+      setFeedback({ msg: lang === 'tr' ? 'Harika çaba!' : 'Great effort!', good: true });
       return;
     }
 
@@ -507,23 +617,29 @@ function PhaseSpeak({
 
       if (isClose) {
         setCorrectCount((c) => c + 1);
-        setFeedback({ msg: 'Perfect!', good: true });
+        setFeedback({ msg: lang === 'tr' ? 'Mükemmel! 🌟' : 'Perfect! 🌟', good: true });
       } else {
-        setFeedback({ msg: 'Good try!', good: false });
+        // Montessori: no "wrong" — gentle encouragement
+        setFeedback({ msg: lang === 'tr' ? 'Tekrar dene! 🎤' : 'Try again! 🎤', good: true });
       }
     };
 
     recognition.onerror = () => {
       setListening(false);
-      setFeedback({ msg: 'Great effort!', good: true });
+      setFeedback({ msg: lang === 'tr' ? 'Harika çaba!' : 'Great effort!', good: true });
     };
 
     recognition.start();
-  }, [currentWord.word]);
+  }, [currentWord.word, lang]);
 
   const stopListening = useCallback(() => {
     recognitionRef.current?.stop();
     setListening(false);
+  }, []);
+
+  // Montessori: Try Again — doesn't count as wrong, just resets feedback
+  const handleTryAgain = useCallback(() => {
+    setFeedback(null);
   }, []);
 
   const handleNext = useCallback(() => {
@@ -555,7 +671,7 @@ function PhaseSpeak({
         <span className="dl-card__tr">{currentWord.turkish}</span>
 
         <button
-          className="dl-btn dl-btn--secondary"
+          className="dl-btn dl-btn--ghost"
           onClick={speakCurrent}
           style={{ minHeight: 44, padding: '0 20px', fontSize: 14 }}
         >
@@ -578,10 +694,22 @@ function PhaseSpeak({
 
         {feedback && (
           <span
-            className={`dl-speak-feedback ${feedback.good ? 'dl-speak-feedback--good' : 'dl-speak-feedback--meh'}`}
+            className={`dl-speak-feedback ${feedback.good ? 'dl-speak-feedback--good' : 'dl-speak-feedback--good'}`}
           >
             {feedback.msg}
           </span>
+        )}
+
+        {/* Montessori: Try Again without penalty */}
+        {feedback && (
+          <button
+            className="dl-btn dl-btn--ghost"
+            onClick={handleTryAgain}
+            style={{ fontSize: 13, minHeight: 36 }}
+          >
+            <RotateCcw size={14} />
+            {lang === 'tr' ? 'Tekrar Dene' : 'Try Again'}
+          </button>
         )}
       </div>
 
@@ -605,17 +733,16 @@ function PhaseSpeak({
 // ─── Phase 5: REVIEW ──────────────────────────────────────────────────────────
 
 interface ReviewQuestion {
-  prompt: string;                        // the question text
-  promptWord: string;                    // the highlighted word shown to the kid
-  choices: string[];                     // answer options
-  correct: string;                       // correct answer
+  prompt: string;
+  promptWord: string;
+  choices: string[];
+  correct: string;
   questionType: 'en-to-tr' | 'tr-to-en';
 }
 
 function buildReviewQuestions(allWords: KidsWord[]): ReviewQuestion[] {
   return allWords.map((word, i) => {
     if (i % 2 === 0) {
-      // Type A: Show English word → kid picks Turkish meaning
       const correct = word.turkish;
       const distractors = allWords
         .filter((w) => w.turkish !== correct)
@@ -630,7 +757,6 @@ function buildReviewQuestions(allWords: KidsWord[]): ReviewQuestion[] {
         questionType: 'en-to-tr' as const,
       };
     } else {
-      // Type B: Show Turkish meaning → kid picks English word
       const correct = word.word.toUpperCase();
       const distractors = allWords
         .filter((w) => w.word !== word.word)
@@ -651,18 +777,22 @@ function buildReviewQuestions(allWords: KidsWord[]): ReviewQuestion[] {
 function PhaseReview({
   newWords,
   reviewWords,
+  lang,
   onComplete,
 }: {
   newWords: KidsWord[];
   reviewWords: KidsWord[];
+  lang: string;
   onComplete: (score: number) => void;
 }) {
   const allWords = [...newWords, ...reviewWords].slice(0, 8);
-  const [questions] = useState(() => buildReviewQuestions(allWords));
+  const [questions, setQuestions] = useState(() => buildReviewQuestions(allWords));
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
   const [score, setScore] = useState(0);
+  const [allReviewDone, setAllReviewDone] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState<{ msg: string; sad?: boolean } | null>(null);
 
   const q = questions[qIndex];
@@ -676,26 +806,64 @@ function PhaseReview({
       if (choice === q.correct) {
         SFX.correct();
         setScore((s) => s + 1);
-        setShowFeedback({ msg: 'Correct!' });
+        setShowFeedback({ msg: lang === 'tr' ? 'Doğru! ✨' : 'Correct! ✨' });
       } else {
         SFX.wrong();
-        setShowFeedback({ msg: `The answer is "${q.correct}"`, sad: true });
+        // Montessori: self-correcting — show correct answer, no "wrong" label
+        setShowFeedback({
+          msg: lang === 'tr'
+            ? `Neredeyse! Doğrusu: "${q.correct}"`
+            : `Almost! Here it is: "${q.correct}"`,
+          sad: true,
+        });
       }
 
       setTimeout(() => {
         setShowFeedback(null);
         if (qIndex >= questions.length - 1) {
           const pct = Math.round(((score + (choice === q.correct ? 1 : 0)) / questions.length) * 100);
-          onComplete(pct);
+          setFinalScore(pct);
+          setAllReviewDone(true);
         } else {
           setQIndex((i) => i + 1);
           setSelected(null);
           setAnswered(false);
         }
-      }, 1100);
+      }, 1300);
     },
-    [answered, q, qIndex, questions.length, score, onComplete]
+    [answered, q, qIndex, questions.length, score, lang]
   );
+
+  const handlePracticeMore = useCallback(() => {
+    setQuestions(buildReviewQuestions(allWords));
+    setQIndex(0);
+    setSelected(null);
+    setAnswered(false);
+    setScore(0);
+    setAllReviewDone(false);
+    setFinalScore(0);
+  }, [allWords]);
+
+  if (allReviewDone) {
+    return (
+      <div className="dl-phase-complete">
+        <div className="dl-phase-complete__icon">🧠</div>
+        <p className="dl-phase-complete__msg">
+          {lang === 'tr' ? `${finalScore}% doğru!` : `${finalScore}% correct!`}
+        </p>
+        <div className="dl-nav" style={{ flexDirection: 'column', gap: 10 }}>
+          {/* Montessori: Practice More for repetition freedom */}
+          <button className="dl-btn dl-btn--ghost" onClick={handlePracticeMore}>
+            <RotateCcw size={18} />
+            {lang === 'tr' ? 'Daha Fazla Pratik' : 'Practice More'}
+          </button>
+          <button className="dl-btn dl-btn--primary" onClick={() => onComplete(finalScore)}>
+            {lang === 'tr' ? 'Devam Et' : 'Continue'} <ChevronRight size={20} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const progress = Math.round((qIndex / questions.length) * 100);
 
@@ -723,7 +891,8 @@ function PhaseReview({
           let cls = 'dl-choice-btn';
           if (answered) {
             if (choice === q.correct) cls += ' dl-choice-btn--correct';
-            else if (choice === selected) cls += ' dl-choice-btn--wrong';
+            // Montessori: wrong choice → "reveal" class (not "wrong"), correct one shown green
+            else if (choice === selected) cls += ' dl-choice-btn--reveal';
             else cls += ' dl-choice-btn--disabled';
           }
           return (
@@ -772,7 +941,6 @@ function CelebrationScreen({
 }) {
   const title = score >= 80 ? 'Amazing work!' : score >= 60 ? 'Well done!' : 'Great effort!';
 
-  // Play celebration sound once
   useEffect(() => {
     SFX.celebration();
   }, []);
@@ -797,7 +965,6 @@ function CelebrationScreen({
         </div>
       </div>
 
-      {/* Words learned today */}
       {wordList.length > 0 && (
         <div className="dl-celebration__wordlist">
           <p className="dl-celebration__wordlist-label">You learned today:</p>
@@ -817,7 +984,6 @@ function CelebrationScreen({
         </div>
       )}
 
-      {/* Parent share nudge */}
       <div className="dl-celebration__parent-share">
         <span>Show mom &amp; dad what you learned today!</span>
       </div>
@@ -899,7 +1065,6 @@ const STORY_TEMPLATES: Array<{ en: string; tr: string }> = [
 function generateMiniStory(words: KidsWord[]): MiniStory {
   const template = STORY_TEMPLATES[Math.floor(Math.random() * STORY_TEMPLATES.length)];
 
-  // Build English and Turkish text by substituting word slots
   let enText = template.en;
   let trText = template.tr;
   words.forEach((w, i) => {
@@ -909,13 +1074,11 @@ function generateMiniStory(words: KidsWord[]): MiniStory {
 
   const wordList = words.map((w) => w.word);
 
-  // Split English text into sentences, then parse each into highlight parts
   const rawSentences = enText.split(/(?<=[.!?])\s+/).filter((s) => s.trim());
   const sentences: StorySentence[] = rawSentences.map((sentence) => {
     const parts: StoryPart[] = [];
     let remaining = sentence;
 
-    // Greedy left-to-right match for word highlights
     while (remaining.length > 0) {
       let matched = false;
       for (const w of wordList) {
@@ -926,7 +1089,6 @@ function generateMiniStory(words: KidsWord[]): MiniStory {
           matched = true;
           break;
         } else if (idx > 0) {
-          // Find the earliest match
           const earliestIdx = wordList.reduce<number>((best, ww) => {
             const i = remaining.toLowerCase().indexOf(ww.toLowerCase());
             return i !== -1 && i < best ? i : best;
@@ -1026,58 +1188,94 @@ export default function DailyLesson() {
 
   const userId = user?.uid || 'guest';
 
-  // Load lesson plan once
   const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId));
 
-  // Phase state (1-6) + sub-step within phase
+  // Current active phase
   const [phase, setPhase] = useState(1);
+
+  // Montessori: track which phases have been completed at least once
+  const [completedPhases, setCompletedPhases] = useState<Set<number>>(new Set());
+
+  // Sub-step indices within phases
   const [listenIndex, setListenIndex] = useState(0);
   const [seeIndex, setSeeIndex] = useState(0);
+
+  // Celebration state
   const [celebrated, setCelebrated] = useState(false);
 
   // Accumulated scores per phase
   const scoresRef = useRef<Record<number, number>>({ 3: 0, 4: 0, 5: 0 });
 
-  // ── Navigation helpers ──────────────────────────────────────────────────────
+  const PHASES = lang === 'tr' ? PHASES_TR : PHASES_EN;
 
-  const advancePhase = useCallback(() => {
-    setPhase((p) => Math.min(p + 1, TOTAL_PHASES));
+  // ── Montessori: mark a phase as completed ──────────────────────────────────
+
+  const markPhaseComplete = useCallback((phaseId: number) => {
+    setCompletedPhases((prev) => {
+      const next = new Set(prev);
+      next.add(phaseId);
+      return next;
+    });
   }, []);
 
-  // Phase 1 next
+  // ── Navigation: select a phase from nav bar ────────────────────────────────
+
+  const handleSelectPhase = useCallback((phaseId: number) => {
+    // Reset sub-indices when jumping to a phase
+    if (phaseId === 1) setListenIndex(0);
+    if (phaseId === 2) setSeeIndex(0);
+    setPhase(phaseId);
+  }, []);
+
+  // ── Phase 1: LISTEN ────────────────────────────────────────────────────────
+
   const handleListenNext = useCallback(() => {
     if (listenIndex < plan.newWords.length - 1) {
       setListenIndex((i) => i + 1);
     } else {
-      advancePhase();
+      // Phase 1 complete — unlock all other phases
+      markPhaseComplete(1);
+      setPhase(2); // natural progression by default
     }
-  }, [listenIndex, plan.newWords.length, advancePhase]);
+  }, [listenIndex, plan.newWords.length, markPhaseComplete]);
 
-  // Phase 2 nav
+  // ── Phase 2: SEE ───────────────────────────────────────────────────────────
+
   const handleSeeNext = useCallback(() => {
     if (seeIndex < plan.newWords.length - 1) {
       setSeeIndex((i) => i + 1);
     } else {
-      advancePhase();
+      markPhaseComplete(2);
+      setPhase(3);
     }
-  }, [seeIndex, plan.newWords.length, advancePhase]);
+  }, [seeIndex, plan.newWords.length, markPhaseComplete]);
 
   const handleSeePrev = useCallback(() => {
     setSeeIndex((i) => Math.max(0, i - 1));
   }, []);
 
-  // Phase 3/4/5 complete
+  // ── Phase 3/4/5 complete callbacks ────────────────────────────────────────
+
   const handlePhaseComplete = useCallback(
     (phaseNum: number) => (score: number) => {
       scoresRef.current[phaseNum] = score;
-      advancePhase();
+      markPhaseComplete(phaseNum);
+      // Natural progression
+      setPhase(phaseNum + 1);
     },
-    [advancePhase]
+    [markPhaseComplete]
   );
 
-  // Final completion — triggers after Story phase (phase 6) completes
+  // ── Phase 6 (Story) complete ──────────────────────────────────────────────
+
+  const handleStoryComplete = useCallback(() => {
+    markPhaseComplete(6);
+  }, [markPhaseComplete]);
+
+  // ── Check if ALL 6 phases done → celebration ──────────────────────────────
+
   useEffect(() => {
-    if (phase > TOTAL_PHASES && !celebrated) {
+    if (completedPhases.size === TOTAL_PHASES && !celebrated) {
       setCelebrated(true);
 
       const avgScore = Math.round(
@@ -1086,25 +1284,18 @@ export default function DailyLesson() {
 
       completeDailyLesson(userId, plan, avgScore);
 
-      // Award XP: base 50 + up to 50 bonus for score
       const xpEarned = 50 + Math.round((avgScore / 100) * 50);
       addXP(xpEarned, 'daily_lesson_complete').catch(() => {});
       trackActivity('daily_lesson', { score: avgScore, words: plan.newWords.length }).catch(() => {});
     }
-  }, [phase, celebrated, userId, plan, addXP, trackActivity]);
+  }, [completedPhases, celebrated, userId, plan, addXP, trackActivity]);
 
-  const PHASES = lang === 'tr' ? PHASES_TR : PHASES_EN;
   const currentPhaseInfo = PHASES[Math.min(phase, TOTAL_PHASES) - 1];
 
-  // ── Keyboard shortcuts ────────────────────────────────────────────────────
-  // Space/Enter: advance card or next phase (when applicable)
-  // Escape: close lesson (go to dashboard)
-  // ArrowRight: next card in phase 1 (listen) or phase 2 (see)
-  // ArrowLeft: prev card in phase 2 (see)
+  // ── Keyboard shortcuts ─────────────────────────────────────────────────────
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if focus is in an input/textarea
       const tag = (e.target as HTMLElement).tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
@@ -1137,7 +1328,7 @@ export default function DailyLesson() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
-  if (phase > TOTAL_PHASES && celebrated) {
+  if (celebrated) {
     const avgScore = Math.round(
       (scoresRef.current[3] + scoresRef.current[4] + scoresRef.current[5]) / 3
     );
@@ -1153,7 +1344,7 @@ export default function DailyLesson() {
     );
   }
 
-  // Suppress unused translation warning — kept for future use
+  // Suppress unused translation warning
   void t;
 
   return (
@@ -1168,10 +1359,18 @@ export default function DailyLesson() {
           <X size={20} />
         </button>
 
-        <PhaseDots current={phase} total={TOTAL_PHASES} />
+        <PhaseDots current={phase} total={TOTAL_PHASES} completedPhases={completedPhases} />
 
         <span className="dl-phase-label">{phase}/{TOTAL_PHASES}</span>
       </div>
+
+      {/* ── Montessori Nav Bar (appears after Phase 1 is done) ── */}
+      <MontessoriNav
+        phases={PHASES}
+        currentPhase={phase}
+        completedPhases={completedPhases}
+        onSelectPhase={handleSelectPhase}
+      />
 
       {/* ── Phase title ── */}
       <div className="dl-content">
@@ -1209,6 +1408,7 @@ export default function DailyLesson() {
         {phase === 3 && (
           <PhasePlay
             words={plan.newWords}
+            lang={lang}
             onComplete={handlePhaseComplete(3)}
           />
         )}
@@ -1227,6 +1427,7 @@ export default function DailyLesson() {
           <PhaseReview
             newWords={plan.newWords}
             reviewWords={plan.reviewWords}
+            lang={lang}
             onComplete={handlePhaseComplete(5)}
           />
         )}
@@ -1236,7 +1437,7 @@ export default function DailyLesson() {
           <PhaseStory
             words={plan.newWords}
             lang={lang}
-            onComplete={advancePhase}
+            onComplete={handleStoryComplete}
           />
         )}
       </div>
