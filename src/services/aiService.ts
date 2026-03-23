@@ -52,11 +52,15 @@ export const sendMessageToAI = async (messages: ChatMessage[]): Promise<string> 
 
         // Call backend proxy
         const token = await auth.currentUser?.getIdToken().catch(() => null);
+        const csrfToken = typeof document !== 'undefined'
+            ? document.cookie.match(/csrf_token=([^;]+)/)?.[1] || ''
+            : '';
         const response = await fetch(`${BACKEND_URL}/api/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
             },
             body: JSON.stringify({
                 messages: apiMessages

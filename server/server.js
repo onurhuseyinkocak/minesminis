@@ -897,7 +897,7 @@ Sitemap: ${siteBase}/sitemap.xml`;
   res.send(txt);
 });
 
-app.post('/api/seo/apply', security.rateLimiter({ maxRequests: 20, windowMs: 60000, keyPrefix: 'seo-apply' }), async (req, res) => {
+app.post('/api/seo/apply', requireAdminAuth, security.rateLimiter({ maxRequests: 20, windowMs: 60000, keyPrefix: 'seo-apply' }), async (req, res) => {
   try {
     const base = req.headers.origin || `${req.protocol}://${req.get('host')}`;
     const siteBase = base.replace(/\/$/, '');

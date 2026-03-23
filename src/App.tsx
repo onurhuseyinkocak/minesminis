@@ -332,6 +332,7 @@ function AppRoutes() {
   return (
     <>
       <ScrollToTop />
+      <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>
         <div key={location.pathname} className="route-fade">
           <Routes>
@@ -412,6 +413,7 @@ function AppRoutes() {
           </Routes>
         </div>
       </Suspense>
+      </ErrorBoundary>
     </>
   );
 }
