@@ -23,6 +23,7 @@ import { SFX } from '../data/soundLibrary';
 import {
   getTodayLesson,
   completeDailyLesson,
+  getTodayPhonicsSound,
   type DailyLessonPlan,
 } from '../services/dailyLessonService';
 import type { KidsWord } from '../data/wordsData';
@@ -30,20 +31,25 @@ import './DailyLesson.css';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
+// Subtitles follow Montessori Three-Period Lesson naming:
+// Period 1 (Listen): "This is..." — teacher names
+// Period 2 (Play): "Show me..." — child identifies
+// Period 3 (Speak): "What is this?" — child recalls
+
 const PHASES_EN = [
-  { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'Tap a card to hear it', icon: '👂' },
-  { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See each word in context', icon: '👀' },
-  { id: 3, key: 'play',   title: "Let's Play!",    subtitle: 'Match words to meanings', icon: '🎮' },
-  { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'Press mic and say the word', icon: '🎤' },
+  { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'This is SAT. This is SIT. Tap to hear!', icon: '👂' },
+  { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See each word in a sentence', icon: '👀' },
+  { id: 3, key: 'play',   title: "Let's Play!",    subtitle: 'Show me which one is SAT', icon: '🎮' },
+  { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'What is this word? Say it!', icon: '🎤' },
   { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned', icon: '🧠' },
   { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story', icon: '📖' },
 ];
 
 const PHASES_TR = [
-  { id: 1, key: 'listen', title: 'Yeni Kelimeler!',    subtitle: 'Duymak için karta dokun', icon: '👂' },
-  { id: 2, key: 'see',    title: 'İzle ve Öğren!',     subtitle: 'Her kelimeyi bağlamda gör', icon: '👀' },
-  { id: 3, key: 'play',   title: 'Hadi Oynayalım!',    subtitle: 'Kelimeleri eşleştir', icon: '🎮' },
-  { id: 4, key: 'speak',  title: 'Söyle!',             subtitle: 'Mikrofona bas ve söyle', icon: '🎤' },
+  { id: 1, key: 'listen', title: 'Yeni Kelimeler!',    subtitle: 'Bu SAT. Bu SIT. Duymak için dokun!', icon: '👂' },
+  { id: 2, key: 'see',    title: 'İzle ve Öğren!',     subtitle: 'Her kelimeyi cümlede gör', icon: '👀' },
+  { id: 3, key: 'play',   title: 'Hadi Oynayalım!',    subtitle: 'Hangisi SAT? Göster bana!', icon: '🎮' },
+  { id: 4, key: 'speak',  title: 'Söyle!',             subtitle: 'Bu kelime ne? Söyle!', icon: '🎤' },
   { id: 5, key: 'review', title: 'Hatırlıyor musun?',  subtitle: 'Öğrendiklerini test et', icon: '🧠' },
   { id: 6, key: 'story',  title: 'Mini Hikaye!',       subtitle: 'Kelimeleri hikayede gör', icon: '📖' },
 ];
@@ -168,14 +174,31 @@ function MontessoriNav({
   phases,
   currentPhase,
   completedPhases,
+  phaseProgress,
+  wordCount,
   onSelectPhase,
 }: {
   phases: PhaseInfo[];
   currentPhase: number;
   completedPhases: Set<number>;
+  phaseProgress: Record<number, number>;
+  wordCount: number;
   onSelectPhase: (id: number) => void;
 }) {
   const unlocked = completedPhases.has(1);
+
+  function getProgressLabel(phaseId: number): string | null {
+    const p = phaseProgress[phaseId] ?? 0;
+    if (completedPhases.has(phaseId)) {
+      if (phaseId === 5) return `${p}%`;
+      return 'Done';
+    }
+    if (phaseId === 1 || phaseId === 2 || phaseId === 4) {
+      if (p === 0) return null;
+      return `${Math.min(p, wordCount)}/${wordCount}`;
+    }
+    return null;
+  }
 
   return (
     <div className="dl-montessori-nav" role="navigation" aria-label="Lesson phases">
@@ -183,6 +206,7 @@ function MontessoriNav({
         const isActive = currentPhase === p.id;
         const isDone = completedPhases.has(p.id);
         const isLocked = p.id !== 1 && !unlocked;
+        const progressLabel = getProgressLabel(p.id);
 
         let cls = 'dl-phase-btn';
         if (isActive) cls += ' dl-phase-btn--active';
@@ -200,6 +224,9 @@ function MontessoriNav({
           >
             <span className="dl-phase-btn__icon">{p.icon}</span>
             <span className="dl-phase-btn__label">{p.title}</span>
+            {progressLabel && (
+              <span className="dl-phase-btn__progress">{progressLabel}</span>
+            )}
             {isDone && <Check size={12} className="dl-phase-btn__check" />}
             {isLocked && <span className="dl-phase-btn__lock">🔒</span>}
           </button>
@@ -447,7 +474,7 @@ function PhasePlay({
         )
       );
       setMatchedCount((c) => c + 1);
-      showFeedbackMsg(lang === 'tr' ? 'Harika eşleşme! ✨' : 'Great match! ✨');
+      showFeedbackMsg(lang === 'tr' ? 'Harika eşleşme! ✨' : 'Great match! ✨');  // i18n: Great match!
     } else {
       // Montessori self-correcting: show the correct Turkish tile gently
       SFX.wrong();
@@ -455,7 +482,7 @@ function PhasePlay({
       const correctTrId = `tr-${selectedEn.wordIndex}`;
       setRevealCorrect(correctTrId);
       showFeedbackMsg(
-        lang === 'tr' ? 'Neredeyse! Bak — bu doğru olan:' : 'Almost! Look — it\'s this one:',
+        lang === 'tr' ? 'Neredeyse! İşte doğrusu:' : 'Almost! Here it is:',
         true
       );
       setTimeout(() => setRevealCorrect(null), 1200);
@@ -589,7 +616,7 @@ function PhaseSpeak({
   const startListening = useCallback(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
-      setFeedback({ msg: lang === 'tr' ? 'Harika çaba!' : 'Great effort!', good: true });
+      setFeedback({ msg: lang === 'tr' ? 'İyi deneme!' : 'Good try!', good: true });
       return;
     }
 
@@ -620,13 +647,13 @@ function PhaseSpeak({
         setFeedback({ msg: lang === 'tr' ? 'Mükemmel! 🌟' : 'Perfect! 🌟', good: true });
       } else {
         // Montessori: no "wrong" — gentle encouragement
-        setFeedback({ msg: lang === 'tr' ? 'Tekrar dene! 🎤' : 'Try again! 🎤', good: true });
+        setFeedback({ msg: lang === 'tr' ? 'İyi deneme! 🎤' : 'Good try! 🎤', good: true });
       }
     };
 
     recognition.onerror = () => {
       setListening(false);
-      setFeedback({ msg: lang === 'tr' ? 'Harika çaba!' : 'Great effort!', good: true });
+      setFeedback({ msg: lang === 'tr' ? 'İyi deneme!' : 'Good try!', good: true });
     };
 
     recognition.start();
@@ -740,7 +767,7 @@ interface ReviewQuestion {
   questionType: 'en-to-tr' | 'tr-to-en';
 }
 
-function buildReviewQuestions(allWords: KidsWord[]): ReviewQuestion[] {
+function buildReviewQuestions(allWords: KidsWord[], lang: string): ReviewQuestion[] {
   return allWords.map((word, i) => {
     if (i % 2 === 0) {
       const correct = word.turkish;
@@ -750,7 +777,7 @@ function buildReviewQuestions(allWords: KidsWord[]): ReviewQuestion[] {
         .slice(0, REVIEW_CHOICES - 1)
         .map((w) => w.turkish);
       return {
-        prompt: 'What does this mean?',
+        prompt: lang === 'tr' ? 'Bu ne demek?' : 'What does this mean?',
         promptWord: word.word.toUpperCase(),
         choices: [...distractors, correct].sort(() => Math.random() - 0.5),
         correct,
@@ -764,7 +791,7 @@ function buildReviewQuestions(allWords: KidsWord[]): ReviewQuestion[] {
         .slice(0, REVIEW_CHOICES - 1)
         .map((w) => w.word.toUpperCase());
       return {
-        prompt: 'Which English word means:',
+        prompt: lang === 'tr' ? 'Hangi İngilizce kelime şu anlama gelir:' : 'Which English word means:',
         promptWord: word.turkish,
         choices: [...distractors, correct].sort(() => Math.random() - 0.5),
         correct,
@@ -786,7 +813,7 @@ function PhaseReview({
   onComplete: (score: number) => void;
 }) {
   const allWords = [...newWords, ...reviewWords].slice(0, 8);
-  const [questions, setQuestions] = useState(() => buildReviewQuestions(allWords));
+  const [questions, setQuestions] = useState(() => buildReviewQuestions(allWords, lang));
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -812,7 +839,7 @@ function PhaseReview({
         // Montessori: self-correcting — show correct answer, no "wrong" label
         setShowFeedback({
           msg: lang === 'tr'
-            ? `Neredeyse! Doğrusu: "${q.correct}"`
+            ? `Neredeyse! İşte doğrusu: "${q.correct}"`
             : `Almost! Here it is: "${q.correct}"`,
           sad: true,
         });
@@ -835,14 +862,14 @@ function PhaseReview({
   );
 
   const handlePracticeMore = useCallback(() => {
-    setQuestions(buildReviewQuestions(allWords));
+    setQuestions(buildReviewQuestions(allWords, lang));
     setQIndex(0);
     setSelected(null);
     setAnswered(false);
     setScore(0);
     setAllReviewDone(false);
     setFinalScore(0);
-  }, [allWords]);
+  }, [allWords, lang]);
 
   if (allReviewDone) {
     return (
@@ -867,6 +894,11 @@ function PhaseReview({
 
   const progress = Math.round((qIndex / questions.length) * 100);
 
+  // Speak the prompt word in Review — phonics: hear the word, not just read it
+  const handleHearPrompt = useCallback(() => {
+    speak(q.promptWord).catch(() => {});
+  }, [q.promptWord]);
+
   return (
     <>
       <div className="dl-progress-bar">
@@ -876,9 +908,23 @@ function PhaseReview({
       <p className="dl-review-question">
         {q.prompt}
       </p>
-      <p className="dl-review-prompt-word">
-        {q.promptWord}
-      </p>
+
+      {/* Prompt word with speaker button — Tekrar Dinle / Hear Again */}
+      <div className="dl-review-prompt-row">
+        <p className="dl-review-prompt-word">
+          {q.promptWord}
+        </p>
+        {q.questionType === 'en-to-tr' && (
+          <button
+            className="dl-btn--icon"
+            onClick={handleHearPrompt}
+            aria-label={lang === 'tr' ? 'Tekrar Dinle' : 'Hear Again'}
+            title={lang === 'tr' ? 'Tekrar Dinle' : 'Hear Again'}
+          >
+            <Volume2 size={20} />
+          </button>
+        )}
+      </div>
 
       <div className="dl-score-strip">
         <div className="dl-score-chip">
@@ -1190,6 +1236,9 @@ export default function DailyLesson() {
 
   const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId));
 
+  // Phonics: Sound of the Day
+  const [todaySound] = useState(() => getTodayPhonicsSound(userId));
+
   // Current active phase
   const [phase, setPhase] = useState(1);
 
@@ -1199,6 +1248,12 @@ export default function DailyLesson() {
   // Sub-step indices within phases
   const [listenIndex, setListenIndex] = useState(0);
   const [seeIndex, setSeeIndex] = useState(0);
+
+  // Phase progress tracking (for MontessoriNav mini-progress display)
+  // Keys: 1=listen cards seen, 2=see cards read, 3=play done, 4=speak done, 5=review score, 6=story done
+  const [phaseProgress, setPhaseProgress] = useState<Record<number, number>>({
+    1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+  });
 
   // Celebration state
   const [celebrated, setCelebrated] = useState(false);
@@ -1230,8 +1285,10 @@ export default function DailyLesson() {
   // ── Phase 1: LISTEN ────────────────────────────────────────────────────────
 
   const handleListenNext = useCallback(() => {
+    const nextIndex = listenIndex + 1;
+    setPhaseProgress((prev) => ({ ...prev, 1: nextIndex }));
     if (listenIndex < plan.newWords.length - 1) {
-      setListenIndex((i) => i + 1);
+      setListenIndex(nextIndex);
     } else {
       // Phase 1 complete — unlock all other phases
       markPhaseComplete(1);
@@ -1242,8 +1299,10 @@ export default function DailyLesson() {
   // ── Phase 2: SEE ───────────────────────────────────────────────────────────
 
   const handleSeeNext = useCallback(() => {
+    const nextIndex = seeIndex + 1;
+    setPhaseProgress((prev) => ({ ...prev, 2: nextIndex }));
     if (seeIndex < plan.newWords.length - 1) {
-      setSeeIndex((i) => i + 1);
+      setSeeIndex(nextIndex);
     } else {
       markPhaseComplete(2);
       setPhase(3);
@@ -1260,6 +1319,8 @@ export default function DailyLesson() {
     (phaseNum: number) => (score: number) => {
       scoresRef.current[phaseNum] = score;
       markPhaseComplete(phaseNum);
+      // Store score as progress (phases 3=100 done, 4=100 done, 5=score%)
+      setPhaseProgress((prev) => ({ ...prev, [phaseNum]: score }));
       // Natural progression
       setPhase(phaseNum + 1);
     },
@@ -1270,6 +1331,7 @@ export default function DailyLesson() {
 
   const handleStoryComplete = useCallback(() => {
     markPhaseComplete(6);
+    setPhaseProgress((prev) => ({ ...prev, 6: 100 }));
   }, [markPhaseComplete]);
 
   // ── Check if ALL 6 phases done → celebration ──────────────────────────────
@@ -1369,6 +1431,8 @@ export default function DailyLesson() {
         phases={PHASES}
         currentPhase={phase}
         completedPhases={completedPhases}
+        phaseProgress={phaseProgress}
+        wordCount={plan.newWords.length}
         onSelectPhase={handleSelectPhase}
       />
 
@@ -1382,6 +1446,22 @@ export default function DailyLesson() {
         </div>
 
         {/* ── Phase 1: LISTEN ── */}
+        {phase === 1 && listenIndex === 0 && todaySound && (
+          <div className="dl-phonics-card">
+            <div className="dl-phonics-card__sound">{todaySound.grapheme}</div>
+            <div className="dl-phonics-card__phoneme">{todaySound.phoneme}</div>
+            <div className="dl-phonics-card__keyword">{todaySound.emoji} {todaySound.keyword}</div>
+            <button
+              className="dl-btn dl-btn--ghost"
+              onClick={() => speak(todaySound.grapheme).catch(() => {})}
+              style={{ minHeight: 40, fontSize: 14 }}
+            >
+              <Volume2 size={16} />
+              {lang === 'tr' ? 'Sesi duy' : 'Hear the sound'}
+            </button>
+          </div>
+        )}
+
         {phase === 1 && (
           <PhaseListenStep
             word={plan.newWords[listenIndex]}

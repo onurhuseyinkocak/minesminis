@@ -8,6 +8,7 @@
 
 import { kidsWords, type KidsWord } from '../data/wordsData';
 import { getDueWords, updateWordProgress, loadAllProgress } from '../data/spacedRepetition';
+import { ALL_SOUNDS } from '../data/phonics';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -186,6 +187,36 @@ export function completeDailyLesson(
   // Also register new words in spaced-repetition engine so they appear for future reviews
   plan.newWords.forEach((w) => updateWordProgress(w.word.toLowerCase(), true));
 }
+
+// ─── Phonics: next unmastered sound ──────────────────────────────────────────
+
+/**
+ * Returns the next phonics sound the user has not yet mastered.
+ * Mastered sounds are stored in localStorage as an array of grapheme strings.
+ * Returns null if all 42 sounds are mastered.
+ */
+export function getTodayPhonicsSound(
+  userId: string,
+): { grapheme: string; phoneme: string; keyword: string; emoji: string } | null {
+  let mastered: string[] = [];
+  try {
+    mastered = JSON.parse(
+      localStorage.getItem(`mm_mastered_sounds_${userId}`) || '[]',
+    ) as string[];
+  } catch {
+    mastered = [];
+  }
+  const next = ALL_SOUNDS.find((s) => !mastered.includes(s.grapheme));
+  if (!next) return null;
+  return {
+    grapheme: next.grapheme,
+    phoneme: next.ipa,
+    keyword: next.keywords?.[0] ?? '',
+    emoji: next.mnemonicEmoji ?? '',
+  };
+}
+
+// ─── Total learned count ──────────────────────────────────────────────────────
 
 /**
  * How many words has this user learned in total?
