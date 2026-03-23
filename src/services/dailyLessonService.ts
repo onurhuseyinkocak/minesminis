@@ -10,6 +10,10 @@ import { kidsWords, type KidsWord } from '../data/wordsData';
 import { getDueWords, updateWordProgress, loadAllProgress } from '../data/spacedRepetition';
 import { ALL_SOUNDS } from '../data/phonics';
 
+function localDateStr(d: Date = new Date()): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type { KidsWord };
@@ -235,7 +239,7 @@ export function getAdaptiveWordCount(userId: string): number {
   for (let i = 1; i <= 3; i++) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const key = dailyKey(userId, d.toISOString().split('T')[0]);
+    const key = dailyKey(userId, localDateStr(d));
     const saved = localStorage.getItem(key);
     if (saved) {
       try {
@@ -260,7 +264,7 @@ export function getAdaptiveWordCount(userId: string): number {
 // ─── Core plan builder ────────────────────────────────────────────────────────
 
 export function getTodayLesson(userId: string): DailyLessonPlan {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
 
   // Return saved plan if already built today
   try {
@@ -318,7 +322,7 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
 }
 
 export function isDailyLessonCompletedToday(userId: string): boolean {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
   try {
     const saved = localStorage.getItem(dailyKey(userId, today));
     if (!saved) return false;
@@ -389,7 +393,7 @@ export function getTodayPhonicsSound(
 export function getYesterdayWords(userId: string): KidsWord[] {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-  const key = `mm_daily_${userId}_${yesterday.toISOString().split('T')[0]}`;
+  const key = `mm_daily_${userId}_${localDateStr(yesterday)}`;
   try {
     const saved = localStorage.getItem(key);
     if (!saved) return [];

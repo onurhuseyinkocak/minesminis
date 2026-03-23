@@ -71,20 +71,38 @@ const showBadgeCelebration = (badge: Badge) => {
     // Create celebration overlay
     const overlay = document.createElement('div');
     overlay.className = 'badge-celebration-overlay';
-    overlay.innerHTML = `
-    <div class="badge-celebration">
-      <div class="badge-icon-large">${badge.icon}</div>
-      <h2>🎉 New Badge Earned! 🎉</h2>
-      <h3>${badge.name}</h3>
-      <p>${badge.description}</p>
-      <button class="celebration-close">Awesome!</button>
-    </div>
-  `;
+
+    const celebration = document.createElement('div');
+    celebration.className = 'badge-celebration';
+
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'badge-icon-large';
+    iconDiv.textContent = badge.icon;
+
+    const h2 = document.createElement('h2');
+    h2.textContent = '\uD83C\uDF89 New Badge Earned! \uD83C\uDF89';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = badge.name;
+
+    const p = document.createElement('p');
+    p.textContent = badge.description;
+
+    const btn = document.createElement('button');
+    btn.className = 'celebration-close';
+    btn.textContent = 'Awesome!';
+
+    celebration.appendChild(iconDiv);
+    celebration.appendChild(h2);
+    celebration.appendChild(h3);
+    celebration.appendChild(p);
+    celebration.appendChild(btn);
+    overlay.appendChild(celebration);
 
     document.body.appendChild(overlay);
 
     // Add click handler
-    overlay.querySelector('.celebration-close')?.addEventListener('click', () => {
+    btn.addEventListener('click', () => {
         overlay.remove();
     });
 

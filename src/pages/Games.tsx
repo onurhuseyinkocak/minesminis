@@ -52,6 +52,9 @@ const INTERNAL_GAMES: InternalGame[] = [
   { id: 'pronunciation', type: 'pronunciation', icon: <Mic size={28} />, title: 'Say It!', subtitle: 'Practice speaking!', color: 'var(--accent-indigo)', difficulty: 1 },
   { id: 'blending', type: 'blending', icon: <Blocks size={28} />, title: 'Word Builder', subtitle: 'Build words from sounds!', color: 'var(--success)', difficulty: 2 },
   { id: 'segmenting', type: 'segmenting', icon: <Scissors size={28} />, title: 'Sound Splitter', subtitle: 'Break words into sounds!', color: 'var(--secondary-light, #2A9D8F)', difficulty: 3 },
+  { id: 'listening-challenge', type: 'listening-challenge', icon: <Headphones size={28} />, title: 'Listening Challenge', subtitle: 'Listen and choose the right word!', color: 'var(--accent-amber)', difficulty: 2 },
+  { id: 'sentence-scramble', type: 'sentence-scramble', icon: <Puzzle size={28} />, title: 'Sentence Scramble', subtitle: 'Put the words in order!', color: 'var(--accent-indigo)', difficulty: 3 },
+  { id: 'story-choices', type: 'story-choices', icon: <BookOpen size={28} />, title: 'Story Choices', subtitle: 'Choose your own adventure!', color: 'var(--success)', difficulty: 2 },
 ];
 
 function getGameWords() {
@@ -83,6 +86,7 @@ function getGameWords() {
 
 function Games() {
   const [games, setGames] = useState<Game[]>([]);
+  const [gamesLoading, setGamesLoading] = useState(true);
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<GameCategory>('all');
   const [playingInternal, setPlayingInternal] = useState<InternalGame | null>(null);
@@ -95,6 +99,7 @@ function Games() {
   }, [user]);
 
   const fetchGames = async () => {
+    setGamesLoading(true);
     const cached = getCachedData<Game[]>('games');
 
     try {
@@ -103,7 +108,8 @@ function Games() {
         .select('*');
 
       if (error) throw error;
-      const result = (data && data.length > 0) ? (data as Game[]) : fallbackGames as Game[];
+      const validDb = (data || []).filter((g: Game) => g.url?.startsWith('http'));
+      const result = validDb.length > 0 ? (validDb as Game[]) : fallbackGames as Game[];
       setGames(result);
       setCachedData('games', result, 6 * 60 * 60 * 1000);
     } catch {
@@ -113,6 +119,8 @@ function Games() {
         toast.error('Oyunlar yüklenirken sorun oluştu.');
         setGames(fallbackGames as Game[]);
       }
+    } finally {
+      setGamesLoading(false);
     }
   };
 
@@ -219,8 +227,16 @@ function Games() {
           ))}
         </div>
 
+        {/* Loading indicator for external games */}
+        {gamesLoading && (
+          <div className="games-loading-indicator" style={{ textAlign: 'center', padding: '24px 0' }}>
+            <div className="page-loader__spinner" />
+            <p style={{ color: 'var(--text-muted)', marginTop: 8 }}>Loading more games...</p>
+          </div>
+        )}
+
         {/* External Wordwall games */}
-        {games.length > 0 && (
+        {!gamesLoading && games.length > 0 && (
           <>
             <h2 className="games-section-title"><Sparkles size={20} /> {t('games.moreGames')}</h2>
             <div className="external-games-grid">

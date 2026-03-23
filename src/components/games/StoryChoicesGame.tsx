@@ -49,6 +49,7 @@ function buildQuestions(words: WordItem[]): Question[] {
 }
 
 export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWrongAnswer }) => {
+  if (words.length < 3) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const questions = useMemo(() => buildQuestions(words), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);

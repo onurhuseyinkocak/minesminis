@@ -41,7 +41,7 @@ const group1Song: PhonicsSong = {
   lyrics: [
     {
       text: 'Welcome to the Sound Safari, come along with me!',
-      textTr: 'Ses Safarisine hosgeldin, benimle gel!',
+      textTr: 'Ses Safarisine hoşgeldin, benimle gel!',
       startMs: 0,
       durationMs: 4000,
       highlightSounds: [],
@@ -50,7 +50,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'S-s-s says the snake, sliding in the sun',
-      textTr: 'S-s-s diyor yilan, guneste kayiyor',
+      textTr: 'S-s-s diyor yılan, güneşte kayıyor',
       startMs: 4000,
       durationMs: 4000,
       highlightSounds: ['s'],
@@ -59,7 +59,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'A-a-a says the apple, having so much fun',
-      textTr: 'A-a-a diyor elma, cok egleniyor',
+      textTr: 'A-a-a diyor elma, çok eğleniyor',
       startMs: 8000,
       durationMs: 4000,
       highlightSounds: ['a'],
@@ -68,7 +68,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'T-t-t says the tiger, tapping with its tail',
-      textTr: 'T-t-t diyor kaplan, kuyrugu ile vuruyor',
+      textTr: 'T-t-t diyor kaplan, kuyruğu ile vuruyor',
       startMs: 12000,
       durationMs: 4000,
       highlightSounds: ['t'],
@@ -77,7 +77,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'I-i-i says the igloo, hiding from the hail',
-      textTr: 'I-i-i diyor igloo, dolundan saklaniyorum',
+      textTr: 'I-i-i diyor igloo, doludan saklanıyorum',
       startMs: 16000,
       durationMs: 4000,
       highlightSounds: ['i'],
@@ -104,7 +104,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'S, A, T, I, P, N — those are the sounds we know!',
-      textTr: 'S, A, T, I, P, N — bunlar bildigimiz sesler!',
+      textTr: 'S, A, T, I, P, N — bunlar bildiğimiz sesler!',
       startMs: 28000,
       durationMs: 4000,
       highlightSounds: ['s', 'a', 't', 'i', 'p', 'n'],
@@ -113,7 +113,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'S, A, T, I, P, N — sing them high and low!',
-      textTr: 'S, A, T, I, P, N — yuksek ve alcak soyle!',
+      textTr: 'S, A, T, I, P, N — yüksek ve alçak söyle!',
       startMs: 32000,
       durationMs: 4000,
       highlightSounds: ['s', 'a', 't', 'i', 'p', 'n'],
@@ -122,7 +122,7 @@ const group1Song: PhonicsSong = {
     },
     {
       text: 'We sat and sipped and tapped today, hooray for Group One sounds!',
-      textTr: 'Bugün oturduk, yudumladik ve tiklatik, yasasin Grup Bir sesleri!',
+      textTr: 'Bugün oturduk, yudumladık ve tıklattık, yaşasın Grup Bir sesleri!',
       startMs: 36000,
       durationMs: 5000,
       highlightSounds: ['s', 'a', 't', 'i', 'p', 'n'],
@@ -145,7 +145,7 @@ const group2Song: PhonicsSong = {
   lyrics: [
     {
       text: 'Come into the kitchen, what sounds can you hear?',
-      textTr: 'Mutfaga gel, hangi sesleri duyabilirsin?',
+      textTr: 'Mutfağa gel, hangi sesleri duyabilirsin?',
       startMs: 0,
       durationMs: 4000,
       highlightSounds: [],
@@ -154,7 +154,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'C-c-c the cat is cooking, stirring something near',
-      textTr: 'K-k-k kedi yemek pisiyor, yakindan karistiriyor',
+      textTr: 'K-k-k kedi yemek pişiriyor, yakından karıştırıyor',
       startMs: 4000,
       durationMs: 4000,
       highlightSounds: ['c'],
@@ -163,7 +163,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'E-e-e the egg is ready, cracking in the pan',
-      textTr: 'E-e-e yumurta hazir, tavada catlak',
+      textTr: 'E-e-e yumurta hazır, tavada çatlak',
       startMs: 8000,
       durationMs: 4000,
       highlightSounds: ['e'],
@@ -172,7 +172,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'H-h-h the hungry dog is panting, what a happy plan!',
-      textTr: 'H-h-h ac kopek soluyuyor, ne guzel plan!',
+      textTr: 'H-h-h aç köpek soluyuyor, ne güzel plan!',
       startMs: 12000,
       durationMs: 4000,
       highlightSounds: ['h'],
@@ -190,7 +190,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'M-m-m the muffin smells so yummy, what a tasty treat!',
-      textTr: 'M-m-m muffin cok guzel kokuyor, ne lezzetli!',
+      textTr: 'M-m-m muffin çok güzel kokuyor, ne lezzetli!',
       startMs: 20000,
       durationMs: 4000,
       highlightSounds: ['m'],
@@ -199,7 +199,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'D-d-d the drum is beating loudly, dinner time is here!',
-      textTr: 'D-d-d davul yuksek sesle caliyor, yemek zamani geldi!',
+      textTr: 'D-d-d davul yüksek sesle çalıyor, yemek zamanı geldi!',
       startMs: 24000,
       durationMs: 4000,
       highlightSounds: ['d'],
@@ -217,7 +217,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'C, E, H, R, M, D — put them on your plate!',
-      textTr: 'C, E, H, R, M, D — onlari tabagina koy!',
+      textTr: 'C, E, H, R, M, D — onları tabağına koy!',
       startMs: 32000,
       durationMs: 4000,
       highlightSounds: ['c', 'e', 'h', 'r', 'm', 'd'],
@@ -226,7 +226,7 @@ const group2Song: PhonicsSong = {
     },
     {
       text: 'The cat cooked eggs with Mum and Dad, the kitchen song is done!',
-      textTr: 'Kedi anne ve babayla yumurta pisirdi, mutfak sarkisi bitti!',
+      textTr: 'Kedi anne ve babayla yumurta pişirdi, mutfak şarkısı bitti!',
       startMs: 36000,
       durationMs: 5000,
       highlightSounds: ['c', 'e', 'h', 'r', 'm', 'd'],
@@ -242,14 +242,14 @@ const group3Song: PhonicsSong = {
   id: 'song-g3-playground-bounce',
   groupNumber: 3,
   title: 'Playground Bounce',
-  titleTr: 'Oyun Alani Ziplatmasi',
+  titleTr: 'Oyun Alanı Zıplatması',
   emoji: '\u{1F3C0}',
   tempo: 'fast',
   style: 'rap',
   lyrics: [
     {
       text: 'Bounce, bounce, at the playground, let us go go go!',
-      textTr: 'Zipla, zipla, oyun alaninda, hadi gidelim!',
+      textTr: 'Zıpla, zıpla, oyun alanında, hadi gidelim!',
       startMs: 0,
       durationMs: 3500,
       highlightSounds: [],
@@ -258,7 +258,7 @@ const group3Song: PhonicsSong = {
     },
     {
       text: 'G-g-g gulp the water, drinking nice and slow',
-      textTr: 'G-g-g suyu yudumla, yavas yavas ic',
+      textTr: 'G-g-g suyu yudumla, yavaş yavaş iç',
       startMs: 3500,
       durationMs: 3500,
       highlightSounds: ['g'],
@@ -267,7 +267,7 @@ const group3Song: PhonicsSong = {
     },
     {
       text: 'O-o-o the octopus is jumping, oh oh oh!',
-      textTr: 'O-o-o ahtapot zipliyor, oh oh oh!',
+      textTr: 'O-o-o ahtapot zıplıyor, oh oh oh!',
       startMs: 7000,
       durationMs: 3500,
       highlightSounds: ['o'],
@@ -276,7 +276,7 @@ const group3Song: PhonicsSong = {
     },
     {
       text: 'U-u-u umbrella up, the rain begins to flow',
-      textTr: 'U-u-u semsiye ac, yagmur basliyor',
+      textTr: 'U-u-u şemsiye aç, yağmur başlıyor',
       startMs: 10500,
       durationMs: 3500,
       highlightSounds: ['u'],
@@ -285,7 +285,7 @@ const group3Song: PhonicsSong = {
     },
     {
       text: 'L-l-l lollipop lick, so sweet upon my tongue',
-      textTr: 'L-l-l lolipop yala, dilimde cok tatli',
+      textTr: 'L-l-l lolipop yala, dilimde çok tatlı',
       startMs: 14000,
       durationMs: 3500,
       highlightSounds: ['l'],
@@ -303,7 +303,7 @@ const group3Song: PhonicsSong = {
     },
     {
       text: 'B-b-b bounce the ball, we are having fun!',
-      textTr: 'B-b-b topu zipplat, eglenceye devam!',
+      textTr: 'B-b-b topu zıpplat, eğlenceye devam!',
       startMs: 21000,
       durationMs: 3500,
       highlightSounds: ['b'],
@@ -312,7 +312,7 @@ const group3Song: PhonicsSong = {
     },
     {
       text: 'G, O, U, L, F, B — playground sounds rock!',
-      textTr: 'G, O, U, L, F, B — oyun alani sesleri harika!',
+      textTr: 'G, O, U, L, F, B — oyun alanı sesleri harika!',
       startMs: 24500,
       durationMs: 3500,
       highlightSounds: ['g', 'o', 'u', 'l', 'f', 'b'],
@@ -330,7 +330,7 @@ const group3Song: PhonicsSong = {
     },
     {
       text: 'A big dog and a bug on a log, having fun in the fog!',
-      textTr: 'Buyuk bir kopek ve bir bocek kutuk uzerinde, siste egleniyor!',
+      textTr: 'Büyük bir köpek ve bir böcek kütük üzerinde, siste eğleniyor!',
       startMs: 31500,
       durationMs: 5000,
       highlightSounds: ['g', 'o', 'u', 'l', 'f', 'b'],

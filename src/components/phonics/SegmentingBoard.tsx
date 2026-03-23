@@ -52,6 +52,7 @@ function shuffleArray<T>(arr: T[]): T[] {
 }
 
 export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onComplete, onWrongAnswer }) => {
+  if (!words || words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const gameWords = useMemo(() => words.slice(0, 5).map(w => typeof w === 'string' ? w : w.english), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);

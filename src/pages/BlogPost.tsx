@@ -12,6 +12,7 @@ function sanitizeHtml(html: string): string {
   doc.querySelectorAll('*').forEach(el => {
     Array.from(el.attributes).forEach(attr => {
       if (attr.name.startsWith('on') || attr.name === 'srcdoc') el.removeAttribute(attr.name);
+      if (['href', 'src', 'action'].includes(attr.name) && attr.value.trim().toLowerCase().startsWith('javascript:')) { el.removeAttribute(attr.name); }
     });
   });
   return doc.body.innerHTML;

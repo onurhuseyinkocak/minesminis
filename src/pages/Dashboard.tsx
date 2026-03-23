@@ -253,7 +253,8 @@ export default function Dashboard() {
   const initial = displayName.charAt(0).toUpperCase();
 
   // Daily lesson state
-  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const [lessonDone, setLessonDone] = useState<boolean>(() =>
     isDailyLessonCompletedToday(userId)
   );
@@ -266,7 +267,7 @@ export default function Dashboard() {
     return Array.from({ length: 7 }, (_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - (6 - i));
-      const key = d.toISOString().split('T')[0];
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       const saved = localStorage.getItem(`mm_daily_${userId}_${key}`);
       if (!saved) return false;
       try { return JSON.parse(saved).completed === true; } catch { return false; }

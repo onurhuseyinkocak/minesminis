@@ -136,6 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (cancelled) return;
         clearTimeout(timeout);
         setAuthTimeoutReached(false);
+        if (firebaseUser) setProfileLoading(true);
         setUser(firebaseUser);
         setLoading(false);
       },

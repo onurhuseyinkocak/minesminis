@@ -54,21 +54,21 @@ interface WordCard {
 
 const MOCK_WORDS: WordCard[] = [
   { id: '1', english: 'Cat', turkish: 'Kedi', emoji: '🐱', mastery: 'mastered', world: 'Animals', confidence: 95, exampleSentence: 'The cat is sleeping on the sofa.' },
-  { id: '2', english: 'Dog', turkish: 'Kopek', emoji: '🐶', mastery: 'mastered', world: 'Animals', confidence: 90, exampleSentence: 'My dog likes to play in the park.' },
-  { id: '3', english: 'Bird', turkish: 'Kus', emoji: '🐦', mastery: 'reviewing', world: 'Animals', confidence: 70, exampleSentence: 'A bird is singing in the tree.', dueForReview: true },
-  { id: '4', english: 'Fish', turkish: 'Balik', emoji: '🐟', mastery: 'reviewing', world: 'Animals', confidence: 65, exampleSentence: 'The fish swims in the water.', dueForReview: true },
-  { id: '5', english: 'Red', turkish: 'Kirmizi', emoji: '🔴', mastery: 'mastered', world: 'Colors', confidence: 100, exampleSentence: 'The apple is red.' },
+  { id: '2', english: 'Dog', turkish: 'Köpek', emoji: '🐶', mastery: 'mastered', world: 'Animals', confidence: 90, exampleSentence: 'My dog likes to play in the park.' },
+  { id: '3', english: 'Bird', turkish: 'Kuş', emoji: '🐦', mastery: 'reviewing', world: 'Animals', confidence: 70, exampleSentence: 'A bird is singing in the tree.', dueForReview: true },
+  { id: '4', english: 'Fish', turkish: 'Balık', emoji: '🐟', mastery: 'reviewing', world: 'Animals', confidence: 65, exampleSentence: 'The fish swims in the water.', dueForReview: true },
+  { id: '5', english: 'Red', turkish: 'Kırmızı', emoji: '🔴', mastery: 'mastered', world: 'Colors', confidence: 100, exampleSentence: 'The apple is red.' },
   { id: '6', english: 'Blue', turkish: 'Mavi', emoji: '🔵', mastery: 'learning', world: 'Colors', confidence: 45, exampleSentence: 'The sky is blue today.' },
-  { id: '7', english: 'Green', turkish: 'Yesil', emoji: '🟢', mastery: 'learning', world: 'Colors', confidence: 40, exampleSentence: 'The grass is green.' },
+  { id: '7', english: 'Green', turkish: 'Yeşil', emoji: '🟢', mastery: 'learning', world: 'Colors', confidence: 40, exampleSentence: 'The grass is green.' },
   { id: '8', english: 'Apple', turkish: 'Elma', emoji: '🍎', mastery: 'reviewing', world: 'Food', confidence: 75, exampleSentence: 'I eat an apple every day.', dueForReview: true },
   { id: '9', english: 'Bread', turkish: 'Ekmek', emoji: '🍞', mastery: 'new', world: 'Food', confidence: 10, exampleSentence: 'We have bread for breakfast.' },
   { id: '10', english: 'Water', turkish: 'Su', emoji: '💧', mastery: 'new', world: 'Food', confidence: 5, exampleSentence: 'Please drink your water.' },
   { id: '11', english: 'Mother', turkish: 'Anne', emoji: '👩', mastery: 'learning', world: 'Family', confidence: 50, exampleSentence: 'My mother makes delicious cakes.' },
   { id: '12', english: 'Father', turkish: 'Baba', emoji: '👨', mastery: 'learning', world: 'Family', confidence: 55, exampleSentence: 'My father reads me stories.' },
   { id: '13', english: 'One', turkish: 'Bir', emoji: '1️⃣', mastery: 'mastered', world: 'Numbers', confidence: 100, exampleSentence: 'I have one pencil.' },
-  { id: '14', english: 'Two', turkish: 'Iki', emoji: '2️⃣', mastery: 'mastered', world: 'Numbers', confidence: 98, exampleSentence: 'I have two hands.' },
+  { id: '14', english: 'Two', turkish: 'İki', emoji: '2️⃣', mastery: 'mastered', world: 'Numbers', confidence: 98, exampleSentence: 'I have two hands.' },
   { id: '15', english: 'Horse', turkish: 'At', emoji: '🐴', mastery: 'new', world: 'Animals', confidence: 0, exampleSentence: 'The horse runs very fast.' },
-  { id: '16', english: 'Rabbit', turkish: 'Tavsan', emoji: '🐰', mastery: 'new', world: 'Animals', confidence: 15, exampleSentence: 'The rabbit has long ears.' },
+  { id: '16', english: 'Rabbit', turkish: 'Tavşan', emoji: '🐰', mastery: 'new', world: 'Animals', confidence: 15, exampleSentence: 'The rabbit has long ears.' },
 ];
 
 const WORLDS = ['All', 'Animals', 'Colors', 'Food', 'Family', 'Numbers'];

@@ -54,6 +54,7 @@ function generateLetterPool(word: string): string[] {
 }
 
 export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const gameWords = useMemo(() => words.slice(0, 5), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -136,7 +137,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     }
   };
 
-  const progress = ((currentIndex) / gameWords.length) * 100;
+  const progress = gameWords.length > 0 ? ((currentIndex) / gameWords.length) * 100 : 0;
 
   const handlePlayAgain = () => {
     setCurrentIndex(0);

@@ -42,6 +42,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { SFX } from '../data/soundLibrary';
 import { logActivity } from '../services/activityLogger';
 import { syncStudentProgress } from '../services/classroomService';
+import { PHASES } from '../data/curriculumPhases';
+import type { LearningUnit, UnitActivity } from '../data/curriculumPhases';
 import './LessonPlayer.css';
 
 // ============================================================
@@ -88,6 +90,25 @@ const ACTIVITY_COLORS: Record<string, string> = {
   practice: 'var(--accent-pink)',
   quiz: 'var(--error)',
 };
+
+function getUnitById(unitId: string): LearningUnit | null {
+  for (const phase of PHASES) {
+    const unit = phase.units.find((u) => u.id === unitId);
+    if (unit) return unit;
+  }
+  return null;
+}
+
+function unitActivityToActivity(ua: UnitActivity, index: number): Activity {
+  return {
+    id: `activity-${index}`,
+    title: ua.title,
+    type: ua.type as Activity['type'],
+    instructions: ua.description,
+    xpReward: ua.xp,
+    duration: ua.duration,
+  };
+}
 
 // Game types that GameSelector can handle
 const SUPPORTED_GAME_TYPES = new Set([
@@ -322,7 +343,26 @@ const LessonPlayer = () => {
   const userId = user?.uid || 'guest';
 
   // Load real lesson data from curriculum
-  const lesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
+  const oldLesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
+  const lesson = useMemo(() => {
+    if (oldLesson) return oldLesson;
+    // Fallback: try new curriculum phases system
+    const unit = getUnitById(worldId);
+    if (unit) {
+      return {
+        id: unit.id,
+        title: unit.title,
+        titleTr: unit.titleTr,
+        number: unit.number,
+        type: 'vocabulary' as const,
+        xpReward: unit.activities.reduce((sum, a) => sum + a.xp, 0),
+        duration: unit.activities.reduce((sum, a) => sum + a.duration, 0),
+        targetWords: [] as string[],
+        activities: unit.activities.map((ua, i) => unitActivityToActivity(ua, i)),
+      };
+    }
+    return null;
+  }, [worldId, lessonId, oldLesson]);
   const world = useMemo(() => getWorldById(worldId), [worldId]);
   const vocabulary = useMemo(() => getWorldVocabulary(worldId), [worldId]);
 
@@ -706,7 +746,7 @@ const LessonPlayer = () => {
           fontSize: '0.85rem',
         }}>
           {world && <span>{world.icon} {lang === 'tr' ? world.nameTr : world.name} &bull; </span>}
-          {lesson.objective}
+          {'objective' in lesson ? (lesson as { objective: string }).objective : (lang === 'tr' ? lesson.titleTr : lesson.title)}
         </div>
       )}
 

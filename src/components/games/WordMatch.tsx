@@ -37,6 +37,7 @@ function shuffleArray<T>(arr: T[]): T[] {
 }
 
 export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const roundSize = 3;
   const totalRounds = Math.ceil(Math.min(words.length, 6) / roundSize);

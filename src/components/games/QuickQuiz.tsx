@@ -65,6 +65,7 @@ function generateQuestions(words: WordItem[]): Question[] {
 const TIMER_DURATION = 10;
 
 export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  if (words.length < 4) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const questions = useMemo(() => generateQuestions(words), [words]);
   const [currentQ, setCurrentQ] = useState(0);

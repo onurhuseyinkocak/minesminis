@@ -28,6 +28,7 @@ function getSpeechRecognitionConstructor(): (new () => SpeechRecognition) | null
 }
 
 export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const roundWords = words.slice(0, WORDS_PER_ROUND);
   const total = roundWords.length;
@@ -119,8 +120,15 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
       }
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       setIsListening(false);
+      const msg =
+        event.error === 'no-speech' ? 'Ses algılanamadı. Lütfen tekrar deneyin.' :
+        event.error === 'not-allowed' ? 'Mikrofon izni verilmedi. Lütfen tarayıcı ayarlarını kontrol edin.' :
+        event.error === 'network' ? 'Ağ hatası oluştu. Lütfen internet bağlantınızı kontrol edin.' :
+        'Bir hata oluştu. Lütfen tekrar deneyin.';
+      setHeardText(msg);
+      setFeedback('wrong');
     };
 
     recognition.onend = () => {
