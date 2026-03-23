@@ -346,14 +346,14 @@ const group4Song: PhonicsSong = {
   id: 'song-g4-vowel-voyage',
   groupNumber: 4,
   title: 'The Vowel Voyage',
-  titleTr: 'Sesli Harf Yolculugu',
+  titleTr: 'Sesli Harf Yolculuğu',
   emoji: '\u{26F5}',
   tempo: 'slow',
   style: 'nursery',
   lyrics: [
     {
       text: 'Set sail on the vowel voyage, long sounds here we come!',
-      textTr: 'Sesli harf yolculuguna yelken ac, uzun sesler geliyoruz!',
+      textTr: 'Sesli harf yolculuğuna yelken aç, uzun sesler geliyoruz!',
       startMs: 0,
       durationMs: 4500,
       highlightSounds: [],
@@ -362,7 +362,7 @@ const group4Song: PhonicsSong = {
     },
     {
       text: 'AI-AI-AI the rain is falling, splashing everyone',
-      textTr: 'AY-AY-AY yagmur yagiyor, herkesi islatiyor',
+      textTr: 'AY-AY-AY yağmur yağıyor, herkesi ıslatıyor',
       startMs: 4500,
       durationMs: 4500,
       highlightSounds: ['ai'],
@@ -371,7 +371,7 @@ const group4Song: PhonicsSong = {
     },
     {
       text: 'J-j-j the jelly wobbles, wibbly wobbly fun',
-      textTr: 'C-c-c jole titriyor, titresen eglence',
+      textTr: 'C-c-c jöle titriyor, titreşen eğlence',
       startMs: 9000,
       durationMs: 4500,
       highlightSounds: ['j'],
@@ -380,7 +380,7 @@ const group4Song: PhonicsSong = {
     },
     {
       text: 'OA-OA-OA the goat is on a boat, sailing in the sun',
-      textTr: 'OA-OA-OA keci teknede, guneste yelken aciyor',
+      textTr: 'OA-OA-OA keçi teknede, güneşte yelken açıyor',
       startMs: 13500,
       durationMs: 4500,
       highlightSounds: ['oa'],
@@ -389,7 +389,7 @@ const group4Song: PhonicsSong = {
     },
     {
       text: 'IE-IE-IE the kite is flying high, way up in the sky',
-      textTr: 'AY-AY-AY ucurtma yuksekte ucuyor, gokyuzunde',
+      textTr: 'AY-AY-AY uçurtma yüksekte uçuyor, gökyüzünde',
       startMs: 18000,
       durationMs: 4500,
       highlightSounds: ['ie'],
@@ -398,7 +398,7 @@ const group4Song: PhonicsSong = {
     },
     {
       text: 'EE-EE-EE the buzzy little bee, flying way up high',
-      textTr: 'EE-EE-EE vizildayan kucuk ari, yuksekte ucuyor',
+      textTr: 'EE-EE-EE vızıldayan küçük arı, yüksekte uçuyor',
       startMs: 22500,
       durationMs: 4500,
       highlightSounds: ['ee'],
@@ -407,7 +407,7 @@ const group4Song: PhonicsSong = {
     },
     {
       text: 'OR-OR-OR we row the boat to shore, resting by the corn',
-      textTr: 'OR-OR-OR tekneyi kiyiya cekelim, misirlarin yaninda dinlenelim',
+      textTr: 'OR-OR-OR tekneyi kıyıya çekelim, mısırların yanında dinlenelim',
       startMs: 27000,
       durationMs: 4500,
       highlightSounds: ['or'],
@@ -425,7 +425,7 @@ const group4Song: PhonicsSong = {
     },
     {
       text: 'Rain and boats and bees, oh my — we sailed and passed the test!',
-      textTr: 'Yagmur, tekneler ve arilar, ohhh — yelken actik ve sinavi gectik!',
+      textTr: 'Yağmur, tekneler ve arılar, ohhh — yelken açtık ve sınavı geçtik!',
       startMs: 36000,
       durationMs: 5000,
       highlightSounds: ['ai', 'oa', 'ee', 'or'],
@@ -441,14 +441,14 @@ const group5Song: PhonicsSong = {
   id: 'song-g5-zoo-groove',
   groupNumber: 5,
   title: 'Zoo Groove',
-  titleTr: 'Hayvanat Bahcesi Ritmi',
+  titleTr: 'Hayvanat Bahçesi Ritmi',
   emoji: '\u{1F981}',
   tempo: 'medium',
   style: 'chant',
   lyrics: [
     {
       text: 'Let us groove at the zoo, with some tricky sounds to say!',
-      textTr: 'Hayvanat bahcesinde dans edelim, bazi zor seslerle!',
+      textTr: 'Hayvanat bahçesinde dans edelim, bazı zor seslerle!',
       startMs: 0,
       durationMs: 4000,
       highlightSounds: [],
@@ -457,7 +457,7 @@ const group5Song: PhonicsSong = {
     },
     {
       text: 'Z-z-z the bee goes buzzing, zig-zag all the way',
-      textTr: 'Z-z-z ari vizildayarak gidiyor, zikzak yaparak',
+      textTr: 'Z-z-z arı vızıldayarak gidiyor, zikzak yaparak',
       startMs: 4000,
       durationMs: 4000,
       highlightSounds: ['z'],
@@ -466,7 +466,7 @@ const group5Song: PhonicsSong = {
     },
     {
       text: 'W-w-w the wind is blowing, whoooosh across the bay',
-      textTr: 'W-w-w ruzgar esiyor, vuuuuus koyun icinden',
+      textTr: 'W-w-w rüzgar esiyor, vuuuuus koyun içinden',
       startMs: 8000,
       durationMs: 4000,
       highlightSounds: ['w'],
@@ -475,7 +475,7 @@ const group5Song: PhonicsSong = {
     },
     {
       text: 'NG-NG-NG the king is singing, ding dong ring the bell!',
-      textTr: 'NG-NG-NG kral sarki soyluyor, ding dong zili cal!',
+      textTr: 'NG-NG-NG kral şarkı söylüyor, ding dong zili çal!',
       startMs: 12000,
       durationMs: 4000,
       highlightSounds: ['ng'],
@@ -484,7 +484,7 @@ const group5Song: PhonicsSong = {
     },
     {
       text: 'V-v-v the van goes vroom vroom, racing really well',
-      textTr: 'V-v-v minibus viiin diyor, gercekten iyi yarisiyor',
+      textTr: 'V-v-v minibüs viiin diyor, gerçekten iyi yarışıyor',
       startMs: 16000,
       durationMs: 4000,
       highlightSounds: ['v'],
@@ -493,7 +493,7 @@ const group5Song: PhonicsSong = {
     },
     {
       text: 'OO-OO short says the book, look look look around',
-      textTr: 'OO-OO kisa diyor kitap, bak bak bak etrafina',
+      textTr: 'OO-OO kısa diyor kitap, bak bak bak etrafına',
       startMs: 20000,
       durationMs: 4000,
       highlightSounds: ['oo'],
@@ -502,7 +502,7 @@ const group5Song: PhonicsSong = {
     },
     {
       text: 'OO-OO long says the moon, howling wolf makes the sound',
-      textTr: 'OO-OO uzun diyor ay, uluyan kurt sesi cikariyor',
+      textTr: 'OO-OO uzun diyor ay, uluyan kurt sesi çıkarıyor',
       startMs: 24000,
       durationMs: 4000,
       highlightSounds: ['oo'],
@@ -520,7 +520,7 @@ const group5Song: PhonicsSong = {
     },
     {
       text: 'A king at the zoo sang a cool moon song, we love the zoo groove!',
-      textTr: 'Hayvanat bahcesindeki kral havalai bir ay sarkisi soyledi, dans etmeyi seviyoruz!',
+      textTr: 'Hayvanat bahçesindeki kral havalı bir ay şarkısı söyledi, dans etmeyi seviyoruz!',
       startMs: 32000,
       durationMs: 5000,
       highlightSounds: ['z', 'w', 'ng', 'v', 'oo'],
@@ -536,14 +536,14 @@ const group6Song: PhonicsSong = {
   id: 'song-g6-special-express',
   groupNumber: 6,
   title: 'The Special Sound Express',
-  titleTr: 'Ozel Ses Ekspresi',
+  titleTr: 'Özel Ses Ekspresi',
   emoji: '\u{1F682}',
   tempo: 'medium',
   style: 'nursery',
   lyrics: [
     {
       text: 'All aboard the sound express, special sounds today!',
-      textTr: 'Hepiniz ses ekspresine binin, bugun ozel sesler!',
+      textTr: 'Hepiniz ses ekspresine binin, bugün özel sesler!',
       startMs: 0,
       durationMs: 4000,
       highlightSounds: [],
@@ -552,7 +552,7 @@ const group6Song: PhonicsSong = {
     },
     {
       text: 'Y-y-y says yummy yogurt, hooray hooray hooray!',
-      textTr: 'Y-y-y diyor lezzetli yogurt, yasasin yasasin yasasin!',
+      textTr: 'Y-y-y diyor lezzetli yoğurt, yaşasın yaşasın yaşasın!',
       startMs: 4000,
       durationMs: 4000,
       highlightSounds: ['y'],
@@ -561,7 +561,7 @@ const group6Song: PhonicsSong = {
     },
     {
       text: 'X-x-x the fox is in a box, ks ks ks he says!',
-      textTr: 'X-x-x tilki kutunun icinde, ks ks ks diyor!',
+      textTr: 'X-x-x tilki kutunun içinde, ks ks ks diyor!',
       startMs: 8000,
       durationMs: 4000,
       highlightSounds: ['x'],
@@ -588,7 +588,7 @@ const group6Song: PhonicsSong = {
     },
     {
       text: 'TH-TH-TH this and that, stick your tongue out with ease',
-      textTr: 'TH-TH-TH bu ve su, dilini rahatca cikar',
+      textTr: 'TH-TH-TH bu ve şu, dilini rahatça çıkar',
       startMs: 20000,
       durationMs: 4000,
       highlightSounds: ['th'],
@@ -597,7 +597,7 @@ const group6Song: PhonicsSong = {
     },
     {
       text: 'TH-TH-TH think of three, thin things upon the breeze',
-      textTr: 'TH-TH-TH uc tane dusun, ruzgardaki ince seyler',
+      textTr: 'TH-TH-TH üç tane düşün, rüzgardaki ince şeyler',
       startMs: 24000,
       durationMs: 4000,
       highlightSounds: ['th'],
@@ -606,7 +606,7 @@ const group6Song: PhonicsSong = {
     },
     {
       text: 'Y, X, CH, SH, TH, TH — special sounds express!',
-      textTr: 'Y, X, \u00C7, \u015E, TH, TH — ozel ses ekspresi!',
+      textTr: 'Y, X, \u00C7, \u015E, TH, TH — özel ses ekspresi!',
       startMs: 28000,
       durationMs: 4000,
       highlightSounds: ['y', 'x', 'ch', 'sh', 'th'],
@@ -631,14 +631,14 @@ const group7Song: PhonicsSong = {
   id: 'song-g7-treasure-quest',
   groupNumber: 7,
   title: 'The Treasure Quest Chant',
-  titleTr: 'Hazine Gorevi Tezahuratu',
+  titleTr: 'Hazine Görevi Tezahüratı',
   emoji: '\u{1F3C6}',
   tempo: 'medium',
   style: 'chant',
   lyrics: [
     {
       text: 'Quest! Quest! On a treasure quest, the final sounds to find!',
-      textTr: 'Gorev! Gorev! Hazine gorevindeyiz, son sesleri bulalim!',
+      textTr: 'Görev! Görev! Hazine görevindeyiz, son sesleri bulalım!',
       startMs: 0,
       durationMs: 4000,
       highlightSounds: [],
@@ -647,7 +647,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'QU-QU-QU the queen says quick, the duck says quack behind',
-      textTr: 'KU-KU-KU kralice cabuk diyor, ordek arkadan vakliyor',
+      textTr: 'KU-KU-KU kraliçe çabuk diyor, ördek arkadan vaklıyor',
       startMs: 4000,
       durationMs: 4000,
       highlightSounds: ['qu'],
@@ -656,7 +656,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'OU-OU-OU ouch that hurts! A cloud rolls through the sky',
-      textTr: 'AV-AV-AV ayyy acidi! Bir bulut gokyuzunde yuvarlanir',
+      textTr: 'AV-AV-AV ayyy acıdı! Bir bulut gökyüzünde yuvarlanır',
       startMs: 8000,
       durationMs: 4000,
       highlightSounds: ['ou'],
@@ -665,7 +665,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'OI-OI-OI the pirate shouts, a golden coin nearby!',
-      textTr: 'OY-OY-OY korsan bagirir, yakinlarda altin bir para!',
+      textTr: 'OY-OY-OY korsan bağırır, yakınlarda altın bir para!',
       startMs: 12000,
       durationMs: 4000,
       highlightSounds: ['oi'],
@@ -674,7 +674,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'UE-UE-UE the sky is blue, a beautiful blue view',
-      textTr: 'YU-YU-YU gokyuzu mavi, guzel bir mavi manzara',
+      textTr: 'YU-YU-YU gökyüzü mavi, güzel bir mavi manzara',
       startMs: 16000,
       durationMs: 4000,
       highlightSounds: ['ue'],
@@ -683,7 +683,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'ER-ER-ER the mixer stirs, her butter turning too',
-      textTr: 'ER-ER-ER mikser karistiriyor, onun tereyagi da donuyor',
+      textTr: 'ER-ER-ER mikser karıştırıyor, onun tereyağı da dönüyor',
       startMs: 20000,
       durationMs: 4000,
       highlightSounds: ['er'],
@@ -692,7 +692,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'AR-AR-AR a pirate star, shining from afar',
-      textTr: 'AR-AR-AR bir korsan yildizi, uzaktan parliyot',
+      textTr: 'AR-AR-AR bir korsan yıldızı, uzaktan parlıyor',
       startMs: 24000,
       durationMs: 4000,
       highlightSounds: ['ar'],
@@ -710,7 +710,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'We found the treasure, every sound! Now give a mighty cheer!',
-      textTr: 'Hazineyi bulduk, her sesi! Simdi guclu bir tezahurat yapin!',
+      textTr: 'Hazineyi bulduk, her sesi! Şimdi güçlü bir tezahürat yapın!',
       startMs: 32000,
       durationMs: 4000,
       highlightSounds: ['qu', 'ou', 'oi', 'ue', 'er', 'ar'],
@@ -719,7 +719,7 @@ const group7Song: PhonicsSong = {
     },
     {
       text: 'All 42 sounds we know, from s to ar and more — phonics champions forevermore!',
-      textTr: '42 sesin hepsini biliyoruz, s-ten ar-a ve otesine — sonsuza dek fonetik sampiyonlari!',
+      textTr: '42 sesin hepsini biliyoruz, s-ten ar-a ve ötesine — sonsuza dek fonetik şampiyonları!',
       startMs: 36000,
       durationMs: 6000,
       highlightSounds: [],
