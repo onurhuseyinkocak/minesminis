@@ -18,6 +18,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGamification } from '../contexts/GamificationContext';
 import { speak } from '../services/ttsService';
+import { SFX } from '../data/soundLibrary';
 import {
   getTodayLesson,
   completeDailyLesson,
@@ -336,6 +337,7 @@ function PhasePlay({
     const isMatch = selectedEn.wordIndex === selectedTr.wordIndex;
 
     if (isMatch) {
+      SFX.correct();
       setTiles((prev) =>
         prev.map((t) =>
           t.id === selectedEn.id || t.id === selectedTr.id
@@ -346,6 +348,7 @@ function PhasePlay({
       setMatchedCount((c) => c + 1);
       showFeedbackMsg('Great match! 🎉');
     } else {
+      SFX.wrong();
       setWrongPair([selectedEn.id, selectedTr.id]);
       showFeedbackMsg('Try again! 💪', true);
       setTimeout(() => setWrongPair(null), 600);
@@ -630,9 +633,11 @@ function PhaseReview({
       setAnswered(true);
 
       if (choice === q.correct) {
+        SFX.correct();
         setScore((s) => s + 1);
         setShowFeedback({ msg: 'Correct! 🎉' });
       } else {
+        SFX.wrong();
         setShowFeedback({ msg: `It's "${q.correct}" 💙`, sad: true });
       }
 
@@ -693,22 +698,47 @@ function PhaseReview({
 
 // ─── Celebration screen ────────────────────────────────────────────────────────
 
+function StarRating({ score }: { score: number }) {
+  const stars = score >= 80 ? 3 : score >= 50 ? 2 : 1;
+  return (
+    <div className="dl-star-rating" aria-label={`${stars} out of 3 stars`}>
+      {[1, 2, 3].map((s) => (
+        <span
+          key={s}
+          className={`dl-star ${s <= stars ? 'dl-star--filled' : 'dl-star--empty'}`}
+          style={{ animationDelay: `${(s - 1) * 0.15}s` }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function CelebrationScreen({
   wordsLearned,
   score,
+  wordList,
   onDone,
 }: {
   wordsLearned: number;
   score: number;
+  wordList: KidsWord[];
   onDone: () => void;
 }) {
-  const emoji = score >= 80 ? '🏆' : score >= 60 ? '⭐' : '🌟';
   const title = score >= 80 ? 'Amazing work!' : score >= 60 ? 'Well done!' : 'Great effort!';
+
+  // Play celebration sound once
+  useEffect(() => {
+    SFX.celebration();
+  }, []);
 
   return (
     <div className="dl-celebration">
       <Confetti />
-      <div className="dl-celebration__icon">{emoji}</div>
+
+      <StarRating score={score} />
+
       <h1 className="dl-celebration__title">{title}</h1>
       <p className="dl-celebration__subtitle">Today&apos;s lesson complete!</p>
 
@@ -721,6 +751,32 @@ function CelebrationScreen({
           <span className="dl-stat-card__value">{score}%</span>
           <span className="dl-stat-card__label">Score</span>
         </div>
+      </div>
+
+      {/* Words learned today */}
+      {wordList.length > 0 && (
+        <div className="dl-celebration__wordlist">
+          <p className="dl-celebration__wordlist-label">You learned today:</p>
+          <div className="dl-celebration__wordlist-grid">
+            {wordList.map((w) => (
+              <button
+                key={w.word}
+                className="dl-celebration__word-chip"
+                onClick={() => speak(w.word).catch(() => {})}
+                aria-label={`Hear ${w.word}`}
+              >
+                <span>{w.emoji}</span>
+                <span>{w.word}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Parent share nudge */}
+      <div className="dl-celebration__parent-share">
+        <span className="dl-celebration__parent-share-icon">👨‍👩‍👧</span>
+        <span>Show mom &amp; dad what you learned today!</span>
       </div>
 
       <button className="dl-btn dl-btn--primary" onClick={onDone} style={{ minWidth: 180 }}>
@@ -997,6 +1053,45 @@ export default function DailyLesson() {
   const PHASES = lang === 'tr' ? PHASES_TR : PHASES_EN;
   const currentPhaseInfo = PHASES[Math.min(phase, TOTAL_PHASES) - 1];
 
+  // ── Keyboard shortcuts ────────────────────────────────────────────────────
+  // Space/Enter: advance card or next phase (when applicable)
+  // Escape: close lesson (go to dashboard)
+  // ArrowRight: next card in phase 1 (listen) or phase 2 (see)
+  // ArrowLeft: prev card in phase 2 (see)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if focus is in an input/textarea
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      switch (e.key) {
+        case 'Escape':
+          navigate('/dashboard');
+          break;
+        case ' ':
+        case 'Enter':
+          e.preventDefault();
+          if (phase === 1) handleListenNext();
+          else if (phase === 2) handleSeeNext();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (phase === 1) handleListenNext();
+          else if (phase === 2) handleSeeNext();
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (phase === 2) handleSeePrev();
+          else if (phase === 1 && listenIndex > 0) setListenIndex((i) => i - 1);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [phase, navigate, handleListenNext, handleSeeNext, handleSeePrev, listenIndex]);
+
   // ── Render ─────────────────────────────────────────────────────────────────
 
   if (phase > TOTAL_PHASES && celebrated) {
@@ -1008,6 +1103,7 @@ export default function DailyLesson() {
         <CelebrationScreen
           wordsLearned={plan.newWords.length}
           score={avgScore}
+          wordList={plan.newWords}
           onDone={() => navigate('/dashboard')}
         />
       </div>

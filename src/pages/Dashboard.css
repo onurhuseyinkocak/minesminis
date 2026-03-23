@@ -1100,3 +1100,77 @@
     height: 36px;
   }
 }
+
+/* ==========================================================================
+   WORD OF THE DAY
+   ========================================================================== */
+.dash-word-of-day {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border-subtle, var(--border-light, #eee));
+  border-radius: var(--radius-xl, 16px);
+  overflow: hidden;
+}
+
+.dash-wod__emoji {
+  font-size: 22px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.dash-wod__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dash-wod__label {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold, 700);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  width: 100%;
+  margin-bottom: 1px;
+}
+
+.dash-wod__word {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extrabold, 800);
+  font-size: var(--text-base, 1rem);
+  color: var(--text-primary);
+}
+
+.dash-wod__tr {
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold, 600);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--text-secondary);
+}
+
+.dash-wod__listen {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full, 9999px);
+  border: 1.5px solid var(--color-border-subtle, #E5E7EB);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.dash-wod__listen:hover {
+  background: var(--primary-pale);
+  border-color: var(--primary);
+  color: var(--primary);
+}

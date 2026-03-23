@@ -23,12 +23,14 @@ import {
   Loader2,
   Gift,
   BookMarked,
+  Volume2,
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
 import { SFX } from '../data/soundLibrary';
+import { speak } from '../services/ttsService';
 import MimiGuide from '../components/MimiGuide';
 import { WORLDS, getWorldById, getLessonById } from '../data/curriculum';
 import { PHASES } from '../data/curriculumPhases';
@@ -150,6 +152,74 @@ const itemVariants = {
     transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
   },
 };
+
+// ============================================================
+// WORD OF THE DAY DATA
+// ============================================================
+
+interface WodEntry { word: string; tr: string }
+
+const WORDS_OF_THE_DAY: WodEntry[] = [
+  { word: 'wonderful',   tr: 'harika'          },
+  { word: 'adventure',   tr: 'macera'          },
+  { word: 'curious',     tr: 'meraklı'         },
+  { word: 'brilliant',   tr: 'parlak / zeki'   },
+  { word: 'generous',    tr: 'cömert'          },
+  { word: 'enormous',    tr: 'devasa'          },
+  { word: 'mysterious',  tr: 'gizemli'         },
+  { word: 'courageous',  tr: 'cesur'           },
+  { word: 'imagine',     tr: 'hayal etmek'     },
+  { word: 'discover',    tr: 'keşfetmek'       },
+  { word: 'treasure',    tr: 'hazine'          },
+  { word: 'champion',    tr: 'şampiyon'        },
+  { word: 'spectacular', tr: 'muhteşem'        },
+  { word: 'enormous',    tr: 'devasa'          },
+  { word: 'galaxy',      tr: 'galaksi'         },
+  { word: 'volcano',     tr: 'yanardağ'        },
+  { word: 'enchanted',   tr: 'büyülenmiş'      },
+  { word: 'dazzling',    tr: 'göz alıcı'       },
+  { word: 'fearless',    tr: 'korkusuz'        },
+  { word: 'horizon',     tr: 'ufuk'            },
+  { word: 'expedition',  tr: 'keşif gezisi'    },
+  { word: 'harmony',     tr: 'uyum'            },
+  { word: 'celebrate',   tr: 'kutlamak'        },
+  { word: 'legendary',   tr: 'efsanevi'        },
+  { word: 'radiant',     tr: 'parlak / ışıltılı'},
+  { word: 'whimsical',   tr: 'tuhaf ve eğlenceli'},
+  { word: 'persevere',   tr: 'ısrar etmek'     },
+  { word: 'tranquil',    tr: 'sakin'           },
+  { word: 'vibrant',     tr: 'canlı / renkli'  },
+  { word: 'innovative',  tr: 'yenilikçi'       },
+];
+
+function getWordOfTheDay(): WodEntry {
+  const dayOfYear = Math.floor(
+    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86_400_000
+  );
+  return WORDS_OF_THE_DAY[dayOfYear % WORDS_OF_THE_DAY.length];
+}
+
+function WordOfTheDay() {
+  const wod = getWordOfTheDay();
+  return (
+    <div className="dash-word-of-day">
+      <span className="dash-wod__emoji">🌟</span>
+      <div className="dash-wod__body">
+        <span className="dash-wod__label">Word of the Day</span>
+        <strong className="dash-wod__word">{wod.word}</strong>
+        <span className="dash-wod__tr">— {wod.tr}</span>
+      </div>
+      <button
+        className="dash-wod__listen"
+        onClick={() => speak(wod.word).catch(() => {})}
+        aria-label={`Listen to ${wod.word}`}
+        title="Listen"
+      >
+        <Volume2 size={16} />
+      </button>
+    </div>
+  );
+}
 
 // ============================================================
 // QUICK ACTION DATA
@@ -359,6 +429,13 @@ export default function Dashboard() {
           </>
         )}
       </motion.section>
+
+      {/* ============================================================
+          WORD OF THE DAY
+          ============================================================ */}
+      <motion.div variants={itemVariants}>
+        <WordOfTheDay />
+      </motion.div>
 
       {/* ============================================================
           WORDS I KNOW PROGRESS
