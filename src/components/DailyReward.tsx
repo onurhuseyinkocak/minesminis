@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import './DailyReward.css';
 import { useGamification } from '../contexts/GamificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ConfettiRain, FloatingEmoji } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
 import { Gift, CheckCircle, Star, Sparkles, Flame, X } from 'lucide-react';
@@ -18,6 +19,7 @@ const DailyReward: React.FC = () => {
         getDailyRewardForDay,
         getNextClaimTime
     } = useGamification();
+    const { t } = useLanguage();
 
     const [isOpen, setIsOpen] = useState(false);
     const [claiming, setClaiming] = useState(false);
@@ -132,8 +134,8 @@ const DailyReward: React.FC = () => {
                 <button className="close-btn" onClick={() => setIsOpen(false)}><X size={18} /></button>
 
                 <div className="modal-header">
-                    <h2><Gift size={20} style={{ display: 'inline', verticalAlign: 'middle' }} /> Daily Rewards</h2>
-                    <p>Come back every day for amazing rewards!</p>
+                    <h2><Gift size={20} style={{ display: 'inline', verticalAlign: 'middle' }} /> {t('dailyReward.title')}</h2>
+                    <p>{t('dailyReward.subtitle')}</p>
                 </div>
 
                 <div className="rewards-grid">
@@ -165,16 +167,16 @@ const DailyReward: React.FC = () => {
                     <div className="claimed-section">
                         <div className="claimed-animation">
                             <span className="claimed-icon"><Sparkles size={20} /></span>
-                            <h3>Reward Claimed!</h3>
+                            <h3>{t('dailyReward.rewardClaimed')}</h3>
                             <p className="claimed-xp">+{claimedReward.xp} XP</p>
                             {claimedReward.badge && (
-                                <p className="claimed-badge">New Badge Unlocked! 🏅</p>
+                                <p className="claimed-badge">{t('dailyReward.newBadge')} 🏅</p>
                             )}
                         </div>
 
                         {showCountdown && (
                             <div className="next-reward-fade-in">
-                                <p>Next reward in:</p>
+                                <p>{t('dailyReward.nextRewardIn')}</p>
                                 <div className="countdown">{countdown}</div>
                             </div>
                         )}
@@ -189,14 +191,14 @@ const DailyReward: React.FC = () => {
                             <span className="claiming">Claiming...</span>
                         ) : (
                             <>
-                                <span>Claim Today's Reward</span>
+                                <span>{t('dailyReward.claimReward')}</span>
                                 <span className="claim-emoji"><Gift size={20} /></span>
                             </>
                         )}
                     </button>
                 ) : (
                     <div className="next-reward">
-                        <p>Next reward in:</p>
+                        <p>{t('dailyReward.nextRewardIn')}</p>
                         <div className="countdown">{countdown}</div>
                     </div>
                 )}

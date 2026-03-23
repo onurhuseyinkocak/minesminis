@@ -283,6 +283,20 @@ const tr: TranslationKeys = {
     backOnline: 'Tekrar çevrimiçi!',
     youreOffline: 'Çevrimdışısınız. Bazı özellikler kısıtlı olabilir.',
   },
+  dailyReward: {
+    title: 'Günlük Ödüller',
+    subtitle: 'Her gün gel, harika ödüller kazan!',
+    claimReward: 'Bugünün Ödülünü Al',
+    rewardClaimed: 'Ödül Alındı!',
+    nextRewardIn: 'Sonraki ödül:',
+    dayStreak: 'Günlük Seri',
+    newBadge: 'Yeni Rozet Kazanıldı!',
+  },
+  levelUp: {
+    title: 'SEVİYE ATLADIN!',
+    youReached: 'Ulaştın:',
+    message: 'Harika iş! Daha fazla ödül açmak için öğrenmeye devam et!',
+  },
 } as const;
 
 export default tr;

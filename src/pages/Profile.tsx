@@ -166,7 +166,7 @@ const Profile: React.FC = () => {
           <div className="edit-modal">
             <div className="edit-modal-header">
               <h2><Palette size={20} style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />Kid Profile Editor</h2>
-              <button onClick={() => setShowEditModal(false)}><X size={24} /></button>
+              <button onClick={() => setShowEditModal(false)} aria-label="Close"><X size={24} /></button>
             </div>
             <div className="edit-modal-body">
               <div className="edit-field">

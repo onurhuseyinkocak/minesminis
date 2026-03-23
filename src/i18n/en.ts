@@ -281,6 +281,20 @@ const en = {
     backOnline: 'Back online!',
     youreOffline: "You're offline. Some features may be limited.",
   },
+  dailyReward: {
+    title: 'Daily Rewards',
+    subtitle: 'Come back every day for amazing rewards!',
+    claimReward: "Claim Today's Reward",
+    rewardClaimed: 'Reward Claimed!',
+    nextRewardIn: 'Next reward in:',
+    dayStreak: 'Day Streak',
+    newBadge: 'New Badge Unlocked!',
+  },
+  levelUp: {
+    title: 'LEVEL UP!',
+    youReached: 'You reached',
+    message: 'Amazing work! Keep learning to unlock more rewards!',
+  },
 };
 
 // Deep type that allows any string values for translations

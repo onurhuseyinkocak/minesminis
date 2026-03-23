@@ -6,6 +6,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './LevelUpModal.css';
 import { useGamification } from '../contexts/GamificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { StarBurst, StreakFlame } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
 import { getGardenStats } from '../services/gardenService';
@@ -13,6 +14,7 @@ import { Star, Sprout } from 'lucide-react';
 
 const LevelUpModal: React.FC = () => {
     const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
+    const { t } = useLanguage();
     const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number; color: string }>>([]);
     const [showStarBurst, setShowStarBurst] = useState(false);
     const starBurstTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -81,22 +83,22 @@ const LevelUpModal: React.FC = () => {
                         <span className="star star-3"><Star size={20} /></span>
                     </div>
 
-                    <h2 className="level-up-title">LEVEL UP!</h2>
+                    <h2 className="level-up-title">{t('levelUp.title')}</h2>
 
                     <div className="new-level-display">
-                        <span className="level-label">You reached</span>
+                        <span className="level-label">{t('levelUp.youReached')}</span>
                         <span className="level-number">{newLevel}</span>
                     </div>
 
                     {stats.streakDays >= 2 && (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', margin: '0.5rem 0' }}>
                             <StreakFlame days={stats.streakDays} />
-                            <span style={{ fontWeight: 700, color: 'var(--accent-amber)' }}>{stats.streakDays} Day Streak!</span>
+                            <span style={{ fontWeight: 700, color: 'var(--accent-amber)' }}>{stats.streakDays} {t('dailyReward.dayStreak')}!</span>
                         </div>
                     )}
 
                     <p className="level-up-message">
-                        Amazing work! Keep learning to unlock more rewards!
+                        {t('levelUp.message')}
                         {(() => {
                             const gardenStats = getGardenStats();
                             if (gardenStats.blooming > 0) {
