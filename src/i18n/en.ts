@@ -41,6 +41,7 @@ const en = {
     myXpProgress: 'My XP Progress',
     myTrophies: 'My Trophies',
     myBadges: 'My Badges',
+    wordOfTheDay: 'Word of the Day',
     wordsLearned: 'Words Learned',
     gamesPlayed: 'Games Played',
     videosWatched: 'Videos Watched',

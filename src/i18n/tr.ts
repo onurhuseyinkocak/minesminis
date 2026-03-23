@@ -43,6 +43,7 @@ const tr: TranslationKeys = {
     myXpProgress: 'XP Durumum',
     myTrophies: 'Kupalarım',
     myBadges: 'Rozetlerim',
+    wordOfTheDay: 'Günün Kelimesi',
     wordsLearned: 'Öğrenilen Kelimeler',
     gamesPlayed: 'Oynanan Oyunlar',
     videosWatched: 'İzlenen Videolar',

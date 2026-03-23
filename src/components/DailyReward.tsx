@@ -205,7 +205,7 @@ const DailyReward: React.FC = () => {
 
                 <div className="streak-display">
                     <span className="streak-fire"><Flame size={20} /></span>
-                    <span className="streak-text">{stats.streakDays} Day Streak</span>
+                    <span className="streak-text">{stats.streakDays} {t('dailyReward.dayStreak')}</span>
                 </div>
             </div>
 
