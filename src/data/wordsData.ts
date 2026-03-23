@@ -8,6 +8,8 @@ export interface KidsWord {
     emoji: string;
     turkish: string;
     example?: string;
+    exampleSentence?: string;
+    exampleSentenceTr?: string;
     grade?: number;
     image_url?: string | null;
     word_audio_url?: string | null;

@@ -615,7 +615,7 @@ function PhaseNewWords({
       <div className="dl-nav">
         <button
           className="dl-btn dl-btn--ghost dl-btn--small"
-          onClick={() => speak(word.exampleSentence).catch(() => {})}
+          onClick={() => speak(word.exampleSentence ?? word.word).catch(() => {})}
         >
           <Volume2 size={16} />
           {lang === 'tr' ? 'Cümleyi Dinle' : 'Hear Sentence'}
@@ -656,7 +656,7 @@ function buildComprehensionQuestions(
       phrasePair.english,
       ...words
         .slice(0, 2)
-        .map((w) => w.exampleSentence)
+        .map((w) => w.exampleSentence ?? w.word)
         .filter((s) => s !== phrasePair.english),
     ]
       .slice(0, 3)
@@ -1293,9 +1293,10 @@ function buildChallengeQuestions(plan: DailyLessonPlan, lang: string): Challenge
     {
       type: 'speaking',
       prompt: lang === 'tr'
-        ? `Şunu söyle: "${plan.grammarPattern.examples[0].sentence}"`
-        : `Say: "${plan.grammarPattern.examples[0].sentence}"`,
-      speakWord: plan.grammarPattern.examples[0].sentence.split(' ').slice(-1)[0].replace(/[^a-z]/gi, ''),
+        ? `Şunu söyle: "${plan.grammarPattern?.examples[0]?.sentence ?? w0.word}"`
+        : `Say: "${plan.grammarPattern?.examples[0]?.sentence ?? w0.word}"`,
+      speakWord: (plan.grammarPattern?.examples[0]?.sentence ?? w0.word)
+        .split(' ').slice(-1)[0].replace(/[^a-z]/gi, ''),
     },
   ];
 }
@@ -1487,8 +1488,8 @@ function CelebrationScreen({
     : (lang === 'tr' ? 'Devam et!' : 'Keep going!');
 
   // Next theme preview
-  const currentThemeIdx = THEMED_WORD_GROUPS.findIndex((g) => g.name === plan.themeName);
-  const nextThemeGroup = THEMED_WORD_GROUPS[(currentThemeIdx + 1) % THEMED_WORD_GROUPS.length];
+  const currentThemeIdx = THEMED_WORD_GROUPS.findIndex((g) => g.name === (plan.themeName ?? ''));
+  const nextThemeGroup = THEMED_WORD_GROUPS[(currentThemeIdx < 0 ? 0 : currentThemeIdx + 1) % THEMED_WORD_GROUPS.length];
 
   // Phonics hint from first word
   const phoneticSound = plan.newWords[0]?.word.charAt(0).toUpperCase() ?? '?';
@@ -1563,7 +1564,7 @@ function CelebrationScreen({
             <span className="dl-celebration__summary-label">
               {lang === 'tr' ? 'Gramer:' : 'Grammar:'}
             </span>
-            <span className="dl-celebration__summary-value">{plan.grammarPattern.pattern}</span>
+            <span className="dl-celebration__summary-value">{plan.grammarPattern?.pattern ?? '—'}</span>
           </div>
         </div>
         <div className="dl-celebration__summary-item">
@@ -1625,7 +1626,9 @@ export default function DailyLesson() {
   const [cvcWords] = useState<CVCWord[]>(() => getTodayCVCWords());
 
   // Theme emoji for Phase 3
-  const themeGroup = THEMED_WORD_GROUPS.find((g) => g.name === plan.themeName);
+  const themeGroup = plan.themeName
+    ? THEMED_WORD_GROUPS.find((g) => g.name === plan.themeName)
+    : undefined;
   const themeEmoji = themeGroup?.emoji ?? '📖';
 
   // ── Progress persistence — resume from last incomplete phase on mount ──
@@ -1641,10 +1644,8 @@ export default function DailyLesson() {
   const [showSuccessFlash, setShowSuccessFlash] = useState(false);
   const [pendingPhase, setPendingPhase] = useState<number | null>(null);
 
-  const scoresRef = useRef<Record<number, number>>(() => {
-    const saved = loadProgress(userId, today);
-    return saved?.scores ?? { 4: 0, 5: 0, 8: 0 };
-  });
+  const savedScores = loadProgress(userId, today)?.scores ?? { 4: 0, 5: 0, 8: 0 };
+  const scoresRef = useRef<Record<number, number>>(savedScores);
 
   // Persist progress whenever phase changes
   const persistProgress = useCallback((currentPhase: number, scores: Record<number, number>) => {
@@ -1772,7 +1773,7 @@ export default function DailyLesson() {
         {phase === 3 && (
           <PhaseNewWords
             words={plan.newWords}
-            themeName={plan.themeName}
+            themeName={plan.themeName ?? ''}
             themeEmoji={themeEmoji}
             lang={lang}
             onComplete={() => handlePhaseComplete(3)}
@@ -1781,7 +1782,7 @@ export default function DailyLesson() {
 
         {phase === 4 && (
           <PhaseListenUnderstand
-            phrasePair={plan.phrasePair}
+            phrasePair={plan.phrasePair ?? { english: 'I see a cat.', turkish: 'Bir kedi görüyorum.' }}
             words={plan.newWords}
             lang={lang}
             onComplete={(score) => handlePhaseComplete(4, score)}
@@ -1804,12 +1805,19 @@ export default function DailyLesson() {
           />
         )}
 
-        {phase === 7 && (
+        {phase === 7 && plan.grammarPattern && (
           <PhaseMiniGrammar
             pattern={plan.grammarPattern}
             lang={lang}
             onComplete={() => handlePhaseComplete(7)}
           />
+        )}
+        {phase === 7 && !plan.grammarPattern && (
+          <div className="dl-phase-content dl-phase-content--center">
+            <button className="dl-btn dl-btn--primary" onClick={() => handlePhaseComplete(7)}>
+              {lang === 'tr' ? 'İleri' : 'Next'} <ChevronRight size={20} />
+            </button>
+          </div>
         )}
 
         {phase === 8 && (
