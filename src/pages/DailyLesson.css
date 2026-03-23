@@ -406,10 +406,20 @@
 
 /* ── PHASE 5: REVIEW ── */
 .dl-review-question {
-  font-size: 22px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.dl-review-prompt-word {
+  font-size: 28px;
   font-weight: 800;
   color: var(--text-primary, #f8fafc);
   text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
 }
 
 .dl-review-choices {

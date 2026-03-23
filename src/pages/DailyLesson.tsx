@@ -30,21 +30,21 @@ import './DailyLesson.css';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PHASES_EN = [
-  { id: 1, key: 'listen', emoji: '👂', title: 'New Words!',    subtitle: 'Tap a card to hear it again' },
-  { id: 2, key: 'see',    emoji: '👀', title: 'Watch & Learn!', subtitle: 'See how each word is used' },
-  { id: 3, key: 'play',   emoji: '🎮', title: "Let's Play!",    subtitle: 'Match words to their meanings' },
-  { id: 4, key: 'speak',  emoji: '🎤', title: 'Say It!',        subtitle: 'Press the mic and say the word' },
-  { id: 5, key: 'review', emoji: '🧠', title: 'Remember?',      subtitle: 'Test what you learned today' },
-  { id: 6, key: 'story',  emoji: '📖', title: 'Mini Story!',    subtitle: 'See the words in a story' },
+  { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'Tap a card to hear it again' },
+  { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See how each word is used' },
+  { id: 3, key: 'play',   title: "Let's Play!",    subtitle: 'Match words to their meanings' },
+  { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'Press the mic and say the word' },
+  { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned today' },
+  { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story' },
 ];
 
 const PHASES_TR = [
-  { id: 1, key: 'listen', emoji: '👂', title: 'Yeni Kelimeler!',    subtitle: 'Tekrar duymak için karta dokun' },
-  { id: 2, key: 'see',    emoji: '👀', title: 'İzle ve Öğren!',     subtitle: 'Her kelimenin nasıl kullanıldığını gör' },
-  { id: 3, key: 'play',   emoji: '🎮', title: 'Hadi Oynayalım!',    subtitle: 'Kelimeleri anlamlarıyla eşleştir' },
-  { id: 4, key: 'speak',  emoji: '🎤', title: 'Söyle!',             subtitle: 'Mikrofona bas ve kelimeyi söyle' },
-  { id: 5, key: 'review', emoji: '🧠', title: 'Hatırlıyor musun?',  subtitle: 'Bugün öğrendiklerini test et' },
-  { id: 6, key: 'story',  emoji: '📖', title: 'Mini Hikaye!',       subtitle: 'Kelimeleri bir hikayede gör' },
+  { id: 1, key: 'listen', title: 'Yeni Kelimeler!',    subtitle: 'Tekrar duymak için karta dokun' },
+  { id: 2, key: 'see',    title: 'İzle ve Öğren!',     subtitle: 'Her kelimenin nasıl kullanıldığını gör' },
+  { id: 3, key: 'play',   title: 'Hadi Oynayalım!',    subtitle: 'Kelimeleri anlamlarıyla eşleştir' },
+  { id: 4, key: 'speak',  title: 'Söyle!',             subtitle: 'Mikrofona bas ve kelimeyi söyle' },
+  { id: 5, key: 'review', title: 'Hatırlıyor musun?',  subtitle: 'Bugün öğrendiklerini test et' },
+  { id: 6, key: 'story',  title: 'Mini Hikaye!',       subtitle: 'Kelimeleri bir hikayede gör' },
 ];
 
 const TOTAL_PHASES = PHASES_EN.length; // 6
@@ -76,13 +76,29 @@ const EXAMPLE_SENTENCES: Record<string, { en: string; tr: string; highlight: str
   mat:    { en: 'Wipe your feet on the MAT.',         tr: 'Ayaklarını paspasta sil.',          highlight: 'MAT' },
 };
 
+// Common English verb endings — used to pick a smarter fallback sentence
+const VERB_SUFFIXES = ['ed', 'ing', 'run', 'sit', 'sat', 'sip', 'tap', 'tip', 'hop', 'cut', 'let', 'put'];
+
+function looksLikeVerb(w: string): boolean {
+  const lower = w.toLowerCase();
+  // Single-syllable CVC pattern typical of simple verbs, or known verb suffixes
+  return VERB_SUFFIXES.includes(lower) || lower.endsWith('ed') || lower.endsWith('ing');
+}
+
 function getSentence(word: KidsWord): { en: string; tr: string; highlight: string } {
   const lower = word.word.toLowerCase();
   if (EXAMPLE_SENTENCES[lower]) return EXAMPLE_SENTENCES[lower];
   const upper = word.word.toUpperCase();
+  if (looksLikeVerb(lower)) {
+    return {
+      en: `The boy can ${upper}.`,
+      tr: `Çocuk ${word.turkish}.`,
+      highlight: upper,
+    };
+  }
   return {
-    en: `I can see a ${upper}.`,
-    tr: `Bir ${word.turkish} görüyorum.`,
+    en: `Look! A big ${upper}.`,
+    tr: `Bak! Büyük bir ${word.turkish}.`,
     highlight: upper,
   };
 }
@@ -346,11 +362,11 @@ function PhasePlay({
         )
       );
       setMatchedCount((c) => c + 1);
-      showFeedbackMsg('Great match! 🎉');
+      showFeedbackMsg('Great match!');
     } else {
       SFX.wrong();
       setWrongPair([selectedEn.id, selectedTr.id]);
-      showFeedbackMsg('Try again! 💪', true);
+      showFeedbackMsg('Try again!', true);
       setTimeout(() => setWrongPair(null), 600);
     }
 
@@ -463,7 +479,7 @@ function PhaseSpeak({
   const startListening = useCallback(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
-      setFeedback({ msg: 'Great effort! 👏', good: true });
+      setFeedback({ msg: 'Great effort!', good: true });
       return;
     }
 
@@ -491,15 +507,15 @@ function PhaseSpeak({
 
       if (isClose) {
         setCorrectCount((c) => c + 1);
-        setFeedback({ msg: 'Perfect! 🌟', good: true });
+        setFeedback({ msg: 'Perfect!', good: true });
       } else {
-        setFeedback({ msg: 'Good try! 💪', good: false });
+        setFeedback({ msg: 'Good try!', good: false });
       }
     };
 
     recognition.onerror = () => {
       setListening(false);
-      setFeedback({ msg: 'Great effort! 👏', good: true });
+      setFeedback({ msg: 'Great effort!', good: true });
     };
 
     recognition.start();
@@ -589,21 +605,46 @@ function PhaseSpeak({
 // ─── Phase 5: REVIEW ──────────────────────────────────────────────────────────
 
 interface ReviewQuestion {
-  word: KidsWord;       // the word being tested
-  choices: string[];    // translated choices (Turkish)
-  correct: string;      // correct Turkish word
+  prompt: string;                        // the question text
+  promptWord: string;                    // the highlighted word shown to the kid
+  choices: string[];                     // answer options
+  correct: string;                       // correct answer
+  questionType: 'en-to-tr' | 'tr-to-en';
 }
 
 function buildReviewQuestions(allWords: KidsWord[]): ReviewQuestion[] {
-  return allWords.map((word) => {
-    const correct = word.turkish;
-    const distractors = allWords
-      .filter((w) => w.turkish !== correct)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, REVIEW_CHOICES - 1)
-      .map((w) => w.turkish);
-    const choices = [...distractors, correct].sort(() => Math.random() - 0.5);
-    return { word, choices, correct };
+  return allWords.map((word, i) => {
+    if (i % 2 === 0) {
+      // Type A: Show English word → kid picks Turkish meaning
+      const correct = word.turkish;
+      const distractors = allWords
+        .filter((w) => w.turkish !== correct)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, REVIEW_CHOICES - 1)
+        .map((w) => w.turkish);
+      return {
+        prompt: 'What does this mean?',
+        promptWord: word.word.toUpperCase(),
+        choices: [...distractors, correct].sort(() => Math.random() - 0.5),
+        correct,
+        questionType: 'en-to-tr' as const,
+      };
+    } else {
+      // Type B: Show Turkish meaning → kid picks English word
+      const correct = word.word.toUpperCase();
+      const distractors = allWords
+        .filter((w) => w.word !== word.word)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, REVIEW_CHOICES - 1)
+        .map((w) => w.word.toUpperCase());
+      return {
+        prompt: 'Which English word means:',
+        promptWord: word.turkish,
+        choices: [...distractors, correct].sort(() => Math.random() - 0.5),
+        correct,
+        questionType: 'tr-to-en' as const,
+      };
+    }
   });
 }
 
@@ -635,10 +676,10 @@ function PhaseReview({
       if (choice === q.correct) {
         SFX.correct();
         setScore((s) => s + 1);
-        setShowFeedback({ msg: 'Correct! 🎉' });
+        setShowFeedback({ msg: 'Correct!' });
       } else {
         SFX.wrong();
-        setShowFeedback({ msg: `It's "${q.correct}" 💙`, sad: true });
+        setShowFeedback({ msg: `The answer is "${q.correct}"`, sad: true });
       }
 
       setTimeout(() => {
@@ -665,7 +706,10 @@ function PhaseReview({
       </div>
 
       <p className="dl-review-question">
-        Which one is &quot;{q.word.turkish}&quot;?
+        {q.prompt}
+      </p>
+      <p className="dl-review-prompt-word">
+        {q.promptWord}
       </p>
 
       <div className="dl-score-strip">
@@ -775,7 +819,6 @@ function CelebrationScreen({
 
       {/* Parent share nudge */}
       <div className="dl-celebration__parent-share">
-        <span className="dl-celebration__parent-share-icon">👨‍👩‍👧</span>
         <span>Show mom &amp; dad what you learned today!</span>
       </div>
 
@@ -1134,7 +1177,7 @@ export default function DailyLesson() {
       <div className="dl-content">
         <div style={{ textAlign: 'center' }}>
           <p className="dl-phase-title">
-            {currentPhaseInfo.emoji} {currentPhaseInfo.title}
+            {currentPhaseInfo.title}
           </p>
           <p className="dl-phase-subtitle">{currentPhaseInfo.subtitle}</p>
         </div>
