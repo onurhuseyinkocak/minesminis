@@ -200,6 +200,7 @@ function getWordOfTheDay(): WodEntry {
 }
 
 function WordOfTheDay() {
+  const { t } = useLanguage();
   const wod = getWordOfTheDay();
   return (
     <div className="dash-word-of-day">
