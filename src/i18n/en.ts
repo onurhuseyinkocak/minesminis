@@ -281,6 +281,78 @@ const en = {
     backOnline: 'Back online!',
     youreOffline: "You're offline. Some features may be limited.",
   },
+  dailyLesson: {
+    // Phase names
+    phaseWarmup: 'Warm-Up',
+    phaseNewSounds: 'New Sound',
+    phaseNewWords: 'New Words',
+    phaseListenUnderstand: 'Listen & Understand',
+    phaseSpeakCorrect: 'Speak & Correct',
+    phaseReadBlend: 'Read & Blend',
+    phaseMiniGrammar: 'Mini Grammar',
+    phaseChallenge: 'Challenge',
+    // Warm-up
+    warmupQuestion: 'Do you remember these words?',
+    warmupReveal: 'Remember it? Tap to reveal!',
+    warmupDidYou: 'Did you remember?',
+    warmupYes: 'Yes!',
+    warmupSkip: 'Not quite, skip',
+    warmupFirst: "This is your first lesson! Let's get started.",
+    // New sounds
+    soundHear: 'Hear Sound',
+    soundMouth: 'Open your mouth and make the sound',
+    soundWordsWith: 'Words with the sound:',
+    soundNowTry: 'Now You Try!',
+    soundSayIt: 'Say the sound!',
+    soundPerfect: 'Perfect pronunciation!',
+    soundCorrectIs: 'Correct sound: Try again!',
+    soundListenAgain: 'Listen one more time...',
+    soundAllLearned: 'You have learned all sounds! Amazing!',
+    // New words
+    todaysTheme: "Today's theme:",
+    hearSentence: 'Hear Sentence',
+    tapHearAgain: 'Tap to hear again',
+    // Listen & understand
+    listenInstruction: 'Listen to the English sentence and answer:',
+    listen: 'Listen',
+    hearAgain: 'Hear Again',
+    whatDidYouHear: 'What did you hear?',
+    // Speak & correct
+    hearCorrectSound: 'Hear correct sound',
+    speakAttempt: 'Attempt',
+    youSaid: 'You said:',
+    correctIs: 'correct is',
+    tryAgain: 'Try again!',
+    threeAttempts: '3 attempts used. Listen one more time...',
+    couldntHear: "Couldn't hear you. Try again!",
+    nextWord: 'Next word',
+    // Read & blend
+    blendInstruction: 'Tap each letter to hear its sound, then say the whole word!',
+    blendNowSay: 'Now say the whole word!',
+    blendGreat: 'Great reading!',
+    blendTryAgain: 'Try again!',
+    // Mini grammar
+    fillBlank: 'Fill in the blank:',
+    fillBlankBtn: 'Fill the Blank!',
+    correctAnswer: 'Correct answer:',
+    // Challenge
+    challengeVocab: 'Vocabulary',
+    challengeListening: 'Listening',
+    challengeSpeaking: 'Speaking',
+    // General
+    continue: 'Continue',
+    next: 'Next',
+    done: 'Done!',
+    finish: 'Finish',
+    skip: 'Skip',
+    listening: 'Listening...',
+    // Celebration
+    celebrationWordsLabel: 'You learned today:',
+    celebrationParent: 'Show mom & dad what you learned today!',
+    backToDashboard: 'Back to Dashboard',
+    phaseOf: 'Phase',
+    of: 'of',
+  },
 };
 
 // Deep type that allows any string values for translations
