@@ -35,6 +35,8 @@ import { useGamification } from '../contexts/GamificationContext';
 import { GameSelector } from '../components/games';
 import { getLessonById, getWorldById, getWorldVocabulary } from '../data/curriculum';
 import type { Activity, VocabularyWord } from '../data/curriculum';
+import { PHASES } from '../data/curriculumPhases';
+import type { LearningUnit, UnitActivity } from '../data/curriculumPhases';
 import { completeLesson } from '../data/progressTracker';
 import { updateWordProgress } from '../data/spacedRepetition';
 import { useAuth } from '../contexts/AuthContext';
@@ -88,6 +90,32 @@ const ACTIVITY_COLORS: Record<string, string> = {
   practice: 'var(--accent-pink)',
   quiz: 'var(--error)',
 };
+
+// ============================================================
+// PHASES → LESSON ADAPTER
+// Converts new curriculum phase units/activities into the old Lesson format
+// so the existing LessonPlayer can render them.
+// ============================================================
+
+function getUnitById(unitId: string): LearningUnit | null {
+  for (const phase of PHASES) {
+    const unit = phase.units.find((u) => u.id === unitId);
+    if (unit) return unit;
+  }
+  return null;
+}
+
+/** Convert a UnitActivity into the Activity format LessonPlayer expects */
+function unitActivityToActivity(ua: UnitActivity, index: number): Activity {
+  return {
+    id: `activity-${index}`,
+    title: ua.title,
+    type: ua.type as Activity['type'],
+    instructions: ua.description,
+    xpReward: ua.xp,
+    duration: ua.duration,
+  };
+}
 
 // Game types that GameSelector can handle
 const SUPPORTED_GAME_TYPES = new Set([
@@ -321,10 +349,33 @@ const LessonPlayer = () => {
   const { t, lang } = useLanguage();
   const userId = user?.uid || 'guest';
 
-  // Load real lesson data from curriculum
-  const lesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
+  // Load real lesson data from curriculum (old system first, then phases fallback)
+  const oldLesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
   const world = useMemo(() => getWorldById(worldId), [worldId]);
   const vocabulary = useMemo(() => getWorldVocabulary(worldId), [worldId]);
+
+  // Fallback: try new curriculum phases if old system doesn't find it
+  const lesson = useMemo(() => {
+    if (oldLesson) return oldLesson;
+    const unit = getUnitById(worldId);
+    if (!unit) return null;
+    const activityIndex = parseInt(lessonId, 10);
+    // Build a synthetic lesson from the unit's activities
+    const activities = isNaN(activityIndex)
+      ? unit.activities.map(unitActivityToActivity)
+      : [unitActivityToActivity(unit.activities[activityIndex] || unit.activities[0], activityIndex)];
+    return {
+      id: `${unit.id}-${lessonId}`,
+      worldId: unit.id,
+      title: unit.title,
+      titleTr: unit.titleTr,
+      type: 'phonics' as const,
+      xpReward: activities.reduce((sum, a) => sum + (a.xpReward || 10), 0),
+      targetWords: [] as string[],
+      activities,
+      vocabulary: [],
+    };
+  }, [oldLesson, worldId, lessonId]);
 
   // Build word items for game components from lesson's targetWords + world vocabulary
   const activityWords = useMemo(() => {
@@ -706,7 +757,7 @@ const LessonPlayer = () => {
           fontSize: '0.85rem',
         }}>
           {world && <span>{world.icon} {lang === 'tr' ? world.nameTr : world.name} &bull; </span>}
-          {lesson.objective}
+          {'objective' in lesson ? (lesson as { objective: string }).objective : (lang === 'tr' ? lesson.titleTr : lesson.title)}
         </div>
       )}
 

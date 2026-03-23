@@ -87,7 +87,7 @@ export const READING_LIBRARY: DecodableBook[] = [
       },
       {
         question: 'What does Pat do in the sun?',
-        questionTr: 'Pat gunes altinda ne yapar?',
+        questionTr: 'Pat güneş altında ne yapar?',
         options: ['Naps', 'Runs', 'Swims'],
         correctIndex: 0,
         emoji: '☀️',
@@ -154,7 +154,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g2-1',
     title: 'Red Hen',
-    titleTr: 'Kirmizi Tavuk',
+    titleTr: 'Kırmızı Tavuk',
     emoji: '🐔',
     requiredGroup: 2,
     difficulty: 1,
@@ -190,21 +190,21 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'What is Red Hen in?',
-        questionTr: 'Kirmizi Tavuk nerede?',
+        questionTr: 'Kırmızı Tavuk nerede?',
         options: ['A pen', 'A car', 'A bed'],
         correctIndex: 0,
         emoji: '🏠',
       },
       {
         question: 'What did the man have?',
-        questionTr: 'Adamda ne vardi?',
+        questionTr: 'Adamda ne vardı?',
         options: ['A hat', 'A cat', 'A pen'],
         correctIndex: 0,
         emoji: '🎩',
       },
       {
         question: 'What did the man do?',
-        questionTr: 'Adam ne yapti?',
+        questionTr: 'Adam ne yaptı?',
         options: ['Ran', 'Sat', 'Napped'],
         correctIndex: 0,
         emoji: '💨',
@@ -214,7 +214,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g2-2',
     title: 'The Big Map',
-    titleTr: 'Buyuk Harita',
+    titleTr: 'Büyük Harita',
     emoji: '🗺️',
     requiredGroup: 2,
     difficulty: 2,
@@ -250,14 +250,14 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'Who had a map?',
-        questionTr: 'Kimde harita vardi?',
+        questionTr: 'Kimde harita vardı?',
         options: ['Dad', 'Mum', 'A cat'],
         correctIndex: 0,
         emoji: '🧑',
       },
       {
         question: 'Where did he hide the map?',
-        questionTr: 'Haritayi nereye sakladi?',
+        questionTr: 'Haritayı nereye sakladı?',
         options: ['In a den', 'In a hat', 'In a pan'],
         correctIndex: 0,
         emoji: '🕳️',
@@ -271,7 +271,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g3-1',
     title: 'Bug on a Log',
-    titleTr: 'Kutuk Ustunde Bocek',
+    titleTr: 'Kütük Üstünde Böcek',
     emoji: '🐛',
     requiredGroup: 3,
     difficulty: 1,
@@ -307,21 +307,21 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'Where did the bug sit?',
-        questionTr: 'Bocek nereye oturdu?',
+        questionTr: 'Böcek nereye oturdu?',
         options: ['On a log', 'On a bed', 'On a hat'],
         correctIndex: 0,
         emoji: '🪵',
       },
       {
         question: 'Where did the bug hide?',
-        questionTr: 'Bocek nereye saklandi?',
+        questionTr: 'Böcek nereye saklandı?',
         options: ['In the fog', 'In the sun', 'In the mud'],
         correctIndex: 0,
         emoji: '🌫️',
       },
       {
         question: 'What did the dog do?',
-        questionTr: 'Kopek ne yapti?',
+        questionTr: 'Köpek ne yaptı?',
         options: ['Dug in the mud', 'Sat on the log', 'Ate a bun'],
         correctIndex: 0,
         emoji: '🐕',
@@ -331,7 +331,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g3-2',
     title: 'Fun in the Sun',
-    titleTr: 'Guneste Eglence',
+    titleTr: 'Güneşte Eğlence',
     emoji: '☀️',
     requiredGroup: 3,
     difficulty: 2,
@@ -367,7 +367,7 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'How did Gus travel?',
-        questionTr: 'Gus nasil seyahat etti?',
+        questionTr: 'Gus nasıl seyahat etti?',
         options: ['On a bus', 'On a boat', 'On a bike'],
         correctIndex: 0,
         emoji: '🚌',
@@ -388,7 +388,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g4-1',
     title: 'The Goat on a Boat',
-    titleTr: 'Teknedeki Keci',
+    titleTr: 'Teknedeki Keçi',
     emoji: '🐐',
     requiredGroup: 4,
     difficulty: 1,
@@ -424,21 +424,21 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'What did the goat get on?',
-        questionTr: 'Keci neye bindi?',
+        questionTr: 'Keçi neye bindi?',
         options: ['A boat', 'A bus', 'A log'],
         correctIndex: 0,
         emoji: '⛵',
       },
       {
         question: 'What fell from the sky?',
-        questionTr: 'Gokten ne yagdi?',
+        questionTr: 'Gökten ne yağdı?',
         options: ['Rain', 'Seeds', 'Mud'],
         correctIndex: 0,
         emoji: '🌧️',
       },
       {
         question: 'Where did the goat run?',
-        questionTr: 'Keci nereye kostu?',
+        questionTr: 'Keçi nereye koştu?',
         options: ['The road', 'The den', 'The pen'],
         correctIndex: 0,
         emoji: '🛤️',
@@ -448,7 +448,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g4-2',
     title: 'The Bee and the Tree',
-    titleTr: 'Ari ve Agac',
+    titleTr: 'Arı ve Ağaç',
     emoji: '🐝',
     requiredGroup: 4,
     difficulty: 2,
@@ -489,21 +489,21 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'Where did the bee sit?',
-        questionTr: 'Ari nereye oturdu?',
+        questionTr: 'Arı nereye oturdu?',
         options: ['In a tree', 'On a log', 'In a boat'],
         correctIndex: 0,
         emoji: '🌳',
       },
       {
         question: 'What did the bee see?',
-        questionTr: 'Ari ne gordu?',
+        questionTr: 'Arı ne gördü?',
         options: ['A green seed', 'A red hat', 'A big dog'],
         correctIndex: 0,
         emoji: '🌱',
       },
       {
         question: 'What does the bee need?',
-        questionTr: 'Arinin neye ihtiyaci var?',
+        questionTr: 'Arının neye ihtiyacı var?',
         options: ['To feed', 'To nap', 'To run'],
         correctIndex: 0,
         emoji: '🍯',
@@ -517,7 +517,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g5-1',
     title: 'The King and the Zoo',
-    titleTr: 'Kral ve Hayvanat Bahcesi',
+    titleTr: 'Kral ve Hayvanat Bahçesi',
     emoji: '👑',
     requiredGroup: 5,
     difficulty: 1,
@@ -560,14 +560,14 @@ export const READING_LIBRARY: DecodableBook[] = [
       },
       {
         question: 'What did the king sing?',
-        questionTr: 'Kral ne soyledi?',
+        questionTr: 'Kral ne söyledi?',
         options: ['A song', 'A poem', 'A name'],
         correctIndex: 0,
         emoji: '🎵',
       },
       {
         question: 'What went buzz?',
-        questionTr: 'Ne vizildadi?',
+        questionTr: 'Ne vızıldadı?',
         options: ['A bee', 'A king', 'A van'],
         correctIndex: 0,
         emoji: '🐝',
@@ -577,7 +577,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g5-2',
     title: 'Win the Ring',
-    titleTr: 'Yuzugu Kazan',
+    titleTr: 'Yüzüğü Kazan',
     emoji: '💍',
     requiredGroup: 5,
     difficulty: 2,
@@ -620,7 +620,7 @@ export const READING_LIBRARY: DecodableBook[] = [
       },
       {
         question: 'What did Vin take?',
-        questionTr: 'Vin ne aldi?',
+        questionTr: 'Vin ne aldı?',
         options: ['A good book', 'A red pen', 'A fat cat'],
         correctIndex: 0,
         emoji: '📖',
@@ -634,7 +634,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g6-1',
     title: 'The Fox in the Shop',
-    titleTr: 'Dukkandaki Tilki',
+    titleTr: 'Dükkândaki Tilki',
     emoji: '🦊',
     requiredGroup: 6,
     difficulty: 1,
@@ -684,7 +684,7 @@ export const READING_LIBRARY: DecodableBook[] = [
       },
       {
         question: 'How many chips did she have?',
-        questionTr: 'Kac tane cipsi vardi?',
+        questionTr: 'Kaç tane cipsi vardı?',
         options: ['Six', 'Three', 'Ten'],
         correctIndex: 0,
         emoji: '6️⃣',
@@ -742,7 +742,7 @@ export const READING_LIBRARY: DecodableBook[] = [
       },
       {
         question: 'What was on the ship?',
-        questionTr: 'Gemide ne vardi?',
+        questionTr: 'Gemide ne vardı?',
         options: ['A shed and a chest', 'A hat and a mat', 'A dog and a cat'],
         correctIndex: 0,
         emoji: '🧰',
@@ -763,7 +763,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g7-1',
     title: 'The Queen and the Star',
-    titleTr: 'Kralice ve Yildiz',
+    titleTr: 'Kraliçe ve Yıldız',
     emoji: '👸',
     requiredGroup: 7,
     difficulty: 1,
@@ -804,21 +804,21 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'Where did the queen drive?',
-        questionTr: 'Kralice nereye gitti?',
+        questionTr: 'Kraliçe nereye gitti?',
         options: ['To the farm', 'To the zoo', 'To the ship'],
         correctIndex: 0,
         emoji: '🌾',
       },
       {
         question: 'What did the queen find?',
-        questionTr: 'Kralice ne buldu?',
+        questionTr: 'Kraliçe ne buldu?',
         options: ['A round coin', 'A red hat', 'A fat cat'],
         correctIndex: 0,
         emoji: '🪙',
       },
       {
         question: 'What was at the end?',
-        questionTr: 'Sonda ne vardi?',
+        questionTr: 'Sonda ne vardı?',
         options: ['A star', 'A ring', 'A fox'],
         correctIndex: 0,
         emoji: '⭐',
@@ -828,7 +828,7 @@ export const READING_LIBRARY: DecodableBook[] = [
   {
     id: 'book-g7-2',
     title: 'The Dark Park',
-    titleTr: 'Karanlik Park',
+    titleTr: 'Karanlık Park',
     emoji: '🌙',
     requiredGroup: 7,
     difficulty: 2,
@@ -869,14 +869,14 @@ export const READING_LIBRARY: DecodableBook[] = [
     comprehensionQuestions: [
       {
         question: 'Where is it dark?',
-        questionTr: 'Neresi karanlik?',
+        questionTr: 'Neresi karanlık?',
         options: ['In the park', 'In the shop', 'In the zoo'],
         correctIndex: 0,
         emoji: '🌳',
       },
       {
         question: 'What did her sister find?',
-        questionTr: 'Ablasi ne buldu?',
+        questionTr: 'Ablası ne buldu?',
         options: ['A blue clue', 'A red hat', 'A big dog'],
         correctIndex: 0,
         emoji: '🔵',

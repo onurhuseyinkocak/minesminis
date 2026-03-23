@@ -50,6 +50,11 @@ function buildQuestions(words: WordItem[]): Question[] {
 
 export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWrongAnswer }) => {
   const { t } = useLanguage();
+
+  if (words.length < 3) {
+    return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Bu oyun için en az 3 kelime gerekiyor.</div>;
+  }
+
   const questions = useMemo(() => buildQuestions(words), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);

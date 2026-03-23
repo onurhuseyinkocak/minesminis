@@ -64,8 +64,14 @@ function saveLogs(logs: ActivityLog[], userId?: string): void {
     // Keep only the most recent entries
     const trimmed = logs.slice(-MAX_LOG_ENTRIES);
     localStorage.setItem(getStorageKey(userId), JSON.stringify(trimmed));
-  } catch {
-    // localStorage might be full or unavailable
+  } catch (e) {
+    // localStorage might be full — try aggressive trim then retry once
+    if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+      try {
+        const minimal = logs.slice(-50);
+        localStorage.setItem(getStorageKey(userId), JSON.stringify(minimal));
+      } catch { /* truly full, give up silently */ }
+    }
   }
 }
 

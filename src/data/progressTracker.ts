@@ -90,8 +90,9 @@ export function completeLesson(
     const completedInWorld = currentWorld.lessons.filter(
       (l) => progress.completedLessons[l.id],
     ).length;
-    // Unlock next world when 7+ lessons completed
-    if (completedInWorld >= 7) {
+    // Unlock next world when majority of lessons completed (at least 70% or all if fewer than 7)
+    const threshold = Math.min(7, Math.ceil(currentWorld.lessons.length * 0.7));
+    if (completedInWorld >= threshold) {
       const nextWorldId = WORLDS[worldIndex + 1].id;
       if (!progress.unlockedWorlds.includes(nextWorldId)) {
         progress.unlockedWorlds.push(nextWorldId);

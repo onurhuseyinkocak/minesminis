@@ -68,7 +68,9 @@ function getNextInterval(currentInterval: number, easeFactor: number): number {
     }
   }
   // Beyond predefined steps — multiply the current interval by ease factor
-  return Math.round(currentInterval * easeFactor);
+  // Cap at 365 days to prevent Infinity from corrupted easeFactor
+  const result = Math.round(currentInterval * easeFactor);
+  return isFinite(result) && result > 0 ? Math.min(result, 365) : 30;
 }
 
 // ============================================================

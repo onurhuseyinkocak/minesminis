@@ -43,6 +43,10 @@ function generateRounds(words: WordItem[]): Round[] {
 }
 
 export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  if (words.length < 2) {
+    return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Bu oyun için en az 2 kelime gerekiyor.</div>;
+  }
+
   const rounds = useMemo(() => generateRounds(words), [words]);
   const [currentRound, setCurrentRound] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);

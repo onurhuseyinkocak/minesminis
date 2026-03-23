@@ -6,7 +6,7 @@
  * Shows the world header, lesson list, and vocabulary preview.
  * Uses real curriculum data and progress tracking.
  */
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -313,6 +313,7 @@ interface UnitDetailViewProps {
 }
 
 function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
+  const navigate = useNavigate();
   // Read progress from localStorage
   let activitiesCompleted = 0;
   try {
@@ -443,7 +444,12 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
                   {/* Status */}
                   <div className="lesson-card__status">
                     {isCurrent && (
-                      <Button variant="primary" size="sm" icon={<Play size={14} />}>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        icon={<Play size={14} />}
+                        onClick={() => navigate(`/worlds/${unit.id}/lessons/${idx}`)}
+                      >
                         Start
                       </Button>
                     )}

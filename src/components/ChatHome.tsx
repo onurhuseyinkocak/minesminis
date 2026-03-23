@@ -45,7 +45,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
             try {
                 const parsed = JSON.parse(stored);
                 if (parsed.date === today) return parsed.count;
-            } catch { /* corrupted localStorage */ }
+            } catch { /* corrupted localStorage - reset counter */ }
         }
         return 0;
     });

@@ -8,10 +8,16 @@ function sanitizeHtml(html: string): string {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   // Remove dangerous tags
   doc.querySelectorAll('script, style, iframe, object, embed, form, input').forEach(el => el.remove());
-  // Remove event handlers and dangerous attributes
+  // Remove event handlers, dangerous attributes, and javascript: URLs
   doc.querySelectorAll('*').forEach(el => {
     Array.from(el.attributes).forEach(attr => {
-      if (attr.name.startsWith('on') || attr.name === 'srcdoc') el.removeAttribute(attr.name);
+      if (attr.name.startsWith('on') || attr.name === 'srcdoc') {
+        el.removeAttribute(attr.name);
+      }
+      // Block javascript: protocol in href/src/action attributes
+      if (['href', 'src', 'action'].includes(attr.name) && attr.value.trim().toLowerCase().startsWith('javascript:')) {
+        el.removeAttribute(attr.name);
+      }
     });
   });
   return doc.body.innerHTML;

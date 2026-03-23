@@ -9,6 +9,8 @@ import { createDefaultState } from '../data/storyEngine';
 
 const LS_KEY = 'mimi_story_progress';
 let useLocalStorage = false;
+let lastFallbackTime = 0;
+const FALLBACK_RETRY_MS = 60_000; // Retry Supabase after 60s of localStorage fallback
 
 // ─────────── LOCAL STORAGE HELPERS ───────────
 
@@ -42,6 +44,10 @@ function deleteFromLS(userId: string): boolean {
 // ─────────── LOAD ───────────
 
 export async function loadStoryState(userId: string): Promise<StoryState | null> {
+  // Retry Supabase after fallback period to recover from temporary outages
+  if (useLocalStorage && Date.now() - lastFallbackTime > FALLBACK_RETRY_MS) {
+    useLocalStorage = false;
+  }
   if (useLocalStorage) return loadFromLS(userId);
 
   try {
@@ -52,9 +58,9 @@ export async function loadStoryState(userId: string): Promise<StoryState | null>
       .maybeSingle();
 
     if (error) {
-      // Table doesn't exist or connection issue - switch to localStorage
-      // Supabase story_progress unavailable — fall back to localStorage
+      // Table doesn't exist or connection issue - switch to localStorage temporarily
       useLocalStorage = true;
+      lastFallbackTime = Date.now();
       return loadFromLS(userId);
     }
 

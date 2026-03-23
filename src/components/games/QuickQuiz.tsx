@@ -66,6 +66,11 @@ const TIMER_DURATION = 10;
 
 export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
+
+  if (words.length < 4) {
+    return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Bu oyun için en az 4 kelime gerekiyor.</div>;
+  }
+
   const questions = useMemo(() => generateQuestions(words), [words]);
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);

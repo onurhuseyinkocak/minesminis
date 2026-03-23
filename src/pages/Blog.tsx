@@ -56,7 +56,7 @@ export default function Blog() {
       ) : posts.length === 0 ? (
         <div className="blog-empty">
           <span className="blog-empty-emoji"><MimiMascot size={48} mood="thinking" /></span>
-          <p>Mimi hasn't written anything yet. Coming soon! / Mimi henuz bir yazi hazirlamadi. Yakinda burada olacak!</p>
+          <p>Mimi hasn't written anything yet. Coming soon! / Mimi henüz bir yazı hazırlamadı. Yakında burada olacak!</p>
         </div>
       ) : (
         <div className="blog-list">

@@ -20,7 +20,9 @@ import {
     Search,
     AlertTriangle,
     FileBarChart,
-    BookOpen
+    BookOpen,
+    Video,
+    Type
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import AdminDashboard from './AdminDashboard';
@@ -38,6 +40,8 @@ import PremiumManager from './PremiumManager';
 import ReportsManager from './ReportsManager';
 import SEOManager from './SEOManager';
 import WorksheetsManager from './WorksheetsManager';
+import VideosManager from './VideosManager';
+import WordsManager from './WordsManager';
 import './AdminLayout.css';
 
 const ADMIN_SESSION_KEY = 'admin_session';
@@ -57,6 +61,8 @@ const navSections = [
             { path: '/admin/content', icon: Package, label: 'Content' },
             { path: '/admin/curriculum', icon: GraduationCap, label: 'Curriculum' },
             { path: '/admin/games', icon: Gamepad2, label: 'Games' },
+            { path: '/admin/videos', icon: Video, label: 'Videos' },
+            { path: '/admin/words', icon: Type, label: 'Words' },
             { path: '/admin/worksheets', icon: FileSpreadsheet, label: 'Worksheets' },
         ]
     },
@@ -242,6 +248,8 @@ function AdminLayout() {
                         <Route path="curriculum" element={<AdminCurriculumManager />} />
                         <Route path="analytics" element={<AdminAnalytics />} />
                         <Route path="games" element={<GamesManager />} />
+                        <Route path="videos" element={<VideosManager />} />
+                        <Route path="words" element={<WordsManager />} />
                         <Route path="worksheets" element={<WorksheetsManager />} />
                         <Route path="blog" element={<BlogManager />} />
                         <Route path="stories" element={<StoryGenerator />} />

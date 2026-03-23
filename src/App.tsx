@@ -261,7 +261,8 @@ function TimeGuardedRoute({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  const savedLimit = parseInt(localStorage.getItem(LS_DAILY_TIME_LIMIT) || '0');
+  const parsed = parseInt(localStorage.getItem(LS_DAILY_TIME_LIMIT) || '0', 10);
+  const savedLimit = isNaN(parsed) ? 0 : parsed;
   const dailyLimit = savedLimit || (userProfile?.settings?.dailyTimeLimit as number) || 60;
   const todayMinutes = getTodayMinutes();
 

@@ -136,6 +136,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (cancelled) return;
         clearTimeout(timeout);
         setAuthTimeoutReached(false);
+        // Set profileLoading BEFORE clearing loading to prevent a render frame
+        // where user exists but profile hasn't started loading yet.
+        // Without this, profileReady=true with userProfile=null causes a
+        // false redirect to /setup → /dashboard on direct URL navigation.
+        if (firebaseUser) setProfileLoading(true);
         setUser(firebaseUser);
         setLoading(false);
       },

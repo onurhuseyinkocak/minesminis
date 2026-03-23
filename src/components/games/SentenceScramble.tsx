@@ -53,6 +53,10 @@ function generateSentences(wordItems: WordItem[]): SentenceData[] {
 }
 
 export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+  if (words.length < 1) {
+    return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Cümle oluşturmak için kelime gerekiyor.</div>;
+  }
+
   const sentences = useMemo(() => generateSentences(words), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [placed, setPlaced] = useState<string[]>([]);
@@ -136,7 +140,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     setPlaced([]);
   };
 
-  const progress = (currentIndex / sentences.length) * 100;
+  const progress = sentences.length > 0 ? (currentIndex / sentences.length) * 100 : 0;
 
   if (completed) {
     return (

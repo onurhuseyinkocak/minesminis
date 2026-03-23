@@ -10,15 +10,172 @@ import { kidsWords, type KidsWord } from '../data/wordsData';
 import { getDueWords, updateWordProgress, loadAllProgress } from '../data/spacedRepetition';
 import { ALL_SOUNDS } from '../data/phonics';
 
+/** Get local date string YYYY-MM-DD (avoids UTC midnight timezone mismatch) */
+function localDateStr(d: Date = new Date()): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+export type { KidsWord };
+
+export interface CVCWord {
+  word: string;
+  letters: string[];
+  emoji: string;
+  turkish: string;
+}
+
+export interface GrammarPattern {
+  pattern: string;        // e.g. "I + verb"
+  patternTr: string;      // Turkish description
+  examples: Array<{
+    sentence: string;
+    sentenceTr: string;
+  }>;
+  blankTemplate: string;  // e.g. "I ___ a cat."
+  blankAnswer: string;    // correct fill-in
+  blankChoices: string[]; // all options including the answer
+}
+
 export interface DailyLessonPlan {
-  date: string;        // YYYY-MM-DD
+  date: string;            // YYYY-MM-DD
   newWords: KidsWord[];
   reviewWords: KidsWord[];
   completed: boolean;
-  score: number;       // 0-100
+  score: number;           // 0-100
+  themeName?: string;      // display name of today's theme
+  phrasePair?: { english: string; turkish: string };
+  grammarPattern?: GrammarPattern;
 }
+
+// ─── Themed Word Groups ───────────────────────────────────────────────────────
+
+export interface ThemedWordGroup {
+  name: string;
+  nameTr: string;
+  emoji: string;
+  words: KidsWord[];
+}
+
+export const THEMED_WORD_GROUPS: ThemedWordGroup[] = [
+  {
+    name: 'Animals',
+    nameTr: 'Hayvanlar',
+    emoji: '🐾',
+    words: kidsWords.filter((w) => w.category === 'Animals').slice(0, 10),
+  },
+  {
+    name: 'Colors',
+    nameTr: 'Renkler',
+    emoji: '🎨',
+    words: kidsWords.filter((w) => w.category === 'Colors').slice(0, 10),
+  },
+  {
+    name: 'Body',
+    nameTr: 'Vücut',
+    emoji: '🧍',
+    words: kidsWords.filter((w) => w.category === 'Body').slice(0, 10),
+  },
+  {
+    name: 'Nature',
+    nameTr: 'Doğa',
+    emoji: '🌿',
+    words: kidsWords.filter((w) => w.category === 'Nature').slice(0, 10),
+  },
+  {
+    name: 'Phonics',
+    nameTr: 'Fonetik',
+    emoji: '🔤',
+    words: kidsWords.filter((w) => w.category === 'Phonics').slice(0, 10),
+  },
+];
+
+// ─── CVC Words pool ──────────────────────────────────────────────────────────
+
+const CVC_POOL: CVCWord[] = [
+  { word: 'cat', letters: ['c', 'a', 't'], emoji: '🐱', turkish: 'kedi' },
+  { word: 'dog', letters: ['d', 'o', 'g'], emoji: '🐶', turkish: 'köpek' },
+  { word: 'cup', letters: ['c', 'u', 'p'], emoji: '☕', turkish: 'fincan' },
+  { word: 'hat', letters: ['h', 'a', 't'], emoji: '🎩', turkish: 'şapka' },
+  { word: 'sun', letters: ['s', 'u', 'n'], emoji: '☀️', turkish: 'güneş' },
+  { word: 'bed', letters: ['b', 'e', 'd'], emoji: '🛏️', turkish: 'yatak' },
+  { word: 'pen', letters: ['p', 'e', 'n'], emoji: '✏️', turkish: 'kalem' },
+  { word: 'big', letters: ['b', 'i', 'g'], emoji: '🔶', turkish: 'büyük' },
+];
+
+// ─── Grammar patterns pool ───────────────────────────────────────────────────
+
+const GRAMMAR_PATTERNS: GrammarPattern[] = [
+  {
+    pattern: 'I + verb',
+    patternTr: 'Ben + fiil',
+    examples: [
+      { sentence: 'I run fast.', sentenceTr: 'Hızlı koşarım.' },
+      { sentence: 'I eat an apple.', sentenceTr: 'Bir elma yerim.' },
+    ],
+    blankTemplate: 'I ___ fast.',
+    blankAnswer: 'run',
+    blankChoices: ['run', 'runs', 'running'],
+  },
+  {
+    pattern: 'I have a ___',
+    patternTr: 'Benim bir ___ var',
+    examples: [
+      { sentence: 'I have a cat.', sentenceTr: 'Benim bir kedim var.' },
+      { sentence: 'I have a bag.', sentenceTr: 'Benim bir çantam var.' },
+    ],
+    blankTemplate: 'I have a ___.',
+    blankAnswer: 'cat',
+    blankChoices: ['cat', 'cats', 'the cat'],
+  },
+  {
+    pattern: 'It is + adjective',
+    patternTr: 'Bu + sıfat',
+    examples: [
+      { sentence: 'It is big.', sentenceTr: 'Bu büyük.' },
+      { sentence: 'It is red.', sentenceTr: 'Bu kırmızı.' },
+    ],
+    blankTemplate: 'It is ___.',
+    blankAnswer: 'big',
+    blankChoices: ['big', 'bigger', 'bigs'],
+  },
+  {
+    pattern: 'I can ___',
+    patternTr: 'Ben ___ yapabilirim',
+    examples: [
+      { sentence: 'I can jump.', sentenceTr: 'Ben zıplayabilirim.' },
+      { sentence: 'I can swim.', sentenceTr: 'Ben yüzebilirim.' },
+    ],
+    blankTemplate: 'I can ___.',
+    blankAnswer: 'jump',
+    blankChoices: ['jump', 'jumped', 'jumping'],
+  },
+  {
+    pattern: 'I like ___',
+    patternTr: 'Ben ___ seviyorum',
+    examples: [
+      { sentence: 'I like dogs.', sentenceTr: 'Köpekleri seviyorum.' },
+      { sentence: 'I like cake.', sentenceTr: 'Pastayı seviyorum.' },
+    ],
+    blankTemplate: 'I like ___.',
+    blankAnswer: 'dogs',
+    blankChoices: ['dogs', 'dog', 'a dogs'],
+  },
+];
+
+// ─── Phrase pairs pool ───────────────────────────────────────────────────────
+
+const PHRASE_PAIRS: Array<{ english: string; turkish: string }> = [
+  { english: 'The cat is on the mat.', turkish: 'Kedi paspasın üzerinde.' },
+  { english: 'I see a big dog.', turkish: 'Büyük bir köpek görüyorum.' },
+  { english: 'She has a red hat.', turkish: 'Onun kırmızı bir şapkası var.' },
+  { english: 'The sun is bright today.', turkish: 'Bugün güneş parlak.' },
+  { english: 'I like to run and jump.', turkish: 'Koşmayı ve zıplamayı seviyorum.' },
+  { english: 'He can swim very fast.', turkish: 'Çok hızlı yüzebilir.' },
+  { english: 'The bird sits on the tree.', turkish: 'Kuş ağaçta oturuyor.' },
+  { english: 'We play in the park.', turkish: 'Parkta oynuyoruz.' },
+];
 
 // ─── Storage keys ─────────────────────────────────────────────────────────────
 
@@ -83,7 +240,7 @@ export function getAdaptiveWordCount(userId: string): number {
   for (let i = 1; i <= 3; i++) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const key = dailyKey(userId, d.toISOString().split('T')[0]);
+    const key = dailyKey(userId, localDateStr(d));
     const saved = localStorage.getItem(key);
     if (saved) {
       try {
@@ -108,7 +265,7 @@ export function getAdaptiveWordCount(userId: string): number {
 // ─── Core plan builder ────────────────────────────────────────────────────────
 
 export function getTodayLesson(userId: string): DailyLessonPlan {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
 
   // Return saved plan if already built today
   try {
@@ -135,12 +292,24 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
   // Pick up to 5 review words due today
   const reviewWords = getDueReviewWords(5);
 
+  // Pick today's theme
+  const themeGroup = THEMED_WORD_GROUPS[Math.floor(Math.random() * THEMED_WORD_GROUPS.length)];
+
+  // Pick a random phrase pair for Phase 4
+  const phrasePair = PHRASE_PAIRS[Math.floor(Math.random() * PHRASE_PAIRS.length)];
+
+  // Pick a grammar pattern for Phase 7
+  const grammarPattern = GRAMMAR_PATTERNS[Math.floor(Math.random() * GRAMMAR_PATTERNS.length)];
+
   const plan: DailyLessonPlan = {
     date: today,
     newWords: safeNewWords,
     reviewWords,
     completed: false,
     score: 0,
+    themeName: themeGroup.name,
+    phrasePair,
+    grammarPattern,
   };
 
   // Persist the plan so the same words show all day
@@ -154,7 +323,7 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
 }
 
 export function isDailyLessonCompletedToday(userId: string): boolean {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
   try {
     const saved = localStorage.getItem(dailyKey(userId, today));
     if (!saved) return false;
@@ -197,7 +366,7 @@ export function completeDailyLesson(
  */
 export function getTodayPhonicsSound(
   userId: string,
-): { grapheme: string; phoneme: string; keyword: string; emoji: string } | null {
+): { grapheme: string; phoneme: string; keyword: string; emoji: string; exampleWords: string[] } | null {
   let mastered: string[] = [];
   try {
     mastered = JSON.parse(
@@ -213,7 +382,42 @@ export function getTodayPhonicsSound(
     phoneme: next.ipa,
     keyword: next.keywords?.[0] ?? '',
     emoji: next.mnemonicEmoji ?? '',
+    exampleWords: (next.keywords ?? []).slice(0, 4),
   };
+}
+
+// ─── Yesterday's words ────────────────────────────────────────────────────────
+
+/**
+ * Returns the new words from yesterday's lesson plan for warm-up review.
+ */
+export function getYesterdayWords(userId: string): KidsWord[] {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const key = `mm_daily_${userId}_${localDateStr(yesterday)}`;
+  try {
+    const saved = localStorage.getItem(key);
+    if (!saved) return [];
+    const plan = JSON.parse(saved) as DailyLessonPlan;
+    return plan.newWords.slice(0, 3);
+  } catch {
+    return [];
+  }
+}
+
+// ─── CVC Words for blending (Phase 6) ────────────────────────────────────────
+
+export function getTodayCVCWords(): CVCWord[] {
+  // Rotate through pool based on day of year for variety
+  const dayOfYear = Math.floor(
+    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000,
+  );
+  const offset = (dayOfYear * 3) % CVC_POOL.length;
+  const result: CVCWord[] = [];
+  for (let i = 0; i < 3; i++) {
+    result.push(CVC_POOL[(offset + i) % CVC_POOL.length]);
+  }
+  return result;
 }
 
 // ─── Streak freeze ────────────────────────────────────────────────────────────

@@ -96,7 +96,7 @@ const Login: React.FC = () => {
 
   const handlePasswordReset = async () => {
     if (!resetEmail.trim()) {
-      toast.error(lang === 'tr' ? 'Email adresi giriniz' : 'Please enter your email');
+      toast.error(lang === 'tr' ? 'E-posta adresi giriniz' : 'Please enter your email');
       return;
     }
     setLoading(true);
@@ -165,11 +165,11 @@ const Login: React.FC = () => {
         ) {
           setError(t.errorInvalidLogin);
         } else if (code === 'auth/too-many-requests') {
-          setError(lang === 'en' ? 'Too many attempts. Please try again later.' : 'Cok fazla deneme. Lutfen daha sonra tekrar deneyin.');
+          setError(lang === 'en' ? 'Too many attempts. Please try again later.' : 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.');
         } else if (code === 'auth/weak-password') {
-          setError(lang === 'en' ? 'Password is too weak. Use at least 6 characters.' : 'Sifre cok zayif. En az 6 karakter kullanin.');
+          setError(lang === 'en' ? 'Password is too weak. Use at least 6 characters.' : 'Şifre çok zayıf. En az 6 karakter kullanın.');
         } else if (code === 'auth/invalid-email') {
-          setError(lang === 'en' ? 'Invalid email address.' : 'Gecersiz e-posta adresi.');
+          setError(lang === 'en' ? 'Invalid email address.' : 'Geçersiz e-posta adresi.');
         } else {
           setError(msg || t.errorGeneric);
         }
@@ -278,6 +278,7 @@ const Login: React.FC = () => {
               disabled={loading}
               icon={<Mail size={18} />}
               size="lg"
+              autoComplete="email"
             />
 
             <Input
@@ -291,6 +292,7 @@ const Login: React.FC = () => {
               minLength={6}
               icon={<Lock size={18} />}
               size="lg"
+              autoComplete={isLogin ? 'current-password' : 'new-password'}
             />
 
             {isLogin && !resetMode && (
@@ -315,6 +317,7 @@ const Login: React.FC = () => {
                   disabled={loading}
                   icon={<Mail size={18} />}
                   size="lg"
+                  autoComplete="email"
                 />
                 <Button
                   type="button"
@@ -349,13 +352,14 @@ const Login: React.FC = () => {
                   minLength={6}
                   icon={<Lock size={18} />}
                   size="lg"
+                  autoComplete="new-password"
                 />
                 <span className="login-password-hint">{t.passwordHint}</span>
               </>
             )}
 
             {error && (
-              <div className="login-error">
+              <div className="login-error" role="alert">
                 <AlertCircle size={16} className="login-error-icon" />
                 <span>{error}</span>
               </div>
