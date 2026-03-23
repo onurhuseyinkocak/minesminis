@@ -14,6 +14,14 @@ export interface CurriculumWord {
   exampleEn: string;
   exampleTr: string;
   phonics: string;
+  /** 3 varied example sentences for richer context (required for first 50 words) */
+  examples?: Array<{ en: string; tr: string }>;
+  /** English word this word is commonly confused with */
+  confusingWith?: string;
+  /** Sound or spelling trap specific to Turkish speakers */
+  turkishTrap?: string;
+  /** Frequency rank 1–100: how common the word is in everyday English (higher = more common) */
+  frequency?: number;
 }
 
 export interface GrammarPattern {
@@ -27,235 +35,657 @@ export interface GrammarPattern {
 
 // ─── LEVEL 1 — THEME 1: Animals ───────────────────────────────────────────────
 const level1Animals: CurriculumWord[] = [
-  { english: 'cat', turkish: 'kedi', emoji: '🐱', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The cat is sleeping.', exampleTr: 'Kedi uyuyor.', phonics: 'short-a' },
-  { english: 'dog', turkish: 'köpek', emoji: '🐶', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'My dog is big.', exampleTr: 'Benim köpeğim büyük.', phonics: 'short-o' },
-  { english: 'bird', turkish: 'kuş', emoji: '🐦', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The bird can fly.', exampleTr: 'Kuş uçabilir.', phonics: 'r-blend' },
-  { english: 'fish', turkish: 'balık', emoji: '🐟', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'I have a fish.', exampleTr: 'Benim bir balığım var.', phonics: 'digraph-sh' },
-  { english: 'frog', turkish: 'kurbağa', emoji: '🐸', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The frog is green.', exampleTr: 'Kurbağa yeşil.', phonics: 'r-blend' },
-  { english: 'duck', turkish: 'ördek', emoji: '🦆', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The duck is in the pond.', exampleTr: 'Ördek gölette.', phonics: 'short-u' },
-  { english: 'hen', turkish: 'tavuk', emoji: '🐔', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The hen has eggs.', exampleTr: 'Tavuğun yumurtaları var.', phonics: 'short-e' },
-  { english: 'pig', turkish: 'domuz', emoji: '🐷', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The pig is pink.', exampleTr: 'Domuz pembe.', phonics: 'short-i' },
-  { english: 'cow', turkish: 'inek', emoji: '🐄', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The cow is in the field.', exampleTr: 'İnek tarlada.', phonics: 'vowel-ow' },
-  { english: 'horse', turkish: 'at', emoji: '🐴', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The horse runs fast.', exampleTr: 'At hızlı koşar.', phonics: 'r-controlled' },
-  { english: 'sheep', turkish: 'koyun', emoji: '🐑', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The sheep is white.', exampleTr: 'Koyun beyaz.', phonics: 'digraph-ee' },
-  { english: 'rabbit', turkish: 'tavşan', emoji: '🐰', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The rabbit is soft.', exampleTr: 'Tavşan yumuşak.', phonics: 'short-a' },
-  { english: 'mouse', turkish: 'fare', emoji: '🐭', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The mouse is small.', exampleTr: 'Fare küçük.', phonics: 'vowel-ou' },
-  { english: 'bee', turkish: 'arı', emoji: '🐝', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The bee makes honey.', exampleTr: 'Arı bal yapar.', phonics: 'digraph-ee' },
-  { english: 'ant', turkish: 'karınca', emoji: '🐜', category: 'Animals', level: 1, partOfSpeech: 'noun', exampleEn: 'The ant is tiny.', exampleTr: 'Karınca çok küçük.', phonics: 'short-a' },
+  {
+    english: 'cat', turkish: 'kedi', emoji: '🐱', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The cat is sleeping.', exampleTr: 'Kedi uyuyor.', phonics: 'short-a', frequency: 72,
+    examples: [
+      { en: 'I have a cat.', tr: 'Bir kedim var.' },
+      { en: 'The cat is sleeping.', tr: 'Kedi uyuyor.' },
+      { en: 'My cat is black.', tr: 'Kedim siyah.' },
+    ],
+    confusingWith: 'cut',
+    turkishTrap: "'cat' ve 'cut' sesi farklı: cat=kısa a (kedi), cut=kısa u (kesmek)",
+  },
+  {
+    english: 'dog', turkish: 'köpek', emoji: '🐶', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'My dog is big.', exampleTr: 'Köpeğim büyük.', phonics: 'short-o', frequency: 78,
+    examples: [
+      { en: 'I have a dog.', tr: 'Bir köpeğim var.' },
+      { en: 'My dog is big.', tr: 'Köpeğim büyük.' },
+      { en: 'The dog is running.', tr: 'Köpek koşuyor.' },
+    ],
+  },
+  {
+    english: 'bird', turkish: 'kuş', emoji: '🐦', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The bird can fly.', exampleTr: 'Kuş uçabilir.', phonics: 'r-blend', frequency: 65,
+    examples: [
+      { en: 'I see a bird.', tr: 'Bir kuş görüyorum.' },
+      { en: 'The bird can fly.', tr: 'Kuş uçabilir.' },
+      { en: 'The bird is in the tree.', tr: 'Kuş ağaçta.' },
+    ],
+  },
+  {
+    english: 'fish', turkish: 'balık', emoji: '🐟', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I have a fish.', exampleTr: 'Bir balığım var.', phonics: 'digraph-sh', frequency: 62,
+    examples: [
+      { en: 'I have a fish.', tr: 'Bir balığım var.' },
+      { en: 'The fish is in the water.', tr: 'Balık suda.' },
+      { en: 'I like fish.', tr: 'Balığı severim.' },
+    ],
+  },
+  {
+    english: 'frog', turkish: 'kurbağa', emoji: '🐸', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The frog is green.', exampleTr: 'Kurbağa yeşil.', phonics: 'r-blend', frequency: 44,
+    examples: [
+      { en: 'The frog is green.', tr: 'Kurbağa yeşil.' },
+      { en: 'The frog can jump.', tr: 'Kurbağa zıplayabilir.' },
+      { en: 'I see a frog.', tr: 'Bir kurbağa görüyorum.' },
+    ],
+  },
+  {
+    english: 'duck', turkish: 'ördek', emoji: '🦆', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The duck is in the pond.', exampleTr: 'Ördek gölette.', phonics: 'short-u', frequency: 46,
+    examples: [
+      { en: 'The duck is in the pond.', tr: 'Ördek gölette.' },
+      { en: 'The duck is yellow.', tr: 'Ördek sarı.' },
+      { en: 'I see a duck.', tr: 'Bir ördek görüyorum.' },
+    ],
+  },
+  {
+    english: 'hen', turkish: 'tavuk', emoji: '🐔', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The hen has eggs.', exampleTr: 'Tavuğun yumurtaları var.', phonics: 'short-e', frequency: 35,
+    examples: [
+      { en: 'The hen has eggs.', tr: 'Tavuğun yumurtaları var.' },
+      { en: 'The hen is on the farm.', tr: 'Tavuk çiftlikte.' },
+      { en: 'I see a hen.', tr: 'Bir tavuk görüyorum.' },
+    ],
+  },
+  {
+    english: 'pig', turkish: 'domuz', emoji: '🐷', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The pig is pink.', exampleTr: 'Domuz pembe.', phonics: 'short-i', frequency: 48,
+    examples: [
+      { en: 'The pig is pink.', tr: 'Domuz pembe.' },
+      { en: 'The pig is on the farm.', tr: 'Domuz çiftlikte.' },
+      { en: 'I see a pig.', tr: 'Bir domuz görüyorum.' },
+    ],
+  },
+  {
+    english: 'cow', turkish: 'inek', emoji: '🐄', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The cow is in the field.', exampleTr: 'İnek tarlada.', phonics: 'vowel-ow', frequency: 55,
+    examples: [
+      { en: 'The cow is in the field.', tr: 'İnek tarlada.' },
+      { en: 'The cow gives milk.', tr: 'İnek süt verir.' },
+      { en: 'I see a cow.', tr: 'Bir inek görüyorum.' },
+    ],
+  },
+  {
+    english: 'horse', turkish: 'at', emoji: '🐴', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The horse runs fast.', exampleTr: 'At hızlı koşar.', phonics: 'r-controlled', frequency: 60,
+    examples: [
+      { en: 'The horse runs fast.', tr: 'At hızlı koşar.' },
+      { en: 'I like horses.', tr: 'Atları severim.' },
+      { en: 'The horse is big.', tr: 'At büyük.' },
+    ],
+  },
+  {
+    english: 'sheep', turkish: 'koyun', emoji: '🐑', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The sheep is white.', exampleTr: 'Koyun beyaz.', phonics: 'digraph-ee', frequency: 50,
+    examples: [
+      { en: 'The sheep is white.', tr: 'Koyun beyaz.' },
+      { en: 'I see two sheep.', tr: 'İki koyun görüyorum.' },
+      { en: 'The sheep is on the farm.', tr: 'Koyun çiftlikte.' },
+    ],
+    confusingWith: 'ship',
+    turkishTrap: "'sheep' uzun ee sesi (koyun), 'ship' kısa i sesi (gemi) — Türkçede ikisi de kısa gelir",
+  },
+  {
+    english: 'rabbit', turkish: 'tavşan', emoji: '🐰', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The rabbit is soft.', exampleTr: 'Tavşan yumuşak.', phonics: 'short-a', frequency: 52,
+    examples: [
+      { en: 'The rabbit is soft.', tr: 'Tavşan yumuşak.' },
+      { en: 'My rabbit is white.', tr: 'Tavşanım beyaz.' },
+      { en: 'The rabbit can jump.', tr: 'Tavşan zıplayabilir.' },
+    ],
+  },
+  {
+    english: 'mouse', turkish: 'fare', emoji: '🐭', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The mouse is small.', exampleTr: 'Fare küçük.', phonics: 'vowel-ou', frequency: 53,
+    examples: [
+      { en: 'The mouse is small.', tr: 'Fare küçük.' },
+      { en: 'I see a mouse.', tr: 'Bir fare görüyorum.' },
+      { en: 'The mouse is gray.', tr: 'Fare gri.' },
+    ],
+  },
+  {
+    english: 'bee', turkish: 'arı', emoji: '🐝', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The bee makes honey.', exampleTr: 'Arı bal yapar.', phonics: 'digraph-ee', frequency: 45,
+    examples: [
+      { en: 'The bee makes honey.', tr: 'Arı bal yapar.' },
+      { en: 'I see a bee.', tr: 'Bir arı görüyorum.' },
+      { en: 'The bee is yellow.', tr: 'Arı sarı.' },
+    ],
+  },
+  {
+    english: 'ant', turkish: 'karınca', emoji: '🐜', category: 'Animals', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The ant is tiny.', exampleTr: 'Karınca çok küçük.', phonics: 'short-a', frequency: 42,
+    examples: [
+      { en: 'The ant is tiny.', tr: 'Karınca çok küçük.' },
+      { en: 'I see an ant.', tr: 'Bir karınca görüyorum.' },
+      { en: 'Ants are small.', tr: 'Karıncalar küçük.' },
+    ],
+  },
 ];
 
 // ─── LEVEL 1 — THEME 2: Colors ────────────────────────────────────────────────
 const level1Colors: CurriculumWord[] = [
-  { english: 'red', turkish: 'kırmızı', emoji: '🔴', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'I like red apples.', exampleTr: 'Kırmızı elmaları severim.', phonics: 'short-e' },
-  { english: 'blue', turkish: 'mavi', emoji: '🔵', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'The sky is blue.', exampleTr: 'Gökyüzü mavi.', phonics: 'long-u' },
-  { english: 'green', turkish: 'yeşil', emoji: '🟢', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'Grass is green.', exampleTr: 'Çimen yeşil.', phonics: 'digraph-ee' },
-  { english: 'yellow', turkish: 'sarı', emoji: '🟡', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'The sun is yellow.', exampleTr: 'Güneş sarı.', phonics: 'digraph-ow' },
-  { english: 'pink', turkish: 'pembe', emoji: '🩷', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'Her dress is pink.', exampleTr: 'Onun elbisesi pembe.', phonics: 'short-i' },
-  { english: 'orange', turkish: 'turuncu', emoji: '🟠', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'Carrots are orange.', exampleTr: 'Havuçlar turuncu.', phonics: 'r-controlled' },
-  { english: 'purple', turkish: 'mor', emoji: '🟣', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'I have a purple bag.', exampleTr: 'Benim mor bir çantam var.', phonics: 'r-controlled' },
-  { english: 'black', turkish: 'siyah', emoji: '⚫', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'The cat is black.', exampleTr: 'Kedi siyah.', phonics: 'l-blend' },
-  { english: 'white', turkish: 'beyaz', emoji: '⚪', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'Snow is white.', exampleTr: 'Kar beyaz.', phonics: 'long-i' },
-  { english: 'brown', turkish: 'kahverengi', emoji: '🟤', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'The bear is brown.', exampleTr: 'Ayı kahverengi.', phonics: 'vowel-ow' },
-  { english: 'gray', turkish: 'gri', emoji: '🩶', category: 'Colors', level: 1, partOfSpeech: 'adjective', exampleEn: 'Elephants are gray.', exampleTr: 'Filler gri.', phonics: 'long-a' },
-  { english: 'rainbow', turkish: 'gökkuşağı', emoji: '🌈', category: 'Colors', level: 1, partOfSpeech: 'noun', exampleEn: 'I see a rainbow!', exampleTr: 'Gökkuşağı görüyorum!', phonics: 'long-a' },
+  {
+    english: 'red', turkish: 'kırmızı', emoji: '🔴', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'I like red apples.', exampleTr: 'Kırmızı elmaları severim.', phonics: 'short-e', frequency: 80,
+    examples: [
+      { en: 'I like red apples.', tr: 'Kırmızı elmaları severim.' },
+      { en: 'The rose is red.', tr: 'Gül kırmızı.' },
+      { en: 'My bag is red.', tr: 'Çantam kırmızı.' },
+    ],
+  },
+  {
+    english: 'blue', turkish: 'mavi', emoji: '🔵', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'The sky is blue.', exampleTr: 'Gökyüzü mavi.', phonics: 'long-u', frequency: 79,
+    examples: [
+      { en: 'The sky is blue.', tr: 'Gökyüzü mavi.' },
+      { en: 'I like blue.', tr: 'Maviyi severim.' },
+      { en: 'My pencil is blue.', tr: 'Kalemim mavi.' },
+    ],
+  },
+  {
+    english: 'green', turkish: 'yeşil', emoji: '🟢', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'Grass is green.', exampleTr: 'Çimen yeşil.', phonics: 'digraph-ee', frequency: 78,
+    examples: [
+      { en: 'Grass is green.', tr: 'Çimen yeşil.' },
+      { en: 'The frog is green.', tr: 'Kurbağa yeşil.' },
+      { en: 'I have a green book.', tr: 'Yeşil bir kitabım var.' },
+    ],
+  },
+  {
+    english: 'yellow', turkish: 'sarı', emoji: '🟡', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'The sun is yellow.', exampleTr: 'Güneş sarı.', phonics: 'digraph-ow', frequency: 72,
+    examples: [
+      { en: 'The sun is yellow.', tr: 'Güneş sarı.' },
+      { en: 'I like yellow.', tr: 'Sarıyı severim.' },
+      { en: 'The banana is yellow.', tr: 'Muz sarı.' },
+    ],
+  },
+  {
+    english: 'pink', turkish: 'pembe', emoji: '🩷', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'Her dress is pink.', exampleTr: 'Elbisesi pembe.', phonics: 'short-i', frequency: 62,
+    examples: [
+      { en: 'Her dress is pink.', tr: 'Elbisesi pembe.' },
+      { en: 'The pig is pink.', tr: 'Domuz pembe.' },
+      { en: 'I have a pink flower.', tr: 'Pembe bir çiçeğim var.' },
+    ],
+  },
+  {
+    english: 'orange', turkish: 'turuncu', emoji: '🟠', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'Carrots are orange.', exampleTr: 'Havuçlar turuncu.', phonics: 'r-controlled', frequency: 60,
+    examples: [
+      { en: 'Carrots are orange.', tr: 'Havuçlar turuncu.' },
+      { en: 'The ball is orange.', tr: 'Top turuncu.' },
+      { en: 'I like orange.', tr: 'Turuncu rengini severim.' },
+    ],
+  },
+  {
+    english: 'purple', turkish: 'mor', emoji: '🟣', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'I have a purple bag.', exampleTr: 'Mor bir çantam var.', phonics: 'r-controlled', frequency: 55,
+    examples: [
+      { en: 'I have a purple bag.', tr: 'Mor bir çantam var.' },
+      { en: 'The flower is purple.', tr: 'Çiçek mor.' },
+      { en: 'Purple is my favorite color.', tr: 'Mor en sevdiğim renk.' },
+    ],
+  },
+  {
+    english: 'black', turkish: 'siyah', emoji: '⚫', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'The cat is black.', exampleTr: 'Kedi siyah.', phonics: 'l-blend', frequency: 82,
+    examples: [
+      { en: 'The cat is black.', tr: 'Kedi siyah.' },
+      { en: 'I have a black pen.', tr: 'Siyah bir kalemim var.' },
+      { en: 'The night is black.', tr: 'Gece siyah.' },
+    ],
+  },
+  {
+    english: 'white', turkish: 'beyaz', emoji: '⚪', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'Snow is white.', exampleTr: 'Kar beyaz.', phonics: 'long-i', frequency: 80,
+    examples: [
+      { en: 'Snow is white.', tr: 'Kar beyaz.' },
+      { en: 'The sheep is white.', tr: 'Koyun beyaz.' },
+      { en: 'I have a white shirt.', tr: 'Beyaz bir gömleğim var.' },
+    ],
+  },
+  {
+    english: 'brown', turkish: 'kahverengi', emoji: '🟤', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'The bear is brown.', exampleTr: 'Ayı kahverengi.', phonics: 'vowel-ow', frequency: 65,
+    examples: [
+      { en: 'The bear is brown.', tr: 'Ayı kahverengi.' },
+      { en: 'My hair is brown.', tr: 'Saçım kahverengi.' },
+      { en: 'The door is brown.', tr: 'Kapı kahverengi.' },
+    ],
+  },
+  {
+    english: 'gray', turkish: 'gri', emoji: '🩶', category: 'Colors', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'Elephants are gray.', exampleTr: 'Filler gri.', phonics: 'long-a', frequency: 58,
+    examples: [
+      { en: 'Elephants are gray.', tr: 'Filler gri.' },
+      { en: 'The sky is gray today.', tr: 'Gökyüzü bugün gri.' },
+      { en: 'My cat is gray.', tr: 'Kedim gri.' },
+    ],
+  },
+  {
+    english: 'rainbow', turkish: 'gökkuşağı', emoji: '🌈', category: 'Colors', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I see a rainbow!', exampleTr: 'Gökkuşağı görüyorum!', phonics: 'long-a', frequency: 40,
+    examples: [
+      { en: 'I see a rainbow!', tr: 'Gökkuşağı görüyorum!' },
+      { en: 'The rainbow is beautiful.', tr: 'Gökkuşağı çok güzel.' },
+      { en: 'A rainbow has many colors.', tr: 'Gökkuşağının çok rengi var.' },
+    ],
+  },
 ];
 
 // ─── LEVEL 1 — THEME 3: Numbers ───────────────────────────────────────────────
 const level1Numbers: CurriculumWord[] = [
-  { english: 'one', turkish: 'bir', emoji: '1️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'I have one cat.', exampleTr: 'Benim bir kedim var.', phonics: 'long-o' },
-  { english: 'two', turkish: 'iki', emoji: '2️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'I have two hands.', exampleTr: 'İki elim var.', phonics: 'long-oo' },
-  { english: 'three', turkish: 'üç', emoji: '3️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'I see three birds.', exampleTr: 'Üç kuş görüyorum.', phonics: 'digraph-ee' },
-  { english: 'four', turkish: 'dört', emoji: '4️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'A dog has four legs.', exampleTr: 'Bir köpeğin dört ayağı var.', phonics: 'r-controlled' },
-  { english: 'five', turkish: 'beş', emoji: '5️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'I have five fingers.', exampleTr: 'Beş parmağım var.', phonics: 'long-i' },
-  { english: 'six', turkish: 'altı', emoji: '6️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'Six eggs are in the box.', exampleTr: 'Kutuda altı yumurta var.', phonics: 'short-i' },
-  { english: 'seven', turkish: 'yedi', emoji: '7️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'There are seven days.', exampleTr: 'Yedi gün var.', phonics: 'short-e' },
-  { english: 'eight', turkish: 'sekiz', emoji: '8️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'She is eight years old.', exampleTr: 'O sekiz yaşında.', phonics: 'long-a' },
-  { english: 'nine', turkish: 'dokuz', emoji: '9️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'Nine stars in the sky.', exampleTr: 'Gökyüzünde dokuz yıldız.', phonics: 'long-i' },
-  { english: 'ten', turkish: 'on', emoji: '🔟', category: 'Numbers', level: 1, partOfSpeech: 'noun', exampleEn: 'Count to ten!', exampleTr: 'One kadar say!', phonics: 'short-e' },
-  { english: 'first', turkish: 'birinci', emoji: '🥇', category: 'Numbers', level: 1, partOfSpeech: 'adjective', exampleEn: 'She is first in class.', exampleTr: 'O sınıfta birinci.', phonics: 'r-blend' },
-  { english: 'second', turkish: 'ikinci', emoji: '🥈', category: 'Numbers', level: 1, partOfSpeech: 'adjective', exampleEn: 'He is second.', exampleTr: 'O ikinci.', phonics: 'short-e' },
-  { english: 'last', turkish: 'son', emoji: '🔚', category: 'Numbers', level: 1, partOfSpeech: 'adjective', exampleEn: 'This is the last cookie.', exampleTr: 'Bu son kurabiye.', phonics: 'l-blend' },
-  { english: 'many', turkish: 'çok', emoji: '✨', category: 'Numbers', level: 1, partOfSpeech: 'adjective', exampleEn: 'There are many stars.', exampleTr: 'Çok yıldız var.', phonics: 'short-a' },
-  { english: 'few', turkish: 'birkaç', emoji: '🔢', category: 'Numbers', level: 1, partOfSpeech: 'adjective', exampleEn: 'A few dogs play.', exampleTr: 'Birkaç köpek oynuyor.', phonics: 'long-u' },
+  {
+    english: 'one', turkish: 'bir', emoji: '1️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I have one cat.', exampleTr: 'Bir kedim var.', phonics: 'long-o', frequency: 95,
+    examples: [
+      { en: 'I have one cat.', tr: 'Bir kedim var.' },
+      { en: 'One fish is in the bowl.', tr: 'Kasede bir balık var.' },
+      { en: 'I eat one apple.', tr: 'Bir elma yiyorum.' },
+    ],
+    confusingWith: 'won',
+    turkishTrap: "'one' telaffuzu 'van' gibi — 'o-ne' değil",
+  },
+  {
+    english: 'two', turkish: 'iki', emoji: '2️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I have two hands.', exampleTr: 'İki elim var.', phonics: 'long-oo', frequency: 92,
+    examples: [
+      { en: 'I have two hands.', tr: 'İki elim var.' },
+      { en: 'I see two birds.', tr: 'İki kuş görüyorum.' },
+      { en: 'Two dogs are running.', tr: 'İki köpek koşuyor.' },
+    ],
+    confusingWith: 'too',
+    turkishTrap: "'two' telaffuzu 'tu' — 'w' harfi okunmaz",
+  },
+  {
+    english: 'three', turkish: 'üç', emoji: '3️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I see three birds.', exampleTr: 'Üç kuş görüyorum.', phonics: 'digraph-ee', frequency: 88,
+    examples: [
+      { en: 'I see three birds.', tr: 'Üç kuş görüyorum.' },
+      { en: 'I have three cats.', tr: 'Üç kedim var.' },
+      { en: 'Three is my favorite number.', tr: 'Üç en sevdiğim sayı.' },
+    ],
+    confusingWith: 'tree',
+    turkishTrap: "'three' başındaki 'th' sesi Türkçede yoktur — dil dişlere değmeli, 'sri' değil",
+  },
+  {
+    english: 'four', turkish: 'dört', emoji: '4️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'A dog has four legs.', exampleTr: 'Bir köpeğin dört ayağı var.', phonics: 'r-controlled', frequency: 85,
+    examples: [
+      { en: 'A dog has four legs.', tr: 'Bir köpeğin dört ayağı var.' },
+      { en: 'I have four books.', tr: 'Dört kitabım var.' },
+      { en: 'There are four chairs.', tr: 'Dört sandalye var.' },
+    ],
+  },
+  {
+    english: 'five', turkish: 'beş', emoji: '5️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I have five fingers.', exampleTr: 'Beş parmağım var.', phonics: 'long-i', frequency: 84,
+    examples: [
+      { en: 'I have five fingers.', tr: 'Beş parmağım var.' },
+      { en: 'I eat five apples.', tr: 'Beş elma yiyorum.' },
+      { en: 'There are five birds.', tr: 'Beş kuş var.' },
+    ],
+  },
+  {
+    english: 'six', turkish: 'altı', emoji: '6️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'Six eggs are in the box.', exampleTr: 'Kutuda altı yumurta var.', phonics: 'short-i', frequency: 80,
+    examples: [
+      { en: 'Six eggs are in the box.', tr: 'Kutuda altı yumurta var.' },
+      { en: 'I have six crayons.', tr: 'Altı boya kalemim var.' },
+      { en: 'There are six dogs.', tr: 'Altı köpek var.' },
+    ],
+  },
+  {
+    english: 'seven', turkish: 'yedi', emoji: '7️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'There are seven days in a week.', exampleTr: 'Bir haftada yedi gün var.', phonics: 'short-e', frequency: 78,
+    examples: [
+      { en: 'There are seven days in a week.', tr: 'Bir haftada yedi gün var.' },
+      { en: 'I am seven years old.', tr: 'Yedi yaşındayım.' },
+      { en: 'I see seven stars.', tr: 'Yedi yıldız görüyorum.' },
+    ],
+  },
+  {
+    english: 'eight', turkish: 'sekiz', emoji: '8️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'She is eight years old.', exampleTr: 'O sekiz yaşında.', phonics: 'long-a', frequency: 75,
+    examples: [
+      { en: 'She is eight years old.', tr: 'O sekiz yaşında.' },
+      { en: 'A spider has eight legs.', tr: 'Bir örümceğin sekiz bacağı var.' },
+      { en: 'I have eight crayons.', tr: 'Sekiz boya kalemim var.' },
+    ],
+  },
+  {
+    english: 'nine', turkish: 'dokuz', emoji: '9️⃣', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I see nine stars in the sky.', exampleTr: 'Gökyüzünde dokuz yıldız görüyorum.', phonics: 'long-i', frequency: 73,
+    examples: [
+      { en: 'I see nine stars in the sky.', tr: 'Gökyüzünde dokuz yıldız görüyorum.' },
+      { en: 'I have nine books.', tr: 'Dokuz kitabım var.' },
+      { en: 'Nine cats are sleeping.', tr: 'Dokuz kedi uyuyor.' },
+    ],
+  },
+  {
+    english: 'ten', turkish: 'on', emoji: '🔟', category: 'Numbers', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'Count to ten!', exampleTr: 'Ona kadar say!', phonics: 'short-e', frequency: 82,
+    examples: [
+      { en: 'Count to ten!', tr: 'Ona kadar say!' },
+      { en: 'I have ten fingers.', tr: 'On parmağım var.' },
+      { en: 'There are ten apples.', tr: 'On elma var.' },
+    ],
+  },
+  {
+    english: 'first', turkish: 'birinci', emoji: '🥇', category: 'Numbers', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'She is first in class.', exampleTr: 'O sınıfta birinci.', phonics: 'r-blend', frequency: 85,
+    examples: [
+      { en: 'She is first in class.', tr: 'O sınıfta birinci.' },
+      { en: 'I am first!', tr: 'Ben birinciyim!' },
+      { en: 'This is the first page.', tr: 'Bu birinci sayfa.' },
+    ],
+  },
+  {
+    english: 'second', turkish: 'ikinci', emoji: '🥈', category: 'Numbers', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'He is second.', exampleTr: 'O ikinci.', phonics: 'short-e', frequency: 82,
+    examples: [
+      { en: 'He is second.', tr: 'O ikinci.' },
+      { en: 'This is my second book.', tr: 'Bu benim ikinci kitabım.' },
+      { en: 'I am second today.', tr: 'Bugün ikinciyim.' },
+    ],
+  },
+  {
+    english: 'last', turkish: 'son', emoji: '🔚', category: 'Numbers', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'This is the last cookie.', exampleTr: 'Bu son kurabiye.', phonics: 'l-blend', frequency: 88,
+    examples: [
+      { en: 'This is the last cookie.', tr: 'Bu son kurabiye.' },
+      { en: 'I am last.', tr: 'Ben sonuncuyum.' },
+      { en: 'This is the last page.', tr: 'Bu son sayfa.' },
+    ],
+  },
+  {
+    english: 'many', turkish: 'çok', emoji: '✨', category: 'Numbers', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'There are many stars.', exampleTr: 'Çok yıldız var.', phonics: 'short-a', frequency: 87,
+    examples: [
+      { en: 'There are many stars.', tr: 'Çok yıldız var.' },
+      { en: 'I have many friends.', tr: 'Çok arkadaşım var.' },
+      { en: 'There are many cats.', tr: 'Çok kedi var.' },
+    ],
+  },
+  {
+    english: 'few', turkish: 'birkaç', emoji: '🔢', category: 'Numbers', level: 1, partOfSpeech: 'adjective',
+    exampleEn: 'A few dogs play.', exampleTr: 'Birkaç köpek oynuyor.', phonics: 'long-u', frequency: 75,
+    examples: [
+      { en: 'A few dogs play.', tr: 'Birkaç köpek oynuyor.' },
+      { en: 'I have a few books.', tr: 'Birkaç kitabım var.' },
+      { en: 'A few birds are singing.', tr: 'Birkaç kuş şarkı söylüyor.' },
+    ],
+  },
 ];
 
 // ─── LEVEL 1 — THEME 4: Family ────────────────────────────────────────────────
 const level1Family: CurriculumWord[] = [
-  { english: 'mom', turkish: 'anne', emoji: '👩', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'My mom is kind.', exampleTr: 'Annem çok iyi kalpli.', phonics: 'short-o' },
-  { english: 'dad', turkish: 'baba', emoji: '👨', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'My dad is tall.', exampleTr: 'Babam uzun boylu.', phonics: 'short-a' },
-  { english: 'sister', turkish: 'kız kardeş', emoji: '👧', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'My sister sings.', exampleTr: 'Kız kardeşim şarkı söyler.', phonics: 'r-controlled' },
-  { english: 'brother', turkish: 'erkek kardeş', emoji: '👦', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'My brother plays football.', exampleTr: 'Erkek kardeşim futbol oynar.', phonics: 'r-blend' },
-  { english: 'baby', turkish: 'bebek', emoji: '👶', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'The baby is sleeping.', exampleTr: 'Bebek uyuyor.', phonics: 'long-a' },
-  { english: 'grandma', turkish: 'büyükanne', emoji: '👵', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'Grandma makes cookies.', exampleTr: 'Büyükanne kurabiye yapar.', phonics: 'r-blend' },
-  { english: 'grandpa', turkish: 'büyükbaba', emoji: '👴', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'Grandpa reads books.', exampleTr: 'Büyükbaba kitap okur.', phonics: 'r-blend' },
-  { english: 'family', turkish: 'aile', emoji: '👨‍👩‍👧‍👦', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'I love my family.', exampleTr: 'Ailemi seviyorum.', phonics: 'long-a' },
-  { english: 'friend', turkish: 'arkadaş', emoji: '🤝', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'She is my best friend.', exampleTr: 'O benim en iyi arkadaşım.', phonics: 'r-blend' },
-  { english: 'boy', turkish: 'erkek çocuk', emoji: '👦', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'The boy is happy.', exampleTr: 'Erkek çocuk mutlu.', phonics: 'vowel-oy' },
-  { english: 'girl', turkish: 'kız çocuk', emoji: '👧', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'The girl has a doll.', exampleTr: 'Kız çocuğunun bir bebeği var.', phonics: 'r-controlled' },
-  { english: 'teacher', turkish: 'öğretmen', emoji: '👩‍🏫', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'My teacher is nice.', exampleTr: 'Öğretmenim çok güzel.', phonics: 'digraph-ea' },
+  {
+    english: 'mom', turkish: 'anne', emoji: '👩', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'My mom is kind.', exampleTr: 'Annem çok iyi kalpli.', phonics: 'short-o', frequency: 88,
+    examples: [
+      { en: 'My mom is kind.', tr: 'Annem çok iyi kalpli.' },
+      { en: 'My mom is in the kitchen.', tr: 'Annem mutfakta.' },
+      { en: 'I love my mom.', tr: 'Annemi seviyorum.' },
+    ],
+  },
+  {
+    english: 'dad', turkish: 'baba', emoji: '👨', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'My dad is tall.', exampleTr: 'Babam uzun boylu.', phonics: 'short-a', frequency: 86,
+    examples: [
+      { en: 'My dad is tall.', tr: 'Babam uzun boylu.' },
+      { en: 'My dad reads books.', tr: 'Babam kitap okur.' },
+      { en: 'I love my dad.', tr: 'Babamı seviyorum.' },
+    ],
+  },
+  {
+    english: 'sister', turkish: 'kız kardeş', emoji: '👧', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'My sister sings.', exampleTr: 'Kız kardeşim şarkı söyler.', phonics: 'r-controlled', frequency: 74,
+    examples: [
+      { en: 'My sister sings.', tr: 'Kız kardeşim şarkı söyler.' },
+      { en: 'I have a sister.', tr: 'Bir kız kardeşim var.' },
+      { en: 'My sister is happy.', tr: 'Kız kardeşim mutlu.' },
+    ],
+  },
+  {
+    english: 'brother', turkish: 'erkek kardeş', emoji: '👦', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'My brother plays football.', exampleTr: 'Erkek kardeşim futbol oynar.', phonics: 'r-blend', frequency: 74,
+    examples: [
+      { en: 'My brother plays football.', tr: 'Erkek kardeşim futbol oynar.' },
+      { en: 'I have a brother.', tr: 'Bir erkek kardeşim var.' },
+      { en: 'My brother is big.', tr: 'Erkek kardeşim büyük.' },
+    ],
+  },
+  {
+    english: 'baby', turkish: 'bebek', emoji: '👶', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'The baby is sleeping.', exampleTr: 'Bebek uyuyor.', phonics: 'long-a', frequency: 70,
+    examples: [
+      { en: 'The baby is sleeping.', tr: 'Bebek uyuyor.' },
+      { en: 'The baby is cute.', tr: 'Bebek sevimli.' },
+      { en: 'I have a baby sister.', tr: 'Bebek bir kız kardeşim var.' },
+    ],
+  },
+  {
+    english: 'grandma', turkish: 'büyükanne', emoji: '👵', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'Grandma makes cookies.', exampleTr: 'Büyükanne kurabiye yapar.', phonics: 'r-blend', frequency: 65,
+    examples: [
+      { en: 'Grandma makes cookies.', tr: 'Büyükanne kurabiye yapar.' },
+      { en: 'I love my grandma.', tr: 'Büyükanneimi seviyorum.' },
+      { en: 'My grandma is kind.', tr: 'Büyükannem iyi kalpli.' },
+    ],
+  },
+  {
+    english: 'grandpa', turkish: 'büyükbaba', emoji: '👴', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'Grandpa reads books.', exampleTr: 'Büyükbaba kitap okur.', phonics: 'r-blend', frequency: 60,
+    examples: [
+      { en: 'Grandpa reads books.', tr: 'Büyükbaba kitap okur.' },
+      { en: 'I love my grandpa.', tr: 'Büyükbabamı seviyorum.' },
+      { en: 'My grandpa drinks tea.', tr: 'Büyükbabam çay içer.' },
+    ],
+  },
+  {
+    english: 'family', turkish: 'aile', emoji: '👨‍👩‍👧‍👦', category: 'Family', level: 1, partOfSpeech: 'noun',
+    exampleEn: 'I love my family.', exampleTr: 'Ailemi seviyorum.', phonics: 'long-a', frequency: 82,
+    examples: [
+      { en: 'I love my family.', tr: 'Ailemi seviyorum.' },
+      { en: 'My family is big.', tr: 'Ailem büyük.' },
+      { en: 'We eat together as a family.', tr: 'Aile olarak birlikte yiyoruz.' },
+    ],
+  },
+  { english: 'friend', turkish: 'arkadaş', emoji: '🤝', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'She is my best friend.', exampleTr: 'O benim en iyi arkadaşım.', phonics: 'r-blend', frequency: 85 },
+  { english: 'boy', turkish: 'erkek çocuk', emoji: '👦', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'The boy is happy.', exampleTr: 'Erkek çocuk mutlu.', phonics: 'vowel-oy', frequency: 78 },
+  { english: 'girl', turkish: 'kız çocuk', emoji: '👧', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'The girl has a doll.', exampleTr: 'Kız çocuğunun bir bebeği var.', phonics: 'r-controlled', frequency: 78 },
+  { english: 'teacher', turkish: 'öğretmen', emoji: '👩‍🏫', category: 'Family', level: 1, partOfSpeech: 'noun', exampleEn: 'My teacher is nice.', exampleTr: 'Öğretmenim çok iyi.', phonics: 'digraph-ea', frequency: 75 },
 ];
 
 // ─── LEVEL 1 — THEME 5: Body ──────────────────────────────────────────────────
 const level1Body: CurriculumWord[] = [
-  { english: 'head', turkish: 'baş', emoji: '🧠', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I put the hat on my head.', exampleTr: 'Şapkayı başıma koydum.', phonics: 'digraph-ea' },
-  { english: 'eye', turkish: 'göz', emoji: '👁️', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I have two eyes.', exampleTr: 'İki gözüm var.', phonics: 'long-i' },
-  { english: 'ear', turkish: 'kulak', emoji: '👂', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I hear with my ear.', exampleTr: 'Kulağımla duyarım.', phonics: 'digraph-ear' },
-  { english: 'nose', turkish: 'burun', emoji: '👃', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My nose is cold.', exampleTr: 'Burnum soğuk.', phonics: 'long-o' },
-  { english: 'mouth', turkish: 'ağız', emoji: '👄', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat with my mouth.', exampleTr: 'Ağzımla yerim.', phonics: 'vowel-ou' },
-  { english: 'hand', turkish: 'el', emoji: '✋', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Wash your hands.', exampleTr: 'Ellerini yıka.', phonics: 'short-a' },
-  { english: 'foot', turkish: 'ayak', emoji: '🦶', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My foot hurts.', exampleTr: 'Ayağım acıyor.', phonics: 'long-oo' },
-  { english: 'leg', turkish: 'bacak', emoji: '🦵', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Dogs have four legs.', exampleTr: 'Köpeklerin dört bacağı var.', phonics: 'short-e' },
-  { english: 'arm', turkish: 'kol', emoji: '💪', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I can carry with my arm.', exampleTr: 'Kolumla taşıyabilirim.', phonics: 'r-controlled' },
-  { english: 'hair', turkish: 'saç', emoji: '💇', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Her hair is long.', exampleTr: 'Onun saçı uzun.', phonics: 'r-controlled' },
-  { english: 'face', turkish: 'yüz', emoji: '😊', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'She has a happy face.', exampleTr: 'Onun mutlu bir yüzü var.', phonics: 'long-a' },
-  { english: 'tooth', turkish: 'diş', emoji: '🦷', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Brush your teeth.', exampleTr: 'Dişlerini fırçala.', phonics: 'long-oo' },
-  { english: 'finger', turkish: 'parmak', emoji: '☝️', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I have ten fingers.', exampleTr: 'On parmağım var.', phonics: 'r-controlled' },
-  { english: 'knee', turkish: 'diz', emoji: '🦵', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My knee is sore.', exampleTr: 'Dizim ağrıyor.', phonics: 'digraph-ee' },
-  { english: 'tummy', turkish: 'göbek/karın', emoji: '🫃', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My tummy is full.', exampleTr: 'Karnım dolu.', phonics: 'short-u' },
+  { english: 'head', turkish: 'baş', emoji: '🗣️', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I put the hat on my head.', exampleTr: 'Şapkayı başıma koydum.', phonics: 'digraph-ea', frequency: 85 },
+  { english: 'eye', turkish: 'göz', emoji: '👁️', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I have two eyes.', exampleTr: 'İki gözüm var.', phonics: 'long-i', frequency: 82 },
+  { english: 'ear', turkish: 'kulak', emoji: '👂', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I hear with my ears.', exampleTr: 'Kulaklarımla duyarım.', phonics: 'digraph-ear', frequency: 75 },
+  { english: 'nose', turkish: 'burun', emoji: '👃', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My nose is cold.', exampleTr: 'Burnum soğuk.', phonics: 'long-o', frequency: 70 },
+  { english: 'mouth', turkish: 'ağız', emoji: '👄', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat with my mouth.', exampleTr: 'Ağzımla yerim.', phonics: 'vowel-ou', frequency: 72 },
+  { english: 'hand', turkish: 'el', emoji: '✋', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Wash your hands.', exampleTr: 'Ellerini yıka.', phonics: 'short-a', frequency: 88 },
+  { english: 'foot', turkish: 'ayak', emoji: '🦶', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My foot hurts.', exampleTr: 'Ayağım acıyor.', phonics: 'long-oo', frequency: 76 },
+  { english: 'leg', turkish: 'bacak', emoji: '🦵', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Dogs have four legs.', exampleTr: 'Köpeklerin dört bacağı var.', phonics: 'short-e', frequency: 78 },
+  { english: 'arm', turkish: 'kol', emoji: '💪', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I have two arms.', exampleTr: 'İki kolum var.', phonics: 'r-controlled', frequency: 74 },
+  { english: 'hair', turkish: 'saç', emoji: '💇', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Her hair is long.', exampleTr: 'Saçı uzun.', phonics: 'r-controlled', frequency: 72 },
+  { english: 'face', turkish: 'yüz', emoji: '😊', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'She has a happy face.', exampleTr: 'Mutlu bir yüzü var.', phonics: 'long-a', frequency: 80 },
+  { english: 'tooth', turkish: 'diş', emoji: '🦷', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'Brush your teeth.', exampleTr: 'Dişlerini fırçala.', phonics: 'long-oo', frequency: 65 },
+  { english: 'finger', turkish: 'parmak', emoji: '☝️', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'I have ten fingers.', exampleTr: 'On parmağım var.', phonics: 'r-controlled', frequency: 70 },
+  { english: 'knee', turkish: 'diz', emoji: '🦵', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My knee is sore.', exampleTr: 'Dizim ağrıyor.', phonics: 'digraph-ee', frequency: 60 },
+  { english: 'tummy', turkish: 'karın', emoji: '🫃', category: 'Body', level: 1, partOfSpeech: 'noun', exampleEn: 'My tummy is full.', exampleTr: 'Karnım dolu.', phonics: 'short-u', frequency: 58 },
 ];
 
 // ─── LEVEL 1 — THEME 6: Food ──────────────────────────────────────────────────
 const level1Food: CurriculumWord[] = [
-  { english: 'apple', turkish: 'elma', emoji: '🍎', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat an apple.', exampleTr: 'Bir elma yiyorum.', phonics: 'short-a' },
-  { english: 'bread', turkish: 'ekmek', emoji: '🍞', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat bread every day.', exampleTr: 'Her gün ekmek yerim.', phonics: 'r-blend' },
-  { english: 'milk', turkish: 'süt', emoji: '🥛', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Milk is good for you.', exampleTr: 'Süt sağlıklıdır.', phonics: 'l-blend' },
-  { english: 'water', turkish: 'su', emoji: '💧', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Drink your water.', exampleTr: 'Suyunu iç.', phonics: 'r-controlled' },
-  { english: 'egg', turkish: 'yumurta', emoji: '🥚', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat an egg for breakfast.', exampleTr: 'Kahvaltıda yumurta yerim.', phonics: 'short-e' },
-  { english: 'cheese', turkish: 'peynir', emoji: '🧀', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I like cheese.', exampleTr: 'Peyniri severim.', phonics: 'digraph-ee' },
-  { english: 'rice', turkish: 'pilav', emoji: '🍚', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'We eat rice for dinner.', exampleTr: 'Akşam yemeğinde pilav yeriz.', phonics: 'long-i' },
-  { english: 'chicken', turkish: 'tavuk', emoji: '🍗', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I like chicken soup.', exampleTr: 'Tavuk çorbasını severim.', phonics: 'short-i' },
-  { english: 'banana', turkish: 'muz', emoji: '🍌', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Monkeys eat bananas.', exampleTr: 'Maymunlar muz yer.', phonics: 'short-a' },
-  { english: 'orange', turkish: 'portakal', emoji: '🍊', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I drink orange juice.', exampleTr: 'Portakal suyu içiyorum.', phonics: 'r-controlled' },
-  { english: 'cake', turkish: 'pasta', emoji: '🎂', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'We have cake on birthdays.', exampleTr: 'Doğum günlerinde pasta yeriz.', phonics: 'long-a' },
-  { english: 'cookie', turkish: 'kurabiye', emoji: '🍪', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'The cookie is sweet.', exampleTr: 'Kurabiye tatlı.', phonics: 'long-oo' },
-  { english: 'juice', turkish: 'meyve suyu', emoji: '🧃', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I drink juice.', exampleTr: 'Meyve suyu içiyorum.', phonics: 'long-u' },
-  { english: 'soup', turkish: 'çorba', emoji: '🍲', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Mom makes soup.', exampleTr: 'Annem çorba yapar.', phonics: 'long-oo' },
-  { english: 'tea', turkish: 'çay', emoji: '🍵', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Grandpa drinks tea.', exampleTr: 'Büyükbaba çay içer.', phonics: 'digraph-ea' },
+  { english: 'apple', turkish: 'elma', emoji: '🍎', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat an apple.', exampleTr: 'Bir elma yiyorum.', phonics: 'short-a', frequency: 78 },
+  { english: 'bread', turkish: 'ekmek', emoji: '🍞', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat bread every day.', exampleTr: 'Her gün ekmek yerim.', phonics: 'r-blend', frequency: 80 },
+  { english: 'milk', turkish: 'süt', emoji: '🥛', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Milk is good for you.', exampleTr: 'Süt sağlıklıdır.', phonics: 'l-blend', frequency: 80 },
+  { english: 'water', turkish: 'su', emoji: '💧', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Drink your water.', exampleTr: 'Suyunu iç.', phonics: 'r-controlled', frequency: 92 },
+  { english: 'egg', turkish: 'yumurta', emoji: '🥚', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I eat an egg for breakfast.', exampleTr: 'Kahvaltıda yumurta yerim.', phonics: 'short-e', frequency: 76 },
+  { english: 'cheese', turkish: 'peynir', emoji: '🧀', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I like cheese.', exampleTr: 'Peyniri severim.', phonics: 'digraph-ee', frequency: 70 },
+  { english: 'rice', turkish: 'pilav', emoji: '🍚', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'We eat rice for dinner.', exampleTr: 'Akşam yemeğinde pilav yeriz.', phonics: 'long-i', frequency: 72 },
+  { english: 'chicken', turkish: 'tavuk eti', emoji: '🍗', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I like chicken soup.', exampleTr: 'Tavuk çorbasını severim.', phonics: 'short-i', frequency: 74 },
+  { english: 'banana', turkish: 'muz', emoji: '🍌', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Monkeys eat bananas.', exampleTr: 'Maymunlar muz yer.', phonics: 'short-a', frequency: 68 },
+  { english: 'orange', turkish: 'portakal', emoji: '🍊', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I drink orange juice.', exampleTr: 'Portakal suyu içiyorum.', phonics: 'r-controlled', frequency: 68 },
+  { english: 'cake', turkish: 'pasta', emoji: '🎂', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'We have cake on birthdays.', exampleTr: 'Doğum günlerinde pasta yeriz.', phonics: 'long-a', frequency: 66 },
+  { english: 'cookie', turkish: 'kurabiye', emoji: '🍪', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'The cookie is sweet.', exampleTr: 'Kurabiye tatlı.', phonics: 'long-oo', frequency: 62 },
+  { english: 'juice', turkish: 'meyve suyu', emoji: '🧃', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'I drink juice.', exampleTr: 'Meyve suyu içiyorum.', phonics: 'long-u', frequency: 70 },
+  { english: 'soup', turkish: 'çorba', emoji: '🍲', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Mom makes soup.', exampleTr: 'Annem çorba yapar.', phonics: 'long-oo', frequency: 68 },
+  { english: 'tea', turkish: 'çay', emoji: '🍵', category: 'Food', level: 1, partOfSpeech: 'noun', exampleEn: 'Grandpa drinks tea.', exampleTr: 'Büyükbaba çay içer.', phonics: 'digraph-ea', frequency: 72 },
 ];
 
 // ─── LEVEL 1 — THEME 7: Classroom ─────────────────────────────────────────────
 const level1Classroom: CurriculumWord[] = [
-  { english: 'book', turkish: 'kitap', emoji: '📖', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I read a book.', exampleTr: 'Kitap okuyorum.', phonics: 'long-oo' },
-  { english: 'pen', turkish: 'kalem', emoji: '🖊️', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I write with a pen.', exampleTr: 'Kalemle yazıyorum.', phonics: 'short-e' },
-  { english: 'desk', turkish: 'sıra', emoji: '🪑', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I sit at my desk.', exampleTr: 'Sıramda oturuyorum.', phonics: 'short-e' },
-  { english: 'chair', turkish: 'sandalye', emoji: '🪑', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'The chair is red.', exampleTr: 'Sandalye kırmızı.', phonics: 'r-controlled' },
-  { english: 'bag', turkish: 'çanta', emoji: '🎒', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'My bag is heavy.', exampleTr: 'Çantam ağır.', phonics: 'short-a' },
-  { english: 'door', turkish: 'kapı', emoji: '🚪', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'Open the door.', exampleTr: 'Kapıyı aç.', phonics: 'r-controlled' },
-  { english: 'board', turkish: 'tahta', emoji: '📋', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'Write on the board.', exampleTr: 'Tahtaya yaz.', phonics: 'r-controlled' },
-  { english: 'class', turkish: 'sınıf', emoji: '🏫', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'We are in class.', exampleTr: 'Sınıftayız.', phonics: 'l-blend' },
-  { english: 'school', turkish: 'okul', emoji: '🏫', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I like school.', exampleTr: 'Okulu seviyorum.', phonics: 'long-oo' },
-  { english: 'paper', turkish: 'kağıt', emoji: '📄', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I draw on paper.', exampleTr: 'Kağıda çiziyorum.', phonics: 'long-a' },
-  { english: 'ruler', turkish: 'cetvel', emoji: '📏', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'Use a ruler to draw a line.', exampleTr: 'Çizgi çizmek için cetvel kullan.', phonics: 'long-u' },
-  { english: 'eraser', turkish: 'silgi', emoji: '🧹', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I use the eraser.', exampleTr: 'Silgiyi kullanıyorum.', phonics: 'long-a' },
+  { english: 'book', turkish: 'kitap', emoji: '📖', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I read a book.', exampleTr: 'Kitap okuyorum.', phonics: 'long-oo', frequency: 90 },
+  { english: 'pen', turkish: 'tükenmez kalem', emoji: '🖊️', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I write with a pen.', exampleTr: 'Tükenmez kalemle yazıyorum.', phonics: 'short-e', frequency: 75 },
+  { english: 'desk', turkish: 'sıra/masa', emoji: '🪑', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I sit at my desk.', exampleTr: 'Sıramda oturuyorum.', phonics: 'short-e', frequency: 72 },
+  { english: 'chair', turkish: 'sandalye', emoji: '🪑', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'The chair is red.', exampleTr: 'Sandalye kırmızı.', phonics: 'r-controlled', frequency: 74 },
+  { english: 'bag', turkish: 'çanta', emoji: '🎒', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'My bag is heavy.', exampleTr: 'Çantam ağır.', phonics: 'short-a', frequency: 78 },
+  { english: 'door', turkish: 'kapı', emoji: '🚪', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'Open the door.', exampleTr: 'Kapıyı aç.', phonics: 'r-controlled', frequency: 82 },
+  { english: 'board', turkish: 'tahta', emoji: '🟫', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'Write on the board.', exampleTr: 'Tahtaya yaz.', phonics: 'r-controlled', frequency: 68 },
+  { english: 'class', turkish: 'sınıf', emoji: '🏫', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'We are in class.', exampleTr: 'Sınıftayız.', phonics: 'l-blend', frequency: 80 },
+  { english: 'school', turkish: 'okul', emoji: '🏫', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I like school.', exampleTr: 'Okulu seviyorum.', phonics: 'long-oo', frequency: 85 },
+  { english: 'paper', turkish: 'kağıt', emoji: '📄', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I draw on paper.', exampleTr: 'Kağıda çiziyorum.', phonics: 'long-a', frequency: 78 },
+  { english: 'ruler', turkish: 'cetvel', emoji: '📏', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'Use a ruler to draw a line.', exampleTr: 'Çizgi çizmek için cetvel kullan.', phonics: 'long-u', frequency: 58 },
+  { english: 'eraser', turkish: 'silgi', emoji: '🩹', category: 'Classroom', level: 1, partOfSpeech: 'noun', exampleEn: 'I use the eraser.', exampleTr: 'Silgiyi kullanıyorum.', phonics: 'long-a', frequency: 55 },
 ];
 
 // ─── LEVEL 1 — THEME 8: Home ──────────────────────────────────────────────────
 const level1Home: CurriculumWord[] = [
-  { english: 'house', turkish: 'ev', emoji: '🏠', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I live in a house.', exampleTr: 'Bir evde yaşıyorum.', phonics: 'vowel-ou' },
-  { english: 'room', turkish: 'oda', emoji: '🛋️', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'My room is clean.', exampleTr: 'Odam temiz.', phonics: 'long-oo' },
-  { english: 'bed', turkish: 'yatak', emoji: '🛏️', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I sleep in my bed.', exampleTr: 'Yatağımda uyuyorum.', phonics: 'short-e' },
-  { english: 'table', turkish: 'masa', emoji: '🪑', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'We eat at the table.', exampleTr: 'Masada yiyoruz.', phonics: 'long-a' },
-  { english: 'window', turkish: 'pencere', emoji: '🪟', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'Open the window.', exampleTr: 'Pencereyi aç.', phonics: 'short-i' },
-  { english: 'kitchen', turkish: 'mutfak', emoji: '🍳', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'Mom is in the kitchen.', exampleTr: 'Annem mutfakta.', phonics: 'short-i' },
-  { english: 'garden', turkish: 'bahçe', emoji: '🌻', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I play in the garden.', exampleTr: 'Bahçede oynuyorum.', phonics: 'r-controlled' },
-  { english: 'toy', turkish: 'oyuncak', emoji: '🧸', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I love my toys.', exampleTr: 'Oyuncaklarımı seviyorum.', phonics: 'vowel-oy' },
-  { english: 'ball', turkish: 'top', emoji: '⚽', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I kick the ball.', exampleTr: 'Topa vuruyorum.', phonics: 'vowel-all' },
-  { english: 'doll', turkish: 'bebek', emoji: '🪆', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'She plays with her doll.', exampleTr: 'Bebeğiyle oynuyor.', phonics: 'short-o' },
-  { english: 'car', turkish: 'araba', emoji: '🚗', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I have a toy car.', exampleTr: 'Oyuncak arabam var.', phonics: 'r-controlled' },
-  { english: 'teddy', turkish: 'oyuncak ayı', emoji: '🧸', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I hug my teddy.', exampleTr: 'Oyuncak ayıma sarılıyorum.', phonics: 'short-e' },
+  { english: 'house', turkish: 'ev', emoji: '🏠', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I live in a house.', exampleTr: 'Bir evde yaşıyorum.', phonics: 'vowel-ou', frequency: 88 },
+  { english: 'room', turkish: 'oda', emoji: '🛋️', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'My room is clean.', exampleTr: 'Odam temiz.', phonics: 'long-oo', frequency: 82 },
+  { english: 'bed', turkish: 'yatak', emoji: '🛏️', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I sleep in my bed.', exampleTr: 'Yatağımda uyuyorum.', phonics: 'short-e', frequency: 80,
+    confusingWith: 'bad',
+    turkishTrap: "'bed' kısa e sesi (yatak), 'bad' kısa a sesi (kötü) — Türkler ikisini aynı okur",
+  },
+  { english: 'table', turkish: 'masa', emoji: '🪑', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'We eat at the table.', exampleTr: 'Masada yiyoruz.', phonics: 'long-a', frequency: 82 },
+  { english: 'window', turkish: 'pencere', emoji: '🪟', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'Open the window.', exampleTr: 'Pencereyi aç.', phonics: 'short-i', frequency: 78 },
+  { english: 'kitchen', turkish: 'mutfak', emoji: '🍳', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'Mom is in the kitchen.', exampleTr: 'Annem mutfakta.', phonics: 'short-i', frequency: 75 },
+  { english: 'garden', turkish: 'bahçe', emoji: '🌻', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I play in the garden.', exampleTr: 'Bahçede oynuyorum.', phonics: 'r-controlled', frequency: 72 },
+  { english: 'toy', turkish: 'oyuncak', emoji: '🧸', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I love my toys.', exampleTr: 'Oyuncaklarımı seviyorum.', phonics: 'vowel-oy', frequency: 70 },
+  { english: 'ball', turkish: 'top', emoji: '⚽', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I kick the ball.', exampleTr: 'Topa vuruyorum.', phonics: 'vowel-all', frequency: 78 },
+  { english: 'doll', turkish: 'oyuncak bebek', emoji: '🪆', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'She plays with her doll.', exampleTr: 'Oyuncak bebeğiyle oynuyor.', phonics: 'short-o', frequency: 60 },
+  { english: 'car', turkish: 'araba', emoji: '🚗', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I have a toy car.', exampleTr: 'Oyuncak arabam var.', phonics: 'r-controlled', frequency: 85 },
+  { english: 'teddy', turkish: 'oyuncak ayı', emoji: '🧸', category: 'Home', level: 1, partOfSpeech: 'noun', exampleEn: 'I hug my teddy.', exampleTr: 'Oyuncak ayıma sarılıyorum.', phonics: 'short-e', frequency: 55 },
 ];
 
 // ─── LEVEL 1 — THEME 9: Clothes ───────────────────────────────────────────────
 const level1Clothes: CurriculumWord[] = [
-  { english: 'shirt', turkish: 'gömlek', emoji: '👕', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear a shirt.', exampleTr: 'Gömlek giyiyorum.', phonics: 'digraph-ir' },
-  { english: 'pants', turkish: 'pantolon', emoji: '👖', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'My pants are blue.', exampleTr: 'Pantolonu mavi.', phonics: 'short-a' },
-  { english: 'shoes', turkish: 'ayakkabı', emoji: '👟', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I put on my shoes.', exampleTr: 'Ayakkabımı giyiyorum.', phonics: 'long-oo' },
-  { english: 'hat', turkish: 'şapka', emoji: '🎩', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear a hat.', exampleTr: 'Şapka takıyorum.', phonics: 'short-a' },
-  { english: 'coat', turkish: 'palto', emoji: '🧥', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'Wear your coat — it is cold.', exampleTr: 'Paltonu giy, hava soğuk.', phonics: 'long-o' },
-  { english: 'dress', turkish: 'elbise', emoji: '👗', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'She wears a pretty dress.', exampleTr: 'Güzel bir elbise giyiyor.', phonics: 'r-blend' },
-  { english: 'socks', turkish: 'çorap', emoji: '🧦', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'My socks are warm.', exampleTr: 'Çoraplarım sıcak.', phonics: 'short-o' },
-  { english: 'boots', turkish: 'bot', emoji: '🥾', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear boots in winter.', exampleTr: 'Kışın bot giyerim.', phonics: 'long-oo' },
-  { english: 'scarf', turkish: 'atkı', emoji: '🧣', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'My scarf is red.', exampleTr: 'Atkım kırmızı.', phonics: 'r-controlled' },
-  { english: 'gloves', turkish: 'eldiven', emoji: '🧤', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear gloves outside.', exampleTr: 'Dışarıda eldiven giyiyorum.', phonics: 'l-blend' },
-  { english: 'jacket', turkish: 'ceket', emoji: '🧥', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'Put on your jacket.', exampleTr: 'Ceketini giy.', phonics: 'short-a' },
-  { english: 'umbrella', turkish: 'şemsiye', emoji: '☂️', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'Take your umbrella.', exampleTr: 'Şemsiyeni al.', phonics: 'short-u' },
+  { english: 'shirt', turkish: 'gömlek/tişört', emoji: '👕', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear a shirt.', exampleTr: 'Gömlek giyiyorum.', phonics: 'digraph-ir', frequency: 76 },
+  { english: 'pants', turkish: 'pantolon', emoji: '👖', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'My pants are blue.', exampleTr: 'Pantalonum mavi.', phonics: 'short-a', frequency: 74 },
+  { english: 'shoes', turkish: 'ayakkabı', emoji: '👟', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I put on my shoes.', exampleTr: 'Ayakkabımı giyiyorum.', phonics: 'long-oo', frequency: 80 },
+  { english: 'hat', turkish: 'şapka', emoji: '🧢', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear a hat.', exampleTr: 'Şapka takıyorum.', phonics: 'short-a', frequency: 72 },
+  { english: 'coat', turkish: 'palto/mont', emoji: '🧥', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'Wear your coat — it is cold.', exampleTr: 'Paltonu giy, hava soğuk.', phonics: 'long-o', frequency: 70 },
+  { english: 'dress', turkish: 'elbise', emoji: '👗', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'She wears a pretty dress.', exampleTr: 'Güzel bir elbise giyiyor.', phonics: 'r-blend', frequency: 72 },
+  { english: 'socks', turkish: 'çorap', emoji: '🧦', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'My socks are warm.', exampleTr: 'Çoraplarım sıcak.', phonics: 'short-o', frequency: 68 },
+  { english: 'boots', turkish: 'bot/çizme', emoji: '🥾', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear boots in winter.', exampleTr: 'Kışın bot giyerim.', phonics: 'long-oo', frequency: 62 },
+  { english: 'scarf', turkish: 'atkı/eşarp', emoji: '🧣', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'My scarf is red.', exampleTr: 'Atkım kırmızı.', phonics: 'r-controlled', frequency: 58 },
+  { english: 'gloves', turkish: 'eldiven', emoji: '🧤', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'I wear gloves outside.', exampleTr: 'Dışarıda eldiven giyiyorum.', phonics: 'l-blend', frequency: 56 },
+  { english: 'jacket', turkish: 'ceket', emoji: '🧥', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'Put on your jacket.', exampleTr: 'Ceketini giy.', phonics: 'short-a', frequency: 72 },
+  { english: 'umbrella', turkish: 'şemsiye', emoji: '☂️', category: 'Clothes', level: 1, partOfSpeech: 'noun', exampleEn: 'Take your umbrella.', exampleTr: 'Şemsiyeni al.', phonics: 'short-u', frequency: 62 },
 ];
 
 // ─── LEVEL 1 — THEME 10: Nature ───────────────────────────────────────────────
 const level1Nature: CurriculumWord[] = [
-  { english: 'sun', turkish: 'güneş', emoji: '☀️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The sun is bright.', exampleTr: 'Güneş parlıyor.', phonics: 'short-u' },
-  { english: 'moon', turkish: 'ay', emoji: '🌙', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The moon is full.', exampleTr: 'Ay dolunay.', phonics: 'long-oo' },
-  { english: 'star', turkish: 'yıldız', emoji: '⭐', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'I see a star.', exampleTr: 'Bir yıldız görüyorum.', phonics: 'r-controlled' },
-  { english: 'tree', turkish: 'ağaç', emoji: '🌳', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The tree is tall.', exampleTr: 'Ağaç uzun boylu.', phonics: 'digraph-ee' },
-  { english: 'flower', turkish: 'çiçek', emoji: '🌸', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The flower is pretty.', exampleTr: 'Çiçek güzel.', phonics: 'vowel-ow' },
-  { english: 'rain', turkish: 'yağmur', emoji: '🌧️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'I like the rain.', exampleTr: 'Yağmuru severim.', phonics: 'long-a' },
-  { english: 'snow', turkish: 'kar', emoji: '❄️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'Snow is cold and white.', exampleTr: 'Kar soğuk ve beyaz.', phonics: 'long-o' },
-  { english: 'wind', turkish: 'rüzgar', emoji: '💨', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The wind is blowing.', exampleTr: 'Rüzgar esiyor.', phonics: 'short-i' },
-  { english: 'cloud', turkish: 'bulut', emoji: '☁️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'A big cloud is in the sky.', exampleTr: 'Gökyüzünde büyük bir bulut var.', phonics: 'vowel-ou' },
-  { english: 'sky', turkish: 'gökyüzü', emoji: '🌌', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The sky is blue.', exampleTr: 'Gökyüzü mavi.', phonics: 'long-i' },
+  { english: 'sun', turkish: 'güneş', emoji: '☀️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The sun is bright.', exampleTr: 'Güneş parlak.', phonics: 'short-u', frequency: 85 },
+  { english: 'moon', turkish: 'ay', emoji: '🌙', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The moon is full tonight.', exampleTr: 'Bu gece ay dolunay.', phonics: 'long-oo', frequency: 78 },
+  { english: 'star', turkish: 'yıldız', emoji: '⭐', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'I see a star.', exampleTr: 'Bir yıldız görüyorum.', phonics: 'r-controlled', frequency: 80 },
+  { english: 'tree', turkish: 'ağaç', emoji: '🌳', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The tree is tall.', exampleTr: 'Ağaç yüksek.', phonics: 'digraph-ee', frequency: 82,
+    confusingWith: 'three',
+    turkishTrap: "'tree' iki harfli tr ile başlar, 'three' üç harfli thr ile — 'th' sesi farklı",
+  },
+  { english: 'flower', turkish: 'çiçek', emoji: '🌸', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The flower is pretty.', exampleTr: 'Çiçek güzel.', phonics: 'vowel-ow', frequency: 72 },
+  { english: 'rain', turkish: 'yağmur', emoji: '🌧️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'I like the rain.', exampleTr: 'Yağmuru severim.', phonics: 'long-a', frequency: 76 },
+  { english: 'snow', turkish: 'kar', emoji: '❄️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'Snow is cold and white.', exampleTr: 'Kar soğuk ve beyaz.', phonics: 'long-o', frequency: 74 },
+  { english: 'wind', turkish: 'rüzgar', emoji: '💨', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The wind is blowing.', exampleTr: 'Rüzgar esiyor.', phonics: 'short-i', frequency: 72,
+    confusingWith: 'wine',
+    turkishTrap: "'wind' kısa i sesi (rüzgar), Türkler 'v' ile 'w' farkını duyamaz — her ikisi de 'v' gibi gelir",
+  },
+  { english: 'cloud', turkish: 'bulut', emoji: '☁️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'There is a big cloud in the sky.', exampleTr: 'Gökyüzünde büyük bir bulut var.', phonics: 'vowel-ou', frequency: 70 },
+  { english: 'sky', turkish: 'gökyüzü', emoji: '🌤️', category: 'Nature', level: 1, partOfSpeech: 'noun', exampleEn: 'The sky is blue.', exampleTr: 'Gökyüzü mavi.', phonics: 'long-i', frequency: 80 },
 ];
 
 // ─── LEVEL 2 — Actions ────────────────────────────────────────────────────────
 const level2Actions: CurriculumWord[] = [
-  { english: 'run', turkish: 'koşmak', emoji: '🏃', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I run in the park.', exampleTr: 'Parkta koşuyorum.', phonics: 'short-u' },
-  { english: 'jump', turkish: 'zıplamak', emoji: '🤸', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Can you jump high?', exampleTr: 'Yüksek zıplayabilir misin?', phonics: 'short-u' },
-  { english: 'walk', turkish: 'yürümek', emoji: '🚶', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I walk to school.', exampleTr: 'Okula yürüyorum.', phonics: 'l-blend' },
-  { english: 'sit', turkish: 'oturmak', emoji: '🪑', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Please sit down.', exampleTr: 'Lütfen otur.', phonics: 'short-i' },
-  { english: 'eat', turkish: 'yemek', emoji: '🍽️', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I eat breakfast.', exampleTr: 'Kahvaltı yapıyorum.', phonics: 'digraph-ea' },
-  { english: 'drink', turkish: 'içmek', emoji: '🥤', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I drink water.', exampleTr: 'Su içiyorum.', phonics: 'r-blend' },
-  { english: 'sleep', turkish: 'uyumak', emoji: '😴', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I sleep at night.', exampleTr: 'Geceleri uyurum.', phonics: 'digraph-ee' },
-  { english: 'play', turkish: 'oynamak', emoji: '🎮', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Let us play together.', exampleTr: 'Hadi birlikte oynayalım.', phonics: 'long-a' },
-  { english: 'read', turkish: 'okumak', emoji: '📖', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I read every day.', exampleTr: 'Her gün okuyorum.', phonics: 'digraph-ea' },
-  { english: 'write', turkish: 'yazmak', emoji: '✏️', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I write my name.', exampleTr: 'Adımı yazıyorum.', phonics: 'long-i' },
-  { english: 'sing', turkish: 'şarkı söylemek', emoji: '🎤', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I love to sing.', exampleTr: 'Şarkı söylemeyi seviyorum.', phonics: 'short-i' },
-  { english: 'dance', turkish: 'dans etmek', emoji: '💃', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'She can dance well.', exampleTr: 'Güzel dans edebilir.', phonics: 'long-a' },
-  { english: 'swim', turkish: 'yüzmek', emoji: '🏊', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I swim in the sea.', exampleTr: 'Denizde yüzüyorum.', phonics: 'short-i' },
-  { english: 'fly', turkish: 'uçmak', emoji: '✈️', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Birds can fly.', exampleTr: 'Kuşlar uçabilir.', phonics: 'long-i' },
-  { english: 'climb', turkish: 'tırmanmak', emoji: '🧗', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I climb the tree.', exampleTr: 'Ağaca tırmanıyorum.', phonics: 'long-i' },
+  { english: 'run', turkish: 'koşmak', emoji: '🏃', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I run in the park.', exampleTr: 'Parkta koşuyorum.', phonics: 'short-u', frequency: 82 },
+  { english: 'jump', turkish: 'zıplamak', emoji: '🤸', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Can you jump high?', exampleTr: 'Yüksek zıplayabilir misin?', phonics: 'short-u', frequency: 72 },
+  { english: 'walk', turkish: 'yürümek', emoji: '🚶', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I walk to school.', exampleTr: 'Okula yürüyorum.', phonics: 'l-blend', frequency: 85 },
+  { english: 'sit', turkish: 'oturmak', emoji: '🪑', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Please sit down.', exampleTr: 'Lütfen otur.', phonics: 'short-i', frequency: 82 },
+  { english: 'eat', turkish: 'yemek', emoji: '🍽️', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I eat breakfast.', exampleTr: 'Kahvaltı yapıyorum.', phonics: 'digraph-ea', frequency: 90 },
+  { english: 'drink', turkish: 'içmek', emoji: '🥤', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I drink water.', exampleTr: 'Su içiyorum.', phonics: 'r-blend', frequency: 85 },
+  { english: 'sleep', turkish: 'uyumak', emoji: '😴', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I sleep at night.', exampleTr: 'Geceleri uyurum.', phonics: 'digraph-ee', frequency: 83 },
+  { english: 'play', turkish: 'oynamak', emoji: '🎮', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Let us play together.', exampleTr: 'Hadi birlikte oynayalım.', phonics: 'long-a', frequency: 88 },
+  { english: 'read', turkish: 'okumak', emoji: '📖', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I read every day.', exampleTr: 'Her gün okuyorum.', phonics: 'digraph-ea', frequency: 86 },
+  { english: 'write', turkish: 'yazmak', emoji: '✏️', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I write my name.', exampleTr: 'Adımı yazıyorum.', phonics: 'long-i', frequency: 82 },
+  { english: 'sing', turkish: 'şarkı söylemek', emoji: '🎤', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I love to sing.', exampleTr: 'Şarkı söylemeyi seviyorum.', phonics: 'short-i', frequency: 70 },
+  { english: 'dance', turkish: 'dans etmek', emoji: '💃', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'She can dance well.', exampleTr: 'Güzel dans edebilir.', phonics: 'long-a', frequency: 68 },
+  { english: 'swim', turkish: 'yüzmek', emoji: '🏊', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I swim in the sea.', exampleTr: 'Denizde yüzüyorum.', phonics: 'short-i', frequency: 65 },
+  { english: 'fly', turkish: 'uçmak', emoji: '✈️', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'Birds can fly.', exampleTr: 'Kuşlar uçabilir.', phonics: 'long-i', frequency: 72 },
+  { english: 'climb', turkish: 'tırmanmak', emoji: '🧗', category: 'Actions', level: 2, partOfSpeech: 'verb', exampleEn: 'I climb the tree.', exampleTr: 'Ağaca tırmanıyorum.', phonics: 'long-i', frequency: 60 },
 ];
 
 // ─── LEVEL 2 — Feelings ───────────────────────────────────────────────────────
 const level2Feelings: CurriculumWord[] = [
-  { english: 'happy', turkish: 'mutlu', emoji: '😊', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am happy today.', exampleTr: 'Bugün mutluyum.', phonics: 'short-a' },
-  { english: 'sad', turkish: 'üzgün', emoji: '😢', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'The girl is sad.', exampleTr: 'Kız üzgün.', phonics: 'short-a' },
-  { english: 'angry', turkish: 'kızgın', emoji: '😠', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'Don\'t be angry.', exampleTr: 'Kızma.', phonics: 'short-a' },
-  { english: 'scared', turkish: 'korkmuş', emoji: '😨', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am scared of spiders.', exampleTr: 'Örümceklerden korkuyorum.', phonics: 'r-controlled' },
-  { english: 'tired', turkish: 'yorgun', emoji: '😴', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am very tired.', exampleTr: 'Çok yorgunum.', phonics: 'long-i' },
-  { english: 'hungry', turkish: 'aç', emoji: '🍽️', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am hungry.', exampleTr: 'Açım.', phonics: 'short-u' },
-  { english: 'thirsty', turkish: 'susuz', emoji: '💧', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'Are you thirsty?', exampleTr: 'Susamış mısın?', phonics: 'digraph-ir' },
-  { english: 'cold', turkish: 'soğuk', emoji: '🥶', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am cold outside.', exampleTr: 'Dışarıda üşüyorum.', phonics: 'long-o' },
-  { english: 'hot', turkish: 'sıcak', emoji: '🥵', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'It is very hot today.', exampleTr: 'Bugün çok sıcak.', phonics: 'short-o' },
-  { english: 'sick', turkish: 'hasta', emoji: '🤒', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am sick today.', exampleTr: 'Bugün hastayım.', phonics: 'short-i' },
+  { english: 'happy', turkish: 'mutlu', emoji: '😊', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am happy today.', exampleTr: 'Bugün mutluyum.', phonics: 'short-a', frequency: 88 },
+  { english: 'sad', turkish: 'üzgün', emoji: '😢', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'The girl is sad.', exampleTr: 'Kız üzgün.', phonics: 'short-a', frequency: 82 },
+  { english: 'angry', turkish: 'kızgın', emoji: '😠', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: "Don't be angry.", exampleTr: 'Kızma.', phonics: 'short-a', frequency: 78 },
+  { english: 'scared', turkish: 'korkmuş', emoji: '😨', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am scared of spiders.', exampleTr: 'Örümceklerden korkuyorum.', phonics: 'r-controlled', frequency: 72 },
+  { english: 'tired', turkish: 'yorgun', emoji: '😴', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am very tired.', exampleTr: 'Çok yorgunum.', phonics: 'long-i', frequency: 80 },
+  { english: 'hungry', turkish: 'aç', emoji: '🍽️', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am hungry.', exampleTr: 'Açım.', phonics: 'short-u', frequency: 82 },
+  { english: 'thirsty', turkish: 'susuz/susamış', emoji: '💧', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'Are you thirsty?', exampleTr: 'Susamış mısın?', phonics: 'digraph-ir', frequency: 70 },
+  { english: 'cold', turkish: 'soğuk/üşümüş', emoji: '🥶', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am cold outside.', exampleTr: 'Dışarıda üşüyorum.', phonics: 'long-o', frequency: 82 },
+  { english: 'hot', turkish: 'sıcak', emoji: '🥵', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'It is very hot today.', exampleTr: 'Bugün çok sıcak.', phonics: 'short-o', frequency: 80 },
+  { english: 'sick', turkish: 'hasta', emoji: '🤒', category: 'Feelings', level: 2, partOfSpeech: 'adjective', exampleEn: 'I am sick today.', exampleTr: 'Bugün hastayım.', phonics: 'short-i', frequency: 75 },
 ];
 
 // ─── LEVEL 2 — Adjectives ─────────────────────────────────────────────────────
 const level2Adjectives: CurriculumWord[] = [
-  { english: 'big', turkish: 'büyük', emoji: '🐘', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The elephant is big.', exampleTr: 'Fil büyük.', phonics: 'short-i' },
-  { english: 'small', turkish: 'küçük', emoji: '🐭', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The mouse is small.', exampleTr: 'Fare küçük.', phonics: 'l-blend' },
-  { english: 'tall', turkish: 'uzun boylu', emoji: '🦒', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The giraffe is tall.', exampleTr: 'Zürafa uzun boylu.', phonics: 'vowel-all' },
-  { english: 'short', turkish: 'kısa', emoji: '📏', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'He is short.', exampleTr: 'O kısa boylu.', phonics: 'digraph-sh' },
-  { english: 'long', turkish: 'uzun', emoji: '🐍', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The snake is long.', exampleTr: 'Yılan uzun.', phonics: 'long-o' },
-  { english: 'old', turkish: 'yaşlı/eski', emoji: '👴', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'Grandpa is old.', exampleTr: 'Büyükbaba yaşlı.', phonics: 'long-o' },
-  { english: 'new', turkish: 'yeni', emoji: '✨', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'I have a new book.', exampleTr: 'Yeni bir kitabım var.', phonics: 'long-u' },
-  { english: 'fast', turkish: 'hızlı', emoji: '🏎️', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The car is fast.', exampleTr: 'Araba hızlı.', phonics: 'short-a' },
-  { english: 'slow', turkish: 'yavaş', emoji: '🐢', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The turtle is slow.', exampleTr: 'Kaplumbağa yavaş.', phonics: 'long-o' },
-  { english: 'good', turkish: 'iyi', emoji: '👍', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'You are a good student.', exampleTr: 'İyi bir öğrencisin.', phonics: 'long-oo' },
-  { english: 'bad', turkish: 'kötü', emoji: '👎', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'It is a bad day.', exampleTr: 'Kötü bir gün.', phonics: 'short-a' },
+  { english: 'big', turkish: 'büyük', emoji: '🐘', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The elephant is big.', exampleTr: 'Fil büyük.', phonics: 'short-i', frequency: 90 },
+  { english: 'small', turkish: 'küçük', emoji: '🐭', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The mouse is small.', exampleTr: 'Fare küçük.', phonics: 'l-blend', frequency: 88 },
+  { english: 'tall', turkish: 'uzun boylu', emoji: '🦒', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The giraffe is tall.', exampleTr: 'Zürafa uzun boylu.', phonics: 'vowel-all', frequency: 78 },
+  { english: 'short', turkish: 'kısa/alçak', emoji: '📏', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'He is short.', exampleTr: 'O kısa boylu.', phonics: 'digraph-sh', frequency: 82 },
+  { english: 'long', turkish: 'uzun', emoji: '🐍', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The snake is long.', exampleTr: 'Yılan uzun.', phonics: 'long-o', frequency: 85 },
+  { english: 'old', turkish: 'yaşlı/eski', emoji: '👴', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'Grandpa is old.', exampleTr: 'Büyükbaba yaşlı.', phonics: 'long-o', frequency: 86 },
+  { english: 'new', turkish: 'yeni', emoji: '✨', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'I have a new book.', exampleTr: 'Yeni bir kitabım var.', phonics: 'long-u', frequency: 88 },
+  { english: 'fast', turkish: 'hızlı', emoji: '🏎️', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The car is fast.', exampleTr: 'Araba hızlı.', phonics: 'short-a', frequency: 78 },
+  { english: 'slow', turkish: 'yavaş', emoji: '🐢', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'The turtle is slow.', exampleTr: 'Kaplumbağa yavaş.', phonics: 'long-o', frequency: 75 },
+  { english: 'good', turkish: 'iyi', emoji: '👍', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'You are a good student.', exampleTr: 'İyi bir öğrencisin.', phonics: 'long-oo', frequency: 95 },
+  { english: 'bad', turkish: 'kötü', emoji: '👎', category: 'Adjectives', level: 2, partOfSpeech: 'adjective', exampleEn: 'It is a bad day.', exampleTr: 'Kötü bir gün.', phonics: 'short-a', frequency: 88,
+    confusingWith: 'bed',
+    turkishTrap: "'bad' kısa a sesi (kötü), 'bed' kısa e sesi (yatak) — Türkçede ikisi aynı gelir",
+  },
 ];
 
 // ─── LEVEL 2 — More Animals & Food ────────────────────────────────────────────
 const level2MoreAnimals: CurriculumWord[] = [
-  { english: 'lion', turkish: 'aslan', emoji: '🦁', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The lion is the king.', exampleTr: 'Aslan kral.', phonics: 'long-i' },
-  { english: 'tiger', turkish: 'kaplan', emoji: '🐯', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The tiger has stripes.', exampleTr: 'Kaplanın çizgileri var.', phonics: 'long-i' },
-  { english: 'bear', turkish: 'ayı', emoji: '🐻', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The bear sleeps in winter.', exampleTr: 'Ayı kışın uyur.', phonics: 'r-controlled' },
-  { english: 'elephant', turkish: 'fil', emoji: '🐘', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'Elephants are big.', exampleTr: 'Filler büyük.', phonics: 'short-e' },
-  { english: 'monkey', turkish: 'maymun', emoji: '🐒', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'Monkeys climb trees.', exampleTr: 'Maymunlar ağaçlara tırmanır.', phonics: 'short-o' },
-  { english: 'penguin', turkish: 'penguen', emoji: '🐧', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'Penguins live in cold places.', exampleTr: 'Penguenler soğuk yerlerde yaşar.', phonics: 'short-e' },
-  { english: 'turtle', turkish: 'kaplumbağa', emoji: '🐢', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The turtle moves slowly.', exampleTr: 'Kaplumbağa yavaş hareket eder.', phonics: 'r-controlled' },
-  { english: 'fox', turkish: 'tilki', emoji: '🦊', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The fox is clever.', exampleTr: 'Tilki zekidir.', phonics: 'short-o' },
-  { english: 'wolf', turkish: 'kurt', emoji: '🐺', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The wolf howls at night.', exampleTr: 'Kurt geceleri ulur.', phonics: 'short-o' },
-  { english: 'giraffe', turkish: 'zürafa', emoji: '🦒', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The giraffe has a long neck.', exampleTr: 'Zürafanın uzun boynu var.', phonics: 'r-controlled' },
-  { english: 'crocodile', turkish: 'timsah', emoji: '🐊', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The crocodile has big teeth.', exampleTr: 'Timsahın büyük dişleri var.', phonics: 'long-o' },
+  { english: 'lion', turkish: 'aslan', emoji: '🦁', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The lion is the king.', exampleTr: 'Aslan ormanın kralı.', phonics: 'long-i', frequency: 62 },
+  { english: 'tiger', turkish: 'kaplan', emoji: '🐯', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The tiger has stripes.', exampleTr: 'Kaplanın çizgileri var.', phonics: 'long-i', frequency: 60 },
+  { english: 'bear', turkish: 'ayı', emoji: '🐻', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The bear sleeps in winter.', exampleTr: 'Ayı kışın uyur.', phonics: 'r-controlled', frequency: 65 },
+  { english: 'elephant', turkish: 'fil', emoji: '🐘', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'Elephants are big.', exampleTr: 'Filler büyük.', phonics: 'short-e', frequency: 68 },
+  { english: 'monkey', turkish: 'maymun', emoji: '🐒', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'Monkeys climb trees.', exampleTr: 'Maymunlar ağaçlara tırmanır.', phonics: 'short-o', frequency: 62 },
+  { english: 'penguin', turkish: 'penguen', emoji: '🐧', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'Penguins live in cold places.', exampleTr: 'Penguenler soğuk yerlerde yaşar.', phonics: 'short-e', frequency: 52 },
+  { english: 'turtle', turkish: 'kaplumbağa', emoji: '🐢', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The turtle moves slowly.', exampleTr: 'Kaplumbağa yavaş hareket eder.', phonics: 'r-controlled', frequency: 55 },
+  { english: 'fox', turkish: 'tilki', emoji: '🦊', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The fox is clever.', exampleTr: 'Tilki zekidir.', phonics: 'short-o', frequency: 55 },
+  { english: 'wolf', turkish: 'kurt', emoji: '🐺', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The wolf howls at night.', exampleTr: 'Kurt geceleri ulur.', phonics: 'short-o', frequency: 58 },
+  { english: 'giraffe', turkish: 'zürafa', emoji: '🦒', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The giraffe has a long neck.', exampleTr: 'Zürafanın uzun boynu var.', phonics: 'r-controlled', frequency: 50 },
+  { english: 'crocodile', turkish: 'timsah', emoji: '🐊', category: 'Animals', level: 2, partOfSpeech: 'noun', exampleEn: 'The crocodile has big teeth.', exampleTr: 'Timsahın büyük dişleri var.', phonics: 'long-o', frequency: 48 },
 ];
 
 // ─── LEVEL 3 — Time ───────────────────────────────────────────────────────────

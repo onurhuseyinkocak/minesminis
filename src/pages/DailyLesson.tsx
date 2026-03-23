@@ -35,6 +35,7 @@ import {
   getTodayPhonicsSound,
   getTodayCVCWords,
   getYesterdayWords,
+  THEMED_WORD_GROUPS,
   type DailyLessonPlan,
   type KidsWord,
   type CVCWord,
@@ -47,15 +48,53 @@ import './DailyLesson.css';
 const TOTAL_PHASES = 8;
 
 const PHASE_META: Array<{ id: number; icon: string; titleEn: string; titleTr: string }> = [
-  { id: 1, icon: '🌅', titleEn: 'Warm-Up',          titleTr: 'Isınma' },
-  { id: 2, icon: '🔤', titleEn: 'New Sound',         titleTr: 'Yeni Ses' },
-  { id: 3, icon: '📚', titleEn: 'New Words',         titleTr: 'Yeni Kelimeler' },
+  { id: 1, icon: '🌅', titleEn: 'Warm-Up',            titleTr: 'Isınma' },
+  { id: 2, icon: '🔤', titleEn: 'New Sound',           titleTr: 'Yeni Ses' },
+  { id: 3, icon: '📚', titleEn: 'New Words',           titleTr: 'Yeni Kelimeler' },
   { id: 4, icon: '👂', titleEn: 'Listen & Understand', titleTr: 'Dinle & Anla' },
-  { id: 5, icon: '🎤', titleEn: 'Speak & Correct',   titleTr: 'Söyle & Düzelt' },
-  { id: 6, icon: '🔡', titleEn: 'Read & Blend',      titleTr: 'Oku & Birleştir' },
-  { id: 7, icon: '📝', titleEn: 'Mini Grammar',      titleTr: 'Mini Gramer' },
-  { id: 8, icon: '🏆', titleEn: 'Challenge',         titleTr: 'Meydan Okuma' },
+  { id: 5, icon: '🎤', titleEn: 'Speak & Correct',     titleTr: 'Söyle & Düzelt' },
+  { id: 6, icon: '🔡', titleEn: 'Read & Blend',        titleTr: 'Oku & Birleştir' },
+  { id: 7, icon: '📝', titleEn: 'Mini Grammar',        titleTr: 'Mini Gramer' },
+  { id: 8, icon: '🏆', titleEn: 'Challenge',           titleTr: 'Meydan Okuma' },
 ];
+
+// ─── Progress persistence helpers ────────────────────────────────────────────
+
+interface LessonProgress {
+  completedPhases: number[];
+  scores: Record<number, number>;
+  phase: number;
+}
+
+function getProgressKey(userId: string, date: string) {
+  return `mm_lesson_progress_${userId}_${date}`;
+}
+
+function saveProgress(userId: string, date: string, progress: LessonProgress) {
+  try {
+    localStorage.setItem(getProgressKey(userId, date), JSON.stringify(progress));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function loadProgress(userId: string, date: string): LessonProgress | null {
+  try {
+    const raw = localStorage.getItem(getProgressKey(userId, date));
+    if (!raw) return null;
+    return JSON.parse(raw) as LessonProgress;
+  } catch {
+    return null;
+  }
+}
+
+function clearProgress(userId: string, date: string) {
+  try {
+    localStorage.removeItem(getProgressKey(userId, date));
+  } catch {
+    // ignore
+  }
+}
 
 // ─── Levenshtein helper ────────────────────────────────────────────────────────
 
@@ -100,6 +139,21 @@ function Confetti() {
           }}
         />
       ))}
+    </div>
+  );
+}
+
+// ─── Phase Success Flash (800ms green checkmark between phases) ───────────────
+
+function PhaseSuccessFlash({ onDone }: { onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 800);
+    return () => clearTimeout(t);
+  }, [onDone]);
+
+  return (
+    <div className="dl-phase-success" aria-hidden>
+      <div className="dl-phase-success__check">✓</div>
     </div>
   );
 }
@@ -157,10 +211,12 @@ function FeedbackBanner({
 function PhaseWarmup({
   words,
   lang,
+  streakDays,
   onComplete,
 }: {
   words: KidsWord[];
   lang: string;
+  streakDays: number;
   onComplete: () => void;
 }) {
   const [index, setIndex] = useState(0);
@@ -176,6 +232,16 @@ function PhaseWarmup({
   if (words.length === 0) {
     return (
       <div className="dl-phase-content dl-phase-content--center">
+        {streakDays >= 2 && (
+          <div className="dl-streak-banner">
+            <span className="dl-streak-banner__fire">🔥</span>
+            <span className="dl-streak-banner__text">
+              {lang === 'tr'
+                ? `${streakDays} günlük seri! Devam et!`
+                : `Day ${streakDays} streak! Keep going!`}
+            </span>
+          </div>
+        )}
         <div className="dl-empty-state">
           <span className="dl-empty-state__emoji">👋</span>
           <p className="dl-empty-state__text">
@@ -206,6 +272,17 @@ function PhaseWarmup({
 
   return (
     <div className="dl-phase-content">
+      {streakDays >= 2 && (
+        <div className="dl-streak-banner">
+          <span className="dl-streak-banner__fire">🔥</span>
+          <span className="dl-streak-banner__text">
+            {lang === 'tr'
+              ? `${streakDays} günlük seri! Devam et!`
+              : `Day ${streakDays} streak! Keep going!`}
+          </span>
+        </div>
+      )}
+
       <p className="dl-instruction">
         {lang === 'tr' ? 'Dünkü kelimeleri hatırlıyor musun?' : 'Do you remember these words?'}
       </p>
@@ -224,7 +301,7 @@ function PhaseWarmup({
         role="button"
         tabIndex={0}
         onClick={revealed ? undefined : handleReveal}
-        aria-label={revealed ? word.word : 'Tap to reveal'}
+        aria-label={revealed ? word.word : (lang === 'tr' ? 'Görmek için dokun' : 'Tap to reveal')}
       >
         <span className="dl-word-card__emoji">{word.emoji}</span>
         {revealed ? (
@@ -441,7 +518,7 @@ function PhaseNewSounds({
                 <button
                   className={`dl-mic-btn${listening ? ' dl-mic-btn--listening' : ''}`}
                   onClick={listening ? stopListening : startListening}
-                  aria-label={listening ? 'Stop' : 'Speak'}
+                  aria-label={listening ? (lang === 'tr' ? 'Durdur' : 'Stop') : (lang === 'tr' ? 'Söyle' : 'Speak')}
                 >
                   {listening ? <MicOff size={28} /> : <Mic size={28} />}
                 </button>
@@ -459,11 +536,13 @@ function PhaseNewSounds({
 function PhaseNewWords({
   words,
   themeName,
+  themeEmoji,
   lang,
   onComplete,
 }: {
   words: KidsWord[];
   themeName: string;
+  themeEmoji: string;
   lang: string;
   onComplete: () => void;
 }) {
@@ -471,6 +550,10 @@ function PhaseNewWords({
   const [animating, setAnimating] = useState(false);
 
   const word = words[index];
+
+  // Bilingual theme name
+  const themeGroup = THEMED_WORD_GROUPS.find((g) => g.name === themeName);
+  const themeNameDisplay = lang === 'tr' && themeGroup ? themeGroup.nameTr : themeName;
 
   useEffect(() => {
     setAnimating(true);
@@ -489,9 +572,15 @@ function PhaseNewWords({
 
   return (
     <div className="dl-phase-content">
-      <div className="dl-theme-badge">
-        {lang === 'tr' ? `Bu haftanın konusu: ` : `Today's theme: `}
-        <strong>{themeName}</strong>
+      {/* Today's Theme — prominent display */}
+      <div className="dl-today-theme">
+        <span className="dl-today-theme__emoji">{themeEmoji}</span>
+        <div className="dl-today-theme__labels">
+          <span className="dl-today-theme__eyebrow">
+            {lang === 'tr' ? 'Bugünün Konusu' : "Today's Theme"}
+          </span>
+          <span className="dl-today-theme__name">{themeNameDisplay}</span>
+        </div>
       </div>
 
       <div className="dl-word-counter">
@@ -508,7 +597,7 @@ function PhaseNewWords({
         role="button"
         tabIndex={0}
         onClick={() => speak(word.word).catch(() => {})}
-        aria-label={`${word.word} — tap to hear`}
+        aria-label={`${word.word} — ${lang === 'tr' ? 'duymak için dokun' : 'tap to hear'}`}
       >
         <span className="dl-word-card__emoji">{word.emoji}</span>
         <span className="dl-word-card__word">{word.word.toUpperCase()}</span>
@@ -549,6 +638,7 @@ interface ComprehensionQuestion {
   audio: string;
   audioTr: string;
   question: string;
+  questionTr: string;
   choices: string[];
   answer: string;
 }
@@ -557,11 +647,11 @@ function buildComprehensionQuestions(
   phrasePair: { english: string; turkish: string },
   words: KidsWord[],
 ): ComprehensionQuestion[] {
-  // Primary question from today's phrase pair
   const primary: ComprehensionQuestion = {
     audio: phrasePair.english,
     audioTr: phrasePair.turkish,
     question: 'What did you hear?',
+    questionTr: 'Ne duydun?',
     choices: [
       phrasePair.english,
       ...words
@@ -597,7 +687,6 @@ function PhaseListenUnderstand({
   const q = questions[qIndex];
 
   useEffect(() => {
-    // Auto-play the sentence when phase starts
     const t = setTimeout(() => {
       speak(q.audio).catch(() => {});
     }, 500);
@@ -629,14 +718,16 @@ function PhaseListenUnderstand({
   return (
     <div className="dl-phase-content">
       <p className="dl-instruction">
-        {lang === 'tr' ? 'İngilizce cümleyi dinle ve cevaplaaa:' : 'Listen to the English sentence and answer:'}
+        {lang === 'tr'
+          ? 'İngilizce cümleyi dinle ve cevaplaaa:'
+          : 'Listen to the English sentence and answer:'}
       </p>
 
       <div className="dl-listen-card">
         <button
           className="dl-listen-play-btn"
           onClick={() => speak(q.audio).catch(() => {})}
-          aria-label="Play sentence"
+          aria-label={lang === 'tr' ? 'Cümleyi çal' : 'Play sentence'}
         >
           <Volume2 size={32} />
           <span>{lang === 'tr' ? 'Dinle' : 'Listen'}</span>
@@ -645,7 +736,7 @@ function PhaseListenUnderstand({
         <p className="dl-listen-card__tr">{q.audioTr}</p>
       </div>
 
-      <p className="dl-question-prompt">{q.question}</p>
+      <p className="dl-question-prompt">{lang === 'tr' ? q.questionTr : q.question}</p>
 
       <div className="dl-choices">
         {q.choices.map((choice) => {
@@ -702,7 +793,7 @@ function PhaseSpeakCorrect({
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
       setCorrectCount((c) => c + 1);
-      setFeedback({ type: 'correct', message: 'Perfect pronunciation!' });
+      setFeedback({ type: 'correct', message: lang === 'tr' ? 'Mükemmel telaffuz!' : 'Perfect pronunciation!' });
       return;
     }
 
@@ -839,7 +930,7 @@ function PhaseSpeakCorrect({
             className={`dl-mic-btn${listening ? ' dl-mic-btn--listening' : ''}`}
             onClick={listening ? stopListening : startListening}
             disabled={listening && false}
-            aria-label={listening ? 'Stop' : 'Speak'}
+            aria-label={listening ? (lang === 'tr' ? 'Durdur' : 'Stop') : (lang === 'tr' ? 'Söyle' : 'Speak')}
           >
             {listening ? <MicOff size={28} /> : <Mic size={28} />}
           </button>
@@ -998,7 +1089,7 @@ function PhaseReadBlend({
         <button
           className={`dl-mic-btn${listening ? ' dl-mic-btn--listening' : ''}`}
           onClick={listening ? () => { recognitionRef.current?.stop(); setListening(false); } : handleSpeak}
-          aria-label={listening ? 'Stop' : 'Speak'}
+          aria-label={listening ? (lang === 'tr' ? 'Durdur' : 'Stop') : (lang === 'tr' ? 'Söyle' : 'Speak')}
         >
           {listening ? <MicOff size={28} /> : <Mic size={28} />}
         </button>
@@ -1052,6 +1143,12 @@ function PhaseMiniGrammar({
   const [step, setStep] = useState<'learn' | 'practice'>('learn');
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
+  const [slideIn, setSlideIn] = useState(false);
+
+  // Split template around "___" for the enhanced dashed-box blank
+  const templateParts = pattern.blankTemplate.split('___');
+  const beforeBlank = templateParts[0] ?? '';
+  const afterBlank = templateParts[1] ?? '';
 
   const handleChoice = (choice: string) => {
     if (answered) return;
@@ -1059,6 +1156,7 @@ function PhaseMiniGrammar({
     setAnswered(true);
     if (choice === pattern.blankAnswer) {
       SFX.correct();
+      setSlideIn(true);
     } else {
       SFX.wrong();
     }
@@ -1097,7 +1195,26 @@ function PhaseMiniGrammar({
   return (
     <div className="dl-phase-content">
       <div className="dl-grammar-fill">
-        <p className="dl-grammar-fill__template">{pattern.blankTemplate}</p>
+        {/* Enhanced fill-in-blank with amber dashed box */}
+        <div className="dl-grammar-fill__sentence">
+          <span className="dl-grammar-fill__part">{beforeBlank}</span>
+          <span
+            className={[
+              'dl-grammar-fill__blank',
+              answered && selected === pattern.blankAnswer ? 'dl-grammar-fill__blank--filled' : '',
+              answered && selected !== pattern.blankAnswer ? 'dl-grammar-fill__blank--wrong-fill' : '',
+            ].filter(Boolean).join(' ')}
+          >
+            {answered ? (
+              <span className={slideIn ? 'dl-grammar-fill__answer-slide' : ''}>
+                {pattern.blankAnswer}
+              </span>
+            ) : (
+              <span className="dl-grammar-fill__blank-placeholder">___</span>
+            )}
+          </span>
+          <span className="dl-grammar-fill__part">{afterBlank}</span>
+        </div>
         <p className="dl-instruction">
           {lang === 'tr' ? 'Boşluğu doldur:' : 'Fill in the blank:'}
         </p>
@@ -1158,13 +1275,17 @@ function buildChallengeQuestions(plan: DailyLessonPlan, lang: string): Challenge
   return [
     {
       type: 'vocab',
-      prompt: `What does "${w0.word}" mean?`,
+      prompt: lang === 'tr'
+        ? `"${w0.word}" ne demek?`
+        : `What does "${w0.word}" mean?`,
       choices: vocabChoices,
       answer: w0.turkish,
     },
     {
       type: 'listening',
-      prompt: `Listen: "${w1.exampleSentence}" — Is this about ${w1.word} or ${w2.word}?`,
+      prompt: lang === 'tr'
+        ? `Dinle: "${w1.exampleSentence}" — Bu ${w1.word} mu yoksa ${w2.word} mu?`
+        : `Listen: "${w1.exampleSentence}" — Is this about ${w1.word} or ${w2.word}?`,
       audioSrc: w1.exampleSentence,
       choices: [w1.word, w2.word].sort(() => Math.random() - 0.5),
       answer: w1.word,
@@ -1332,7 +1453,7 @@ function PhaseChallenge({
             <button
               className={`dl-mic-btn${listening ? ' dl-mic-btn--listening' : ''}`}
               onClick={listening ? () => { recognitionRef.current?.stop(); setListening(false); } : handleSpeak}
-              aria-label={listening ? 'Stop' : 'Speak'}
+              aria-label={listening ? (lang === 'tr' ? 'Durdur' : 'Stop') : (lang === 'tr' ? 'Söyle' : 'Speak')}
             >
               {listening ? <MicOff size={28} /> : <Mic size={28} />}
             </button>
@@ -1343,16 +1464,18 @@ function PhaseChallenge({
   );
 }
 
-// ─── Celebration Screen ───────────────────────────────────────────────────────
+// ─── End-of-Lesson Summary / Celebration Screen ───────────────────────────────
 
 function CelebrationScreen({
   plan,
   score,
+  xpEarned,
   lang,
   onDone,
 }: {
   plan: DailyLessonPlan;
   score: number;
+  xpEarned: number;
   lang: string;
   onDone: () => void;
 }) {
@@ -1363,13 +1486,20 @@ function CelebrationScreen({
     ? (lang === 'tr' ? 'Aferin!' : 'Well done!')
     : (lang === 'tr' ? 'Devam et!' : 'Keep going!');
 
+  // Next theme preview
+  const currentThemeIdx = THEMED_WORD_GROUPS.findIndex((g) => g.name === plan.themeName);
+  const nextThemeGroup = THEMED_WORD_GROUPS[(currentThemeIdx + 1) % THEMED_WORD_GROUPS.length];
+
+  // Phonics hint from first word
+  const phoneticSound = plan.newWords[0]?.word.charAt(0).toUpperCase() ?? '?';
+
   useEffect(() => { SFX.celebration(); }, []);
 
   return (
     <div className="dl-celebration">
       <Confetti />
 
-      <div className="dl-star-rating" aria-label={`${stars} out of 3 stars`}>
+      <div className="dl-star-rating" aria-label={`${stars} ${lang === 'tr' ? 'üzerinden 3 yıldız' : 'out of 3 stars'}`}>
         {[1, 2, 3].map((s) => (
           <span
             key={s}
@@ -1383,9 +1513,16 @@ function CelebrationScreen({
 
       <h1 className="dl-celebration__title">{title}</h1>
       <p className="dl-celebration__subtitle">
-        {lang === 'tr' ? `Bugünkü ders tamamlandı!` : `Today's lesson complete!`}
+        {lang === 'tr' ? 'Bugünkü ders tamamlandı!' : "Today's lesson complete!"}
       </p>
 
+      {/* XP earned badge */}
+      <div className="dl-celebration__xp-badge">
+        <span className="dl-celebration__xp-icon">⚡</span>
+        <span className="dl-celebration__xp-value">+{xpEarned} XP</span>
+      </div>
+
+      {/* Stats */}
       <div className="dl-celebration__stats">
         <div className="dl-stat-card">
           <span className="dl-stat-card__value">{plan.newWords.length}</span>
@@ -1397,6 +1534,7 @@ function CelebrationScreen({
         </div>
       </div>
 
+      {/* Words learned today */}
       <div className="dl-celebration__wordlist">
         <p className="dl-celebration__wordlist-label">
           {lang === 'tr' ? 'Bugün öğrendiklerin:' : 'You learned today:'}
@@ -1407,7 +1545,7 @@ function CelebrationScreen({
               key={w.word}
               className="dl-celebration__word-chip"
               onClick={() => speak(w.word).catch(() => {})}
-              aria-label={`Hear ${w.word}`}
+              aria-label={lang === 'tr' ? `${w.word} kelimesini duy` : `Hear ${w.word}`}
             >
               <span>{w.emoji}</span>
               <span>{w.word}</span>
@@ -1417,6 +1555,44 @@ function CelebrationScreen({
         </div>
       </div>
 
+      {/* Grammar pattern + phonics summary */}
+      <div className="dl-celebration__learned-summary">
+        <div className="dl-celebration__summary-item">
+          <span className="dl-celebration__summary-icon">📝</span>
+          <div>
+            <span className="dl-celebration__summary-label">
+              {lang === 'tr' ? 'Gramer:' : 'Grammar:'}
+            </span>
+            <span className="dl-celebration__summary-value">{plan.grammarPattern.pattern}</span>
+          </div>
+        </div>
+        <div className="dl-celebration__summary-item">
+          <span className="dl-celebration__summary-icon">🔤</span>
+          <div>
+            <span className="dl-celebration__summary-label">
+              {lang === 'tr' ? 'Ses:' : 'Sound:'}
+            </span>
+            <span className="dl-celebration__summary-value">
+              {lang === 'tr' ? `"${phoneticSound}" sesi` : `"${phoneticSound}" sound`}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Tomorrow's theme preview */}
+      {nextThemeGroup && (
+        <div className="dl-celebration__next-theme">
+          <span className="dl-celebration__next-theme__label">
+            {lang === 'tr' ? 'Yarın:' : "Tomorrow's theme:"}
+          </span>
+          <span className="dl-celebration__next-theme__content">
+            {nextThemeGroup.emoji}{' '}
+            {lang === 'tr' ? nextThemeGroup.nameTr : nextThemeGroup.name}!
+          </span>
+        </div>
+      )}
+
+      {/* Share with parents nudge */}
       <div className="dl-celebration__parent-share">
         <span>
           {lang === 'tr'
@@ -1437,42 +1613,86 @@ function CelebrationScreen({
 export default function DailyLesson() {
   const { user } = useAuth();
   const { lang } = useLanguage();
-  const { addXP, trackActivity } = useGamification();
+  const { addXP, trackActivity, stats } = useGamification();
   const navigate = useNavigate();
 
   const userId = user?.uid || 'guest';
+  const today = new Date().toISOString().split('T')[0];
 
   const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId));
   const [yesterdayWords] = useState<KidsWord[]>(() => getYesterdayWords(userId));
   const [todaySound] = useState(() => getTodayPhonicsSound(userId));
   const [cvcWords] = useState<CVCWord[]>(() => getTodayCVCWords());
 
-  const [phase, setPhase] = useState(1);
-  const [celebrated, setCelebrated] = useState(false);
-  const scoresRef = useRef<Record<number, number>>({
-    4: 0, 5: 0, 8: 0,
+  // Theme emoji for Phase 3
+  const themeGroup = THEMED_WORD_GROUPS.find((g) => g.name === plan.themeName);
+  const themeEmoji = themeGroup?.emoji ?? '📖';
+
+  // ── Progress persistence — resume from last incomplete phase on mount ──
+
+  const [phase, setPhase] = useState<number>(() => {
+    const saved = loadProgress(userId, today);
+    if (saved && saved.phase >= 1 && saved.phase <= TOTAL_PHASES) return saved.phase;
+    return 1;
   });
 
-  // ── Phase complete handlers ──
+  const [celebrated, setCelebrated] = useState(false);
+  const [xpEarned, setXpEarned] = useState(0);
+  const [showSuccessFlash, setShowSuccessFlash] = useState(false);
+  const [pendingPhase, setPendingPhase] = useState<number | null>(null);
+
+  const scoresRef = useRef<Record<number, number>>(() => {
+    const saved = loadProgress(userId, today);
+    return saved?.scores ?? { 4: 0, 5: 0, 8: 0 };
+  });
+
+  // Persist progress whenever phase changes
+  const persistProgress = useCallback((currentPhase: number, scores: Record<number, number>) => {
+    const completed: number[] = [];
+    for (let i = 1; i < currentPhase; i++) completed.push(i);
+    saveProgress(userId, today, { completedPhases: completed, scores, phase: currentPhase });
+  }, [userId, today]);
+
+  // ── Phase complete handler ──
 
   const handlePhaseComplete = useCallback(
     (phaseNum: number, score = 100) => {
       scoresRef.current[phaseNum] = score;
+
       if (phaseNum === TOTAL_PHASES) {
-        // All phases done
         const avgScore = Math.round(
           (scoresRef.current[4] + scoresRef.current[5] + scoresRef.current[8]) / 3
         );
         completeDailyLesson(userId, plan, avgScore);
-        addXP(50 + Math.round((avgScore / 100) * 50), 'daily_lesson_complete').catch(() => {});
+        const earned = 50 + Math.round((avgScore / 100) * 50);
+        addXP(earned, 'daily_lesson_complete').catch(() => {});
         trackActivity('daily_lesson', { score: avgScore, words: plan.newWords.length }).catch(() => {});
-        setCelebrated(true);
+        setXpEarned(earned);
+        clearProgress(userId, today);
+        setShowSuccessFlash(true);
+        setPendingPhase(null);
+        setTimeout(() => {
+          setShowSuccessFlash(false);
+          setCelebrated(true);
+        }, 800);
       } else {
-        setPhase(phaseNum + 1);
+        const nextPhase = phaseNum + 1;
+        persistProgress(nextPhase, scoresRef.current);
+        setShowSuccessFlash(true);
+        setPendingPhase(nextPhase);
       }
     },
-    [userId, plan, addXP, trackActivity]
+    [userId, plan, today, addXP, trackActivity, persistProgress]
   );
+
+  // When flash finishes, advance to next phase
+  const handleFlashDone = useCallback(() => {
+    setShowSuccessFlash(false);
+    if (pendingPhase !== null) {
+      setPhase(pendingPhase);
+      setPendingPhase(null);
+    }
+  }, [pendingPhase]);
 
   // ── Keyboard shortcuts ──
 
@@ -1497,6 +1717,7 @@ export default function DailyLesson() {
         <CelebrationScreen
           plan={plan}
           score={avgScore}
+          xpEarned={xpEarned}
           lang={lang}
           onDone={() => navigate('/dashboard')}
         />
@@ -1508,6 +1729,9 @@ export default function DailyLesson() {
 
   return (
     <div className="dl">
+      {/* Phase success flash overlay */}
+      {showSuccessFlash && <PhaseSuccessFlash onDone={handleFlashDone} />}
+
       {/* Header */}
       <div className="dl-header">
         <button
@@ -1528,16 +1752,15 @@ export default function DailyLesson() {
 
       {/* Phase content */}
       <div className="dl-content">
-        {/* Phase 1: WARM-UP */}
         {phase === 1 && (
           <PhaseWarmup
             words={yesterdayWords}
             lang={lang}
+            streakDays={stats.streakDays}
             onComplete={() => handlePhaseComplete(1)}
           />
         )}
 
-        {/* Phase 2: NEW SOUNDS */}
         {phase === 2 && (
           <PhaseNewSounds
             sound={todaySound}
@@ -1546,17 +1769,16 @@ export default function DailyLesson() {
           />
         )}
 
-        {/* Phase 3: NEW WORDS */}
         {phase === 3 && (
           <PhaseNewWords
             words={plan.newWords}
             themeName={plan.themeName}
+            themeEmoji={themeEmoji}
             lang={lang}
             onComplete={() => handlePhaseComplete(3)}
           />
         )}
 
-        {/* Phase 4: LISTEN & UNDERSTAND */}
         {phase === 4 && (
           <PhaseListenUnderstand
             phrasePair={plan.phrasePair}
@@ -1566,7 +1788,6 @@ export default function DailyLesson() {
           />
         )}
 
-        {/* Phase 5: SPEAK & CORRECT */}
         {phase === 5 && (
           <PhaseSpeakCorrect
             words={plan.newWords.slice(0, 3)}
@@ -1575,7 +1796,6 @@ export default function DailyLesson() {
           />
         )}
 
-        {/* Phase 6: READ & BLEND */}
         {phase === 6 && (
           <PhaseReadBlend
             cvcWords={cvcWords}
@@ -1584,7 +1804,6 @@ export default function DailyLesson() {
           />
         )}
 
-        {/* Phase 7: MINI GRAMMAR */}
         {phase === 7 && (
           <PhaseMiniGrammar
             pattern={plan.grammarPattern}
@@ -1593,7 +1812,6 @@ export default function DailyLesson() {
           />
         )}
 
-        {/* Phase 8: CHALLENGE */}
         {phase === 8 && (
           <PhaseChallenge
             plan={plan}
