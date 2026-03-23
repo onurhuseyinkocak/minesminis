@@ -52,5 +52,13 @@ export async function adminFetch(
   const auth = authHeaders as Record<string, string>;
   if (auth.Authorization) headers.set('Authorization', auth.Authorization);
   if (auth['X-Admin-Password']) headers.set('X-Admin-Password', auth['X-Admin-Password']);
+
+  // Add CSRF token for mutating requests
+  const method = (options.method || 'GET').toUpperCase();
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+    const csrfToken = document.cookie.match(/csrf_token=([^;]+)/)?.[1] || '';
+    if (csrfToken) headers.set('X-CSRF-Token', csrfToken);
+  }
+
   return fetch(url, { ...options, headers });
 }

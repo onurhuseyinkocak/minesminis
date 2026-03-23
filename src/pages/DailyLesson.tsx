@@ -751,7 +751,7 @@ function PhaseSpeak({
 
         {feedback && (
           <span
-            className={`dl-speak-feedback ${feedback.good ? 'dl-speak-feedback--good' : 'dl-speak-feedback--good'}`}
+            className={`dl-speak-feedback ${feedback.good ? 'dl-speak-feedback--good' : 'dl-speak-feedback--meh'}`}
           >
             {feedback.msg}
           </span>
@@ -1138,8 +1138,22 @@ const STORY_TEMPLATES: Array<{ en: string; tr: string }> = [
   },
 ];
 
-function generateMiniStory(words: KidsWord[]): MiniStory {
-  const template = STORY_TEMPLATES[Math.floor(Math.random() * STORY_TEMPLATES.length)];
+function generateMiniStory(rawWords: KidsWord[]): MiniStory {
+  // Ensure we always have at least 5 words so no {N} placeholders go unfilled
+  const words = [...rawWords];
+  while (words.length < 5) words.push(words[words.length % words.length]);
+
+  // Pick a template that only uses placeholders within the word count
+  const usableTemplates = STORY_TEMPLATES.filter((t) => {
+    const maxIdx = words.length - 1;
+    // Find the highest {N} used in the template
+    const matches = [...t.en.matchAll(/\{(\d+)\}/g)];
+    if (matches.length === 0) return false;
+    const highest = Math.max(...matches.map((m) => parseInt(m[1], 10)));
+    return highest <= maxIdx;
+  });
+  const pool = usableTemplates.length > 0 ? usableTemplates : STORY_TEMPLATES;
+  const template = pool[Math.floor(Math.random() * pool.length)];
 
   let enText = template.en;
   let trText = template.tr;

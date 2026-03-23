@@ -221,11 +221,13 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
     if (!user) return null;
     try {
       const token = await user.getIdToken();
+      const csrfToken = document.cookie.match(/csrf_token=([^;]+)/)?.[1] || '';
       const res = await fetch(`${API}/api/billing/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
         },
         body: JSON.stringify({
           variantId: planId,
@@ -251,11 +253,13 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
     if (!user) return null;
     try {
       const token = await user.getIdToken();
+      const csrfToken = document.cookie.match(/csrf_token=([^;]+)/)?.[1] || '';
       const res = await fetch(`${API}/api/billing/portal`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
         },
         body: JSON.stringify({ userId: user.uid }),
       });
