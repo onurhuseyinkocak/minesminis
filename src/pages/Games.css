@@ -240,7 +240,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(0, 0, 0, 0.35);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -342,7 +342,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(26, 26, 46, 0.6);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px);
   animation: gamesPageFadeIn 200ms ease forwards;
 }

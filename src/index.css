@@ -137,6 +137,11 @@
   --bg-soft: #FFF0E8;
   --bg-glass: rgba(255, 255, 255, 0.85);
 
+  /* Backwards compat bg aliases */
+  --bg-primary: #FFF8F2;
+  --bg-hover: #F1F5F9;
+  --bg-surface: #FFFFFF;
+
   /* ---- BORDERS: Light theme ---- */
   --border: #E2E8F0;
   --border-hover: #CBD5E1;
@@ -231,7 +236,7 @@
   /* ---- GLASS / OVERLAY ---- */
   --overlay-bg: rgba(0, 0, 0, 0.4);
   --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-border: #E2E8F0;
   --glass-shine: rgba(255, 255, 255, 0.3);
 
   /* ---- Z-INDEX SCALE ---- */
@@ -1070,6 +1075,9 @@ h1, h2, h3 {
   --bg-muted: #111526;
   --bg-soft: #0F1320;
   --bg-glass: rgba(21, 25, 41, 0.85);
+  --bg-primary: #0C0F1A;
+  --bg-hover: #1C2236;
+  --bg-surface: #151929;
 
   --text-primary: #F1F5F9;
   --text-body: #CBD5E1;
