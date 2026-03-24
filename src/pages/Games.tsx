@@ -37,12 +37,12 @@ interface InternalGame {
 }
 
 const CATEGORIES: { id: GameCategory; icon: React.ReactNode; emoji?: string; label: string; color: string }[] = [
-  { id: 'all', icon: <Dice5 size={20} />, label: 'All', color: 'var(--primary)' },
-  { id: 'letters', icon: <Type size={20} />, label: 'Letters', color: 'var(--accent-teal)' },
-  { id: 'puzzles', icon: <Puzzle size={20} />, label: 'Puzzles', color: 'var(--secondary-light, #2A9D8F)' },
-  { id: 'listening', icon: <Headphones size={20} />, label: 'Listening', color: 'var(--accent-amber)' },
-  { id: 'spelling', icon: <PenTool size={20} />, label: 'Spelling', color: 'var(--accent-rose, #f43f5e)' },
-  { id: 'reading', icon: <BookOpen size={20} />, label: 'Reading', color: 'var(--success)' },
+  { id: 'all', icon: <Dice5 size={20} />, label: 'Tümü', color: 'var(--primary)' },
+  { id: 'letters', icon: <Type size={20} />, label: 'Harfler', color: 'var(--accent-teal)' },
+  { id: 'puzzles', icon: <Puzzle size={20} />, label: 'Bulmacalar', color: 'var(--secondary-light, #2A9D8F)' },
+  { id: 'listening', icon: <Headphones size={20} />, label: 'Dinleme', color: 'var(--accent-amber)' },
+  { id: 'spelling', icon: <PenTool size={20} />, label: 'Heceleme', color: 'var(--accent-rose, #f43f5e)' },
+  { id: 'reading', icon: <BookOpen size={20} />, label: 'Okuma', color: 'var(--success)' },
 ];
 
 const INTERNAL_GAMES: InternalGame[] = [
