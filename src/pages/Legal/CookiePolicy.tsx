@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Cookie } from 'lucide-react';
+import './LegalPages.css';
 
 const CookiePolicy: React.FC = () => {
   return (

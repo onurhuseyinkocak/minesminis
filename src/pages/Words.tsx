@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import { Volume2, Mic } from "lucide-react";
+import { Volume2, Mic, Check } from "lucide-react";
 import './Words.css';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -345,7 +345,7 @@ const Words: React.FC = () => {
                                     className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                                     onClick={() => toggleLearned(word.word)}
                                   >
-                                    {learnedWords.has(word.word) ? '✓ Learned!' : '✓ I know this!'}
+                                    {learnedWords.has(word.word) ? <><Check size={14} /> Learned!</> : <><Check size={14} /> I know this!</>}
                                   </button>
                                 </div>
                                 <button className="kid-card-close" onClick={() => setFlippedCard(null)}>Tap to close</button>

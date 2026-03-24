@@ -8,6 +8,7 @@ import { generateDynamicQuickReplies, getStarterReplies, QuickReply } from '../s
 import { usePremium } from '../contexts/PremiumContext';
 import { GLINTS } from '../config/GlintsConfig';
 import { LS_CAVE_DAILY_USAGE } from '../config/storageKeys';
+import { MessageCircle, Crown, Volume2, VolumeX, AlertTriangle, Send, X } from 'lucide-react';
 
 interface ChatMessage {
     id: string;
@@ -25,9 +26,9 @@ const DAILY_MESSAGE_LIMIT = 10;
 
 const WELCOME_BY_MASCOT: Record<string, string> = {
     mimi_dragon: "Merhaba! Welcome to my cozy cave! Let's learn English together! What would you like to do today?",
-    nova_fox: "Hey there! I'm Nova the cosmic fox! 🦊✨ Let's zoom through words at lightning speed! What shall we explore? 🌟",
-    bubbles_octo: "Hello friend! I'm Bubbles! 🐙🎵 Let's dive into sounds and music together! What would you like to listen to? 🌊",
-    sparky_alien: "Greetings earthling! I'm Sparky! 👾⚡ My brain works super fast - let's solve puzzles and grammar together! Ready? 🧠",
+    nova_fox: "Hey there! I'm Nova the cosmic fox! Let's zoom through words at lightning speed! What shall we explore?",
+    bubbles_octo: "Hello friend! I'm Bubbles! Let's dive into sounds and music together! What would you like to listen to?",
+    sparky_alien: "Greetings earthling! I'm Sparky! My brain works super fast - let's solve puzzles and grammar together! Ready?",
 };
 
 const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
@@ -171,7 +172,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
         } catch (error) {
             errorLogger.log({ severity: 'high', message: 'Chat Error', component: 'ChatHome', metadata: { error: String(error) } });
-            const errorMsg = "Oops! I didn't catch that. Can you say it again? 👂";
+            const errorMsg = "Oops! I didn't catch that. Can you say it again?";
             const errorMessage: ChatMessage = {
                 id: Date.now().toString(),
                 role: 'assistant',
@@ -213,7 +214,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                     {!isPremium && (
                         <div className="usage-indicator">
                             <div className="usage-badge">
-                                <span className="usage-icon">💬</span>
+                                <MessageCircle size={14} className="usage-icon" />
                                 <span className="usage-count">{remainingMessages}</span>
                             </div>
                             <div className="usage-progress">
@@ -227,7 +228,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
                     {isPremium && (
                         <div className="premium-badge-header">
-                            <span>👑</span>
+                            <Crown size={14} />
                             <span>Premium</span>
                         </div>
                     )}
@@ -238,10 +239,10 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             onClick={toggleTTS}
                             title={isTTSEnabled ? "Mute Voice" : "Enable Voice"}
                         >
-                            {isTTSEnabled ? "🔊" : "🔇"}
+                            {isTTSEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
                         </button>
                         <button className="close-button" onClick={onClose} aria-label="Close Chat">
-                            ✖
+                            <X size={18} />
                         </button>
                     </div>
                 </div>
@@ -285,13 +286,13 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                 {showLimitReached && (
                     <div className="limit-modal-overlay">
                         <div className="limit-modal">
-                            <div className="limit-modal-icon">🐲💔</div>
+                            <div className="limit-modal-icon"><AlertTriangle size={40} /></div>
                             <h3>Günlük Limit Doldu!</h3>
                             <p>Bugün için 10 ücretsiz mesaj hakkını kullandın.</p>
                             <p className="limit-modal-sub">Premium ile sınırsız sohbet et!</p>
                             <div className="limit-modal-actions">
                                 <button className="premium-btn" onClick={handleGetPremium}>
-                                    👑 Premium Ol
+                                    <Crown size={16} /> Premium Ol
                                 </button>
                                 <button className="later-btn" onClick={() => setShowLimitReached(false)}>
                                     Yarın Devam Et
@@ -305,7 +306,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                     {/* Remaining messages warning */}
                     {!isPremium && remainingMessages <= 3 && remainingMessages > 0 && (
                         <div className="low-messages-warning">
-                            ⚠️ Sadece {remainingMessages} mesaj kaldı!
+                            <AlertTriangle size={14} /> Sadece {remainingMessages} mesaj kaldı!
                         </div>
                     )}
 
@@ -336,7 +337,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             onClick={() => handleSend(inputValue)}
                             disabled={!canSendMessage() && !isPremium}
                         >
-                            Send 🚀
+                            Send <Send size={15} />
                         </button>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield } from 'lucide-react';
+import './LegalPages.css';
 
 const PrivacyPolicy: React.FC = () => {
   return (

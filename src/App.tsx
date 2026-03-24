@@ -350,6 +350,16 @@ function AppRoutes() {
                 )
               }
             />
+            <Route
+              path="/signup"
+              element={
+                user ? (
+                  <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />
+                ) : (
+                  <Navigate to="/login?tab=signup" replace />
+                )
+              }
+            />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />

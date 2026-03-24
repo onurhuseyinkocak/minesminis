@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Check, LogIn, UserPlus, Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react';
 import { Button, Input, Tabs } from '../components/ui';
@@ -83,8 +83,9 @@ const content = {
 const Login: React.FC = () => {
   const [lang, setLang] = useState<Lang>('en');
   const t = content[lang];
+  const [searchParams] = useSearchParams();
 
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(() => searchParams.get('tab') !== 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -394,9 +395,9 @@ const Login: React.FC = () => {
 
             <p className="login-toggle">
               {isLogin ? (
-                <>{t.hintLogin}<button type="button" onClick={() => { setIsLogin(false); setError(''); }}>{t.signUp}</button></>
+                <>{t.hintLogin}{' '}<button type="button" onClick={() => { setIsLogin(false); setError(''); }}>{t.signUp}</button></>
               ) : (
-                <>{t.hintJoin}<button type="button" onClick={() => { setIsLogin(true); setError(''); }}>{t.login}</button></>
+                <>{t.hintJoin}{' '}<button type="button" onClick={() => { setIsLogin(true); setError(''); }}>{t.login}</button></>
               )}
             </p>
           </form>

@@ -97,7 +97,7 @@ const TESTIMONIALS = [
 const APP_PREVIEWS = [
   { bg: 'from-primary-400 to-primary-600', label: 'Günlük Ders', icon: <BookOpen size={20} className="text-white" />, desc: 'cat • dog • run • jump • play' },
   { bg: 'from-purple-500 to-purple-700', label: 'Word Match', icon: <Gamepad2 size={20} className="text-white" />, desc: '8/10 correct!' },
-  { bg: 'from-success-500 to-success-700', label: 'Streak: 7 gün', icon: <Trophy size={20} className="text-white" />, desc: '★★★★★ 240 XP' },
+  { bg: 'from-success-500 to-success-700', label: 'Streak: 7 gün', icon: <Trophy size={20} className="text-white" />, desc: '5/5 · 240 XP' },
 ];
 
 export default function Landing() {

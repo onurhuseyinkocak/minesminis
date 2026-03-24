@@ -1,1 +1,111 @@
-/* Auto-generated placeholder */
+/* Tabs component styles — uses design system tokens */
+
+/* ── Base container ───────────────────────────────── */
+.mm-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  position: relative;
+}
+
+/* ── Default variant: underline ───────────────────── */
+.mm-tabs:not(.mm-tabs--pill) {
+  border-bottom: 2px solid #f0ece8;
+}
+
+.mm-tabs:not(.mm-tabs--pill) .mm-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px 12px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px; /* overlap container border */
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: #9c8f87;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease;
+  outline: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mm-tabs:not(.mm-tabs--pill) .mm-tab:hover:not(.mm-tab--active) {
+  color: #FF6B35;
+  border-bottom-color: rgba(255, 107, 53, 0.35);
+}
+
+.mm-tabs:not(.mm-tabs--pill) .mm-tab:focus-visible {
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.35);
+  border-radius: 4px 4px 0 0;
+}
+
+.mm-tabs:not(.mm-tabs--pill) .mm-tab--active {
+  color: #FF6B35;
+  border-bottom-color: #FF6B35;
+}
+
+/* ── Pill variant ─────────────────────────────────── */
+.mm-tabs--pill {
+  background-color: #f5f0ed;
+  border-radius: 14px;
+  padding: 4px;
+  gap: 2px;
+  border-bottom: none;
+}
+
+.mm-tabs--pill .mm-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: #9c8f87;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+  outline: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mm-tabs--pill .mm-tab:hover:not(.mm-tab--active) {
+  color: #FF6B35;
+  background-color: rgba(255, 107, 53, 0.08);
+}
+
+.mm-tabs--pill .mm-tab:focus-visible {
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.35);
+}
+
+.mm-tabs--pill .mm-tab--active {
+  background-color: #ffffff;
+  color: #FF6B35;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Icon slot ────────────────────────────────────── */
+.mm-tab__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

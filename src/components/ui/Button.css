@@ -1,1 +1,184 @@
 /* Button component styles — uses design system tokens */
+
+/* ── Base ─────────────────────────────────────────── */
+.mm-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 16px; /* rounded-2xl */
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  outline: none;
+  transition:
+    background-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.12s ease,
+    opacity 0.18s ease;
+  position: relative;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mm-button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.35);
+}
+
+.mm-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.mm-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Sizes ────────────────────────────────────────── */
+.mm-button--sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.mm-button--md {
+  height: 40px;
+  padding: 0 18px;
+  font-size: 14px;
+  border-radius: 12px;
+}
+
+.mm-button--lg {
+  height: 48px;
+  padding: 0 24px;
+  font-size: 16px;
+  border-radius: 16px;
+}
+
+.mm-button--xl {
+  height: 56px;
+  padding: 0 32px;
+  font-size: 18px;
+  border-radius: 18px;
+}
+
+/* ── Variants ─────────────────────────────────────── */
+
+/* Primary — turuncu fill */
+.mm-button--primary {
+  background-color: #FF6B35;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.28);
+}
+
+.mm-button--primary:hover:not(:disabled) {
+  background-color: #f05a22;
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.38);
+}
+
+.mm-button--primary:active:not(:disabled) {
+  background-color: #e04d18;
+  box-shadow: 0 1px 4px rgba(255, 107, 53, 0.22);
+}
+
+/* Secondary — border + turuncu yazı */
+.mm-button--secondary {
+  background-color: #fff5f1;
+  color: #FF6B35;
+  border: 1.5px solid #FF6B35;
+  box-shadow: none;
+}
+
+.mm-button--secondary:hover:not(:disabled) {
+  background-color: #ffe8dc;
+  border-color: #f05a22;
+  color: #f05a22;
+}
+
+.mm-button--secondary:active:not(:disabled) {
+  background-color: #ffd9c8;
+}
+
+/* Ghost — sadece yazı, arka plan yok */
+.mm-button--ghost {
+  background-color: transparent;
+  color: #FF6B35;
+  border: none;
+  box-shadow: none;
+}
+
+.mm-button--ghost:hover:not(:disabled) {
+  background-color: #fff1eb;
+  color: #f05a22;
+}
+
+.mm-button--ghost:active:not(:disabled) {
+  background-color: #ffe3d5;
+}
+
+/* Danger */
+.mm-button--danger {
+  background-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+}
+
+.mm-button--danger:hover:not(:disabled) {
+  background-color: #dc2626;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.32);
+}
+
+.mm-button--danger:active:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+/* ── Full width ───────────────────────────────────── */
+.mm-button--full-width {
+  width: 100%;
+}
+
+/* ── Icon slot ────────────────────────────────────── */
+.mm-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Loading state ────────────────────────────────── */
+.mm-button--loading {
+  cursor: wait;
+  pointer-events: none;
+}
+
+.mm-button__spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: mm-btn-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+.mm-button--lg .mm-button__spinner,
+.mm-button--xl .mm-button__spinner {
+  width: 18px;
+  height: 18px;
+}
+
+.mm-button--sm .mm-button__spinner {
+  width: 13px;
+  height: 13px;
+}
+
+@keyframes mm-btn-spin {
+  to { transform: rotate(360deg); }
+}

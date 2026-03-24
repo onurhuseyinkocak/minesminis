@@ -17,15 +17,15 @@
    ========================================================================== */
 
 :root {
-  /* ---- PRIMARY: Vibrant Amber ---- */
-  --primary: #F59E0B;
-  --primary-hover: #D97706;
-  --primary-light: #FBBF24;
-  --primary-pale: #FFFBEB;
-  --primary-glow: rgba(245, 158, 11, 0.35);
+  /* ---- PRIMARY: Vivid Orange-Coral (matches Tailwind primary-500 #FF6B35) ---- */
+  --primary: #FF6B35;
+  --primary-hover: #F04B10;
+  --primary-light: #FF7B3A;
+  --primary-pale: #FFF4EE;
+  --primary-glow: rgba(255, 107, 53, 0.35);
 
   /* Backwards compat alias */
-  --primary-dark: #D97706;
+  --primary-dark: #C73A0A;
 
   /* ---- SECONDARY: Deep Teal ---- */
   --secondary: #0D5C4D;
@@ -128,6 +128,10 @@
   --text-muted: #94A3B8;
   --text-on-primary: #FFFFFF;
   --text-on-dark: #F1F5F9;
+
+  /* ---- TEXT: Legacy aliases (used by some components) ---- */
+  --text-dark: #1A1A2E;
+  --text-medium: #4A5568;
 
   /* ---- BACKGROUNDS: Light theme ---- */
   --bg-page: #FFF8F2;

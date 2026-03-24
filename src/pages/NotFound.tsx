@@ -24,7 +24,7 @@ function NotFound() {
                     animation: 'float 3s ease-in-out infinite',
                 }}
             >
-                <Rocket size={96} color="#E8A317" strokeWidth={1.5} />
+                <Rocket size={96} color="#FF6B35" strokeWidth={1.5} />
             </div>
 
             <h1
@@ -36,7 +36,7 @@ function NotFound() {
                 }}
             >
                 4&nbsp;
-                <span style={{ color: '#E8A317' }}>0</span>
+                <span style={{ color: '#FF6B35' }}>0</span>
                 &nbsp;4
             </h1>
 
@@ -63,11 +63,11 @@ function NotFound() {
                     fontWeight: 700,
                     fontFamily: "'Nunito', sans-serif",
                     color: '#fff',
-                    background: '#E8A317',
+                    background: '#FF6B35',
                     border: 'none',
                     borderRadius: '999px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 14px rgba(232,163,23,0.35)',
+                    boxShadow: '0 4px 14px rgba(255,107,53,0.35)',
                     transition: 'transform 0.15s ease, box-shadow 0.15s ease',
                 }}
                 onMouseEnter={(e) => {

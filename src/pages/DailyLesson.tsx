@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, RotateCcw, Lock } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, Star, RotateCcw, Lock } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -600,7 +600,7 @@ function PhasePlay({
               return (
                 <button key={tile.id} className={cls} onClick={() => handleTile(tile)}>
                   {tile.matched && <Check size={14} />}
-                  {isRevealed && <span style={{ fontSize: 12 }}>✓</span>}
+                  {isRevealed && <Check size={12} />}
                   {tile.text}
                 </button>
               );
@@ -997,7 +997,7 @@ function StarRating({ score }: { score: number }) {
           className={`dl-star ${s <= stars ? 'dl-star--filled' : 'dl-star--empty'}`}
           style={{ animationDelay: `${(s - 1) * 0.15}s` }}
         >
-          ★
+          <Star size={24} />
         </span>
       ))}
     </div>
