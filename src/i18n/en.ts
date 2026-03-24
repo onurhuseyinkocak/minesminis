@@ -138,6 +138,7 @@ const en = {
     notFound: 'Lesson not found',
     notFoundDesc: 'Could not find lesson',
     inWorld: 'in world',
+    next: 'Done! Next',
     backToWorld: 'Back to World',
     tapToReveal: 'Tap to reveal',
     hide: 'Hide',

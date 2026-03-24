@@ -112,7 +112,8 @@ function unitActivityToActivity(ua: UnitActivity, index: number): Activity & { t
   };
 }
 
-// Game types that GameSelector can handle
+// Game types that GameSelector can handle (word-based games only)
+// Phonics-specific types (sound-intro, tpr, reading) need PhonicsSound data, not words
 const SUPPORTED_GAME_TYPES = new Set([
   'word-match',
   'spelling-bee',
@@ -121,11 +122,8 @@ const SUPPORTED_GAME_TYPES = new Set([
   'listening-challenge',
   'phonics-builder',
   'story-choices',
-  'sound-intro',
   'blending',
   'segmenting',
-  'tpr',
-  'reading',
   'pronunciation',
 ]);
 
@@ -218,9 +216,22 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
   };
 
   if (!word) {
+    // For phonics activities without words, show description and auto-complete
     return (
       <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <p>{t('lesson.noWordsToReview')}</p>
+        <p style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
+          {activity.instructions || t('lesson.noWordsToReview')}
+        </p>
+        <button
+          onClick={() => onComplete(1, 1)}
+          style={{
+            background: 'var(--primary)', color: 'white', border: 'none',
+            borderRadius: 12, padding: '12px 32px', fontSize: '1rem',
+            fontWeight: 700, cursor: 'pointer',
+          }}
+        >
+          {t('lesson.next')}
+        </button>
       </div>
     );
   }
