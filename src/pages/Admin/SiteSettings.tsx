@@ -129,7 +129,7 @@ function SiteSettings() {
                                     onChange={(e) => setSettings({ ...settings, maintenanceMode: e.target.checked })}
                                 />
                                 <span className="toggle-text">
-                                    🔧 Bakım Modu
+                                    Bakım Modu
                                     <small>Aktif olduğunda sadece adminler siteye erişebilir</small>
                                 </span>
                             </label>
@@ -143,7 +143,7 @@ function SiteSettings() {
                                     onChange={(e) => setSettings({ ...settings, allowRegistration: e.target.checked })}
                                 />
                                 <span className="toggle-text">
-                                    👥 Yeni Kayıtlara İzin Ver
+                                    Yeni Kayıtlara İzin Ver
                                     <small>Kapalıyken yeni kullanıcılar kayıt olamaz</small>
                                 </span>
                             </label>
@@ -166,7 +166,7 @@ function SiteSettings() {
                                     onChange={(e) => setSettings({ ...settings, announcementEnabled: e.target.checked })}
                                 />
                                 <span className="toggle-text">
-                                    📢 Duyuru Bandı Aktif
+                                    Duyuru Bandı Aktif
                                 </span>
                             </label>
                         </div>
@@ -189,10 +189,10 @@ function SiteSettings() {
                                         value={settings.announcementType}
                                         onChange={(e) => setSettings({ ...settings, announcementType: e.target.value })}
                                     >
-                                        <option value="info">ℹ️ Bilgi</option>
-                                        <option value="success">✅ Başarı</option>
-                                        <option value="warning">⚠️ Uyarı</option>
-                                        <option value="error">❌ Hata</option>
+                                        <option value="info">Bilgi</option>
+                                        <option value="success">Başarı</option>
+                                        <option value="warning">Uyarı</option>
+                                        <option value="error">Hata</option>
                                     </select>
                                 </div>
                             </>

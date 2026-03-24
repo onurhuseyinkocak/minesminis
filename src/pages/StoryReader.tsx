@@ -298,7 +298,7 @@ export default function StoryReader() {
               )}
               {currentScene.animation_cue && (
                 <div className="story-reader__cue">
-                  ✨ {currentScene.animation_cue}
+                  {currentScene.animation_cue}
                 </div>
               )}
             </div>
@@ -308,12 +308,12 @@ export default function StoryReader() {
           {done && ((currentScene.vocabulary && currentScene.vocabulary.length > 0) || (sceneIndex === 0 && story?.vocabulary && story.vocabulary.length > 0)) && (
             <div className="story-reader__vocab">
               <div className="story-reader__vocab-title">
-                {lang === 'tr' ? '📚 Yeni Kelimeler' : '📚 New Words'}
+                {lang === 'tr' ? 'Yeni Kelimeler' : 'New Words'}
               </div>
               <div className="story-reader__vocab-list">
                 {(currentScene.vocabulary || (sceneIndex === 0 ? story?.vocabulary : []) || []).map((v, i) => (
                   <div key={i} className="story-reader__vocab-item">
-                    {v.emoji && <span>{v.emoji}</span>}
+                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{v.english?.charAt(0).toUpperCase() ?? '?'}</div>
                     <span className="story-reader__vocab-word">{v.word}</span>
                     {(v.word_tr || v.turkish) && (
                       <span className="story-reader__vocab-tr">— {v.word_tr || v.turkish}</span>
@@ -347,7 +347,9 @@ export default function StoryReader() {
       {/* Completion Screen */}
       {showCompletion && (
         <div className="story-reader__completion">
-          <div className="story-reader__completion-confetti" aria-hidden="true">🎉🏆🌟</div>
+          <div className="story-reader__completion-confetti" aria-hidden="true">
+            <BookOpen size={48} style={{ color: '#E8A317' }} />
+          </div>
           <h2 className="story-reader__completion-title">
             {lang === 'tr' ? 'Hikaye Bitti!' : 'Story Complete!'}
           </h2>
@@ -359,14 +361,14 @@ export default function StoryReader() {
             </p>
           )}
           <div className="story-reader__completion-xp">
-            ⭐ +{Math.max(10, totalScenes * 5)} XP {lang === 'tr' ? 'kazandın!' : 'earned!'}
+            +{Math.max(10, totalScenes * 5)} XP {lang === 'tr' ? 'kazandın!' : 'earned!'}
           </div>
 
           {/* Moral of the story */}
           {story && (story.moral || story.moral_tr) && (
             <div className="story-reader__completion-moral">
               <div className="story-reader__completion-moral-label">
-                {lang === 'tr' ? '💡 Hikayenin Mesajı' : '💡 Moral of the Story'}
+                {lang === 'tr' ? 'Hikayenin Mesajı' : 'Moral of the Story'}
               </div>
               <p className="story-reader__completion-moral-text">
                 {lang === 'tr' ? (story.moral_tr ?? story.moral) : story.moral}
@@ -384,12 +386,12 @@ export default function StoryReader() {
             return (
               <div className="story-reader__completion-vocab">
                 <div className="story-reader__completion-vocab-title">
-                  📚 {lang === 'tr' ? `Öğrendiğin ${unique.length} Kelime` : `${unique.length} Words You Learned`}
+                  {lang === 'tr' ? `Öğrendiğin ${unique.length} Kelime` : `${unique.length} Words You Learned`}
                 </div>
                 <div className="story-reader__completion-vocab-list">
                   {unique.map((v, i) => (
                     <div key={i} className="story-reader__completion-vocab-chip">
-                      {v.emoji && <span>{v.emoji}</span>}
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{v.english?.charAt(0).toUpperCase() ?? '?'}</div>
                       <strong>{v.word}</strong>
                       {(v.word_tr || v.turkish) && (
                         <span>— {v.word_tr || v.turkish}</span>
@@ -461,7 +463,7 @@ export default function StoryReader() {
               className="story-reader__choice-btn"
               onClick={() => setShowCompletion(true)}
             >
-              <span className="story-reader__choice-icon">🎉</span>
+              <span className="story-reader__choice-icon"><BookOpen size={16} /></span>
               {lang === 'tr' ? 'Hikayeyi Tamamla!' : 'Complete Story!'}
             </button>
           )}

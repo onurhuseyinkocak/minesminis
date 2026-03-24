@@ -142,9 +142,17 @@
   box-shadow: var(--shadow-md);
 }
 
-.vocab-preview-card__emoji {
-  font-size: 1.75rem;
-  line-height: 1;
+.vocab-preview-card__letter {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
 }
 
 .vocab-preview-card__word {

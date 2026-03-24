@@ -344,7 +344,7 @@ function AdminMimi() {
                 title="Admin Mimi'yi Aç"
             >
                 <div className="admin-mimi-fab-icon">
-                    <span className="admin-mimi-bear">🐻</span>
+                    <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
                     <Shield size={14} className="admin-mimi-shield" />
                 </div>
                 <span className="admin-mimi-fab-badge">∞</span>
@@ -358,7 +358,7 @@ function AdminMimi() {
             <div className="admin-mimi-header">
                 <div className="admin-mimi-header-left">
                     <div className="admin-mimi-avatar">
-                        <span>🐻</span>
+                        <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
                         <Shield size={12} className="admin-mimi-avatar-badge" />
                     </div>
                     <div className="admin-mimi-header-info">
@@ -406,7 +406,7 @@ function AdminMimi() {
                             >
                                 {message.role === 'assistant' && (
                                     <div className="message-avatar">
-                                        <span>🐻</span>
+                                        <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
                                     </div>
                                 )}
                                 <div className="message-content">
@@ -439,7 +439,7 @@ function AdminMimi() {
                         {isTyping && (
                             <div className="admin-mimi-message assistant">
                                 <div className="message-avatar">
-                                    <span>🐻</span>
+                                    <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
                                 </div>
                                 <div className="message-content">
                                     <div className="typing-indicator">

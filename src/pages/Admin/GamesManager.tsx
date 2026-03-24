@@ -128,7 +128,7 @@ function GamesManager() {
                 const json = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
                 setGames(prev => [{ id: json.id, ...formData, embedUrl: url }, ...prev]);
-                toast.success('Yeni oyun eklendi! 🎮');
+                toast.success('Yeni oyun eklendi!');
                 try {
                     const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
                     if (!error && data?.length) setGames(data.map((r: Record<string, unknown>) => ({
@@ -216,9 +216,9 @@ function GamesManager() {
                             className={`filter-chip ${selectedGrade === grade ? 'active' : ''}`}
                             onClick={() => setSelectedGrade(grade)}
                         >
-                            {grade === 'all' ? '📚 Tümü' :
-                                grade === 'primary' ? '🌟 İlkokul' :
-                                    `📖 ${grade}. Sınıf`}
+                            {grade === 'all' ? 'Tümü' :
+                                grade === 'primary' ? 'İlkokul' :
+                                    `${grade}. Sınıf`}
                         </button>
                     ))}
                 </div>

@@ -14,12 +14,12 @@ const SEVERITY_LABELS: Record<ErrorSeverity, string> = {
   info: 'Bilgi',
 };
 
-const SEVERITY_ICONS: Record<ErrorSeverity, string> = {
-  critical: '🔴',
-  high: '🟠',
-  medium: '🟡',
-  low: '🔵',
-  info: '⚪',
+const SEVERITY_DOT_COLORS: Record<ErrorSeverity, string> = {
+  critical: '#ef4444',
+  high: '#f97316',
+  medium: '#eab308',
+  low: '#3b82f6',
+  info: '#94a3b8',
 };
 
 function timeAgo(ts: number): string {
@@ -271,7 +271,8 @@ function ErrorMonitor() {
                       color: SEVERITY_COLORS[log.severity],
                       border: `1px solid ${SEVERITY_COLORS[log.severity]}30`,
                     }}>
-                      {SEVERITY_ICONS[log.severity]} {SEVERITY_LABELS[log.severity].toUpperCase()}
+                      <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: SEVERITY_DOT_COLORS[log.severity], marginRight: '4px', verticalAlign: 'middle' }} />
+                      {SEVERITY_LABELS[log.severity].toUpperCase()}
                     </span>
 
                     {/* Message */}

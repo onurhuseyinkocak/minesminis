@@ -102,38 +102,38 @@ const DAILY_REWARDS: DailyReward[] = [
 
 export const ALL_BADGES: Badge[] = [
     // Streak Badges
-    { id: 'streak_3', name: '3 Day Streak', description: 'Login 3 days in a row', icon: '🔥', category: 'streak', requirement: 3, requirementType: 'streak' },
-    { id: 'streak_7', name: 'Week Warrior', description: 'Login 7 days in a row', icon: '⚡', category: 'streak', requirement: 7, requirementType: 'streak' },
-    { id: 'streak_30', name: 'Monthly Master', description: 'Login 30 days in a row', icon: '🌟', category: 'streak', requirement: 30, requirementType: 'streak' },
-    { id: 'streak_100', name: 'Century Champion', description: 'Login 100 days in a row', icon: '👑', category: 'streak', requirement: 100, requirementType: 'streak' },
+    { id: 'streak_3', name: '3 Day Streak', description: 'Login 3 days in a row', icon: 'fire', category: 'streak', requirement: 3, requirementType: 'streak' },
+    { id: 'streak_7', name: 'Week Warrior', description: 'Login 7 days in a row', icon: 'fire', category: 'streak', requirement: 7, requirementType: 'streak' },
+    { id: 'streak_30', name: 'Monthly Master', description: 'Login 30 days in a row', icon: 'fire', category: 'streak', requirement: 30, requirementType: 'streak' },
+    { id: 'streak_100', name: 'Century Champion', description: 'Login 100 days in a row', icon: 'fire', category: 'streak', requirement: 100, requirementType: 'streak' },
 
     // Learning Badges - Words
-    { id: 'words_10', name: 'Word Explorer', description: 'Learn 10 words', icon: '📖', category: 'learning', requirement: 10, requirementType: 'words' },
-    { id: 'words_50', name: 'Word Collector', description: 'Learn 50 words', icon: '📚', category: 'learning', requirement: 50, requirementType: 'words' },
-    { id: 'words_100', name: 'Word Master', description: 'Learn 100 words', icon: '🎓', category: 'learning', requirement: 100, requirementType: 'words' },
-    { id: 'words_500', name: 'Word Genius', description: 'Learn 500 words', icon: '🧠', category: 'learning', requirement: 500, requirementType: 'words' },
+    { id: 'words_10', name: 'Word Explorer', description: 'Learn 10 words', icon: 'book', category: 'learning', requirement: 10, requirementType: 'words' },
+    { id: 'words_50', name: 'Word Collector', description: 'Learn 50 words', icon: 'book', category: 'learning', requirement: 50, requirementType: 'words' },
+    { id: 'words_100', name: 'Word Master', description: 'Learn 100 words', icon: 'reading', category: 'learning', requirement: 100, requirementType: 'words' },
+    { id: 'words_500', name: 'Word Genius', description: 'Learn 500 words', icon: 'library', category: 'learning', requirement: 500, requirementType: 'words' },
 
     // Learning Badges - Games
-    { id: 'games_5', name: 'Game Starter', description: 'Play 5 games', icon: '🎮', category: 'learning', requirement: 5, requirementType: 'games' },
-    { id: 'games_25', name: 'Game Player', description: 'Play 25 games', icon: '🕹️', category: 'learning', requirement: 25, requirementType: 'games' },
-    { id: 'games_100', name: 'Game Champion', description: 'Play 100 games', icon: '🏆', category: 'learning', requirement: 100, requirementType: 'games' },
+    { id: 'games_5', name: 'Game Starter', description: 'Play 5 games', icon: 'games', category: 'learning', requirement: 5, requirementType: 'games' },
+    { id: 'games_25', name: 'Game Player', description: 'Play 25 games', icon: 'games', category: 'learning', requirement: 25, requirementType: 'games' },
+    { id: 'games_100', name: 'Game Champion', description: 'Play 100 games', icon: 'trophy', category: 'learning', requirement: 100, requirementType: 'games' },
 
     // Learning Badges - Videos
-    { id: 'videos_5', name: 'Video Viewer', description: 'Watch 5 videos', icon: '🎬', category: 'learning', requirement: 5, requirementType: 'videos' },
-    { id: 'videos_25', name: 'Video Fan', description: 'Watch 25 videos', icon: '📺', category: 'learning', requirement: 25, requirementType: 'videos' },
-    { id: 'videos_100', name: 'Video Expert', description: 'Watch 100 videos', icon: '🎥', category: 'learning', requirement: 100, requirementType: 'videos' },
+    { id: 'videos_5', name: 'Video Viewer', description: 'Watch 5 videos', icon: 'video', category: 'learning', requirement: 5, requirementType: 'videos' },
+    { id: 'videos_25', name: 'Video Fan', description: 'Watch 25 videos', icon: 'video', category: 'learning', requirement: 25, requirementType: 'videos' },
+    { id: 'videos_100', name: 'Video Expert', description: 'Watch 100 videos', icon: 'video', category: 'learning', requirement: 100, requirementType: 'videos' },
 
     // Achievement Badges
-    { id: 'level_5', name: 'Rising Star', description: 'Reach level 5', icon: '⭐', category: 'achievement', requirement: 5, requirementType: 'level' },
-    { id: 'level_10', name: 'Shining Star', description: 'Reach level 10', icon: '🌟', category: 'achievement', requirement: 10, requirementType: 'level' },
-    { id: 'level_25', name: 'Superstar', description: 'Reach level 25', icon: '💫', category: 'achievement', requirement: 25, requirementType: 'level' },
-    { id: 'level_50', name: 'Legend', description: 'Reach level 50', icon: '🏅', category: 'achievement', requirement: 50, requirementType: 'level' },
+    { id: 'level_5', name: 'Rising Star', description: 'Reach level 5', icon: 'star', category: 'achievement', requirement: 5, requirementType: 'level' },
+    { id: 'level_10', name: 'Shining Star', description: 'Reach level 10', icon: 'star', category: 'achievement', requirement: 10, requirementType: 'level' },
+    { id: 'level_25', name: 'Superstar', description: 'Reach level 25', icon: 'star', category: 'achievement', requirement: 25, requirementType: 'level' },
+    { id: 'level_50', name: 'Legend', description: 'Reach level 50', icon: 'trophy', category: 'achievement', requirement: 50, requirementType: 'level' },
 
     // Special Badges
-    { id: 'weekly_starter', name: 'Weekly Starter', description: 'Claim 5 daily rewards', icon: '🎁', category: 'special', requirement: 5, requirementType: 'daily' },
-    { id: 'week_champion', name: 'Week Champion', description: 'Claim 7 daily rewards in a row', icon: '🏆', category: 'special', requirement: 7, requirementType: 'daily' },
-    { id: 'first_favorite', name: 'First Favorite', description: 'Add your first favorite', icon: '❤️', category: 'special', requirement: 1, requirementType: 'favorites' },
-    { id: 'premium_member', name: 'Premium Member', description: 'Become a premium member', icon: '👑', category: 'special', requirement: 1, requirementType: 'premium' },
+    { id: 'weekly_starter', name: 'Weekly Starter', description: 'Claim 5 daily rewards', icon: 'star', category: 'special', requirement: 5, requirementType: 'daily' },
+    { id: 'week_champion', name: 'Week Champion', description: 'Claim 7 daily rewards in a row', icon: 'trophy', category: 'special', requirement: 7, requirementType: 'daily' },
+    { id: 'first_favorite', name: 'First Favorite', description: 'Add your first favorite', icon: 'heart', category: 'special', requirement: 1, requirementType: 'favorites' },
+    { id: 'premium_member', name: 'Premium Member', description: 'Become a premium member', icon: 'trophy', category: 'special', requirement: 1, requirementType: 'premium' },
 ];
 
 // ============================================================

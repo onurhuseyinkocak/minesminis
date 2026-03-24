@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked } from 'lucide-react';
+import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked, Flame, Star } from 'lucide-react';
 import './TopNav.css';
 
 interface TopNavProps {
@@ -97,7 +97,7 @@ export default function TopNav({
         {/* Logo */}
         <Link to="/" className="topnav__logo" aria-label="MinesMinis Home">
           <div className="topnav__logo-icon" role="img" aria-hidden="true">
-            🐲
+            <Star size={22} fill="#E8A317" color="#E8A317" />
           </div>
           <div className="topnav__logo-text">
             <span>Mines</span><span>Minis</span>
@@ -125,7 +125,7 @@ export default function TopNav({
         <div className="topnav__user">
           {streak > 0 && (
             <div className="topnav__streak" title={`${streak} day streak`}>
-              <span className="topnav__streak-icon">🔥</span>
+              <span className="topnav__streak-icon"><Flame size={16} color="#FF6B35" /></span>
               <span>{streak}</span>
             </div>
           )}
@@ -215,7 +215,7 @@ export default function TopNav({
         <div className="topnav__mobile-header">
           <Link to="/" className="topnav__logo" aria-label="MinesMinis Home">
             <div className="topnav__logo-icon" role="img" aria-hidden="true">
-              🐲
+              <Star size={22} fill="#E8A317" color="#E8A317" />
             </div>
             <div className="topnav__logo-text">
               <span>Mines</span><span>Minis</span>
@@ -270,7 +270,7 @@ export default function TopNav({
           </div>
           {streak > 0 && (
             <div className="topnav__streak">
-              <span className="topnav__streak-icon">🔥</span>
+              <span className="topnav__streak-icon"><Flame size={16} color="#FF6B35" /></span>
               <span>{streak} day streak</span>
             </div>
           )}

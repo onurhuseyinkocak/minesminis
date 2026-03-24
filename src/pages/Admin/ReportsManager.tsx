@@ -66,7 +66,7 @@ const ReportsManager: React.FC = () => {
             if (error) throw error;
 
             setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'resolved' } : r));
-            toast.success('Rapor çözüldü olarak işaretlendi! ✅');
+            toast.success('Rapor çözüldü olarak işaretlendi!');
         } catch (error) {
             console.error('Error resolving report:', error);
             toast.error('Guncelleme yapılamadı.');

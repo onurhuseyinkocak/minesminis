@@ -388,7 +388,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
       <div style={{ ...styles.content, position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <div style={styles.header}>
-          <span style={{ fontSize: '2rem' }}>{song.emoji}</span>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900 }}>{song.title.charAt(0).toUpperCase()}</div>
           <div>
             <h2 style={styles.title}>{song.title}</h2>
             <p style={styles.subtitle}>{song.titleTr}</p>

@@ -227,7 +227,7 @@ const ReadingLibrary: React.FC = () => {
                         disabled={isLocked}
                         aria-label={isLocked ? `${book.title} (locked)` : book.title}
                       >
-                        <span style={styles.bookSpineEmoji}>{book.emoji}</span>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900, color: '#fff' }}>{book.title.charAt(0).toUpperCase()}</div>
                         <span style={styles.bookSpineTitle}>{book.title}</span>
                         {bookStars > 0 && (
                           <div style={styles.bookStars}>

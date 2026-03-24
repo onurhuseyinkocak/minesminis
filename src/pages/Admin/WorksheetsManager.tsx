@@ -166,7 +166,7 @@ function WorksheetsManager() {
                 });
                 const json = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(json.error || 'Ekleme başarısız');
-                toast.success('Yeni çalışma kağıdı eklendi! 📄');
+                toast.success('Yeni çalışma kağıdı eklendi!');
             }
             setIsModalOpen(false);
             await fetchWorksheets();
@@ -185,17 +185,6 @@ function WorksheetsManager() {
             await fetchWorksheets();
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Silme başarısız');
-        }
-    };
-
-    const getCategoryIcon = (category: string) => {
-        switch (category) {
-            case 'Vocabulary': return '📖';
-            case 'Grammar': return '📝';
-            case 'Reading': return '📕';
-            case 'Writing': return '✍️';
-            case 'Phonics': return '🔤';
-            default: return '📚';
         }
     };
 
@@ -246,7 +235,7 @@ function WorksheetsManager() {
                             className={`filter-chip ${selectedGrade === grade ? 'active' : ''}`}
                             onClick={() => setSelectedGrade(grade)}
                         >
-                            {grade === 'All' ? '📚 Tümü' : `📖 ${grade}. Sınıf`}
+                            {grade === 'All' ? 'Tümü' : `${grade}. Sınıf`}
                         </button>
                     ))}
                 </div>
@@ -259,7 +248,7 @@ function WorksheetsManager() {
                             onClick={() => setSelectedCategory(cat)}
                             style={selectedCategory === cat && cat !== 'All' ? { background: getCategoryColor(cat) } : {}}
                         >
-                            {cat === 'All' ? '🏷️ Tüm Kategoriler' : `${getCategoryIcon(cat)} ${cat}`}
+                            {cat === 'All' ? 'Tüm Kategoriler' : cat}
                         </button>
                     ))}
                 </div>
@@ -308,7 +297,7 @@ function WorksheetsManager() {
                                             color: getCategoryColor(ws.category)
                                         }}
                                     >
-                                        {getCategoryIcon(ws.category)} {ws.category}
+                                        {ws.category}
                                     </span>
                                 </td>
                                 <td>{ws.grade}. Sınıf</td>
@@ -394,7 +383,7 @@ function WorksheetsManager() {
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                     >
                                         {categories.filter(c => c !== 'All').map(cat => (
-                                            <option key={cat} value={cat}>{getCategoryIcon(cat)} {cat}</option>
+                                            <option key={cat} value={cat}>{cat}</option>
                                         ))}
                                     </select>
                                 </div>

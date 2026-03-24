@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, Sprout, Flower2, TreePine, ArrowLeft } from 'lucide-react';
+import { Droplets, Sprout, Flower2, TreePine, ArrowLeft, Leaf } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { GARDEN_PLANTS, GARDEN_GROUP_LABELS, getPlantStage } from '../../data/gardenData';
 import type { GardenPlant, PlantStage } from '../../data/gardenData';
@@ -29,6 +29,16 @@ interface SelectedPlantInfo {
   soundName: string;
   grapheme: string;
   waterCount: number;
+}
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function PlantStageIcon({ stageName, color, size = 20 }: { stageName: string; color: string; size?: number }) {
+  if (stageName === 'seed') return <Sprout size={size} color="#9CA3AF" />;
+  if (stageName === 'sprout') return <Sprout size={size} color={color} />;
+  if (stageName === 'growing') return <Leaf size={size} color={color} />;
+  if (stageName === 'blooming') return <Flower2 size={size} color={color} />;
+  return <TreePine size={size} color={color} />;
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -152,7 +162,7 @@ function LearningGarden() {
           <ArrowLeft size={20} />
         </button>
         <div style={{ flex: 1 }}>
-          <h1 style={styles.title}>My Learning Garden <span role="img" aria-label="seedling">🌱</span></h1>
+          <h1 style={styles.title}>My Learning Garden</h1>
           <p style={styles.subtitle}>
             {gardenLevelNames[gardenLevel - 1]} (Level {gardenLevel})
           </p>
@@ -232,12 +242,12 @@ function LearningGarden() {
                             transition={{ duration: 1 }}
                             style={styles.waterDrop}
                           >
-                            💧
+                            <Droplets size={16} color="#3B82F6" />
                           </motion.span>
                         )}
                       </AnimatePresence>
 
-                      {/* Plant emoji */}
+                      {/* Plant icon */}
                       <motion.span
                         style={{
                           fontSize: '1.6rem',
@@ -258,17 +268,34 @@ function LearningGarden() {
                               : {}
                         }
                       >
-                        {isStarted ? (isBlooming ? plant.emoji : stage.emoji) : '❓'}
+                        {isStarted ? (
+                          <PlantStageIcon stageName={isBlooming ? 'flowering' : stage.name} color={plant.color} size={22} />
+                        ) : (
+                          <span style={{
+                            display: 'inline-flex',
+                            width: '1.4rem',
+                            height: '1.4rem',
+                            borderRadius: '50%',
+                            background: '#3B4A68',
+                            border: '2px dashed #556',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.55rem',
+                            fontWeight: 800,
+                            color: '#778',
+                            verticalAlign: 'middle',
+                          }}>?</span>
+                        )}
                       </motion.span>
 
-                      {/* Sparkle for blooming */}
+                      {/* Blooming indicator */}
                       {isBlooming && (
                         <motion.span
                           style={styles.sparkle}
                           animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
                           transition={{ repeat: Infinity, duration: 2 }}
                         >
-                          ✨
+                          <Flower2 size={10} color={plant.color} />
                         </motion.span>
                       )}
 
@@ -313,11 +340,28 @@ function LearningGarden() {
                 }
                 transition={{ repeat: Infinity, duration: 2.5 }}
               >
-                {selectedPlant.mastery > 0
-                  ? selectedPlant.mastery >= 95
-                    ? selectedPlant.plant.emoji
-                    : selectedPlant.stage.emoji
-                  : '❓'}
+                {selectedPlant.mastery > 0 ? (
+                  <PlantStageIcon
+                    stageName={selectedPlant.mastery >= 95 ? 'flowering' : selectedPlant.stage.name}
+                    color={selectedPlant.plant.color}
+                    size={56}
+                  />
+                ) : (
+                  <span style={{
+                    display: 'inline-flex',
+                    width: '3.5rem',
+                    height: '3.5rem',
+                    borderRadius: '50%',
+                    background: '#3B4A68',
+                    border: '3px dashed #556',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.2rem',
+                    fontWeight: 800,
+                    color: '#778',
+                    verticalAlign: 'middle',
+                  }}>?</span>
+                )}
               </motion.span>
 
               {/* Sound info */}
@@ -356,12 +400,13 @@ function LearningGarden() {
                         style={{
                           ...styles.timelineEmoji,
                           opacity: reached ? 1 : 0.3,
-                          filter: reached ? 'none' : 'grayscale(1)',
                         }}
                       >
-                        {i === selectedPlant.plant.stages.length - 1
-                          ? selectedPlant.plant.emoji
-                          : s.emoji}
+                        <PlantStageIcon
+                          stageName={i === selectedPlant.plant.stages.length - 1 ? 'flowering' : s.name}
+                          color={selectedPlant.plant.color}
+                          size={16}
+                        />
                       </span>
                       <span
                         style={{

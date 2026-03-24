@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, Zap, Trophy, Sparkles } from 'lucide-react';
+import { Timer, Zap, Trophy, Sparkles, Star, Lightbulb } from 'lucide-react';
 import { Card, Badge, ProgressBar, StreakFlame } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -177,9 +177,11 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             <p className="quick-quiz__results-score">
               {score} / {questions.length} {t('games.xCorrect')}
             </p>
-            <div className="quick-quiz__results-stars" aria-label={`${stars} out of 3 stars`}>
-              {'⭐'.repeat(stars)}{'☆'.repeat(3 - stars)}
-            </div>
+            <span className="game-stars">
+              {Array.from({ length: 3 }, (_, i) => (
+                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+              ))}
+            </span>
             {bestStreak >= 2 && (
               <Badge variant="warning" icon={<Zap size={14} />}>
                 {t('games.bestStreak')} {bestStreak}x
@@ -244,9 +246,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           animate={{ opacity: 1, y: 0 }}
           className="quick-quiz__question-content"
         >
-          <span className="quick-quiz__emoji" role="img" aria-label={question.word.english}>
-            {question.word.emoji}
-          </span>
+          <div className="quick-quiz__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{question.word.english.charAt(0).toUpperCase()}</div>
           <p className="quick-quiz__prompt-text">
             {question.mode === 'en-to-tr'
               ? t('games.whatIsInTurkish').replace('{word}', question.word.english)
@@ -295,7 +295,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          {t('games.correct')} 🌟 {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
+          {t('games.correct')} {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
         </motion.div>
       )}
 
@@ -305,7 +305,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          {t('games.theAnswerWas')} {question.options[question.correctIndex]} 💡
+          {t('games.theAnswerWas')} {question.options[question.correctIndex]} <Lightbulb size={14} color="#E8A317" />
         </motion.div>
       )}
 
@@ -315,7 +315,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]} ⏰
+          {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]}
         </motion.div>
       )}
     </div>

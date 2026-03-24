@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Award, Check } from 'lucide-react';
 import './BadgeShowcase.css';
 import { useGamification, Badge } from '../contexts/GamificationContext';
 
@@ -54,7 +54,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
     return (
         <div className="badge-showcase">
             <div className="showcase-header">
-                <h3>🏅 My Badges</h3>
+                <h3><Award size={18} /> My Badges</h3>
                 <div className="badge-stats">
                     <span className="earned-count">{earnedBadges.length}</span>
                     <span className="total-count">/ {allBadges.length}</span>
@@ -98,7 +98,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                                 <span className="badge-name">{badge.name}</span>
                                 <span className="badge-category">{badge.category}</span>
                             </div>
-                            {isEarned && <div className="earned-check">✓</div>}
+                            {isEarned && <div className="earned-check"><Check size={12} strokeWidth={3} /></div>}
                         </div>
                     );
                 })}
@@ -114,7 +114,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
             {selectedBadge && (
                 <div className="badge-modal-overlay" onClick={() => setSelectedBadge(null)}>
                     <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-modal" onClick={() => setSelectedBadge(null)}>✕</button>
+                        <button className="close-modal" onClick={() => setSelectedBadge(null)}><Check size={14} /></button>
 
                         <div className={`modal-badge-icon ${hasBadge(selectedBadge.id) ? 'earned' : 'locked'}`}>
                             {hasBadge(selectedBadge.id) ? selectedBadge.icon : <Lock size={16} />}
@@ -125,7 +125,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
 
                         <div className="modal-badge-status">
                             {hasBadge(selectedBadge.id) ? (
-                                <span className="status-earned">✅ Earned!</span>
+                                <span className="status-earned"><Check size={14} strokeWidth={3} /> Earned!</span>
                             ) : (
                                 <span className="status-locked"><Lock size={14} /> Not yet earned</span>
                             )}

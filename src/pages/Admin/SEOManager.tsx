@@ -244,7 +244,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
     return (
         <div className="admin-page">
             <div className="admin-header">
-                <h1>🔍 SEO Yönetimi</h1>
+                <h1>SEO Yönetimi</h1>
                 <p>Gerçek SEO araçları — sitemap, robots.txt, meta etiketleri, Schema.org</p>
             </div>
 

@@ -68,7 +68,7 @@ const StoryNarrator: React.FC<StoryNarratorProps> = ({
       {/* NPC indicator */}
       {npcName && (
         <div className="story-narrator__npc">
-          <span className="story-narrator__npc-emoji">{npcEmoji}</span>
+          <div className="story-narrator__npc-emoji" style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{npcName.charAt(0).toUpperCase()}</div>
           <span className="story-narrator__npc-name">{npcName}</span>
         </div>
       )}

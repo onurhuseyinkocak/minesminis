@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Volume2, Check } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
 
 interface TPRActivityProps {
@@ -10,40 +10,13 @@ interface TPRActivityProps {
 
 interface ParsedCommand {
   text: string;
-  emoji: string;
+  actionLabel: string;
 }
 
-const COMMAND_EMOJIS: Record<string, string> = {
-  'stand up': '🧍',
-  'sit down': '🪑',
-  'jump': '🦘',
-  'clap your hands': '👏',
-  'touch your nose': '👃',
-  'wave': '👋',
-  'turn around': '🔄',
-  'stomp your feet': '🦶',
-  'raise your hand': '🙋',
-  'touch your head': '🤲',
-  'close your eyes': '😌',
-  'open your eyes': '👀',
-  'walk': '🚶',
-  'run': '🏃',
-  'dance': '💃',
-  'sing': '🎵',
-  'smile': '😊',
-  'nod your head': '😊',
-  'shake your head': '🙅',
-  'point to the door': '🚪',
-};
-
 function parseCommand(cmd: string): ParsedCommand {
-  const lower = cmd.toLowerCase().replace(/[!.]/g, '');
-  for (const [key, emoji] of Object.entries(COMMAND_EMOJIS)) {
-    if (lower.includes(key)) {
-      return { text: cmd, emoji };
-    }
-  }
-  return { text: cmd, emoji: '🎯' };
+  const trimmed = cmd.trim();
+  const actionLabel = trimmed.replace(/[!.]/g, '').trim().charAt(0).toUpperCase();
+  return { text: cmd, actionLabel };
 }
 
 export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }) => {
@@ -109,7 +82,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
             transition={{ type: 'spring', stiffness: 200 }}
             style={{ textAlign: 'center' }}
           >
-            <span style={{ fontSize: '4rem' }} role="img" aria-label="star">⭐</span>
+            <Sparkles size={64} color="#E8A317" />
             <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>Great Moves!</h2>
             <p style={{ fontSize: '1.1rem', color: '#555' }}>
               You completed all {gameCommands.length} actions!
@@ -147,18 +120,30 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
 
       <Card variant="elevated" padding="xl">
         <div style={{ textAlign: 'center' }}>
-          {/* Animated emoji */}
-          <motion.span
+          {/* Animated action badge */}
+          <motion.div
             key={currentIndex}
             animate={{
               scale: [1, 1.3, 1],
               rotate: [0, 10, -10, 0],
             }}
             transition={{ repeat: Infinity, duration: 2 }}
-            style={{ fontSize: '5rem', display: 'block' }}
+            style={{
+              width: '5rem',
+              height: '5rem',
+              borderRadius: '50%',
+              backgroundColor: '#1A6B5A',
+              color: '#fff',
+              fontSize: '2.5rem',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto',
+            }}
           >
-            {current.emoji}
-          </motion.span>
+            {current.actionLabel}
+          </motion.div>
 
           {/* Command text */}
           <motion.h3
@@ -182,7 +167,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
             onClick={() => speak(current.text)}
             style={{ marginBottom: '1rem' }}
           >
-            🔊 Listen again
+            <Volume2 size={16} /> Listen again
           </Button>
 
           {/* Timer */}
@@ -209,7 +194,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
             onClick={handleDidIt}
             style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
           >
-            I did it! ✓
+            I did it! <Check size={14} strokeWidth={3} />
           </Button>
         </div>
       </Card>

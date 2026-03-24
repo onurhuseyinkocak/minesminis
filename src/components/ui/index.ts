@@ -30,3 +30,6 @@ export { StarBurst, ConfettiRain, FloatingEmoji, StreakFlame, XPPop, PerfectBadg
 
 export { LottieIcon } from './LottieIcon';
 export type { LottieIconProps, LottieIconName } from './LottieIcon';
+
+export { KidIcon } from './KidIcon';
+export type { KidIconProps, KidIconName } from './KidIcon';

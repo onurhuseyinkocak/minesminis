@@ -251,7 +251,7 @@ function Games() {
                       src={game.thumbnail_url}
                       alt={game.title}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%231a2332" width="400" height="300"/><text x="200" y="150" text-anchor="middle" fill="%23F59E0B" font-size="48">\uD83C\uDFAE</text></svg>';
+                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%231a2332" width="400" height="300"/><rect x="160" y="110" width="80" height="80" rx="12" fill="%23FF6B35" opacity="0.5"/></svg>';
                       }}
                     />
                     <div className="external-play-overlay">

@@ -116,17 +116,7 @@ const UnifiedMascot: React.FC<UnifiedMascotProps> = ({
         };
     }, [state, isRandomLooking]);
 
-    const getEmoji = () => {
-        switch (state) {
-            case 'love': return '\u2764\uFE0F';
-            case 'celebrating': return '\uD83C\uDF89';
-            case 'thinking': return '\uD83D\uDCAD';
-            case 'sleeping': return '\uD83D\uDCA4';
-            case 'surprised': return '\u2757';
-            case 'laughing': return '\uD83D\uDE02';
-            default: return null;
-        }
-    };
+    const getEmoji = () => null;
 
     const emoji = getEmoji();
     const showBigSmile = state === 'laughing' || state === 'celebrating' || state === 'dancing' || isSmiling;
@@ -828,7 +818,7 @@ const UnifiedMascot: React.FC<UnifiedMascotProps> = ({
     return (
         <div ref={containerRef} className={`mascot-container type-${displayType} pattern-${config.behaviorPattern} state-${state} ${isHovered ? 'hovered' : ''}`} onClick={onClick} style={{ width: size, height: size }}>
             <div className="mascot-wrapper"><svg viewBox="0 0 200 220" className="mascot-svg">{renderCharacter()}</svg></div>
-            {emoji && <div className="mascot-emoji-bubble"><span className="emoji-float">{emoji}</span></div>}
+            {/* emoji bubble removed */}
             <div className="mascot-shadow"></div>
         </div>
     );

@@ -51,7 +51,7 @@ const StoryChoices: React.FC<StoryChoicesProps> = ({ choices, onChoose, disabled
             disabled={disabled || !!selectedId}
             style={{ animationDelay: `${i * 0.12}s` }}
           >
-            <span className="story-choice__emoji">{choice.emoji}</span>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }} className="story-choice__emoji">{choice.text.charAt(0).toUpperCase()}</div>
             <span className="story-choice__text">{choice.text}</span>
 
             {/* Trait & XP badges */}
@@ -61,7 +61,7 @@ const StoryChoices: React.FC<StoryChoicesProps> = ({ choices, onChoose, disabled
                   className="story-choice__trait"
                   style={{ color: traitInfo.color }}
                 >
-                  {traitInfo.emoji} {traitInfo.name}
+                  {traitInfo.name}
                 </span>
               )}
               <span className="story-choice__xp">+{choice.xpReward} XP</span>

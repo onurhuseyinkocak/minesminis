@@ -479,3 +479,34 @@
   border-left: 4px solid var(--primary);
   margin: 0;
 }
+
+/* ---- LETTER BADGES (emoji replacements) ---- */
+.kid-card-letter-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary, #FF6B35) 0%, var(--accent-orange, #FF8C42) 100%);
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.review-letter-badge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C3AED 0%, #9D5CF6 100%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-family: 'Nunito', sans-serif;
+}

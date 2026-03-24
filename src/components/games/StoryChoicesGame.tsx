@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Star, Check, X } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -103,8 +103,10 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
             transition={{ type: 'spring', stiffness: 200 }}
             className="story-choices-game__complete-content"
           >
-            <span className="story-choices-game__complete-emoji" role="img" aria-label="celebration">
-              {score >= questions.length * 0.8 ? '🌟' : '👏'}
+            <span className="story-choices-game__complete-emoji">
+              {score >= questions.length * 0.8
+                ? <Star size={48} fill="#E8A317" color="#E8A317" />
+                : <Check size={48} color="#22C55E" />}
             </span>
             <h2 className="story-choices-game__complete-title">{t('games.storyComplete')}</h2>
             <p className="story-choices-game__complete-score">
@@ -142,9 +144,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
           animate={{ opacity: 1, y: 0 }}
           className="story-choices-game__prompt"
         >
-          <span className="story-choices-game__prompt-emoji">
-            {question.word.emoji}
-          </span>
+          <div className="story-choices-game__prompt-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{question.word.english.charAt(0).toUpperCase()}</div>
           <p className="story-choices-game__prompt-word">
             {question.word.english}
           </p>
@@ -182,8 +182,8 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
                 aria-label={`Choice: ${choice.text}`}
               >
                 {choice.text}
-                {showCorrect && ' ✓'}
-                {showWrong && ' ✗'}
+                {showCorrect && <Check size={14} strokeWidth={3} />}
+                {showWrong && <X size={14} />}
               </motion.button>
             );
           })}

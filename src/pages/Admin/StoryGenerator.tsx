@@ -33,12 +33,12 @@ const LOCATIONS = [
 ];
 
 const CHARACTERS = [
-  { value: 'mimi_dragon', label: '🐉 Mimi (Dragon)' },
-  { value: 'luna_owl', label: '🦉 Luna (Owl)' },
-  { value: 'rocky_bear', label: '🐻 Rocky (Bear)' },
-  { value: 'stella_fox', label: '🦊 Stella (Fox)' },
-  { value: 'pip_bunny', label: '🐰 Pip (Bunny)' },
-  { value: 'finn_turtle', label: '🐢 Finn (Turtle)' },
+  { value: 'mimi_dragon', label: 'Mimi (Dragon)' },
+  { value: 'luna_owl', label: 'Luna (Owl)' },
+  { value: 'rocky_bear', label: 'Rocky (Bear)' },
+  { value: 'stella_fox', label: 'Stella (Fox)' },
+  { value: 'pip_bunny', label: 'Pip (Bunny)' },
+  { value: 'finn_turtle', label: 'Finn (Turtle)' },
 ];
 
 interface GeneratedScene {

@@ -20,7 +20,7 @@ function WordsManager() {
         turkish: '',
         level: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
         category: 'Animals',
-        emoji: '📚',
+        emoji: '',
         example: ''
     });
 
@@ -98,7 +98,7 @@ function WordsManager() {
             turkish: '',
             level: 'beginner',
             category: 'Animals',
-            emoji: '📚',
+            emoji: '',
             example: ''
         });
         setIsModalOpen(true);
@@ -176,7 +176,7 @@ function WordsManager() {
                 if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
                 wordStore.addWord(wordData as KidsWord);
                 setWords(prev => [...prev, wordData as KidsWord]);
-                toast.success('Yeni kelime eklendi! 📖');
+                toast.success('Yeni kelime eklendi!');
             }
             setIsModalOpen(false);
         } catch (err) {
@@ -223,9 +223,9 @@ function WordsManager() {
 
     const getLevelLabel = (level: string) => {
         switch (level) {
-            case 'beginner': return '🟢 2-3. Sınıf';
-            case 'intermediate': return '🟡 4. Sınıf';
-            case 'advanced': return '🔴 5. Sınıf';
+            case 'beginner': return '2-3. Sınıf';
+            case 'intermediate': return '4. Sınıf';
+            case 'advanced': return '5. Sınıf';
             default: return level;
         }
     };
@@ -270,7 +270,7 @@ function WordsManager() {
                             className={`filter-chip ${selectedLevel === level ? 'active' : ''}`}
                             onClick={() => { setSelectedLevel(level); setCurrentPage(1); }}
                         >
-                            {level === 'all' ? '📚 Tümü' : getLevelLabel(level)}
+                            {level === 'all' ? 'Tümü' : getLevelLabel(level)}
                         </button>
                     ))}
                 </div>
@@ -282,7 +282,7 @@ function WordsManager() {
                             className={`filter-chip ${selectedCategory === cat ? 'active' : ''}`}
                             onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
                         >
-                            {cat === 'all' ? '🏷️ Tüm Kategoriler' : cat}
+                            {cat === 'all' ? 'Tüm Kategoriler' : cat}
                         </button>
                     ))}
                     {categories.length > 10 && (
@@ -447,9 +447,9 @@ function WordsManager() {
                                         value={formData.level}
                                         onChange={(e) => setFormData({ ...formData, level: e.target.value as 'beginner' | 'intermediate' | 'advanced' })}
                                     >
-                                        <option value="beginner">🟢 Başlangıç (2-3. Sınıf)</option>
-                                        <option value="intermediate">🟡 Orta (4. Sınıf)</option>
-                                        <option value="advanced">🔴 İleri (5. Sınıf)</option>
+                                        <option value="beginner">Başlangıç (2-3. Sınıf)</option>
+                                        <option value="intermediate">Orta (4. Sınıf)</option>
+                                        <option value="advanced">İleri (5. Sınıf)</option>
                                     </select>
                                 </div>
 

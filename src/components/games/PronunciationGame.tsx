@@ -215,7 +215,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
         animate={{ opacity: 1, y: 0 }}
         className={cardClass}
       >
-        <span className="pronunciation-game__emoji">{currentWord.emoji}</span>
+        <div className="pronunciation-game__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{currentWord.english.charAt(0).toUpperCase()}</div>
         <div className="pronunciation-game__word">{currentWord.english}</div>
         <div className="pronunciation-game__turkish">{currentWord.turkish}</div>
 

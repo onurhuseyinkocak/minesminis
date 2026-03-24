@@ -200,9 +200,7 @@ const Onboarding: React.FC = () => {
 
   const handleSkip = () => {
     setHasSkippedSetup(true);
-    if (role === 'teacher') navigate('/teacher');
-    else if (role === 'parent') navigate('/parent');
-    else navigate('/dashboard');
+    navigate('/dashboard');
   };
 
   const nextStep = useCallback(() => {
@@ -383,7 +381,7 @@ const Onboarding: React.FC = () => {
 
       await refreshUserProfile();
       toast.success('Welcome to MinesMinis!');
-      navigate(role === 'parent' ? '/parent' : role === 'teacher' ? '/teacher' : '/dashboard');
+      navigate('/dashboard');
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Please try again.';
       toast.error(`Oops! ${msg}`, { duration: 6000 });
@@ -459,7 +457,7 @@ const Onboarding: React.FC = () => {
       <p className="onboarding-step-sub">{isTr ? 'Kişiselleştirilmiş deneyim için rolünü seç' : 'Choose your role to get a personalized experience'}</p>
 
       <div className="onboarding-role-grid">
-        {ROLE_CARDS_DATA.map((r) => (
+        {ROLE_CARDS_DATA.filter(r => r.value === 'student').map((r) => (
           <motion.button
             key={r.value}
             type="button"

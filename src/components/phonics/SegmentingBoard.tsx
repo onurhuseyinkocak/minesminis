@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Trophy, Volume2 } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -18,12 +18,6 @@ interface SegmentingBoardProps {
   onWrongAnswer?: () => void;
 }
 
-const WORD_EMOJIS: Record<string, string> = {
-  cat: '🐱', dog: '🐶', hat: '🎩', sun: '☀️', pig: '🐷',
-  hen: '🐔', bug: '🐛', cup: '☕', red: '🔴', map: '🗺️',
-  fish: '🐟', ship: '🚢', shop: '🏪', chip: '🍟', ring: '💍',
-  tree: '🌳', rain: '🌧️', moon: '🌙', book: '📖', feet: '🦶',
-};
 
 function splitToSounds(word: string): string[] {
   const digraphs = ['sh', 'ch', 'th', 'ng', 'ck', 'qu', 'ai', 'ee', 'oo', 'or', 'ar', 'er', 'ou', 'oi', 'ue', 'ie', 'oa'];
@@ -64,7 +58,6 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
   const [completed, setCompleted] = useState(false);
 
   const currentWord = gameWords[currentIndex] || '';
-  const emoji = WORD_EMOJIS[currentWord.toLowerCase()] || '📝';
 
   const speak = useCallback((text: string, rate = 0.7) => {
     if (window.speechSynthesis) {
@@ -151,7 +144,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             transition={{ type: 'spring', stiffness: 200 }}
             className="segmenting-board__complete-content"
           >
-            <span className="segmenting-board__complete-emoji" role="img" aria-label="celebration">🎊</span>
+            <Trophy size={32} color="#E8A317" />
             <h2 className="segmenting-board__complete-title">{t('games.soundSmasher')}</h2>
             <p className="segmenting-board__complete-score">
               {t('games.wordsSegmented').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
@@ -181,15 +174,16 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
       {/* Word display */}
       <Card variant="elevated" padding="lg">
         <div className="segmenting-board__word-display">
-          <motion.span
+          <motion.div
             key={currentWord}
             initial={{ scale: 0 }}
             animate={feedback === 'explode' ? { scale: [1, 1.3, 0], opacity: [1, 1, 0] } : { scale: 1 }}
             transition={feedback === 'explode' ? { duration: 0.6 } : { type: 'spring', stiffness: 300 }}
             className="segmenting-board__emoji"
+            style={{ background: 'var(--primary)', color: '#fff', borderRadius: '50%', width: 64, height: 64, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.75rem' }}
           >
-            {emoji}
-          </motion.span>
+            {currentWord[0]?.toUpperCase() || '?'}
+          </motion.div>
 
           {feedback !== 'explode' && (
             <motion.p className="segmenting-board__word-text">
@@ -203,7 +197,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             onClick={() => speak(currentWord, 0.8)}
             style={{ marginTop: '0.25rem' }}
           >
-            🔊 {t('games.listen')}
+            <Volume2 size={16} /> {t('games.listen')}
           </Button>
         </div>
       </Card>
@@ -255,7 +249,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             exit={{ opacity: 0 }}
             className="segmenting-board__feedback--wrong"
           >
-            {t('games.tryAnotherSound')} 💪
+            {t('games.tryAnotherSound')}
           </motion.div>
         )}
         {feedback === 'correct' && (
@@ -265,7 +259,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             exit={{ opacity: 0 }}
             className="segmenting-board__feedback--correct"
           >
-            {t('games.youBrokeIt')} 🌟
+            {t('games.youBrokeIt')}
           </motion.div>
         )}
       </AnimatePresence>

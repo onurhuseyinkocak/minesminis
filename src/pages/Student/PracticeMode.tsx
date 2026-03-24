@@ -256,7 +256,7 @@ const PracticeMode: React.FC = () => {
                   onClick={() => setSelectedWord(word)}
                 >
                   <div className="pm-word-card__top">
-                    <span className="pm-word-card__emoji">{word.emoji}</span>
+                    <div className="pm-word-card__letter-badge" style={{ background: cfg.color }}>{word.english.charAt(0).toUpperCase()}</div>
                     <span
                       className="pm-word-card__mastery"
                       style={{ color: cfg.color, background: cfg.bg }}
@@ -313,7 +313,7 @@ const PracticeMode: React.FC = () => {
                 <X size={20} />
               </button>
 
-              <span className="pm-modal__emoji">{selectedWord.emoji}</span>
+              <div className="pm-modal__letter-badge" style={{ background: MASTERY_CONFIG[selectedWord.mastery].color }}>{selectedWord.english.charAt(0).toUpperCase()}</div>
               <h2 className="pm-modal__english">{selectedWord.english}</h2>
               <p className="pm-modal__turkish">{selectedWord.turkish}</p>
 

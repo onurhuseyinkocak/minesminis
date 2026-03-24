@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
+import { KidIcon } from '../components/ui/KidIcon';
+import type { KidIconName } from '../components/ui/KidIcon';
 import XPBar from '../components/XPBar';
 import toast from 'react-hot-toast';
 import MimiMascot from '../components/MimiMascot';
@@ -147,7 +149,9 @@ const Profile: React.FC = () => {
             {explorerBadges.length > 0 ? (
               explorerBadges.map((badge, i) => (
                 <div key={i} className="badge-item">
-                  <div className="badge-circle">{badge.icon}</div>
+                  <div className="badge-circle">
+                    <KidIcon name={badge.icon as KidIconName} size={28} />
+                  </div>
                   <span>{badge.name}</span>
                 </div>
               ))

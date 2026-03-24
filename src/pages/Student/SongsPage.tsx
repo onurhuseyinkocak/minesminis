@@ -3,6 +3,11 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Music, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Badge } from '../../components/ui';
+
+function getSongColor(g: number): string {
+  const colors = ['#FF6B35', '#7C3AED', '#22C55E', '#3B82F6', '#F59E0B', '#EC4899', '#14B8A6'];
+  return colors[(g - 1) % colors.length];
+}
 import { SongPlayer } from '../../components/phonics/SongPlayer';
 import { PHONICS_SONGS } from '../../data/phonicsSongs';
 import { PHONICS_GROUPS } from '../../data/phonics';
@@ -173,7 +178,9 @@ export default function SongsPage() {
                 </div>
               )}
 
-              <span style={styles.songEmoji}>{song.emoji}</span>
+              <div style={{...styles.songGroupBadge, background: getSongColor(song.groupNumber)}}>
+                {song.groupNumber}
+              </div>
 
               <div style={styles.songInfo}>
                 <p style={styles.songTitle}>{song.title}</p>
@@ -184,11 +191,7 @@ export default function SongsPage() {
                     Group {song.groupNumber}
                   </Badge>
                   <span style={styles.songStyle}>
-                    {song.style === 'nursery' && '\u{1F3B6}'}
-                    {song.style === 'chant' && '\u{1F44F}'}
-                    {song.style === 'rap' && '\u{1F3A4}'}
-                    {song.style === 'lullaby' && '\u{1F31C}'}
-                    {' '}{song.style}
+                    {song.style}
                   </span>
                 </div>
 
@@ -212,7 +215,7 @@ export default function SongsPage() {
                     </div>
                     {plays > 0 && (
                       <span style={styles.playCount}>
-                        {'\u{25B6}'} {plays}
+                        &#9654; {plays}
                       </span>
                     )}
                   </div>
@@ -226,7 +229,7 @@ export default function SongsPage() {
       {/* Info */}
       <motion.div style={styles.infoBox} variants={itemVariants}>
         <p style={styles.infoText}>
-          {'\u{1F4A1}'} Songs unlock as you learn sounds in each group.
+          Songs unlock as you learn sounds in each group.
           Sing songs 5 times to earn 3 stars!
         </p>
       </motion.div>
@@ -295,8 +298,16 @@ const styles: Record<string, React.CSSProperties> = {
     top: 8,
     right: 8,
   },
-  songEmoji: {
-    fontSize: '2.5rem',
+  songGroupBadge: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1.4rem',
+    fontWeight: 900,
+    color: 'white',
     flexShrink: 0,
   },
   songInfo: {

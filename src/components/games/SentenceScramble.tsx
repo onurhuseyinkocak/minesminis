@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, RotateCcw, Lightbulb, Sparkles } from 'lucide-react';
+import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import './SentenceScramble.css';
@@ -149,7 +149,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
             transition={{ type: 'spring', stiffness: 200 }}
             className="sentence-scramble__results-content"
           >
-            <span className="sentence-scramble__big-emoji" role="img" aria-label="star">⭐</span>
+            <Star size={48} fill="#E8A317" color="#E8A317" />
             <h2 className="sentence-scramble__results-title">Sentence Master!</h2>
             <p className="sentence-scramble__results-score">
               {score} out of {sentences.length} sentences!
@@ -215,7 +215,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <CheckCircle size={22} /> Perfect sentence! 🌟
+          <CheckCircle size={22} /> Perfect sentence!
         </motion.div>
       )}
 
@@ -225,7 +225,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
         >
-          Not quite! Keep trying! 💪
+          Not quite! Keep trying!
         </motion.div>
       )}
 

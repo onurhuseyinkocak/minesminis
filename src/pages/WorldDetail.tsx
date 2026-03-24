@@ -164,7 +164,7 @@ const WorldDetail = () => {
         <div className="world-detail-vocab__scroll">
           {vocabPreview.map((v, i) => (
             <div key={i} className="vocab-preview-card">
-              <span className="vocab-preview-card__emoji">{v.emoji}</span>
+              <div className="vocab-preview-card__letter">{v.english.charAt(0).toUpperCase()}</div>
               <span className="vocab-preview-card__word">{v.english}</span>
             </div>
           ))}
@@ -379,7 +379,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
           <div className="world-detail-vocab__scroll">
             {unit.phonicsFocus.map((sound, i) => (
               <div key={i} className="vocab-preview-card">
-                <span className="vocab-preview-card__emoji">🔤</span>
+                <div className="vocab-preview-card__letter">{sound.replace(/^g\d+_/, '').charAt(0).toUpperCase()}</div>
                 <span className="vocab-preview-card__word">{sound.replace(/^g\d+_/, '')}</span>
               </div>
             ))}

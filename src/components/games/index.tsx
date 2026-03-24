@@ -110,7 +110,7 @@ export function GameSelector({ type, ...props }: GameSelectorProps) {
     <React.Suspense
       fallback={
         <div style={{ textAlign: 'center', padding: '2rem', fontSize: '1.5rem' }}>
-          Loading game... 🎮
+          Loading game...
         </div>
       }
     >

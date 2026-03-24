@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Mic } from 'lucide-react';
+import { Mic, Volume2 } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
 
 interface DecodableReaderProps {
@@ -188,7 +188,7 @@ export const DecodableReader: React.FC<DecodableReaderProps> = ({ text, highligh
           size="lg"
           onClick={() => speak(text, 0.7)}
         >
-          🔊 Listen All
+          <Volume2 size={16} /> Listen All
         </Button>
 
         <Button
@@ -210,7 +210,7 @@ export const DecodableReader: React.FC<DecodableReaderProps> = ({ text, highligh
           style={{ textAlign: 'center' }}
         >
           <p style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A6B5A' }}>
-            Great reading! 🌟
+            Great reading!
           </p>
           <Button
             variant="primary"

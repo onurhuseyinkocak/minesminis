@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   Menu,
   Search,
+  Star,
 } from 'lucide-react';
 import './AdminShell.css';
 
@@ -92,7 +93,7 @@ export default function AdminShell({
         aria-label="Admin navigation"
       >
         <div className="admin-shell__sidebar-header">
-          <div className="admin-shell__sidebar-logo">🐲</div>
+          <div className="admin-shell__sidebar-logo"><Star size={22} fill="#E8A317" color="#E8A317" /></div>
           <div>
             <div className="admin-shell__sidebar-title">MinesMinis</div>
             <div className="admin-shell__sidebar-subtitle">Admin</div>

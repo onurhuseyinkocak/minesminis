@@ -10,6 +10,7 @@ import { kidsWords as fallbackWords } from '../data/wordsData';
 import { getDueWords, updateWordProgress, type WordProgress } from '../data/spacedRepetition';
 import { SFX } from '../data/soundLibrary';
 import MimiGuide from '../components/MimiGuide';
+import { KidIcon } from '../components/ui';
 
 interface KidsWord {
   id?: string;
@@ -59,7 +60,7 @@ const Words: React.FC = () => {
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [pronunciationResult, setPronunciationResult] = useState<Record<string, 'correct' | 'wrong' | 'listening'>>({});
   const [pronunciationWord, setPronunciationWord] = useState<string | null>(null);
-  const [showMoreWords, setShowMoreWords] = useState(false);
+  const [showMoreWords, setShowMoreWords] = useState(true);
 
   // Review state
   const [dueWords, setDueWords] = useState<WordProgress[]>([]);
@@ -260,17 +261,17 @@ const Words: React.FC = () => {
 
   const myWords = kidsWords.filter(w => learnedWords.has(w.word) || favoriteWords.has(w.word));
 
-  const TABS: { id: TabType; emoji: string; label: string }[] = [
-    { id: 'words', emoji: '\uD83D\uDCDA', label: 'All Words' },
-    { id: 'review', emoji: '\uD83D\uDD04', label: 'Review' },
-    { id: 'mywords', emoji: '\u2B50', label: 'My Words' },
+  const TABS: { id: TabType; icon: React.ReactNode; label: string }[] = [
+    { id: 'words', icon: <KidIcon name="book" size={20} />, label: 'All Words' },
+    { id: 'review', icon: <KidIcon name="star" size={20} />, label: 'Review' },
+    { id: 'mywords', icon: <KidIcon name="heart" size={20} />, label: 'My Words' },
   ];
 
   return (
     <div className="words-page">
       {/* Hero */}
       <div className="words-hero">
-        <span className="words-hero-emoji">{'\uD83D\uDCDA'}</span>
+        <span className="words-hero-emoji"><KidIcon name="book" size={48} /></span>
         <h1 className="words-hero-title">My Words</h1>
       </div>
 
@@ -282,7 +283,7 @@ const Words: React.FC = () => {
             className={`words-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => handleTabSwitch(tab.id)}
           >
-            <span className="words-tab-emoji">{tab.emoji}</span>
+            <span className="words-tab-emoji">{tab.icon}</span>
             <span className="words-tab-label">{tab.label}</span>
           </button>
         ))}
@@ -320,7 +321,7 @@ const Words: React.FC = () => {
                                   {word.image_url ? (
                                     <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
                                   ) : (
-                                    <span className="kid-card-emoji">{word.emoji || '\uD83D\uDCD6'}</span>
+                                    <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                                   )}
                                 </div>
                                 <h3 className="kid-card-word">{word.word}</h3>
@@ -328,7 +329,6 @@ const Words: React.FC = () => {
                               </div>
                             ) : (
                               <div className="kid-card-back" onClick={(e) => e.stopPropagation()}>
-                                <span className="kid-card-emoji-sm">{word.emoji}</span>
                                 <h3 className="kid-card-word">{word.word}</h3>
                                 <div className="kid-card-actions">
                                   <button className="kid-action-btn listen" onClick={() => playWordAudio(word)} disabled={isLoadingAudio}>
@@ -345,7 +345,7 @@ const Words: React.FC = () => {
                                     className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                                     onClick={() => toggleLearned(word.word)}
                                   >
-                                    {learnedWords.has(word.word) ? '\u2705 Learned!' : '\u2705 I know this!'}
+                                    {learnedWords.has(word.word) ? '✓ Learned!' : '✓ I know this!'}
                                   </button>
                                 </div>
                                 <button className="kid-card-close" onClick={() => setFlippedCard(null)}>Tap to close</button>
@@ -376,7 +376,7 @@ const Words: React.FC = () => {
                             {word.image_url ? (
                               <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
                             ) : (
-                              <span className="kid-card-emoji">{word.emoji || '\uD83D\uDCD6'}</span>
+                              <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                             )}
                           </div>
                           <h3 className="kid-card-word">{word.word}</h3>
@@ -385,7 +385,6 @@ const Words: React.FC = () => {
                       ) : (
                         /* BACK */
                         <div className="kid-card-back" onClick={(e) => e.stopPropagation()}>
-                          <span className="kid-card-emoji-sm">{word.emoji}</span>
                           <h3 className="kid-card-word">{word.word}</h3>
 
                           <div className="kid-card-actions">
@@ -409,7 +408,7 @@ const Words: React.FC = () => {
                               className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                               onClick={() => toggleLearned(word.word)}
                             >
-                              {learnedWords.has(word.word) ? '\u2705 Learned!' : '\u2705 I know this!'}
+                              {learnedWords.has(word.word) ? '✓ Learned!' : '✓ I know this!'}
                             </button>
                           </div>
 
@@ -432,7 +431,7 @@ const Words: React.FC = () => {
                     className="more-words-btn"
                     onClick={() => setShowMoreWords(true)}
                   >
-                    {'\uD83D\uDC47'} More Words ({kidsWords.length - displayWords.length} more)
+                    More Words ↓ ({kidsWords.length - displayWords.length} more)
                   </button>
                 </div>
               )}
@@ -449,7 +448,7 @@ const Words: React.FC = () => {
             >
               {dueWords.length === 0 ? (
                 <div className="words-empty">
-                  <span className="words-empty-emoji">{'\u2728'}</span>
+                  <span className="words-empty-emoji"><KidIcon name="star" size={48} /></span>
                   <h3>All caught up!</h3>
                   <p>No words to review right now. Keep learning!</p>
                 </div>
@@ -466,7 +465,7 @@ const Words: React.FC = () => {
                       className="review-flashcard"
                       onClick={() => setReviewRevealed(true)}
                     >
-                      <span className="review-emoji">{matchedWord?.emoji || '\uD83D\uDCDA'}</span>
+                      <div className="review-letter-badge">{(dueWords[reviewIndex]?.wordId || '?').charAt(0).toUpperCase()}</div>
 
                       {reviewRevealed ? (
                         <>
@@ -487,13 +486,13 @@ const Words: React.FC = () => {
                           className="review-btn again"
                           onClick={() => handleReviewAnswer(false)}
                         >
-                          {'\uD83E\uDD14'} Show me again
+                          Show me again
                         </button>
                         <button
                           className="review-btn know"
                           onClick={() => handleReviewAnswer(true)}
                         >
-                          {'\uD83D\uDE0A'} I know it!
+                          I know it!
                         </button>
                       </div>
                     )}
@@ -513,7 +512,7 @@ const Words: React.FC = () => {
             >
               {myWords.length === 0 ? (
                 <div className="words-empty">
-                  <span className="words-empty-emoji">{'\u2B50'}</span>
+                  <span className="words-empty-emoji"><KidIcon name="star" size={48} /></span>
                   <h3>No words yet!</h3>
                   <p>Tap "I know this!" on word cards to add them here.</p>
                 </div>
@@ -533,12 +532,12 @@ const Words: React.FC = () => {
                           {word.image_url ? (
                             <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
                           ) : (
-                            <span className="kid-card-emoji">{word.emoji || '\uD83D\uDCD6'}</span>
+                            <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                           )}
                         </div>
                         <h3 className="kid-card-word">{word.word}</h3>
                         <p className="kid-card-turkish">{word.turkish}</p>
-                        {learnedWords.has(word.word) && <span className="learned-badge">{'\u2705'}</span>}
+                        {learnedWords.has(word.word) && <span className="learned-badge"><KidIcon name="check" size={16} /></span>}
                       </div>
                     </motion.div>
                   ))}

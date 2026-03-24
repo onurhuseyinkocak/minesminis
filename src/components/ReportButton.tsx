@@ -38,7 +38,7 @@ const ReportButton: React.FC = () => {
 
             if (error) throw error;
 
-            toast.success('Raporunuz başarıyla gönderildi. Teşekkürler! 🛡️');
+            toast.success('Raporunuz başarıyla gönderildi. Teşekkürler!');
             setReport('');
             setIsOpen(false);
         } catch (error) {
@@ -101,7 +101,7 @@ const ReportButton: React.FC = () => {
 
                             <form onSubmit={handleSubmit} className="report-form">
                                 <p className="report-info">
-                                    Karşılaştığın sorunu kısaca anlatır mısın? 🐻
+                                    Karşılaştığın sorunu kısaca anlatır mısın?
                                 </p>
                                 <div className="page-info">
                                     <span className="info-label">Sayfa:</span>

@@ -38,21 +38,21 @@ import './DailyLesson.css';
 // Period 3 (Speak): "What is this?" — child recalls
 
 const PHASES_EN = [
-  { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'This is SAT. This is SIT. Tap to hear!', icon: '👂' },
-  { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See each word in a sentence', icon: '👀' },
-  { id: 3, key: 'play',   title: "Hadi Oynayalım!",    subtitle: 'Hangisi SAT göster bana!', icon: '🎮' },
-  { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'What is this word? Say it!', icon: '🎤' },
-  { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned', icon: '🧠' },
-  { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story', icon: '📖' },
+  { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'This is SAT. This is SIT. Tap to hear!', icon: '1' },
+  { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See each word in a sentence', icon: '2' },
+  { id: 3, key: 'play',   title: "Hadi Oynayalım!",    subtitle: 'Hangisi SAT göster bana!', icon: '3' },
+  { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'What is this word? Say it!', icon: '4' },
+  { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned', icon: '5' },
+  { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story', icon: '6' },
 ];
 
 const PHASES_TR = [
-  { id: 1, key: 'listen', title: 'Yeni Kelimeler!',    subtitle: 'Bu SAT. Bu SIT. Duymak için dokun!', icon: '👂' },
-  { id: 2, key: 'see',    title: 'İzle ve Öğren!',     subtitle: 'Her kelimeyi cümlede gör', icon: '👀' },
-  { id: 3, key: 'play',   title: 'Hadi Oynayalım!',    subtitle: 'Hangisi SAT? Göster bana!', icon: '🎮' },
-  { id: 4, key: 'speak',  title: 'Söyle!',             subtitle: 'Bu kelime ne? Söyle!', icon: '🎤' },
-  { id: 5, key: 'review', title: 'Hatırlıyor musun?',  subtitle: 'Öğrendiklerini test et', icon: '🧠' },
-  { id: 6, key: 'story',  title: 'Mini Hikaye!',       subtitle: 'Kelimeleri hikayede gör', icon: '📖' },
+  { id: 1, key: 'listen', title: 'Yeni Kelimeler!',    subtitle: 'Bu SAT. Bu SIT. Duymak için dokun!', icon: '1' },
+  { id: 2, key: 'see',    title: 'İzle ve Öğren!',     subtitle: 'Her kelimeyi cümlede gör', icon: '2' },
+  { id: 3, key: 'play',   title: 'Hadi Oynayalım!',    subtitle: 'Hangisi SAT? Göster bana!', icon: '3' },
+  { id: 4, key: 'speak',  title: 'Söyle!',             subtitle: 'Bu kelime ne? Söyle!', icon: '4' },
+  { id: 5, key: 'review', title: 'Hatırlıyor musun?',  subtitle: 'Öğrendiklerini test et', icon: '5' },
+  { id: 6, key: 'story',  title: 'Mini Hikaye!',       subtitle: 'Kelimeleri hikayede gör', icon: '6' },
 ];
 
 const TOTAL_PHASES = PHASES_EN.length; // 6
@@ -252,7 +252,7 @@ function MontessoriNav({
             aria-label={`${p.title}${isDone ? ' (completed)' : ''}${isLocked ? ' (locked)' : ''}`}
             aria-current={isActive ? 'step' : undefined}
           >
-            <span className="dl-phase-btn__icon">{p.icon}</span>
+            <span className="dl-phase-btn__icon">{p.id}</span>
             <span className="dl-phase-btn__label">{p.title}</span>
             {progressLabel && (
               <span className="dl-phase-btn__progress">{progressLabel}</span>
@@ -330,7 +330,7 @@ function PhaseListenStep({
         tabIndex={0}
         aria-label={`${word.word} — tap to hear`}
       >
-        <span className="dl-card__emoji">{word.emoji}</span>
+        <div className="dl-card__letter">{word.word.charAt(0).toUpperCase()}</div>
         <span className="dl-card__word">{word.word.toUpperCase()}</span>
         <span className="dl-card__tr">{word.turkish}</span>
         <span className="dl-card__tap-hint">
@@ -388,7 +388,7 @@ function PhaseSeeStep({
       <CardDots current={index} total={total} />
 
       <div className="dl-sentence-card">
-        <span className="dl-sentence-card__emoji">{word.emoji}</span>
+        <div className="dl-card__letter dl-sentence-card__letter">{word.word.charAt(0).toUpperCase()}</div>
         <p className="dl-sentence">
           {parts[0]}
           <span className="dl-sentence__highlight">{sentence.highlight}</span>
@@ -504,7 +504,7 @@ function PhasePlay({
         )
       );
       setMatchedCount((c) => c + 1);
-      showFeedbackMsg(lang === 'tr' ? 'Harika eşleşme! ✨' : 'Great match! ✨');  // i18n: Great match!
+      showFeedbackMsg(lang === 'tr' ? 'Harika eşleşme!' : 'Great match!');  // i18n: Great match!
     } else {
       // Montessori self-correcting: show the correct Turkish tile gently
       SFX.wrong();
@@ -546,7 +546,7 @@ function PhasePlay({
   if (allDone) {
     return (
       <div className="dl-phase-complete">
-        <div className="dl-phase-complete__icon">🎉</div>
+        <div className="dl-phase-complete__icon"><Check size={40} strokeWidth={3} color="#22C55E" /></div>
         <p className="dl-phase-complete__msg">
           {lang === 'tr' ? 'Tüm eşleşmeleri buldun!' : 'All matched!'}
         </p>
@@ -723,7 +723,7 @@ function PhaseSpeak({
       <CardDots current={index} total={words.length} />
 
       <div className="dl-speak-card">
-        <span className="dl-card__emoji">{currentWord.emoji}</span>
+        <div className="dl-card__letter">{currentWord.word.charAt(0).toUpperCase()}</div>
         <span className="dl-speak-word">{currentWord.word.toUpperCase()}</span>
         <span className="dl-card__tr">{currentWord.turkish}</span>
 
@@ -863,7 +863,7 @@ function PhaseReview({
       if (choice === q.correct) {
         SFX.correct();
         setScore((s) => s + 1);
-        setShowFeedback({ msg: lang === 'tr' ? 'Doğru! ✨' : 'Correct! ✨' });
+        setShowFeedback({ msg: lang === 'tr' ? 'Doğru!' : 'Correct!' });
       } else {
         SFX.wrong();
         // Montessori: self-correcting — show correct answer, no "wrong" label
@@ -904,7 +904,7 @@ function PhaseReview({
   if (allReviewDone) {
     return (
       <div className="dl-phase-complete">
-        <div className="dl-phase-complete__icon">🧠</div>
+        <div className="dl-phase-complete__icon"><Check size={40} strokeWidth={3} color="#7C3AED" /></div>
         <p className="dl-phase-complete__msg">
           {lang === 'tr' ? `${finalScore}% doğru!` : `${finalScore}% correct!`}
         </p>
@@ -1052,7 +1052,6 @@ function CelebrationScreen({
                 onClick={() => speak(w.word).catch(() => {})}
                 aria-label={`Hear ${w.word}`}
               >
-                <span>{w.emoji}</span>
                 <span>{w.word}</span>
               </button>
             ))}
@@ -1497,7 +1496,7 @@ export default function DailyLesson() {
           <div className="dl-phonics-card">
             <div className="dl-phonics-card__sound">{todaySound.grapheme}</div>
             <div className="dl-phonics-card__phoneme">{todaySound.phoneme}</div>
-            <div className="dl-phonics-card__keyword">{todaySound.emoji} {todaySound.keyword}</div>
+            <div className="dl-phonics-card__keyword">{todaySound.keyword}</div>
             <button
               className="dl-btn dl-btn--ghost"
               onClick={() => speak(todaySound.grapheme).catch(() => {})}

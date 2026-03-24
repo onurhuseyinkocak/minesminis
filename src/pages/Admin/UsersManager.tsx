@@ -248,7 +248,7 @@ function UsersManager() {
                     <br />
                     <small>Şifre: <code>{password}</code></small>
                     <br />
-                    <small style={{ color: '#f59e0b' }}>⚠️ Bu şifreyi kaydedin!</small>
+                    <small style={{ color: '#f59e0b' }}>Bu şifreyi kaydedin!</small>
                 </div>,
                 { duration: 10000 }
             );
@@ -396,9 +396,9 @@ function UsersManager() {
                             className={`filter-chip ${selectedRole === role ? 'active' : ''}`}
                             onClick={() => setSelectedRole(role)}
                         >
-                            {role === 'all' ? '👥 Tümü' :
-                                role === 'admin' ? '🛡️ Admin' :
-                                    role === 'teacher' ? '⭐ Öğretmen' : '📚 Öğrenci'}
+                            {role === 'all' ? 'Tümü' :
+                                role === 'admin' ? 'Admin' :
+                                    role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}
                         </button>
                     ))}
                     <span style={{ margin: '0 0.5rem', color: '#cbd5e1' }}>|</span>
@@ -408,8 +408,8 @@ function UsersManager() {
                             className={`filter-chip ${selectedPremium === type ? 'active' : ''}`}
                             onClick={() => setSelectedPremium(type)}
                         >
-                            {type === 'all' ? '🎯 Tüm Üyelik' :
-                                type === 'premium' ? '👑 Premium' : '🆓 Ücretsiz'}
+                            {type === 'all' ? 'Tüm Üyelik' :
+                                type === 'premium' ? 'Premium' : 'Ücretsiz'}
                         </button>
                     ))}
                 </div>
@@ -431,7 +431,13 @@ function UsersManager() {
                             <tr key={user.id}>
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <span style={{ fontSize: '1.5rem' }}>{(user.settings?.avatar_emoji as string) || '👤'}</span>
+                                        {(user.settings?.avatar_emoji as string) ? (
+                                            <span style={{ fontSize: '1.5rem' }}>{user.settings.avatar_emoji as string}</span>
+                                        ) : (
+                                            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 14 }}>
+                                                {(user.display_name || 'U').charAt(0).toUpperCase()}
+                                            </div>
+                                        )}
                                         <strong>{user.display_name || 'İsimsiz'}</strong>
                                     </div>
                                 </td>
@@ -454,9 +460,9 @@ function UsersManager() {
                                             fontWeight: 600
                                         }}
                                     >
-                                        <option value="student">📚 Öğrenci</option>
-                                        <option value="teacher">⭐ Öğretmen</option>
-                                        <option value="admin">🛡️ Admin</option>
+                                        <option value="student">Öğrenci</option>
+                                        <option value="teacher">Öğretmen</option>
+                                        <option value="admin">Admin</option>
                                     </select>
                                 </td>
                                 <td>
@@ -491,7 +497,7 @@ function UsersManager() {
                                 </td>
                                 <td>
                                     <span style={{ fontWeight: 600, color: '#f59e0b' }}>
-                                        ⭐ {user.points || 0}
+                                        {user.points || 0}
                                     </span>
                                 </td>
                                 <td>
@@ -568,9 +574,9 @@ function UsersManager() {
                                         value={newUserData.role}
                                         onChange={(e) => setNewUserData({ ...newUserData, role: e.target.value as 'student' | 'teacher' | 'admin' })}
                                     >
-                                        <option value="student">📚 Öğrenci</option>
-                                        <option value="teacher">⭐ Öğretmen</option>
-                                        <option value="admin">🛡️ Admin</option>
+                                        <option value="student">Öğrenci</option>
+                                        <option value="teacher">Öğretmen</option>
+                                        <option value="admin">Admin</option>
                                     </select>
                                 </div>
 

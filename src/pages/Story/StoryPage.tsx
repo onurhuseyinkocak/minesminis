@@ -236,7 +236,7 @@ const StoryPage = React.memo(() => {
         </button>
 
         <div className="story-page__world-badge" style={{ background: world.color }}>
-          <span>{world.emoji}</span>
+          <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{world.name.charAt(0).toUpperCase()}</div>
           <span>{world.name}</span>
         </div>
 
@@ -275,7 +275,7 @@ const StoryPage = React.memo(() => {
               const info = TRAIT_NAMES[trait];
               return (
                 <div key={trait} className="story-page__trait">
-                  <span>{info.emoji}</span>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: info.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900 }}>{info.name.charAt(0).toUpperCase()}</div>
                   <span className="story-page__trait-name">{info.name}</span>
                   <div className="story-page__trait-bar">
                     <div
@@ -295,7 +295,7 @@ const StoryPage = React.memo(() => {
             <span>Total XP: {storyState.totalXP}</span>
           </div>
           <div className="story-page__stats-row">
-            <span>Dominant trait: {dominantTraitInfo.emoji} {dominantTraitInfo.name}</span>
+            <span>Dominant trait: {dominantTraitInfo.name}</span>
             <span>Sessions: {storyState.sessionCount}</span>
           </div>
         </div>
@@ -311,7 +311,7 @@ const StoryPage = React.memo(() => {
             <div className="story-page__items">
               {inventoryItems.map(item => item && (
                 <div key={item.id} className={`story-page__item story-page__item--${item.rarity}`}>
-                  <span className="story-page__item-emoji">{item.emoji}</span>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900 }} className="story-page__item-emoji">{item.name.charAt(0).toUpperCase()}</div>
                   <div>
                     <div className="story-page__item-name">{item.name}</div>
                     <div className="story-page__item-desc">{item.description}</div>
@@ -331,7 +331,7 @@ const StoryPage = React.memo(() => {
             const info = TRAIT_NAMES[trait as TraitId];
             return val ? (
               <span key={trait} className="story-page__feedback-trait" style={{ color: info.color }}>
-                {info.emoji} +{val}
+                +{val}
               </span>
             ) : null;
           })}
@@ -361,7 +361,7 @@ const StoryPage = React.memo(() => {
               <div className="story-page__vocab-list">
                 {currentNode.vocabulary!.map((v) => (
                   <div key={v.word} className="story-page__vocab-item">
-                    <span className="story-page__vocab-emoji">{v.emoji}</span>
+                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }} className="story-page__vocab-emoji">{v.word.charAt(0).toUpperCase()}</div>
                     <span className="story-page__vocab-word">{v.word}</span>
                     <span className="story-page__vocab-turkish">{v.turkish}</span>
                     <button
@@ -382,7 +382,7 @@ const StoryPage = React.memo(() => {
                   setVocabUpdating(true);
                   const words = currentNode.vocabulary!;
                   words.forEach((v) => updateWordProgress(v.word, true));
-                  toast.success(`${words.length} new word${words.length > 1 ? 's' : ''} added to your review list! \u{1F4DA}`);
+                  toast.success(`${words.length} new word${words.length > 1 ? 's' : ''} added to your review list!`);
                   setVocabDismissed(true);
                   setVocabUpdating(false);
                 }}

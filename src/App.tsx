@@ -17,6 +17,7 @@ import { getTodayMinutes } from "./services/activityLogger";
 
 import { Star } from "lucide-react";
 import MimiMascot from "./components/MimiMascot";
+import FloatingMascot from "./components/FloatingMascot";
 import { validateCurriculumData } from "./utils/dataValidation";
 import { LS_DAILY_TIME_LIMIT } from "./config/storageKeys";
 import "./App.css";
@@ -60,13 +61,6 @@ const Worksheets = lazy(() => import("./pages/Worksheets"));
 const Favorites = lazy(() => import("./pages/Favorites"));
 const ReadingLibrary = lazy(() => import("./pages/Student/ReadingLibrary"));
 const DailyLesson = lazy(() => import("./pages/DailyLesson"));
-
-// Protected – Parent / Teacher
-const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
-const WeeklyReport = lazy(() => import("./pages/Parent/WeeklyReport"));
-const ClassroomMode = lazy(() => import("./pages/Teacher/ClassroomMode"));
-const ClassroomManager = lazy(() => import("./pages/Teacher/ClassroomManager"));
-const TeacherDashboard = lazy(() => import("./pages/Teacher/TeacherDashboard"));
 
 // Admin
 const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
@@ -277,7 +271,7 @@ function TimeGuardedRoute({ children }: { children: React.ReactNode }) {
 function StudentRoute({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute>
-      <AppShell>
+      <AppShell showSidebar>
         <TimeGuardedRoute>{children}</TimeGuardedRoute>
       </AppShell>
     </ProtectedRoute>
@@ -293,8 +287,6 @@ function AppRoutes() {
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isSetupRoute = location.pathname === "/setup";
-  const isTeacher = userProfile?.role === "teacher";
-  const isParent = userProfile?.role === "parent";
 
   const authReady = !loading;
   const profileReady = !user || !profileLoading;
@@ -342,7 +334,7 @@ function AppRoutes() {
               path="/"
               element={
                 user ? (
-                  <Navigate to={isAdmin ? "/admin" : isParent ? "/parent" : isTeacher ? "/teacher" : "/dashboard"} replace />
+                  <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />
                 ) : (
                   <Landing />
                 )
@@ -352,7 +344,7 @@ function AppRoutes() {
               path="/login"
               element={
                 user ? (
-                  <Navigate to={isAdmin ? "/admin" : isParent ? "/parent" : isTeacher ? "/teacher" : "/dashboard"} replace />
+                  <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />
                 ) : (
                   <Login />
                 )
@@ -400,14 +392,6 @@ function AppRoutes() {
             <Route path="/reading/:bookId" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/daily-lesson" element={<StudentRoute><DailyLesson /></StudentRoute>} />
             <Route path="/pricing" element={<Pricing />} />
-
-            {/* ── Parent (protected, no student AppShell) ────────── */}
-            <Route path="/parent" element={<ErrorBoundary><ProtectedRoute><ParentDashboard /></ProtectedRoute></ErrorBoundary>} />
-            <Route path="/parent/report" element={<ErrorBoundary><ProtectedRoute><WeeklyReport /></ProtectedRoute></ErrorBoundary>} />
-            {/* ── Teacher (protected + AppShell) ─────────────────── */}
-            <Route path="/classroom" element={<StudentRoute><ClassroomMode /></StudentRoute>} />
-            <Route path="/teacher" element={<StudentRoute><TeacherDashboard /></StudentRoute>} />
-            <Route path="/teacher/classrooms" element={<StudentRoute><ClassroomManager /></StudentRoute>} />
 
             {/* ── Catch-all ──────────────────────────────────────── */}
             <Route path="*" element={<NotFound />} />
@@ -513,8 +497,7 @@ function AppContent() {
     }
 
     if (user && isSetupCompleted && isSetupRoute) {
-      const role = userProfile?.role;
-      navigate(role === "parent" ? "/parent" : role === "teacher" ? "/teacher" : "/dashboard");
+      navigate("/dashboard");
     }
   }, [user, userProfile, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileLoading, navigate, isAdmin]);
 
@@ -545,6 +528,11 @@ function AppContent() {
       {/* What's Next? floating button (students only) */}
       {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
         <WhatsNextButton />
+      )}
+
+      {/* Floating mascot (authenticated students only) */}
+      {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
+        <FloatingMascot />
       )}
 
       {/* Chat modal */}

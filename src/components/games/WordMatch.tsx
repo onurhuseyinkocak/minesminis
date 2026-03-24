@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, Sparkles } from 'lucide-react';
+import { CheckCircle, Sparkles, Trophy, Star, Check } from 'lucide-react';
 import { Card, Badge, ProgressBar, FloatingEmoji } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -175,16 +175,18 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             transition={{ type: 'spring', stiffness: 200 }}
             className="word-match__results-content"
           >
-            <span className="word-match__results-emoji" role="img" aria-label="celebration">
-              {pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '👏'}
+            <span className="word-match__results-emoji">
+              {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
             </span>
             <h2 className="word-match__results-title">{t('games.greatJob')}</h2>
             <p className="word-match__results-score">
               {t('games.youMatched').replace('{score}', String(score)).replace('{total}', String(totalAttempted))}
             </p>
-            <div className="word-match__results-stars" aria-label={`${stars} out of 3 stars`}>
-              {'⭐'.repeat(stars)}{'☆'.repeat(3 - stars)}
-            </div>
+            <span className="game-stars">
+              {Array.from({ length: 3 }, (_, i) => (
+                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+              ))}
+            </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 10} XP
             </Badge>
@@ -219,7 +221,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
         >
-          <CheckCircle size={24} /> {t('games.amazing')} 🌟
+          <CheckCircle size={24} /> {t('games.amazing')}
         </motion.div>
       )}
 
@@ -230,7 +232,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           animate={{ opacity: 1, x: [0, -8, 8, -8, 0] }}
           exit={{ opacity: 0 }}
         >
-          {t('games.tryAgainYouGotThis')} 💪
+          {t('games.tryAgainYouGotThis')}
         </motion.div>
       )}
 
@@ -256,7 +258,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <span className="word-match__card-emoji">{item.emoji}</span>
+                <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
                 <span className="word-match__card-text">{item.english}</span>
               </motion.button>
             ))}
@@ -284,7 +286,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <span className="word-match__card-emoji">{item.emoji}</span>
+                <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
                 <span className="word-match__card-text">{item.turkish}</span>
               </motion.button>
             ))}

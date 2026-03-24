@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, Sparkles, Headphones } from 'lucide-react';
+import { Volume2, Sparkles, Headphones, Lightbulb } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
@@ -156,7 +156,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          Yes! It was "{round.correctWord.english}"! 🌟
+          Yes! It was "{round.correctWord.english}"!
         </motion.div>
       )}
 
@@ -166,7 +166,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          It was "{round.correctWord.english}" {round.correctWord.emoji} 💡
+          It was "{round.correctWord.english}" <Lightbulb size={14} color="#E8A317" />
         </motion.div>
       )}
 
@@ -193,7 +193,9 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span className="listening-challenge__option-emoji">{option.emoji}</span>
+                <span className="listening-challenge__option-emoji"
+                  style={{ background: 'var(--primary)', color: '#fff', borderRadius: '50%', width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1rem', flexShrink: 0 }}
+                >{option.english[0].toUpperCase()}</span>
                 <span className="listening-challenge__option-label">{option.english}</span>
               </motion.button>
             );

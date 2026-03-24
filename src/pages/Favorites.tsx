@@ -5,6 +5,7 @@ import { supabase } from '../config/supabase';
 import { Heart, Lock, HeartCrack } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MimiMascot from '../components/MimiMascot';
+import { KidIcon } from '../components/ui';
 import './Favorites.css';
 
 interface Favorite {
@@ -81,13 +82,13 @@ const Favorites: React.FC = () => {
     ? favorites
     : favorites.filter(fav => fav.item_type === activeFilter);
 
-  const getTypeEmoji = (type: string) => {
+  const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'game': return '🎮';
-      case 'word': return '📖';
-      case 'worksheet': return '📝';
-      case 'video': return '🎥';
-      default: return '⭐';
+      case 'game': return <KidIcon name="games" size={20} />;
+      case 'word': return <KidIcon name="book" size={20} />;
+      case 'worksheet': return <KidIcon name="learn" size={20} />;
+      case 'video': return <KidIcon name="video" size={20} />;
+      default: return <KidIcon name="star" size={20} />;
     }
   };
 
@@ -122,25 +123,25 @@ const Favorites: React.FC = () => {
           className={`filter-tab ${activeFilter === 'game' ? 'active' : ''}`}
           onClick={() => setActiveFilter('game')}
         >
-          🎮 Games ({favorites.filter(f => f.item_type === 'game').length})
+          <KidIcon name="games" size={16} /> Games ({favorites.filter(f => f.item_type === 'game').length})
         </button>
         <button
           className={`filter-tab ${activeFilter === 'word' ? 'active' : ''}`}
           onClick={() => setActiveFilter('word')}
         >
-          📖 Words ({favorites.filter(f => f.item_type === 'word').length})
+          <KidIcon name="book" size={16} /> Words ({favorites.filter(f => f.item_type === 'word').length})
         </button>
         <button
           className={`filter-tab ${activeFilter === 'worksheet' ? 'active' : ''}`}
           onClick={() => setActiveFilter('worksheet')}
         >
-          📝 Worksheets ({favorites.filter(f => f.item_type === 'worksheet').length})
+          <KidIcon name="learn" size={16} /> Worksheets ({favorites.filter(f => f.item_type === 'worksheet').length})
         </button>
         <button
           className={`filter-tab ${activeFilter === 'video' ? 'active' : ''}`}
           onClick={() => setActiveFilter('video')}
         >
-          🎥 Videos ({favorites.filter(f => f.item_type === 'video').length})
+          <KidIcon name="video" size={16} /> Videos ({favorites.filter(f => f.item_type === 'video').length})
         </button>
       </div>
 
@@ -162,7 +163,7 @@ const Favorites: React.FC = () => {
             {filteredFavorites.map((favorite) => (
               <div key={favorite.id} className="favorite-card favorite-card--clickable" onClick={() => handleNavigate(favorite.item_type)}>
                 <div className="favorite-type-badge">
-                  {getTypeEmoji(favorite.item_type)}
+                  {getTypeIcon(favorite.item_type)}
                 </div>
                 {favorite.item_image && (
                   <div className="favorite-image">

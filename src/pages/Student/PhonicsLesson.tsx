@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, ArrowRight, ArrowLeft, Sparkles, Mic, BookOpen, PenTool } from 'lucide-react';
+import { Volume2, ArrowRight, ArrowLeft, Sparkles, Mic, BookOpen, PenTool, Trophy, Search, Target } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../../components/ui';
 import { BlendingBoard } from '../../components/phonics/BlendingBoard';
 import { LetterTracing } from '../../components/phonics/LetterTracing';
@@ -105,32 +105,18 @@ function getSegmentingWords(sound: PhonicsSound, group: PhonicsGroup): string[] 
   return words.slice(3, 6).length >= 3 ? words.slice(3, 6) : words.slice(0, 3);
 }
 
-/** Word-to-emoji mapping for keyword cards */
-const WORD_EMOJI: Record<string, string> = {
-  sun: '\u2600\uFE0F', sit: '\uD83E\uDE91', sat: '\uD83E\uDE91', sip: '\uD83E\uDD64', sad: '\uD83D\uDE22', six: '6\uFE0F\u20E3', set: '\uD83C\uDFAF', see: '\uD83D\uDC40',
-  ant: '\uD83D\uDC1C', at: '\uD83D\uDCCD', and: '\u2795', apple: '\uD83C\uDF4E', add: '\u2795',
-  tap: '\uD83D\uDC46', tin: '\uD83E\uDD6B', ten: '\uD83D\uDD1F', top: '\uD83D\uDD1D', tip: '\uD83D\uDCA1',
-  in: '\uD83D\uDCE5', it: '\uD83D\uDC49', is: '\u2705', ink: '\uD83D\uDD8A\uFE0F',
-  pan: '\uD83C\uDF73', pin: '\uD83D\uDCCC', pat: '\u270B', pen: '\uD83D\uDD8A\uFE0F', pig: '\uD83D\uDC37', pot: '\uD83C\uDF6F',
-  nap: '\uD83D\uDE34', net: '\uD83E\uDD45', nit: '\uD83D\uDD0D', nut: '\uD83E\uDD5C', nod: '\uD83D\uDC4D',
-  cat: '\uD83D\uDC31', cup: '\u2615', cap: '\uD83E\uDDE2', car: '\uD83D\uDE97', can: '\uD83E\uDD6B',
-  hat: '\uD83C\uDFA9', hen: '\uD83D\uDC14', hit: '\uD83D\uDCA5', hot: '\uD83D\uDD25', hut: '\uD83D\uDED6',
-  red: '\uD83D\uDD34', run: '\uD83C\uDFC3', rat: '\uD83D\uDC00', rug: '\uD83D\uDFEB', rip: '\uD83D\uDC94',
-  man: '\uD83D\uDC68', map: '\uD83D\uDDFA\uFE0F', mat: '\uD83E\uDDF9', mud: '\uD83D\uDCA9', mix: '\uD83D\uDD04',
-  dog: '\uD83D\uDC15', dad: '\uD83D\uDC68', dig: '\u26CF\uFE0F', dot: '\u26AB', dip: '\uD83E\uDED5',
-  got: '\u2705', gun: '\uD83D\uDD2B', gum: '\uD83E\uDEE7', gap: '\uD83D\uDD73\uFE0F', gas: '\u26FD',
-  on: '\uD83D\uDD1B', off: '\uD83D\uDCF4', odd: '\uD83E\uDD14', ox: '\uD83D\uDC02',
-  up: '\u2B06\uFE0F', us: '\uD83D\uDC65', bus: '\uD83D\uDE8C', bug: '\uD83D\uDC1B', bun: '\uD83C\uDF5E', but: '\u27A1\uFE0F',
-  log: '\uD83E\uDEB5', lip: '\uD83D\uDC44', leg: '\uD83E\uDDB5', lot: '\uD83D\uDCE6', lid: '\uD83E\uDED9',
-  fun: '\uD83C\uDF89', fog: '\uD83C\uDF2B\uFE0F', fig: '\uD83E\uDED8', fit: '\uD83D\uDCAA', fan: '\uD83C\uDF00',
-  big: '\uD83C\uDFD4\uFE0F', bed: '\uD83D\uDECF\uFE0F', bat: '\uD83E\uDD87', box: '\uD83D\uDCE6', bit: '\uD83D\uDD39',
-};
+/** Word letter colors for keyword cards — cycles through palette */
+const LETTER_COLORS = ['#FF6B35', '#7C3AED', '#22C55E', '#3B82F6', '#F59E0B', '#EC4899'];
+function getWordColor(word: string): string {
+  const idx = word.charCodeAt(0) % LETTER_COLORS.length;
+  return LETTER_COLORS[idx];
+}
 
-/** Get keywords with emojis from the sound */
-function getKeywords(sound: PhonicsSound): { word: string; emoji: string }[] {
+/** Get keywords from the sound */
+function getKeywords(sound: PhonicsSound): { word: string; color: string }[] {
   return sound.keywords.slice(0, 6).map((word) => ({
     word,
-    emoji: WORD_EMOJI[word.toLowerCase()] || sound.mnemonicEmoji,
+    color: getWordColor(word),
   }));
 }
 
@@ -245,7 +231,7 @@ function PhonicsLesson() {
       <div style={styles.container}>
         <Card variant="elevated" padding="xl">
           <div style={{ textAlign: 'center' }}>
-            <span style={{ fontSize: '3rem' }}>🔍</span>
+            <Search size={48} color="#1A6B5A" />
             <h2 style={{ color: '#1A6B5A' }}>Sound not found</h2>
             <p style={{ color: '#94A3B8' }}>We couldn&apos;t find this sound lesson.</p>
             <Button variant="primary" onClick={() => navigate('/dashboard')}>
@@ -317,13 +303,20 @@ function PhonicsLesson() {
       exit={{ opacity: 0, y: -20 }}
       style={styles.stepContent}
     >
-      <motion.span
-        animate={{ scale: [1, 1.3, 1] }}
+      <motion.div
+        animate={{ scale: [1, 1.15, 1] }}
         transition={{ repeat: Infinity, duration: 1.5 }}
-        style={{ fontSize: '4rem', display: 'block', textAlign: 'center' }}
+        style={{
+          width: 96, height: 96, borderRadius: '50%',
+          background: `linear-gradient(135deg, ${getWordColor(sound.grapheme)} 0%, ${getWordColor(sound.sound)} 100%)`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto', boxShadow: `0 8px 24px ${getWordColor(sound.grapheme)}44`,
+        }}
       >
-        {sound.mnemonicEmoji}
-      </motion.span>
+        <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', fontFamily: 'Nunito, sans-serif', lineHeight: 1 }}>
+          {sound.grapheme.toUpperCase()}
+        </span>
+      </motion.div>
 
       <div style={styles.actionBox}>
         <p style={styles.actionText}>{sound.action}</p>
@@ -410,7 +403,14 @@ function PhonicsLesson() {
                   backgroundColor: clicked ? 'rgba(34,197,94,0.1)' : '#1C2236',
                 }}
               >
-                <span style={{ fontSize: '1.5rem' }}>{kw.emoji}</span>
+                <div style={{
+                  width: 36, height: 36, borderRadius: '50%', background: kw.color,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0, fontWeight: 900, color: '#fff', fontSize: '1rem',
+                  fontFamily: 'Nunito, sans-serif',
+                }}>
+                  {kw.word.charAt(0).toUpperCase()}
+                </div>
                 <span style={{ fontSize: '1rem', fontWeight: 700 }}>
                   {idx >= 0 ? (
                     <>
@@ -495,7 +495,7 @@ function PhonicsLesson() {
           style={styles.stepContent}
         >
           <div style={{ textAlign: 'center' }}>
-            <span style={{ fontSize: '3rem' }}>🎯</span>
+            <Target size={48} color="#1A6B5A" />
             <h3 style={{ color: '#1A6B5A' }}>Great segmenting!</h3>
             <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
               Continue
@@ -750,13 +750,18 @@ function PhonicsLesson() {
         transition={{ type: 'spring', stiffness: 200 }}
         style={styles.stepContent}
       >
-        <motion.span
-          animate={{ rotate: [0, -10, 10, 0], scale: [1, 1.2, 1] }}
+        <motion.div
+          animate={{ rotate: [0, -8, 8, 0], scale: [1, 1.15, 1] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
-          style={{ fontSize: '5rem', display: 'block', textAlign: 'center' }}
+          style={{
+            width: 96, height: 96, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #E8A317 0%, #FF6B35 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto', boxShadow: '0 8px 24px rgba(232,163,23,0.4)',
+          }}
         >
-          {isGroupComplete ? '\uD83C\uDF89' : '\uD83C\uDF89'}
-        </motion.span>
+          <Trophy size={48} color="#fff" />
+        </motion.div>
 
         <h2 style={{ textAlign: 'center', color: '#1A6B5A', margin: 0 }}>
           {isGroupComplete ? 'Group Complete!' : 'Amazing work!'}
@@ -774,7 +779,7 @@ function PhonicsLesson() {
             </Badge>
             {gardenPlant && plantStage && (
               <p style={{ fontSize: '0.95rem', color: '#1A6B5A', margin: 0, fontWeight: 700 }}>
-                Your {gardenPlant.emoji} grew! It&apos;s now {plantStage.name === 'flowering' ? 'fully bloomed' : `a ${plantStage.name}`}!
+                Your plant grew! It&apos;s now {plantStage.name === 'flowering' ? 'fully bloomed' : `a ${plantStage.name}`}!
               </p>
             )}
             <p style={{ fontSize: '0.85rem', color: '#64748B', margin: 0 }}>
@@ -793,7 +798,7 @@ function PhonicsLesson() {
               style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
               fullWidth
             >
-              Next Sound: {nextSoundInGroup.grapheme.toUpperCase()} {nextSoundInGroup.mnemonicEmoji}
+              Next Sound: {nextSoundInGroup.grapheme.toUpperCase()}
             </Button>
           ) : (
             isGroupComplete && (

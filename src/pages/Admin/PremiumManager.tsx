@@ -319,7 +319,13 @@ function PremiumManager() {
                                     <tr key={user.id}>
                                         <td>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <span style={{ fontSize: '1.5rem' }}>{(user.settings?.avatar_emoji as string) || '👤'}</span>
+                                                {(user.settings?.avatar_emoji as string) ? (
+                                                    <span style={{ fontSize: '1.5rem' }}>{user.settings.avatar_emoji as string}</span>
+                                                ) : (
+                                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 14 }}>
+                                                        {(user.display_name || 'U').charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
                                                 <strong>{user.display_name}</strong>
                                             </div>
                                         </td>
@@ -333,7 +339,7 @@ function PremiumManager() {
                                                 fontSize: '0.75rem',
                                                 fontWeight: 600
                                             }}>
-                                                👑 {user.premium_plan}
+                                                {user.premium_plan}
                                             </span>
                                         </td>
                                         <td>{getPremiumUntil(user) ? new Date(getPremiumUntil(user)!).toLocaleDateString('tr-TR') : '-'}</td>
@@ -432,7 +438,7 @@ function PremiumManager() {
                                         fontSize: '0.7rem',
                                         fontWeight: 700
                                     }}>
-                                        ⭐ POPÜLER
+                                        POPÜLER
                                     </span>
                                 )}
                                 <h3 style={{ margin: '0 0 0.5rem', color: '#1e293b' }}>{plan.name}</h3>
@@ -537,7 +543,7 @@ function PremiumManager() {
                                             onChange={(e) => setPlanFormData({ ...planFormData, is_popular: e.target.checked })}
                                             style={{ width: 'auto' }}
                                         />
-                                        ⭐ Popüler Plan Olarak İşaretle
+                                        Popüler Plan Olarak İşaretle
                                     </label>
                                 </div>
                             </div>

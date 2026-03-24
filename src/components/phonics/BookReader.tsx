@@ -162,7 +162,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
             </button>
           )}
           <div style={styles.titleArea}>
-            <span style={styles.bookEmoji}>{book.emoji}</span>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900 }}>{book.title.charAt(0).toUpperCase()}</div>
             <span style={styles.bookTitle}>{book.title}</span>
           </div>
           <div style={styles.pageIndicator}>
@@ -288,7 +288,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
       <div style={styles.container}>
         <div style={styles.header}>
           <div style={styles.titleArea}>
-            <span style={styles.bookEmoji}>{book.emoji}</span>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900 }}>{book.title.charAt(0).toUpperCase()}</div>
             <span style={styles.bookTitle}>Quiz Time!</span>
           </div>
           <div style={styles.pageIndicator}>
@@ -312,7 +312,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
           animate={{ opacity: 1, y: 0 }}
           style={styles.quizContent}
         >
-          <div style={styles.quizEmoji}>{currentQuestion.emoji}</div>
+          <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900, margin: '0 auto' }}>{currentQuestion.question.charAt(0).toUpperCase()}</div>
           <h2 style={styles.quizQuestion}>{currentQuestion.question}</h2>
           <p style={styles.quizQuestionTr}>{currentQuestion.questionTr}</p>
 

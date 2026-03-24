@@ -26,21 +26,18 @@ type Video = {
   isPopular?: boolean;
 };
 
-const gradeInfo: Record<string, { color: string; gradient: string; emoji: string }> = {
+const gradeInfo: Record<string, { color: string; gradient: string }> = {
   '2nd Grade': {
     color: 'var(--mimi-green)',
     gradient: 'linear-gradient(135deg, var(--mimi-green), var(--mimi-green-dark))',
-    emoji: '\u{1F331}'
   },
   '3rd Grade': {
     color: 'var(--accent-blue)',
     gradient: 'linear-gradient(135deg, var(--accent-blue), var(--info))',
-    emoji: '\u2B50'
   },
   '4th Grade': {
     color: 'var(--accent-purple)',
     gradient: 'linear-gradient(135deg, var(--accent-purple), var(--accent-purple-light))',
-    emoji: '\u{1F680}'
   }
 };
 
@@ -386,7 +383,7 @@ function Videos() {
 
                 <div className="video-content">
                   <span className="video-grade" style={{ background: 'var(--primary-pale)', color: 'var(--primary-dark)' }}>
-                    {gradeInfo[video.grade]?.emoji} {video.grade}
+                    {video.grade}
                   </span>
                   <h3 className="video-title">{video.title}</h3>
                   <p className="video-desc">{video.description}</p>

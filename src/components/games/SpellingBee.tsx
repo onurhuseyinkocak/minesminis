@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Delete, Lightbulb, Volume2, Sparkles } from 'lucide-react';
+import { Delete, Lightbulb, Volume2, Sparkles, Trophy, Star, Check } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
@@ -158,16 +158,18 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
             transition={{ type: 'spring', stiffness: 200 }}
             className="spelling-bee__results-content"
           >
-            <span className="spelling-bee__big-emoji" role="img" aria-label="trophy">
-              {pct >= 90 ? '🏆' : pct >= 60 ? '🌟' : '👏'}
+            <span className="spelling-bee__big-emoji">
+              {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
             </span>
             <h2 className="spelling-bee__results-title">{t('games.spellingStar')}</h2>
             <p className="spelling-bee__results-score">
               {t('games.outOfCorrect').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
-            <div className="spelling-bee__results-stars" aria-label={`${stars} out of 3 stars`}>
-              {'⭐'.repeat(stars)}{'☆'.repeat(3 - stars)}
-            </div>
+            <span className="game-stars">
+              {Array.from({ length: 3 }, (_, i) => (
+                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+              ))}
+            </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
             </Badge>
@@ -199,17 +201,16 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
       <ProgressBar value={progress} variant="success" size="md" animated />
 
       <Card variant="elevated" padding="lg" className="spelling-bee__prompt">
-        <motion.span
+        <motion.div
           className="spelling-bee__big-emoji"
-          key={currentWord.emoji}
+          key={currentWord.english}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300 }}
-          role="img"
-          aria-label={currentWord.english}
+          style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontWeight: 900 }}
         >
-          {currentWord.emoji}
-        </motion.span>
+          {currentWord.english.charAt(0).toUpperCase()}
+        </motion.div>
         <p className="spelling-bee__turkish">{currentWord.turkish}</p>
         <Button
           variant="ghost"
@@ -255,7 +256,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          "{sentence}" 🌟
+          "{sentence}"
         </motion.p>
       )}
 
@@ -265,7 +266,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
         >
-          {t('games.almostTryAgain')} 💪
+          {t('games.almostTryAgain')}
         </motion.p>
       )}
 

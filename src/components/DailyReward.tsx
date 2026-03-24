@@ -9,7 +9,8 @@ import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ConfettiRain, FloatingEmoji } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
-import { Gift, CheckCircle, Star, Sparkles, Flame, X } from 'lucide-react';
+import { Gift, Sparkles, Flame, X } from 'lucide-react';
+import { KidIcon } from './ui';
 
 const DailyReward: React.FC = () => {
     const {
@@ -129,7 +130,7 @@ const DailyReward: React.FC = () => {
     return (
         <div className="daily-reward-overlay" onClick={() => setIsOpen(false)}>
             {showClaimCelebration && <ConfettiRain />}
-            {showClaimCelebration && <FloatingEmoji emoji={'\uD83C\uDF81'} count={8} />}
+            {showClaimCelebration && <ConfettiRain />}
             <div className="daily-reward-modal" onClick={(e) => e.stopPropagation()}>
                 <button className="close-btn" onClick={() => setIsOpen(false)}><X size={18} /></button>
 
@@ -152,11 +153,11 @@ const DailyReward: React.FC = () => {
                             >
                                 <div className="day-label">Day {day}</div>
                                 <div className="reward-icon">
-                                    {isPast ? <CheckCircle size={20} /> : reward.special ? <Star size={20} /> : <Gift size={20} />}
+                                    {isPast ? <KidIcon name="check" size={20} /> : reward.special ? <KidIcon name="star" size={20} /> : <KidIcon name="trophy" size={20} />}
                                 </div>
                                 <div className="reward-xp">{reward.xp} XP</div>
                                 {reward.badge && (
-                                    <div className="reward-badge">+🏅</div>
+                                    <div className="reward-badge"><KidIcon name="star" size={12} /></div>
                                 )}
                             </div>
                         );
@@ -170,7 +171,7 @@ const DailyReward: React.FC = () => {
                             <h3>{t('dailyReward.rewardClaimed')}</h3>
                             <p className="claimed-xp">+{claimedReward.xp} XP</p>
                             {claimedReward.badge && (
-                                <p className="claimed-badge">{t('dailyReward.newBadge')} 🏅</p>
+                                <p className="claimed-badge">{t('dailyReward.newBadge')}</p>
                             )}
                         </div>
 

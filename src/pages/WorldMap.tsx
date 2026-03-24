@@ -7,11 +7,11 @@
  * Each stop = a curriculum phase unit.
  * Completed = green check, Current = golden pulse, Locked = gray lock.
  */
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Star, Check } from 'lucide-react';
-import { ProgressBar } from '../components/ui';
+import { ProgressBar, KidIcon } from '../components/ui';
 import MimiMascot from '../components/MimiMascot';
 import { PHASES, type LearningUnit } from '../data/curriculumPhases';
 import MimiGuide from '../components/MimiGuide';
@@ -22,38 +22,17 @@ import './WorldMap.css';
 // HELPERS
 // ============================================================
 
-/** Phase emoji icons */
-const PHASE_EMOJIS: Record<string, string> = {
-  'little-ears': '\u{1F423}',
-  'word-builders': '\u{1F3D7}\u{FE0F}',
-  'story-makers': '\u{1F4DA}',
-  'young-explorers': '\u{1F30D}',
+/** Phase icons */
+const PHASE_ICONS: Record<string, React.ReactNode> = {
+  'little-ears': <KidIcon name="mic" size={20} />,
+  'word-builders': <KidIcon name="learn" size={20} />,
+  'story-makers': <KidIcon name="stories" size={20} />,
+  'young-explorers': <KidIcon name="games" size={20} />,
 };
 
-/** Per-unit emoji icons based on unit content */
-function getUnitEmoji(unit: LearningUnit): string {
-  const title = unit.title.toLowerCase();
-  if (title.includes('snake')) return '\u{1F40D}';
-  if (title.includes('mouse')) return '\u{1F42D}';
-  if (title.includes('cat')) return '\u{1F431}';
-  if (title.includes('lion')) return '\u{1F981}';
-  if (title.includes('octopus') || title.includes('umbrella')) return '\u{1F419}';
-  if (title.includes('lollipop') || title.includes('ball')) return '\u{1F3C0}';
-  if (title.includes('rain')) return '\u{1F327}\u{FE0F}';
-  if (title.includes('kite') || title.includes('bee')) return '\u{1F41D}';
-  if (title.includes('buzz') || title.includes('ring')) return '\u{1F514}';
-  if (title.includes('van') || title.includes('moon')) return '\u{1F319}';
-  if (title.includes('workshop') || title.includes('builder')) return '\u{1F527}';
-  if (title.includes('challenge')) return '\u{1F3C6}';
-  if (title.includes('fox')) return '\u{1F98A}';
-  if (title.includes('tongue') || title.includes('thinking')) return '\u{1F914}';
-  if (title.includes('queen') || title.includes('coin')) return '\u{1F451}';
-  if (title.includes('star') || title.includes('blue')) return '\u{2B50}';
-  if (title.includes('expression') || title.includes('reading')) return '\u{1F3AD}';
-  if (title.includes('understanding') || title.includes('stories')) return '\u{1F4D6}';
-  if (title.includes('writing') || title.includes('first stories')) return '\u{270D}\u{FE0F}';
-  if (title.includes('champion') || title.includes('phonics')) return '\u{1F947}';
-  return '\u{1F4CC}';
+/** Per-unit icon based on unit index */
+function getUnitIcon(_unit: LearningUnit, index: number): React.ReactNode {
+  return <span style={{ fontSize: '0.8rem', fontWeight: 900, color: 'inherit' }}>{index + 1}</span>;
 }
 
 /** Get unit progress from localStorage */
@@ -198,7 +177,7 @@ const WorldMap = () => {
   // Build flat stop list with progress
   const stops = allUnits.map((unit, i) => ({
     unit,
-    emoji: getUnitEmoji(unit),
+    icon: getUnitIcon(unit, i),
     progress: getUnitProgress(unit, activePhaseIndex, i),
     index: i,
   }));
@@ -230,9 +209,9 @@ const WorldMap = () => {
         <div className="journey-cloud journey-cloud--1" />
         <div className="journey-cloud journey-cloud--2" />
         <div className="journey-cloud journey-cloud--3" />
-        <div className="journey-star journey-star--1">{'\u2B50'}</div>
-        <div className="journey-star journey-star--2">{'\u{1F31F}'}</div>
-        <div className="journey-star journey-star--3">{'\u2728'}</div>
+        <div className="journey-star journey-star--1"><KidIcon name="star" size={16} /></div>
+        <div className="journey-star journey-star--2"><KidIcon name="star" size={12} /></div>
+        <div className="journey-star journey-star--3"><KidIcon name="star" size={10} /></div>
       </div>
 
       {/* ---- HEADER ---- */}
@@ -240,7 +219,7 @@ const WorldMap = () => {
         <div className="journey-header__top">
           <h1 className="journey-header__title">
             <span className="journey-header__phase-emoji">
-              {PHASE_EMOJIS[phase.id] || phase.icon}
+              {PHASE_ICONS[phase.id] || <KidIcon name="learn" size={20} />}
             </span>
             {phase.name}
           </h1>
@@ -271,7 +250,7 @@ const WorldMap = () => {
                   : undefined
               }
             >
-              <span className="journey-phase-tab__icon">{PHASE_EMOJIS[p.id] || p.icon}</span>
+              <span className="journey-phase-tab__icon">{PHASE_ICONS[p.id] || <KidIcon name="learn" size={16} />}</span>
               <span className="journey-phase-tab__label">{p.name}</span>
             </button>
           ))}
@@ -353,7 +332,7 @@ const WorldMap = () => {
                 )}
                 {isCurrent && (
                   <span className="journey-stop__badge journey-stop__badge--current">
-                    {'\u2B50'}
+                    <KidIcon name="star" size={14} />
                   </span>
                 )}
                 {isLocked && (
@@ -363,10 +342,10 @@ const WorldMap = () => {
                 )}
                 {isUnlocked && (
                   <span className="journey-stop__badge journey-stop__badge--unlocked">
-                    {'\u{1F31F}'}
+                    <KidIcon name="star" size={14} />
                   </span>
                 )}
-                <span className="journey-stop__emoji">{stop.emoji}</span>
+                <span className="journey-stop__icon">{stop.icon}</span>
               </div>
 
               {/* Label */}
@@ -407,15 +386,15 @@ const WorldMap = () => {
         })}
 
         {/* Decorative elements along the path */}
-        <div className="journey-deco journey-deco--tree1">{'\u{1F333}'}</div>
-        <div className="journey-deco journey-deco--tree2">{'\u{1F332}'}</div>
-        <div className="journey-deco journey-deco--flower1">{'\u{1F33C}'}</div>
-        <div className="journey-deco journey-deco--flower2">{'\u{1F337}'}</div>
-        <div className="journey-deco journey-deco--flower3">{'\u{1F33A}'}</div>
+        <div className="journey-deco journey-deco--tree1"><KidIcon name="garden" size={24} /></div>
+        <div className="journey-deco journey-deco--tree2"><KidIcon name="garden" size={20} /></div>
+        <div className="journey-deco journey-deco--flower1"><KidIcon name="star" size={16} /></div>
+        <div className="journey-deco journey-deco--flower2"><KidIcon name="star" size={14} /></div>
+        <div className="journey-deco journey-deco--flower3"><KidIcon name="star" size={12} /></div>
       </motion.div>
 
       <MimiGuide
-        message="Tap a game to play! The golden \u2B50 one is next!"
+        message="Tap a game to play! The highlighted one is next!"
         messageTr="Oynamak için bir oyuna dokun! Yıldızlı olan sıradasın!"
         showOnce="mimi_guide_worldmap"
         position="bottom-left"

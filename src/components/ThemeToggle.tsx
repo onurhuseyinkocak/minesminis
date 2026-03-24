@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { Moon, Sun } from 'lucide-react';
 
 interface ThemeToggleProps {
     showLabel?: boolean;
@@ -25,7 +26,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ showLabel = false }) => {
             <div className={`toggle-track ${isDark ? 'dark' : 'light'}`}>
                 <div className="toggle-thumb">
                     <span className="toggle-icon">
-                        {isDark ? '🌙' : '☀️'}
+                        {isDark ? <Moon size={14} /> : <Sun size={14} />}
                     </span>
                 </div>
             </div>

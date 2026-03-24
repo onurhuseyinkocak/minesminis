@@ -264,7 +264,7 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
           transition: 'transform 0.2s',
         }}
       >
-        <span style={{ fontSize: '3rem' }}>{word.emoji}</span>
+        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontWeight: 900, margin: '0 auto' }}>{word.english.charAt(0).toUpperCase()}</div>
         <span style={{ fontSize: '2rem', fontWeight: 700 }}>{word.english}</span>
 
         {flipped ? (
@@ -658,7 +658,7 @@ const LessonPlayer = () => {
           animate="visible"
         >
           <div className="lesson-complete__confetti" aria-hidden="true">
-            {'\u{1F389}\u{1F38A}\u{2B50}\u{1F31F}\u{1F386}'}
+            <Trophy size={48} color="#E8A317" />
           </div>
           <div className="lesson-complete__trophy">
             <Trophy size={64} />
@@ -695,7 +695,7 @@ const LessonPlayer = () => {
           </div>
 
           <div className="lesson-complete__mimi">
-            <span className="lesson-complete__mimi-avatar">{'\u{1F431}'}</span>
+            <span className="lesson-complete__mimi-avatar"><Star size={32} fill="#E8A317" color="#E8A317" /></span>
             <p>{t('lesson.iKnewYouCouldDoIt')}</p>
           </div>
 
@@ -841,7 +841,7 @@ const LessonPlayer = () => {
 
         {/* Mimi Encouragement */}
         <div className="lesson-player-mimi">
-          <span className="lesson-player-mimi__avatar">{'\u{1F431}'}</span>
+          <span className="lesson-player-mimi__avatar"><Star size={20} fill="#E8A317" color="#E8A317" /></span>
           <div className="lesson-player-mimi__bubble">
             <Star size={16} /> {t(encouragementKey)}
           </div>

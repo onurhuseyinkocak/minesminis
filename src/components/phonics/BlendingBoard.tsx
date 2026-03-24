@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Trophy } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -149,7 +149,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             transition={{ type: 'spring', stiffness: 200 }}
             className="blending-board__complete-content"
           >
-            <span className="blending-board__complete-emoji" role="img" aria-label="celebration">🎉</span>
+            <Trophy size={32} color="#E8A317" />
             <h2 className="blending-board__complete-title">{t('games.blendingStar')}</h2>
             <p className="blending-board__complete-score">
               {t('games.wordsBlended').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
@@ -213,7 +213,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             exit={{ opacity: 0 }}
             className="blending-board__feedback--wrong"
           >
-            {t('games.tryAnotherSound')} 💪
+            {t('games.tryAnotherSound')}
           </motion.div>
         )}
         {feedback === 'correct' && (
@@ -223,7 +223,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             exit={{ opacity: 0 }}
             className="blending-board__feedback--correct"
           >
-            {t('games.amazing')} 🌟
+            {t('games.amazing')}
           </motion.div>
         )}
       </AnimatePresence>

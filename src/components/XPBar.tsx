@@ -6,6 +6,7 @@
 import React from 'react';
 import './XPBar.css';
 import { useGamification } from '../contexts/GamificationContext';
+import { Flame, Star } from 'lucide-react';
 
 interface XPBarProps {
     compact?: boolean;
@@ -22,7 +23,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
         return (
             <div className="xp-bar-compact">
                 <div className="xp-level-badge">
-                    <span className="level-icon">⭐</span>
+                    <Star size={14} fill="#E8A317" color="#E8A317" className="level-icon" />
                     <span className="level-num">{stats.level}</span>
                 </div>
                 <div className="xp-mini-bar">
@@ -30,7 +31,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                 </div>
                 {stats.streakDays > 0 && (
                     <div className="streak-badge-mini">
-                        <span>🔥</span>
+                        <Flame size={14} color="#FF6B35" />
                         <span>{stats.streakDays}</span>
                     </div>
                 )}
@@ -64,7 +65,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
             <div className="xp-bar-footer">
                 {stats.streakDays > 0 && (
                     <div className="streak-info">
-                        <span className="streak-icon">🔥</span>
+                        <Flame size={16} color="#FF6B35" className="streak-icon" />
                         <span className="streak-days">{stats.streakDays} day streak</span>
                         {streakBonus > 0 && (
                             <span className="streak-bonus">+{streakBonus}% XP bonus</span>

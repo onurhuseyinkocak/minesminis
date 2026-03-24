@@ -146,7 +146,7 @@ function VideosManager() {
                 if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
                 await videoStore.fetchVideos();
                 setVideos(videoStore.getVideos());
-                toast.success('Yeni video eklendi! 🎉');
+                toast.success('Yeni video eklendi!');
             }
             setIsModalOpen(false);
         } catch (err) {
@@ -165,15 +165,6 @@ function VideosManager() {
             toast.success('Video silindi!');
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Silinemedi');
-        }
-    };
-
-    const getTypeIcon = (type: string) => {
-        switch (type) {
-            case 'song': return '🎵';
-            case 'lesson': return '📚';
-            case 'story': return '❤️';
-            default: return '🎬';
         }
     };
 
@@ -213,7 +204,7 @@ function VideosManager() {
                             className={`filter-chip ${selectedGrade === grade ? 'active' : ''}`}
                             onClick={() => setSelectedGrade(grade)}
                         >
-                            {grade === 'all' ? '🎯 Tümü' : `${gradeInfo[grade]?.emoji || '📚'} ${grade}`}
+                            {grade === 'all' ? 'Tümü' : grade}
                         </button>
                     ))}
                     <span style={{ margin: '0 0.5rem', color: '#cbd5e1' }}>|</span>
@@ -223,7 +214,7 @@ function VideosManager() {
                             className={`filter-chip ${selectedType === type ? 'active' : ''}`}
                             onClick={() => setSelectedType(type)}
                         >
-                            {type === 'all' ? '📺 Tüm Türler' : `${getTypeIcon(type)} ${type.charAt(0).toUpperCase() + type.slice(1)}`}
+                            {type === 'all' ? 'Tüm Türler' : type.charAt(0).toUpperCase() + type.slice(1)}
                         </button>
                     ))}
                 </div>
@@ -265,7 +256,7 @@ function VideosManager() {
                                 <td>
                                     <div>
                                         <strong>{video.title}</strong>
-                                        {video.isPopular && <span style={{ marginLeft: '8px', color: '#fbbf24' }}>⭐</span>}
+                                        {video.isPopular && <span style={{ marginLeft: '8px', color: '#fbbf24', fontSize: '0.7rem', fontWeight: 700 }}>POPÜLER</span>}
                                         <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{video.description}</div>
                                     </div>
                                 </td>
@@ -277,12 +268,12 @@ function VideosManager() {
                                             color: gradeInfo[video.grade]?.color
                                         }}
                                     >
-                                        {gradeInfo[video.grade]?.emoji} {video.grade}
+                                        {video.grade}
                                     </span>
                                 </td>
                                 <td>
                                     <span className="badge badge-intermediate">
-                                        {getTypeIcon(video.category)} {video.category}
+                                        {video.category}
                                     </span>
                                 </td>
                                 <td>{video.duration}</td>
@@ -379,9 +370,9 @@ function VideosManager() {
                                         value={formData.type}
                                         onChange={(e) => setFormData({ ...formData, type: e.target.value as 'song' | 'lesson' | 'story' })}
                                     >
-                                        <option value="song">🎵 Şarkı</option>
-                                        <option value="lesson">📚 Ders</option>
-                                        <option value="story">❤️ Hikaye</option>
+                                        <option value="song">Şarkı</option>
+                                        <option value="lesson">Ders</option>
+                                        <option value="story">Hikaye</option>
                                     </select>
                                 </div>
 
@@ -403,7 +394,7 @@ function VideosManager() {
                                             onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
                                             style={{ width: 'auto' }}
                                         />
-                                        ⭐ Popüler Video Olarak İşaretle
+                                        Popüler Video Olarak İşaretle
                                     </label>
                                 </div>
                             </div>

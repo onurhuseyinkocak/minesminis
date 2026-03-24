@@ -128,7 +128,7 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
                 transition={{ repeat: Infinity, duration: 1.5 }}
                 style={{ fontSize: '3rem', display: 'block' }}
               >
-                {sound.emoji}
+                <span style={{ fontSize: '1rem', fontWeight: 900, color: 'inherit' }}>{sound.grapheme?.toUpperCase() ?? sound.sound?.toUpperCase() ?? '?'}</span>
               </motion.span>
               <p style={{ fontSize: '1.1rem', fontWeight: 600, color: '#333', margin: '0.5rem 0' }}>
                 {sound.action}
@@ -181,7 +181,7 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
                     cursor: 'pointer',
                   }}
                 >
-                  <span style={{ fontSize: '1.5rem' }}>{kw.emoji}</span>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900 }}>{kw.word.charAt(0).toUpperCase()}</div>
                   <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
                     {idx >= 0 ? (
                       <>
