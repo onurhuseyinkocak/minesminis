@@ -5,70 +5,102 @@ import {
   ArrowRight,
   X,
   Menu,
-  BookOpen,
-  Ear,
-  Globe,
-  Puzzle,
-  GraduationCap,
-  Users,
-  Shield,
   CheckCircle,
   Play,
   Sparkles,
-  Music,
-  BookText,
-  Layers,
 } from 'lucide-react';
 import UnifiedMascot, { MascotState } from '../components/UnifiedMascot';
 import BackgroundGradientAnimation from '../components/ui/BackgroundGradientAnimation';
+import { LottieIcon } from '../components/ui/LottieIcon';
 import { mascotRoaming } from '../services/mascotRoaming';
 import './Landing.css';
 
+/* ─── Types ─────────────────────────────────────────────────────────────── */
+
 type Lang = 'en' | 'tr';
-type AnimationState = 'idle' | 'walking' | 'dancing' | 'celebrating' | 'waving' | 'sleeping' | 'laughing' | 'singing' | 'thinking' | 'surprised' | 'love' | 'jumping' | 'following' | 'goingHome';
+type AnimationState =
+  | 'idle' | 'walking' | 'dancing' | 'celebrating' | 'waving'
+  | 'sleeping' | 'laughing' | 'singing' | 'thinking' | 'surprised'
+  | 'love' | 'jumping' | 'following' | 'goingHome';
+
+type AudienceTab = 'students' | 'teachers' | 'parents';
+
+interface PhonicsCard {
+  letter: string;
+  word: string;
+  iconClass: string;
+  delay: number;
+}
+
+interface Phase {
+  lottie: 'ear' | 'brain' | 'book' | 'rocket';
+  title: string;
+  age: string;
+  desc: string;
+  color: string;
+  num: string;
+}
+
+interface StatItem {
+  num: string;
+  label: string;
+  lottie: 'ear' | 'book' | 'music' | 'star';
+  color: string;
+}
+
+interface AudienceItem {
+  label: string;
+  features: string[];
+  iconClass: string;
+}
+
+/* ─── Content (EN + TR) ─────────────────────────────────────────────────── */
 
 const content = {
   en: {
-    // Nav
     navHow: 'How It Works',
     navFor: 'For You',
     navStats: 'Results',
     loginBtn: 'Login',
-    // Hero
     heroBadge: 'Montessori + Phonics Method',
-    heroTitle: 'English Learning That Actually Works',
-    heroSub: 'Research-backed phonics for Turkish children ages 3-10. 42 sounds. One dragon friend.',
+    heroTitle1: 'English Learning',
+    heroTitle2: 'That Actually Works',
+    heroSub: 'Research-backed phonics for Turkish children ages 3\u201310. 42 sounds. One dragon friend.',
     heroCtaPrimary: 'Start Learning',
     heroCtaSecondary: 'See How It Works',
-    // Method
+    trustMontessori: 'Montessori-based',
+    trustFree: 'Free to start',
+    trustAge: 'Ages 3\u201310',
+    methodLabel: 'The Method',
     methodTitle: 'A proven path to English fluency',
+    methodSub: 'Four carefully designed phases guide children from first sounds to confident communication.',
     phase1Title: 'Sound Discovery',
-    phase1Age: 'Ages 3-5',
-    phase1Desc: 'Children identify and produce 42 English phonemes',
+    phase1Age: 'Ages 3\u20135',
+    phase1Desc: 'Children identify and produce 42 English phonemes through playful activities.',
     phase2Title: 'Word Building',
-    phase2Age: 'Ages 5-7',
-    phase2Desc: 'Blending sounds into words and sentences',
+    phase2Age: 'Ages 5\u20137',
+    phase2Desc: 'Blending sounds into words and sentences with interactive games.',
     phase3Title: 'Reading & Stories',
-    phase3Age: 'Ages 7-9',
-    phase3Desc: 'Decodable books using only mastered sounds',
+    phase3Age: 'Ages 7\u20139',
+    phase3Desc: 'Decodable books using only sounds the child has already mastered.',
     phase4Title: 'Independence',
-    phase4Age: 'Ages 9-10',
-    phase4Desc: 'Confident communication in English',
-    // Audience
+    phase4Age: 'Ages 9\u201310',
+    phase4Desc: 'Confident, independent communication in English.',
+    audienceLabel: 'For Everyone',
     audienceTitle: 'Built for everyone who cares about learning',
     tabStudents: 'Students',
     tabTeachers: 'Teachers',
     tabParents: 'Parents',
     studentFeatures: [
-      '42 phonics sounds with actions',
-      'Interactive blending games',
+      '42 phonics sounds with fun actions',
+      'Interactive blending & word games',
       'Decodable reading library',
       'Learning garden that grows with you',
     ],
     teacherFeatures: [
-      'Free classroom management',
+      'Free classroom management tools',
       'Join codes for students',
-      'Phonics progress tracking',
+      'Phonics progress tracking per child',
       'Curriculum-aligned activities',
     ],
     parentFeatures: [
@@ -77,84 +109,91 @@ const content = {
       'Multi-child support',
       'Weekly progress insights',
     ],
-    // Stats
+    statsLabel: 'By the numbers',
     stat1Num: '42', stat1Label: 'Phonics Sounds',
     stat2Num: '14', stat2Label: 'Decodable Books',
     stat3Num: '7', stat3Label: 'Song Lessons',
     stat4Num: '4', stat4Label: 'Learning Phases',
-    // CTA
-    ctaTitle: 'Ready to start your child\'s English journey?',
+    ctaTitle: "Ready to start your child\u2019s English journey?",
     ctaSub: 'Free to begin. No credit card required.',
     ctaBtn: 'Create Free Account',
-    // Footer
-    footerTagline: 'Montessori + Phonics English for kids ages 3-10',
+    ctaTrustSafe: 'Child-safe',
+    ctaTrustPrivacy: 'KVKK compliant',
+    ctaTrustFree: 'Free forever plan',
+    footerTagline: 'Montessori + Phonics English for kids ages 3\u201310',
     footerPrivacy: 'Privacy',
     footerTerms: 'Terms',
   },
   tr: {
-    // Nav
-    navHow: 'Nasıl Çalışır',
-    navFor: 'Kimler İçin',
-    navStats: 'Sonuçlar',
-    loginBtn: 'Giriş Yap',
-    // Hero
-    heroBadge: 'Montessori + Fonetik Yöntemi',
-    heroTitle: 'Gerçekten İşe Yarayan İngilizce Öğrenme',
-    heroSub: 'Türkiye\'deki 3-10 yaş arası çocuklar için araştırmaya dayalı fonetik. 42 ses. Bir ejderha arkadaş.',
-    heroCtaPrimary: 'Öğrenmeye Başla',
-    heroCtaSecondary: 'Nasıl Çalıştığını Gör',
-    // Method
-    methodTitle: 'İngilizce akıcılığına giden kanıtlanmış yol',
-    phase1Title: 'Ses Keşfi',
-    phase1Age: '3-5 Yaş',
-    phase1Desc: 'Çocuklar 42 İngilizce fonemi tanır ve üretir',
+    navHow: 'Nas\u0131l \u00c7al\u0131\u015f\u0131r',
+    navFor: 'Kimler \u0130\u00e7in',
+    navStats: 'Sonu\u00e7lar',
+    loginBtn: 'Giri\u015f Yap',
+    heroBadge: 'Montessori + Fonetik Y\u00f6ntemi',
+    heroTitle1: 'Ger\u00e7ekten \u0130\u015fe Yarayan',
+    heroTitle2: '\u0130ngilizce \u00d6\u011frenme',
+    heroSub: 'T\u00fcrkiye\u2019deki 3\u201310 ya\u015f aras\u0131 \u00e7ocuklar i\u00e7in ara\u015ft\u0131rmaya dayal\u0131 fonetik. 42 ses. Bir ejderha arkada\u015f.',
+    heroCtaPrimary: '\u00d6\u011frenmeye Ba\u015fla',
+    heroCtaSecondary: 'Nas\u0131l \u00c7al\u0131\u015ft\u0131\u011f\u0131n\u0131 G\u00f6r',
+    trustMontessori: 'Montessori temelli',
+    trustFree: '\u00dccretsiz ba\u015fla',
+    trustAge: '3\u201310 ya\u015f',
+    methodLabel: 'Y\u00f6ntem',
+    methodTitle: '\u0130ngilizce ak\u0131c\u0131l\u0131\u011f\u0131na giden kan\u0131tlanm\u0131\u015f yol',
+    methodSub: 'D\u00f6rt \u00f6zenle tasarlanm\u0131\u015f a\u015fama, \u00e7ocuklar\u0131 ilk seslerden g\u00fcvenli ileti\u015fime y\u00f6nlendirir.',
+    phase1Title: 'Ses Ke\u015ffi',
+    phase1Age: '3\u20135 Ya\u015f',
+    phase1Desc: '\u00c7ocuklar e\u011flenceli aktivitelerle 42 \u0130ngilizce fonemi tan\u0131r ve \u00fcretir.',
     phase2Title: 'Kelime Kurma',
-    phase2Age: '5-7 Yaş',
-    phase2Desc: 'Sesleri kelimelere ve cümlelere harmanlama',
+    phase2Age: '5\u20137 Ya\u015f',
+    phase2Desc: 'Etkile\u015fimli oyunlarla sesleri kelimelere ve c\u00fcmlelere harmanlama.',
     phase3Title: 'Okuma & Hikayeler',
-    phase3Age: '7-9 Yaş',
-    phase3Desc: 'Yalnızca öğrenilen seslerle okunabilir kitaplar',
-    phase4Title: 'Bağımsızlık',
-    phase4Age: '9-10 Yaş',
-    phase4Desc: 'İngilizce\'de güvenle iletişim kurma',
-    // Audience
-    audienceTitle: 'Öğrenmeyi önemseyen herkes için tasarlandı',
-    tabStudents: 'Öğrenciler',
-    tabTeachers: 'Öğretmenler',
+    phase3Age: '7\u20139 Ya\u015f',
+    phase3Desc: '\u00c7ocu\u011fun \u00f6\u011frendi\u011fi seslerle olu\u015fturulmu\u015f okunabilir kitaplar.',
+    phase4Title: 'Ba\u011f\u0131ms\u0131zl\u0131k',
+    phase4Age: '9\u201310 Ya\u015f',
+    phase4Desc: '\u0130ngilizce\u2019de g\u00fcvenli ve ba\u011f\u0131ms\u0131z ileti\u015fim kurma.',
+    audienceLabel: 'Herkes \u0130\u00e7in',
+    audienceTitle: '\u00d6\u011frenmeyi \u00f6nemseyen herkes i\u00e7in tasarland\u0131',
+    tabStudents: '\u00d6\u011frenciler',
+    tabTeachers: '\u00d6\u011fretmenler',
     tabParents: 'Veliler',
     studentFeatures: [
       'Hareketlerle 42 fonetik ses',
-      'Etkileşimli harmanlama oyunları',
-      'Okunabilir okuma kütüphanesi',
-      'Seninle büyüyen öğrenme bahçesi',
+      'Etkile\u015fimli harmanlama oyunlar\u0131',
+      'Okunabilir okuma k\u00fct\u00fcphanesi',
+      'Seninle b\u00fcy\u00fcyen \u00f6\u011frenme bah\u00e7esi',
     ],
     teacherFeatures: [
-      'Ücretsiz sınıf yönetimi',
-      'Öğrenciler için katılım kodları',
-      'Fonetik ilerleme takibi',
-      'Müfredata uyumlu etkinlikler',
+      '\u00dccretsiz s\u0131n\u0131f y\u00f6netimi ara\u00e7lar\u0131',
+      '\u00d6\u011frenciler i\u00e7in kat\u0131l\u0131m kodlar\u0131',
+      '\u00c7ocuk ba\u015f\u0131na fonetik ilerleme takibi',
+      'M\u00fcfredata uyumlu etkinlikler',
     ],
     parentFeatures: [
-      'Gerçek zamanlı öğrenme analitiği',
-      'Günlük süre kontrolleri',
-      'Çoklu çocuk desteği',
-      'Haftalık ilerleme raporları',
+      'Ger\u00e7ek zamanl\u0131 \u00f6\u011frenme analiti\u011fi',
+      'G\u00fcnl\u00fck s\u00fcre kontrolleri',
+      '\u00c7oklu \u00e7ocuk deste\u011fi',
+      'Haftal\u0131k ilerleme raporlar\u0131',
     ],
-    // Stats
+    statsLabel: 'Rakamlarla',
     stat1Num: '42', stat1Label: 'Fonetik Ses',
     stat2Num: '14', stat2Label: 'Okunabilir Kitap',
-    stat3Num: '7', stat3Label: 'Şarkı Dersi',
-    stat4Num: '4', stat4Label: 'Öğrenme Aşaması',
-    // CTA
-    ctaTitle: 'Çocuğunuzun İngilizce yolculuğuna başlamaya hazır mısınız?',
-    ctaSub: 'Başlamak ücretsiz. Kredi kartı gerekmez.',
-    ctaBtn: 'Ücretsiz Hesap Oluştur',
-    // Footer
-    footerTagline: '3-10 yaş çocuklar için Montessori + Fonetik İngilizce',
+    stat3Num: '7', stat3Label: '\u015eark\u0131 Dersi',
+    stat4Num: '4', stat4Label: '\u00d6\u011frenme A\u015famas\u0131',
+    ctaTitle: '\u00c7ocu\u011funuzun \u0130ngilizce yolculu\u011funa ba\u015flamaya haz\u0131r m\u0131s\u0131n\u0131z?',
+    ctaSub: 'Ba\u015flamak \u00fccretsiz. Kredi kart\u0131 gerekmez.',
+    ctaBtn: '\u00dccretsiz Hesap Olu\u015ftur',
+    ctaTrustSafe: '\u00c7ocuk g\u00fcvenli',
+    ctaTrustPrivacy: 'KVKK uyumlu',
+    ctaTrustFree: '\u00dccretsiz plan',
+    footerTagline: '3\u201310 ya\u015f \u00e7ocuklar i\u00e7in Montessori + Fonetik \u0130ngilizce',
     footerPrivacy: 'Gizlilik',
-    footerTerms: 'Şartlar',
+    footerTerms: '\u015eartlar',
   },
 };
+
+/* ─── Helpers ────────────────────────────────────────────────────────────── */
 
 const mapState = (state: AnimationState): MascotState => {
   switch (state) {
@@ -187,14 +226,21 @@ const mapState = (state: AnimationState): MascotState => {
   }
 };
 
+const sectionVariants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
+
+/* ─── Component ──────────────────────────────────────────────────────────── */
+
 const Landing: React.FC = () => {
   const navigate = useNavigate();
   const [lang, setLang] = useState<Lang>('en');
   const t = content[lang];
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'students' | 'teachers' | 'parents'>('students');
+  const [activeTab, setActiveTab] = useState<AudienceTab>('students');
 
-  // Roaming Mimi state
+  /* Roaming Mimi state */
   const dragDistance = useRef(0);
   const constraintsRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 85, y: 75 });
@@ -203,6 +249,7 @@ const Landing: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [showMimiModal, setShowMimiModal] = useState(false);
 
+  /* Roaming Mimi logic */
   useEffect(() => {
     const initialState = mascotRoaming.getCurrentState();
     setPosition({ ...initialState.position });
@@ -245,37 +292,81 @@ const Landing: React.FC = () => {
     navigate('/login');
   };
 
-  const phases = [
-    { icon: <Ear size={24} />, title: t.phase1Title, age: t.phase1Age, desc: t.phase1Desc, color: '#f59e0b' },
-    { icon: <Puzzle size={24} />, title: t.phase2Title, age: t.phase2Age, desc: t.phase2Desc, color: '#8b5cf6' },
-    { icon: <BookOpen size={24} />, title: t.phase3Title, age: t.phase3Age, desc: t.phase3Desc, color: '#14b8a6' },
-    { icon: <Globe size={24} />, title: t.phase4Title, age: t.phase4Age, desc: t.phase4Desc, color: '#3b82f6' },
+  /* ─── Data ───────────────────────────────────────────────────────────── */
+
+  const phonicsCards: PhonicsCard[] = [
+    { letter: 'A', word: 'Apple', iconClass: 'apple', delay: 0 },
+    { letter: 'B', word: 'Bear', iconClass: 'bear', delay: 0.4 },
+    { letter: 'C', word: 'Cat', iconClass: 'cat', delay: 0.8 },
   ];
 
-  const audienceData = {
+  const phases: Phase[] = [
+    {
+      lottie: 'ear',
+      title: t.phase1Title,
+      age: t.phase1Age,
+      desc: t.phase1Desc,
+      color: '#F59E0B',
+      num: '01',
+    },
+    {
+      lottie: 'brain',
+      title: t.phase2Title,
+      age: t.phase2Age,
+      desc: t.phase2Desc,
+      color: '#8B5CF6',
+      num: '02',
+    },
+    {
+      lottie: 'book',
+      title: t.phase3Title,
+      age: t.phase3Age,
+      desc: t.phase3Desc,
+      color: '#14B8A6',
+      num: '03',
+    },
+    {
+      lottie: 'rocket',
+      title: t.phase4Title,
+      age: t.phase4Age,
+      desc: t.phase4Desc,
+      color: '#3B82F6',
+      num: '04',
+    },
+  ];
+
+  const audienceData: Record<AudienceTab, AudienceItem> = {
     students: {
       label: t.tabStudents,
-      icon: <GraduationCap size={20} />,
       features: t.studentFeatures,
+      iconClass: 'students',
     },
     teachers: {
       label: t.tabTeachers,
-      icon: <Users size={20} />,
       features: t.teacherFeatures,
+      iconClass: 'teachers',
     },
     parents: {
       label: t.tabParents,
-      icon: <Shield size={20} />,
       features: t.parentFeatures,
+      iconClass: 'parents',
     },
   };
 
-  const stats = [
-    { num: t.stat1Num, label: t.stat1Label, icon: <Music size={20} /> },
-    { num: t.stat2Num, label: t.stat2Label, icon: <BookText size={20} /> },
-    { num: t.stat3Num, label: t.stat3Label, icon: <Play size={20} /> },
-    { num: t.stat4Num, label: t.stat4Label, icon: <Layers size={20} /> },
+  const stats: StatItem[] = [
+    { num: t.stat1Num, label: t.stat1Label, lottie: 'ear', color: '#F59E0B' },
+    { num: t.stat2Num, label: t.stat2Label, lottie: 'book', color: '#14B8A6' },
+    { num: t.stat3Num, label: t.stat3Label, lottie: 'music', color: '#8B5CF6' },
+    { num: t.stat4Num, label: t.stat4Label, lottie: 'star', color: '#3B82F6' },
   ];
+
+  const tabIcons: Record<AudienceTab, React.ReactNode> = {
+    students: <LottieIcon name="star" size={16} />,
+    teachers: <LottieIcon name="book" size={16} />,
+    parents: <LottieIcon name="heart" size={16} />,
+  };
+
+  /* ─── Render ─────────────────────────────────────────────────────────── */
 
   return (
     <div className="landing">
@@ -283,7 +374,7 @@ const Landing: React.FC = () => {
       <nav className="landing-nav">
         <div className="landing-nav__inner">
           <Link to="/" className="landing-nav__logo">
-            <Sparkles size={20} />
+            <LottieIcon name="sparkle" size={22} />
             <span>Mines<strong>Minis</strong></span>
           </Link>
 
@@ -346,32 +437,52 @@ const Landing: React.FC = () => {
         <BackgroundGradientAnimation
           containerClassName="landing-hero__gradient"
           interactive={true}
+          gradientBackgroundStart="rgb(8, 10, 20)"
+          gradientBackgroundEnd="rgb(16, 18, 36)"
+          firstColor="200, 140, 20"
+          secondColor="100, 60, 200"
+          thirdColor="20, 140, 100"
+          fourthColor="60, 80, 200"
+          fifthColor="180, 80, 160"
+          pointerColor="245, 158, 11"
         >
           <div className="landing-hero__inner">
             <div className="landing-hero__text">
               <motion.div
                 className="landing-hero__badge"
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <BookOpen size={14} />
+                <LottieIcon name="sparkle" size={16} />
                 <span>{t.heroBadge}</span>
               </motion.div>
 
-              <h1 className="landing-hero__title">
-                {t.heroTitle}
-              </h1>
+              <motion.h1
+                className="landing-hero__title"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.15 }}
+              >
+                {t.heroTitle1}
+                <br />
+                <span className="landing-hero__title-highlight">{t.heroTitle2}</span>
+              </motion.h1>
 
-              <p className="landing-hero__sub">
+              <motion.p
+                className="landing-hero__sub"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
                 {t.heroSub}
-              </p>
+              </motion.p>
 
               <motion.div
                 className="landing-hero__actions"
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+                transition={{ duration: 0.5, delay: 0.45 }}
               >
                 <Link to="/login" className="landing-btn landing-btn--primary">
                   {t.heroCtaPrimary} <ArrowRight size={18} />
@@ -380,19 +491,57 @@ const Landing: React.FC = () => {
                   <Play size={16} /> {t.heroCtaSecondary}
                 </a>
               </motion.div>
+
+              <motion.div
+                className="landing-hero__trust"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+              >
+                <div className="landing-hero__trust-item">
+                  <LottieIcon name="star" size={18} />
+                  <span>{t.trustMontessori}</span>
+                </div>
+                <div className="landing-hero__trust-item">
+                  <LottieIcon name="check" size={18} />
+                  <span>{t.trustFree}</span>
+                </div>
+                <div className="landing-hero__trust-item">
+                  <LottieIcon name="heart" size={18} />
+                  <span>{t.trustAge}</span>
+                </div>
+              </motion.div>
             </div>
 
             <motion.div
               className="landing-hero__visual"
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.88 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
+              transition={{ duration: 0.75, delay: 0.25 }}
             >
-              <div className="landing-hero__orb">
-                <div className="landing-hero__orb-inner" />
-              </div>
+              <div className="landing-hero__orb" />
+              <div className="landing-hero__orb-secondary" />
+
+              {phonicsCards.map((card, i) => (
+                <motion.div
+                  key={card.letter}
+                  className={`landing-hero__phonics-card landing-hero__phonics-card--${i + 1}`}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.6 + card.delay }}
+                >
+                  <div className={`landing-hero__phonics-icon landing-hero__phonics-icon--${card.iconClass}`}>
+                    {card.letter}
+                  </div>
+                  <div className="landing-hero__phonics-text">
+                    <strong>{card.letter}</strong>
+                    <span>{card.word}</span>
+                  </div>
+                </motion.div>
+              ))}
+
               <div className="landing-hero__mascot">
-                <UnifiedMascot id="mimi_dragon" state="waving" size={160} />
+                <UnifiedMascot id="mimi_dragon" state="waving" size={220} />
               </div>
             </motion.div>
           </div>
@@ -402,30 +551,39 @@ const Landing: React.FC = () => {
       {/* ===== SECTION 2: METHOD ===== */}
       <section className="landing-method" id="how-it-works">
         <div className="landing-method__inner">
-          <motion.h2
-            className="landing-section__title"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+          <motion.div
+            className="landing-method__header"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
           >
-            {t.methodTitle}
-          </motion.h2>
+            <div className="landing-section__label">
+              {t.methodLabel}
+            </div>
+            <h2 className="landing-section__title">{t.methodTitle}</h2>
+            <p className="landing-section__subtitle">{t.methodSub}</p>
+          </motion.div>
 
           <div className="landing-method__grid">
             {phases.map((phase, i) => (
               <motion.div
-                key={i}
+                key={phase.num}
                 className="landing-method__card"
-                initial={{ opacity: 0, y: 24 }}
+                style={{ '--phase-color': phase.color } as React.CSSProperties}
+                initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: i * 0.12, duration: 0.5 }}
               >
-                <div
-                  className="landing-method__card-icon"
-                  style={{ backgroundColor: `${phase.color}14`, color: phase.color }}
-                >
-                  {phase.icon}
+                <div className="landing-method__card-top">
+                  <span className="landing-method__card-num">{phase.num}</span>
+                  <div
+                    className="landing-method__card-icon"
+                    style={{ backgroundColor: `${phase.color}14`, color: phase.color }}
+                  >
+                    <LottieIcon name={phase.lottie} size={30} />
+                  </div>
                 </div>
                 <h3 className="landing-method__card-title">{phase.title}</h3>
                 <span className="landing-method__card-age" style={{ color: phase.color }}>
@@ -441,14 +599,18 @@ const Landing: React.FC = () => {
       {/* ===== SECTION 3: AUDIENCE TABS ===== */}
       <section className="landing-audience" id="for-you">
         <div className="landing-audience__inner">
-          <motion.h2
-            className="landing-section__title"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+          <motion.div
+            className="landing-audience__header"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
           >
-            {t.audienceTitle}
-          </motion.h2>
+            <div className="landing-section__label">
+              {t.audienceLabel}
+            </div>
+            <h2 className="landing-section__title">{t.audienceTitle}</h2>
+          </motion.div>
 
           <div className="landing-audience__tabs">
             {(['students', 'teachers', 'parents'] as const).map((tab) => (
@@ -457,7 +619,9 @@ const Landing: React.FC = () => {
                 className={`landing-audience__tab ${activeTab === tab ? 'active' : ''}`}
                 onClick={() => setActiveTab(tab)}
               >
-                {audienceData[tab].icon}
+                <span className={`landing-audience__tab-icon landing-audience__tab-icon--${audienceData[tab].iconClass}`}>
+                  {tabIcons[tab]}
+                </span>
                 <span>{audienceData[tab].label}</span>
               </button>
             ))}
@@ -475,10 +639,10 @@ const Landing: React.FC = () => {
               <ul className="landing-audience__list">
                 {audienceData[activeTab].features.map((feature, i) => (
                   <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -8 }}
+                    key={feature}
+                    initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06 }}
+                    transition={{ delay: i * 0.07 }}
                   >
                     <CheckCircle size={20} className="landing-audience__check" />
                     <span>{feature}</span>
@@ -490,38 +654,72 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* ===== SECTION 4: NUMBERS ===== */}
+      {/* ===== SECTION 4: STATS ===== */}
       <section className="landing-stats" id="results">
         <div className="landing-stats__inner">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              className="landing-stats__item"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-            >
-              <span className="landing-stats__number">{stat.num}</span>
-              <span className="landing-stats__label">{stat.label}</span>
-            </motion.div>
-          ))}
+          <motion.div
+            className="landing-section__label landing-stats__label-top"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            {t.statsLabel}
+          </motion.div>
+          <div className="landing-stats__grid">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                className="landing-stats__item"
+                style={{ color: stat.color }}
+                initial={{ opacity: 0, scale: 0.85 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <div className="landing-stats__icon" style={{ color: stat.color }}>
+                  <LottieIcon name={stat.lottie} size={38} />
+                </div>
+                <span className="landing-stats__number" style={{ color: stat.color }}>
+                  {stat.num}
+                </span>
+                <span className="landing-stats__label">{stat.label}</span>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ===== SECTION 5: CTA ===== */}
+      {/* ===== SECTION 5: CTA BANNER ===== */}
       <section className="landing-cta">
         <motion.div
           className="landing-cta__inner"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
         >
+          <div className="landing-cta__mascot">
+            <UnifiedMascot id="mimi_dragon" state="celebrating" size={110} />
+          </div>
           <h2 className="landing-cta__title">{t.ctaTitle}</h2>
           <p className="landing-cta__sub">{t.ctaSub}</p>
-          <Link to="/login" className="landing-btn landing-btn--primary">
+          <Link to="/login" className="landing-btn landing-btn--cta-dark">
             {t.ctaBtn} <ArrowRight size={18} />
           </Link>
+          <div className="landing-cta__trust">
+            <div className="landing-cta__trust-badge">
+              <LottieIcon name="check" size={16} />
+              <span>{t.ctaTrustSafe}</span>
+            </div>
+            <div className="landing-cta__trust-badge">
+              <LottieIcon name="check" size={16} />
+              <span>{t.ctaTrustPrivacy}</span>
+            </div>
+            <div className="landing-cta__trust-badge">
+              <LottieIcon name="check" size={16} />
+              <span>{t.ctaTrustFree}</span>
+            </div>
+          </div>
         </motion.div>
       </section>
 
@@ -604,10 +802,10 @@ const Landing: React.FC = () => {
           >
             <motion.div
               className="landing-modal"
-              initial={{ scale: 0.92, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -620,11 +818,11 @@ const Landing: React.FC = () => {
               <div className="landing-modal__mascot">
                 <UnifiedMascot id="mimi_dragon" state="celebrating" size={100} />
               </div>
-              <h3>{lang === 'en' ? 'Come play with Mimi!' : 'Mimi ile oynayalım!'}</h3>
+              <h3>{lang === 'en' ? 'Come play with Mimi!' : 'Mimi ile oynayalim!'}</h3>
               <p>
                 {lang === 'en'
-                  ? 'Login to start your English adventure. Games, videos, words -- all waiting for you!'
-                  : 'İngilizce macerana başlamak için giriş yap. Oyunlar, videolar, kelimeler -- hepsi seni bekliyor!'}
+                  ? 'Login to start your English adventure. Games, videos, words \u2014 all waiting for you!'
+                  : '\u0130ngilizce macerana baslamak icin giris yap. Oyunlar, videolar, kelimeler \u2014 hepsi seni bekliyor!'}
               </p>
               <button className="landing-btn landing-btn--primary" onClick={handleGoToLogin}>
                 {t.loginBtn} <ArrowRight size={18} />
