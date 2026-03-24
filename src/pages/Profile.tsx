@@ -45,10 +45,10 @@ const Profile: React.FC = () => {
 
       if (error) throw error;
       await refreshUserProfile();
-      toast.success('Profile updated!');
+      toast.success('Profil güncellendi!');
       setShowEditModal(false);
     } catch {
-      toast.error('Failed to update profile');
+      toast.error('Profil güncellenemedi');
     }
   };
 
@@ -99,7 +99,7 @@ const Profile: React.FC = () => {
 
             <div className="level-badge">
               <Trophy size={20} />
-              <span>Level {stats.level} Explorer</span>
+              <span>Level {stats.level}</span>
             </div>
           </div>
         </header>
@@ -112,7 +112,7 @@ const Profile: React.FC = () => {
             </div>
             <div className="xp-details">
               <XPBar />
-              <p className="xp-text">{stats.xp} XP collected so far!</p>
+              <p className="xp-text">{stats.xp} XP</p>
             </div>
           </div>
 
@@ -154,7 +154,7 @@ const Profile: React.FC = () => {
             ) : (
               <div className="no-badges">
                 <span className="no-badges-emoji"><MimiMascot size={48} mood="waving" /></span>
-                <p>Mimi says: Keep exploring to earn your first badge!</p>
+                <p>Mimi: Rozet kazanmak için keşfetmeye devam et!</p>
               </div>
             )}
           </div>
@@ -165,24 +165,24 @@ const Profile: React.FC = () => {
         <div className="edit-modal-overlay">
           <div className="edit-modal">
             <div className="edit-modal-header">
-              <h2><Palette size={20} style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />Kid Profile Editor</h2>
+              <h2><Palette size={20} style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />Profil Düzenle</h2>
               <button onClick={() => setShowEditModal(false)} aria-label="Close"><X size={24} /></button>
             </div>
             <div className="edit-modal-body">
               <div className="edit-field">
-                <label>What should we call you?</label>
+                <label>Sana ne diyelim?</label>
                 <input
                   type="text"
                   value={editDisplayName}
                   onChange={(e) => setEditDisplayName(e.target.value)}
-                  placeholder="Enter your explorer name"
+                  placeholder="Kaşif adını gir"
                   maxLength={30}
                 />
               </div>
             </div>
             <div className="edit-modal-footer">
               <button className="cancel-btn" onClick={() => setShowEditModal(false)}>{t('common.back')}</button>
-              <button className="save-btn" onClick={handleUpdateProfile}>Save Name</button>
+              <button className="save-btn" onClick={handleUpdateProfile}>Kaydet</button>
             </div>
           </div>
         </div>
