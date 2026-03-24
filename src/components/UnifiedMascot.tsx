@@ -116,8 +116,6 @@ const UnifiedMascot: React.FC<UnifiedMascotProps> = ({
         };
     }, [state, isRandomLooking]);
 
-    const getEmoji = () => null;
-
     const showBigSmile = state === 'laughing' || state === 'celebrating' || state === 'dancing' || isSmiling;
     const currentEyeOffset = isRandomLooking ? randomLookOffset : eyeOffset;
     const eyeStyle = state !== 'sleeping' && state !== 'thinking' ? {
