@@ -363,6 +363,89 @@
 }
 
 /* ==========================================================================
+   FORCE LIGHT THEME — Override dark UI components inside login page
+   ========================================================================== */
+
+/* Input fields */
+.login-page .ui-input,
+.login-page input[type="email"],
+.login-page input[type="password"],
+.login-page input[type="text"] {
+  background: #F9FAFB !important;
+  border-color: #E2E8F0 !important;
+  color: #1a1a2e !important;
+}
+.login-page .ui-input:focus,
+.login-page input:focus {
+  background: #ffffff !important;
+  border-color: #FF6B35 !important;
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.15) !important;
+}
+.login-page .ui-input-wrapper,
+.login-page .input-wrapper {
+  background: #F9FAFB !important;
+  border: 1.5px solid #E2E8F0 !important;
+  border-radius: 12px !important;
+}
+.login-page .ui-input-wrapper:focus-within,
+.login-page .input-wrapper:focus-within {
+  background: #ffffff !important;
+  border-color: #FF6B35 !important;
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.12) !important;
+}
+.login-page .ui-input-icon,
+.login-page .input-icon {
+  color: #94A3B8 !important;
+}
+.login-page label,
+.login-page .ui-input-label,
+.login-page .input-label {
+  color: #334155 !important;
+  font-weight: 700 !important;
+}
+.login-page input::placeholder {
+  color: #CBD5E1 !important;
+}
+
+/* Primary button */
+.login-page .ui-btn-primary,
+.login-page button[type="submit"],
+.login-page .btn-primary {
+  background: #FF6B35 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(255,107,53,0.3) !important;
+}
+.login-page .ui-btn-primary:hover,
+.login-page button[type="submit"]:hover {
+  background: #F04B10 !important;
+}
+
+/* Tabs */
+.login-page .ui-tabs,
+.login-page .tabs-underline {
+  border-bottom-color: #E5E7EB !important;
+}
+.login-page .ui-tab,
+.login-page .tab-item {
+  color: #94A3B8 !important;
+}
+.login-page .ui-tab--active,
+.login-page .tab-item--active {
+  color: #FF6B35 !important;
+  border-bottom-color: #FF6B35 !important;
+}
+
+/* Error message */
+.login-page .login-error {
+  background: #FFF1F2 !important;
+  border-color: #FECDD3 !important;
+  color: #BE123C !important;
+}
+
+/* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 @media (max-width: 768px) {
