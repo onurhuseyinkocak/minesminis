@@ -67,7 +67,7 @@ const Leaderboard: React.FC = () => {
             <div className="leader-header">
                 <div className="header-title">
                     <Trophy className="trophy-gold" size={24} />
-                    <h3>Weekly <span>Mimi</span></h3>
+                    <h3>Weekly <span>Challenge</span></h3>
                 </div>
                 <div className="prize-pill">
                     <Crown size={14} />
