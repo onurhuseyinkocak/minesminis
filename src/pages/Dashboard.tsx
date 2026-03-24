@@ -462,13 +462,21 @@ export default function Dashboard() {
       <motion.section className="dash-weekly" variants={itemVariants}>
         <span className="dash-weekly__label">{t('dashboard.weeklyProgress')}</span>
         <div className="dash-weekly__dots">
-          {weeklyDots.map((done, i) => (
-            <div
-              key={i}
-              className={`dash-weekly__dot${done ? ' dash-weekly__dot--done' : ''}`}
-              aria-label={done ? 'Completed' : 'Not completed'}
-            />
-          ))}
+          {weeklyDots.map((done, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - (6 - i));
+            const dayLabel = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'][d.getDay()];
+            const isToday = i === 6;
+            return (
+              <div key={i} className={`dash-weekly__dot-wrap${isToday ? ' dash-weekly__dot-wrap--today' : ''}`}>
+                <div
+                  className={`dash-weekly__dot${done ? ' dash-weekly__dot--done' : ''}`}
+                  aria-label={done ? 'Tamamlandı' : 'Tamamlanmadı'}
+                />
+                <span className="dash-weekly__day-label">{dayLabel}</span>
+              </div>
+            );
+          })}
         </div>
       </motion.section>
 
@@ -500,7 +508,7 @@ export default function Dashboard() {
           <ProgressRing
             value={todayCompletions}
             max={Math.max(todayCompletions, 5)}
-            label="done"
+            label="tamamlandı"
             colorClass="dash-today__stat-ring-fill--done"
           />
         </div>
@@ -541,33 +549,8 @@ export default function Dashboard() {
       {/* ============================================================
           JOIN CLASSROOM
           ============================================================ */}
-      {!joinedClassroom ? (
-        <motion.section className="dash-classroom" variants={itemVariants}>
-          <div className="dash-classroom__icon">
-            <School size={20} />
-          </div>
-          <span className="dash-classroom__label">{t('dashboard.joinClassroom')}</span>
-          <div className="dash-classroom__form">
-            <input
-              type="text"
-              className="dash-classroom__input"
-              placeholder="Code"
-              value={joinCode}
-              onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(''); }}
-              maxLength={6}
-            />
-            <button
-              type="button"
-              className="dash-classroom__btn"
-              onClick={handleJoinClassroom}
-              disabled={joinCode.trim().length < 4}
-            >
-              {t('common.join')}
-            </button>
-          </div>
-          {joinError && <span className="dash-classroom__error">{joinError}</span>}
-        </motion.section>
-      ) : (
+      {/* Show classroom only if already joined (join flow moved to Profile/Settings) */}
+      {joinedClassroom && (
         <motion.section className="dash-classroom dash-classroom--joined" variants={itemVariants}>
           <School size={18} />
           <span className="dash-classroom__name">{joinedClassroom}</span>

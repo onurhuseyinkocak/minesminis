@@ -348,6 +348,29 @@
   box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
+.dash-weekly__dot-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dash-weekly__dot-wrap--today .dash-weekly__dot {
+  border-color: var(--primary, #F59E0B);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.dash-weekly__day-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+}
+
+.dash-weekly__dot-wrap--today .dash-weekly__day-label {
+  color: var(--primary);
+}
+
 /* ==========================================================================
    HERO -- Continue Learning (kept for potential future use)
    ========================================================================== */

@@ -24,7 +24,7 @@ const tr: TranslationKeys = {
     today: 'Bugün',
     playGames: 'Oyun Oyna',
     achievements: 'Başarılar',
-    playLessonsToUnlock: 'Rozet ve ödüllerin kilidini açmak için ders oyna!',
+    playLessonsToUnlock: 'Ders yap, rozet kazan!',
     joinClassroom: 'Bir sınıfa katıl',
     games: 'Oyunlar',
     words: 'Kelimeler',
