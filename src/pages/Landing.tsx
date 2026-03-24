@@ -107,10 +107,9 @@ export default function Landing() {
               {t(lang, '🏆 10,000+ öğrenci kullanıyor', '🏆 Trusted by 10,000+ students')}
             </div>
             <h1 className="ld-hero__h1">
-              {t(lang,
-                <>Çocuğunuz<br /><span>İngilizceyi</span><br />Sevecek</>,
-                <>Your Child<br /><span>Will Love</span><br />English</>
-              )}
+              {lang === 'tr'
+                ? <>Çocuğunuz<br /><span>İngilizceyi</span><br />Sevecek</>
+                : <>Your Child<br /><span>Will Love</span><br />English</>}
             </h1>
             <p className="ld-hero__sub">
               {t(lang,
