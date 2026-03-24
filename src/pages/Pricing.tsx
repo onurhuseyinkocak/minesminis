@@ -8,6 +8,7 @@ import {
   ChevronDown, ChevronUp, Loader2, ExternalLink,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import PublicLayout from '../components/layout/PublicLayout';
 import './Pricing.css';
 
 // ── Plan variant IDs (set these to your Lemon Squeezy variant IDs) ──────────
@@ -216,6 +217,7 @@ export default function Pricing() {
   };
 
   return (
+    <PublicLayout>
     <div className="pricing-page">
       <div className="pricing-container">
 
@@ -375,5 +377,6 @@ export default function Pricing() {
         )}
       </div>
     </div>
+    </PublicLayout>
   );
 }

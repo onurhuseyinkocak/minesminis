@@ -16,10 +16,10 @@
   background: rgba(255,255,255,0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #E5E7EB;
-  border-radius: 999px;
-  color: #64748B;
-  font-family: 'Nunito', sans-serif;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 14px;
   text-decoration: none;
@@ -27,8 +27,8 @@
   min-height: 44px;
 }
 .login-back-btn:hover {
-  background: #fff;
-  color: #FF6B35;
+  background: var(--bg-card);
+  color: var(--primary);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
@@ -39,7 +39,7 @@
   align-items: center;
   justify-content: center;
   padding: 32px;
-  background: #FFF8F2;
+  background: var(--bg-page);
   position: relative;
 }
 
@@ -52,12 +52,12 @@
   display: flex;
   align-items: center;
   gap: 0;
-  background: #fff;
-  border-radius: 999px;
+  background: var(--bg-card);
+  border-radius: var(--radius-full);
   padding: 3px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border: 1px solid #E5E7EB;
-  font-family: 'Nunito', sans-serif;
+  border: 1px solid var(--border-light);
+  font-family: var(--font-display);
   font-size: 13px;
 }
 
@@ -65,24 +65,24 @@
   all: unset;
   cursor: pointer;
   padding: 4px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-weight: 600;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
-  color: #64748B;
+  color: var(--text-secondary);
   transition: all 200ms ease-out;
   line-height: 1.5;
 }
 
 .login-lang-toggle button.active {
-  background: #FF6B35;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--text-on-primary);
 }
 
 .login-lang-divider {
   width: 1px;
   height: 14px;
-  background: #E5E7EB;
+  background: var(--border-light);
   flex-shrink: 0;
 }
 
@@ -92,8 +92,8 @@
   grid-template-columns: 1fr 1.2fr;
   width: 100%;
   max-width: 880px;
-  background: #ffffff;
-  border-radius: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
   box-shadow: 0 8px 40px rgba(0,0,0,0.10);
   border: 1px solid #F0E8DF;
   overflow: hidden;
@@ -104,7 +104,7 @@
    SIDE PANEL (Orange gradient — Duolingo style)
    ========================================================================== */
 .login-side {
-  background: linear-gradient(135deg, #FF6B35, #F04B10);
+  background: var(--gradient-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -141,15 +141,15 @@
 }
 
 .login-side-brand {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 2.25rem;
-  color: #ffffff;
+  color: var(--text-on-primary);
   letter-spacing: -0.02em;
 }
 
 .login-side-tagline {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   color: rgba(255,255,255,0.88);
   line-height: 1.6;
@@ -169,7 +169,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.9rem;
   color: rgba(255,255,255,0.92);
   line-height: 1.5;
@@ -181,9 +181,9 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255,255,255,0.25);
-  color: #ffffff;
+  color: var(--text-on-primary);
   flex-shrink: 0;
 }
 
@@ -195,7 +195,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: #ffffff;
+  background: var(--bg-card);
 }
 
 .login-header {
@@ -203,18 +203,18 @@
 }
 
 .login-header h2 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.625rem;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin-bottom: 6px;
   line-height: 1.2;
 }
 
 .login-header p {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.9rem;
-  color: #64748B;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
@@ -231,16 +231,16 @@
 }
 
 .login-password-hint {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.8rem;
-  color: #94A3B8;
+  color: var(--text-muted);
   margin-top: -8px;
 }
 
 .login-forgot-link {
   background: none;
   border: none;
-  color: #FF6B35;
+  color: var(--primary);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -248,7 +248,7 @@
   margin-top: -4px;
   text-align: left;
   transition: opacity 0.2s;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
 }
 
 .login-forgot-link:hover {
@@ -261,8 +261,8 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: #FFF8F2;
-  border-radius: 12px;
+  background: var(--bg-page);
+  border-radius: var(--radius-md);
   border: 1px solid #F0E8DF;
 }
 
@@ -271,9 +271,9 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  background: #FEF2F2;
+  background: var(--error-pale);
   color: #DC2626;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   padding: 10px 16px;
   border-radius: 8px;
@@ -299,11 +299,11 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #E5E7EB;
+  background: var(--border-light);
 }
 
 .login-divider span {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.8rem;
   color: #9CA3AF;
   text-transform: uppercase;
@@ -318,21 +318,21 @@
   gap: 8px;
   width: 100%;
   height: 48px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--border-light);
   border-radius: 10px;
-  background: #ffffff;
-  font-family: 'Nunito', sans-serif;
+  background: var(--bg-card);
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--text-body);
   cursor: pointer;
   transition: all 200ms ease-out;
 }
 
 .login-google-btn:hover {
-  border-color: #D1D5DB;
+  border-color: var(--border-hover);
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  background: #F9FAFB;
+  background: var(--bg-elevated);
 }
 
 .login-google-btn:disabled {
@@ -343,22 +343,22 @@
 /* ---- TOGGLE HINT ---- */
 .login-toggle {
   text-align: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.85rem;
-  color: #64748B;
+  color: var(--text-secondary);
 }
 
 .login-toggle button {
   all: unset;
   cursor: pointer;
-  color: #FF6B35;
+  color: var(--primary);
   font-weight: 600;
   margin-left: 4px;
   transition: color 200ms ease-out;
 }
 
 .login-toggle button:hover {
-  color: #F04B10;
+  color: var(--primary-hover);
   text-decoration: underline;
 }
 
@@ -371,78 +371,78 @@
 .login-page input[type="email"],
 .login-page input[type="password"],
 .login-page input[type="text"] {
-  background: #F9FAFB !important;
-  border-color: #E2E8F0 !important;
-  color: #1a1a2e !important;
+  background: var(--bg-elevated);
+  border-color: var(--border);
+  color: var(--text-primary);
 }
 .login-page .ui-input:focus,
 .login-page input:focus {
-  background: #ffffff !important;
-  border-color: #FF6B35 !important;
-  box-shadow: 0 0 0 3px rgba(255,107,53,0.15) !important;
+  background: var(--bg-card);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.15);
 }
 .login-page .ui-input-wrapper,
 .login-page .input-wrapper {
-  background: #F9FAFB !important;
-  border: 1.5px solid #E2E8F0 !important;
-  border-radius: 12px !important;
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
 }
 .login-page .ui-input-wrapper:focus-within,
 .login-page .input-wrapper:focus-within {
-  background: #ffffff !important;
-  border-color: #FF6B35 !important;
-  box-shadow: 0 0 0 3px rgba(255,107,53,0.12) !important;
+  background: var(--bg-card);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.12);
 }
 .login-page .ui-input-icon,
 .login-page .input-icon {
-  color: #94A3B8 !important;
+  color: var(--text-muted);
 }
 .login-page label,
 .login-page .ui-input-label,
 .login-page .input-label {
-  color: #334155 !important;
-  font-weight: 700 !important;
+  color: var(--text-body);
+  font-weight: 700;
 }
 .login-page input::placeholder {
-  color: #CBD5E1 !important;
+  color: var(--border-medium);
 }
 
 /* Primary button */
 .login-page .ui-btn-primary,
 .login-page button[type="submit"],
 .login-page .btn-primary {
-  background: #FF6B35 !important;
-  color: #ffffff !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-weight: 800 !important;
-  box-shadow: 0 4px 14px rgba(255,107,53,0.3) !important;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(255,107,53,0.3);
 }
 .login-page .ui-btn-primary:hover,
 .login-page button[type="submit"]:hover {
-  background: #F04B10 !important;
+  background: var(--primary-hover);
 }
 
 /* Tabs */
 .login-page .ui-tabs,
 .login-page .tabs-underline {
-  border-bottom-color: #E5E7EB !important;
+  border-bottom-color: var(--border-light);
 }
 .login-page .ui-tab,
 .login-page .tab-item {
-  color: #94A3B8 !important;
+  color: var(--text-muted);
 }
 .login-page .ui-tab--active,
 .login-page .tab-item--active {
-  color: #FF6B35 !important;
-  border-bottom-color: #FF6B35 !important;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }
 
 /* Error message */
 .login-page .login-error {
-  background: #FFF1F2 !important;
-  border-color: #FECDD3 !important;
-  color: #BE123C !important;
+  background: #FFF1F2;
+  border-color: var(--error-soft);
+  color: #BE123C;
 }
 
 /* ==========================================================================

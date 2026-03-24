@@ -1,93 +1,36 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Rocket, Home } from 'lucide-react';
+import PublicLayout from '../components/layout/PublicLayout';
 
 function NotFound() {
-    const navigate = useNavigate();
-
     return (
-        <div
-            style={{
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: "'Nunito', sans-serif",
-                background: '#FFF8F2',
-                padding: '2rem',
-                textAlign: 'center',
-            }}
-        >
-            <div
-                style={{
-                    marginBottom: '0.5rem',
-                    animation: 'float 3s ease-in-out infinite',
-                }}
-            >
-                <Rocket size={96} color="#FF6B35" strokeWidth={1.5} />
+        <PublicLayout>
+            <div className="min-h-[70vh] flex flex-col items-center justify-center bg-cream-100 px-6 text-center">
+                <div className="animate-float mb-4">
+                    <Rocket
+                        size={96}
+                        className="text-primary-500"
+                        strokeWidth={1.5}
+                    />
+                </div>
+
+                <h1 className="font-display font-black text-ink-900 text-6xl sm:text-8xl mb-4 tracking-tight">
+                    4<span className="text-primary-500">0</span>4
+                </h1>
+
+                <p className="font-display font-semibold text-ink-500 text-lg sm:text-xl max-w-sm mb-8">
+                    Hay aksi! Aradığın sayfa kayıp bir roket gibi uzayda kayboldu.
+                </p>
+
+                <Link
+                    to="/"
+                    className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-display font-bold text-base px-8 py-4 rounded-2xl shadow-primary hover:shadow-primary-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                >
+                    <Home size={20} />
+                    Ana Sayfaya Dön
+                </Link>
             </div>
-
-            <h1
-                style={{
-                    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-                    fontWeight: 800,
-                    color: '#1a1a2e',
-                    margin: '0.5rem 0',
-                }}
-            >
-                4&nbsp;
-                <span style={{ color: '#FF6B35' }}>0</span>
-                &nbsp;4
-            </h1>
-
-            <p
-                style={{
-                    fontSize: 'clamp(1rem, 2.5vw, 1.35rem)',
-                    color: '#64748B',
-                    maxWidth: '420px',
-                    marginBottom: '2rem',
-                    fontWeight: 600,
-                }}
-            >
-                Oops! This page got lost in space!
-            </p>
-
-            <button
-                onClick={() => navigate('/dashboard')}
-                style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.85rem 2rem',
-                    fontSize: '1.05rem',
-                    fontWeight: 700,
-                    fontFamily: "'Nunito', sans-serif",
-                    color: '#fff',
-                    background: '#FF6B35',
-                    border: 'none',
-                    borderRadius: '999px',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 14px rgba(255,107,53,0.35)',
-                    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-                }}
-                onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
-                }}
-            >
-                <Home size={20} />
-                Ana Sayfaya Dön
-            </button>
-
-            <style>{`
-                @keyframes float {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-12px); }
-                }
-            `}</style>
-        </div>
+        </PublicLayout>
     );
 }
 
