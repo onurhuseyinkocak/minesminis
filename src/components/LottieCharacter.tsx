@@ -1,29 +1,29 @@
 /**
- * LottieCharacter — New mascot system using Google Noto Emoji Lottie animations
- * Apache 2.0 License — free for commercial use
- * Source: https://googlefonts.github.io/noto-emoji-animation/
+ * LottieCharacter — Zubulig mascot (local Lottie JSON files)
+ * Files located in /public/mascot/zubulig_*.json
  */
 import { useEffect, useState } from 'react';
 import Lottie from 'lottie-react';
 
-// State → Google Noto Emoji CDN URL mapping
-// All Apache 2.0 licensed — free commercial use
-const NOTO_BASE = 'https://fonts.gstatic.com/s/e/notoemoji/latest';
-
-const STATE_URLS: Record<string, string> = {
-  idle:        `${NOTO_BASE}/1f43c/lottie.json`,   // panda
-  happy:       `${NOTO_BASE}/1f60a/lottie.json`,   // smiling
-  celebrating: `${NOTO_BASE}/1f389/lottie.json`,   // party
-  star:        `${NOTO_BASE}/1f929/lottie.json`,   // star-eyes
-  waving:      `${NOTO_BASE}/1f44b/lottie.json`,   // waving
-  sleeping:    `${NOTO_BASE}/1f634/lottie.json`,   // sleeping
-  thinking:    `${NOTO_BASE}/1f914/lottie.json`,   // thinking
-  love:        `${NOTO_BASE}/1f970/lottie.json`,   // loving
-  surprised:   `${NOTO_BASE}/1f632/lottie.json`,   // surprised
-  cool:        `${NOTO_BASE}/1f60e/lottie.json`,   // cool
+const STATE_MAP: Record<string, string> = {
+  idle:        '/mascot/zubulig_idle.json',
+  happy:       '/mascot/zubulig_happy.json',
+  sad:         '/mascot/zubulig_sad.json',
+  sit:         '/mascot/zubulig_sit.json',
+  talk:        '/mascot/zubulig_talk.json',
+  walk:        '/mascot/zubulig_walk.json',
+  wave:        '/mascot/zubulig_wave.json',
+  // aliases
+  celebrating: '/mascot/zubulig_happy.json',
+  thinking:    '/mascot/zubulig_sit.json',
+  sleeping:    '/mascot/zubulig_sit.json',
+  star:        '/mascot/zubulig_happy.json',
+  waving:      '/mascot/zubulig_wave.json',
+  excited:     '/mascot/zubulig_happy.json',
+  cool:        '/mascot/zubulig_idle.json',
 };
 
-export type CharacterState = keyof typeof STATE_URLS;
+export type CharacterState = keyof typeof STATE_MAP;
 
 interface LottieCharacterProps {
   state?: CharacterState;
@@ -39,23 +39,18 @@ export default function LottieCharacter({
   autoplay = true,
 }: LottieCharacterProps) {
   const [animData, setAnimData] = useState<unknown>(null);
-  const [loading, setLoading] = useState(true);
 
-  const url = STATE_URLS[state] ?? STATE_URLS.idle;
+  const path = STATE_MAP[state] ?? STATE_MAP.idle;
 
   useEffect(() => {
-    setLoading(true);
     setAnimData(null);
-    fetch(url)
+    fetch(path)
       .then(r => r.json())
-      .then(data => {
-        setAnimData(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [url]);
+      .then(data => setAnimData(data))
+      .catch(() => { /* fallback stays null */ });
+  }, [path]);
 
-  if (loading || !animData) {
+  if (!animData) {
     return (
       <div style={{
         width: size,
@@ -69,7 +64,7 @@ export default function LottieCharacter({
         fontWeight: 900,
         color: '#fff',
         fontFamily: 'Nunito, sans-serif',
-      }}>M</div>
+      }}>Z</div>
     );
   }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Menu, X } from 'lucide-react';
+import { ArrowRight, Check, Menu, X, Mic, Gamepad2, BookOpen, Star, Trophy } from 'lucide-react';
 import LottieCharacter from '../components/LottieCharacter';
 import './Landing.css';
 
@@ -16,28 +16,28 @@ const STATS = [
 
 const FEATURES = [
   {
-    icon: '🎤',
+    icon: <Mic size={28} />,
     iconBg: '#FFF0E8',
     iconColor: '#FF6B35',
     title: { tr: 'Sesi Duy, Tekrar Et', en: 'Hear It, Repeat It' },
     desc: { tr: '42 fonetik ses animasyonlarla canlı öğretilir. Her ses bir hikayeye dönüşür.', en: '42 phonics sounds taught with animations. Every sound becomes a story.' },
   },
   {
-    icon: '🎮',
+    icon: <Gamepad2 size={28} />,
     iconBg: '#EDE9FE',
     iconColor: '#7C3AED',
     title: { tr: 'Oyunlarla Pekiştir', en: 'Practice Through Games' },
     desc: { tr: 'Kelime eşleştirme, yazım arısı, cümle kurma — öğrenmek oyun kadar eğlenceli.', en: 'Word match, spelling bee, sentence scramble — learning as fun as playing.' },
   },
   {
-    icon: '📖',
+    icon: <BookOpen size={28} />,
     iconBg: '#F0FDF4',
     iconColor: '#16A34A',
     title: { tr: 'Hikayeler Oku', en: 'Read Stories' },
     desc: { tr: 'Çocuğun seviyesine göre fonetik hikayeler. Her bölümde kelime hazinesi büyür.', en: 'Phonics stories matched to your child\'s level. Vocabulary grows every chapter.' },
   },
   {
-    icon: '⭐',
+    icon: <Star size={28} />,
     iconBg: '#FFFBEB',
     iconColor: '#D97706',
     title: { tr: 'Ödüller Kazan', en: 'Earn Rewards' },
@@ -46,9 +46,51 @@ const FEATURES = [
 ];
 
 const HOW_STEPS = [
-  { num: '1', title: { tr: 'Seviyeni Bul', en: 'Find Your Level' }, desc: { tr: 'Kısa bir yerleştirme testiyle başlangıç noktanı belirle.', en: 'A quick placement test finds exactly where to start.' }, color: '#FF6B35' },
-  { num: '2', title: { tr: 'Günlük Ders', en: 'Daily Lesson' }, desc: { tr: 'Günde 10 dakika — sesler, kelimeler, oyunlar, hikayeler.', en: '10 minutes a day — sounds, words, games, stories.' }, color: '#7C3AED' },
-  { num: '3', title: { tr: 'İlerleme Gör', en: 'See Progress' }, desc: { tr: 'Tamamlanan sesler, kazanılan yıldızlar, büyüyen bahçe.', en: 'Completed sounds, earned stars, a growing garden.' }, color: '#16A34A' },
+  {
+    num: '1',
+    title: { tr: 'Seviyeni Bul', en: 'Find Your Level' },
+    desc: { tr: 'Kısa bir yerleştirme testiyle başlangıç noktanı belirle.', en: 'A quick placement test finds exactly where to start.' },
+    color: '#FF6B35',
+  },
+  {
+    num: '2',
+    title: { tr: 'Günlük Ders', en: 'Daily Lesson' },
+    desc: { tr: 'Günde 10 dakika — sesler, kelimeler, oyunlar, hikayeler.', en: '10 minutes a day — sounds, words, games, stories.' },
+    color: '#7C3AED',
+  },
+  {
+    num: '3',
+    title: { tr: 'İlerleme Gör', en: 'See Progress' },
+    desc: { tr: 'Tamamlanan sesler, kazanılan yıldızlar, büyüyen bahçe.', en: 'Completed sounds, earned stars, a growing garden.' },
+    color: '#16A34A',
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: {
+      tr: '"Kızım her gün kendi isteğiyle oturup ders yapıyor. Bunu beklemiyordum!"',
+      en: '"My daughter sits down voluntarily every day. I didn\'t expect this!"',
+    },
+    name: 'Ayşe K.',
+    role: { tr: '7 yaşında kız çocuğu annesi', en: 'Mother of a 7-year-old girl' },
+  },
+  {
+    quote: {
+      tr: '"3 ayda ilk kitabı okumaya başladı. Fonetik sistemi gerçekten işe yarıyor."',
+      en: '"Started reading her first book in 3 months. The phonics system really works."',
+    },
+    name: 'Mehmet A.',
+    role: { tr: '6 yaşında erkek çocuğu babası', en: 'Father of a 6-year-old boy' },
+  },
+  {
+    quote: {
+      tr: '"Oyun oynadığını zannediyor ama İngilizce öğreniyor. Harika tasarım."',
+      en: '"He thinks he\'s playing games but he\'s learning English. Brilliant design."',
+    },
+    name: 'Fatma T.',
+    role: { tr: '8 yaşında erkek çocuğu annesi', en: 'Mother of an 8-year-old boy' },
+  },
 ];
 
 export default function Landing() {
@@ -57,14 +99,11 @@ export default function Landing() {
 
   return (
     <div className="ld-root">
-      {/* ══════════════════════════════════════════
-          NAVBAR
-      ══════════════════════════════════════════ */}
+
+      {/* ══ NAVBAR ══ */}
       <nav className="ld-nav">
         <div className="ld-nav__inner">
-          <Link to="/" className="ld-logo">
-            <span>MinesMinis</span>
-          </Link>
+          <Link to="/" className="ld-logo">MinesMinis</Link>
 
           <div className="ld-nav__links">
             <a href="#features">{t(lang, 'Özellikler', 'Features')}</a>
@@ -95,15 +134,13 @@ export default function Landing() {
         )}
       </nav>
 
-      {/* ══════════════════════════════════════════
-          HERO
-      ══════════════════════════════════════════ */}
+      {/* ══ HERO ══ */}
       <section className="ld-hero">
         <div className="ld-hero__inner">
-          {/* Text side */}
           <div className="ld-hero__text">
             <div className="ld-hero__badge">
-              {t(lang, '🏆 10,000+ öğrenci kullanıyor', '🏆 Trusted by 10,000+ students')}
+              <Trophy size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} />
+              {t(lang, '10.000+ öğrenci kullanıyor', 'Trusted by 10,000+ students')}
             </div>
             <h1 className="ld-hero__h1">
               {lang === 'tr'
@@ -112,7 +149,7 @@ export default function Landing() {
             </h1>
             <p className="ld-hero__sub">
               {t(lang,
-                '42 fonetik sesle bilimsel olarak kanıtlanmış yöntem. Günde 10 dakika yeterli.',
+                '42 fonetik sesle bilimsel olarak kanıtlanmış yöntem. Günde sadece 10 dakika.',
                 'Scientifically proven method with 42 phonics sounds. Just 10 minutes a day.'
               )}
             </p>
@@ -127,7 +164,7 @@ export default function Landing() {
             </div>
             <ul className="ld-hero__checks">
               {[
-                t(lang, 'Kayıt gerekmez', 'No sign-up required'),
+                t(lang, 'Kredi kartı gerekmez', 'No credit card required'),
                 t(lang, 'Tamamen ücretsiz', 'Completely free'),
                 t(lang, '42 fonetik ses', '42 phonics sounds'),
               ].map(item => (
@@ -136,20 +173,12 @@ export default function Landing() {
             </ul>
           </div>
 
-          {/* Hero visual — animated emoji characters */}
           <div className="ld-hero__visual">
-            <div className="ld-hero__emoji-grid">
-              <div className="ld-hero__emoji-main">
-                <LottieCharacter state="idle" size={180} />
-              </div>
-              <div className="ld-hero__emoji-row">
-                <LottieCharacter state="happy" size={72} />
-                <LottieCharacter state="celebrating" size={72} />
-                <LottieCharacter state="star" size={72} />
-              </div>
+            <div className="ld-hero__mascot-wrap">
+              <div className="ld-hero__glow" />
+              <LottieCharacter state="idle" size={260} />
             </div>
 
-            {/* Floating phonics bubbles */}
             <div className="ld-bubble ld-bubble--a">
               <span className="ld-bubble__letter">A</span>
               <span className="ld-bubble__word">Apple</span>
@@ -170,9 +199,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          STATS BAND
-      ══════════════════════════════════════════ */}
+      {/* ══ STATS BAND ══ */}
       <div className="ld-stats-band">
         {STATS.map(s => (
           <div key={s.value} className="ld-stats-band__item">
@@ -182,19 +209,16 @@ export default function Landing() {
         ))}
       </div>
 
-      {/* ══════════════════════════════════════════
-          FEATURES
-      ══════════════════════════════════════════ */}
+      {/* ══ FEATURES ══ */}
       <section id="features" className="ld-section ld-section--white">
         <div className="ld-section__inner">
           <p className="ld-section__eyebrow">{t(lang, 'Her şey tek bir uygulamada', 'Everything in one app')}</p>
           <h2 className="ld-section__h2">{t(lang, 'Neden MinesMinis?', 'Why MinesMinis?')}</h2>
-
           <div className="ld-features-grid">
             {FEATURES.map(f => (
               <div key={f.title.tr} className="ld-feature-card">
-                <div className="ld-feature-card__icon" style={{ background: f.iconBg }}>
-                  <span style={{ fontSize: 28 }}>{f.icon}</span>
+                <div className="ld-feature-card__icon" style={{ background: f.iconBg, color: f.iconColor }}>
+                  {f.icon}
                 </div>
                 <h3 className="ld-feature-card__title">{t(lang, f.title.tr, f.title.en)}</h3>
                 <p className="ld-feature-card__desc">{t(lang, f.desc.tr, f.desc.en)}</p>
@@ -204,14 +228,11 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          HOW IT WORKS
-      ══════════════════════════════════════════ */}
+      {/* ══ HOW IT WORKS ══ */}
       <section id="how" className="ld-section ld-section--cream">
         <div className="ld-section__inner">
           <p className="ld-section__eyebrow">{t(lang, 'Basit, etkili, eğlenceli', 'Simple, effective, fun')}</p>
           <h2 className="ld-section__h2">{t(lang, 'Nasıl Çalışır?', 'How It Works?')}</h2>
-
           <div className="ld-steps">
             {HOW_STEPS.map((step, i) => (
               <div key={step.num} className="ld-step">
@@ -227,20 +248,16 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          SOCIAL PROOF
-      ══════════════════════════════════════════ */}
+      {/* ══ TESTIMONIALS ══ */}
       <section className="ld-section ld-section--white">
         <div className="ld-section__inner">
           <h2 className="ld-section__h2">{t(lang, 'Aileler Ne Diyor?', 'What Parents Say?')}</h2>
           <div className="ld-testimonials">
-            {[
-              { quote: { tr: '"Kızım her gün kendi isteğiyle oturup ders yapıyor. Bunu beklemiyordum!"', en: '"My daughter sits down voluntarily every day. I didn\'t expect this!"' }, name: 'Ayşe K.', role: { tr: '7 yaşında kız çocuğu annesi', en: 'Mother of a 7-year-old girl' } },
-              { quote: { tr: '"3 ayda ilk kitabı okumaya başladı. Fonetik sistemi gerçekten işe yarıyor."', en: '"Started reading her first book in 3 months. The phonics system really works."' }, name: 'Mehmet A.', role: { tr: '6 yaşında erkek çocuğu babası', en: 'Father of a 6-year-old boy' } },
-              { quote: { tr: '"Oyun oynadığını zannediyor ama İngilizce öğreniyor. Harika tasarım."', en: '"He thinks he\'s playing games but he\'s learning English. Brilliant design."' }, name: 'Fatma T.', role: { tr: '8 yaşında erkek çocuğu annesi', en: 'Mother of an 8-year-old boy' } },
-            ].map(r => (
+            {TESTIMONIALS.map(r => (
               <div key={r.name} className="ld-testimonial">
-                <div className="ld-testimonial__stars">{'★★★★★'}</div>
+                <div className="ld-testimonial__stars">
+                  {[0,1,2,3,4].map(i => <Star key={i} size={14} fill="#F59E0B" color="#F59E0B" />)}
+                </div>
                 <p className="ld-testimonial__quote">{t(lang, r.quote.tr, r.quote.en)}</p>
                 <div className="ld-testimonial__author">
                   <div className="ld-testimonial__avatar">{r.name.charAt(0)}</div>
@@ -255,15 +272,11 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          CTA BOTTOM
-      ══════════════════════════════════════════ */}
+      {/* ══ CTA ══ */}
       <section className="ld-cta-section">
         <div className="ld-cta-section__inner">
           <div className="ld-cta-mascot">
-            <div style={{ fontSize: 80, lineHeight: 1 }}>
-              <LottieCharacter state="celebrating" size={100} />
-            </div>
+            <LottieCharacter state="wave" size={120} />
           </div>
           <h2 className="ld-cta-section__h2">
             {t(lang, 'Bugün Ücretsiz Başla!', 'Start Free Today!')}
@@ -281,21 +294,17 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          FOOTER
-      ══════════════════════════════════════════ */}
+      {/* ══ FOOTER ══ */}
       <footer className="ld-footer">
         <div className="ld-footer__inner">
-          <Link to="/" className="ld-footer__logo">
-            <span>MinesMinis</span>
-          </Link>
+          <Link to="/" className="ld-footer__logo">MinesMinis</Link>
           <p className="ld-footer__tagline">
             {t(lang, 'Çocuklar için İngilizce', 'English for kids')}
           </p>
           <div className="ld-footer__links">
-            <a href="#">{t(lang, 'Gizlilik', 'Privacy')}</a>
-            <a href="#">{t(lang, 'Kullanım Şartları', 'Terms')}</a>
-            <a href="#">{t(lang, 'Çerezler', 'Cookies')}</a>
+            <Link to="/privacy">{t(lang, 'Gizlilik', 'Privacy')}</Link>
+            <Link to="/terms">{t(lang, 'Kullanım Şartları', 'Terms')}</Link>
+            <Link to="/cookies">{t(lang, 'Çerezler', 'Cookies')}</Link>
           </div>
           <p className="ld-footer__copy">© 2026 MinesMinis. {t(lang, 'Tüm hakları saklıdır.', 'All rights reserved.')}</p>
         </div>
