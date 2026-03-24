@@ -12,9 +12,9 @@ interface ThemeToggleProps {
 }
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ showLabel = false }) => {
-    const { effectiveTheme, toggleTheme } = useTheme();
+    const { toggleTheme } = useTheme();
 
-    const isDark = effectiveTheme === 'dark';
+    const isDark = false;
 
     return (
         <button

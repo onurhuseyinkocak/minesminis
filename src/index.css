@@ -121,39 +121,39 @@
   --snow: var(--slate-50);
   --white: #FFFFFF;
 
-  /* ---- TEXT: Dark theme defaults ---- */
-  --text-primary: #F1F5F9;
-  --text-body: #CBD5E1;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  /* ---- TEXT: Light theme ---- */
+  --text-primary: #1a1a2e;
+  --text-body: #334155;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
   --text-on-primary: #FFFFFF;
   --text-on-dark: #F1F5F9;
 
-  /* ---- BACKGROUNDS: Dark theme (dark-only site) ---- */
-  --bg-page: #0C0F1A;
-  --bg-card: #151929;
-  --bg-elevated: #1C2236;
-  --bg-muted: #111526;
-  --bg-soft: #0F1320;
-  --bg-glass: rgba(21, 25, 41, 0.85);
+  /* ---- BACKGROUNDS: Light theme ---- */
+  --bg-page: #FFF8F2;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F8F9FA;
+  --bg-muted: #F1F5F9;
+  --bg-soft: #FFF0E8;
+  --bg-glass: rgba(255, 255, 255, 0.85);
 
-  /* ---- BORDERS: Dark theme defaults ---- */
-  --border: #334155;
-  --border-hover: #475569;
+  /* ---- BORDERS: Light theme ---- */
+  --border: #E2E8F0;
+  --border-hover: #CBD5E1;
   --border-focus: var(--primary-light);
 
   /* Backwards compat aliases */
-  --border-light: #334155;
-  --border-medium: #475569;
+  --border-light: #E2E8F0;
+  --border-medium: #CBD5E1;
 
-  /* ---- GRADIENTS: Dark theme defaults ---- */
-  --gradient-warm: linear-gradient(135deg, #0C0F1A 0%, #151929 50%, #111526 100%);
-  --gradient-mimi: linear-gradient(180deg, #0D2818 0%, #0F2D1E 100%);
-  --gradient-premium: linear-gradient(135deg, #050810 0%, #0F172A 100%);
-  --gradient-sky: linear-gradient(180deg, #0C1929 0%, #0F1E30 30%, #0B1622 100%);
-  --gradient-primary: linear-gradient(135deg, #B87C0A 0%, #D4940D 100%);
-  --gradient-secondary: linear-gradient(135deg, #0A4A3E 0%, #0D5C4D 100%);
-  --gradient-hero: linear-gradient(160deg, #0F172A 0%, #1E293B 40%, #0F172A 100%);
+  /* ---- GRADIENTS: Light theme ---- */
+  --gradient-warm: linear-gradient(135deg, #FFF8F2 0%, #FFF0E8 50%, #FFE4CC 100%);
+  --gradient-mimi: linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 100%);
+  --gradient-premium: linear-gradient(135deg, #FFF0E8 0%, #FFE4CC 100%);
+  --gradient-sky: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 30%, #EFF6FF 100%);
+  --gradient-primary: linear-gradient(135deg, #FF6B35 0%, #F04B10 100%);
+  --gradient-secondary: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
+  --gradient-hero: linear-gradient(160deg, #FFF8F2 0%, #FFF3E8 40%, #F8F4FF 100%);
 
   /* ---- SHADOWS: Clean with subtle amber tint ---- */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
