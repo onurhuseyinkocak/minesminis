@@ -35,6 +35,7 @@ import { useGamification } from '../contexts/GamificationContext';
 import { GameSelector } from '../components/games';
 import { getLessonById, getWorldById, getWorldVocabulary } from '../data/curriculum';
 import type { Activity, VocabularyWord } from '../data/curriculum';
+import { PHONICS_GROUPS } from '../data/phonics';
 import { completeLesson } from '../data/progressTracker';
 import { updateWordProgress } from '../data/spacedRepetition';
 import { useAuth } from '../contexts/AuthContext';
@@ -391,18 +392,14 @@ const LessonPlayer = () => {
     // Fallback for new curriculum: get blendable words from phonics groups
     const unit = getUnitById(worldId);
     if (unit) {
-      const { PHONICS_GROUPS } = require('../data/phonics');
-      const groupNums = unit.phonicsFocus.map(s => {
-        const g = PHONICS_GROUPS.find((pg: { sounds: { id: string }[] }) => pg.sounds.some((ps: { id: string }) => ps.id === s));
-        return g?.group;
-      }).filter(Boolean);
-      const uniqueGroups = [...new Set(groupNums)];
       const words: { english: string; turkish: string; emoji: string }[] = [];
-      for (const gn of uniqueGroups) {
-        const g = PHONICS_GROUPS.find((pg: { group: number }) => pg.group === gn);
-        if (g?.blendableWords) {
-          for (const w of g.blendableWords.slice(0, 6)) {
-            words.push({ english: w, turkish: w, emoji: '' });
+      for (const soundId of unit.phonicsFocus) {
+        const group = PHONICS_GROUPS.find((pg) => pg.sounds.some((ps) => ps.id === soundId));
+        if (group?.blendableWords) {
+          for (const w of group.blendableWords.slice(0, 4)) {
+            if (!words.some(existing => existing.english === w)) {
+              words.push({ english: w, turkish: w, emoji: '' });
+            }
           }
         }
       }
