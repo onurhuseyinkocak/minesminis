@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
+import { LottieIcon } from '../components/ui';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
 import { SFX } from '../data/soundLibrary';
@@ -205,7 +206,7 @@ function WordOfTheDay() {
   const wod = getWordOfTheDay();
   return (
     <div className="dash-word-of-day">
-      <span className="dash-wod__emoji">🌟</span>
+      <span className="dash-wod__emoji"><LottieIcon name="star" size={28} /></span>
       <div className="dash-wod__body">
         <span className="dash-wod__label">{t('profile.wordOfTheDay')}</span>
         <strong className="dash-wod__word">{wod.word}</strong>

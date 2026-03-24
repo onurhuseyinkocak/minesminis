@@ -27,3 +27,6 @@ export { Tabs } from './Tabs';
 export type { TabsProps, TabItem, TabsVariant } from './Tabs';
 
 export { StarBurst, ConfettiRain, FloatingEmoji, StreakFlame, XPPop, PerfectBadge } from './Celebrations';
+
+export { LottieIcon, EMOJI } from './LottieIcon';
+export type { LottieIconProps, LottieIconName } from './LottieIcon';
