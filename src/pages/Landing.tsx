@@ -1,526 +1,298 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Menu, X } from 'lucide-react';
+import { ArrowRight, Check, Menu, X } from 'lucide-react';
 import UnifiedMascot from '../components/UnifiedMascot';
-import { KidIcon } from '../components/ui';
-import type { KidIconName } from '../components/ui';
 import './Landing.css';
 
-/* ─── Types ─────────────────────────────────────────────────────────────── */
-
 type Lang = 'en' | 'tr';
+const t = (lang: Lang, tr: string, en: string) => lang === 'tr' ? tr : en;
 
-interface PhonicsCard {
-  letter: string;
-  word: { tr: string; en: string };
-  color: string;
-  delay: number;
-}
-
-interface Phase {
-  num: number;
-  title: { tr: string; en: string };
-  age: string;
-  desc: { tr: string; en: string };
-  accent: string;
-}
-
-/* ─── Content ───────────────────────────────────────────────────────────── */
-
-const content = {
-  hero: {
-    title: { tr: 'Çocuğunuz İngilizceyi Sevecek', en: 'Your Child Will Love English' },
-    sub: {
-      tr: '42 fonetik sesle eğlenceli öğrenme. Günde 10 dakika yeterli.',
-      en: 'Fun learning with 42 phonics sounds. 10 minutes a day is enough.',
-    },
-    ctaPrimary: { tr: 'Ücretsiz Başla', en: 'Start Free' },
-    ctaSecondary: { tr: 'Nasıl Çalışır?', en: 'How It Works?' },
-  },
-  nav: {
-    learn: { tr: 'Öğren', en: 'Learn' },
-    games: { tr: 'Oyunlar', en: 'Games' },
-    stories: { tr: 'Hikayeler', en: 'Stories' },
-    start: { tr: 'Başla', en: 'Start' },
-  },
-  trust: [
-    { value: '4.9/5', label: { tr: 'Puan', en: 'Rating' } },
-    { value: '10,000+', label: { tr: 'Çocuk', en: 'Kids' } },
-    { value: '100%', label: { tr: 'Ücretsiz', en: 'Free' } },
-  ],
-  howItWorks: {
-    title: { tr: 'Nasıl Çalışır?', en: 'How It Works?' },
-    steps: [
-      {
-        icon: 'mic' as KidIconName,
-        title: { tr: 'Sesi Duy', en: 'Hear the Sound' },
-        desc: {
-          tr: 'Her harfin sesini eğlenceli animasyonlarla duy ve tekrar et.',
-          en: 'Hear each letter sound with fun animations and repeat.',
-        },
-      },
-      {
-        icon: 'learn' as KidIconName,
-        title: { tr: 'Öğren & Oyna', en: 'Learn & Play' },
-        desc: {
-          tr: 'Oyunlar ve hikayelerle yeni kelimeleri öğren, pekiştir.',
-          en: 'Learn new words through games and stories, then practice.',
-        },
-      },
-      {
-        icon: 'trophy' as KidIconName,
-        title: { tr: 'Yıldız Kazan', en: 'Earn Stars' },
-        desc: {
-          tr: 'Her derste yıldız topla, seviyeni yükselt, ödülleri aç.',
-          en: 'Collect stars each lesson, level up, and unlock rewards.',
-        },
-      },
-    ],
-  },
-  method: {
-    title: { tr: 'Kanıtlanmış Fonetik Yöntem', en: 'Proven Phonics Method' },
-    subtitle: { tr: '42 Fonetik Ses Sistemi', en: '42 Phonics Sound System' },
-    phases: [
-      {
-        num: 1,
-        title: { tr: 'Temel Sesler', en: 'Basic Sounds' },
-        age: '3-4',
-        desc: {
-          tr: 's, a, t, p, i, n gibi ilk harflerle başlangıç.',
-          en: 'Start with first letters like s, a, t, p, i, n.',
-        },
-        accent: 'primary',
-      },
-      {
-        num: 2,
-        title: { tr: 'Ses Birleştirme', en: 'Sound Blending' },
-        age: '4-5',
-        desc: {
-          tr: 'Sesleri birleştirip ilk kelimeleri okumayla tanışma.',
-          en: 'Blend sounds together and start reading first words.',
-        },
-        accent: 'purple',
-      },
-      {
-        num: 3,
-        title: { tr: 'İleri Sesler', en: 'Advanced Sounds' },
-        age: '5-6',
-        desc: {
-          tr: 'sh, ch, th gibi birleşik sesleri ve uzun kelimeleri öğrenme.',
-          en: 'Learn blended sounds like sh, ch, th and longer words.',
-        },
-        accent: 'primary',
-      },
-      {
-        num: 4,
-        title: { tr: 'Akıcı Okuma', en: 'Fluent Reading' },
-        age: '6-7',
-        desc: {
-          tr: 'Cümle kurma, hikaye okuma ve bağımsız öğrenme.',
-          en: 'Sentence building, story reading and independent learning.',
-        },
-        accent: 'purple',
-      },
-    ] as Phase[],
-  },
-  stats: [
-    { value: '42+', label: { tr: 'Ses', en: 'Sounds' } },
-    { value: '5000+', label: { tr: 'Kelime', en: 'Words' } },
-    { value: '10,000+', label: { tr: 'Çocuk', en: 'Kids' } },
-    { value: '100%', label: { tr: 'Bedava', en: 'Free' } },
-  ],
-  cta: {
-    title: { tr: 'Hemen Başla — Ücretsiz', en: 'Start Now — Free' },
-    sub: {
-      tr: 'Çocuğunuzun İngilizce yolculuğu bugün başlasın.',
-      en: "Let your child's English journey start today.",
-    },
-    btn: { tr: 'Hemen Başla', en: 'Start Now' },
-  },
-  footer: {
-    privacy: { tr: 'Gizlilik', en: 'Privacy' },
-    terms: { tr: 'Kullanım Şartları', en: 'Terms' },
-    cookies: { tr: 'Çerezler', en: 'Cookies' },
-  },
-};
-
-const phonicsCards: PhonicsCard[] = [
-  { letter: 'A', word: { tr: 'Apple', en: 'Apple' }, color: 'bg-primary-100 text-primary-600 border-primary-200', delay: 0 },
-  { letter: 'B', word: { tr: 'Bear', en: 'Bear' }, color: 'bg-purple-100 text-purple-600 border-purple-200', delay: 0.5 },
-  { letter: 'C', word: { tr: 'Cat', en: 'Cat' }, color: 'bg-success-100 text-success-600 border-success-200', delay: 1.0 },
-  { letter: 'D', word: { tr: 'Dog', en: 'Dog' }, color: 'bg-gold-100 text-gold-600 border-gold-200', delay: 1.5 },
+const STATS = [
+  { value: '42', label: { tr: 'Fonetik Ses', en: 'Phonics Sounds' } },
+  { value: '5K+', label: { tr: 'Kelime', en: 'Words' } },
+  { value: '10K+', label: { tr: 'Öğrenci', en: 'Students' } },
+  { value: '%100', label: { tr: 'Ücretsiz', en: 'Free' } },
 ];
 
-/* ─── Animation presets ─────────────────────────────────────────────────── */
+const FEATURES = [
+  {
+    icon: '🎤',
+    iconBg: '#FFF0E8',
+    iconColor: '#FF6B35',
+    title: { tr: 'Sesi Duy, Tekrar Et', en: 'Hear It, Repeat It' },
+    desc: { tr: '42 fonetik ses animasyonlarla canlı öğretilir. Her ses bir hikayeye dönüşür.', en: '42 phonics sounds taught with animations. Every sound becomes a story.' },
+  },
+  {
+    icon: '🎮',
+    iconBg: '#EDE9FE',
+    iconColor: '#7C3AED',
+    title: { tr: 'Oyunlarla Pekiştir', en: 'Practice Through Games' },
+    desc: { tr: 'Kelime eşleştirme, yazım arısı, cümle kurma — öğrenmek oyun kadar eğlenceli.', en: 'Word match, spelling bee, sentence scramble — learning as fun as playing.' },
+  },
+  {
+    icon: '📖',
+    iconBg: '#F0FDF4',
+    iconColor: '#16A34A',
+    title: { tr: 'Hikayeler Oku', en: 'Read Stories' },
+    desc: { tr: 'Çocuğun seviyesine göre fonetik hikayeler. Her bölümde kelime hazinesi büyür.', en: 'Phonics stories matched to your child\'s level. Vocabulary grows every chapter.' },
+  },
+  {
+    icon: '⭐',
+    iconBg: '#FFFBEB',
+    iconColor: '#D97706',
+    title: { tr: 'Ödüller Kazan', en: 'Earn Rewards' },
+    desc: { tr: 'Yıldızlar, rozetler, seviye atlama — her ders bir başarı kutlaması.', en: 'Stars, badges, level-ups — every lesson is a celebration.' },
+  },
+];
 
-const fadeUp = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.5 },
-};
-
-const staggerChild = (index: number) => ({
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.5, delay: index * 0.1 },
-});
-
-/* ─── Component ─────────────────────────────────────────────────────────── */
+const HOW_STEPS = [
+  { num: '1', title: { tr: 'Seviyeni Bul', en: 'Find Your Level' }, desc: { tr: 'Kısa bir yerleştirme testiyle başlangıç noktanı belirle.', en: 'A quick placement test finds exactly where to start.' }, color: '#FF6B35' },
+  { num: '2', title: { tr: 'Günlük Ders', en: 'Daily Lesson' }, desc: { tr: 'Günde 10 dakika — sesler, kelimeler, oyunlar, hikayeler.', en: '10 minutes a day — sounds, words, games, stories.' }, color: '#7C3AED' },
+  { num: '3', title: { tr: 'İlerleme Gör', en: 'See Progress' }, desc: { tr: 'Tamamlanan sesler, kazanılan yıldızlar, büyüyen bahçe.', en: 'Completed sounds, earned stars, a growing garden.' }, color: '#16A34A' },
+];
 
 export default function Landing() {
   const [lang, setLang] = useState<Lang>('tr');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const t = (obj: { tr: string; en: string }) => obj[lang];
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white font-body text-ink-900 overflow-x-hidden">
-      {/* ━━━ NAVBAR ━━━ */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <UnifiedMascot state="idle" size={36} />
-            <span className="font-display font-extrabold text-xl text-primary-500">
-              MinesMinis
-            </span>
+    <div className="ld-root">
+      {/* ══════════════════════════════════════════
+          NAVBAR
+      ══════════════════════════════════════════ */}
+      <nav className="ld-nav">
+        <div className="ld-nav__inner">
+          <Link to="/" className="ld-logo">
+            <UnifiedMascot state="idle" size={32} />
+            <span>MinesMinis</span>
           </Link>
 
-          {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="font-display font-semibold text-ink-600 hover:text-primary-500 transition-colors">
-              {t(content.nav.learn)}
-            </a>
-            <a href="#method" className="font-display font-semibold text-ink-600 hover:text-primary-500 transition-colors">
-              {t(content.nav.games)}
-            </a>
-            <a href="#cta" className="font-display font-semibold text-ink-600 hover:text-primary-500 transition-colors">
-              {t(content.nav.stories)}
-            </a>
+          <div className="ld-nav__links">
+            <a href="#features">{t(lang, 'Özellikler', 'Features')}</a>
+            <a href="#how">{t(lang, 'Nasıl Çalışır?', 'How It Works?')}</a>
           </div>
 
-          {/* Right side */}
-          <div className="flex items-center gap-3">
-            {/* Lang toggle */}
-            <button
-              onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
-              className="font-display font-bold text-sm px-3 py-1.5 rounded-full border-2 border-ink-200 text-ink-600 hover:border-primary-500 hover:text-primary-500 transition-colors"
-            >
+          <div className="ld-nav__right">
+            <button className="ld-lang-btn" onClick={() => setLang(l => l === 'tr' ? 'en' : 'tr')}>
               {lang === 'tr' ? 'EN' : 'TR'}
             </button>
-
-            {/* CTA */}
-            <Link
-              to="/dashboard"
-              className="hidden sm:inline-flex font-display font-bold text-sm px-5 py-2 rounded-full bg-primary-500 text-white hover:bg-primary-600 transition-colors shadow-primary"
-            >
-              {t(content.nav.start)}
+            <Link to="/dashboard" className="ld-nav-cta">
+              {t(lang, 'Başla', 'Start')}
             </Link>
-
-            {/* Mobile menu */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-ink-600"
-              aria-label="Menu"
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            <button className="ld-menu-btn" onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile dropdown */}
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-ink-100 px-4 pb-4"
-          >
-            <div className="flex flex-col gap-3 pt-3">
-              <a href="#how-it-works" className="font-display font-semibold text-ink-600 py-2" onClick={() => setMobileMenuOpen(false)}>
-                {t(content.nav.learn)}
-              </a>
-              <a href="#method" className="font-display font-semibold text-ink-600 py-2" onClick={() => setMobileMenuOpen(false)}>
-                {t(content.nav.games)}
-              </a>
-              <a href="#cta" className="font-display font-semibold text-ink-600 py-2" onClick={() => setMobileMenuOpen(false)}>
-                {t(content.nav.stories)}
-              </a>
-              <Link
-                to="/dashboard"
-                className="font-display font-bold text-center px-5 py-2.5 rounded-full bg-primary-500 text-white"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t(content.nav.start)}
-              </Link>
-            </div>
-          </motion.div>
+        {menuOpen && (
+          <div className="ld-mobile-menu">
+            <a href="#features" onClick={() => setMenuOpen(false)}>{t(lang, 'Özellikler', 'Features')}</a>
+            <a href="#how" onClick={() => setMenuOpen(false)}>{t(lang, 'Nasıl Çalışır?', 'How It Works?')}</a>
+            <Link to="/dashboard" className="ld-mobile-cta" onClick={() => setMenuOpen(false)}>
+              {t(lang, 'Ücretsiz Başla', 'Start Free')}
+            </Link>
+          </div>
         )}
       </nav>
 
-      {/* ━━━ HERO ━━━ */}
-      <section className="landing-hero-bg relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-            {/* Left */}
-            <motion.div className="flex-1 text-center lg:text-left" {...fadeUp}>
-              <h1 className="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl leading-tight bg-gradient-to-r from-ink-900 to-primary-500 bg-clip-text text-transparent">
-                {t(content.hero.title)}
-              </h1>
-              <p className="mt-4 text-lg sm:text-xl text-ink-600 font-body max-w-lg mx-auto lg:mx-0">
-                {t(content.hero.sub)}
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link
-                  to="/dashboard"
-                  className="inline-flex items-center justify-center gap-2 font-display font-extrabold text-xl px-10 py-4 rounded-full bg-primary-500 text-white hover:bg-primary-600 active:scale-95 transition-all duration-200 shadow-primary-lg hover:shadow-primary"
-                >
-                  {t(content.hero.ctaPrimary)}
-                  <ArrowRight size={20} />
-                </Link>
-                <a
-                  href="#how-it-works"
-                  className="inline-flex items-center justify-center gap-2 font-display font-bold text-lg px-8 py-3.5 rounded-full border-2 border-primary-500 text-primary-500 hover:bg-primary-50 transition-colors"
-                >
-                  {t(content.hero.ctaSecondary)}
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Right — Mascot + floating phonics cards */}
-            <motion.div
-              className="flex-1 relative flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
-                {/* Glow behind mascot */}
-                <div className="absolute inset-0 rounded-full bg-primary-100/60 blur-3xl" />
-                <div className="relative z-10 flex items-center justify-center w-full h-full">
-                  <UnifiedMascot state="waving" size={240} />
-                </div>
-
-                {/* Floating phonics cards */}
-                {phonicsCards.map((card, i) => {
-                  const positions = [
-                    'top-0 -left-4',
-                    'top-4 -right-4',
-                    'bottom-8 -left-8',
-                    'bottom-0 -right-8',
-                  ];
-                  return (
-                    <motion.div
-                      key={card.letter}
-                      className={`absolute ${positions[i]} phonics-card-float`}
-                      style={{ animationDelay: `${card.delay}s` }}
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: 0.4 + i * 0.15 }}
-                    >
-                      <div className={`${card.color} phonics-card-float rounded-2xl px-4 py-3 shadow-lg font-display font-extrabold text-center border-2 border-white`}>
-                        <div className="text-2xl">{card.letter}</div>
-                        <div className="text-xs font-semibold mt-0.5">{t(card.word)}</div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Trust badges */}
-          <motion.div
-            className="mt-16 flex flex-wrap justify-center gap-6 sm:gap-10"
-            {...fadeUp}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            {content.trust.map((badge, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-card"
-              >
-                <KidIcon name="star" size={28} />
-                <div>
-                  <div className="font-display font-extrabold text-ink-900 text-lg">{badge.value}</div>
-                  <div className="text-ink-500 text-sm font-body">{t(badge.label)}</div>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ━━━ HOW IT WORKS ━━━ */}
-      <section id="how-it-works" className="bg-white py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.h2
-            className="font-display font-extrabold text-3xl sm:text-4xl text-center text-ink-900 mb-4"
-            {...fadeUp}
-          >
-            {t(content.howItWorks.title)}
-          </motion.h2>
-          <motion.div className="w-20 h-1.5 bg-primary-500 rounded-full mx-auto mt-4 mb-14" {...fadeUp} />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {content.howItWorks.steps.map((step, i) => (
-              <motion.div
-                key={i}
-                className="bg-white rounded-2xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 text-center border border-ink-100"
-                {...staggerChild(i)}
-              >
-                <div className="w-8 h-8 rounded-full bg-primary-500 text-white font-display font-black text-sm flex items-center justify-center mx-auto mb-4">
-                  {i + 1}
-                </div>
-                <div className="mx-auto w-20 h-20 rounded-3xl bg-primary-100 flex items-center justify-center mb-6">
-                  <KidIcon name={step.icon} size={48} />
-                </div>
-                <h3 className="font-display font-bold text-xl text-ink-900 mb-3">
-                  {t(step.title)}
-                </h3>
-                <p className="text-ink-600 font-body leading-relaxed">
-                  {t(step.desc)}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ━━━ METHOD (4 phases) ━━━ */}
-      <section id="method" className="bg-cream-100 py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div className="text-center mb-14" {...fadeUp}>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-ink-900">
-              {t(content.method.subtitle)}
-            </h2>
-            <p className="mt-3 text-ink-600 text-lg font-body">
-              {t(content.method.title)}
+      {/* ══════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════ */}
+      <section className="ld-hero">
+        <div className="ld-hero__inner">
+          {/* Text side */}
+          <div className="ld-hero__text">
+            <div className="ld-hero__badge">
+              {t(lang, '🏆 10,000+ öğrenci kullanıyor', '🏆 Trusted by 10,000+ students')}
+            </div>
+            <h1 className="ld-hero__h1">
+              {t(lang,
+                <>Çocuğunuz<br /><span>İngilizceyi</span><br />Sevecek</>,
+                <>Your Child<br /><span>Will Love</span><br />English</>
+              )}
+            </h1>
+            <p className="ld-hero__sub">
+              {t(lang,
+                '42 fonetik sesle bilimsel olarak kanıtlanmış yöntem. Günde 10 dakika yeterli.',
+                'Scientifically proven method with 42 phonics sounds. Just 10 minutes a day.'
+              )}
             </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {content.method.phases.map((phase, i) => {
-              const isPrimary = phase.accent === 'primary';
-              const accentBg = isPrimary ? 'bg-primary-500' : 'bg-purple-600';
-              const accentLight = isPrimary ? 'bg-primary-50' : 'bg-purple-50';
-              const accentText = isPrimary ? 'text-primary-500' : 'text-purple-600';
-
-              return (
-                <motion.div
-                  key={phase.num}
-                  className={`${accentLight} rounded-2xl p-6 lg:p-8 shadow-card hover:shadow-card-hover transition-shadow`}
-                  {...staggerChild(i)}
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className={`${accentBg} w-10 h-10 rounded-full flex items-center justify-center text-white font-display font-extrabold text-lg`}>
-                      {phase.num}
-                    </div>
-                    <div>
-                      <h3 className={`font-display font-bold text-lg ${accentText}`}>
-                        {t(phase.title)}
-                      </h3>
-                      <span className="text-ink-400 text-sm font-body">
-                        {lang === 'tr' ? 'Yaş' : 'Age'} {phase.age}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-ink-600 font-body leading-relaxed">
-                    {t(phase.desc)}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ━━━ STATS BAR ━━━ */}
-      <section className="bg-gradient-to-r from-primary-500 to-primary-600 py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {content.stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                className="text-center"
-                {...staggerChild(i)}
-              >
-                <div className="w-3 h-3 rounded-full bg-white/60 mx-auto mb-2" />
-                <div className="font-display font-black text-5xl sm:text-6xl text-white">
-                  {stat.value}
-                </div>
-                <div className="mt-1 text-white/80 font-body text-lg">
-                  {t(stat.label)}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ━━━ CTA ━━━ */}
-      <section id="cta" className="bg-cream-100 py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <motion.div className="flex-1 text-center lg:text-left" {...fadeUp}>
-              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-ink-900">
-                {t(content.cta.title)}
-              </h2>
-              <p className="mt-4 text-ink-600 text-lg font-body max-w-md mx-auto lg:mx-0">
-                {t(content.cta.sub)}
-              </p>
-              <Link
-                to="/dashboard"
-                className="mt-8 inline-flex items-center gap-2 font-display font-bold text-lg px-8 py-4 rounded-full bg-primary-500 text-white hover:bg-primary-600 transition-colors shadow-primary-lg"
-              >
-                {t(content.cta.btn)}
+            <div className="ld-hero__actions">
+              <Link to="/dashboard" className="ld-hero-cta-primary">
+                {t(lang, 'Ücretsiz Başla', 'Start Free')}
                 <ArrowRight size={20} />
               </Link>
-            </motion.div>
+              <a href="#how" className="ld-hero-cta-ghost">
+                {t(lang, 'Nasıl çalışır?', 'How it works?')}
+              </a>
+            </div>
+            <ul className="ld-hero__checks">
+              {[
+                t(lang, 'Kayıt gerekmez', 'No sign-up required'),
+                t(lang, 'Tamamen ücretsiz', 'Completely free'),
+                t(lang, '42 fonetik ses', '42 phonics sounds'),
+              ].map(item => (
+                <li key={item}><Check size={16} />{item}</li>
+              ))}
+            </ul>
+          </div>
 
-            <motion.div
-              className="flex-1 flex justify-center"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <UnifiedMascot state="celebrating" size={220} />
-            </motion.div>
+          {/* Mascot side */}
+          <div className="ld-hero__visual">
+            <div className="ld-hero__mascot-wrap">
+              <div className="ld-hero__glow" />
+              <UnifiedMascot state="waving" size={260} />
+            </div>
+
+            {/* Floating phonics bubbles */}
+            <div className="ld-bubble ld-bubble--a">
+              <span className="ld-bubble__letter">A</span>
+              <span className="ld-bubble__word">Apple</span>
+            </div>
+            <div className="ld-bubble ld-bubble--b">
+              <span className="ld-bubble__letter">B</span>
+              <span className="ld-bubble__word">Bear</span>
+            </div>
+            <div className="ld-bubble ld-bubble--c">
+              <span className="ld-bubble__letter">C</span>
+              <span className="ld-bubble__word">Cat</span>
+            </div>
+            <div className="ld-bubble ld-bubble--d">
+              <span className="ld-bubble__letter">D</span>
+              <span className="ld-bubble__word">Dog</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ━━━ FOOTER ━━━ */}
-      <footer className="bg-ink-50 py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <UnifiedMascot state="idle" size={28} />
-              <div>
-                <span className="font-display font-extrabold text-primary-500 block leading-tight">MinesMinis</span>
-                <span className="font-body text-xs text-ink-400 leading-tight">{lang === 'tr' ? 'Çocuklar için İngilizce' : 'English for Kids'}</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-6 text-sm text-ink-500 font-body">
-              <a href="/privacy" className="hover:text-ink-700 transition-colors">
-                {t(content.footer.privacy)}
-              </a>
-              <a href="/terms" className="hover:text-ink-700 transition-colors">
-                {t(content.footer.terms)}
-              </a>
-              <a href="/cookies" className="hover:text-ink-700 transition-colors">
-                {t(content.footer.cookies)}
-              </a>
-            </div>
-            <p className="text-sm text-ink-400 font-body">
-              {new Date().getFullYear()} MinesMinis. {lang === 'tr' ? 'Tüm hakları saklıdır.' : 'All rights reserved.'}
-            </p>
+      {/* ══════════════════════════════════════════
+          STATS BAND
+      ══════════════════════════════════════════ */}
+      <div className="ld-stats-band">
+        {STATS.map(s => (
+          <div key={s.value} className="ld-stats-band__item">
+            <span className="ld-stats-band__value">{s.value}</span>
+            <span className="ld-stats-band__label">{t(lang, s.label.tr, s.label.en)}</span>
           </div>
+        ))}
+      </div>
+
+      {/* ══════════════════════════════════════════
+          FEATURES
+      ══════════════════════════════════════════ */}
+      <section id="features" className="ld-section ld-section--white">
+        <div className="ld-section__inner">
+          <p className="ld-section__eyebrow">{t(lang, 'Her şey tek bir uygulamada', 'Everything in one app')}</p>
+          <h2 className="ld-section__h2">{t(lang, 'Neden MinesMinis?', 'Why MinesMinis?')}</h2>
+
+          <div className="ld-features-grid">
+            {FEATURES.map(f => (
+              <div key={f.title.tr} className="ld-feature-card">
+                <div className="ld-feature-card__icon" style={{ background: f.iconBg }}>
+                  <span style={{ fontSize: 28 }}>{f.icon}</span>
+                </div>
+                <h3 className="ld-feature-card__title">{t(lang, f.title.tr, f.title.en)}</h3>
+                <p className="ld-feature-card__desc">{t(lang, f.desc.tr, f.desc.en)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          HOW IT WORKS
+      ══════════════════════════════════════════ */}
+      <section id="how" className="ld-section ld-section--cream">
+        <div className="ld-section__inner">
+          <p className="ld-section__eyebrow">{t(lang, 'Basit, etkili, eğlenceli', 'Simple, effective, fun')}</p>
+          <h2 className="ld-section__h2">{t(lang, 'Nasıl Çalışır?', 'How It Works?')}</h2>
+
+          <div className="ld-steps">
+            {HOW_STEPS.map((step, i) => (
+              <div key={step.num} className="ld-step">
+                <div className="ld-step__num" style={{ background: step.color }}>{step.num}</div>
+                {i < HOW_STEPS.length - 1 && <div className="ld-step__line" />}
+                <div className="ld-step__body">
+                  <h3 className="ld-step__title">{t(lang, step.title.tr, step.title.en)}</h3>
+                  <p className="ld-step__desc">{t(lang, step.desc.tr, step.desc.en)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          SOCIAL PROOF
+      ══════════════════════════════════════════ */}
+      <section className="ld-section ld-section--white">
+        <div className="ld-section__inner">
+          <h2 className="ld-section__h2">{t(lang, 'Aileler Ne Diyor?', 'What Parents Say?')}</h2>
+          <div className="ld-testimonials">
+            {[
+              { quote: { tr: '"Kızım her gün kendi isteğiyle oturup ders yapıyor. Bunu beklemiyordum!"', en: '"My daughter sits down voluntarily every day. I didn\'t expect this!"' }, name: 'Ayşe K.', role: { tr: '7 yaşında kız çocuğu annesi', en: 'Mother of a 7-year-old girl' } },
+              { quote: { tr: '"3 ayda ilk kitabı okumaya başladı. Fonetik sistemi gerçekten işe yarıyor."', en: '"Started reading her first book in 3 months. The phonics system really works."' }, name: 'Mehmet A.', role: { tr: '6 yaşında erkek çocuğu babası', en: 'Father of a 6-year-old boy' } },
+              { quote: { tr: '"Oyun oynadığını zannediyor ama İngilizce öğreniyor. Harika tasarım."', en: '"He thinks he\'s playing games but he\'s learning English. Brilliant design."' }, name: 'Fatma T.', role: { tr: '8 yaşında erkek çocuğu annesi', en: 'Mother of an 8-year-old boy' } },
+            ].map(r => (
+              <div key={r.name} className="ld-testimonial">
+                <div className="ld-testimonial__stars">{'★★★★★'}</div>
+                <p className="ld-testimonial__quote">{t(lang, r.quote.tr, r.quote.en)}</p>
+                <div className="ld-testimonial__author">
+                  <div className="ld-testimonial__avatar">{r.name.charAt(0)}</div>
+                  <div>
+                    <div className="ld-testimonial__name">{r.name}</div>
+                    <div className="ld-testimonial__role">{t(lang, r.role.tr, r.role.en)}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          CTA BOTTOM
+      ══════════════════════════════════════════ */}
+      <section className="ld-cta-section">
+        <div className="ld-cta-section__inner">
+          <div className="ld-cta-mascot">
+            <UnifiedMascot state="celebrating" size={120} />
+          </div>
+          <h2 className="ld-cta-section__h2">
+            {t(lang, 'Bugün Ücretsiz Başla!', 'Start Free Today!')}
+          </h2>
+          <p className="ld-cta-section__sub">
+            {t(lang,
+              'Kredi kartı yok. Zorunlu kayıt yok. Sadece öğrenme var.',
+              'No credit card. No mandatory sign-up. Just learning.'
+            )}
+          </p>
+          <Link to="/dashboard" className="ld-cta-section__btn">
+            {t(lang, 'Hemen Başla', 'Get Started Now')}
+            <ArrowRight size={22} />
+          </Link>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          FOOTER
+      ══════════════════════════════════════════ */}
+      <footer className="ld-footer">
+        <div className="ld-footer__inner">
+          <Link to="/" className="ld-footer__logo">
+            <UnifiedMascot state="idle" size={28} />
+            <span>MinesMinis</span>
+          </Link>
+          <p className="ld-footer__tagline">
+            {t(lang, 'Çocuklar için İngilizce', 'English for kids')}
+          </p>
+          <div className="ld-footer__links">
+            <a href="#">{t(lang, 'Gizlilik', 'Privacy')}</a>
+            <a href="#">{t(lang, 'Kullanım Şartları', 'Terms')}</a>
+            <a href="#">{t(lang, 'Çerezler', 'Cookies')}</a>
+          </div>
+          <p className="ld-footer__copy">© 2026 MinesMinis. {t(lang, 'Tüm hakları saklıdır.', 'All rights reserved.')}</p>
         </div>
       </footer>
     </div>
