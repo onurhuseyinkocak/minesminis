@@ -244,20 +244,21 @@ export default function Dashboard() {
 
   return (
     <motion.div
-      className="max-w-lg mx-auto px-4 py-6 space-y-4 bg-gradient-to-b from-cream-100 to-white min-h-screen"
+      className="min-h-screen bg-gradient-to-b from-cream-100 to-white"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
+      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-6">
       {/* ============================================================
           1. GREETING + STREAK ROW
           ============================================================ */}
-      <motion.div className="flex items-center justify-between" variants={itemVariants}>
+      <motion.div className="flex items-center justify-between mb-5" variants={itemVariants}>
         <div>
           <p className="text-ink-500 font-body text-sm">Merhaba,</p>
-          <h1 className="font-display font-extrabold text-2xl text-ink-900">{displayName}</h1>
+          <h1 className="font-display font-extrabold text-2xl lg:text-3xl text-ink-900">{displayName}</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 lg:hidden">
           <div className="flex items-center gap-1 bg-orange-50 text-primary-500 font-bold px-3 py-1.5 rounded-full text-sm font-display">
             <Flame size={16} className="text-primary-500" />
             {stats.streakDays} gün
@@ -268,6 +269,12 @@ export default function Dashboard() {
           </div>
         </div>
       </motion.div>
+
+      {/* Desktop 2-column layout */}
+      <div className="lg:grid lg:grid-cols-3 lg:gap-6 space-y-4 lg:space-y-0">
+
+      {/* LEFT COLUMN (main content) */}
+      <div className="lg:col-span-2 space-y-4">
 
       {/* ============================================================
           2. DAILY LESSON HERO CARD
@@ -367,6 +374,35 @@ export default function Dashboard() {
       </motion.section>
 
       {/* ============================================================
+          6. QUICK ACTIONS GRID
+          ============================================================ */}
+      <motion.nav className="grid grid-cols-2 gap-3" variants={itemVariants}>
+        {[
+          { to: '/games', icon: Gamepad2, label: t('dashboard.games'), bg: 'bg-purple-500', lightBg: 'bg-purple-50', textColor: 'text-purple-600' },
+          { to: '/words', icon: BookOpen, label: t('dashboard.words'), bg: 'bg-success-500', lightBg: 'bg-success-50', textColor: 'text-success-600' },
+          { to: '/videos', icon: Video, label: t('dashboard.videos'), bg: 'bg-blue-500', lightBg: 'bg-blue-50', textColor: 'text-blue-600' },
+          { to: '/songs', icon: Music, label: t('dashboard.songs'), bg: 'bg-gold-500', lightBg: 'bg-gold-50', textColor: 'text-gold-700' },
+        ].map(({ to, icon: Icon, label, bg, lightBg, textColor }) => (
+          <Link
+            key={to}
+            to={to}
+            className={`${lightBg} rounded-2xl p-4 flex items-center gap-4 hover:shadow-md active:scale-95 transition-all duration-200 cursor-pointer shadow-sm`}
+            onClick={() => SFX.click()}
+          >
+            <div className={`${bg} w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm`}>
+              <Icon size={24} className="text-white" />
+            </div>
+            <span className={`font-display font-bold text-base ${textColor}`}>{label}</span>
+          </Link>
+        ))}
+      </motion.nav>
+
+      </div>{/* end left column */}
+
+      {/* RIGHT COLUMN (desktop only sidebar content) */}
+      <div className="lg:col-span-1 space-y-4">
+
+      {/* ============================================================
           5. WORD OF THE DAY
           ============================================================ */}
       <motion.section
@@ -391,30 +427,6 @@ export default function Dashboard() {
           <Volume2 size={18} />
         </button>
       </motion.section>
-
-      {/* ============================================================
-          6. QUICK ACTIONS GRID
-          ============================================================ */}
-      <motion.nav className="grid grid-cols-2 gap-3" variants={itemVariants}>
-        {[
-          { to: '/games', icon: Gamepad2, label: t('dashboard.games'), bg: 'bg-purple-500', lightBg: 'bg-purple-50', textColor: 'text-purple-600' },
-          { to: '/words', icon: BookOpen, label: t('dashboard.words'), bg: 'bg-success-500', lightBg: 'bg-success-50', textColor: 'text-success-600' },
-          { to: '/videos', icon: Video, label: t('dashboard.videos'), bg: 'bg-blue-500', lightBg: 'bg-blue-50', textColor: 'text-blue-600' },
-          { to: '/songs', icon: Music, label: t('dashboard.songs'), bg: 'bg-gold-500', lightBg: 'bg-gold-50', textColor: 'text-gold-700' },
-        ].map(({ to, icon: Icon, label, bg, lightBg, textColor }) => (
-          <Link
-            key={to}
-            to={to}
-            className={`${lightBg} rounded-2xl p-4 flex items-center gap-4 hover:shadow-md active:scale-95 transition-all duration-200 cursor-pointer shadow-sm`}
-            onClick={() => SFX.click()}
-          >
-            <div className={`${bg} w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm`}>
-              <Icon size={24} className="text-white" />
-            </div>
-            <span className={`font-display font-bold text-base ${textColor}`}>{label}</span>
-          </Link>
-        ))}
-      </motion.nav>
 
       {/* ============================================================
           7. ACHIEVEMENTS
@@ -445,9 +457,13 @@ export default function Dashboard() {
         )}
       </motion.section>
 
+      </div>{/* end right column */}
+
+      </div>{/* end grid */}
+
       {/* Admin shortcut */}
       {isAdmin && (
-        <motion.div className="text-center" variants={itemVariants}>
+        <motion.div className="text-center mt-4" variants={itemVariants}>
           <Link
             to="/admin"
             className="inline-block font-display font-bold text-sm text-ink-400 hover:text-primary-500 transition-colors px-4 py-2"
@@ -456,6 +472,8 @@ export default function Dashboard() {
           </Link>
         </motion.div>
       )}
+
+      </div>{/* end max-w-6xl container */}
 
       <MimiGuide
         message="Hi! Tap the big play button to start learning!"
