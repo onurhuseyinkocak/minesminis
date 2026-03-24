@@ -5,6 +5,8 @@
 
 /* ---- PAGE CONTAINER ---- */
 .dash {
+  --dash-amber-glow: rgba(245, 158, 11, 0.18);
+  --dash-card-border: rgba(255, 255, 255, 0.06);
   max-width: 600px;
   margin: 0 auto;
   padding: var(--space-3) var(--space-4) var(--space-8);
@@ -923,81 +925,237 @@
 }
 
 /* ==========================================================================
-   DARK MODE
+   DARK MODE -- Premium dark theme with vibrant accents
    ========================================================================== */
-[data-theme="dark"] .dash-topbar,
-[data-theme="dark"] .dash-today,
-[data-theme="dark"] .dash-achievements,
-[data-theme="dark"] .dash-action,
-[data-theme="dark"] .dash-words-progress,
-[data-theme="dark"] .dash-weekly {
-  background: var(--bg-card);
-  border-color: var(--border);
+
+/* ---- Topbar ---- */
+[data-theme="dark"] .dash-topbar {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+[data-theme="dark"] .dash-topbar__stat--streak {
+  background: rgba(245, 158, 11, 0.12);
+  color: #FBBF24;
+}
+
+[data-theme="dark"] .dash-topbar__stat--xp {
+  background: rgba(245, 158, 11, 0.1);
+  color: #F59E0B;
+}
+
+/* ---- Daily Lesson Hero -- THE primary action, must POP ---- */
 [data-theme="dark"] .dash-daily-lesson {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.08) 60%, rgba(253, 230, 138, 0.06) 100%);
-  border-color: rgba(245, 158, 11, 0.2);
+  background: linear-gradient(135deg, #1A1200 0%, #1F1500 30%, #261A00 60%, #2A1D00 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.4);
+  box-shadow:
+    0 4px 32px rgba(245, 158, 11, 0.18),
+    inset 0 1px 0 rgba(255, 200, 0, 0.08);
 }
 
-[data-theme="dark"] .dash-daily-lesson--done {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(74, 222, 128, 0.07) 60%, rgba(187, 247, 208, 0.05) 100%);
-  border-color: rgba(34, 197, 94, 0.2);
+[data-theme="dark"] .dash-daily-lesson__icon-wrap {
+  background: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+[data-theme="dark"] .dash-daily-lesson__title {
+  color: #FFF;
+}
+
+[data-theme="dark"] .dash-daily-lesson__desc {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 [data-theme="dark"] .dash-daily-lesson__preview span {
-  background: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.15);
-  color: var(--primary, #F59E0B);
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #FBBF24;
 }
 
-[data-theme="dark"] .dash-weekly__dot {
-  background: var(--bg-muted);
-  border-color: var(--border);
+[data-theme="dark"] .dash-daily-lesson--done {
+  background: linear-gradient(135deg, #0A1A0F 0%, #0D1F12 30%, #112816 60%, #142D1A 100%);
+  border: 1.5px solid rgba(34, 197, 94, 0.4);
+  box-shadow:
+    0 4px 32px rgba(34, 197, 94, 0.15),
+    inset 0 1px 0 rgba(74, 222, 128, 0.08);
+}
+
+[data-theme="dark"] .dash-daily-lesson--done .dash-daily-lesson__icon-wrap--done {
+  background: rgba(34, 197, 94, 0.2);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+}
+
+/* ---- Word of the Day -- blue accent ---- */
+[data-theme="dark"] .dash-word-of-day {
+  background: linear-gradient(135deg, #0F1A2A 0%, #0A1520 100%);
+  border-color: transparent;
+  border-left: 3px solid #3B82F6;
+}
+
+[data-theme="dark"] .dash-wod__label {
+  color: #60A5FA;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+[data-theme="dark"] .dash-wod__word {
+  color: #F1F5F9;
+}
+
+[data-theme="dark"] .dash-wod__listen {
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #60A5FA;
+}
+
+[data-theme="dark"] .dash-wod__listen:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3B82F6;
+  color: #93BBFD;
+}
+
+/* ---- Words Progress -- glowing bar ---- */
+[data-theme="dark"] .dash-words-progress {
+  background: var(--bg-card);
+  border-color: var(--dash-card-border, rgba(255, 255, 255, 0.06));
 }
 
 [data-theme="dark"] .dash-words-progress__track {
-  background: var(--bg-muted);
+  background: rgba(255, 255, 255, 0.06);
 }
 
+[data-theme="dark"] .dash-words-progress__fill {
+  background: linear-gradient(90deg, #10B981, #34D399);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* ---- Weekly Dots -- amber pulse for today ---- */
+[data-theme="dark"] .dash-weekly {
+  background: var(--bg-card);
+  border-color: var(--dash-card-border, rgba(255, 255, 255, 0.06));
+}
+
+[data-theme="dark"] .dash-weekly__dot {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .dash-weekly__dot--done {
+  background: var(--primary, #F59E0B);
+  border-color: var(--primary, #F59E0B);
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .dash-weekly__dot-wrap--today .dash-weekly__dot {
+  border-color: var(--primary, #F59E0B);
+  animation: dashTodayPulse 2s ease-in-out infinite;
+}
+
+@keyframes dashTodayPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+  }
+}
+
+/* ---- Quick Actions -- vibrant, larger, better hover ---- */
+[data-theme="dark"] .dash-qa--games {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+[data-theme="dark"] .dash-qa--games .dash-action__icon {
+  background: rgba(139, 92, 246, 0.2);
+  color: #A78BFA;
+}
+
+[data-theme="dark"] .dash-qa--words {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="dark"] .dash-qa--words .dash-action__icon {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+}
+
+[data-theme="dark"] .dash-qa--videos {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+[data-theme="dark"] .dash-qa--videos .dash-action__icon {
+  background: rgba(239, 68, 68, 0.2);
+  color: #F87171;
+}
+
+[data-theme="dark"] .dash-qa--songs {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+[data-theme="dark"] .dash-qa--songs .dash-action__icon {
+  background: rgba(245, 158, 11, 0.2);
+  color: #FBBF24;
+}
+
+[data-theme="dark"] .dash-action {
+  min-height: 120px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+[data-theme="dark"] .dash-action__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+[data-theme="dark"] .dash-action:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.15);
+}
+
+/* ---- Achievements -- purple tint ---- */
+[data-theme="dark"] .dash-achievements {
+  background: rgba(139, 92, 246, 0.04);
+  border-color: var(--dash-card-border, rgba(255, 255, 255, 0.06));
+}
+
+[data-theme="dark"] .dash-achievements__empty-icon {
+  width: 72px;
+  height: 72px;
+  background: rgba(139, 92, 246, 0.12);
+  color: #A78BFA;
+}
+
+[data-theme="dark"] .dash-achievements__badge svg {
+  background: rgba(139, 92, 246, 0.12);
+  color: #A78BFA;
+}
+
+/* ---- Today section ---- */
+[data-theme="dark"] .dash-today {
+  background: var(--bg-card);
+  border-color: var(--dash-card-border, rgba(255, 255, 255, 0.06));
+}
+
+/* ---- Hero (legacy) ---- */
 [data-theme="dark"] .dash-hero {
   background: rgba(245, 158, 11, 0.08);
   border-color: rgba(245, 158, 11, 0.12);
 }
 
+/* ---- Classroom ---- */
 [data-theme="dark"] .dash-classroom {
   background: var(--bg-soft);
-  border-color: var(--border);
+  border-color: var(--dash-card-border, rgba(255, 255, 255, 0.06));
 }
 
 [data-theme="dark"] .dash-classroom--joined {
   background: rgba(34, 197, 94, 0.06);
   border-color: rgba(34, 197, 94, 0.15);
-}
-
-[data-theme="dark"] .dash-topbar__stat--streak,
-[data-theme="dark"] .dash-topbar__stat--xp {
-  background: rgba(245, 158, 11, 0.08);
-}
-
-[data-theme="dark"] .dash-qa--games {
-  background: rgba(147, 51, 234, 0.06);
-  border-color: rgba(147, 51, 234, 0.12);
-}
-
-[data-theme="dark"] .dash-qa--words {
-  background: rgba(34, 197, 94, 0.06);
-  border-color: rgba(34, 197, 94, 0.12);
-}
-
-[data-theme="dark"] .dash-qa--videos {
-  background: rgba(239, 68, 68, 0.06);
-  border-color: rgba(239, 68, 68, 0.12);
-}
-
-[data-theme="dark"] .dash-qa--songs {
-  background: rgba(245, 158, 11, 0.06);
-  border-color: rgba(245, 158, 11, 0.12);
 }
 
 /* ==========================================================================

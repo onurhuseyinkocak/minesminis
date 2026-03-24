@@ -41,7 +41,7 @@ import {
 } from '../data/progressTracker';
 import { getDueWords } from '../data/spacedRepetition';
 import { getNextAction, getCurrentPhonicsSound } from '../services/learningPathService';
-import { getTodayMinutes, getRecentActivities } from '../services/activityLogger';
+import { getTodayMinutes } from '../services/activityLogger';
 import { getStudentClassroom } from '../services/classroomService';
 import { getTodayLesson, isDailyLessonCompletedToday } from '../services/dailyLessonService';
 import './Dashboard.css';
@@ -91,47 +91,6 @@ function getPhaseInfo(): { name: string; unitLabel: string } {
     name: phase?.name || 'Little Ears',
     unitLabel: `${phase?.name || 'Little Ears'} -- Group ${currentSound.group}`,
   };
-}
-
-// ============================================================
-// PROGRESS RING COMPONENT
-// ============================================================
-
-function ProgressRing({
-  value,
-  max,
-  label,
-  colorClass,
-}: {
-  value: number;
-  max: number;
-  label: string;
-  colorClass: string;
-}) {
-  const radius = 18;
-  const circumference = 2 * Math.PI * radius;
-  const pct = max > 0 ? Math.min(value / max, 1) : 0;
-  const offset = circumference * (1 - pct);
-
-  return (
-    <div className="dash-today__stat">
-      <div className="dash-today__stat-ring">
-        <svg viewBox="0 0 44 44">
-          <circle className="dash-today__stat-ring-bg" cx="22" cy="22" r={radius} />
-          <circle
-            className={`dash-today__stat-ring-fill ${colorClass}`}
-            cx="22"
-            cy="22"
-            r={radius}
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-          />
-        </svg>
-        <span className="dash-today__stat-value">{value}</span>
-      </div>
-      <span className="dash-today__stat-label">{label}</span>
-    </div>
-  );
 }
 
 // ============================================================
@@ -307,14 +266,6 @@ export default function Dashboard() {
   const phaseInfo = useMemo(() => getPhaseInfo(), []);
   const xpProgress = getXPProgress();
 
-  // Today's completions -- count activities logged today, not lifetime stats
-  const todayCompletions = useMemo(() => {
-    const todayPrefix = new Date().toISOString().slice(0, 10);
-    return getRecentActivities(50).filter(a =>
-      a.timestamp.startsWith(todayPrefix)
-    ).length;
-  }, []);
-
   // Recent badges (last 6 earned)
   const recentBadges = useMemo(() => {
     return stats.badges
@@ -482,24 +433,7 @@ export default function Dashboard() {
         ))}
       </motion.nav>
 
-      {/* ============================================================
-          TODAY'S PROGRESS -- visual progress rings (secondary)
-          ============================================================ */}
-      <motion.section className="dash-today" variants={itemVariants}>
-        <span className="dash-today__label">{t('dashboard.today')}</span>
-        <div className="dash-today__stats">
-          <ProgressRing
-            value={todayCompletions}
-            max={Math.max(todayCompletions, 5)}
-            label="tamamlandı"
-            colorClass="dash-today__stat-ring-fill--done"
-          />
-        </div>
-        <Link to="/words" className="dash-today__challenge">
-          <BookOpen size={16} />
-          <span>{t('dashboard.wordsIKnow')}</span>
-        </Link>
-      </motion.section>
+      {/* TODAY'S PROGRESS section removed -- streak/XP shown in topbar */}
 
       {/* ============================================================
           RECENT ACHIEVEMENTS
