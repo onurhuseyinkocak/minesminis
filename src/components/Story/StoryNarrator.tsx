@@ -17,7 +17,6 @@ const CHAR_DELAY = 25; // ms per character
 const StoryNarrator: React.FC<StoryNarratorProps> = ({
   text,
   npcName,
-  npcEmoji,
   location,
   onComplete,
 }) => {

@@ -15,7 +15,6 @@ import {
   BookOpen,
   Video,
   Music,
-  CheckCircle,
   Award,
   Loader2,
   Volume2,

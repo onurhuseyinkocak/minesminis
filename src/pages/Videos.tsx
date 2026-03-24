@@ -26,20 +26,6 @@ type Video = {
   isPopular?: boolean;
 };
 
-const gradeInfo: Record<string, { color: string; gradient: string }> = {
-  '2nd Grade': {
-    color: 'var(--mimi-green)',
-    gradient: 'linear-gradient(135deg, var(--mimi-green), var(--mimi-green-dark))',
-  },
-  '3rd Grade': {
-    color: 'var(--accent-blue)',
-    gradient: 'linear-gradient(135deg, var(--accent-blue), var(--info))',
-  },
-  '4th Grade': {
-    color: 'var(--accent-purple)',
-    gradient: 'linear-gradient(135deg, var(--accent-purple), var(--accent-purple-light))',
-  }
-};
 
 const categoryIcons: Record<string, { icon: React.ReactNode; label: string }> = {
   song: { icon: <Music size={14} />, label: 'Song' },

@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import './DailyReward.css';
 import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ConfettiRain, FloatingEmoji } from './ui/Celebrations';
+import { ConfettiRain } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
 import { Gift, Sparkles, Flame, X } from 'lucide-react';
 import { KidIcon } from './ui';

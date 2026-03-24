@@ -128,7 +128,7 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
                 transition={{ repeat: Infinity, duration: 1.5 }}
                 style={{ fontSize: '3rem', display: 'block' }}
               >
-                <span style={{ fontSize: '1rem', fontWeight: 900, color: 'inherit' }}>{sound.grapheme?.toUpperCase() ?? sound.sound?.toUpperCase() ?? '?'}</span>
+                <span style={{ fontSize: '1rem', fontWeight: 900, color: 'inherit' }}>{sound.grapheme?.toUpperCase() ?? '?'}</span>
               </motion.span>
               <p style={{ fontSize: '1.1rem', fontWeight: 600, color: '#333', margin: '0.5rem 0' }}>
                 {sound.action}
