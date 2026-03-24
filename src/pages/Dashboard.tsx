@@ -6,7 +6,7 @@
  * Everything else is secondary.
  * Uses design-system.css variables throughout.
  */
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -41,7 +41,7 @@ import {
 import { getDueWords } from '../data/spacedRepetition';
 import { getNextAction, getCurrentPhonicsSound } from '../services/learningPathService';
 import { getTodayMinutes, getRecentActivities } from '../services/activityLogger';
-import { joinClassroom, getStudentClassroom } from '../services/classroomService';
+import { getStudentClassroom } from '../services/classroomService';
 import { getTodayLesson, isDailyLessonCompletedToday } from '../services/dailyLessonService';
 import './Dashboard.css';
 
@@ -296,29 +296,11 @@ export default function Dashboard() {
     return () => window.removeEventListener('focus', onFocus);
   }, [userId, today]);
 
-  // Classroom
-  const [joinCode, setJoinCode] = useState('');
-  const [joinError, setJoinError] = useState('');
-  const [joinedClassroom, setJoinedClassroom] = useState<string | null>(() => {
+  // Classroom (read-only — join flow in Profile/Settings)
+  const [joinedClassroom] = useState<string | null>(() => {
     const membership = getStudentClassroom();
     return membership?.classroomName ?? null;
   });
-
-  const handleJoinClassroom = useCallback(() => {
-    if (!joinCode.trim()) return;
-    const result = joinClassroom(joinCode.trim(), {
-      id: userId,
-      name: displayName,
-      avatar: (userProfile?.settings?.avatar_emoji as string) || 'A',
-    });
-    if (result.success) {
-      setJoinedClassroom(result.classroomName || 'Classroom');
-      setJoinCode('');
-      setJoinError('');
-    } else {
-      setJoinError(result.error || 'Could not join classroom.');
-    }
-  }, [joinCode, userId, displayName, userProfile]);
 
   const lessonProgress = Math.round((lesson.currentLesson / lesson.totalLessons) * 100);
   const phaseInfo = useMemo(() => getPhaseInfo(), []);
