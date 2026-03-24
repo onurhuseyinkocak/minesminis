@@ -230,7 +230,7 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
             fontWeight: 700, cursor: 'pointer',
           }}
         >
-          {t('lesson.next')}
+          {t('lesson.doneNext')}
         </button>
       </div>
     );

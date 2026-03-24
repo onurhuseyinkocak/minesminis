@@ -140,7 +140,7 @@ const tr: TranslationKeys = {
     notFound: 'Ders bulunamadı',
     notFoundDesc: 'Ders bulunamadı',
     inWorld: 'dünya',
-    next: 'Tamam! İleri',
+    doneNext: 'Tamam! İleri',
     backToWorld: 'Dünyaya Dön',
     tapToReveal: 'Görmek için dokun',
     hide: 'Gizle',
