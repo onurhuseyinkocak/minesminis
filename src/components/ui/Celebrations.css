@@ -249,7 +249,7 @@
   position: absolute;
   width: 6px;
   height: 6px;
-  background: #1C2236;
+  background: #FFD700;
   border-radius: 50%;
   box-shadow: 0 0 6px 2px rgba(255, 200, 0, 0.8);
   animation: sparkle-blink 0.8s ease-in-out infinite alternate;

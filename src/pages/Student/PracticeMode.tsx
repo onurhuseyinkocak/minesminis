@@ -6,7 +6,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import MimiMascot from '../../components/MimiMascot';
+import LottieCharacter from '../../components/LottieCharacter';
 import {
   Sparkles,
   Filter,
@@ -39,7 +39,6 @@ interface WordCard {
   id: string;
   english: string;
   turkish: string;
-  emoji: string;
   mastery: MasteryLevel;
   world: string;
   confidence: number; // 0-100
@@ -53,29 +52,29 @@ interface WordCard {
 // ============================================================
 
 const MOCK_WORDS: WordCard[] = [
-  { id: '1', english: 'Cat', turkish: 'Kedi', emoji: '🐱', mastery: 'mastered', world: 'Animals', confidence: 95, exampleSentence: 'The cat is sleeping on the sofa.' },
-  { id: '2', english: 'Dog', turkish: 'Köpek', emoji: '🐶', mastery: 'mastered', world: 'Animals', confidence: 90, exampleSentence: 'My dog likes to play in the park.' },
-  { id: '3', english: 'Bird', turkish: 'Kuş', emoji: '🐦', mastery: 'reviewing', world: 'Animals', confidence: 70, exampleSentence: 'A bird is singing in the tree.', dueForReview: true },
-  { id: '4', english: 'Fish', turkish: 'Balık', emoji: '🐟', mastery: 'reviewing', world: 'Animals', confidence: 65, exampleSentence: 'The fish swims in the water.', dueForReview: true },
-  { id: '5', english: 'Red', turkish: 'Kırmızı', emoji: '🔴', mastery: 'mastered', world: 'Colors', confidence: 100, exampleSentence: 'The apple is red.' },
-  { id: '6', english: 'Blue', turkish: 'Mavi', emoji: '🔵', mastery: 'learning', world: 'Colors', confidence: 45, exampleSentence: 'The sky is blue today.' },
-  { id: '7', english: 'Green', turkish: 'Yeşil', emoji: '🟢', mastery: 'learning', world: 'Colors', confidence: 40, exampleSentence: 'The grass is green.' },
-  { id: '8', english: 'Apple', turkish: 'Elma', emoji: '🍎', mastery: 'reviewing', world: 'Food', confidence: 75, exampleSentence: 'I eat an apple every day.', dueForReview: true },
-  { id: '9', english: 'Bread', turkish: 'Ekmek', emoji: '🍞', mastery: 'new', world: 'Food', confidence: 10, exampleSentence: 'We have bread for breakfast.' },
-  { id: '10', english: 'Water', turkish: 'Su', emoji: '💧', mastery: 'new', world: 'Food', confidence: 5, exampleSentence: 'Please drink your water.' },
-  { id: '11', english: 'Mother', turkish: 'Anne', emoji: '👩', mastery: 'learning', world: 'Family', confidence: 50, exampleSentence: 'My mother makes delicious cakes.' },
-  { id: '12', english: 'Father', turkish: 'Baba', emoji: '👨', mastery: 'learning', world: 'Family', confidence: 55, exampleSentence: 'My father reads me stories.' },
-  { id: '13', english: 'One', turkish: 'Bir', emoji: '1️⃣', mastery: 'mastered', world: 'Numbers', confidence: 100, exampleSentence: 'I have one pencil.' },
-  { id: '14', english: 'Two', turkish: 'İki', emoji: '2️⃣', mastery: 'mastered', world: 'Numbers', confidence: 98, exampleSentence: 'I have two hands.' },
-  { id: '15', english: 'Horse', turkish: 'At', emoji: '🐴', mastery: 'new', world: 'Animals', confidence: 0, exampleSentence: 'The horse runs very fast.' },
-  { id: '16', english: 'Rabbit', turkish: 'Tavşan', emoji: '🐰', mastery: 'new', world: 'Animals', confidence: 15, exampleSentence: 'The rabbit has long ears.' },
+  { id: '1', english: 'Cat', turkish: 'Kedi', mastery: 'mastered', world: 'Animals', confidence: 95, exampleSentence: 'The cat is sleeping on the sofa.' },
+  { id: '2', english: 'Dog', turkish: 'Köpek', mastery: 'mastered', world: 'Animals', confidence: 90, exampleSentence: 'My dog likes to play in the park.' },
+  { id: '3', english: 'Bird', turkish: 'Kuş', mastery: 'reviewing', world: 'Animals', confidence: 70, exampleSentence: 'A bird is singing in the tree.', dueForReview: true },
+  { id: '4', english: 'Fish', turkish: 'Balık', mastery: 'reviewing', world: 'Animals', confidence: 65, exampleSentence: 'The fish swims in the water.', dueForReview: true },
+  { id: '5', english: 'Red', turkish: 'Kırmızı', mastery: 'mastered', world: 'Colors', confidence: 100, exampleSentence: 'The apple is red.' },
+  { id: '6', english: 'Blue', turkish: 'Mavi', mastery: 'learning', world: 'Colors', confidence: 45, exampleSentence: 'The sky is blue today.' },
+  { id: '7', english: 'Green', turkish: 'Yeşil', mastery: 'learning', world: 'Colors', confidence: 40, exampleSentence: 'The grass is green.' },
+  { id: '8', english: 'Apple', turkish: 'Elma', mastery: 'reviewing', world: 'Food', confidence: 75, exampleSentence: 'I eat an apple every day.', dueForReview: true },
+  { id: '9', english: 'Bread', turkish: 'Ekmek', mastery: 'new', world: 'Food', confidence: 10, exampleSentence: 'We have bread for breakfast.' },
+  { id: '10', english: 'Water', turkish: 'Su', mastery: 'new', world: 'Food', confidence: 5, exampleSentence: 'Please drink your water.' },
+  { id: '11', english: 'Mother', turkish: 'Anne', mastery: 'learning', world: 'Family', confidence: 50, exampleSentence: 'My mother makes delicious cakes.' },
+  { id: '12', english: 'Father', turkish: 'Baba', mastery: 'learning', world: 'Family', confidence: 55, exampleSentence: 'My father reads me stories.' },
+  { id: '13', english: 'One', turkish: 'Bir', mastery: 'mastered', world: 'Numbers', confidence: 100, exampleSentence: 'I have one pencil.' },
+  { id: '14', english: 'Two', turkish: 'İki', mastery: 'mastered', world: 'Numbers', confidence: 98, exampleSentence: 'I have two hands.' },
+  { id: '15', english: 'Horse', turkish: 'At', mastery: 'new', world: 'Animals', confidence: 0, exampleSentence: 'The horse runs very fast.' },
+  { id: '16', english: 'Rabbit', turkish: 'Tavşan', mastery: 'new', world: 'Animals', confidence: 15, exampleSentence: 'The rabbit has long ears.' },
 ];
 
 const WORLDS = ['All', 'Animals', 'Colors', 'Food', 'Family', 'Numbers'];
 
 const FILTER_TABS = [
   { id: 'all', label: 'All Words', icon: <BookOpen size={16} /> },
-  { id: 'mimi', label: "Mimi's Picks", icon: <Sparkles size={16} /> },
+  { id: 'mimi', label: "My Picks", icon: <Sparkles size={16} /> },
   { id: 'mastered', label: 'Mastered', icon: <CheckCircle2 size={16} /> },
   { id: 'reviewing', label: 'Reviewing', icon: <Clock size={16} /> },
   { id: 'learning', label: 'Learning', icon: <Star size={16} /> },
@@ -92,7 +91,7 @@ const MASTERY_CONFIG: Record<MasteryLevel, { label: string; color: string; bg: s
 const ENCOURAGEMENTS = [
   "You are doing great! Keep it up!",
   "Practice makes perfect!",
-  "Mimi believes in you!",
+  "You can do it!",
   "Every word counts!",
   "You are a word champion!",
 ];
@@ -183,7 +182,7 @@ const PracticeMode: React.FC = () => {
             animate={{ scale: 1 }}
             transition={{ type: 'spring', damping: 12, stiffness: 200 }}
           >
-            <MimiMascot size={40} mood="excited" />
+            <LottieCharacter state="happy" size={40} />
           </motion.div>
           <div>
             <h1 className="pm-header__title">Practice Time!</h1>
@@ -234,8 +233,8 @@ const PracticeMode: React.FC = () => {
       {/* ---- WORD GRID ---- */}
       {filteredWords.length === 0 ? (
         <div className="pm-empty">
-          <span className="pm-empty__emoji"><MimiMascot size={48} mood="thinking" /></span>
-          <p className="pm-empty__text">Mimi could not find any words here. Try a different filter!</p>
+          <span className="pm-empty__emoji"><LottieCharacter state="thinking" size={48} /></span>
+          <p className="pm-empty__text">No words found here. Try a different filter!</p>
         </div>
       ) : (
         <div className="pm-grid">

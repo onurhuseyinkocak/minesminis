@@ -18,7 +18,7 @@
 }
 
 .pronunciation-game__card {
-  background: var(--bg-card, #1C2236);
+  background: var(--bg-card, #ffffff);
   border-radius: 1.25rem;
   padding: 2rem;
   text-align: center;
@@ -175,7 +175,7 @@
 .pronunciation-game__unsupported {
   text-align: center;
   padding: 3rem 2rem;
-  background: var(--bg-card, #1C2236);
+  background: var(--bg-card, #ffffff);
   border-radius: 1.25rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
