@@ -99,10 +99,11 @@ function getUnitById(unitId: string): LearningUnit | null {
   return null;
 }
 
-function unitActivityToActivity(ua: UnitActivity, index: number): Activity {
+function unitActivityToActivity(ua: UnitActivity, index: number): Activity & { titleTr?: string } {
   return {
     id: `activity-${index}`,
     title: ua.title,
+    titleTr: ua.titleTr,
     type: ua.type as Activity['type'],
     instructions: ua.description,
     xpReward: ua.xp,
@@ -119,6 +120,12 @@ const SUPPORTED_GAME_TYPES = new Set([
   'listening-challenge',
   'phonics-builder',
   'story-choices',
+  'sound-intro',
+  'blending',
+  'segmenting',
+  'tpr',
+  'reading',
+  'pronunciation',
 ]);
 
 // ============================================================
@@ -369,7 +376,8 @@ const LessonPlayer = () => {
   // Build word items for game components from lesson's targetWords + world vocabulary
   const activityWords = useMemo(() => {
     if (!lesson) return [];
-    return lesson.targetWords
+    // Try old curriculum vocabulary first
+    const fromVocab = lesson.targetWords
       .map((tw) => vocabulary.find((v) => v.english === tw))
       .filter((w): w is VocabularyWord => Boolean(w))
       .map((w) => ({
@@ -379,7 +387,29 @@ const LessonPlayer = () => {
         phonetic: w.phonetic,
         exampleSentence: w.exampleSentence,
       }));
-  }, [lesson, vocabulary]);
+    if (fromVocab.length > 0) return fromVocab;
+    // Fallback for new curriculum: get blendable words from phonics groups
+    const unit = getUnitById(worldId);
+    if (unit) {
+      const { PHONICS_GROUPS } = require('../data/phonics');
+      const groupNums = unit.phonicsFocus.map(s => {
+        const g = PHONICS_GROUPS.find((pg: { sounds: { id: string }[] }) => pg.sounds.some((ps: { id: string }) => ps.id === s));
+        return g?.group;
+      }).filter(Boolean);
+      const uniqueGroups = [...new Set(groupNums)];
+      const words: { english: string; turkish: string; emoji: string }[] = [];
+      for (const gn of uniqueGroups) {
+        const g = PHONICS_GROUPS.find((pg: { group: number }) => pg.group === gn);
+        if (g?.blendableWords) {
+          for (const w of g.blendableWords.slice(0, 6)) {
+            words.push({ english: w, turkish: w, emoji: '' });
+          }
+        }
+      }
+      return words;
+    }
+    return [];
+  }, [lesson, vocabulary, worldId]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -768,8 +798,14 @@ const LessonPlayer = () => {
                 <ActivityIcon size={28} color="var(--white)" />
               </div>
               <div>
-                <h2 className="lesson-activity__title">{currentActivity?.title}</h2>
-                <span className="lesson-activity__type">{currentActivity?.type}</span>
+                <h2 className="lesson-activity__title">{lang === 'tr' && (currentActivity as unknown as { titleTr?: string })?.titleTr ? (currentActivity as unknown as { titleTr: string }).titleTr : currentActivity?.title}</h2>
+                <span className="lesson-activity__type">{({
+                  'word-match': 'Kelime Eşleştir', 'spelling-bee': 'Heceleme', 'quick-quiz': 'Hızlı Test',
+                  'sentence-scramble': 'Cümle Kur', 'listening-challenge': 'Dinleme', 'phonics-builder': 'Ses Birleştir',
+                  'story-choices': 'Hikaye', 'sound-intro': 'Ses Tanıtımı', 'blending': 'Birleştirme',
+                  'segmenting': 'Parçalama', 'tpr': 'Hareket', 'listening': 'Dinleme', 'pronunciation': 'Telaffuz',
+                  'reading': 'Okuma', 'song': 'Şarkı',
+                } as Record<string, string>)[currentActivity?.type || ''] || currentActivity?.type}</span>
               </div>
             </div>
 
