@@ -78,7 +78,7 @@ function NotFound() {
                 }}
             >
                 <Home size={20} />
-                Back to Dashboard
+                Ana Sayfaya Dön
             </button>
 
             <style>{`

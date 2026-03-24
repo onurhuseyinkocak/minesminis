@@ -377,7 +377,7 @@ function PlacementTest() {
           </motion.div>
 
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: C.primary, margin: 0, textAlign: 'center' as const }}>
-            Let&apos;s Play!
+            Hadi Oynayalım!
           </h1>
           <p style={{ fontSize: '1.2rem', color: C.textSec, margin: 0, textAlign: 'center' as const }}>
             5 fun questions

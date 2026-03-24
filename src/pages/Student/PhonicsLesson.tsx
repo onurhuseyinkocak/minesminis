@@ -249,7 +249,7 @@ function PhonicsLesson() {
             <h2 style={{ color: '#1A6B5A' }}>Sound not found</h2>
             <p style={{ color: '#94A3B8' }}>We couldn&apos;t find this sound lesson.</p>
             <Button variant="primary" onClick={() => navigate('/dashboard')}>
-              Back to Dashboard
+              Ana Sayfaya Dön
             </Button>
           </div>
         </Card>
@@ -815,7 +815,7 @@ function PhonicsLesson() {
             onClick={() => navigate('/dashboard')}
             fullWidth
           >
-            Back to Dashboard
+            Ana Sayfaya Dön
           </Button>
         </div>
       </motion.div>

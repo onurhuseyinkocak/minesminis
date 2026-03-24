@@ -106,9 +106,9 @@ const Favorites: React.FC = () => {
       <div className="favorites-header">
         <h1>
           <Heart size={32} className="favorites-header-icon" />
-          My Treasures
+          Hazinelerim
         </h1>
-        <p>Your favorite games, words, and more!</p>
+        <p>Favori oyunların, kelimelerin ve daha fazlası!</p>
       </div>
 
       <div className="filter-tabs">

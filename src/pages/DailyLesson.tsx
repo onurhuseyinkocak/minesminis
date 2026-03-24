@@ -40,7 +40,7 @@ import './DailyLesson.css';
 const PHASES_EN = [
   { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'This is SAT. This is SIT. Tap to hear!', icon: '👂' },
   { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See each word in a sentence', icon: '👀' },
-  { id: 3, key: 'play',   title: "Let's Play!",    subtitle: 'Show me which one is SAT', icon: '🎮' },
+  { id: 3, key: 'play',   title: "Hadi Oynayalım!",    subtitle: 'Hangisi SAT göster bana!', icon: '🎮' },
   { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'What is this word? Say it!', icon: '🎤' },
   { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned', icon: '🧠' },
   { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story', icon: '📖' },
@@ -1065,7 +1065,7 @@ function CelebrationScreen({
       </div>
 
       <button className="dl-btn dl-btn--primary" onClick={onDone} style={{ minWidth: 180 }}>
-        Back to Dashboard
+        Ana Sayfaya Dön
       </button>
     </div>
   );

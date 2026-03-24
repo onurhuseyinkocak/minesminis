@@ -346,7 +346,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
       {/* Back */}
       <Link to="/worlds" className="world-detail-back">
         <ArrowLeft size={18} />
-        Back to World Map
+        Dünya Haritasına Dön
       </Link>
 
       {/* Unit Header */}

@@ -221,7 +221,7 @@ function Games() {
                 ))}
               </div>
               <div className="play-now-btn">
-                <Play size={18} fill="white" /> Play!
+                <Play size={18} fill="white" /> Oyna!
               </div>
             </button>
           ))}
