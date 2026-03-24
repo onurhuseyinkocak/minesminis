@@ -221,7 +221,7 @@ function LearningGarden() {
                       style={{
                         ...styles.plantCell,
                         borderColor: isBlooming ? plant.color : isStarted ? '#D1D5DB' : '#E5E7EB',
-                        backgroundColor: isBlooming ? `${plant.color}15` : '#1C2236',
+                        backgroundColor: isBlooming ? `${plant.color}15` : '#F8F9FA',
                       }}
                       whileTap={{ scale: 0.9 }}
                       animate={
@@ -276,13 +276,13 @@ function LearningGarden() {
                             width: '1.4rem',
                             height: '1.4rem',
                             borderRadius: '50%',
-                            background: '#3B4A68',
-                            border: '2px dashed #556',
+                            background: '#E5E7EB',
+                            border: '2px dashed #CBD5E1',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '0.55rem',
                             fontWeight: 800,
-                            color: '#778',
+                            color: '#94A3B8',
                             verticalAlign: 'middle',
                           }}>?</span>
                         )}
@@ -352,13 +352,13 @@ function LearningGarden() {
                     width: '3.5rem',
                     height: '3.5rem',
                     borderRadius: '50%',
-                    background: '#3B4A68',
-                    border: '3px dashed #556',
+                    background: '#E5E7EB',
+                    border: '3px dashed #CBD5E1',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '1.2rem',
                     fontWeight: 800,
-                    color: '#778',
+                    color: '#94A3B8',
                     verticalAlign: 'middle',
                   }}>?</span>
                 )}
@@ -488,7 +488,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: '0.75rem',
     padding: '1rem 1.25rem',
-    background: 'rgba(255,255,255,0.08)',
+    background: 'rgba(255,255,255,0.95)',
     backdropFilter: 'blur(10px)',
     borderBottom: '1px solid #D1FAE5',
     position: 'sticky' as const,
@@ -536,7 +536,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     gap: '1.5rem',
     padding: '0.75rem 1rem',
-    background: 'rgba(255,255,255,0.05)',
+    background: 'rgba(255,255,255,0.8)',
   },
   statItem: {
     display: 'flex',
@@ -592,7 +592,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0.4rem 0.2rem',
     borderRadius: '0.75rem',
     border: '2px solid #E5E7EB',
-    background: '#1C2236',
+    background: '#F8F9FA',
     cursor: 'pointer',
     fontFamily: 'Nunito, sans-serif',
     aspectRatio: '1',
@@ -632,7 +632,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1rem',
   },
   plantModal: {
-    background: '#1C2236',
+    background: '#ffffff',
     borderRadius: '1.5rem',
     padding: '1.5rem',
     maxWidth: '360px',
@@ -640,7 +640,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.75rem',
-    boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
   },
   modalTitle: {
     textAlign: 'center' as const,

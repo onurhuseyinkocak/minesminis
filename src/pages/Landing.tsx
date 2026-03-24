@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Menu, X } from 'lucide-react';
-import UnifiedMascot from '../components/UnifiedMascot';
+import LottieCharacter from '../components/LottieCharacter';
 import './Landing.css';
 
 type Lang = 'en' | 'tr';
@@ -63,7 +63,6 @@ export default function Landing() {
       <nav className="ld-nav">
         <div className="ld-nav__inner">
           <Link to="/" className="ld-logo">
-            <UnifiedMascot state="idle" size={32} />
             <span>MinesMinis</span>
           </Link>
 
@@ -137,11 +136,17 @@ export default function Landing() {
             </ul>
           </div>
 
-          {/* Mascot side */}
+          {/* Hero visual — animated emoji characters */}
           <div className="ld-hero__visual">
-            <div className="ld-hero__mascot-wrap">
-              <div className="ld-hero__glow" />
-              <UnifiedMascot state="waving" size={260} />
+            <div className="ld-hero__emoji-grid">
+              <div className="ld-hero__emoji-main">
+                <LottieCharacter state="idle" size={180} />
+              </div>
+              <div className="ld-hero__emoji-row">
+                <LottieCharacter state="happy" size={72} />
+                <LottieCharacter state="celebrating" size={72} />
+                <LottieCharacter state="star" size={72} />
+              </div>
             </div>
 
             {/* Floating phonics bubbles */}
@@ -256,7 +261,9 @@ export default function Landing() {
       <section className="ld-cta-section">
         <div className="ld-cta-section__inner">
           <div className="ld-cta-mascot">
-            <UnifiedMascot state="celebrating" size={120} />
+            <div style={{ fontSize: 80, lineHeight: 1 }}>
+              <LottieCharacter state="celebrating" size={100} />
+            </div>
           </div>
           <h2 className="ld-cta-section__h2">
             {t(lang, 'Bugün Ücretsiz Başla!', 'Start Free Today!')}
@@ -280,7 +287,6 @@ export default function Landing() {
       <footer className="ld-footer">
         <div className="ld-footer__inner">
           <Link to="/" className="ld-footer__logo">
-            <UnifiedMascot state="idle" size={28} />
             <span>MinesMinis</span>
           </Link>
           <p className="ld-footer__tagline">

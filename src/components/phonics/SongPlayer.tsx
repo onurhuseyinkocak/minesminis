@@ -662,7 +662,7 @@ const styles: Record<string, React.CSSProperties> = {
     height: 40,
     borderRadius: '50%',
     border: '2px solid #d1d5db',
-    backgroundColor: '#1C2236',
+    backgroundColor: '#F8F9FA',
     color: '#555',
     cursor: 'pointer',
     display: 'flex',

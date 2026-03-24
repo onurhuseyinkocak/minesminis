@@ -270,6 +270,22 @@
 }
 .ld-hero__checks li svg { color: #22C55E; flex-shrink: 0; }
 
+/* Hero emoji grid */
+.ld-hero__emoji-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.ld-hero__emoji-main {
+  filter: drop-shadow(0 12px 32px rgba(255,107,53,0.25));
+}
+.ld-hero__emoji-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 /* Hero visual */
 .ld-hero__visual {
   flex: 1;

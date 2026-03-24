@@ -399,8 +399,8 @@ function PhonicsLesson() {
                 }}
                 style={{
                   ...styles.keywordCard,
-                  borderColor: clicked ? '#1A6B5A' : '#334155',
-                  backgroundColor: clicked ? 'rgba(34,197,94,0.1)' : '#1C2236',
+                  borderColor: clicked ? '#1A6B5A' : '#E5E7EB',
+                  backgroundColor: clicked ? 'rgba(34,197,94,0.1)' : '#F8F9FA',
                 }}
               >
                 <div style={{
@@ -930,7 +930,7 @@ const styles: Record<string, React.CSSProperties> = {
   stepDesc: {
     fontSize: '1.1rem',
     fontWeight: 600,
-    color: '#94A3B8',
+    color: '#64748B',
     textAlign: 'center' as const,
     margin: 0,
   },
@@ -945,7 +945,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   mimiText: {
     fontSize: '0.95rem',
-    color: '#F1F5F9',
+    color: '#334155',
     fontStyle: 'italic',
     margin: 0,
     lineHeight: 1.5,
@@ -960,7 +960,7 @@ const styles: Record<string, React.CSSProperties> = {
   actionText: {
     fontSize: '1.15rem',
     fontWeight: 700,
-    color: '#F1F5F9',
+    color: '#1a1a2e',
     margin: 0,
   },
   turkishNote: {
@@ -983,8 +983,8 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.3rem',
     padding: '0.75rem 0.5rem',
     borderRadius: '0.75rem',
-    border: '2px solid #334155',
-    background: '#1C2236',
+    border: '2px solid #E5E7EB',
+    background: '#F8F9FA',
     cursor: 'pointer',
     fontFamily: 'Nunito, sans-serif',
     transition: 'all 0.2s',
@@ -1028,7 +1028,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     fontSize: '1.2rem',
     fontWeight: 600,
-    color: '#F1F5F9',
+    color: '#334155',
     fontFamily: 'Nunito, sans-serif',
     padding: '0.15rem 0.3rem',
     borderRadius: '0.25rem',

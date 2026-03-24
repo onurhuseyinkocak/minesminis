@@ -270,7 +270,7 @@ export default ReadingLibrary;
 const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
-    backgroundColor: '#151929',
+    backgroundColor: '#FFFFFF',
     fontFamily: 'Nunito, sans-serif',
     paddingBottom: 80,
   },
@@ -279,8 +279,8 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: 12,
     padding: '16px 20px',
-    backgroundColor: '#1C2236',
-    borderBottom: '1px solid #2A3050',
+    backgroundColor: '#F8F9FA',
+    borderBottom: '1px solid #E5E7EB',
     position: 'sticky',
     top: 0,
     zIndex: 10,
@@ -290,23 +290,23 @@ const styles: Record<string, React.CSSProperties> = {
     height: 40,
     borderRadius: '50%',
     border: '1px solid #E5E7EB',
-    backgroundColor: '#1C2236',
+    backgroundColor: '#ffffff',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#94A3B8',
+    color: '#64748B',
   },
   title: {
     fontSize: 22,
     fontWeight: 900,
-    color: '#F1F5F9',
+    color: '#1a1a2e',
     margin: 0,
   },
   subtitle: {
     fontSize: 13,
     fontWeight: 600,
-    color: '#9CA3AF',
+    color: '#64748B',
     margin: 0,
   },
   counter: {
@@ -341,7 +341,7 @@ const styles: Record<string, React.CSSProperties> = {
   shelfGroupNum: {
     fontSize: 12,
     fontWeight: 800,
-    color: '#F1F5F9',
+    color: '#ffffff',
     backgroundColor: '#1A6B5A',
     padding: '2px 8px',
     borderRadius: 8,
@@ -349,7 +349,7 @@ const styles: Record<string, React.CSSProperties> = {
   shelfGroupName: {
     fontSize: 14,
     fontWeight: 700,
-    color: '#F1F5F9',
+    color: '#334155',
   },
   shelfSounds: {
     fontSize: 12,
@@ -363,10 +363,10 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    backgroundColor: '#0F1320',
+    backgroundColor: '#F1F5F9',
     borderRadius: 12,
     padding: '12px 12px 0',
-    boxShadow: 'inset 0 -2px 8px rgba(0,0,0,0.06)',
+    boxShadow: 'inset 0 -2px 8px rgba(0,0,0,0.04)',
   },
   booksRow: {
     display: 'flex',
@@ -404,7 +404,7 @@ const styles: Record<string, React.CSSProperties> = {
   bookSpineTitle: {
     fontSize: 10,
     fontWeight: 800,
-    color: '#F1F5F9',
+    color: '#ffffff',
     textAlign: 'center',
     lineHeight: 1.2,
     textShadow: '0 1px 2px rgba(0,0,0,0.3)',
