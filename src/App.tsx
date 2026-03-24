@@ -281,23 +281,13 @@ function StudentRoute({ children }: { children: React.ReactNode }) {
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
 function AppRoutes() {
-  const { user, userProfile, loading, isAdmin, profileLoading, hasSkippedSetup } = useAuth();
+  const { user, loading, isAdmin, profileLoading } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
-
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const isSetupRoute = location.pathname === "/setup";
 
   const authReady = !loading;
   const profileReady = !user || !profileLoading;
   const showContent = authReady && profileReady;
-
-  const isSetupCompleted = userProfile?.settings?.setup_completed === true;
-  const mustGoToSetup = !!user && !isAdmin && !isSetupRoute && !isSetupCompleted && !hasSkippedSetup && profileReady;
-
-  useEffect(() => {
-    if (mustGoToSetup) navigate("/setup", { replace: true });
-  }, [mustGoToSetup, navigate]);
 
   // While auth or profile is loading, show loader — prevents flash of onboarding
   if (!showContent) {

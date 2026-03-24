@@ -95,34 +95,41 @@ function Games() {
   const { t } = useLanguage();
 
   useEffect(() => {
-    fetchGames();
-  }, [user]);
+    let cancelled = false;
 
-  const fetchGames = async () => {
-    setGamesLoading(true);
-    const cached = getCachedData<Game[]>('games');
+    const fetchGames = async () => {
+      setGamesLoading(true);
+      const cached = getCachedData<Game[]>('games');
 
-    try {
-      const { data, error } = await supabase
-        .from('games')
-        .select('*');
+      try {
+        const { data, error } = await supabase
+          .from('games')
+          .select('*');
 
-      if (error) throw error;
-      const validDb = (data || []).filter((g: Game) => g.url?.startsWith('http'));
-      const result = validDb.length > 0 ? (validDb as Game[]) : fallbackGames as Game[];
-      setGames(result);
-      setCachedData('games', result, 6 * 60 * 60 * 1000);
-    } catch {
-      if (cached && cached.length > 0) {
-        setGames(cached);
-      } else {
-        toast.error('Oyunlar yüklenirken sorun oluştu.');
-        setGames(fallbackGames as Game[]);
+        if (error) throw error;
+        const validDb = (data || []).filter((g: Game) => g.url?.startsWith('http'));
+        const result = validDb.length > 0 ? (validDb as Game[]) : fallbackGames as Game[];
+        if (!cancelled) {
+          setGames(result);
+          setCachedData('games', result, 6 * 60 * 60 * 1000);
+        }
+      } catch {
+        if (!cancelled) {
+          if (cached && cached.length > 0) {
+            setGames(cached);
+          } else {
+            toast.error('Oyunlar yüklenirken sorun oluştu.');
+            setGames(fallbackGames as Game[]);
+          }
+        }
+      } finally {
+        if (!cancelled) setGamesLoading(false);
       }
-    } finally {
-      setGamesLoading(false);
-    }
-  };
+    };
+
+    fetchGames();
+    return () => { cancelled = true; };
+  }, [user]);
 
   const selectedGameData = games.find(game => game.id === selectedGame);
 

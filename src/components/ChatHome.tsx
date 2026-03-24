@@ -81,6 +81,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     const [quickReplies, setQuickReplies] = useState<QuickReply[]>(getStarterReplies());
     const [usedReplies, setUsedReplies] = useState<Set<string>>(new Set());
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const speak = (text: string) => {
         if (!isTTSEnabled) return;
@@ -186,8 +187,8 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
         }
     };
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') handleSend(inputValue);
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) handleSend(inputValue);
     };
 
     const handleGetPremium = () => {
@@ -314,7 +315,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                         {quickReplies.map(reply => (
                             <button
                                 key={reply.id}
-                                onClick={() => handleSend(reply.value)}
+                                onClick={() => { setInputValue(reply.value); inputRef.current?.focus(); }}
                                 disabled={!canSendMessage() && !isPremium}
                             >
                                 {reply.text}
@@ -324,10 +325,11 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
                     <div className="input-row">
                         <input
+                            ref={inputRef}
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onKeyPress={handleKeyPress}
+                            onKeyDown={handleKeyDown}
                             placeholder={canSendMessage() ? `Type a message to ${mascotConfig.name}...` : "Limit doldu - Premium'a geç!"}
                             aria-label="Type your message"
                             disabled={!canSendMessage() && !isPremium}

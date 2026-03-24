@@ -91,13 +91,11 @@ function UsersManager() {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('Supabase error:', error);
                 toast.error('Kullanıcılar yüklenemedi');
             } else {
                 setUsers((data || []).map(u => ({ ...u, settings: (u.settings || {}) as Record<string, unknown> })));
             }
-        } catch (error) {
-            console.error('Error loading users:', error);
+        } catch {
             toast.error('Kullanıcılar yüklenemedi');
         } finally {
             setLoading(false);
@@ -123,17 +121,13 @@ function UsersManager() {
             const newSettings = { ...(targetUser?.settings || {}), is_admin: isAdmin };
 
             // Try Supabase first
-            const { error } = await supabase
+            await supabase
                 .from('users')
                 .update({
                     role: newRole,
                     settings: newSettings
                 })
                 .eq('id', userId);
-
-            if (error) {
-                console.error('Supabase error, updating locally:', error);
-            }
 
             // Update locally regardless
             setUsers(prev => prev.map(u =>
@@ -144,8 +138,7 @@ function UsersManager() {
 
             toast.success('Kullanıcı rolü güncellendi!');
             setConfirmState(null);
-        } catch (error) {
-            console.error('Error updating role:', error);
+        } catch {
             // Still update locally in dev mode
             setUsers(prev => prev.map(u =>
                 u.id === userId
@@ -168,14 +161,10 @@ function UsersManager() {
         const newSettings = { ...(targetUser?.settings || {}), is_premium: premium, premium_until: premiumUntil };
 
         try {
-            const { error } = await supabase
+            await supabase
                 .from('users')
                 .update({ settings: newSettings })
                 .eq('id', userId);
-
-            if (error) {
-                console.error('Supabase error:', error);
-            }
 
             setUsers(prev => prev.map(u =>
                 u.id === userId
@@ -185,8 +174,7 @@ function UsersManager() {
 
             toast.success(premium ? 'Premium aktifleştirildi!' : 'Premium kaldırıldı!');
             setConfirmState(null);
-        } catch (error) {
-            console.error('Error updating premium:', error);
+        } catch {
             setUsers(prev => prev.map(u =>
                 u.id === userId
                     ? { ...u, settings: { ...u.settings, is_premium: premium, premium_until: premiumUntil } }
@@ -263,8 +251,7 @@ function UsersManager() {
                 is_premium: false,
                 premium_months: 1
             });
-        } catch (error) {
-            console.error('Error creating user:', error);
+        } catch {
             toast.error('Kullanıcı oluşturulamadı');
         } finally {
             setIsCreating(false);
@@ -281,20 +268,15 @@ function UsersManager() {
         const userId = confirmState.user.id;
         setConfirmLoading(true);
         try {
-            const { error } = await supabase
+            await supabase
                 .from('users')
                 .delete()
                 .eq('id', userId);
 
-            if (error) {
-                console.error('Supabase error:', error);
-            }
-
             setUsers(prev => prev.filter(u => u.id !== userId));
             toast.success('Kullanıcı silindi!');
             setConfirmState(null);
-        } catch (error) {
-            console.error('Error deleting user:', error);
+        } catch {
             setUsers(prev => prev.filter(u => u.id !== userId));
             toast.success('Kullanıcı silindi! (Lokal)');
         } finally {

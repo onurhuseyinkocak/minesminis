@@ -63,7 +63,7 @@ export interface Database {
         Update: {
           id?: string;
           email?: string;
-          role?: 'teacher' | 'student';
+          role?: 'teacher' | 'student' | 'parent';
           display_name?: string;
           avatar_url?: string | null;
           bio?: string;

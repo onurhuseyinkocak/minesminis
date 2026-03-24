@@ -73,50 +73,59 @@ function AdminDashboard() {
 
     const loadDashboardData = async () => {
         setLoading(true);
-        try {
-            const [usersRes, gamesRes, videosRes, wordsRes, worksheetsRes] = await Promise.all([
-                supabase.from('users').select('id, display_name, email, settings, role, created_at, is_online').order('created_at', { ascending: false }).limit(10),
-                supabase.from('games').select('*'),
-                supabase.from('videos').select('*'),
-                supabase.from('words').select('*'),
-                supabase.from('worksheets').select('*'),
-            ]);
 
-            if (!usersRes.error && usersRes.data) {
-                const { count: userCount } = await supabase.from('users').select('*', { count: 'exact', head: true });
-                setTotalUsers(userCount ?? usersRes.data.length);
-                setRecentUsers(usersRes.data.slice(0, 6) as RecentUser[]);
+        const [usersRes, userCountRes, gamesRes, videosRes, wordsRes, worksheetsRes] = await Promise.allSettled([
+            supabase.from('users').select('id, display_name, email, settings, role, created_at, is_online').order('created_at', { ascending: false }).limit(10),
+            supabase.from('users').select('*', { count: 'exact', head: true }),
+            supabase.from('games').select('*', { count: 'exact', head: true }),
+            supabase.from('videos').select('*', { count: 'exact', head: true }),
+            supabase.from('words').select('*', { count: 'exact', head: true }),
+            supabase.from('worksheets').select('*', { count: 'exact', head: true }),
+        ]);
 
-                // Count premium users
-                const premium = usersRes.data.filter(u => (u.settings as Record<string, unknown>)?.is_premium).length;
-                setPremiumUsers(premium);
+        if (usersRes.status === 'fulfilled' && !usersRes.value.error && usersRes.value.data) {
+            const data = usersRes.value.data;
+            setRecentUsers(data.slice(0, 6) as RecentUser[]);
 
-                // Count active today (online or created today)
-                const today = new Date().toISOString().split('T')[0];
-                const active = usersRes.data.filter(u =>
-                    u.is_online || (u.created_at && u.created_at.startsWith(today))
-                ).length;
-                setActiveToday(active);
-            }
+            const premium = data.filter(u => (u.settings as Record<string, unknown>)?.is_premium).length;
+            setPremiumUsers(premium);
 
-            const gCount = gamesRes.data?.length ?? 0;
-            const vCount = videosRes.data?.length ?? 0;
-            const wCount = wordsRes.data?.length ?? 0;
-            const wsCount = worksheetsRes.data?.length ?? 0;
-            setGamesCount(gCount || fallbackGames.length);
-            setVideosCount(vCount || fallbackVideos.length);
-            setWordsCount(wCount || kidsWords.length);
-            setWorksheetsCount(wsCount || fallbackWorksheets.length);
-        } catch (error) {
-            console.error('Dashboard load error:', error);
-            toast.error('Error loading dashboard data');
-            setGamesCount(fallbackGames.length);
-            setVideosCount(fallbackVideos.length);
-            setWordsCount(kidsWords.length);
-            setWorksheetsCount(fallbackWorksheets.length);
-        } finally {
-            setLoading(false);
+            const today = new Date().toISOString().split('T')[0];
+            const active = data.filter(u =>
+                u.is_online || (u.created_at && u.created_at.startsWith(today))
+            ).length;
+            setActiveToday(active);
         }
+
+        if (userCountRes.status === 'fulfilled' && !userCountRes.value.error) {
+            setTotalUsers(userCountRes.value.count ?? 0);
+        }
+
+        if (gamesRes.status === 'fulfilled' && !gamesRes.value.error) {
+            setGamesCount(gamesRes.value.count ?? fallbackGames.length);
+        } else {
+            setGamesCount(fallbackGames.length);
+        }
+
+        if (videosRes.status === 'fulfilled' && !videosRes.value.error) {
+            setVideosCount(videosRes.value.count ?? fallbackVideos.length);
+        } else {
+            setVideosCount(fallbackVideos.length);
+        }
+
+        if (wordsRes.status === 'fulfilled' && !wordsRes.value.error) {
+            setWordsCount(wordsRes.value.count ?? kidsWords.length);
+        } else {
+            setWordsCount(kidsWords.length);
+        }
+
+        if (worksheetsRes.status === 'fulfilled' && !worksheetsRes.value.error) {
+            setWorksheetsCount(worksheetsRes.value.count ?? fallbackWorksheets.length);
+        } else {
+            setWorksheetsCount(fallbackWorksheets.length);
+        }
+
+        setLoading(false);
     };
 
     const totalContent = gamesCount + videosCount + wordsCount + worksheetsCount;

@@ -44,9 +44,8 @@ function WordsManager() {
                 } else if (!cancelled) {
                     setWords(wordStore.getWords());
                 }
-            } catch (err) {
+            } catch {
                 if (!cancelled) {
-                    console.error('Words load error:', err);
                     toast.error('Kelimeler yüklenirken hata. Yerel veri kullanılıyor.');
                     setWords(wordStore.getWords());
                 }

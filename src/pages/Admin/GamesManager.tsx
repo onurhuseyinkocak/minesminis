@@ -57,8 +57,7 @@ function GamesManager() {
                     const local = gameStore.getGames();
                     setGames(local.map(g => ({ id: String(g.id), title: g.title, embedUrl: g.embedUrl, thumbnailUrl: g.thumbnailUrl, type: g.type, grade: g.grade || '2' })));
                 }
-            } catch (err) {
-                console.error('Games load error:', err);
+            } catch {
                 toast.error('Oyunlar yüklenirken hata. Yerel veri kullanılıyor.');
                 const local = gameStore.getGames();
                 setGames(local.map(g => ({ id: String(g.id), title: g.title, embedUrl: g.embedUrl, thumbnailUrl: g.thumbnailUrl, type: g.type, grade: g.grade || '2' })));

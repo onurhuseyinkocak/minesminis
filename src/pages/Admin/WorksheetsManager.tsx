@@ -86,8 +86,7 @@ function WorksheetsManager() {
             const { data, error } = await supabase.from('worksheets').select('id, title, description, subject, grade, thumbnail_url, file_url, source');
             if (error) throw error;
             setWorksheets((data || []).map(mapSupabaseToWorksheet));
-        } catch (err) {
-            console.error('Worksheets fetch:', err);
+        } catch {
             toast.error('Çalışma kağıtları yüklenemedi');
             setWorksheets([]);
         } finally {

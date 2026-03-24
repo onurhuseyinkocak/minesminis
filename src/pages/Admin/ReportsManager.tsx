@@ -44,8 +44,7 @@ const ReportsManager: React.FC = () => {
 
             if (error) throw error;
             setReports(data || []);
-        } catch (error) {
-            console.error('Error fetching reports:', error);
+        } catch {
             // Simulated data for demo if table doesn't exist yet
             setReports([
                 { id: '1', user_id: 'dev', page_url: '/games', content: 'Oun yüklenmiyor, siyah ekran kalıyor.', status: 'open', created_at: new Date().toISOString() },
@@ -67,8 +66,7 @@ const ReportsManager: React.FC = () => {
 
             setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'resolved' } : r));
             toast.success('Rapor çözüldü olarak işaretlendi!');
-        } catch (error) {
-            console.error('Error resolving report:', error);
+        } catch {
             toast.error('Guncelleme yapılamadı.');
         }
     };
@@ -86,8 +84,7 @@ const ReportsManager: React.FC = () => {
 
             setReports(prev => prev.filter(r => r.id !== id));
             toast.success('Rapor silindi.');
-        } catch (error) {
-            console.error('Error deleting report:', error);
+        } catch {
             toast.error('Silme işlemi başarısız.');
         }
     };

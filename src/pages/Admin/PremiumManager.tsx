@@ -90,13 +90,12 @@ function PremiumManager() {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('Supabase error:', error);
+                // silently fail
             } else {
                 const allUsers = (data || []).map(u => ({ ...u, settings: (u.settings || {}) as Record<string, unknown>, premium_plan: 'Yıllık' }));
                 setPremiumUsers(allUsers.filter(u => isPremium(u)));
             }
-        } catch (error) {
-            console.error('Error loading premium users:', error);
+        } catch {
             toast.error('Premium kullanıcılar yüklenemedi');
         } finally {
             setLoading(false);
@@ -124,8 +123,7 @@ function PremiumManager() {
                 .from('users')
                 .update({ settings: newSettings })
                 .eq('id', userId);
-        } catch (error) {
-            console.error('Error extending premium:', error);
+        } catch {
             toast.error('Premium süre uzatılamadı');
         }
 
@@ -146,8 +144,7 @@ function PremiumManager() {
                 .from('users')
                 .update({ settings: newSettings })
                 .eq('id', userId);
-        } catch (error) {
-            console.error('Error revoking premium:', error);
+        } catch {
             toast.error('Premium iptal edilemedi');
         }
 

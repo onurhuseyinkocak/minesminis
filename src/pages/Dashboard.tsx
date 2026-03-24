@@ -36,7 +36,7 @@ import {
   getWorldCompletionCount,
 } from '../data/progressTracker';
 import { getDueWords } from '../data/spacedRepetition';
-import { getNextAction, getCurrentPhonicsSound } from '../services/learningPathService';
+import { getCurrentPhonicsSound } from '../services/learningPathService';
 import { getTodayMinutes } from '../services/activityLogger';
 import { getTodayLesson, isDailyLessonCompletedToday } from '../services/dailyLessonService';
 
@@ -196,14 +196,12 @@ export default function Dashboard() {
 
   const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
   const [dueWords, setDueWords] = useState(() => getDueWords());
-  const [_nextAction, _setNextAction] = useState(() => getNextAction());
   const [todayMin, setTodayMin] = useState(() => getTodayMinutes(user?.uid));
 
   useEffect(() => {
     const onFocus = () => {
       setLesson(getCurrentLessonData(userId));
       setDueWords(getDueWords());
-      _setNextAction(getNextAction());
       setTodayMin(getTodayMinutes(userId));
       setLessonDone(isDailyLessonCompletedToday(userId));
     };

@@ -36,13 +36,11 @@ export default function BlogManager() {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.warn('Blog table may not exist, using empty list:', error);
         setPosts([]);
       } else {
         setPosts(data || []);
       }
-    } catch (e) {
-      console.error('Blog fetch error:', e);
+    } catch {
       setPosts([]);
     } finally {
       setLoading(false);
@@ -86,7 +84,6 @@ export default function BlogManager() {
       alert('Günlük blog yazısı oluşturuldu!');
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
-      console.error('Blog API error:', e);
       alert(`API bağlantısı kurulamadı. Sunucu çalışıyor olmalı (npm run dev). Hata: ${msg}`);
     } finally {
       setGenerating(false);

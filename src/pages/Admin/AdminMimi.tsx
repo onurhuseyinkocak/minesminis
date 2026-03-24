@@ -457,7 +457,7 @@ function AdminMimi() {
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                             placeholder="Rapor, analiz veya yardım isteyin..."
                         />
                         <button
