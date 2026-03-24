@@ -46,7 +46,7 @@ const getAdminResponse = (message: string): string => {
     const lowerMessage = message.toLowerCase();
 
     if (lowerMessage.includes('rapor') || lowerMessage.includes('performans')) {
-        return `📊 **Haftalık Performans Raporu**
+        return `**Haftalık Performans Raporu**
 
 **Kullanıcı Metrikleri:**
 • Yeni kayıt: 47 kullanıcı (+12% geçen haftaya göre)
@@ -63,18 +63,18 @@ const getAdminResponse = (message: string): string => {
 • En izlenen video: "Baby Shark" (189 görüntülenme)
 • Yeni eklenen içerik: 3 oyun, 5 video
 
-✅ Sistem sağlıklı çalışıyor. Premium dönüşümlerinde artış var!`;
+Sistem sağlıklı çalışıyor. Premium dönüşümlerinde artış var.`;
     }
 
     if (lowerMessage.includes('aktif') || lowerMessage.includes('kullanıcı')) {
-        return `👥 **Son 24 Saatte Aktif Kullanıcılar**
+        return `**Son 24 Saatte Aktif Kullanıcılar**
 
 **Toplam:** 89 aktif kullanıcı
 
 **Dağılım:**
-• 🎓 Öğrenci: 72 (%81)
-• 👩‍🏫 Öğretmen: 14 (%16)
-• 🛡️ Admin: 3 (%3)
+• Öğrenci: 72 (%81)
+• Öğretmen: 14 (%16)
+• Admin: 3 (%3)
 
 **En Aktif Saatler:**
 • 14:00 - 16:00 (okul sonrası pik)
@@ -84,11 +84,11 @@ const getAdminResponse = (message: string): string => {
 • 34 premium kullanıcı aktif (%38)
 • Ortalama oturum süresi: 28 dakika
 
-📈 Kullanıcı etkileşimi geçen haftaya göre %12 arttı!`;
+Kullanıcı etkileşimi geçen haftaya göre %12 arttı.`;
     }
 
     if (lowerMessage.includes('premium') || lowerMessage.includes('dönüşüm')) {
-        return `👑 **Premium Dönüşüm Analizi**
+        return `**Premium Dönüşüm Analizi**
 
 **Bu Ay:**
 • Yeni premium: 23 kullanıcı
@@ -98,7 +98,7 @@ const getAdminResponse = (message: string): string => {
 **Plan Dağılımı:**
 • Aylık: 45 üye (%29)
 • 3 Aylık: 38 üye (%24)
-• Yıllık: 52 üye (%33) ⭐ En popüler
+• Yıllık: 52 üye (%33) — En popüler
 • Ömür Boyu: 21 üye (%14)
 
 **Öneriler:**
@@ -106,39 +106,39 @@ const getAdminResponse = (message: string): string => {
 2. Deneme süresi sonrası hatırlatma e-postası gönderin
 3. Öğretmenlere özel paket oluşturun
 
-💡 Yıllık plan en iyi ROI sağlıyor, odağı buraya kaydırın!`;
+Yıllık plan en iyi ROI sağlıyor, odağı buraya kaydırın.`;
     }
 
     if (lowerMessage.includes('sorun') || lowerMessage.includes('hata') || lowerMessage.includes('kontrol')) {
-        return `🔍 **Sistem Sağlık Kontrolü**
+        return `**Sistem Sağlık Kontrolü**
 
-✅ **Tüm Sistemler Çalışıyor**
+**Tüm Sistemler Çalışıyor**
 
 **Kontrol Edilen Alanlar:**
 
 | Alan | Durum | Son Kontrol |
 |------|-------|-------------|
-| Veritabanı | ✅ Normal | 2 dk önce |
-| Auth Servisi | ✅ Normal | 2 dk önce |
-| CDN | ✅ Normal | 5 dk önce |
-| API | ✅ Normal | 1 dk önce |
+| Veritabanı | Normal | 2 dk önce |
+| Auth Servisi | Normal | 2 dk önce |
+| CDN | Normal | 5 dk önce |
+| API | Normal | 1 dk önce |
 
 **Uyarılar:**
-⚠️ 3 kullanıcının premium süresi bu hafta doluyor
-⚠️ 2 video'nun thumbnail'i yüklenememiş
+- 3 kullanıcının premium süresi bu hafta doluyor
+- 2 video'nun thumbnail'i yüklenememiş
 
 **Performans:**
 • API yanıt süresi: 45ms (mükemmel)
 • Uptime: 99.9%
 • Hata oranı: 0.02%
 
-🎉 Kritik sorun yok, sistem sağlıklı!`;
+Kritik sorun yok, sistem sağlıklı.`;
     }
 
     if (lowerMessage.includes('veritabanı') || lowerMessage.includes('database') || lowerMessage.includes('db')) {
-        return `🗄️ **Veritabanı Durumu**
+        return `**Veritabanı Durumu**
 
-**Supabase Bağlantısı:** ✅ Aktif
+**Supabase Bağlantısı:** Aktif
 
 **Tablo İstatistikleri:**
 | Tablo | Kayıt | Son Güncelleme |
@@ -159,54 +159,51 @@ const getAdminResponse = (message: string): string => {
 • Boşta: 7
 • Max: 50
 
-💡 Veritabanı sağlıklı, ek optimizasyona gerek yok.`;
+Veritabanı sağlıklı, ek optimizasyona gerek yok.`;
     }
 
     if (lowerMessage.includes('içerik') || lowerMessage.includes('istatistik') || lowerMessage.includes('özet')) {
-        return `📚 **İçerik İstatistikleri Özeti**
+        return `**İçerik İstatistikleri Özeti**
 
 **Toplam İçerik:** 85 öğe
 
 **Dağılım:**
-• 🎮 Oyunlar: 6 adet
+• Oyunlar: 6 adet
   - 2. Sınıf: 2 | 3. Sınıf: 2 | 4. Sınıf: 2
-  
-• 🎬 Videolar: 24 adet
+• Videolar: 24 adet
   - Şarkılar: 12 | Hikayeler: 8 | Dersler: 4
-  
-• 📖 Kelimeler: 20 adet (aktif)
+• Kelimeler: 20 adet (aktif)
   - Başlangıç: 8 | Orta: 7 | İleri: 5
-  
-• 📄 Çalışma Kağıtları: 35 adet
+• Çalışma Kağıtları: 35 adet
   - Yazma: 10 | Okuma: 12 | Matematik: 8 | Diğer: 5
 
 **Popülerlik:**
-1. 🥇 "Baby Shark" video (1.2K görüntülenme)
-2. 🥈 "2nd Grade Revision" oyun (890 oynama)
-3. 🥉 "Alphabet Practice" worksheet (654 indirme)
+1. "Baby Shark" video (1.2K görüntülenme)
+2. "2nd Grade Revision" oyun (890 oynama)
+3. "Alphabet Practice" worksheet (654 indirme)
 
-💡 Video içerikler en çok etkileşim alıyor!`;
+Video içerikler en çok etkileşim alıyor.`;
     }
 
     if (lowerMessage.includes('merhaba') || lowerMessage.includes('selam') || lowerMessage.includes('hey')) {
-        return `👋 **Merhaba Admin!**
+        return `**Merhaba Admin!**
 
-Ben Mimi'nin admin moduyum 🔴
+Ben Mimi'nin admin moduyum.
 
 Size nasıl yardımcı olabilirim?
 
 **Hızlı Erişim:**
-• 📊 Rapor oluşturma
-• 👥 Kullanıcı analizi
-• 💰 Finansal özet
-• 🔧 Sistem bakımı
-• 📈 Performans metrikleri
+• Rapor oluşturma
+• Kullanıcı analizi
+• Finansal özet
+• Sistem bakımı
+• Performans metrikleri
 
 Sormak istediğiniz herhangi bir şey var mı?`;
     }
 
     if (lowerMessage.includes('nerede') || lowerMessage.includes('nereden') || lowerMessage.includes('nasıl eklerim') || lowerMessage.includes('şunu nereden')) {
-        return `📍 **Admin Panel - Nerede Yapılır?**
+        return `**Admin Panel - Nerede Yapılır?**
 
 **Oyun ekleme/düzenleme:** Sol menü → **Oyunlar** (/admin/games)
 **Video ekleme:** Sol menü → **Videolar** (/admin/videos)
@@ -216,45 +213,45 @@ Sormak istediğiniz herhangi bir şey var mı?`;
 **Premium/abonelik:** Sol menü → **Premium** (/admin/premium)
 **Raporlar:** Sol menü → **Raporlar** (/admin/reports)
 **SEO ayarları:** Sol menü → **SEO** (/admin/seo)
-**Blog yazısı:** Sol menü → **Blog** (/admin/blog) - Günlük makale oluştur veya manuel ekle
+**Blog yazısı:** Sol menü → **Blog** (/admin/blog)
 **Site ayarları:** Sol menü → **Ayarlar** (/admin/settings)
-**Dashboard:** Ana sayfa → **Dashboard** (/admin) - Genel istatistikler
+**Dashboard:** Ana sayfa → **Dashboard** (/admin)
 
-Başka bir şey sorarsan detay vereyim! 🎯`;
+Başka bir şey sorarsan detay vereyim.`;
     }
 
     if (lowerMessage.includes('yardım') || lowerMessage.includes('help') || lowerMessage.includes('ne yapabilirsin')) {
-        return `🛡️ **Admin Mimi Yetenekleri**
+        return `**Admin Mimi Yetenekleri**
 
 Ben admin paneli için özel olarak tasarlandım. İşte yapabileceklerim:
 
-**📊 Raporlama:**
+**Raporlama:**
 • Günlük/haftalık/aylık performans raporları
 • Kullanıcı aktivite analizleri
 • Gelir ve büyüme raporları
 
-**👥 Kullanıcı Yönetimi:**
+**Kullanıcı Yönetimi:**
 • Aktif kullanıcı listesi
 • Premium dönüşüm analizi
 • Kullanıcı davranış insights
 
-**🔧 Sistem Yönetimi:**
+**Sistem Yönetimi:**
 • Veritabanı durum kontrolü
 • Hata tespiti
 • Performans metrikleri
 
-**💡 Öneriler:**
+**Öneriler:**
 • İçerik stratejisi önerileri
 • Pazarlama tavsiyeleri
 • Optimizasyon fırsatları
 
-Sadece sorun, hemen yanıtlayayım! 🚀`;
+Sadece sorun, hemen yanıtlayayım.`;
     }
 
     // Default response
     return `Anladım! "${message}" hakkında size yardımcı olayım.
 
-🔍 Bu konuyla ilgili analiz yapmam için daha spesifik bilgi verebilir misiniz?
+Bu konuyla ilgili analiz yapmam için daha spesifik bilgi verebilir misiniz?
 
 **Örnek sorular:**
 • "Haftalık rapor oluştur"
@@ -262,7 +259,7 @@ Sadece sorun, hemen yanıtlayayım! 🚀`;
 • "Sistemde sorun var mı kontrol et"
 • "Aktif kullanıcı sayısı ne?"
 
-Hızlı erişim için yukarıdaki butonları da kullanabilirsiniz! 👆`;
+Hızlı erişim için yukarıdaki butonları da kullanabilirsiniz.`;
 };
 
 function AdminMimi() {
@@ -272,7 +269,7 @@ function AdminMimi() {
         {
             id: '1',
             role: 'assistant',
-            content: '🛡️ **Admin Mimi Aktif!**\n\nMerhaba Admin! Ben sizin özel yardımcınızım.\n\n• Raporlar oluşturabilirim\n• Sistem durumunu kontrol edebilirim\n• Kullanıcı analizleri yapabilirim\n\nNasıl yardımcı olabilirim?',
+            content: '**Admin Mimi Aktif!**\n\nMerhaba Admin! Ben sizin özel yardımcınızım.\n\n• Raporlar oluşturabilirim\n• Sistem durumunu kontrol edebilirim\n• Kullanıcı analizleri yapabilirim\n\nNasıl yardımcı olabilirim?',
             timestamp: new Date()
         }
     ]);

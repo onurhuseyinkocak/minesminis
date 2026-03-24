@@ -55,7 +55,7 @@ export default function Blog() {
         <div className="blog-loading">Loading... / Yükleniyor...</div>
       ) : posts.length === 0 ? (
         <div className="blog-empty">
-          <span className="blog-empty-emoji"><LottieCharacter state="thinking" size={48} /></span>
+          <span className="blog-empty-icon"><LottieCharacter state="thinking" size={48} /></span>
           <p>Nothing here yet. Coming soon! / Henüz bir yazı hazırlanmadı. Yakında burada olacak!</p>
         </div>
       ) : (

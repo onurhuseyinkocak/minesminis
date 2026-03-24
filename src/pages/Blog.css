@@ -48,8 +48,7 @@
   padding: var(--space-3xl);
 }
 
-.blog-empty-emoji {
-  font-size: 56px;
+.blog-empty-icon {
   display: block;
   margin-bottom: var(--space-md);
 }
