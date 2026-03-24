@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Star, Check } from 'lucide-react';
 import { ProgressBar, KidIcon } from '../components/ui';
-import MimiMascot from '../components/MimiMascot';
+import LottieCharacter from '../components/LottieCharacter';
 import { PHASES, type LearningUnit } from '../data/curriculumPhases';
 import MimiGuide from '../components/MimiGuide';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
@@ -319,7 +319,7 @@ const WorldMap = () => {
               {/* Mimi at current position */}
               {isCurrent && currentStopIndex === i && (
                 <div className="journey-mimi-marker">
-                  <MimiMascot size={48} mood="waving" />
+                  <LottieCharacter state="happy" size={48} />
                 </div>
               )}
 

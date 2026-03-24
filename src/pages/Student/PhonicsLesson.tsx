@@ -10,7 +10,7 @@ import { getSongByGroup } from '../../data/phonicsSongs';
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../../data/phonics';
 import type { PhonicsSound, PhonicsGroup } from '../../data/phonics';
 import MimiGuide from '../../components/MimiGuide';
-import MimiMascot from '../../components/MimiMascot';
+import LottieCharacter from '../../components/LottieCharacter';
 import { SFX } from '../../data/soundLibrary';
 import { advanceToNextSound, recordSoundMastery } from '../../services/learningPathService';
 import { setActiveUser, recordActivity } from '../../services/adaptiveEngine';
@@ -283,7 +283,7 @@ function PhonicsLesson() {
       </Button>
 
       <div style={styles.mimiBox}>
-        <MimiMascot size={40} mood="happy" />
+        <LottieCharacter state="happy" size={40} />
         <p style={styles.mimiText}>
           {sound.story}
         </p>

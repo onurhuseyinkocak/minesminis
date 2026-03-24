@@ -5,7 +5,7 @@ import { Crown, Check, Star, Sparkles, Zap, MessageCircle, Gamepad2, BookOpen, T
 import './Premium.css';
 
 const premiumFeatures = [
-  { icon: <MessageCircle size={32} strokeWidth={2.5} />, title: 'Unlimited Chat with Mimi', description: 'Practice English as much as you want with our AI dragon Mimi!' },
+  { icon: <MessageCircle size={32} strokeWidth={2.5} />, title: 'Unlimited AI Chat', description: 'Practice English as much as you want with your AI dragon guide!' },
   { icon: <Gamepad2 size={32} strokeWidth={2.5} />, title: 'All Educational Games', description: 'Word matching, memory games, speed rounds, and more!' },
   { icon: <BookOpen size={32} strokeWidth={2.5} />, title: 'Vocabulary Practice', description: 'Visual and audio learning experience with 100+ words' },
   { icon: <Trophy size={32} strokeWidth={2.5} />, title: 'Daily Challenges', description: 'Keep learning with new questions every day!' },
@@ -26,11 +26,11 @@ export default function Premium() {
             <Sparkles size={20} />
             <span>Premium</span>
           </div>
-          <h1>{isPremium ? 'You\'re Premium!' : 'Unlimited AI Chat with Mimi!'}</h1>
+          <h1>{isPremium ? 'You\'re Premium!' : 'Unlock Everything!'}</h1>
           <p>
             {isPremium
               ? 'Thank you for being a Premium member! Enjoy unlimited access to all features.'
-              : 'Upgrade to Premium to unlock unlimited English practice with Mimi and all educational content.'}
+              : 'Upgrade to Premium to unlock unlimited English practice and all educational content.'}
           </p>
           <div className="hero-sparkles">
             <Sparkles className="sparkle-1" size={24} />

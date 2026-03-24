@@ -13,7 +13,7 @@ function NotFound() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontFamily: "'Nunito', sans-serif",
-                background: '#0C0F1A',
+                background: '#FFF8F2',
                 padding: '2rem',
                 textAlign: 'center',
             }}
@@ -31,7 +31,7 @@ function NotFound() {
                 style={{
                     fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                     fontWeight: 800,
-                    color: '#F1F5F9',
+                    color: '#1a1a2e',
                     margin: '0.5rem 0',
                 }}
             >
@@ -43,7 +43,7 @@ function NotFound() {
             <p
                 style={{
                     fontSize: 'clamp(1rem, 2.5vw, 1.35rem)',
-                    color: '#94A3B8',
+                    color: '#64748B',
                     maxWidth: '420px',
                     marginBottom: '2rem',
                     fontWeight: 600,

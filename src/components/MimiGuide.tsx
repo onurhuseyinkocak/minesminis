@@ -5,7 +5,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import MimiMascot from './MimiMascot';
+import LottieCharacter from './LottieCharacter';
 
 export interface MimiGuideProps {
   message: string;
@@ -115,7 +115,7 @@ export default function MimiGuide({
               border: '3px solid var(--bg-card, #1C2236)',
             }}
           >
-            <MimiMascot size={32} mood="happy" />
+            <LottieCharacter state="happy" size={32} />
           </motion.div>
 
           {/* Speech bubble */}

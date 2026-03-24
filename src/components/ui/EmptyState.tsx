@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import MimiMascot from '../MimiMascot';
+import LottieCharacter from '../LottieCharacter';
 import './EmptyState.css';
 
 export interface EmptyStateProps {
@@ -32,7 +32,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       )}
       {mimiMessage && (
         <div className="mm-empty-state__mimi" role="status">
-          <span aria-hidden="true"><MimiMascot size={24} mood="happy" animate={false} /></span>
+          <span aria-hidden="true"><LottieCharacter state="happy" size={24} /></span>
           <span>{mimiMessage}</span>
         </div>
       )}

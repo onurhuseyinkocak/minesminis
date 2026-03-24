@@ -24,7 +24,7 @@ interface ChatHomeProps {
 const DAILY_MESSAGE_LIMIT = 10;
 
 const WELCOME_BY_MASCOT: Record<string, string> = {
-    mimi_dragon: "Merhaba! Welcome to my cozy cave! 🐲✨ I'm Mimi the dragon! Let's learn English together! What would you like to do today? 🌟",
+    mimi_dragon: "Merhaba! Welcome to my cozy cave! Let's learn English together! What would you like to do today?",
     nova_fox: "Hey there! I'm Nova the cosmic fox! 🦊✨ Let's zoom through words at lightning speed! What shall we explore? 🌟",
     bubbles_octo: "Hello friend! I'm Bubbles! 🐙🎵 Let's dive into sounds and music together! What would you like to listen to? 🌊",
     sparky_alien: "Greetings earthling! I'm Sparky! 👾⚡ My brain works super fast - let's solve puzzles and grammar together! Ready? 🧠",

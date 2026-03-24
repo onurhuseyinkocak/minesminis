@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { Heart, Lock, HeartCrack } from 'lucide-react';
 import toast from 'react-hot-toast';
-import MimiMascot from '../components/MimiMascot';
+import LottieCharacter from '../components/LottieCharacter';
 import { KidIcon } from '../components/ui';
 import './Favorites.css';
 
@@ -153,9 +153,9 @@ const Favorites: React.FC = () => {
           </div>
         ) : filteredFavorites.length === 0 ? (
           <div className="favorites-empty">
-            <div className="empty-state-icon"><MimiMascot size={64} mood="waving" /></div>
+            <div className="empty-state-icon"><LottieCharacter state="idle" size={64} /></div>
             <h2>No Treasures Yet!</h2>
-            <p>Mimi is waiting to help you collect your favorite games, words, worksheets, and videos!</p>
+            <p>Collect your favorite games, words, worksheets, and videos!</p>
             <p className="hint">Tap the heart icon on any item to add it here</p>
           </div>
         ) : (

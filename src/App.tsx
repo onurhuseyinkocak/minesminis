@@ -16,7 +16,7 @@ import { getNextAction } from "./services/learningPathService";
 import { getTodayMinutes } from "./services/activityLogger";
 
 import { Star } from "lucide-react";
-import MimiMascot from "./components/MimiMascot";
+import LottieCharacter from "./components/LottieCharacter";
 import FloatingMascot from "./components/FloatingMascot";
 import { validateCurriculumData } from "./utils/dataValidation";
 import { LS_DAILY_TIME_LIMIT } from "./config/storageKeys";
@@ -519,9 +519,9 @@ function AppContent() {
         <button
           className="floating-chat-btn"
           onClick={() => setShowChat(true)}
-          aria-label="Chat with Mimi"
+          aria-label="Open chat"
         >
-          <MimiMascot size={28} mood="happy" />
+          <LottieCharacter state="happy" size={28} />
         </button>
       )}
 

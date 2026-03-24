@@ -18,7 +18,7 @@ import { KidIcon } from '../components/ui/KidIcon';
 import type { KidIconName } from '../components/ui/KidIcon';
 import XPBar from '../components/XPBar';
 import toast from 'react-hot-toast';
-import MimiMascot from '../components/MimiMascot';
+import LottieCharacter from '../components/LottieCharacter';
 import MimiGuide from '../components/MimiGuide';
 import './Profile.css';
 
@@ -157,8 +157,8 @@ const Profile: React.FC = () => {
               ))
             ) : (
               <div className="no-badges">
-                <span className="no-badges-emoji"><MimiMascot size={48} mood="waving" /></span>
-                <p>Mimi: Rozet kazanmak için keşfetmeye devam et!</p>
+                <span className="no-badges-emoji"><LottieCharacter state="happy" size={48} /></span>
+                <p>Rozet kazanmak için keşfetmeye devam et!</p>
               </div>
             )}
           </div>

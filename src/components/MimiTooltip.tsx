@@ -5,7 +5,7 @@
  */
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import MimiMascot from './MimiMascot';
+import LottieCharacter from './LottieCharacter';
 
 export interface MimiTooltipProps {
   message: string;
@@ -140,7 +140,7 @@ export default function MimiTooltip({
                 position: 'relative',
               }}
             >
-              <MimiMascot size={14} mood="happy" animate={false} />
+              <LottieCharacter state="happy" size={14} />
               {message}
 
               {/* Arrow */}

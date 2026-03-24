@@ -5,7 +5,7 @@ import { errorLogger } from '../services/errorLogger';
 import { fallbackWorksheets } from '../data/fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
 import toast from 'react-hot-toast';
-import MimiMascot from '../components/MimiMascot';
+import LottieCharacter from '../components/LottieCharacter';
 import {
   Printer,
   Heart,
@@ -360,7 +360,7 @@ function Worksheets() {
 
       {filteredWorksheets.length === 0 && (
         <div className="worksheets-empty">
-          <div className="empty-icon"><MimiMascot size={64} mood="thinking" /></div>
+          <div className="empty-icon"><LottieCharacter state="thinking" size={64} /></div>
           <h3>{t('worksheets.noWorksheetsFound')}</h3>
           <p>{t('worksheets.noWorksheetsDesc')}</p>
         </div>

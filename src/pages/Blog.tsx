@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '../config/supabase';
-import MimiMascot from '../components/MimiMascot';
+import LottieCharacter from '../components/LottieCharacter';
 import './Blog.css';
 
 interface BlogPost {
@@ -55,8 +55,8 @@ export default function Blog() {
         <div className="blog-loading">Loading... / Yükleniyor...</div>
       ) : posts.length === 0 ? (
         <div className="blog-empty">
-          <span className="blog-empty-emoji"><MimiMascot size={48} mood="thinking" /></span>
-          <p>Mimi hasn't written anything yet. Coming soon! / Mimi henüz bir yazı hazırlamadı. Yakında burada olacak!</p>
+          <span className="blog-empty-emoji"><LottieCharacter state="thinking" size={48} /></span>
+          <p>Nothing here yet. Coming soon! / Henüz bir yazı hazırlanmadı. Yakında burada olacak!</p>
         </div>
       ) : (
         <div className="blog-list">

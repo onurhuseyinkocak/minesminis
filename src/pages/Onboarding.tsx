@@ -14,7 +14,7 @@ import {
   Volume2, Lock as LockIcon, CheckCircle, MapPin, Settings, UserPlus,
 } from 'lucide-react';
 import { Button } from '../components/ui';
-import MimiMascot from '../components/MimiMascot';
+import LottieCharacter from '../components/LottieCharacter';
 import './Onboarding.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -635,7 +635,7 @@ const Onboarding: React.FC = () => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="onboarding-step"
     >
-      <h2>Meet Mimi!</h2>
+      <h2>Meet Your Guide!</h2>
       <p className="onboarding-step-sub">Your friendly dragon guide on this learning adventure</p>
 
       <div className="onboarding-mimi-intro">
@@ -644,11 +644,11 @@ const Onboarding: React.FC = () => {
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
         >
-          <MimiMascot size={160} mood="waving" />
+          <LottieCharacter state="happy" size={160} />
         </motion.div>
 
         <div className="onboarding-mimi-speech">
-          Hi there! I&apos;m Mimi, your dragon friend! I&apos;ll help you learn English through fun games,
+          Hi there! I&apos;m your dragon friend! I&apos;ll help you learn English through fun games,
           exciting stories, and magical adventures. Ready to explore?
           <div className="onboarding-mimi-facts">
             <span className="onboarding-mimi-fact"><Volume2 size={14} /> Dragon Fire</span>
