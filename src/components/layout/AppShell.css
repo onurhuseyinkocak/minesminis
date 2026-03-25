@@ -1,1 +1,143 @@
-/* Tailwind-only — no custom CSS needed */
+/* ==========================================================================
+   APP SHELL — LibreUIUX / MinesMinis Design System
+   Desktop top nav, mobile top bar, mobile bottom nav
+   Uses Tailwind classes in TSX — this file provides base overrides
+   and ensures design-system compliance for nav elements.
+   ========================================================================== */
+
+/* -- Page background ---------------------------------------------------- */
+.min-h-screen {
+  background: var(--bg-page);
+}
+
+/* -- Desktop top nav ---------------------------------------------------- */
+
+/* Scrolled state shadow consistency */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+/* -- Mobile bottom nav -------------------------------------------------- */
+
+/* Ensure bottom nav has proper card background and shadow */
+nav.fixed.bottom-0 {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Bottom nav items — enforce 44px minimum touch targets */
+nav.fixed.bottom-0 a {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  transition:
+    color var(--duration-normal) var(--ease-out),
+    background var(--duration-normal) var(--ease-out);
+}
+
+/* Active bottom nav item — icon background pill */
+nav.fixed.bottom-0 a .bg-primary-50 {
+  background: var(--primary-pale);
+}
+
+/* Active bottom nav text color uses Tailwind's text-primary-500 which maps
+   to var(--primary) via tailwind config — no override needed */
+
+/* -- Desktop nav active state reinforcement ----------------------------- */
+
+/* Active nav link pill */
+header nav a.bg-primary-50 {
+  background: var(--primary-pale);
+}
+
+header nav a.text-primary-600 {
+  color: var(--primary);
+}
+
+/* Hover state for non-active links */
+header nav a:hover:not(.bg-primary-50) {
+  background: var(--bg-muted);
+}
+
+/* -- Desktop dropdown --------------------------------------------------- */
+
+header .absolute.bg-white {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+header .absolute.bg-white a:hover,
+header .absolute.bg-white button:hover {
+  background: var(--bg-muted);
+}
+
+/* -- Focus visible for all nav interactive elements --------------------- */
+
+header a:focus-visible,
+header button:focus-visible,
+nav.fixed.bottom-0 a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* -- Smooth transitions ------------------------------------------------- */
+
+header {
+  transition:
+    background var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out);
+}
+
+/* -- Safe area bottom padding for iOS ----------------------------------- */
+
+nav.fixed.bottom-0 {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* -- Responsive --------------------------------------------------------- */
+
+@media (max-width: 1023px) {
+  /* Ensure mobile top bar has proper height and borders */
+  header.fixed.top-0 {
+    height: 56px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+  }
+}
+
+/* -- Smart Board -------------------------------------------------------- */
+
+@media (min-width: 1920px) {
+  header.fixed.top-0 {
+    height: 80px;
+  }
+
+  nav.fixed.bottom-0 a {
+    min-height: var(--touch-target-lg);
+  }
+}
+
+/* -- Dark mode ---------------------------------------------------------- */
+
+[data-theme="dark"] header.fixed.top-0 {
+  background: rgba(26, 26, 46, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] nav.fixed.bottom-0 {
+  background: var(--ink);
+  border-top-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] header .absolute.bg-white {
+  background: var(--ink);
+  border-color: rgba(255, 255, 255, 0.08);
+}

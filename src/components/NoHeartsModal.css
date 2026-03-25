@@ -17,13 +17,19 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: var(--space-md, 16px);
+  animation: nhOverlayIn 200ms ease both;
+}
+
+@keyframes nhOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ── Card ─────────────────────────────────────────────────── */
 
 .no-hearts-card {
   width: 100%;
-  max-width: 360px;
+  max-width: 380px;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
@@ -34,6 +40,12 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-lg);
+  animation: nhCardIn 300ms var(--ease-spring) both;
+}
+
+@keyframes nhCardIn {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 [data-theme="dark"] .no-hearts-card {
@@ -43,16 +55,16 @@
 /* ── Heart icon ───────────────────────────────────────────── */
 
 .no-hearts-icon {
-  width: 64px;
-  height: 64px;
-  color: var(--error, #ef4444);
-  filter: drop-shadow(0 2px 8px var(--error-glow, rgba(239, 68, 68, 0.4)));
+  width: 72px;
+  height: 72px;
+  color: var(--error);
+  filter: drop-shadow(0 4px 12px rgba(239, 68, 68, 0.35));
   animation: nhHeartPulse 1.4s ease-in-out infinite;
 }
 
 @keyframes nhHeartPulse {
   0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.08); }
+  50%       { transform: scale(1.1); }
 }
 
 /* ── Title ────────────────────────────────────────────────── */
@@ -73,7 +85,8 @@
   font-size: 0.9375rem;
   color: var(--text-secondary);
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
+  max-width: 280px;
 }
 
 /* ── Timer block ──────────────────────────────────────────── */
@@ -84,6 +97,7 @@
   align-items: center;
   gap: var(--space-xs, 4px);
   background: var(--bg-elevated, var(--bg-secondary));
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   padding: var(--space-md) var(--space-xl);
   width: 100%;
@@ -99,13 +113,13 @@
 
 .no-hearts-timer__countdown {
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 900;
   color: var(--primary);
   letter-spacing: 0.04em;
 }
 
-/* ── Actions ──────────────────────────────────────────────── */
+/* ── Actions — Clear CTA hierarchy ───────────────────────── */
 
 .no-hearts-actions {
   display: flex;
@@ -119,15 +133,18 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: 14px var(--space-xl);
+  padding: var(--space-4) var(--space-xl);
   border: none;
   border-radius: var(--radius-full);
   font-family: var(--font-display);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  min-height: var(--touch-target, 44px);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-height: var(--btn-height-lg);
+  transition:
+    transform 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out),
+    background 0.15s var(--ease-out);
   width: 100%;
 }
 
@@ -136,25 +153,42 @@
   outline-offset: 2px;
 }
 
+/* Premium button — MOST prominent, gradient + glow */
 .no-hearts-btn--primary {
-  background: var(--gradient-primary, var(--primary));
-  color: var(--text-on-primary, #fff);
-  box-shadow: var(--shadow-md);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  box-shadow:
+    var(--shadow-button),
+    0 4px 20px var(--primary-glow);
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
 }
 
 .no-hearts-btn--primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+  box-shadow:
+    var(--shadow-button-hover),
+    0 8px 30px var(--primary-glow);
 }
 
+.no-hearts-btn--primary:active {
+  transform: scale(0.97);
+}
+
+/* Secondary button — subdued, clearly less important */
 .no-hearts-btn--secondary {
-  background: transparent;
+  background: var(--bg-elevated);
   color: var(--text-secondary);
-  border: 1.5px solid var(--border-medium);
+  border: 1.5px solid var(--border);
+  min-height: var(--btn-height);
+  font-size: 0.9375rem;
+  font-weight: 700;
 }
 
 .no-hearts-btn--secondary:hover {
-  background: var(--bg-elevated, var(--bg-secondary));
+  background: var(--bg-muted);
+  border-color: var(--border-hover);
+  color: var(--text-body);
 }
 
 /* ── Responsive ───────────────────────────────────────────── */
@@ -171,5 +205,10 @@
 
   .no-hearts-timer__countdown {
     font-size: 1.5rem;
+  }
+
+  .no-hearts-icon {
+    width: 60px;
+    height: 60px;
   }
 }

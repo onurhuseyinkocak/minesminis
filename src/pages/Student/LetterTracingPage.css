@@ -139,9 +139,10 @@
 
 .ltp-overall-bar-fill {
   height: 100%;
-  background: var(--primary);
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
   border-radius: var(--radius-full);
-  transition: width 0.4s ease-out;
+  transition: width 0.5s var(--ease-spring);
+  box-shadow: 0 0 6px var(--primary-glow);
 }
 
 /* ---- Alphabet grid ---- */
@@ -172,23 +173,27 @@
   border: 2px solid var(--border-default, #e2e8f0);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s var(--ease-spring);
   aspect-ratio: 1;
+  min-height: var(--touch-target);
+  box-shadow: var(--shadow-xs);
 }
 
 .ltp-letter-btn:hover {
   border-color: var(--primary);
   background: var(--primary-pale);
-  transform: scale(1.04);
+  transform: scale(1.06);
+  box-shadow: var(--shadow-md);
 }
 
 .ltp-letter-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .ltp-letter-btn--mastered {
   border-color: var(--success);
   background: var(--success-pale);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .ltp-letter-btn__char {
@@ -236,10 +241,10 @@
   width: 100%;
   max-width: 400px;
   background: var(--bg-surface, #fff);
-  border: 2px solid var(--border-default, #e2e8f0);
+  border: 2.5px solid var(--primary-light);
   border-radius: var(--radius-2xl);
   padding: var(--space-lg);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .ltp-mastery-stars {

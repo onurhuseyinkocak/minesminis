@@ -6,13 +6,13 @@
 .mm-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   font-family: var(--font-display);
   font-weight: 700;
   border-radius: var(--radius-full);
   white-space: nowrap;
   line-height: 1;
-  transition: background 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: background var(--transition-base);
 }
 
 /* -- Sizes ------------------------------------------------------------ */
@@ -90,27 +90,27 @@
 /* -- Dark mode -------------------------------------------------------- */
 
 [data-theme="dark"] .mm-badge--default {
-  background: rgba(212, 148, 13, 0.15);
+  background: rgba(255, 107, 53, 0.15);
   color: var(--primary-light);
 }
 
 [data-theme="dark"] .mm-badge--success {
-  background: var(--success-pale);
+  background: var(--success-soft);
   color: var(--success-light);
 }
 
 [data-theme="dark"] .mm-badge--warning {
-  background: var(--warning-pale);
+  background: var(--warning-soft);
   color: var(--warning-light);
 }
 
 [data-theme="dark"] .mm-badge--error {
-  background: var(--error-pale);
+  background: rgba(239, 68, 68, 0.15);
   color: var(--error-light);
 }
 
 [data-theme="dark"] .mm-badge--info {
-  background: var(--info-pale);
+  background: rgba(14, 165, 233, 0.15);
   color: var(--info-light);
 }
 

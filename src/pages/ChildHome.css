@@ -14,7 +14,7 @@
   background: linear-gradient(
     160deg,
     var(--primary-pale) 0%,
-    #fff8f5 40%,
+    var(--bg-page) 40%,
     var(--secondary-pale) 100%
   );
   padding: calc(env(safe-area-inset-top, 0px) + 24px)
@@ -32,19 +32,19 @@
   position: absolute;
   top: calc(env(safe-area-inset-top, 0px) + 14px);
   right: calc(env(safe-area-inset-right, 0px) + 14px);
-  background: var(--bg-elevated, #fff);
-  border: 2px solid var(--border-color, #e2e8f0);
+  background: var(--bg-elevated);
+  border: 2px solid var(--border);
   border-radius: 20px;
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: Nunito, sans-serif;
-  transition: background 0.15s, border-color 0.15s;
+  font-family: var(--font-display);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
   min-height: 40px;
   z-index: 10;
 }
@@ -100,16 +100,16 @@
   top: -56px;
   left: 50%;
   transform: translateX(-50%) scale(1);
-  background: var(--bg-elevated, #fff);
+  background: var(--bg-elevated);
   border: 2.5px solid var(--primary);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   padding: 10px 18px;
   font-size: 18px;
   font-weight: 800;
   color: var(--primary);
   white-space: nowrap;
   box-shadow: 0 4px 16px var(--primary-glow);
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-display);
   z-index: 20;
   pointer-events: none;
   animation: bubble-appear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
@@ -145,10 +145,10 @@
 .child-home__greeting {
   font-size: clamp(22px, 5vw, 30px);
   font-weight: 900;
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary);
   text-align: center;
   margin: 0 0 20px;
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-display);
   letter-spacing: -0.3px;
 }
 
@@ -165,8 +165,8 @@
   border-radius: 28px;
   border: none;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  color: #fff;
-  font-family: Nunito, sans-serif;
+  color: var(--text-on-primary);
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 900;
   cursor: pointer;
@@ -175,8 +175,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 8px 28px var(--primary-glow), 0 2px 8px rgba(0,0,0,0.08);
-  transition: transform 0.12s, box-shadow 0.12s;
+  box-shadow: 0 8px 28px var(--primary-glow), var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   position: relative;
   overflow: hidden;
   padding: 20px 28px;
@@ -256,18 +256,18 @@
   border-radius: 24px;
   border: none;
   cursor: pointer;
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 900;
-  color: #fff;
+  color: var(--text-on-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
   padding: 16px 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-  transition: transform 0.12s, box-shadow 0.12s;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   letter-spacing: 0.3px;
   text-transform: uppercase;
 }
@@ -275,6 +275,7 @@
 .child-home__secondary-btn:hover,
 .child-home__secondary-btn:focus-visible {
   transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-card-hover);
   outline: 3px solid rgba(255,255,255,0.6);
   outline-offset: 2px;
 }

@@ -1,28 +1,38 @@
 /* ============================================================
-   HabitStats — 4-column stats strip
-   MinesMinis Design System tokens only. No hardcoded hex.
+   HabitStats.css — 4-column stats strip
+   MinesMinis Design System v5. All var() tokens.
    ============================================================ */
 
 .habit-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .habit-stat-card {
   background: var(--bg-card);
-  border-radius: 12px;
-  padding: 10px 8px;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  box-shadow: 0 1px 4px var(--shadow-color);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-card);
   min-width: 0;
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.habit-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
 }
 
 .habit-stat-value {
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 900;
   line-height: 1;
@@ -35,7 +45,7 @@
 .habit-stat-value--total   { color: var(--accent-purple); }
 
 .habit-stat-label {
-  font-family: var(--font-body, 'Inter', sans-serif);
+  font-family: var(--font-body);
   font-size: 0.6rem;
   font-weight: 600;
   color: var(--text-muted);
@@ -46,7 +56,7 @@
 }
 
 /* ================================================================
-   Responsive — collapse to 2×2 on very small screens
+   Responsive -- collapse to 2x2 on very small screens
    ================================================================ */
 @media (max-width: 360px) {
   .habit-stats {

@@ -1,6 +1,6 @@
 /* ==========================================================================
-   PRACTICE MODE — MinesMinis Design System v4.0
-   Mastery word cards, filters, detail modal. ZERO hex colors. All var() tokens.
+   PRACTICE MODE — MinesMinis Design System v5.0
+   Mastery word cards, filters, detail modal. All var() tokens.
    ========================================================================== */
 
 /* ---- CONTAINER ---- */
@@ -82,8 +82,8 @@
 .pm-world-select {
   height: var(--btn-height-sm);
   padding: 0 var(--space-lg) 0 var(--space-sm);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
   background: var(--bg-card);
   font-family: var(--font-body);
   font-size: 14px;
@@ -99,6 +99,7 @@
 .pm-world-select:focus {
   outline: none;
   border-color: var(--primary);
+  box-shadow: var(--focus-ring);
 }
 
 /* ---- EMPTY ---- */
@@ -123,35 +124,45 @@
 /* ---- WORD GRID ---- */
 .pm-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: var(--space-md);
   margin-bottom: var(--space-xl);
 }
 
-/* ---- WORD CARD ---- */
+/* ---- WORD CARD — clean with clear difficulty stripe ---- */
 .pm-word-card {
   cursor: pointer;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-card);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .pm-word-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
 }
 
+.pm-word-card:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* Difficulty color stripes */
 .pm-word-card--mastered {
-  border-top: 3px solid var(--success);
+  border-top: 4px solid var(--success);
 }
 
 .pm-word-card--reviewing {
-  border-top: 3px solid var(--primary);
+  border-top: 4px solid var(--primary);
 }
 
 .pm-word-card--learning {
-  border-top: 3px solid var(--info);
+  border-top: 4px solid var(--info);
 }
 
 .pm-word-card--new {
-  border-top: 3px solid var(--cloud);
+  border-top: 4px solid var(--slate-300);
 }
 
 .pm-word-card__top {
@@ -162,24 +173,26 @@
 }
 
 .pm-word-card__letter-badge {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 800;
   color: #fff;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .pm-word-card__mastery {
-  padding: 2px var(--space-sm);
+  padding: 3px var(--space-sm);
   border-radius: var(--radius-full);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .pm-word-card__english {
@@ -197,7 +210,7 @@
   margin: 0 0 var(--space-sm);
 }
 
-/* ---- CONFIDENCE BAR ---- */
+/* ---- CONFIDENCE BAR — clear visual progress ---- */
 .pm-word-card__confidence {
   display: flex;
   align-items: center;
@@ -206,7 +219,7 @@
 
 .pm-word-card__confidence-bar {
   flex: 1;
-  height: 6px;
+  height: 8px;
   border-radius: var(--radius-full);
   background: var(--bg-muted);
   overflow: hidden;
@@ -220,9 +233,9 @@
 
 .pm-word-card__confidence-label {
   font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-  min-width: 32px;
+  font-size: 13px;
+  font-weight: 800;
+  min-width: 36px;
   text-align: right;
 }
 
@@ -232,7 +245,7 @@
   inset: 0;
   z-index: var(--z-modal);
   background: var(--overlay-bg, rgba(26, 26, 46, 0.5));
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
 }
 
 .pm-modal {
@@ -244,7 +257,7 @@
   width: 90vw;
   max-width: 440px;
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-xl);
   box-shadow: var(--shadow-xl);
   text-align: center;
@@ -254,8 +267,8 @@
   position: absolute;
   top: var(--space-md);
   right: var(--space-md);
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,16 +286,18 @@
 }
 
 .pm-modal__letter-badge {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-family: var(--font-display);
+  font-size: 34px;
   font-weight: 800;
   color: #fff;
   margin: 0 auto var(--space-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .pm-modal__english {
@@ -305,27 +320,29 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-lg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
   background: var(--bg-card);
   color: var(--secondary);
   font-family: var(--font-display);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all var(--transition-fast);
   margin-bottom: var(--space-lg);
+  min-height: var(--touch-target);
 }
 
 .pm-modal__pronounce:hover {
   border-color: var(--secondary);
   background: var(--secondary-pale);
+  transform: scale(1.02);
 }
 
 .pm-modal__example {
   text-align: left;
   padding: var(--space-md);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--bg-muted);
   margin-bottom: var(--space-lg);
 }
@@ -437,7 +454,7 @@
   }
 
   .pm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
   }
 
   .pm-summary__stats {

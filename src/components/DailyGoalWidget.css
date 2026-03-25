@@ -1,14 +1,17 @@
-/* ── DailyGoalWidget ──────────────────────────────────────────────────────── */
+/* ============================================================
+   DailyGoalWidget.css — Progress ring + goal selector
+   MinesMinis Design System v5. All var() tokens.
+   ============================================================ */
 
 .dgw {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   user-select: none;
 }
 
-/* ── Ring button ── */
+/* ---- Ring button ---- */
 
 .dgw__ring-btn {
   position: relative;
@@ -18,14 +21,14 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  border-radius: 50%;
-  transition: transform 0.15s;
+  border-radius: var(--radius-full);
+  transition: transform var(--transition-fast);
 }
 
 .dgw__ring-btn:hover { transform: scale(1.06); }
 .dgw__ring-btn:active { transform: scale(0.97); }
 
-/* ── SVG ── */
+/* ---- SVG ---- */
 
 .dgw__svg {
   width: 100%;
@@ -33,19 +36,28 @@
 }
 
 .dgw__track {
-  stroke: var(--color-ink-100, #f1f0ec);
+  stroke: var(--border-light);
 }
 
 .dgw__progress {
-  stroke: var(--color-primary-500, #f97316);
-  transition: stroke-dashoffset 0.8s ease-out;
+  stroke: var(--primary);
+  transition: stroke-dashoffset 0.8s var(--ease-out);
+  filter: drop-shadow(0 0 4px var(--primary-glow));
 }
 
 .dgw__progress--done {
-  stroke: var(--color-success-500, #22c55e);
+  stroke: var(--success);
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4));
+  animation: ring-complete 0.6s var(--ease-spring);
 }
 
-/* ── Center ── */
+@keyframes ring-complete {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.6)); }
+  100% { filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4)); }
+}
+
+/* ---- Center ---- */
 
 .dgw__center {
   position: absolute;
@@ -58,29 +70,29 @@
 }
 
 .dgw__xp {
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-weight: 900;
-  font-size: 18px;
-  color: var(--color-ink-900, #1c1917);
+  font-size: 1.125rem;
+  color: var(--text-primary);
   line-height: 1;
 }
 
 .dgw__goal {
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 11px;
-  color: var(--color-ink-400, #a8a29e);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
   line-height: 1;
   align-self: flex-end;
   margin-bottom: 2px;
 }
 
 .dgw__check {
-  color: var(--color-success-500, #22c55e);
+  color: var(--success);
   stroke-width: 3;
 }
 
-/* ── Label ── */
+/* ---- Label ---- */
 
 .dgw__label {
   display: flex;
@@ -90,106 +102,126 @@
 }
 
 .dgw__label-title {
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-weight: 800;
-  font-size: 11px;
-  color: var(--color-ink-600, #57534e);
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .dgw__label-sub {
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 11px;
-  color: var(--color-ink-400, #a8a29e);
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
 }
 
-/* ── Selector overlay ── */
+/* ---- Selector overlay ---- */
 
 .dgw__overlay {
   position: fixed;
   inset: 0;
-  z-index: 200;
-  background: rgba(0,0,0,0.45);
+  z-index: var(--z-overlay);
+  background: rgba(26, 26, 46, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: var(--space-lg);
+  animation: dgw-overlay-in 0.2s ease;
+}
+
+@keyframes dgw-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .dgw__selector {
-  background: #fff;
-  border-radius: 24px;
-  padding: 28px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl) var(--space-lg);
   max-width: 340px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  box-shadow: var(--shadow-xl);
+  animation: dgw-modal-in 0.3s var(--ease-spring);
+}
+
+@keyframes dgw-modal-in {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .dgw__selector-title {
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-weight: 900;
-  font-size: 20px;
-  color: var(--color-ink-900, #1c1917);
-  margin: 0 0 6px;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-xs);
   text-align: center;
 }
 
 .dgw__selector-sub {
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 13px;
-  color: var(--color-ink-500, #78716c);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
   text-align: center;
-  margin: 0 0 20px;
+  margin: 0 0 var(--space-lg);
 }
 
 .dgw__options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .dgw__option {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 2px solid var(--color-ink-100, #f1f0ec);
-  background: var(--color-cream-50, #fafaf8);
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-light);
+  background: var(--bg-elevated);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
   width: 100%;
 }
 
 .dgw__option:hover {
-  border-color: var(--color-primary-300, #fed7aa);
-  background: var(--color-primary-50, #fff7ed);
+  border-color: var(--primary-light);
+  background: var(--primary-pale);
+  transform: translateY(-1px);
 }
 
 .dgw__option--active {
-  border-color: var(--color-primary-500, #f97316);
-  background: var(--color-primary-50, #fff7ed);
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  box-shadow: 0 0 0 2px var(--primary-glow);
 }
 
 .dgw__option-xp {
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-weight: 900;
-  font-size: 18px;
-  color: var(--color-primary-500, #f97316);
+  font-size: 1.125rem;
+  color: var(--primary);
   min-width: 56px;
 }
 
 .dgw__option-label {
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 14px;
-  color: var(--color-ink-800, #292524);
+  font-size: 0.875rem;
+  color: var(--text-primary);
   flex: 1;
 }
 
 .dgw__option-check {
-  color: var(--color-primary-500, #f97316);
+  color: var(--primary);
   stroke-width: 3;
   flex-shrink: 0;
 }

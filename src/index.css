@@ -307,7 +307,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #FFF8F2;
+  background: var(--bg-page);
   position: relative;
 }
 
@@ -807,21 +807,28 @@ input::placeholder, textarea::placeholder {
   border-radius: var(--radius-sm);
 }
 
-/* ---- Skip to content ---- */
+/* ---- Skip to content (base — App.css has the polished version) ---- */
 .skip-to-content {
   position: absolute;
-  top: -9999px;
+  top: -60px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--primary);
-  color: #FFFFFF;
-  padding: 1rem 2rem;
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  padding: var(--space-2) var(--space-6);
   z-index: var(--z-max);
-  border-radius: var(--radius-md);
-  font-weight: bold;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: top var(--transition-fast);
 }
 .skip-to-content:focus {
-  top: 10px;
+  top: 0;
+  outline: none;
 }
 
 /* ==========================================================================

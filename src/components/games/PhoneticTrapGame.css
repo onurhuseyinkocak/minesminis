@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PHONETIC TRAP GAME — MinesMinis Design System
+   PHONETIC TRAP GAME — MinesMinis Design System v5
    Turkish phonetic interference trainer for English learners
    ========================================================================== */
 
@@ -35,7 +35,7 @@
 
 .ptg__back-btn:hover {
   color: var(--text-primary);
-  background: var(--bg-subtle);
+  background: var(--bg-muted);
 }
 
 .ptg__sound-badge {
@@ -49,7 +49,7 @@
   font-size: 1.75rem;
   font-weight: 900;
   font-family: var(--font-display, Nunito, sans-serif);
-  color: var(--trap-color, var(--primary));
+  color: var(--trap-color, var(--accent-purple));
   line-height: 1;
 }
 
@@ -60,51 +60,60 @@
   line-height: 1.2;
 }
 
-/* ── Tab Navigation ──────────────────────────────────────────────────────── */
+/* ── Tab Navigation — visually clear segmented control ────────────────── */
 
 .ptg__tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-xs);
-  background: var(--bg-subtle);
+  gap: var(--space-1);
+  background: var(--bg-muted);
   border-radius: var(--radius-lg);
-  padding: var(--space-xs);
+  padding: var(--space-1);
+  border: 1.5px solid var(--border);
 }
 
 .ptg__tab {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: var(--space-sm) var(--space-xs);
+  padding: var(--space-2) var(--space-2);
   border-radius: var(--radius-md);
-  font-family: var(--font-body, Nunito, sans-serif);
+  font-family: var(--font-display, Nunito, sans-serif);
   font-size: 0.8125rem;
   font-weight: 700;
   color: var(--text-muted);
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-out);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  position: relative;
 }
 
 .ptg__tab:hover {
   color: var(--text-primary);
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .ptg__tab--active {
-  background: var(--bg-elevated);
-  color: var(--trap-color, var(--primary));
-  box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
+  color: var(--trap-color, var(--accent-purple));
+  box-shadow: var(--shadow-sm), 0 0 0 1px rgba(139, 92, 246, 0.1);
+  font-weight: 800;
+}
+
+.ptg__tab--active .ptg__tab-icon {
+  transform: scale(1.15);
 }
 
 .ptg__tab-icon {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  transition: transform 0.2s var(--ease-spring);
 }
 
 .ptg__tab-label {
   font-size: 0.75rem;
+  letter-spacing: 0.02em;
 }
 
 /* ── Tab Panel ───────────────────────────────────────────────────────────── */
@@ -124,8 +133,8 @@
 /* ── Learn Tab ───────────────────────────────────────────────────────────── */
 
 .ptg__error-card {
-  background: var(--bg-elevated);
-  border: 1.5px solid var(--trap-color, var(--primary));
+  background: var(--accent-purple-pale, #EDE9FE);
+  border: 1.5px solid var(--trap-color, var(--accent-purple));
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   display: flex;
@@ -138,7 +147,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--trap-color, var(--primary));
+  color: var(--trap-color, var(--accent-purple));
   margin: 0;
 }
 
@@ -179,9 +188,10 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  background: var(--bg-subtle);
+  background: var(--bg-muted);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
+  border: 1px solid var(--border);
 }
 
 .ptg__mouth-svg-wrap {
@@ -230,9 +240,15 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--space-sm);
-  background: var(--bg-elevated);
+  background: var(--bg-card);
   border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
+  border: 1.5px solid var(--border);
+  transition: border-color 0.2s;
+}
+
+.ptg__pair:hover {
+  border-color: var(--accent-purple-light);
 }
 
 .ptg__pair-correct {
@@ -242,7 +258,7 @@
 .ptg__pair-word {
   font-size: 1.125rem;
   font-weight: 800;
-  color: var(--trap-color, var(--primary));
+  color: var(--trap-color, var(--accent-purple));
   display: block;
   font-family: var(--font-display, Nunito, sans-serif);
 }
@@ -267,7 +283,7 @@
 .ptg__pair-word--wrong {
   font-size: 1.125rem;
   font-weight: 800;
-  color: var(--danger, #EF4444);
+  color: var(--error);
   display: block;
   text-decoration: line-through;
   font-family: var(--font-display, Nunito, sans-serif);
@@ -300,11 +316,12 @@
 }
 
 .ptg__prompt-card {
-  background: var(--bg-elevated);
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   text-align: center;
-  border: 1.5px solid var(--glass-border, var(--border));
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 .ptg__prompt-en {
@@ -329,8 +346,8 @@
 }
 
 .ptg__option {
-  background: var(--bg-elevated);
-  border: 2px solid var(--border);
+  background: var(--bg-card);
+  border: 2.5px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-md) var(--space-lg);
   font-family: var(--font-display, Nunito, sans-serif);
@@ -339,29 +356,50 @@
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;
-  transition: all 0.15s;
+  transition: all 0.15s var(--ease-out);
+  min-height: 56px;
+  display: flex;
+  align-items: center;
 }
 
 .ptg__option:hover:not(:disabled) {
-  border-color: var(--trap-color, var(--primary));
-  background: color-mix(in srgb, var(--trap-color, var(--primary)) 8%, var(--bg-elevated));
+  border-color: var(--accent-purple);
+  background: var(--accent-purple-pale);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .ptg__option--correct {
-  border-color: var(--success, #10B981);
-  background: color-mix(in srgb, var(--success, #10B981) 12%, var(--bg-elevated));
-  color: var(--success, #10B981);
+  border-color: var(--success) !important;
+  background: var(--success-pale) !important;
+  color: var(--success) !important;
+  animation: ptg-correct-bounce 0.4s var(--ease-spring);
+}
+
+@keyframes ptg-correct-bounce {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }
 
 .ptg__option--wrong {
-  border-color: var(--danger, #EF4444);
-  background: color-mix(in srgb, var(--danger, #EF4444) 12%, var(--bg-elevated));
-  color: var(--danger, #EF4444);
+  border-color: var(--error) !important;
+  background: var(--error-pale) !important;
+  color: var(--error) !important;
+  animation: ptg-shake 0.4s ease;
+}
+
+@keyframes ptg-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
 }
 
 .ptg__feedback {
   text-align: center;
-  padding: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 0.9375rem;
@@ -369,17 +407,19 @@
 }
 
 .ptg__feedback--correct {
-  background: color-mix(in srgb, var(--success, #10B981) 15%, transparent);
-  color: var(--success, #10B981);
+  background: var(--success-pale);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .ptg__feedback--wrong {
-  background: color-mix(in srgb, var(--danger, #EF4444) 12%, transparent);
-  color: var(--danger, #EF4444);
+  background: var(--error-pale);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .ptg__next-btn {
-  background: var(--trap-color, var(--primary));
+  background: var(--accent-purple);
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
@@ -388,12 +428,15 @@
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
+  transition: all 0.2s var(--ease-out);
   width: 100%;
+  min-height: 52px;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .ptg__next-btn:hover {
-  opacity: 0.92;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
 }
 
 .ptg__next-btn:active {
@@ -430,7 +473,7 @@
 .ptg__challenge-word {
   font-size: 3rem;
   font-weight: 900;
-  color: var(--trap-color, var(--primary));
+  color: var(--trap-color, var(--accent-purple));
   font-family: var(--font-display, Nunito, sans-serif);
   text-align: center;
   animation: ptg-pop-in 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -450,8 +493,8 @@
 }
 
 .ptg__challenge-option {
-  background: var(--bg-elevated);
-  border: 2px solid var(--border);
+  background: var(--bg-card);
+  border: 2.5px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   font-family: var(--font-display, Nunito, sans-serif);
@@ -460,27 +503,34 @@
   color: var(--text-primary);
   cursor: pointer;
   text-align: center;
-  transition: all 0.15s;
+  transition: all 0.15s var(--ease-out);
   display: flex;
   flex-direction: column;
   gap: 4px;
   align-items: center;
+  min-height: 56px;
 }
 
 .ptg__challenge-option:hover:not(:disabled) {
-  border-color: var(--trap-color, var(--primary));
+  border-color: var(--accent-purple);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  background: var(--accent-purple-pale);
 }
 
 .ptg__challenge-option--correct {
-  border-color: var(--success, #10B981);
-  background: color-mix(in srgb, var(--success, #10B981) 15%, var(--bg-elevated));
+  border-color: var(--success) !important;
+  background: var(--success-pale) !important;
+  color: var(--success);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  animation: ptg-correct-bounce 0.4s var(--ease-spring);
 }
 
 .ptg__challenge-option--wrong {
-  border-color: var(--danger, #EF4444);
-  background: color-mix(in srgb, var(--danger, #EF4444) 12%, var(--bg-elevated));
+  border-color: var(--error) !important;
+  background: var(--error-pale) !important;
+  color: var(--error);
+  animation: ptg-shake 0.4s ease;
 }
 
 .ptg__challenge-option-word {
@@ -531,12 +581,12 @@
 .ptg__complete-score {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--trap-color, var(--primary));
+  color: var(--accent-purple);
   margin: 0;
 }
 
 .ptg__complete-btn {
-  background: var(--trap-color, var(--primary));
+  background: var(--accent-purple);
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
@@ -545,25 +595,28 @@
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.2s var(--ease-out);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  min-height: 52px;
 }
 
 .ptg__complete-btn:hover {
-  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
 }
 
 /* ── Progress bar ────────────────────────────────────────────────────────── */
 
 .ptg__progress-bar-track {
   height: 6px;
-  background: var(--bg-subtle);
+  background: var(--bg-muted);
   border-radius: 99px;
   overflow: hidden;
 }
 
 .ptg__progress-bar-fill {
   height: 100%;
-  background: var(--trap-color, var(--primary));
+  background: var(--trap-color, var(--accent-purple));
   border-radius: 99px;
   transition: width 0.4s ease;
 }

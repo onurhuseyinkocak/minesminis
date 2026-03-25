@@ -7,6 +7,7 @@ import { LottieIcon, KidIcon } from '../ui';
 import type { KidIconName } from '../ui';
 import ParentGate, { hasParentGatePassed } from '../ParentGate';
 import { Users2, LayoutDashboard, Trophy } from 'lucide-react';
+import './AppShell.css';
 
 interface AppShellProps {
   children: React.ReactNode;

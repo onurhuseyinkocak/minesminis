@@ -51,9 +51,23 @@
 }
 
 .listening-challenge__play-btn {
-  min-width: 200px;
-  min-height: 72px;
+  min-width: 220px;
+  min-height: 80px;
   font-size: 1.3rem !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-button), 0 0 0 6px rgba(255, 107, 53, 0.12) !important;
+  position: relative;
+  animation: lc-pulse-ring 2.5s ease-in-out infinite;
+}
+
+@keyframes lc-pulse-ring {
+  0%, 100% { box-shadow: var(--shadow-button), 0 0 0 6px rgba(255, 107, 53, 0.12); }
+  50% { box-shadow: var(--shadow-button-hover), 0 0 0 12px rgba(255, 107, 53, 0.08); }
+}
+
+.listening-challenge__play-btn:hover {
+  box-shadow: var(--shadow-button-hover), 0 0 0 8px rgba(255, 107, 53, 0.15) !important;
+  animation: none;
 }
 
 /* -- Feedback --------------------------------------------------------- */
@@ -74,8 +88,8 @@
 }
 
 .listening-challenge__feedback--wrong {
-  background: var(--warning-pale);
-  color: var(--primary-dark);
+  background: var(--error-pale);
+  color: var(--error);
 }
 
 /* -- Option grid ------------------------------------------------------ */
@@ -103,7 +117,7 @@
     transform var(--transition-base),
     background var(--transition-fast);
   font-family: var(--font-display);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), 0 3px 0 0 rgba(0, 0, 0, 0.05);
 }
 
 .listening-challenge__option:hover:not(:disabled) {
@@ -124,21 +138,32 @@
 .listening-challenge__option:disabled { cursor: default; }
 
 .listening-challenge__option--correct {
-  border-color: var(--mimi-green);
+  border-color: var(--success);
   background: var(--success-pale);
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 4px 16px rgba(16, 185, 129, 0.15);
+  animation: lc-correct-pop 0.4s var(--ease-spring);
+}
+
+@keyframes lc-correct-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.04); }
+  100% { transform: scale(1); }
 }
 
 .listening-challenge__option--wrong {
-  border-color: var(--primary);
-  background: var(--primary-pale);
-  animation: lc-shake 0.4s ease;
+  border-color: var(--error);
+  background: var(--error-pale);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+  animation: lc-shake 0.45s ease;
 }
 
 @keyframes lc-shake {
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
 }
 
 /* -- Emoji + label ---------------------------------------------------- */
@@ -204,6 +229,53 @@
   line-height: 1.6;
 }
 
+.listening-challenge__results-stars {
+  font-size: 1.75rem;
+  letter-spacing: 0.1em;
+}
+
+.listening-challenge__results-actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.listening-challenge__results-btn {
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  min-height: 52px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.listening-challenge__results-btn:hover {
+  transform: translateY(-2px);
+}
+
+.listening-challenge__results-btn:active {
+  transform: scale(0.97);
+}
+
+.listening-challenge__results-btn--primary {
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: var(--shadow-button);
+}
+
+.listening-challenge__results-btn--primary:hover {
+  box-shadow: var(--shadow-button-hover);
+}
+
+.listening-challenge__results-btn--secondary {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-light);
+}
+
 /* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1024px) {
@@ -214,9 +286,10 @@
   .listening-challenge__option-emoji { font-size: 5rem; }
   .listening-challenge__option-label { font-size: 1.3rem; }
   .listening-challenge__play-btn {
-    min-width: 260px;
-    min-height: 88px;
+    min-width: 280px;
+    min-height: 96px;
     font-size: 1.5rem !important;
+    border-radius: var(--radius-2xl) !important;
   }
 }
 
@@ -258,8 +331,8 @@
 }
 
 [data-theme="dark"] .listening-challenge__option--wrong {
-  background: var(--primary-pale);
-  border-color: var(--primary-light);
+  background: var(--error-pale);
+  border-color: var(--error);
 }
 
 [data-theme="dark"] .listening-challenge__feedback--correct {
@@ -267,5 +340,5 @@
 }
 
 [data-theme="dark"] .listening-challenge__feedback--wrong {
-  background: var(--warning-pale);
+  background: var(--error-pale);
 }

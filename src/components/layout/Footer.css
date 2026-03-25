@@ -48,8 +48,8 @@
   color: var(--text-muted);
   text-decoration: none;
   transition:
-    color 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    color var(--transition-base),
+    transform var(--transition-base);
   padding: var(--space-xs) 0;
   min-height: var(--touch-target);
   display: inline-flex;
@@ -67,7 +67,7 @@
 
 .footer__link:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--focus-ring);
   border-radius: var(--radius-sm);
 }
 

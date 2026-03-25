@@ -10,16 +10,20 @@
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  transition:
+    transform 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
   outline: none;
 }
 
 .game-card:not(.game-card--locked):hover,
 .game-card:not(.game-card--locked):focus-visible {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: var(--shadow-card-hover, 0 12px 32px rgba(0, 0, 0, 0.18));
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--border-hover);
 }
 
 /* Accent stripe at top */
@@ -35,9 +39,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 96px;
-  background: color-mix(in srgb, var(--gc-color, var(--primary)) 12%, transparent);
+  height: 100px;
+  background: color-mix(in srgb, var(--gc-color, var(--primary)) 10%, var(--bg-card));
   flex-shrink: 0;
+  transition: background 0.25s var(--ease-out);
+}
+
+.game-card:not(.game-card--locked):hover .game-card__icon-wrap {
+  background: color-mix(in srgb, var(--gc-color, var(--primary)) 16%, var(--bg-card));
 }
 
 .game-card__icon {
@@ -45,6 +54,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.25s var(--ease-spring);
+}
+
+.game-card:not(.game-card--locked):hover .game-card__icon {
+  transform: scale(1.1);
 }
 
 /* Body */
@@ -82,28 +96,30 @@
 
 .game-card__badge--new {
   display: inline-block;
-  padding: 2px 7px;
-  background: var(--success, #22c55e);
-  color: #fff;
+  padding: 2px 8px;
+  background: var(--success);
+  color: var(--text-on-primary);
   font-family: var(--font-display);
   font-size: 10px;
   font-weight: 800;
   border-radius: var(--radius-full);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
 }
 
 .game-card__badge--score {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 2px 7px;
-  background: var(--accent-amber, #f59e0b);
-  color: #fff;
+  padding: 2px 8px;
+  background: var(--accent-amber);
+  color: var(--text-on-primary);
   font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   border-radius: var(--radius-full);
+  box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
 }
 
 .game-card__desc {
@@ -111,25 +127,32 @@
   font-size: 12px;
   color: var(--text-secondary);
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
   flex: 1;
 }
 
+/* Difficulty stars — clearly visible */
 .game-card__stars {
   display: flex;
-  gap: 2px;
+  gap: 3px;
   margin-top: auto;
-  padding-top: var(--space-xs);
+  padding-top: var(--space-sm);
 }
 
 .game-card__star {
-  color: var(--accent-amber, #f59e0b);
-  opacity: 0.22;
+  color: var(--accent-amber);
+  opacity: 0.2;
   display: flex;
+  transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
 }
 
 .game-card__star--filled {
   opacity: 1;
+  filter: drop-shadow(0 1px 3px rgba(251, 191, 36, 0.4));
+}
+
+.game-card:not(.game-card--locked):hover .game-card__star--filled {
+  transform: scale(1.15);
 }
 
 /* Footer / Play button */
@@ -144,21 +167,30 @@
   justify-content: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
+  min-height: var(--btn-height);
   background: var(--gc-color, var(--primary));
-  color: #fff;
+  color: var(--text-on-primary);
   border: none;
   border-radius: var(--radius-full);
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: filter 0.15s ease, transform 0.15s ease;
-  box-shadow: var(--shadow-button, 0 2px 8px rgba(0,0,0,0.15));
+  transition:
+    filter 0.15s ease,
+    transform 0.15s var(--ease-spring),
+    box-shadow 0.15s ease;
+  box-shadow: var(--shadow-button);
 }
 
 .game-card__play-btn:hover {
   filter: brightness(1.1);
   transform: scale(1.04);
+  box-shadow: var(--shadow-button-hover);
+}
+
+.game-card__play-btn:active {
+  transform: scale(0.97);
 }
 
 /* ---- LOCKED STATE ---- */
@@ -181,7 +213,7 @@
 }
 
 .game-card__lock-icon {
-  color: #fff;
+  color: var(--text-on-primary);
   opacity: 0.9;
 }
 
@@ -189,7 +221,7 @@
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-on-primary);
   text-align: center;
   padding: 0 var(--space-sm);
   line-height: 1.3;

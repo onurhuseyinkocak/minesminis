@@ -196,18 +196,47 @@
 }
 
 .reward-day.past {
-  opacity: 0.4;
+  opacity: 0.65;
+  background: var(--success-pale);
+  border-color: var(--success-light);
+  position: relative;
+}
+
+.reward-day.past::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  border: 1.5px solid var(--bg-card);
+  box-shadow: var(--shadow-xs);
 }
 
 .reward-day.current {
   border-color: var(--primary);
   background: var(--primary-pale);
-  box-shadow: 0 0 0 1px var(--primary-glow), var(--shadow-md);
-  transform: scale(1.08);
+  box-shadow: 0 0 0 2px var(--primary-glow), var(--shadow-md);
+  transform: scale(1.1);
+  animation: current-day-pulse 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes current-day-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--primary-glow), var(--shadow-md); }
+  50% { box-shadow: 0 0 0 5px var(--primary-glow), 0 0 20px var(--primary-glow), var(--shadow-md); }
+}
+
+.reward-day.current .day-label {
+  color: var(--primary);
+  font-weight: 900;
 }
 
 .reward-day.future {
-  opacity: 0.6;
+  opacity: 0.5;
+  border-style: dashed;
 }
 
 .reward-day.special {
@@ -338,9 +367,9 @@
 
 .next-reward-fade-in {
   animation: fadeIn 0.8s ease-out forwards;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-light);
 }
 
 @keyframes fadeIn {
@@ -389,7 +418,7 @@
   font-family: var(--font-display);
   font-size: 0.9375rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--success);
 }
 
 /* ---- Responsive ---- */

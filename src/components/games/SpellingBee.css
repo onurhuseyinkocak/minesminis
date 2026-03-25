@@ -103,13 +103,14 @@
   border-style: solid;
   border-color: var(--secondary);
   background: var(--secondary-pale);
-  box-shadow: 0 2px 8px rgba(26, 107, 90, 0.1);
-  animation: sb-fill 200ms ease-out;
+  box-shadow: 0 2px 12px rgba(26, 107, 90, 0.15);
+  animation: sb-fill 300ms var(--ease-spring);
 }
 
 @keyframes sb-fill {
-  from { transform: scale(0.85); }
-  to { transform: scale(1); }
+  0% { transform: scale(0.7); opacity: 0.5; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .spelling-bee__slot--correct {
@@ -120,9 +121,10 @@
 }
 
 .spelling-bee__slot--wrong {
-  border-color: var(--primary);
-  background: var(--primary-pale);
-  animation: sb-shake 0.4s ease;
+  border-color: var(--error);
+  background: var(--error-pale);
+  color: var(--error);
+  animation: sb-shake 0.45s ease;
 }
 
 @keyframes sb-shake {
@@ -166,8 +168,9 @@
   width: 64px;
   height: 72px;
   border: 2.5px solid var(--secondary);
+  border-bottom: 5px solid var(--secondary-dark);
   border-radius: var(--radius-lg);
-  background: var(--bg-card);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8F9FA 100%);
   font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 800;
@@ -182,19 +185,23 @@
     color var(--transition-fast),
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
-    border-color var(--transition-fast);
-  box-shadow: var(--shadow-card);
+    border-color var(--transition-fast),
+    opacity var(--transition-base);
+  box-shadow: var(--shadow-card), 0 4px 0 0 rgba(13, 92, 77, 0.15);
 }
 
 .spelling-bee__tile:hover:not(:disabled) {
   background: var(--gradient-secondary);
   color: var(--white);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(26, 107, 90, 0.25);
+  transform: translateY(-4px);
+  border-bottom-width: 5px;
+  box-shadow: 0 8px 20px rgba(26, 107, 90, 0.25), 0 6px 0 0 rgba(13, 92, 77, 0.2);
 }
 
 .spelling-bee__tile:active:not(:disabled) {
-  transform: translateY(-1px) scale(0.95);
+  transform: translateY(0px) scale(0.97);
+  border-bottom-width: 2.5px;
+  box-shadow: var(--shadow-sm);
 }
 
 .spelling-bee__tile:focus-visible {
@@ -203,9 +210,14 @@
 }
 
 .spelling-bee__tile--used {
-  opacity: 0.15;
+  opacity: 0.2;
   pointer-events: none;
-  transform: scale(0.88);
+  transform: scale(0.9) translateY(2px);
+  border-bottom-width: 2.5px;
+  box-shadow: none;
+  background: var(--slate-100);
+  border-color: var(--slate-300);
+  color: var(--slate-400);
 }
 
 /* -- Actions ---------------------------------------------------------- */
@@ -274,14 +286,25 @@
 }
 
 .spelling-bee__results-btn--primary {
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+  box-shadow: var(--shadow-button);
+  min-height: 52px;
+  padding: 0.85rem 2rem;
+  font-size: 1.1rem;
+}
+
+.spelling-bee__results-btn--primary:hover {
+  box-shadow: var(--shadow-button-hover);
 }
 
 .spelling-bee__results-btn--secondary {
   background: var(--bg-soft, #f5f5f5);
   color: var(--text-secondary);
+  border: 2px solid var(--border-light);
+  min-height: 52px;
+  padding: 0.85rem 2rem;
+  font-size: 1.1rem;
 }
 
 [data-theme="dark"] .spelling-bee__results-btn--secondary {

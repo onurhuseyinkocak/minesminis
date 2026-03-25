@@ -9,9 +9,9 @@
   position: relative;
   overflow: hidden;
   transition:
-    transform 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    box-shadow 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    border-color 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
 }
 
 /* -- Padding ---------------------------------------------------------- */
@@ -25,13 +25,14 @@
 /* -- Variants --------------------------------------------------------- */
 
 .mm-card--default {
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 .mm-card--default:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
 }
 
 .mm-card--elevated {
@@ -46,7 +47,7 @@
 
 .mm-card--outlined {
   box-shadow: none;
-  border: 1.5px solid var(--border-light);
+  border: 1.5px solid var(--border);
 }
 
 .mm-card--outlined:hover {
@@ -56,8 +57,8 @@
 }
 
 .mm-card--interactive {
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
 }
 
@@ -75,7 +76,7 @@
 .mm-card--interactive:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 4px rgba(212, 148, 13, 0.2),
+    var(--focus-ring),
     var(--shadow-sm);
 }
 
@@ -104,7 +105,7 @@
 }
 
 [data-theme="dark"] .mm-card--outlined {
-  border-color: var(--border-light);
+  border-color: var(--border);
 }
 
 [data-theme="dark"] .mm-card--outlined:hover {
@@ -112,5 +113,5 @@
 }
 
 [data-theme="dark"] .mm-card--interactive:hover {
-  border-color: rgba(232, 163, 23, 0.2);
+  border-color: rgba(255, 107, 53, 0.2);
 }

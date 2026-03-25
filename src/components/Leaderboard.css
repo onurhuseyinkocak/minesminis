@@ -231,13 +231,41 @@
   padding: var(--space-xs) 0;
 }
 
-/* Podium heights */
-.podium-pos-1 .podium-avatar { width: 52px; height: 52px; font-size: 1.15rem; }
-.podium-pos-1 .podium-bar { height: 72px; background: linear-gradient(180deg, var(--primary-pale), var(--bg-elevated)); }
-.podium-pos-1 .podium-rank { color: var(--mimi-gold); font-size: 0.95rem; }
+/* Podium heights — Gold / Silver / Bronze */
+.podium-pos-1 .podium-avatar {
+  width: 56px; height: 56px; font-size: 1.2rem;
+  border: 2.5px solid var(--warning);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+}
+.podium-pos-1 .podium-bar {
+  height: 76px;
+  background: linear-gradient(180deg, var(--warning-pale), rgba(245, 158, 11, 0.08));
+  border-color: var(--warning-light);
+}
+.podium-pos-1 .podium-rank { color: var(--warning); font-size: 1rem; font-weight: 900; }
+.podium-pos-1 .podium-name { font-weight: 900; }
 
-.podium-pos-2 .podium-bar { height: 52px; }
-.podium-pos-3 .podium-bar { height: 36px; }
+.podium-pos-2 .podium-avatar {
+  border: 2px solid var(--slate-400);
+  box-shadow: 0 0 10px rgba(163, 163, 163, 0.25);
+}
+.podium-pos-2 .podium-bar {
+  height: 56px;
+  background: linear-gradient(180deg, var(--slate-100), var(--bg-elevated));
+  border-color: var(--slate-300);
+}
+.podium-pos-2 .podium-rank { color: var(--slate-500); }
+
+.podium-pos-3 .podium-avatar {
+  border: 2px solid var(--accent-orange);
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.2);
+}
+.podium-pos-3 .podium-bar {
+  height: 40px;
+  background: linear-gradient(180deg, rgba(249, 115, 22, 0.06), var(--bg-elevated));
+  border-color: rgba(249, 115, 22, 0.2);
+}
+.podium-pos-3 .podium-rank { color: var(--accent-orange); }
 
 /* ---- Leader List ---- */
 .leader-list {
@@ -276,9 +304,26 @@
 }
 
 .leader-row.is-me {
-  border-color: var(--primary-light);
+  border-color: var(--primary);
   background: var(--primary-pale);
-  box-shadow: 0 0 0 1px var(--primary-glow);
+  box-shadow: 0 0 0 2px var(--primary-glow), var(--shadow-card);
+  position: relative;
+}
+
+.leader-row.is-me::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--primary);
+  border-radius: var(--radius-full);
+}
+
+.leader-row.is-me .leader-name {
+  color: var(--primary);
+  font-weight: 900;
 }
 
 /* ---- Current User Sticky ---- */

@@ -1,6 +1,6 @@
 /* ==========================================================================
-   STORY CHOICES GAME — MinesMinis
-   CSS extracted from inline styles — uses design-system tokens
+   STORY CHOICES GAME — MinesMinis Design System v5
+   Interactive story-panel style choices for vocabulary learning
    ========================================================================== */
 
 /* ---- Container ---- */
@@ -24,28 +24,32 @@
 }
 
 .story-choices-game__title {
-  color: var(--secondary, #1A6B5A);
+  color: var(--accent-purple);
   margin: 0;
   font-size: 1.4rem;
   font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 /* ---- Prompt card content ---- */
 .story-choices-game__prompt {
   text-align: center;
+  padding: var(--space-4) 0;
 }
 
 .story-choices-game__prompt-emoji {
-  font-size: 3rem;
+  font-size: 3.5rem;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
 }
 
 .story-choices-game__prompt-word {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--secondary, #1A6B5A);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--accent-purple);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 /* ---- Choices list ---- */
@@ -56,51 +60,140 @@
   width: 100%;
 }
 
-/* ---- Individual choice button ---- */
+/* ---- Individual choice button — story panel style ---- */
 .story-choices-game__choice {
-  padding: 1rem 1.25rem;
-  border-radius: 1rem;
-  border: 2px solid #e0e0e0;
-  background-color: #fff;
-  color: #333;
+  position: relative;
+  padding: 1.1rem 1.35rem 1.1rem 1.1rem;
+  border-radius: var(--radius-lg);
+  border: 2.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
   font-size: 1.15rem;
   font-weight: 700;
   font-family: var(--font-display, 'Nunito', sans-serif);
   cursor: pointer;
   text-align: left;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-card);
+  transition:
+    background 0.2s var(--ease-out),
+    border-color 0.2s var(--ease-out),
+    color 0.2s var(--ease-out),
+    transform 0.15s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+  overflow: hidden;
+}
+
+/* Left accent bar for story-panel feel */
+.story-choices-game__choice::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--accent-purple-light);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.story-choices-game__choice:hover:not(:disabled) {
+  border-color: var(--accent-purple);
+  background: var(--accent-purple-pale);
+  transform: translateY(-2px) translateX(2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.story-choices-game__choice:hover:not(:disabled)::before {
+  opacity: 1;
+  background: var(--accent-purple);
+}
+
+.story-choices-game__choice:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .story-choices-game__choice:disabled {
   cursor: default;
 }
 
+/* Correct state */
 .story-choices-game__choice--correct {
-  background-color: #E8F5E9;
-  border-color: var(--secondary, #1A6B5A);
-  color: var(--secondary, #1A6B5A);
+  background: var(--success-pale) !important;
+  border-color: var(--success) !important;
+  color: var(--success) !important;
+  animation: story-correct-bounce 0.4s var(--ease-spring);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), var(--shadow-sm);
 }
 
+.story-choices-game__choice--correct::before {
+  opacity: 1 !important;
+  background: var(--success) !important;
+  width: 5px;
+}
+
+@keyframes story-correct-bounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* Wrong state */
 .story-choices-game__choice--wrong {
-  background-color: #FFEBEE;
-  border-color: #d32f2f;
-  color: #d32f2f;
+  background: var(--error-pale) !important;
+  border-color: var(--error) !important;
+  color: var(--error) !important;
+  animation: story-shake 0.4s ease;
+}
+
+.story-choices-game__choice--wrong::before {
+  opacity: 1 !important;
+  background: var(--error) !important;
+  width: 5px;
+}
+
+@keyframes story-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
 }
 
 /* ---- Feedback text ---- */
 .story-choices-game__feedback--correct {
-  color: var(--secondary, #1A6B5A);
+  color: var(--success);
   font-weight: 700;
   font-size: 1.1rem;
   margin: 0;
+  text-align: center;
+  padding: var(--space-2) var(--space-4);
+  background: var(--success-pale);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  animation: story-feedback-in 0.3s var(--ease-spring);
 }
 
 .story-choices-game__feedback--wrong {
-  color: #d32f2f;
+  color: var(--error);
   font-weight: 700;
   font-size: 1.1rem;
   margin: 0;
+  text-align: center;
+  padding: var(--space-2) var(--space-4);
+  background: var(--error-pale);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  animation: story-feedback-in 0.3s var(--ease-spring);
+}
+
+@keyframes story-feedback-in {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* ---- Completed screen ---- */
@@ -112,39 +205,47 @@
 
 .story-choices-game__complete-content {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .story-choices-game__complete-emoji {
   font-size: 4rem;
   display: block;
+  line-height: 1.2;
 }
 
 .story-choices-game__complete-title {
-  color: var(--secondary, #1A6B5A);
-  margin: 0.5rem 0;
+  color: var(--accent-purple);
+  margin: 0;
   font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
 .story-choices-game__complete-score {
-  font-size: 1.1rem;
-  color: #555;
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* ---- Dark mode ---- */
 [data-theme="dark"] .story-choices-game__choice {
   background-color: var(--bg-card);
-  border-color: var(--border-light);
+  border-color: var(--border);
   color: var(--text-primary);
 }
 
 [data-theme="dark"] .story-choices-game__choice--correct {
-  background-color: var(--success-pale);
-  border-color: var(--secondary, #1A6B5A);
-  color: var(--secondary, #1A6B5A);
+  background-color: var(--success-pale) !important;
+  border-color: var(--success) !important;
+  color: var(--success) !important;
 }
 
 [data-theme="dark"] .story-choices-game__choice--wrong {
-  background-color: rgba(211, 47, 47, 0.1);
-  border-color: #d32f2f;
-  color: #ef5350;
+  background-color: var(--error-pale) !important;
+  border-color: var(--error) !important;
+  color: var(--error) !important;
 }

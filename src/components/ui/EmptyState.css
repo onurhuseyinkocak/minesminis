@@ -13,7 +13,7 @@
   gap: var(--space-md);
   max-width: 440px;
   margin: 0 auto;
-  animation: fadeInUp 500ms cubic-bezier(0.33, 1, 0.68, 1);
+  animation: fadeInUp 500ms var(--ease-out);
 }
 
 /* -- Icon circle ------------------------------------------------------ */
@@ -29,7 +29,7 @@
   color: var(--primary);
   font-size: 2.5rem;
   margin-bottom: var(--space-sm);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   animation: float 4s ease-in-out infinite;
 }
 
@@ -65,14 +65,14 @@
   padding: var(--space-md) var(--space-lg);
   background: var(--primary-pale);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
   font-family: var(--font-display);
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--text-body);
   max-width: 380px;
   margin-top: var(--space-sm);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   text-align: left;
   line-height: 1.5;
 }
@@ -122,7 +122,7 @@
 /* -- Dark mode -------------------------------------------------------- */
 
 [data-theme="dark"] .mm-empty-state__icon {
-  background: rgba(212, 148, 13, 0.12);
+  background: rgba(255, 107, 53, 0.12);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 

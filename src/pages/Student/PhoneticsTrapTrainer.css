@@ -10,7 +10,7 @@
   padding: var(--space-md) var(--space-md) var(--space-xl);
   max-width: 760px;
   margin: 0 auto;
-  font-family: var(--font-body, Nunito, sans-serif);
+  font-family: var(--font-body);
 }
 
 /* ── Page header ─────────────────────────────────────────────────────────── */
@@ -28,7 +28,7 @@
 }
 
 .ptt__page-title {
-  font-family: var(--font-display, Nunito, sans-serif);
+  font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 900;
   color: var(--text-primary);
@@ -37,6 +37,7 @@
 }
 
 .ptt__page-subtitle {
+  font-family: var(--font-body);
   font-size: 0.9375rem;
   color: var(--text-secondary);
   margin: 0;
@@ -47,13 +48,14 @@
 /* ── Master progress bar ─────────────────────────────────────────────────── */
 
 .ptt__master-progress {
-  background: var(--bg-elevated);
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: var(--space-md) var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  border: 1.5px solid var(--glass-border, var(--border));
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .ptt__master-row {
@@ -64,6 +66,7 @@
 }
 
 .ptt__master-label {
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--text-secondary);
@@ -71,6 +74,7 @@
 }
 
 .ptt__master-value {
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 800;
   color: var(--primary);
@@ -78,16 +82,17 @@
 
 .ptt__master-bar-track {
   height: 10px;
-  background: var(--bg-subtle);
-  border-radius: 99px;
+  background: var(--bg-muted);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .ptt__master-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary, #7C3AED) 100%);
-  border-radius: 99px;
-  transition: width 0.6s ease;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--accent-purple) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.6s var(--ease-spring);
+  box-shadow: 0 0 8px var(--primary-glow);
 }
 
 /* ── Trap grid ───────────────────────────────────────────────────────────── */
@@ -107,27 +112,34 @@
 /* ── Trap card ───────────────────────────────────────────────────────────── */
 
 .ptt__card {
-  background: var(--bg-elevated);
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 2px solid var(--border);
   padding: var(--space-md);
   cursor: pointer;
   text-align: left;
-  font-family: var(--font-body, Nunito, sans-serif);
-  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  font-family: var(--font-body);
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s, border-color 0.2s;
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
+  box-shadow: var(--shadow-xs);
 }
 
 .ptt__card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
+}
+
+.ptt__card:active {
+  transform: translateY(-1px) scale(0.99);
 }
 
 .ptt__card--mastered {
-  border-color: var(--success, #10B981);
+  border-color: var(--success);
+  background: linear-gradient(180deg, var(--bg-card), var(--success-pale));
 }
 
 .ptt__card-top {
@@ -144,10 +156,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 900;
-  font-family: var(--font-display, Nunito, sans-serif);
   color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
 }
 
 .ptt__card-meta {
@@ -158,6 +171,7 @@
 }
 
 .ptt__card-name {
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 800;
   color: var(--text-primary);
@@ -166,54 +180,60 @@
 }
 
 .ptt__card-ipa {
+  font-family: var(--font-body);
   font-size: 0.8125rem;
   color: var(--text-muted);
   margin: 0;
 }
 
+/* Difficulty dots — clear visual indicator */
 .ptt__card-difficulty {
   display: flex;
-  gap: 3px;
+  gap: 4px;
   margin-top: 4px;
 }
 
 .ptt__dot {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background: var(--bg-subtle);
+  background: var(--bg-muted);
+  transition: background 0.2s;
 }
 
 .ptt__dot--filled {
   background: var(--trap-color, var(--primary));
+  box-shadow: 0 0 4px rgba(255, 107, 53, 0.3);
 }
 
 .ptt__card-score-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 10px;
-  border-radius: 99px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 800;
 }
 
 .ptt__card-score-badge--mastered {
-  background: color-mix(in srgb, var(--success, #10B981) 15%, transparent);
-  color: var(--success, #10B981);
+  background: color-mix(in srgb, var(--success) 15%, transparent);
+  color: var(--success);
 }
 
 .ptt__card-score-badge--partial {
-  background: color-mix(in srgb, var(--warning, #F59E0B) 15%, transparent);
-  color: var(--warning, #F59E0B);
+  background: color-mix(in srgb, var(--warning) 15%, transparent);
+  color: var(--warning);
 }
 
 .ptt__card-score-badge--none {
-  background: var(--bg-subtle);
+  background: var(--bg-muted);
   color: var(--text-muted);
 }
 
 .ptt__card-error {
+  font-family: var(--font-body);
   font-size: 0.8125rem;
   color: var(--text-secondary);
   margin: 0;
@@ -227,9 +247,10 @@
 }
 
 .ptt__pair-chip {
-  background: var(--bg-subtle);
-  border-radius: 6px;
-  padding: 3px 8px;
+  background: var(--bg-muted);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-secondary);
@@ -240,6 +261,7 @@
 
 .ptt__pair-chip-correct {
   color: var(--trap-color, var(--primary));
+  font-weight: 800;
 }
 
 .ptt__pair-chip-sep {
@@ -248,7 +270,7 @@
 }
 
 .ptt__pair-chip-wrong {
-  color: var(--danger, #EF4444);
+  color: var(--error);
   text-decoration: line-through;
 }
 
@@ -265,16 +287,20 @@
   border: none;
   border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
-  font-family: var(--font-display, Nunito, sans-serif);
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 800;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
   pointer-events: none; /* parent handles click */
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ptt__card:hover .ptt__start-btn {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 /* ── Mascot intro block ───────────────────────────────────────────────────── */
@@ -283,10 +309,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  background: var(--bg-elevated);
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
-  border: 1.5px solid var(--glass-border, var(--border));
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .ptt__intro-text {
@@ -294,6 +321,7 @@
 }
 
 .ptt__intro-title {
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 800;
   color: var(--text-primary);
@@ -301,6 +329,7 @@
 }
 
 .ptt__intro-body {
+  font-family: var(--font-body);
   font-size: 0.875rem;
   color: var(--text-secondary);
   margin: 0;

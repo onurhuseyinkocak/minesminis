@@ -1,1 +1,86 @@
-/* Auto-generated placeholder */
+/* ==========================================================================
+   SKELETON — LibreUIUX / MinesMinis Design System
+   Shimmer loading placeholder
+   ========================================================================== */
+
+.mm-skeleton {
+  display: block;
+  background: var(--bg-muted);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+  animation: mm-skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+.mm-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: mm-skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes mm-skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+@keyframes mm-skeleton-shimmer {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* -- Shape variants --------------------------------------------------- */
+
+.mm-skeleton--text {
+  height: 14px;
+  border-radius: var(--radius-xs);
+  width: 100%;
+}
+
+.mm-skeleton--heading {
+  height: 24px;
+  border-radius: var(--radius-xs);
+  width: 60%;
+}
+
+.mm-skeleton--circle {
+  border-radius: var(--radius-full);
+}
+
+.mm-skeleton--card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.mm-skeleton--button {
+  height: var(--btn-height);
+  border-radius: var(--radius-full);
+  width: 120px;
+}
+
+.mm-skeleton--avatar-sm { width: 32px; height: 32px; border-radius: var(--radius-full); }
+.mm-skeleton--avatar-md { width: 40px; height: 40px; border-radius: var(--radius-full); }
+.mm-skeleton--avatar-lg { width: 56px; height: 56px; border-radius: var(--radius-full); }
+
+/* -- Dark mode -------------------------------------------------------- */
+
+[data-theme="dark"] .mm-skeleton {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .mm-skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+}

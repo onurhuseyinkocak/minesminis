@@ -1,5 +1,6 @@
 /* ==========================================================================
    WORDS MANAGER — MinesMinis Admin
+   Uses admin design tokens from AdminLayout.css
    ========================================================================== */
 
 /* ── Search icon wrapper ── */
@@ -12,7 +13,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -28,12 +29,12 @@
 
 /* ── Export button variant ── */
 .adm-export-btn {
-  background: #10b981;
+  background: var(--success);
 }
 
 /* ── Category overflow hint ── */
 .adm-cat-overflow {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -54,7 +55,7 @@
 }
 
 .adm-enrich-hint {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.75rem;
 }
 

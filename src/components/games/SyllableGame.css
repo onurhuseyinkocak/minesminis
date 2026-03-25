@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SYLLABLE GAME — MinesMinis Design System v4
+   SYLLABLE GAME — MinesMinis Design System v5
    Montessori clapping/tapping to segment syllables
    ========================================================================== */
 
@@ -84,8 +84,8 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--primary, #E8A317);
-  box-shadow: 0 0 0 4px rgba(232, 163, 23, 0.3), 0 2px 6px rgba(232, 163, 23, 0.5);
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.25), 0 2px 6px rgba(255, 107, 53, 0.4);
   animation: syg-dot-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -113,13 +113,13 @@
   cursor: pointer;
   background: radial-gradient(
     circle at 35% 30%,
-    var(--primary-light, #ffd54f),
-    var(--primary, #E8A317) 60%,
-    var(--primary-dark, #e65100)
+    var(--primary-light),
+    var(--primary) 60%,
+    var(--primary-hover)
   );
   box-shadow:
     0 8px 0 rgba(0, 0, 0, 0.2),
-    0 12px 32px rgba(232, 163, 23, 0.45),
+    0 12px 32px rgba(255, 107, 53, 0.4),
     inset 0 2px 8px rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
@@ -148,7 +148,7 @@
   transform: translateY(-3px);
   box-shadow:
     0 11px 0 rgba(0, 0, 0, 0.2),
-    0 16px 36px rgba(232, 163, 23, 0.55),
+    0 16px 36px rgba(255, 107, 53, 0.5),
     inset 0 2px 8px rgba(255, 255, 255, 0.3);
 }
 
@@ -157,15 +157,15 @@
   transform: translateY(4px) scale(0.96);
   box-shadow:
     0 4px 0 rgba(0, 0, 0, 0.2),
-    0 6px 16px rgba(232, 163, 23, 0.35),
+    0 6px 16px rgba(255, 107, 53, 0.35),
     inset 0 2px 8px rgba(255, 255, 255, 0.3);
   animation: syg-drum-pulse 0.25s ease-out;
 }
 
 @keyframes syg-drum-pulse {
-  0%   { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(232,163,23,.35), 0 0 0 0 rgba(232,163,23,.6); }
-  60%  { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(232,163,23,.35), 0 0 0 28px rgba(232,163,23,.0); }
-  100% { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(232,163,23,.35), 0 0 0 0 rgba(232,163,23,.0); }
+  0%   { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(255,107,53,.35), 0 0 0 0 rgba(255,107,53,.6); }
+  60%  { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(255,107,53,.35), 0 0 0 28px rgba(255,107,53,.0); }
+  100% { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(255,107,53,.35), 0 0 0 0 rgba(255,107,53,.0); }
 }
 
 .syg__drum-label {
@@ -187,10 +187,11 @@
   font-weight: 800;
   cursor: pointer;
   border: none;
-  background: var(--secondary, #3f51b5);
+  background: var(--secondary);
   color: #fff;
-  box-shadow: 0 6px 20px rgba(63, 81, 181, 0.4);
+  box-shadow: 0 6px 20px rgba(13, 92, 77, 0.35);
   letter-spacing: 0.02em;
+  min-height: 56px;
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
@@ -199,7 +200,7 @@
 
 .syg__done-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(63, 81, 181, 0.5);
+  box-shadow: 0 8px 24px rgba(13, 92, 77, 0.45);
 }
 
 .syg__done-btn:active:not(:disabled) {
@@ -207,7 +208,7 @@
 }
 
 .syg__done-btn:disabled {
-  background: var(--cloud, #b0bec5);
+  background: var(--slate-300);
   box-shadow: none;
   cursor: not-allowed;
   opacity: 0.7;
@@ -228,7 +229,7 @@
   min-width: 68px;
   min-height: 68px;
   border-radius: var(--radius-xl, 20px);
-  border: 3px solid var(--border-light);
+  border: 3px solid var(--border);
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
   font-family: var(--font-display);
@@ -260,7 +261,7 @@
 .syg__choice-btn:hover:not(:disabled) {
   box-shadow: var(--shadow-card-hover);
   transform: translateY(-3px);
-  border-color: var(--cloud, #b0bec5);
+  border-color: var(--secondary-light);
 }
 
 .syg__choice-btn:active:not(:disabled) {
@@ -277,17 +278,17 @@
 }
 
 .syg__choice-btn--correct {
-  border-color: var(--mimi-green, #4caf50);
-  background: var(--success-pale, #e8f5e9);
-  color: var(--mimi-green-dark, #2e7d32);
-  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2), var(--shadow-md);
+  border-color: var(--success) !important;
+  background: var(--success-pale) !important;
+  color: var(--success) !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), var(--shadow-md);
   animation: syg-scale-up 0.25s ease-out;
 }
 
 .syg__choice-btn--wrong {
-  border-color: var(--danger, #f44336);
-  background: var(--danger-pale, #ffebee);
-  color: var(--danger-dark, #c62828);
+  border-color: var(--error) !important;
+  background: var(--error-pale) !important;
+  color: var(--error) !important;
   animation: syg-shake 0.4s ease;
 }
 
@@ -299,10 +300,10 @@
 
 @keyframes syg-shake {
   0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-8px); }
-  40%       { transform: translateX(8px); }
-  60%       { transform: translateX(-6px); }
-  80%       { transform: translateX(6px); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-6px); }
+  80%      { transform: translateX(6px); }
 }
 
 /* -- Syllable tiles (shown after correct answer) --------------------------- */
@@ -317,12 +318,12 @@
 .syg__syllable-tile {
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-lg);
-  background: var(--secondary, #3f51b5);
+  background: var(--secondary);
   color: #fff;
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.35);
+  box-shadow: 0 4px 12px rgba(13, 92, 77, 0.3);
   letter-spacing: 0.02em;
   animation: syg-tile-enter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -346,16 +347,24 @@
   justify-content: center;
   gap: var(--space-sm);
   width: 100%;
+  animation: syg-feedback-in 0.3s var(--ease-spring);
+}
+
+@keyframes syg-feedback-in {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .syg__feedback--correct {
-  background: var(--success-pale, #e8f5e9);
-  color: var(--mimi-green-dark, #2e7d32);
+  background: var(--success-pale);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .syg__feedback--wrong {
-  background: var(--warning-pale, #fff8e1);
-  color: var(--primary-dark, #e65100);
+  background: var(--error-pale);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 /* -- Completion screen ----------------------------------------------------- */
@@ -370,12 +379,13 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-md);
+  padding: var(--space-6) 0;
 }
 
 .syg__completion-title {
   font-family: var(--font-display);
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 900;
   color: var(--secondary);
   margin: 0;
   letter-spacing: -0.02em;
@@ -397,7 +407,7 @@
 }
 
 .syg__completion-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.75rem;
   border-radius: var(--radius-lg);
   font-family: var(--font-display);
   font-size: 1rem;
@@ -405,6 +415,7 @@
   cursor: pointer;
   border: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-height: 48px;
 }
 
 .syg__completion-btn:hover {
@@ -418,12 +429,13 @@
 .syg__completion-btn--primary {
   background: var(--primary);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.35);
 }
 
 .syg__completion-btn--secondary {
-  background: var(--bg-soft, #f5f5f5);
+  background: var(--bg-muted);
   color: var(--text-secondary);
+  border: 1.5px solid var(--border);
 }
 
 /* -- Reset button ---------------------------------------------------------- */
@@ -431,7 +443,7 @@
 .syg__reset-btn {
   padding: 0.5rem 1.5rem;
   border-radius: var(--radius-full, 999px);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   background: var(--bg-card);
   color: var(--text-secondary);
   font-family: var(--font-display);
@@ -442,7 +454,7 @@
 }
 
 .syg__reset-btn:hover {
-  border-color: var(--cloud);
+  border-color: var(--secondary-light);
   background: var(--bg-soft);
 }
 
@@ -479,7 +491,7 @@
 
 [data-theme="dark"] .syg__choice-btn {
   background: var(--bg-card);
-  border-color: var(--border-light);
+  border-color: var(--border);
 }
 
 [data-theme="dark"] .syg__choice-btn--correct {
@@ -487,7 +499,7 @@
 }
 
 [data-theme="dark"] .syg__choice-btn--wrong {
-  background: var(--danger-pale);
+  background: var(--error-pale);
 }
 
 [data-theme="dark"] .syg__completion-btn--secondary {

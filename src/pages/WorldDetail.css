@@ -42,7 +42,7 @@
    HEADER BANNER — world color gradient
    ========================================================================== */
 .world-detail-header {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--space-xl) var(--space-xl);
   display: flex;
   align-items: center;
@@ -129,17 +129,17 @@
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
   background: var(--bg-card);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
   min-width: 80px;
   flex-shrink: 0;
-  transition: all 200ms ease-out;
+  transition: all var(--transition-base);
 }
 
 .vocab-preview-card:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .vocab-preview-card__letter {
@@ -177,7 +177,7 @@
   display: block;
   text-decoration: none;
   color: inherit;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 }
 
 .lesson-card-link--locked {
@@ -190,10 +190,10 @@
   align-items: center;
   gap: var(--space-md);
   background: var(--bg-card);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-  transition: all 200ms ease-out;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-base);
 }
 
 .lesson-card--available {
@@ -201,8 +201,8 @@
 }
 
 .lesson-card--available:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .lesson-card--completed {
@@ -227,7 +227,7 @@
   font-size: 0.85rem;
   background: var(--bg-muted);
   color: var(--text-secondary);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   flex-shrink: 0;
 }
 

@@ -1,11 +1,12 @@
 /* ============================================================
    SplashScreen.css — Light brand splash, orange/cream theme
+   MinesMinis Design System v5. All var() tokens.
    ============================================================ */
 
 .splash {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: var(--z-max);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,7 +14,7 @@
   opacity: 0;
   transform: scale(1.02);
   transition: opacity 0.45s ease, transform 0.45s ease;
-  background: #FFF8F2;
+  background: var(--bg-page);
   overflow: hidden;
 }
 
@@ -43,7 +44,7 @@
   right: -15%;
   width: 420px;
   height: 420px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: radial-gradient(circle, rgba(255, 107, 53, 0.18) 0%, transparent 70%);
   filter: blur(50px);
   animation: splashPulse 3s ease-in-out infinite alternate;
@@ -56,7 +57,7 @@
   left: -10%;
   width: 360px;
   height: 360px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: radial-gradient(circle, rgba(255, 107, 53, 0.12) 0%, transparent 70%);
   filter: blur(60px);
   animation: splashPulse 4s ease-in-out infinite alternate-reverse;
@@ -74,7 +75,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: var(--space-5);
   animation: splashFloat 2.8s ease-in-out infinite alternate;
 }
 
@@ -87,7 +88,7 @@
 .logo-box {
   width: 120px;
   height: 120px;
-  border-radius: 28px;
+  border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow:
     0 0 0 4px rgba(255, 107, 53, 0.15),
@@ -119,22 +120,22 @@
 
 /* ---- Brand Text ---- */
 .brand {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.25rem;
   font-weight: 900;
-  color: #FF6B35;
+  color: var(--primary);
   letter-spacing: -0.02em;
   margin: 0;
 }
 
 .brand span {
-  color: #F04B10;
+  color: var(--primary-hover);
 }
 
 .tagline {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.875rem;
-  color: #94A3B8;
+  color: var(--text-muted);
   margin: 0;
   letter-spacing: 0.1em;
   font-weight: 600;
@@ -145,19 +146,19 @@
 .loader {
   width: 200px;
   height: 4px;
-  border-radius: 999px;
-  background: #F0E8DF;
+  border-radius: var(--radius-full);
+  background: var(--bg-soft);
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: var(--space-1);
 }
 
 .loader-bar {
   height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #FF6B35, #FFB347, #FF6B35);
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--primary), var(--warning-light), var(--primary));
   background-size: 200% 100%;
   animation: loaderSlide 1.6s ease-in-out infinite;
-  box-shadow: 0 0 10px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 0 10px var(--primary-glow);
 }
 
 @keyframes loaderSlide {
@@ -173,8 +174,8 @@
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-family: 'Nunito', sans-serif;
+  gap: var(--space-4);
+  font-family: var(--font-display);
   font-size: 0.75rem;
 }
 
@@ -190,17 +191,17 @@
   font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #CBD5E1;
+  color: var(--border-hover);
   font-weight: 700;
 }
 
 .credits strong {
-  color: #64748B;
+  color: var(--text-secondary);
   font-weight: 700;
 }
 
 .credits .dot {
-  color: #CBD5E1;
+  color: var(--border-hover);
   font-size: 0.5rem;
 }
 
@@ -209,7 +210,7 @@
   .logo-box {
     width: 96px;
     height: 96px;
-    border-radius: 22px;
+    border-radius: var(--radius-xl);
   }
 
   .brand {

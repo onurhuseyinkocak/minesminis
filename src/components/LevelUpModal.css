@@ -204,24 +204,25 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: 14px var(--space-2xl);
+  padding: var(--space-4) var(--space-2xl);
   border: none;
   border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: var(--text-on-primary);
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   cursor: pointer;
-  min-height: var(--touch-target);
-  box-shadow: var(--shadow-lg);
-  transition: transform var(--transition-fast),
-              box-shadow var(--transition-fast);
+  min-height: var(--btn-height-lg);
+  box-shadow: var(--shadow-button);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .continue-btn:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .btn-arrow {

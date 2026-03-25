@@ -48,11 +48,12 @@
   gap: var(--space-md);
   transition: transform var(--admin-transition),
               box-shadow var(--admin-transition);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-users-stat:hover {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .adm-users-stat-icon {
@@ -146,6 +147,13 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.adm-table-wrap .adm-table-scroll {
+  overflow-x: auto;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 .adm-table-info {
@@ -172,8 +180,11 @@
   color: var(--admin-text-muted);
   text-align: left;
   border-bottom: 1px solid var(--admin-border);
-  background: var(--admin-bg);
+  background: var(--bg-muted);
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .adm-table tbody tr {
@@ -182,7 +193,9 @@
 }
 
 .adm-table tbody tr:last-child { border-bottom: none; }
-.adm-table tbody tr:hover { background: var(--snow); }
+.adm-table tbody tr:hover { background: var(--bg-muted); }
+.adm-table tbody tr:nth-child(even) { background: var(--slate-50); }
+.adm-table tbody tr:nth-child(even):hover { background: var(--bg-muted); }
 
 .adm-table tbody td {
   padding: var(--space-sm) var(--space-md);
@@ -260,9 +273,9 @@
 }
 
 .adm-icon-btn {
-  width: 44px;
-  height: 44px;
-  min-height: 44px;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -297,9 +310,9 @@
 }
 
 .adm-page-btn {
-  min-width: 44px;
-  height: 44px;
-  min-height: 44px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -479,6 +492,22 @@
   font-size: 0.7rem;
   color: var(--admin-text-muted);
   margin-top: var(--space-xs);
+}
+
+.adm-form-group small.error {
+  color: var(--error);
+}
+
+.adm-form-group input.error,
+.adm-form-group select.error,
+.adm-form-group textarea.error {
+  border-color: var(--error);
+}
+
+.adm-form-group input.error:focus,
+.adm-form-group select.error:focus,
+.adm-form-group textarea.error:focus {
+  box-shadow: 0 0 0 3px var(--error-soft);
 }
 
 .adm-form-check {

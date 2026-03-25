@@ -5,10 +5,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   border: none;
-  border-radius: var(--radius-lg);
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
@@ -16,17 +16,18 @@
   white-space: nowrap;
   outline: none;
   transition:
-    background-color 0.18s ease,
-    box-shadow 0.18s ease,
-    transform 0.12s ease,
-    opacity 0.18s ease;
+    background-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast),
+    border-color var(--transition-base),
+    opacity var(--transition-base);
   position: relative;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 .mm-button:focus-visible {
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  box-shadow: var(--focus-ring);
 }
 
 .mm-button:active:not(:disabled) {
@@ -41,71 +42,71 @@
 
 /* ── Sizes ────────────────────────────────────────── */
 .mm-button--sm {
-  height: 32px;
-  padding: 0 12px;
+  height: var(--btn-height-sm);
+  padding: 0 var(--space-3);
   font-size: 13px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
 }
 
 .mm-button--md {
   height: 40px;
-  padding: 0 18px;
+  padding: 0 var(--space-5);
   font-size: 14px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
 }
 
 .mm-button--lg {
-  height: 48px;
-  padding: 0 24px;
+  height: var(--btn-height);
+  padding: var(--space-3) var(--space-6);
   font-size: 16px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-full);
 }
 
 .mm-button--xl {
-  height: 56px;
-  padding: 0 32px;
+  height: var(--btn-height-lg);
+  padding: 0 var(--space-8);
   font-size: 18px;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-full);
 }
 
 /* ── Variants ─────────────────────────────────────── */
 
-/* Primary — turuncu fill */
+/* Primary — filled orange */
 .mm-button--primary {
   background-color: var(--primary);
   color: var(--text-on-primary);
-  box-shadow: 0 2px 8px var(--primary-glow);
+  box-shadow: var(--shadow-button);
 }
 
 .mm-button--primary:hover:not(:disabled) {
   background-color: var(--primary-hover);
-  box-shadow: 0 4px 16px var(--primary-glow);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .mm-button--primary:active:not(:disabled) {
   background-color: var(--primary-dark);
-  box-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 60%, transparent);
+  box-shadow: var(--shadow-xs);
 }
 
-/* Secondary — border + turuncu yazı */
+/* Secondary — border + orange text */
 .mm-button--secondary {
-  background-color: var(--primary-pale);
+  background-color: transparent;
   color: var(--primary);
-  border: 1.5px solid var(--primary);
+  border: 2px solid var(--primary);
   box-shadow: none;
 }
 
 .mm-button--secondary:hover:not(:disabled) {
-  background-color: var(--bg-soft);
+  background-color: var(--primary-pale);
   border-color: var(--primary-hover);
   color: var(--primary-hover);
 }
 
 .mm-button--secondary:active:not(:disabled) {
-  background-color: color-mix(in srgb, var(--primary) 15%, transparent);
+  background-color: var(--bg-soft);
 }
 
-/* Ghost — sadece yazı, arka plan yok */
+/* Ghost — text only, no background */
 .mm-button--ghost {
   background-color: transparent;
   color: var(--primary);
@@ -124,18 +125,18 @@
 
 /* Danger */
 .mm-button--danger {
-  background-color: #ef4444;
-  color: #ffffff;
+  background-color: var(--error);
+  color: var(--text-on-primary);
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
 }
 
 .mm-button--danger:hover:not(:disabled) {
-  background-color: #dc2626;
+  background-color: var(--accent-red);
   box-shadow: 0 4px 14px rgba(239, 68, 68, 0.32);
 }
 
 .mm-button--danger:active:not(:disabled) {
-  background-color: #b91c1c;
+  background-color: var(--accent-red-dark);
 }
 
 /* ── Full width ───────────────────────────────────── */

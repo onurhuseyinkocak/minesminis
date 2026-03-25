@@ -1,5 +1,6 @@
 /* ==========================================================================
    GAMES MANAGER — MinesMinis Admin
+   Uses admin design tokens from AdminLayout.css
    ========================================================================== */
 
 /* ── Wrapper ── */
@@ -18,7 +19,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -35,18 +36,32 @@
 
 .adm-table th,
 .adm-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-light, #e2e8f0);
+  padding: var(--space-3) var(--space-4, 0.75rem 1rem);
+  border-bottom: 1px solid var(--border);
   text-align: left;
+  vertical-align: middle;
 }
 
 .adm-table th {
   font-weight: 600;
-  color: var(--text-secondary, #64748b);
-  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  background: var(--bg-surface, #f8fafc);
+  letter-spacing: 0.05em;
+  background: var(--bg-muted);
+  white-space: nowrap;
+}
+
+.adm-table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.adm-table tbody tr:hover {
+  background: var(--bg-muted);
+}
+
+.adm-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* ── Badge tokens ── */
@@ -54,38 +69,54 @@
   display: inline-flex;
   align-items: center;
   padding: 0.2em 0.65em;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .adm-badge--indigo {
-  background: #eef2ff;
+  background: var(--accent-indigo-pale);
   color: #4f46e5;
 }
 
 .adm-badge--green {
-  background: #ecfdf5;
-  color: #059669;
+  background: var(--success-pale);
+  color: var(--success);
 }
 
 .adm-badge--amber {
-  background: #fffbeb;
+  background: var(--warning-pale);
   color: #d97706;
 }
 
 .adm-badge--pink {
-  background: #fdf2f8;
+  background: var(--accent-pink-pale);
   color: #db2777;
 }
 
 .adm-badge--violet {
-  background: #f5f3ff;
-  color: #7c3aed;
+  background: var(--accent-purple-pale);
+  color: var(--accent-purple);
 }
 
 .adm-badge--default {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+/* ── Status badges ── */
+.adm-badge--published {
+  background: var(--success-pale);
+  color: var(--success);
+}
+
+.adm-badge--draft {
+  background: var(--warning-pale);
+  color: #d97706;
+}
+
+.adm-badge--active {
+  background: var(--info-pale);
+  color: var(--info);
 }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   App.css — MinesMinis Design System v4
+   App.css — MinesMinis Design System v5
    Route transitions, page loader, accessibility skip link
    ========================================================================== */
 
@@ -29,7 +29,7 @@
   flex-direction: column;
   min-height: 50vh;
   gap: var(--space-md);
-  animation: fadeIn 400ms ease-out;
+  animation: fadeIn 400ms var(--ease-out);
 }
 
 .page-loader__spinner {
@@ -48,31 +48,7 @@
   }
 }
 
-/* -- Skip-to-content (accessibility) ---------------------------------- */
-
-.skip-to-content {
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--gradient-primary);
-  color: var(--ink);
-  padding: var(--space-sm) var(--space-lg);
-  z-index: var(--z-max);
-  transition: top var(--transition-fast);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.875rem;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  box-shadow: var(--shadow-md);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.skip-to-content:focus {
-  top: 0;
-  outline: none;
-}
+/* -- Skip-to-content is defined in index.css (single source of truth) -- */
 
 /* -- Floating chat button --------------------------------------------- */
 
@@ -92,7 +68,7 @@
   align-items: center;
   justify-content: center;
   z-index: 800;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 .floating-chat-btn:hover {
   transform: translateY(-2px) scale(1.05);

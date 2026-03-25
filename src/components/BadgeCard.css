@@ -41,18 +41,31 @@
 
 /* ---- Locked state ---- */
 .badge-card-item--locked {
-  opacity: 0.42;
-  filter: grayscale(0.6);
+  opacity: 0.38;
+  filter: grayscale(0.85) brightness(0.95);
+  border-color: var(--border);
+  background: var(--bg-muted);
 }
 
 .badge-card-item--locked:hover {
-  opacity: 0.62;
-  filter: grayscale(0.3);
+  opacity: 0.55;
+  filter: grayscale(0.5) brightness(1);
+  border-color: var(--border-hover);
+}
+
+.badge-card-item--locked .badge-card-icon {
+  opacity: 0.5;
 }
 
 /* ---- Earned base ---- */
 .badge-card-item--earned {
   border-color: var(--primary-light);
+  animation: badge-earned-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes badge-earned-shimmer {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 16px rgba(255, 107, 53, 0.18); }
 }
 
 /* ---- Rarity: common (earned) ---- */
@@ -283,4 +296,11 @@
   border-radius: var(--radius-full);
   background: var(--success);
   border: 2px solid var(--bg-elevated);
+  box-shadow: 0 0 6px var(--success-soft);
+  animation: earned-dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes earned-dot-pulse {
+  0%, 100% { box-shadow: 0 0 4px var(--success-soft); }
+  50% { box-shadow: 0 0 10px var(--success-soft), 0 0 20px var(--success-soft); }
 }

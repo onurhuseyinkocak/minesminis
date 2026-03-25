@@ -1,5 +1,5 @@
 /* ==========================================================================
-   WORD ILLUSTRATION — MinesMinis Design System v4
+   WORD ILLUSTRATION — MinesMinis Design System v5
    SVG illustration or letter-badge fallback for vocabulary words
    ========================================================================== */
 
@@ -16,12 +16,33 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-xl, 20px);
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   color: var(--text-on-primary, #fff);
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 900;
   line-height: 1;
-  letter-spacing: -0.01em;
-  box-shadow: var(--shadow-card);
+  letter-spacing: -0.02em;
+  box-shadow:
+    var(--shadow-card),
+    0 4px 12px rgba(255, 107, 53, 0.2);
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle shine overlay */
+.word-illustration__fallback::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 100%
+  );
+  border-radius: var(--radius-xl, 20px) var(--radius-xl, 20px) 0 0;
+  pointer-events: none;
 }

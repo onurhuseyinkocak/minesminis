@@ -19,8 +19,8 @@
   border-bottom: 1px solid var(--border-light);
   z-index: var(--z-sticky);
   transition:
-    background 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    box-shadow 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    background var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .topnav--scrolled {
@@ -37,14 +37,14 @@
   text-decoration: none;
   color: inherit;
   flex-shrink: 0;
-  transition: transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: transform var(--transition-base);
 }
 
 .topnav__logo:hover { transform: translateY(-1px); }
 
 .topnav__logo:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--focus-ring);
   border-radius: var(--radius-sm);
 }
 
@@ -92,9 +92,9 @@
   font-size: 0.875rem;
   border-radius: var(--radius-sm);
   transition:
-    color 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    background 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    color var(--transition-base),
+    background var(--transition-base),
+    transform var(--transition-base);
   position: relative;
   white-space: nowrap;
   min-height: var(--touch-target);
@@ -110,7 +110,7 @@
 
 .topnav__link:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
 .topnav__link.active {
@@ -151,7 +151,7 @@
   padding: var(--space-xs) var(--space-md);
   background: var(--primary-pale);
   border-radius: var(--radius-full);
-  transition: transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: transform var(--transition-base);
 }
 
 .topnav__streak:hover {
@@ -183,7 +183,7 @@
   height: 100%;
   background: var(--gradient-secondary);
   border-radius: var(--radius-full);
-  transition: width 600ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: width 600ms var(--ease-out);
 }
 
 /* Avatar */
@@ -197,8 +197,8 @@
   cursor: pointer;
   overflow: hidden;
   transition:
-    transform 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    box-shadow 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -212,12 +212,12 @@
 
 .topnav__avatar:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .topnav__avatar:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
 .topnav__avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -336,7 +336,7 @@
   cursor: pointer;
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
-  transition: background 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: background var(--transition-base);
   color: var(--text-body);
 }
 
@@ -345,7 +345,7 @@
 
 .topnav__hamburger:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
 .topnav__hamburger svg { width: 24px; height: 24px; }
@@ -361,7 +361,7 @@
   -webkit-backdrop-filter: blur(6px);
   z-index: 1100;
   opacity: 0;
-  transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: opacity var(--transition-base);
 }
 
 .topnav__mobile-overlay.open { opacity: 1; }
@@ -376,7 +376,7 @@
   background: var(--bg-card);
   z-index: 1101;
   transform: translateX(100%);
-  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform var(--transition-spring);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -407,9 +407,9 @@
   justify-content: center;
   color: var(--text-secondary);
   transition:
-    background 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    color 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    background var(--transition-base),
+    color var(--transition-base),
+    transform var(--transition-base);
 }
 
 .topnav__mobile-close:hover {
@@ -421,7 +421,7 @@
 
 .topnav__mobile-close:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
 .topnav__mobile-links {
@@ -441,8 +441,8 @@
   font-weight: 600;
   font-size: 1rem;
   transition:
-    color 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    background 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    color var(--transition-base),
+    background var(--transition-base);
   min-height: var(--touch-target);
 }
 
@@ -455,7 +455,7 @@
 
 .topnav__mobile-link:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
 .topnav__mobile-link.active {

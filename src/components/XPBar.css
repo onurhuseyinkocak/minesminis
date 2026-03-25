@@ -57,11 +57,13 @@
 
 .xp-mini-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--success));
+  background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--success));
+  background-size: 200% 100%;
   border-radius: var(--radius-full);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 4px;
   box-shadow: 0 0 10px var(--primary-glow);
+  animation: xp-bar-shimmer 2.5s ease-in-out infinite;
 }
 
 .streak-badge-mini {
@@ -159,12 +161,20 @@
 
 .xp-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--success));
+  background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--success));
+  background-size: 200% 100%;
   border-radius: var(--radius-full);
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   min-width: 8px;
   box-shadow: 0 0 14px var(--primary-glow);
+  animation: xp-bar-shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes xp-bar-shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .xp-bar-shine {

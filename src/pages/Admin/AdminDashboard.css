@@ -84,6 +84,7 @@
 .adm-metric-card {
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
+  border-left: 3px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   padding: var(--space-lg);
   display: flex;
@@ -91,12 +92,18 @@
   gap: var(--space-md);
   transition: transform var(--admin-transition),
               box-shadow var(--admin-transition);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card-hover);
 }
+
+.adm-metric-card:nth-child(1) { border-left-color: var(--info); }
+.adm-metric-card:nth-child(2) { border-left-color: var(--success); }
+.adm-metric-card:nth-child(3) { border-left-color: var(--primary); }
+.adm-metric-card:nth-child(4) { border-left-color: var(--accent-purple); }
 
 .adm-metric-top {
   display: flex;
@@ -171,10 +178,11 @@
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
   transition: box-shadow var(--admin-transition);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-card:hover {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .adm-card-header {
@@ -200,7 +208,7 @@
 
 .adm-chart-container {
   height: 280px;
-  padding: var(--space-md) var(--space-lg) var(--space-sm);
+  padding: var(--space-md) var(--space-lg) var(--space-md);
 }
 
 /* ---- Activity Feed ---- */

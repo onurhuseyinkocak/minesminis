@@ -236,8 +236,9 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
+  min-height: var(--touch-target);
   background: var(--bg-card);
-  border: 1px solid var(--border-light);
+  border: 1.5px solid var(--border-light);
   border-radius: var(--radius-full);
   font-family: var(--font-display);
   font-size: 13px;
@@ -245,7 +246,7 @@
   color: var(--text-secondary);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s ease;
+  transition: all 0.15s var(--ease-out);
 }
 
 .games-tab:hover {
@@ -256,7 +257,8 @@
 .games-tab--active {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: var(--text-on-primary);
+  box-shadow: 0 2px 8px var(--primary-glow);
 }
 
 /* ---- MINI GAMES GRID ---- */
@@ -384,8 +386,11 @@
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: var(--shadow-md);
+  transition:
+    transform 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
+  box-shadow: var(--shadow-card);
   min-height: 220px;
   position: relative;
   overflow: hidden;
@@ -402,8 +407,9 @@
 }
 
 .featured-game-card:hover {
-  transform: translateY(-6px) scale(1.02);
+  transform: translateY(-8px) scale(1.02);
   box-shadow: var(--shadow-card-hover);
+  border-color: var(--border-hover);
 }
 
 .featured-emoji {
@@ -428,17 +434,20 @@
 
 .difficulty-stars {
   display: flex;
-  gap: 2px;
+  gap: 3px;
   margin-bottom: var(--space-sm);
 }
 
 .difficulty-stars .star {
   font-size: 14px;
-  opacity: 0.25;
+  opacity: 0.2;
+  color: var(--accent-amber, #f59e0b);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .difficulty-stars .star.filled {
   opacity: 1;
+  filter: drop-shadow(0 1px 3px rgba(251, 191, 36, 0.4));
 }
 
 .play-now-btn {

@@ -33,8 +33,9 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md) 0;
-  background: var(--bg-page);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 248, 242, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-light);
   margin-bottom: var(--space-md);
   flex-shrink: 0;
@@ -44,20 +45,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 200ms ease-out;
+  transition: all var(--transition-base);
   flex-shrink: 0;
 }
 
 .lesson-player-topbar__back:hover {
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
+  border-color: var(--border-hover);
 }
 
 .lesson-player-topbar__center {
@@ -221,10 +223,16 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
   padding: var(--space-3xl) var(--space-xl);
   max-width: 480px;
   margin: 0 auto;
+  animation: lessonCompleteIn 0.5s var(--ease-spring) both;
+}
+
+@keyframes lessonCompleteIn {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .lesson-complete__confetti {
@@ -234,15 +242,22 @@
 }
 
 .lesson-complete__trophy {
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  background: var(--primary-pale);
+  background: linear-gradient(135deg, var(--primary-pale), var(--warning-pale));
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary);
   margin-bottom: var(--space-sm);
+  box-shadow: 0 0 30px var(--primary-glow);
+  animation: trophyPulse 2s ease-in-out infinite;
+}
+
+@keyframes trophyPulse {
+  0%, 100% { box-shadow: 0 0 30px var(--primary-glow); }
+  50% { box-shadow: 0 0 50px var(--primary-glow), 0 0 80px rgba(255, 107, 53, 0.1); }
 }
 
 .lesson-complete__title {
@@ -264,16 +279,19 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-lg);
-  background: var(--primary-pale);
-  border-radius: var(--radius-full);
+  padding: var(--space-md) var(--space-xl);
+  background: linear-gradient(135deg, var(--primary-pale), var(--bg-card));
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-xl);
   color: var(--primary-dark);
+  box-shadow: 0 4px 16px var(--primary-glow);
 }
 
 .lesson-complete__xp-value {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.25rem;
+  font-weight: 900;
+  font-size: 1.75rem;
+  color: var(--primary);
 }
 
 .lesson-complete__mimi {
@@ -326,12 +344,14 @@
 }
 
 .lesson-player-topbar__heart--full {
-  animation: heartPulse 1s ease-in-out infinite;
+  animation: heartPulse 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 1px 3px rgba(239, 68, 68, 0.35));
 }
 
 .lesson-player-topbar__heart--empty {
-  opacity: 0.3;
+  opacity: 0.25;
   transform: scale(0.85);
+  filter: grayscale(1);
 }
 
 .lesson-player-topbar__hearts--shake .lesson-player-topbar__heart--full:last-of-type {
@@ -397,6 +417,48 @@
   60% { transform: scale(1.1) rotate(5deg); }
   75% { transform: scale(1.05) rotate(-3deg); }
   100% { transform: scale(0.85) rotate(0deg); opacity: 0.3; }
+}
+
+/* ==========================================================================
+   PROGRESS BAR — Polished track with animated fill
+   ========================================================================== */
+.lesson-progress-track {
+  width: 100%;
+  height: 10px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.lesson-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: var(--radius-full);
+  transition: width 0.5s var(--ease-out);
+  position: relative;
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.lesson-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }
 
 /* ==========================================================================

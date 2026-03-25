@@ -53,8 +53,8 @@
 }
 
 .word-match__feedback--wrong {
-  background: var(--warning-pale);
-  color: var(--primary-dark);
+  background: var(--error-pale);
+  color: var(--error);
 }
 
 /* -- Board ------------------------------------------------------------ */
@@ -77,6 +77,7 @@
 /* -- Cards ------------------------------------------------------------ */
 
 .word-match__card {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-md);
@@ -85,7 +86,7 @@
   border: 2.5px solid var(--border-light);
   border-radius: var(--radius-lg);
   background: var(--bg-card);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), 0 2px 0 0 rgba(0, 0, 0, 0.04);
   cursor: pointer;
   font-family: var(--font-display);
   font-size: 1.2rem;
@@ -95,7 +96,8 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-base),
     transform var(--transition-base),
-    background var(--transition-fast);
+    background var(--transition-fast),
+    opacity var(--transition-base);
   text-align: left;
   width: 100%;
 }
@@ -124,20 +126,43 @@
 }
 
 .word-match__card--matched {
-  border-color: var(--mimi-green);
+  border-color: var(--success);
   background: var(--success-pale);
-  opacity: 0.6;
+  opacity: 0.75;
   pointer-events: none;
   transform: scale(0.97);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  animation: wm-match-pop 0.5s var(--ease-spring);
+}
+
+@keyframes wm-match-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.08); }
+  60% { transform: scale(0.95); }
+  100% { transform: scale(0.97); }
 }
 
 .word-match__card--flash {
-  animation: wm-flash 0.6s ease;
+  animation: wm-flash 0.7s ease;
 }
 
 @keyframes wm-flash {
-  0%, 100% { background: var(--bg-card); }
-  50% { background: var(--success-pale); }
+  0% { background: var(--bg-card); box-shadow: var(--shadow-card); }
+  40% { background: var(--success-pale); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+  100% { background: var(--bg-card); box-shadow: var(--shadow-card); }
+}
+
+/* Connection line animation for matched pairs */
+.word-match__card--matched::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  width: 8px;
+  height: 3px;
+  background: var(--success);
+  border-radius: var(--radius-full);
+  opacity: 0.5;
 }
 
 .word-match__card:disabled { cursor: default; }
@@ -215,14 +240,25 @@
 }
 
 .word-match__results-btn--primary {
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+  box-shadow: var(--shadow-button);
+  min-height: 52px;
+  padding: 0.85rem 2rem;
+  font-size: 1.1rem;
+}
+
+.word-match__results-btn--primary:hover {
+  box-shadow: var(--shadow-button-hover);
 }
 
 .word-match__results-btn--secondary {
   background: var(--bg-soft, #f5f5f5);
   color: var(--text-secondary);
+  border: 2px solid var(--border-light);
+  min-height: 52px;
+  padding: 0.85rem 2rem;
+  font-size: 1.1rem;
 }
 
 [data-theme="dark"] .word-match__results-btn--secondary {
@@ -284,5 +320,5 @@
 }
 
 [data-theme="dark"] .word-match__feedback--wrong {
-  background: var(--warning-pale);
+  background: var(--error-pale);
 }

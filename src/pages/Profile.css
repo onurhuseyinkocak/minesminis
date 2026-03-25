@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PROFILE PAGE — MinesMinis Design System v4.0
+   PROFILE PAGE — MinesMinis Design System v5.0
    Avatar hero, stats, badges. ZERO hex colors. All var() tokens.
    ========================================================================== */
 
@@ -31,12 +31,27 @@
   display: flex;
   align-items: center;
   gap: var(--space-xl);
-  padding: var(--space-xl);
-  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  padding: var(--space-xl) var(--space-2xl);
+  background: var(--gradient-warm);
   border-radius: var(--radius-2xl);
   margin-bottom: var(--space-xl);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: var(--primary-glow);
+  top: -60px;
+  right: -40px;
+  filter: blur(60px);
+  pointer-events: none;
 }
 
 .profile-avatar-large {
@@ -46,6 +61,7 @@
 
 .avatar-vector {
   color: var(--primary);
+  filter: drop-shadow(0 4px 12px var(--primary-glow));
 }
 
 .change-avatar-btn {
@@ -57,20 +73,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--bg-card);
+  border: 3px solid var(--bg-card);
   border-radius: var(--radius-full);
   background: var(--primary);
-  color: var(--white);
+  color: var(--text-on-primary);
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-sm);
 }
 
 .change-avatar-btn:hover {
   transform: scale(1.1);
+  box-shadow: var(--shadow-md);
 }
 
 .profile-main-info {
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .name-row {
@@ -93,12 +113,13 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
   background: var(--bg-card);
   color: var(--text-secondary);
-  font-family: var(--font-body);
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
@@ -114,7 +135,7 @@
   align-items: center;
   gap: var(--space-xs);
   margin-top: var(--space-sm);
-  padding: var(--space-xs) var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   background: var(--primary-pale);
   color: var(--primary-dark);
@@ -135,14 +156,14 @@
   background: var(--bg-card);
   border-radius: var(--radius-xl);
   padding: var(--space-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .stat-card.xp-focused {
@@ -221,7 +242,7 @@
   font-family: var(--font-display);
   font-size: 40px;
   font-weight: 900;
-  color: var(--warning-dark, #92400e);
+  color: var(--warning);
   line-height: 1;
 }
 
@@ -243,9 +264,9 @@
 .profile-badges-section {
   background: var(--bg-card);
   border-radius: var(--radius-xl);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
 }
 
 .profile-badges-section .section-header {
@@ -275,25 +296,33 @@
   align-items: center;
   gap: var(--space-sm);
   text-align: center;
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-fast);
+}
+
+.badge-item:hover {
+  transform: translateY(-2px);
 }
 
 .badge-circle {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
-  background: var(--primary-pale);
+  background: var(--gradient-warm);
   font-size: 28px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--primary-pale);
 }
 
 .badge-item span:last-child {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 12px;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ---- Badges header row right side ---- */
@@ -307,7 +336,7 @@
   display: inline-flex;
   align-items: center;
   padding: var(--space-xs) var(--space-md);
-  border: 1.5px solid var(--primary-light);
+  border: 1.5px solid var(--primary);
   border-radius: var(--radius-full);
   background: var(--primary-pale);
   color: var(--primary-dark);
@@ -325,9 +354,9 @@
 
 .view-achievements-btn:hover {
   background: var(--primary);
-  color: var(--white);
+  color: var(--text-on-primary);
   border-color: var(--primary);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-button);
   transform: translateY(-1px);
 }
 
@@ -358,7 +387,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--overlay-bg);
   backdrop-filter: blur(6px);
 }
 
@@ -366,7 +395,7 @@
   width: 90vw;
   max-width: 440px;
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
   overflow: hidden;
 }
@@ -376,7 +405,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-md) var(--space-lg);
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border);
 }
 
 .edit-modal-header h2 {
@@ -423,8 +452,8 @@
   width: 100%;
   height: var(--input-height);
   padding: 0 var(--space-md);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
   background: var(--bg-card);
   font-family: var(--font-body);
   font-size: 15px;
@@ -444,14 +473,14 @@
   justify-content: flex-end;
   gap: var(--space-sm);
   padding: var(--space-md) var(--space-lg);
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--border);
 }
 
 .cancel-btn {
   height: var(--btn-height-sm);
   padding: 0 var(--space-lg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
   background: var(--bg-card);
   color: var(--text-secondary);
   font-family: var(--font-display);
@@ -463,13 +492,14 @@
 
 .cancel-btn:hover {
   background: var(--bg-muted);
+  border-color: var(--border-hover);
 }
 
 .save-btn {
   height: var(--btn-height-sm);
   padding: 0 var(--space-lg);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: var(--text-on-primary);
   font-family: var(--font-display);
@@ -522,18 +552,18 @@
   width: 100%;
   padding: var(--space-lg) var(--space-xl);
   border-radius: var(--radius-2xl);
-  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
+  background: var(--gradient-warm);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
   text-decoration: none;
   color: var(--text-primary);
   cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.15s;
+  transition: box-shadow var(--transition-base), transform var(--transition-fast);
 }
 
 .mascot-link-btn:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
   text-decoration: none;
   color: var(--text-primary);
 }
@@ -542,10 +572,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-full);
-  background: var(--bg-elevated);
+  background: var(--primary-pale);
+  color: var(--primary);
   flex-shrink: 0;
 }
 
@@ -556,14 +587,14 @@
 }
 
 .mascot-link-text strong {
-  font-family: var(--font-heading);
-  font-size: var(--text-base);
+  font-family: var(--font-display);
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .mascot-link-sub {
   font-family: var(--font-body);
-  font-size: var(--text-sm);
+  font-size: 13px;
   color: var(--text-muted);
 }

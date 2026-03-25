@@ -2,46 +2,56 @@
 
 .rl-page {
   min-height: 100vh;
-  background-color: #ffffff;
+  background: var(--bg-page);
   padding-bottom: 80px;
 }
 
 .rl-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  background-color: var(--bg-elevated, #F8F9FA);
-  border-bottom: 1px solid var(--border-light, #E5E7EB);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--primary-pale);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
 .rl-backBtn {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target);
+  height: var(--touch-target);
   border-radius: 50%;
-  border: 1px solid var(--border-light, #E5E7EB);
-  background-color: #ffffff;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748B;
+  color: var(--text-secondary);
+  transition: all var(--transition-base);
+}
+
+.rl-backBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-pale);
 }
 
 .rl-title {
-  font-size: 22px;
+  font-family: var(--font-display);
+  font-size: 24px;
   font-weight: 900;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .rl-subtitle {
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
-  color: #64748B;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -50,66 +60,74 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  background-color: #F0FDF4;
-  color: var(--text-primary, #065F46);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--success-pale);
+  color: var(--success);
+  font-family: var(--font-display);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
+  border: 1.5px solid rgba(16, 185, 129, 0.2);
 }
 
 .rl-shelves {
-  padding: 20px 16px;
+  padding: var(--space-5) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 
 .rl-shelfSection {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .rl-shelfLabel {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-left: 4px;
+  gap: var(--space-2);
+  padding-left: var(--space-1);
 }
 
 .rl-shelfGroupNum {
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 800;
-  color: #ffffff;
-  background-color: var(--text-primary, #065F46);
-  padding: 2px 8px;
-  border-radius: 8px;
+  color: var(--text-on-primary);
+  background: var(--primary);
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
 }
 
 .rl-shelfGroupName {
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 15px;
   font-weight: 700;
-  color: #334155;
+  color: var(--text-primary);
 }
 
 .rl-shelfSounds {
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-muted, #9CA3AF);
+  color: var(--text-muted);
   font-style: italic;
 }
 
+/* Bookshelf visual — warm wood tones */
 .rl-shelf {
   position: relative;
-  min-height: 160px;
+  min-height: 170px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background-color: #F1F5F9;
-  border-radius: 12px;
-  padding: 12px 12px 0;
-  box-shadow: inset 0 -2px 8px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(180deg, #FFF8F2 0%, #FEECD2 100%);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 14px 14px 0;
+  box-shadow: inset 0 2px 8px rgba(139, 90, 43, 0.06);
+  border: 1px solid rgba(139, 90, 43, 0.08);
+  border-bottom: none;
 }
 
 .rl-booksRow {
@@ -117,40 +135,74 @@
   gap: 10px;
   align-items: flex-end;
   flex-wrap: wrap;
-  padding-bottom: 6px;
+  padding-bottom: 8px;
 }
 
+/* Wooden shelf plank */
 .rl-woodShelf {
-  height: 8px;
-  border-radius: 0 0 8px 8px;
-  margin-left: -12px;
-  margin-right: -12px;
+  height: 10px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  margin-left: -14px;
+  margin-right: -14px;
   margin-bottom: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(180deg, #C4956A 0%, #A47148 50%, #8B5E3C 100%);
+  box-shadow:
+    0 3px 8px rgba(139, 90, 43, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
+/* Book spines — 3D depth illusion */
 .rl-bookSpine {
-  width: 90px;
-  min-height: 120px;
-  border-radius: 4px 4px 0 0;
+  width: 92px;
+  min-height: 125px;
+  border-radius: 4px 6px 0 0;
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 12px 6px;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15), -1px 0 2px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease;
+  gap: 8px;
+  padding: 14px 8px;
+  cursor: pointer;
+  box-shadow:
+    3px 0 6px rgba(0, 0, 0, 0.18),
+    -1px 0 3px rgba(0, 0, 0, 0.1),
+    inset -2px 0 4px rgba(255, 255, 255, 0.15);
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s;
+  position: relative;
+}
+
+.rl-bookSpine::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 3px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1px;
+}
+
+.rl-bookSpine:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    4px 4px 12px rgba(0, 0, 0, 0.2),
+    -1px 0 3px rgba(0, 0, 0, 0.1),
+    inset -2px 0 4px rgba(255, 255, 255, 0.15);
+}
+
+.rl-bookSpine:active {
+  transform: translateY(-3px) scale(0.98);
 }
 
 .rl-bookSpineTitle {
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 800;
   color: #ffffff;
   text-align: center;
-  line-height: 1.2;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  line-height: 1.25;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 .rl-bookStars {
@@ -158,15 +210,18 @@
   gap: 2px;
 }
 
+/* Reading progress badge on spine */
 .rl-wpmBadge {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 800;
   color: var(--white, #fff);
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: var(--radius-full, 9999px);
-  padding: 1px 5px;
-  letter-spacing: 0.02em;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-full);
+  padding: 2px 7px;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(4px);
 }

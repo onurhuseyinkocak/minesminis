@@ -13,19 +13,19 @@
   flex-shrink: 0;
   background: var(--gradient-warm);
   box-shadow:
-    0 0 0 2px rgba(212, 148, 13, 0.15),
-    0 1px 3px rgba(0, 0, 0, 0.1);
+    0 0 0 2px rgba(255, 107, 53, 0.15),
+    var(--shadow-sm);
   user-select: none;
   transition:
-    transform 200ms cubic-bezier(0.33, 1, 0.68, 1),
-    box-shadow 200ms cubic-bezier(0.33, 1, 0.68, 1);
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .mm-avatar:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 0 0 3px rgba(212, 148, 13, 0.2),
-    0 4px 12px rgba(0, 0, 0, 0.1);
+    0 0 0 3px rgba(255, 107, 53, 0.2),
+    var(--shadow-md);
 }
 
 /* -- Sizes ------------------------------------------------------------ */
@@ -42,7 +42,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition: transform var(--transition-base);
 }
 
 .mm-avatar:hover .mm-avatar__image {
@@ -70,6 +70,15 @@
 .mm-avatar--lg .mm-avatar__fallback { font-size: 1.25rem; }
 .mm-avatar--xl .mm-avatar__fallback { font-size: 1.75rem; }
 
+/* -- Focus ------------------------------------------------------------ */
+
+.mm-avatar:focus-visible {
+  outline: none;
+  box-shadow:
+    var(--focus-ring),
+    var(--shadow-sm);
+}
+
 /* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1600px) {
@@ -83,7 +92,7 @@
 
 [data-theme="dark"] .mm-avatar {
   box-shadow:
-    0 0 0 2px rgba(212, 148, 13, 0.1),
+    0 0 0 2px rgba(255, 107, 53, 0.1),
     0 1px 3px rgba(0, 0, 0, 0.25);
 }
 

@@ -1,8 +1,12 @@
-/* Legal Pages */
+/* ==========================================================================
+   LEGAL PAGES — MinesMinis Design System v5.0
+   Clean, readable legal content. All var() tokens.
+   ========================================================================== */
 
 .legal-page {
   min-height: 60vh;
-  padding: clamp(24px, 4vw, 48px);
+  padding: clamp(var(--space-6), 4vw, var(--space-12));
+  background: var(--bg-page);
 }
 
 .legal-container {
@@ -13,64 +17,79 @@
 .legal-back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   color: var(--primary);
   text-decoration: none;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 0.95rem;
-  margin-bottom: 24px;
-  transition: opacity 0.2s;
+  margin-bottom: var(--space-6);
+  transition: opacity var(--transition-base);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
 }
 
 .legal-back:hover {
   opacity: 0.8;
+  background: var(--primary-pale);
 }
 
 .legal-container h1 {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
+  font-family: var(--font-display);
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 800;
-  color: var(--text-dark);
-  margin-bottom: 8px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .legal-updated {
+  font-family: var(--font-body);
   font-size: 0.9rem;
-  color: var(--text-medium);
-  margin-bottom: 32px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-8);
 }
 
 .legal-container section {
-  margin-bottom: 28px;
+  margin-bottom: var(--space-6);
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 .legal-container h2 {
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-dark);
-  margin-bottom: 10px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
 }
 
 .legal-container p,
 .legal-container li {
+  font-family: var(--font-body);
   font-size: 0.95rem;
-  line-height: 1.65;
-  color: var(--text-medium);
-  margin-bottom: 8px;
+  line-height: 1.7;
+  color: var(--text-body);
+  margin-bottom: var(--space-2);
 }
 
 .legal-container ul {
-  margin: 12px 0;
-  padding-left: 24px;
+  margin: var(--space-3) 0;
+  padding-left: var(--space-6);
 }
 
 .legal-container a {
   color: var(--primary);
   text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
 }
 
 .legal-container a:hover {
-  opacity: 0.8;
+  color: var(--primary-hover);
 }

@@ -1,7 +1,7 @@
 /* ==========================================================================
-   Admin Curriculum Manager — MinesMinis Premium Design System V2
+   Admin Curriculum Manager — MinesMinis Admin
    World/lesson management
-   ZERO hex colors. Token-only.
+   Uses admin design tokens from AdminLayout.css
    ========================================================================== */
 
 .adm-curriculum {
@@ -11,17 +11,17 @@
 }
 
 .adm-curriculum-header h1 {
-  font-family: var(--admin-font-heading);
+  font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--admin-text);
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.02em;
 }
 
 .adm-curriculum-header p {
   font-size: 0.85rem;
-  color: var(--admin-text-secondary);
+  color: var(--text-secondary);
   margin: var(--space-xs) 0 0;
 }
 
@@ -35,25 +35,26 @@
 
 /* ---- Worlds List ---- */
 .adm-worlds-list {
-  background: var(--admin-surface);
-  border: 1px solid var(--admin-border);
-  border-radius: var(--admin-radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: box-shadow var(--admin-transition);
+  transition: box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-worlds-list:hover {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .adm-worlds-list-header {
   padding: var(--space-md);
-  font-family: var(--admin-font-heading);
+  font-family: var(--font-display);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--admin-text);
-  border-bottom: 1px solid var(--admin-border);
-  background: var(--admin-bg);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-muted);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -64,14 +65,14 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md);
-  border-bottom: 1px solid var(--admin-border-light);
+  border-bottom: 1px solid var(--bg-muted);
   cursor: pointer;
-  transition: background var(--admin-transition),
-              transform var(--admin-transition);
+  transition: background var(--transition-fast),
+              transform var(--transition-fast);
 }
 
 .adm-world-item:last-child { border-bottom: none; }
-.adm-world-item:hover { background: var(--admin-bg); transform: translateX(2px); }
+.adm-world-item:hover { background: var(--bg-muted); transform: translateX(2px); }
 
 .adm-world-item.active {
   background: var(--primary-pale);
@@ -81,7 +82,7 @@
 .adm-world-item-color {
   width: 6px;
   height: 34px;
-  border-radius: var(--space-xs);
+  border-radius: var(--radius-xs);
   flex-shrink: 0;
 }
 
@@ -90,7 +91,7 @@
 .adm-world-item-name {
   font-size: 0.825rem;
   font-weight: 600;
-  color: var(--admin-text);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -98,35 +99,37 @@
 
 .adm-world-item-count {
   font-size: 0.7rem;
-  color: var(--admin-text-muted);
+  color: var(--text-muted);
 }
 
 /* ---- Lessons Panel ---- */
 .adm-lessons-panel {
-  background: var(--admin-surface);
-  border: 1px solid var(--admin-border);
-  border-radius: var(--admin-radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: box-shadow var(--admin-transition);
+  transition: box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-lessons-panel:hover {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .adm-lessons-header {
   padding: var(--space-md) var(--space-lg);
-  border-bottom: 1px solid var(--admin-border);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: var(--bg-muted);
 }
 
 .adm-lessons-title {
-  font-family: var(--admin-font-heading);
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
-  color: var(--admin-text);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -139,25 +142,25 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
-  border-bottom: 1px solid var(--admin-border-light);
-  transition: background var(--admin-transition);
+  border-bottom: 1px solid var(--bg-muted);
+  transition: background var(--transition-fast);
 }
 
 .adm-lesson-row:last-child { border-bottom: none; }
-.adm-lesson-row:hover { background: var(--admin-bg); }
+.adm-lesson-row:hover { background: var(--bg-muted); }
 
 .adm-lesson-order {
   width: 30px;
   height: 30px;
   border-radius: var(--radius-sm);
-  background: var(--admin-bg);
+  background: var(--bg-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--admin-font-heading);
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--admin-text-muted);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -166,12 +169,12 @@
 .adm-lesson-name {
   font-size: 0.825rem;
   font-weight: 600;
-  color: var(--admin-text);
+  color: var(--text-primary);
 }
 
 .adm-lesson-details {
   font-size: 0.7rem;
-  color: var(--admin-text-muted);
+  color: var(--text-muted);
   display: flex;
   gap: var(--space-md);
   margin-top: 2px;
@@ -185,14 +188,14 @@
 /* ---- Activity Preview ---- */
 .adm-activities-section {
   padding: var(--space-md) var(--space-lg);
-  border-top: 1px solid var(--admin-border);
+  border-top: 1px solid var(--border);
 }
 
 .adm-activities-title {
-  font-family: var(--admin-font-heading);
+  font-family: var(--font-display);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--admin-text);
+  color: var(--text-primary);
   margin-bottom: var(--space-md);
 }
 
@@ -202,17 +205,17 @@
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-md);
   margin: var(--space-xs) var(--space-xs) var(--space-xs) 0;
-  background: var(--admin-bg);
-  border: 1px solid var(--admin-border);
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
   border-radius: var(--radius-full);
   font-size: 0.725rem;
   font-weight: 500;
-  color: var(--admin-text-secondary);
-  transition: border-color var(--admin-transition);
+  color: var(--text-secondary);
+  transition: border-color var(--transition-fast);
 }
 
 .adm-activity-chip:hover {
-  border-color: var(--primary-light);
+  border-color: var(--primary);
 }
 
 /* ---- Vocabulary ---- */
@@ -221,7 +224,7 @@
   flex-wrap: wrap;
   gap: var(--space-xs);
   padding: var(--space-md) var(--space-lg);
-  border-top: 1px solid var(--admin-border);
+  border-top: 1px solid var(--border);
 }
 
 .adm-vocab-chip {
@@ -244,7 +247,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-3xl) var(--space-xl);
-  color: var(--admin-text-muted);
+  color: var(--text-muted);
   text-align: center;
 }
 
@@ -257,9 +260,6 @@
   justify-content: space-between;
   align-items: flex-start;
 }
-
-/* ---- World item color swatch (dynamic bg set inline) ---- */
-/* .adm-world-item-color background is set dynamically per-world via style prop */
 
 /* ---- World emoji in item name ---- */
 .adm-world-emoji {
@@ -281,9 +281,9 @@
   margin-left: 6px;
   font-size: 0.65rem;
   padding: 1px 6px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   background: var(--warning-pale);
-  color: var(--primary-dark);
+  color: #d97706;
   font-weight: 600;
 }
 
@@ -300,15 +300,15 @@
 .adm-lesson-objective {
   padding: 0.75rem 1.25rem;
   font-size: 0.8rem;
-  color: var(--admin-text-secondary);
-  border-top: 1px solid var(--admin-border-light);
+  color: var(--text-secondary);
+  border-top: 1px solid var(--bg-muted);
 }
 
 /* ---- Empty state with panel style ---- */
 .adm-curriculum-empty-panel {
-  background: var(--admin-surface);
-  border: 1px solid var(--admin-border);
-  border-radius: var(--admin-radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
 }
 
 /* ---- Lessons title parts ---- */
@@ -318,7 +318,7 @@
 
 .adm-lessons-title-desc {
   font-size: 0.75rem;
-  color: var(--admin-text-muted);
+  color: var(--text-muted);
   font-weight: 400;
 }
 
@@ -346,8 +346,8 @@
 .adm-color-input {
   height: 40px;
   padding: 2px;
-  border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 

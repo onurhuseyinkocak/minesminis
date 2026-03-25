@@ -18,10 +18,10 @@
   width: 100%;
   max-width: 640px;
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2xl) var(--space-xl) var(--space-lg);
   position: relative;
   overflow: hidden;
 }
@@ -45,7 +45,7 @@
 .onboarding-progress-line {
   width: 40px;
   height: 2px;
-  background: var(--border-light);
+  background: var(--border);
   transition: background 200ms ease-out;
 }
 
@@ -65,7 +65,7 @@
   font-size: 0.8rem;
   background: var(--bg-muted);
   color: var(--text-muted);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   transition: all 200ms ease-out;
   flex-shrink: 0;
 }
@@ -99,12 +99,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-md);
+  width: 68px;
+  height: 68px;
+  border-radius: var(--radius-lg);
   background: var(--primary-pale);
-  color: var(--primary-dark);
-  margin-bottom: var(--space-xs);
+  color: var(--primary);
+  margin-bottom: var(--space-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .onboarding-step-icon-large.onboarding-step-icon-success {
@@ -153,22 +154,25 @@
   gap: var(--space-md);
   padding: var(--space-lg) var(--space-lg);
   background: var(--bg-card);
-  border: 2px solid var(--border-light);
-  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 200ms ease-out;
+  transition: all var(--transition-base);
   text-align: left;
+  box-shadow: var(--shadow-card);
 }
 
 .onboarding-role-card:hover {
-  border-color: var(--border-medium);
-  box-shadow: var(--shadow-sm);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .onboarding-role-card.selected {
   border-color: var(--primary);
   background: var(--primary-pale);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  box-shadow: 0 0 0 3px var(--primary-glow), var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .onboarding-role-icon-wrap {
@@ -231,14 +235,14 @@
   min-height: 120px;
   justify-content: center;
   background: var(--bg-card);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 200ms ease-out;
 }
 
 .onboarding-age-card:hover {
-  border-color: var(--border-medium);
+  border-color: var(--border-hover);
   box-shadow: var(--shadow-sm);
 }
 
@@ -292,7 +296,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--border-light);
+  background: var(--border);
   transition: all 200ms ease-out;
 }
 
@@ -320,7 +324,7 @@
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
   background: var(--bg-card);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   border-radius: var(--radius-md);
   cursor: pointer;
   font-family: var(--font-display);
@@ -332,7 +336,7 @@
 }
 
 .onboarding-placement-option:hover {
-  border-color: var(--border-medium);
+  border-color: var(--border-hover);
   background: var(--bg-muted);
 }
 
@@ -349,7 +353,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   flex-shrink: 0;
   transition: all 200ms ease-out;
   color: var(--text-on-primary);
@@ -431,7 +435,7 @@
   line-height: 1.6;
   max-width: 440px;
   text-align: left;
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
 }
 
 .onboarding-mimi-facts {
@@ -472,7 +476,7 @@
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
   background: var(--bg-card);
   text-align: left;
 }
@@ -561,7 +565,7 @@
   font-size: 0.9rem;
   color: var(--text-primary);
   background: var(--bg-card);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   outline: none;
   transition: border-color 200ms ease-out;
@@ -584,7 +588,7 @@
   font-size: 0.9rem;
   color: var(--text-primary);
   background: var(--bg-card);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   outline: none;
   cursor: pointer;
@@ -614,14 +618,14 @@
   font-size: 0.8rem;
   color: var(--text-secondary);
   background: var(--bg-muted);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all 200ms ease-out;
 }
 
 .onboarding-chip:hover {
-  border-color: var(--border-medium);
+  border-color: var(--border-hover);
 }
 
 .onboarding-chip.selected {
@@ -641,7 +645,7 @@
   padding: var(--space-lg);
   background: var(--bg-muted);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
 }
 
 .onboarding-join-code {
@@ -679,7 +683,7 @@
   gap: 2px;
   padding: var(--space-sm) var(--space-md);
   background: var(--bg-card);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
   text-align: left;
@@ -687,7 +691,7 @@
 }
 
 .onboarding-phonics-item:hover {
-  border-color: var(--border-medium);
+  border-color: var(--border-hover);
 }
 
 .onboarding-phonics-item.selected {
@@ -708,7 +712,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   flex-shrink: 0;
   transition: all 200ms ease-out;
   color: var(--text-on-primary);
@@ -766,7 +770,7 @@
   padding: var(--space-md);
   background: var(--bg-muted);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
 }
 
 .onboarding-child-header {
@@ -812,14 +816,14 @@
   font-size: 0.9rem;
   width: 40px;
   height: 40px;
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 200ms ease-out;
 }
 
 .onboarding-child-avatar-btn:hover {
-  border-color: var(--border-medium);
+  border-color: var(--border-hover);
 }
 
 .onboarding-child-avatar-btn.selected {
@@ -879,7 +883,7 @@
   width: 48px;
   height: 26px;
   border-radius: 13px;
-  background: var(--border-light);
+  background: var(--border);
   position: relative;
   cursor: pointer;
   transition: background 200ms ease-out;

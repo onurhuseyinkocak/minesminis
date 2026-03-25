@@ -24,7 +24,7 @@
 }
 
 [data-theme="dark"] .journey-page {
-  background: linear-gradient(180deg, #1a1a3e 0%, #1e2a3a 40%, #1a2e1a 100%);
+  background: linear-gradient(180deg, var(--slate-950) 0%, var(--slate-900) 40%, var(--slate-950) 100%);
 }
 
 /* ==========================================================================
@@ -307,7 +307,7 @@
   align-items: center;
   justify-content: center;
   background: var(--bg-card, #fff);
-  border: 3px solid var(--border-light, #e0e0e0);
+  border: 3px solid var(--border);
   box-shadow: var(--shadow-md, 0 2px 8px rgba(0,0,0,0.1));
   transition: all 300ms ease-out;
   flex-shrink: 0;
@@ -326,28 +326,28 @@
 }
 
 [data-theme="dark"] .journey-stop--completed .journey-stop__circle {
-  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  background: linear-gradient(135deg, var(--mimi-dark), var(--mimi));
 }
 
 /* --- Current --- */
 .journey-stop--current .journey-stop__circle {
-  border-color: var(--journey-path-color);
+  border-color: var(--primary);
   border-width: 4px;
-  box-shadow: 0 0 0 6px var(--journey-current-glow),
-              var(--shadow-md, 0 2px 8px rgba(0,0,0,0.1));
+  box-shadow: 0 0 0 6px var(--primary-glow),
+              var(--shadow-md);
   animation: currentPulse 2s ease-in-out infinite;
 }
 
 @keyframes currentPulse {
-  0%, 100% { box-shadow: 0 0 0 4px var(--journey-current-glow), var(--shadow-md, 0 2px 8px rgba(0,0,0,0.1)); }
-  50% { box-shadow: 0 0 0 10px var(--journey-current-glow), var(--shadow-lg, 0 4px 12px rgba(0,0,0,0.15)); }
+  0%, 100% { box-shadow: 0 0 0 4px var(--primary-glow), var(--shadow-md); }
+  50% { box-shadow: 0 0 0 10px var(--primary-glow), var(--shadow-lg); }
 }
 
 /* --- Unlocked (next available) --- */
 .journey-stop--unlocked .journey-stop__circle {
-  border-color: rgba(232, 197, 71, 0.5);
+  border-color: var(--journey-unlocked-glow);
   box-shadow: 0 0 0 3px var(--journey-unlocked-glow),
-              var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.08));
+              var(--shadow-sm);
 }
 
 /* --- Locked --- */
@@ -384,7 +384,7 @@
 
 .journey-stop__badge--done {
   background: var(--journey-completed-color);
-  color: #fff;
+  color: var(--text-on-primary);
 }
 
 .journey-stop__badge--current {
@@ -400,7 +400,7 @@
 
 .journey-stop__badge--locked {
   background: var(--journey-locked-color);
-  color: #fff;
+  color: var(--text-on-primary);
 }
 
 .journey-stop__badge--unlocked {
@@ -445,8 +445,8 @@
 }
 
 .journey-star-icon {
-  color: var(--border-light, #ddd);
-  fill: var(--border-light, #ddd);
+  color: var(--border);
+  fill: var(--border);
 }
 
 .journey-star-icon--filled {
@@ -569,7 +569,7 @@
    ========================================================================== */
 [data-theme="dark"] .journey-stop__circle {
   background: var(--bg-card, #2a2a2a);
-  border-color: var(--border-light, #444);
+  border-color: var(--border);
 }
 
 [data-theme="dark"] .journey-stop--locked .journey-stop__circle {
