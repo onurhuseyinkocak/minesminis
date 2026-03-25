@@ -113,7 +113,7 @@ function VideosManager() {
             if (json.videoId) {
                 setFormData(f => ({
                     ...f,
-                    id: json.videoId,
+                    id: json.videoId ?? '',
                     title: json.title || f.title,
                     description: json.description || f.description,
                     duration: json.duration || f.duration

@@ -502,9 +502,9 @@ const LessonPlayer = () => {
           duration: Math.round(totalActivities * 60),
           accuracy,
           xpEarned: totalXP,
-        }, user?.uid).catch(() => { /* activity log failed silently */ });
+        }, user?.uid);
 
-        syncStudentProgress(totalXP).catch(() => { /* classroom sync failed silently */ });
+        void syncStudentProgress(totalXP);
       } catch {
         // localStorage might be unavailable
       }
