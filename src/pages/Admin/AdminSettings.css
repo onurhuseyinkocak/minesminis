@@ -39,10 +39,11 @@
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
   transition: box-shadow var(--admin-transition);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-settings-section:hover {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .adm-settings-section-header {

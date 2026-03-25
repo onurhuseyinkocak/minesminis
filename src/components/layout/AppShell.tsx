@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { LottieIcon, KidIcon } from '../ui';
 import type { KidIconName } from '../ui';
-import ParentGate, { hasParentGatePassed } from '../ParentGate';
 import { Users2, LayoutDashboard, Trophy } from 'lucide-react';
 import './AppShell.css';
 
@@ -23,9 +22,6 @@ const NAV_ITEMS: { path: string; label: string; labelTr: string; icon: KidIconNa
   { path: '/stories', label: 'Stories', labelTr: 'Hikayeler', icon: 'stories' },
 ];
 
-/** Action that triggered the ParentGate, used to resume after success. */
-type GateAction = 'logout' | 'settings' | 'premium';
-
 export default function AppShell({
   children,
   showBottomNav = true,
@@ -38,37 +34,6 @@ export default function AppShell({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Parent Gate state
-  const [gateAction, setGateAction] = useState<GateAction | null>(null);
-  const [gateReason, setGateReason] = useState<string>('');
-
-  /** Open the gate for the given action, skipping it if the session already passed. */
-  const requestGate = useCallback(
-    (action: GateAction, reason: string) => {
-      setDropdownOpen(false);
-      if (hasParentGatePassed()) {
-        // Already verified this session — execute immediately
-        if (action === 'logout') { signOut(); return; }
-        if (action === 'settings') { navigate('/settings'); return; }
-        if (action === 'premium') { navigate('/pricing'); return; }
-      }
-      setGateReason(reason);
-      setGateAction(action);
-    },
-    [navigate, signOut]
-  );
-
-  const handleGateSuccess = useCallback(() => {
-    setGateAction(null);
-    if (gateAction === 'logout') { signOut(); return; }
-    if (gateAction === 'settings') { navigate('/settings'); return; }
-    if (gateAction === 'premium') { navigate('/pricing'); return; }
-  }, [gateAction, navigate, signOut]);
-
-  const handleGateCancel = useCallback(() => {
-    setGateAction(null);
-  }, []);
 
   const isActive = (path: string) => {
     if (path === '/dashboard') return location.pathname === '/' || location.pathname === '/dashboard';
@@ -209,12 +174,7 @@ export default function AppShell({
                 </Link>
                 <button
                   type="button"
-                  onClick={() =>
-                    requestGate(
-                      'settings',
-                      lang === 'tr' ? 'Ayarlara gitmek için' : 'To access Settings'
-                    )
-                  }
+                  onClick={() => { setDropdownOpen(false); navigate('/settings'); }}
                   className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink-600 hover:bg-ink-50 hover:text-ink-900 transition-colors font-display font-semibold"
                 >
                   <KidIcon name="learn" size={16} />
@@ -222,12 +182,7 @@ export default function AppShell({
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
-                    requestGate(
-                      'logout',
-                      lang === 'tr' ? 'Çıkış yapmak için' : 'To sign out'
-                    )
-                  }
+                  onClick={() => { setDropdownOpen(false); signOut(); }}
                   className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-error-500 hover:bg-error-50 transition-colors font-display font-semibold"
                 >
                   <KidIcon name="logout" size={16} />
@@ -345,16 +300,6 @@ export default function AppShell({
         </nav>
       )}
 
-      {/* ══════════════════════════════════════════════════
-          PARENT GATE MODAL
-          ══════════════════════════════════════════════════ */}
-      {gateAction !== null && (
-        <ParentGate
-          reason={gateReason}
-          onSuccess={handleGateSuccess}
-          onCancel={handleGateCancel}
-        />
-      )}
     </div>
   );
 }

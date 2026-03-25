@@ -1,4 +1,4 @@
-/* Admin Mimi - Red Theme - IMPROVED VERSION */
+/* Admin Mimi - Chat Assistant Widget */
 
 /* FAB Button */
 .admin-mimi-fab {
@@ -8,13 +8,13 @@
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent-coral) 0%, var(--primary-orange-dark) 100%);
+    background: var(--gradient-primary);
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-premium);
+    box-shadow: var(--shadow-lg);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 9999;
     animation: adminMimiFabPulse 2s infinite;
@@ -22,18 +22,18 @@
 
 .admin-mimi-fab:hover {
     transform: scale(1.1);
-    box-shadow: var(--shadow-premium-glow);
+    box-shadow: var(--shadow-xl);
 }
 
 @keyframes adminMimiFabPulse {
 
     0%,
     100% {
-        box-shadow: var(--shadow-premium);
+        box-shadow: var(--shadow-lg);
     }
 
     50% {
-        box-shadow: var(--shadow-premium-glow), 0 0 0 8px var(--primary-orange-glow);
+        box-shadow: var(--shadow-xl), 0 0 0 8px var(--primary-glow);
     }
 }
 
@@ -62,8 +62,8 @@
     position: absolute;
     top: 4px;
     right: 4px;
-    background: var(--primary-orange-light);
-    color: var(--text-dark);
+    background: var(--primary-light);
+    color: var(--text-primary);
     font-size: 0.7rem;
     font-weight: 800;
     padding: 2px 6px;
@@ -120,12 +120,12 @@
 
 /* Header */
 .admin-mimi-header {
-    background: linear-gradient(135deg, var(--accent-coral) 0%, var(--primary-orange-dark) 100%);
+    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
     padding: 16px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: var(--text-dark);
+    color: var(--white);
     flex-shrink: 0;
 }
 
@@ -149,8 +149,8 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background: var(--primary-orange-light);
-    color: var(--text-dark);
+    background: var(--primary-light);
+    color: var(--white);
     border-radius: 50%;
     padding: 2px;
 }
@@ -175,12 +175,12 @@
 }
 
 .admin-mimi-header-actions button {
-    background: var(--glass-accent-border);
+    background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: var(--text-dark);
+    color: var(--white);
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -189,14 +189,14 @@
 }
 
 .admin-mimi-header-actions button:hover {
-    background: var(--glass-border);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* Quick Actions - Horizontal Scroll */
 .admin-mimi-quick-actions {
     padding: 12px 16px;
-    background: var(--primary-orange-pale);
-    border-bottom: 1px solid var(--border-light);
+    background: var(--primary-pale);
+    border-bottom: 1px solid var(--border);
     display: flex;
     gap: 8px;
     overflow-x: auto;
@@ -208,7 +208,7 @@
 }
 
 .admin-mimi-quick-actions::-webkit-scrollbar-thumb {
-    background: var(--accent-coral);
+    background: var(--primary);
     border-radius: 2px;
 }
 
@@ -218,10 +218,10 @@
     gap: 6px;
     padding: 8px 14px;
     background: var(--bg-card);
-    border: 1px solid var(--border-light);
-    border-radius: 100px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
     font-size: 0.8rem;
-    color: var(--accent-coral);
+    color: var(--primary);
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
@@ -229,9 +229,9 @@
 }
 
 .admin-mimi-quick-actions .quick-action-btn:hover {
-    background: var(--accent-coral);
-    color: var(--text-dark);
-    border-color: var(--accent-coral);
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
 }
 
 /* Messages - MUCH LARGER AREA */
@@ -242,7 +242,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-soft) 100%);
+    background: linear-gradient(180deg, var(--bg-muted) 0%, var(--bg-soft) 100%);
     min-height: 300px;
 }
 
@@ -274,18 +274,18 @@
 .admin-mimi-message .message-text {
     background: var(--bg-card);
     padding: 16px 20px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     font-size: 0.95rem;
     line-height: 1.7;
-    color: var(--text-dark);
+    color: var(--text-primary);
     box-shadow: var(--shadow-sm);
     word-wrap: break-word;
     white-space: pre-wrap;
 }
 
 .admin-mimi-message.user .message-text {
-    background: linear-gradient(135deg, var(--accent-coral) 0%, var(--primary-orange-dark) 100%);
-    color: var(--text-dark);
+    background: var(--gradient-primary);
+    color: var(--white);
     border-radius: 16px 16px 4px 16px;
 }
 
@@ -295,19 +295,19 @@
 
 /* Better formatting for AI responses */
 .admin-mimi-message .message-text strong {
-    color: var(--accent-coral);
+    color: var(--primary);
     display: block;
     margin-top: 8px;
     margin-bottom: 4px;
 }
 
 .admin-mimi-message.user .message-text strong {
-    color: var(--text-dark);
+    color: var(--white);
 }
 
 .admin-mimi-message .message-time {
     font-size: 0.7rem;
-    color: var(--text-light);
+    color: var(--text-muted);
     margin-top: 6px;
     text-align: right;
 }
@@ -316,11 +316,11 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background: var(--bg-soft);
+    background: var(--bg-muted);
     border: none;
     width: 28px;
     height: 28px;
-    border-radius: 6px;
+    border-radius: var(--radius-xs);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -335,8 +335,8 @@
 }
 
 .message-copy-btn:hover {
-    background: var(--border-light);
-    color: var(--text-dark);
+    background: var(--border);
+    color: var(--text-primary);
 }
 
 /* Typing Indicator */
@@ -349,7 +349,7 @@
 .typing-indicator span {
     width: 10px;
     height: 10px;
-    background: var(--accent-coral);
+    background: var(--primary);
     border-radius: 50%;
     animation: typingBounce 1.4s infinite;
 }
@@ -381,7 +381,7 @@
 .admin-mimi-input {
     padding: 16px 20px;
     background: var(--bg-card);
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid var(--border);
     display: flex;
     gap: 12px;
     flex-shrink: 0;
@@ -390,28 +390,30 @@
 .admin-mimi-input input {
     flex: 1;
     padding: 14px 20px;
-    border: 2px solid var(--border-light);
-    border-radius: 100px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-full);
     font-size: 0.95rem;
     outline: none;
     transition: border-color 0.2s;
+    background: var(--bg-card);
+    color: var(--text-primary);
 }
 
 .admin-mimi-input input:focus {
-    border-color: var(--accent-coral);
+    border-color: var(--primary);
 }
 
 .admin-mimi-input input::placeholder {
-    color: var(--text-light);
+    color: var(--text-muted);
 }
 
 .admin-mimi-input .send-btn {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent-coral) 0%, var(--primary-orange-dark) 100%);
+    background: var(--gradient-primary);
     border: none;
-    color: var(--text-dark);
+    color: var(--white);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -422,7 +424,7 @@
 
 .admin-mimi-input .send-btn:hover:not(:disabled) {
     transform: scale(1.05);
-    box-shadow: var(--shadow-premium);
+    box-shadow: var(--shadow-lg);
 }
 
 .admin-mimi-input .send-btn:disabled {
@@ -434,7 +436,7 @@
 .admin-mimi-footer {
     padding: 10px 20px;
     background: var(--bg-card);
-    color: var(--text-light);
+    color: var(--text-muted);
     font-size: 0.75rem;
     display: flex;
     align-items: center;
@@ -453,12 +455,12 @@
 }
 
 .admin-mimi-messages::-webkit-scrollbar-thumb {
-    background: var(--text-medium);
+    background: var(--slate-300);
     border-radius: 4px;
 }
 
 .admin-mimi-messages::-webkit-scrollbar-thumb:hover {
-    background: var(--text-light);
+    background: var(--slate-400);
 }
 
 /* Mobile Responsive */

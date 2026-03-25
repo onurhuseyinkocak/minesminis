@@ -8,9 +8,9 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, Check, Menu, X, Mic, Gamepad2, BookOpen,
-  Star, Trophy, GraduationCap, Users, School,
+  Star, GraduationCap,
   ChevronRight, Zap, Brain, Globe, Music,
-  PenTool, Eye, Volume2, Layers,
+  PenTool, Eye,
 } from 'lucide-react';
 import LottieCharacter from '../components/LottieCharacter';
 
@@ -92,8 +92,6 @@ const COMP_ROWS: CompRow[] = [
   { feature: { tr: 'Fonetik kısıtlamalı hikayeler', en: 'Phonics-constrained stories' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Hece sayma oyunu', en: 'Syllable counting game' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Konuşma tanıma (SayIt)', en: 'Speech recognition (SayIt)' }, us: true, duolingo: true, lingokids: false },
-  { feature: { tr: 'Ebeveyn dashboard', en: 'Parent dashboard' }, us: true, duolingo: false, lingokids: true },
-  { feature: { tr: 'Öğretmen dashboard', en: 'Teacher dashboard' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Kelime ezber', en: 'Vocabulary memorisation' }, us: true, duolingo: true, lingokids: true },
 ];
 
@@ -161,7 +159,7 @@ const HOW_STEPS = [
     num: '3',
     bg: 'bg-success-600',
     title: { tr: 'Sonucu Gör', en: 'See the Results' },
-    desc: { tr: 'Ebeveyn panelinden her dersi, her ilerlemeyi canlı takip et.', en: 'Track every lesson and every milestone live from the parent dashboard.' },
+    desc: { tr: 'XP, seriler, rozetler ve haftalık hedeflerle ilerlemeyi anlık takip et.', en: 'Track progress in real-time with XP, streaks, badges and weekly goals.' },
   },
 ];
 
@@ -193,17 +191,6 @@ const WHO_FOR = [
     points: {
       tr: ['Okuma akıcılığı kazanır', '16 oyun türüyle motivasyon yüksek', 'Türkçe fonetik tuzakları aşar'],
       en: ['Builds reading fluency', 'Motivated with 16 game types', 'Overcomes Turkish phonetic traps'],
-    },
-  },
-  {
-    icon: <School size={28} />,
-    bg: 'bg-success-100',
-    iconColor: 'text-success-600',
-    audience: { tr: 'Öğretmenler', en: 'Teachers' },
-    age: { tr: 'Tüm sınıflar', en: 'All classrooms' },
-    points: {
-      tr: ['Öğrenci ilerleme takibi', 'Fonetik ustalaşma haritası', 'Türk müfredatıyla uyumlu'],
-      en: ['Student progress tracking', 'Phonics mastery map', 'Aligned to Turkish curriculum'],
     },
   },
 ];
@@ -360,9 +347,6 @@ export default function Landing() {
             <a href="#how" className="font-display font-semibold text-sm text-ink-600 hover:text-primary-500 transition-colors">
               {t(lang, 'Nasıl Çalışır', 'How It Works')}
             </a>
-            <a href="#school" className="font-display font-semibold text-sm text-ink-600 hover:text-primary-500 transition-colors">
-              {t(lang, 'Okul', 'School')}
-            </a>
             <a href="#pricing" className="font-display font-semibold text-sm text-amber-600 hover:text-amber-700 transition-colors">
               {t(lang, 'Erken Kayıt', 'Early Bird')}
             </a>
@@ -411,7 +395,6 @@ export default function Landing() {
                   { href: '#features', label: t(lang, 'Özellikler', 'Features') },
                   { href: '#compare', label: t(lang, 'Karşılaştır', 'Compare') },
                   { href: '#how', label: t(lang, 'Nasıl Çalışır', 'How It Works') },
-                  { href: '#school', label: t(lang, 'Okul', 'School') },
                 ].map(item => (
                   <a
                     key={item.href}
@@ -991,78 +974,6 @@ export default function Landing() {
       </section>
 
       {/* ══════════════════════════════════════
-          SCHOOL / B2B SECTION
-          ══════════════════════════════════════ */}
-      <section id="school" className="py-16 lg:py-24 bg-ink-900">
-        <div className="max-w-6xl mx-auto px-4 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="font-display font-bold text-primary-400 text-sm uppercase tracking-widest mb-4">
-                {t(lang, 'Okullar & Öğretmenler', 'Schools & Teachers')}
-              </p>
-              <h2 className="font-display font-black text-white mb-5" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}>
-                {t(lang,
-                  'Sınıfınıza Fonetik Getirin',
-                  'Bring Phonics to Your Classroom'
-                )}
-              </h2>
-              <p className="font-body text-ink-300 text-lg mb-8 leading-relaxed">
-                {t(lang,
-                  'Öğretmen dashboard, sınıf yönetimi, her öğrenci için fonetik ustalaşma haritası, ödev verme, ilerleme raporları.',
-                  'Teacher dashboard, classroom management, phonics mastery map per student, homework assignment, progress reports.'
-                )}
-              </p>
-              <div className="grid sm:grid-cols-2 gap-4 mb-8">
-                {[
-                  { icon: <Users size={18} />, label: { tr: 'Sınıf Yönetimi', en: 'Class Management' } },
-                  { icon: <Layers size={18} />, label: { tr: 'Fonetik Harita', en: 'Phonics Map' } },
-                  { icon: <Trophy size={18} />, label: { tr: 'Liderlik Tablosu', en: 'Leaderboard' } },
-                  { icon: <Volume2 size={18} />, label: { tr: 'Haftalık Rapor', en: 'Weekly Report' } },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-ink-800 rounded-2xl px-4 py-3">
-                    <span className="text-primary-400">{item.icon}</span>
-                    <span className="font-display font-bold text-white text-sm">
-                      {t(lang, item.label.tr, item.label.en)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <Link
-                to="/login?tab=signup"
-                className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white font-display font-extrabold text-base px-7 py-4 rounded-2xl transition-all duration-150 hover:scale-105"
-              >
-                {t(lang, 'Öğretmen Hesabı Aç', 'Open Teacher Account')}
-                <ArrowRight size={18} />
-              </Link>
-            </div>
-
-            <div className="space-y-4">
-              {[
-                { num: '01', label: { tr: 'Öğrenci kodu ile kayıt — veliden izin gerekmez', en: 'Student code signup — no parent permission needed' } },
-                { num: '02', label: { tr: 'Her öğrencinin fonetik yolculuğunu anlık izle', en: 'Track every student\'s phonics journey in real-time' } },
-                { num: '03', label: { tr: 'Risk altındaki öğrenciler otomatik tespit edilir', en: 'At-risk students automatically detected' } },
-                { num: '04', label: { tr: 'Ebeveynlere haftalık rapor otomatik gönderilir', en: 'Weekly reports automatically sent to parents' } },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="flex items-start gap-4 bg-ink-800 rounded-2xl p-5"
-                >
-                  <span className="font-display font-black text-primary-400 text-2xl leading-none w-10 flex-shrink-0">{item.num}</span>
-                  <span className="font-body text-ink-300 text-sm leading-relaxed pt-1">
-                    {t(lang, item.label.tr, item.label.en)}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════
           EARLY BIRD PRICING
           ══════════════════════════════════════ */}
       <section id="pricing" className="py-16 lg:py-24 bg-gradient-to-b from-cream-50 to-white">
@@ -1106,12 +1017,12 @@ export default function Landing() {
                   'Günlük 1 ders',
                   '7 fonetik grup — tümüne erişim',
                   '5 oyun türü',
-                  'Ebeveyn özet görünümü',
+                  'XP, rozet ve seri takibi',
                 ] : [
                   '1 lesson per day',
                   '7 phonics groups — full access',
                   '5 game types',
-                  'Parent summary view',
+                  'XP, badges and streak tracking',
                 ]).map(item => (
                   <li key={item} className="flex items-start gap-2">
                     <Check size={14} className="text-success-500 flex-shrink-0 mt-0.5" />
@@ -1151,14 +1062,12 @@ export default function Landing() {
                 {(lang === 'tr' ? [
                   'Sınırsız ders',
                   'Tüm 16 oyun türü',
-                  'Tam ebeveyn + öğretmen paneli',
                   'Haftalık ilerleme raporu',
                   'Reklamsız deneyim',
                   'Öncelikli destek',
                 ] : [
                   'Unlimited lessons',
                   'All 16 game types',
-                  'Full parent + teacher dashboard',
                   'Weekly progress reports',
                   'Ad-free experience',
                   'Priority support',
@@ -1268,7 +1177,6 @@ export default function Landing() {
                 {[
                   { to: '#features', label: t(lang, 'Özellikler', 'Features') },
                   { to: '#compare', label: t(lang, 'Karşılaştırma', 'Compare') },
-                  { to: '#school', label: t(lang, 'Okullar', 'Schools') },
                   { to: '/login?tab=signup', label: t(lang, 'Ücretsiz Başla', 'Start Free') },
                 ].map(item => (
                   item.to.startsWith('#')

@@ -38,10 +38,11 @@
   border-radius: var(--admin-radius-lg);
   overflow: hidden;
   transition: box-shadow var(--admin-transition);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-analytics-chart:hover {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .adm-analytics-chart.full {
@@ -92,11 +93,12 @@
   gap: var(--space-md);
   transition: transform var(--admin-transition),
               box-shadow var(--admin-transition);
+  box-shadow: var(--shadow-card);
 }
 
 .adm-analytics-stat:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .adm-analytics-stat-icon {

@@ -1,141 +1,122 @@
+/**
+ * Onboarding — MinesMinis
+ * Student-only flow: Welcome → Age group → Placement test → Learning path
+ */
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { userService } from '../services/userService';
-import { createClassroom } from '../services/classroomService';
 import toast from 'react-hot-toast';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import {
-  ArrowLeft, ArrowRight, Rocket, Check, Plus, Trash2,
-  Users, Heart,
-  Baby, User, BookOpen, Globe,
-  Volume2, Lock as LockIcon, CheckCircle, MapPin, Settings, UserPlus,
+  ArrowLeft, ArrowRight, Rocket, Check, CheckCircle,
+  Baby, BookOpen, Globe, Volume2, Lock as LockIcon, Sparkles,
 } from 'lucide-react';
 import { Button } from '../components/ui';
 import './Onboarding.css';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
-type UserRole = 'student' | 'teacher' | 'parent';
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-interface ChildEntry {
-  name: string;
-  age: string;
-  avatar: string;
-}
+// ── Constants ─────────────────────────────────────────────────────────────────
 
-// ── Constants ──────────────────────────────────────────────────────────────────
-
-
-const STUDENT_AGE_GROUPS: { value: string; label: string; labelTr: string; phase: string; phaseTr: string; icon: React.ReactNode; color: string }[] = [
-  { value: '3-5', label: 'Ages 3-5', labelTr: '3-5 Yaş', phase: 'Little Ears', phaseTr: 'Küçük Kulaklar', icon: <Baby size={24} />, color: 'var(--primary)' },
-  { value: '5-7', label: 'Ages 5-7', labelTr: '5-7 Yaş', phase: 'Word Builders', phaseTr: 'Kelime Ustası', icon: <User size={24} />, color: 'var(--primary)' },
-  { value: '7-9', label: 'Ages 7-9', labelTr: '7-9 Yaş', phase: 'Story Makers', phaseTr: 'Hikaye Yazarı', icon: <BookOpen size={24} />, color: 'var(--primary)' },
-  { value: '9-10', label: 'Ages 9-10', labelTr: '9-10 Yaş', phase: 'Young Explorers', phaseTr: 'Genç Kaşif', icon: <Globe size={24} />, color: 'var(--primary)' },
+const STUDENT_AGE_GROUPS: {
+  value: string; label: string; labelTr: string;
+  phase: string; phaseTr: string; emoji: string;
+  desc: string; descTr: string;
+}[] = [
+  {
+    value: '3-5', label: 'Ages 3–5', labelTr: '3–5 Yaş',
+    phase: 'Little Ears', phaseTr: 'Küçük Kulaklar',
+    emoji: '🌱',
+    desc: 'First sounds & letters', descTr: 'İlk sesler ve harfler',
+  },
+  {
+    value: '5-7', label: 'Ages 5–7', labelTr: '5–7 Yaş',
+    phase: 'Word Builders', phaseTr: 'Kelime Ustaları',
+    emoji: '📖',
+    desc: 'Reading first words', descTr: 'İlk kelimeleri okuma',
+  },
+  {
+    value: '7-9', label: 'Ages 7–9', labelTr: '7–9 Yaş',
+    phase: 'Story Makers', phaseTr: 'Hikaye Yazarları',
+    emoji: '✍️',
+    desc: 'Fluency & stories', descTr: 'Akıcılık ve hikayeler',
+  },
+  {
+    value: '9-10', label: 'Ages 9–10', labelTr: '9–10 Yaş',
+    phase: 'Young Explorers', phaseTr: 'Genç Kaşifler',
+    emoji: '🚀',
+    desc: 'Advanced phonics', descTr: 'İleri fonetik',
+  },
 ];
 
 const PLACEMENT_QUESTIONS = [
   {
     id: 1,
-    title: 'Can you hear the first sound?',
-    titleTr: 'İlk sesi duyabiliyor musun?',
-    instruction: 'What sound does "Ball" start with?',
-    instructionTr: '"Ball" kelimesi hangi sesle başlar?',
+    title: 'What sound does "Ball" start with?',
+    titleTr: '"Ball" hangi sesle başlar?',
     options: [
-      { label: 'B', labelTr: 'B', value: 'correct' },
-      { label: 'D', labelTr: 'D', value: 'wrong1' },
-      { label: 'P', labelTr: 'P', value: 'wrong2' },
+      { label: 'B', value: 'correct' },
+      { label: 'D', value: 'wrong1' },
+      { label: 'P', value: 'wrong2' },
     ],
     correct: 'correct',
-    skill: 'phoneme_awareness',
   },
   {
     id: 2,
-    title: 'What does this letter say?',
-    titleTr: 'Bu harf ne sesini çıkarır?',
-    instruction: 'The letter "S" makes the sound...',
-    instructionTr: '"S" harfinin sesi...',
+    title: 'The letter "S" makes which sound?',
+    titleTr: '"S" harfi hangi sesi çıkarır?',
     options: [
-      { label: '"sss" like a snake', labelTr: '"sss" yılan gibi', value: 'correct' },
-      { label: '"mmm" like humming', labelTr: '"mmm" mırıldanma gibi', value: 'wrong1' },
-      { label: '"zzz" like a bee', labelTr: '"zzz" arı gibi', value: 'wrong2' },
+      { label: '"sss" — like a snake', value: 'correct' },
+      { label: '"mmm" — humming', value: 'wrong1' },
+      { label: '"zzz" — like a bee', value: 'wrong2' },
     ],
     correct: 'correct',
-    skill: 'letter_sound',
   },
   {
     id: 3,
-    title: 'Blend these sounds!',
-    titleTr: 'Bu sesleri birleştir!',
-    instruction: 's - a - t  =  ?',
-    instructionTr: 's - a - t  =  ?',
+    title: 's – a – t = ?',
+    titleTr: 's – a – t = ?',
     options: [
-      { label: 'sat', labelTr: 'sat', value: 'correct' },
-      { label: 'set', labelTr: 'set', value: 'wrong1' },
-      { label: 'sit', labelTr: 'sit', value: 'wrong2' },
+      { label: 'sat', value: 'correct' },
+      { label: 'set', value: 'wrong1' },
+      { label: 'sit', value: 'wrong2' },
     ],
     correct: 'correct',
-    skill: 'blending',
   },
 ];
 
 const PHONICS_GROUPS = [
-  { id: 1, name: 'Group 1', sounds: 's, a, t, p', description: 'First letter sounds and simple CVC words' },
-  { id: 2, name: 'Group 2', sounds: 'i, n, m, d', description: 'More consonants and short vowel words' },
-  { id: 3, name: 'Group 3', sounds: 'g, o, c, k', description: 'Hard sounds and word families' },
-  { id: 4, name: 'Group 4', sounds: 'e, u, r, b', description: 'All short vowels and blends' },
-  { id: 5, name: 'Group 5', sounds: 'h, f, l, ss', description: 'Consonant digraphs and doubles' },
-  { id: 6, name: 'Group 6', sounds: 'j, v, w, x', description: 'Less common consonants' },
-  { id: 7, name: 'Group 7', sounds: 'y, z, qu, ch', description: 'Advanced digraphs and trigraphs' },
+  { id: 1, name: 'Group 1', sounds: 's, a, t, p', desc: 'First letter sounds & simple words' },
+  { id: 2, name: 'Group 2', sounds: 'i, n, m, d', desc: 'More consonants & short vowels' },
+  { id: 3, name: 'Group 3', sounds: 'g, o, c, k', desc: 'Hard sounds & word families' },
+  { id: 4, name: 'Group 4', sounds: 'e, u, r, b', desc: 'All short vowels & blends' },
+  { id: 5, name: 'Group 5', sounds: 'h, f, l, ss', desc: 'Consonant digraphs & doubles' },
+  { id: 6, name: 'Group 6', sounds: 'j, v, w, x', desc: 'Less common consonants' },
+  { id: 7, name: 'Group 7', sounds: 'y, z, qu, ch', desc: 'Advanced digraphs & trigraphs' },
 ];
 
-const GRADE_LEVELS = ['Pre-K', 'Kindergarten', '1st Grade', '2nd Grade', '3rd Grade', '4th Grade'];
-const STUDENT_RANGES = ['1-10', '11-25', '26-40', '40+'];
-
-const CHILD_AVATAR_COLORS = [
-  'var(--primary)', 'var(--secondary, #14b8a6)', 'var(--accent, #f59e0b)',
-  'var(--error, #ef4444)', 'var(--info, #3b82f6)', 'var(--warning, #8b5cf6)',
-];
-
-const CHILD_AVATAR_INITIALS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'];
-
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function computePhonicsGroup(score: number, ageGroup: string): number {
   if (score <= 1) return 1;
   if (score === 2) return ageGroup === '3-5' ? 1 : 2;
   if (score === 3) return ageGroup === '9-10' ? 4 : 3;
-  if (score === 4) return ageGroup === '9-10' ? 5 : 4;
   const ageMap: Record<string, number> = { '3-5': 3, '5-7': 4, '7-9': 5, '9-10': 6 };
-  return ageMap[ageGroup] ?? 5;
+  return ageMap[ageGroup] ?? 3;
 }
 
-function generateJoinCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
+// ── Slide animation ────────────────────────────────────────────────────────────
 
-function recommendedPhonicsGroup(gradeLevels: string[]): number {
-  if (gradeLevels.includes('Pre-K') || gradeLevels.includes('Kindergarten')) return 1;
-  if (gradeLevels.includes('1st Grade')) return 3;
-  if (gradeLevels.includes('2nd Grade')) return 4;
-  if (gradeLevels.includes('3rd Grade')) return 5;
-  if (gradeLevels.includes('4th Grade')) return 6;
-  return 1;
-}
-
-// ── Slide animation variants ───────────────────────────────────────────────────
-
-const slideVariants = {
-  enter: (dir: number) => ({ x: dir > 0 ? 280 : -280, opacity: 0 }),
+const slide = {
+  enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit: (dir: number) => ({ x: dir > 0 ? -280 : 280, opacity: 0 }),
+  exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
 };
+
+const TOTAL_STEPS = 4;
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
@@ -146,291 +127,204 @@ const Onboarding: React.FC = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState(1);
-  const [role, setRole] = useState<UserRole | ''>('');
+  const [dir, setDir] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Student state
+  // Step 1: nickname
+  const [nickname, setNickname] = useState(user?.displayName?.split(' ')[0] || '');
+
+  // Step 2: age group
   const [ageGroup, setAgeGroup] = useState('');
-  const [placementAnswers, setPlacementAnswers] = useState<Record<number, string>>({});
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+
+  // Step 3: placement test
+  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [questionIdx, setQuestionIdx] = useState(0);
   const [placementDone, setPlacementDone] = useState(false);
-  const [startingPhonicsGroup, setStartingPhonicsGroup] = useState(1);
+  const [startingGroup, setStartingGroup] = useState(1);
 
-  // Teacher state
-  const [schoolName, setSchoolName] = useState('');
-  const [teacherGrades, setTeacherGrades] = useState<string[]>([]);
-  const [studentCount, setStudentCount] = useState('');
-  const [classroomName, setClassroomName] = useState('');
-  const [classroomGrade, setClassroomGrade] = useState('');
-  const [joinCode] = useState(() => generateJoinCode());
-  const [selectedPhonicsGroup, setSelectedPhonicsGroup] = useState(1);
+  const goNext = useCallback(() => { setDir(1); setStep(s => Math.min(s + 1, TOTAL_STEPS)); }, []);
+  const goPrev = useCallback(() => { setDir(-1); setStep(s => Math.max(s - 1, 1)); }, []);
 
-  // Parent state
-  const [children, setChildren] = useState<ChildEntry[]>([{ name: '', age: '', avatar: 'A' }]);
-  const [dailyTimeLimit, setDailyTimeLimit] = useState(30);
-  const [weeklyEmails, setWeeklyEmails] = useState(true);
-
-  // ── Step calculations ──────────────────────────────────────────────────────
-  // Step 1=role, Student: 2=age, 3=placement, 4=meet mimi (learning path merged in)
-  const totalSteps = role === 'student' ? 4 : role === 'teacher' ? 4 : role === 'parent' ? 3 : 4;
-
-
-  const nextStep = useCallback(() => {
-    setDirection(1);
-    setStep((s) => Math.min(s + 1, totalSteps));
-  }, [totalSteps]);
-
-  const prevStep = useCallback(() => {
-    setDirection(-1);
-    setStep((s) => Math.max(s - 1, 1));
-  }, []);
-
-  // ── Placement test logic ───────────────────────────────────────────────────
-  const handlePlacementAnswer = (questionId: number, answer: string) => {
-    const updated = { ...placementAnswers, [questionId]: answer };
-    setPlacementAnswers(updated);
-
-    if (currentQuestion < PLACEMENT_QUESTIONS.length - 1) {
-      setCurrentQuestion((c) => c + 1);
-    } else {
-      let score = 0;
-      PLACEMENT_QUESTIONS.forEach((q) => {
-        if (updated[q.id] === q.correct) score++;
-      });
-      const group = computePhonicsGroup(score, ageGroup);
-      setStartingPhonicsGroup(group);
-      setPlacementDone(true);
-    }
-  };
-
-  // ── Teacher grade toggle ───────────────────────────────────────────────────
-  const toggleGrade = (grade: string) => {
-    setTeacherGrades((prev) =>
-      prev.includes(grade) ? prev.filter((g) => g !== grade) : [...prev, grade]
-    );
-  };
-
-  // ── Parent child management ────────────────────────────────────────────────
-  const updateChild = (index: number, field: keyof ChildEntry, value: string) => {
-    setChildren((prev) => prev.map((c, i) => (i === index ? { ...c, [field]: value } : c)));
-  };
-
-  const addChild = () => {
-    if (children.length < 4) {
-      setChildren((prev) => [...prev, { name: '', age: '', avatar: 'A' }]);
-    }
-  };
-
-  const removeChild = (index: number) => {
-    if (children.length > 1) {
-      setChildren((prev) => prev.filter((_, i) => i !== index));
-    }
-  };
-
-  // ── Can proceed check ─────────────────────────────────────────────────────
   const canProceed = (): boolean => {
-    if (step === 1) return !!role;
-
-    if (role === 'student') {
-      if (step === 2) return !!ageGroup;
-      if (step === 3) return placementDone;
-      if (step === 4) return true;
-    }
-
-    if (role === 'teacher') {
-      if (step === 2) return teacherGrades.length > 0 && !!studentCount;
-      if (step === 3) return !!classroomName && !!classroomGrade;
-      if (step === 4) return true;
-    }
-
-    if (role === 'parent') {
-      if (step === 2) return children.every((c) => c.name.trim() !== '' && c.age !== '');
-      if (step === 3) return true;
-    }
-
+    if (step === 1) return nickname.trim().length >= 2;
+    if (step === 2) return !!ageGroup;
+    if (step === 3) return placementDone;
     return true;
   };
 
-  // ── Submit ─────────────────────────────────────────────────────────────────
-  const handleSubmit = async () => {
-    if (!user) { navigate('/login'); return; }
+  const handleAnswer = (questionId: number, value: string) => {
+    const updated = { ...answers, [questionId]: value };
+    setAnswers(updated);
+    if (questionIdx < PLACEMENT_QUESTIONS.length - 1) {
+      setTimeout(() => setQuestionIdx(i => i + 1), 350);
+    } else {
+      const score = PLACEMENT_QUESTIONS.filter(q => updated[q.id] === q.correct).length;
+      const group = computePhonicsGroup(score, ageGroup);
+      setStartingGroup(group);
+      setTimeout(() => setPlacementDone(true), 350);
+    }
+  };
 
+  const handleFinish = async () => {
+    if (!user) { navigate('/login'); return; }
     setIsSubmitting(true);
     try {
-      if (role === 'student') {
-        const gradeMap: Record<string, string> = {
-          '3-5': 'primary',
-          '5-7': 'primary',
-          '7-9': 'grade2',
-          '9-10': 'grade4',
-        };
-        const userId = user.uid ?? (user as unknown as { id?: string }).id;
-        const placementScore = PLACEMENT_QUESTIONS.filter(q => placementAnswers[q.id] === q.correct).length;
+      const gradeMap: Record<string, string> = {
+        '3-5': 'primary', '5-7': 'primary', '7-9': 'grade2', '9-10': 'grade4',
+      };
+      const uid = user.uid ?? (user as unknown as { id?: string }).id;
+      const placementScore = PLACEMENT_QUESTIONS.filter(q => answers[q.id] === q.correct).length;
 
-        await userService.createOrUpdateUserProfile(user, {
-          role: 'student',
-          displayName: user.displayName || 'Explorer',
-          grade: gradeMap[ageGroup] || 'primary',
-          avatar_emoji: 'A',
-          mascotId: 'mimi_dragon',
+      await userService.createOrUpdateUserProfile(user, {
+        role: 'student',
+        displayName: nickname.trim() || user.displayName || 'Explorer',
+        grade: gradeMap[ageGroup] || 'primary',
+        avatar_emoji: 'A',
+        mascotId: 'mimi_dragon',
+      });
+
+      if (uid) {
+        const existing = await userService.getUserProfile(uid);
+        const base = (existing?.settings as Record<string, unknown>) ?? {};
+        await userService.updateUserProfile(uid, {
+          settings: {
+            ...base,
+            setup_completed: true,
+            setup_date: new Date().toISOString(),
+            avatar_emoji: 'A',
+            mascotId: 'mimi_dragon',
+            startingPhonicsGroup: startingGroup,
+            ageGroup,
+            placementScore,
+          },
         });
-
-        // Extend settings with placement data — read first to merge safely
-        if (userId) {
-          const existing = await userService.getUserProfile(userId);
-          const baseSettings = (existing?.settings as Record<string, unknown>) ?? {};
-          await userService.updateUserProfile(userId, {
-            settings: {
-              ...baseSettings,
-              setup_completed: true,
-              setup_date: new Date().toISOString(),
-              avatar_emoji: 'A',
-              mascotId: 'mimi_dragon',
-              startingPhonicsGroup,
-              ageGroup,
-              placementScore,
-            },
-          });
-        }
-
-        localStorage.setItem(LS_PLACEMENT_RESULT, String(startingPhonicsGroup));
-
-        const { createPet } = await import('../services/petService');
-        await createPet(user.uid, 'mimi_dragon', user.displayName || 'Explorer');
       }
 
-      if (role === 'teacher') {
-        await userService.createOrUpdateUserProfile(user, {
-          role: 'teacher',
-          displayName: user.displayName || 'Teacher',
-          grade: teacherGrades.join(', '),
-        });
+      localStorage.setItem(LS_PLACEMENT_RESULT, String(startingGroup));
 
-        const userId = user.uid ?? (user as unknown as { id?: string }).id;
-        if (userId) {
-          await userService.updateUserProfile(userId, {
-            settings: {
-              setup_completed: true,
-              setup_date: new Date().toISOString(),
-              schoolName,
-              teacherGrades,
-              studentCount,
-              classroomName,
-              classroomGrade,
-              joinCode,
-              selectedPhonicsGroup,
-            },
-          });
-        }
-
-        if (classroomName && classroomGrade) {
-          const teacherUid = user.uid ?? (user as unknown as { id?: string }).id;
-          if (teacherUid) {
-            await createClassroom(teacherUid, classroomName, classroomGrade);
-          }
-        }
-      }
-
-      if (role === 'parent') {
-        await userService.createOrUpdateUserProfile(user, {
-          role: 'parent',
-          displayName: user.displayName || 'Parent',
-        });
-
-        // Save time limit to localStorage so TimeGuardedRoute can read it
-        localStorage.setItem('mimi_daily_time_limit', String(dailyTimeLimit));
-
-        const userId = user.uid ?? (user as unknown as { id?: string }).id;
-        if (userId) {
-          await userService.updateUserProfile(userId, {
-            settings: {
-              setup_completed: true,
-              setup_date: new Date().toISOString(),
-              children,
-              dailyTimeLimit,
-              weeklyEmails,
-            },
-          });
-        }
-      }
+      const { createPet } = await import('../services/petService');
+      await createPet(user.uid, 'mimi_dragon', nickname.trim() || user.displayName || 'Explorer');
 
       await refreshUserProfile();
-      toast.success(isTr ? "MinesMinis'e hoş geldin!" : 'Welcome to MinesMinis!');
+      toast.success(isTr ? `Hoş geldin, ${nickname}! Macera başlıyor!` : `Welcome, ${nickname}! Adventure starts!`);
       navigate('/dashboard');
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Please try again.';
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Please try again.';
       toast.error(`Oops! ${msg}`, { duration: 6000 });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // ── Render helpers ─────────────────────────────────────────────────────────
+  // ── Step 1: Welcome ───────────────────────────────────────────────────────
 
-  const renderProgressBar = () => (
-    <div className="onboarding-progress">
-      {Array.from({ length: totalSteps }, (_, i) => {
-        const s = i + 1;
-        const isActive = step === s;
-        const isCompleted = step > s;
-        return (
-          <div className="onboarding-progress-step" key={s}>
-            {i > 0 && (
-              <div className={`onboarding-progress-line ${isCompleted || isActive ? 'active' : ''}`} />
-            )}
-            <motion.div
-              className={`onboarding-progress-dot ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
-              animate={isActive ? { scale: [1, 1.08, 1] } : {}}
-              transition={{ repeat: Infinity, duration: 2 }}
-            >
-              {isCompleted ? <Check size={14} /> : s}
-            </motion.div>
-          </div>
-        );
-      })}
-    </div>
-  );
-
-  const renderNavActions = (opts?: { showBack?: boolean; nextLabel?: string; nextLabelTr?: string; onNext?: () => void; isLast?: boolean }) => {
-    const { showBack = true, nextLabel = 'Continue', nextLabelTr = 'Devam Et', onNext, isLast = false } = opts || {};
-    const label = isTr ? nextLabelTr : nextLabel;
-    return (
-      <div className="onboarding-actions">
-        {showBack && (
-          <Button variant="ghost" size="lg" onClick={prevStep} icon={<ArrowLeft size={18} />}>
-            {isTr ? 'Geri' : 'Back'}
-          </Button>
-        )}
-        <Button
-          variant="primary"
-          size="lg"
-          onClick={isLast ? handleSubmit : (onNext || nextStep)}
-          disabled={!canProceed()}
-          loading={isLast ? isSubmitting : false}
-          icon={isLast ? <Rocket size={18} /> : <ArrowRight size={18} />}
-        >
-          {isLast ? (isSubmitting ? (isTr ? 'Hazırlanıyor...' : 'Preparing...') : label) : label}
-        </Button>
-      </div>
-    );
-  };
-
-  // ── STUDENT PATH ───────────────────────────────────────────────────────────
-
-  const renderStudentAge = () => (
+  const renderWelcome = () => (
     <motion.div
-      key="student-age"
-      custom={direction}
-      variants={slideVariants}
+      key="welcome"
+      custom={dir}
+      variants={slide}
       initial="enter"
       animate="center"
       exit="exit"
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+      transition={{ type: 'spring', damping: 26, stiffness: 220 }}
       className="onboarding-step"
     >
-      <h2>{isTr ? 'Yaş grubun nedir?' : "What's your age group?"}</h2>
-      <p className="onboarding-step-sub">{isTr ? 'Sana en uygun öğrenme aşamasını seçmemize yardımcı olur' : 'This helps us pick the perfect learning phase for you'}</p>
+      {/* Hero mascot */}
+      <div className="onboarding-mascot-wrap">
+        <div className="onboarding-mascot-ring">
+          <span className="onboarding-mascot-emoji">🐉</span>
+        </div>
+        <div className="onboarding-mascot-sparkles">
+          {[...Array(5)].map((_, i) => (
+            <motion.span
+              key={i}
+              className="onboarding-sparkle"
+              style={{ '--i': i } as React.CSSProperties}
+              animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.4, 1, 0.4] }}
+              transition={{ repeat: Infinity, duration: 2 + i * 0.3, delay: i * 0.4 }}
+            >
+              <Sparkles size={10} />
+            </motion.span>
+          ))}
+        </div>
+      </div>
+
+      <h2 className="onboarding-welcome-title">
+        {isTr ? 'MinesMinis\'e Hoş Geldin!' : 'Welcome to MinesMinis!'}
+      </h2>
+      <p className="onboarding-step-sub">
+        {isTr
+          ? 'Ben Mimi! Seninle İngilizce öğreneceğim. Sana nasıl hitap edeyim?'
+          : "I'm Mimi! I'll be learning English with you. What should I call you?"
+        }
+      </p>
+
+      <div className="onboarding-name-wrap">
+        <input
+          type="text"
+          className="onboarding-name-input"
+          placeholder={isTr ? 'Adın veya takma adın...' : 'Your name or nickname...'}
+          value={nickname}
+          onChange={e => setNickname(e.target.value)}
+          maxLength={20}
+          autoFocus
+          onKeyDown={e => e.key === 'Enter' && canProceed() && goNext()}
+        />
+        {nickname.trim().length >= 2 && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="onboarding-name-check"
+          >
+            <Check size={16} />
+          </motion.div>
+        )}
+      </div>
+
+      {nickname.trim().length >= 2 && (
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="onboarding-name-preview"
+        >
+          {isTr ? `Merhaba, ${nickname}!` : `Hello, ${nickname}!`}
+        </motion.p>
+      )}
+
+      <div className="onboarding-actions">
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={goNext}
+          disabled={!canProceed()}
+          icon={<ArrowRight size={18} />}
+        >
+          {isTr ? 'Devam Et' : 'Continue'}
+        </Button>
+      </div>
+    </motion.div>
+  );
+
+  // ── Step 2: Age group ─────────────────────────────────────────────────────
+
+  const renderAgeGroup = () => (
+    <motion.div
+      key="age"
+      custom={dir}
+      variants={slide}
+      initial="enter"
+      animate="center"
+      exit="exit"
+      transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+      className="onboarding-step"
+    >
+      <h2>{isTr ? `${nickname}, kaç yaşındasın?` : `${nickname}, how old are you?`}</h2>
+      <p className="onboarding-step-sub">
+        {isTr
+          ? 'Yaş grubun mükemmel öğrenme yolunu belirler'
+          : 'Your age group shapes your perfect learning path'
+        }
+      </p>
 
       <div className="onboarding-age-grid">
         {STUDENT_AGE_GROUPS.map((ag) => (
@@ -439,561 +333,277 @@ const Onboarding: React.FC = () => {
             type="button"
             className={`onboarding-age-card ${ageGroup === ag.value ? 'selected' : ''}`}
             onClick={() => setAgeGroup(ag.value)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <span className="onboarding-age-icon-wrap">
-              {ag.icon}
-            </span>
+            <span className="onboarding-age-emoji">{ag.emoji}</span>
             <span className="onboarding-age-range">{isTr ? ag.labelTr : ag.label}</span>
-            <span className="onboarding-age-label">{isTr ? ag.phaseTr : ag.phase}</span>
+            <span className="onboarding-age-phase">{isTr ? ag.phaseTr : ag.phase}</span>
+            <span className="onboarding-age-label">{isTr ? ag.descTr : ag.desc}</span>
+            {ageGroup === ag.value && (
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="onboarding-age-check">
+                <Check size={14} />
+              </motion.div>
+            )}
           </motion.button>
         ))}
       </div>
 
-      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
+      <div className="onboarding-actions">
+        <Button variant="ghost" size="lg" onClick={goPrev} icon={<ArrowLeft size={18} />}>
+          {isTr ? 'Geri' : 'Back'}
+        </Button>
+        <Button variant="primary" size="lg" onClick={goNext} disabled={!canProceed()} icon={<ArrowRight size={18} />}>
+          {isTr ? 'Devam Et' : 'Continue'}
+        </Button>
+      </div>
     </motion.div>
   );
 
-  const renderPlacementTest = () => {
+  // ── Step 3: Placement test ────────────────────────────────────────────────
+
+  const renderPlacement = () => {
     if (placementDone) {
+      const group = PHONICS_GROUPS[startingGroup - 1];
       return (
         <motion.div
           key="placement-done"
-          custom={direction}
-          variants={slideVariants}
+          custom={dir}
+          variants={slide}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          transition={{ type: 'spring', damping: 26, stiffness: 220 }}
           className="onboarding-step"
         >
-          <div className="onboarding-step-icon-large onboarding-step-icon-success">
-            <CheckCircle size={40} />
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', damping: 15, stiffness: 300, delay: 0.1 }}
+            className="onboarding-step-icon-large onboarding-step-icon-success"
+          >
+            <CheckCircle size={44} />
+          </motion.div>
           <h2>{isTr ? 'Harika!' : 'Great job!'}</h2>
           <p className="onboarding-step-sub">
             {isTr
-              ? <><strong>Fonetik {PHONICS_GROUPS[startingPhonicsGroup - 1].name}</strong>'den başlamanı öneriyoruz</>
-              : <>Based on your answers, we recommend starting at <strong>Phonics {PHONICS_GROUPS[startingPhonicsGroup - 1].name}</strong></>
+              ? <><strong>{group.name}</strong>'den başlamanı öneriyoruz</>
+              : <>We recommend starting at <strong>{group.name}</strong></>
             }
           </p>
-          <div className="onboarding-placement-result">
-            <div className="onboarding-phonics-result-card">
-              <span className="onboarding-phonics-result-name">{PHONICS_GROUPS[startingPhonicsGroup - 1].name}</span>
-              <span className="onboarding-phonics-result-sounds">{PHONICS_GROUPS[startingPhonicsGroup - 1].sounds}</span>
-              <span className="onboarding-phonics-result-desc">{PHONICS_GROUPS[startingPhonicsGroup - 1].description}</span>
-            </div>
+          <div className="onboarding-phonics-result-card">
+            <span className="onboarding-phonics-result-name">{group.name}</span>
+            <span className="onboarding-phonics-result-sounds">{group.sounds}</span>
+            <span className="onboarding-phonics-result-desc">{group.desc}</span>
           </div>
-          {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
+          <div className="onboarding-actions">
+            <Button variant="ghost" size="lg" onClick={goPrev} icon={<ArrowLeft size={18} />}>
+              {isTr ? 'Geri' : 'Back'}
+            </Button>
+            <Button variant="primary" size="lg" onClick={goNext} icon={<ArrowRight size={18} />}>
+              {isTr ? 'Devam Et' : 'Continue'}
+            </Button>
+          </div>
         </motion.div>
       );
     }
 
-    const q = PLACEMENT_QUESTIONS[currentQuestion];
+    const q = PLACEMENT_QUESTIONS[questionIdx];
     return (
       <motion.div
-        key={`placement-q${currentQuestion}`}
-        custom={direction}
-        variants={slideVariants}
+        key={`q-${questionIdx}`}
+        custom={dir}
+        variants={slide}
         initial="enter"
         animate="center"
         exit="exit"
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        transition={{ type: 'spring', damping: 26, stiffness: 220 }}
         className="onboarding-step"
       >
-        <h2>{isTr ? q.titleTr : q.title}</h2>
-        <p className="onboarding-step-sub onboarding-step-sub-large">{isTr ? q.instructionTr : q.instruction}</p>
+        <p className="onboarding-placement-label">
+          {isTr ? 'Hızlı Test' : 'Quick Check'} · {questionIdx + 1}/{PLACEMENT_QUESTIONS.length}
+        </p>
+        <h2 className="onboarding-placement-question">
+          {isTr ? q.titleTr : q.title}
+        </h2>
 
-        <div className="onboarding-placement-progress">
+        <div className="onboarding-placement-dots">
           {PLACEMENT_QUESTIONS.map((_, i) => (
-            <div
-              key={i}
-              className={`onboarding-placement-dot ${i === currentQuestion ? 'active' : ''} ${i < currentQuestion ? 'done' : ''}`}
-            />
+            <div key={i} className={`onboarding-pdot ${i < questionIdx ? 'done' : ''} ${i === questionIdx ? 'active' : ''}`} />
           ))}
         </div>
 
         <div className="onboarding-placement-options">
           {q.options.map((opt) => {
-            const isSelected = placementAnswers[q.id] === opt.value;
+            const selected = answers[q.id] === opt.value;
             return (
               <motion.button
                 key={opt.value}
                 type="button"
-                className={`onboarding-placement-option ${isSelected ? 'selected' : ''}`}
-                onClick={() => handlePlacementAnswer(q.id, opt.value)}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
+                className={`onboarding-placement-option ${selected ? 'selected' : ''}`}
+                onClick={() => handleAnswer(q.id, opt.value)}
+                whileHover={{ scale: 1.01, x: 4 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <span className="onboarding-placement-option-indicator">
-                  {isSelected ? <Check size={16} /> : null}
+                  {selected ? <Check size={15} /> : null}
                 </span>
-                <span>{isTr ? opt.labelTr : opt.label}</span>
+                <span>{opt.label}</span>
               </motion.button>
             );
           })}
         </div>
 
         <div className="onboarding-actions">
-          <Button variant="ghost" size="lg" onClick={prevStep} icon={<ArrowLeft size={18} />}>
+          <Button variant="ghost" size="lg" onClick={goPrev} icon={<ArrowLeft size={18} />}>
             {isTr ? 'Geri' : 'Back'}
           </Button>
-          <span className="onboarding-question-counter">
-            {currentQuestion + 1} / {PLACEMENT_QUESTIONS.length}
-          </span>
         </div>
       </motion.div>
     );
   };
 
+  // ── Step 4: Learning path ─────────────────────────────────────────────────
+
   const renderLearningPath = () => {
-    const phase = STUDENT_AGE_GROUPS.find((a) => a.value === ageGroup);
-    const group = PHONICS_GROUPS[startingPhonicsGroup - 1];
-    const nextGroups = PHONICS_GROUPS.slice(startingPhonicsGroup, startingPhonicsGroup + 2);
+    const phase = STUDENT_AGE_GROUPS.find(a => a.value === ageGroup);
+    const group = PHONICS_GROUPS[startingGroup - 1];
+    const next = PHONICS_GROUPS.slice(startingGroup, startingGroup + 2);
 
     return (
       <motion.div
-        key="learning-path"
-        custom={direction}
-        variants={slideVariants}
+        key="path"
+        custom={dir}
+        variants={slide}
         initial="enter"
         animate="center"
         exit="exit"
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        transition={{ type: 'spring', damping: 26, stiffness: 220 }}
         className="onboarding-step"
       >
-        <div className="onboarding-step-icon-large">
-          <MapPin size={32} />
+        <div className="onboarding-step-icon-large onboarding-step-icon-primary">
+          <Rocket size={36} />
         </div>
-        <h2>{isTr ? 'Öğrenme Yolun' : 'Your Learning Path'}</h2>
+        <h2>{isTr ? `${nickname}, hazır mısın?` : `${nickname}, ready to fly?`}</h2>
         <p className="onboarding-step-sub">
           {isTr
-            ? <>{phase?.phaseTr || 'Aşama 1'} ile {group.name} başlıyor</>
-            : <>Starting in {phase?.phase || 'Phase 1'} with {group.name}</>
+            ? <>{phase?.phaseTr || 'İlk Adım'} aşamasından {group.name} ile başlıyoruz!</>
+            : <>Starting in {phase?.phase || 'Phase 1'} with <strong>{group.name}</strong>!</>
           }
         </p>
 
         <div className="onboarding-path-units">
-          <div className="onboarding-path-unit current">
+          <motion.div
+            className="onboarding-path-unit current"
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+          >
             <span className="onboarding-path-unit-icon"><Volume2 size={20} /></span>
             <div className="onboarding-path-unit-info">
               <strong>{group.name}</strong>
               <span>{group.sounds}</span>
             </div>
             <span className="onboarding-path-unit-badge">{isTr ? 'Buradan Başla' : 'Start Here'}</span>
-          </div>
-          {nextGroups.map((ng) => (
-            <div key={ng.id} className="onboarding-path-unit upcoming">
-              <span className="onboarding-path-unit-icon"><LockIcon size={20} /></span>
+          </motion.div>
+          {next.map((ng, i) => (
+            <motion.div
+              key={ng.id}
+              className="onboarding-path-unit upcoming"
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.15 + i * 0.08 }}
+            >
+              <span className="onboarding-path-unit-icon locked"><LockIcon size={18} /></span>
               <div className="onboarding-path-unit-info">
                 <strong>{ng.name}</strong>
                 <span>{ng.sounds}</span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {renderNavActions({ nextLabel: 'Begin Learning', nextLabelTr: 'Öğrenmeye Başla', isLast: true })}
-      </motion.div>
-    );
-  };
-
-  // ── TEACHER PATH ───────────────────────────────────────────────────────────
-
-  const renderTeacherAbout = () => (
-    <motion.div
-      key="teacher-about"
-      custom={direction}
-      variants={slideVariants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="onboarding-step"
-    >
-      <div className="onboarding-step-icon-large">
-        <UserPlus size={32} />
-      </div>
-      <h2>{isTr ? 'Hakkında' : 'About You'}</h2>
-      <p className="onboarding-step-sub">{isTr ? 'Öğretmenliğin hakkında biraz bilgi ver' : 'Tell us a bit about your teaching'}</p>
-
-      <div className="onboarding-form-group">
-        <label className="onboarding-label">{isTr ? 'Okul / Kurum (isteğe bağlı)' : 'School / Institution (optional)'}</label>
-        <input
-          type="text"
-          className="onboarding-input"
-          placeholder={isTr ? 'örn. Atatürk İlkokulu' : 'e.g. Sunshine Primary School'}
-          value={schoolName}
-          onChange={(e) => setSchoolName(e.target.value)}
-        />
-      </div>
-
-      <div className="onboarding-form-group">
-        <label className="onboarding-label">{isTr ? 'Öğrettiğin sınıf seviyeleri' : 'Grade levels you teach'}</label>
-        <div className="onboarding-chip-grid">
-          {GRADE_LEVELS.map((gl) => (
-            <button
-              key={gl}
-              type="button"
-              className={`onboarding-chip ${teacherGrades.includes(gl) ? 'selected' : ''}`}
-              onClick={() => toggleGrade(gl)}
+        <div className="onboarding-features-row">
+          {[
+            { icon: <Baby size={16} />, label: isTr ? 'Yaş uyumlu' : 'Age-adapted' },
+            { icon: <Globe size={16} />, label: isTr ? 'Fonetik sistem' : 'Phonics-based' },
+            { icon: <BookOpen size={16} />, label: isTr ? '16 oyun türü' : '16 game types' },
+          ].map((f, i) => (
+            <motion.div
+              key={i}
+              className="onboarding-feature-chip"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3 + i * 0.07 }}
             >
-              {teacherGrades.includes(gl) && <Check size={14} />}
-              {gl}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="onboarding-form-group">
-        <label className="onboarding-label">{isTr ? 'Kaç öğrencin var?' : 'How many students?'}</label>
-        <div className="onboarding-chip-grid">
-          {STUDENT_RANGES.map((sr) => (
-            <button
-              key={sr}
-              type="button"
-              className={`onboarding-chip ${studentCount === sr ? 'selected' : ''}`}
-              onClick={() => setStudentCount(sr)}
-            >
-              {studentCount === sr && <Check size={14} />}
-              {sr}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
-    </motion.div>
-  );
-
-  const renderCreateClassroom = () => (
-    <motion.div
-      key="teacher-classroom"
-      custom={direction}
-      variants={slideVariants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="onboarding-step"
-    >
-      <div className="onboarding-step-icon-large">
-        <Users size={32} />
-      </div>
-      <h2>{isTr ? 'İlk Sınıfını Oluştur' : 'Create First Classroom'}</h2>
-      <p className="onboarding-step-sub">{isTr ? 'Öğrencilerin katılabilmesi için bir sınıf oluştur' : 'Set up a classroom so students can join'}</p>
-
-      <div className="onboarding-form-group">
-        <label className="onboarding-label">{isTr ? 'Sınıf Adı' : 'Classroom Name'}</label>
-        <input
-          type="text"
-          className="onboarding-input"
-          placeholder={isTr ? 'örn. 3-A Sınıfı' : 'e.g. Grade 3 Class A'}
-          value={classroomName}
-          onChange={(e) => setClassroomName(e.target.value)}
-        />
-      </div>
-
-      <div className="onboarding-form-group">
-        <label className="onboarding-label">{isTr ? 'Sınıf Seviyesi' : 'Grade Level'}</label>
-        <select
-          className="onboarding-select"
-          value={classroomGrade}
-          onChange={(e) => setClassroomGrade(e.target.value)}
-        >
-          <option value="">{isTr ? 'Sınıf seç...' : 'Select grade...'}</option>
-          {GRADE_LEVELS.map((gl) => (
-            <option key={gl} value={gl}>{gl}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="onboarding-join-code-box">
-        <label className="onboarding-label">{isTr ? 'Bu kodu öğrencilerinle paylaş' : 'Share this code with your students'}</label>
-        <div className="onboarding-join-code">{joinCode}</div>
-        <p className="onboarding-join-code-hint">{isTr ? 'Öğrenciler bu kodu girerek sınıfına katılır' : 'Students enter this code to join your classroom'}</p>
-      </div>
-
-      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
-    </motion.div>
-  );
-
-  const renderChooseStarting = () => {
-    const recommended = recommendedPhonicsGroup(teacherGrades);
-    return (
-      <motion.div
-        key="teacher-starting"
-        custom={direction}
-        variants={slideVariants}
-        initial="enter"
-        animate="center"
-        exit="exit"
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="onboarding-step"
-      >
-        <div className="onboarding-step-icon-large">
-          <BookOpen size={32} />
-        </div>
-        <h2>{isTr ? 'Başlangıç Noktasını Seç' : 'Choose Starting Point'}</h2>
-        <p className="onboarding-step-sub">{isTr ? 'Sınıfının hangi Fonetik Gruptan başlaması gerektiğini seç. İstediğin zaman değiştirebilirsin.' : 'Select which Phonics Group your class should start with. You can change this anytime.'}</p>
-
-        <div className="onboarding-phonics-list">
-          {PHONICS_GROUPS.map((pg) => (
-            <motion.button
-              key={pg.id}
-              type="button"
-              className={`onboarding-phonics-item ${selectedPhonicsGroup === pg.id ? 'selected' : ''}`}
-              onClick={() => setSelectedPhonicsGroup(pg.id)}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-            >
-              <div className="onboarding-phonics-item-header">
-                <span className="onboarding-phonics-item-check">
-                  {selectedPhonicsGroup === pg.id ? <Check size={16} /> : null}
-                </span>
-                <strong>{pg.name}</strong>
-                <span className="onboarding-phonics-item-sounds">{pg.sounds}</span>
-                {pg.id === recommended && (
-                  <span className="onboarding-phonics-recommended">{isTr ? 'Önerilen' : 'Recommended'}</span>
-                )}
-              </div>
-              <span className="onboarding-phonics-item-desc">{pg.description}</span>
-            </motion.button>
+              {f.icon}
+              <span>{f.label}</span>
+            </motion.div>
           ))}
         </div>
 
-        {renderNavActions({ nextLabel: "Let's Start!", nextLabelTr: 'Başlayalım!', isLast: true })}
-      </motion.div>
-    );
-  };
-
-  // ── PARENT PATH ────────────────────────────────────────────────────────────
-
-  const renderAddChild = () => (
-    <motion.div
-      key="parent-child"
-      custom={direction}
-      variants={slideVariants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="onboarding-step"
-    >
-      <div className="onboarding-step-icon-large">
-        <Heart size={32} />
-      </div>
-      <h2>{isTr ? 'Çocuğunu Ekle' : 'Add Your Child'}</h2>
-      <p className="onboarding-step-sub">{isTr ? 'Çocuğun hakkında bilgi ver (en fazla 4)' : 'Tell us about your child (up to 4)'}</p>
-
-      <div className="onboarding-children-list">
-        {children.map((child, idx) => (
-          <div key={idx} className="onboarding-child-card">
-            <div className="onboarding-child-header">
-              <span className="onboarding-child-number">{isTr ? `Cocuk ${idx + 1}` : `Child ${idx + 1}`}</span>
-              {children.length > 1 && (
-                <button type="button" className="onboarding-child-remove" onClick={() => removeChild(idx)}>
-                  <Trash2 size={14} />
-                </button>
-              )}
-            </div>
-
-            <div className="onboarding-form-group">
-              <input
-                type="text"
-                className="onboarding-input"
-                placeholder={isTr ? 'Çocuğun adı' : "Child's name"}
-                value={child.name}
-                onChange={(e) => updateChild(idx, 'name', e.target.value)}
-              />
-            </div>
-
-            <div className="onboarding-form-group">
-              <select
-                className="onboarding-select"
-                value={child.age}
-                onChange={(e) => updateChild(idx, 'age', e.target.value)}
-              >
-                <option value="">{isTr ? 'Yaş...' : 'Age...'}</option>
-                {[3, 4, 5, 6, 7, 8, 9, 10].map((a) => (
-                  <option key={a} value={String(a)}>{isTr ? `${a} yasinda` : `${a} years old`}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="onboarding-child-avatars">
-              {CHILD_AVATAR_INITIALS.map((initial, i) => {
-                const bgColor = CHILD_AVATAR_COLORS[i % CHILD_AVATAR_COLORS.length];
-                return (
-                  <button
-                    key={initial}
-                    type="button"
-                    className={`onboarding-child-avatar-btn ${child.avatar === initial ? 'selected' : ''}`}
-                    onClick={() => updateChild(idx, 'avatar', initial)}
-                    style={{
-                      background: child.avatar === initial ? bgColor : 'var(--bg-card)',
-                      color: child.avatar === initial ? 'var(--text-on-primary)' : 'var(--text-secondary)',
-                    }}
-                  >
-                    {initial}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {children.length < 4 && (
-        <button type="button" className="onboarding-add-child-btn" onClick={addChild}>
-          <Plus size={16} /> {isTr ? 'Başka Çocuk Ekle' : 'Add Another Child'}
-        </button>
-      )}
-
-      {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
-    </motion.div>
-  );
-
-  const renderParentPreferences = () => (
-    <motion.div
-      key="parent-prefs"
-      custom={direction}
-      variants={slideVariants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="onboarding-step"
-    >
-      <div className="onboarding-step-icon-large">
-        <Settings size={32} />
-      </div>
-      <h2>{isTr ? 'Tercihler' : 'Preferences'}</h2>
-      <p className="onboarding-step-sub">{isTr ? 'Günlük limitleri ve bildirimleri ayarla' : 'Set up daily limits and notifications'}</p>
-
-      <div className="onboarding-form-group">
-        <label className="onboarding-label">
-          {isTr ? 'Günlük süre limiti: ' : 'Daily time limit: '}<strong>{dailyTimeLimit} {isTr ? 'dk' : 'min'}</strong>
-        </label>
-        <input
-          type="range"
-          className="onboarding-slider"
-          min={15}
-          max={60}
-          step={5}
-          value={dailyTimeLimit}
-          onChange={(e) => setDailyTimeLimit(Number(e.target.value))}
-        />
-        <div className="onboarding-slider-labels">
-          <span>15 {isTr ? 'dk' : 'min'}</span>
-          <span>60 {isTr ? 'dk' : 'min'}</span>
-        </div>
-      </div>
-
-      <div className="onboarding-form-group">
-        <label className="onboarding-toggle-row">
-          <span>{isTr ? 'Haftalık ilerleme e-postaları al' : 'Get weekly progress emails'}</span>
-          <button
-            type="button"
-            className={`onboarding-toggle ${weeklyEmails ? 'on' : ''}`}
-            onClick={() => setWeeklyEmails(!weeklyEmails)}
+        <div className="onboarding-actions">
+          <Button variant="ghost" size="lg" onClick={goPrev} icon={<ArrowLeft size={18} />}>
+            {isTr ? 'Geri' : 'Back'}
+          </Button>
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={handleFinish}
+            loading={isSubmitting}
+            icon={<Rocket size={18} />}
           >
-            <span className="onboarding-toggle-knob" />
-          </button>
-        </label>
-      </div>
-
-      <div className="onboarding-ready-banner">
-        <CheckCircle size={20} />
-        <span>{isTr ? 'Panelin hazır!' : 'Your dashboard is ready!'}</span>
-      </div>
-
-      {renderNavActions({ nextLabel: "Let's Start!", nextLabelTr: 'Başlayalım!', isLast: true })}
-    </motion.div>
-  );
-
-  // ── Step router ────────────────────────────────────────────────────────────
-
-  const renderCurrentStep = () => {
-    // Step 1 (role selection) is skipped — role auto-set to 'student'
-    if (step === 1) {
-      const roles: { value: UserRole; icon: React.ReactNode; label: string; labelTr: string; desc: string; descTr: string }[] = [
-        { value: 'student', icon: <User size={28} />, label: 'Student', labelTr: 'Öğrenci', desc: 'I want to learn English', descTr: 'İngilizce öğrenmek istiyorum' },
-        { value: 'parent', icon: <Heart size={28} />, label: 'Parent', labelTr: 'Ebeveyn', desc: "I'm setting up for my child", descTr: 'Çocuğum için kuruyorum' },
-        { value: 'teacher', icon: <Users size={28} />, label: 'Teacher', labelTr: 'Öğretmen', desc: 'I teach a classroom', descTr: 'Bir sınıf öğretiyorum' },
-      ];
-
-      return (
-        <motion.div
-          key="role-select"
-          custom={direction}
-          variants={slideVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="onboarding-step"
-        >
-          <h2>{isTr ? 'Sen kimsin?' : 'Who are you?'}</h2>
-          <p className="onboarding-step-sub">{isTr ? 'Sana en uygun deneyimi hazırlayalım' : "Let's set up the best experience for you"}</p>
-
-          <div className="onboarding-age-grid">
-            {roles.map((r) => (
-              <motion.button
-                key={r.value}
-                type="button"
-                className={`onboarding-age-card ${role === r.value ? 'selected' : ''}`}
-                onClick={() => setRole(r.value)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="onboarding-age-icon-wrap">{r.icon}</span>
-                <span className="onboarding-age-range">{isTr ? r.labelTr : r.label}</span>
-                <span className="onboarding-age-label">{isTr ? r.descTr : r.desc}</span>
-              </motion.button>
-            ))}
-          </div>
-
-          {renderNavActions({ showBack: false, nextLabel: 'Continue', nextLabelTr: 'Devam Et' })}
-        </motion.div>
-      );
-    }
-
-    if (role === 'student') {
-      if (step === 2) return renderStudentAge();
-      if (step === 3) return renderPlacementTest();
-      if (step === 4) return renderLearningPath(); // Meet Mimi merged into learning path
-    }
-
-    if (role === 'teacher') {
-      if (step === 2) return renderTeacherAbout();
-      if (step === 3) return renderCreateClassroom();
-      if (step === 4) return renderChooseStarting();
-    }
-
-    if (role === 'parent') {
-      if (step === 2) return renderAddChild();
-      if (step === 3) return renderParentPreferences();
-    }
-
-    return null;
+            {isSubmitting
+              ? (isTr ? 'Hazırlanıyor...' : 'Preparing...')
+              : (isTr ? 'Maceraya Başla!' : 'Begin Adventure!')
+            }
+          </Button>
+        </div>
+      </motion.div>
+    );
   };
 
-  // ── Main render ────────────────────────────────────────────────────────────
+  // ── Progress bar ──────────────────────────────────────────────────────────
+
+  const renderProgress = () => (
+    <div className="onboarding-progress">
+      {Array.from({ length: TOTAL_STEPS }, (_, i) => {
+        const s = i + 1;
+        const done = step > s;
+        const active = step === s;
+        return (
+          <div className="onboarding-progress-step" key={s}>
+            {i > 0 && <div className={`onboarding-progress-line ${done || active ? 'active' : ''}`} />}
+            <motion.div
+              className={`onboarding-progress-dot ${active ? 'active' : ''} ${done ? 'completed' : ''}`}
+              animate={active ? { scale: [1, 1.1, 1] } : {}}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              {done ? <Check size={13} /> : s}
+            </motion.div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="onboarding-page">
       <motion.div
         className="onboarding-card"
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        initial={{ scale: 0.94, opacity: 0, y: 24 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        {renderProgressBar()}
+        {renderProgress()}
 
-        <AnimatePresence mode="wait" custom={direction}>
-          {renderCurrentStep()}
+        <AnimatePresence mode="wait" custom={dir}>
+          {step === 1 && renderWelcome()}
+          {step === 2 && renderAgeGroup()}
+          {step === 3 && renderPlacement()}
+          {step === 4 && renderLearningPath()}
         </AnimatePresence>
       </motion.div>
     </div>

@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked, Flame, Star } from 'lucide-react';
 import './TopNav.css';
-import ParentGate, { hasParentGatePassed } from '../ParentGate';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 interface TopNavProps {
@@ -34,8 +33,6 @@ const EXTRA_NAV_ITEMS = [
   { path: '/reading', i18nKey: 'nav.reading', icon: BookMarked },
 ];
 
-type GateAction = 'logout' | 'settings';
-
 export default function TopNav({
   userName = '',
   avatarUrl,
@@ -51,35 +48,6 @@ export default function TopNav({
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Parent Gate state
-  const [gateAction, setGateAction] = useState<GateAction | null>(null);
-  const [gateReason, setGateReason] = useState<string>('');
-
-  const requestGate = useCallback(
-    (action: GateAction, reason: string) => {
-      setDropdownOpen(false);
-      setMobileOpen(false);
-      if (hasParentGatePassed()) {
-        if (action === 'logout' && onLogout) { onLogout(); return; }
-        if (action === 'settings') { navigate('/settings'); return; }
-      }
-      setGateReason(reason);
-      setGateAction(action);
-    },
-    [navigate, onLogout]
-  );
-
-  const handleGateSuccess = useCallback(() => {
-    const action = gateAction;
-    setGateAction(null);
-    if (action === 'logout' && onLogout) { onLogout(); return; }
-    if (action === 'settings') { navigate('/settings'); return; }
-  }, [gateAction, navigate, onLogout]);
-
-  const handleGateCancel = useCallback(() => {
-    setGateAction(null);
-  }, []);
 
   const isActive = (path: string) => {
     if (path === '/dashboard') return location.pathname === '/' || location.pathname === '/dashboard';
@@ -206,7 +174,7 @@ export default function TopNav({
                 <button
                   type="button"
                   className="topnav__dropdown-item"
-                  onClick={() => requestGate('settings', 'To access Settings')}
+                  onClick={() => { setDropdownOpen(false); navigate('/settings'); }}
                 >
                   <Settings size={16} /> {t('common.settings')}
                 </button>
@@ -216,7 +184,7 @@ export default function TopNav({
                     <button
                       type="button"
                       className="topnav__dropdown-item topnav__dropdown-item--danger"
-                      onClick={() => requestGate('logout', 'To sign out')}
+                      onClick={() => { setDropdownOpen(false); onLogout(); }}
                     >
                       <LogOut size={16} /> {t('common.logout')}
                     </button>
@@ -321,7 +289,7 @@ export default function TopNav({
             <button
               type="button"
               className="topnav__mobile-logout"
-              onClick={() => requestGate('logout', 'To sign out')}
+              onClick={() => { setMobileOpen(false); onLogout(); }}
             >
               <LogOut size={20} /> {t('common.logout')}
             </button>
@@ -329,13 +297,6 @@ export default function TopNav({
         </div>
       </div>
 
-      {gateAction !== null && (
-        <ParentGate
-          reason={gateReason}
-          onSuccess={handleGateSuccess}
-          onCancel={handleGateCancel}
-        />
-      )}
     </>
   );
 }
