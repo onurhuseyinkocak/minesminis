@@ -190,7 +190,7 @@ function VideosManager() {
                                 className="search-input adm-search-input"
                             />
                         </div>
-                        <button className="add-btn" onClick={openAddModal}>
+                        <button type="button" className="add-btn" onClick={openAddModal}>
                             <Plus size={18} />
                             Video Ekle
                         </button>
@@ -272,10 +272,10 @@ function VideosManager() {
                                 <td>{video.duration}</td>
                                 <td>
                                     <div className="action-btns">
-                                        <button className="edit-btn" onClick={() => openEditModal(video)}>
+                                        <button type="button" className="edit-btn" onClick={() => openEditModal(video)}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button className="delete-btn" onClick={() => handleDelete(video.id)}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(video.id)}>
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
@@ -299,7 +299,7 @@ function VideosManager() {
                     <div className="modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>{editingVideo ? 'Videoyu Düzenle' : 'Yeni Video Ekle'}</h3>
-                            <button className="modal-close" onClick={() => setIsModalOpen(false)}>
+                            <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
                                 <X size={20} />
                             </button>
                         </div>
@@ -413,7 +413,7 @@ function VideosManager() {
                     >
                         <div className="modal-header">
                             <h3>Video Önizleme</h3>
-                            <button className="modal-close" onClick={() => setPreviewVideo(null)}>
+                            <button type="button" className="modal-close" onClick={() => setPreviewVideo(null)}>
                                 <X size={20} />
                             </button>
                         </div>

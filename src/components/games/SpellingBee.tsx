@@ -174,10 +174,10 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
               +{score * 15} XP
             </Badge>
             <div className="spelling-bee__results-actions">
-              <button className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => onComplete(score, gameWords.length)}>
+              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => onComplete(score, gameWords.length)}>
                 {t('games.backToGames')}
               </button>
-              <button className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain}>
+              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain}>
                 {t('games.playAgain')}
               </button>
             </div>

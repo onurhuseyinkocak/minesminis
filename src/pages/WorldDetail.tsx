@@ -21,7 +21,56 @@ import {
   Layers,
   Mic,
   HelpCircle,
+  Globe,
+  Home,
+  PawPrint,
+  Palette,
+  Apple,
+  Activity,
+  TreePine,
+  Gem,
+  GraduationCap,
+  MapPin,
+  BookMarked,
+  Plane,
+  Ear,
+  Building2,
+  type LucideIcon,
 } from 'lucide-react';
+
+// World ID → Lucide icon mapping (replaces emoji world.icon)
+const WORLD_ICON_MAP: Record<string, LucideIcon> = {
+  w1: Globe,
+  w2: Home,
+  w3: PawPrint,
+  w4: Palette,
+  w5: Apple,
+  w6: Activity,
+  w7: TreePine,
+  w8: Gem,
+  w9: GraduationCap,
+  w10: MapPin,
+  w11: BookMarked,
+  w12: Plane,
+};
+
+// Phase ID → Lucide icon mapping (replaces emoji phase.icon)
+const PHASE_ICON_MAP: Record<string, LucideIcon> = {
+  'little-ears': Ear,
+  'word-builders': Building2,
+  'story-makers': BookMarked,
+  'young-explorers': Globe,
+};
+
+function WorldIcon({ worldId, size = 40 }: { worldId: string; size?: number }) {
+  const Icon = WORLD_ICON_MAP[worldId] || Globe;
+  return <Icon size={size} color="currentColor" />;
+}
+
+function PhaseIcon({ phaseId, size = 40 }: { phaseId: string; size?: number }) {
+  const Icon = PHASE_ICON_MAP[phaseId] || BookOpen;
+  return <Icon size={size} color="currentColor" />;
+}
 import { Card, ProgressBar, Button, Badge } from '../components/ui';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -145,7 +194,7 @@ const WorldDetail = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <span className="world-detail-header__icon">{world.icon}</span>
+        <span className="world-detail-header__icon"><WorldIcon worldId={world.id} size={40} /></span>
         <div className="world-detail-header__info">
           <h1 className="world-detail-header__name">{lang === 'tr' ? world.nameTr : world.name}</h1>
           <p className="world-detail-header__theme">{lang === 'tr' ? world.descriptionTr : world.theme}</p>
@@ -357,7 +406,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <span className="world-detail-header__icon">{phase.icon}</span>
+        <span className="world-detail-header__icon"><PhaseIcon phaseId={phase.id} size={40} /></span>
         <div className="world-detail-header__info">
           <h1 className="world-detail-header__name">
             {lang === 'tr' ? unit.titleTr : unit.title}

@@ -94,7 +94,7 @@ const ReportButton: React.FC = () => {
                                     <AlertCircle size={20} className="header-icon" />
                                     <h3>Sorun Bildir</h3>
                                 </div>
-                                <button className="close-btn" onClick={() => setIsOpen(false)}>
+                                <button type="button" className="close-btn" onClick={() => setIsOpen(false)}>
                                     <X size={20} />
                                 </button>
                             </div>

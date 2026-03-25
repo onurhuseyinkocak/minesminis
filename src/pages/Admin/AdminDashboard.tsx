@@ -64,6 +64,7 @@ function AdminDashboard() {
     const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
     const [growthData, setGrowthData] = useState<{ day: string; users: number }[]>([]);
     const [loading, setLoading] = useState(true);
+    const [dbStatus, setDbStatus] = useState<'checking' | 'ok' | 'error'>('checking');
 
     useEffect(() => {
         loadDashboardData();
@@ -71,6 +72,7 @@ function AdminDashboard() {
 
     const loadDashboardData = async () => {
         setLoading(true);
+        setDbStatus('checking');
 
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
@@ -128,6 +130,12 @@ function AdminDashboard() {
             setWorksheetsCount(fallbackWorksheets.length);
         }
 
+        // System health: DB is healthy if at least one query succeeded
+        const anySuccess = [userCountRes, gamesRes, videosRes, wordsRes, worksheetsRes].some(
+            (r) => r.status === 'fulfilled' && !r.value.error
+        );
+        setDbStatus(anySuccess ? 'ok' : 'error');
+
         if (growthRes.status === 'fulfilled' && !growthRes.value.error && growthRes.value.data) {
             const dailyCounts: Record<string, number> = {};
             for (const row of growthRes.value.data) {
@@ -162,7 +170,7 @@ function AdminDashboard() {
                     <p>Overview of your MinesMinis platform</p>
                 </div>
                 <div className="adm-dash-actions">
-                    <button className="adm-action-btn" onClick={loadDashboardData}>
+                    <button type="button" className="adm-action-btn" onClick={loadDashboardData}>
                         <RefreshCw size={14} />
                         Refresh
                     </button>
@@ -384,17 +392,23 @@ function AdminDashboard() {
                         <div className="adm-health-bar">
                             <Server size={15} className="adm-icon-muted" />
                             <span className="adm-health-label">API Server</span>
-                            <span className="adm-health-status ok">Operational</span>
+                            <span className={`adm-health-status ${dbStatus === 'checking' ? 'checking' : dbStatus === 'ok' ? 'ok' : 'error'}`}>
+                                {dbStatus === 'checking' ? 'Checking...' : dbStatus === 'ok' ? 'Operational' : 'Error'}
+                            </span>
                         </div>
                         <div className="adm-health-bar">
                             <Database size={15} className="adm-icon-muted" />
                             <span className="adm-health-label">Database</span>
-                            <span className="adm-health-status ok">Healthy</span>
+                            <span className={`adm-health-status ${dbStatus === 'checking' ? 'checking' : dbStatus === 'ok' ? 'ok' : 'error'}`}>
+                                {dbStatus === 'checking' ? 'Checking...' : dbStatus === 'ok' ? 'Healthy' : 'Unreachable'}
+                            </span>
                         </div>
                         <div className="adm-health-bar">
                             <Wifi size={15} className="adm-icon-muted" />
                             <span className="adm-health-label">CDN</span>
-                            <span className="adm-health-status ok">Online</span>
+                            <span className={`adm-health-status ${dbStatus === 'checking' ? 'checking' : dbStatus === 'ok' ? 'ok' : 'error'}`}>
+                                {dbStatus === 'checking' ? 'Checking...' : dbStatus === 'ok' ? 'Online' : 'Degraded'}
+                            </span>
                         </div>
                     </div>
                 </div>

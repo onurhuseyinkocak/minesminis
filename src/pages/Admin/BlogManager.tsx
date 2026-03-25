@@ -232,7 +232,7 @@ export default function BlogManager() {
             <RefreshCw size={18} className={generating ? 'spin' : ''} />
             {generating ? 'Oluşturuluyor...' : 'Günlük Makale Oluştur'}
           </button>
-          <button className="admin-btn admin-btn-secondary" onClick={() => openEditor(null)}>
+          <button type="button" className="admin-btn admin-btn-secondary" onClick={() => openEditor(null)}>
             <Plus size={18} /> Yeni Yazı
           </button>
         </div>
@@ -247,7 +247,7 @@ export default function BlogManager() {
               <PenSquare size={48} />
               <p>Henüz blog yazısı yok.</p>
               <p className="admin-blog-empty-hint">Günlük makale oluştur veya manuel ekle. Supabase&apos;te blog_posts tablosu gerekir.</p>
-              <button className="admin-btn admin-btn-primary" onClick={handleGenerateDaily} disabled={generating}>
+              <button type="button" className="admin-btn admin-btn-primary" onClick={handleGenerateDaily} disabled={generating}>
                 Günlük Makale Oluştur
               </button>
             </div>
@@ -266,10 +266,10 @@ export default function BlogManager() {
                   <a href={`/blog/${p.slug}`} target="_blank" rel="noopener noreferrer" className="admin-btn-icon" title="Görüntüle">
                     <ExternalLink size={18} />
                   </a>
-                  <button className="admin-btn-icon" onClick={() => openEditor(p)} title="Düzenle">
+                  <button type="button" className="admin-btn-icon" onClick={() => openEditor(p)} title="Düzenle">
                     <Edit2 size={18} />
                   </button>
-                  <button className="admin-btn-icon admin-btn-icon-danger" onClick={() => handleDelete(p)} title="Sil">
+                  <button type="button" className="admin-btn-icon admin-btn-icon-danger" onClick={() => handleDelete(p)} title="Sil">
                     <Trash2 size={18} />
                   </button>
                 </div>
@@ -358,10 +358,10 @@ export default function BlogManager() {
             </div>
 
             <div className="admin-blog-editor-footer">
-              <button className="admin-btn admin-btn-secondary" onClick={closeEditor} disabled={saving}>
+              <button type="button" className="admin-btn admin-btn-secondary" onClick={closeEditor} disabled={saving}>
                 İptal
               </button>
-              <button className="admin-btn admin-btn-primary" onClick={handleSave} disabled={saving}>
+              <button type="button" className="admin-btn admin-btn-primary" onClick={handleSave} disabled={saving}>
                 {saving ? 'Kaydediliyor...' : (editingPost ? 'Güncelle' : 'Kaydet')}
               </button>
             </div>

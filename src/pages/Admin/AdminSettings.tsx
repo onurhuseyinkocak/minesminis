@@ -5,27 +5,32 @@ import {
 import toast from 'react-hot-toast';
 import './AdminSettings.css';
 
+const DEFAULT_SETTINGS = {
+    siteName: 'MinesMinis',
+    siteDescription: 'Premium English education for children ages 1-10',
+    defaultLanguage: 'tr',
+    lemonSqueezyApiKey: '',
+    planFree: 'Free - Limited content',
+    planPremium: 'Premium - Full access',
+    planClassroom: 'Classroom - Teacher + 30 students',
+    defaultWorld: 'w1',
+    featuredContentEnabled: true,
+    announcementEnabled: false,
+    announcementText: '',
+    announcementType: 'info' as 'info' | 'success' | 'warning' | 'error',
+    maintenanceMode: false,
+    allowRegistration: true,
+};
+
 function AdminSettings() {
-    const [settings, setSettings] = useState({
-        // General
-        siteName: 'MinesMinis',
-        siteDescription: 'Premium English education for children ages 1-10',
-        defaultLanguage: 'tr',
-        // Billing
-        lemonSqueezyApiKey: '',
-        planFree: 'Free - Limited content',
-        planPremium: 'Premium - Full access',
-        planClassroom: 'Classroom - Teacher + 30 students',
-        // Content
-        defaultWorld: 'w1',
-        featuredContentEnabled: true,
-        // Notifications
-        announcementEnabled: false,
-        announcementText: '',
-        announcementType: 'info' as 'info' | 'success' | 'warning' | 'error',
-        // Security
-        maintenanceMode: false,
-        allowRegistration: true,
+    const [settings, setSettings] = useState(() => {
+        try {
+            const saved = localStorage.getItem('siteSettings');
+            if (saved) return { ...DEFAULT_SETTINGS, ...(JSON.parse(saved) as typeof DEFAULT_SETTINGS) };
+        } catch {
+            // ignore parse errors
+        }
+        return DEFAULT_SETTINGS;
     });
 
     const [isSaving, setIsSaving] = useState(false);
@@ -46,7 +51,7 @@ function AdminSettings() {
                     <h1>Settings</h1>
                     <p>Configure platform settings, billing, and notifications</p>
                 </div>
-                <button className="adm-action-btn primary" onClick={handleSave} disabled={isSaving}>
+                <button type="button" className="adm-action-btn primary" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? (
                         <><div className="adm-spinner" style={{ width: 14, height: 14, borderWidth: 2 }} /> Saving...</>
                     ) : (
@@ -140,7 +145,7 @@ function AdminSettings() {
                             Subscription Plans
                             <small>Plan names and descriptions</small>
                         </div>
-                        <div className="adm-settings-input" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <div className="adm-settings-input adm-settings-input--stack">
                             <input
                                 type="text"
                                 value={settings.planFree}
@@ -227,7 +232,7 @@ function AdminSettings() {
                             <small>Show a banner across the site</small>
                         </div>
                         <div className="adm-settings-input">
-                            <div className="adm-toggle-wrap" style={{ marginBottom: '0.75rem' }}>
+                            <div className="adm-toggle-wrap adm-toggle-wrap--mb">
                                 <label className="adm-toggle">
                                     <input
                                         type="checkbox"
@@ -241,7 +246,7 @@ function AdminSettings() {
                                 </span>
                             </div>
                             {settings.announcementEnabled && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <div className="adm-settings-announcement-fields">
                                     <textarea
                                         value={settings.announcementText}
                                         onChange={(e) => setSettings({ ...settings, announcementText: e.target.value })}
@@ -291,7 +296,7 @@ function AdminSettings() {
                                         {settings.maintenanceMode ? 'Active' : 'Inactive'}
                                     </span>
                                     {settings.maintenanceMode && (
-                                        <div className="adm-toggle-desc" style={{ color: 'var(--accent-red)' }}>
+                                        <div className="adm-toggle-desc adm-toggle-desc--danger">
                                             Site is currently in maintenance mode
                                         </div>
                                     )}
@@ -325,7 +330,7 @@ function AdminSettings() {
 
             {/* Bottom Save */}
             <div className="adm-settings-save">
-                <button className="adm-action-btn primary" onClick={handleSave} disabled={isSaving} style={{ padding: '0.625rem 1.5rem' }}>
+                <button type="button" className="adm-action-btn primary adm-action-btn--save" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? 'Saving...' : (
                         <><Save size={14} /> Save All Settings</>
                     )}

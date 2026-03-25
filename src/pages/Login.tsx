@@ -210,9 +210,9 @@ const Login: React.FC = () => {
 
       {/* Language toggle */}
       <div className="login-lang-toggle">
-        <button className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
+        <button type="button" className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
         <span className="login-lang-divider" />
-        <button className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
+        <button type="button" className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
       </div>
 
       <motion.div

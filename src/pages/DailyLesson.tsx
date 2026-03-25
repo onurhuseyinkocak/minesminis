@@ -340,7 +340,7 @@ function PhaseListenStep({
       </div>
 
       <div className="dl-nav">
-        <button className="dl-btn dl-btn--primary" onClick={onNext}>
+        <button type="button" className="dl-btn dl-btn--primary" onClick={onNext}>
           {index < total - 1 ? (
             <>{lang === 'tr' ? 'İleri' : 'Next'} <ChevronRight size={20} /></>
           ) : (
@@ -409,11 +409,11 @@ function PhaseSeeStep({
 
       <div className="dl-nav">
         {index > 0 && (
-          <button className="dl-btn dl-btn--secondary" onClick={onPrev}>
+          <button type="button" className="dl-btn dl-btn--secondary" onClick={onPrev}>
             <ChevronLeft size={20} />
           </button>
         )}
-        <button className="dl-btn dl-btn--primary" onClick={onNext}>
+        <button type="button" className="dl-btn dl-btn--primary" onClick={onNext}>
           {index < total - 1 ? (
             <>{lang === 'tr' ? 'İleri' : 'Next'} <ChevronRight size={20} /></>
           ) : (
@@ -552,11 +552,11 @@ function PhasePlay({
         </p>
         <div className="dl-nav" style={{ flexDirection: 'column', gap: 10 }}>
           {/* Montessori: Play Again for repetition freedom */}
-          <button className="dl-btn dl-btn--ghost" onClick={handlePlayAgain}>
+          <button type="button" className="dl-btn dl-btn--ghost" onClick={handlePlayAgain}>
             <RotateCcw size={18} />
             {lang === 'tr' ? 'Tekrar Oyna' : 'Play Again'}
           </button>
-          <button className="dl-btn dl-btn--primary" onClick={() => onComplete(100)}>
+          <button type="button" className="dl-btn dl-btn--primary" onClick={() => onComplete(100)}>
             {lang === 'tr' ? 'Devam Et' : 'Continue'} <ChevronRight size={20} />
           </button>
         </div>
@@ -582,7 +582,7 @@ function PhasePlay({
               if (tile.matched) cls += ' dl-match-tile--correct';
               else if (isSelected) cls += ' dl-match-tile--selected';
               return (
-                <button key={tile.id} className={cls} onClick={() => handleTile(tile)}>
+                <button type="button" key={tile.id} className={cls} onClick={() => handleTile(tile)}>
                   {tile.matched && <Check size={14} />}
                   {tile.text}
                 </button>
@@ -598,7 +598,7 @@ function PhasePlay({
               else if (isRevealed) cls += ' dl-match-tile--reveal'; // Montessori gentle reveal
               else if (isSelected) cls += ' dl-match-tile--selected';
               return (
-                <button key={tile.id} className={cls} onClick={() => handleTile(tile)}>
+                <button type="button" key={tile.id} className={cls} onClick={() => handleTile(tile)}>
                   {tile.matched && <Check size={14} />}
                   {isRevealed && <Check size={12} />}
                   {tile.text}
@@ -910,11 +910,11 @@ function PhaseReview({
         </p>
         <div className="dl-nav" style={{ flexDirection: 'column', gap: 10 }}>
           {/* Montessori: Practice More for repetition freedom */}
-          <button className="dl-btn dl-btn--ghost" onClick={handlePracticeMore}>
+          <button type="button" className="dl-btn dl-btn--ghost" onClick={handlePracticeMore}>
             <RotateCcw size={18} />
             {lang === 'tr' ? 'Daha Fazla Pratik' : 'Practice More'}
           </button>
-          <button className="dl-btn dl-btn--primary" onClick={() => onComplete(finalScore)}>
+          <button type="button" className="dl-btn dl-btn--primary" onClick={() => onComplete(finalScore)}>
             {lang === 'tr' ? 'Devam Et' : 'Continue'} <ChevronRight size={20} />
           </button>
         </div>
@@ -972,7 +972,7 @@ function PhaseReview({
             else cls += ' dl-choice-btn--disabled';
           }
           return (
-            <button key={choice} className={cls} onClick={() => handleChoice(choice)}>
+            <button type="button" key={choice} className={cls} onClick={() => handleChoice(choice)}>
               {answered && choice === q.correct && <Check size={18} />}
               {choice}
             </button>
@@ -1063,7 +1063,7 @@ function CelebrationScreen({
         <span>Show mom &amp; dad what you learned today!</span>
       </div>
 
-      <button className="dl-btn dl-btn--primary" onClick={onDone} style={{ minWidth: 180 }}>
+      <button type="button" className="dl-btn dl-btn--primary" onClick={onDone} style={{ minWidth: 180 }}>
         Ana Sayfaya Dön
       </button>
     </div>
@@ -1240,7 +1240,7 @@ function PhaseStory({
       <p className="dl-story__translation">{story.translation}</p>
 
       <div className="dl-nav">
-        <button className="dl-btn dl-btn--primary" onClick={onComplete}>
+        <button type="button" className="dl-btn dl-btn--primary" onClick={onComplete}>
           {lang === 'tr' ? 'Devam Et →' : 'Continue →'}
         </button>
       </div>

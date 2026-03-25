@@ -365,6 +365,8 @@
 
 .adm-health-status.ok { background: var(--success-soft); color: var(--success); }
 .adm-health-status.warn { background: var(--warning-soft); color: var(--warning); }
+.adm-health-status.error { background: var(--error-soft, #fee2e2); color: var(--error, #ef4444); }
+.adm-health-status.checking { background: var(--bg-muted); color: var(--text-muted); }
 
 /* ---- Empty / Loading ---- */
 .adm-empty {

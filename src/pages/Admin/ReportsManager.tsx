@@ -107,7 +107,7 @@ const ReportsManager: React.FC = () => {
                     <h1>Hata & Geri Bildirim Raporları</h1>
                     <p>Kullanıcılardan gelen sorunları buradan takip edebilirsin.</p>
                 </div>
-                <button className="refresh-btn" onClick={fetchReports} disabled={loading}>
+                <button type="button" className="refresh-btn" onClick={fetchReports} disabled={loading}>
                     <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
                 </button>
             </div>

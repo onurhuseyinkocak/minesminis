@@ -188,6 +188,30 @@
   line-height: 1.4;
 }
 
+.adm-toggle-desc--danger {
+  color: var(--error, #ef4444);
+}
+
+.adm-toggle-wrap--mb {
+  margin-bottom: 0.75rem;
+}
+
+.adm-settings-input--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.adm-settings-announcement-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.adm-action-btn--save {
+  padding: 0.625rem 1.5rem;
+}
+
 /* ---- Save Bar ---- */
 .adm-settings-save {
   display: flex;

@@ -112,7 +112,7 @@ const LevelUpModal: React.FC = () => {
                         })()}
                     </p>
 
-                    <button className="continue-btn" onClick={dismissLevelUp}>
+                    <button type="button" className="continue-btn" onClick={dismissLevelUp}>
                         <span>Continue</span>
                         <span className="btn-arrow">→</span>
                     </button>

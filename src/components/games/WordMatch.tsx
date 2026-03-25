@@ -191,10 +191,10 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
               +{score * 10} XP
             </Badge>
             <div className="word-match__results-actions">
-              <button className="word-match__results-btn word-match__results-btn--secondary" onClick={() => onComplete(score, totalAttempted)}>
+              <button type="button" className="word-match__results-btn word-match__results-btn--secondary" onClick={() => onComplete(score, totalAttempted)}>
                 {t('games.backToGames')}
               </button>
-              <button className="word-match__results-btn word-match__results-btn--primary" onClick={handlePlayAgain}>
+              <button type="button" className="word-match__results-btn word-match__results-btn--primary" onClick={handlePlayAgain}>
                 {t('games.playAgain')}
               </button>
             </div>

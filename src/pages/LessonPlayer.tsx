@@ -732,7 +732,7 @@ const LessonPlayer = () => {
           color: 'var(--text-secondary)',
           fontSize: '0.85rem',
         }}>
-          {world && <span>{world.icon} {lang === 'tr' ? world.nameTr : world.name} &bull; </span>}
+          {world && <span>{lang === 'tr' ? world.nameTr : world.name} &bull; </span>}
           {'objective' in lesson ? (lesson as { objective: string }).objective : (lang === 'tr' ? lesson.titleTr : lesson.title)}
         </div>
       )}

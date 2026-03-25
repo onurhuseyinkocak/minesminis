@@ -160,7 +160,7 @@ function AdminLayout() {
 
                         {loginError && <p className="adm-login-error">{loginError}</p>}
 
-                        <button className="adm-login-submit" onClick={handlePasswordLogin}>
+                        <button type="button" className="adm-login-submit" onClick={handlePasswordLogin}>
                             Sign In
                         </button>
                     </div>
@@ -211,7 +211,7 @@ function AdminLayout() {
                         <ExternalLink size={16} />
                         View Site
                     </Link>
-                    <button className="adm-sidebar-footer-link danger" onClick={handleLogout}>
+                    <button type="button" className="adm-sidebar-footer-link danger" onClick={handleLogout}>
                         <LogOut size={16} />
                         Sign Out
                     </button>
@@ -226,7 +226,7 @@ function AdminLayout() {
             {/* Main Content */}
             <div className="adm-main">
                 <header className="adm-topbar">
-                    <button className="adm-hamburger" onClick={() => setSidebarOpen(true)}>
+                    <button type="button" className="adm-hamburger" onClick={() => setSidebarOpen(true)}>
                         {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
                     </button>
 

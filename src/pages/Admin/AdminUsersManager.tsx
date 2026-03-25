@@ -282,11 +282,11 @@ function AdminUsersManager() {
                     <p>Manage registered users, roles, and subscriptions</p>
                 </div>
                 <div className="adm-dash-actions">
-                    <button className="adm-action-btn" onClick={exportUsers}>
+                    <button type="button" className="adm-action-btn" onClick={exportUsers}>
                         <Download size={14} />
                         Export
                     </button>
-                    <button className="adm-action-btn primary" onClick={() => setIsCreateOpen(true)}>
+                    <button type="button" className="adm-action-btn primary" onClick={() => setIsCreateOpen(true)}>
                         <Plus size={14} />
                         Add User
                     </button>
@@ -524,7 +524,7 @@ function AdminUsersManager() {
                     <div className="adm-panel">
                         <div className="adm-panel-header">
                             <h3>User Details</h3>
-                            <button className="adm-icon-btn" onClick={() => setSelectedUser(null)}>
+                            <button type="button" className="adm-icon-btn" onClick={() => setSelectedUser(null)}>
                                 <X size={16} />
                             </button>
                         </div>
@@ -597,7 +597,7 @@ function AdminUsersManager() {
                     <div className="adm-modal" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>Add New User</h3>
-                            <button className="adm-icon-btn" onClick={() => setIsCreateOpen(false)}>
+                            <button type="button" className="adm-icon-btn" onClick={() => setIsCreateOpen(false)}>
                                 <X size={16} />
                             </button>
                         </div>
@@ -706,7 +706,7 @@ function AdminUsersManager() {
                             </div>
                         </div>
                         <div className="adm-modal-footer adm-modal-footer-center">
-                            <button className="adm-btn" onClick={() => setConfirmState(null)} disabled={confirmLoading}>
+                            <button type="button" className="adm-btn" onClick={() => setConfirmState(null)} disabled={confirmLoading}>
                                 Cancel
                             </button>
                             <button

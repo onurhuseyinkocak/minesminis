@@ -364,7 +364,7 @@ function UsersManager() {
                                 style={{ paddingLeft: '40px' }}
                             />
                         </div>
-                        <button className="add-btn" onClick={() => setIsModalOpen(true)}>
+                        <button type="button" className="add-btn" onClick={() => setIsModalOpen(true)}>
                             <Plus size={18} />
                             Kullanıcı Ekle
                         </button>
@@ -519,7 +519,7 @@ function UsersManager() {
                     <div className="modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3><Plus size={20} /> Yeni Kullanıcı Ekle</h3>
-                            <button className="modal-close" onClick={() => setIsModalOpen(false)}>
+                            <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
                                 <X size={20} />
                             </button>
                         </div>

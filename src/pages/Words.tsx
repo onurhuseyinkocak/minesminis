@@ -315,7 +315,7 @@ const Words: React.FC = () => {
                             className={`kid-word-card ${flippedCard === word.word ? 'flipped' : ''}`}
                             onClick={() => setFlippedCard(flippedCard === word.word ? null : word.word)}
                           >
-                            {flippedCard !== word.word ? (
+                            <div className="kid-card-inner">
                               <div className="kid-card-front">
                                 <div className="kid-card-visual">
                                   {word.image_url ? (
@@ -327,14 +327,14 @@ const Words: React.FC = () => {
                                 <h3 className="kid-card-word">{word.word}</h3>
                                 <p className="kid-card-turkish">{word.turkish}</p>
                               </div>
-                            ) : (
                               <div className="kid-card-back" onClick={(e) => e.stopPropagation()}>
                                 <h3 className="kid-card-word">{word.word}</h3>
                                 <div className="kid-card-actions">
-                                  <button className="kid-action-btn listen" onClick={() => playWordAudio(word)} disabled={isLoadingAudio}>
+                                  <button type="button" className="kid-action-btn listen" onClick={() => playWordAudio(word)} disabled={isLoadingAudio}>
                                     <Volume2 size={22} /> Listen
                                   </button>
                                   <button
+                                    type="button"
                                     className={`kid-action-btn speak ${pronunciationResult[word.word] === 'correct' ? 'correct' : pronunciationResult[word.word] === 'wrong' ? 'wrong' : pronunciationResult[word.word] === 'listening' ? 'listening-active' : ''}`}
                                     onClick={() => startPronunciation(word.word)}
                                     disabled={pronunciationWord === word.word}
@@ -342,15 +342,16 @@ const Words: React.FC = () => {
                                     <Mic size={22} /> Speak
                                   </button>
                                   <button
+                                    type="button"
                                     className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                                     onClick={() => toggleLearned(word.word)}
                                   >
                                     {learnedWords.has(word.word) ? <><Check size={14} /> Learned!</> : <><Check size={14} /> I know this!</>}
                                   </button>
                                 </div>
-                                <button className="kid-card-close" onClick={() => setFlippedCard(null)}>Tap to close</button>
+                                <button type="button" className="kid-card-close" onClick={(e) => { e.stopPropagation(); setFlippedCard(null); }}>Tap to close</button>
                               </div>
-                            )}
+                            </div>
                           </motion.div>
                         ))}
                       </div>
@@ -369,8 +370,7 @@ const Words: React.FC = () => {
                       className={`kid-word-card ${flippedCard === word.word ? 'flipped' : ''}`}
                       onClick={() => setFlippedCard(flippedCard === word.word ? null : word.word)}
                     >
-                      {flippedCard !== word.word ? (
-                        /* FRONT */
+                      <div className="kid-card-inner">
                         <div className="kid-card-front">
                           <div className="kid-card-visual">
                             {word.image_url ? (
@@ -382,44 +382,42 @@ const Words: React.FC = () => {
                           <h3 className="kid-card-word">{word.word}</h3>
                           <p className="kid-card-turkish">{word.turkish}</p>
                         </div>
-                      ) : (
-                        /* BACK */
                         <div className="kid-card-back" onClick={(e) => e.stopPropagation()}>
                           <h3 className="kid-card-word">{word.word}</h3>
-
                           <div className="kid-card-actions">
                             <button
+                              type="button"
                               className="kid-action-btn listen"
                               onClick={() => playWordAudio(word)}
                               disabled={isLoadingAudio}
                             >
                               <Volume2 size={22} /> Listen
                             </button>
-
                             <button
+                              type="button"
                               className={`kid-action-btn speak ${pronunciationResult[word.word] === 'correct' ? 'correct' : pronunciationResult[word.word] === 'wrong' ? 'wrong' : pronunciationResult[word.word] === 'listening' ? 'listening-active' : ''}`}
                               onClick={() => startPronunciation(word.word)}
                               disabled={pronunciationWord === word.word}
                             >
                               <Mic size={22} /> Speak
                             </button>
-
                             <button
+                              type="button"
                               className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                               onClick={() => toggleLearned(word.word)}
                             >
                               {learnedWords.has(word.word) ? <><Check size={14} /> Learned!</> : <><Check size={14} /> I know this!</>}
                             </button>
                           </div>
-
                           <button
+                            type="button"
                             className="kid-card-close"
-                            onClick={() => setFlippedCard(null)}
+                            onClick={(e) => { e.stopPropagation(); setFlippedCard(null); }}
                           >
                             Tap to close
                           </button>
                         </div>
-                      )}
+                      </div>
                     </motion.div>
                   ))}
                 </div>

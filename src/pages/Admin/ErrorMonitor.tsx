@@ -210,13 +210,13 @@ function ErrorMonitor() {
             </button>
 
             {/* Actions */}
-            <button className="edit-btn em-action-btn" onClick={handleResolveAll}>
+            <button type="button" className="edit-btn em-action-btn" onClick={handleResolveAll}>
               <CheckCircle size={14} /> Tumu Coz
             </button>
-            <button className="edit-btn em-action-btn" onClick={handleExport}>
+            <button type="button" className="edit-btn em-action-btn" onClick={handleExport}>
               <Download size={14} /> Indir
             </button>
-            <button className="delete-btn" onClick={handleClearAll}>
+            <button type="button" className="delete-btn" onClick={handleClearAll}>
               <Trash2 size={14} />
             </button>
           </div>

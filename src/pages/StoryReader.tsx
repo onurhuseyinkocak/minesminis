@@ -216,7 +216,7 @@ export default function StoryReader() {
         <div className="story-reader__bg story-reader__bg-default" />
         <div className="story-reader__error">
           <p>{lang === 'tr' ? 'Hikaye bulunamadı.' : 'Story not found.'}</p>
-          <button className="story-reader__error-btn" onClick={() => navigate('/stories')}>
+          <button type="button" className="story-reader__error-btn" onClick={() => navigate('/stories')}>
             {lang === 'tr' ? 'Hikayelere Dön' : 'Back to Stories'}
           </button>
         </div>

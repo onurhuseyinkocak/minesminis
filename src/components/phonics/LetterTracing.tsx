@@ -287,7 +287,7 @@ export function LetterTracing({
   return (
     <div style={styles.wrapper}>
       <div style={styles.letterLabel}>
-        <button onClick={() => speak(letter, 0.5)} style={styles.soundBtn}>
+        <button type="button" onClick={() => speak(letter, 0.5)} style={styles.soundBtn}>
           <Volume2 size={18} />
         </button>
         <span style={styles.letterText}>{letter}</span>

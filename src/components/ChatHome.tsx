@@ -242,7 +242,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                         >
                             {isTTSEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
                         </button>
-                        <button className="close-button" onClick={onClose} aria-label="Close Chat">
+                        <button type="button" className="close-button" onClick={onClose} aria-label="Close Chat">
                             <X size={18} />
                         </button>
                     </div>
@@ -292,10 +292,10 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             <p>Bugün için 10 ücretsiz mesaj hakkını kullandın.</p>
                             <p className="limit-modal-sub">Premium ile sınırsız sohbet et!</p>
                             <div className="limit-modal-actions">
-                                <button className="premium-btn" onClick={handleGetPremium}>
+                                <button type="button" className="premium-btn" onClick={handleGetPremium}>
                                     <Crown size={16} /> Premium Ol
                                 </button>
-                                <button className="later-btn" onClick={() => setShowLimitReached(false)}>
+                                <button type="button" className="later-btn" onClick={() => setShowLimitReached(false)}>
                                     Yarın Devam Et
                                 </button>
                             </div>

@@ -132,7 +132,7 @@ const DailyReward: React.FC = () => {
             {showClaimCelebration && <ConfettiRain />}
             {showClaimCelebration && <ConfettiRain />}
             <div className="daily-reward-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="close-btn" onClick={() => setIsOpen(false)}><X size={18} /></button>
+                <button type="button" className="close-btn" onClick={() => setIsOpen(false)}><X size={18} /></button>
 
                 <div className="modal-header">
                     <h2><Gift size={20} style={{ display: 'inline', verticalAlign: 'middle' }} /> {t('dailyReward.title')}</h2>

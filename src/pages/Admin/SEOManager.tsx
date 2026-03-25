@@ -272,7 +272,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <p className="seo-desc">
                             Sitemap Google ve Bing'e bildirilir. Sunucunuz /sitemap.xml ve /robots.txt adreslerini 7/24 sunar — bilgisayarınız kapalıyken bile (deploy edildiğinde).
                         </p>
-                        <button className="add-btn seo-apply-btn" onClick={handleOneClickSEO} disabled={seoApplying}>
+                        <button type="button" className="add-btn seo-apply-btn" onClick={handleOneClickSEO} disabled={seoApplying}>
                             <RefreshCw size={18} className={seoApplying ? 'spin' : ''} />
                             {seoApplying ? 'Uygulanıyor...' : 'SEO Uygula'}
                         </button>
@@ -306,7 +306,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <p className="seo-page-count">
                             {SITE_ROUTES.length + blogSlugs.length} sayfa (statik + {blogSlugs.length} blog yazısı)
                         </p>
-                        <button className="add-btn seo-apply-btn" onClick={generateSitemap}>
+                        <button type="button" className="add-btn seo-apply-btn" onClick={generateSitemap}>
                             <Download size={18} />
                             sitemap.xml İndir
                         </button>
@@ -326,11 +326,11 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         </p>
                         <pre className="seo-pre">{robotsTxt}</pre>
                         <div className="seo-action-row" style={{ marginTop: '1rem' }}>
-                            <button className="add-btn seo-apply-btn" onClick={generateRobotsTxt}>
+                            <button type="button" className="add-btn seo-apply-btn" onClick={generateRobotsTxt}>
                                 <Download size={18} />
                                 robots.txt İndir
                             </button>
-                            <button className="cancel-btn" onClick={() => copyToClipboard(robotsTxt, 'robots.txt')}>
+                            <button type="button" className="cancel-btn" onClick={() => copyToClipboard(robotsTxt, 'robots.txt')}>
                                 <Copy size={18} /> Kopyala
                             </button>
                         </div>
@@ -384,7 +384,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                                 <div key={i} className="seo-field">
                                     <div className="seo-page-row-header">
                                         <span className="seo-page-label">{label}</span>
-                                        <button className="cancel-btn seo-copy-btn" onClick={() => copyToClipboard(code, label)}>
+                                        <button type="button" className="cancel-btn seo-copy-btn" onClick={() => copyToClipboard(code, label)}>
                                             <Copy size={14} /> Kopyala
                                         </button>
                                     </div>
@@ -410,7 +410,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                         <p className="seo-schema-note">
                             Kullanım: &lt;script type="application/ld+json"&gt;{schemaOrgJSON().slice(0, 50)}...&lt;/script&gt;
                         </p>
-                        <button className="cancel-btn" style={{ marginTop: '1rem' }} onClick={() => copyToClipboard(schemaOrgJSON(), 'Schema.org JSON-LD')}>
+                        <button type="button" className="cancel-btn" style={{ marginTop: '1rem' }} onClick={() => copyToClipboard(schemaOrgJSON(), 'Schema.org JSON-LD')}>
                             <Copy size={18} /> Kopyala
                         </button>
                     </div>
@@ -435,7 +435,7 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
                                 placeholder={settings.siteUrl + '/'}
                                 className="search-input seo-inspect-input"
                             />
-                            <button className="add-btn seo-apply-btn" onClick={inspectMeta} disabled={inspecting}>
+                            <button type="button" className="add-btn seo-apply-btn" onClick={inspectMeta} disabled={inspecting}>
                                 <RefreshCw size={18} className={inspecting ? 'spin' : ''} />
                                 {inspecting ? 'İnceleniyor...' : 'İncele'}
                             </button>

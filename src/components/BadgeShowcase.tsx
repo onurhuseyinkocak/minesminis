@@ -105,7 +105,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
             </div>
 
             {maxDisplay && displayBadges.length > maxDisplay && (
-                <button className="view-all-btn">
+                <button type="button" className="view-all-btn">
                     View All Badges ({displayBadges.length})
                 </button>
             )}
@@ -114,7 +114,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
             {selectedBadge && (
                 <div className="badge-modal-overlay" onClick={() => setSelectedBadge(null)}>
                     <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-modal" onClick={() => setSelectedBadge(null)}><Check size={14} /></button>
+                        <button type="button" className="close-modal" onClick={() => setSelectedBadge(null)}><Check size={14} /></button>
 
                         <div className={`modal-badge-icon ${hasBadge(selectedBadge.id) ? 'earned' : 'locked'}`}>
                             {hasBadge(selectedBadge.id) ? selectedBadge.icon : <Lock size={16} />}

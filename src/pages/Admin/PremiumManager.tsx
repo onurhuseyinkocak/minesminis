@@ -385,7 +385,7 @@ function PremiumManager() {
                 <div className="data-table-container">
                     <div className="table-header">
                         <h2>Premium Planlar</h2>
-                        <button className="add-btn" onClick={() => {
+                        <button type="button" className="add-btn" onClick={() => {
                             setEditingPlan(null);
                             setPlanFormData({ name: '', price: 0, duration_months: 1, features: '', is_popular: false });
                             setIsModalOpen(true);
@@ -444,7 +444,7 @@ function PremiumManager() {
                     <div className="modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>{editingPlan ? 'Planı Düzenle' : 'Yeni Plan Ekle'}</h3>
-                            <button className="modal-close" onClick={() => setIsModalOpen(false)}>
+                            <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
                                 <X size={20} />
                             </button>
                         </div>

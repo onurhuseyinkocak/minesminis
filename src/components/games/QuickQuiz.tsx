@@ -191,10 +191,10 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
               +{score * 10} XP
             </Badge>
             <div className="quick-quiz__results-actions">
-              <button className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
+              <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
                 {t('games.backToGames')}
               </button>
-              <button className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
+              <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
                 {t('games.playAgain')}
               </button>
             </div>

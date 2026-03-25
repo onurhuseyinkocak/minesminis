@@ -164,7 +164,7 @@ function Games() {
       <div className="games-page">
         <div className="internal-game-fullscreen">
           <div className="internal-game-topbar">
-            <button className="back-btn-big" onClick={() => setPlayingInternal(null)}>
+            <button type="button" className="back-btn-big" onClick={() => setPlayingInternal(null)}>
               <X size={24} /> {t('common.back')}
             </button>
             <span className="game-topbar-title">

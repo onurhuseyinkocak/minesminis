@@ -401,11 +401,11 @@ function AdminContentManager() {
             <div className="adm-content-pagination">
                 <span>{total} items total</span>
                 <div className="adm-content-pagination-btns">
-                    <button className="adm-page-btn" onClick={() => setCurrent(Math.max(1, current - 1))} disabled={current === 1}>
+                    <button type="button" className="adm-page-btn" onClick={() => setCurrent(Math.max(1, current - 1))} disabled={current === 1}>
                         <ChevronLeft size={14} />
                     </button>
                     <span style={{ padding: '0 0.5rem', fontSize: '0.8rem' }}>{current} / {pages}</span>
-                    <button className="adm-page-btn" onClick={() => setCurrent(Math.min(pages, current + 1))} disabled={current === pages}>
+                    <button type="button" className="adm-page-btn" onClick={() => setCurrent(Math.min(pages, current + 1))} disabled={current === pages}>
                         <ChevronRight size={14} />
                     </button>
                 </div>
@@ -508,11 +508,11 @@ function AdminContentManager() {
                 <div className="adm-toolbar-divider" />
 
                 {activeTab === 'words' && (
-                    <button className="adm-action-btn" onClick={exportWords}>
+                    <button type="button" className="adm-action-btn" onClick={exportWords}>
                         <Download size={14} /> Export
                     </button>
                 )}
-                <button className="adm-action-btn primary" onClick={openAddModal}>
+                <button type="button" className="adm-action-btn primary" onClick={openAddModal}>
                     <Plus size={14} /> Add {activeTab === 'words' ? 'Word' : activeTab === 'games' ? 'Game' : activeTab === 'videos' ? 'Video' : 'Worksheet'}
                 </button>
             </div>
@@ -553,8 +553,8 @@ function AdminContentManager() {
                                     </td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button className="adm-icon-btn" onClick={() => openEditModal(word)}><Pencil size={14} /></button>
-                                            <button className="adm-icon-btn danger" onClick={() => handleDeleteWord(word.word)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(word)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteWord(word.word)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -595,8 +595,8 @@ function AdminContentManager() {
                                     <td>{game.grade === 'primary' ? 'Primary' : `${game.grade}. Grade`}</td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button className="adm-icon-btn" onClick={() => openEditModal(game)}><Pencil size={14} /></button>
-                                            <button className="adm-icon-btn danger" onClick={() => handleDeleteGame(game.id)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(game)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteGame(game.id)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -644,8 +644,8 @@ function AdminContentManager() {
                                     <td style={{ fontSize: '0.775rem', color: 'var(--admin-text-muted)' }}>{video.duration}</td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button className="adm-icon-btn" onClick={() => openEditModal(video)}><Pencil size={14} /></button>
-                                            <button className="adm-icon-btn danger" onClick={() => handleDeleteVideo(video.id)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(video)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteVideo(video.id)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -688,8 +688,8 @@ function AdminContentManager() {
                                     </td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button className="adm-icon-btn" onClick={() => openEditModal(ws)}><Pencil size={14} /></button>
-                                            <button className="adm-icon-btn danger" onClick={() => handleDeleteWorksheet(ws.id)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(ws)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteWorksheet(ws.id)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -707,7 +707,7 @@ function AdminContentManager() {
                     <div className="adm-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
                         <div className="adm-modal-header">
                             <h3>{editingItem ? 'Edit' : 'Add'} {activeTab === 'words' ? 'Word' : activeTab === 'games' ? 'Game' : activeTab === 'videos' ? 'Video' : 'Worksheet'}</h3>
-                            <button className="adm-icon-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+                            <button type="button" className="adm-icon-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="adm-modal-body">

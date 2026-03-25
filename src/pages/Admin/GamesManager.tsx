@@ -201,7 +201,7 @@ function GamesManager() {
                                 className="search-input adm-search-input"
                             />
                         </div>
-                        <button className="add-btn" onClick={openAddModal}>
+                        <button type="button" className="add-btn" onClick={openAddModal}>
                             <Plus size={18} />
                             Oyun Ekle
                         </button>
@@ -252,10 +252,10 @@ function GamesManager() {
                                 <td>{game.grade}. Sınıf</td>
                                 <td>
                                     <div className="action-btns">
-                                        <button className="edit-btn" onClick={() => openEditModal(game)}>
+                                        <button type="button" className="edit-btn" onClick={() => openEditModal(game)}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button className="delete-btn" onClick={() => handleDelete(String(game.id))}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(String(game.id))}>
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
@@ -279,7 +279,7 @@ function GamesManager() {
                     <div className="modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>{editingGame ? 'Oyunu Düzenle' : 'Yeni Oyun Ekle'}</h3>
-                            <button className="modal-close" onClick={() => setIsModalOpen(false)}>
+                            <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
                                 <X size={20} />
                             </button>
                         </div>

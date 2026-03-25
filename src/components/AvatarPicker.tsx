@@ -81,7 +81,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
       <div className="avatar-picker-modal" onClick={(e) => e.stopPropagation()}>
         <div className="picker-header">
           <h3>Choose Your Avatar</h3>
-          <button className="picker-close" onClick={onClose} aria-label="Close">
+          <button type="button" className="picker-close" onClick={onClose} aria-label="Close">
             <X size={20} />
           </button>
         </div>

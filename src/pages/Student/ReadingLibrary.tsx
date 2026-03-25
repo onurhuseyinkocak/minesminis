@@ -187,7 +187,7 @@ const ReadingLibrary: React.FC = () => {
     <div style={styles.page}>
       {/* Header */}
       <div style={styles.header}>
-        <button onClick={() => navigate('/dashboard')} style={styles.backBtn}>
+        <button type="button" onClick={() => navigate('/dashboard')} style={styles.backBtn}>
           <ArrowLeft size={20} />
         </button>
         <div>

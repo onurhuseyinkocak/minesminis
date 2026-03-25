@@ -159,7 +159,7 @@ function LearningGarden() {
     <div style={styles.container}>
       {/* Header */}
       <div style={styles.header}>
-        <button onClick={() => navigate('/dashboard')} style={styles.backBtn}>
+        <button type="button" onClick={() => navigate('/dashboard')} style={styles.backBtn}>
           <ArrowLeft size={20} />
         </button>
         <div style={{ flex: 1 }}>
@@ -447,7 +447,7 @@ function LearningGarden() {
               )}
 
               {/* Close button */}
-              <button style={styles.closeBtn} onClick={() => setSelectedPlant(null)}>
+              <button type="button" style={styles.closeBtn} onClick={() => setSelectedPlant(null)}>
                 Close
               </button>
             </motion.div>

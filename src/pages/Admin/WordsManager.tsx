@@ -251,11 +251,11 @@ function WordsManager() {
                                 className="search-input adm-search-input"
                             />
                         </div>
-                        <button className="add-btn adm-export-btn" onClick={exportWords}>
+                        <button type="button" className="add-btn adm-export-btn" onClick={exportWords}>
                             <Download size={18} />
                             Dışa Aktar
                         </button>
-                        <button className="add-btn" onClick={openAddModal}>
+                        <button type="button" className="add-btn" onClick={openAddModal}>
                             <Plus size={18} />
                             Kelime Ekle
                         </button>
@@ -314,10 +314,10 @@ function WordsManager() {
                                 </td>
                                 <td>
                                     <div className="action-btns">
-                                        <button className="edit-btn" onClick={() => openEditModal(word)}>
+                                        <button type="button" className="edit-btn" onClick={() => openEditModal(word)}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button className="delete-btn" onClick={() => handleDelete(word.word)}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(word.word)}>
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
@@ -381,7 +381,7 @@ function WordsManager() {
                     <div className="modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>{editingWord ? 'Kelimeyi Düzenle' : 'Yeni Kelime Ekle'}</h3>
-                            <button className="modal-close" onClick={() => setIsModalOpen(false)}>
+                            <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
                                 <X size={20} />
                             </button>
                         </div>

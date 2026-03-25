@@ -157,7 +157,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
         {/* Header */}
         <div style={styles.header}>
           {onClose && (
-            <button onClick={onClose} style={styles.closeBtn} aria-label="Close">
+            <button type="button" onClick={onClose} style={styles.closeBtn} aria-label="Close">
               <X size={24} />
             </button>
           )}

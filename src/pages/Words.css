@@ -94,19 +94,32 @@
 
 /* ---- WORD CARD ---- */
 .kid-word-card {
-  background: var(--bg-card);
   border-radius: var(--radius-lg);
-  overflow: hidden;
   box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   min-height: 200px;
   position: relative;
+  /* 3D flip setup */
+  perspective: 1000px;
 }
 
 .kid-word-card:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: var(--shadow-card-hover);
+}
+
+/* -- 3D INNER (flip container) -- */
+.kid-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kid-word-card.flipped .kid-card-inner {
+  transform: rotateY(180deg);
 }
 
 /* -- FRONT -- */
@@ -116,7 +129,14 @@
   align-items: center;
   text-align: center;
   padding: var(--space-lg) var(--space-sm);
-  height: 100%;
+  /* 3D: always on front face */
+  position: absolute;
+  inset: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .kid-card-visual {
@@ -171,6 +191,14 @@
   padding: var(--space-lg) var(--space-sm);
   gap: var(--space-sm);
   background: var(--bg-card);
+  /* 3D: starts as back face (rotated 180) */
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .kid-card-emoji-sm {

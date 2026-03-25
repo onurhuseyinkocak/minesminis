@@ -278,7 +278,7 @@ function AdminCurriculumManager() {
                     <h1>Curriculum</h1>
                     <p>Manage the 12 worlds, their lessons, vocabulary, and activities</p>
                 </div>
-                <button className="adm-action-btn primary" onClick={openAddWorld}>
+                <button type="button" className="adm-action-btn primary" onClick={openAddWorld}>
                     <Plus size={14} /> Add World
                 </button>
             </div>
@@ -327,7 +327,7 @@ function AdminCurriculumManager() {
                                     ({selectedWorld.description})
                                 </span>
                             </div>
-                            <button className="adm-action-btn primary" onClick={openAddLesson}>
+                            <button type="button" className="adm-action-btn primary" onClick={openAddLesson}>
                                 <Plus size={14} /> Add Lesson
                             </button>
                         </div>
@@ -366,8 +366,8 @@ function AdminCurriculumManager() {
                                                 >
                                                     <GripVertical size={14} />
                                                 </button>
-                                                <button className="adm-icon-btn" onClick={() => openEditLesson(lesson)}><Pencil size={13} /></button>
-                                                <button className="adm-icon-btn danger" onClick={() => handleDeleteLesson(lesson.id)}><Trash2 size={13} /></button>
+                                                <button type="button" className="adm-icon-btn" onClick={() => openEditLesson(lesson)}><Pencil size={13} /></button>
+                                                <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteLesson(lesson.id)}><Trash2 size={13} /></button>
                                             </div>
                                         </div>
 
@@ -420,7 +420,7 @@ function AdminCurriculumManager() {
                     <div className="adm-modal" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>{editingWorld ? 'Edit World' : 'Add World'}</h3>
-                            <button className="adm-icon-btn" onClick={() => setIsWorldModal(false)}><X size={16} /></button>
+                            <button type="button" className="adm-icon-btn" onClick={() => setIsWorldModal(false)}><X size={16} /></button>
                         </div>
                         <form onSubmit={handleWorldSubmit}>
                             <div className="adm-modal-body">
@@ -468,7 +468,7 @@ function AdminCurriculumManager() {
                     <div className="adm-modal adm-modal-lesson" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>{editingLesson ? 'Edit Lesson' : 'Add Lesson'}</h3>
-                            <button className="adm-icon-btn" onClick={() => setIsLessonModal(false)}><X size={16} /></button>
+                            <button type="button" className="adm-icon-btn" onClick={() => setIsLessonModal(false)}><X size={16} /></button>
                         </div>
                         <form onSubmit={handleLessonSubmit}>
                             <div className="adm-modal-body">

@@ -231,7 +231,7 @@ const StoryPage = React.memo(() => {
     <div className="story-page">
       {/* Top bar */}
       <div className="story-page__topbar">
-        <button className="story-page__back" onClick={() => navigate(-1)} aria-label="Go back">
+        <button type="button" className="story-page__back" onClick={() => navigate(-1)} aria-label="Go back">
           <ArrowLeft size={20} />
         </button>
 
@@ -257,10 +257,10 @@ const StoryPage = React.memo(() => {
           >
             <Package size={18} />
           </button>
-          <button className="story-page__icon-btn" onClick={toggleSound} title="Sound" aria-label="Toggle sound">
+          <button type="button" className="story-page__icon-btn" onClick={toggleSound} title="Sound" aria-label="Toggle sound">
             {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
           </button>
-          <button className="story-page__icon-btn" onClick={handleReset} title="Restart" aria-label="Restart story">
+          <button type="button" className="story-page__icon-btn" onClick={handleReset} title="Restart" aria-label="Restart story">
             <RotateCcw size={18} />
           </button>
         </div>

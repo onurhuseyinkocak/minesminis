@@ -366,13 +366,13 @@ function AdminMimi() {
                     </div>
                 </div>
                 <div className="admin-mimi-header-actions">
-                    <button onClick={clearChat} title="Sohbeti Temizle">
+                    <button type="button" onClick={clearChat} title="Sohbeti Temizle">
                         <Trash2 size={16} />
                     </button>
-                    <button onClick={() => setIsMinimized(!isMinimized)} title={isMinimized ? 'Genişlet' : 'Küçült'}>
+                    <button type="button" onClick={() => setIsMinimized(!isMinimized)} title={isMinimized ? 'Genişlet' : 'Küçült'}>
                         <ChevronDown size={18} style={{ transform: isMinimized ? 'rotate(180deg)' : 'none' }} />
                     </button>
-                    <button onClick={() => setIsOpen(false)} title="Kapat">
+                    <button type="button" onClick={() => setIsOpen(false)} title="Kapat">
                         <X size={18} />
                     </button>
                 </div>

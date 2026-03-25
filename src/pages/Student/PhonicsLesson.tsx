@@ -834,7 +834,7 @@ function PhonicsLesson() {
     <div style={styles.container}>
       {/* Header */}
       <div style={styles.header}>
-        <button onClick={goBack} disabled={stepIndex === 0} style={styles.backBtn}>
+        <button type="button" onClick={goBack} disabled={stepIndex === 0} style={styles.backBtn}>
           <ArrowLeft size={20} />
         </button>
         <div style={{ flex: 1 }}>
