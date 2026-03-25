@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked, Flame, Star } from 'lucide-react';
 import './TopNav.css';
+import ParentGate, { hasParentGatePassed } from '../ParentGate';
 
 interface TopNavProps {
   /** User display name or initials for avatar fallback */
@@ -32,6 +33,8 @@ const EXTRA_NAV_ITEMS = [
   { path: '/reading', label: 'Reading', icon: BookMarked },
 ];
 
+type GateAction = 'logout' | 'settings';
+
 export default function TopNav({
   userName = '',
   avatarUrl,
@@ -46,6 +49,35 @@ export default function TopNav({
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Parent Gate state
+  const [gateAction, setGateAction] = useState<GateAction | null>(null);
+  const [gateReason, setGateReason] = useState<string>('');
+
+  const requestGate = useCallback(
+    (action: GateAction, reason: string) => {
+      setDropdownOpen(false);
+      setMobileOpen(false);
+      if (hasParentGatePassed()) {
+        if (action === 'logout' && onLogout) { onLogout(); return; }
+        if (action === 'settings') { navigate('/settings'); return; }
+      }
+      setGateReason(reason);
+      setGateAction(action);
+    },
+    [navigate, onLogout]
+  );
+
+  const handleGateSuccess = useCallback(() => {
+    const action = gateAction;
+    setGateAction(null);
+    if (action === 'logout' && onLogout) { onLogout(); return; }
+    if (action === 'settings') { navigate('/settings'); return; }
+  }, [gateAction, navigate, onLogout]);
+
+  const handleGateCancel = useCallback(() => {
+    setGateAction(null);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/dashboard') return location.pathname === '/' || location.pathname === '/dashboard';
@@ -112,6 +144,7 @@ export default function TopNav({
                 <Link
                   to={path}
                   className={`topnav__link ${isActive(path) ? 'active' : ''}`}
+                  aria-current={isActive(path) ? 'page' : undefined}
                 >
                   <Icon size={18} />
                   <span>{label}</span>
@@ -162,23 +195,26 @@ export default function TopNav({
                   <span className="topnav__dropdown-name">{userName || 'User'}</span>
                 </div>
                 <button
+                  type="button"
                   className="topnav__dropdown-item"
                   onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
                 >
                   <User size={16} /> Profile
                 </button>
                 <button
+                  type="button"
                   className="topnav__dropdown-item"
-                  onClick={() => { setDropdownOpen(false); navigate('/pricing'); }}
+                  onClick={() => requestGate('settings', 'To access Settings')}
                 >
-                  <Settings size={16} /> Plans
+                  <Settings size={16} /> Settings
                 </button>
                 {onLogout && (
                   <>
                     <div className="topnav__dropdown-divider" />
                     <button
+                      type="button"
                       className="topnav__dropdown-item topnav__dropdown-item--danger"
-                      onClick={() => { setDropdownOpen(false); onLogout(); }}
+                      onClick={() => requestGate('logout', 'To sign out')}
                     >
                       <LogOut size={16} /> Logout
                     </button>
@@ -237,6 +273,7 @@ export default function TopNav({
               <Link
                 to={path}
                 className={`topnav__mobile-link ${isActive(path) ? 'active' : ''}`}
+                aria-current={isActive(path) ? 'page' : undefined}
                 onClick={() => setMobileOpen(false)}
               >
                 <Icon size={22} />
@@ -249,6 +286,7 @@ export default function TopNav({
               <Link
                 to={path}
                 className={`topnav__mobile-link ${isActive(path) ? 'active' : ''}`}
+                aria-current={isActive(path) ? 'page' : undefined}
                 onClick={() => setMobileOpen(false)}
               >
                 <Icon size={22} />
@@ -279,14 +317,23 @@ export default function TopNav({
           </Link>
           {onLogout && (
             <button
+              type="button"
               className="topnav__mobile-logout"
-              onClick={() => { setMobileOpen(false); onLogout(); }}
+              onClick={() => requestGate('logout', 'To sign out')}
             >
               <LogOut size={20} /> Logout
             </button>
           )}
         </div>
       </div>
+
+      {gateAction !== null && (
+        <ParentGate
+          reason={gateReason}
+          onSuccess={handleGateSuccess}
+          onCancel={handleGateCancel}
+        />
+      )}
     </>
   );
 }

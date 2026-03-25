@@ -1331,3 +1331,47 @@
   font-weight: 800;
   color: #4c1d95; /* purple-900 — no exact token available */
 }
+
+/* ── Utility modifiers ── */
+.dl-nav--col {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dl-match-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dl-btn--sm {
+  min-height: 40px;
+  font-size: 0.875rem;
+}
+
+.dl-btn--xs {
+  min-height: 36px;
+  font-size: 0.8125rem;
+}
+
+.dl-btn--wide {
+  min-width: 180px;
+}
+
+.dl-phase-subtitle--sm {
+  font-size: 0.8125rem;
+}
+
+.dl-content-center {
+  text-align: center;
+}
+
+.dl-card__hint-icon {
+  display: inline;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.dl-phase-subtitle--spaced {
+  margin-top: 2.5rem;
+}

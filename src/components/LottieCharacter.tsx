@@ -1,26 +1,26 @@
 /**
- * LottieCharacter — Zubulig mascot (local Lottie JSON files)
- * Files located in /public/mascot/zubulig_*.json
+ * LottieCharacter — Mimi mascot (local Lottie JSON files)
+ * Files located in /public/mascot/mimi_*.json
  */
 import { useEffect, useState } from 'react';
 import Lottie from 'lottie-react';
 
 const STATE_MAP: Record<string, string> = {
-  idle:        '/mascot/zubulig_idle.json',
-  happy:       '/mascot/zubulig_happy.json',
-  sad:         '/mascot/zubulig_sad.json',
-  sit:         '/mascot/zubulig_sit.json',
-  talk:        '/mascot/zubulig_talk.json',
-  walk:        '/mascot/zubulig_walk.json',
-  wave:        '/mascot/zubulig_wave.json',
+  idle:        '/mascot/mimi_idle.json',
+  happy:       '/mascot/mimi_happy.json',
+  sad:         '/mascot/mimi_sad.json',
+  sit:         '/mascot/mimi_sit.json',
+  talk:        '/mascot/mimi_talk.json',
+  walk:        '/mascot/mimi_walk.json',
+  wave:        '/mascot/mimi_wave.json',
   // aliases
-  celebrating: '/mascot/zubulig_happy.json',
-  thinking:    '/mascot/zubulig_sit.json',
-  sleeping:    '/mascot/zubulig_sit.json',
-  star:        '/mascot/zubulig_happy.json',
-  waving:      '/mascot/zubulig_wave.json',
-  excited:     '/mascot/zubulig_happy.json',
-  cool:        '/mascot/zubulig_idle.json',
+  celebrating: '/mascot/mimi_happy.json',
+  thinking:    '/mascot/mimi_sit.json',
+  sleeping:    '/mascot/mimi_sit.json',
+  star:        '/mascot/mimi_happy.json',
+  waving:      '/mascot/mimi_wave.json',
+  excited:     '/mascot/mimi_happy.json',
+  cool:        '/mascot/mimi_idle.json',
 };
 
 export type CharacterState = keyof typeof STATE_MAP;
@@ -64,7 +64,7 @@ export default function LottieCharacter({
         fontWeight: 900,
         color: '#fff',
         fontFamily: 'Nunito, sans-serif',
-      }}>Z</div>
+      }}>M</div>
     );
   }
 

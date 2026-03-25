@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
+import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { PremiumProvider } from "./contexts/PremiumContext";
 import { GamificationProvider } from "./contexts/GamificationContext";
+import { HeartsProvider } from "./contexts/HeartsContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -11,15 +12,25 @@ import SplashScreen from "./components/SplashScreen";
 import { AppShell } from "./components/layout";
 import { sendMessageToAI } from "./services/aiService";
 import { errorLogger } from "./services/errorLogger";
-import { isOnline, onOnlineStatusChange } from "./utils/offlineManager";
+import OfflineBanner from "./components/OfflineBanner";
+import InstallBanner from "./components/InstallBanner";
 import { getNextAction } from "./services/learningPathService";
 import { getTodayMinutes } from "./services/activityLogger";
+import NotificationPrompt from "./components/NotificationPrompt";
+import {
+  getLessonCount,
+  hasSeenNotificationPrompt,
+  markNotificationPromptShown,
+  requestNotificationPermission,
+  scheduleStreakReminder,
+} from "./services/notificationService";
 
 import { Star } from "lucide-react";
 import LottieCharacter from "./components/LottieCharacter";
 import FloatingMascot from "./components/FloatingMascot";
 import { validateCurriculumData } from "./utils/dataValidation";
 import { LS_DAILY_TIME_LIMIT } from "./config/storageKeys";
+import { initTTS } from "./services/ttsService";
 import "./App.css";
 
 // Initialize error logging
@@ -39,6 +50,7 @@ const Ataturk = lazy(() => import("./pages/Ataturk"));
 
 // Protected – Student
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ChildHome = lazy(() => import("./pages/ChildHome"));
 const WorldMap = lazy(() => import("./pages/WorldMap"));
 const WorldDetail = lazy(() => import("./pages/WorldDetail"));
 const LessonPlayer = lazy(() => import("./pages/LessonPlayer"));
@@ -49,6 +61,7 @@ const PhonicsLesson = lazy(() => import("./pages/Student/PhonicsLesson"));
 const SongsPage = lazy(() => import("./pages/Student/SongsPage"));
 const LearningGarden = lazy(() => import("./pages/Student/LearningGarden"));
 const Words = lazy(() => import("./pages/Words"));
+const FlashcardReview = lazy(() => import("./pages/FlashcardReview"));
 const Videos = lazy(() => import("./pages/Videos"));
 const StoryPage = lazy(() => import("./pages/Story/StoryPage"));
 const StoriesGrid = lazy(() => import("./pages/StoriesGrid"));
@@ -60,7 +73,23 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Worksheets = lazy(() => import("./pages/Worksheets"));
 const Favorites = lazy(() => import("./pages/Favorites"));
 const ReadingLibrary = lazy(() => import("./pages/Student/ReadingLibrary"));
+const PhoneticsTrapTrainer = lazy(() => import("./pages/Student/PhoneticsTrapTrainer"));
+const LetterTracingPage = lazy(() => import("./pages/Student/LetterTracingPage"));
 const DailyLesson = lazy(() => import("./pages/DailyLesson"));
+const FriendsPage = lazy(() =>
+  import("./pages/Social").then((m) => ({ default: m.FriendsPage }))
+);
+const Achievements = lazy(() => import("./pages/Achievements"));
+const MascotSelector = lazy(() => import("./pages/MascotSelector"));
+const AvatarCustomizer = lazy(() => import("./pages/AvatarCustomizer"));
+
+// Parent
+const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
+
+// Teacher
+const TeacherDashboard = lazy(() =>
+  import("./pages/Teacher").then((m) => ({ default: m.TeacherDashboard }))
+);
 
 // Admin
 const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
@@ -112,103 +141,6 @@ function PageLoader() {
       <div className="page-loader__spinner" />
     </div>
   );
-}
-
-/** Offline/online status banner */
-function OfflineBanner() {
-  const [online, setOnline] = useState(isOnline);
-  const [showBackOnline, setShowBackOnline] = useState(false);
-  const wasOffline = useRef(false);
-  const backOnlineTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleStatusChange = useCallback((status: boolean) => {
-    setOnline(status);
-    if (status && wasOffline.current) {
-      setShowBackOnline(true);
-      if (backOnlineTimerRef.current) clearTimeout(backOnlineTimerRef.current);
-      backOnlineTimerRef.current = setTimeout(() => setShowBackOnline(false), 3000);
-    }
-    wasOffline.current = !status;
-  }, []);
-
-  useEffect(() => {
-    const unsub = onOnlineStatusChange(handleStatusChange);
-    return () => {
-      unsub();
-      if (backOnlineTimerRef.current) clearTimeout(backOnlineTimerRef.current);
-    };
-  }, [handleStatusChange]);
-
-  if (showBackOnline) {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 9999,
-          background: "var(--success)",
-          color: "#fff",
-          textAlign: "center",
-          padding: "8px 16px",
-          fontSize: "14px",
-          fontWeight: 500,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px",
-          animation: "slideDown 0.3s ease",
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12.55a11 11 0 0 1 14.08 0" />
-          <path d="M1.42 9a16 16 0 0 1 21.16 0" />
-          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-          <line x1="12" y1="20" x2="12.01" y2="20" />
-        </svg>
-        Back online!
-      </div>
-    );
-  }
-
-  if (!online) {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 9999,
-          background: "var(--warning)",
-          color: "var(--warning-dark, #78350f)",
-          textAlign: "center",
-          padding: "8px 16px",
-          fontSize: "14px",
-          fontWeight: 500,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px",
-          animation: "slideDown 0.3s ease",
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="1" y1="1" x2="23" y2="23" />
-          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
-          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
-          <path d="M10.71 5.05A16 16 0 0 1 22.56 9" />
-          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
-          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-          <line x1="12" y1="20" x2="12.01" y2="20" />
-        </svg>
-        You're offline. Some features may be limited.
-      </div>
-    );
-  }
-
-  return null;
 }
 
 /** Wrapper that requires authentication; redirects to /login otherwise */
@@ -275,6 +207,36 @@ function StudentRoute({ children }: { children: React.ReactNode }) {
         <TimeGuardedRoute>{children}</TimeGuardedRoute>
       </AppShell>
     </ProtectedRoute>
+  );
+}
+
+/** Returns true when the child-mode experience should be shown. */
+function isChildMode(settings: Record<string, unknown> | undefined): boolean {
+  if (typeof settings?.ageGroup === 'string' && settings.ageGroup === '3-5') return true;
+  try {
+    return localStorage.getItem('mm_child_mode') === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Dashboard selector — renders ChildHome for young learners (ages 3-6 or
+ * child mode toggle on), otherwise falls back to the normal Dashboard.
+ */
+function DashboardSelector() {
+  const { userProfile } = useAuth();
+  if (isChildMode(userProfile?.settings)) {
+    return (
+      <Suspense fallback={<PageLoader />}>
+        <ChildHome />
+      </Suspense>
+    );
+  }
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Dashboard />
+    </Suspense>
   );
 }
 
@@ -368,13 +330,25 @@ function AppRoutes() {
             />
 
             {/* ── Student routes (protected + AppShell) ─────────── */}
-            <Route path="/dashboard" element={<StudentRoute><Dashboard /></StudentRoute>} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AppShell showSidebar>
+                    <TimeGuardedRoute>
+                      <DashboardSelector />
+                    </TimeGuardedRoute>
+                  </AppShell>
+                </ProtectedRoute>
+              }
+            />
             <Route path="/worlds" element={<StudentRoute><WorldMap /></StudentRoute>} />
             <Route path="/worlds/:worldId" element={<StudentRoute><WorldDetail /></StudentRoute>} />
             <Route path="/worlds/:worldId/lessons/:lessonId" element={<StudentRoute><LessonPlayer /></StudentRoute>} />
             <Route path="/games" element={<StudentRoute><Games /></StudentRoute>} />
             <Route path="/practice" element={<StudentRoute><PracticeMode /></StudentRoute>} />
             <Route path="/words" element={<StudentRoute><Words /></StudentRoute>} />
+            <Route path="/review/flashcards" element={<StudentRoute><FlashcardReview /></StudentRoute>} />
             <Route path="/videos" element={<StudentRoute><Videos /></StudentRoute>} />
             <Route path="/story" element={<StudentRoute><StoryPage /></StudentRoute>} />
             <Route path="/stories" element={<StudentRoute><StoriesGrid /></StudentRoute>} />
@@ -391,7 +365,37 @@ function AppRoutes() {
             <Route path="/reading" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/reading/:bookId" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/daily-lesson" element={<StudentRoute><DailyLesson /></StudentRoute>} />
+            <Route path="/social/friends" element={<StudentRoute><FriendsPage /></StudentRoute>} />
+            <Route path="/achievements" element={<StudentRoute><Achievements /></StudentRoute>} />
+            <Route path="/mascots" element={<StudentRoute><MascotSelector /></StudentRoute>} />
+            <Route path="/avatar" element={<StudentRoute><AvatarCustomizer /></StudentRoute>} />
+            <Route path="/phonetics/traps" element={<StudentRoute><PhoneticsTrapTrainer /></StudentRoute>} />
+            <Route path="/tracing" element={<StudentRoute><LetterTracingPage /></StudentRoute>} />
             <Route path="/pricing" element={<Pricing />} />
+
+            {/* ── Parent routes (protected, parent role only) ───── */}
+            <Route
+              path="/parent"
+              element={
+                <ProtectedRoute>
+                  <AppShell showSidebar={false}>
+                    <ParentDashboard />
+                  </AppShell>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ── Teacher routes (protected, teacher role only) ── */}
+            <Route
+              path="/teacher"
+              element={
+                <ProtectedRoute>
+                  <AppShell showSidebar={false}>
+                    <TeacherDashboard />
+                  </AppShell>
+                </ProtectedRoute>
+              }
+            />
 
             {/* ── Catch-all ──────────────────────────────────────── */}
             <Route path="*" element={<NotFound />} />
@@ -469,6 +473,7 @@ function WhatsNextButton() {
 
 function AppContent() {
   const [showChat, setShowChat] = useState(false);
+  const [showNotifPrompt, setShowNotifPrompt] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -476,6 +481,29 @@ function AppContent() {
   const isSetupRoute = location.pathname === "/setup";
 
   const { user, userProfile, hasSkippedSetup, loading, profileLoading, isAdmin } = useAuth();
+
+  // Show notification prompt after 3+ lessons if not yet shown
+  useEffect(() => {
+    if (!user || isAdminRoute || isSetupRoute) return;
+    if (hasSeenNotificationPrompt()) return;
+    if (getLessonCount() >= 3) {
+      setShowNotifPrompt(true);
+    }
+  }, [user, isAdminRoute, isSetupRoute]);
+
+  const handleNotifAccept = useCallback(async () => {
+    setShowNotifPrompt(false);
+    markNotificationPromptShown('accepted');
+    const { granted } = await requestNotificationPermission();
+    if (granted) {
+      scheduleStreakReminder(null, userProfile?.streak_days ?? 0);
+    }
+  }, [userProfile?.streak_days]);
+
+  const handleNotifDecline = useCallback(() => {
+    setShowNotifPrompt(false);
+    markNotificationPromptShown('declined');
+  }, []);
 
   // Admin: redirect to admin panel immediately
   useEffect(() => {
@@ -503,7 +531,15 @@ function AppContent() {
 
   return (
     <>
+      {/* Screen reader live region — must be in the DOM at all times */}
+      <div
+        id="sr-announcer"
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
+      />
       <OfflineBanner />
+      <InstallBanner />
       <AppRoutes />
 
       {/* Gamification overlays for authenticated users */}
@@ -512,6 +548,14 @@ function AppContent() {
           <DailyReward />
           <LevelUpModal />
         </Suspense>
+      )}
+
+      {/* Notification permission prompt — shown after 3rd lesson completion */}
+      {showNotifPrompt && (
+        <NotificationPrompt
+          onAccept={handleNotifAccept}
+          onDecline={handleNotifDecline}
+        />
       )}
 
       {/* Floating chat button */}
@@ -572,6 +616,11 @@ function App() {
     setShowSplash(false);
   };
 
+  // Pre-load Web Speech API voices so they are ready when the child taps a speak button
+  useEffect(() => {
+    void initTTS();
+  }, []);
+
   // Hide animated background blobs during splash
   useEffect(() => {
     const root = document.getElementById('root');
@@ -600,11 +649,13 @@ function App() {
           <LanguageProvider>
             <AuthProvider>
               <PremiumProvider>
+                <HeartsProvider>
                 <GamificationProvider>
                   <ToastProvider>
                     <AppContent />
                   </ToastProvider>
                 </GamificationProvider>
+                </HeartsProvider>
               </PremiumProvider>
             </AuthProvider>
           </LanguageProvider>

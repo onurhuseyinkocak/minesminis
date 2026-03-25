@@ -331,7 +331,7 @@ export default function BlogManager() {
                 <label>Yayın Tarihi</label>
                 <input
                   type="date"
-                  value={form.published_at}
+                  value={form.published_at ?? ''}
                   onChange={(e) => setForm((f) => ({ ...f, published_at: e.target.value }))}
                 />
               </div>

@@ -11,7 +11,10 @@
 /* ---- HERO ---- */
 .words-hero {
   text-align: center;
-  padding: var(--space-xl) var(--space-md) var(--space-md);
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+  margin-bottom: var(--space-sm);
 }
 
 .words-hero-emoji {
@@ -26,6 +29,45 @@
   font-weight: 800;
   color: var(--text-primary);
   margin: 0;
+}
+
+/* ---- FLASHCARD CTA ---- */
+.words-flashcard-cta {
+  padding: 12px 16px 4px;
+}
+
+.words-flashcard-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: var(--text-on-primary, #ffffff);
+  border: none;
+  border-radius: var(--radius-xl, 16px);
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px var(--primary-glow, rgba(255, 107, 53, 0.35));
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  touch-action: manipulation;
+}
+
+.words-flashcard-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px var(--primary-glow, rgba(255, 107, 53, 0.4));
+}
+
+.words-flashcard-cta-btn:active {
+  transform: scale(0.98);
+}
+
+.words-flashcard-cta-arrow {
+  margin-left: auto;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 /* ---- TAB BUTTONS ---- */

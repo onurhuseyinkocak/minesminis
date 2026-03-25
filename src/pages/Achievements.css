@@ -1,0 +1,257 @@
+/* =============================================================================
+   Achievements.css — Full achievements gallery page.
+   MinesMinis Design System v5. ZERO hex colors. All var() tokens.
+   ============================================================================= */
+
+/* ---- Page container ---- */
+.achievements-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding-bottom: var(--space-3xl);
+}
+
+.achievements-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+/* ---- Header ---- */
+.achievements-header {
+  margin-bottom: var(--space-xl);
+}
+
+.achievements-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.achievements-title-row h1 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ---- Summary strip ---- */
+.achievements-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  flex-wrap: wrap;
+}
+
+.achievements-summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 60px;
+}
+
+.achievements-summary-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.achievements-summary-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.achievements-summary-card--rarest .achievements-summary-value {
+  font-size: 0.75rem;
+}
+
+.achievements-summary-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border-light);
+  flex-shrink: 0;
+}
+
+/* ---- Rarity pills ---- */
+.achievements-rarity-pill {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+}
+
+.achievements-rarity-pill--common {
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+}
+
+.achievements-rarity-pill--rare {
+  background: var(--info-pale);
+  color: var(--info);
+}
+
+.achievements-rarity-pill--epic {
+  background: var(--accent-purple-pale);
+  color: var(--accent-purple);
+}
+
+.achievements-rarity-pill--legendary {
+  background: var(--warning-pale);
+  color: var(--warning);
+}
+
+/* ---- Section titles ---- */
+.achievements-section-title {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+/* ---- Recent section ---- */
+.achievements-recent {
+  margin-bottom: var(--space-xl);
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.achievements-recent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-md);
+}
+
+/* ---- Category tabs ---- */
+.achievements-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-xs);
+  background: var(--bg-muted);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.achievements-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.achievements-tab {
+  flex-shrink: 0;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: var(--touch-target);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.achievements-tab:hover {
+  color: var(--text-primary);
+}
+
+.achievements-tab--active {
+  background: var(--bg-card);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- Badge grid ---- */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-md);
+}
+
+.achievements-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* ---- Progress hint ---- */
+.achievements-progress-hint {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  background: var(--bg-muted);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* ---- Empty state ---- */
+.achievements-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-3xl) var(--space-xl);
+}
+
+.achievements-empty p {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .achievements-content {
+    padding: var(--space-md);
+  }
+
+  .achievements-title-row h1 {
+    font-size: 1.375rem;
+  }
+
+  .achievements-summary {
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .achievements-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .achievements-recent-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}

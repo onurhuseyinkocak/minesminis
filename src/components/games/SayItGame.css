@@ -1,0 +1,414 @@
+/* ==========================================================================
+   SAY IT GAME — MinesMinis Design System v4
+   Child speaks a word aloud and gets feedback via Web Speech API
+   ========================================================================== */
+
+.sig {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  max-width: 540px;
+  margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
+}
+
+/* -- Header --------------------------------------------------------------- */
+
+.sig__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.sig__title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--secondary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* -- Word Card ------------------------------------------------------------ */
+
+.sig__card {
+  background: var(--bg-card);
+  border: 3px solid var(--border-light);
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xl, 32px) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: center;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.sig__card--correct {
+  border-color: var(--mimi-green, #4caf50);
+  background: var(--success-pale, #e8f5e9);
+}
+
+.sig__card--wrong {
+  border-color: var(--danger, #f44336);
+  background: var(--danger-pale, #ffebee);
+}
+
+/* -- Word Display --------------------------------------------------------- */
+
+.sig__word {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.sig__translation {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+}
+
+.sig__phonetic {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  background: var(--bg-muted, #efefef);
+  border-radius: var(--radius-md, 8px);
+  padding: 0.2rem 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.sig__hint {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* -- Mic Button ----------------------------------------------------------- */
+
+.sig__mic-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm, 8px);
+  margin-top: var(--space-sm, 8px);
+}
+
+.sig__mic-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.sig__mic-btn:hover:not(:disabled) {
+  transform: scale(1.07);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.sig__mic-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.sig__mic-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Listening — pulsing ring */
+.sig__mic-btn--listening {
+  background: var(--danger, #f44336);
+  animation: mic-pulse 1.4s ease-in-out infinite;
+}
+
+/* Processing — muted */
+.sig__mic-btn--processing {
+  background: var(--text-secondary, #64748b);
+}
+
+/* Success */
+.sig__mic-btn--success {
+  background: var(--mimi-green, #4caf50);
+}
+
+/* Error */
+.sig__mic-btn--error {
+  background: var(--accent-amber, #f59e0b);
+}
+
+@keyframes mic-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--primary);
+  }
+  50% {
+    box-shadow: 0 0 0 16px transparent;
+  }
+}
+
+.sig__mic-label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* -- Feedback ------------------------------------------------------------ */
+
+.sig__feedback {
+  width: 100%;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.sig__feedback--correct {
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+}
+
+.sig__feedback--wrong {
+  background: var(--warning-pale, #fff8e1);
+  color: var(--primary-dark, #e65100);
+}
+
+.sig__heard {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-top: var(--space-xs, 4px);
+}
+
+/* -- Action Row ---------------------------------------------------------- */
+
+.sig__actions {
+  display: flex;
+  gap: var(--space-sm, 8px);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-xs, 4px);
+}
+
+.sig__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: none;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.sig__btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+.sig__btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.sig__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sig__btn--retry {
+  background: var(--accent-amber, #f59e0b);
+  color: #fff;
+}
+
+.sig__btn--skip {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+}
+
+.sig__btn--mark-done {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* -- Skip Always --------------------------------------------------------- */
+
+.sig__skip-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-xs, 4px);
+}
+
+/* -- Unsupported --------------------------------------------------------- */
+
+.sig__unsupported {
+  text-align: center;
+  padding: 3rem var(--space-lg);
+  background: var(--bg-card);
+  border: 3px solid var(--border-light);
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: var(--shadow-card);
+}
+
+.sig__unsupported h2 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm);
+}
+
+.sig__unsupported p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-lg);
+}
+
+/* -- Completion ---------------------------------------------------------- */
+
+.sig__completion {
+  text-align: center;
+}
+
+.sig__completion-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.sig__completion-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--secondary);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.sig__completion-score {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text-body);
+  margin: 0;
+}
+
+.sig__completion-actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--space-sm);
+}
+
+.sig__completion-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sig__completion-btn:hover {
+  transform: translateY(-2px);
+}
+
+.sig__completion-btn:active {
+  transform: scale(0.97);
+}
+
+.sig__completion-btn--primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+}
+
+.sig__completion-btn--secondary {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+}
+
+/* -- Score row ----------------------------------------------------------- */
+
+.sig__score-row {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-family: var(--font-display);
+}
+
+/* -- Responsive ---------------------------------------------------------- */
+
+@media (max-width: 480px) {
+  .sig {
+    padding: var(--space-md);
+  }
+
+  .sig__word {
+    font-size: 2.25rem;
+  }
+
+  .sig__mic-btn {
+    width: 68px;
+    height: 68px;
+  }
+
+  .sig__title {
+    font-size: 1.4rem;
+  }
+}
+
+/* -- Dark mode ----------------------------------------------------------- */
+
+[data-theme="dark"] .sig__card {
+  background: var(--bg-elevated);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .sig__card--correct {
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .sig__card--wrong {
+  background: var(--danger-pale);
+}
+
+[data-theme="dark"] .sig__phonetic {
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .sig__unsupported {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .sig__completion-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .sig__btn--skip {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}

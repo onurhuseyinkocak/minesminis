@@ -55,7 +55,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   const round = rounds[currentRound];
 
   const speakWord = useCallback((text: string) => {
-    speak(text, 0.85).catch(() => {/* fallback handled inside speak() */});
+    speak(text);
   }, []);
 
   const handlePlay = () => {

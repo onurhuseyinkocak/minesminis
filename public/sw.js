@@ -211,30 +211,27 @@ async function networkFirst(request) {
 // ─── Push notifications ──────────────────────────────────────────────────────
 
 self.addEventListener('push', (event) => {
-    const options = {
-        body: event.data ? event.data.text() : 'New notification from MinesMinis!',
-        icon: '/images/mine-logo.jpg',
-        badge: '/images/mine-logo.jpg',
-        vibrate: [100, 50, 100],
-        data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1,
-        },
-        actions: [
-            { action: 'explore', title: 'Open App' },
-            { action: 'close', title: 'Close' },
-        ],
-    };
+    let data = { title: 'MinesMinis', body: "Bugün ders yapmayı unutma!" };
+    if (event.data) {
+        try {
+            data = event.data.json();
+        } catch {
+            data.body = event.data.text() || data.body;
+        }
+    }
 
     event.waitUntil(
-        self.registration.showNotification('MinesMinis', options)
+        self.registration.showNotification(data.title || 'MinesMinis', {
+            body: data.body || '',
+            icon: '/icon-192.png',
+            badge: '/icon-192.png',
+            data: { url: data.url || '/' },
+        })
     );
 });
 
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
-
-    if (event.action === 'explore') {
-        event.waitUntil(clients.openWindow('/'));
-    }
+    const url = (event.notification.data && event.notification.data.url) || '/';
+    event.waitUntil(clients.openWindow(url));
 });

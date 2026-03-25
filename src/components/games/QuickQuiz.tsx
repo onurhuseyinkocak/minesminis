@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Timer, Zap, Trophy, Sparkles, Star, Lightbulb } from 'lucide-react';
 import { Card, Badge, ProgressBar, StreakFlame } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { SpeakButton } from '../SpeakButton';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHearts } from '../../contexts/HeartsContext';
+import LessonCompleteScreen, { useLessonComplete } from '../LessonCompleteScreen';
+import NoHeartsModal from '../NoHeartsModal';
+import { announceToScreenReader } from '../../utils/accessibility';
 import './QuickQuiz.css';
 
 interface WordItem {
@@ -17,6 +22,8 @@ interface GameProps {
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
+  mascotId?: string;
+  streakDays?: number;
 }
 
 interface Question {
@@ -64,9 +71,10 @@ function generateQuestions(words: WordItem[]): Question[] {
 
 const TIMER_DURATION = 10;
 
-export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, mascotId, streakDays }) => {
   if (words.length < 4) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
+  const { loseHeart, hearts } = useHearts();
   const questions = useMemo(() => generateQuestions(words), [words]);
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
@@ -76,7 +84,9 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | 'timeout' | null>(null);
   const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
   const [completed, setCompleted] = useState(false);
+  const [showNoHearts, setShowNoHearts] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { show: showComplete, trigger: triggerComplete, dismiss: dismissComplete } = useLessonComplete();
 
   const question = questions[currentQ];
 
@@ -94,10 +104,21 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setFeedback(null);
       setTimeLeft(TIMER_DURATION);
     } else {
+      const finalScore = latestScore ?? score;
       setCompleted(true);
-      onComplete(latestScore ?? score, questions.length);
+      const xpEarned = finalScore * 10;
+      triggerComplete({
+        xpEarned,
+        wordsLearned: questions.map((q) => q.word.english),
+        streakDays,
+        mascotId,
+        onContinue: () => {
+          dismissComplete();
+          onComplete(finalScore, questions.length);
+        },
+      });
     }
-  }, [currentQ, questions.length, score, onComplete]);
+  }, [currentQ, questions, score, onComplete, triggerComplete, dismissComplete, mascotId, streakDays]);
 
   useEffect(() => {
     if (completed || feedback) return;
@@ -135,13 +156,19 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       });
       setFeedback('correct');
       SFX.correct();
+      announceToScreenReader('Correct!', 'polite');
       onXpEarned?.(10 + streakBonus);
       setTimeout(() => advanceQuestion(newScore), 1500);
     } else {
       setStreak(0);
       setFeedback('wrong');
       SFX.wrong();
+      announceToScreenReader('Try again', 'assertive');
+      loseHeart();
       onWrongAnswer?.();
+      if (hearts - 1 <= 0) {
+        setShowNoHearts(true);
+      }
       setTimeout(() => advanceQuestion(score), 1500);
     }
   };
@@ -164,49 +191,71 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
-      <div className="quick-quiz">
-        <Card variant="elevated" padding="xl" className="quick-quiz__results">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
-            className="quick-quiz__results-content"
-          >
-            <Trophy size={56} className="quick-quiz__trophy" />
-            <h2 className="quick-quiz__results-title">{t('games.quizComplete')}</h2>
-            <p className="quick-quiz__results-score">
-              {score} / {questions.length} {t('games.xCorrect')}
-            </p>
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
-              ))}
-            </span>
-            {bestStreak >= 2 && (
-              <Badge variant="warning" icon={<Zap size={14} />}>
-                {t('games.bestStreak')} {bestStreak}x
-              </Badge>
-            )}
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 10} XP
-            </Badge>
-            <div className="quick-quiz__results-actions">
-              <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
-                {t('games.backToGames')}
-              </button>
-              <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
-                {t('games.playAgain')}
-              </button>
-            </div>
-          </motion.div>
-        </Card>
-      </div>
+      <>
+        {/* LessonCompleteScreen overlay (shown via useLessonComplete trigger) */}
+        {showComplete && (
+          <LessonCompleteScreen
+            xpEarned={score * 10}
+            wordsLearned={questions.map((q) => q.word.english)}
+            streakDays={streakDays}
+            mascotId={mascotId}
+            onContinue={() => {
+              dismissComplete();
+              onComplete(score, questions.length);
+            }}
+          />
+        )}
+        {/* Fallback inline results (visible if overlay was dismissed) */}
+        {!showComplete && (
+          <div className="quick-quiz">
+            <Card variant="elevated" padding="xl" className="quick-quiz__results">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 200 }}
+                className="quick-quiz__results-content"
+              >
+                <Trophy size={56} className="quick-quiz__trophy" />
+                <h2 className="quick-quiz__results-title">{t('games.quizComplete')}</h2>
+                <p className="quick-quiz__results-score">
+                  {score} / {questions.length} {t('games.xCorrect')}
+                </p>
+                <span className="game-stars">
+                  {Array.from({ length: 3 }, (_, i) => (
+                    <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                  ))}
+                </span>
+                {bestStreak >= 2 && (
+                  <Badge variant="warning" icon={<Zap size={14} />}>
+                    {t('games.bestStreak')} {bestStreak}x
+                  </Badge>
+                )}
+                <Badge variant="success" icon={<Sparkles size={14} />}>
+                  +{score * 10} XP
+                </Badge>
+                <div className="quick-quiz__results-actions">
+                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
+                    {t('games.backToGames')}
+                  </button>
+                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
+                    {t('games.playAgain')}
+                  </button>
+                </div>
+              </motion.div>
+            </Card>
+          </div>
+        )}
+      </>
     );
   }
 
   if (!question) return null;
 
   return (
+    <>
+    {showNoHearts && (
+      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
+    )}
     <div className="quick-quiz" role="application" aria-label="Quick quiz game">
       <div className="quick-quiz__header">
         <h2 className="quick-quiz__title">{t('games.quickQuiz')}</h2>
@@ -247,7 +296,10 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           className="quick-quiz__question-content"
         >
           <div className="quick-quiz__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{question.word.english.charAt(0).toUpperCase()}</div>
-          <p className="quick-quiz__prompt-text">
+          {question.mode === 'en-to-tr' && (
+            <SpeakButton text={question.word.english} autoPlay size="md" />
+          )}
+          <p id="qq-question-text" className="quick-quiz__prompt-text">
             {question.mode === 'en-to-tr'
               ? t('games.whatIsInTurkish').replace('{word}', question.word.english)
               : t('games.whatIsInEnglish')}
@@ -255,7 +307,12 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
         </motion.div>
       </Card>
 
-      <div className="quick-quiz__options" role="radiogroup" aria-label="Answer options">
+      <div
+        className="quick-quiz__options"
+        role="radiogroup"
+        aria-label="Answer choices"
+        aria-describedby="qq-question-text"
+      >
         <AnimatePresence mode="wait">
           {question.options.map((option, index) => {
             let optionClass = 'quick-quiz__option';
@@ -273,6 +330,8 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                 className={optionClass}
                 onClick={() => handleSelect(index)}
                 disabled={feedback !== null}
+                role="radio"
+                aria-checked={selected === index}
                 aria-label={option}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -289,36 +348,39 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
         </AnimatePresence>
       </div>
 
-      {feedback === 'correct' && (
-        <motion.div
-          className="quick-quiz__feedback quick-quiz__feedback--correct"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          {t('games.correct')} {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
-        </motion.div>
-      )}
+      <div aria-live="polite" aria-atomic="true">
+        {feedback === 'correct' && (
+          <motion.div
+            className="quick-quiz__feedback quick-quiz__feedback--correct"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            {t('games.correct')} {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
+          </motion.div>
+        )}
 
-      {feedback === 'wrong' && (
-        <motion.div
-          className="quick-quiz__feedback quick-quiz__feedback--wrong"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          {t('games.theAnswerWas')} {question.options[question.correctIndex]} <Lightbulb size={14} color="#E8A317" />
-        </motion.div>
-      )}
+        {feedback === 'wrong' && (
+          <motion.div
+            className="quick-quiz__feedback quick-quiz__feedback--wrong"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {t('games.theAnswerWas')} {question.options[question.correctIndex]} <Lightbulb size={14} color="#E8A317" />
+          </motion.div>
+        )}
 
-      {feedback === 'timeout' && (
-        <motion.div
-          className="quick-quiz__feedback quick-quiz__feedback--timeout"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]}
-        </motion.div>
-      )}
+        {feedback === 'timeout' && (
+          <motion.div
+            className="quick-quiz__feedback quick-quiz__feedback--timeout"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]}
+          </motion.div>
+        )}
+      </div>
     </div>
+    </>
   );
 };
 

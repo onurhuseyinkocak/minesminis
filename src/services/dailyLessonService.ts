@@ -419,39 +419,114 @@ export function getTodayCVCWords(): CVCWord[] {
   return result;
 }
 
-// ─── Streak freeze ────────────────────────────────────────────────────────────
+// ─── Streak freeze / protection packs ────────────────────────────────────────
+
+const FREEZE_COUNT_KEY = 'mm_streak_freezes';
+const FREEZE_EARNED_AT_KEY = 'mm_streak_freeze_earned_at';
 
 /**
- * Returns true if the user is eligible to use a streak freeze.
- * One free miss allowed per 7-day rolling window.
+ * Returns the number of streak freeze charges the user currently has.
  */
-export function shouldFreezeStreak(userId: string): boolean {
-  const freezeKey = `mm_streak_freeze_${userId}`;
-  const lastFreeze = localStorage.getItem(freezeKey);
-  if (lastFreeze) {
-    const freezeDate = new Date(lastFreeze);
-    const now = new Date();
-    const daysDiff = Math.floor(
-      (now.getTime() - freezeDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
-    if (daysDiff < 7) return false; // already used this week
+export function getStreakFreezeCount(): number {
+  try {
+    const raw = localStorage.getItem(FREEZE_COUNT_KEY);
+    if (raw === null) return 0;
+    const val = parseInt(raw, 10);
+    return isNaN(val) ? 0 : Math.max(0, val);
+  } catch {
+    return 0;
   }
-  return true; // can freeze
 }
 
 /**
- * Records that the user has consumed their streak freeze for this week.
- * Call this when a missed day is forgiven instead of resetting the streak.
+ * Adds `count` freeze charges to the user's balance.
  */
-export function useStreakFreeze(userId: string): void {
+export function addStreakFreeze(count: number): void {
   try {
-    localStorage.setItem(
-      `mm_streak_freeze_${userId}`,
-      new Date().toISOString(),
-    );
+    const current = getStreakFreezeCount();
+    localStorage.setItem(FREEZE_COUNT_KEY, String(current + count));
   } catch {
     // storage full — ignore
   }
+}
+
+/**
+ * Consumes 1 freeze charge if available.
+ * Returns true if a freeze was consumed, false if balance was 0.
+ */
+export function consumeStreakFreeze(): boolean {
+  const current = getStreakFreezeCount();
+  if (current <= 0) return false;
+  try {
+    localStorage.setItem(FREEZE_COUNT_KEY, String(current - 1));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Returns the ISO timestamp of when the last freeze was earned, or null.
+ */
+export function getStreakFreezeEarnedAt(): string | null {
+  try {
+    return localStorage.getItem(FREEZE_EARNED_AT_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Checks whether the current streak milestone earns a new freeze.
+ * - Free tier:    1 freeze per 7-day milestone. Starts with 1 if balance is 0.
+ * - Premium tier: 5 freezes on first use, then 1 per 3-day milestone.
+ *
+ * Returns true if a freeze was awarded.
+ */
+export function checkAndAwardStreakFreeze(
+  streakDays: number,
+  isPremium: boolean,
+): boolean {
+  // Bootstrap: premium users start with 5, free users start with 1
+  if (streakDays === 1 && getStreakFreezeCount() === 0) {
+    const bootstrap = isPremium ? 5 : 1;
+    addStreakFreeze(bootstrap);
+    try {
+      localStorage.setItem(FREEZE_EARNED_AT_KEY, new Date().toISOString());
+    } catch {
+      // ignore
+    }
+    return true;
+  }
+
+  const milestone = isPremium ? 3 : 7;
+  if (streakDays > 1 && streakDays % milestone === 0) {
+    addStreakFreeze(1);
+    try {
+      localStorage.setItem(FREEZE_EARNED_AT_KEY, new Date().toISOString());
+    } catch {
+      // ignore
+    }
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Returns true if the user has at least one freeze available.
+ * Kept for backwards-compatibility with any callers that used shouldFreezeStreak.
+ */
+export function shouldFreezeStreak(_userId: string): boolean {
+  return getStreakFreezeCount() > 0;
+}
+
+/**
+ * Consumes a streak freeze (new implementation).
+ * Kept for backwards-compatibility — prefer consumeStreakFreeze() directly.
+ */
+export function useStreakFreeze(_userId: string): void {
+  consumeStreakFreeze();
 }
 
 // ─── Total learned count ──────────────────────────────────────────────────────

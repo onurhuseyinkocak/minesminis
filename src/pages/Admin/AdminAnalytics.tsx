@@ -148,7 +148,7 @@ function AdminAnalytics() {
             {/* Key Stats */}
             <div className="adm-analytics-stats">
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--info-pale)', color: 'var(--accent-blue)' }}>
+                    <div className="adm-analytics-stat-icon adm-analytics-stat-icon--info">
                         <Users size={20} />
                     </div>
                     <div>
@@ -157,7 +157,7 @@ function AdminAnalytics() {
                     </div>
                 </div>
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--success-pale)', color: 'var(--accent-emerald)' }}>
+                    <div className="adm-analytics-stat-icon adm-analytics-stat-icon--success">
                         <Target size={20} />
                     </div>
                     <div>
@@ -166,7 +166,7 @@ function AdminAnalytics() {
                     </div>
                 </div>
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--warning-pale)', color: 'var(--accent-orange)' }}>
+                    <div className="adm-analytics-stat-icon adm-analytics-stat-icon--warning">
                         <Flame size={20} />
                     </div>
                     <div>
@@ -175,7 +175,7 @@ function AdminAnalytics() {
                     </div>
                 </div>
                 <div className="adm-analytics-stat">
-                    <div className="adm-analytics-stat-icon" style={{ background: 'var(--accent-purple-pale)', color: 'var(--accent-purple)' }}>
+                    <div className="adm-analytics-stat-icon adm-analytics-stat-icon--purple">
                         <Award size={20} />
                     </div>
                     <div>
@@ -192,7 +192,7 @@ function AdminAnalytics() {
                         <div className="adm-analytics-chart-title">
                             <TrendingUp size={16} /> User Registrations Over Time
                         </div>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)' }}>Last 12 months</span>
+                        <span className="adm-analytics-chart-period">Last 12 months</span>
                     </div>
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -265,7 +265,7 @@ function AdminAnalytics() {
                             <Target size={16} /> Word Mastery Distribution
                         </div>
                     </div>
-                    <div className="adm-analytics-chart-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="adm-analytics-chart-body adm-analytics-chart-body--centered">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <PieChart>
                                 <Pie
@@ -316,7 +316,7 @@ function AdminAnalytics() {
                             <Gamepad2 size={16} /> Most Popular Games
                         </div>
                     </div>
-                    <div style={{ padding: '0.5rem 0' }}>
+                    <div className="adm-analytics-games-list">
                         {topGames.length === 0 && (
                             <div className="adm-empty">No game data available</div>
                         )}
@@ -345,8 +345,8 @@ function AdminAnalytics() {
                             <Award size={16} /> Engagement Summary
                         </div>
                     </div>
-                    <div style={{ padding: '1.25rem' }}>
-                        <div style={{ display: 'grid', gap: '1rem' }}>
+                    <div className="adm-engagement-body">
+                        <div className="adm-engagement-grid">
                             {[
                                 { label: 'Daily Active Users', value: 'N/A', sub: 'No activity data yet', color: 'var(--accent-blue)' },
                                 { label: 'Weekly Active Users', value: 'N/A', sub: 'No activity data yet', color: 'var(--accent-emerald)' },
@@ -354,13 +354,13 @@ function AdminAnalytics() {
                                 { label: 'Retention (7-day)', value: 'N/A', sub: 'Users returning within 7 days', color: 'var(--accent-purple)' },
                                 { label: 'Content Engagement', value: 'N/A', sub: 'Avg. items per session', color: 'var(--accent-pink)' },
                             ].map(item => (
-                                <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid var(--admin-border-light)' }}>
-                                    <div style={{ width: 4, height: 32, borderRadius: 2, background: item.color, flexShrink: 0 }} />
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: '0.775rem', fontWeight: 500, color: 'var(--admin-text)' }}>{item.label}</div>
-                                        <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)' }}>{item.sub}</div>
+                                <div key={item.label} className="adm-engagement-row">
+                                    <div className="adm-engagement-bar" style={{ background: item.color }} />
+                                    <div className="adm-engagement-info">
+                                        <div className="adm-engagement-label">{item.label}</div>
+                                        <div className="adm-engagement-sub">{item.sub}</div>
                                     </div>
-                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--admin-text)' }}>{item.value}</div>
+                                    <div className="adm-engagement-value">{item.value}</div>
                                 </div>
                             ))}
                         </div>

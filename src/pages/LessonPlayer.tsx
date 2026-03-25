@@ -533,7 +533,7 @@ const LessonPlayer = () => {
     return (
       <div className="lesson-player-page lesson-player-page--not-found">
         <h2>{t('lesson.notFound')}</h2>
-        <p style={{ color: 'var(--text-secondary)', margin: '1rem 0' }}>
+        <p className="lesson-not-found__desc">
           {t('lesson.notFoundDesc')} &quot;{lessonId}&quot; {t('lesson.inWorld')} &quot;{worldId}&quot;.
         </p>
         <Link to={`/worlds/${worldId}`}>
@@ -633,7 +633,7 @@ const LessonPlayer = () => {
           </div>
 
           {totalPossible > 0 && (
-            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+            <p className="lesson-accuracy__text">
               {t('lesson.accuracy')}: {accuracy}% ({totalScore}/{totalPossible})
             </p>
           )}
@@ -726,12 +726,7 @@ const LessonPlayer = () => {
 
       {/* Lesson Info */}
       {currentIndex === 0 && (
-        <div style={{
-          textAlign: 'center',
-          padding: '0.5rem 1rem',
-          color: 'var(--text-secondary)',
-          fontSize: '0.85rem',
-        }}>
+        <div className="lesson-breadcrumb">
           {world && <span>{lang === 'tr' ? world.nameTr : world.name} &bull; </span>}
           {'objective' in lesson ? (lesson as { objective: string }).objective : (lang === 'tr' ? lesson.titleTr : lesson.title)}
         </div>

@@ -404,7 +404,7 @@ function AdminContentManager() {
                     <button type="button" className="adm-page-btn" onClick={() => setCurrent(Math.max(1, current - 1))} disabled={current === 1}>
                         <ChevronLeft size={14} />
                     </button>
-                    <span style={{ padding: '0 0.5rem', fontSize: '0.8rem' }}>{current} / {pages}</span>
+                    <span className="adm-page-num">{current} / {pages}</span>
                     <button type="button" className="adm-page-btn" onClick={() => setCurrent(Math.min(pages, current + 1))} disabled={current === pages}>
                         <ChevronRight size={14} />
                     </button>
@@ -519,7 +519,7 @@ function AdminContentManager() {
 
             {/* Loading */}
             {isLoading && (
-                <div className="adm-loading" style={{ minHeight: '20vh' }}>
+                <div className="adm-loading adm-loading--tall">
                     <div className="adm-spinner" />
                     <p>Loading {activeTab}...</p>
                 </div>
@@ -545,7 +545,7 @@ function AdminContentManager() {
                                     <td><div className="adm-thumb-emoji">{word.emoji}</div></td>
                                     <td><strong>{word.word}</strong></td>
                                     <td>{word.turkish}</td>
-                                    <td style={{ fontSize: '0.775rem', color: 'var(--admin-text-secondary)' }}>{word.category}</td>
+                                    <td className="adm-td--secondary">{word.category}</td>
                                     <td>
                                         <span className={`adm-level-badge ${word.level}`}>
                                             {word.level === 'beginner' ? 'Beginner' : word.level === 'intermediate' ? 'Intermediate' : 'Advanced'}
@@ -626,22 +626,22 @@ function AdminContentManager() {
                             {paginate(filteredVideos, videosPage).map(video => (
                                 <tr key={video.id}>
                                     <td>
-                                        <div style={{ position: 'relative' }}>
+                                        <div className="adm-video-thumb-wrap">
                                             <img
                                                 src={video.thumbnail?.startsWith('http') ? video.thumbnail : `https://img.youtube.com/vi/${video.youtube_id}/mqdefault.jpg`}
                                                 alt={video.title}
                                                 className="adm-thumb"
                                             />
-                                            <Play size={12} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'var(--white)', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }} />
+                                            <Play size={12} className="adm-video-play-icon" />
                                         </div>
                                     </td>
                                     <td>
                                         <strong>{video.title}</strong>
-                                        {video.isPopular && <span style={{ marginLeft: 6, fontSize: '0.7rem', color: 'var(--warning)', fontWeight: 600 }}>POPULAR</span>}
+                                        {video.isPopular && <span className="adm-badge--popular">POPULAR</span>}
                                     </td>
-                                    <td style={{ fontSize: '0.775rem' }}>{video.grade}</td>
+                                    <td className="adm-td--sm">{video.grade}</td>
                                     <td><span className="adm-level-badge intermediate">{video.category}</span></td>
-                                    <td style={{ fontSize: '0.775rem', color: 'var(--admin-text-muted)' }}>{video.duration}</td>
+                                    <td className="adm-td--muted">{video.duration}</td>
                                     <td>
                                         <div className="adm-table-actions">
                                             <button type="button" className="adm-icon-btn" onClick={() => openEditModal(video)}><Pencil size={14} /></button>
@@ -677,12 +677,12 @@ function AdminContentManager() {
                                     <td><img src={ws.thumbnailUrl} alt={ws.title} className="adm-thumb" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} /></td>
                                     <td>
                                         <strong>{ws.title}</strong>
-                                        <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)', marginTop: 2 }}>{ws.description}</div>
+                                        <div className="adm-td-subtitle">{ws.description}</div>
                                     </td>
                                     <td><span className="adm-level-badge beginner">{ws.category}</span></td>
                                     <td>{ws.grade}. Grade</td>
                                     <td>
-                                        <a href={ws.externalUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-primary)', textDecoration: 'none', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                        <a href={ws.externalUrl} target="_blank" rel="noopener noreferrer" className="adm-source-link">
                                             {ws.source} <ExternalLink size={11} />
                                         </a>
                                     </td>
@@ -704,7 +704,7 @@ function AdminContentManager() {
             {/* ========== Add/Edit Modal ========== */}
             {isModalOpen && (
                 <div className="adm-modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="adm-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
+                    <div className="adm-modal adm-modal--md" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>{editingItem ? 'Edit' : 'Add'} {activeTab === 'words' ? 'Word' : activeTab === 'games' ? 'Game' : activeTab === 'videos' ? 'Video' : 'Worksheet'}</h3>
                             <button type="button" className="adm-icon-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
@@ -716,9 +716,9 @@ function AdminContentManager() {
                                     <>
                                         <div className="adm-form-group">
                                             <label>English Word</label>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                <input type="text" value={String(formData.word || '')} onChange={e => setFormData({ ...formData, word: e.target.value })} placeholder="e.g. apple" required style={{ flex: 1 }} />
-                                                <button type="button" className="adm-btn" onClick={fetchWordEnrich} disabled={enriching} style={{ whiteSpace: 'nowrap' }}>
+                                            <div className="adm-input-row">
+                                                <input type="text" value={String(formData.word || '')} onChange={e => setFormData({ ...formData, word: e.target.value })} placeholder="e.g. apple" required className="adm-input--flex" />
+                                                <button type="button" className="adm-btn adm-btn--nowrap" onClick={fetchWordEnrich} disabled={enriching}>
                                                     <Sparkles size={14} /> {enriching ? '...' : 'Auto Fill'}
                                                 </button>
                                             </div>
@@ -727,10 +727,10 @@ function AdminContentManager() {
                                             <label>Turkish</label>
                                             <input type="text" value={String(formData.turkish || '')} onChange={e => setFormData({ ...formData, turkish: e.target.value })} placeholder="e.g. elma" required />
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: '0.75rem' }}>
+                                        <div className="adm-form-grid--emoji">
                                             <div className="adm-form-group">
                                                 <label>Emoji</label>
-                                                <input type="text" value={String(formData.emoji || '')} onChange={e => setFormData({ ...formData, emoji: e.target.value })} style={{ textAlign: 'center', fontSize: '1.25rem' }} />
+                                                <input type="text" value={String(formData.emoji || '')} onChange={e => setFormData({ ...formData, emoji: e.target.value })} className="adm-input--emoji" />
                                             </div>
                                             <div className="adm-form-group">
                                                 <label>Category</label>
@@ -768,7 +768,7 @@ function AdminContentManager() {
                                             <label>Thumbnail URL</label>
                                             <input type="text" value={String(formData.thumbnailUrl || '')} onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })} placeholder="https://..." />
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                        <div className="adm-form-grid--half">
                                             <div className="adm-form-group">
                                                 <label>Game Type</label>
                                                 <select value={String(formData.type || 'Quiz')} onChange={e => setFormData({ ...formData, type: e.target.value })}>
@@ -793,9 +793,9 @@ function AdminContentManager() {
                                     <>
                                         <div className="adm-form-group">
                                             <label>YouTube URL or Video ID</label>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                <input type="text" value={String(formData.id || '')} onChange={e => setFormData({ ...formData, id: e.target.value })} placeholder="https://youtube.com/watch?v=..." required style={{ flex: 1 }} />
-                                                <button type="button" className="adm-btn" onClick={fetchYouTubeMeta} disabled={enriching} style={{ whiteSpace: 'nowrap' }}>
+                                            <div className="adm-input-row">
+                                                <input type="text" value={String(formData.id || '')} onChange={e => setFormData({ ...formData, id: e.target.value })} placeholder="https://youtube.com/watch?v=..." required className="adm-input--flex" />
+                                                <button type="button" className="adm-btn adm-btn--nowrap" onClick={fetchYouTubeMeta} disabled={enriching}>
                                                     <RefreshCw size={14} /> {enriching ? '...' : 'Fetch'}
                                                 </button>
                                             </div>
@@ -808,7 +808,7 @@ function AdminContentManager() {
                                             <label>Description</label>
                                             <textarea value={String(formData.description || '')} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={2} />
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                                        <div className="adm-form-grid--thirds">
                                             <div className="adm-form-group">
                                                 <label>Grade</label>
                                                 <select value={String(formData.grade || '2nd Grade')} onChange={e => setFormData({ ...formData, grade: e.target.value })}>
@@ -832,7 +832,7 @@ function AdminContentManager() {
                                         </div>
                                         <div className="adm-form-check">
                                             <input type="checkbox" checked={!!formData.isPopular} onChange={e => setFormData({ ...formData, isPopular: e.target.checked })} />
-                                            <label style={{ margin: 0 }}>Mark as Popular</label>
+                                            <label className="adm-label--inline">Mark as Popular</label>
                                         </div>
                                     </>
                                 )}
@@ -848,7 +848,7 @@ function AdminContentManager() {
                                             <label>Description</label>
                                             <input type="text" value={String(formData.description || '')} onChange={e => setFormData({ ...formData, description: e.target.value })} required />
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                        <div className="adm-form-grid--half">
                                             <div className="adm-form-group">
                                                 <label>Category</label>
                                                 <select value={String(formData.category || 'Vocabulary')} onChange={e => setFormData({ ...formData, category: e.target.value })}>
@@ -868,10 +868,10 @@ function AdminContentManager() {
                                         </div>
                                         <div className="adm-form-group">
                                             <label>File or External URL</label>
-                                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                                <label className="adm-btn" style={{ cursor: 'pointer' }}>
+                                            <div className="adm-upload-row">
+                                                <label className="adm-btn adm-btn--upload">
                                                     <Upload size={14} /> {uploading ? 'Uploading...' : 'Upload File'}
-                                                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileUpload} disabled={uploading} style={{ display: 'none' }} />
+                                                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileUpload} disabled={uploading} className="adm-file-input" />
                                                 </label>
                                             </div>
                                             <input type="url" value={String(formData.externalUrl || '')} onChange={e => setFormData({ ...formData, externalUrl: e.target.value })} placeholder="https://..." required />

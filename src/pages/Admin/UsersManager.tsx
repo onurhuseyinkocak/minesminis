@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, Users, Shield, Star, CheckCircle, Plus, X, Mail, Key, Crown, Trash2, AlertTriangle } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import './UsersManager.css';
 
 interface ConfirmModalProps {
     isOpen: boolean;
@@ -18,7 +19,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmLabel
     const btnClass = confirmVariant === 'danger' ? 'confirm-btn-danger' : confirmVariant === 'warning' ? 'confirm-btn-warning' : 'confirm-btn-primary';
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal confirm-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '420px' }}>
+            <div className="modal confirm-modal um-confirm-modal" onClick={e => e.stopPropagation()}>
                 <div className="confirm-modal-header">
                     <div className="confirm-modal-icon">
                         <AlertTriangle size={28} />
@@ -26,7 +27,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmLabel
                     <h3>{title}</h3>
                     <p>{message}</p>
                 </div>
-                <div className="modal-footer" style={{ borderTop: '1px solid #e5e7eb', gap: '0.75rem' }}>
+                <div className="modal-footer um-modal-footer">
                     <button type="button" className="cancel-btn" onClick={onClose}>İptal</button>
                     <button type="button" className={`save-btn ${btnClass}`} onClick={onConfirm} disabled={loading}>
                         {loading ? 'İşleniyor...' : confirmLabel}
@@ -236,7 +237,7 @@ function UsersManager() {
                     <br />
                     <small>Şifre: <code>{password}</code></small>
                     <br />
-                    <small style={{ color: '#f59e0b' }}>Bu şifreyi kaydedin!</small>
+                    <small className="um-toast-warning">Bu şifreyi kaydedin!</small>
                 </div>,
                 { duration: 10000 }
             );
@@ -318,7 +319,7 @@ function UsersManager() {
             </div>
 
             {/* Stats Cards */}
-            <div className="stats-grid" style={{ marginBottom: '1.5rem' }}>
+            <div className="stats-grid um-stats-row">
                 <div className="stat-card" style={{ '--stat-color': '#8b5cf6', '--stat-bg': '#f5f3ff' } as React.CSSProperties}>
                     <div className="stat-icon"><Users size={24} /></div>
                     <div className="stat-info">
@@ -353,15 +354,14 @@ function UsersManager() {
                 <div className="table-header">
                     <h2>{filteredUsers.length} Kullanıcı</h2>
                     <div className="table-actions">
-                        <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                        <div className="um-search-wrap">
+                            <Search size={18} className="um-search-icon" />
                             <input
                                 type="text"
                                 placeholder="Kullanıcı ara..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="search-input"
-                                style={{ paddingLeft: '40px' }}
+                                className="search-input um-search-input"
                             />
                         </div>
                         <button type="button" className="add-btn" onClick={() => setIsModalOpen(true)}>
@@ -383,7 +383,7 @@ function UsersManager() {
                                     role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}
                         </button>
                     ))}
-                    <span style={{ margin: '0 0.5rem', color: '#cbd5e1' }}>|</span>
+                    <span className="um-filter-sep">|</span>
                     {['all', 'premium', 'free'].map(type => (
                         <button
                             key={type}
@@ -412,18 +412,18 @@ function UsersManager() {
                         {filteredUsers.map(user => (
                             <tr key={user.id}>
                                 <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <div className="um-user-cell">
                                         {(user.settings?.avatar_emoji as string) ? (
-                                            <span style={{ fontSize: '1.5rem' }}>{user.settings.avatar_emoji as string}</span>
+                                            <span className="um-avatar-emoji">{user.settings.avatar_emoji as string}</span>
                                         ) : (
-                                            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 14 }}>
+                                            <div className="um-avatar-initial">
                                                 {(user.display_name || 'U').charAt(0).toUpperCase()}
                                             </div>
                                         )}
                                         <strong>{user.display_name || 'İsimsiz'}</strong>
                                     </div>
                                 </td>
-                                <td style={{ color: '#64748b' }}>{user.email}</td>
+                                <td className="um-email-cell">{user.email}</td>
                                 <td>
                                     <select
                                         value={user.role}
@@ -432,15 +432,7 @@ function UsersManager() {
                                             user,
                                             newRole: e.target.value as 'student' | 'teacher' | 'admin'
                                         })}
-                                        className={`role-select ${getRoleBadgeClass(user.role)}`}
-                                        style={{
-                                            padding: '0.4rem 0.6rem',
-                                            borderRadius: '6px',
-                                            border: '1px solid #e2e8f0',
-                                            fontSize: '0.8rem',
-                                            cursor: 'pointer',
-                                            fontWeight: 600
-                                        }}
+                                        className={`role-select um-role-select ${getRoleBadgeClass(user.role)}`}
                                     >
                                         <option value="student">Öğrenci</option>
                                         <option value="teacher">Öğretmen</option>
@@ -449,46 +441,35 @@ function UsersManager() {
                                 </td>
                                 <td>
                                     <button
+                                        type="button"
                                         onClick={() => setConfirmState({
                                             type: 'premium',
                                             user,
                                             newPremium: !isUserPremium(user)
                                         })}
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            padding: '0.4rem 0.8rem',
-                                            borderRadius: '100px',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 600,
-                                            background: isUserPremium(user) ? '#fef3c7' : '#f1f5f9',
-                                            color: isUserPremium(user) ? '#d97706' : '#64748b'
-                                        }}
+                                        className={`um-premium-btn ${isUserPremium(user) ? 'um-premium-btn--active' : 'um-premium-btn--inactive'}`}
                                     >
                                         <Crown size={14} />
                                         {isUserPremium(user) ? 'Premium' : 'Ücretsiz'}
                                     </button>
                                     {isUserPremium(user) && getUserPremiumUntil(user) && (
-                                        <small style={{ display: 'block', color: '#94a3b8', fontSize: '0.7rem', marginTop: '2px' }}>
+                                        <small className="um-premium-expiry">
                                             {new Date(getUserPremiumUntil(user)!).toLocaleDateString('tr-TR')} 'e kadar
                                         </small>
                                     )}
                                 </td>
                                 <td>
-                                    <span style={{ fontWeight: 600, color: '#f59e0b' }}>
+                                    <span className="um-points">
                                         {user.points || 0}
                                     </span>
                                 </td>
                                 <td>
                                     {user.is_online ? (
-                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#22c55e' }}>
+                                        <span className="um-status-online">
                                             <CheckCircle size={14} /> Çevrimiçi
                                         </span>
                                     ) : (
-                                        <span style={{ color: '#94a3b8' }}>Çevrimdışı</span>
+                                        <span className="um-status-offline">Çevrimdışı</span>
                                     )}
                                 </td>
                                 <td>
@@ -535,7 +516,7 @@ function UsersManager() {
                                         placeholder="kullanici@ornek.com"
                                         required
                                     />
-                                    <small style={{ color: '#64748b' }}>
+                                    <small className="um-small-muted">
                                         Bu adrese hoş geldin maili ve otomatik şifre gönderilecek
                                     </small>
                                 </div>
@@ -563,14 +544,13 @@ function UsersManager() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <label className="um-premium-label">
                                         <input
                                             type="checkbox"
                                             checked={newUserData.is_premium}
                                             onChange={(e) => setNewUserData({ ...newUserData, is_premium: e.target.checked })}
-                                            style={{ width: 'auto' }}
                                         />
-                                        <Crown size={16} style={{ color: '#f59e0b' }} />
+                                        <Crown size={16} className="um-premium-icon" />
                                         Premium Üyelik Ver
                                     </label>
                                 </div>
@@ -591,17 +571,12 @@ function UsersManager() {
                                     </div>
                                 )}
 
-                                <div style={{
-                                    background: '#fef3c7',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    marginTop: '1rem'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#92400e', marginBottom: '0.5rem' }}>
+                                <div className="um-password-info">
+                                    <div className="um-password-info-header">
                                         <Key size={16} />
                                         <strong>Otomatik Şifre</strong>
                                     </div>
-                                    <p style={{ color: '#a16207', fontSize: '0.85rem', margin: 0 }}>
+                                    <p className="um-password-info-text">
                                         Kullanıcı oluşturulduğunda otomatik şifre üretilecek ve ekranda gösterilecek.
                                         Bu şifreyi kaydedin veya kullanıcıya iletin.
                                     </p>

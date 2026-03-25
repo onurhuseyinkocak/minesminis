@@ -201,7 +201,7 @@ const StoryPage = React.memo(() => {
 
   // ─── TTS helper ───
   const speakWord = (word: string) => {
-    speak(word, 0.9).catch(() => {/* fallback handled inside speak() */});
+    speak(word);
   };
 
   const hasVocabulary = currentNode.vocabulary && currentNode.vocabulary.length > 0;
@@ -236,12 +236,13 @@ const StoryPage = React.memo(() => {
         </button>
 
         <div className="story-page__world-badge" style={{ background: world.color }}>
-          <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{world.name.charAt(0).toUpperCase()}</div>
+          <div className="story-page__avatar-circle story-page__avatar-circle--sm">{world.name.charAt(0).toUpperCase()}</div>
           <span>{world.name}</span>
         </div>
 
         <div className="story-page__topbar-actions">
           <button
+            type="button"
             className="story-page__icon-btn"
             onClick={() => setShowStats(!showStats)}
             title="Stats"
@@ -250,6 +251,7 @@ const StoryPage = React.memo(() => {
             <Star size={18} />
           </button>
           <button
+            type="button"
             className="story-page__icon-btn"
             onClick={() => setShowInventory(!showInventory)}
             title="Inventory"
@@ -275,7 +277,7 @@ const StoryPage = React.memo(() => {
               const info = TRAIT_NAMES[trait];
               return (
                 <div key={trait} className="story-page__trait">
-                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: info.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900 }}>{info.name.charAt(0).toUpperCase()}</div>
+                  <div className="story-page__avatar-circle story-page__avatar-circle--sm" style={{ background: info.color }}>{info.name.charAt(0).toUpperCase()}</div>
                   <span className="story-page__trait-name">{info.name}</span>
                   <div className="story-page__trait-bar">
                     <div
@@ -311,7 +313,7 @@ const StoryPage = React.memo(() => {
             <div className="story-page__items">
               {inventoryItems.map(item => item && (
                 <div key={item.id} className={`story-page__item story-page__item--${item.rarity}`}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900 }} className="story-page__item-emoji">{item.name.charAt(0).toUpperCase()}</div>
+                  <div className="story-page__avatar-circle story-page__item-emoji">{item.name.charAt(0).toUpperCase()}</div>
                   <div>
                     <div className="story-page__item-name">{item.name}</div>
                     <div className="story-page__item-desc">{item.description}</div>

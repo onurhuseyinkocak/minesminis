@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { Volume2, Mic, Check } from "lucide-react";
@@ -49,6 +49,7 @@ function saveLearnedToLS(words: Set<string>) {
 
 const Words: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>(
     (searchParams.get('tab') as TabType) || 'words'
@@ -273,6 +274,18 @@ const Words: React.FC = () => {
       <div className="words-hero">
         <span className="words-hero-emoji"><KidIcon name="book" size={48} /></span>
         <h1 className="words-hero-title">My Words</h1>
+      </div>
+
+      {/* Flashcard Review entry point */}
+      <div className="words-flashcard-cta">
+        <button
+          className="words-flashcard-cta-btn"
+          onClick={() => navigate('/review/flashcards')}
+        >
+          <KidIcon name="star" size={22} />
+          <span>Kelime Kartları</span>
+          <span className="words-flashcard-cta-arrow">→</span>
+        </button>
       </div>
 
       {/* Big tab buttons */}

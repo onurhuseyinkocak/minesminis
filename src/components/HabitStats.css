@@ -1,0 +1,55 @@
+/* ============================================================
+   HabitStats — 4-column stats strip
+   MinesMinis Design System tokens only. No hardcoded hex.
+   ============================================================ */
+
+.habit-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.habit-stat-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  box-shadow: 0 1px 4px var(--shadow-color);
+  min-width: 0;
+}
+
+.habit-stat-value {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.habit-stat-value--streak  { color: var(--primary); }
+.habit-stat-value--longest { color: var(--warning); }
+.habit-stat-value--rate    { color: var(--success); }
+.habit-stat-value--total   { color: var(--accent-purple); }
+
+.habit-stat-label {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+/* ================================================================
+   Responsive — collapse to 2×2 on very small screens
+   ================================================================ */
+@media (max-width: 360px) {
+  .habit-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

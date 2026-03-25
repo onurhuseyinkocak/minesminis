@@ -1,0 +1,31 @@
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: Nunito, sans-serif;
+  padding: 0 16px;
+  overflow: hidden;
+}
+
+.offline-banner--offline {
+  background: var(--warning, #f59e0b);
+  color: var(--warning-dark, #78350f);
+}
+
+.offline-banner--online {
+  background: var(--success, #22c55e);
+  color: #fff;
+}
+
+.offline-banner__icon {
+  flex-shrink: 0;
+}

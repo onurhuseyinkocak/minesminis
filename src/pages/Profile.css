@@ -32,9 +32,11 @@
   align-items: center;
   gap: var(--space-xl);
   padding: var(--space-xl);
-  background: var(--gradient-warm);
-  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  border-radius: var(--radius-2xl);
   margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
 }
 
 .profile-avatar-large {
@@ -131,9 +133,16 @@
 
 .stat-card {
   background: var(--bg-card);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   padding: var(--space-lg);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .stat-card.xp-focused {
@@ -196,12 +205,47 @@
   color: var(--text-body);
 }
 
+/* ---- READING SPEED CARD ---- */
+.profile-reading-speed-card {
+  border-left: 4px solid var(--warning);
+}
+
+.profile-wpm-display {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.profile-wpm-value {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--warning-dark, #92400e);
+  line-height: 1;
+}
+
+.profile-wpm-unit {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.profile-wpm-hint {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
 /* ---- BADGES SECTION ---- */
 .profile-badges-section {
   background: var(--bg-card);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   padding: var(--space-lg);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
 }
 
 .profile-badges-section .section-header {
@@ -250,6 +294,41 @@
   font-size: 12px;
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+/* ---- Badges header row right side ---- */
+.badges-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.view-achievements-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-md);
+  border: 1.5px solid var(--primary-light);
+  border-radius: var(--radius-full);
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  white-space: nowrap;
+}
+
+.view-achievements-btn:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .no-badges {
@@ -429,4 +508,62 @@
   .badges-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
+}
+
+/* ---- MASCOT LINK ---- */
+.profile-mascot-link-section {
+  margin-bottom: var(--space-xl);
+}
+
+.mascot-link-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.mascot-link-btn:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.mascot-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  flex-shrink: 0;
+}
+
+.mascot-link-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mascot-link-text strong {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mascot-link-sub {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
 }

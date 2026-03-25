@@ -1,10 +1,13 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Delete, Lightbulb, Volume2, Sparkles, Trophy, Star, Check } from 'lucide-react';
+import { Delete, Lightbulb, Sparkles, Trophy, Star, Check } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
-import { speak } from '../../services/ttsService';
+import { speakElevenLabs } from '../../services/ttsService';
+import { SpeakButton } from '../SpeakButton';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHearts } from '../../contexts/HeartsContext';
+import NoHeartsModal from '../NoHeartsModal';
 import './SpellingBee.css';
 
 interface WordItem {
@@ -56,6 +59,8 @@ function generateLetterPool(word: string): string[] {
 export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
+  const { loseHeart, hearts } = useHearts();
+  const [showNoHearts, setShowNoHearts] = useState(false);
   const gameWords = useMemo(() => words.slice(0, 5), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typed, setTyped] = useState<string[]>([]);
@@ -85,7 +90,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   }, [initWord]);
 
   const speakWord = useCallback((text: string) => {
-    speak(text, 0.9).catch(() => {/* fallback handled inside speak() */});
+    speakElevenLabs(text, 0.9).catch(() => {/* fallback handled inside speakElevenLabs() */});
   }, []);
 
   const handleLetterTap = (letter: string, poolIndex: number) => {
@@ -124,7 +129,11 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     } else {
       setFeedback('wrong');
       SFX.wrong();
+      loseHeart();
       onWrongAnswer?.();
+      if (hearts - 1 <= 0) {
+        setShowNoHearts(true);
+      }
       const newAttempts = wrongAttempts + 1;
       setWrongAttempts(newAttempts);
       if (newAttempts >= 2) setShowHint(true);
@@ -192,6 +201,10 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   const sentence = EXAMPLE_SENTENCES[currentWord.english.toLowerCase()] || `I like ${currentWord.english}.`;
 
   return (
+    <>
+    {showNoHearts && (
+      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
+    )}
     <div className="spelling-bee" role="application" aria-label="Spelling game">
       <div className="spelling-bee__header">
         <h2 className="spelling-bee__title">{t('games.spellIt')}</h2>
@@ -211,16 +224,13 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         >
           {currentWord.english.charAt(0).toUpperCase()}
         </motion.div>
-        <p className="spelling-bee__turkish">{currentWord.turkish}</p>
-        <Button
-          variant="ghost"
+        <p id="sb-word-prompt" className="spelling-bee__turkish">{currentWord.turkish}</p>
+        <SpeakButton
+          text={currentWord.english}
           size="lg"
-          icon={<Volume2 size={24} />}
-          onClick={() => speakWord(currentWord.english)}
+          variant="labeled"
           aria-label="Listen to pronunciation"
-        >
-          {t('games.listen')}
-        </Button>
+        />
       </Card>
 
       {showHint && (
@@ -234,7 +244,13 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         </motion.div>
       )}
 
-      <div className="spelling-bee__answer" aria-live="polite">
+      <div
+        className="spelling-bee__answer"
+        aria-label="Spelling input"
+        aria-describedby="sb-word-prompt"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {currentWord.english.split('').map((_, i) => (
           <div
             key={i}
@@ -250,25 +266,27 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         ))}
       </div>
 
-      {feedback === 'correct' && (
-        <motion.p
-          className="spelling-bee__sentence"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          "{sentence}"
-        </motion.p>
-      )}
+      <div aria-live="polite" aria-atomic="true">
+        {feedback === 'correct' && (
+          <motion.p
+            className="spelling-bee__sentence"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            "{sentence}"
+          </motion.p>
+        )}
 
-      {feedback === 'wrong' && (
-        <motion.p
-          className="spelling-bee__try-again"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
-        >
-          {t('games.almostTryAgain')}
-        </motion.p>
-      )}
+        {feedback === 'wrong' && (
+          <motion.p
+            className="spelling-bee__try-again"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
+          >
+            {t('games.almostTryAgain')}
+          </motion.p>
+        )}
+      </div>
 
       <div className="spelling-bee__tiles" role="group" aria-label="Available letters">
         <AnimatePresence>
@@ -314,6 +332,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         </Button>
       </div>
     </div>
+    </>
   );
 };
 

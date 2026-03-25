@@ -1,0 +1,179 @@
+.install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  height: 64px;
+
+  background: var(--bg-elevated, #1a1f35);
+  border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+
+  /* Slide up from bottom */
+  animation: install-banner-slide-up 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+
+@keyframes install-banner-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── App icon ───────────────────────────────────────────────────────────── */
+
+.install-banner__icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+
+  background: var(--primary, #e8a317);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: "Nunito", sans-serif;
+  letter-spacing: 0.02em;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* ── Text block ─────────────────────────────────────────────────────────── */
+
+.install-banner__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.install-banner__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary, #f0f4ff);
+  font-family: "Nunito", sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.install-banner__subtitle {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+  font-family: "Nunito", sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Share icon (iOS) ───────────────────────────────────────────────────── */
+
+.install-banner__share-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--primary, #e8a317);
+}
+
+/* ── Install button ─────────────────────────────────────────────────────── */
+
+.install-banner__install-btn {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 20px;
+  border: none;
+
+  background: var(--primary, #e8a317);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: "Nunito", sans-serif;
+  cursor: pointer;
+
+  transition: opacity 0.15s ease, transform 0.12s ease;
+}
+
+.install-banner__install-btn:hover:not(:disabled) {
+  opacity: 0.88;
+  transform: scale(1.03);
+}
+
+.install-banner__install-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Dismiss button ─────────────────────────────────────────────────────── */
+
+.install-banner__dismiss-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+
+  background: var(--bg-surface, rgba(255, 255, 255, 0.06));
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.install-banner__dismiss-btn:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.1));
+  color: var(--text-primary, #f0f4ff);
+}
+
+.install-banner__dismiss-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Safe area for devices with home indicator ──────────────────────────── */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .install-banner {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(64px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ── Light theme override ───────────────────────────────────────────────── */
+
+[data-theme="light"] .install-banner {
+  background: var(--bg-elevated, #ffffff);
+  border-top-color: var(--glass-border, rgba(0, 0, 0, 0.08));
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .install-banner__dismiss-btn {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .install-banner__dismiss-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}

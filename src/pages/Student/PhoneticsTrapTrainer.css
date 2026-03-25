@@ -1,0 +1,319 @@
+/* ==========================================================================
+   PHONETICS TRAP TRAINER — MinesMinis Design System
+   Turkish phonetic interference trainer — page layout
+   ========================================================================== */
+
+.ptt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-md) var(--space-xl);
+  max-width: 760px;
+  margin: 0 auto;
+  font-family: var(--font-body, Nunito, sans-serif);
+}
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
+
+.ptt__page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.ptt__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.ptt__page-title {
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.ptt__page-subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  max-width: 540px;
+}
+
+/* ── Master progress bar ─────────────────────────────────────────────────── */
+
+.ptt__master-progress {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  border: 1.5px solid var(--glass-border, var(--border));
+}
+
+.ptt__master-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.ptt__master-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.ptt__master-value {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.ptt__master-bar-track {
+  height: 10px;
+  background: var(--bg-subtle);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ptt__master-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary, #7C3AED) 100%);
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+/* ── Trap grid ───────────────────────────────────────────────────────────── */
+
+.ptt__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-md);
+}
+
+@media (max-width: 480px) {
+  .ptt__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Trap card ───────────────────────────────────────────────────────────── */
+
+.ptt__card {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  padding: var(--space-md);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body, Nunito, sans-serif);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.ptt__card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.ptt__card--mastered {
+  border-color: var(--success, #10B981);
+}
+
+.ptt__card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.ptt__card-ipa-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  font-weight: 900;
+  font-family: var(--font-display, Nunito, sans-serif);
+  color: #fff;
+}
+
+.ptt__card-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ptt__card-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ptt__card-ipa {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.ptt__card-difficulty {
+  display: flex;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.ptt__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+}
+
+.ptt__dot--filled {
+  background: var(--trap-color, var(--primary));
+}
+
+.ptt__card-score-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.ptt__card-score-badge--mastered {
+  background: color-mix(in srgb, var(--success, #10B981) 15%, transparent);
+  color: var(--success, #10B981);
+}
+
+.ptt__card-score-badge--partial {
+  background: color-mix(in srgb, var(--warning, #F59E0B) 15%, transparent);
+  color: var(--warning, #F59E0B);
+}
+
+.ptt__card-score-badge--none {
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+}
+
+.ptt__card-error {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.ptt__card-pairs-row {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.ptt__pair-chip {
+  background: var(--bg-subtle);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ptt__pair-chip-correct {
+  color: var(--trap-color, var(--primary));
+}
+
+.ptt__pair-chip-sep {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+}
+
+.ptt__pair-chip-wrong {
+  color: var(--danger, #EF4444);
+  text-decoration: line-through;
+}
+
+.ptt__card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-xs);
+}
+
+.ptt__start-btn {
+  background: var(--trap-color, var(--primary));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  pointer-events: none; /* parent handles click */
+}
+
+.ptt__card:hover .ptt__start-btn {
+  opacity: 0.9;
+}
+
+/* ── Mascot intro block ───────────────────────────────────────────────────── */
+
+.ptt__intro-mascot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  border: 1.5px solid var(--glass-border, var(--border));
+}
+
+.ptt__intro-text {
+  flex: 1;
+}
+
+.ptt__intro-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-xs);
+}
+
+.ptt__intro-body {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Game overlay ────────────────────────────────────────────────────────── */
+
+.ptt__game-overlay {
+  animation: ptg-fade-in 300ms ease-out;
+}
+
+@keyframes ptg-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

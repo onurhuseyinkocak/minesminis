@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GAMES PAGE — Kid-friendly redesign. Big visuals, minimal text.
+   GAMES PAGE — Mini Games Hub. Duolingo-style practice section.
    ========================================================================== */
 
 .games-page {
@@ -11,9 +11,23 @@
 /* ---- HERO ---- */
 .games-hero {
   text-align: center;
-  padding: var(--space-xl) var(--space-md) var(--space-md);
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+  margin-bottom: var(--space-sm);
 }
 
+.games-hero-icon {
+  font-size: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  margin-bottom: var(--space-sm);
+  animation: heroBounce 2s ease-in-out infinite;
+}
+
+/* kept for backward compat */
 .games-hero-emoji {
   font-size: 56px;
   display: block;
@@ -26,7 +40,257 @@
   font-size: 32px;
   font-weight: 800;
   color: var(--text-primary);
+  margin: 0 0 var(--space-xs);
+}
+
+.games-hero-sub {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
   margin: 0;
+}
+
+/* ---- DAILY PRACTICE BANNER ---- */
+.daily-practice-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  max-width: var(--container-max);
+  margin: var(--space-md) auto 0;
+  padding: var(--space-md) var(--space-lg);
+  background: linear-gradient(135deg, var(--accent-amber, #f59e0b) 0%, var(--accent-rose, #f43f5e) 100%);
+  border-radius: var(--radius-xl);
+}
+
+.daily-practice-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.daily-flame {
+  color: #fff;
+  flex-shrink: 0;
+  animation: heroBounce 1.8s ease-in-out infinite;
+}
+
+.daily-practice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.daily-practice-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.daily-practice-streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.daily-practice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-lg);
+  background: #fff;
+  color: var(--accent-rose, #f43f5e);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-button, 0 2px 8px rgba(0,0,0,0.15));
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.daily-practice-btn:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---- FEATURED HERO CARD ---- */
+.featured-hero-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-xl) var(--space-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--fhc-color, var(--primary)) 18%, var(--bg-card)) 0%,
+    var(--bg-card) 100%
+  );
+  border: 2px solid color-mix(in srgb, var(--fhc-color, var(--primary)) 30%, transparent);
+  border-radius: var(--radius-2xl);
+  margin-bottom: var(--space-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.featured-hero-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.featured-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fhc-color, var(--primary));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.featured-hero-name {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.featured-hero-desc {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.featured-hero-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--fhc-color, var(--primary));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+  box-shadow: var(--shadow-button, 0 2px 8px rgba(0,0,0,0.15));
+  align-self: flex-start;
+}
+
+.featured-hero-play-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}
+
+.featured-hero-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.featured-hero-icon-area {
+  color: color-mix(in srgb, var(--fhc-color, var(--primary)) 35%, transparent);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- CATEGORY TABS ---- */
+.games-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: var(--space-xs);
+}
+
+.games-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.games-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.games-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.games-tab--active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* ---- MINI GAMES GRID ---- */
+.mini-games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+/* ---- DAILY PRACTICE: progress dots in topbar ---- */
+.daily-progress-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.daily-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--border-light);
+  transition: background 0.2s ease;
+}
+
+.daily-dot.done {
+  background: var(--success, #22c55e);
+}
+
+.daily-dot.active {
+  background: var(--primary);
+  width: 22px;
+  border-radius: 5px;
 }
 
 @keyframes heroBounce {
@@ -117,11 +381,11 @@
   text-align: center;
   padding: var(--space-xl) var(--space-md);
   background: var(--bg-card);
-  border: none;
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-md);
   min-height: 220px;
   position: relative;
   overflow: hidden;
@@ -205,16 +469,17 @@
 
 .external-game-card {
   background: var(--bg-card);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .external-game-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: var(--shadow-lg);
 }
 
 .external-game-thumb {
@@ -352,7 +617,7 @@
   max-width: 960px;
   max-height: 90vh;
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-xl);
   display: flex;
@@ -418,23 +683,33 @@
 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
+  .games-hero-icon { font-size: 44px; }
   .games-hero-emoji { font-size: 44px; }
   .games-hero-title { font-size: 26px; }
 
-  .category-circles {
-    gap: var(--space-sm);
+  .daily-practice-banner {
+    margin: var(--space-sm) var(--space-md) 0;
     padding: var(--space-sm) var(--space-md);
   }
 
-  .category-circle {
-    width: 64px;
-    height: 64px;
+  .daily-practice-title { font-size: 14px; }
+
+  .featured-hero-card {
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-lg) var(--space-md);
   }
 
-  .category-circle-emoji { font-size: 22px; }
-  .category-circle-label { font-size: 9px; }
+  .featured-hero-icon-area { display: none; }
+
+  .featured-hero-name { font-size: 20px; }
 
   .games-content { padding: var(--space-md); }
+
+  .mini-games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-md);
+  }
 
   .featured-games-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -460,4 +735,18 @@
   }
 
   .game-iframe-container { min-height: 320px; }
+
+  /* category circles — kept for any remaining usage */
+  .category-circles {
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .category-circle {
+    width: 64px;
+    height: 64px;
+  }
+
+  .category-circle-emoji { font-size: 22px; }
+  .category-circle-label { font-size: 9px; }
 }

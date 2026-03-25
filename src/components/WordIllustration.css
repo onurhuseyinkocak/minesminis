@@ -1,0 +1,27 @@
+/* ==========================================================================
+   WORD ILLUSTRATION — MinesMinis Design System v4
+   SVG illustration or letter-badge fallback for vocabulary words
+   ========================================================================== */
+
+.word-illustration {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.word-illustration__fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xl, 20px);
+  background: var(--primary);
+  color: var(--text-on-primary, #fff);
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+}

@@ -1,5 +1,5 @@
 /* ============================================================
-   Leaderboard.css — Ranked list with medals, user highlight
+   Leaderboard.css — Ranked list, podium, tier badges, timer
    MinesMinis Premium Design System V2
    ZERO hex colors. Token-only.
    ============================================================ */
@@ -65,6 +65,44 @@
   text-transform: uppercase;
 }
 
+/* ---- Tier Badge Row ---- */
+.tier-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--tier-color, var(--primary));
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--tier-color, var(--primary)) 25%, transparent);
+  transition: box-shadow var(--transition-fast);
+}
+
+.tier-icon {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--tier-color, var(--primary));
+  line-height: 1;
+}
+
+.tier-name {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--tier-color, var(--primary));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* ---- Timer ---- */
 .reset-timer {
   display: flex;
@@ -74,16 +112,149 @@
   font-size: 0.75rem;
   color: var(--text-muted);
   font-weight: 600;
-  margin-bottom: var(--space-lg);
 }
+
+/* ---- Promotion Hint ---- */
+.promotion-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--primary-pale);
+  border-radius: var(--radius-md);
+  padding: 8px var(--space-md);
+  margin-bottom: var(--space-md);
+  border-left: 3px solid var(--primary-light);
+}
+
+.promotion-hint svg {
+  color: var(--mimi-gold);
+  flex-shrink: 0;
+}
+
+.promotion-hint strong {
+  color: var(--primary);
+}
+
+/* ---- PODIUM ---- */
+.podium-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  padding: 0 var(--space-xs);
+}
+
+.podium-spot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 100px;
+  position: relative;
+}
+
+.podium-crown {
+  color: var(--mimi-gold);
+  filter: drop-shadow(0 2px 6px var(--primary-glow));
+  margin-bottom: 2px;
+}
+
+.podium-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  transition: border-color var(--transition-fast);
+}
+
+.podium-avatar--empty {
+  opacity: 0.35;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border-color: var(--border-light);
+}
+
+.podium-is-me .podium-avatar {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.podium-name {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-top: 4px;
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium-xp {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.podium-bar {
+  width: 100%;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-light);
+  border-bottom: none;
+}
+
+.podium-rank {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: var(--space-xs) 0;
+}
+
+/* Podium heights */
+.podium-pos-1 .podium-avatar { width: 52px; height: 52px; font-size: 1.15rem; }
+.podium-pos-1 .podium-bar { height: 72px; background: linear-gradient(180deg, var(--primary-pale), var(--bg-elevated)); }
+.podium-pos-1 .podium-rank { color: var(--mimi-gold); font-size: 0.95rem; }
+
+.podium-pos-2 .podium-bar { height: 52px; }
+.podium-pos-3 .podium-bar { height: 36px; }
 
 /* ---- Leader List ---- */
 .leader-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
 }
+
+.leader-list::-webkit-scrollbar { width: 4px; }
+.leader-list::-webkit-scrollbar-track { background: transparent; }
+.leader-list::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
 
 /* ---- Leader Row ---- */
 .leader-row {
@@ -110,8 +281,14 @@
   box-shadow: 0 0 0 1px var(--primary-glow);
 }
 
-.leader-row.rank-1 {
-  background: linear-gradient(90deg, var(--primary-pale), var(--bg-elevated));
+/* ---- Current User Sticky ---- */
+.current-user-sticky {
+  position: sticky;
+  bottom: 0;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-xs);
+  background: linear-gradient(transparent, var(--bg-card) 40%);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 /* ---- Rank Badge ---- */
@@ -123,11 +300,6 @@
   color: var(--text-muted);
   flex-shrink: 0;
   text-align: center;
-}
-
-.rank-1 .rank-badge {
-  color: var(--mimi-gold);
-  text-shadow: 0 0 10px var(--primary-glow);
 }
 
 /* ---- Avatar ---- */
@@ -215,41 +387,6 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-}
-
-/* ---- User Context Action ---- */
-.user-context-action {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--bg-elevated);
-  padding: 14px var(--space-lg);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  min-height: var(--touch-target);
-  transition: background var(--transition-fast),
-              transform var(--transition-fast),
-              box-shadow var(--transition-fast);
-}
-
-.user-context-action:hover {
-  background: var(--primary-pale);
-  transform: translateX(3px);
-  box-shadow: var(--shadow-sm);
-}
-
-.status-box {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.status-box strong {
-  color: var(--primary);
-  font-weight: 800;
 }
 
 /* ---- Loading State ---- */

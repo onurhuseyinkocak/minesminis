@@ -4,8 +4,10 @@ import { ArrowLeft, Lock, Music, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Badge } from '../../components/ui';
 import { SongPlayer } from '../../components/phonics/SongPlayer';
+import PhonicsKaraoke from '../../components/PhonicsKaraoke';
 import { PHONICS_SONGS } from '../../data/phonicsSongs';
 import { PHONICS_GROUPS } from '../../data/phonics';
+import { getLyricsByGroup } from '../../data/phonicsSongLyrics';
 import type { PhonicsSong } from '../../data/phonicsSongs';
 import { LS_MASTERED_SOUNDS, LS_SONG_PLAYS } from '../../config/storageKeys';
 
@@ -98,6 +100,7 @@ const itemVariants = {
 export default function SongsPage() {
   const navigate = useNavigate();
   const [activeSong, setActiveSong] = useState<PhonicsSong | null>(null);
+  const [mode, setMode] = useState<'singalong' | 'karaoke'>('karaoke');
 
   const mastered = useMemo(() => getMasteredSounds(), []);
   const unlockedGroups = useMemo(() => getUnlockedGroups(mastered), [mastered]);
@@ -112,6 +115,8 @@ export default function SongsPage() {
 
   // ── Playing a song ──
   if (activeSong) {
+    const karaokeData = getLyricsByGroup(activeSong.groupNumber);
+
     return (
       <div style={styles.playerWrapper}>
         <div style={styles.playerHeader}>
@@ -123,12 +128,41 @@ export default function SongsPage() {
           >
             Back
           </Button>
+          {/* Mode toggle */}
+          <div style={styles.modeToggle}>
+            <button
+              style={{
+                ...styles.modeBtn,
+                ...(mode === 'karaoke' ? styles.modeBtnActive : {}),
+              }}
+              onClick={() => setMode('karaoke')}
+            >
+              Karaoke
+            </button>
+            <button
+              style={{
+                ...styles.modeBtn,
+                ...(mode === 'singalong' ? styles.modeBtnActive : {}),
+              }}
+              onClick={() => setMode('singalong')}
+            >
+              Classic
+            </button>
+          </div>
         </div>
-        <SongPlayer
-          song={activeSong}
-          mode="singalong"
-          onComplete={handleSongComplete}
-        />
+
+        {mode === 'karaoke' && karaokeData ? (
+          <PhonicsKaraoke
+            lyrics={karaokeData}
+            onComplete={handleSongComplete}
+          />
+        ) : (
+          <SongPlayer
+            song={activeSong}
+            mode="singalong"
+            onComplete={handleSongComplete}
+          />
+        )}
       </div>
     );
   }
@@ -380,7 +414,32 @@ const styles: Record<string, React.CSSProperties> = {
   playerHeader: {
     display: 'flex',
     alignItems: 'center',
+    gap: '0.75rem',
   },
+  modeToggle: {
+    display: 'flex',
+    background: '#F1F5F9',
+    borderRadius: '9999px',
+    padding: '3px',
+    gap: '2px',
+    marginLeft: 'auto',
+  },
+  modeBtn: {
+    padding: '4px 12px',
+    border: 'none',
+    background: 'transparent',
+    borderRadius: '9999px',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    color: '#6B7280',
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+  } as React.CSSProperties,
+  modeBtnActive: {
+    background: '#fff',
+    color: 'var(--color-emerald-700, #047857)',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+  } as React.CSSProperties,
   infoBox: {
     padding: '0.75rem 1rem',
     background: '#F1F5F9',

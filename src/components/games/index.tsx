@@ -6,6 +6,26 @@ export { QuickQuiz } from './QuickQuiz';
 export { SentenceScramble } from './SentenceScramble';
 export { ListeningChallenge } from './ListeningChallenge';
 export { PronunciationGame } from './PronunciationGame';
+export { DialogueGame } from './DialogueGame';
+export type { DialogueLine, DialogueOption, DialogueGameProps } from './DialogueGame';
+export { ImageLabelGame } from './ImageLabelGame';
+export type { LabelQuestion, ImageLabelGameProps } from './ImageLabelGame';
+export { SayItGame } from './SayItGame';
+export type { SayItQuestion, SayItGameProps } from './SayItGame';
+export { PhonicsBlendGame } from './PhonicsBlendGame';
+export type { BlendQuestion, PhonicsBlendGameProps } from './PhonicsBlendGame';
+export { PhonemeManipulationGame } from './PhonemeManipulationGame';
+export type {
+  ManipulationType,
+  PhonemeManipulationQuestion,
+  PhonemeManipulationGameProps,
+} from './PhonemeManipulationGame';
+export { SyllableGame } from './SyllableGame';
+export type { SyllableQuestion, SyllableGameProps } from './SyllableGame';
+export { WordFamilyGame } from './WordFamilyGame';
+export type { WordFamily, WordFamilyGameProps } from './WordFamilyGame';
+export { RhymeGame } from './RhymeGame';
+export type { RhymeTaskType, RhymeQuestion, RhymeGameProps } from './RhymeGame';
 
 interface WordItem {
   english: string;
@@ -20,7 +40,7 @@ interface GameProps {
   onWrongAnswer?: () => void;
 }
 
-type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing' | 'phonics-builder' | 'story-choices';
+type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing' | 'phonics-builder' | 'story-choices' | 'dialogue' | 'image-label' | 'say-it' | 'phonics-blend' | 'phoneme-manipulation' | 'syllable' | 'word-family' | 'rhyme';
 
 // Lazy imports to keep bundle size down
 const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GameProps>>> = {
@@ -39,6 +59,14 @@ const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GamePr
   'word-writing': React.lazy(() => import('../phonics/WordWriting').then((m) => ({ default: m.WordWriting as unknown as React.FC<GameProps> }))),
   'phonics-builder': React.lazy(() => import('../phonics/BlendingBoard').then((m) => ({ default: m.BlendingBoard as unknown as React.FC<GameProps> }))),
   'story-choices': React.lazy(() => import('./StoryChoicesGame').then((m) => ({ default: m.StoryChoicesGame }))),
+  'dialogue': React.lazy(() => import('./DialogueGame').then((m) => ({ default: m.DialogueGame as unknown as React.FC<GameProps> }))),
+  'image-label': React.lazy(() => import('./ImageLabelGame').then((m) => ({ default: m.ImageLabelGame as unknown as React.FC<GameProps> }))),
+  'say-it': React.lazy(() => import('./SayItGame').then((m) => ({ default: m.SayItGame as unknown as React.FC<GameProps> }))),
+  'phonics-blend': React.lazy(() => import('./PhonicsBlendGame').then((m) => ({ default: m.PhonicsBlendGame as unknown as React.FC<GameProps> }))),
+  'phoneme-manipulation': React.lazy(() => import('./PhonemeManipulationGame').then((m) => ({ default: m.PhonemeManipulationGame as unknown as React.FC<GameProps> }))),
+  'syllable': React.lazy(() => import('./SyllableGame').then((m) => ({ default: m.SyllableGame as unknown as React.FC<GameProps> }))),
+  'word-family': React.lazy(() => import('./WordFamilyGame').then((m) => ({ default: m.WordFamilyGame as unknown as React.FC<GameProps> }))),
+  'rhyme': React.lazy(() => import('./RhymeGame').then((m) => ({ default: m.RhymeGame as unknown as React.FC<GameProps> }))),
 };
 
 const GAME_TYPE_MAP: Record<string, GameType> = {
@@ -87,6 +115,37 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
   'story-choices': 'story-choices',
   'storychoices': 'story-choices',
   'StoryChoices': 'story-choices',
+  'dialogue': 'dialogue',
+  'Dialogue': 'dialogue',
+  'DialogueGame': 'dialogue',
+  'dialogue-game': 'dialogue',
+  'image-label': 'image-label',
+  'imagelabel': 'image-label',
+  'ImageLabel': 'image-label',
+  'ImageLabelGame': 'image-label',
+  'say-it': 'say-it',
+  'sayit': 'say-it',
+  'SayIt': 'say-it',
+  'SayItGame': 'say-it',
+  'phonics-blend': 'phonics-blend',
+  'phonicsblend': 'phonics-blend',
+  'PhonicsBlend': 'phonics-blend',
+  'PhonicsBlendGame': 'phonics-blend',
+  'phoneme-manipulation': 'phoneme-manipulation',
+  'phonememanipulation': 'phoneme-manipulation',
+  'PhonemeManipulation': 'phoneme-manipulation',
+  'PhonemeManipulationGame': 'phoneme-manipulation',
+  'syllable': 'syllable',
+  'SyllableGame': 'syllable',
+  'syllable-game': 'syllable',
+  'word-family': 'word-family',
+  'wordfamily': 'word-family',
+  'WordFamily': 'word-family',
+  'WordFamilyGame': 'word-family',
+  'word-family-game': 'word-family',
+  'rhyme': 'rhyme',
+  'RhymeGame': 'rhyme',
+  'rhyme-game': 'rhyme',
 };
 
 export interface GameSelectorProps extends GameProps {

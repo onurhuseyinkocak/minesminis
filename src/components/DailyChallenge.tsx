@@ -8,6 +8,7 @@ import { Zap, CheckCircle, RefreshCw } from 'lucide-react';
 import { useGamification } from '../contexts/GamificationContext';
 import { useAuth } from '../contexts/AuthContext';
 import { logActivity } from '../services/activityLogger';
+import { activateBoost } from './XPBooster';
 
 interface ChallengeData {
   id: string;
@@ -105,6 +106,9 @@ const DailyChallenge: React.FC = () => {
         JSON.stringify({ date: getTodayKey(), challenge })
       );
       setAlreadyCompleted(true);
+
+      // Activate 2x XP boost for 30 minutes
+      activateBoost(2, 30 * 60 * 1000, 'daily_challenge');
 
       // Award XP
       await addXP(25, 'daily_challenge');

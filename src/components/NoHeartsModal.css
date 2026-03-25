@@ -1,0 +1,175 @@
+/* ============================================================
+   NoHeartsModal.css — Out of hearts overlay for MinesMinis
+   MinesMinis Premium Design System V2
+   ZERO hex colors. Token-only.
+   ============================================================ */
+
+/* ── Overlay ──────────────────────────────────────────────── */
+
+.no-hearts-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--overlay-bg, rgba(0, 0, 0, 0.6));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: var(--space-md, 16px);
+}
+
+/* ── Card ─────────────────────────────────────────────────── */
+
+.no-hearts-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl) var(--space-xl);
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+[data-theme="dark"] .no-hearts-card {
+  border-color: var(--border-medium);
+}
+
+/* ── Heart icon ───────────────────────────────────────────── */
+
+.no-hearts-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--error, #ef4444);
+  filter: drop-shadow(0 2px 8px var(--error-glow, rgba(239, 68, 68, 0.4)));
+  animation: nhHeartPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes nhHeartPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+/* ── Title ────────────────────────────────────────────────── */
+
+.no-hearts-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* ── Body text ────────────────────────────────────────────── */
+
+.no-hearts-body {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Timer block ──────────────────────────────────────────── */
+
+.no-hearts-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs, 4px);
+  background: var(--bg-elevated, var(--bg-secondary));
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-xl);
+  width: 100%;
+}
+
+.no-hearts-timer__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.no-hearts-timer__countdown {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: 0.04em;
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
+
+.no-hearts-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.no-hearts-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 14px var(--space-xl);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  cursor: pointer;
+  min-height: var(--touch-target, 44px);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+
+.no-hearts-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.no-hearts-btn--primary {
+  background: var(--gradient-primary, var(--primary));
+  color: var(--text-on-primary, #fff);
+  box-shadow: var(--shadow-md);
+}
+
+.no-hearts-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.no-hearts-btn--secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border-medium);
+}
+
+.no-hearts-btn--secondary:hover {
+  background: var(--bg-elevated, var(--bg-secondary));
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .no-hearts-card {
+    padding: var(--space-xl) var(--space-lg);
+    max-width: 100%;
+  }
+
+  .no-hearts-title {
+    font-size: 1.25rem;
+  }
+
+  .no-hearts-timer__countdown {
+    font-size: 1.5rem;
+  }
+}

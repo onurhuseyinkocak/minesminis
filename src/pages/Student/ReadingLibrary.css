@@ -157,3 +157,16 @@
   display: flex;
   gap: 2px;
 }
+
+.rl-wpmBadge {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--white, #fff);
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-full, 9999px);
+  padding: 1px 5px;
+  letter-spacing: 0.02em;
+}

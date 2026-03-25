@@ -99,75 +99,145 @@ function playFreqSweep(
 // SFX IMPLEMENTATIONS
 // ============================================================
 
-/** Pleasant ascending tone C5 -> E5, 200ms */
+// ============================================================
+// HELPER: Soft noise burst (for tap feedback)
+// ============================================================
+
+function playNoiseBurst(ctx: AudioContext, duration: number, freq: number): void {
+  const buf = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+  filter.type = 'bandpass';
+  filter.frequency.value = freq;
+  filter.Q.value = 0.8;
+  gain.gain.setValueAtTime(0.12, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  src.buffer = buf;
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  src.start();
+  src.stop(ctx.currentTime + duration);
+}
+
+/** Two-tone chime: C5 + E5 simultaneously + quick C6 tail, 350ms total */
 function playCorrect(): void {
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
-    playFreqSweep(NOTE.C5, NOTE.E5, now, 0.2, ctx, ctx.destination, 'sine');
+    // Root + third chord
+    playTone(NOTE.C5, now, 0.25, ctx, ctx.destination, 'sine');
+    playTone(NOTE.E5, now, 0.25, ctx, ctx.destination, 'sine');
+    // Bright tail
+    playTone(NOTE.C6, now + 0.15, 0.18, ctx, ctx.destination, 'sine');
   } catch { /* audio unavailable */ }
 }
 
-/** Descending tone E4 -> C4, 300ms */
+/** Gentle descending wobble — not punishing */
 function playWrong(): void {
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
-    playFreqSweep(NOTE.E4, NOTE.C4, now, 0.3, ctx, ctx.destination, 'triangle');
+    // Soft descending step
+    playFreqSweep(360, 240, now, 0.18, ctx, ctx.destination, 'triangle');
+    playFreqSweep(300, 200, now + 0.1, 0.18, ctx, ctx.destination, 'triangle');
   } catch { /* audio unavailable */ }
 }
 
-/** Celebratory ascending arpeggio C5 -> E5 -> G5 -> C6, 400ms */
+/** Full arpeggio C5→E5→G5→C6 with harmonic overtones, 600ms */
 function playLevelUp(): void {
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
-    const step = 0.1;
-    playTone(NOTE.C5, now, step, ctx, ctx.destination, 'sine');
-    playTone(NOTE.E5, now + step, step, ctx, ctx.destination, 'sine');
-    playTone(NOTE.G5, now + step * 2, step, ctx, ctx.destination, 'sine');
-    playTone(NOTE.C6, now + step * 3, step, ctx, ctx.destination, 'sine');
+    const s = 0.11;
+    playTone(NOTE.C5, now,         s * 1.5, ctx, ctx.destination, 'sine');
+    playTone(NOTE.E5, now + s,     s * 1.5, ctx, ctx.destination, 'sine');
+    playTone(NOTE.G5, now + s * 2, s * 1.5, ctx, ctx.destination, 'sine');
+    playTone(NOTE.C6, now + s * 3, s * 2,   ctx, ctx.destination, 'sine');
+    // Add gentle sub-octave warmth
+    playTone(NOTE.C4, now,         s * 4,   ctx, ctx.destination, 'sine');
   } catch { /* audio unavailable */ }
 }
 
-/** Short click, 1000Hz 50ms */
+/** Soft synthetic tap — wood-block-esque */
 function playClick(): void {
   try {
     const ctx = getAudioContext();
-    const now = ctx.currentTime;
-    playTone(1000, now, 0.05, ctx, ctx.destination, 'square');
+    playNoiseBurst(ctx, 0.04, 1200);
   } catch { /* audio unavailable */ }
 }
 
-/** Quick ascending scale C5 -> D5 -> E5, 300ms */
+/** Triple ascending chime — streak reward */
 function playStreak(): void {
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
-    const step = 0.1;
-    playTone(NOTE.C5, now, step, ctx, ctx.destination, 'sine');
-    playTone(NOTE.D5, now + step, step, ctx, ctx.destination, 'sine');
-    playTone(NOTE.E5, now + step * 2, step, ctx, ctx.destination, 'sine');
+    const s = 0.09;
+    playTone(NOTE.E5, now,         s * 1.2, ctx, ctx.destination, 'sine');
+    playTone(NOTE.G5, now + s,     s * 1.2, ctx, ctx.destination, 'sine');
+    playTone(NOTE.C6, now + s * 2, s * 2,   ctx, ctx.destination, 'sine');
+    playTone(NOTE.E5, now,         s * 1.2, ctx, ctx.destination, 'triangle');
   } catch { /* audio unavailable */ }
 }
 
-/** Fanfare-style chord C5 + E5 + G5, 500ms */
+/** Full chord stab + shimmer — big moment */
 function playCelebration(): void {
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
-    playTone(NOTE.C5, now, 0.5, ctx, ctx.destination, 'sine');
-    playTone(NOTE.E5, now, 0.5, ctx, ctx.destination, 'sine');
-    playTone(NOTE.G5, now, 0.5, ctx, ctx.destination, 'sine');
+    // Major chord
+    playTone(NOTE.C5, now, 0.6, ctx, ctx.destination, 'sine');
+    playTone(NOTE.E5, now, 0.6, ctx, ctx.destination, 'sine');
+    playTone(NOTE.G5, now, 0.6, ctx, ctx.destination, 'sine');
+    // Octave boom
+    playTone(NOTE.C4, now, 0.4, ctx, ctx.destination, 'sine');
+    // Shimmer high arpeggio
+    [0, 0.08, 0.16, 0.24, 0.32].forEach((d, i) => {
+      const freqs = [NOTE.C6, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.C6];
+      playTone(freqs[i], now + d, 0.12, ctx, ctx.destination, 'sine');
+    });
   } catch { /* audio unavailable */ }
 }
 
-/** Tick sound 800Hz, 30ms */
+/** Soft metronome tick */
 function playCountdown(): void {
   try {
     const ctx = getAudioContext();
+    playNoiseBurst(ctx, 0.035, 900);
+  } catch { /* audio unavailable */ }
+}
+
+/** XP coin collect — bright sparkle */
+function playXPGain(): void {
+  try {
+    const ctx = getAudioContext();
     const now = ctx.currentTime;
-    playTone(800, now, 0.03, ctx, ctx.destination, 'square');
+    playFreqSweep(880, 1760, now, 0.12, ctx, ctx.destination, 'sine');
+    playFreqSweep(1320, 2200, now + 0.06, 0.1, ctx, ctx.destination, 'sine');
+  } catch { /* audio unavailable */ }
+}
+
+/** Badge earned — metallic shimmer */
+function playBadgeEarned(): void {
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    playTone(NOTE.E5, now,        0.15, ctx, ctx.destination, 'sine');
+    playTone(NOTE.G5, now + 0.1,  0.15, ctx, ctx.destination, 'sine');
+    playTone(NOTE.C6, now + 0.2,  0.3,  ctx, ctx.destination, 'sine');
+    playTone(1318.51, now + 0.25, 0.25, ctx, ctx.destination, 'sine');
+  } catch { /* audio unavailable */ }
+}
+
+/** Page whoosh — subtle */
+function playNavigation(): void {
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    playFreqSweep(200, 600, now, 0.15, ctx, ctx.destination, 'sine');
   } catch { /* audio unavailable */ }
 }
 
@@ -183,6 +253,9 @@ export const SFX = {
   streak: playStreak,
   celebration: playCelebration,
   countdown: playCountdown,
+  xpGain: playXPGain,
+  badgeEarned: playBadgeEarned,
+  navigation: playNavigation,
 } as const;
 
 // ============================================================

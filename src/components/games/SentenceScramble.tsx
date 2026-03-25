@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { useHearts } from '../../contexts/HeartsContext';
+import NoHeartsModal from '../NoHeartsModal';
 import './SentenceScramble.css';
 
 interface WordItem {
@@ -54,6 +56,8 @@ function generateSentences(wordItems: WordItem[]): SentenceData[] {
 
 export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
+  const { loseHeart, hearts } = useHearts();
+  const [showNoHearts, setShowNoHearts] = useState(false);
   const sentences = useMemo(() => generateSentences(words), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [placed, setPlaced] = useState<string[]>([]);
@@ -120,7 +124,11 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     } else {
       setFeedback('wrong');
       SFX.wrong();
+      loseHeart();
       onWrongAnswer?.();
+      if (hearts - 1 <= 0) {
+        setShowNoHearts(true);
+      }
       const attempts = failedAttempts + 1;
       setFailedAttempts(attempts);
       if (attempts >= 1) setShowHint(true);
@@ -166,6 +174,10 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
   if (!currentSentence) return null;
 
   return (
+    <>
+    {showNoHearts && (
+      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
+    )}
     <div className="sentence-scramble" role="application" aria-label="Sentence scramble game">
       <div className="sentence-scramble__header">
         <h2 className="sentence-scramble__title">Build the Sentence!</h2>
@@ -186,17 +198,25 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
       )}
 
       <Card variant="outlined" padding="lg" className="sentence-scramble__dropzone">
-        <p className="sentence-scramble__dropzone-label">
+        <p id="ss-dropzone-label" className="sentence-scramble__dropzone-label">
           {placed.length === 0 ? 'Tap words below to build your sentence' : 'Your sentence:'}
         </p>
-        <div className="sentence-scramble__placed" aria-live="polite">
+        <div
+          className="sentence-scramble__placed"
+          role="list"
+          aria-label="Build your sentence"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           <AnimatePresence>
             {placed.map((word, index) => (
               <motion.button
                 key={`placed-${index}-${word}`}
+                role="listitem"
                 className="sentence-scramble__chip sentence-scramble__chip--placed"
                 onClick={() => handleRemoveWord(word, index)}
                 aria-label={`Remove ${word}`}
+                aria-pressed={true}
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.5 }}
@@ -209,35 +229,39 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
         </div>
       </Card>
 
-      {feedback === 'correct' && (
-        <motion.div
-          className="sentence-scramble__feedback sentence-scramble__feedback--correct"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <CheckCircle size={22} /> Perfect sentence!
-        </motion.div>
-      )}
+      <div aria-live="polite" aria-atomic="true">
+        {feedback === 'correct' && (
+          <motion.div
+            className="sentence-scramble__feedback sentence-scramble__feedback--correct"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <CheckCircle size={22} /> Perfect sentence!
+          </motion.div>
+        )}
 
-      {feedback === 'wrong' && (
-        <motion.div
-          className="sentence-scramble__feedback sentence-scramble__feedback--wrong"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
-        >
-          Not quite! Keep trying!
-        </motion.div>
-      )}
+        {feedback === 'wrong' && (
+          <motion.div
+            className="sentence-scramble__feedback sentence-scramble__feedback--wrong"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
+          >
+            Not quite! Keep trying!
+          </motion.div>
+        )}
+      </div>
 
-      <div className="sentence-scramble__available" role="group" aria-label="Available words">
+      <div className="sentence-scramble__available" role="list" aria-label="Available words">
         <AnimatePresence>
           {available.map((word, index) => (
             <motion.button
               key={`avail-${index}-${word}`}
+              role="listitem"
               className="sentence-scramble__chip sentence-scramble__chip--available"
               onClick={() => handleWordTap(word, index)}
               disabled={!!feedback}
               aria-label={`Add word: ${word}`}
+              aria-pressed={false}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -270,6 +294,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
         </Button>
       </div>
     </div>
+    </>
   );
 };
 

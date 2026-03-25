@@ -2,12 +2,20 @@ import React, { useState, useCallback, useMemo } from 'react';
 import './ReadingLibrary.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpen, Lock, ArrowLeft, Star } from 'lucide-react';
+import { BookOpen, Lock, ArrowLeft, Star, Zap, CheckCircle } from 'lucide-react';
 import { READING_LIBRARY, getBookById } from '../../data/readingLibrary';
-import type { DecodableBook } from '../../data/readingLibrary';
+import type { DecodableBook, CompQuestion } from '../../data/readingLibrary';
 import { BookReader } from '../../components/phonics/BookReader';
 import { useGamification } from '../../contexts/GamificationContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { LS_READ_BOOKS, LS_PHONICS_MASTERY } from '../../config/storageKeys';
+import ReadingPlayer from '../../components/ReadingPlayer';
+import type { ReadingStats, ComprehensionQuestion } from '../../components/ReadingPlayer';
+import {
+  saveReadingRecord,
+  hasCompletedContent,
+  getBestWPMForContent,
+} from '../../services/readingProgressService';
 
 // --- LOCAL STORAGE ---
 
@@ -76,6 +84,27 @@ function getMasteredGroup(): number {
   }
 }
 
+// --- READING PLAYER HELPERS ---
+
+function levelFromGroup(group: number): 'beginner' | 'intermediate' | 'advanced' {
+  if (group <= 2) return 'beginner';
+  if (group <= 5) return 'intermediate';
+  return 'advanced';
+}
+
+function compQuestionsToPlayerFormat(questions: CompQuestion[]): ComprehensionQuestion[] {
+  return questions.map((q, qi) => ({
+    id: `q-${qi}`,
+    question: q.question,
+    questionTr: q.questionTr,
+    options: q.options.map((opt, oi) => ({
+      id: `q-${qi}-o-${oi}`,
+      text: opt,
+      correct: oi === q.correctIndex,
+    })),
+  }));
+}
+
 // --- GROUP NAMES ---
 
 const GROUP_NAMES: Record<number, { en: string; tr: string; sounds: string }> = {
@@ -124,6 +153,7 @@ const ReadingLibrary: React.FC = () => {
   const navigate = useNavigate();
   const { bookId } = useParams<{ bookId?: string }>();
   const { addXP } = useGamification();
+  const { user } = useAuth();
 
   const [selectedBook, setSelectedBook] = useState<DecodableBook | null>(() => {
     if (bookId) {
@@ -131,9 +161,12 @@ const ReadingLibrary: React.FC = () => {
     }
     return null;
   });
+  // When true, use ReadingPlayer instead of BookReader for selectedBook
+  const [useReadingPlayer, setUseReadingPlayer] = useState(false);
 
   const readBooks = useMemo(() => getReadBooks(), []);
   const masteredGroup = useMemo(() => getMasteredGroup(), []);
+  const userId = user?.uid ?? 'guest';
 
   const totalBooksRead = useMemo(() => {
     return Object.keys(readBooks).length;
@@ -159,13 +192,59 @@ const ReadingLibrary: React.FC = () => {
 
   const handleCloseReader = useCallback(() => {
     setSelectedBook(null);
+    setUseReadingPlayer(false);
     if (bookId) {
       navigate('/reading', { replace: true });
     }
   }, [bookId, navigate]);
 
-  // If a book is selected, show the reader
+  const handleReadingPlayerComplete = useCallback((stats: ReadingStats) => {
+    if (!selectedBook) return;
+
+    // Save WPM record
+    saveReadingRecord(userId, {
+      contentId: selectedBook.id,
+      completedAt: new Date().toISOString(),
+      wpm: stats.wpm,
+      quizScore: stats.quizScore,
+    });
+
+    // Award XP based on quiz score if available
+    const quizRatio = stats.quizTotal && stats.quizTotal > 0
+      ? (stats.quizScore ?? 0) / 100
+      : 0;
+    let stars = 1;
+    if (quizRatio >= 0.9) stars = 3;
+    else if (quizRatio >= 0.6) stars = 2;
+    saveReadBook(selectedBook.id, stars);
+    addXP(stars * 10 + 5, 'Reading completion');
+
+    setSelectedBook(null);
+    setUseReadingPlayer(false);
+    if (bookId) {
+      navigate('/reading', { replace: true });
+    }
+  }, [selectedBook, userId, addXP, bookId, navigate]);
+
+  // If a book is selected, show the appropriate reader
   if (selectedBook) {
+    if (useReadingPlayer) {
+      const playerContent = {
+        id: selectedBook.id,
+        title: selectedBook.title,
+        text: selectedBook.pages.map((p) => p.text).join('\n\n'),
+        wordCount: selectedBook.wordCount,
+        level: levelFromGroup(selectedBook.requiredGroup),
+        comprehensionQuiz: compQuestionsToPlayerFormat(selectedBook.comprehensionQuestions),
+      };
+      return (
+        <ReadingPlayer
+          content={playerContent}
+          onComplete={handleReadingPlayerComplete}
+          onClose={handleCloseReader}
+        />
+      );
+    }
     return (
       <BookReader
         book={selectedBook}
@@ -230,6 +309,8 @@ const ReadingLibrary: React.FC = () => {
                     const record = readBooks[book.id];
                     const bookStars = record?.stars || 0;
                     const spineColor = BOOK_SPINE_COLORS[(group - 1) * 2 + i] || '#6B7280';
+                    const bestWpm = getBestWPMForContent(userId, book.id);
+                    const isCompleted = hasCompletedContent(userId, book.id);
 
                     return (
                       <motion.button
@@ -237,7 +318,10 @@ const ReadingLibrary: React.FC = () => {
                         whileHover={!isLocked ? { y: -8, scale: 1.05 } : {}}
                         whileTap={!isLocked ? { scale: 0.95 } : {}}
                         onClick={() => {
-                          if (!isLocked) setSelectedBook(book);
+                          if (!isLocked) {
+                            setSelectedBook(book);
+                            setUseReadingPlayer(true);
+                          }
                         }}
                         className="rl-bookSpine"
                         style={{
@@ -273,6 +357,18 @@ const ReadingLibrary: React.FC = () => {
                                 stroke={s <= bookStars ? '#F59E0B' : 'var(--border-light, #D1D5DB)'}
                               />
                             ))}
+                          </div>
+                        )}
+                        {isCompleted && (
+                          <CheckCircle
+                            size={12}
+                            style={{ color: '#10B981', marginTop: 2 }}
+                          />
+                        )}
+                        {bestWpm !== null && (
+                          <div className="rl-wpmBadge">
+                            <Zap size={8} />
+                            {bestWpm}
                           </div>
                         )}
                         {isLocked && (

@@ -1,0 +1,541 @@
+/* ==========================================================================
+   PHONICS BLEND GAME — MinesMinis Design System v4
+   Child blends phoneme tiles together to form words
+   ========================================================================== */
+
+.pbg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  max-width: 600px;
+  margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
+}
+
+/* -- Header ---------------------------------------------------------------- */
+
+.pbg__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.pbg__title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--secondary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* -- Instruction ----------------------------------------------------------- */
+
+.pbg__instruction {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0;
+  min-height: 1.5rem;
+}
+
+/* -- Sound Tiles Row ------------------------------------------------------- */
+
+.pbg__tiles-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* Blending animation: tiles slide toward center */
+.pbg__tiles-row--blending {
+  gap: 0;
+  transition: gap 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pbg__tiles-row--blending .pbg__tile {
+  transform: scale(0.9);
+  opacity: 0.7;
+  transition:
+    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.6s ease,
+    margin 0.6s ease;
+  margin: 0 -4px;
+}
+
+/* -- Individual Sound Tile ------------------------------------------------- */
+
+.pbg__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  min-width: 72px;
+  min-height: 80px;
+  padding: var(--space-md) var(--space-lg);
+
+  border: 3px solid var(--border-light);
+  border-radius: var(--radius-xl, 20px);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+
+  font-family: var(--font-display);
+  color: var(--text-primary);
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
+    background var(--transition-fast);
+}
+
+.pbg__tile:hover:not(:disabled) {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-3px);
+  border-color: var(--cloud, #b0bec5);
+}
+
+.pbg__tile:active:not(:disabled) {
+  transform: translateY(0) scale(0.94);
+}
+
+.pbg__tile:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.pbg__tile:disabled {
+  cursor: default;
+}
+
+/* Tapped state — subtle highlight, stays until blending */
+.pbg__tile--tapped {
+  border-color: var(--primary, #E8A317);
+  background: var(--warning-pale, #fff8e1);
+}
+
+/* Active state — glows with primary color after tap */
+.pbg__tile--active {
+  border-color: var(--primary, #E8A317);
+  background: var(--warning-pale, #fff8e1);
+  box-shadow: 0 0 0 4px rgba(232, 163, 23, 0.25), var(--shadow-md);
+  animation: pbg-pulse 0.35s ease-out;
+}
+
+/* Merging tiles during blend animation */
+.pbg__tile--merging {
+  border-color: var(--secondary, #3f51b5);
+  background: var(--bg-soft, #f8f9fb);
+  animation: pbg-merge 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes pbg-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pbg-merge {
+  0%   { transform: scale(1) translateX(0); }
+  60%  { transform: scale(0.85) translateX(0); }
+  100% { transform: scale(0.9) translateX(0); }
+}
+
+/* -- Tile letter & icon ---------------------------------------------------- */
+
+.pbg__tile-letter {
+  font-size: 2.25rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.pbg__tile-icon {
+  color: var(--text-secondary);
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+}
+
+/* -- Blended Word Display -------------------------------------------------- */
+
+.pbg__blended-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl);
+  background: linear-gradient(
+    135deg,
+    var(--warning-pale, #fff8e1),
+    var(--bg-soft, #f8f9fb)
+  );
+  border: 3px solid var(--primary, #E8A317);
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: 0 0 0 6px rgba(232, 163, 23, 0.15), var(--shadow-card);
+}
+
+.pbg__blended-letter {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--primary-dark, #e65100);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  user-select: none;
+}
+
+.pbg__blended-tr {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+}
+
+/* -- Blend Button ---------------------------------------------------------- */
+
+.pbg__blend-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.pbg__blend-btn {
+  padding: 1rem 3rem;
+  border-radius: var(--radius-xl, 20px);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  background: var(--primary, #E8A317);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(232, 163, 23, 0.45);
+  letter-spacing: 0.02em;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.pbg__blend-btn:hover:not(.pbg__blend-btn--disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(232, 163, 23, 0.55);
+}
+
+.pbg__blend-btn:active:not(.pbg__blend-btn--disabled) {
+  transform: scale(0.97);
+}
+
+.pbg__blend-btn--disabled {
+  background: var(--cloud, #b0bec5);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.pbg__blend-hint {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+  text-align: center;
+}
+
+/* -- Multiple Choice Options ----------------------------------------------- */
+
+.pbg__options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm, 8px);
+}
+
+.pbg__option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-lg);
+  min-height: 64px;
+  border: 2.5px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
+    background var(--transition-fast);
+  text-align: center;
+  width: 100%;
+}
+
+.pbg__option:hover:not(:disabled) {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+  border-color: var(--cloud, #b0bec5);
+}
+
+.pbg__option:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.pbg__option:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.pbg__option:disabled {
+  cursor: default;
+}
+
+.pbg__option--correct {
+  border-color: var(--mimi-green, #4caf50);
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2), var(--shadow-md);
+  animation: pbg-scale-up 0.25s ease-out;
+}
+
+.pbg__option--wrong {
+  border-color: var(--danger, #f44336);
+  background: var(--danger-pale, #ffebee);
+  color: var(--danger-dark, #c62828);
+  animation: pbg-shake 0.4s ease;
+}
+
+@keyframes pbg-scale-up {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pbg-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+/* -- Feedback Banner ------------------------------------------------------- */
+
+.pbg__feedback {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.pbg__feedback--correct {
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+}
+
+.pbg__feedback--wrong {
+  background: var(--warning-pale, #fff8e1);
+  color: var(--primary-dark, #e65100);
+}
+
+/* -- Difficulty badge row -------------------------------------------------- */
+
+.pbg__difficulty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-xs, 4px);
+  margin-top: var(--space-sm);
+}
+
+.pbg__difficulty-badge {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full, 999px);
+}
+
+.pbg__difficulty-badge--easy {
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+}
+
+.pbg__difficulty-badge--medium {
+  background: var(--warning-pale, #fff8e1);
+  color: var(--primary-dark, #e65100);
+}
+
+.pbg__difficulty-badge--hard {
+  background: var(--danger-pale, #ffebee);
+  color: var(--danger-dark, #c62828);
+}
+
+/* -- Completion Card ------------------------------------------------------- */
+
+.pbg__completion {
+  text-align: center;
+}
+
+.pbg__completion-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.pbg__completion-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--secondary);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.pbg__completion-score {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text-body);
+  margin: 0;
+}
+
+.pbg__completion-actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pbg__completion-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pbg__completion-btn:hover {
+  transform: translateY(-2px);
+}
+
+.pbg__completion-btn:active {
+  transform: scale(0.97);
+}
+
+.pbg__completion-btn--primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+}
+
+.pbg__completion-btn--secondary {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+}
+
+/* -- Responsive ------------------------------------------------------------ */
+
+@media (min-width: 600px) {
+  .pbg__tile-letter {
+    font-size: 2.75rem;
+  }
+  .pbg__tile {
+    min-width: 88px;
+    min-height: 96px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pbg {
+    padding: var(--space-md);
+  }
+  .pbg__tile {
+    min-width: 58px;
+    min-height: 66px;
+    padding: var(--space-sm) var(--space-md);
+  }
+  .pbg__tile-letter {
+    font-size: 1.85rem;
+  }
+  .pbg__blended-letter {
+    font-size: 2.75rem;
+  }
+  .pbg__title {
+    font-size: 1.4rem;
+  }
+  .pbg__option {
+    font-size: 1.15rem;
+    min-height: 52px;
+  }
+  .pbg__blend-btn {
+    font-size: 1.15rem;
+    padding: 0.9rem 2rem;
+  }
+}
+
+/* -- Dark mode ------------------------------------------------------------- */
+
+[data-theme="dark"] .pbg__tile {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .pbg__tile--tapped,
+[data-theme="dark"] .pbg__tile--active {
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .pbg__option {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .pbg__option--correct {
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .pbg__option--wrong {
+  background: var(--danger-pale);
+}
+
+[data-theme="dark"] .pbg__blended-word {
+  background: var(--bg-elevated);
+  border-color: var(--primary);
+}
+
+[data-theme="dark"] .pbg__completion-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}

@@ -1,0 +1,287 @@
+/* ==========================================================================
+   DIALOGUE GAME — MinesMinis
+   Chat-bubble conversation UI for turn-based dialogue exercises.
+   Uses design-system tokens exclusively (var()). Mobile-first.
+   ========================================================================== */
+
+/* ---- Root container ---- */
+.dialogue-game {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1rem 1.5rem;
+  max-width: 520px;
+  margin: 0 auto;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  min-height: 0;
+}
+
+/* ---- Chat feed (scrollable area) ---- */
+.dialogue-game__feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  max-height: 52vh;
+  padding: 0.5rem 0.25rem 0.25rem;
+  scroll-behavior: smooth;
+}
+
+/* ---- A single message row ---- */
+.dialogue-game__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.dialogue-game__row--mimi {
+  justify-content: flex-start;
+}
+
+.dialogue-game__row--child {
+  justify-content: flex-end;
+}
+
+/* ---- Mascot avatar ---- */
+.dialogue-game__avatar {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* ---- Chat bubbles ---- */
+.dialogue-game__bubble {
+  max-width: 68%;
+  padding: 0.65rem 0.9rem;
+  border-radius: 1.25rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.dialogue-game__bubble--mimi {
+  background: var(--slate-100);
+  color: var(--slate-900);
+  border-bottom-left-radius: 0.25rem;
+  box-shadow: 0 1px 4px var(--shadow-color);
+}
+
+.dialogue-game__bubble--child {
+  background: var(--primary);
+  color: #fff;
+  border-bottom-right-radius: 0.25rem;
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.dialogue-game__bubble-text {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.dialogue-game__bubble-translation {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.dialogue-game__bubble-feedback {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+/* ---- Thinking / typing indicator ---- */
+.dialogue-game__thinking {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--slate-100);
+  padding: 0.65rem 1rem;
+  border-radius: 1.25rem;
+  border-bottom-left-radius: 0.25rem;
+  box-shadow: 0 1px 4px var(--shadow-color);
+}
+
+.dialogue-game__thinking span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--slate-400);
+  animation: dialogue-bounce 1.2s infinite ease-in-out;
+}
+
+.dialogue-game__thinking span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dialogue-game__thinking span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dialogue-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30%           { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ---- Options section ---- */
+.dialogue-game__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.dialogue-game__options-label {
+  margin: 0 0 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--slate-500);
+  text-align: center;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ---- Option button ---- */
+.dialogue-game__option {
+  width: 100%;
+  padding: 0.75rem 1.1rem;
+  border-radius: 0.875rem;
+  border: 2px solid var(--slate-200);
+  background: var(--surface, #fff);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.18s, background 0.18s, transform 0.1s;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dialogue-game__option:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+}
+
+.dialogue-game__option:focus-visible {
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.dialogue-game__option--idle {
+  /* default */
+}
+
+.dialogue-game__option--correct {
+  border-color: var(--success);
+  background: var(--success-pale);
+}
+
+.dialogue-game__option--correct .dialogue-game__option-text {
+  color: var(--success);
+}
+
+.dialogue-game__option--wrong {
+  border-color: var(--error);
+  background: var(--error-pale);
+}
+
+.dialogue-game__option--wrong .dialogue-game__option-text {
+  color: var(--error);
+}
+
+.dialogue-game__option:disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+
+.dialogue-game__option-text {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--slate-800);
+  display: block;
+  line-height: 1.4;
+}
+
+/* ---- Progress dots ---- */
+.dialogue-game__progress {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  padding-top: 0.25rem;
+}
+
+.dialogue-game__dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--slate-200);
+  transition: background 0.25s, transform 0.25s;
+}
+
+.dialogue-game__dot--active {
+  background: var(--primary);
+  transform: scale(1.25);
+}
+
+.dialogue-game__dot--done {
+  background: var(--success);
+}
+
+/* ---- Summary / end card ---- */
+.dialogue-game__summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+}
+
+.dialogue-game__summary-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.dialogue-game__summary-score {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--secondary);
+  line-height: 1;
+}
+
+.dialogue-game__summary-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+/* ---- Responsive: smaller screens ---- */
+@media (max-width: 400px) {
+  .dialogue-game__bubble {
+    max-width: 78%;
+  }
+
+  .dialogue-game__bubble-text {
+    font-size: 0.92rem;
+  }
+
+  .dialogue-game__option-text {
+    font-size: 0.9rem;
+  }
+
+  .dialogue-game__feed {
+    max-height: 44vh;
+  }
+}

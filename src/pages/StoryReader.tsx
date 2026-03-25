@@ -9,6 +9,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ArrowLeft, MapPin, Volume2, BookOpen, RotateCcw } from 'lucide-react';
 import { speak } from '../services/ttsService';
+import SceneBackground from '../components/Story/StoryScene';
+import type { BackgroundId } from '../data/storyWorlds';
+import type { CameraAngleId } from '../data/cameraAngles';
 import './StoryReader.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -36,6 +39,7 @@ interface StoryScene {
   animations?: string[];
   sound_effect?: string;
   animation_cue?: string;
+  camera_angle?: string;
   vocabulary?: VocabWord[];
   choices?: Array<{ text: string; textTr?: string; text_tr?: string; leadsTo?: number; next_scene_id?: string }>;
 }
@@ -51,6 +55,7 @@ interface Story {
   vocabulary?: VocabWord[];
   scenes: StoryScene[];
   target_age?: number[];
+  characters?: string[];
 }
 
 // ─── Typewriter hook ─────────────────────────────────────────────────────────
@@ -98,16 +103,42 @@ function useTypewriter(
   return { displayed, done, skip };
 }
 
-// ─── Background class from scene text ────────────────────────────────────────
+// ─── Location string → BackgroundId mapper ────────────────────────────────────
 
-function getBgClass(text: string): string {
-  const t = text.toLowerCase();
-  if (t.includes('forest') || t.includes('tree') || t.includes('orman')) return 'story-reader__bg-forest';
-  if (t.includes('ocean') || t.includes('sea') || t.includes('water') || t.includes('deniz')) return 'story-reader__bg-ocean';
-  if (t.includes('space') || t.includes('star') || t.includes('uzay')) return 'story-reader__bg-space';
-  if (t.includes('mountain') || t.includes('snow') || t.includes('dağ')) return 'story-reader__bg-mountain';
-  if (t.includes('desert') || t.includes('sand') || t.includes('çöl')) return 'story-reader__bg-desert';
-  return 'story-reader__bg-default';
+function resolveBackground(location: string | undefined, narration: string): BackgroundId {
+  const s = (location || narration || '').toLowerCase();
+  if (s.includes('deep') && (s.includes('forest') || s.includes('orman'))) return 'forest-deep';
+  if (s.includes('lake') && s.includes('forest')) return 'forest-lake';
+  if (s.includes('cave') && s.includes('forest')) return 'forest-cave';
+  if (s.includes('treehouse')) return 'forest-treehouse';
+  if (s.includes('forest') || s.includes('orman') || s.includes('tree') || s.includes('meadow') || s.includes('flower')) return 'forest-clearing';
+  if (s.includes('coral')) return 'ocean-coral';
+  if (s.includes('deep') && (s.includes('ocean') || s.includes('sea') || s.includes('deniz'))) return 'ocean-deep';
+  if (s.includes('ship') || s.includes('boat') || s.includes('pirate')) return 'ocean-ship';
+  if (s.includes('palace') && (s.includes('ocean') || s.includes('underwater'))) return 'ocean-palace';
+  if (s.includes('ocean') || s.includes('sea') || s.includes('shore') || s.includes('beach') || s.includes('deniz')) return 'ocean-shore';
+  if (s.includes('peak') || s.includes('summit')) return 'mountain-peak';
+  if (s.includes('cave') && s.includes('mountain')) return 'mountain-cave';
+  if (s.includes('cloud') && s.includes('mountain')) return 'mountain-clouds';
+  if (s.includes('bridge') && s.includes('mountain')) return 'mountain-bridge';
+  if (s.includes('mountain') || s.includes('dağ') || s.includes('snow') || s.includes('snowy')) return 'mountain-base';
+  if (s.includes('station') || s.includes('spaceship')) return 'space-station';
+  if (s.includes('asteroid')) return 'space-asteroid';
+  if (s.includes('nebula') || s.includes('cosmic')) return 'space-nebula';
+  if (s.includes('moon') || s.includes('lunar')) return 'space-moon';
+  if (s.includes('comet')) return 'space-comet';
+  if (s.includes('space') || s.includes('star') || s.includes('galaxy') || s.includes('uzay')) return 'space-station';
+  if (s.includes('oasis')) return 'desert-oasis';
+  if (s.includes('dune') || s.includes('sand')) return 'desert-dunes';
+  if (s.includes('temple') || s.includes('ancient')) return 'desert-temple';
+  if (s.includes('market') || s.includes('village')) return 'desert-market';
+  if (s.includes('desert') || s.includes('çöl')) return 'desert-oasis';
+  return 'forest-clearing';
+}
+
+function resolveCameraAngle(angle: string | undefined): CameraAngleId {
+  const valid: CameraAngleId[] = ['wide', 'closeUp', 'lowAngle', 'birdEye', 'sidePan', 'sidePanLeft', 'dutch', 'dramatic'];
+  return valid.includes(angle as CameraAngleId) ? (angle as CameraAngleId) : 'wide';
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -155,7 +186,8 @@ export default function StoryReader() {
         : (currentScene.narration || currentScene.text || ''))
     : '';
 
-  const bgClass = currentScene ? getBgClass(narrationText) : 'story-reader__bg-default';
+  const sceneBackground = resolveBackground(currentScene?.location ?? currentScene?.background, narrationText);
+  const sceneCameraAngle = resolveCameraAngle(currentScene?.camera_angle);
 
   const handleNarratorComplete = useCallback(() => {
     setShowChoices(true);
@@ -193,7 +225,7 @@ export default function StoryReader() {
   }, [done, skip]);
 
   const speakWord = useCallback((word: string) => {
-    speak(word, 0.9).catch(() => {});
+    speak(word);
   }, []);
 
   // ── Render ──
@@ -228,8 +260,14 @@ export default function StoryReader() {
 
   return (
     <div className="story-reader" onClick={!done ? handleSkipTypewriter : undefined}>
-      {/* Background */}
-      <div className={`story-reader__bg ${bgClass}`} />
+      {/* Cinematic background with camera angles */}
+      <div className="story-reader__scene-wrapper">
+        <SceneBackground
+          background={sceneBackground}
+          cameraAngle={sceneCameraAngle}
+          mascotId={story.characters?.[0]}
+        />
+      </div>
 
       {/* Topbar */}
       <div className="story-reader__topbar">

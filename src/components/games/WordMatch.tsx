@@ -4,6 +4,9 @@ import { CheckCircle, Sparkles, Trophy, Star, Check } from 'lucide-react';
 import { Card, Badge, ProgressBar, FloatingEmoji } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHearts } from '../../contexts/HeartsContext';
+import NoHeartsModal from '../NoHeartsModal';
+import { announceToScreenReader } from '../../utils/accessibility';
 import './WordMatch.css';
 
 interface WordItem {
@@ -39,6 +42,8 @@ function shuffleArray<T>(arr: T[]): T[] {
 export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
+  const { loseHeart, hearts } = useHearts();
+  const [showNoHearts, setShowNoHearts] = useState(false);
   const roundSize = 3;
   const totalRounds = Math.ceil(Math.min(words.length, 6) / roundSize);
 
@@ -84,6 +89,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setFeedback({ type: 'correct', pairId: leftId });
       onXpEarned?.(10);
       SFX.correct();
+      announceToScreenReader('Correct!', 'polite');
 
       // Floating emoji celebration
       const matchedEmoji = pairs[leftId]?.emoji;
@@ -128,14 +134,19 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       }, 1200);
     } else {
       setFeedback({ type: 'wrong' });
+      announceToScreenReader('Try again', 'assertive');
+      loseHeart();
       onWrongAnswer?.();
+      if (hearts - 1 <= 0) {
+        setShowNoHearts(true);
+      }
       setTimeout(() => {
         setFeedback(null);
         setSelectedLeft(null);
         setSelectedRight(null);
       }, 800);
     }
-  }, [pairs, round, totalRounds, score, totalAttempted, onComplete, onXpEarned, onWrongAnswer, initRound]);
+  }, [pairs, round, totalRounds, score, totalAttempted, onComplete, onXpEarned, onWrongAnswer, initRound, loseHeart, hearts]);
 
   const handleLeftClick = (id: number) => {
     if (pairs[id]?.matched || feedback) return;
@@ -205,6 +216,10 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   }
 
   return (
+    <>
+    {showNoHearts && (
+      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
+    )}
     <div className="word-match" role="application" aria-label="Word matching game">
       {floatingEmoji && <FloatingEmoji emoji={floatingEmoji} count={5} />}
       <div className="word-match__header">
@@ -214,86 +229,91 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
       <ProgressBar value={progress} variant="success" size="md" animated />
 
-      {feedback?.type === 'correct' && (
-        <motion.div
-          className="word-match__feedback word-match__feedback--correct"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-        >
-          <CheckCircle size={24} /> {t('games.amazing')}
-        </motion.div>
-      )}
+      <div aria-live="assertive" aria-atomic="true">
+        {feedback?.type === 'correct' && (
+          <motion.div
+            className="word-match__feedback word-match__feedback--correct"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            <CheckCircle size={24} /> {t('games.amazing')}
+          </motion.div>
+        )}
 
-      {feedback?.type === 'wrong' && (
-        <motion.div
-          className="word-match__feedback word-match__feedback--wrong"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, x: [0, -8, 8, -8, 0] }}
-          exit={{ opacity: 0 }}
-        >
-          {t('games.tryAgainYouGotThis')}
-        </motion.div>
-      )}
+        {feedback?.type === 'wrong' && (
+          <motion.div
+            className="word-match__feedback word-match__feedback--wrong"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, x: [0, -8, 8, -8, 0] }}
+            exit={{ opacity: 0 }}
+          >
+            {t('games.tryAgainYouGotThis')}
+          </motion.div>
+        )}
+      </div>
 
       <div className="word-match__board">
-        <div className="word-match__column" aria-label="English words">
+        <div className="word-match__column" role="list" aria-label="English words">
           <AnimatePresence>
             {leftItems.map((item) => (
-              <motion.button
-                key={`left-${item.id}`}
-                className={[
-                  'word-match__card',
-                  'word-match__card--left',
-                  selectedLeft === item.id && 'word-match__card--selected',
-                  item.matched && 'word-match__card--matched',
-                  feedback?.type === 'correct' && feedback.pairId === item.id && 'word-match__card--flash',
-                ].filter(Boolean).join(' ')}
-                onClick={() => handleLeftClick(item.id)}
-                disabled={item.matched || !!feedback}
-                aria-label={`English: ${item.english}`}
-                aria-pressed={selectedLeft === item.id}
-                layout
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
-                <span className="word-match__card-text">{item.english}</span>
-              </motion.button>
+              <div key={`left-${item.id}`} role="listitem">
+                <motion.button
+                  className={[
+                    'word-match__card',
+                    'word-match__card--left',
+                    selectedLeft === item.id && 'word-match__card--selected',
+                    item.matched && 'word-match__card--matched',
+                    feedback?.type === 'correct' && feedback.pairId === item.id && 'word-match__card--flash',
+                  ].filter(Boolean).join(' ')}
+                  onClick={() => handleLeftClick(item.id)}
+                  disabled={item.matched || !!feedback}
+                  aria-label={`English: ${item.english}`}
+                  aria-pressed={selectedLeft === item.id}
+                  layout
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
+                  <span className="word-match__card-text">{item.english}</span>
+                </motion.button>
+              </div>
             ))}
           </AnimatePresence>
         </div>
 
-        <div className="word-match__column" aria-label="Turkish translations">
+        <div className="word-match__column" role="list" aria-label="Turkish translations">
           <AnimatePresence>
             {rightItems.map((item) => (
-              <motion.button
-                key={`right-${item.id}`}
-                className={[
-                  'word-match__card',
-                  'word-match__card--right',
-                  selectedRight === item.id && 'word-match__card--selected',
-                  item.matched && 'word-match__card--matched',
-                  feedback?.type === 'correct' && feedback.pairId === item.id && 'word-match__card--flash',
-                ].filter(Boolean).join(' ')}
-                onClick={() => handleRightClick(item.id)}
-                disabled={item.matched || !!feedback}
-                aria-label={`Turkish: ${item.turkish}`}
-                aria-pressed={selectedRight === item.id}
-                layout
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
-                <span className="word-match__card-text">{item.turkish}</span>
-              </motion.button>
+              <div key={`right-${item.id}`} role="listitem">
+                <motion.button
+                  className={[
+                    'word-match__card',
+                    'word-match__card--right',
+                    selectedRight === item.id && 'word-match__card--selected',
+                    item.matched && 'word-match__card--matched',
+                    feedback?.type === 'correct' && feedback.pairId === item.id && 'word-match__card--flash',
+                  ].filter(Boolean).join(' ')}
+                  onClick={() => handleRightClick(item.id)}
+                  disabled={item.matched || !!feedback}
+                  aria-label={`Turkish: ${item.turkish}`}
+                  aria-pressed={selectedRight === item.id}
+                  layout
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
+                  <span className="word-match__card-text">{item.turkish}</span>
+                </motion.button>
+              </div>
             ))}
           </AnimatePresence>
         </div>
       </div>
     </div>
+    </>
   );
 };
 

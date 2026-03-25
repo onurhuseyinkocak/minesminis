@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { usePremium } from '../contexts/PremiumContext';
 import {
-  Crown, Check, Star, Sparkles, Users, GraduationCap,
+  Crown, Check, Star, Sparkles,
   ChevronDown, ChevronUp, Loader2, ExternalLink,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -16,10 +16,6 @@ import './Pricing.css';
 const VARIANT_IDS = {
   premium_monthly: import.meta.env.VITE_LS_PREMIUM_MONTHLY || '',
   premium_yearly:  import.meta.env.VITE_LS_PREMIUM_YEARLY  || '',
-  family_monthly:  import.meta.env.VITE_LS_FAMILY_MONTHLY  || '',
-  family_yearly:   import.meta.env.VITE_LS_FAMILY_YEARLY   || '',
-  classroom_monthly: import.meta.env.VITE_LS_CLASSROOM_MONTHLY || '',
-  classroom_yearly:  import.meta.env.VITE_LS_CLASSROOM_YEARLY  || '',
 };
 
 // ── Plan definitions ─────────────────────────────────────────────────────────
@@ -74,41 +70,6 @@ const PLANS: PlanDef[] = [
       'pricing.featurePremium7',
     ],
   },
-  {
-    id: 'family',
-    name: 'Family',
-    icon: <Users size={28} />,
-    monthlyPrice: 119,
-    yearlyPrice: 890,
-    monthlyVariantId: VARIANT_IDS.family_monthly,
-    yearlyVariantId: VARIANT_IDS.family_yearly,
-    features: [
-      'pricing.featureFamily1',
-      'pricing.featureFamily2',
-      'pricing.featureFamily3',
-      'pricing.featureFamily4',
-      'pricing.featureFamily5',
-      'pricing.featureFamily6',
-    ],
-  },
-  {
-    id: 'classroom',
-    name: 'Classroom',
-    icon: <GraduationCap size={28} />,
-    monthlyPrice: 299,
-    yearlyPrice: 2290,
-    monthlyVariantId: VARIANT_IDS.classroom_monthly,
-    yearlyVariantId: VARIANT_IDS.classroom_yearly,
-    features: [
-      'pricing.featureClassroom1',
-      'pricing.featureClassroom2',
-      'pricing.featureClassroom3',
-      'pricing.featureClassroom4',
-      'pricing.featureClassroom5',
-      'pricing.featureClassroom6',
-      'pricing.featureClassroom7',
-    ],
-  },
 ];
 
 // ── FAQ data ─────────────────────────────────────────────────────────────────
@@ -133,8 +94,6 @@ export default function Pricing() {
   const planNameMap: Record<string, string> = {
     free: t('pricing.planFree'),
     premium: t('pricing.planPremium'),
-    family: t('pricing.planFamily'),
-    classroom: t('pricing.planClassroom'),
   };
 
   const [searchParams, setSearchParams] = useSearchParams();

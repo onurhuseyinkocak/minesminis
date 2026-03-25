@@ -6,7 +6,7 @@
     "display": "standalone",
     "background_color": "#0C0F1A",
     "theme_color": "#E8A317",
-    "orientation": "any",
+    "orientation": "portrait",
     "scope": "/",
     "categories": [
         "education",
@@ -40,37 +40,40 @@
             "purpose": "maskable"
         }
     ],
-    "screenshots": [],
+    "screenshots": [
+        {
+            "src": "/images/mine-logo.jpg",
+            "sizes": "390x844",
+            "type": "image/jpeg",
+            "form_factor": "narrow",
+            "label": "MinesMinis dashboard — daily lessons and progress tracking"
+        },
+        {
+            "src": "/images/mine-logo.jpg",
+            "sizes": "390x844",
+            "type": "image/jpeg",
+            "form_factor": "narrow",
+            "label": "MinesMinis mini games — fun interactive English games for kids"
+        }
+    ],
     "shortcuts": [
         {
-            "name": "Games",
-            "short_name": "Games",
-            "description": "Play educational games",
+            "name": "Günlük Ders",
+            "short_name": "Ders",
+            "description": "Bugünün dersini başlat",
+            "url": "/lesson",
+            "icons": [
+                {
+                    "src": "/images/mine-logo.jpg",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Oyunlar",
+            "short_name": "Oyunlar",
+            "description": "Mini oyunlar",
             "url": "/games",
-            "icons": [
-                {
-                    "src": "/images/mine-logo.jpg",
-                    "sizes": "96x96"
-                }
-            ]
-        },
-        {
-            "name": "Words",
-            "short_name": "Words",
-            "description": "Learn new words",
-            "url": "/words",
-            "icons": [
-                {
-                    "src": "/images/mine-logo.jpg",
-                    "sizes": "96x96"
-                }
-            ]
-        },
-        {
-            "name": "Videos",
-            "short_name": "Videos",
-            "description": "Watch educational videos",
-            "url": "/videos",
             "icons": [
                 {
                     "src": "/images/mine-logo.jpg",

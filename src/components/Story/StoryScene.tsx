@@ -5,10 +5,16 @@
 
 import React, { useEffect, useState } from 'react';
 import type { BackgroundId } from '../../data/storyWorlds';
+import type { CameraAngleId } from '../../data/cameraAngles';
+import { CAMERA_ANGLES } from '../../data/cameraAngles';
+import { GLINTS } from '../../config/GlintsConfig';
+import UnifiedMascot from '../UnifiedMascot';
 
 interface StorySceneProps {
   background: BackgroundId;
   children?: React.ReactNode;
+  cameraAngle?: CameraAngleId;
+  mascotId?: string;
 }
 
 // SVG scene layers per background
@@ -165,14 +171,20 @@ const SCENE_CONFIG: Record<BackgroundId, {
   },
 };
 
-const StoryScene: React.FC<StorySceneProps> = ({ background, children }) => {
+const StoryScene: React.FC<StorySceneProps> = ({ background, children, cameraAngle = 'wide', mascotId }) => {
   const config = SCENE_CONFIG[background];
+  const angle = CAMERA_ANGLES[cameraAngle];
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true));
     return () => setMounted(false);
   }, [background]);
+
+  // Resolve mascot from GLINTS config
+  const glint = mascotId ? GLINTS[mascotId] : null;
+
+  const svgViewBox = `${angle.svgTransform.x} ${angle.svgTransform.y} ${angle.svgTransform.width} ${angle.svgTransform.height}`;
 
   return (
     <div className={`story-scene ${mounted ? 'story-scene--visible' : ''}`}>
@@ -185,7 +197,15 @@ const StoryScene: React.FC<StorySceneProps> = ({ background, children }) => {
       }} />
 
       {/* SVG Scene Elements */}
-      <svg className="story-scene__svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+      <svg
+        className="story-scene__svg"
+        viewBox={svgViewBox}
+        preserveAspectRatio="xMidYMid slice"
+        style={{
+          transform: angle.cssTransform !== 'none' ? angle.cssTransform : undefined,
+          transition: `all ${angle.transitionDuration} cubic-bezier(0.4, 0, 0.2, 1)`,
+        }}
+      >
         <defs>
           <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#FFD93D" stopOpacity="1" />
@@ -518,6 +538,13 @@ const StoryScene: React.FC<StorySceneProps> = ({ background, children }) => {
               }}
             />
           ))}
+        </div>
+      )}
+
+      {/* Mascot character */}
+      {glint && mascotId && (
+        <div className="story-scene__mascot-character story-scene__mascot-bounce">
+          <UnifiedMascot id={mascotId} state="idle" size={80} />
         </div>
       )}
 

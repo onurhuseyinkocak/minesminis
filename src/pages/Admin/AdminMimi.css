@@ -39,7 +39,9 @@
 
 .admin-mimi-fab-icon {
     position: relative;
-    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .admin-mimi-bear {
@@ -135,14 +137,12 @@
 
 .admin-mimi-avatar {
     position: relative;
-    font-size: 2rem;
-    background: var(--glass-accent-border);
     width: 48px;
     height: 48px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .admin-mimi-avatar-badge {
@@ -257,14 +257,11 @@
 }
 
 .admin-mimi-message .message-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent-coral) 0%, var(--primary-orange-dark) 100%);
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3rem;
     flex-shrink: 0;
 }
 

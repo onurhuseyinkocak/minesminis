@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { LottieIcon, KidIcon } from '../ui';
 import type { KidIconName } from '../ui';
+import ParentGate, { hasParentGatePassed } from '../ParentGate';
+import { Users2, LayoutDashboard } from 'lucide-react';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -19,16 +22,52 @@ const NAV_ITEMS: { path: string; label: string; icon: KidIconName }[] = [
   { path: '/stories', label: 'Stories', icon: 'stories' },
 ];
 
+/** Action that triggered the ParentGate, used to resume after success. */
+type GateAction = 'logout' | 'settings' | 'premium';
+
 export default function AppShell({
   children,
   showBottomNav = true,
 }: AppShellProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { userProfile, signOut } = useAuth();
   const { stats } = useGamification();
+  const { lang } = useLanguage();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Parent Gate state
+  const [gateAction, setGateAction] = useState<GateAction | null>(null);
+  const [gateReason, setGateReason] = useState<string>('');
+
+  /** Open the gate for the given action, skipping it if the session already passed. */
+  const requestGate = useCallback(
+    (action: GateAction, reason: string) => {
+      setDropdownOpen(false);
+      if (hasParentGatePassed()) {
+        // Already verified this session — execute immediately
+        if (action === 'logout') { signOut(); return; }
+        if (action === 'settings') { navigate('/settings'); return; }
+        if (action === 'premium') { navigate('/pricing'); return; }
+      }
+      setGateReason(reason);
+      setGateAction(action);
+    },
+    [navigate, signOut]
+  );
+
+  const handleGateSuccess = useCallback(() => {
+    setGateAction(null);
+    if (gateAction === 'logout') { signOut(); return; }
+    if (gateAction === 'settings') { navigate('/settings'); return; }
+    if (gateAction === 'premium') { navigate('/pricing'); return; }
+  }, [gateAction, navigate, signOut]);
+
+  const handleGateCancel = useCallback(() => {
+    setGateAction(null);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/dashboard') return location.pathname === '/' || location.pathname === '/dashboard';
@@ -37,6 +76,7 @@ export default function AppShell({
 
   const displayName = userProfile?.display_name || '';
   const initial = displayName ? displayName.charAt(0).toUpperCase() : '?';
+  const isTeacher = userProfile?.role === 'teacher';
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 8);
@@ -96,6 +136,30 @@ export default function AppShell({
               </Link>
             );
           })}
+          <Link
+            to="/social/friends"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-display font-semibold transition-all duration-150 ${
+              isActive('/social/friends')
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-ink-500 hover:bg-ink-50 hover:text-ink-800'
+            }`}
+          >
+            <Users2 size={18} />
+            <span>Friends</span>
+          </Link>
+          {isTeacher && (
+            <Link
+              to="/teacher"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-display font-semibold transition-all duration-150 ${
+                isActive('/teacher')
+                  ? 'bg-primary-50 text-primary-600'
+                  : 'text-ink-500 hover:bg-ink-50 hover:text-ink-800'
+              }`}
+            >
+              <LayoutDashboard size={18} />
+              <span>Sınıfım</span>
+            </Link>
+          )}
         </nav>
 
         {/* Right: streak + XP + avatar */}
@@ -132,7 +196,26 @@ export default function AppShell({
                   Profile
                 </Link>
                 <button
-                  onClick={() => { setDropdownOpen(false); signOut(); }}
+                  type="button"
+                  onClick={() =>
+                    requestGate(
+                      'settings',
+                      lang === 'tr' ? 'Ayarlara gitmek için' : 'To access Settings'
+                    )
+                  }
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink-600 hover:bg-ink-50 hover:text-ink-900 transition-colors font-display font-semibold"
+                >
+                  <KidIcon name="learn" size={16} />
+                  Settings
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    requestGate(
+                      'logout',
+                      lang === 'tr' ? 'Çıkış yapmak için' : 'To sign out'
+                    )
+                  }
                   className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-error-500 hover:bg-error-50 transition-colors font-display font-semibold"
                 >
                   <KidIcon name="logout" size={16} />
@@ -206,7 +289,46 @@ export default function AppShell({
               </Link>
             );
           })}
+          <Link
+            to="/social/friends"
+            className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-colors duration-200 ${
+              isActive('/social/friends') ? 'text-primary-500' : 'text-ink-400'
+            }`}
+          >
+            <div className={`p-1 rounded-full transition-colors duration-200 ${isActive('/social/friends') ? 'bg-primary-50' : ''}`}>
+              <Users2 size={22} />
+            </div>
+            <span className={`text-[10px] font-display ${isActive('/social/friends') ? 'font-bold' : 'font-semibold'}`}>
+              Friends
+            </span>
+          </Link>
+          {isTeacher && (
+            <Link
+              to="/teacher"
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-colors duration-200 ${
+                isActive('/teacher') ? 'text-primary-500' : 'text-ink-400'
+              }`}
+            >
+              <div className={`p-1 rounded-full transition-colors duration-200 ${isActive('/teacher') ? 'bg-primary-50' : ''}`}>
+                <LayoutDashboard size={22} />
+              </div>
+              <span className={`text-[10px] font-display ${isActive('/teacher') ? 'font-bold' : 'font-semibold'}`}>
+                Sınıfım
+              </span>
+            </Link>
+          )}
         </nav>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          PARENT GATE MODAL
+          ══════════════════════════════════════════════════ */}
+      {gateAction !== null && (
+        <ParentGate
+          reason={gateReason}
+          onSuccess={handleGateSuccess}
+          onCancel={handleGateCancel}
+        />
       )}
     </div>
   );

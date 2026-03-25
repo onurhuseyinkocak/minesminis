@@ -13,7 +13,8 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, Star, RotateCcw, Lock } from 'lucide-react';
+import LessonCompleteScreen from '../components/LessonCompleteScreen';
+import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, RotateCcw, Lock } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -136,40 +137,6 @@ function getSentence(word: KidsWord): { en: string; tr: string; highlight: strin
     tr: `Bak! Büyük bir ${word.turkish}.`,
     highlight: upper,
   };
-}
-
-// ─── Confetti ─────────────────────────────────────────────────────────────────
-
-const CONFETTI_COLORS = ['#f59e0b', '#22c55e', '#3b82f6', '#ec4899', '#8b5cf6'];
-
-function ConfettiPiece({ delay, x, color }: { delay: number; x: number; color: string }) {
-  return (
-    <div
-      className="dl-confetti__piece"
-      style={{
-        left: `${x}%`,
-        backgroundColor: color,
-        animationDuration: `${1.2 + Math.random() * 1.5}s`,
-        animationDelay: `${delay}s`,
-      }}
-    />
-  );
-}
-
-function Confetti() {
-  const pieces = Array.from({ length: 40 }, (_, i) => ({
-    id: i,
-    delay: Math.random() * 0.8,
-    x: Math.random() * 100,
-    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-  }));
-  return (
-    <div className="dl-confetti" aria-hidden>
-      {pieces.map((p) => (
-        <ConfettiPiece key={p.id} delay={p.delay} x={p.x} color={p.color} />
-      ))}
-    </div>
-  );
 }
 
 // ─── Phase dot indicator ──────────────────────────────────────────────────────
@@ -310,13 +277,13 @@ function PhaseListenStep({
 
   useEffect(() => {
     setEntering(true);
-    speak(word.word).catch(() => {});
+    speak(word.word);
     const t = setTimeout(() => setEntering(false), 400);
     return () => clearTimeout(t);
   }, [word.word]);
 
   const handleTap = useCallback(() => {
-    speak(word.word).catch(() => {});
+    speak(word.word);
   }, [word.word]);
 
   return (
@@ -334,7 +301,7 @@ function PhaseListenStep({
         <span className="dl-card__word">{word.word.toUpperCase()}</span>
         <span className="dl-card__tr">{word.turkish}</span>
         <span className="dl-card__tap-hint">
-          <Volume2 size={12} style={{ display: 'inline', marginRight: 4 }} />
+          <Volume2 size={12} className="dl-card__hint-icon" />
           {lang === 'tr' ? 'Tekrar duymak için dokun' : 'Tap to hear again'}
         </span>
       </div>
@@ -374,12 +341,12 @@ function PhaseSeeStep({
   const parts = sentence.en.split(sentence.highlight);
 
   const handleReadAgain = useCallback(() => {
-    speak(sentence.en).catch(() => {});
+    speak(sentence.en);
   }, [sentence.en]);
 
   // Auto-play sentence TTS when card loads
   useEffect(() => {
-    speak(sentence.en).catch(() => {});
+    speak(sentence.en);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word.word]);
 
@@ -398,9 +365,8 @@ function PhaseSeeStep({
 
         {/* Montessori: Read Again button for repetition freedom */}
         <button
-          className="dl-btn dl-btn--ghost"
+          className="dl-btn dl-btn--ghost dl-btn--sm"
           onClick={handleReadAgain}
-          style={{ minHeight: 40, fontSize: 14 }}
         >
           <Volume2 size={16} />
           {lang === 'tr' ? 'Tekrar Dinle' : 'Read Again'}
@@ -483,7 +449,7 @@ function PhasePlay({
   const handleTile = (tile: MatchItem) => {
     if (tile.matched) return;
     if (tile.type === 'english') {
-      speak(tile.text.toLowerCase()).catch(() => {});
+      speak(tile.text.toLowerCase());
       setSelectedEn((prev) => (prev?.id === tile.id ? null : tile));
     } else {
       setSelectedTr((prev) => (prev?.id === tile.id ? null : tile));
@@ -550,7 +516,7 @@ function PhasePlay({
         <p className="dl-phase-complete__msg">
           {lang === 'tr' ? 'Tüm eşleşmeleri buldun!' : 'All matched!'}
         </p>
-        <div className="dl-nav" style={{ flexDirection: 'column', gap: 10 }}>
+        <div className="dl-nav dl-nav--col">
           {/* Montessori: Play Again for repetition freedom */}
           <button type="button" className="dl-btn dl-btn--ghost" onClick={handlePlayAgain}>
             <RotateCcw size={18} />
@@ -575,7 +541,7 @@ function PhasePlay({
 
       <div className="dl-game-section">
         <div className="dl-match-grid">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="dl-match-col">
             {englishTiles.map((tile) => {
               const isSelected = selectedEn?.id === tile.id;
               let cls = 'dl-match-tile';
@@ -589,7 +555,7 @@ function PhasePlay({
               );
             })}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="dl-match-col">
             {turkishTiles.map((tile) => {
               const isSelected = selectedTr?.id === tile.id;
               const isRevealed = revealCorrect === tile.id;
@@ -635,7 +601,7 @@ function PhaseSpeak({
   const currentWord = words[index];
 
   const speakCurrent = useCallback(() => {
-    speak(currentWord.word).catch(() => {});
+    speak(currentWord.word);
   }, [currentWord.word]);
 
   useEffect(() => {
@@ -712,7 +678,7 @@ function PhaseSpeak({
 
   if (done) {
     return (
-      <div className="dl-phase-subtitle" style={{ marginTop: 40 }}>
+      <div className="dl-phase-subtitle dl-phase-subtitle--spaced">
         {lang === 'tr' ? 'Bitti! Devam ediyoruz...' : 'Done! Moving on...'}
       </div>
     );
@@ -728,9 +694,8 @@ function PhaseSpeak({
         <span className="dl-card__tr">{currentWord.turkish}</span>
 
         <button
-          className="dl-btn dl-btn--ghost"
+          className="dl-btn dl-btn--ghost dl-btn--sm"
           onClick={speakCurrent}
-          style={{ minHeight: 44, padding: '0 20px', fontSize: 14 }}
         >
           <Volume2 size={16} /> {lang === 'tr' ? 'Dinle' : 'Hear it'}
         </button>
@@ -744,7 +709,7 @@ function PhaseSpeak({
         </button>
 
         {listening && (
-          <span className="dl-phase-subtitle" style={{ fontSize: 13 }}>
+          <span className="dl-phase-subtitle dl-phase-subtitle--sm">
             {lang === 'tr' ? 'Dinleniyor...' : 'Listening...'}
           </span>
         )}
@@ -760,9 +725,8 @@ function PhaseSpeak({
         {/* Montessori: Try Again without penalty */}
         {feedback && (
           <button
-            className="dl-btn dl-btn--ghost"
+            className="dl-btn dl-btn--ghost dl-btn--xs"
             onClick={handleTryAgain}
-            style={{ fontSize: 13, minHeight: 36 }}
           >
             <RotateCcw size={14} />
             {lang === 'tr' ? 'Tekrar Dene' : 'Try Again'}
@@ -908,7 +872,7 @@ function PhaseReview({
         <p className="dl-phase-complete__msg">
           {lang === 'tr' ? `${finalScore}% doğru!` : `${finalScore}% correct!`}
         </p>
-        <div className="dl-nav" style={{ flexDirection: 'column', gap: 10 }}>
+        <div className="dl-nav dl-nav--col">
           {/* Montessori: Practice More for repetition freedom */}
           <button type="button" className="dl-btn dl-btn--ghost" onClick={handlePracticeMore}>
             <RotateCcw size={18} />
@@ -926,7 +890,7 @@ function PhaseReview({
 
   // Speak the prompt word in Review — phonics: hear the word, not just read it
   const handleHearPrompt = useCallback(() => {
-    speak(q.promptWord).catch(() => {});
+    speak(q.promptWord);
   }, [q.promptWord]);
 
   return (
@@ -985,90 +949,6 @@ function PhaseReview({
   );
 }
 
-// ─── Celebration screen ────────────────────────────────────────────────────────
-
-function StarRating({ score }: { score: number }) {
-  const stars = score >= 80 ? 3 : score >= 50 ? 2 : 1;
-  return (
-    <div className="dl-star-rating" aria-label={`${stars} out of 3 stars`}>
-      {[1, 2, 3].map((s) => (
-        <span
-          key={s}
-          className={`dl-star ${s <= stars ? 'dl-star--filled' : 'dl-star--empty'}`}
-          style={{ animationDelay: `${(s - 1) * 0.15}s` }}
-        >
-          <Star size={24} />
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function CelebrationScreen({
-  wordsLearned,
-  score,
-  wordList,
-  onDone,
-}: {
-  wordsLearned: number;
-  score: number;
-  wordList: KidsWord[];
-  onDone: () => void;
-}) {
-  const title = score >= 80 ? 'Amazing work!' : score >= 60 ? 'Well done!' : 'Great effort!';
-
-  useEffect(() => {
-    SFX.celebration();
-  }, []);
-
-  return (
-    <div className="dl-celebration">
-      <Confetti />
-
-      <StarRating score={score} />
-
-      <h1 className="dl-celebration__title">{title}</h1>
-      <p className="dl-celebration__subtitle">Today&apos;s lesson complete!</p>
-
-      <div className="dl-celebration__stats">
-        <div className="dl-stat-card">
-          <span className="dl-stat-card__value">{wordsLearned}</span>
-          <span className="dl-stat-card__label">Words</span>
-        </div>
-        <div className="dl-stat-card">
-          <span className="dl-stat-card__value">{score}%</span>
-          <span className="dl-stat-card__label">Score</span>
-        </div>
-      </div>
-
-      {wordList.length > 0 && (
-        <div className="dl-celebration__wordlist">
-          <p className="dl-celebration__wordlist-label">You learned today:</p>
-          <div className="dl-celebration__wordlist-grid">
-            {wordList.map((w) => (
-              <button
-                key={w.word}
-                className="dl-celebration__word-chip"
-                onClick={() => speak(w.word).catch(() => {})}
-                aria-label={`Hear ${w.word}`}
-              >
-                <span>{w.word}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="dl-celebration__parent-share">
-        <span>Show mom &amp; dad what you learned today!</span>
-      </div>
-
-      <button type="button" className="dl-btn dl-btn--primary" onClick={onDone} style={{ minWidth: 180 }}>
-        Ana Sayfaya Dön
-      </button>
-    </div>
-  );
-}
 
 // ─── Phase 5.5: STORY ─────────────────────────────────────────────────────────
 
@@ -1222,7 +1102,7 @@ function PhaseStory({
                 <span
                   key={j}
                   className="dl-story__highlight"
-                  onClick={() => speak(part.text).catch(() => {})}
+                  onClick={() => speak(part.text)}
                   role="button"
                   tabIndex={0}
                   aria-label={`Hear ${part.text}`}
@@ -1272,7 +1152,7 @@ function levenshtein(a: string, b: string): number {
 export default function DailyLesson() {
   const { user } = useAuth();
   const { t, lang } = useLanguage();
-  const { addXP, trackActivity } = useGamification();
+  const { addXP, trackActivity, stats } = useGamification();
   const navigate = useNavigate();
 
   const userId = user?.uid || 'guest';
@@ -1440,15 +1320,14 @@ export default function DailyLesson() {
     const avgScore = Math.round(
       (scoresRef.current[3] + scoresRef.current[4] + scoresRef.current[5]) / 3
     );
+    const xpEarned = 50 + Math.round((avgScore / 100) * 50);
     return (
-      <div className="dl">
-        <CelebrationScreen
-          wordsLearned={plan.newWords.length}
-          score={avgScore}
-          wordList={plan.newWords}
-          onDone={() => navigate('/dashboard')}
-        />
-      </div>
+      <LessonCompleteScreen
+        xpEarned={xpEarned}
+        wordsLearned={plan.newWords.map((w) => w.word)}
+        streakDays={stats.streakDays}
+        onContinue={() => navigate('/dashboard')}
+      />
     );
   }
 
@@ -1484,7 +1363,7 @@ export default function DailyLesson() {
 
       {/* ── Phase title ── */}
       <div className="dl-content">
-        <div style={{ textAlign: 'center' }}>
+        <div className="dl-content-center">
           <p className="dl-phase-title">
             {currentPhaseInfo.title}
           </p>
@@ -1498,9 +1377,8 @@ export default function DailyLesson() {
             <div className="dl-phonics-card__phoneme">{todaySound.phoneme}</div>
             <div className="dl-phonics-card__keyword">{todaySound.keyword}</div>
             <button
-              className="dl-btn dl-btn--ghost"
-              onClick={() => speak(todaySound.grapheme).catch(() => {})}
-              style={{ minHeight: 40, fontSize: 14 }}
+              className="dl-btn dl-btn--ghost dl-btn--sm"
+              onClick={() => speak(todaySound.grapheme)}
             >
               <Volume2 size={16} />
               {lang === 'tr' ? 'Sesi duy' : 'Hear the sound'}

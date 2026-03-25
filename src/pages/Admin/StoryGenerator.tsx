@@ -307,8 +307,8 @@ export default function StoryGenerator() {
 
           {/* Error */}
           {genError && (
-            <p style={{ fontSize: '0.85rem', color: 'var(--error)', margin: 0 }}>
-              ⚠ {genError}
+            <p className="story-gen-error">
+              {genError}
             </p>
           )}
 
@@ -349,7 +349,7 @@ export default function StoryGenerator() {
 
             <p className="story-gen-preview-summary">{generatedStory.summary}</p>
             {generatedStory.title_tr && (
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
+              <p className="story-gen-title-tr">
                 <span className="story-gen-lang-badge">TR</span> {generatedStory.title_tr}
               </p>
             )}
@@ -396,21 +396,9 @@ export default function StoryGenerator() {
 
         {/* Placeholder when no preview */}
         {!generatedStory && !generating && (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.75rem',
-            padding: '3rem',
-            background: 'var(--bg-card)',
-            border: '1px dashed var(--border-light)',
-            borderRadius: 'var(--radius-xl)',
-            color: 'var(--text-muted)',
-            textAlign: 'center',
-          }}>
-            <BookOpen size={40} style={{ opacity: 0.3 }} />
-            <p style={{ margin: 0, fontSize: '0.9rem' }}>
+          <div className="story-gen-placeholder">
+            <BookOpen size={40} className="story-gen-placeholder-icon" />
+            <p className="story-gen-placeholder-text">
               Configure options and click "Generate Story" to preview a new AI-generated story.
             </p>
           </div>
@@ -422,18 +410,8 @@ export default function StoryGenerator() {
         <div className="story-gen-list-header">
           <h2>All Generated Stories</h2>
           <button
-            style={{
-              padding: '0.4rem 0.875rem',
-              background: 'var(--bg-elevated)',
-              border: '1px solid var(--border-light)',
-              borderRadius: 'var(--radius-sm)',
-              cursor: 'pointer',
-              fontSize: '0.82rem',
-              color: 'var(--text-secondary)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-            }}
+            type="button"
+            className="story-gen-refresh-btn"
             onClick={fetchStoriesList}
           >
             <RefreshCw size={14} /> Refresh

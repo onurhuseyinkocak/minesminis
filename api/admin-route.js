@@ -1,5 +1,6 @@
 import { getSupabase, getEnvStatus, getSupabaseUnavailableResponse } from './_lib/admin.js';
 import crypto from 'crypto';
+import OpenAI from 'openai';
 
 function checkAuth(req) {
   const pw = req.headers['x-admin-password'];
@@ -176,6 +177,199 @@ export default async function handler(req, res) {
         if (error) throw error;
       }
       return res.status(200).json({ ok: true });
+    }
+
+    // ── STORIES ──────────────────────────────────────────────────────────────
+    if (resource === 'stories') {
+      // Generate: POST /api/admin/stories/generate
+      if (idOrWord === 'generate') {
+        if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+        const { theme, location, characters, target_age } = body;
+        if (!theme) return res.status(400).json({ error: 'theme required' });
+
+        const openaiKey = process.env.OPENAI_API_KEY;
+        if (!openaiKey) return res.status(503).json({ error: 'OpenAI not configured' });
+
+        const openai = new OpenAI({ apiKey: openaiKey });
+
+        const ageRange = Array.isArray(target_age) ? target_age : [4, 8];
+        const characterList = Array.isArray(characters) && characters.length > 0
+          ? characters.join(', ')
+          : 'mimi_dragon';
+
+        const systemPrompt = `You are a world-class children's English learning story creator.
+You combine Montessori pedagogy, phonics instruction, and adventure storytelling.
+Your stories feature Mimi and her friends on educational adventures.
+Rules:
+- English is the target language, Turkish is the translation layer
+- Each vocabulary word must highlight a phonics pattern (e.g. "cat" = short-a CVC)
+- Stories are interactive: 3-5 scenes, each with 2 choices
+- Age-appropriate: ages ${ageRange[0]}-${ageRange[1]}
+- Each scene has a camera_angle hint: wide|closeUp|lowAngle|birdEye|sidePan|sidePanLeft|dutch|dramatic
+- ALWAYS return valid JSON, no markdown fences`;
+
+        const userPrompt = `Create an educational English story for children aged ${ageRange[0]}-${ageRange[1]}.
+Theme: ${theme}
+Location: ${location || 'enchanted_forest'}
+Characters: ${characterList}
+
+Return ONLY this JSON structure (no markdown):
+{
+  "title": "Story Title in English",
+  "title_tr": "Hikaye Başlığı Türkçe",
+  "summary": "2-sentence English summary",
+  "summary_tr": "2 cümle Türkçe özet",
+  "cover_scene": "forest-clearing",
+  "target_age": [${ageRange[0]}, ${ageRange[1]}],
+  "moral": "Short moral lesson in English",
+  "moral_tr": "Kısa ahlaki ders Türkçe",
+  "characters": ["mimi_dragon"],
+  "location": "${location || 'enchanted_forest'}",
+  "theme": "${theme}",
+  "scenes": [
+    {
+      "scene_order": 1,
+      "text": "English narration for this scene (2-3 sentences, vivid and child-friendly)",
+      "text_tr": "Türkçe anlatım (2-3 cümle)",
+      "location": "forest-clearing",
+      "characters": ["mimi_dragon"],
+      "mood": "excited",
+      "camera_angle": "wide",
+      "sound_effect": "birds_chirping",
+      "animation_cue": "leaves_fall",
+      "vocabulary": [
+        {
+          "word": "sparkle",
+          "word_tr": "parlamak",
+          "emoji": "✨",
+          "phonics": "ar blend",
+          "example": "The stars sparkle at night."
+        }
+      ],
+      "choices": [
+        {
+          "id": "1a",
+          "text": "Follow the glowing path",
+          "text_tr": "Işıklı yolu takip et",
+          "next_scene_id": "2"
+        },
+        {
+          "id": "1b",
+          "text": "Climb the tall oak tree",
+          "text_tr": "Uzun meşe ağacına tırman",
+          "next_scene_id": "3"
+        }
+      ]
+    }
+  ]
+}
+
+Generate 4-5 scenes total. Make it magical, educational, and joyful.`;
+
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature: 0.85,
+          max_tokens: 3000,
+          response_format: { type: 'json_object' },
+        });
+
+        const raw = completion.choices[0].message.content || '{}';
+        let story;
+        try {
+          story = JSON.parse(raw);
+        } catch {
+          return res.status(500).json({ error: 'AI returned invalid JSON', raw });
+        }
+
+        return res.status(200).json({ story });
+      }
+
+      // List: GET /api/admin/stories
+      if (!idOrWord) {
+        if (req.method === 'GET') {
+          const { data, error } = await sb
+            .from('stories')
+            .select('id, title, title_tr, summary, target_age, published, created_at, cover_scene')
+            .order('created_at', { ascending: false })
+            .limit(100);
+          if (error) throw error;
+          return res.status(200).json({ stories: data || [] });
+        }
+
+        // Publish (save): POST /api/admin/stories
+        if (req.method === 'POST') {
+          const { title, title_tr, summary, summary_tr, cover_scene, target_age, published,
+            characters, location, theme, moral, moral_tr, scenes } = body;
+          if (!title || !scenes) return res.status(400).json({ error: 'title and scenes required' });
+
+          const { data: storyRow, error: storyErr } = await sb
+            .from('stories')
+            .insert({
+              title, title_tr: title_tr || '', summary: summary || '', summary_tr: summary_tr || '',
+              cover_scene: cover_scene || 'forest-clearing',
+              target_age: target_age || [4, 8],
+              published: published !== false,
+              characters: characters || [],
+              location: location || '',
+              theme: theme || '',
+              moral: moral || '',
+              moral_tr: moral_tr || '',
+            })
+            .select('id')
+            .single();
+          if (storyErr) throw storyErr;
+
+          const storyId = storyRow.id;
+
+          if (Array.isArray(scenes) && scenes.length > 0) {
+            const sceneRows = scenes.map((s, i) => ({
+              story_id: storyId,
+              scene_order: s.scene_order ?? i + 1,
+              text: s.text || '',
+              text_tr: s.text_tr || '',
+              location: s.location || '',
+              characters: s.characters || [],
+              mood: s.mood || 'neutral',
+              camera_angle: s.camera_angle || 'wide',
+              sound_effect: s.sound_effect || null,
+              animation_cue: s.animation_cue || null,
+              vocabulary: s.vocabulary || [],
+              choices: s.choices || [],
+            }));
+            const { error: scenesErr } = await sb.from('story_scenes').insert(sceneRows);
+            if (scenesErr) throw scenesErr;
+          }
+
+          return res.status(200).json({ id: storyId, ok: true });
+        }
+
+        return res.status(405).json({ error: 'Method not allowed' });
+      }
+
+      // Single story ops: PATCH/DELETE /api/admin/stories/:id
+      if (req.method === 'PATCH') {
+        const { published } = body;
+        const row = {};
+        if (published !== undefined) row.published = !!published;
+        if (Object.keys(row).length === 0) return res.status(400).json({ error: 'Nothing to update' });
+        const { error } = await sb.from('stories').update(row).eq('id', idOrWord);
+        if (error) throw error;
+        return res.status(200).json({ ok: true });
+      }
+
+      if (req.method === 'DELETE') {
+        await sb.from('story_scenes').delete().eq('story_id', idOrWord);
+        const { error } = await sb.from('stories').delete().eq('id', idOrWord);
+        if (error) throw error;
+        return res.status(200).json({ ok: true });
+      }
+
+      return res.status(405).json({ error: 'Method not allowed' });
     }
 
     return res.status(404).json({ error: 'Not found' });

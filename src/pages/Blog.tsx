@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import { useLanguage } from '../contexts/LanguageContext';
 import LottieCharacter from '../components/LottieCharacter';
 import PublicLayout from '../components/layout/PublicLayout';
 import './Blog.css';
@@ -19,6 +20,7 @@ interface BlogPost {
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const { lang } = useLanguage();
 
   useEffect(() => {
     fetchPosts();
@@ -53,8 +55,9 @@ export default function Blog() {
           <div className="blog-loading">Loading... / Yükleniyor...</div>
         ) : posts.length === 0 ? (
           <div className="blog-empty">
-            <span className="blog-empty-icon"><LottieCharacter state="thinking" size={48} /></span>
-            <p>Nothing here yet. Coming soon! / Henüz bir yazı hazırlanmadı. Yakında burada olacak!</p>
+            <span className="blog-empty-icon"><LottieCharacter state="wave" size={120} /></span>
+            <p className="blog-empty-title">{lang === 'tr' ? 'Yakında Burada!' : 'Coming Soon!'}</p>
+            <p className="blog-empty-sub">{lang === 'tr' ? 'Harika içerikler hazırlanıyor. Takipte kal!' : 'Amazing content is on the way. Stay tuned!'}</p>
           </div>
         ) : (
           <div className="blog-list">

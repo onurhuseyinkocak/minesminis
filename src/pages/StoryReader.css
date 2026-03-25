@@ -13,7 +13,31 @@
   transition: background 0.8s ease;
 }
 
-/* ── Background ──────────────────────────────────────────────────────────── */
+/* ── Scene wrapper (StoryScene component) ───────────────────────────────── */
+
+.story-reader__scene-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.story-reader__scene-wrapper .story-scene {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* Overlay so text is readable over the vivid scene backgrounds */
+.story-reader__scene-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.7) 100%);
+  z-index: 2;
+}
+
+/* ── Legacy background (kept for loading/error states) ───────────────────── */
 
 .story-reader__bg {
   position: fixed;

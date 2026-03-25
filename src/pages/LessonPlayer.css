@@ -456,3 +456,20 @@
     min-height: 360px;
   }
 }
+
+.lesson-not-found__desc {
+  color: var(--text-secondary);
+  margin: 1rem 0;
+}
+
+.lesson-accuracy__text {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.lesson-breadcrumb {
+  text-align: center;
+  padding: 0.5rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}

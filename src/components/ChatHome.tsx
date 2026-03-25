@@ -204,6 +204,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                         <UnifiedMascot
                             id={mascotId}
                             state="waving"
+                            size={72}
                         />
                     </div>
                     <div className="header-title">
@@ -236,6 +237,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
                     <div className="header-actions">
                         <button
+                            type="button"
                             className="tts-toggle"
                             onClick={toggleTTS}
                             title={isTTSEnabled ? "Mute Voice" : "Enable Voice"}
@@ -315,6 +317,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                         {quickReplies.map(reply => (
                             <button
                                 key={reply.id}
+                                type="button"
                                 onClick={() => { setInputValue(reply.value); inputRef.current?.focus(); }}
                                 disabled={!canSendMessage() && !isPremium}
                             >
@@ -335,6 +338,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             disabled={!canSendMessage() && !isPremium}
                         />
                         <button
+                            type="button"
                             className="send-button"
                             onClick={() => handleSend(inputValue)}
                             disabled={!canSendMessage() && !isPremium}

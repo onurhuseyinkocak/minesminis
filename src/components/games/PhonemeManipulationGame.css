@@ -1,0 +1,602 @@
+/* ==========================================================================
+   PHONEME MANIPULATION GAME — MinesMinis Design System v4
+   Child deletes, substitutes, or adds phoneme tiles to form new words
+   ========================================================================== */
+
+.pmg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  max-width: 600px;
+  margin: 0 auto;
+  animation: fadeInUp 400ms ease-out;
+}
+
+/* -- Header ---------------------------------------------------------------- */
+
+.pmg__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.pmg__title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--secondary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* -- Type badge ------------------------------------------------------------ */
+
+.pmg__type-badge {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full, 999px);
+}
+
+.pmg__type-badge--delete {
+  background: var(--danger-pale, #ffebee);
+  color: var(--danger-dark, #c62828);
+}
+
+.pmg__type-badge--substitute {
+  background: var(--warning-pale, #fff8e1);
+  color: var(--primary-dark, #e65100);
+}
+
+.pmg__type-badge--add {
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+}
+
+.pmg__type-badge--reverse {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--info, #3b82f6);
+}
+
+/* -- Target Word Display --------------------------------------------------- */
+
+.pmg__target-word {
+  text-align: center;
+  padding: var(--space-md) 0 0;
+}
+
+.pmg__target-label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-xs);
+  display: block;
+}
+
+.pmg__target-text {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  user-select: none;
+}
+
+/* -- Prompt card ----------------------------------------------------------- */
+
+.pmg__prompt-card {
+  background: linear-gradient(135deg, var(--warning-pale, #fff8e1), var(--bg-soft, #f8f9fb));
+  border: 2px solid var(--primary, #E8A317);
+  border-radius: var(--radius-xl, 20px);
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+}
+
+.pmg__prompt-text {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.pmg__prompt-tr {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: var(--space-xs) 0 0;
+}
+
+/* -- Phoneme Tiles Row ----------------------------------------------------- */
+
+.pmg__tiles-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.pmg__tiles-label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pmg__tiles-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  flex-wrap: wrap;
+  min-height: 96px;
+}
+
+/* -- Individual Phoneme Tile ----------------------------------------------- */
+
+.pmg__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 64px;
+  min-height: 72px;
+  padding: var(--space-sm) var(--space-md);
+
+  border: 3px solid transparent;
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: var(--shadow-card);
+  cursor: default;
+
+  font-family: var(--font-display);
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Consonant tiles — primary color */
+.pmg__tile--consonant {
+  background: var(--primary, #E8A317);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+}
+
+/* Vowel tiles — secondary/fuchsia color */
+.pmg__tile--vowel {
+  background: var(--secondary, #e879f9);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+}
+
+/* Blend tiles — info/blue color */
+.pmg__tile--blend {
+  background: var(--info, #3b82f6);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+}
+
+/* Tile about to be deleted — red pulse ring */
+.pmg__tile--deleting {
+  border-color: var(--danger, #f44336);
+  box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.3), var(--shadow-card);
+}
+
+/* Tile being substituted — golden glow */
+.pmg__tile--substituting {
+  border-color: var(--primary, #E8A317);
+  box-shadow: 0 0 0 4px rgba(232, 163, 23, 0.35), var(--shadow-card);
+}
+
+.pmg__tile-phoneme {
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.pmg__tile-slash {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.75;
+  letter-spacing: 0.02em;
+}
+
+/* -- Change Instruction ---------------------------------------------------- */
+
+.pmg__change-instruction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--bg-soft, #f8f9fb);
+  border-radius: var(--radius-full, 999px);
+  border: 1.5px solid var(--border-light);
+}
+
+.pmg__change-label {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pmg__change-text {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1.5px solid var(--border-light);
+}
+
+/* -- Answer Area (result display) ----------------------------------------- */
+
+.pmg__answer-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: linear-gradient(135deg, var(--success-pale, #e8f5e9), var(--bg-soft, #f8f9fb));
+  border: 2.5px solid var(--mimi-green, #4caf50);
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.15), var(--shadow-card);
+}
+
+.pmg__answer-label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mimi-green-dark, #2e7d32);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pmg__answer-word {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--mimi-green-dark, #2e7d32);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/* -- Options Grid ---------------------------------------------------------- */
+
+.pmg__options-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.pmg__options-label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.pmg__options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm, 8px);
+}
+
+.pmg__option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-lg);
+  min-height: 72px;
+  border: 2.5px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
+    background var(--transition-fast);
+  text-align: center;
+  width: 100%;
+  letter-spacing: -0.01em;
+}
+
+.pmg__option:hover:not(:disabled) {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+  border-color: var(--cloud, #b0bec5);
+}
+
+.pmg__option:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.pmg__option:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.pmg__option:disabled {
+  cursor: default;
+}
+
+.pmg__option--correct {
+  border-color: var(--mimi-green, #4caf50);
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25), var(--shadow-md);
+  animation: pmg-scale-up 0.25s ease-out;
+}
+
+.pmg__option--wrong {
+  border-color: var(--danger, #f44336);
+  background: var(--danger-pale, #ffebee);
+  color: var(--danger-dark, #c62828);
+  animation: pmg-shake 0.42s ease;
+}
+
+@keyframes pmg-scale-up {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pmg-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+/* -- Feedback Banner ------------------------------------------------------- */
+
+.pmg__feedback {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: 2.5rem;
+}
+
+.pmg__feedback--correct {
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+}
+
+.pmg__feedback--wrong {
+  background: var(--warning-pale, #fff8e1);
+  color: var(--primary-dark, #e65100);
+}
+
+/* -- Hint ------------------------------------------------------------------ */
+
+.pmg__hint {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--bg-soft, #f8f9fb);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--border-light);
+  margin: 0;
+}
+
+/* -- Bottom row ------------------------------------------------------------ */
+
+.pmg__bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-xs, 4px);
+}
+
+.pmg__difficulty-badge {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full, 999px);
+}
+
+.pmg__difficulty-badge--1 {
+  background: var(--success-pale, #e8f5e9);
+  color: var(--mimi-green-dark, #2e7d32);
+}
+
+.pmg__difficulty-badge--2 {
+  background: var(--warning-pale, #fff8e1);
+  color: var(--primary-dark, #e65100);
+}
+
+.pmg__difficulty-badge--3 {
+  background: var(--danger-pale, #ffebee);
+  color: var(--danger-dark, #c62828);
+}
+
+/* -- Completion Card ------------------------------------------------------- */
+
+.pmg__completion {
+  text-align: center;
+}
+
+.pmg__completion-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.pmg__completion-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--secondary);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.pmg__completion-score {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text-body);
+  margin: 0;
+}
+
+.pmg__completion-actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pmg__completion-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pmg__completion-btn:hover {
+  transform: translateY(-2px);
+}
+
+.pmg__completion-btn:active {
+  transform: scale(0.97);
+}
+
+.pmg__completion-btn--primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+}
+
+.pmg__completion-btn--secondary {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+}
+
+/* -- Responsive ------------------------------------------------------------ */
+
+@media (min-width: 600px) {
+  .pmg__tile-phoneme {
+    font-size: 2.25rem;
+  }
+  .pmg__tile {
+    min-width: 80px;
+    min-height: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pmg {
+    padding: var(--space-md);
+  }
+  .pmg__target-text {
+    font-size: 2.75rem;
+  }
+  .pmg__tile {
+    min-width: 52px;
+    min-height: 60px;
+    padding: var(--space-xs) var(--space-sm);
+  }
+  .pmg__tile-phoneme {
+    font-size: 1.5rem;
+  }
+  .pmg__option {
+    font-size: 1.25rem;
+    min-height: 58px;
+  }
+  .pmg__title {
+    font-size: 1.4rem;
+  }
+  .pmg__prompt-text {
+    font-size: 0.95rem;
+  }
+  .pmg__answer-word {
+    font-size: 2.5rem;
+  }
+}
+
+/* -- Dark mode ------------------------------------------------------------- */
+
+[data-theme="dark"] .pmg__option {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .pmg__option--correct {
+  background: var(--success-pale);
+}
+
+[data-theme="dark"] .pmg__option--wrong {
+  background: var(--danger-pale);
+}
+
+[data-theme="dark"] .pmg__prompt-card {
+  background: var(--bg-elevated);
+  border-color: var(--primary);
+}
+
+[data-theme="dark"] .pmg__answer-area {
+  background: var(--bg-elevated);
+  border-color: var(--mimi-green, #4caf50);
+}
+
+[data-theme="dark"] .pmg__completion-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .pmg__change-instruction {
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .pmg__change-text {
+  background: var(--bg-card);
+}
+
+[data-theme="dark"] .pmg__hint {
+  background: var(--bg-elevated);
+}

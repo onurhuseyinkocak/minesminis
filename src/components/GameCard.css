@@ -1,0 +1,196 @@
+/* ==========================================================================
+   GAME CARD — Mini Games Collection
+   ========================================================================== */
+
+.game-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  outline: none;
+}
+
+.game-card:not(.game-card--locked):hover,
+.game-card:not(.game-card--locked):focus-visible {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-card-hover, 0 12px 32px rgba(0, 0, 0, 0.18));
+}
+
+/* Accent stripe at top */
+.game-card__stripe {
+  height: 5px;
+  width: 100%;
+  background: var(--gc-color, var(--primary));
+  flex-shrink: 0;
+}
+
+/* Icon area */
+.game-card__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96px;
+  background: color-mix(in srgb, var(--gc-color, var(--primary)) 12%, transparent);
+  flex-shrink: 0;
+}
+
+.game-card__icon {
+  color: var(--gc-color, var(--primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Body */
+.game-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md);
+  gap: var(--space-xs);
+}
+
+.game-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.game-card__name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.game-card__badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.game-card__badge--new {
+  display: inline-block;
+  padding: 2px 7px;
+  background: var(--success, #22c55e);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.game-card__badge--score {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  background: var(--accent-amber, #f59e0b);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+}
+
+.game-card__desc {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.game-card__stars {
+  display: flex;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: var(--space-xs);
+}
+
+.game-card__star {
+  color: var(--accent-amber, #f59e0b);
+  opacity: 0.22;
+  display: flex;
+}
+
+.game-card__star--filled {
+  opacity: 1;
+}
+
+/* Footer / Play button */
+.game-card__footer {
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+}
+
+.game-card__play-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--gc-color, var(--primary));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+  box-shadow: var(--shadow-button, 0 2px 8px rgba(0,0,0,0.15));
+}
+
+.game-card__play-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}
+
+/* ---- LOCKED STATE ---- */
+.game-card--locked {
+  cursor: default;
+}
+
+.game-card__locked-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  background: rgba(0, 0, 0, 0.54);
+  backdrop-filter: blur(4px);
+  border-radius: var(--radius-xl);
+  z-index: 2;
+}
+
+.game-card__lock-icon {
+  color: #fff;
+  opacity: 0.9;
+}
+
+.game-card__lock-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  padding: 0 var(--space-sm);
+  line-height: 1.3;
+}

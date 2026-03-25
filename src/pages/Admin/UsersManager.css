@@ -1,0 +1,172 @@
+/* ==========================================================================
+   USERS MANAGER — MinesMinis Admin
+   ========================================================================== */
+
+/* ── User cell ── */
+.um-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.um-avatar-emoji {
+  font-size: 1.5rem;
+}
+
+.um-avatar-initial {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--accent-indigo, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white, #fff);
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Email cell ── */
+.um-email-cell {
+  color: var(--text-secondary, #64748b);
+}
+
+/* ── Role select ── */
+.um-role-select {
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--border-light, #e2e8f0);
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ── Premium toggle button ── */
+.um-premium-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-full, 100px);
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.um-premium-btn--active {
+  background: var(--warning-pale, #fef3c7);
+  color: var(--warning-dark, #d97706);
+}
+
+.um-premium-btn--inactive {
+  background: var(--bg-muted, #f1f5f9);
+  color: var(--text-secondary, #64748b);
+}
+
+.um-premium-expiry {
+  display: block;
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+
+/* ── Points cell ── */
+.um-points {
+  font-weight: 600;
+  color: var(--warning, #f59e0b);
+}
+
+/* ── Online status ── */
+.um-status-online {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--success, #22c55e);
+}
+
+.um-status-offline {
+  color: var(--text-muted, #94a3b8);
+}
+
+/* ── Table toolbar ── */
+.um-search-wrap {
+  position: relative;
+}
+
+.um-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted, #94a3b8);
+}
+
+.um-search-input {
+  padding-left: 40px;
+}
+
+/* ── Filter separator ── */
+.um-filter-sep {
+  margin: 0 0.5rem;
+  color: var(--border, #cbd5e1);
+}
+
+/* ── Stats row ── */
+.um-stats-row {
+  margin-bottom: 1.5rem;
+}
+
+/* ── Confirm modal ── */
+.um-confirm-modal {
+  max-width: 420px;
+}
+
+.um-modal-footer {
+  border-top: 1px solid var(--border-light, #e5e7eb);
+  gap: 0.75rem;
+}
+
+/* ── Password info box ── */
+.um-password-info {
+  background: var(--warning-pale, #fef3c7);
+  padding: 1rem;
+  border-radius: var(--radius-md, 8px);
+  margin-top: 1rem;
+}
+
+.um-password-info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--warning-deep, #92400e);
+  margin-bottom: 0.5rem;
+}
+
+.um-password-info-text {
+  color: var(--warning-dark, #a16207);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ── Premium label ── */
+.um-premium-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.um-premium-icon {
+  color: var(--warning, #f59e0b);
+}
+
+/* ── Small info text ── */
+.um-small-muted {
+  color: var(--text-secondary, #64748b);
+}
+
+/* ── Toast saved-password note ── */
+.um-toast-warning {
+  color: var(--warning, #f59e0b);
+}

@@ -17,6 +17,7 @@ import {
     Copy,
     Trash2
 } from 'lucide-react';
+import UnifiedMascot from '../../components/UnifiedMascot';
 import './AdminMimi.css';
 
 interface Message {
@@ -336,12 +337,13 @@ function AdminMimi() {
     if (!isOpen) {
         return (
             <button
+                type="button"
                 className="admin-mimi-fab"
                 onClick={() => setIsOpen(true)}
                 title="Admin Mimi'yi Aç"
             >
                 <div className="admin-mimi-fab-icon">
-                    <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
+                    <UnifiedMascot id="mimi_dragon" state="idle" size={40} />
                     <Shield size={14} className="admin-mimi-shield" />
                 </div>
                 <span className="admin-mimi-fab-badge">∞</span>
@@ -355,7 +357,7 @@ function AdminMimi() {
             <div className="admin-mimi-header">
                 <div className="admin-mimi-header-left">
                     <div className="admin-mimi-avatar">
-                        <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
+                        <UnifiedMascot id="mimi_dragon" state="idle" size={36} />
                         <Shield size={12} className="admin-mimi-avatar-badge" />
                     </div>
                     <div className="admin-mimi-header-info">
@@ -385,6 +387,7 @@ function AdminMimi() {
                         {quickActions.map((action, index) => (
                             <button
                                 key={index}
+                                type="button"
                                 className="quick-action-btn"
                                 onClick={() => handleQuickAction(action.prompt)}
                             >
@@ -403,7 +406,7 @@ function AdminMimi() {
                             >
                                 {message.role === 'assistant' && (
                                     <div className="message-avatar">
-                                        <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
+                                        <UnifiedMascot id="mimi_dragon" state="idle" size={32} />
                                     </div>
                                 )}
                                 <div className="message-content">
@@ -419,6 +422,7 @@ function AdminMimi() {
                                     </p>
                                     {message.role === 'assistant' && (
                                         <button
+                                            type="button"
                                             className="message-copy-btn"
                                             onClick={() => handleCopyMessage(message.content)}
                                             title="Kopyala"
@@ -436,7 +440,7 @@ function AdminMimi() {
                         {isTyping && (
                             <div className="admin-mimi-message assistant">
                                 <div className="message-avatar">
-                                    <div style={{width:32,height:32,borderRadius:'50%',background:'#7C3AED',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:14}}>M</div>
+                                    <UnifiedMascot id="mimi_dragon" state="thinking" size={32} />
                                 </div>
                                 <div className="message-content">
                                     <div className="typing-indicator">
@@ -461,6 +465,7 @@ function AdminMimi() {
                             placeholder="Rapor, analiz veya yardım isteyin..."
                         />
                         <button
+                            type="button"
                             onClick={handleSend}
                             disabled={!inputValue.trim()}
                             className="send-btn"

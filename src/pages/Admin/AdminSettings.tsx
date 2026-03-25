@@ -12,7 +12,6 @@ const DEFAULT_SETTINGS = {
     lemonSqueezyApiKey: '',
     planFree: 'Free - Limited content',
     planPremium: 'Premium - Full access',
-    planClassroom: 'Classroom - Teacher + 30 students',
     defaultWorld: 'w1',
     featuredContentEnabled: true,
     announcementEnabled: false,
@@ -157,12 +156,6 @@ function AdminSettings() {
                                 value={settings.planPremium}
                                 onChange={(e) => setSettings({ ...settings, planPremium: e.target.value })}
                                 placeholder="Premium plan description"
-                            />
-                            <input
-                                type="text"
-                                value={settings.planClassroom}
-                                onChange={(e) => setSettings({ ...settings, planClassroom: e.target.value })}
-                                placeholder="Classroom plan description"
                             />
                         </div>
                     </div>

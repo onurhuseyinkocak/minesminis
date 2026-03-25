@@ -6,8 +6,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Sparkles, Clock, Star } from 'lucide-react';
+import { Sparkles, Clock, Star, BookOpen } from 'lucide-react';
 import { KidIcon } from '../components/ui';
+import { generateStoryCover } from '../utils/storyCoverGenerator';
+import { getAllBuiltInStories, type DecodableStory } from '../services/decodableStoryService';
+import DecodableStoryReader from '../components/DecodableStoryReader';
 import './StoriesGrid.css';
 
 interface StoryCard {
@@ -19,16 +22,24 @@ interface StoryCard {
   cover_scene: string;
   target_age: number[];
   created_at: string;
+  coverUrl?: string;
+  characters?: string[];
+  location?: string;
 }
 
 const SKELETON_COUNT = 6;
+type Tab = 'all' | 'decodable';
 
 export default function StoriesGrid() {
   const [stories, setStories] = useState<StoryCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [coverUrls, setCoverUrls] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState<Tab>('all');
+  const [activeDecodableStory, setActiveDecodableStory] = useState<DecodableStory | null>(null);
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  const decodableStories = getAllBuiltInStories();
 
   useEffect(() => {
     fetch('/api/stories')
@@ -42,6 +53,40 @@ export default function StoriesGrid() {
         setLoading(false);
       });
   }, [lang]);
+
+  // Generate covers for stories that don't have one
+  useEffect(() => {
+    if (stories.length === 0) return;
+    const storiesWithoutCover = stories.filter(s => !s.coverUrl && !coverUrls[s.id]);
+    if (storiesWithoutCover.length === 0) return;
+
+    storiesWithoutCover.forEach(story => {
+      generateStoryCover({
+        title: story.title,
+        locationId: story.location ?? story.cover_scene ?? 'forest',
+        characterIds: story.characters ?? [],
+        mood: undefined,
+      })
+        .then(dataUrl => {
+          setCoverUrls(prev => ({ ...prev, [story.id]: dataUrl }));
+        })
+        .catch(() => {
+          // Silently fail — StoryCover SVG will be shown instead
+        });
+    });
+  }, [stories, coverUrls]);
+
+  // Show full-screen decodable reader when a story is active
+  if (activeDecodableStory) {
+    return (
+      <DecodableStoryReader
+        story={activeDecodableStory}
+        onComplete={() => setActiveDecodableStory(null)}
+        highlightMode
+        lang={lang as 'en' | 'tr'}
+      />
+    );
+  }
 
   return (
     <div className="stories-grid-page">
@@ -59,7 +104,72 @@ export default function StoriesGrid() {
         </p>
       </div>
 
-      {error ? (
+      {/* ── Tab Filter ── */}
+      <div className="stories-tabs">
+        <button
+          className={`stories-tab${activeTab === 'all' ? ' stories-tab--active' : ''}`}
+          onClick={() => setActiveTab('all')}
+        >
+          <Sparkles size={15} />
+          {lang === 'tr' ? 'Tüm Hikayeler' : 'All Stories'}
+        </button>
+        <button
+          className={`stories-tab${activeTab === 'decodable' ? ' stories-tab--active' : ''}`}
+          onClick={() => setActiveTab('decodable')}
+        >
+          <BookOpen size={15} />
+          {lang === 'tr' ? 'Fonik Hikayeler' : 'Decodable'}
+          <span className="stories-tab__badge">{decodableStories.length}</span>
+        </button>
+      </div>
+
+      {/* ── Decodable Stories Tab ── */}
+      {activeTab === 'decodable' && (
+        <div className="stories-decodable">
+          <p className="stories-decodable__intro">
+            {lang === 'tr'
+              ? 'Bu hikayeler yalnızca öğrendiğin sesler kullanılarak yazılmıştır. Her kelimeyi okuyabilirsin!'
+              : 'These stories only use sounds you have already learned. You can decode every word!'}
+          </p>
+          <div className="stories-grid">
+            {decodableStories.map(ds => (
+              <button
+                key={ds.id}
+                type="button"
+                className="story-card story-card--decodable"
+                onClick={() => setActiveDecodableStory(ds)}
+                aria-label={lang === 'tr' ? ds.titleTr : ds.title}
+              >
+                <div className="story-card__cover story-card__cover--decodable">
+                  <span className="story-card__group-badge">
+                    {lang === 'tr' ? `Grup ${ds.phonicsGroup}` : `Group ${ds.phonicsGroup}`}
+                  </span>
+                  <BookOpen size={40} color="white" strokeWidth={1.5} />
+                </div>
+                <div className="story-card__info">
+                  <h3>{lang === 'tr' ? ds.titleTr : ds.title}</h3>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--slate-500)' }}>
+                    {lang === 'tr'
+                      ? `${ds.wordCount} kelime · %${ds.decodabilityScore} çözümlenebilir`
+                      : `${ds.wordCount} words · ${ds.decodabilityScore}% decodable`}
+                  </p>
+                  <div className="story-card__meta">
+                    <span>
+                      <Star size={14} />
+                      {ds.topic}
+                    </span>
+                    <span className="story-decodable-tag">
+                      {lang === 'tr' ? 'Fonik' : 'Phonics'}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'all' && (error ? (
         <div className="stories-empty stories-error">
           <Sparkles size={48} />
           <p>{error}</p>
@@ -105,15 +215,26 @@ export default function StoriesGrid() {
         </div>
       ) : (
         <div className="stories-grid">
-          {stories.map(story => (
+          {stories.map(story => {
+            const resolvedCoverUrl = story.coverUrl ?? coverUrls[story.id];
+            return (
             <button
               key={story.id}
+              type="button"
               className="story-card"
               onClick={() => navigate(`/stories/${story.id}`)}
               aria-label={lang === 'tr' ? story.title_tr : story.title}
             >
               <div className="story-card__cover">
-                <StoryCover scene={story.cover_scene} />
+                {resolvedCoverUrl ? (
+                  <img
+                    src={resolvedCoverUrl}
+                    alt={story.title}
+                    className="story-grid__card-cover"
+                  />
+                ) : (
+                  <StoryCover scene={story.cover_scene} />
+                )}
               </div>
               <div className="story-card__info">
                 <h3>{lang === 'tr' ? story.title_tr : story.title}</h3>
@@ -132,9 +253,10 @@ export default function StoriesGrid() {
                 </div>
               </div>
             </button>
-          ))}
+            );
+          })}
         </div>
-      )}
+      ))}
     </div>
   );
 }

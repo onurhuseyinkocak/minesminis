@@ -1,0 +1,734 @@
+/* ============================================================
+   PARENT DASHBOARD — Clean professional design
+   All colors via CSS custom properties
+   ============================================================ */
+
+/* ── Page layout ── */
+.pd-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 0 0 64px;
+}
+
+.pd-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pd-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pd-header-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-pale);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.pd-header h1 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pd-header-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Child selector ── */
+.pd-child-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pd-child-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 24px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.pd-child-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-pale);
+}
+
+.pd-child-tab--active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--text-on-primary);
+}
+
+.pd-child-tab--active:hover {
+  background: var(--primary-hover);
+  color: var(--text-on-primary);
+}
+
+.pd-child-avatar {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ── Content area ── */
+.pd-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── Section label ── */
+.pd-section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+/* ── Cards shared ── */
+.pd-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.pd-card-header {
+  padding: 20px 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pd-card-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pd-card-title svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.pd-card-body {
+  padding: 16px 24px 24px;
+}
+
+/* ── Summary grid ── */
+.pd-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.pd-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pd-stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pd-stat-icon--time   { background: var(--info-pale);    color: var(--info); }
+.pd-stat-icon--words  { background: var(--success-pale);  color: var(--success); }
+.pd-stat-icon--streak { background: var(--warning-pale);  color: var(--warning); }
+.pd-stat-icon--xp     { background: var(--primary-pale);  color: var(--primary); }
+
+.pd-stat-value {
+  font-family: 'Nunito', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.pd-stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.pd-stat-delta {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.pd-stat-delta--neutral {
+  color: var(--text-muted);
+}
+
+/* ── Two column layout ── */
+.pd-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.pd-three-col {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* ── Streak calendar ── */
+.pd-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.pd-cal-day {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: default;
+  transition: transform 100ms;
+  position: relative;
+}
+
+.pd-cal-day--active {
+  background: var(--success-pale);
+  border-color: var(--success-light);
+  color: var(--success);
+}
+
+.pd-cal-day--streak {
+  background: var(--warning-pale);
+  border-color: var(--warning-light);
+  color: var(--warning);
+}
+
+.pd-cal-day--today {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-pale);
+}
+
+.pd-cal-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.pd-cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.pd-cal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.pd-cal-dot--active { background: var(--success-pale); border: 1px solid var(--success-light); }
+.pd-cal-dot--streak { background: var(--warning-pale); border: 1px solid var(--warning-light); }
+.pd-cal-dot--missed { background: var(--bg-muted); border: 1px solid var(--border); }
+
+/* ── Word mastery bar ── */
+.pd-mastery-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pd-mastery-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pd-mastery-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.pd-mastery-box-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pd-mastery-count {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pd-bar-track {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+
+.pd-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 600ms ease;
+}
+
+.pd-bar-fill--box1 { background: var(--error-light); }
+.pd-bar-fill--box2 { background: var(--warning); }
+.pd-bar-fill--box3 { background: var(--success); }
+
+.pd-mastery-total {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ── Activity breakdown ── */
+.pd-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pd-activity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pd-activity-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.pd-activity-icon--phonics  { background: var(--accent-indigo-pale); color: var(--accent-indigo); }
+.pd-activity-icon--game     { background: var(--accent-purple-pale);  color: var(--accent-purple); }
+.pd-activity-icon--reading  { background: var(--success-pale);        color: var(--success); }
+.pd-activity-icon--song     { background: var(--accent-pink-pale);    color: var(--accent-pink); }
+.pd-activity-icon--review   { background: var(--info-pale);           color: var(--info); }
+.pd-activity-icon--challenge{ background: var(--primary-pale);        color: var(--primary); }
+
+.pd-activity-label {
+  flex: 1;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.pd-activity-bar-wrap {
+  flex: 2;
+  height: 6px;
+  background: var(--bg-muted);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.pd-activity-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--primary);
+  transition: width 500ms ease;
+}
+
+.pd-activity-minutes {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 44px;
+  text-align: right;
+}
+
+/* ── Phonics grid ── */
+.pd-phonics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+}
+
+.pd-phonics-chip {
+  border-radius: 10px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-elevated);
+  transition: all 150ms ease;
+}
+
+.pd-phonics-chip--mastered {
+  border-color: var(--success-light);
+  background: var(--success-pale);
+}
+
+.pd-phonics-chip--learning {
+  border-color: var(--warning-light);
+  background: var(--warning-pale);
+}
+
+.pd-phonics-chip--new {
+  border-color: var(--border);
+  background: var(--bg-muted);
+  opacity: 0.6;
+}
+
+.pd-phonics-grapheme {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.pd-phonics-chip--mastered .pd-phonics-grapheme { color: var(--success); }
+.pd-phonics-chip--learning .pd-phonics-grapheme { color: var(--warning); }
+.pd-phonics-chip--new      .pd-phonics-grapheme { color: var(--text-muted); }
+
+.pd-phonics-pct {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.pd-phonics-chip--mastered .pd-phonics-pct { color: var(--success); }
+.pd-phonics-chip--learning .pd-phonics-pct { color: var(--warning); }
+.pd-phonics-chip--new      .pd-phonics-pct { color: var(--text-muted); }
+
+.pd-phonics-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.pd-phonics-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.pd-phonics-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.pd-phonics-legend-dot--mastered { background: var(--success); }
+.pd-phonics-legend-dot--learning { background: var(--warning); }
+.pd-phonics-legend-dot--new      { background: var(--text-muted); }
+
+/* ── Badges ── */
+.pd-badges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pd-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.pd-badge-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--warning-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--warning);
+  flex-shrink: 0;
+}
+
+.pd-badge-name {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pd-badge-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── Insight card ── */
+.pd-insight {
+  background: var(--secondary-pale);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--secondary);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.pd-insight-recommendation {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text-body);
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+
+.pd-insight-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pd-insight-stat {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pd-insight-stat strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── Empty state ── */
+.pd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+
+.pd-empty svg {
+  opacity: 0.3;
+  margin-bottom: 8px;
+}
+
+.pd-empty-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.pd-empty-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 240px;
+}
+
+/* ── Loading skeleton ── */
+.pd-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.pd-skeleton-row {
+  display: flex;
+  gap: 16px;
+}
+
+.pd-skel {
+  background: linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-elevated) 50%, var(--bg-muted) 75%);
+  background-size: 200% 100%;
+  animation: pd-shimmer 1.4s infinite;
+  border-radius: 12px;
+}
+
+.pd-skel--h80  { height: 80px; }
+.pd-skel--h160 { height: 160px; }
+.pd-skel--h240 { height: 240px; }
+.pd-skel--w1   { flex: 1; }
+.pd-skel--w2   { flex: 2; }
+
+@keyframes pd-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .pd-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pd-two-col,
+  .pd-three-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .pd-header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pd-content {
+    padding: 20px 16px;
+    gap: 20px;
+  }
+
+  .pd-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .pd-card-body {
+    padding: 12px 16px 20px;
+  }
+
+  .pd-card-header {
+    padding: 16px 16px 0;
+  }
+
+  .pd-phonics-grid {
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  }
+}
+
+@media (max-width: 380px) {
+  .pd-summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pd-stat-value {
+    font-size: 22px;
+  }
+}
+
+/* ── Report button ── */
+
+.pd-report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.pd-report-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.pd-report-btn:active {
+  transform: translateY(0);
+}
+
+@media print {
+  .pd-report-btn {
+    display: none;
+  }
+}

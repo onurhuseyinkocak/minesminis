@@ -1,0 +1,122 @@
+/* ── NotificationPrompt — bottom-sheet card ─────────────────────────────── */
+
+.notif-prompt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  pointer-events: none; /* overlay itself is not clickable */
+}
+
+.notif-prompt-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1201;
+
+  /* Card */
+  background: var(--bg-elevated, #1e293b);
+  border-top: 1px solid var(--glass-border, #334155);
+  border-radius: var(--radius-xl, 24px) var(--radius-xl, 24px) 0 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.32);
+
+  padding: 28px 24px 32px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Content row ─────────────────────────────────────────────────────────── */
+
+.notif-prompt-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.notif-prompt-icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg, 16px);
+  background: var(--primary-pale, rgba(232, 163, 23, 0.12));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary, #e8a317);
+}
+
+.notif-prompt-text {
+  flex: 1;
+}
+
+.notif-prompt-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary, #f1f5f9);
+  margin: 0 0 4px;
+  font-family: Nunito, sans-serif;
+  line-height: 1.3;
+}
+
+.notif-prompt-subtitle {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+  margin: 0;
+  font-family: Nunito, sans-serif;
+  line-height: 1.5;
+}
+
+/* ── Action buttons ──────────────────────────────────────────────────────── */
+
+.notif-prompt-actions {
+  display: flex;
+  gap: 12px;
+  flex-direction: row-reverse; /* primary on right */
+}
+
+.notif-prompt-btn {
+  flex: 1;
+  padding: 13px 20px;
+  border-radius: var(--radius-md, 12px);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: Nunito, sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.notif-prompt-btn:active {
+  transform: scale(0.97);
+}
+
+.notif-prompt-btn--primary {
+  background: var(--primary, #e8a317);
+  color: #fff;
+}
+
+.notif-prompt-btn--primary:hover {
+  opacity: 0.9;
+}
+
+.notif-prompt-btn--ghost {
+  background: transparent;
+  color: var(--text-muted, #94a3b8);
+  border: 1px solid var(--glass-border, #334155);
+}
+
+.notif-prompt-btn--ghost:hover {
+  color: var(--text-primary, #f1f5f9);
+  border-color: var(--text-muted, #94a3b8);
+}
+
+/* ── Drag handle (cosmetic) ──────────────────────────────────────────────── */
+
+.notif-prompt-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--glass-border, #334155);
+  margin: 0 auto 20px;
+}

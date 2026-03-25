@@ -1,0 +1,586 @@
+/* ============================================================
+   DecodableStoryReader — Phonics Story Reader
+   Uses design tokens from :root (index.css)
+   ============================================================ */
+
+/* ─── Layout ───────────────────────────────────────────────────────────────── */
+
+.dsr-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--surface-bg, var(--slate-50));
+  font-family: var(--font-display, 'Nunito', sans-serif);
+}
+
+/* ─── Toolbar ──────────────────────────────────────────────────────────────── */
+
+.dsr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  background: var(--surface, white);
+  border-bottom: 1px solid var(--slate-200);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px var(--shadow-color, rgba(15, 23, 42, 0.08));
+}
+
+.dsr-toolbar__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: none;
+  background: var(--slate-100);
+  color: var(--slate-700);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.dsr-toolbar__back:hover {
+  background: var(--slate-200);
+  color: var(--slate-900);
+}
+
+.dsr-toolbar__title {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--slate-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.dsr-toolbar__badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--primary-pale);
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.dsr-toolbar__highlight-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--slate-200);
+  background: var(--slate-50);
+  color: var(--slate-600);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.dsr-toolbar__highlight-btn--active {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  color: var(--primary);
+}
+
+.dsr-toolbar__highlight-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  color: var(--primary);
+}
+
+/* ─── Progress bar ─────────────────────────────────────────────────────────── */
+
+.dsr-progress {
+  height: 4px;
+  background: var(--slate-200);
+  position: relative;
+}
+
+.dsr-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--accent-amber) 100%);
+  border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dsr-progress__label {
+  position: absolute;
+  right: 0.75rem;
+  top: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+/* ─── Scene container ──────────────────────────────────────────────────────── */
+
+.dsr-scene {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6, 1.5rem) var(--space-4, 1rem);
+  gap: var(--space-4, 1rem);
+  max-width: 40rem;
+  width: 100%;
+  margin: 0 auto;
+  animation: dsr-scene-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dsr-scene-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── Location badge ───────────────────────────────────────────────────────── */
+
+.dsr-location {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--secondary-pale);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+}
+
+/* ─── Story text card ──────────────────────────────────────────────────────── */
+
+.dsr-text-card {
+  width: 100%;
+  background: var(--surface, white);
+  border-radius: 1.5rem;
+  padding: var(--space-6, 1.5rem) var(--space-5, 1.25rem);
+  box-shadow: 0 4px 24px var(--shadow-color, rgba(15, 23, 42, 0.08));
+  border: 1.5px solid var(--slate-200);
+}
+
+.dsr-text {
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--slate-900);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em;
+  align-items: flex-end;
+}
+
+.dsr-text-tr {
+  margin-top: var(--space-3, 0.75rem);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--slate-500);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ─── Word tokens ──────────────────────────────────────────────────────────── */
+
+.dsr-word {
+  position: relative;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  padding: 0 0.05em;
+  transition: background 0.12s, transform 0.12s;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.dsr-word:hover {
+  transform: translateY(-1px);
+}
+
+.dsr-word:active {
+  transform: scale(0.97);
+}
+
+/* Decodable = blue underline */
+.dsr-word--decodable {
+  border-bottom: 2.5px solid var(--accent-blue);
+}
+
+.dsr-word--decodable:hover,
+.dsr-word--decodable:focus {
+  background: var(--accent-indigo-pale);
+}
+
+/* Sight = purple underline */
+.dsr-word--sight {
+  border-bottom: 2.5px solid var(--accent-purple);
+}
+
+.dsr-word--sight:hover,
+.dsr-word--sight:focus {
+  background: var(--accent-purple-pale);
+}
+
+/* Tricky = orange underline */
+.dsr-word--tricky {
+  border-bottom: 2.5px solid var(--accent-orange);
+}
+
+.dsr-word--tricky:hover,
+.dsr-word--tricky:focus {
+  background: var(--warning-pale);
+}
+
+/* No-highlight mode: remove underlines */
+.dsr-text--no-highlight .dsr-word {
+  border-bottom: none;
+}
+
+/* ─── Word tooltip popup ───────────────────────────────────────────────────── */
+
+.dsr-word-popup {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 7rem;
+  background: var(--slate-900);
+  color: white;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  animation: dsr-popup-in 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+@keyframes dsr-popup-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.dsr-word-popup::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--slate-900);
+}
+
+.dsr-word-popup__phonemes {
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.06em;
+  color: var(--accent-amber);
+  display: block;
+  font-size: 0.9em;
+}
+
+.dsr-word-popup__type {
+  font-size: 0.7em;
+  opacity: 0.7;
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.dsr-word-popup__type--decodable { color: var(--accent-blue); }
+.dsr-word-popup__type--sight { color: var(--accent-purple-light); }
+.dsr-word-popup__type--tricky { color: var(--accent-orange); }
+
+/* ─── Legend ────────────────────────────────────────────────────────────────── */
+
+.dsr-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: var(--space-2, 0.5rem) 0;
+}
+
+.dsr-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--slate-600);
+}
+
+.dsr-legend__dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+}
+
+.dsr-legend__dot--decodable { background: var(--accent-blue); }
+.dsr-legend__dot--sight { background: var(--accent-purple); }
+.dsr-legend__dot--tricky { background: var(--accent-orange); }
+
+/* ─── Navigation buttons ───────────────────────────────────────────────────── */
+
+.dsr-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem) var(--space-4, 1rem) calc(var(--space-4, 1rem) + env(safe-area-inset-bottom));
+  background: var(--surface, white);
+  border-top: 1px solid var(--slate-200);
+  position: sticky;
+  bottom: 0;
+}
+
+.dsr-nav__btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dsr-nav__btn--prev {
+  background: var(--slate-100);
+  color: var(--slate-600);
+}
+
+.dsr-nav__btn--prev:hover:not(:disabled) {
+  background: var(--slate-200);
+  color: var(--slate-800);
+}
+
+.dsr-nav__btn--next {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 12px var(--primary-glow);
+}
+
+.dsr-nav__btn--next:hover:not(:disabled) {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 16px var(--primary-glow);
+  transform: translateY(-1px);
+}
+
+.dsr-nav__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.dsr-nav__listen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--secondary-pale);
+  background: var(--secondary-pale);
+  color: var(--secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dsr-nav__listen-btn:hover {
+  background: var(--secondary-light);
+  color: white;
+  border-color: var(--secondary-light);
+}
+
+/* ─── Stats row ────────────────────────────────────────────────────────────── */
+
+.dsr-stats {
+  display: flex;
+  gap: var(--space-3, 0.75rem);
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+  background: var(--slate-50);
+  border-top: 1px solid var(--slate-200);
+}
+
+.dsr-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--slate-500);
+}
+
+.dsr-stat__value {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--slate-800);
+}
+
+.dsr-stat--score .dsr-stat__value {
+  color: var(--success);
+}
+
+/* ─── Comprehension question ───────────────────────────────────────────────── */
+
+.dsr-quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-6, 1.5rem) var(--space-4, 1rem);
+  max-width: 36rem;
+  width: 100%;
+  margin: 0 auto;
+  animation: dsr-scene-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dsr-quiz__title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.dsr-quiz__question {
+  font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--slate-800);
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.dsr-quiz__answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+  width: 100%;
+}
+
+.dsr-quiz__answer-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem) var(--space-4, 1rem);
+  border-radius: 1rem;
+  border: 2px solid var(--slate-200);
+  background: var(--surface, white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--slate-700);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.dsr-quiz__answer-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px var(--primary-glow);
+}
+
+.dsr-quiz__answer-btn--correct {
+  border-color: var(--success);
+  background: var(--success-pale);
+  color: var(--success);
+}
+
+.dsr-quiz__answer-btn--wrong {
+  border-color: var(--error);
+  background: var(--error-pale);
+  color: var(--error);
+}
+
+.dsr-quiz__answer-btn:disabled {
+  cursor: default;
+  transform: none;
+}
+
+.dsr-quiz__letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--slate-100);
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.dsr-quiz__done-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px var(--primary-glow);
+  transition: all 0.15s;
+  margin-top: var(--space-2, 0.5rem);
+}
+
+.dsr-quiz__done-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--primary-glow);
+}
+
+/* ─── Loading / empty states ───────────────────────────────────────────────── */
+
+.dsr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-8, 2rem);
+  text-align: center;
+  color: var(--slate-500);
+}
+
+.dsr-empty p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}

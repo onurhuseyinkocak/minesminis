@@ -1,0 +1,517 @@
+/* ============================================================
+   ASSESSMENT REPORT — Screen & Print Styles
+   ============================================================ */
+
+.assessment-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  overflow-y: auto;
+}
+
+.assessment-report {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+  max-width: 860px;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+}
+
+/* ─── Actions bar ────────────────────────────────────────── */
+
+.assessment-report-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-page);
+  border-radius: 16px 16px 0 0;
+}
+
+.ar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.ar-btn--print {
+  background: var(--primary);
+  color: var(--text-on-primary);
+}
+
+.ar-btn--print:hover {
+  background: var(--primary-hover);
+}
+
+.ar-btn--close {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border);
+}
+
+.ar-btn--close:hover {
+  background: var(--bg-page);
+}
+
+/* ─── Report body ────────────────────────────────────────── */
+
+.ar-body {
+  padding: var(--space-6) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ─── Header ─────────────────────────────────────────────── */
+
+.ar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 2px solid var(--border);
+}
+
+.ar-logo {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.3px;
+}
+
+.ar-logo-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.ar-header-meta {
+  text-align: right;
+}
+
+.ar-student-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+}
+
+.ar-header-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.ar-header-period {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--primary-pale);
+  padding: 2px 10px;
+  border-radius: 100px;
+}
+
+/* ─── Summary strip ──────────────────────────────────────── */
+
+.ar-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.ar-metric-card {
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.ar-metric-value {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  line-height: 1.1;
+}
+
+.ar-metric-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ar-metric-card--mastered .ar-metric-value  { color: var(--success); }
+.ar-metric-card--accuracy .ar-metric-value  { color: var(--primary); }
+.ar-metric-card--streak .ar-metric-value    { color: var(--warning); }
+.ar-metric-card--reading .ar-metric-value   { color: var(--accent-purple, #7c3aed); font-size: 18px; }
+
+/* ─── Section headings ────────────────────────────────────── */
+
+.ar-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 var(--space-3) 0;
+}
+
+/* ─── Group progress bars ─────────────────────────────────── */
+
+.ar-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ar-group-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 44px;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ar-group-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.ar-group-track {
+  height: 10px;
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.ar-group-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.4s ease;
+  background: var(--primary);
+}
+
+.ar-group-fill--mastered {
+  background: var(--success);
+}
+
+.ar-group-fill--low {
+  background: var(--error, #ef4444);
+}
+
+.ar-group-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+/* ─── Sound grid ──────────────────────────────────────────── */
+
+.ar-sound-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.ar-sound-cell {
+  border-radius: 8px;
+  padding: 6px 4px;
+  text-align: center;
+  border: 1.5px solid transparent;
+}
+
+.ar-sound-grapheme {
+  font-size: 15px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  display: block;
+}
+
+.ar-sound-pct {
+  font-size: 10px;
+  font-weight: 600;
+  display: block;
+  margin-top: 2px;
+}
+
+.ar-sound-cell--mastered {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+}
+
+.ar-sound-cell--in-progress {
+  background: #fef9c3;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+.ar-sound-cell--needs-work {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
+.ar-sound-cell--not-started {
+  background: var(--bg-page);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* ─── Sound grid legend ──────────────────────────────────── */
+
+.ar-legend {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.ar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ar-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1.5px solid transparent;
+  flex-shrink: 0;
+}
+
+.ar-legend-dot--mastered    { background: #dcfce7; border-color: #86efac; }
+.ar-legend-dot--in-progress { background: #fef9c3; border-color: #fde047; }
+.ar-legend-dot--needs-work  { background: #fee2e2; border-color: #fca5a5; }
+.ar-legend-dot--not-started { background: var(--bg-page); border-color: var(--border); }
+
+/* ─── Activity timeline ──────────────────────────────────── */
+
+.ar-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ar-activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.ar-activity-type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--primary-pale);
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.ar-activity-title {
+  flex: 1;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.ar-activity-acc {
+  font-weight: 700;
+  color: var(--success);
+  white-space: nowrap;
+}
+
+.ar-activity-acc--low {
+  color: var(--error, #ef4444);
+}
+
+.ar-activity-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ─── Recommendations ────────────────────────────────────── */
+
+.ar-recommendations {
+  background: var(--primary-pale, #eff6ff);
+  border: 1.5px solid var(--primary, #3b82f6);
+  border-radius: 12px;
+  padding: var(--space-4) var(--space-5);
+}
+
+.ar-rec-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ar-rec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.ar-rec-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+/* ─── Footer ─────────────────────────────────────────────── */
+
+.ar-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* ─── Dividers ───────────────────────────────────────────── */
+
+.ar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+
+@media print {
+  body {
+    background: white !important;
+  }
+
+  .assessment-overlay {
+    position: static;
+    background: none;
+    padding: 0;
+    display: block;
+  }
+
+  .assessment-report {
+    max-width: 100%;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .assessment-report-actions {
+    display: none;
+  }
+
+  .ar-body {
+    padding: 24px 32px;
+    gap: 24px;
+  }
+
+  /* Force white backgrounds, remove shadows */
+  .ar-metric-card,
+  .ar-activity-item,
+  .ar-group-track,
+  .ar-sound-cell--not-started {
+    background: #f8f8f8 !important;
+    border-color: #ccc !important;
+    box-shadow: none !important;
+  }
+
+  .ar-sound-cell--mastered {
+    background: #e0f2e9 !important;
+    border-color: #6dbf8a !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .ar-sound-cell--in-progress {
+    background: #fdf8d8 !important;
+    border-color: #e6c84a !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .ar-sound-cell--needs-work {
+    background: #fde8e8 !important;
+    border-color: #e88a8a !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .ar-recommendations {
+    background: #f0f7ff !important;
+    border-color: #6baed6 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Avoid page breaks inside critical sections */
+  .ar-summary-strip,
+  .ar-sound-grid,
+  .ar-groups {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .ar-metric-value {
+    color: #111 !important;
+  }
+
+  .ar-group-fill {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

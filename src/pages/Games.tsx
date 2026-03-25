@@ -1,5 +1,6 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../config/supabase';
 import { fallbackGames } from '../data/fallbackData';
@@ -7,13 +8,39 @@ import { getCachedData, setCachedData } from '../utils/offlineManager';
 import { kidsWords } from '../data/wordsData';
 import { getCurrentPhonicsSound } from '../services/learningPathService';
 import { PHONICS_GROUPS } from '../data/phonics';
+import {
+  MINI_GAMES,
+  getDailyFeaturedGame,
+  getDailyPracticeSet,
+  getDailyPracticeStreak,
+  recordDailyPractice,
+  getBestScore,
+  saveBestScore,
+  isNewGame,
+} from '../data/miniGamesData';
+import type { GameMeta, GameCategory } from '../data/miniGamesData';
+import { GameCard } from '../components/GameCard';
 import toast from 'react-hot-toast';
-import { X, Play, Dice5, Type, Puzzle, Headphones, PenTool, BookOpen, Link, Zap, Bug, Mic, Blocks, Scissors, Gamepad2, Star, Sparkles } from 'lucide-react';
+import {
+  X,
+  Play,
+  Gamepad2,
+  Star,
+  Sparkles,
+  Flame,
+  ChevronRight,
+  BookOpen,
+  Mic,
+  Volume2,
+  BookMarked,
+  Layers,
+  Trophy,
+} from 'lucide-react';
 import { GameSelector } from '../components/games/index';
 import MimiGuide from '../components/MimiGuide';
 import './Games.css';
 
-type Game = {
+type ExternalGame = {
   id: string;
   title: string;
   url: string;
@@ -23,158 +50,199 @@ type Game = {
   target_audience?: string;
 };
 
-type GameCategory = 'all' | 'letters' | 'puzzles' | 'listening' | 'spelling' | 'reading';
+type TabCategory = 'all' | GameCategory;
 
-interface InternalGame {
-  id: string;
-  type: string;
-  icon?: React.ReactNode;
-  emoji?: string;
-  title: string;
-  subtitle: string;
-  color: string;
-  difficulty: number; // 1-3 stars
+interface DailyPracticeSession {
+  games: GameMeta[];
+  currentIndex: number;
+  scores: number[];
 }
 
-const CATEGORIES: { id: GameCategory; icon: React.ReactNode; emoji?: string; label: string; color: string }[] = [
-  { id: 'all', icon: <Dice5 size={20} />, label: 'Tümü', color: 'var(--primary)' },
-  { id: 'letters', icon: <Type size={20} />, label: 'Harfler', color: 'var(--accent-teal)' },
-  { id: 'puzzles', icon: <Puzzle size={20} />, label: 'Bulmacalar', color: 'var(--secondary-light, #2A9D8F)' },
-  { id: 'listening', icon: <Headphones size={20} />, label: 'Dinleme', color: 'var(--accent-amber)' },
-  { id: 'spelling', icon: <PenTool size={20} />, label: 'Heceleme', color: 'var(--accent-rose, #f43f5e)' },
-  { id: 'reading', icon: <BookOpen size={20} />, label: 'Okuma', color: 'var(--success)' },
-];
-
-const INTERNAL_GAMES: InternalGame[] = [
-  { id: 'word-match', type: 'word-match', icon: <Link size={28} />, title: 'Word Match', subtitle: 'Match words to pictures!', color: 'var(--accent-teal)', difficulty: 1 },
-  { id: 'quick-quiz', type: 'quick-quiz', icon: <Zap size={28} />, title: 'Quick Quiz', subtitle: 'How fast can you answer?', color: 'var(--accent-amber)', difficulty: 2 },
-  { id: 'spelling-bee', type: 'spelling-bee', icon: <Bug size={28} />, title: 'Spelling Bee', subtitle: 'Spell the word!', color: 'var(--accent-rose, #f43f5e)', difficulty: 2 },
-  { id: 'pronunciation', type: 'pronunciation', icon: <Mic size={28} />, title: 'Say It!', subtitle: 'Practice speaking!', color: 'var(--accent-indigo)', difficulty: 1 },
-  { id: 'blending', type: 'blending', icon: <Blocks size={28} />, title: 'Word Builder', subtitle: 'Build words from sounds!', color: 'var(--success)', difficulty: 2 },
-  { id: 'segmenting', type: 'segmenting', icon: <Scissors size={28} />, title: 'Sound Splitter', subtitle: 'Break words into sounds!', color: 'var(--secondary-light, #2A9D8F)', difficulty: 3 },
-  { id: 'listening-challenge', type: 'listening-challenge', icon: <Headphones size={28} />, title: 'Listening Challenge', subtitle: 'Listen and choose the right word!', color: 'var(--accent-amber)', difficulty: 2 },
-  { id: 'sentence-scramble', type: 'sentence-scramble', icon: <Puzzle size={28} />, title: 'Sentence Scramble', subtitle: 'Put the words in order!', color: 'var(--accent-indigo)', difficulty: 3 },
-  { id: 'story-choices', type: 'story-choices', icon: <BookOpen size={28} />, title: 'Story Choices', subtitle: 'Choose your own adventure!', color: 'var(--success)', difficulty: 2 },
+const TAB_DEFS: { id: TabCategory; icon: React.ReactNode; label: string }[] = [
+  { id: 'all', icon: <Gamepad2 size={16} />, label: 'All' },
+  { id: 'vocabulary', icon: <BookMarked size={16} />, label: 'Vocabulary' },
+  { id: 'phonics', icon: <Layers size={16} />, label: 'Phonics' },
+  { id: 'reading', icon: <BookOpen size={16} />, label: 'Reading' },
+  { id: 'speaking', icon: <Mic size={16} />, label: 'Speaking' },
 ];
 
 function getGameWords() {
   const currentSound = getCurrentPhonicsSound();
   if (currentSound) {
-    // Get blendable words from current phonics group
-    const group = PHONICS_GROUPS.find(g => g.group === currentSound.group);
+    const group = PHONICS_GROUPS.find((g) => g.group === currentSound.group);
     if (group && group.blendableWords.length >= 4) {
-      // Map blendable words to game format, looking up emoji/turkish from kidsWords
-      const mapped = group.blendableWords.slice(0, 8).map(w => {
-        const found = kidsWords.find(kw => kw.word === w);
-        return {
-          english: w,
-          turkish: found?.turkish || w,
-          emoji: found?.emoji || '',
-        };
+      return group.blendableWords.slice(0, 8).map((w) => {
+        const found = kidsWords.find((kw) => kw.word === w);
+        return { english: w, turkish: found?.turkish ?? w, emoji: found?.emoji ?? '' };
       });
-      return mapped;
     }
   }
-  // Fallback to random if no phonics context
   const shuffled = [...kidsWords].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 8).map(w => ({
-    english: w.word,
-    turkish: w.turkish,
-    emoji: w.emoji,
-  }));
+  return shuffled.slice(0, 8).map((w) => ({ english: w.word, turkish: w.turkish, emoji: w.emoji }));
 }
 
 function Games() {
-  const [games, setGames] = useState<Game[]>([]);
+  const [externalGames, setExternalGames] = useState<ExternalGame[]>([]);
   const [gamesLoading, setGamesLoading] = useState(true);
-  const [selectedGame, setSelectedGame] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<GameCategory>('all');
-  const [playingInternal, setPlayingInternal] = useState<InternalGame | null>(null);
+  const [selectedExternal, setSelectedExternal] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<TabCategory>('all');
+
+  // Active single game being played
+  const [playingGame, setPlayingGame] = useState<GameMeta | null>(null);
+
+  // Daily practice session state
+  const [dailySession, setDailySession] = useState<DailyPracticeSession | null>(null);
+
   const [gameWords, setGameWords] = useState(() => getGameWords());
+  const [dailyStreak, setDailyStreak] = useState(() => getDailyPracticeStreak());
+
+  // Re-render trigger for best-score badges (updated after game completes)
+  const [scoreVersion, setScoreVersion] = useState(0);
+
   const { user } = useAuth();
+  const { stats } = useGamification();
   const { t } = useLanguage();
 
+  const userLevel = stats?.level ?? 1;
+
+  const featuredGame = getDailyFeaturedGame();
+
+  // ---- External games fetch ----
   useEffect(() => {
     let cancelled = false;
-
     const fetchGames = async () => {
       setGamesLoading(true);
-      const cached = getCachedData<Game[]>('games');
-
+      const cached = getCachedData<ExternalGame[]>('games');
       try {
-        const { data, error } = await supabase
-          .from('games')
-          .select('*');
-
+        const { data, error } = await supabase.from('games').select('*');
         if (error) throw error;
-        const validDb = (data || []).filter((g: Game) => g.url?.startsWith('http'));
-        const result = validDb.length > 0 ? (validDb as Game[]) : fallbackGames as Game[];
+        const validDb = (data || []).filter((g: ExternalGame) => g.url?.startsWith('http'));
+        const result = validDb.length > 0 ? (validDb as ExternalGame[]) : (fallbackGames as ExternalGame[]);
         if (!cancelled) {
-          setGames(result);
+          setExternalGames(result);
           setCachedData('games', result, 6 * 60 * 60 * 1000);
         }
       } catch {
         if (!cancelled) {
           if (cached && cached.length > 0) {
-            setGames(cached);
+            setExternalGames(cached);
           } else {
             toast.error('Oyunlar yüklenirken sorun oluştu.');
-            setGames(fallbackGames as Game[]);
+            setExternalGames(fallbackGames as ExternalGame[]);
           }
         }
       } finally {
         if (!cancelled) setGamesLoading(false);
       }
     };
-
     fetchGames();
     return () => { cancelled = true; };
   }, [user]);
 
-  const selectedGameData = games.find(game => game.id === selectedGame);
+  // ---- Helpers ----
+  const isGameLocked = useCallback(
+    (game: GameMeta): boolean => {
+      return userLevel < game.minLevel;
+    },
+    [userLevel],
+  );
 
-  const getCategoryGames = (): InternalGame[] => {
-    if (activeCategory === 'all') return INTERNAL_GAMES;
-    const map: Record<GameCategory, string[]> = {
-      all: [],
-      letters: ['spelling-bee', 'pronunciation', 'blending'],
-      puzzles: ['word-match', 'segmenting', 'blending'],
-      listening: ['pronunciation', 'blending'],
-      spelling: ['spelling-bee', 'word-writing'],
-      reading: ['word-match', 'quick-quiz', 'segmenting'],
-    };
-    return INTERNAL_GAMES.filter(g => map[activeCategory].includes(g.id));
-  };
+  const filteredGames: GameMeta[] =
+    activeTab === 'all'
+      ? MINI_GAMES
+      : MINI_GAMES.filter((g) => g.category === activeTab);
 
-  const handlePlayInternal = (game: InternalGame) => {
+  // ---- Play handlers ----
+  const handlePlaySingle = useCallback((game: GameMeta) => {
+    if (!game) return;
     setGameWords(getGameWords());
-    setPlayingInternal(game);
-  };
+    setPlayingGame(game);
+    setDailySession(null);
+  }, []);
 
-  const handleGameComplete = (score: number, total: number) => {
-    toast.success(`Great job! You got ${score} out of ${total}!`);
-    setPlayingInternal(null);
-  };
+  const handleStartDailyPractice = useCallback(() => {
+    const set = getDailyPracticeSet();
+    setGameWords(getGameWords());
+    setDailySession({ games: set, currentIndex: 0, scores: [] });
+    setPlayingGame(null);
+  }, []);
 
-  const filteredInternal = getCategoryGames();
+  const handleGameComplete = useCallback(
+    (score: number, total: number) => {
+      if (playingGame) {
+        saveBestScore(playingGame.type, score);
+        setScoreVersion((v) => v + 1);
+        toast.success(`Great job! ${score}/${total}`);
+        setPlayingGame(null);
+        return;
+      }
 
-  // If playing an internal game, show it full screen
-  if (playingInternal) {
+      if (dailySession) {
+        const newScores = [...dailySession.scores, score];
+        const nextIndex = dailySession.currentIndex + 1;
+
+        if (nextIndex >= dailySession.games.length) {
+          // Session complete
+          saveBestScore(dailySession.games[dailySession.currentIndex].type, score);
+          const streak = recordDailyPractice();
+          setDailyStreak(streak);
+          setScoreVersion((v) => v + 1);
+          const total5 = newScores.reduce((a, b) => a + b, 0);
+          toast.success(`Daily Practice done! ${total5} points today!`);
+          setDailySession(null);
+        } else {
+          saveBestScore(dailySession.games[dailySession.currentIndex].type, score);
+          setScoreVersion((v) => v + 1);
+          setGameWords(getGameWords());
+          setDailySession({
+            ...dailySession,
+            currentIndex: nextIndex,
+            scores: newScores,
+          });
+        }
+        return;
+      }
+    },
+    [playingGame, dailySession],
+  );
+
+  const handleExitGame = useCallback(() => {
+    setPlayingGame(null);
+    setDailySession(null);
+  }, []);
+
+  // ---- Render: active game ----
+  const activeGameMeta = playingGame ?? (dailySession ? dailySession.games[dailySession.currentIndex] : null);
+
+  if (activeGameMeta) {
+    const progressLabel = dailySession
+      ? `Game ${dailySession.currentIndex + 1} / ${dailySession.games.length}`
+      : activeGameMeta.name;
+
     return (
       <div className="games-page">
         <div className="internal-game-fullscreen">
           <div className="internal-game-topbar">
-            <button type="button" className="back-btn-big" onClick={() => setPlayingInternal(null)}>
-              <X size={24} /> {t('common.back')}
+            <button type="button" className="back-btn-big" onClick={handleExitGame}>
+              <X size={20} /> {t('common.back')}
             </button>
-            <span className="game-topbar-title">
-              {playingInternal.icon} {playingInternal.title}
-            </span>
+            <span className="game-topbar-title">{progressLabel}</span>
+            {dailySession && (
+              <div className="daily-progress-dots">
+                {dailySession.games.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`daily-dot${i < dailySession.currentIndex ? ' done' : ''}${i === dailySession.currentIndex ? ' active' : ''}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
           <div className="internal-game-container">
             <Suspense fallback={<div className="game-loading">{t('games.loadingGame')}</div>}>
               <GameSelector
-                type={playingInternal.type}
+                type={activeGameMeta.type}
                 words={gameWords}
                 onComplete={handleGameComplete}
               />
@@ -185,90 +253,171 @@ function Games() {
     );
   }
 
+  const selectedExternalData = externalGames.find((g) => g.id === selectedExternal);
+
   return (
     <div className="games-page">
-      {/* Big fun header */}
+      {/* Hero */}
       <div className="games-hero">
-        <span className="games-hero-emoji"><Gamepad2 size={48} /></span>
+        <span className="games-hero-icon">
+          <Gamepad2 size={48} />
+        </span>
         <h1 className="games-hero-title">{t('games.letsPlay')}</h1>
+        <p className="games-hero-sub">Pick a game and start learning!</p>
       </div>
 
-      {/* Category circles */}
-      <div className="category-circles">
-        {CATEGORIES.map(cat => (
-          <button
-            key={cat.id}
-            className={`category-circle ${activeCategory === cat.id ? 'active' : ''}`}
-            onClick={() => setActiveCategory(cat.id)}
-            style={{ '--cat-color': cat.color } as React.CSSProperties}
-          >
-            <span className="category-circle-emoji">{cat.icon}</span>
-            <span className="category-circle-label">{cat.label}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="games-content">
-        {/* Featured Internal Games */}
-        <h2 className="games-section-title"><Star size={20} /> {t('games.ourGames')}</h2>
-        {filteredInternal.length === 0 ? (
-          <div className="games-empty-state">
-            <Puzzle size={48} />
-            <p>Bu kategoride oyun yok.</p>
+      {/* Daily Practice pinned banner */}
+      <div className="daily-practice-banner">
+        <div className="daily-practice-left">
+          <Flame size={28} className="daily-flame" />
+          <div className="daily-practice-text">
+            <span className="daily-practice-title">Daily Practice</span>
+            <span className="daily-practice-streak">
+              {dailyStreak > 0 ? (
+                <>
+                  <Trophy size={12} /> {dailyStreak} day streak!
+                </>
+              ) : (
+                'Start your streak today!'
+              )}
+            </span>
           </div>
-        ) : null}
-        <div className="featured-games-grid">
-          {filteredInternal.map(game => (
+        </div>
+        <button
+          type="button"
+          className="daily-practice-btn"
+          onClick={handleStartDailyPractice}
+        >
+          Start <ChevronRight size={16} />
+        </button>
+      </div>
+
+      {/* Featured game */}
+      <div className="games-content">
+        <div
+          className="featured-hero-card"
+          style={{ '--fhc-color': featuredGame.color } as React.CSSProperties}
+          role="region"
+          aria-label="Featured game of the day"
+        >
+          <div className="featured-hero-body">
+            <span className="featured-hero-tag">
+              <Star size={12} fill="currentColor" /> Today's Pick
+            </span>
+            <h2 className="featured-hero-name">{featuredGame.name}</h2>
+            <p className="featured-hero-desc">{featuredGame.description}</p>
+            {!isGameLocked(featuredGame) ? (
+              <button
+                type="button"
+                className="featured-hero-play-btn"
+                onClick={() => handlePlaySingle(featuredGame)}
+              >
+                <Play size={18} fill="white" /> Play Now
+              </button>
+            ) : (
+              <span className="featured-hero-locked">
+                Unlock at Level {featuredGame.minLevel}
+              </span>
+            )}
+          </div>
+          <div className="featured-hero-icon-area" aria-hidden="true">
+            <Volume2 size={72} />
+          </div>
+        </div>
+
+        {/* Category tabs */}
+        <div className="games-tabs" role="tablist" aria-label="Game categories">
+          {TAB_DEFS.map((tab) => (
             <button
-              key={game.id}
-              className="featured-game-card"
-              onClick={() => handlePlayInternal(game)}
-              style={{ '--card-color': game.color } as React.CSSProperties}
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`games-tab${activeTab === tab.id ? ' games-tab--active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
             >
-              <span className="featured-emoji">{game.icon}</span>
-              <h3 className="featured-title">{game.title}</h3>
-              <p className="featured-subtitle">{game.subtitle}</p>
-              <div className="difficulty-stars">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} className={`star ${i < game.difficulty ? 'filled' : ''}`}><Star size={14} /></span>
-                ))}
-              </div>
-              <div className="play-now-btn">
-                <Play size={18} fill="white" /> Oyna!
-              </div>
+              {tab.icon}
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Loading indicator for external games */}
-        {gamesLoading && (
-          <div className="games-loading-indicator" style={{ textAlign: 'center', padding: '24px 0' }}>
-            <div className="page-loader__spinner" />
-            <p style={{ color: 'var(--text-muted)', marginTop: 8 }}>Loading more games...</p>
+        {/* Games grid */}
+        <h2 className="games-section-title">
+          <Star size={18} /> {t('games.ourGames')}
+        </h2>
+
+        {filteredGames.length === 0 ? (
+          <div className="games-empty-state">
+            <Gamepad2 size={48} />
+            <p>No games in this category yet.</p>
+          </div>
+        ) : (
+          <div
+            className="mini-games-grid"
+            role="tabpanel"
+            aria-label={`${activeTab} games`}
+          >
+            {filteredGames.map((game) => {
+              const locked = isGameLocked(game);
+              const best = scoreVersion >= 0 ? getBestScore(game.type) : undefined;
+              return (
+                <GameCard
+                  key={game.type}
+                  game={game}
+                  isLocked={locked}
+                  userLevel={userLevel}
+                  bestScore={best}
+                  isNew={isNewGame(game)}
+                  onPlay={() => handlePlaySingle(game)}
+                />
+              );
+            })}
           </div>
         )}
 
         {/* External Wordwall games */}
-        {!gamesLoading && games.length > 0 && (
+        {gamesLoading && (
+          <div className="games-loading-indicator">
+            <div className="page-loader__spinner" />
+            <p>Loading more games...</p>
+          </div>
+        )}
+
+        {!gamesLoading && externalGames.length > 0 && (
           <>
-            <h2 className="games-section-title"><Sparkles size={20} /> {t('games.moreGames')}</h2>
+            <h2 className="games-section-title">
+              <Sparkles size={18} /> {t('games.moreGames')}
+            </h2>
             <div className="external-games-grid">
-              {games.map((game) => (
+              {externalGames.map((game) => (
                 <div
                   key={game.id}
                   className="external-game-card"
-                  onClick={() => setSelectedGame(game.id)}
+                  onClick={() => setSelectedExternal(game.id)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Play ${game.title}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedExternal(game.id);
+                    }
+                  }}
                 >
                   <div className="external-game-thumb">
                     <img
                       src={game.thumbnail_url}
                       alt={game.title}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%231a2332" width="400" height="300"/><rect x="160" y="110" width="80" height="80" rx="12" fill="%23FF6B35" opacity="0.5"/></svg>';
+                        (e.target as HTMLImageElement).src =
+                          'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect fill="%231a2332" width="400" height="300"/><rect x="160" y="110" width="80" height="80" rx="12" fill="%23FF6B35" opacity="0.5"/></svg>';
                       }}
                     />
                     <div className="external-play-overlay">
-                      <span className="play-icon-circle"><Play size={28} fill="white" /></span>
+                      <span className="play-icon-circle">
+                        <Play size={28} fill="white" />
+                      </span>
                     </div>
                   </div>
                   <div className="external-game-info">
@@ -282,27 +431,35 @@ function Games() {
       </div>
 
       {/* External game modal */}
-      {selectedGame && selectedGameData && (
-        <div className="game-modal-overlay" onClick={() => setSelectedGame(null)}>
+      {selectedExternal && selectedExternalData && (
+        <div
+          className="game-modal-overlay"
+          onClick={() => setSelectedExternal(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={selectedExternalData.title}
+        >
           <div className="game-modal" onClick={(e) => e.stopPropagation()}>
             <div className="game-modal-header">
-              <h2>{selectedGameData.title}</h2>
+              <h2>{selectedExternalData.title}</h2>
               <button
-                onClick={() => setSelectedGame(null)}
+                type="button"
+                onClick={() => setSelectedExternal(null)}
                 className="game-modal-close"
+                aria-label="Close"
               >
                 <X size={24} />
               </button>
             </div>
             <div className="game-iframe-container">
               <iframe
-                src={selectedGameData.url}
+                src={selectedExternalData.url}
                 width="100%"
                 height="100%"
                 frameBorder="0"
                 allowFullScreen
                 sandbox="allow-scripts allow-same-origin allow-popups"
-                title={selectedGameData.title}
+                title={selectedExternalData.title}
               />
             </div>
           </div>
@@ -310,9 +467,9 @@ function Games() {
       )}
 
       <MimiGuide
-        message="Tap a game to play! The golden star one is next!"
-        messageTr="Oynamak için bir oyuna dokun!"
-        showOnce="mimi_guide_worldmap"
+        message="Pick a game to play! Try Daily Practice for a streak!"
+        messageTr="Bir oyun seç! Seriyi artırmak için Günlük Pratik'i dene!"
+        showOnce="mimi_guide_gameshub"
         position="bottom-left"
       />
     </div>

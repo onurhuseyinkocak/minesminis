@@ -515,6 +515,377 @@ const w12Lessons: Lesson[] = [
   L('w12', 12, 10, 'World Traveler Review', 'Dünya Gezgini Tekrarı', 'Review all travel words', 'review', 8, [['quick-quiz', 'Big World Quiz', 'Review everything', 4, 20], ['sentence-scramble', 'World Sentences', 'Build sentences', 4, 20]], ['country', 'travel', 'beach', 'world', 'friend'], 50),
 ];
 
+// --- WORLD 14: Weather World ---
+const w14Vocab: VocabularyWord[] = [
+  { english: 'rain', turkish: 'yağmur', emoji: '🌧️', category: 'weather', phonetic: '/reɪn/', exampleSentence: 'The rain falls from the sky.' },
+  { english: 'snow', turkish: 'kar', emoji: '❄️', category: 'weather', phonetic: '/snoʊ/', exampleSentence: 'Snow is cold and white.' },
+  { english: 'sun', turkish: 'güneş', emoji: '☀️', category: 'weather', phonetic: '/sʌn/', exampleSentence: 'The sun is shining today.' },
+  { english: 'cloud', turkish: 'bulut', emoji: '☁️', category: 'weather', phonetic: '/klaʊd/', exampleSentence: 'Dark clouds bring rain.' },
+  { english: 'wind', turkish: 'rüzgar', emoji: '💨', category: 'weather', phonetic: '/wɪnd/', exampleSentence: 'The wind blows my hat away.' },
+  { english: 'hot', turkish: 'sıcak', emoji: '🔥', category: 'weather', phonetic: '/hɒt/', exampleSentence: 'It is very hot today.' },
+  { english: 'cold', turkish: 'soğuk', emoji: '🥶', category: 'weather', phonetic: '/koʊld/', exampleSentence: 'The water is cold.' },
+  { english: 'warm', turkish: 'ılık', emoji: '🌤️', category: 'weather', phonetic: '/wɔːrm/', exampleSentence: 'Spring days are warm.' },
+  { english: 'spring', turkish: 'ilkbahar', emoji: '🌸', category: 'seasons', phonetic: '/sprɪŋ/', exampleSentence: 'Flowers bloom in spring.' },
+  { english: 'summer', turkish: 'yaz', emoji: '🌞', category: 'seasons', phonetic: '/ˈsʌmər/', exampleSentence: 'We swim in summer.' },
+  { english: 'autumn', turkish: 'sonbahar', emoji: '🍂', category: 'seasons', phonetic: '/ˈɔːtəm/', exampleSentence: 'Leaves fall in autumn.' },
+  { english: 'winter', turkish: 'kış', emoji: '⛄', category: 'seasons', phonetic: '/ˈwɪntər/', exampleSentence: 'Winter is cold and snowy.' },
+  { english: 'storm', turkish: 'fırtına', emoji: '⛈️', category: 'weather', phonetic: '/stɔːrm/', exampleSentence: 'A big storm is coming.' },
+  { english: 'rainbow', turkish: 'gökkuşağı', emoji: '🌈', category: 'weather', phonetic: '/ˈreɪnboʊ/', exampleSentence: 'A rainbow has many colors.' },
+  { english: 'thunder', turkish: 'gök gürültüsü', emoji: '🌩️', category: 'weather', phonetic: '/ˈθʌndər/', exampleSentence: 'Thunder is very loud.' },
+  { english: 'lightning', turkish: 'şimşek', emoji: '⚡', category: 'weather', phonetic: '/ˈlaɪtnɪŋ/', exampleSentence: 'Lightning lights up the sky.' },
+  { english: 'fog', turkish: 'sis', emoji: '🌫️', category: 'weather', phonetic: '/fɒɡ/', exampleSentence: 'Fog makes it hard to see.' },
+  { english: 'ice', turkish: 'buz', emoji: '🧊', category: 'weather', phonetic: '/aɪs/', exampleSentence: 'The lake is covered with ice.' },
+  { english: 'hail', turkish: 'dolu', emoji: '🌨️', category: 'weather', phonetic: '/heɪl/', exampleSentence: 'Hail fell from the clouds.' },
+  { english: 'frost', turkish: 'kırağı', emoji: '🌡️', category: 'weather', phonetic: '/frɒst/', exampleSentence: 'There is frost on the grass.' },
+];
+
+const w14Lessons: Lesson[] = [
+  L('w14', 14, 1, 'Sunny Days', 'Güneşli Günler', 'Learn sunny weather words', 'vocabulary', 5, [
+    ['word-match', 'Sunny Match', 'Match sunny weather words', 3, 10],
+    ['listening-challenge', 'How Is the Weather?', 'Listen and pick the weather', 2, 15],
+    ['quick-quiz', 'Sunshine Quiz', 'Answer questions about sunny weather', 2, 10],
+  ], ['sun', 'hot', 'warm', 'cloud'], 40),
+  L('w14', 14, 2, 'Rainy Days', 'Yağmurlu Günler', 'Learn rainy weather words', 'vocabulary', 5, [
+    ['word-match', 'Rain Match', 'Match rain words', 3, 10],
+    ['phonics-builder', 'Rain Sounds', 'Build rainy weather words', 2, 15],
+    ['sentence-scramble', 'Rainy Day Sentence', 'Put rain sentence in order', 2, 10],
+  ], ['rain', 'cloud', 'wind', 'rainbow'], 40),
+  L('w14', 14, 3, 'Snowy Days', 'Karlı Günler', 'Learn snow and cold words', 'vocabulary', 5, [
+    ['word-match', 'Snow Match', 'Match snow words', 3, 10],
+    ['listening-challenge', 'Cold Weather', 'Listen and choose cold words', 2, 15],
+    ['spelling-bee', 'Spell Snow', 'Spell cold weather words', 2, 10],
+  ], ['snow', 'cold', 'ice', 'frost'], 40),
+  L('w14', 14, 4, 'The Four Seasons', 'Dört Mevsim', 'Learn the seasons', 'grammar', 6, [
+    ['sentence-scramble', 'Season Sentences', 'Build sentences about seasons', 3, 15],
+    ['quick-quiz', 'Season Quiz', 'Match activities to seasons', 2, 15],
+    ['word-match', 'Season Match', 'Match seasons to descriptions', 2, 10],
+  ], ['spring', 'summer', 'autumn', 'winter'], 45),
+  L('w14', 14, 5, 'Extreme Weather', 'Aşırı Hava', 'Learn about storms and extreme weather', 'story', 7, [
+    ['story-choices', 'Storm Story', 'Read about a big storm', 4, 20],
+    ['word-match', 'Extreme Match', 'Match extreme weather words', 2, 10],
+    ['quick-quiz', 'Weather Safety Quiz', 'Answer extreme weather questions', 2, 15],
+    ['spelling-bee', 'Storm Spell', 'Spell extreme weather words', 2, 10],
+  ], ['storm', 'thunder', 'lightning', 'fog', 'hail'], 60),
+];
+
+// --- WORLD 15: My Town ---
+const w15Vocab: VocabularyWord[] = [
+  { english: 'school', turkish: 'okul', emoji: '🏫', category: 'places', phonetic: '/skuːl/', exampleSentence: 'I go to school every day.' },
+  { english: 'park', turkish: 'park', emoji: '🌳', category: 'places', phonetic: '/pɑːrk/', exampleSentence: 'We play in the park.' },
+  { english: 'hospital', turkish: 'hastane', emoji: '🏥', category: 'places', phonetic: '/ˈhɒspɪtəl/', exampleSentence: 'The doctor works at the hospital.' },
+  { english: 'store', turkish: 'mağaza', emoji: '🏪', category: 'places', phonetic: '/stɔːr/', exampleSentence: 'We buy food at the store.' },
+  { english: 'library', turkish: 'kütüphane', emoji: '📚', category: 'places', phonetic: '/ˈlaɪbrəri/', exampleSentence: 'I read books at the library.' },
+  { english: 'bank', turkish: 'banka', emoji: '🏦', category: 'places', phonetic: '/bæŋk/', exampleSentence: 'My mom goes to the bank.' },
+  { english: 'restaurant', turkish: 'restoran', emoji: '🍽️', category: 'places', phonetic: '/ˈrɛstərɒnt/', exampleSentence: 'We eat at the restaurant.' },
+  { english: 'bus', turkish: 'otobüs', emoji: '🚌', category: 'transport', phonetic: '/bʌs/', exampleSentence: 'I take the bus to school.' },
+  { english: 'street', turkish: 'sokak', emoji: '🛣️', category: 'places', phonetic: '/striːt/', exampleSentence: 'Our house is on this street.' },
+  { english: 'road', turkish: 'yol', emoji: '🚗', category: 'places', phonetic: '/roʊd/', exampleSentence: 'Cars drive on the road.' },
+  { english: 'bridge', turkish: 'köprü', emoji: '🌉', category: 'places', phonetic: '/brɪdʒ/', exampleSentence: 'We cross the bridge to get home.' },
+  { english: 'building', turkish: 'bina', emoji: '🏢', category: 'places', phonetic: '/ˈbɪldɪŋ/', exampleSentence: 'That building is very tall.' },
+  { english: 'police', turkish: 'polis', emoji: '👮', category: 'community', phonetic: '/pəˈliːs/', exampleSentence: 'The police keep us safe.' },
+  { english: 'fire', turkish: 'yangın', emoji: '🔥', category: 'community', phonetic: '/faɪər/', exampleSentence: 'Call the fire station!' },
+  { english: 'post office', turkish: 'postane', emoji: '📮', category: 'places', phonetic: '/ˈpoʊst ˌɒfɪs/', exampleSentence: 'I mail a letter at the post office.' },
+  { english: 'market', turkish: 'pazar', emoji: '🛒', category: 'places', phonetic: '/ˈmɑːrkɪt/', exampleSentence: 'We buy vegetables at the market.' },
+  { english: 'cinema', turkish: 'sinema', emoji: '🎬', category: 'places', phonetic: '/ˈsɪnɪmə/', exampleSentence: 'We watched a film at the cinema.' },
+  { english: 'museum', turkish: 'müze', emoji: '🏛️', category: 'places', phonetic: '/mjuːˈziːəm/', exampleSentence: 'The museum shows old things.' },
+  { english: 'church', turkish: 'kilise', emoji: '⛪', category: 'places', phonetic: '/tʃɜːrtʃ/', exampleSentence: 'There is an old church downtown.' },
+  { english: 'mosque', turkish: 'cami', emoji: '🕌', category: 'places', phonetic: '/mɒsk/', exampleSentence: 'The mosque has a tall minaret.' },
+];
+
+const w15Lessons: Lesson[] = [
+  L('w15', 15, 1, 'Around Town', 'Şehirde', 'Learn community place words', 'vocabulary', 5, [
+    ['word-match', 'Town Match', 'Match places in town', 3, 10],
+    ['listening-challenge', 'Where Is It?', 'Listen and find the place', 2, 15],
+    ['quick-quiz', 'Town Quiz', 'Answer questions about town places', 2, 10],
+  ], ['school', 'park', 'hospital', 'store', 'library'], 40),
+  L('w15', 15, 2, 'Getting Help', 'Yardım Almak', 'Learn community helper words', 'vocabulary', 5, [
+    ['word-match', 'Helper Match', 'Match helpers to places', 3, 10],
+    ['sentence-scramble', 'Help Sentence', 'Build sentences about helpers', 2, 15],
+    ['quick-quiz', 'Helper Quiz', 'Who can help you?', 2, 10],
+  ], ['police', 'fire', 'hospital', 'bank'], 40),
+  L('w15', 15, 3, 'Shopping', 'Alışveriş', 'Learn shopping and market words', 'vocabulary', 5, [
+    ['word-match', 'Shop Match', 'Match shopping words', 3, 10],
+    ['phonics-builder', 'Shop Sounds', 'Build shopping words', 2, 15],
+    ['spelling-bee', 'Shop Spell', 'Spell shopping words', 2, 10],
+  ], ['store', 'market', 'restaurant', 'post office'], 40),
+  L('w15', 15, 4, 'Getting Around', 'Dolaşmak', 'Learn directions and transport', 'grammar', 6, [
+    ['sentence-scramble', 'Direction Sentences', 'Build direction sentences', 3, 15],
+    ['quick-quiz', 'Direction Quiz', 'Answer direction questions', 2, 15],
+    ['word-match', 'Transport Match', 'Match transport words', 2, 10],
+  ], ['bus', 'street', 'road', 'bridge', 'building'], 45),
+  L('w15', 15, 5, 'Community Helpers', 'Toplum Kahramanları', 'Learn about people who help us', 'story', 7, [
+    ['story-choices', 'Help in Town', 'Read about community helpers', 4, 20],
+    ['word-match', 'Community Match', 'Match helpers to jobs', 2, 10],
+    ['quick-quiz', 'Community Quiz', 'Answer helper questions', 2, 15],
+    ['spelling-bee', 'Helper Spell', 'Spell community words', 2, 10],
+  ], ['police', 'fire', 'museum', 'cinema', 'church', 'mosque'], 60),
+];
+
+// --- WORLD 16: Time & Routines ---
+const w16Vocab: VocabularyWord[] = [
+  { english: 'morning', turkish: 'sabah', emoji: '🌅', category: 'time', phonetic: '/ˈmɔːrnɪŋ/', exampleSentence: 'I wake up in the morning.' },
+  { english: 'afternoon', turkish: 'öğleden sonra', emoji: '🌤️', category: 'time', phonetic: '/ˌæftərˈnuːn/', exampleSentence: 'We eat lunch in the afternoon.' },
+  { english: 'evening', turkish: 'akşam', emoji: '🌆', category: 'time', phonetic: '/ˈiːvnɪŋ/', exampleSentence: 'We watch TV in the evening.' },
+  { english: 'night', turkish: 'gece', emoji: '🌙', category: 'time', phonetic: '/naɪt/', exampleSentence: 'Stars come out at night.' },
+  { english: 'wake up', turkish: 'uyanmak', emoji: '⏰', category: 'routines', phonetic: '/weɪk ʌp/', exampleSentence: 'I wake up at seven.' },
+  { english: 'sleep', turkish: 'uyumak', emoji: '😴', category: 'routines', phonetic: '/sliːp/', exampleSentence: 'I sleep at nine o\'clock.' },
+  { english: 'breakfast', turkish: 'kahvaltı', emoji: '🍳', category: 'routines', phonetic: '/ˈbrɛkfəst/', exampleSentence: 'I eat breakfast every morning.' },
+  { english: 'lunch', turkish: 'öğle yemeği', emoji: '🥪', category: 'routines', phonetic: '/lʌntʃ/', exampleSentence: 'We have lunch at school.' },
+  { english: 'dinner', turkish: 'akşam yemeği', emoji: '🍜', category: 'routines', phonetic: '/ˈdɪnər/', exampleSentence: 'We eat dinner as a family.' },
+  { english: 'bath', turkish: 'banyo', emoji: '🛁', category: 'routines', phonetic: '/bæθ/', exampleSentence: 'I take a bath before bed.' },
+  { english: 'brush teeth', turkish: 'diş fırçalamak', emoji: '🦷', category: 'routines', phonetic: '/brʌʃ tiːθ/', exampleSentence: 'I brush my teeth after breakfast.' },
+  { english: 'dress', turkish: 'giyinmek', emoji: '👕', category: 'routines', phonetic: '/drɛs/', exampleSentence: 'I dress myself in the morning.' },
+  { english: 'homework', turkish: 'ödev', emoji: '📝', category: 'routines', phonetic: '/ˈhoʊmwɜːrk/', exampleSentence: 'I do my homework after school.' },
+  { english: 'watch', turkish: 'izlemek', emoji: '📺', category: 'routines', phonetic: '/wɒtʃ/', exampleSentence: 'I watch my favourite show.' },
+  { english: 'read', turkish: 'okumak', emoji: '📖', category: 'routines', phonetic: '/riːd/', exampleSentence: 'I read a book before sleep.' },
+  { english: 'play', turkish: 'oynamak', emoji: '🎮', category: 'routines', phonetic: '/pleɪ/', exampleSentence: 'I play outside after school.' },
+  { english: 'exercise', turkish: 'egzersiz yapmak', emoji: '🏃', category: 'routines', phonetic: '/ˈɛksərsaɪz/', exampleSentence: 'I exercise every morning.' },
+  { english: 'cook', turkish: 'pişirmek', emoji: '🍳', category: 'routines', phonetic: '/kʊk/', exampleSentence: 'Mom cooks dinner for us.' },
+  { english: 'clean', turkish: 'temizlemek', emoji: '🧹', category: 'routines', phonetic: '/kliːn/', exampleSentence: 'We clean the house together.' },
+  { english: 'rest', turkish: 'dinlenmek', emoji: '😌', category: 'routines', phonetic: '/rɛst/', exampleSentence: 'I rest for a while after school.' },
+];
+
+const w16Lessons: Lesson[] = [
+  L('w16', 16, 1, 'My Morning', 'Sabahım', 'Learn morning routine words', 'vocabulary', 5, [
+    ['word-match', 'Morning Match', 'Match morning routine words', 3, 10],
+    ['listening-challenge', 'Morning Sounds', 'Listen and pick morning activities', 2, 15],
+    ['sentence-scramble', 'Morning Routine', 'Put morning activities in order', 2, 10],
+  ], ['morning', 'wake up', 'breakfast', 'brush teeth', 'dress'], 40),
+  L('w16', 16, 2, 'My Afternoon', 'Öğleden Sonram', 'Learn afternoon routine words', 'vocabulary', 5, [
+    ['word-match', 'Afternoon Match', 'Match afternoon activities', 3, 10],
+    ['phonics-builder', 'Afternoon Builder', 'Build afternoon words', 2, 15],
+    ['quick-quiz', 'Afternoon Quiz', 'Answer afternoon questions', 2, 10],
+  ], ['afternoon', 'lunch', 'homework', 'play', 'exercise'], 40),
+  L('w16', 16, 3, 'My Evening', 'Akşamım', 'Learn evening routine words', 'vocabulary', 5, [
+    ['word-match', 'Evening Match', 'Match evening activities', 3, 10],
+    ['sentence-scramble', 'Evening Routine', 'Put evening activities in order', 2, 15],
+    ['spelling-bee', 'Evening Spell', 'Spell evening words', 2, 10],
+  ], ['evening', 'dinner', 'bath', 'read', 'sleep'], 40),
+  L('w16', 16, 4, 'Days of Week', 'Haftanın Günleri', 'Learn daily time expressions', 'grammar', 6, [
+    ['sentence-scramble', 'Day Sentences', 'Build sentences about the week', 3, 15],
+    ['quick-quiz', 'Day Quiz', 'Answer questions about days', 2, 15],
+    ['word-match', 'Time Match', 'Match time expressions', 2, 10],
+  ], ['morning', 'afternoon', 'evening', 'night', 'watch'], 45),
+  L('w16', 16, 5, 'Months of Year', 'Yılın Ayları', 'Learn monthly routines', 'story', 7, [
+    ['story-choices', 'A Year in My Life', 'Read about yearly routines', 4, 20],
+    ['word-match', 'Routine Review', 'Match routine words', 2, 10],
+    ['quick-quiz', 'Routine Quiz', 'Answer routine questions', 2, 15],
+    ['spelling-bee', 'Routine Spell', 'Spell routine words', 2, 10],
+  ], ['cook', 'clean', 'rest', 'read', 'exercise'], 60),
+];
+
+// --- WORLD 17: The Ocean ---
+const w17Vocab: VocabularyWord[] = [
+  { english: 'fish', turkish: 'balık', emoji: '🐟', category: 'sea creatures', phonetic: '/fɪʃ/', exampleSentence: 'The fish swims in the ocean.' },
+  { english: 'shark', turkish: 'köpekbalığı', emoji: '🦈', category: 'sea creatures', phonetic: '/ʃɑːrk/', exampleSentence: 'The shark has sharp teeth.' },
+  { english: 'whale', turkish: 'balina', emoji: '🐋', category: 'sea creatures', phonetic: '/weɪl/', exampleSentence: 'The whale is the biggest animal.' },
+  { english: 'dolphin', turkish: 'yunus', emoji: '🐬', category: 'sea creatures', phonetic: '/ˈdɒlfɪn/', exampleSentence: 'The dolphin jumps out of the water.' },
+  { english: 'octopus', turkish: 'ahtapot', emoji: '🐙', category: 'sea creatures', phonetic: '/ˈɒktəpəs/', exampleSentence: 'The octopus has eight arms.' },
+  { english: 'crab', turkish: 'yengeç', emoji: '🦀', category: 'sea creatures', phonetic: '/kræb/', exampleSentence: 'The crab walks sideways.' },
+  { english: 'jellyfish', turkish: 'denizanası', emoji: '🪼', category: 'sea creatures', phonetic: '/ˈdʒɛliˌfɪʃ/', exampleSentence: 'The jellyfish glows in the dark.' },
+  { english: 'starfish', turkish: 'denizyıldızı', emoji: '⭐', category: 'sea creatures', phonetic: '/ˈstɑːrfɪʃ/', exampleSentence: 'The starfish lives on the sea floor.' },
+  { english: 'coral', turkish: 'mercan', emoji: '🪸', category: 'sea creatures', phonetic: '/ˈkɒrəl/', exampleSentence: 'Coral reefs are very colourful.' },
+  { english: 'wave', turkish: 'dalga', emoji: '🌊', category: 'ocean', phonetic: '/weɪv/', exampleSentence: 'Big waves crash on the beach.' },
+  { english: 'beach', turkish: 'plaj', emoji: '🏖️', category: 'ocean', phonetic: '/biːtʃ/', exampleSentence: 'We play on the beach.' },
+  { english: 'sand', turkish: 'kum', emoji: '🏝️', category: 'ocean', phonetic: '/sænd/', exampleSentence: 'Sand is soft between my toes.' },
+  { english: 'shell', turkish: 'deniz kabuğu', emoji: '🐚', category: 'ocean', phonetic: '/ʃɛl/', exampleSentence: 'I found a pretty shell.' },
+  { english: 'boat', turkish: 'tekne', emoji: '⛵', category: 'ocean', phonetic: '/boʊt/', exampleSentence: 'The boat sails on the sea.' },
+  { english: 'swim', turkish: 'yüzmek', emoji: '🏊', category: 'ocean', phonetic: '/swɪm/', exampleSentence: 'I can swim in the ocean.' },
+  { english: 'dive', turkish: 'dalmak', emoji: '🤿', category: 'ocean', phonetic: '/daɪv/', exampleSentence: 'I dive under the water.' },
+  { english: 'sail', turkish: 'yelken açmak', emoji: '🌬️', category: 'ocean', phonetic: '/seɪl/', exampleSentence: 'We sail across the sea.' },
+  { english: 'island', turkish: 'ada', emoji: '🏝️', category: 'ocean', phonetic: '/ˈaɪlənd/', exampleSentence: 'The island is surrounded by water.' },
+  { english: 'lighthouse', turkish: 'deniz feneri', emoji: '🗼', category: 'ocean', phonetic: '/ˈlaɪthaʊs/', exampleSentence: 'The lighthouse guides the boats.' },
+  { english: 'treasure', turkish: 'hazine', emoji: '💎', category: 'ocean', phonetic: '/ˈtrɛʒər/', exampleSentence: 'Pirates search for treasure.' },
+];
+
+const w17Lessons: Lesson[] = [
+  L('w17', 17, 1, 'Sea Creatures', 'Deniz Yaratıkları', 'Learn ocean animal words', 'vocabulary', 5, [
+    ['word-match', 'Sea Match', 'Match sea creature words', 3, 10],
+    ['listening-challenge', 'Ocean Sounds', 'Listen and identify sea creatures', 2, 15],
+    ['quick-quiz', 'Sea Quiz', 'Answer sea creature questions', 2, 10],
+  ], ['fish', 'shark', 'whale', 'dolphin', 'octopus'], 40),
+  L('w17', 17, 2, 'The Beach', 'Plajda', 'Learn beach vocabulary', 'vocabulary', 5, [
+    ['word-match', 'Beach Match', 'Match beach words', 3, 10],
+    ['phonics-builder', 'Beach Builder', 'Build beach words', 2, 15],
+    ['spelling-bee', 'Beach Spell', 'Spell beach words', 2, 10],
+  ], ['beach', 'sand', 'shell', 'wave', 'boat'], 40),
+  L('w17', 17, 3, 'Underwater Adventure', 'Su Altı Macerası', 'Discover underwater life', 'vocabulary', 5, [
+    ['word-match', 'Underwater Match', 'Match underwater words', 3, 10],
+    ['sentence-scramble', 'Dive In!', 'Build underwater sentences', 2, 15],
+    ['quick-quiz', 'Deep Sea Quiz', 'Answer deep sea questions', 2, 10],
+  ], ['crab', 'jellyfish', 'starfish', 'coral', 'dive'], 40),
+  L('w17', 17, 4, 'Ocean Conservation', 'Okyanusu Koruma', 'Learn about protecting the ocean', 'grammar', 6, [
+    ['sentence-scramble', 'Ocean Sentences', 'Build ocean sentences', 3, 15],
+    ['quick-quiz', 'Ocean Quiz', 'Answer ocean conservation questions', 2, 15],
+    ['word-match', 'Conservation Match', 'Match conservation words', 2, 10],
+  ], ['coral', 'whale', 'dolphin', 'island', 'swim'], 45),
+  L('w17', 17, 5, 'Sailing Away', 'Yelken Açıyoruz', 'Learn sailing and exploration words', 'story', 7, [
+    ['story-choices', 'Treasure Hunt', 'Sail to find the treasure', 4, 20],
+    ['word-match', 'Sailing Match', 'Match sailing words', 2, 10],
+    ['quick-quiz', 'Sailing Quiz', 'Answer sailing questions', 2, 15],
+    ['spelling-bee', 'Ocean Spell', 'Spell ocean words', 2, 10],
+  ], ['sail', 'island', 'lighthouse', 'treasure', 'boat'], 60),
+];
+
+// --- WORLD 18: My Feelings ---
+const w18Vocab: VocabularyWord[] = [
+  { english: 'happy', turkish: 'mutlu', emoji: '😄', category: 'emotions', phonetic: '/ˈhæpi/', exampleSentence: 'I am happy today!' },
+  { english: 'sad', turkish: 'üzgün', emoji: '😢', category: 'emotions', phonetic: '/sæd/', exampleSentence: 'She is sad because she lost her toy.' },
+  { english: 'angry', turkish: 'kızgın', emoji: '😠', category: 'emotions', phonetic: '/ˈæŋɡri/', exampleSentence: 'He is angry at the broken toy.' },
+  { english: 'scared', turkish: 'korkmuş', emoji: '😨', category: 'emotions', phonetic: '/skɛrd/', exampleSentence: 'I am scared of the dark.' },
+  { english: 'surprised', turkish: 'şaşırmış', emoji: '😲', category: 'emotions', phonetic: '/sərˈpraɪzd/', exampleSentence: 'She was surprised by the gift.' },
+  { english: 'excited', turkish: 'heyecanlı', emoji: '🤩', category: 'emotions', phonetic: '/ɪkˈsaɪtɪd/', exampleSentence: 'I am excited about the trip.' },
+  { english: 'bored', turkish: 'sıkılmış', emoji: '😑', category: 'emotions', phonetic: '/bɔːrd/', exampleSentence: 'He is bored with nothing to do.' },
+  { english: 'tired', turkish: 'yorgun', emoji: '😪', category: 'emotions', phonetic: '/ˈtaɪərd/', exampleSentence: 'I am tired after playing all day.' },
+  { english: 'proud', turkish: 'gururlu', emoji: '😤', category: 'emotions', phonetic: '/praʊd/', exampleSentence: 'I am proud of my drawing.' },
+  { english: 'confused', turkish: 'kafası karışmış', emoji: '😕', category: 'emotions', phonetic: '/kənˈfjuːzd/', exampleSentence: 'He is confused by the question.' },
+  { english: 'lonely', turkish: 'yalnız', emoji: '🥺', category: 'emotions', phonetic: '/ˈloʊnli/', exampleSentence: 'She feels lonely without friends.' },
+  { english: 'nervous', turkish: 'gergin', emoji: '😰', category: 'emotions', phonetic: '/ˈnɜːrvəs/', exampleSentence: 'I am nervous before the test.' },
+  { english: 'calm', turkish: 'sakin', emoji: '😌', category: 'emotions', phonetic: '/kɑːm/', exampleSentence: 'Take a breath and stay calm.' },
+  { english: 'brave', turkish: 'cesur', emoji: '🦁', category: 'emotions', phonetic: '/breɪv/', exampleSentence: 'She was brave at the doctor.' },
+  { english: 'kind', turkish: 'nazik', emoji: '🤗', category: 'emotions', phonetic: '/kaɪnd/', exampleSentence: 'He is kind to everyone.' },
+  { english: 'sorry', turkish: 'üzgün / özür dilerim', emoji: '😔', category: 'emotions', phonetic: '/ˈsɒri/', exampleSentence: 'I am sorry I broke your pencil.' },
+  { english: 'thankful', turkish: 'minnettar', emoji: '🙏', category: 'emotions', phonetic: '/ˈθæŋkfəl/', exampleSentence: 'I am thankful for my friends.' },
+  { english: 'loved', turkish: 'sevilmiş', emoji: '🥰', category: 'emotions', phonetic: '/lʌvd/', exampleSentence: 'I feel loved by my family.' },
+  { english: 'hurt', turkish: 'incinmiş', emoji: '😣', category: 'emotions', phonetic: '/hɜːrt/', exampleSentence: 'I feel hurt when someone is mean.' },
+  { english: 'silly', turkish: 'aptalca', emoji: '🤪', category: 'emotions', phonetic: '/ˈsɪli/', exampleSentence: 'We made silly faces together.' },
+];
+
+const w18Lessons: Lesson[] = [
+  L('w18', 18, 1, 'Basic Emotions', 'Temel Duygular', 'Learn core emotion words', 'vocabulary', 5, [
+    ['word-match', 'Emotion Match', 'Match emotion words to faces', 3, 10],
+    ['listening-challenge', 'How Do You Feel?', 'Listen and pick the emotion', 2, 15],
+    ['quick-quiz', 'Feeling Quiz', 'Answer basic emotion questions', 2, 10],
+  ], ['happy', 'sad', 'angry', 'scared', 'excited'], 40),
+  L('w18', 18, 2, 'When I Feel Sad', 'Üzgün Olduğumda', 'Learn about sad emotions and comfort', 'vocabulary', 5, [
+    ['word-match', 'Sad Match', 'Match sad emotion words', 3, 10],
+    ['sentence-scramble', 'I Feel...', 'Build sentences about feelings', 2, 15],
+    ['quick-quiz', 'Comfort Quiz', 'What helps when feeling sad?', 2, 10],
+  ], ['sad', 'lonely', 'hurt', 'tired', 'bored'], 40),
+  L('w18', 18, 3, 'When I Feel Happy', 'Mutlu Olduğumda', 'Learn about joyful emotions', 'vocabulary', 5, [
+    ['word-match', 'Happy Match', 'Match happy emotion words', 3, 10],
+    ['phonics-builder', 'Happy Sounds', 'Build happy words', 2, 15],
+    ['spelling-bee', 'Happy Spell', 'Spell positive emotion words', 2, 10],
+  ], ['happy', 'excited', 'proud', 'loved', 'thankful'], 40),
+  L('w18', 18, 4, 'Being Kind', 'Nazik Olmak', 'Learn kindness and empathy words', 'grammar', 6, [
+    ['sentence-scramble', 'Kindness Sentences', 'Build kind sentences', 3, 15],
+    ['quick-quiz', 'Kindness Quiz', 'Answer questions about being kind', 2, 15],
+    ['word-match', 'Kind Match', 'Match kind actions to words', 2, 10],
+  ], ['kind', 'sorry', 'calm', 'brave', 'thankful'], 45),
+  L('w18', 18, 5, 'Solving Problems', 'Sorunları Çözmek', 'Learn how to handle emotions', 'story', 7, [
+    ['story-choices', 'Feelings Story', 'Read and choose kind actions', 4, 20],
+    ['word-match', 'Problem Match', 'Match problems to solutions', 2, 10],
+    ['quick-quiz', 'Solution Quiz', 'Answer problem-solving questions', 2, 15],
+    ['spelling-bee', 'Feelings Spell', 'Spell emotion words', 2, 10],
+  ], ['confused', 'nervous', 'calm', 'brave', 'silly'], 60),
+];
+
+// --- WORLD 19: Science & Nature ---
+const w19Vocab: VocabularyWord[] = [
+  { english: 'flower', turkish: 'çiçek', emoji: '🌸', category: 'plants', phonetic: '/ˈflaʊər/', exampleSentence: 'The flower smells sweet.' },
+  { english: 'tree', turkish: 'ağaç', emoji: '🌳', category: 'plants', phonetic: '/triː/', exampleSentence: 'The tree is very tall.' },
+  { english: 'leaf', turkish: 'yaprak', emoji: '🍃', category: 'plants', phonetic: '/liːf/', exampleSentence: 'The leaf falls in autumn.' },
+  { english: 'root', turkish: 'kök', emoji: '🌱', category: 'plants', phonetic: '/ruːt/', exampleSentence: 'Roots grow underground.' },
+  { english: 'seed', turkish: 'tohum', emoji: '🌾', category: 'plants', phonetic: '/siːd/', exampleSentence: 'We plant a seed in the soil.' },
+  { english: 'grow', turkish: 'büyümek', emoji: '📈', category: 'plants', phonetic: '/ɡroʊ/', exampleSentence: 'Plants grow toward the sun.' },
+  { english: 'water', turkish: 'su', emoji: '💧', category: 'nature', phonetic: '/ˈwɔːtər/', exampleSentence: 'Plants need water to grow.' },
+  { english: 'soil', turkish: 'toprak', emoji: '🪨', category: 'nature', phonetic: '/sɔɪl/', exampleSentence: 'Seeds grow in the soil.' },
+  { english: 'sun', turkish: 'güneş', emoji: '☀️', category: 'nature', phonetic: '/sʌn/', exampleSentence: 'The sun gives plants energy.' },
+  { english: 'air', turkish: 'hava', emoji: '🌬️', category: 'nature', phonetic: '/ɛr/', exampleSentence: 'Plants clean the air.' },
+  { english: 'butterfly', turkish: 'kelebek', emoji: '🦋', category: 'insects', phonetic: '/ˈbʌtərflaɪ/', exampleSentence: 'The butterfly lands on the flower.' },
+  { english: 'bee', turkish: 'arı', emoji: '🐝', category: 'insects', phonetic: '/biː/', exampleSentence: 'The bee makes honey.' },
+  { english: 'ant', turkish: 'karınca', emoji: '🐜', category: 'insects', phonetic: '/ænt/', exampleSentence: 'Ants work together.' },
+  { english: 'bird', turkish: 'kuş', emoji: '🐦', category: 'birds', phonetic: '/bɜːrd/', exampleSentence: 'The bird sings in the tree.' },
+  { english: 'nest', turkish: 'yuva', emoji: '🪺', category: 'birds', phonetic: '/nɛst/', exampleSentence: 'The bird built a nest.' },
+  { english: 'mountain', turkish: 'dağ', emoji: '⛰️', category: 'nature', phonetic: '/ˈmaʊntɪn/', exampleSentence: 'The mountain is covered in snow.' },
+  { english: 'river', turkish: 'nehir', emoji: '🌊', category: 'nature', phonetic: '/ˈrɪvər/', exampleSentence: 'The river flows to the sea.' },
+  { english: 'lake', turkish: 'göl', emoji: '🏞️', category: 'nature', phonetic: '/leɪk/', exampleSentence: 'We fish at the lake.' },
+  { english: 'rock', turkish: 'kaya', emoji: '🪨', category: 'nature', phonetic: '/rɒk/', exampleSentence: 'The rock is hard and heavy.' },
+  { english: 'volcano', turkish: 'yanardağ', emoji: '🌋', category: 'nature', phonetic: '/vɒlˈkeɪnoʊ/', exampleSentence: 'The volcano erupted with fire.' },
+];
+
+const w19Lessons: Lesson[] = [
+  L('w19', 19, 1, 'Plants Grow', 'Bitkiler Büyür', 'Learn how plants grow', 'vocabulary', 5, [
+    ['word-match', 'Plant Match', 'Match plant words', 3, 10],
+    ['listening-challenge', 'Plant Sounds', 'Listen and identify plant words', 2, 15],
+    ['sentence-scramble', 'Plant Sentence', 'Put plant words in order', 2, 10],
+  ], ['flower', 'tree', 'leaf', 'root', 'seed', 'grow'], 40),
+  L('w19', 19, 2, 'Bugs & Insects', 'Böcekler', 'Discover insects and bugs', 'vocabulary', 5, [
+    ['word-match', 'Bug Match', 'Match bug words', 3, 10],
+    ['phonics-builder', 'Bug Builder', 'Build insect words', 2, 15],
+    ['quick-quiz', 'Bug Quiz', 'Answer insect questions', 2, 10],
+  ], ['butterfly', 'bee', 'ant', 'flower', 'soil'], 40),
+  L('w19', 19, 3, 'Birds & Nests', 'Kuşlar ve Yuvalar', 'Learn about birds in nature', 'vocabulary', 5, [
+    ['word-match', 'Bird Match', 'Match bird-related words', 3, 10],
+    ['sentence-scramble', 'Nest Sentence', 'Build bird sentences', 2, 15],
+    ['spelling-bee', 'Bird Spell', 'Spell bird words', 2, 10],
+  ], ['bird', 'nest', 'tree', 'air', 'grow'], 40),
+  L('w19', 19, 4, 'Earth & Rocks', 'Dünya ve Kayalar', 'Learn about earth and landforms', 'grammar', 6, [
+    ['sentence-scramble', 'Earth Sentences', 'Build earth sentences', 3, 15],
+    ['quick-quiz', 'Earth Quiz', 'Answer earth science questions', 2, 15],
+    ['word-match', 'Landform Match', 'Match landform words', 2, 10],
+  ], ['mountain', 'river', 'lake', 'rock', 'volcano'], 45),
+  L('w19', 19, 5, 'Water Cycle', 'Su Döngüsü', 'Learn about water in nature', 'story', 7, [
+    ['story-choices', 'A Drop of Water', 'Follow a water drop through nature', 4, 20],
+    ['word-match', 'Water Match', 'Match water cycle words', 2, 10],
+    ['quick-quiz', 'Nature Quiz', 'Answer water cycle questions', 2, 15],
+    ['spelling-bee', 'Nature Spell', 'Spell nature words', 2, 10],
+  ], ['water', 'river', 'lake', 'sun', 'air', 'soil'], 60),
+];
+
+// --- WORLD 20: Let's Celebrate! ---
+const w20Vocab: VocabularyWord[] = [
+  { english: 'birthday', turkish: 'doğum günü', emoji: '🎂', category: 'celebrations', phonetic: '/ˈbɜːrθdeɪ/', exampleSentence: 'Happy birthday to you!' },
+  { english: 'cake', turkish: 'pasta', emoji: '🍰', category: 'celebrations', phonetic: '/keɪk/', exampleSentence: 'We eat cake at a party.' },
+  { english: 'candle', turkish: 'mum', emoji: '🕯️', category: 'celebrations', phonetic: '/ˈkændəl/', exampleSentence: 'Blow out the candles!' },
+  { english: 'gift', turkish: 'hediye', emoji: '🎁', category: 'celebrations', phonetic: '/ɡɪft/', exampleSentence: 'I got a gift for my birthday.' },
+  { english: 'party', turkish: 'parti', emoji: '🎉', category: 'celebrations', phonetic: '/ˈpɑːrti/', exampleSentence: 'We had a big party.' },
+  { english: 'balloon', turkish: 'balon', emoji: '🎈', category: 'celebrations', phonetic: '/bəˈluːn/', exampleSentence: 'The balloon floats up high.' },
+  { english: 'dance', turkish: 'dans etmek', emoji: '💃', category: 'celebrations', phonetic: '/dæns/', exampleSentence: 'We dance at the party.' },
+  { english: 'music', turkish: 'müzik', emoji: '🎵', category: 'celebrations', phonetic: '/ˈmjuːzɪk/', exampleSentence: 'Music makes me want to dance.' },
+  { english: 'sing', turkish: 'şarkı söylemek', emoji: '🎤', category: 'celebrations', phonetic: '/sɪŋ/', exampleSentence: 'We sing happy birthday.' },
+  { english: 'celebrate', turkish: 'kutlamak', emoji: '🥳', category: 'celebrations', phonetic: '/ˈsɛlɪbreɪt/', exampleSentence: 'Let\'s celebrate together!' },
+  { english: 'new year', turkish: 'yeni yıl', emoji: '🎆', category: 'holidays', phonetic: '/njuː jɪər/', exampleSentence: 'Happy New Year to everyone!' },
+  { english: 'holiday', turkish: 'tatil / bayram', emoji: '🏖️', category: 'holidays', phonetic: '/ˈhɒlɪdeɪ/', exampleSentence: 'We visit family on the holiday.' },
+  { english: 'costume', turkish: 'kostüm', emoji: '🎭', category: 'celebrations', phonetic: '/ˈkɒstjuːm/', exampleSentence: 'I wore a funny costume.' },
+  { english: 'parade', turkish: 'geçit töreni', emoji: '🎊', category: 'celebrations', phonetic: '/pəˈreɪd/', exampleSentence: 'The parade went down the street.' },
+  { english: 'firework', turkish: 'havai fişek', emoji: '🎇', category: 'celebrations', phonetic: '/ˈfaɪərwɜːrk/', exampleSentence: 'Fireworks light up the sky.' },
+  { english: 'medal', turkish: 'madalya', emoji: '🏅', category: 'competition', phonetic: '/ˈmɛdəl/', exampleSentence: 'She won a gold medal.' },
+  { english: 'trophy', turkish: 'kupa', emoji: '🏆', category: 'competition', phonetic: '/ˈtroʊfi/', exampleSentence: 'He got a big trophy.' },
+  { english: 'winner', turkish: 'kazanan', emoji: '🥇', category: 'competition', phonetic: '/ˈwɪnər/', exampleSentence: 'She is the winner!' },
+  { english: 'champion', turkish: 'şampiyon', emoji: '🏆', category: 'competition', phonetic: '/ˈtʃæmpiən/', exampleSentence: 'He is the world champion.' },
+  { english: 'congratulations', turkish: 'tebrikler', emoji: '🎊', category: 'celebrations', phonetic: '/kənˌɡrætʃəˈleɪʃənz/', exampleSentence: 'Congratulations on your win!' },
+];
+
+const w20Lessons: Lesson[] = [
+  L('w20', 20, 1, 'Birthday Party', 'Doğum Günü Partisi', 'Learn birthday party words', 'vocabulary', 5, [
+    ['word-match', 'Birthday Match', 'Match birthday words', 3, 10],
+    ['listening-challenge', 'Party Sounds', 'Listen and pick party words', 2, 15],
+    ['sentence-scramble', 'Happy Birthday!', 'Build birthday sentences', 2, 10],
+  ], ['birthday', 'cake', 'candle', 'gift', 'party', 'balloon'], 40),
+  L('w20', 20, 2, 'Holidays', 'Bayramlar', 'Learn about holidays and traditions', 'vocabulary', 5, [
+    ['word-match', 'Holiday Match', 'Match holiday words', 3, 10],
+    ['phonics-builder', 'Holiday Builder', 'Build holiday words', 2, 15],
+    ['quick-quiz', 'Holiday Quiz', 'Answer holiday questions', 2, 10],
+  ], ['new year', 'holiday', 'costume', 'parade', 'firework'], 40),
+  L('w20', 20, 3, 'Music & Dance', 'Müzik ve Dans', 'Learn about music and dance', 'vocabulary', 5, [
+    ['word-match', 'Music Match', 'Match music words', 3, 10],
+    ['sentence-scramble', 'Dance Sentence', 'Build music sentences', 2, 15],
+    ['spelling-bee', 'Music Spell', 'Spell music words', 2, 10],
+  ], ['dance', 'music', 'sing', 'celebrate', 'party'], 40),
+  L('w20', 20, 4, 'Games & Competitions', 'Oyunlar ve Yarışmalar', 'Learn competition words', 'grammar', 6, [
+    ['sentence-scramble', 'Competition Sentences', 'Build competition sentences', 3, 15],
+    ['quick-quiz', 'Games Quiz', 'Answer competition questions', 2, 15],
+    ['word-match', 'Trophy Match', 'Match competition words', 2, 10],
+  ], ['medal', 'trophy', 'winner', 'champion', 'congratulations'], 45),
+  L('w20', 20, 5, 'We Did It!', 'Başardık!', 'Celebrate all your learning', 'story', 7, [
+    ['story-choices', 'The Big Celebration', 'Read about a big celebration', 4, 20],
+    ['word-match', 'Celebration Match', 'Match celebration words', 2, 10],
+    ['quick-quiz', 'Celebration Quiz', 'Answer celebration questions', 2, 15],
+    ['spelling-bee', 'Celebrate Spell', 'Spell celebration words', 2, 10],
+  ], ['celebrate', 'winner', 'congratulations', 'firework', 'trophy'], 60),
+];
+
 // --- BUILD WORLDS ---
 
 function buildWorld(
@@ -603,6 +974,48 @@ export const WORLDS: World[] = [
     'Dünyayı gez ve farklı kültürleri öğren!',
     '✈️', '#009688', '#009688', '#80CBC4', 'I want to + verb',
     w12Lessons, w12Vocab),
+
+  buildWorld(14, 'w14', 'Weather World', 'Hava Dünyası', 'Weather & Seasons',
+    'Discover weather, seasons, and the world around you!',
+    'Hava durumunu, mevsimleri ve çevreni keşfet!',
+    '🌦️', '#2196F3', '#2196F3', '#90CAF9', 'It is + weather adjective',
+    w14Lessons, w14Vocab),
+
+  buildWorld(15, 'w15', 'My Town', 'Şehrim', 'Community & Places',
+    'Explore your town and meet community helpers!',
+    'Şehrini keşfet ve toplum kahramanlarıyla tanış!',
+    '🏙️', '#795548', '#795548', '#BCAAA4', 'Where is the + place?',
+    w15Lessons, w15Vocab),
+
+  buildWorld(16, 'w16', 'Time & Routines', 'Zaman ve Rutinler', 'Daily Routines',
+    'Learn daily routines and how to talk about time!',
+    'Günlük rutinleri ve zamanı konuşmayı öğren!',
+    '⏰', '#FF9800', '#FF9800', '#FFCC80', 'I + verb + every + time',
+    w16Lessons, w16Vocab),
+
+  buildWorld(17, 'w17', 'The Ocean', 'Okyanus', 'Ocean & Sea Life',
+    'Dive into the ocean and meet amazing sea creatures!',
+    'Okyanuslara dal ve muhteşem deniz canlılarıyla tanış!',
+    '🌊', '#1565C0', '#1565C0', '#64B5F6', 'There is / there are in the ocean',
+    w17Lessons, w17Vocab),
+
+  buildWorld(18, 'w18', 'My Feelings', 'Duygularım', 'Emotions & Empathy',
+    'Understand your feelings and be kind to others!',
+    'Duygularını anla ve başkalarına nazik ol!',
+    '💛', '#E91E63', '#E91E63', '#F48FB1', 'I feel + emotion',
+    w18Lessons, w18Vocab),
+
+  buildWorld(19, 'w19', 'Science & Nature', 'Bilim ve Doğa', 'Science & Nature',
+    'Explore plants, insects, rocks, and the wonders of nature!',
+    'Bitkileri, böcekleri, kayaları ve doğanın harikalarını keşfet!',
+    '🔬', '#558B2F', '#558B2F', '#AED581', 'Questions with How/Why in nature',
+    w19Lessons, w19Vocab),
+
+  buildWorld(20, 'w20', 'Let\'s Celebrate!', 'Kutlayalım!', 'Celebrations & Holidays',
+    'Party, sing, dance, and celebrate every achievement!',
+    'Parti yap, şarkı söyle, dans et ve her başarını kutla!',
+    '🎉', '#F9A825', '#F9A825', '#FFD54F', 'Let\'s + verb to celebrate',
+    w20Lessons, w20Vocab),
 ];
 
 // --- HELPER FUNCTIONS ---

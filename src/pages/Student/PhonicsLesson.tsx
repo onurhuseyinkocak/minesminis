@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import './PhonicsLesson.css';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, ArrowRight, ArrowLeft, Sparkles, Mic, BookOpen, PenTool, Trophy, Search, Target } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../../components/ui';
@@ -232,10 +232,10 @@ function PhonicsLesson() {
     return (
       <div className="pl-container">
         <Card variant="elevated" padding="xl">
-          <div style={{ textAlign: 'center' }}>
-            <Search size={48} color="#1A6B5A" />
-            <h2 style={{ color: '#1A6B5A' }}>Ses bulunamadı</h2>
-            <p style={{ color: '#94A3B8' }}>Bu ses dersini bulamadık.</p>
+          <div className="pl-not-found">
+            <Search size={48} color="var(--green-800, #1A6B5A)" />
+            <h2 className="pl-not-found__title">Ses bulunamadı</h2>
+            <p className="pl-not-found__subtitle">Bu ses dersini bulamadık.</p>
             <Button variant="primary" onClick={() => navigate('/dashboard')}>
               Ana Sayfaya Dön
             </Button>
@@ -315,7 +315,7 @@ function PhonicsLesson() {
           margin: '0 auto', boxShadow: `0 8px 24px ${getWordColor(sound.grapheme)}44`,
         }}
       >
-        <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', fontFamily: 'Nunito, sans-serif', lineHeight: 1 }}>
+        <span className="pl-letter-text">
           {sound.grapheme.toUpperCase()}
         </span>
       </motion.div>
@@ -324,7 +324,7 @@ function PhonicsLesson() {
         <p className="pl-actionText">{sound.action}</p>
       </div>
 
-      <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div className="pl-btn-row">
         <Button
           variant="primary"
           size="lg"
@@ -405,19 +405,14 @@ function PhonicsLesson() {
                   backgroundColor: clicked ? 'rgba(34,197,94,0.1)' : '#F8F9FA',
                 }}
               >
-                <div style={{
-                  width: 36, height: 36, borderRadius: '50%', background: kw.color,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0, fontWeight: 900, color: '#fff', fontSize: '1rem',
-                  fontFamily: 'Nunito, sans-serif',
-                }}>
+                <div className="pl-keyword-avatar" style={{ background: kw.color }}>
                   {kw.word.charAt(0).toUpperCase()}
                 </div>
-                <span style={{ fontSize: '1rem', fontWeight: 700 }}>
+                <span className="pl-keyword-label">
                   {idx >= 0 ? (
                     <>
                       {kw.word.slice(0, idx)}
-                      <span style={{ color: 'var(--gold-500)', fontWeight: 800 }}>
+                      <span className="pl-keyword-highlight">
                         {kw.word.slice(idx, idx + sound.grapheme.length)}
                       </span>
                       {kw.word.slice(idx + sound.grapheme.length)}
@@ -461,11 +456,11 @@ function PhonicsLesson() {
       className="pl-stepContent"
     >
       {blendingDone ? (
-        <div style={{ textAlign: 'center' }}>
+        <div className="pl-blending-done">
           <Badge variant="success" icon={<Sparkles size={14} />}>
             Birleştirme tamamlandı!
           </Badge>
-          <div style={{ marginTop: '1rem' }}>
+          <div className="pl-blending-actions">
             <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
               Devam Et
             </Button>
@@ -496,9 +491,9 @@ function PhonicsLesson() {
           animate={{ opacity: 1 }}
           className="pl-stepContent"
         >
-          <div style={{ textAlign: 'center' }}>
-            <Target size={48} color="#1A6B5A" />
-            <h3 style={{ color: '#1A6B5A' }}>Harika bölme!</h3>
+          <div className="pl-not-found">
+            <Target size={48} color="var(--green-800, #1A6B5A)" />
+            <h3 className="pl-not-found__title">Harika bölme!</h3>
             <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
               Devam Et
             </Button>
@@ -517,7 +512,7 @@ function PhonicsLesson() {
       >
         <p className="pl-stepDesc">Bu kelimeyi seslere böl!</p>
 
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="pl-segmenting-counter">
           <Badge variant="info">{segmentingIndex + 1}/{segmentingWords.length}</Badge>
         </div>
 
@@ -526,7 +521,7 @@ function PhonicsLesson() {
           className="pl-wordDisplay"
           whileTap={{ scale: 0.95 }}
         >
-          <Volume2 size={18} style={{ marginRight: '0.5rem' }} />
+          <Volume2 size={18} className="pl-volume-icon" />
           {currentWord}
         </motion.button>
 
@@ -592,9 +587,9 @@ function PhonicsLesson() {
         exit={{ opacity: 0, y: -20 }}
         className="pl-stepContent"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
-          <PenTool size={20} color="#1A6B5A" />
-          <p className="pl-stepDesc" style={{ margin: 0 }}>Harfi parmağınla takip et!</p>
+        <div className="pl-reading-header">
+          <PenTool size={20} color="var(--green-800, #1A6B5A)" />
+          <p className="pl-stepDesc pl-stepDesc--no-margin">Harfi parmağınla takip et!</p>
         </div>
 
         <LetterTracing
@@ -623,13 +618,13 @@ function PhonicsLesson() {
         exit={{ opacity: 0, y: -20 }}
         className="pl-stepContent"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
-          <BookOpen size={20} color="#1A6B5A" />
-          <p className="pl-stepDesc" style={{ margin: 0 }}>Herhangi bir kelimeye dokunarak dinle!</p>
+        <div className="pl-reading-header">
+          <BookOpen size={20} color="var(--green-800, #1A6B5A)" />
+          <p className="pl-stepDesc pl-stepDesc--no-margin">Herhangi bir kelimeye dokunarak dinle!</p>
         </div>
 
         <Card variant="elevated" padding="lg">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', lineHeight: 2.2 }}>
+          <div className="pl-words-flex">
             {words.map((word, i) => (
               <motion.button
                 key={i}
@@ -765,32 +760,32 @@ function PhonicsLesson() {
           <Trophy size={48} color="#fff" />
         </motion.div>
 
-        <h2 style={{ textAlign: 'center', color: '#1A6B5A', margin: 0 }}>
+        <h2 className="pl-completion-title">
           {isGroupComplete ? 'Grup Tamamlandı!' : 'Harika iş!'}
         </h2>
-        <p style={{ textAlign: 'center', color: '#94A3B8', margin: 0 }}>
+        <p className="pl-completion-subtitle">
           {isGroupComplete
             ? `${currentGroup?.name || 'Bu gruptaki'} tüm sesleri öğrendin!`
             : <>&quot;{sound.grapheme}&quot; sesini öğrendin!</>}
         </p>
 
         <Card variant="elevated" padding="lg">
-          <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
+          <div className="pl-completion-card">
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{totalXP} XP kazandın!
             </Badge>
             {gardenPlant && plantStage && (
-              <p style={{ fontSize: '0.95rem', color: '#1A6B5A', margin: 0, fontWeight: 700 }}>
+              <p className="pl-plant-grew">
                 Bitkini büyüdü! Artık {plantStage.name === 'flowering' ? 'tam çiçek açtı' : `${plantStage.name} aşamasında`}!
               </p>
             )}
-            <p style={{ fontSize: '0.85rem', color: '#64748B', margin: 0 }}>
+            <p className="pl-mastery-note">
               &quot;{sound.grapheme}&quot; sesi ustalık tablona eklendi
             </p>
           </div>
         </Card>
 
-        <div style={{ display: 'flex', gap: '0.75rem', flexDirection: 'column' }}>
+        <div className="pl-next-actions">
           {nextSoundInGroup ? (
             <Button
               variant="primary"
@@ -838,7 +833,7 @@ function PhonicsLesson() {
         <button type="button" onClick={goBack} disabled={stepIndex === 0} className="pl-backBtn">
           <ArrowLeft size={20} />
         </button>
-        <div style={{ flex: 1 }}>
+        <div className="pl-progress-row">
           <ProgressBar value={progress} variant="success" size="sm" animated />
         </div>
         <Badge variant="info">{STEP_LABELS[currentStep]}</Badge>
@@ -872,6 +867,31 @@ function PhonicsLesson() {
         {currentStep === 'sing' && renderSing()}
         {currentStep === 'celebrate' && renderCelebrate()}
       </AnimatePresence>
+
+      {/* Shortcut to Turkish pronunciation trap trainer */}
+      <div style={{
+        textAlign: 'center',
+        padding: '0.5rem 0 0.25rem',
+      }}>
+        <Link
+          to="/phonetics/traps"
+          style={{
+            fontSize: '0.8125rem',
+            fontWeight: 700,
+            color: 'var(--primary)',
+            textDecoration: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            padding: '0.375rem 0.75rem',
+            borderRadius: '99px',
+            border: '1.5px solid var(--primary)',
+            background: 'transparent',
+          }}
+        >
+          Türkçe Zorluklarım
+        </Link>
+      </div>
 
       <MimiGuide
         message="Listen carefully, then try saying the sound!"

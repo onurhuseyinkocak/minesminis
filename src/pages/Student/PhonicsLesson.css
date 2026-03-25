@@ -167,3 +167,161 @@
   border-radius: 0.25rem;
   transition: background 0.15s;
 }
+
+/* ── Not-found block ── */
+.pl-not-found {
+  text-align: center;
+}
+
+.pl-not-found__title {
+  color: var(--green-800, #1A6B5A);
+}
+
+.pl-not-found__subtitle {
+  color: var(--text-muted, #94A3B8);
+}
+
+/* ── Big letter circle ── */
+.pl-letter-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pl-letter-text {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--white, #fff);
+  font-family: Nunito, sans-serif;
+  line-height: 1;
+}
+
+/* ── Action buttons row ── */
+.pl-btn-row {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Keyword card avatar ── */
+.pl-keyword-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pl-keyword-label {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pl-keyword-highlight {
+  color: var(--gold-500);
+  font-weight: 800;
+}
+
+/* ── Blending done ── */
+.pl-blending-done {
+  text-align: center;
+}
+
+.pl-blending-actions {
+  margin-top: 1rem;
+}
+
+/* ── Segmenting center row ── */
+.pl-segmenting-counter {
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Volume icon ── */
+.pl-volume-icon {
+  margin-right: 0.5rem;
+}
+
+/* ── Reading step header ── */
+.pl-reading-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.pl-stepDesc--no-margin {
+  margin: 0;
+}
+
+/* ── Readable words row ── */
+.pl-words-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  line-height: 2.2;
+}
+
+/* ── Completion block ── */
+.pl-completion-center {
+  text-align: center;
+}
+
+.pl-completion-title {
+  text-align: center;
+  color: var(--green-800, #1A6B5A);
+  margin: 0;
+}
+
+.pl-completion-subtitle {
+  text-align: center;
+  color: var(--text-muted, #94A3B8);
+  margin: 0;
+}
+
+.pl-completion-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.pl-plant-grew {
+  font-size: 0.95rem;
+  color: var(--green-800, #1A6B5A);
+  margin: 0;
+  font-weight: 700;
+}
+
+.pl-mastery-note {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #64748B);
+  margin: 0;
+}
+
+/* ── Next sound actions ── */
+.pl-next-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: column;
+}
+
+/* ── Progress bar row ── */
+.pl-progress-row {
+  flex: 1;
+}
+
+/* ── Step dot ── */
+.pl-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}

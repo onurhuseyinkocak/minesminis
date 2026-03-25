@@ -25,7 +25,6 @@ import {
     Tooltip,
     ResponsiveContainer
 } from 'recharts';
-import toast from 'react-hot-toast';
 import { supabase } from '../../config/supabase';
 import { fallbackGames, fallbackVideos, fallbackWorksheets } from '../../data/fallbackData';
 import { kidsWords } from '../../data/wordsData';

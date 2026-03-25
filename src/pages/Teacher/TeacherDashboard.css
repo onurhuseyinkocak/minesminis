@@ -1,0 +1,846 @@
+/* ============================================================
+   TEACHER DASHBOARD — Professional classroom management UI
+   All colors via CSS custom properties (var())
+   Mobile-first, responsive
+   ============================================================ */
+
+/* ── Page wrapper ── */
+.td-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding-bottom: var(--space-16);
+}
+
+/* ── Page header ── */
+.td-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-6) var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.td-header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.td-header-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--secondary-pale);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+  flex-shrink: 0;
+}
+
+.td-header h1 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.td-header-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Main body container ── */
+.td-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-6);
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .td-body {
+    grid-template-columns: 1fr;
+    padding: var(--space-4);
+  }
+}
+
+/* ── Section card ── */
+.td-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.td-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.td-section-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.td-section-body {
+  padding: var(--space-4) var(--space-5);
+}
+
+/* ── Classroom card ── */
+.td-class-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all 150ms ease;
+  background: var(--bg-card);
+  margin-bottom: var(--space-3);
+}
+
+.td-class-card:last-child {
+  margin-bottom: 0;
+}
+
+.td-class-card:hover {
+  border-color: var(--secondary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.td-class-card.active {
+  border-color: var(--secondary);
+  background: var(--secondary-pale);
+}
+
+.td-class-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.td-class-name {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1);
+}
+
+.td-class-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+.td-join-code {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px var(--space-2);
+  margin-top: var(--space-2);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.td-join-code:hover {
+  background: var(--border);
+}
+
+.td-join-code-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--secondary);
+  user-select: all;
+}
+
+.td-join-code-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Buttons ── */
+.td-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 150ms ease;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.td-btn-primary {
+  background: var(--secondary);
+  color: var(--text-on-primary);
+}
+
+.td-btn-primary:hover {
+  background: var(--secondary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.td-btn-secondary {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.td-btn-secondary:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+.td-btn-sm {
+  padding: 5px var(--space-3);
+  font-size: 12px;
+}
+
+.td-btn-danger {
+  background: var(--error-pale);
+  color: var(--error);
+  border: 1px solid var(--error-soft);
+}
+
+.td-btn-danger:hover {
+  background: var(--error-soft);
+}
+
+/* ── Create classroom form ── */
+.td-create-form {
+  background: var(--secondary-pale);
+  border: 1.5px solid var(--secondary-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.td-create-form h3 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--secondary);
+  margin: 0 0 var(--space-4);
+}
+
+.td-form-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.td-form-field {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.td-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.td-input {
+  padding: 9px var(--space-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  transition: border-color 150ms ease;
+  outline: none;
+}
+
+.td-input:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(13, 92, 77, 0.08);
+}
+
+.td-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Success join code banner ── */
+.td-code-banner {
+  background: var(--success-pale);
+  border: 1.5px solid var(--success-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-top: var(--space-4);
+  text-align: center;
+}
+
+.td-code-banner-label {
+  font-size: 12px;
+  color: var(--success);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.td-code-banner-code {
+  font-family: 'Nunito', sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--secondary);
+}
+
+.td-code-banner-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Right panel (detail) ── */
+.td-detail-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Roster controls ── */
+.td-roster-controls {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.td-search {
+  flex: 1;
+  min-width: 180px;
+}
+
+.td-sort-select {
+  padding: 8px var(--space-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  cursor: pointer;
+  outline: none;
+}
+
+.td-sort-select:focus {
+  border-color: var(--secondary);
+}
+
+/* ── Roster table ── */
+.td-roster-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.td-roster-table thead th {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.td-roster-table thead th:first-child {
+  border-radius: var(--radius-sm) 0 0 0;
+}
+
+.td-roster-table thead th:last-child {
+  border-radius: 0 var(--radius-sm) 0 0;
+}
+
+.td-roster-row {
+  border-bottom: 1px solid var(--border);
+  transition: background 100ms ease;
+  cursor: pointer;
+}
+
+.td-roster-row:last-child {
+  border-bottom: none;
+}
+
+.td-roster-row:hover {
+  background: var(--bg-muted);
+}
+
+.td-roster-row.at-risk {
+  background: var(--warning-pale);
+}
+
+.td-roster-row.at-risk:hover {
+  background: var(--warning-soft);
+}
+
+.td-roster-row.expanded {
+  background: var(--bg-muted);
+}
+
+.td-roster-row td {
+  padding: var(--space-3) var(--space-3);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text-body);
+  vertical-align: middle;
+}
+
+.td-student-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.td-avatar-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--secondary-pale);
+  color: var(--secondary);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.td-at-risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--warning-pale);
+  color: var(--warning);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  font-family: 'Inter', sans-serif;
+  border: 1px solid var(--warning-light);
+}
+
+.td-level-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-indigo-pale);
+  color: var(--accent-indigo);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Expanded phonics row ── */
+.td-phonics-expand {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.td-phonics-expand td {
+  padding: var(--space-4) var(--space-4);
+}
+
+.td-phonics-expand-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.td-phonics-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.td-phonics-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.td-phonics-dot-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.td-phonics-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: transform 100ms ease;
+  position: relative;
+}
+
+.td-phonics-dot:hover {
+  transform: scale(1.2);
+}
+
+.td-phonics-dot.mastery-none {
+  background: var(--bg-muted);
+  border-color: var(--border);
+}
+
+.td-phonics-dot.mastery-low {
+  background: var(--warning-pale);
+  border-color: var(--warning-light);
+}
+
+.td-phonics-dot.mastery-mid {
+  background: var(--info-pale);
+  border-color: var(--info-soft);
+}
+
+.td-phonics-dot.mastery-high {
+  background: var(--success-pale);
+  border-color: var(--success-light);
+}
+
+.td-phonics-dot.mastery-full {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.td-phonics-dot-label {
+  font-size: 9px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── Progress summary ── */
+.td-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.td-stat-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.td-stat-value {
+  font-family: 'Nunito', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: var(--space-1);
+}
+
+.td-stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── At-risk list ── */
+.td-atrisk-list {
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.td-atrisk-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--warning-pale);
+  border: 1px solid var(--warning-light);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text-body);
+}
+
+.td-atrisk-days {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--warning);
+  font-weight: 700;
+}
+
+/* ── Top performers ── */
+.td-performers-list {
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.td-performer-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text-body);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.td-performer-medal {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.td-performer-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.td-performer-xp {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-amber);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Homework section ── */
+.td-hw-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+}
+
+.td-hw-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .td-hw-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.td-hw-assigned-banner {
+  background: var(--success-pale);
+  border: 1.5px solid var(--success-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── Empty state ── */
+.td-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  gap: var(--space-3);
+}
+
+.td-empty-icon {
+  font-size: 40px;
+  opacity: 0.4;
+}
+
+.td-empty-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.td-empty-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 260px;
+}
+
+/* ── Select classroom prompt ── */
+.td-select-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+  gap: var(--space-3);
+  color: var(--text-muted);
+}
+
+.td-select-prompt-icon {
+  font-size: 48px;
+  opacity: 0.3;
+}
+
+.td-select-prompt p {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ── Copy toast ── */
+.td-copy-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--secondary);
+  color: var(--text-on-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  pointer-events: none;
+  animation: td-toast-in 0.2s ease;
+}
+
+@keyframes td-toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Responsive left panel ── */
+@media (max-width: 900px) {
+  .td-header {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  .td-section-body {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .td-roster-table thead th,
+  .td-roster-row td {
+    padding: var(--space-2);
+  }
+}
+
+/* ── Collapsed / expanded chevron ── */
+.td-chevron {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  transition: transform 200ms ease;
+  opacity: 0.5;
+}
+
+.td-chevron.open {
+  transform: rotate(180deg);
+}
+
+
+/* ── Student report button ── */
+
+.td-report-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: var(--primary-pale);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.td-report-btn:hover {
+  background: var(--primary);
+  color: var(--text-on-primary);
+}
+
+@media print {
+  .td-report-btn {
+    display: none;
+  }
+}

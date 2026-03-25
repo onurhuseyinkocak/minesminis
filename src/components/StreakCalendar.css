@@ -1,0 +1,205 @@
+/* ============================================================
+   StreakCalendar — MinesMinis Design System tokens only
+   No hardcoded hex values.
+   ============================================================ */
+
+/* ---- shared wrapper ---- */
+.streak-calendar {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+}
+
+/* ================================================================
+   COMPACT MODE  (5 rows × 7 cols, last 35 days)
+   ================================================================ */
+.streak-calendar--compact .sc-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.streak-calendar--compact .sc-day {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+/* ================================================================
+   FULL MODE  (month calendar)
+   ================================================================ */
+.streak-calendar--full {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.streak-calendar--full .sc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sc-header-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: var(--font-display, 'Nunito', sans-serif);
+}
+
+.sc-nav-btn {
+  background: var(--bg-muted);
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sc-nav-btn:hover {
+  background: var(--primary-pale);
+  color: var(--primary);
+}
+
+.sc-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.sc-weekday-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+}
+
+.streak-calendar--full .sc-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.streak-calendar--full .sc-day {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.15s ease;
+  margin: 0 auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+}
+
+/* ================================================================
+   DAY STATES  (shared between both modes)
+   ================================================================ */
+
+/* Empty / placeholder */
+.sc-day--empty {
+  visibility: hidden;
+}
+
+/* No activity */
+.sc-day--none {
+  background: var(--bg-muted);
+  color: var(--text-muted);
+}
+
+/* Active day */
+.sc-day--active {
+  background: var(--success);
+  color: var(--text-on-primary);
+}
+
+/* Streak day (still active, highlighted differently) */
+.sc-day--streak {
+  background: var(--primary);
+  color: var(--text-on-primary);
+}
+
+/* Freeze used */
+.sc-day--freeze {
+  background: var(--info);
+  color: var(--text-on-primary);
+}
+
+/* Today ring */
+.sc-day--today {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Future day */
+.sc-day--future {
+  background: transparent;
+  color: var(--text-muted);
+  opacity: 0.35;
+}
+
+/* ================================================================
+   LEGEND  (full mode only)
+   ================================================================ */
+.sc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.sc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.sc-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sc-legend-dot--active  { background: var(--success); }
+.sc-legend-dot--streak  { background: var(--primary); }
+.sc-legend-dot--freeze  { background: var(--info); }
+.sc-legend-dot--none    { background: var(--bg-muted); border: 1px solid var(--border); }
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 400px) {
+  .streak-calendar--compact .sc-day {
+    width: 24px;
+    height: 24px;
+  }
+
+  .streak-calendar--full .sc-day {
+    width: 30px;
+    height: 30px;
+    font-size: 0.65rem;
+  }
+}

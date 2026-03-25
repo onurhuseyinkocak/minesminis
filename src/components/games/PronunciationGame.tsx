@@ -47,7 +47,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   const isSupported = SRConstructor !== null;
 
   const speakWord = useCallback((text: string) => {
-    speak(text, 0.85).catch(() => {/* fallback handled inside speak() */});
+    speak(text);
   }, []);
 
   const goToNext = useCallback(() => {

@@ -41,6 +41,9 @@ export const LS_OFFLINE_CACHE_PREFIX = 'mm_cache_';
 // ── Site Settings (Admin) ────────────────────────────────────────────────────
 export const LS_SITE_SETTINGS = 'siteSettings';
 
+// ── Reading Progress ──────────────────────────────────────────────────────────
+export const LS_READING_PROGRESS = 'mm_reading_progress';
+
 // ── Stores ───────────────────────────────────────────────────────────────────
 export const LS_GAMES_STORE = 'minesminis_games';
 export const LS_WORDS_STORE = 'minesminis_words';

@@ -9,12 +9,11 @@ import toast from 'react-hot-toast';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import {
   ArrowLeft, ArrowRight, Rocket, Check, Plus, Trash2,
-  GraduationCap, Users, Heart,
+  Users, Heart,
   Baby, User, BookOpen, Globe,
   Volume2, Lock as LockIcon, CheckCircle, MapPin, Settings, UserPlus,
 } from 'lucide-react';
 import { Button } from '../components/ui';
-import LottieCharacter from '../components/LottieCharacter';
 import './Onboarding.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -28,11 +27,6 @@ interface ChildEntry {
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
-const ROLE_CARDS_DATA: { value: UserRole; icon: React.ReactNode; title: string; titleTr: string; subtitle: string; subtitleTr: string; detail: string; detailTr: string; color: string }[] = [
-  { value: 'student', icon: <GraduationCap size={28} />, title: 'Student', titleTr: 'Öğrenci', subtitle: "I'm learning English", subtitleTr: 'İngilizce öğreniyorum', detail: 'Ages 3-10', detailTr: '3-10 yaş', color: 'var(--primary)' },
-  { value: 'teacher', icon: <Users size={28} />, title: 'Teacher', titleTr: 'Öğretmen', subtitle: 'I teach English', subtitleTr: 'İngilizce öğretiyorum', detail: 'Classroom tools', detailTr: 'Sınıf araçları', color: 'var(--secondary, var(--primary))' },
-  { value: 'parent', icon: <Heart size={28} />, title: 'Parent', titleTr: 'Ebeveyn', subtitle: 'My child is learning', subtitleTr: 'Çocuğum öğreniyor', detail: 'Track progress', detailTr: 'İlerlemeyi takip et', color: 'var(--accent, var(--primary))' },
-];
 
 const STUDENT_AGE_GROUPS: { value: string; label: string; phase: string; icon: React.ReactNode; color: string }[] = [
   { value: '3-5', label: 'Ages 3-5', phase: 'Little Ears', icon: <Baby size={24} />, color: 'var(--primary)' },
@@ -77,29 +71,6 @@ const PLACEMENT_QUESTIONS = [
     ],
     correct: 'correct',
     skill: 'blending',
-  },
-  {
-    id: 4,
-    title: 'Read this word',
-    instruction: 'What does "cat" mean?',
-    options: [
-      { label: 'A small furry animal', value: 'correct' },
-      { label: 'A loyal pet that barks', value: 'wrong1' },
-      { label: 'A creature that flies', value: 'wrong2' },
-    ],
-    correct: 'correct',
-    skill: 'decoding',
-  },
-  {
-    id: 5,
-    title: 'Read this sentence',
-    instruction: '"The sun is hot." -- Is this TRUE or FALSE?',
-    options: [
-      { label: 'True', value: 'correct' },
-      { label: 'False', value: 'wrong1' },
-    ],
-    correct: 'correct',
-    skill: 'comprehension',
   },
 ];
 
@@ -163,15 +134,15 @@ const slideVariants = {
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const Onboarding: React.FC = () => {
-  const { user, refreshUserProfile, setHasSkippedSetup } = useAuth();
+  const { user, refreshUserProfile } = useAuth();
   const { lang } = useLanguage();
   const isTr = lang === 'tr';
   const navigate = useNavigate();
 
-  // Shared state
-  const [step, setStep] = useState(1);
+  // Shared state — start at step 2, role auto-set to student
+  const [step, setStep] = useState(2);
   const [direction, setDirection] = useState(1);
-  const [role, setRole] = useState<UserRole | ''>('');
+  const [role] = useState<UserRole | ''>('student');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Student state
@@ -196,12 +167,9 @@ const Onboarding: React.FC = () => {
   const [weeklyEmails, setWeeklyEmails] = useState(true);
 
   // ── Step calculations ──────────────────────────────────────────────────────
-  const totalSteps = role === 'student' ? 5 : role === 'teacher' ? 4 : role === 'parent' ? 3 : 1;
+  // Student: step 2=age, 3=placement, 4=meet mimi (learning path merged in)
+  const totalSteps = role === 'student' ? 4 : role === 'teacher' ? 4 : role === 'parent' ? 3 : 4;
 
-  const handleSkip = () => {
-    setHasSkippedSetup(true);
-    navigate('/dashboard');
-  };
 
   const nextStep = useCallback(() => {
     setDirection(1);
@@ -257,13 +225,12 @@ const Onboarding: React.FC = () => {
 
   // ── Can proceed check ─────────────────────────────────────────────────────
   const canProceed = (): boolean => {
-    if (step === 1) return !!role;
+    if (step === 1) return true; // auto-skipped
 
     if (role === 'student') {
       if (step === 2) return !!ageGroup;
       if (step === 3) return placementDone;
       if (step === 4) return true;
-      if (step === 5) return true;
     }
 
     if (role === 'teacher') {
@@ -440,62 +407,6 @@ const Onboarding: React.FC = () => {
     );
   };
 
-  // ── Step 1: Role Selection ────────────────────────────────────────────────
-
-  const renderRoleSelection = () => (
-    <motion.div
-      key="step-role"
-      custom={direction}
-      variants={slideVariants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="onboarding-step"
-    >
-      <h2>{isTr ? 'MinesMinis\'i nasıl kullanacaksın?' : 'How will you use MinesMinis?'}</h2>
-      <p className="onboarding-step-sub">{isTr ? 'Kişiselleştirilmiş deneyim için rolünü seç' : 'Choose your role to get a personalized experience'}</p>
-
-      <div className="onboarding-role-grid">
-        {ROLE_CARDS_DATA.filter(r => r.value === 'student').map((r) => (
-          <motion.button
-            key={r.value}
-            type="button"
-            className={`onboarding-role-card ${role === r.value ? 'selected' : ''}`}
-            onClick={() => setRole(r.value)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <span className="onboarding-role-icon-wrap" style={{ background: role === r.value ? 'var(--primary)' : 'var(--bg-muted)' }}>
-              <span style={{ color: role === r.value ? 'var(--text-on-primary)' : 'var(--primary)' }}>{r.icon}</span>
-            </span>
-            <div className="onboarding-role-text">
-              <span className="onboarding-role-title">{isTr ? r.titleTr : r.title}</span>
-              <span className="onboarding-role-subtitle">{isTr ? r.subtitleTr : r.subtitle}</span>
-              <span className="onboarding-role-detail">{isTr ? r.detailTr : r.detail}</span>
-            </div>
-          </motion.button>
-        ))}
-      </div>
-
-      <div className="onboarding-actions">
-        <Button
-          variant="primary"
-          size="lg"
-          onClick={nextStep}
-          disabled={!canProceed()}
-          icon={<ArrowRight size={18} />}
-        >
-          {isTr ? 'Devam' : 'Continue'}
-        </Button>
-      </div>
-
-      <div className="onboarding-skip">
-        <button type="button" onClick={handleSkip}>{isTr ? 'Şimdilik geç' : 'Skip for now'}</button>
-      </div>
-    </motion.div>
-  );
-
   // ── STUDENT PATH ───────────────────────────────────────────────────────────
 
   const renderStudentAge = () => (
@@ -623,44 +534,6 @@ const Onboarding: React.FC = () => {
       </motion.div>
     );
   };
-
-  const renderMeetMimi = () => (
-    <motion.div
-      key="meet-mimi"
-      custom={direction}
-      variants={slideVariants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="onboarding-step"
-    >
-      <h2>Meet Your Guide!</h2>
-      <p className="onboarding-step-sub">Your friendly dragon guide on this learning adventure</p>
-
-      <div className="onboarding-mimi-intro">
-        <motion.div
-          className="onboarding-mimi-large"
-          animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-        >
-          <LottieCharacter state="happy" size={160} />
-        </motion.div>
-
-        <div className="onboarding-mimi-speech">
-          Hi there! I&apos;m your dragon friend! I&apos;ll help you learn English through fun games,
-          exciting stories, and magical adventures. Ready to explore?
-          <div className="onboarding-mimi-facts">
-            <span className="onboarding-mimi-fact"><Volume2 size={14} /> Dragon Fire</span>
-            <span className="onboarding-mimi-fact"><Check size={14} /> +20% Stars</span>
-            <span className="onboarding-mimi-fact"><Heart size={14} /> Always Friendly</span>
-          </div>
-        </div>
-      </div>
-
-      {renderNavActions({ nextLabel: "Let's Go!", nextLabelTr: 'Haydi Başlayalım!' })}
-    </motion.div>
-  );
 
   const renderLearningPath = () => {
     const phase = STUDENT_AGE_GROUPS.find((a) => a.value === ageGroup);
@@ -1028,13 +901,13 @@ const Onboarding: React.FC = () => {
   // ── Step router ────────────────────────────────────────────────────────────
 
   const renderCurrentStep = () => {
-    if (step === 1) return renderRoleSelection();
+    // Step 1 (role selection) is skipped — role auto-set to 'student'
+    if (step === 1) { nextStep(); return null; }
 
     if (role === 'student') {
       if (step === 2) return renderStudentAge();
       if (step === 3) return renderPlacementTest();
-      if (step === 4) return renderMeetMimi();
-      if (step === 5) return renderLearningPath();
+      if (step === 4) return renderLearningPath(); // Meet Mimi merged into learning path
     }
 
     if (role === 'teacher') {

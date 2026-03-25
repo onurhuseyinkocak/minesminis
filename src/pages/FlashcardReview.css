@@ -1,0 +1,157 @@
+/* ==========================================================================
+   FLASHCARD REVIEW PAGE — MinesMinis Design System
+   Full review session wrapper
+   ========================================================================== */
+
+.flashcard-review {
+  min-height: 100vh;
+  background: var(--bg-page, #fff8f2);
+  padding: 0 0 80px;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+
+.flashcard-review__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px 8px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.flashcard-review__back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-card, #ffffff);
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  flex-shrink: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  touch-action: manipulation;
+}
+
+.flashcard-review__back-btn:hover {
+  background: var(--bg-muted, #f1f5f9);
+  border-color: var(--border-hover, #cbd5e1);
+}
+
+.flashcard-review__title {
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text-primary, #1a1a2e);
+  line-height: 1.2;
+  flex: 1;
+}
+
+/* ── Body ───────────────────────────────────────────────────────────────────── */
+
+.flashcard-review__body {
+  padding: 16px 20px 0;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────────── */
+
+.flashcard-review__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.flashcard-review__empty-icon {
+  width: 88px;
+  height: 88px;
+  background: var(--success-pale, #ecfdf5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+}
+
+.flashcard-review__empty-title {
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text-primary, #1a1a2e);
+  margin: 0;
+}
+
+.flashcard-review__empty-sub {
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: 15px;
+  color: var(--text-secondary, #475569);
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.flashcard-review__empty-btn {
+  padding: 12px 28px;
+  background: var(--primary, #ff6b35);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-xl, 16px);
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px var(--primary-glow, rgba(255, 107, 53, 0.35));
+  transition: transform 0.15s ease;
+  touch-action: manipulation;
+}
+
+.flashcard-review__empty-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ── Stats strip ────────────────────────────────────────────────────────────── */
+
+.flashcard-review__stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.flashcard-review__stat {
+  flex: 1;
+  background: var(--bg-card, #ffffff);
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-xl, 16px);
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.flashcard-review__stat-value {
+  display: block;
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--primary, #ff6b35);
+  line-height: 1;
+}
+
+.flashcard-review__stat-label {
+  display: block;
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

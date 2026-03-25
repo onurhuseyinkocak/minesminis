@@ -210,3 +210,130 @@
   .adm-content-toolbar { flex-direction: column; }
   .adm-search-input { width: 100%; }
 }
+
+/* ── Pagination number ── */
+.adm-page-num {
+  padding: 0 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* ── Loading tall variant ── */
+.adm-loading--tall {
+  min-height: 20vh;
+}
+
+/* ── Table cell variants ── */
+.adm-td--secondary {
+  font-size: 0.775rem;
+  color: var(--admin-text-secondary);
+}
+
+.adm-td--sm {
+  font-size: 0.775rem;
+}
+
+.adm-td--muted {
+  font-size: 0.775rem;
+  color: var(--admin-text-muted);
+}
+
+.adm-td-subtitle {
+  font-size: 0.7rem;
+  color: var(--admin-text-muted);
+  margin-top: 2px;
+}
+
+/* ── Popular badge ── */
+.adm-badge--popular {
+  margin-left: 6px;
+  font-size: 0.7rem;
+  color: var(--warning);
+  font-weight: 600;
+}
+
+/* ── Video thumbnail ── */
+.adm-video-thumb-wrap {
+  position: relative;
+}
+
+.adm-video-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--white);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+/* ── Source link ── */
+.adm-source-link {
+  color: var(--admin-primary);
+  text-decoration: none;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Modal medium width ── */
+.adm-modal--md {
+  max-width: 520px;
+}
+
+/* ── Form row / grid helpers ── */
+.adm-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.adm-input--flex {
+  flex: 1;
+}
+
+.adm-btn--nowrap {
+  white-space: nowrap;
+}
+
+.adm-form-grid--emoji {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.adm-form-grid--half {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.adm-form-grid--thirds {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* ── Emoji input ── */
+.adm-input--emoji {
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+/* ── Inline label ── */
+.adm-label--inline {
+  margin: 0;
+}
+
+/* ── Upload row ── */
+.adm-upload-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.adm-btn--upload {
+  cursor: pointer;
+}
+
+.adm-file-input {
+  display: none;
+}

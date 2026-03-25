@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
+import AvatarDisplay from '../components/AvatarDisplay';
+import { getAvatarConfig } from '../services/avatarService';
 import { KidIcon } from '../components/ui';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
@@ -34,7 +36,13 @@ import {
   getCurrentLesson as getTrackerCurrentLesson,
   getWorldCompletionCount,
 } from '../data/progressTracker';
-import { getTodayLesson, isDailyLessonCompletedToday } from '../services/dailyLessonService';
+import { getTodayLesson, isDailyLessonCompletedToday, getStreakFreezeCount } from '../services/dailyLessonService';
+import StreakProtectionBadge from '../components/StreakProtectionBadge';
+import { XPBoosterBadge, getActiveBoost } from '../components/XPBooster';
+import WeeklyTournamentBanner from '../components/WeeklyTournamentBanner';
+import StreakCalendar from '../components/StreakCalendar';
+import { getActivityDates } from '../services/habitTracker';
+import SoundOfTheDay from '../components/SoundOfTheDay';
 
 // ============================================================
 // HELPERS
@@ -142,7 +150,6 @@ export default function Dashboard() {
   const {
     stats,
     loading,
-    getXPProgress,
     allBadges,
   } = useGamification();
 
@@ -172,8 +179,9 @@ export default function Dashboard() {
 
   const completedDays = weeklyDots.filter(Boolean).length;
   const learnedCount = stats.wordsLearned ?? 0;
+  const freezeCount = getStreakFreezeCount();
 
-  const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
+  const [_lesson, setLesson] = useState(() => getCurrentLessonData(userId));
 
   useEffect(() => {
     const onFocus = () => {
@@ -216,19 +224,31 @@ export default function Dashboard() {
           1. GREETING + STREAK ROW
           ============================================================ */}
       <motion.div className="flex items-center justify-between mb-5" variants={itemVariants}>
-        <div>
-          <p className="text-ink-500 font-body text-sm">Merhaba,</p>
-          <h1 className="font-display font-extrabold text-2xl lg:text-3xl text-ink-900">{displayName}</h1>
+        <div className="flex items-center gap-3">
+          <Link to="/avatar" title="Avatarını düzenle" className="flex-shrink-0">
+            <AvatarDisplay
+              config={getAvatarConfig(userId)}
+              letter={displayName}
+              size={40}
+              animated={false}
+            />
+          </Link>
+          <div>
+            <p className="text-ink-500 font-body text-sm">{t('dashboard.hello')}</p>
+            <h1 className="font-display font-extrabold text-2xl lg:text-3xl text-ink-900">{displayName}</h1>
+          </div>
         </div>
         <div className="flex items-center gap-2 lg:hidden">
           <div className="flex items-center gap-1 bg-orange-50 text-primary-500 font-bold px-3 py-1.5 rounded-full text-sm font-display">
             <Flame size={16} className="text-primary-500" />
-            {stats.streakDays} gün
+            {stats.streakDays} {t('dashboard.dayUnit')}
           </div>
+          <StreakProtectionBadge count={freezeCount} size="sm" />
           <div className="flex items-center gap-1 bg-gold-50 text-gold-600 font-bold px-3 py-1.5 rounded-full text-sm font-display">
             <Star size={16} className="text-gold-600" />
             {stats.xp.toLocaleString()}
           </div>
+          {getActiveBoost() !== null && <XPBoosterBadge />}
         </div>
       </motion.div>
 
@@ -251,15 +271,15 @@ export default function Dashboard() {
 
             <div className="relative z-10">
               <div className="text-white/80 text-sm font-display font-semibold mb-1">
-                {lessonDone ? '' : 'BUGÜNÜN DERSİ'}
+                {lessonDone ? '' : t('dashboard.todaysLesson').toUpperCase()}
               </div>
               <h2 className="font-display font-black text-2xl lg:text-3xl text-white mt-2 leading-tight mb-2">
-                {lessonDone ? 'Bugün tamamlandı!' : 'Öğrenmeye devam et'}
+                {lessonDone ? t('dashboard.completedToday') : t('dashboard.continueLearning')}
               </h2>
               <p className="text-white/80 text-sm mb-4">
                 {lessonDone
-                  ? `${stats.streakDays} günlük seri!`
-                  : '5 yeni İngilizce kelime öğren'}
+                  ? `${stats.streakDays} ${t('dashboard.dayStreakLabel')}!`
+                  : t('dashboard.learnFiveWords')}
               </p>
               {!lessonDone && (
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -274,7 +294,7 @@ export default function Dashboard() {
                 </div>
               )}
               <div className="inline-flex items-center gap-2 bg-white text-primary-500 font-display font-extrabold py-3 px-6 rounded-full shadow-md">
-                {lessonDone ? 'Tekrar Et' : 'Başla'}
+                {lessonDone ? t('dashboard.review') : t('dashboard.start')}
                 <Play size={16} strokeWidth={3} />
               </div>
             </div>
@@ -287,14 +307,14 @@ export default function Dashboard() {
           ============================================================ */}
       <motion.section className="bg-white rounded-2xl p-4 shadow-card" variants={itemVariants}>
         <div className="flex items-center justify-between mb-3">
-          <span className="font-display font-bold text-ink-900">Bu Hafta</span>
-          <span className="text-xs text-ink-400 font-body">{completedDays}/7 gün</span>
+          <span className="font-display font-bold text-ink-900">{t('dashboard.weeklyProgress')}</span>
+          <span className="text-xs text-ink-400 font-body">{completedDays}/7 {t('dashboard.dayUnit')}</span>
         </div>
         <div className="flex justify-between">
           {weeklyDots.map((done, i) => {
             const d = new Date();
             d.setDate(d.getDate() - (6 - i));
-            const dayLabels = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const dayLabels = t('dashboard.daysOfWeek').split(',');
             const dayLabel = dayLabels[d.getDay()];
             const isToday = i === 6;
             return (
@@ -320,11 +340,26 @@ export default function Dashboard() {
       </motion.section>
 
       {/* ============================================================
+          3B. STREAK CALENDAR
+          ============================================================ */}
+      <motion.section className="bg-white rounded-2xl p-4 shadow-card" variants={itemVariants}>
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-display font-bold text-ink-900">Activity</span>
+          <span className="text-xs text-ink-400 font-body">Last 35 days</span>
+        </div>
+        <StreakCalendar
+          activityDates={getActivityDates(userId)}
+          streakDays={stats.streakDays}
+          size="compact"
+        />
+      </motion.section>
+
+      {/* ============================================================
           4. WORDS I KNOW PROGRESS
           ============================================================ */}
       <motion.section className="bg-white rounded-2xl p-4 shadow-card" variants={itemVariants}>
         <div className="flex justify-between mb-2">
-          <span className="font-display font-bold text-ink-900">Bildiğim Kelimeler</span>
+          <span className="font-display font-bold text-ink-900">{t('dashboard.wordsIKnow')}</span>
           <span className="font-display font-bold text-primary-500">{learnedCount}/200</span>
         </div>
         <div className="h-3 bg-ink-100 rounded-full overflow-hidden">
@@ -334,6 +369,13 @@ export default function Dashboard() {
           />
         </div>
       </motion.section>
+
+      {/* ============================================================
+          5B. WEEKLY TOURNAMENT BANNER
+          ============================================================ */}
+      <motion.div variants={itemVariants}>
+        <WeeklyTournamentBanner />
+      </motion.div>
 
       {/* ============================================================
           6. QUICK ACTIONS GRID
@@ -376,18 +418,26 @@ export default function Dashboard() {
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-xs font-display font-bold text-white/70 uppercase tracking-wide mb-1">
-            Günün Kelimesi
+            {t('profile.wordOfTheDay')}
           </div>
           <div className="font-display font-black text-2xl text-white">{wod.word}</div>
           <div className="text-white/70 text-sm font-body">{wod.tr}</div>
         </div>
         <button
-          onClick={() => speak(wod.word).catch(() => {})}
+          type="button"
+          onClick={() => speak(wod.word)}
           className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors flex-shrink-0"
           aria-label={`Listen to ${wod.word}`}
         >
           <Volume2 size={18} />
         </button>
+      </motion.section>
+
+      {/* ============================================================
+          6B. SOUND OF THE DAY
+          ============================================================ */}
+      <motion.section variants={itemVariants}>
+        <SoundOfTheDay />
       </motion.section>
 
       {/* ============================================================
@@ -413,8 +463,8 @@ export default function Dashboard() {
             <div className="w-20 h-20 rounded-2xl bg-gold-50 mx-auto mb-4 flex items-center justify-center">
               <KidIcon name="trophy" size={48} />
             </div>
-            <p className="font-display font-bold text-ink-900 mb-1">İlk rozetini kazan!</p>
-            <p className="text-sm text-ink-400 font-body">Ders yaparak rozetler kazan</p>
+            <p className="font-display font-bold text-ink-900 mb-1">{t('dashboard.earnFirstBadge')}</p>
+            <p className="text-sm text-ink-400 font-body">{t('dashboard.completeForBadges')}</p>
           </div>
         )}
       </motion.section>

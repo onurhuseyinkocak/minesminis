@@ -5,10 +5,20 @@
  */
 /* eslint-disable react-refresh/only-export-components -- context file: exports Provider + useGamification + types */
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import toast from 'react-hot-toast';
 import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
 import { errorLogger } from '../services/errorLogger';
 import { LS_GAMIFICATION_PREFIX } from '../config/storageKeys';
+import {
+    checkAndAwardStreakFreeze,
+    consumeStreakFreeze,
+} from '../services/dailyLessonService';
+import { usePremium } from './PremiumContext';
+import { getActiveBoost, activateBoost } from '../components/XPBooster';
+import { getSelectedMascotId } from '../services/mascotService';
+import { hasNewMascotUnlocked } from '../services/mascotService';
+import { logActivityToday } from '../services/habitTracker';
 
 // ============================================================
 // TYPES
@@ -17,11 +27,14 @@ import { LS_GAMIFICATION_PREFIX } from '../config/storageKeys';
 export interface Badge {
     id: string;
     name: string;
+    nameTr: string;
     description: string;
+    descriptionTr: string;
     icon: string;
-    category: 'learning' | 'streak' | 'achievement' | 'special';
+    category: 'learning' | 'streak' | 'achievement' | 'special' | 'social';
     requirement: number;
     requirementType: string;
+    rarity: 'common' | 'rare' | 'epic' | 'legendary';
 }
 
 export interface DailyReward {
@@ -102,38 +115,55 @@ const DAILY_REWARDS: DailyReward[] = [
 
 export const ALL_BADGES: Badge[] = [
     // Streak Badges
-    { id: 'streak_3', name: '3 Day Streak', description: 'Login 3 days in a row', icon: 'fire', category: 'streak', requirement: 3, requirementType: 'streak' },
-    { id: 'streak_7', name: 'Week Warrior', description: 'Login 7 days in a row', icon: 'fire', category: 'streak', requirement: 7, requirementType: 'streak' },
-    { id: 'streak_30', name: 'Monthly Master', description: 'Login 30 days in a row', icon: 'fire', category: 'streak', requirement: 30, requirementType: 'streak' },
-    { id: 'streak_100', name: 'Century Champion', description: 'Login 100 days in a row', icon: 'fire', category: 'streak', requirement: 100, requirementType: 'streak' },
+    { id: 'streak_3', name: '3 Day Streak', nameTr: '3 Günlük Seri', description: 'Login 3 days in a row', descriptionTr: '3 gün üst üste giriş yaptın', icon: 'fire', category: 'streak', requirement: 3, requirementType: 'streak', rarity: 'common' },
+    { id: 'streak_7', name: 'Week Warrior', nameTr: 'Hafta Savaşçısı', description: 'Login 7 days in a row', descriptionTr: '7 gün üst üste giriş yaptın', icon: 'fire', category: 'streak', requirement: 7, requirementType: 'streak', rarity: 'rare' },
+    { id: 'streak_30', name: 'Monthly Master', nameTr: 'Aylık Usta', description: 'Login 30 days in a row', descriptionTr: '30 gün üst üste giriş yaptın', icon: 'fire', category: 'streak', requirement: 30, requirementType: 'streak', rarity: 'epic' },
+    { id: 'streak_100', name: 'Century Champion', nameTr: 'Asır Şampiyonu', description: 'Login 100 days in a row', descriptionTr: '100 gün üst üste giriş yaptın', icon: 'fire', category: 'streak', requirement: 100, requirementType: 'streak', rarity: 'legendary' },
 
     // Learning Badges - Words
-    { id: 'words_10', name: 'Word Explorer', description: 'Learn 10 words', icon: 'book', category: 'learning', requirement: 10, requirementType: 'words' },
-    { id: 'words_50', name: 'Word Collector', description: 'Learn 50 words', icon: 'book', category: 'learning', requirement: 50, requirementType: 'words' },
-    { id: 'words_100', name: 'Word Master', description: 'Learn 100 words', icon: 'reading', category: 'learning', requirement: 100, requirementType: 'words' },
-    { id: 'words_500', name: 'Word Genius', description: 'Learn 500 words', icon: 'library', category: 'learning', requirement: 500, requirementType: 'words' },
+    { id: 'words_10', name: 'Word Explorer', nameTr: 'Kelime Kaşifi', description: 'Learn 10 words', descriptionTr: '10 kelime öğrendin', icon: 'book', category: 'learning', requirement: 10, requirementType: 'words', rarity: 'common' },
+    { id: 'words_50', name: 'Word Collector', nameTr: 'Kelime Koleksiyoncusu', description: 'Learn 50 words', descriptionTr: '50 kelime öğrendin', icon: 'book', category: 'learning', requirement: 50, requirementType: 'words', rarity: 'rare' },
+    { id: 'words_100', name: 'Word Master', nameTr: 'Kelime Ustası', description: 'Learn 100 words', descriptionTr: '100 kelime öğrendin', icon: 'reading', category: 'learning', requirement: 100, requirementType: 'words', rarity: 'epic' },
+    { id: 'words_500', name: 'Word Genius', nameTr: 'Kelime Dahisi', description: 'Learn 500 words', descriptionTr: '500 kelime öğrendin', icon: 'library', category: 'learning', requirement: 500, requirementType: 'words', rarity: 'legendary' },
 
     // Learning Badges - Games
-    { id: 'games_5', name: 'Game Starter', description: 'Play 5 games', icon: 'games', category: 'learning', requirement: 5, requirementType: 'games' },
-    { id: 'games_25', name: 'Game Player', description: 'Play 25 games', icon: 'games', category: 'learning', requirement: 25, requirementType: 'games' },
-    { id: 'games_100', name: 'Game Champion', description: 'Play 100 games', icon: 'trophy', category: 'learning', requirement: 100, requirementType: 'games' },
+    { id: 'games_5', name: 'Game Starter', nameTr: 'Oyun Başlangıcı', description: 'Play 5 games', descriptionTr: '5 oyun oynadın', icon: 'games', category: 'learning', requirement: 5, requirementType: 'games', rarity: 'common' },
+    { id: 'games_25', name: 'Game Player', nameTr: 'Oyuncu', description: 'Play 25 games', descriptionTr: '25 oyun oynadın', icon: 'games', category: 'learning', requirement: 25, requirementType: 'games', rarity: 'rare' },
+    { id: 'games_100', name: 'Game Champion', nameTr: 'Oyun Şampiyonu', description: 'Play 100 games', descriptionTr: '100 oyun oynadın', icon: 'trophy', category: 'learning', requirement: 100, requirementType: 'games', rarity: 'epic' },
 
     // Learning Badges - Videos
-    { id: 'videos_5', name: 'Video Viewer', description: 'Watch 5 videos', icon: 'video', category: 'learning', requirement: 5, requirementType: 'videos' },
-    { id: 'videos_25', name: 'Video Fan', description: 'Watch 25 videos', icon: 'video', category: 'learning', requirement: 25, requirementType: 'videos' },
-    { id: 'videos_100', name: 'Video Expert', description: 'Watch 100 videos', icon: 'video', category: 'learning', requirement: 100, requirementType: 'videos' },
+    { id: 'videos_5', name: 'Video Viewer', nameTr: 'Video İzleyici', description: 'Watch 5 videos', descriptionTr: '5 video izledin', icon: 'video', category: 'learning', requirement: 5, requirementType: 'videos', rarity: 'common' },
+    { id: 'videos_25', name: 'Video Fan', nameTr: 'Video Hayranı', description: 'Watch 25 videos', descriptionTr: '25 video izledin', icon: 'video', category: 'learning', requirement: 25, requirementType: 'videos', rarity: 'rare' },
+    { id: 'videos_100', name: 'Video Expert', nameTr: 'Video Uzmanı', description: 'Watch 100 videos', descriptionTr: '100 video izledin', icon: 'video', category: 'learning', requirement: 100, requirementType: 'videos', rarity: 'epic' },
 
     // Achievement Badges
-    { id: 'level_5', name: 'Rising Star', description: 'Reach level 5', icon: 'star', category: 'achievement', requirement: 5, requirementType: 'level' },
-    { id: 'level_10', name: 'Shining Star', description: 'Reach level 10', icon: 'star', category: 'achievement', requirement: 10, requirementType: 'level' },
-    { id: 'level_25', name: 'Superstar', description: 'Reach level 25', icon: 'star', category: 'achievement', requirement: 25, requirementType: 'level' },
-    { id: 'level_50', name: 'Legend', description: 'Reach level 50', icon: 'trophy', category: 'achievement', requirement: 50, requirementType: 'level' },
+    { id: 'level_5', name: 'Rising Star', nameTr: 'Yükselen Yıldız', description: 'Reach level 5', descriptionTr: '5. seviyeye ulaştın', icon: 'star', category: 'achievement', requirement: 5, requirementType: 'level', rarity: 'common' },
+    { id: 'level_10', name: 'Shining Star', nameTr: 'Parlayan Yıldız', description: 'Reach level 10', descriptionTr: '10. seviyeye ulaştın', icon: 'star', category: 'achievement', requirement: 10, requirementType: 'level', rarity: 'rare' },
+    { id: 'level_25', name: 'Superstar', nameTr: 'Süperyıldız', description: 'Reach level 25', descriptionTr: '25. seviyeye ulaştın', icon: 'star', category: 'achievement', requirement: 25, requirementType: 'level', rarity: 'epic' },
+    { id: 'level_50', name: 'Legend', nameTr: 'Efsane', description: 'Reach level 50', descriptionTr: '50. seviyeye ulaştın', icon: 'trophy', category: 'achievement', requirement: 50, requirementType: 'level', rarity: 'legendary' },
 
     // Special Badges
-    { id: 'weekly_starter', name: 'Weekly Starter', description: 'Claim 5 daily rewards', icon: 'star', category: 'special', requirement: 5, requirementType: 'daily' },
-    { id: 'week_champion', name: 'Week Champion', description: 'Claim 7 daily rewards in a row', icon: 'trophy', category: 'special', requirement: 7, requirementType: 'daily' },
-    { id: 'first_favorite', name: 'First Favorite', description: 'Add your first favorite', icon: 'heart', category: 'special', requirement: 1, requirementType: 'favorites' },
-    { id: 'premium_member', name: 'Premium Member', description: 'Become a premium member', icon: 'trophy', category: 'special', requirement: 1, requirementType: 'premium' },
+    { id: 'weekly_starter', name: 'Weekly Starter', nameTr: 'Haftalık Başlangıç', description: 'Claim 5 daily rewards', descriptionTr: '5 günlük ödül aldın', icon: 'star', category: 'special', requirement: 5, requirementType: 'daily', rarity: 'common' },
+    { id: 'week_champion', name: 'Week Champion', nameTr: 'Hafta Şampiyonu', description: 'Claim 7 daily rewards in a row', descriptionTr: '7 günlük ödülü üst üste aldın', icon: 'trophy', category: 'special', requirement: 7, requirementType: 'daily', rarity: 'rare' },
+    { id: 'first_favorite', name: 'First Favorite', nameTr: 'İlk Favori', description: 'Add your first favorite', descriptionTr: 'İlk favorini ekledin', icon: 'heart', category: 'special', requirement: 1, requirementType: 'favorites', rarity: 'common' },
+    { id: 'premium_member', name: 'Premium Member', nameTr: 'Premium Üye', description: 'Become a premium member', descriptionTr: 'Premium üye oldun', icon: 'trophy', category: 'special', requirement: 1, requirementType: 'premium', rarity: 'rare' },
+
+    // New Learning Badges
+    { id: 'first_story', name: 'Story Starter', nameTr: 'Hikaye Başlangıcı', description: 'Read your first story', descriptionTr: 'İlk hikayeni okudun', icon: 'stories', category: 'learning', requirement: 1, requirementType: 'stories', rarity: 'common' },
+    { id: 'story_master', name: 'Story Master', nameTr: 'Hikaye Ustası', description: 'Read 10 stories', descriptionTr: '10 hikaye okudun', icon: 'stories', category: 'learning', requirement: 10, requirementType: 'stories', rarity: 'rare' },
+    { id: 'dialogue_star', name: 'Dialogue Star', nameTr: 'Diyalog Yıldızı', description: 'Complete 5 dialogue exercises', descriptionTr: '5 diyalog alıştırması tamamladın', icon: 'mic', category: 'learning', requirement: 5, requirementType: 'dialogues', rarity: 'rare' },
+    { id: 'pronunciation_pro', name: 'Pronunciation Pro', nameTr: 'Telaffuz Ustası', description: 'Score 100% on 3 pronunciation exercises', descriptionTr: '3 telaffuz alıştırmasında tam puan aldın', icon: 'mic', category: 'learning', requirement: 3, requirementType: 'perfect_pronunciation', rarity: 'epic' },
+    { id: 'word_collector_50', name: 'Word Collector', nameTr: 'Kelime Koleksiyoncusu 50', description: 'Learn 50 words', descriptionTr: '50 kelime öğrendin', icon: 'book', category: 'learning', requirement: 50, requirementType: 'words', rarity: 'rare' },
+    { id: 'word_collector_100', name: 'Word Collector Pro', nameTr: 'Kelime Koleksiyoncusu 100', description: 'Learn 100 words', descriptionTr: '100 kelime öğrendin', icon: 'reading', category: 'learning', requirement: 100, requirementType: 'words', rarity: 'epic' },
+
+    // New Social Badges
+    { id: 'first_friend', name: 'First Friend', nameTr: 'İlk Arkadaş', description: 'Add your first friend', descriptionTr: 'İlk arkadaşını ekledin', icon: 'heart', category: 'social', requirement: 1, requirementType: 'friends', rarity: 'common' },
+    { id: 'top_leaderboard', name: 'Top 10', nameTr: 'İlk 10', description: 'Reach top 10 in weekly leaderboard', descriptionTr: 'Haftalık sıralamada ilk 10\'a girdin', icon: 'trophy', category: 'social', requirement: 10, requirementType: 'leaderboard', rarity: 'epic' },
+
+    // New Special Badges
+    { id: 'early_bird', name: 'Early Bird', nameTr: 'Erken Kuş', description: 'Complete a lesson before 9am', descriptionTr: 'Sabah 9\'dan önce bir ders tamamladın', icon: 'star', category: 'special', requirement: 1, requirementType: 'early_lesson', rarity: 'rare' },
+    { id: 'night_owl', name: 'Night Owl', nameTr: 'Gece Kuşu', description: 'Complete a lesson after 9pm', descriptionTr: 'Gece 9\'dan sonra bir ders tamamladın', icon: 'star', category: 'special', requirement: 1, requirementType: 'night_lesson', rarity: 'rare' },
+    { id: 'weekend_warrior', name: 'Weekend Warrior', nameTr: 'Hafta Sonu Savaşçısı', description: 'Complete lessons on both Saturday and Sunday', descriptionTr: 'Hem Cumartesi hem Pazar ders tamamladın', icon: 'trophy', category: 'special', requirement: 2, requirementType: 'weekend_lesson', rarity: 'epic' },
 ];
 
 // ============================================================
@@ -196,11 +226,12 @@ const DEFAULT_STATS: UserStats = {
     videosWatched: 0,
     worksheetsCompleted: 0,
     dailyChallengesCompleted: 0,
-    mascotId: 'mimi_dragon',
+    mascotId: getSelectedMascotId(),
 };
 
 export function GamificationProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth();
+    const { isPremium } = usePremium();
     const [stats, setStats] = useState<UserStats>(DEFAULT_STATS);
     const [loading, setLoading] = useState(true);
     const [showLevelUp, setShowLevelUp] = useState(false);
@@ -265,7 +296,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                         lastLoginDate: data.last_login,
                         lastDailyClaim: (settingsObj.last_daily_claim as string) || prev.lastDailyClaim,
                         lastWeeklyReset: (settingsObj.last_weekly_reset as string) || prev.lastWeeklyReset,
-                        mascotId: (settingsObj.mascotId as string) || 'mimi_dragon',
+                        mascotId: getSelectedMascotId(),
                         // Restore activity counters from server settings (fallback to local)
                         wordsLearned: (settingsObj.wordsLearned as number) ?? prev.wordsLearned ?? 0,
                         gamesPlayed: (settingsObj.gamesPlayed as number) ?? prev.gamesPlayed ?? 0,
@@ -330,6 +361,12 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             totalXP = Math.floor(totalXP * 1.5); // Sparky: 1.5x in grammar + fast answers
         }
 
+        // Apply active XP boost multiplier
+        const activeBoost = getActiveBoost();
+        if (activeBoost) {
+            totalXP = Math.round(totalXP * activeBoost.multiplier);
+        }
+
         const newXP = stats.xp + totalXP;
         const newWeeklyXP = stats.weekly_xp + totalXP;
         const oldLevel = stats.level;
@@ -353,6 +390,22 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             // Mimi: bonus XP on level up
             if (stats.mascotId === 'mimi_dragon') {
                 setTimeout(() => addXP(20, 'mimi_level_bonus'), 500);
+            }
+
+            // Check if a new mascot just unlocked due to level change
+            const newlyUnlocked = hasNewMascotUnlocked(
+                oldLevel,
+                newLevelValue,
+                stats.streakDays,
+                stats.streakDays,
+                stats.wordsLearned,
+                stats.wordsLearned,
+            );
+            if (newlyUnlocked) {
+                toast.success(`Yeni maskot açıldı: ${newlyUnlocked.nameTr}!`, {
+                    icon: undefined,
+                    duration: 4000,
+                });
             }
         }
 
@@ -447,6 +500,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         const lastLogin = stats.lastLoginDate ? new Date(stats.lastLoginDate) : null;
 
         let newStreak = stats.streakDays;
+        let streakBroken = false;
 
         if (!lastLogin) {
             newStreak = 1;
@@ -456,8 +510,15 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             // Consecutive day
             newStreak = stats.streakDays + 1;
         } else {
-            // Streak broken
-            newStreak = 1;
+            // Streak broken — try to consume a freeze
+            const protected_ = consumeStreakFreeze();
+            if (protected_) {
+                // Freeze absorbed the miss: keep existing streak
+                newStreak = stats.streakDays;
+            } else {
+                newStreak = 1;
+                streakBroken = true;
+            }
         }
 
         const newStats = {
@@ -468,6 +529,27 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
         setStats(newStats);
         saveStatsLocally(newStats);
+
+        // Log today's activity in the habit tracker (idempotent)
+        if (user?.uid) {
+            logActivityToday(user.uid);
+        }
+
+        // Award freeze if streak milestone reached (only on actual increments)
+        if (!streakBroken && newStreak !== stats.streakDays) {
+            const awarded = checkAndAwardStreakFreeze(newStreak, isPremium);
+            if (awarded) {
+                toast.success('Yeni seri koruması kazandın!', {
+                    icon: undefined,
+                    duration: 3000,
+                });
+            }
+
+            // Award 1.5x XP boost for 1 hour at streak milestones 7, 14, 21, 30
+            if ([7, 14, 21, 30].includes(newStreak)) {
+                activateBoost(1.5, 60 * 60 * 1000, 'streak_milestone');
+            }
+        }
 
         // Sync with server
         if (user?.uid) {
