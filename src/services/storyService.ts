@@ -52,7 +52,7 @@ export async function loadStoryState(userId: string): Promise<StoryState | null>
   try {
     const { data, error } = await supabase
       .from('story_progress')
-      .select('*')
+      .select('user_id, character_name, mascot_id, current_world, current_node_id, traits, inventory, visited_node_ids, total_xp, choice_history, session_count, created_at, updated_at')
       .eq('user_id', userId)
       .maybeSingle();
 

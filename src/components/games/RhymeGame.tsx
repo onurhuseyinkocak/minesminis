@@ -620,7 +620,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
     <div className="rg" role="application" aria-label="Rhyme awareness game">
       {/* Header */}
       <div className="rg__header">
-        <h2 className="rg__title">Rhyme Time!</h2>
+        <h2 className="rg__title">{t('games.rhymeTime') || 'Rhyme Time!'}</h2>
         <Badge variant="info">
           {currentIndex + 1} / {questions.length}
         </Badge>

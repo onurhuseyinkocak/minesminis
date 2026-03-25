@@ -99,23 +99,28 @@ const DailyReward: React.FC = () => {
         if (!canClaimDaily || claiming) return;
 
         setClaiming(true);
-        const reward = await claimDailyReward();
+        try {
+            const reward = await claimDailyReward();
 
-        if (reward) {
-            setClaimedReward(reward);
-            setClaimed(true);
-            setShowClaimCelebration(true);
-            SFX.celebration();
-            if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
-            celebrationTimerRef.current = setTimeout(() => setShowClaimCelebration(false), 3000);
+            if (reward) {
+                setClaimedReward(reward);
+                setClaimed(true);
+                setShowClaimCelebration(true);
+                SFX.celebration();
+                if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+                celebrationTimerRef.current = setTimeout(() => setShowClaimCelebration(false), 3000);
+            }
+        } catch {
+            // Claim failed silently — user can retry
+        } finally {
+            setClaiming(false);
         }
-
-        setClaiming(false);
     };
 
     if (!isOpen) {
         return (
             <button
+                type="button"
                 className={`daily-reward-trigger ${canClaimDaily ? 'available' : ''}`}
                 onClick={() => setIsOpen(true)}
             >
@@ -129,7 +134,6 @@ const DailyReward: React.FC = () => {
 
     return (
         <div className="daily-reward-overlay" onClick={() => setIsOpen(false)}>
-            {showClaimCelebration && <ConfettiRain />}
             {showClaimCelebration && <ConfettiRain />}
             <div className="daily-reward-modal" onClick={(e) => e.stopPropagation()}>
                 <button type="button" className="close-btn" onClick={() => setIsOpen(false)}><X size={18} /></button>
@@ -184,6 +188,7 @@ const DailyReward: React.FC = () => {
                     </div>
                 ) : canClaimDaily ? (
                     <button
+                        type="button"
                         className="claim-btn"
                         onClick={handleClaim}
                         disabled={claiming}

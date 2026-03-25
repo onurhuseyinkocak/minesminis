@@ -148,6 +148,7 @@ export function addWaterDrops(count: number): void {
 
 /** Water a plant (purely visual, uses water drops) */
 export function waterPlant(soundId: string): boolean {
+  // Read drops first, validate, then do all writes together to reduce race window
   const drops = getWaterDrops();
   if (drops <= 0) return false;
 
@@ -155,15 +156,17 @@ export function waterPlant(soundId: string): boolean {
   const existing = state[soundId];
   if (!existing) return false;
 
-  existing.waterCount = (existing.waterCount || 0) + 1;
-  state[soundId] = existing;
-  saveGardenState(state);
-
+  // Perform both writes together to minimize inconsistency window
   try {
     localStorage.setItem(WATER_KEY, String(drops - 1));
   } catch {
-    // ignore
+    return false;
   }
+
+  existing.waterCount = (existing.waterCount || 0) + 1;
+  existing.lastUpdated = new Date().toISOString();
+  state[soundId] = existing;
+  saveGardenState(state);
 
   return true;
 }

@@ -226,7 +226,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
     <div className="syg" role="application" aria-label="Syllable segmentation game">
       {/* Header */}
       <div className="syg__header">
-        <h2 className="syg__title">Syllable Game</h2>
+        <h2 className="syg__title">{t('games.syllableGame')}</h2>
         <Badge variant="info">
           {currentIndex + 1} / {questions.length}
         </Badge>
@@ -247,7 +247,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
             >
               {showFeedback === 'correct'
                 ? t('games.amazing')
-                : `${currentQuestion.syllableCount} ${currentQuestion.syllableCount === 1 ? 'syllable' : 'syllables'}! ${t('games.tryAgainYouGotThis')}`}
+                : `${t('games.xSyllables').replace('{count}', String(currentQuestion.syllableCount)).replace('{unit}', currentQuestion.syllableCount === 1 ? t('games.syllable') : t('games.syllablesPlural'))} ${t('games.tryAgainYouGotThis')}`}
             </motion.div>
           )}
         </AnimatePresence>
@@ -272,10 +272,10 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
 
           {/* Instruction */}
           <p className="syg__instruction" aria-live="polite">
-            {phase === 'tapping' && 'Tap the drum once for each syllable you hear!'}
-            {phase === 'choices' && 'Now choose — how many syllables?'}
-            {phase === 'result-correct' && 'Great! Here are the syllables:'}
-            {phase === 'result-wrong' && 'Keep trying!'}
+            {phase === 'tapping' && t('games.tapDrumPerSyllable')}
+            {phase === 'choices' && t('games.howManySyllables')}
+            {phase === 'result-correct' && t('games.hereAreTheSyllables')}
+            {phase === 'result-wrong' && t('games.keepTrying')}
           </p>
 
           {/* Drum area */}
@@ -296,10 +296,10 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                 aria-label={`Tap drum (${tapCount} taps so far)`}
                 whileTap={{ scale: 0.93 }}
               >
-                🥁
+                <svg width="36" height="36" viewBox="0 0 48 48" fill="none" aria-hidden="true"><ellipse cx="24" cy="28" rx="18" ry="10" fill="#CC4A1A"/><ellipse cx="24" cy="24" rx="18" ry="10" fill="#E8A317"/><rect x="6" y="24" width="36" height="4" fill="#CC4A1A" opacity="0.4"/><line x1="12" y1="14" x2="12" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/><line x1="36" y1="14" x2="36" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/></svg>
               </motion.button>
 
-              <p className="syg__drum-label">Tap here — one tap per syllable</p>
+              <p className="syg__drum-label">{t('games.tapHereOneTapPerSyllable')}</p>
 
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -310,7 +310,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                     onClick={handleReset}
                     aria-label="Reset taps"
                   >
-                    Reset
+                    {t('games.reset')}
                   </button>
                 )}
                 <motion.button
@@ -321,7 +321,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                   whileTap={{ scale: 0.96 }}
                   aria-label="Done tapping"
                 >
-                  Done!
+                  {t('games.doneExcl')}
                 </motion.button>
               </div>
             </div>
@@ -349,7 +349,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                     whileTap={{ scale: 0.92 }}
                   >
                     {num}
-                    <span>{num === 1 ? 'syllable' : 'syllables'}</span>
+                    <span>{num === 1 ? t('games.syllable') : t('games.syllablesPlural')}</span>
                   </motion.button>
                 );
               })}

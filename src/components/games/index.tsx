@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export { WordMatch } from './WordMatch';
 export { SpellingBee } from './SpellingBee';
@@ -26,6 +27,9 @@ export { WordFamilyGame } from './WordFamilyGame';
 export type { WordFamily, WordFamilyGameProps } from './WordFamilyGame';
 export { RhymeGame } from './RhymeGame';
 export type { RhymeTaskType, RhymeQuestion, RhymeGameProps } from './RhymeGame';
+export { StoryChoicesGame } from './StoryChoicesGame';
+export { default as PhoneticTrapGame } from './PhoneticTrapGame';
+export type { PhoneticTrapGameProps } from './PhoneticTrapGame';
 
 interface WordItem {
   english: string;
@@ -40,7 +44,7 @@ interface GameProps {
   onWrongAnswer?: () => void;
 }
 
-type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing' | 'phonics-builder' | 'story-choices' | 'dialogue' | 'image-label' | 'say-it' | 'phonics-blend' | 'phoneme-manipulation' | 'syllable' | 'word-family' | 'rhyme';
+type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing' | 'phonics-builder' | 'story-choices' | 'dialogue' | 'image-label' | 'say-it' | 'phonics-blend' | 'phoneme-manipulation' | 'syllable' | 'word-family' | 'rhyme' | 'phonetic-trap';
 
 // Lazy imports to keep bundle size down
 const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GameProps>>> = {
@@ -67,6 +71,7 @@ const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GamePr
   'syllable': React.lazy(() => import('./SyllableGame').then((m) => ({ default: m.SyllableGame as unknown as React.FC<GameProps> }))),
   'word-family': React.lazy(() => import('./WordFamilyGame').then((m) => ({ default: m.WordFamilyGame as unknown as React.FC<GameProps> }))),
   'rhyme': React.lazy(() => import('./RhymeGame').then((m) => ({ default: m.RhymeGame as unknown as React.FC<GameProps> }))),
+  'phonetic-trap': React.lazy(() => import('./PhoneticTrapGame').then((m) => ({ default: m.default as unknown as React.FC<GameProps> }))),
 };
 
 const GAME_TYPE_MAP: Record<string, GameType> = {
@@ -146,6 +151,11 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
   'rhyme': 'rhyme',
   'RhymeGame': 'rhyme',
   'rhyme-game': 'rhyme',
+  'phonetic-trap': 'phonetic-trap',
+  'phonetictrap': 'phonetic-trap',
+  'PhoneticTrap': 'phonetic-trap',
+  'PhoneticTrapGame': 'phonetic-trap',
+  'phonetic-trap-game': 'phonetic-trap',
 };
 
 export interface GameSelectorProps extends GameProps {
@@ -153,12 +163,13 @@ export interface GameSelectorProps extends GameProps {
 }
 
 export function GameSelector({ type, ...props }: GameSelectorProps) {
+  const { t } = useLanguage();
   const resolvedType = GAME_TYPE_MAP[type];
 
   if (!resolvedType) {
     return (
       <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <p>Unknown game type: {type}</p>
+        <p>{t('games.loadingGame')}: {type}</p>
       </div>
     );
   }
@@ -169,7 +180,7 @@ export function GameSelector({ type, ...props }: GameSelectorProps) {
     <React.Suspense
       fallback={
         <div style={{ textAlign: 'center', padding: '2rem', fontSize: '1.5rem' }}>
-          Loading game...
+          {t('games.loadingGame')}
         </div>
       }
     >

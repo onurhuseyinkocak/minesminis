@@ -403,8 +403,10 @@ function loadProfile(userId: string): LearnerProfile {
 function saveProfile(profile: LearnerProfile): void {
   try {
     localStorage.setItem(getStorageKey(profile.id), JSON.stringify(profile));
-  } catch {
-    // storage full or unavailable
+  } catch (e) {
+    if (typeof console !== 'undefined' && import.meta.env.DEV) {
+      console.warn('adaptiveEngine: failed to save profile — storage may be full', e);
+    }
   }
 }
 
@@ -1790,6 +1792,8 @@ export function getConfusionPairs(): ConfusionPair[] {
   const events = profile._confusionEvents || [];
 
   // Tally confusion events: count how often sound1 was confused with sound2
+  // confusionCount = number of confusion events for this pair
+  // totalAttempts = total activity attempts involving either sound (for rate calculation)
   const confusionCounts: Record<string, { count: number; total: number }> = {};
 
   for (const event of events) {
@@ -1800,10 +1804,16 @@ export function getConfusionPairs(): ConfusionPair[] {
     confusionCounts[pair].count += 1;
   }
 
-  // Also count total attempts involving each sound pair for rate calculation
-  for (const event of events) {
-    const pair = [event.targetSound, event.selectedSound].sort().join('|');
-    confusionCounts[pair].total += 1;
+  // Calculate total attempts involving each sound for rate calculation
+  // Use the profile's actual attempt counts for the sounds in each pair
+  for (const pairKey of Object.keys(confusionCounts)) {
+    const [s1, s2] = pairKey.split('|');
+    const s1Id = findSoundIdByChar(s1);
+    const s2Id = findSoundIdByChar(s2);
+    const s1Attempts = profile.soundMastery[s1Id]?.attempts ?? 0;
+    const s2Attempts = profile.soundMastery[s2Id]?.attempts ?? 0;
+    // Total attempts where either sound was the target
+    confusionCounts[pairKey].total = Math.max(1, s1Attempts + s2Attempts);
   }
 
   const pairs: ConfusionPair[] = [];

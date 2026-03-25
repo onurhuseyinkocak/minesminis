@@ -158,6 +158,7 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
             : `You knew ${knownFinal} out of ${total} words`}
         </p>
         <button
+          type="button"
           className="flashcard-complete__btn"
           onClick={() => onComplete(finalResults)}
         >
@@ -182,7 +183,7 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
             style={{ width: `${progressPct}%` }}
           />
         </div>
-        <span className="flashcard-progress__label">{knownCount} ✓</span>
+        <span className="flashcard-progress__label">{knownCount} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{display:'inline',verticalAlign:'middle'}}><path d="M20 6L9 17l-5-5"/></svg></span>
       </div>
 
       {/* 3-D card */}
@@ -236,16 +237,19 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
       {flipped && (
         <div className="flashcard-actions">
           <button
+            type="button"
             className="flashcard-action-btn flashcard-action-btn--retry"
             onClick={handleRetry}
           >
-            ↩ {lang === 'tr' ? 'Tekrar Et' : 'Try Again'}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }}><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg>
+            {lang === 'tr' ? 'Tekrar Et' : 'Try Again'}
           </button>
           <button
+            type="button"
             className="flashcard-action-btn flashcard-action-btn--know"
             onClick={handleKnow}
           >
-            ✓ {lang === 'tr' ? 'Biliyorum' : 'I Know It'}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{display:'inline',verticalAlign:'middle',marginRight:4}}><path d="M20 6L9 17l-5-5"/></svg>{lang === 'tr' ? 'Biliyorum' : 'I Know It'}
           </button>
         </div>
       )}

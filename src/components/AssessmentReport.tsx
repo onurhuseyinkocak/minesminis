@@ -7,6 +7,7 @@
 import { PHONICS_GROUPS } from '../data/phonics';
 import { getRecentActivities } from '../services/activityLogger';
 import type { PhonicsAssessment, SoundAssessmentResult } from '../services/assessmentService';
+import { useLanguage } from '../contexts/LanguageContext';
 import './AssessmentReport.css';
 
 // ============================================================
@@ -111,27 +112,29 @@ function ReportHeader({
   studentName,
   dateGenerated,
   assessmentPeriod,
+  lang,
 }: {
   studentName: string;
   dateGenerated: string;
   assessmentPeriod: string;
+  lang: 'en' | 'tr';
 }) {
   return (
     <div className="ar-header">
       <div>
         <div className="ar-logo">MinesMinis</div>
-        <div className="ar-logo-sub">Phonics Assessment Report</div>
+        <div className="ar-logo-sub">{lang === 'tr' ? 'Ses Bilgisi Degerlendirme Raporu' : 'Phonics Assessment Report'}</div>
       </div>
       <div className="ar-header-meta">
         <div className="ar-student-name">{studentName}</div>
-        <div className="ar-header-date">Generated: {dateGenerated}</div>
+        <div className="ar-header-date">{lang === 'tr' ? 'Olusturulma' : 'Generated'}: {dateGenerated}</div>
         <div className="ar-header-period">{assessmentPeriod}</div>
       </div>
     </div>
   );
 }
 
-function SummaryStrip({ assessment }: { assessment: PhonicsAssessment }) {
+function SummaryStrip({ assessment, lang }: { assessment: PhonicsAssessment; lang: 'en' | 'tr' }) {
   return (
     <div className="ar-summary-strip">
       <div className="ar-metric-card ar-metric-card--mastered">
@@ -141,24 +144,24 @@ function SummaryStrip({ assessment }: { assessment: PhonicsAssessment }) {
             /{assessment.soundResults.length}
           </span>
         </div>
-        <div className="ar-metric-label">Sounds Mastered</div>
+        <div className="ar-metric-label">{lang === 'tr' ? 'Ogrenilen Sesler' : 'Sounds Mastered'}</div>
       </div>
 
       <div className="ar-metric-card ar-metric-card--accuracy">
         <div className="ar-metric-value">{assessment.averageAccuracy}%</div>
-        <div className="ar-metric-label">Avg Accuracy</div>
+        <div className="ar-metric-label">{lang === 'tr' ? 'Ort. Dogruluk' : 'Avg Accuracy'}</div>
       </div>
 
       <div className="ar-metric-card ar-metric-card--streak">
         <div className="ar-metric-value">{assessment.streakDays}</div>
-        <div className="ar-metric-label">Day Streak</div>
+        <div className="ar-metric-label">{lang === 'tr' ? 'Gunu Seri' : 'Day Streak'}</div>
       </div>
 
       <div className="ar-metric-card ar-metric-card--reading">
         <div className="ar-metric-value">
           {assessment.estimatedReadingLevelTr}
         </div>
-        <div className="ar-metric-label">Reading Level</div>
+        <div className="ar-metric-label">{lang === 'tr' ? 'Okuma Seviyesi' : 'Reading Level'}</div>
       </div>
     </div>
   );
@@ -166,12 +169,14 @@ function SummaryStrip({ assessment }: { assessment: PhonicsAssessment }) {
 
 function GroupProgress({
   soundResults,
+  lang,
 }: {
   soundResults: SoundAssessmentResult[];
+  lang: 'en' | 'tr';
 }) {
   return (
     <div>
-      <p className="ar-section-title">Phonics Group Progress</p>
+      <p className="ar-section-title">{lang === 'tr' ? 'Ses Grubu Ilerlemesi' : 'Phonics Group Progress'}</p>
       <div className="ar-groups">
         {PHONICS_GROUPS.map((group) => {
           const pct = groupAverageMastery(soundResults, group.group);
@@ -197,12 +202,14 @@ function GroupProgress({
 
 function SoundGrid({
   soundResults,
+  lang,
 }: {
   soundResults: SoundAssessmentResult[];
+  lang: 'en' | 'tr';
 }) {
   return (
     <div>
-      <p className="ar-section-title">Sound-by-Sound Breakdown</p>
+      <p className="ar-section-title">{lang === 'tr' ? 'Ses Detay Tablosu' : 'Sound-by-Sound Breakdown'}</p>
       <div className="ar-sound-grid">
         {soundResults.map((result) => (
           <div
@@ -223,32 +230,32 @@ function SoundGrid({
       <div className="ar-legend">
         <div className="ar-legend-item">
           <div className="ar-legend-dot ar-legend-dot--mastered" />
-          Mastered (80%+)
+          {lang === 'tr' ? 'Ogrenildi (80%+)' : 'Mastered (80%+)'}
         </div>
         <div className="ar-legend-item">
           <div className="ar-legend-dot ar-legend-dot--in-progress" />
-          In Progress (40–79%)
+          {lang === 'tr' ? 'Devam Ediyor (40-79%)' : 'In Progress (40-79%)'}
         </div>
         <div className="ar-legend-item">
           <div className="ar-legend-dot ar-legend-dot--needs-work" />
-          Needs Work (1–39%)
+          {lang === 'tr' ? 'Calisma Gerekli (1-39%)' : 'Needs Work (1-39%)'}
         </div>
         <div className="ar-legend-item">
           <div className="ar-legend-dot ar-legend-dot--not-started" />
-          Not Started
+          {lang === 'tr' ? 'Baslanmadi' : 'Not Started'}
         </div>
       </div>
     </div>
   );
 }
 
-function ActivityTimeline({ userId }: { userId: string }) {
+function ActivityTimeline({ userId, lang }: { userId: string; lang: 'en' | 'tr' }) {
   const activities = getRecentActivities(10, userId);
 
   if (activities.length === 0) {
     return (
       <div>
-        <p className="ar-section-title">Recent Activity</p>
+        <p className="ar-section-title">{lang === 'tr' ? 'Son Aktiviteler' : 'Recent Activity'}</p>
         <p
           style={{
             fontSize: 13,
@@ -256,7 +263,7 @@ function ActivityTimeline({ userId }: { userId: string }) {
             margin: 0,
           }}
         >
-          No activity recorded yet.
+          {lang === 'tr' ? 'Henuz aktivite kaydedilmedi.' : 'No activity recorded yet.'}
         </p>
       </div>
     );
@@ -264,7 +271,7 @@ function ActivityTimeline({ userId }: { userId: string }) {
 
   return (
     <div>
-      <p className="ar-section-title">Recent Activity</p>
+      <p className="ar-section-title">{lang === 'tr' ? 'Son Aktiviteler' : 'Recent Activity'}</p>
       <div className="ar-activity-list">
         {activities.map((act) => (
           <div key={act.id} className="ar-activity-item">
@@ -290,15 +297,17 @@ function ActivityTimeline({ userId }: { userId: string }) {
 function Recommendations({
   recommendations,
   recommendationsTr,
+  lang,
 }: {
   recommendations: string[];
   recommendationsTr: string[];
+  lang: 'en' | 'tr';
 }) {
   if (recommendations.length === 0) return null;
 
   return (
     <div>
-      <p className="ar-section-title">Recommendations</p>
+      <p className="ar-section-title">{lang === 'tr' ? 'Oneriler' : 'Recommendations'}</p>
       <div className="ar-recommendations">
         <ul className="ar-rec-list">
           {recommendations.map((rec, idx) => (
@@ -338,6 +347,7 @@ export default function AssessmentReport({
   onPrint,
   onClose,
 }: AssessmentReportProps) {
+  const { lang } = useLanguage();
   const namedAssessment: PhonicsAssessment = {
     ...assessment,
     studentName,
@@ -353,13 +363,13 @@ export default function AssessmentReport({
       <div className="assessment-report">
         {/* Actions bar */}
         <div className="assessment-report-actions">
-          <button className="ar-btn ar-btn--print" onClick={onPrint}>
+          <button type="button" className="ar-btn ar-btn--print" onClick={onPrint}>
             <IconPrint />
-            Print / Save PDF
+            {lang === 'tr' ? 'Yazdir / PDF Kaydet' : 'Print / Save PDF'}
           </button>
-          <button className="ar-btn ar-btn--close" onClick={onClose}>
+          <button type="button" className="ar-btn ar-btn--close" onClick={onClose}>
             <IconX />
-            Close
+            {lang === 'tr' ? 'Kapat' : 'Close'}
           </button>
         </div>
 
@@ -369,27 +379,29 @@ export default function AssessmentReport({
             studentName={namedAssessment.studentName}
             dateGenerated={namedAssessment.dateGenerated}
             assessmentPeriod={namedAssessment.assessmentPeriod}
+            lang={lang}
           />
 
-          <SummaryStrip assessment={namedAssessment} />
+          <SummaryStrip assessment={namedAssessment} lang={lang} />
 
           <hr className="ar-divider" />
 
-          <GroupProgress soundResults={namedAssessment.soundResults} />
+          <GroupProgress soundResults={namedAssessment.soundResults} lang={lang} />
 
           <hr className="ar-divider" />
 
-          <SoundGrid soundResults={namedAssessment.soundResults} />
+          <SoundGrid soundResults={namedAssessment.soundResults} lang={lang} />
 
           <hr className="ar-divider" />
 
-          <ActivityTimeline userId={userId} />
+          <ActivityTimeline userId={userId} lang={lang} />
 
           <hr className="ar-divider" />
 
           <Recommendations
             recommendations={namedAssessment.recommendations}
             recommendationsTr={namedAssessment.recommendationsTr}
+            lang={lang}
           />
 
           <div className="ar-footer">

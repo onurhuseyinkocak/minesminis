@@ -39,12 +39,20 @@ export function getReadingHistory(userId: string): ReadingRecord[] {
   return store[userId] ?? [];
 }
 
+const MAX_RECORDS_PER_USER = 500;
+
 export function saveReadingRecord(userId: string, record: ReadingRecord): void {
   const store = loadStore();
   if (!store[userId]) {
     store[userId] = [];
   }
   store[userId].push(record);
+
+  // Prevent unbounded localStorage growth — keep most recent records
+  if (store[userId].length > MAX_RECORDS_PER_USER) {
+    store[userId] = store[userId].slice(-MAX_RECORDS_PER_USER);
+  }
+
   saveStore(store);
 }
 

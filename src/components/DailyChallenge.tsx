@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Zap, CheckCircle, RefreshCw } from 'lucide-react';
 import { useGamification } from '../contexts/GamificationContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { logActivity } from '../services/activityLogger';
 import { activateBoost } from './XPBooster';
 
@@ -48,6 +49,7 @@ function getDailyFallback(): ChallengeData {
 const DailyChallenge: React.FC = () => {
   const { addXP, trackActivity } = useGamification();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [challenge, setChallenge] = useState<ChallengeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -129,7 +131,7 @@ const DailyChallenge: React.FC = () => {
     return (
       <div className="daily-challenge loading-state">
         <RefreshCw className="spin-icon" size={20} />
-        <span>Loading today's challenge...</span>
+        <span>{t('dailyChallenge.loading')}</span>
         <style>{dailyChallengeStyles}</style>
       </div>
     );
@@ -142,12 +144,12 @@ const DailyChallenge: React.FC = () => {
       <div className="challenge-header">
         <div className="challenge-title-row">
           <Zap size={20} className="zap-icon" />
-          <h3>Daily Challenge</h3>
+          <h3>{t('dailyChallenge.title')}</h3>
         </div>
         {alreadyCompleted && (
           <div className="completed-badge">
             <CheckCircle size={16} />
-            <span>Done!</span>
+            <span>{t('dailyChallenge.done')}</span>
           </div>
         )}
       </div>
@@ -158,13 +160,14 @@ const DailyChallenge: React.FC = () => {
         {alreadyCompleted ? (
           <div className="challenge-result success">
             <span className="result-word">{challenge.word}</span>
-            <span className="result-label">+25 XP earned today</span>
+            <span className="result-label">{t('dailyChallenge.xpEarnedToday')}</span>
           </div>
         ) : (
           <div className="challenge-options">
             {challenge.options.map((option, index) => (
               <button
                 key={index}
+                type="button"
                 className={`option-btn ${
                   selectedAnswer === index
                     ? index === challenge.correctIndex
@@ -186,9 +189,9 @@ const DailyChallenge: React.FC = () => {
         {selectedAnswer !== null && !alreadyCompleted && (
           <div className={`feedback-row ${isCorrect ? 'correct' : 'wrong'}`}>
             {isCorrect ? (
-              <span>Correct! +25 XP</span>
+              <span>{t('dailyChallenge.correct')}</span>
             ) : (
-              <span>Not quite. The answer is <strong>{challenge.word}</strong>. Try again tomorrow!</span>
+              <span>{t('dailyChallenge.wrongPrefix')} <strong>{challenge.word}</strong>{t('dailyChallenge.wrongSuffix')}</span>
             )}
           </div>
         )}

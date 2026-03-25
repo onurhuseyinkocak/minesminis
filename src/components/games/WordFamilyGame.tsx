@@ -164,7 +164,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
 
             <h2 className="wfg__completion-title">{t('games.greatJob')}</h2>
             <p className="wfg__completion-score">
-              {totalScore} words found!
+              {t('games.wordsFoundCount').replace('{count}', String(totalScore))}
             </p>
 
             <span className="game-stars">
@@ -218,7 +218,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
     <div className="wfg" role="application" aria-label="Word family builder game">
       {/* Header */}
       <div className="wfg__header">
-        <h2 className="wfg__title">Word Families</h2>
+        <h2 className="wfg__title">{t('games.wordFamilies')}</h2>
         <Badge variant="info">
           {familyIndex + 1} / {families.length}
         </Badge>
@@ -228,7 +228,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
 
       {/* Family info + rime tip */}
       <p className="wfg__progress-text">
-        {foundWords.length} / {currentFamily.validWords.length} words found &mdash; {currentFamily.rimeTr}
+        {t('games.xWordsFoundDash').replace('{found}', String(foundWords.length)).replace('{total}', String(currentFamily.validWords.length))} &mdash; {currentFamily.rimeTr}
       </p>
 
       {/* Feedback banner */}
@@ -244,7 +244,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
             >
               {showFeedback === 'correct'
                 ? `${lastFormedWord ?? ''} — ${t('games.amazing')}`
-                : `Not a word! ${t('games.tryAgainYouGotThis')}`}
+                : `${t('games.notAWord')} ${t('games.tryAgainYouGotThis')}`}
             </motion.div>
           )}
         </AnimatePresence>
@@ -261,7 +261,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
         >
           {/* Word snap area */}
           <div className="wfg__rime-area">
-            <p className="wfg__rime-label">Word ending (rime)</p>
+            <p className="wfg__rime-label">{t('games.wordEndingRime')}</p>
 
             <div className="wfg__word-snap" aria-live="polite" aria-label="Current word being formed">
               {/* Onset slot */}
@@ -313,7 +313,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
           </div>
 
           {/* Onset tiles */}
-          <p className="wfg__onsets-label">Tap a letter to make a word</p>
+          <p className="wfg__onsets-label">{t('games.tapLetterToMakeWord')}</p>
           <div className="wfg__onsets" role="group" aria-label="Letter tiles">
             {currentFamily.onsets.map((onset) => {
               const candidate = onset + rimeText;
@@ -348,7 +348,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
           {/* Found words */}
           {foundWords.length > 0 && (
             <>
-              <p className="wfg__found-label">Words found</p>
+              <p className="wfg__found-label">{t('games.wordsFoundLabel')}</p>
               <div className="wfg__found-words" aria-label="Found words">
                 {foundWords.map((w) => (
                   <motion.span
@@ -378,7 +378,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
                 className="wfg__next-btn"
                 onClick={handleNextFamily}
               >
-                {familyIndex + 1 < families.length ? 'Next Family!' : 'Finish!'}
+                {familyIndex + 1 < families.length ? t('games.nextFamily') : t('games.finishExcl')}
               </button>
             </motion.div>
           )}

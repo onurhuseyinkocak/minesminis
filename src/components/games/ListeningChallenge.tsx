@@ -4,6 +4,7 @@ import { Volume2, Sparkles, Headphones, Lightbulb } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './ListeningChallenge.css';
 
 interface WordItem {
@@ -43,7 +44,7 @@ function generateRounds(words: WordItem[]): Round[] {
 }
 
 export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
-  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
+  const { t } = useLanguage();
   const rounds = useMemo(() => generateRounds(words), [words]);
   const [currentRound, setCurrentRound] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -55,8 +56,14 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   const round = rounds[currentRound];
 
   const speakWord = useCallback((text: string) => {
-    speak(text);
+    try {
+      speak(text);
+    } catch {
+      /* TTS not available — fail silently */
+    }
   }, []);
+
+  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview') || 'No words to review.'}</div>; }
 
   const handlePlay = () => {
     if (!round) return;
@@ -108,9 +115,9 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
             className="listening-challenge__results-content"
           >
             <Headphones size={48} className="listening-challenge__results-icon" />
-            <h2 className="listening-challenge__results-title">Great Listening!</h2>
+            <h2 className="listening-challenge__results-title">{t('games.greatListening') || 'Great Listening!'}</h2>
             <p className="listening-challenge__results-score">
-              {score} out of {rounds.length} correct!
+              {score} / {rounds.length}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 12} XP
@@ -126,7 +133,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   return (
     <div className="listening-challenge" role="application" aria-label="Listening challenge game">
       <div className="listening-challenge__header">
-        <h2 className="listening-challenge__title">Listen & Pick!</h2>
+        <h2 className="listening-challenge__title">{t('games.listenAndPick') || 'Listen & Pick!'}</h2>
         <Badge variant="info">{currentRound + 1}/{rounds.length}</Badge>
       </div>
 
@@ -134,7 +141,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
 
       <Card variant="elevated" padding="lg" className="listening-challenge__speaker">
         <p className="listening-challenge__instruction">
-          Listen to the word, then pick the right picture!
+          {t('games.listenAndPickInstruction') || 'Listen to the word, then pick the right picture!'}
         </p>
         <motion.div whileTap={{ scale: 0.95 }}>
           <Button
@@ -145,7 +152,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
             className="listening-challenge__play-btn"
             aria-label="Play the word"
           >
-            {hasPlayed ? 'Play Again' : 'Listen'}
+            {hasPlayed ? (t('games.playAgainAudio') || 'Play Again') : (t('games.listen') || 'Listen')}
           </Button>
         </motion.div>
       </Card>
@@ -156,7 +163,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          Yes! It was "{round.correctWord.english}"!
+          {t('games.yesItWas') || 'Yes! It was'} &ldquo;{round.correctWord.english}&rdquo;!
         </motion.div>
       )}
 
@@ -166,7 +173,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          It was "{round.correctWord.english}" <Lightbulb size={14} color="#E8A317" />
+          {t('games.itWas') || 'It was'} &ldquo;{round.correctWord.english}&rdquo; <Lightbulb size={14} color="#E8A317" />
         </motion.div>
       )}
 
@@ -182,6 +189,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
 
             return (
               <motion.button
+                type="button"
                 key={`${currentRound}-${index}`}
                 className={optionClass}
                 onClick={() => handleSelect(index)}
@@ -205,7 +213,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
 
       {!hasPlayed && (
         <p className="listening-challenge__prompt-listen" aria-live="polite">
-          Press the Listen button first!
+          {t('games.pressListenFirst') || 'Press the Listen button first!'}
         </p>
       )}
     </div>

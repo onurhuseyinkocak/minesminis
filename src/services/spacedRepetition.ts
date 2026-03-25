@@ -48,20 +48,28 @@ function daysFromNow(days: number): number {
 // ─── State I/O ────────────────────────────────────────────────────────────────
 
 export function getSRSState(userId: string): SRSState {
-  const raw = localStorage.getItem(storageKey(userId));
-  if (raw) {
-    try {
-      return JSON.parse(raw) as SRSState;
-    } catch {
-      // corrupted storage — return blank
+  try {
+    const raw = localStorage.getItem(storageKey(userId));
+    if (raw) {
+      try {
+        return JSON.parse(raw) as SRSState;
+      } catch {
+        // corrupted storage — return blank
+      }
     }
+  } catch {
+    // localStorage unavailable
   }
   return { words: {}, userId, lastUpdated: Date.now() };
 }
 
 export function saveSRSState(userId: string, state: SRSState): void {
-  const updated: SRSState = { ...state, lastUpdated: Date.now() };
-  localStorage.setItem(storageKey(userId), JSON.stringify(updated));
+  try {
+    const updated: SRSState = { ...state, lastUpdated: Date.now() };
+    localStorage.setItem(storageKey(userId), JSON.stringify(updated));
+  } catch {
+    // localStorage full or unavailable — silently ignore
+  }
 }
 
 // ─── Word Management ──────────────────────────────────────────────────────────
@@ -91,19 +99,24 @@ export function addWord(userId: string, word: string): void {
  * Record a correct or incorrect answer and move the word between boxes.
  */
 export function recordAnswer(userId: string, word: string, correct: boolean): void {
-  const state = getSRSState(userId);
-  const existing = state.words[word];
+  let state = getSRSState(userId);
+  let existing = state.words[word];
 
   const now = Date.now();
 
   if (!existing) {
-    // Auto-add if not tracked yet
-    addWord(userId, word);
-    const freshState = getSRSState(userId);
-    recordAnswer(userId, word, correct);
-    // recursion handles the rest; avoid double-save by returning here
-    void freshState;
-    return;
+    // Auto-add the word inline instead of recursing
+    const newReview: WordReview = {
+      word,
+      box: 1,
+      lastReviewed: now,
+      nextReview: now,
+      correct: 0,
+      incorrect: 0,
+      streak: 0,
+    };
+    state = { ...state, words: { ...state.words, [word]: newReview } };
+    existing = newReview;
   }
 
   let newBox: 1 | 2 | 3;

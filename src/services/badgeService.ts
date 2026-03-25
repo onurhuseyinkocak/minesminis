@@ -46,8 +46,12 @@ export const checkBadgeProgress = (
 
 export const getUserBadges = (): Badge[] => {
     const stored = localStorage.getItem(LS_USER_BADGES);
-    if (!stored) return AVAILABLE_BADGES;
-    return JSON.parse(stored);
+    if (!stored) return AVAILABLE_BADGES.map(b => ({ ...b }));
+    try {
+        return JSON.parse(stored) as Badge[];
+    } catch {
+        return AVAILABLE_BADGES.map(b => ({ ...b }));
+    }
 };
 
 export const awardBadge = (badgeId: string): Badge | null => {

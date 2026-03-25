@@ -4,7 +4,6 @@ import './ConfettiEffect.css';
 interface ConfettiEffectProps {
   isActive?: boolean;
   trigger?: boolean;
-  type?: string;
 }
 
 const ConfettiEffect: React.FC<ConfettiEffectProps> = ({ isActive, trigger }) => {

@@ -218,10 +218,12 @@ function PracticeTab({
   trap,
   onComplete,
   onWrongAnswer,
+  loseHeart,
 }: {
   trap: PhoneticTrap;
   onComplete: (score: number) => void;
   onWrongAnswer?: () => void;
+  loseHeart: () => void;
 }) {
   const { lang: language } = useLanguage();
   const isTr = language === 'tr';
@@ -242,10 +244,11 @@ function PracticeTab({
         setCorrectCount((c) => c + 1);
       } else {
         SFX.wrong?.();
+        loseHeart();
         onWrongAnswer?.();
       }
     },
-    [selected, exercise.correctOption, onWrongAnswer],
+    [selected, exercise.correctOption, onWrongAnswer, loseHeart],
   );
 
   const handleNext = useCallback(() => {
@@ -303,6 +306,7 @@ function PracticeTab({
           }
           return (
             <button
+              type="button"
               key={option}
               className={optClass}
               onClick={() => handleSelect(option)}
@@ -321,7 +325,7 @@ function PracticeTab({
               ? 'Correct! Great pronunciation awareness!'
               : `The right answer is "${exercise.correctOption}"`}
           </div>
-          <button className="ptg__next-btn" style={{ '--trap-color': trap.color } as React.CSSProperties} onClick={handleNext}>
+          <button type="button" className="ptg__next-btn" style={{ '--trap-color': trap.color } as React.CSSProperties} onClick={handleNext}>
             {exerciseIndex + 1 >= trap.exercises.length ? 'Finish Practice' : 'Next Question'}
           </button>
         </>
@@ -336,10 +340,12 @@ function ChallengeTab({
   trap,
   onComplete,
   onWrongAnswer,
+  loseHeart,
 }: {
   trap: PhoneticTrap;
   onComplete: (score: number) => void;
   onWrongAnswer?: () => void;
+  loseHeart: () => void;
 }) {
   const { lang: language } = useLanguage();
   const isTr = language === 'tr';
@@ -371,6 +377,7 @@ function ChallengeTab({
         }, 900);
       } else {
         SFX.wrong?.();
+        loseHeart();
         onWrongAnswer?.();
         setTimeout(() => {
           if (questionIndex + 1 >= questions.length) {
@@ -384,7 +391,7 @@ function ChallengeTab({
         }, 1200);
       }
     },
-    [selected, questionIndex, questions.length, correctCount, onComplete, onWrongAnswer],
+    [selected, questionIndex, questions.length, correctCount, onComplete, onWrongAnswer, loseHeart],
   );
 
   if (done) {
@@ -442,6 +449,7 @@ function ChallengeTab({
             }
             return (
               <button
+                type="button"
                 key={opt.word}
                 className={cls}
                 onClick={() => handleSelect(opt.word, opt.isCorrect)}
@@ -468,7 +476,7 @@ export default function PhoneticTrapGame({
   onWrongAnswer,
   onBack,
 }: PhoneticTrapGameProps) {
-  useHearts(); // kept for consistency with other games — hearts state available if needed
+  const { loseHeart } = useHearts();
   const [activeTab, setActiveTab] = useState<TabId>('learn');
   const [practiceScore, setPracticeScore] = useState<number | null>(null);
   const [challengeScore, setChallengeScore] = useState<number | null>(null);
@@ -500,7 +508,7 @@ export default function PhoneticTrapGame({
     <div className="ptg" style={cssVars}>
       {/* Header */}
       <div className="ptg__header">
-        <button className="ptg__back-btn" onClick={onBack} aria-label="Back to trap list">
+        <button type="button" className="ptg__back-btn" onClick={onBack} aria-label="Back to trap list">
           <ArrowLeft size={20} />
         </button>
         <div className="ptg__sound-badge">
@@ -512,6 +520,7 @@ export default function PhoneticTrapGame({
       {/* Tabs */}
       <div className="ptg__tabs">
         <button
+          type="button"
           className={`ptg__tab${activeTab === 'learn' ? ' ptg__tab--active' : ''}`}
           onClick={() => setActiveTab('learn')}
         >
@@ -519,6 +528,7 @@ export default function PhoneticTrapGame({
           <span className="ptg__tab-label">Learn</span>
         </button>
         <button
+          type="button"
           className={`ptg__tab${activeTab === 'practice' ? ' ptg__tab--active' : ''}`}
           onClick={() => setActiveTab('practice')}
         >
@@ -527,6 +537,7 @@ export default function PhoneticTrapGame({
           {practiceScore !== null && <span style={{ fontSize: '0.65rem', color: 'var(--success, #10B981)' }}>{practiceScore}%</span>}
         </button>
         <button
+          type="button"
           className={`ptg__tab${activeTab === 'challenge' ? ' ptg__tab--active' : ''}`}
           onClick={() => setActiveTab('challenge')}
         >
@@ -543,6 +554,7 @@ export default function PhoneticTrapGame({
           trap={trap}
           onComplete={handlePracticeComplete}
           onWrongAnswer={onWrongAnswer}
+          loseHeart={loseHeart}
         />
       )}
       {activeTab === 'challenge' && (
@@ -550,6 +562,7 @@ export default function PhoneticTrapGame({
           trap={trap}
           onComplete={handleChallengeComplete}
           onWrongAnswer={onWrongAnswer}
+          loseHeart={loseHeart}
         />
       )}
     </div>

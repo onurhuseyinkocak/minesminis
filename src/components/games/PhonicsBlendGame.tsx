@@ -264,7 +264,7 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
     <div className="pbg" role="application" aria-label="Phonics blend game">
       {/* Header */}
       <div className="pbg__header">
-        <h2 className="pbg__title">Phonics Blending</h2>
+        <h2 className="pbg__title">{t('games.phonicsBlending') || 'Phonics Blending'}</h2>
         <Badge variant="info">
           {currentIndex + 1} / {questions.length}
         </Badge>
@@ -300,10 +300,10 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
         >
           {/* Instruction */}
           <p className="pbg__instruction" aria-live="polite">
-            {phase === 'explore' && 'Tap each sound tile to hear it, then press Blend!'}
-            {phase === 'blending' && 'Blending...'}
-            {phase === 'blended' && `The word is: ${currentQuestion.word}`}
-            {phase === 'choices' && 'Which word did you blend?'}
+            {phase === 'explore' && (t('games.tapEachSound') || 'Tap each sound tile to hear it, then press Blend!')}
+            {phase === 'blending' && (t('games.blending') || 'Blending...')}
+            {phase === 'blended' && `${t('games.theWordIs') || 'The word is:'} ${currentQuestion.word}`}
+            {phase === 'choices' && (t('games.whichWordBlend') || 'Which word did you blend?')}
           </p>
 
           {/* Sound tiles area */}
@@ -378,11 +378,11 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
                 whileTap={{ scale: 0.95 }}
                 aria-label="Blend sounds together"
               >
-                Blend!
+                {t('games.blend') || 'Blend!'}
               </motion.button>
               {!allTilesTapped && (
                 <p className="pbg__blend-hint">
-                  Tap all {currentQuestion.sounds.length} sounds first
+                  {t('games.tapAllSoundsFirst') || `Tap all ${currentQuestion.sounds.length} sounds first`}
                 </p>
               )}
             </div>

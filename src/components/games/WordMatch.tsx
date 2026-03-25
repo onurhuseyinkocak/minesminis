@@ -40,7 +40,6 @@ function shuffleArray<T>(arr: T[]): T[] {
 }
 
 export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
-  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
@@ -174,6 +173,8 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     initRound(0);
   };
 
+  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
+
   if (completed) {
     const pct = totalAttempted > 0 ? Math.round((score / Math.min(words.length, 6)) * 100) : 0;
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
@@ -259,6 +260,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             {leftItems.map((item) => (
               <div key={`left-${item.id}`} role="listitem">
                 <motion.button
+                  type="button"
                   className={[
                     'word-match__card',
                     'word-match__card--left',
@@ -288,6 +290,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             {rightItems.map((item) => (
               <div key={`right-${item.id}`} role="listitem">
                 <motion.button
+                  type="button"
                   className={[
                     'word-match__card',
                     'word-match__card--right',

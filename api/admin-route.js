@@ -12,6 +12,17 @@ function checkAuth(req) {
 }
 
 export default async function handler(req, res) {
+  // CORS — admin endpoint, restrict origin
+  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5000').split(',');
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Password');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   const path = (req.query.path || '').replace(/^\/+|\/+$/g, '');
   const segments = path ? path.split('/') : [];
   const resource = segments[0];
@@ -22,11 +33,7 @@ export default async function handler(req, res) {
     const status = getEnvStatus();
     return res.status(200).json({
       ok: true,
-      supabaseConfigured: status.supabaseConfigured,
-      hasSupabaseUrl: status.hasSupabaseUrl,
-      hasSupabaseKey: status.hasSupabaseKey,
-      hint: status.hint,
-      message: status.supabaseConfigured ? 'Admin API configured.' : status.hint,
+      configured: status.supabaseConfigured,
     });
   }
 
@@ -41,10 +48,13 @@ export default async function handler(req, res) {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
       const { file, name } = body;
       if (!file || !name) return res.status(400).json({ error: 'file ve name gerekli' });
+      if (typeof file !== 'string' || typeof name !== 'string') return res.status(400).json({ error: 'Invalid file or name' });
       const allowedExt = ['pdf', 'jpg', 'jpeg', 'png'];
       const ext = (name.split('.').pop() || '').toLowerCase();
       if (!allowedExt.includes(ext)) return res.status(400).json({ error: 'Sadece PDF, JPEG, PNG' });
       const buf = Buffer.from(file, 'base64');
+      // Max 10MB file size
+      if (buf.length > 10 * 1024 * 1024) return res.status(400).json({ error: 'File too large (max 10MB)' });
       const safeName = name.replace(/[^a-zA-Z0-9.-]/g, '_');
       const storagePath = `uploads/${Date.now()}-${safeName}`;
       const contentType = ext === 'pdf' ? 'application/pdf' : (ext === 'jpg' ? 'image/jpeg' : `image/${ext}`);
@@ -276,6 +286,7 @@ Generate 4-5 scenes total. Make it magical, educational, and joyful.`;
           temperature: 0.85,
           max_tokens: 3000,
           response_format: { type: 'json_object' },
+          timeout: 30000,
         });
 
         const raw = completion.choices[0].message.content || '{}';
@@ -374,7 +385,9 @@ Generate 4-5 scenes total. Make it magical, educational, and joyful.`;
 
     return res.status(404).json({ error: 'Not found' });
   } catch (e) {
-    console.error('Admin route error:', e);
-    return res.status(500).json({ error: e.message || 'Server error' });
+    const safeMessage = (e.code === '23505') ? 'Duplicate entry'
+      : (e.code === '23503') ? 'Referenced record not found'
+      : 'Server error';
+    return res.status(500).json({ error: safeMessage });
   }
 }

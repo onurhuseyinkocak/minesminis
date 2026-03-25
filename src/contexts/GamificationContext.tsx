@@ -4,7 +4,7 @@
  * Core gamification system for MinesMinis
  */
 /* eslint-disable react-refresh/only-export-components -- context file: exports Provider + useGamification + types */
-import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useRef, useCallback, ReactNode } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
@@ -238,18 +238,28 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const [newLevel, setNewLevel] = useState(1);
     const [canClaimDaily, setCanClaimDaily] = useState(false);
 
+    // Keep a ref to stats so async callbacks never read stale closures
+    const statsRef = useRef(stats);
+    statsRef.current = stats;
+
     // Load stats from localStorage (works without database)
     useEffect(() => {
+        let cancelled = false;
+
         if (user) {
-            loadStats();
+            loadStats(cancelled);
         } else {
             setStats(DEFAULT_STATS);
             setLoading(false);
         }
+
+        return () => {
+            cancelled = true;
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user is available only
     }, [user]);
 
-    const loadStats = async () => {
+    const loadStats = async (cancelled: boolean) => {
         if (!user?.uid) return;
 
         try {
@@ -264,8 +274,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     initialStats = JSON.parse(localStatsStr);
                     // Level must always be derived from XP so Learning Journey and Level Up stay in sync
                     initialStats.level = calculateLevel(initialStats.xp ?? 0);
-                    setStats(initialStats);
-                    checkDailyClaim(initialStats.lastDailyClaim);
+                    if (!cancelled) {
+                        setStats(initialStats);
+                        checkDailyClaim(initialStats.lastDailyClaim);
+                    }
                 } catch (e) {
                     errorLogger.log({
                         severity: 'medium',
@@ -282,6 +294,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                 .select('xp, points, streak_days, badges, last_login, settings')
                 .eq('id', user.uid)
                 .maybeSingle();
+
+            if (cancelled) return;
 
             if (data && !error) {
                 const settingsObj = (data.settings || {}) as Record<string, unknown>;
@@ -314,13 +328,14 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                 });
             }
         } catch (error) {
+            if (cancelled) return;
             errorLogger.log({
                 severity: 'high',
                 message: `Error loading gamification stats: ${error instanceof Error ? error.message : String(error)}`,
                 component: 'GamificationContext',
             });
         } finally {
-            setLoading(false);
+            if (!cancelled) setLoading(false);
         }
     };
 
@@ -344,20 +359,21 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     // ==================== XP FUNCTIONS ====================
 
     const addXP = async (amount: number, reason: string, metadata?: Record<string, unknown>) => {
+        const currentStats = statsRef.current;
         const streakBonus = getStreakBonus();
         let totalXP = Math.floor(amount * (1 + streakBonus / 100));
 
         // Apply Character Power Multipliers
-        if (stats.mascotId === 'mimi_dragon') {
+        if (currentStats.mascotId === 'mimi_dragon') {
             totalXP = Math.floor(totalXP * 1.2); // Mimi: +20% XP on all activities
         }
-        if (stats.mascotId === 'nova_fox' && (reason === 'word_learned' || reason === 'word_game')) {
+        if (currentStats.mascotId === 'nova_fox' && (reason === 'word_learned' || reason === 'word_game')) {
             totalXP *= 2; // Nova: 2x points in word games
         }
-        if (stats.mascotId === 'bubbles_octo' && (reason === 'listening' || reason === 'pronunciation')) {
+        if (currentStats.mascotId === 'bubbles_octo' && (reason === 'listening' || reason === 'pronunciation')) {
             totalXP *= 2; // Bubbles: 2x points in listening/speaking
         }
-        if (stats.mascotId === 'sparky_alien' && (reason === 'grammar' || metadata?.isFastAnswer)) {
+        if (currentStats.mascotId === 'sparky_alien' && (reason === 'grammar' || metadata?.isFastAnswer)) {
             totalXP = Math.floor(totalXP * 1.5); // Sparky: 1.5x in grammar + fast answers
         }
 
@@ -367,13 +383,13 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             totalXP = Math.round(totalXP * activeBoost.multiplier);
         }
 
-        const newXP = stats.xp + totalXP;
-        const newWeeklyXP = stats.weekly_xp + totalXP;
-        const oldLevel = stats.level;
+        const newXP = currentStats.xp + totalXP;
+        const newWeeklyXP = currentStats.weekly_xp + totalXP;
+        const oldLevel = currentStats.level;
         const newLevelValue = calculateLevel(newXP);
 
         const newStats = {
-            ...stats,
+            ...currentStats,
             xp: newXP,
             weekly_xp: newWeeklyXP,
             level: newLevelValue,
@@ -388,7 +404,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             setShowLevelUp(true);
 
             // Mimi: bonus XP on level up (skip if this IS the bonus, to prevent recursion)
-            if (stats.mascotId === 'mimi_dragon' && reason !== 'mimi_level_bonus') {
+            if (currentStats.mascotId === 'mimi_dragon' && reason !== 'mimi_level_bonus') {
                 setTimeout(() => addXP(20, 'mimi_level_bonus'), 500);
             }
 
@@ -396,10 +412,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             const newlyUnlocked = hasNewMascotUnlocked(
                 oldLevel,
                 newLevelValue,
-                stats.streakDays,
-                stats.streakDays,
-                stats.wordsLearned,
-                stats.wordsLearned,
+                currentStats.streakDays,
+                currentStats.streakDays,
+                currentStats.wordsLearned,
+                currentStats.wordsLearned,
             );
             if (newlyUnlocked) {
                 toast.success(`Yeni maskot açıldı: ${newlyUnlocked.nameTr}!`, {
@@ -451,8 +467,9 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     // ==================== STREAK FUNCTIONS ====================
 
     const checkWeeklyReset = async (lastResetStr: string | null) => {
+        const currentStats = statsRef.current;
         const now = new Date();
-        const lastReset = lastResetStr ? new Date(lastResetStr) : new Date(stats.created_at || now);
+        const lastReset = lastResetStr ? new Date(lastResetStr) : new Date(currentStats.created_at || now);
 
         // Find the most recent Monday at 00:00
         const mostRecentMonday = new Date(now);
@@ -465,13 +482,13 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             // Weekly reset needed!
             // Weekly reset triggered
 
-            // 1. If user was #1 (we'd need to check the full leaderboard here, 
+            // 1. If user was #1 (we'd need to check the full leaderboard here,
             // but for simplicity in this context we'll assume a winner check)
             // In a real app, this logic might live in a Supabase Edge Function
 
             // 2. Reset weekly XP
             const newStats = {
-                ...stats,
+                ...currentStats,
                 weekly_xp: 0,
                 lastWeeklyReset: now.toISOString(),
             };
@@ -496,10 +513,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     };
 
     const checkStreak = async () => {
+        const currentStats = statsRef.current;
         const now = new Date();
-        const lastLogin = stats.lastLoginDate ? new Date(stats.lastLoginDate) : null;
+        const lastLogin = currentStats.lastLoginDate ? new Date(currentStats.lastLoginDate) : null;
 
-        let newStreak = stats.streakDays;
+        let newStreak = currentStats.streakDays;
         let streakBroken = false;
 
         if (!lastLogin) {
@@ -508,13 +526,13 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             // Same day, no change
         } else if (isYesterday(lastLogin, now)) {
             // Consecutive day
-            newStreak = stats.streakDays + 1;
+            newStreak = currentStats.streakDays + 1;
         } else {
             // Streak broken — try to consume a freeze
             const protected_ = consumeStreakFreeze(user?.uid);
             if (protected_) {
                 // Freeze absorbed the miss: keep existing streak
-                newStreak = stats.streakDays;
+                newStreak = currentStats.streakDays;
             } else {
                 newStreak = 1;
                 streakBroken = true;
@@ -522,7 +540,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         }
 
         const newStats = {
-            ...stats,
+            ...currentStats,
             streakDays: newStreak,
             lastLoginDate: now.toISOString(),
         };
@@ -536,7 +554,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         }
 
         // Award freeze if streak milestone reached (only on actual increments)
-        if (!streakBroken && newStreak !== stats.streakDays) {
+        if (!streakBroken && newStreak !== currentStats.streakDays) {
             const awarded = checkAndAwardStreakFreeze(newStreak, isPremium);
             if (awarded) {
                 toast.success('Yeni seri koruması kazandın!', {
@@ -574,25 +592,27 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         await checkAndAwardBadges();
     };
 
-    const getStreakBonus = (): number => {
-        if (stats.streakDays >= 30) return 50;
-        if (stats.streakDays >= 14) return 30;
-        if (stats.streakDays >= 7) return 20;
-        if (stats.streakDays >= 3) return 10;
+    const getStreakBonus = useCallback((): number => {
+        const s = statsRef.current;
+        if (s.streakDays >= 30) return 50;
+        if (s.streakDays >= 14) return 30;
+        if (s.streakDays >= 7) return 20;
+        if (s.streakDays >= 3) return 10;
         return 0;
-    };
+    }, []);
 
     // ==================== DAILY REWARD FUNCTIONS ====================
 
     const claimDailyReward = async (): Promise<DailyReward | null> => {
         if (!canClaimDaily) return null;
 
-        const dayIndex = stats.streakDays === 0 ? 0 : ((stats.streakDays - 1) % 7);
+        const currentStats = statsRef.current;
+        const dayIndex = currentStats.streakDays === 0 ? 0 : ((currentStats.streakDays - 1) % 7);
         const reward = DAILY_REWARDS[dayIndex] ?? DAILY_REWARDS[0];
 
         const now = new Date();
         const newStats = {
-            ...stats,
+            ...currentStats,
             lastDailyClaim: now.toISOString(),
         };
 
@@ -620,7 +640,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         await addXP(reward.xp, 'daily_reward');
 
         // Award badge if included
-        if (reward.badge && !stats.badges.includes(reward.badge)) {
+        if (reward.badge && !currentStats.badges.includes(reward.badge)) {
             await awardBadge(reward.badge);
         }
 
@@ -628,9 +648,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     };
 
     const getNextClaimTime = (): Date | null => {
-        if (!stats.lastDailyClaim) return null;
+        const currentStats = statsRef.current;
+        if (!currentStats.lastDailyClaim) return null;
 
-        const lastClaim = new Date(stats.lastDailyClaim);
+        const lastClaim = new Date(currentStats.lastDailyClaim);
         const nextClaim = new Date(lastClaim);
         nextClaim.setDate(nextClaim.getDate() + 1);
         nextClaim.setHours(0, 0, 0, 0);
@@ -646,15 +667,16 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     // ==================== BADGE FUNCTIONS ====================
 
     const hasBadge = (badgeId: string): boolean => {
-        return stats.badges.includes(badgeId);
+        return statsRef.current.badges.includes(badgeId);
     };
 
     const awardBadge = async (badgeId: string) => {
         if (hasBadge(badgeId)) return;
 
-        const newBadges = [...stats.badges, badgeId];
+        const currentStats = statsRef.current;
+        const newBadges = [...currentStats.badges, badgeId];
         const newStats = {
-            ...stats,
+            ...currentStats,
             badges: newBadges,
         };
 
@@ -679,6 +701,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     };
 
     const checkAndAwardBadges = async (): Promise<string[]> => {
+        const currentStats = statsRef.current;
         const newBadges: string[] = [];
 
         for (const badge of ALL_BADGES) {
@@ -688,19 +711,19 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
             switch (badge.requirementType) {
                 case 'streak':
-                    earned = stats.streakDays >= badge.requirement;
+                    earned = currentStats.streakDays >= badge.requirement;
                     break;
                 case 'words':
-                    earned = stats.wordsLearned >= badge.requirement;
+                    earned = currentStats.wordsLearned >= badge.requirement;
                     break;
                 case 'games':
-                    earned = stats.gamesPlayed >= badge.requirement;
+                    earned = currentStats.gamesPlayed >= badge.requirement;
                     break;
                 case 'videos':
-                    earned = stats.videosWatched >= badge.requirement;
+                    earned = currentStats.videosWatched >= badge.requirement;
                     break;
                 case 'level':
-                    earned = stats.level >= badge.requirement;
+                    earned = currentStats.level >= badge.requirement;
                     break;
             }
 
@@ -718,22 +741,23 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const trackActivity = async (type: string, metadata?: Record<string, unknown>) => {
         // Activity tracked: type + metadata logged in dev only
         if (import.meta.env.DEV) console.debug(`Tracking activity: ${type}`, metadata);
-        const newStats = { ...stats };
+        const currentStats = statsRef.current;
+        const newStats = { ...currentStats };
         switch (type) {
             case 'word_learned':
-                newStats.wordsLearned = (stats.wordsLearned || 0) + 1;
+                newStats.wordsLearned = (currentStats.wordsLearned || 0) + 1;
                 break;
             case 'game_played':
-                newStats.gamesPlayed = (stats.gamesPlayed || 0) + 1;
+                newStats.gamesPlayed = (currentStats.gamesPlayed || 0) + 1;
                 break;
             case 'video_watched':
-                newStats.videosWatched = (stats.videosWatched || 0) + 1;
+                newStats.videosWatched = (currentStats.videosWatched || 0) + 1;
                 break;
             case 'worksheet_completed':
-                newStats.worksheetsCompleted = (stats.worksheetsCompleted || 0) + 1;
+                newStats.worksheetsCompleted = (currentStats.worksheetsCompleted || 0) + 1;
                 break;
             case 'daily_challenge':
-                newStats.dailyChallengesCompleted = (stats.dailyChallengesCompleted || 0) + 1;
+                newStats.dailyChallengesCompleted = (currentStats.dailyChallengesCompleted || 0) + 1;
                 break;
         }
 
@@ -774,9 +798,21 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
     // Check streak on mount
     useEffect(() => {
+        let cancelled = false;
         if (user && !loading) {
-            checkStreak();
+            // Wrap in async IIFE with cancellation guard
+            (async () => {
+                try {
+                    await checkStreak();
+                } catch {
+                    // Error already logged inside checkStreak
+                }
+                if (cancelled) return;
+            })();
         }
+        return () => {
+            cancelled = true;
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user and loading state are ready
     }, [user, loading]);
 

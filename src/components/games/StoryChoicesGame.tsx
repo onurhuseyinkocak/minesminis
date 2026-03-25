@@ -49,7 +49,6 @@ function buildQuestions(words: WordItem[]): Question[] {
 }
 
 export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWrongAnswer }) => {
-  if (words.length < 3) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const questions = useMemo(() => buildQuestions(words), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -58,6 +57,14 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
   const scoreRef = useRef(0);
+
+  if (words.length < 3) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+        {t('games.notQuiteKeepGoing')}
+      </div>
+    );
+  }
 
   const question = questions[currentIndex];
   const progress = (currentIndex / questions.length) * 100;
@@ -172,6 +179,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
             return (
               <motion.button
                 key={`${currentIndex}-${idx}`}
+                type="button"
                 onClick={() => handleChoice(idx, choice.correct)}
                 disabled={feedback !== null}
                 initial={{ opacity: 0, x: -20 }}

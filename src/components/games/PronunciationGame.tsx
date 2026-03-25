@@ -28,7 +28,6 @@ function getSpeechRecognitionConstructor(): (new () => SpeechRecognition) | null
 }
 
 export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
-  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const roundWords = words.slice(0, WORDS_PER_ROUND);
   const total = roundWords.length;
@@ -47,8 +46,14 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   const isSupported = SRConstructor !== null;
 
   const speakWord = useCallback((text: string) => {
-    speak(text);
+    try {
+      speak(text);
+    } catch {
+      /* TTS not available — fail silently */
+    }
   }, []);
+
+  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview') || 'No words to review.'}</div>; }
 
   const goToNext = useCallback(() => {
     if (currentIndex + 1 >= total) {
@@ -123,10 +128,10 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       setIsListening(false);
       const msg =
-        event.error === 'no-speech' ? 'Ses algılanamadı. Lütfen tekrar deneyin.' :
-        event.error === 'not-allowed' ? 'Mikrofon izni verilmedi. Lütfen tarayıcı ayarlarını kontrol edin.' :
-        event.error === 'network' ? 'Ağ hatası oluştu. Lütfen internet bağlantınızı kontrol edin.' :
-        'Bir hata oluştu. Lütfen tekrar deneyin.';
+        event.error === 'no-speech' ? (t('games.noSpeechDetected') || 'No speech detected. Please try again.') :
+        event.error === 'not-allowed' ? (t('games.micPermissionDenied') || 'Microphone permission denied. Check your browser settings.') :
+        event.error === 'network' ? (t('games.networkError') || 'Network error. Check your internet connection.') :
+        (t('games.errorOccurred') || 'An error occurred. Please try again.');
       setHeardText(msg);
       setFeedback('wrong');
     };
@@ -221,6 +226,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
 
         <div className="pronunciation-game__buttons">
           <button
+            type="button"
             className="pronunciation-game__btn pronunciation-game__btn--listen"
             onClick={() => speakWord(currentWord.english)}
             disabled={isListening}
@@ -231,6 +237,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
 
           {feedback !== 'correct' && (
             <button
+              type="button"
               className={`pronunciation-game__btn pronunciation-game__btn--speak ${isListening ? 'listening' : ''}`}
               onClick={isListening ? stopListening : startListening}
               aria-label={isListening ? 'Stop listening' : 'Start speaking'}
@@ -264,12 +271,14 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
             )}
             <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
               <button
+                type="button"
                 className="pronunciation-game__btn pronunciation-game__btn--try-again"
                 onClick={startListening}
               >
                 <Mic size={18} /> {t('games.tryAgain')}
               </button>
               <button
+                type="button"
                 className="pronunciation-game__btn pronunciation-game__btn--listen"
                 onClick={goToNext}
                 style={{ background: 'var(--text-secondary, #64748b)' }}

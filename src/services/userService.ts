@@ -35,7 +35,7 @@ export const userService = {
       avatar_emoji?: string;
       mascotId?: string;
     }
-  ) {
+  ): Promise<void> {
     const userId = user.uid ?? user.id;
     if (!userId) throw new Error('User id is required');
     const userEmail = user.email ?? '';
@@ -137,7 +137,7 @@ export const userService = {
   async updateUserProfile(
     uid: string,
     updates: Partial<Omit<UserProfile, 'id' | 'email' | 'created_at'>>
-  ) {
+  ): Promise<void> {
     if (updates.display_name !== undefined) {
       const trimmed = updates.display_name.trim();
       if (trimmed.length === 0) throw new Error('Display name cannot be empty');
@@ -161,11 +161,20 @@ export const userService = {
     }
   },
 
-  async updateOnlineStatus(uid: string, isOnline: boolean) {
-    await supabase
+  async updateOnlineStatus(uid: string, isOnline: boolean): Promise<void> {
+    const { error } = await supabase
       .from('users')
       .update({ is_online: isOnline })
       .eq('id', uid);
+
+    if (error) {
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error updating online status: ${error.message}`,
+        component: 'userService.updateOnlineStatus',
+        metadata: { uid, isOnline, error },
+      });
+    }
   },
 
   async followUser(followerId: string, followingId: string) {
@@ -190,7 +199,7 @@ export const userService = {
     return { error };
   },
 
-  async getFollowers(userId: string) {
+  async getFollowers(userId: string): Promise<Record<string, unknown>[]> {
     const { data, error } = await supabase
       .from('follows')
       .select('follower_id, users!follows_follower_id_fkey(*)')
@@ -208,7 +217,7 @@ export const userService = {
     return data || [];
   },
 
-  async getFollowing(userId: string) {
+  async getFollowing(userId: string): Promise<Record<string, unknown>[]> {
     const { data, error } = await supabase
       .from('follows')
       .select('following_id, users!follows_following_id_fkey(*)')
@@ -227,40 +236,79 @@ export const userService = {
   },
 
   async isFollowing(followerId: string, followingId: string): Promise<boolean> {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('follows')
       .select('id')
       .eq('follower_id', followerId)
       .eq('following_id', followingId)
       .maybeSingle();
 
+    if (error) {
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error checking follow status: ${error.message}`,
+        component: 'userService.isFollowing',
+        metadata: { followerId, followingId, error },
+      });
+      return false;
+    }
+
     return !!data;
   },
 
-  async awardPoints(userId: string, points: number) {
-    const { data: user } = await supabase
+  async awardPoints(userId: string, points: number): Promise<void> {
+    const { data: user, error: fetchError } = await supabase
       .from('users')
       .select('points')
       .eq('id', userId)
       .maybeSingle();
 
-    if (user) {
-      await supabase
-        .from('users')
-        .update({ points: (user.points || 0) + points })
-        .eq('id', userId);
+    if (fetchError) {
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error fetching user points: ${fetchError.message}`,
+        component: 'userService.awardPoints',
+        metadata: { userId, fetchError },
+      });
+      return;
+    }
+
+    if (!user) return;
+
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ points: (user.points || 0) + points })
+      .eq('id', userId);
+
+    if (updateError) {
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error awarding points: ${updateError.message}`,
+        component: 'userService.awardPoints',
+        metadata: { userId, points, updateError },
+      });
     }
   },
 
-  async checkAndAwardAchievement(userId: string, achievementKey: string) {
+  async checkAndAwardAchievement(userId: string, achievementKey: string): Promise<void> {
     const achievementMap: Record<string, string> = {};
 
-    const { data: achievements } = await supabase
+    const { data: achievements, error: fetchError } = await supabase
       .from('achievements')
       .select('*');
 
+    if (fetchError) {
+      errorLogger.log({
+        severity: 'medium',
+        message: `Error fetching achievements: ${fetchError.message}`,
+        component: 'userService.checkAndAwardAchievement',
+        metadata: { userId, achievementKey, fetchError },
+      });
+      return;
+    }
+
     if (achievements) {
-      achievements.forEach((ach) => {
+      achievements.forEach((ach: { id: string; name: string }) => {
         achievementMap[ach.name.toLowerCase().replace(/\s+/g, '_')] = ach.id;
       });
     }
@@ -276,14 +324,23 @@ export const userService = {
       .maybeSingle();
 
     if (!existing) {
-      await supabase.from('user_achievements').insert({
+      const { error: insertError } = await supabase.from('user_achievements').insert({
         user_id: userId,
         achievement_id: achievementId,
       });
+
+      if (insertError) {
+        errorLogger.log({
+          severity: 'medium',
+          message: `Error awarding achievement: ${insertError.message}`,
+          component: 'userService.checkAndAwardAchievement',
+          metadata: { userId, achievementKey, achievementId, insertError },
+        });
+      }
     }
   },
 
-  async getLeaderboard(limit: number = 10) {
+  async getLeaderboard(limit: number = 10): Promise<Record<string, unknown>[]> {
     const { data, error } = await supabase
       .from('users')
       .select('id, display_name, avatar_url, role, points')

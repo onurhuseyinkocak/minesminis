@@ -191,12 +191,12 @@ export const SayItGame: React.FC<SayItGameProps> = ({
       setMicState('error');
       const errorMsg =
         event.error === 'no-speech'
-          ? 'Ses algılanamadı — tekrar dene'
+          ? (t('games.noSpeechDetected') || 'No speech detected -- try again')
           : event.error === 'not-allowed'
-            ? 'Mikrofon izni verilmedi'
+            ? (t('games.micPermissionDenied') || 'Microphone permission denied')
             : event.error === 'network'
-              ? 'Ağ hatası — internet bağlantını kontrol et'
-              : 'Hata oluştu — tekrar dene';
+              ? (t('games.networkError') || 'Network error -- check your connection')
+              : (t('games.errorOccurred') || 'An error occurred -- try again');
       setHeardText(errorMsg);
       setFeedbackType('wrong');
     };
@@ -262,10 +262,9 @@ export const SayItGame: React.FC<SayItGameProps> = ({
       <div className="sig">
         <div className="sig__unsupported">
           <UnifiedMascot state="thinking" size={100} />
-          <h2>Tarayıcın sesi desteklemiyor</h2>
+          <h2>{t('games.speechUnavailable') || 'Speech recognition not supported'}</h2>
           <p>
-            Bu egzersiz için ses tanıma özelliğine ihtiyaç var. Farklı bir
-            tarayıcı dene veya devam etmek için butona bas.
+            {t('games.speechUnavailableMsg') || 'This exercise requires speech recognition. Try a different browser or tap the button to continue.'}
           </p>
           {currentQuestion && (
             <div style={{ marginBottom: '1.5rem' }}>
@@ -280,7 +279,7 @@ export const SayItGame: React.FC<SayItGameProps> = ({
               className="sig__btn sig__btn--mark-done"
               onClick={handleMarkDone}
             >
-              Tamamlandı olarak işaretle
+              {t('games.markAsDone') || 'Mark as done'}
             </button>
             <button
               type="button"
@@ -381,14 +380,14 @@ export const SayItGame: React.FC<SayItGameProps> = ({
 
   const micLabel =
     micState === 'listening'
-      ? 'Dinliyorum...'
+      ? (t('games.listening') || 'Listening...')
       : micState === 'processing'
-        ? 'İşleniyor...'
+        ? (t('games.processing') || 'Processing...')
         : micState === 'success'
-          ? 'Harika!'
+          ? (t('games.great') || 'Great!')
           : micState === 'error'
-            ? 'Tekrar dene'
-            : 'Söyle';
+            ? (t('games.tryAgain') || 'Try again')
+            : (t('games.speak') || 'Say it');
 
   // ── Render ───────────────────────────────────────────────────────────────
 

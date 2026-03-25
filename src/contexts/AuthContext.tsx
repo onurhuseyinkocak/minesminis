@@ -160,6 +160,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadUserProfile = async () => {
       if (user) {
         // Scope localStorage keys per user for learning data
@@ -168,6 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setProfileLoading(true);
         try {
           const profile = await userService.getUserProfile(user.uid);
+          if (cancelled) return;
           if (profile) {
             setUserProfile(profile);
             const isSetupCompleted = profile.settings?.setup_completed === true;
@@ -176,6 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setShowProfileSetup(true);
           }
         } catch (err) {
+          if (cancelled) return;
           errorLogger.log({
             severity: 'high',
             message: `Failed to load user profile: ${err instanceof Error ? err.message : String(err)}`,
@@ -183,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
           if (!hasSkippedSetup) setShowProfileSetup(true);
         } finally {
-          setProfileLoading(false);
+          if (!cancelled) setProfileLoading(false);
         }
       } else {
         setUserProfile(null);
@@ -193,6 +197,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     loadUserProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user, hasSkippedSetup]);
 
   const isAdmin = !!user && isAdminEmail(user.email ?? undefined);

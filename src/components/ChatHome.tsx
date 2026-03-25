@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import UnifiedMascot from './UnifiedMascot';
 import { generateDynamicQuickReplies, getStarterReplies, QuickReply } from '../services/quickReplies';
 import { usePremium } from '../contexts/PremiumContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { GLINTS } from '../config/GlintsConfig';
 import { LS_CAVE_DAILY_USAGE } from '../config/storageKeys';
 import { MessageCircle, Crown, Volume2, VolumeX, AlertTriangle, Send, X } from 'lucide-react';
@@ -35,6 +36,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     const navigate = useNavigate();
     const { userProfile } = useAuth();
     const { isPremium } = usePremium();
+    const { t } = useLanguage();
     const mascotId = ((userProfile?.settings as Record<string, string>)?.mascotId) || 'mimi_dragon';
     const mascotConfig = useMemo(() => GLINTS[mascotId] || GLINTS.mimi_dragon, [mascotId]);
 
@@ -173,7 +175,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
 
         } catch (error) {
             errorLogger.log({ severity: 'high', message: 'Chat Error', component: 'ChatHome', metadata: { error: String(error) } });
-            const errorMsg = "Oops! I didn't catch that. Can you say it again?";
+            const errorMsg = t('chatHome.errorMessage');
             const errorMessage: ChatMessage = {
                 id: Date.now().toString(),
                 role: 'assistant',
@@ -290,15 +292,15 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                     <div className="limit-modal-overlay">
                         <div className="limit-modal">
                             <div className="limit-modal-icon"><AlertTriangle size={40} /></div>
-                            <h3>Günlük Limit Doldu!</h3>
-                            <p>Bugün için 10 ücretsiz mesaj hakkını kullandın.</p>
-                            <p className="limit-modal-sub">Premium ile sınırsız sohbet et!</p>
+                            <h3>{t('chatHome.limitTitle')}</h3>
+                            <p>{t('chatHome.limitMessage')}</p>
+                            <p className="limit-modal-sub">{t('chatHome.limitSub')}</p>
                             <div className="limit-modal-actions">
                                 <button type="button" className="premium-btn" onClick={handleGetPremium}>
-                                    <Crown size={16} /> Premium Ol
+                                    <Crown size={16} /> {t('chatHome.goPremium')}
                                 </button>
                                 <button type="button" className="later-btn" onClick={() => setShowLimitReached(false)}>
-                                    Yarın Devam Et
+                                    {t('chatHome.continueTomorrow')}
                                 </button>
                             </div>
                         </div>
@@ -309,7 +311,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                     {/* Remaining messages warning */}
                     {!isPremium && remainingMessages <= 3 && remainingMessages > 0 && (
                         <div className="low-messages-warning">
-                            <AlertTriangle size={14} /> Sadece {remainingMessages} mesaj kaldı!
+                            <AlertTriangle size={14} /> {t('chatHome.onlyNLeft').replace('{count}', String(remainingMessages))}
                         </div>
                     )}
 
@@ -333,7 +335,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder={canSendMessage() ? `Type a message to ${mascotConfig.name}...` : "Limit doldu - Premium'a geç!"}
+                            placeholder={canSendMessage() ? t('chatHome.typePlaceholder').replace('{name}', mascotConfig.name) : t('chatHome.limitPlaceholder')}
                             aria-label="Type your message"
                             disabled={!canSendMessage() && !isPremium}
                         />
@@ -343,7 +345,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             onClick={() => handleSend(inputValue)}
                             disabled={!canSendMessage() && !isPremium}
                         >
-                            Send <Send size={15} />
+                            {t('chatHome.send')} <Send size={15} />
                         </button>
                     </div>
                 </div>

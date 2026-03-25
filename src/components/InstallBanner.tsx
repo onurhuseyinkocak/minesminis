@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { usePWAInstall } from "../hooks/usePWAInstall";
+import { useLanguage } from "../contexts/LanguageContext";
 import "./InstallBanner.css";
 
 const LS_KEY = "mm_install_dismissed";
@@ -48,6 +49,7 @@ function ShareIcon() {
 
 export default function InstallBanner() {
   const { canInstall, isInstalled, isIOS, promptInstall } = usePWAInstall();
+  const { lang } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [installing, setInstalling] = useState(false);
 
@@ -79,7 +81,7 @@ export default function InstallBanner() {
   if (!visible) return null;
 
   return (
-    <div className="install-banner" role="banner" aria-label="Uygulama kurulum bildirimi">
+    <div className="install-banner" role="banner" aria-label={lang === 'tr' ? 'Uygulama kurulum bildirimi' : 'App install notification'}>
       <div className="install-banner__icon" aria-hidden="true">
         MM
       </div>
@@ -87,35 +89,43 @@ export default function InstallBanner() {
       <div className="install-banner__content">
         {isIOS ? (
           <>
-            <span className="install-banner__title">Uygulamayı Yükle</span>
+            <span className="install-banner__title">
+              {lang === 'tr' ? 'Uygulamayi Yukle' : 'Install App'}
+            </span>
             <span className="install-banner__subtitle">
               <ShareIcon />
-              Paylaş &rsaquo; Ana Ekrana Ekle
+              {lang === 'tr' ? 'Paylas > Ana Ekrana Ekle' : 'Share > Add to Home Screen'}
             </span>
           </>
         ) : (
           <>
-            <span className="install-banner__title">Uygulamayı Yükle</span>
-            <span className="install-banner__subtitle">Ana ekrana ekle, hızlıca aç</span>
+            <span className="install-banner__title">
+              {lang === 'tr' ? 'Uygulamayi Yukle' : 'Install App'}
+            </span>
+            <span className="install-banner__subtitle">
+              {lang === 'tr' ? 'Ana ekrana ekle, hizlica ac' : 'Add to home screen for quick access'}
+            </span>
           </>
         )}
       </div>
 
       {!isIOS && (
         <button
+          type="button"
           className="install-banner__install-btn"
           onClick={handleInstall}
           disabled={installing}
-          aria-label="Uygulamayı yükle"
+          aria-label={lang === 'tr' ? 'Uygulamayi yukle' : 'Install app'}
         >
-          {installing ? "..." : "Yükle"}
+          {installing ? '...' : (lang === 'tr' ? 'Yukle' : 'Install')}
         </button>
       )}
 
       <button
+        type="button"
         className="install-banner__dismiss-btn"
         onClick={handleDismiss}
-        aria-label="Bildirimi kapat"
+        aria-label={lang === 'tr' ? 'Bildirimi kapat' : 'Dismiss notification'}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
           <line x1="18" y1="6" x2="6" y2="18" />

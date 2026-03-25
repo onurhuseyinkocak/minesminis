@@ -1,27 +1,57 @@
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
+  // CORS
+  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5000').split(',');
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Password');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
   const pw = req.headers['x-admin-password'];
   const adminPass = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || '';
   if (!pw || !adminPass) return res.status(401).json({ error: 'Unauthorized' });
   const a = Buffer.from(String(pw).trim());
   const b = Buffer.from(adminPass);
   if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return res.status(401).json({ error: 'Unauthorized' });
+
   const { word } = req.body || {};
   if (!word || typeof word !== 'string') return res.status(400).json({ error: 'word gerekli' });
   const w = word.trim().toLowerCase();
-  if (!w) return res.status(400).json({ error: 'Kelime bos olamaz' });
+  if (!w || w.length > 100) return res.status(400).json({ error: 'Kelime bos veya cok uzun' });
+
   try {
-    const turkishRes = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(w) + '&langpair=en|tr').then(r => r.json());
+    const translateController = new AbortController();
+    const translateTimeout = setTimeout(() => translateController.abort(), 10000);
+
+    let turkishRes;
+    try {
+      turkishRes = await fetch(
+        'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(w) + '&langpair=en|tr',
+        { signal: translateController.signal }
+      ).then(r => r.json());
+    } finally {
+      clearTimeout(translateTimeout);
+    }
+
     const turkish = turkishRes?.responseData?.translatedText || w;
-    let emoji = '📚';
+    let emoji = '';
     let example = turkish ? ('I like ' + w + '.') : '';
+
     const openaiKey = process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
     if (openaiKey) {
+      const aiController = new AbortController();
+      const aiTimeout = setTimeout(() => aiController.abort(), 15000);
+
       try {
         const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
@@ -34,19 +64,28 @@ export default async function handler(req, res) {
             ],
             max_tokens: 80,
             temperature: 0.3
-          })
+          }),
+          signal: aiController.signal,
         }).then(r => r.json());
+
         if (openaiRes?.choices?.[0]?.message?.content) {
           const raw = openaiRes.choices[0].message.content.replace(/```\w*|```/g, '').trim();
           const j = JSON.parse(raw);
           if (j.emoji) emoji = j.emoji;
           if (j.example) example = j.example;
         }
-      } catch (_) {}
+      } catch (_aiErr) {
+        // OpenAI enrichment is best-effort; translation result is still returned
+      } finally {
+        clearTimeout(aiTimeout);
+      }
     }
+
     res.status(200).json({ turkish, emoji, example });
   } catch (e) {
-    console.error('Words enrich error:', e);
-    res.status(500).json({ error: e.message || 'Bilgiler alinamadi' });
+    if (e.name === 'AbortError') {
+      return res.status(504).json({ error: 'Translation service timed out' });
+    }
+    res.status(500).json({ error: 'Bilgiler alinamadi' });
   }
 }

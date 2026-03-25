@@ -253,6 +253,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
             {currentLine.options.map((option) => (
               <motion.button
                 key={option.id}
+                type="button"
                 className={getOptionClass(option.id)}
                 onClick={() => handleOptionSelect(currentQuestionIndex!, option)}
                 disabled={isAdvancing}

@@ -3,7 +3,7 @@
  * MinesMinis — Light theme
  */
 /* eslint-disable react-refresh/only-export-components -- context file: exports Provider + useTheme */
-import { createContext, useContext, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, ReactNode } from 'react';
 
 interface ThemeContextType {
     theme: 'light';
@@ -27,12 +27,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    const value: ThemeContextType = {
-        theme: 'light',
-        effectiveTheme: 'light',
+    const value: ThemeContextType = useMemo(() => ({
+        theme: 'light' as const,
+        effectiveTheme: 'light' as const,
         setTheme: () => {},
         toggleTheme: () => {},
-    };
+    }), []);
 
     return (
         <ThemeContext.Provider value={value}>

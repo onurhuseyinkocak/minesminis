@@ -142,7 +142,7 @@ export function StreakFlame({ days }: StreakFlameProps) {
       aria-label={`${days} day streak`}
       style={{ '--flame-scale': scale } as React.CSSProperties}
     >
-      <span className="celebration-streak-flame__fire">&#x1F525;</span>
+      <span className="celebration-streak-flame__fire" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21C7.5 21 5 17.5 5 14.5C5 11.5 7 9 8 8C8 8 7.5 11 9.5 12C9.5 12 9 8.5 12 5C12 5 11.5 9 14 10.5C14 10.5 13 7.5 15 6C15 6 18 9 18 13C18 17.5 16 21 12 21Z" fill="#FF6B35"/><path d="M12 19C9.5 19 8 17 8 15C8 13 9.5 11.5 10.5 11C10.5 11 10 13 11.5 14C11.5 14 11.5 12 13 11C13 11 15 13 15 15C15 17 13.5 19 12 19Z" fill="#FFD700" opacity="0.7"/></svg></span>
       <span className="celebration-streak-flame__glow" />
     </span>
   );
@@ -195,7 +195,7 @@ export function PerfectBadge() {
 
   return (
     <div className="celebration-perfect-badge" aria-label="Perfect score!">
-      <span className="celebration-perfect-badge__star">&#x2B50;</span>
+      <span className="celebration-perfect-badge__star" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2.5L14.6 9.3H21.8L16.1 13.6L18.3 20.5L12 16.5L5.7 20.5L7.9 13.6L2.2 9.3H9.4L12 2.5Z" fill="#F59E0B"/></svg></span>
       <span className="celebration-perfect-badge__label">PERFECT!</span>
       <span className="celebration-perfect-badge__sparkle celebration-perfect-badge__sparkle--1" />
       <span className="celebration-perfect-badge__sparkle celebration-perfect-badge__sparkle--2" />

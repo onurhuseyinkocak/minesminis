@@ -136,8 +136,12 @@ END $$;
 `;
 
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS — admin endpoint, restrict origin
+  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5000').split(',');
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Password');
 
@@ -244,14 +248,13 @@ export default async function handler(req, res) {
       sql: MIGRATION_SQL.trim(),
       instructions: [
         '1. Copy the SQL from the "sql" field above',
-        '2. Go to https://supabase.com/dashboard/project/sblwqplagirgiroekotp/sql',
+        '2. Go to the Supabase Dashboard SQL Editor for your project',
         '3. Paste and run in the SQL Editor',
         'Or: set DATABASE_URL env var and POST again',
         'Or: run locally with npm run db:migrate',
       ],
     });
   } catch (err) {
-    console.error('Migration endpoint error:', err);
-    return res.status(500).json({ error: err.message || 'Server error' });
+    return res.status(500).json({ error: 'Migration failed' });
   }
 }

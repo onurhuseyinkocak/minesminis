@@ -9,6 +9,7 @@ import {
   getActivityRate30Days,
   getActivityDates,
 } from '../services/habitTracker';
+import { useLanguage } from '../contexts/LanguageContext';
 import './HabitStats.css';
 
 interface HabitStatsProps {
@@ -33,6 +34,7 @@ function StatCard({ value, label, variant }: StatCardProps) {
 }
 
 export default function HabitStats({ userId, activityDates }: HabitStatsProps) {
+  const { t } = useLanguage();
   const dates = activityDates ?? getActivityDates(userId);
 
   const currentStreak = calculateStreakFromDates(dates);
@@ -44,22 +46,22 @@ export default function HabitStats({ userId, activityDates }: HabitStatsProps) {
     <div className="habit-stats">
       <StatCard
         value={String(currentStreak)}
-        label="Current Streak"
+        label={t('habitStats.currentStreak')}
         variant="streak"
       />
       <StatCard
         value={String(longestStreak)}
-        label="Best Streak"
+        label={t('habitStats.bestStreak')}
         variant="longest"
       />
       <StatCard
         value={`${rate30}%`}
-        label="30-Day Rate"
+        label={t('habitStats.thirtyDayRate')}
         variant="rate"
       />
       <StatCard
         value={String(totalDays)}
-        label="Total Days"
+        label={t('habitStats.totalDays')}
         variant="total"
       />
     </div>

@@ -227,11 +227,17 @@ export async function speakElevenLabs(text: string, speed = 1.0): Promise<void> 
         headers['X-CSRF-Token'] = csrfToken;
       }
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
       const res = await fetch('/api/tts-v2', {
         method: 'POST',
         headers,
         body: JSON.stringify({ text: trimmed }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!res.ok) {
         speak(trimmed);
@@ -270,9 +276,48 @@ export async function narrateText(text: string): Promise<void> {
 /**
  * Pre-fetch and cache ElevenLabs audio for a list of words in parallel.
  * Call this when a game/lesson loads so pronunciations are instant.
+ * Only caches the audio blobs; does NOT play them.
  */
 export async function preloadWords(words: string[]): Promise<void> {
-  await Promise.allSettled(words.map((w) => speakElevenLabs(w)));
+  await Promise.allSettled(words.map((w) => _preloadSingle(w)));
+}
+
+async function _preloadSingle(text: string, speed = 1.0): Promise<void> {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  const key = _cacheKey(trimmed, speed);
+  if (TTS_CACHE.has(key)) return;
+
+  try {
+    const csrfToken = _getCsrfToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (csrfToken) {
+      headers['X-CSRF-Token'] = csrfToken;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
+    const res = await fetch('/api/tts-v2', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ text: trimmed }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!res.ok) return;
+
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    TTS_CACHE.set(key, blobUrl);
+  } catch {
+    // Preload failed silently — will fall back to Web Speech API at play time
+  }
 }
 
 // ─── Cache management ─────────────────────────────────────────────────────────

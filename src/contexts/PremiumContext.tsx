@@ -206,14 +206,68 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
   // ── Hydrate from cache first, then fetch fresh ───────────────────────────
 
   useEffect(() => {
+    let cancelled = false;
     const cached = readCache();
     if (cached) {
       setPlan(cached.plan);
       setSubscriptionStatus(cached.status);
       setExpiresAt(cached.expiresAt);
     }
-    refreshSubscription();
-  }, [refreshSubscription]);
+
+    const doRefresh = async () => {
+      if (!user) {
+        setPlan('free');
+        setSubscriptionStatus('none');
+        setExpiresAt(null);
+        clearCache();
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch(`${API}/api/billing/status/${user.uid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (cancelled) return;
+
+        if (!res.ok) throw new Error('Failed to fetch subscription');
+
+        const data = await res.json();
+        const p = (data.plan || 'free') as Plan;
+        const s = (data.status || 'none') as SubscriptionStatus;
+        const e = data.expiresAt || null;
+
+        setPlan(p);
+        setSubscriptionStatus(s);
+        setExpiresAt(e);
+        writeCache(p, s, e);
+      } catch (err) {
+        if (cancelled) return;
+        errorLogger.log({ severity: 'medium', message: 'Subscription check failed', component: 'PremiumContext', metadata: { error: String(err) } });
+        const cachedFallback = readCache();
+        if (cachedFallback) {
+          setPlan(cachedFallback.plan);
+          setSubscriptionStatus(cachedFallback.status);
+          setExpiresAt(cachedFallback.expiresAt);
+        } else {
+          setPlan('free');
+          setSubscriptionStatus('none');
+          setExpiresAt(null);
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    doRefresh();
+
+    return () => {
+      cancelled = true;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- inline refresh with cancellation guard; depends on user and API
+  }, [user, API]);
 
   // ── Create checkout URL ──────────────────────────────────────────────────
 

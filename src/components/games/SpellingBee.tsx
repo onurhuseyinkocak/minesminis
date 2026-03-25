@@ -57,7 +57,6 @@ function generateLetterPool(word: string): string[] {
 }
 
 export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
-  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
@@ -154,6 +153,8 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     setCompleted(false);
     initWord(0);
   };
+
+  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
 
   if (completed) {
     const pct = gameWords.length > 0 ? Math.round((score / gameWords.length) * 100) : 0;
@@ -292,6 +293,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         <AnimatePresence>
           {letterPool.map((letter, i) => (
             <motion.button
+              type="button"
               key={`${letter}-${i}`}
               className={[
                 'spelling-bee__tile',

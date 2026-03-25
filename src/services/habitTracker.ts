@@ -37,7 +37,11 @@ function loadDates(userId: string): string[] {
 }
 
 function saveDates(userId: string, dates: string[]): void {
-  localStorage.setItem(storageKey(userId), JSON.stringify(dates));
+  try {
+    localStorage.setItem(storageKey(userId), JSON.stringify(dates));
+  } catch {
+    // localStorage full or unavailable — silently ignore
+  }
 }
 
 // ----------------------------------------------------------------

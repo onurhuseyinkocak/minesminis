@@ -190,7 +190,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
     <div className="ilg" role="application" aria-label="Image label game">
       {/* Header */}
       <div className="ilg__header">
-        <h2 className="ilg__title">Label the Picture</h2>
+        <h2 className="ilg__title">{t('games.labelThePicture')}</h2>
         <Badge variant="info">
           {currentIndex + 1} / {questions.length}
         </Badge>
@@ -253,7 +253,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
           </div>
 
           {/* Options */}
-          <div className="ilg-options-grid" role="group" aria-label="Choose the correct label">
+          <div className="ilg-options-grid" role="group" aria-label={t('games.labelThePicture')}>
             {currentQuestion.options.map((option) => {
               const state: OptionState = optionStates[option] ?? 'idle';
               return (

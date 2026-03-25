@@ -43,40 +43,41 @@ export default async function handler(req, res) {
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
         if (!OPENAI_API_KEY) {
-            console.error('❌ OPENAI_API_KEY not found in environment');
             return res.status(500).json({ error: 'API key not configured' });
         }
 
-        console.log('🔊 Generating TTS audio...');
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
 
-        const response = await fetch('https://api.openai.com/v1/audio/speech', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'tts-1',
-                input: text.slice(0, 4000), // Max 4000 chars
-                voice: safeVoice,
-                response_format: 'mp3'
-            })
-        });
+        let response;
+        try {
+            response = await fetch('https://api.openai.com/v1/audio/speech', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'tts-1',
+                    input: text.slice(0, 4000),
+                    voice: safeVoice,
+                    response_format: 'mp3'
+                }),
+                signal: controller.signal,
+            });
+        } finally {
+            clearTimeout(timeout);
+        }
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('❌ OpenAI TTS Error:', response.status, errorData);
-            return res.status(response.status).json({
-                error: 'OpenAI TTS Error',
-                details: errorData.error?.message || 'Unknown error'
+            const status = response.status >= 500 ? 502 : response.status;
+            return res.status(status).json({
+                error: 'TTS service temporarily unavailable',
             });
         }
 
-        // Get audio buffer and convert to base64
         const audioBuffer = await response.arrayBuffer();
         const base64Audio = Buffer.from(audioBuffer).toString('base64');
-
-        console.log('✅ TTS audio generated');
 
         return res.status(200).json({
             audio: base64Audio,
@@ -84,10 +85,11 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('❌ TTS Server Error:', error);
+        if (error.name === 'AbortError') {
+            return res.status(504).json({ error: 'TTS service timed out' });
+        }
         return res.status(500).json({
             error: 'Internal server error',
-            details: error.message
         });
     }
 }

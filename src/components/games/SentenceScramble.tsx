@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
 import './SentenceScramble.css';
@@ -55,7 +56,7 @@ function generateSentences(wordItems: WordItem[]): SentenceData[] {
 }
 
 export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
-  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
+  const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
   const sentences = useMemo(() => generateSentences(words), [words]);
@@ -147,6 +148,8 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   const progress = sentences.length > 0 ? (currentIndex / sentences.length) * 100 : 0;
 
+  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
+
   if (completed) {
     return (
       <div className="sentence-scramble">
@@ -158,13 +161,21 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
             className="sentence-scramble__results-content"
           >
             <Star size={48} fill="#E8A317" color="#E8A317" />
-            <h2 className="sentence-scramble__results-title">Sentence Master!</h2>
+            <h2 className="sentence-scramble__results-title">{t('games.sentenceMaster')}</h2>
             <p className="sentence-scramble__results-score">
-              {score} out of {sentences.length} sentences!
+              {t('games.outOfSentences').replace('{score}', String(score)).replace('{total}', String(sentences.length))}
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
             </Badge>
+            <div className="sentence-scramble__results-actions">
+              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--secondary" onClick={() => onComplete(score, sentences.length)}>
+                {t('games.backToGames')}
+              </button>
+              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--primary" onClick={() => { setCurrentIndex(0); setScore(0); setCompleted(false); initSentence(0); }}>
+                {t('games.playAgain')}
+              </button>
+            </div>
           </motion.div>
         </Card>
       </div>
@@ -180,7 +191,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     )}
     <div className="sentence-scramble" role="application" aria-label="Sentence scramble game">
       <div className="sentence-scramble__header">
-        <h2 className="sentence-scramble__title">Build the Sentence!</h2>
+        <h2 className="sentence-scramble__title">{t('games.buildTheSentence')}</h2>
         <Badge variant="info">{currentIndex + 1}/{sentences.length}</Badge>
       </div>
 
@@ -193,13 +204,13 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
           animate={{ opacity: 1, y: 0 }}
         >
           <Lightbulb size={18} />
-          Hint: The sentence starts with "{currentSentence.words[0]}"
+          {t('games.hintSentenceStartsWith').replace('{word}', currentSentence.words[0])}
         </motion.div>
       )}
 
       <Card variant="outlined" padding="lg" className="sentence-scramble__dropzone">
         <p id="ss-dropzone-label" className="sentence-scramble__dropzone-label">
-          {placed.length === 0 ? 'Tap words below to build your sentence' : 'Your sentence:'}
+          {placed.length === 0 ? t('games.tapWordsBelow') : t('games.yourSentence')}
         </p>
         <div
           className="sentence-scramble__placed"
@@ -211,6 +222,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
           <AnimatePresence>
             {placed.map((word, index) => (
               <motion.button
+                type="button"
                 key={`placed-${index}-${word}`}
                 role="listitem"
                 className="sentence-scramble__chip sentence-scramble__chip--placed"
@@ -236,7 +248,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <CheckCircle size={22} /> Perfect sentence!
+            <CheckCircle size={22} /> {t('games.perfectSentence')}
           </motion.div>
         )}
 
@@ -246,7 +258,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
           >
-            Not quite! Keep trying!
+            {t('games.notQuiteKeepTrying')}
           </motion.div>
         )}
       </div>
@@ -255,6 +267,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
         <AnimatePresence>
           {available.map((word, index) => (
             <motion.button
+              type="button"
               key={`avail-${index}-${word}`}
               role="listitem"
               className="sentence-scramble__chip sentence-scramble__chip--available"
@@ -282,7 +295,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
           onClick={handleReset}
           disabled={placed.length === 0 || !!feedback}
         >
-          Reset
+          {t('games.reset')}
         </Button>
         <Button
           variant="primary"
@@ -290,7 +303,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
           onClick={handleCheck}
           disabled={placed.length !== currentSentence.words.length || !!feedback}
         >
-          Check!
+          {t('games.checkExcl')}
         </Button>
       </div>
     </div>

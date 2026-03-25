@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { userService } from '../services/userService';
 import { errorLogger } from '../services/errorLogger';
 
@@ -51,6 +52,7 @@ const AVATAR_OPTIONS: Array<{ id: string; letter: string; bg: string; fg: string
 
 const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
   const { user, userProfile, setUserProfile } = useAuth();
+  const { lang } = useLanguage();
   const [selected, setSelected] = useState<string>(userProfile?.avatar_url || '');
   const [saving, setSaving] = useState(false);
 
@@ -80,8 +82,8 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
     <div className="avatar-picker-overlay" onClick={onClose}>
       <div className="avatar-picker-modal" onClick={(e) => e.stopPropagation()}>
         <div className="picker-header">
-          <h3>Choose Your Avatar</h3>
-          <button type="button" className="picker-close" onClick={onClose} aria-label="Close">
+          <h3>{lang === 'tr' ? 'Avatarini Sec' : 'Choose Your Avatar'}</h3>
+          <button type="button" className="picker-close" onClick={onClose} aria-label={lang === 'tr' ? 'Kapat' : 'Close'}>
             <X size={20} />
           </button>
         </div>
@@ -89,11 +91,12 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
         <div className="picker-grid">
           {AVATAR_OPTIONS.map((opt) => (
             <button
+              type="button"
               key={opt.id}
               className={`picker-item ${selected === opt.id ? 'selected' : ''}`}
               onClick={() => handleSelect(opt.id)}
               disabled={saving}
-              aria-label={`Select ${opt.letter} avatar`}
+              aria-label={lang === 'tr' ? `${opt.letter} avatarini sec` : `Select ${opt.letter} avatar`}
             >
               <span
                 className="picker-letter-avatar"
@@ -106,7 +109,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
         </div>
 
         {saving && (
-          <div className="picker-saving">Saving...</div>
+          <div className="picker-saving">{lang === 'tr' ? 'Kaydediliyor...' : 'Saving...'}</div>
         )}
 
         <style>{`

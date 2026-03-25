@@ -59,13 +59,21 @@ export async function fetchActivityLogs(
     created_at: string;
   }[]
 > {
-  const { data } = await supabase
-    .from('activity_logs')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(limit);
-  return data || [];
+  try {
+    const { data, error } = await supabase
+      .from('activity_logs')
+      .select('id, type, title, duration, accuracy, xp_earned, sound_id, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      return [];
+    }
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 // ========== PHONICS MASTERY ==========
@@ -105,27 +113,33 @@ export async function syncPhonicsMastery(
 export async function fetchPhonicsMastery(
   userId: string,
 ): Promise<Record<string, { mastery: number; attempts: number }>> {
-  const { data } = await supabase
-    .from('phonics_mastery')
-    .select('sound_id, mastery, attempts, correct_attempts, last_practiced')
-    .eq('user_id', userId);
+  try {
+    const { data, error } = await supabase
+      .from('phonics_mastery')
+      .select('sound_id, mastery, attempts')
+      .eq('user_id', userId);
 
-  const result: Record<string, { mastery: number; attempts: number }> = {};
-  (data || []).forEach(
-    (row: {
-      sound_id: string;
-      mastery: number;
-      attempts: number;
-      correct_attempts: number;
-      last_practiced: string;
-    }) => {
-      result[row.sound_id] = {
-        mastery: row.mastery,
-        attempts: row.attempts,
-      };
-    },
-  );
-  return result;
+    if (error) {
+      return {};
+    }
+
+    const result: Record<string, { mastery: number; attempts: number }> = {};
+    (data || []).forEach(
+      (row: {
+        sound_id: string;
+        mastery: number;
+        attempts: number;
+      }) => {
+        result[row.sound_id] = {
+          mastery: row.mastery,
+          attempts: row.attempts,
+        };
+      },
+    );
+    return result;
+  } catch {
+    return {};
+  }
 }
 
 // ========== CLASSROOMS ==========
@@ -163,21 +177,23 @@ export async function syncJoinClassroom(
   studentId: string,
 ): Promise<{ classroomName: string } | null> {
   try {
-    const { data: classroom } = await supabase
+    const { data: classroom, error: classroomError } = await supabase
       .from('classrooms')
       .select('id, name')
       .eq('join_code', joinCode.toUpperCase())
       .single();
 
-    if (!classroom) return null;
+    if (classroomError || !classroom) return null;
 
-    await supabase.from('classroom_students').upsert(
+    const { error: joinError } = await supabase.from('classroom_students').upsert(
       {
         classroom_id: classroom.id,
         student_id: studentId,
       },
       { onConflict: 'classroom_id,student_id' },
     );
+
+    if (joinError) return null;
 
     return { classroomName: classroom.name };
   } catch {
@@ -201,11 +217,19 @@ export async function fetchTeacherClassrooms(
     classroom_students: { student_id: string; joined_at: string }[];
   }[]
 > {
-  const { data } = await supabase
-    .from('classrooms')
-    .select('*, classroom_students(student_id, joined_at)')
-    .eq('teacher_id', teacherId);
-  return data || [];
+  try {
+    const { data, error } = await supabase
+      .from('classrooms')
+      .select('id, name, grade_level, join_code, phonics_group_assigned, created_at, classroom_students(student_id, joined_at)')
+      .eq('teacher_id', teacherId);
+
+    if (error) {
+      return [];
+    }
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 // ========== PARENT-CHILD ==========

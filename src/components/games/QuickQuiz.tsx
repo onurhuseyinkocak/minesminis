@@ -72,10 +72,9 @@ function generateQuestions(words: WordItem[]): Question[] {
 const TIMER_DURATION = 10;
 
 export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, mascotId, streakDays }) => {
-  if (words.length < 4) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
-  const questions = useMemo(() => generateQuestions(words), [words]);
+  const questions = useMemo(() => words.length >= 4 ? generateQuestions(words) : [], [words]);
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -186,6 +185,8 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     setTimeLeft(TIMER_DURATION);
     setCompleted(false);
   };
+
+  if (words.length < 4) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
 
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
@@ -326,6 +327,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
             return (
               <motion.button
+                type="button"
                 key={`${currentQ}-${index}`}
                 className={optionClass}
                 onClick={() => handleSelect(index)}

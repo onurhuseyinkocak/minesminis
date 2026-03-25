@@ -239,7 +239,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
     <div className="pmg" role="application" aria-label="Phoneme manipulation game">
       {/* Header */}
       <div className="pmg__header">
-        <h2 className="pmg__title">Sound Play</h2>
+        <h2 className="pmg__title">{t('games.soundPlay') || 'Sound Play'}</h2>
         <Badge variant="info">
           {currentIndex + 1} / {questions.length}
         </Badge>
@@ -278,18 +278,18 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <span className={`pmg__type-badge pmg__type-badge--${currentQuestion.type}`}>
               {currentQuestion.type === 'delete'
-                ? 'Delete a Sound'
+                ? (t('games.deleteASound') || 'Delete a Sound')
                 : currentQuestion.type === 'substitute'
-                  ? 'Swap a Sound'
+                  ? (t('games.swapASound') || 'Swap a Sound')
                   : currentQuestion.type === 'add'
-                    ? 'Add a Sound'
-                    : 'Reverse'}
+                    ? (t('games.addASound') || 'Add a Sound')
+                    : (t('games.reverse') || 'Reverse')}
             </span>
           </div>
 
           {/* Target word */}
           <div className="pmg__target-word">
-            <span className="pmg__target-label">The word</span>
+            <span className="pmg__target-label">{t('games.theWord') || 'The word'}</span>
             <motion.div
               key={`word-${currentIndex}`}
               className="pmg__target-text"
@@ -311,7 +311,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
 
           {/* Phoneme tiles */}
           <div className="pmg__tiles-area">
-            <span className="pmg__tiles-label">Sounds in the word</span>
+            <span className="pmg__tiles-label">{t('games.soundsInTheWord') || 'Sounds in the word'}</span>
             <div className="pmg__tiles-row" role="group" aria-label="Phoneme tiles">
               <AnimatePresence>
                 {currentQuestion.targetWordPhonemes.map((phoneme, index) => {
@@ -365,7 +365,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
 
             {/* Change instruction pill */}
             <div className="pmg__change-instruction">
-              <span className="pmg__change-label">Change:</span>
+              <span className="pmg__change-label">{t('games.change') || 'Change:'}</span>
               <span className="pmg__change-text">{currentQuestion.changeInstruction}</span>
             </div>
           </div>
@@ -386,7 +386,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
                 whileTap={{ scale: 0.95 }}
                 aria-label="See what happens to the word"
               >
-                See What Happens!
+                {t('games.seeWhatHappens') || 'See What Happens!'}
               </motion.button>
             </motion.div>
           )}
@@ -404,7 +404,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              Watch the sounds change...
+              {t('games.watchSoundsChange') || 'Watch the sounds change...'}
             </motion.p>
           )}
 
@@ -418,7 +418,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
                 exit={{ scale: 0.8, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
               >
-                <span className="pmg__answer-label">New word</span>
+                <span className="pmg__answer-label">{t('games.newWord') || 'New word'}</span>
                 <span className="pmg__answer-word">{currentQuestion.correctAnswer}</span>
               </motion.div>
             )}
@@ -427,7 +427,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
           {/* Multiple choice options */}
           {phase === 'choices' && (
             <div className="pmg__options-section">
-              <p className="pmg__options-label">Which word do you get?</p>
+              <p className="pmg__options-label">{t('games.whichWordDoYouGet') || 'Which word do you get?'}</p>
               <div className="pmg__options-grid" role="group" aria-label="Choose the new word">
                 {currentQuestion.options.map((option) => {
                   const state: OptionState = optionStates[option] ?? 'idle';
@@ -461,7 +461,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
-                  Hint: {currentQuestion.hint}
+                  {t('games.hint') || 'Hint:'} {currentQuestion.hint}
                 </motion.p>
               )}
             </div>
@@ -473,10 +473,10 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
               className={`pmg__difficulty-badge pmg__difficulty-badge--${currentQuestion.difficulty}`}
             >
               {currentQuestion.difficulty === 1
-                ? 'Easy'
+                ? (t('games.easy') || 'Easy')
                 : currentQuestion.difficulty === 2
-                  ? 'Medium'
-                  : 'Hard'}
+                  ? (t('games.medium') || 'Medium')
+                  : (t('games.hard') || 'Hard')}
             </span>
             <UnifiedMascot
               state={showFeedback === 'correct' ? 'celebrating' : 'idle'}

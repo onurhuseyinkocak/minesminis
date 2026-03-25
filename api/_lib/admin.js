@@ -17,18 +17,14 @@ export function getEnvStatus() {
     hasSupabaseUrl: !!e.supabaseUrl,
     hasSupabaseKey: !!e.supabaseKey,
     supabaseConfigured: !!(e.supabaseUrl && e.supabaseKey),
-    hint: 'Vercel: Project Settings -> Environment Variables. Add SUPABASE_URL (or VITE_SUPABASE_URL) and SUPABASE_SERVICE_ROLE_KEY for Production, then Redeploy.',
+    hint: 'Supabase environment variables are not configured. Check deployment settings and redeploy.',
   };
 }
 
 /** 503 response body when Supabase is not configured */
 export function getSupabaseUnavailableResponse() {
-  const st = getEnvStatus();
   return {
-    error: 'Supabase yapılandırılmamış',
-    hasSupabaseUrl: st.hasSupabaseUrl,
-    hasSupabaseKey: st.hasSupabaseKey,
-    hint: st.hint,
+    error: 'Database service unavailable',
   };
 }
 

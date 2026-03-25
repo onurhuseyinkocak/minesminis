@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHearts } from '../contexts/HeartsContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import './HeartsDisplay.css';
 
 // ── SVG primitives ────────────────────────────────────────────────────────────
@@ -38,6 +39,7 @@ function formatMs(ms: number): string {
 
 export function HeartsDisplay({ size = 'md', showTimer = false, className = '' }: HeartsDisplayProps) {
   const { hearts, maxHearts, isUnlimited, getRegenTimeMs } = useHearts();
+  const { lang } = useLanguage();
   const [regenMs, setRegenMs] = useState<number>(0);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export function HeartsDisplay({ size = 'md', showTimer = false, className = '' }
       <div
         className={`hearts-display ${sizeClass} ${className}`}
         role="status"
-        aria-label="Unlimited hearts"
+        aria-label={lang === 'tr' ? 'Sinirsiz can' : 'Unlimited hearts'}
       >
         <span className="hearts-display__unlimited" aria-hidden="true">
           &#x221E;
@@ -79,7 +81,7 @@ export function HeartsDisplay({ size = 'md', showTimer = false, className = '' }
     <div
       className={`hearts-display ${sizeClass} ${className}`}
       role="status"
-      aria-label={`${hearts} out of ${maxHearts} hearts remaining`}
+      aria-label={lang === 'tr' ? `${maxHearts} candan ${hearts} kaldi` : `${hearts} out of ${maxHearts} hearts remaining`}
     >
       {Array.from({ length: maxHearts }, (_, i) => {
         const isFull = i < hearts;
@@ -96,7 +98,7 @@ export function HeartsDisplay({ size = 'md', showTimer = false, className = '' }
       {showTimer && hearts < maxHearts && regenMs > 0 && (
         <span className="hearts-display__timer-wrap" aria-live="polite">
           <span className="hearts-display__timer">
-            Next heart in: {formatMs(regenMs)}
+            {lang === 'tr' ? `Sonraki can: ${formatMs(regenMs)}` : `Next heart in: ${formatMs(regenMs)}`}
           </span>
         </span>
       )}

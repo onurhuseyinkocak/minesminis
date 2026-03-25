@@ -94,47 +94,52 @@ SEN: Arkadaş canlısı, eğlenceli, öğretici ejderha! 🐲`;
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
         if (!OPENAI_API_KEY) {
-            console.error('❌ OPENAI_API_KEY not found in environment');
             return res.status(500).json({ error: 'API key not configured' });
         }
 
-        console.log('🚀 Sending request to OpenAI API...');
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-4o-mini',
-                messages: fullMessages,
-                max_tokens: 150,
-                temperature: 0.8
-            })
-        });
+        let response;
+        try {
+            response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: fullMessages,
+                    max_tokens: 150,
+                    temperature: 0.8
+                }),
+                signal: controller.signal,
+            });
+        } finally {
+            clearTimeout(timeout);
+        }
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('❌ OpenAI API Error:', response.status, errorData);
-            return res.status(response.status).json({
-                error: 'OpenAI API Error',
-                details: errorData.error?.message || 'Unknown error'
+            const status = response.status >= 500 ? 502 : response.status;
+            return res.status(status).json({
+                error: 'Chat service temporarily unavailable',
             });
         }
 
         const data = await response.json();
-        console.log('✅ OpenAI response received');
 
         const message = data.choices?.[0]?.message?.content || 'No response from AI';
 
         return res.status(200).json({ message });
 
     } catch (error) {
-        console.error('❌ Server Error:', error);
+        if (error.name === 'AbortError') {
+            return res.status(504).json({ error: 'Chat service timed out' });
+        }
         return res.status(500).json({
             error: 'Internal server error',
-            details: error.message
         });
     }
 }

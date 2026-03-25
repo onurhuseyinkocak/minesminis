@@ -187,6 +187,7 @@ function ComprehensionQuiz({ story, lang, onDone }: QuizProps) {
           }
           return (
             <button
+              type="button"
               key={idx}
               className={cls}
               onClick={() => { if (selected === null) setSelected(idx); }}
@@ -206,7 +207,7 @@ function ComprehensionQuiz({ story, lang, onDone }: QuizProps) {
       </div>
 
       {selected !== null && (
-        <button className="dsr-quiz__done-btn" onClick={onDone}>
+        <button type="button" className="dsr-quiz__done-btn" onClick={onDone}>
           {lang === 'tr' ? 'Tamamlandı' : 'Done'}
           <CheckCircle size={18} />
         </button>
@@ -279,7 +280,7 @@ export default function DecodableStoryReader({
     <div className="dsr-wrapper">
       {/* Toolbar */}
       <div className="dsr-toolbar">
-        <button className="dsr-toolbar__back" onClick={goPrev} aria-label="Back">
+        <button type="button" className="dsr-toolbar__back" onClick={goPrev} aria-label="Back">
           <ArrowLeft size={18} />
         </button>
 
@@ -292,6 +293,7 @@ export default function DecodableStoryReader({
         </span>
 
         <button
+          type="button"
           className={`dsr-toolbar__highlight-btn${highlight ? ' dsr-toolbar__highlight-btn--active' : ''}`}
           onClick={() => setHighlight(h => !h)}
           aria-label="Toggle highlights"
@@ -347,6 +349,7 @@ export default function DecodableStoryReader({
       {!showQuiz && (
         <div className="dsr-nav">
           <button
+            type="button"
             className="dsr-nav__btn dsr-nav__btn--prev"
             onClick={goPrev}
             disabled={sceneIndex === 0}
@@ -357,6 +360,7 @@ export default function DecodableStoryReader({
           </button>
 
           <button
+            type="button"
             className="dsr-nav__listen-btn"
             onClick={speakScene}
             aria-label={lang === 'tr' ? 'Dinle' : 'Listen'}
@@ -366,6 +370,7 @@ export default function DecodableStoryReader({
           </button>
 
           <button
+            type="button"
             className="dsr-nav__btn dsr-nav__btn--next"
             onClick={goNext}
             aria-label={isLastScene

@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import UnifiedMascot, { MascotState } from './UnifiedMascot';
+import { useLanguage } from '../contexts/LanguageContext';
 
-const MESSAGES = [
-  'Harika!', 'Devam et!', 'Bravo!', 'Süpersin!',
-  'Keep going!', 'Amazing!', 'Well done!', 'You got this!',
-];
+const MESSAGES: Record<'en' | 'tr', string[]> = {
+  en: ['Keep going!', 'Amazing!', 'Well done!', 'You got this!', 'Fantastic!', 'Brilliant!', 'Nice work!', 'Super!'],
+  tr: ['Harika!', 'Devam et!', 'Bravo!', 'Supersin!', 'Muhtesem!', 'Aferin!', 'Guzel is!', 'Harikasın!'],
+};
 
 const IDLE_STATES: MascotState[] = ['idle', 'waving', 'dancing', 'jumping'];
 
@@ -14,6 +15,7 @@ function getRandomInt(min: number, max: number): number {
 }
 
 export default function FloatingMascot() {
+  const { lang } = useLanguage();
   const [state, setState] = useState<MascotState>('idle');
   const [message, setMessage] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -34,7 +36,8 @@ export default function FloatingMascot() {
       const nextState = IDLE_STATES[Math.floor(Math.random() * IDLE_STATES.length)];
       setState(nextState);
       if (Math.random() < 0.5) {
-        const msg = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+        const pool = MESSAGES[lang];
+        const msg = pool[Math.floor(Math.random() * pool.length)];
         showMessage(msg);
       }
       setTimeout(() => {
@@ -42,7 +45,7 @@ export default function FloatingMascot() {
         scheduleNextIdleChange();
       }, 2500);
     }, delay);
-  }, [showMessage]);
+  }, [showMessage, lang]);
 
   useEffect(() => {
     scheduleNextIdleChange();
@@ -55,13 +58,14 @@ export default function FloatingMascot() {
   const handleClick = useCallback(() => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     setState('celebrating');
-    const msg = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+    const pool = MESSAGES[lang];
+    const msg = pool[Math.floor(Math.random() * pool.length)];
     showMessage(msg);
     setTimeout(() => {
       setState('idle');
       scheduleNextIdleChange();
     }, 2000);
-  }, [showMessage, scheduleNextIdleChange]);
+  }, [showMessage, scheduleNextIdleChange, lang]);
 
   return (
     <div

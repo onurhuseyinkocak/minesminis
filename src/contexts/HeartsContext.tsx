@@ -196,22 +196,22 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
 
     setHearts((prev) => {
       const next = Math.min(MAX_HEARTS, prev + count);
-      const newTs = next >= MAX_HEARTS ? null : lastHeartLostAt;
 
-      writeStorage({
-        hearts: next,
-        maxHearts: MAX_HEARTS,
-        lastHeartLostAt: newTs,
-        isUnlimited: false,
+      // Use setLastHeartLostAt callback to read current value without stale closure
+      setLastHeartLostAt((prevTs) => {
+        const newTs = next >= MAX_HEARTS ? null : prevTs;
+        writeStorage({
+          hearts: next,
+          maxHearts: MAX_HEARTS,
+          lastHeartLostAt: newTs,
+          isUnlimited: false,
+        });
+        return newTs;
       });
-
-      if (next >= MAX_HEARTS) {
-        setLastHeartLostAt(null);
-      }
 
       return next;
     });
-  }, [isPremium, lastHeartLostAt]);
+  }, [isPremium]);
 
   const refillHearts = useCallback(() => {
     setHearts(MAX_HEARTS);

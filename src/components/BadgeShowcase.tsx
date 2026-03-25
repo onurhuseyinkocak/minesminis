@@ -7,6 +7,8 @@ import React, { useState } from 'react';
 import { Lock, Award, Check } from 'lucide-react';
 import './BadgeShowcase.css';
 import { useGamification, Badge } from '../contexts/GamificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import { KidIcon } from './ui';
 
 interface BadgeShowcaseProps {
     compact?: boolean;
@@ -15,6 +17,7 @@ interface BadgeShowcaseProps {
 
 const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDisplay }) => {
     const { hasBadge, allBadges } = useGamification();
+    const { t } = useLanguage();
     const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
     const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
 
@@ -37,7 +40,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                 <div className="badges-row">
                     {earnedBadges.slice(0, 5).map((badge) => (
                         <div key={badge.id} className="badge-mini" title={badge.name}>
-                            <span className="badge-icon">{badge.icon}</span>
+                            <span className="badge-icon"><KidIcon name={badge.icon as import('./ui/KidIcon').KidIconName} size={16} /></span>
                         </div>
                     ))}
                     {earnedBadges.length > 5 && (
@@ -46,7 +49,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                         </div>
                     )}
                 </div>
-                <span className="badge-count">{earnedBadges.length}/{allBadges.length} badges</span>
+                <span className="badge-count">{earnedBadges.length}/{allBadges.length} {t('badgeShowcase.badges')}</span>
             </div>
         );
     }
@@ -54,7 +57,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
     return (
         <div className="badge-showcase">
             <div className="showcase-header">
-                <h3><Award size={18} /> My Badges</h3>
+                <h3><Award size={18} /> {t('badgeShowcase.title')}</h3>
                 <div className="badge-stats">
                     <span className="earned-count">{earnedBadges.length}</span>
                     <span className="total-count">/ {allBadges.length}</span>
@@ -63,22 +66,25 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
 
             <div className="filter-tabs">
                 <button
+                    type="button"
                     className={`filter-tab ${filter === 'all' ? 'active' : ''}`}
                     onClick={() => setFilter('all')}
                 >
-                    All
+                    {t('badgeShowcase.all')}
                 </button>
                 <button
+                    type="button"
                     className={`filter-tab ${filter === 'earned' ? 'active' : ''}`}
                     onClick={() => setFilter('earned')}
                 >
-                    Earned ({earnedBadges.length})
+                    {t('badgeShowcase.earned')} ({earnedBadges.length})
                 </button>
                 <button
+                    type="button"
                     className={`filter-tab ${filter === 'locked' ? 'active' : ''}`}
                     onClick={() => setFilter('locked')}
                 >
-                    Locked ({lockedBadges.length})
+                    {t('badgeShowcase.locked')} ({lockedBadges.length})
                 </button>
             </div>
 
@@ -92,7 +98,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                             onClick={() => setSelectedBadge(badge)}
                         >
                             <div className="badge-icon-large">
-                                {isEarned ? badge.icon : <Lock size={16} />}
+                                {isEarned ? <KidIcon name={badge.icon as import('./ui/KidIcon').KidIconName} size={20} /> : <Lock size={16} />}
                             </div>
                             <div className="badge-info">
                                 <span className="badge-name">{badge.name}</span>
@@ -106,7 +112,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
 
             {maxDisplay && displayBadges.length > maxDisplay && (
                 <button type="button" className="view-all-btn">
-                    View All Badges ({displayBadges.length})
+                    {t('badgeShowcase.viewAll')} ({displayBadges.length})
                 </button>
             )}
 
@@ -117,7 +123,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
                         <button type="button" className="close-modal" onClick={() => setSelectedBadge(null)}><Check size={14} /></button>
 
                         <div className={`modal-badge-icon ${hasBadge(selectedBadge.id) ? 'earned' : 'locked'}`}>
-                            {hasBadge(selectedBadge.id) ? selectedBadge.icon : <Lock size={16} />}
+                            {hasBadge(selectedBadge.id) ? <KidIcon name={selectedBadge.icon as import('./ui/KidIcon').KidIconName} size={24} /> : <Lock size={16} />}
                         </div>
 
                         <h4 className="modal-badge-name">{selectedBadge.name}</h4>
@@ -125,14 +131,14 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
 
                         <div className="modal-badge-status">
                             {hasBadge(selectedBadge.id) ? (
-                                <span className="status-earned"><Check size={14} strokeWidth={3} /> Earned!</span>
+                                <span className="status-earned"><Check size={14} strokeWidth={3} /> {t('badgeShowcase.earnedLabel')}</span>
                             ) : (
-                                <span className="status-locked"><Lock size={14} /> Not yet earned</span>
+                                <span className="status-locked"><Lock size={14} /> {t('badgeShowcase.notYetEarned')}</span>
                             )}
                         </div>
 
                         <div className="modal-badge-category">
-                            Category: <span>{selectedBadge.category}</span>
+                            {t('badgeShowcase.category')}: <span>{selectedBadge.category}</span>
                         </div>
                     </div>
                 </div>
