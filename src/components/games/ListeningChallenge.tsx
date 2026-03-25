@@ -157,25 +157,27 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
         </motion.div>
       </Card>
 
-      {feedback === 'correct' && (
-        <motion.div
-          className="listening-challenge__feedback listening-challenge__feedback--correct"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          {t('games.yesItWas') || 'Yes! It was'} &ldquo;{round.correctWord.english}&rdquo;!
-        </motion.div>
-      )}
+      <div aria-live="assertive" aria-atomic="true">
+        {feedback === 'correct' && (
+          <motion.div
+            className="listening-challenge__feedback listening-challenge__feedback--correct"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            {t('games.yesItWas') || 'Yes! It was'} &ldquo;{round.correctWord.english}&rdquo;!
+          </motion.div>
+        )}
 
-      {feedback === 'wrong' && (
-        <motion.div
-          className="listening-challenge__feedback listening-challenge__feedback--wrong"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          {t('games.itWas') || 'It was'} &ldquo;{round.correctWord.english}&rdquo; <Lightbulb size={14} color="#E8A317" />
-        </motion.div>
-      )}
+        {feedback === 'wrong' && (
+          <motion.div
+            className="listening-challenge__feedback listening-challenge__feedback--wrong"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {t('games.itWas') || 'It was'} &ldquo;{round.correctWord.english}&rdquo; <Lightbulb size={14} color="#E8A317" />
+          </motion.div>
+        )}
+      </div>
 
       <div className="listening-challenge__options" role="radiogroup" aria-label="Choose the word you heard">
         <AnimatePresence>

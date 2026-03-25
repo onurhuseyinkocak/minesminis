@@ -47,7 +47,7 @@ const deleteQuestions: PhonemeManipulationQuestion[] = [
     targetWordPhonemes: ['b', 'æ', 't'],
     changeInstruction: 'remove /b/',
     correctAnswer: 'at',
-    options: ['at', 'at', 'it', 'act'],
+    options: ['at', 'an', 'it', 'act'],
     difficulty: 1,
     hint: 'Drop the first sound!',
   },

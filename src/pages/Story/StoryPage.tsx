@@ -188,6 +188,11 @@ const StoryPage = React.memo(() => {
     await saveStoryState(newState);
   }, [user, storyState, userProfile]);
 
+  // ─── TTS helper ───
+  const speakWord = useCallback((word: string) => {
+    speak(word);
+  }, []);
+
   // ─── Loading ───
   if (loading || !storyState || !currentNode) {
     return (
@@ -199,11 +204,6 @@ const StoryPage = React.memo(() => {
       </div>
     );
   }
-
-  // ─── TTS helper ───
-  const speakWord = useCallback((word: string) => {
-    speak(word);
-  }, []);
 
   const hasVocabulary = currentNode.vocabulary && currentNode.vocabulary.length > 0;
   const showVocabCard = hasVocabulary && showChoices && !vocabDismissed;

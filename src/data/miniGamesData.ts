@@ -180,42 +180,62 @@ export const LS_DAILY_PRACTICE_DATE = 'mm_daily_practice_date';
 export const LS_DAILY_PRACTICE_STREAK = 'mm_daily_practice_streak';
 
 export function getBestScore(gameType: string): number | undefined {
-  const raw = localStorage.getItem(`${LS_GAME_BEST_SCORE_PREFIX}${gameType}`);
-  if (raw === null) return undefined;
-  const n = parseInt(raw, 10);
-  return isNaN(n) ? undefined : n;
+  if (typeof window === 'undefined') return undefined;
+  try {
+    const raw = localStorage.getItem(`${LS_GAME_BEST_SCORE_PREFIX}${gameType}`);
+    if (raw === null) return undefined;
+    const n = parseInt(raw, 10);
+    return isNaN(n) ? undefined : n;
+  } catch {
+    return undefined;
+  }
 }
 
 export function saveBestScore(gameType: string, score: number): void {
-  const current = getBestScore(gameType) ?? 0;
-  if (score > current) {
-    localStorage.setItem(`${LS_GAME_BEST_SCORE_PREFIX}${gameType}`, String(score));
+  if (typeof window === 'undefined') return;
+  try {
+    const current = getBestScore(gameType) ?? 0;
+    if (score > current) {
+      localStorage.setItem(`${LS_GAME_BEST_SCORE_PREFIX}${gameType}`, String(score));
+    }
+  } catch {
+    // localStorage quota exceeded or access denied — silently ignore
   }
 }
 
 export function getDailyPracticeStreak(): number {
-  const raw = localStorage.getItem(LS_DAILY_PRACTICE_STREAK);
-  if (!raw) return 0;
-  const n = parseInt(raw, 10);
-  return isNaN(n) ? 0 : n;
+  if (typeof window === 'undefined') return 0;
+  try {
+    const raw = localStorage.getItem(LS_DAILY_PRACTICE_STREAK);
+    if (!raw) return 0;
+    const n = parseInt(raw, 10);
+    return isNaN(n) ? 0 : n;
+  } catch {
+    return 0;
+  }
 }
 
 /** Increments streak if last practice was yesterday; resets if more than 1 day gap */
 export function recordDailyPractice(): number {
-  const today = new Date().toDateString();
-  const lastDate = localStorage.getItem(LS_DAILY_PRACTICE_DATE);
-  const currentStreak = getDailyPracticeStreak();
+  if (typeof window === 'undefined') return 0;
+  try {
+    const today = new Date().toDateString();
+    const lastDate = localStorage.getItem(LS_DAILY_PRACTICE_DATE);
+    const currentStreak = getDailyPracticeStreak();
 
-  if (lastDate === today) {
-    return currentStreak; // already recorded today
+    if (lastDate === today) {
+      return currentStreak; // already recorded today
+    }
+
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    const newStreak = lastDate === yesterday ? currentStreak + 1 : 1;
+
+    localStorage.setItem(LS_DAILY_PRACTICE_DATE, today);
+    localStorage.setItem(LS_DAILY_PRACTICE_STREAK, String(newStreak));
+    return newStreak;
+  } catch {
+    return 0;
   }
-
-  const yesterday = new Date(Date.now() - 86400000).toDateString();
-  const newStreak = lastDate === yesterday ? currentStreak + 1 : 1;
-
-  localStorage.setItem(LS_DAILY_PRACTICE_DATE, today);
-  localStorage.setItem(LS_DAILY_PRACTICE_STREAK, String(newStreak));
-  return newStreak;
 }
 
 /** Build a randomized 5-game daily practice set (seeded by date so it's the same for the day) */

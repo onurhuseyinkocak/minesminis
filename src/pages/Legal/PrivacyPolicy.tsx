@@ -1,55 +1,57 @@
-import React from 'react';
 import { Shield } from 'lucide-react';
 import PublicLayout from '../../components/layout/PublicLayout';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './LegalPages.css';
 
 const PrivacyPolicy: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <PublicLayout>
       <div className="legal-page">
         <div className="legal-container">
-          <h1><Shield size={28} /> Privacy Policy</h1>
-          <p className="legal-updated">Last updated: 01/03/2025</p>
+          <h1><Shield size={28} /> {t('legal.privacyPolicy')}</h1>
+          <p className="legal-updated">{t('legal.lastUpdated')}</p>
 
           <section>
-            <h2>1. Introduction</h2>
-            <p>MinesMinis (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) is committed to protecting the privacy of children and their parents. This Privacy Policy explains how we collect, use, and safeguard information when you use our educational platform.</p>
+            <h2>{t('legal.privacyIntroTitle')}</h2>
+            <p>{t('legal.privacyIntroDesc')}</p>
           </section>
 
           <section>
-            <h2>2. Information We Collect</h2>
-            <p>We collect:</p>
+            <h2>{t('legal.privacyCollectTitle')}</h2>
+            <p>{t('legal.privacyCollectDesc')}</p>
             <ul>
-              <li>Account information (email, display name, avatar) when you sign up</li>
-              <li>Learning progress data (XP, completed activities, favorites)</li>
-              <li>Technical data (device type, browser) to improve the service</li>
+              <li>{t('legal.privacyCollectItem1')}</li>
+              <li>{t('legal.privacyCollectItem2')}</li>
+              <li>{t('legal.privacyCollectItem3')}</li>
             </ul>
           </section>
 
           <section>
-            <h2>3. How We Use Your Information</h2>
-            <p>We use collected information to:</p>
+            <h2>{t('legal.privacyUseTitle')}</h2>
+            <p>{t('legal.privacyUseDesc')}</p>
             <ul>
-              <li>Provide and personalize the learning experience</li>
-              <li>Track progress and show achievements</li>
-              <li>Improve our platform and content</li>
-              <li>Communicate important updates (with your consent)</li>
+              <li>{t('legal.privacyUseItem1')}</li>
+              <li>{t('legal.privacyUseItem2')}</li>
+              <li>{t('legal.privacyUseItem3')}</li>
+              <li>{t('legal.privacyUseItem4')}</li>
             </ul>
           </section>
 
           <section>
-            <h2>4. Children&apos;s Privacy</h2>
-            <p>MinesMinis is designed for children aged 1–10. We comply with applicable children&apos;s privacy laws (e.g. COPPA). Parental consent is required for children under 13. We do not sell personal information.</p>
+            <h2>{t('legal.privacyChildrenTitle')}</h2>
+            <p>{t('legal.privacyChildrenDesc')}</p>
           </section>
 
           <section>
-            <h2>5. Data Security</h2>
-            <p>We use industry-standard security measures to protect your data. Data is transmitted over HTTPS and stored securely.</p>
+            <h2>{t('legal.privacySecurityTitle')}</h2>
+            <p>{t('legal.privacySecurityDesc')}</p>
           </section>
 
           <section>
-            <h2>6. Contact</h2>
-            <p>For privacy questions: <a href="mailto:privacy@minesminis.com">privacy@minesminis.com</a></p>
+            <h2>{t('legal.privacyContactTitle')}</h2>
+            <p>{t('legal.privacyContactDesc')} <a href="mailto:privacy@minesminis.com">privacy@minesminis.com</a></p>
           </section>
         </div>
       </div>

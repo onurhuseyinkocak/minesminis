@@ -41,6 +41,14 @@ let worksheetsCache: Worksheet[] = [];
 
 if (typeof window !== 'undefined') {
     worksheetsCache = loadWorksheets();
+
+    // Cross-tab sync: reload when another tab updates localStorage
+    window.addEventListener('storage', (event: StorageEvent) => {
+        if (event.key === STORAGE_KEY) {
+            worksheetsCache = loadWorksheets();
+            window.dispatchEvent(new CustomEvent('worksheetsUpdated', { detail: worksheetsCache }));
+        }
+    });
 }
 
 export const worksheetStore = {

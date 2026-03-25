@@ -144,10 +144,27 @@ function PageLoader() {
   );
 }
 
+/** Auth-aware loader that shows a timeout message when auth is slow */
+function AuthPageLoader() {
+  const { authTimeoutReached } = useAuth();
+  return (
+    <div className="page-loader">
+      <div className="page-loader__spinner" />
+      {authTimeoutReached && (
+        <p style={{ marginTop: 16, color: 'var(--text-secondary)', fontSize: 14, textAlign: 'center' }}>
+          {navigator.language.startsWith('tr')
+            ? 'Bağlantı yavaşlıyor... Lütfen bekleyin.'
+            : 'Connection is slow... Please wait.'}
+        </p>
+      )}
+    </div>
+  );
+}
+
 /** Wrapper that requires authentication; redirects to /login otherwise */
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <PageLoader />;
+  if (loading) return <AuthPageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
@@ -155,9 +172,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 /** Wrapper that requires authentication and the 'parent' role */
 function ParentRoute({ children }: { children: React.ReactNode }) {
   const { user, userProfile, loading, profileLoading } = useAuth();
-  if (loading) return <PageLoader />;
+  if (loading) return <AuthPageLoader />;
   if (!user) return <Navigate to="/login" replace />;
-  if (profileLoading) return <PageLoader />;
+  if (profileLoading) return <AuthPageLoader />;
   if (!userProfile || userProfile.role !== 'parent') return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 }
@@ -165,9 +182,9 @@ function ParentRoute({ children }: { children: React.ReactNode }) {
 /** Wrapper that requires authentication and the 'teacher' role */
 function TeacherRoute({ children }: { children: React.ReactNode }) {
   const { user, userProfile, loading, profileLoading } = useAuth();
-  if (loading) return <PageLoader />;
+  if (loading) return <AuthPageLoader />;
   if (!user) return <Navigate to="/login" replace />;
-  if (profileLoading) return <PageLoader />;
+  if (profileLoading) return <AuthPageLoader />;
   if (!userProfile || userProfile.role !== 'teacher') return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 }
@@ -448,6 +465,7 @@ function WhatsNextButton() {
   const [showTooltip, setShowTooltip] = useState(false);
   const navigate = useNavigate();
   const action = getNextAction();
+  const isTr = navigator.language?.startsWith('tr') ?? false;
 
   return (
     <div style={{ position: "fixed", bottom: 90, right: 20, zIndex: 900 }}>
@@ -477,7 +495,7 @@ function WhatsNextButton() {
             gap: 6,
           }}
         >
-          <span>Next: {action.title}</span>
+          <span>{isTr ? 'Sıradaki' : 'Next'}: {isTr ? action.titleTr : action.title}</span>
         </button>
       )}
       <button

@@ -174,6 +174,7 @@ function MontessoriNav({
   phaseProgress,
   wordCount,
   onSelectPhase,
+  lang = 'en',
 }: {
   phases: PhaseInfo[];
   currentPhase: number;
@@ -181,6 +182,7 @@ function MontessoriNav({
   phaseProgress: Record<number, number>;
   wordCount: number;
   onSelectPhase: (id: number) => void;
+  lang?: string;
 }) {
   const unlocked = completedPhases.has(1);
 
@@ -188,7 +190,7 @@ function MontessoriNav({
     const p = phaseProgress[phaseId] ?? 0;
     if (completedPhases.has(phaseId)) {
       if (phaseId === 5) return `${p}%`;
-      return 'Done';
+      return lang === 'tr' ? 'Tamam' : 'Done';
     }
     if (phaseId === 1 || phaseId === 2 || phaseId === 4) {
       if (p === 0) return null;
@@ -1364,6 +1366,7 @@ export default function DailyLesson() {
         phaseProgress={phaseProgress}
         wordCount={plan.newWords.length}
         onSelectPhase={handleSelectPhase}
+        lang={lang}
       />
 
       {/* ── Phase title ── */}

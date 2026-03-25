@@ -350,7 +350,7 @@ export default function Landing() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
             <a href="#features" className="font-display font-semibold text-sm text-ink-600 hover:text-primary-500 transition-colors">
               {t(lang, 'Özellikler', 'Features')}
             </a>
@@ -372,6 +372,7 @@ export default function Landing() {
             <button
               type="button"
               onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
+              aria-label={lang === 'tr' ? 'Switch to English' : "Türkçe'ye geçiş yap"}
               className="font-display font-bold text-xs text-ink-500 hover:text-ink-800 border border-ink-200 rounded-full px-3 py-1.5 transition-colors"
             >
               {lang === 'tr' ? 'EN' : 'TR'}
@@ -389,7 +390,8 @@ export default function Landing() {
             type="button"
             className="md:hidden p-2 rounded-xl text-ink-700 hover:bg-ink-100 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-label={t(lang, 'Menüyü aç/kapat', 'Toggle menu')}
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -424,6 +426,7 @@ export default function Landing() {
                   <button
                     type="button"
                     onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
+                    aria-label={lang === 'tr' ? 'Switch to English' : "Türkçe'ye geçiş yap"}
                     className="font-display font-bold text-xs text-ink-500 border border-ink-200 rounded-full px-3 py-1.5"
                   >
                     {lang === 'tr' ? 'EN' : 'TR'}
@@ -445,7 +448,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           HERO
           ══════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-cream-50 via-primary-50 to-purple-50 py-16 lg:py-24">
+      <section aria-label="Hero" className="relative overflow-hidden bg-gradient-to-br from-cream-50 via-primary-50 to-purple-50 py-16 lg:py-24">
         {/* Background blobs */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-100/40 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-100/40 rounded-full translate-y-1/2 -translate-x-1/3 blur-2xl pointer-events-none" />
@@ -682,45 +685,49 @@ export default function Landing() {
           </div>
 
           <div className="bg-white border-2 border-ink-100 rounded-3xl overflow-hidden shadow-sm">
-            {/* Header row */}
-            <div className="grid grid-cols-4 bg-ink-900 text-white text-center py-4 px-2">
-              <div className="font-display font-bold text-sm text-ink-400 col-span-1 text-left pl-4">
-                {t(lang, 'Özellik', 'Feature')}
-              </div>
-              <div className="font-display font-black text-sm text-primary-300">MinesMinis</div>
-              <div className="font-display font-semibold text-sm text-ink-400">Duolingo</div>
-              <div className="font-display font-semibold text-sm text-ink-400">Lingokids</div>
-            </div>
-
-            {COMP_ROWS.map((row, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04 }}
-                className={`grid grid-cols-4 py-3.5 px-2 items-center ${i % 2 === 0 ? 'bg-cream-50' : 'bg-white'} border-b border-ink-50 last:border-0`}
-              >
-                <div className="col-span-1 font-body text-sm text-ink-700 pl-4 pr-2">
-                  {t(lang, row.feature.tr, row.feature.en)}
-                </div>
-                <div className="text-center">
-                  {row.us
-                    ? <Check size={18} className="text-success-500 mx-auto" />
-                    : <X size={18} className="text-error-400 mx-auto" />}
-                </div>
-                <div className="text-center">
-                  {row.duolingo
-                    ? <Check size={18} className="text-success-400 mx-auto" />
-                    : <X size={18} className="text-ink-300 mx-auto" />}
-                </div>
-                <div className="text-center">
-                  {row.lingokids
-                    ? <Check size={18} className="text-success-400 mx-auto" />
-                    : <X size={18} className="text-ink-300 mx-auto" />}
-                </div>
-              </motion.div>
-            ))}
+            <table className="w-full" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
+              <thead>
+                <tr className="bg-ink-900 text-white text-center">
+                  <th scope="col" className="font-display font-bold text-sm text-ink-400 text-left pl-4 pr-2 py-4">
+                    {t(lang, 'Özellik', 'Feature')}
+                  </th>
+                  <th scope="col" className="font-display font-black text-sm text-primary-300 py-4">MinesMinis</th>
+                  <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4">Duolingo</th>
+                  <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4">Lingokids</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMP_ROWS.map((row, i) => (
+                  <motion.tr
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.04 }}
+                    className={`${i % 2 === 0 ? 'bg-cream-50' : 'bg-white'} border-b border-ink-50 last:border-0`}
+                  >
+                    <td className="font-body text-sm text-ink-700 pl-4 pr-2 py-3.5">
+                      {t(lang, row.feature.tr, row.feature.en)}
+                    </td>
+                    <td className="text-center py-3.5">
+                      {row.us
+                        ? <><Check size={18} className="text-success-500 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
+                        : <><X size={18} className="text-error-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
+                    </td>
+                    <td className="text-center py-3.5">
+                      {row.duolingo
+                        ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
+                        : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
+                    </td>
+                    <td className="text-center py-3.5">
+                      {row.lingokids
+                        ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
+                        : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
 
             {/* Footer CTA */}
             <div className="bg-primary-50 border-t-2 border-primary-100 p-5 text-center">

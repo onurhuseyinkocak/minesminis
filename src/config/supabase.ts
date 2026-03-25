@@ -145,12 +145,14 @@ export interface Database {
           subject: string;
           grade: string;
           difficulty: 'easy' | 'medium' | 'hard' | null;
-          uploaded_by: string;
+          uploaded_by: string | null;
           visibility: string;
           tags: string[];
           downloads: number;
           completions: number;
           rating: number;
+          thumbnail_url: string;
+          source: string;
           created_at: string;
         };
       };
@@ -163,7 +165,7 @@ export interface Database {
           difficulty: 'easy' | 'medium' | 'hard' | null;
           thumbnail_url: string | null;
           description: string | null;
-          added_by: string;
+          added_by: string | null;
           target_audience: string | null;
           plays: number;
           rating: number;
@@ -180,7 +182,9 @@ export interface Database {
           duration: string | null;
           category: string;
           channel_name: string | null;
-          added_by: string;
+          grade: string;
+          is_popular: boolean;
+          added_by: string | null;
           curated_by: string | null;
           tags: string[];
           likes: number;
@@ -363,6 +367,363 @@ export interface Database {
           water_drops?: number;
           last_watered?: string | null;
           created_at?: string;
+        };
+      };
+      follows: {
+        Row: {
+          id: string;
+          follower_id: string;
+          following_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          follower_id: string;
+          following_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          follower_id?: string;
+          following_id?: string;
+          created_at?: string;
+        };
+      };
+      friends: {
+        Row: {
+          id: string;
+          user_id: string;
+          friend_id: string;
+          status: 'pending' | 'accepted';
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          friend_id: string;
+          status?: 'pending' | 'accepted';
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          friend_id?: string;
+          status?: 'pending' | 'accepted';
+          created_at?: string;
+        };
+      };
+      favorites: {
+        Row: {
+          id: string;
+          user_id: string;
+          item_type: string;
+          item_id: string;
+          item_name: string | null;
+          item_image: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          item_type?: string;
+          item_id: string;
+          item_name?: string | null;
+          item_image?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          item_type?: string;
+          item_id?: string;
+          item_name?: string | null;
+          item_image?: string | null;
+          created_at?: string;
+        };
+      };
+      pets: {
+        Row: {
+          id: string;
+          name: string;
+          type: string;
+          emoji: string;
+          level: number;
+          experience: number;
+          happiness: number;
+          hunger: number;
+          energy: number;
+          last_fed: string;
+          last_played: string;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          name?: string;
+          type?: string;
+          emoji?: string;
+          level?: number;
+          experience?: number;
+          happiness?: number;
+          hunger?: number;
+          energy?: number;
+          last_fed?: string;
+          last_played?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          type?: string;
+          emoji?: string;
+          level?: number;
+          experience?: number;
+          happiness?: number;
+          hunger?: number;
+          energy?: number;
+          last_fed?: string;
+          last_played?: string;
+          created_at?: string;
+        };
+      };
+      achievements: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          icon_url: string | null;
+          created_at: string;
+        };
+      };
+      user_achievements: {
+        Row: {
+          id: string;
+          user_id: string;
+          achievement_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          achievement_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          achievement_id?: string;
+          created_at?: string;
+        };
+      };
+      story_progress: {
+        Row: {
+          id: string;
+          user_id: string;
+          character_name: string;
+          mascot_id: string;
+          current_world: string;
+          current_node_id: string;
+          traits: Record<string, unknown>;
+          inventory: unknown[];
+          visited_node_ids: unknown[];
+          total_xp: number;
+          choice_history: unknown[];
+          session_count: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          character_name?: string;
+          mascot_id?: string;
+          current_world?: string;
+          current_node_id?: string;
+          traits?: Record<string, unknown>;
+          inventory?: unknown[];
+          visited_node_ids?: unknown[];
+          total_xp?: number;
+          choice_history?: unknown[];
+          session_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          character_name?: string;
+          mascot_id?: string;
+          current_world?: string;
+          current_node_id?: string;
+          traits?: Record<string, unknown>;
+          inventory?: unknown[];
+          visited_node_ids?: unknown[];
+          total_xp?: number;
+          choice_history?: unknown[];
+          session_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      words: {
+        Row: {
+          id: string;
+          word: string;
+          level: string;
+          category: string;
+          emoji: string;
+          turkish: string;
+          example: string | null;
+          grade: number | null;
+          image_url: string | null;
+          word_audio_url: string | null;
+          example_audio_url: string | null;
+          created_at: string;
+        };
+      };
+      blog_posts: {
+        Row: {
+          id: string;
+          title: string;
+          slug: string;
+          content: string | null;
+          excerpt: string | null;
+          meta_title: string | null;
+          meta_description: string | null;
+          published_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          slug: string;
+          content?: string | null;
+          excerpt?: string | null;
+          meta_title?: string | null;
+          meta_description?: string | null;
+          published_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          slug?: string;
+          content?: string | null;
+          excerpt?: string | null;
+          meta_title?: string | null;
+          meta_description?: string | null;
+          published_at?: string | null;
+          created_at?: string;
+        };
+      };
+      reports: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          page_url: string;
+          page_path: string;
+          content: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          page_url?: string;
+          page_path?: string;
+          content: string;
+          status?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          page_url?: string;
+          page_path?: string;
+          content?: string;
+          status?: string;
+          created_at?: string;
+        };
+      };
+      curriculum_worlds: {
+        Row: {
+          id: string;
+          order: number;
+          name: string;
+          name_en: string;
+          emoji: string;
+          color: string;
+          description: string;
+          age_range: string;
+          lesson_count: number;
+          created_at: string;
+        };
+      };
+      curriculum_lessons: {
+        Row: {
+          id: string;
+          world_id: string;
+          order: number;
+          title: string;
+          title_tr: string;
+          objective: string;
+          vocabulary_words: unknown[];
+          activities: unknown[];
+          duration: number;
+          status: string;
+          created_at: string;
+        };
+      };
+      stories: {
+        Row: {
+          id: string;
+          title: string;
+          title_tr: string | null;
+          summary: string | null;
+          summary_tr: string | null;
+          moral: string | null;
+          moral_tr: string | null;
+          cover_scene: string | null;
+          target_age: number[];
+          vocabulary: unknown[];
+          scenes: unknown[];
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+      };
+      story_scenes: {
+        Row: {
+          id: string;
+          story_id: string;
+          scene_order: number;
+          text: string;
+          text_tr: string;
+          location: string;
+          characters: string[];
+          mood: string;
+          camera_angle: string;
+          sound_effect: string | null;
+          animation_cue: string | null;
+          vocabulary: unknown[];
+          choices: unknown[];
+          created_at: string;
+        };
+      };
+      tts_cache: {
+        Row: {
+          id: number;
+          text_hash: string;
+          text: string;
+          audio_url: string;
+          created_at: string;
+        };
+      };
+      learn_audio: {
+        Row: {
+          id: string;
+          key: string;
+          audio_base64: string;
+          created_at: string;
         };
       };
     };

@@ -280,6 +280,7 @@ function VideosManager() {
                                             src={video.thumbnail?.startsWith('http') ? video.thumbnail : `https://img.youtube.com/vi/${video.youtube_id}/mqdefault.jpg`}
                                             alt={video.title}
                                             className="table-thumbnail"
+                                            loading="lazy"
                                         />
                                         <Play size={16} className="adm-thumb-play" />
                                     </div>

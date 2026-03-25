@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 
       const { data: scenes, error: scenesErr } = await sb
         .from('story_scenes')
-        .select('id, scene_order, text, text_tr, location, characters, mood, sound_effect, animation_cue, vocabulary, choices, camera_angle')
+        .select('id, scene_order, text, text_tr, background, location, characters, mood, sound_effect, animation_cue, vocabulary, choices, camera_angle')
         .eq('story_id', storyId)
         .order('scene_order', { ascending: true });
 

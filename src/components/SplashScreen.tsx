@@ -30,7 +30,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       <div className="splash-bg" />
       <main className="splash-center">
         <div className="logo-box">
-          <img src="/images/mine-logo.jpg" alt="Mine's Minis" className="logo-img" />
+          <img src="/images/mine-logo.jpg" alt="Mine's Minis" className="logo-img" fetchPriority="high" decoding="async" />
         </div>
         <h1 className="brand">
           Mine's <span>Minis</span>

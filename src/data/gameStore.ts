@@ -42,6 +42,14 @@ let gamesCache: Game[] = [];
 
 if (typeof window !== 'undefined') {
     gamesCache = loadGames();
+
+    // Cross-tab sync: reload when another tab updates localStorage
+    window.addEventListener('storage', (event: StorageEvent) => {
+        if (event.key === STORAGE_KEY) {
+            gamesCache = loadGames();
+            window.dispatchEvent(new CustomEvent('gamesUpdated', { detail: gamesCache }));
+        }
+    });
 }
 
 export const gameStore = {

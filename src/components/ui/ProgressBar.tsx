@@ -40,6 +40,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       aria-valuenow={clampedValue}
       aria-valuemin={0}
       aria-valuemax={100}
+      aria-label={`Progress: ${Math.round(clampedValue)}%`}
     >
       <div className="mm-progress__track">
         <div

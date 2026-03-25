@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Rocket, Home } from 'lucide-react';
 import PublicLayout from '../components/layout/PublicLayout';
+import { useLanguage } from '../contexts/LanguageContext';
 
 function NotFound() {
+    const { t } = useLanguage();
+
     return (
         <PublicLayout>
             <div className="min-h-[70vh] flex flex-col items-center justify-center bg-cream-100 px-6 text-center">
@@ -19,7 +22,7 @@ function NotFound() {
                 </h1>
 
                 <p className="font-display font-semibold text-ink-500 text-lg sm:text-xl max-w-sm mb-8">
-                    Hay aksi! Aradığın sayfa kayıp bir roket gibi uzayda kayboldu.
+                    {t('notFoundPage.message')}
                 </p>
 
                 <Link
@@ -27,7 +30,7 @@ function NotFound() {
                     className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-display font-bold text-base px-8 py-4 rounded-2xl shadow-primary hover:shadow-primary-lg transition-all duration-200 hover:scale-105 active:scale-95"
                 >
                     <Home size={20} />
-                    Ana Sayfaya Dön
+                    {t('notFoundPage.backHome')}
                 </Link>
             </div>
         </PublicLayout>

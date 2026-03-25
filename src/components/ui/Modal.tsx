@@ -1,6 +1,41 @@
 import React, { useEffect, useCallback, useRef, ReactNode } from 'react';
 import './Modal.css';
 
+/**
+ * Traps keyboard focus inside a container element.
+ * Returns a keydown handler that should be attached to the container.
+ */
+function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, isActive: boolean) {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!isActive || e.key !== 'Tab' || !containerRef.current) return;
+
+      const focusable = containerRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [containerRef, isActive]
+  );
+
+  return handleKeyDown;
+}
+
 export type ModalSize = 'sm' | 'md' | 'lg' | 'fullscreen';
 
 export interface ModalProps {
@@ -22,6 +57,7 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
+  const handleFocusTrap = useFocusTrap(modalRef, isOpen);
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -71,6 +107,7 @@ export const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
+        onKeyDown={handleFocusTrap}
       >
                 <div className="mm-modal__header">
             {title && <h2 className="mm-modal__title">{title}</h2>}

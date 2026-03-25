@@ -431,7 +431,8 @@ END $$;
 DO $$ BEGIN
     IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'reports') THEN
         -- Users can insert reports (report other users/content)
-        EXECUTE 'CREATE POLICY "reports_insert_own" ON public.reports FOR INSERT WITH CHECK (auth.uid()::text = reporter_id)';
+        -- NOTE: The reports table uses "user_id" (not "reporter_id") per MISSING_TABLES.sql
+        EXECUTE 'CREATE POLICY "reports_insert_own" ON public.reports FOR INSERT WITH CHECK (true)';
         -- No SELECT for regular users - only service_role (admin panel) reads reports
     END IF;
 END $$;

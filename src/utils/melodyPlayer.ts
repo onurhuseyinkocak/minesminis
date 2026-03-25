@@ -177,6 +177,10 @@ export function startBackgroundRhythm(bpm: number = 60): void {
 
     osc.start(now);
     osc.stop(now + 0.2);
+
+    // Track for cleanup so stopMelody() can cancel these too
+    activeOscillators.push(osc);
+    activeGains.push(gain);
   };
 
   playKick();
@@ -227,6 +231,30 @@ function cleanupFinished(): void {
       return false;
     }
   });
+  // Also clean up gain nodes to prevent memory leaks
+  activeGains = activeGains.filter((gain) => {
+    try {
+      return gain.gain.value > 0;
+    } catch {
+      return false;
+    }
+  });
+}
+
+/**
+ * Dispose the AudioContext entirely. Call when the player is no longer needed
+ * (e.g., page unmount) to release all Web Audio resources.
+ */
+export async function disposeAudioContext(): Promise<void> {
+  stopMelody();
+  if (audioCtx && audioCtx.state !== 'closed') {
+    try {
+      await audioCtx.close();
+    } catch {
+      // already closed
+    }
+  }
+  audioCtx = null;
 }
 
 // ─── Exported constants for song data ───────────────────────

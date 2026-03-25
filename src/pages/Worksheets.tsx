@@ -90,6 +90,7 @@ function Worksheets() {
       setCachedData('worksheets', result, 6 * 60 * 60 * 1000);
     } catch (error) {
       errorLogger.log({ severity: 'high', message: 'Error fetching worksheets', component: 'Worksheets', metadata: { error: String(error) } });
+      toast.error(navigator.language.startsWith('tr') ? 'Calisma kagitlari yuklenirken sorun olustu.' : 'Failed to load worksheets.');
       if (cached && cached.length > 0) {
         setWorksheets(cached);
       } else {

@@ -277,11 +277,11 @@ const QUESTIONS: PlacementQuestion[] = [
 // ─── Scoring logic ─────────────────────────────────────────────────────────
 
 function getPlacementResult(score: number, isTr: boolean): { phase: number; group: number; phaseLabel: string } {
-  if (score <= 1) return { phase: 1, group: 1, phaseLabel: isTr ? 'Asama 1: Ilk Sesler' : 'Phase 1: First Sounds' };
-  if (score === 2) return { phase: 1, group: 2, phaseLabel: isTr ? 'Asama 1: Daha Fazla Harf' : 'Phase 1: More Letters' };
-  if (score === 3) return { phase: 2, group: 3, phaseLabel: isTr ? 'Asama 2: Gelisen Harfler' : 'Phase 2: Growing Letters' };
-  if (score === 4) return { phase: 3, group: 5, phaseLabel: isTr ? 'Asama 3: Zor Sesler' : 'Phase 3: Tricky Sounds' };
-  return { phase: 4, group: 7, phaseLabel: isTr ? 'Asama 4: Son Sesler' : 'Phase 4: Final Sounds' };
+  if (score <= 1) return { phase: 1, group: 1, phaseLabel: isTr ? 'Aşama 1: İlk Sesler' : 'Phase 1: First Sounds' };
+  if (score === 2) return { phase: 1, group: 2, phaseLabel: isTr ? 'Aşama 1: Daha Fazla Harf' : 'Phase 1: More Letters' };
+  if (score === 3) return { phase: 2, group: 3, phaseLabel: isTr ? 'Aşama 2: Gelişen Harfler' : 'Phase 2: Growing Letters' };
+  if (score === 4) return { phase: 3, group: 5, phaseLabel: isTr ? 'Aşama 3: Zor Sesler' : 'Phase 3: Tricky Sounds' };
+  return { phase: 4, group: 7, phaseLabel: isTr ? 'Aşama 4: Son Sesler' : 'Phase 4: Final Sounds' };
 }
 
 // ─── TTS helper ────────────────────────────────────────────────────────────

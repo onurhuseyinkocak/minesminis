@@ -430,11 +430,15 @@ export function getWatchedVideoIds(): string[] {
 }
 
 export function markVideoWatched(videoId: string): boolean {
-  const watched = getWatchedVideoIds();
-  if (watched.includes(videoId)) return false; // already watched
-  watched.push(videoId);
-  localStorage.setItem(WATCHED_KEY, JSON.stringify(watched));
-  return true; // first watch
+  try {
+    const watched = getWatchedVideoIds();
+    if (watched.includes(videoId)) return false; // already watched
+    watched.push(videoId);
+    localStorage.setItem(WATCHED_KEY, JSON.stringify(watched));
+    return true; // first watch
+  } catch {
+    return false;
+  }
 }
 
 export function isVideoWatched(videoId: string): boolean {

@@ -41,6 +41,14 @@ let wordsCache: KidsWord[] = [];
 
 if (typeof window !== 'undefined') {
     wordsCache = loadWords();
+
+    // Cross-tab sync: reload when another tab updates localStorage
+    window.addEventListener('storage', (event: StorageEvent) => {
+        if (event.key === STORAGE_KEY) {
+            wordsCache = loadWords();
+            window.dispatchEvent(new CustomEvent('wordsUpdated', { detail: wordsCache }));
+        }
+    });
 }
 
 export const wordStore = {

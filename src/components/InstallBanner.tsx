@@ -90,7 +90,7 @@ export default function InstallBanner() {
         {isIOS ? (
           <>
             <span className="install-banner__title">
-              {lang === 'tr' ? 'Uygulamayi Yukle' : 'Install App'}
+              {lang === 'tr' ? 'Uygulamayı Yükle' : 'Install App'}
             </span>
             <span className="install-banner__subtitle">
               <ShareIcon />
@@ -100,7 +100,7 @@ export default function InstallBanner() {
         ) : (
           <>
             <span className="install-banner__title">
-              {lang === 'tr' ? 'Uygulamayi Yukle' : 'Install App'}
+              {lang === 'tr' ? 'Uygulamayı Yükle' : 'Install App'}
             </span>
             <span className="install-banner__subtitle">
               {lang === 'tr' ? 'Ana ekrana ekle, hizlica ac' : 'Add to home screen for quick access'}
@@ -115,9 +115,9 @@ export default function InstallBanner() {
           className="install-banner__install-btn"
           onClick={handleInstall}
           disabled={installing}
-          aria-label={lang === 'tr' ? 'Uygulamayi yukle' : 'Install app'}
+          aria-label={lang === 'tr' ? 'Uygulamayı yükle' : 'Install app'}
         >
-          {installing ? '...' : (lang === 'tr' ? 'Yukle' : 'Install')}
+          {installing ? '...' : (lang === 'tr' ? 'Yükle' : 'Install')}
         </button>
       )}
 

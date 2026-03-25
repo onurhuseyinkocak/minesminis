@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@400;500;600;700;800;900&display=swap');
+/* Google Fonts loaded via <link> in index.html for non-blocking preload */
 
 /* ==========================================================================
    MINESMINIS DESIGN SYSTEM v5.0 — LibreUIUX Methodology

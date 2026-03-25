@@ -27,10 +27,10 @@ export const fallbackGames = [
 ];
 
 export const fallbackWorksheets = [
-  { id: '1', title: 'Animals Vocabulary', description: 'Learn animal names with pictures', category: 'Vocabulary', grade: '2', external_url: 'https://www.englishwsheets.com/animals.html', source: 'MinesMinis' },
-  { id: '2', title: 'Colors & Shapes', description: 'Match colors and shapes in English', category: 'Vocabulary', grade: '2', external_url: 'https://learnenglishkids.britishcouncil.org/print-make/worksheets/colours', source: 'MinesMinis' },
-  { id: '3', title: 'Food & Drinks', description: 'Vocabulary about food items', category: 'Vocabulary', grade: '2', external_url: 'https://www.englishwsheets.com/food-drinks.html', source: 'MinesMinis' },
-  { id: '4', title: 'Body Parts', description: 'Learn body parts vocabulary', category: 'Vocabulary', grade: '2', external_url: 'https://games4esl.com/esl-worksheets/body-parts-worksheets/', source: 'MinesMinis' },
-  { id: '5', title: 'Simple Sentences', description: 'Build basic English sentences', category: 'Grammar', grade: '2', external_url: 'https://www.englishwsheets.com/grammar.html', source: 'MinesMinis' },
-  { id: '6', title: 'Short Stories', description: 'Easy reading comprehension', category: 'Reading', grade: '2', external_url: 'https://learnenglishkids.britishcouncil.org/short-stories', source: 'MinesMinis' },
+  { id: '1', title: 'Animals Vocabulary', description: 'Learn animal names with pictures', category: 'Vocabulary', grade: '2', thumbnail_url: 'https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=300&h=200&fit=crop', external_url: 'https://www.englishwsheets.com/animals.html', source: 'MinesMinis' },
+  { id: '2', title: 'Colors & Shapes', description: 'Match colors and shapes in English', category: 'Vocabulary', grade: '2', thumbnail_url: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=300&h=200&fit=crop', external_url: 'https://learnenglishkids.britishcouncil.org/print-make/worksheets/colours', source: 'MinesMinis' },
+  { id: '3', title: 'Food & Drinks', description: 'Vocabulary about food items', category: 'Vocabulary', grade: '2', thumbnail_url: 'https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=300&h=200&fit=crop', external_url: 'https://www.englishwsheets.com/food-drinks.html', source: 'MinesMinis' },
+  { id: '4', title: 'Body Parts', description: 'Learn body parts vocabulary', category: 'Vocabulary', grade: '2', thumbnail_url: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=300&h=200&fit=crop', external_url: 'https://games4esl.com/esl-worksheets/body-parts-worksheets/', source: 'MinesMinis' },
+  { id: '5', title: 'Simple Sentences', description: 'Build basic English sentences', category: 'Grammar', grade: '2', thumbnail_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop', external_url: 'https://www.englishwsheets.com/grammar.html', source: 'MinesMinis' },
+  { id: '6', title: 'Short Stories', description: 'Easy reading comprehension', category: 'Reading', grade: '2', thumbnail_url: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=200&fit=crop', external_url: 'https://learnenglishkids.britishcouncil.org/short-stories', source: 'MinesMinis' },
 ];

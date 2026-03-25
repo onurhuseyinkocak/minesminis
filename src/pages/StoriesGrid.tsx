@@ -204,13 +204,21 @@ export default function StoriesGrid() {
         </div>
       ) : stories.length === 0 ? (
         <div className="stories-empty">
-          <Sparkles size={48} />
-          <p>{lang === 'tr' ? 'Mimi henüz yeni hikayeler hazırlıyor!' : 'Mimi is preparing new stories!'}</p>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          <BookOpen size={48} />
+          <h3 style={{ margin: '8px 0 4px', fontSize: '1.2rem' }}>
+            {lang === 'tr' ? 'Henüz hikaye eklenmedi' : 'No stories yet'}
+          </h3>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 16 }}>
             {lang === 'tr'
-              ? 'Yakında burada olacak.'
-              : 'Coming soon.'}
+              ? 'Fonik Hikayeler sekmesinde seni bekleyen hikayeler var!'
+              : 'Check out the Decodable tab for stories waiting for you!'}
           </p>
+          <button
+            className="stories-retry-btn"
+            onClick={() => setActiveTab('decodable')}
+          >
+            {lang === 'tr' ? 'Fonik Hikayelere Git' : 'Explore Decodable Stories'}
+          </button>
         </div>
       ) : (
         <div className="stories-grid">

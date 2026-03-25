@@ -104,12 +104,12 @@ export default function OfflineBanner() {
           {showBackOnline ? (
             <>
               <IconOnline />
-              <span>Back online!</span>
+              <span>{navigator.language?.startsWith('tr') ? 'Tekrar bağlandın!' : 'Back online!'}</span>
             </>
           ) : (
             <>
               <IconOffline />
-              <span>Çevrimdışısın — bazı özellikler çalışmayabilir</span>
+              <span>{navigator.language?.startsWith('tr') ? 'Çevrimdışısın — bazı özellikler çalışmayabilir' : "You're offline — some features may not work"}</span>
             </>
           )}
         </motion.div>

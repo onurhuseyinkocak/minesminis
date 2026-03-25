@@ -62,7 +62,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Google Fonts - Nunito loaded via CSS @import -->
+  <!-- Preconnect for Supabase and YouTube (commonly needed) -->
+  <link rel="preconnect" href="https://bajrnvusqzllvsvipitr.supabase.co" crossorigin />
+  <link rel="preconnect" href="https://img.youtube.com" />
+
+  <!-- Preload critical logo for splash screen LCP -->
+  <link rel="preload" as="image" href="/images/mine-logo.jpg" />
+
+  <!-- Google Fonts — preloaded, non-render-blocking -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@400;500;600;700;800;900&display=swap" /></noscript>
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">

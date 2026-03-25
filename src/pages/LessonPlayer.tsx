@@ -244,6 +244,10 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
 
       <div
         onClick={handleFlip}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleFlip(); } }}
+        role="button"
+        tabIndex={0}
+        aria-label={flipped ? `${word.english} - ${word.turkish}. ${t('lesson.tapToReveal')}` : `${word.english}. ${t('lesson.tapToReveal')}`}
         className="bg-[var(--bg-card)] rounded-[var(--radius-md)] p-8 text-center cursor-pointer min-h-[200px] flex flex-col items-center justify-center gap-3 shadow-[var(--shadow-sm)] border-2 border-[var(--border-light)] transition-transform duration-200"
       >
         <div className="w-16 h-16 rounded-full bg-primary-500 text-white flex items-center justify-center text-[28px] font-black mx-auto">{word.english.charAt(0).toUpperCase()}</div>
@@ -693,7 +697,7 @@ const LessonPlayer = () => {
   const isSupported = SUPPORTED_GAME_TYPES.has(currentActivity.type);
 
   return (
-    <div className="lesson-player-page">
+    <div className="lesson-player-page" role="main" aria-label="Lesson player">
       {/* Celebration overlays */}
       {showStarBurst && <StarBurst />}
       {showConfetti && <ConfettiRain />}
@@ -799,7 +803,7 @@ const LessonPlayer = () => {
         </AnimatePresence>
 
         {/* Mimi Encouragement */}
-        <div className="lesson-player-mimi">
+        <div className="lesson-player-mimi" aria-live="polite">
           <span className="lesson-player-mimi__avatar"><Star size={20} className="text-gold-500 fill-gold-500" /></span>
           <div className="lesson-player-mimi__bubble">
             <Star size={16} /> {t(encouragementKey)}

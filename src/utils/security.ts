@@ -9,8 +9,8 @@ export function sanitizeInput(input: string): string {
   // Remove null bytes
   result = result.replace(/\0/g, '');
 
-  // Remove HTML tags
-  result = result.replace(/<[^>]*>/g, '');
+  // Remove HTML tags (including unclosed tags like "<script")
+  result = result.replace(/<[^>]*>?/g, '');
 
   // Escape special characters (order matters: & first)
   result = result.replace(/&/g, '&amp;');
@@ -39,17 +39,18 @@ export function sanitizeHTML(
 ): string {
   if (typeof input !== 'string') return '';
 
-  const allowedPattern = new RegExp(
-    `<\\/?(${allowedTags.join('|')})(\\s[^>]*)?>`,
-    'gi'
-  );
-
-  // Replace each tag: keep if allowed, remove if not
+  // Replace each tag: keep if allowed (tag-only, no attributes on allowed tags to prevent XSS)
   const result = input.replace(/<\/?[a-z][a-z0-9]*(\s[^>]*)?>/gi, (match) => {
-    if (allowedPattern.test(match)) {
-      return match;
-    }
-    return '';
+    // Strip attributes from allowed tags to prevent event handler injection
+    const tagNameMatch = match.match(/^<\/?([a-z][a-z0-9]*)/i);
+    if (!tagNameMatch) return '';
+
+    const tagName = tagNameMatch[1].toLowerCase();
+    if (!allowedTags.includes(tagName)) return '';
+
+    // Reconstruct clean tag without attributes
+    const isClosing = match.startsWith('</');
+    return isClosing ? `</${tagName}>` : `<${tagName}>`;
   });
 
   return result;
@@ -191,13 +192,25 @@ export function detectMaliciousContent(input: string): boolean {
   const patterns = [
     /<script/i,
     /javascript\s*:/i,
-    /on(click|error|mouseover|load|mouseout|focus|blur)\s*=/i,
+    /vbscript\s*:/i,
+    /on(click|error|mouseover|load|mouseout|focus|blur|submit|input|change|keydown|keyup|dblclick|contextmenu|drag|drop|pointerdown)\s*=/i,
     /eval\s*\(/i,
+    /Function\s*\(/i,
     /innerHTML\s*=/i,
+    /outerHTML\s*=/i,
+    /insertAdjacentHTML/i,
     /document\s*\.\s*cookie/i,
     /document\s*\.\s*write/i,
+    /document\s*\.\s*domain/i,
     /window\s*\.\s*location/i,
     /data:\s*text\/html/i,
+    /data:\s*image\/svg\+xml/i,
+    /<iframe/i,
+    /<object/i,
+    /<embed/i,
+    /<form/i,
+    /import\s*\(/i,
+    /srcdoc\s*=/i,
   ];
 
   return patterns.some((pattern) => pattern.test(input));

@@ -926,3 +926,79 @@ export function calculateStars(correctCount: number, totalQuestions: number): nu
   if (ratio >= 0.6) return 2;
   return 1;
 }
+
+// --- BOOK COMPLETION TRACKING (localStorage) ---
+
+const BOOK_PROGRESS_KEY = 'minesminis_book_progress';
+
+export interface BookProgress {
+  bookId: string;
+  completed: boolean;
+  stars: number;
+  lastPageIndex: number;
+  completedAt: string | null;
+}
+
+function loadBookProgress(): Record<string, BookProgress> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(BOOK_PROGRESS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveBookProgress(progress: Record<string, BookProgress>): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(BOOK_PROGRESS_KEY, JSON.stringify(progress));
+  } catch {
+    // localStorage quota exceeded or access denied
+  }
+}
+
+/** Mark a book as completed with a star rating */
+export function markBookCompleted(bookId: string, stars: number, totalPages: number): void {
+  const all = loadBookProgress();
+  const existing = all[bookId];
+  all[bookId] = {
+    bookId,
+    completed: true,
+    stars: Math.max(stars, existing?.stars ?? 0),
+    lastPageIndex: totalPages - 1,
+    completedAt: new Date().toISOString(),
+  };
+  saveBookProgress(all);
+}
+
+/** Save partial reading progress (bookmark) */
+export function saveReadingBookmark(bookId: string, pageIndex: number): void {
+  const all = loadBookProgress();
+  const existing = all[bookId];
+  all[bookId] = {
+    bookId,
+    completed: existing?.completed ?? false,
+    stars: existing?.stars ?? 0,
+    lastPageIndex: pageIndex,
+    completedAt: existing?.completedAt ?? null,
+  };
+  saveBookProgress(all);
+}
+
+/** Get progress for a specific book */
+export function getBookProgress(bookId: string): BookProgress | null {
+  const all = loadBookProgress();
+  return all[bookId] ?? null;
+}
+
+/** Get all completed book IDs */
+export function getCompletedBookIds(): string[] {
+  const all = loadBookProgress();
+  return Object.values(all).filter(p => p.completed).map(p => p.bookId);
+}
+
+/** Get total completed books count */
+export function getCompletedBooksCount(): number {
+  return getCompletedBookIds().length;
+}

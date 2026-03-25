@@ -645,6 +645,7 @@ function AdminContentManager() {
                                                 src={video.thumbnail?.startsWith('http') ? video.thumbnail : `https://img.youtube.com/vi/${video.youtube_id}/mqdefault.jpg`}
                                                 alt={video.title}
                                                 className="adm-thumb"
+                                                loading="lazy"
                                             />
                                             <Play size={12} className="adm-video-play-icon" />
                                         </div>

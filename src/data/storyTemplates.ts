@@ -869,5 +869,10 @@ export function getNodesByWorldAndTags(world: WorldId, tags: string[], traits: R
 
 export function getStartNode(world: WorldId): StoryNode {
   const starts = ALL_NODES.filter(n => n.world === world && n.tags.includes('start'));
+  if (starts.length === 0) {
+    // Absolute fallback: return the first node for this world, or the very first node
+    const worldNodes = ALL_NODES.filter(n => n.world === world);
+    return worldNodes[0] ?? ALL_NODES[0];
+  }
   return starts[0];
 }

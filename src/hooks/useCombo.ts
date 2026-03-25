@@ -8,7 +8,7 @@
  *   // onCorrect(baseXP) → returns final XP after multiplier
  *   // onWrong() → resets combo
  */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import {
   applyComboMultiplier,
   updateComboRecord,
@@ -24,19 +24,21 @@ export interface UseComboReturn {
 
 export function useCombo(uid?: string): UseComboReturn {
   const [combo, setCombo] = useState(0);
+  // Use a ref to always have the latest combo value, avoiding stale closure
+  const comboRef = useRef(combo);
+  comboRef.current = combo;
 
   const onCorrect = useCallback((baseXP: number): number => {
-    setCombo(prev => {
-      const next = prev + 1;
-      if (uid) updateComboRecord(uid, next);
-      // Play a different sound at combo milestones
-      if (next === 3) SFX.streak();
-      else if (next === 5) SFX.celebration();
-      return next;
-    });
-    // Calculate XP with current combo (before increment for this answer)
-    return applyComboMultiplier(baseXP, combo + 1);
-  }, [combo, uid]);
+    const next = comboRef.current + 1;
+    setCombo(next);
+
+    if (uid) updateComboRecord(uid, next);
+    // Play a different sound at combo milestones
+    if (next === 3) SFX.streak();
+    else if (next === 5) SFX.celebration();
+
+    return applyComboMultiplier(baseXP, next);
+  }, [uid]);
 
   const onWrong = useCallback(() => {
     setCombo(0);

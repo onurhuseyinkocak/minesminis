@@ -12,9 +12,12 @@ CREATE TABLE IF NOT EXISTS public.games (
     url         text NOT NULL,
     thumbnail_url text,
     category    text NOT NULL DEFAULT 'other',
+    difficulty  text CHECK (difficulty IN ('easy', 'medium', 'hard')),
     description text NOT NULL DEFAULT '',
     target_audience text NOT NULL DEFAULT 'all',
     added_by    text REFERENCES public.users(id) ON DELETE SET NULL,
+    plays       integer NOT NULL DEFAULT 0,
+    rating      numeric NOT NULL DEFAULT 0,
     created_at  timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_games_category ON public.games(category);
@@ -33,8 +36,12 @@ CREATE TABLE IF NOT EXISTS public.videos (
     thumbnail   text,
     duration    text NOT NULL DEFAULT '0:00',
     category    text NOT NULL DEFAULT 'general',
+    channel_name text,
     grade       text NOT NULL DEFAULT 'all',
     is_popular  boolean NOT NULL DEFAULT false,
+    tags        text[] NOT NULL DEFAULT '{}',
+    likes       integer NOT NULL DEFAULT 0,
+    views       integer NOT NULL DEFAULT 0,
     added_by    text REFERENCES public.users(id) ON DELETE SET NULL,
     curated_by  text REFERENCES public.users(id) ON DELETE SET NULL,
     created_at  timestamptz NOT NULL DEFAULT now()
@@ -52,10 +59,19 @@ CREATE TABLE IF NOT EXISTS public.worksheets (
     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     title         text NOT NULL,
     description   text NOT NULL DEFAULT '',
+    file_url      text NOT NULL DEFAULT '',
+    file_name     text NOT NULL DEFAULT '',
+    file_type     text NOT NULL DEFAULT 'pdf',
     subject       text NOT NULL DEFAULT 'General',
     grade         text NOT NULL DEFAULT 'all',
+    difficulty    text CHECK (difficulty IN ('easy', 'medium', 'hard')),
+    uploaded_by   text REFERENCES public.users(id) ON DELETE SET NULL,
+    visibility    text NOT NULL DEFAULT 'public',
+    tags          text[] NOT NULL DEFAULT '{}',
+    downloads     integer NOT NULL DEFAULT 0,
+    completions   integer NOT NULL DEFAULT 0,
+    rating        numeric NOT NULL DEFAULT 0,
     thumbnail_url text NOT NULL DEFAULT '',
-    file_url      text NOT NULL DEFAULT '',
     source        text NOT NULL DEFAULT 'MinesMinis',
     created_at    timestamptz NOT NULL DEFAULT now()
 );
@@ -258,27 +274,107 @@ CREATE POLICY "friends_delete" ON public.friends FOR DELETE USING (auth.uid()::t
 -- ============================================================
 -- DONE
 -- ─── pets ─────────────────────────────────────────────────────────────────────
+-- NOTE: pets.id = user_id (PK is the user's Firebase UID, not a separate uuid).
+-- petService.ts uses: id, name, type, emoji, level, experience, happiness, hunger, energy, last_fed, last_played, created_at
 CREATE TABLE IF NOT EXISTS public.pets (
-    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id     text NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-    name        text NOT NULL DEFAULT 'Mimi',
+    id          text PRIMARY KEY REFERENCES public.users(id) ON DELETE CASCADE,
+    name        text NOT NULL DEFAULT 'Pet',
     type        text NOT NULL DEFAULT 'cat',
-    level       int  NOT NULL DEFAULT 1,
-    xp          int  NOT NULL DEFAULT 0,
-    hunger      int  NOT NULL DEFAULT 100,
-    happiness   int  NOT NULL DEFAULT 100,
-    last_fed    timestamptz,
-    last_played timestamptz,
-    created_at  timestamptz NOT NULL DEFAULT now(),
-    updated_at  timestamptz NOT NULL DEFAULT now(),
-    UNIQUE(user_id)
+    emoji       text DEFAULT '',
+    level       integer NOT NULL DEFAULT 1,
+    experience  integer NOT NULL DEFAULT 0,
+    happiness   integer NOT NULL DEFAULT 100,
+    hunger      integer NOT NULL DEFAULT 50,
+    energy      integer NOT NULL DEFAULT 100,
+    last_fed    timestamptz DEFAULT now(),
+    last_played timestamptz DEFAULT now(),
+    created_at  timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.pets ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users manage own pet" ON public.pets;
 CREATE POLICY "Users manage own pet" ON public.pets
-    FOR ALL USING (auth.uid()::text = user_id);
+    FOR ALL USING (auth.uid()::text = id) WITH CHECK (auth.uid()::text = id);
+
+-- ─── posts ──────────────────────────────────────────────────────────────────
+-- Referenced in supabase.ts type definition and FIX_DATABASE.sql FK constraints
+-- but never had a CREATE TABLE statement.
+CREATE TABLE IF NOT EXISTS public.posts (
+    id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    author_id       text NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    content         text NOT NULL,
+    media_url       text,
+    media_type      text,
+    post_type       text NOT NULL DEFAULT 'text',
+    visibility      text NOT NULL DEFAULT 'everyone'
+                    CHECK (visibility IN ('everyone', 'students', 'teachers', 'followers', 'private')),
+    hashtags        text[] NOT NULL DEFAULT '{}',
+    mentions        text[] NOT NULL DEFAULT '{}',
+    likes_count     integer NOT NULL DEFAULT 0,
+    comments_count  integer NOT NULL DEFAULT 0,
+    shares_count    integer NOT NULL DEFAULT 0,
+    is_pinned       boolean NOT NULL DEFAULT false,
+    scheduled_for   timestamptz,
+    created_at      timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_posts_author  ON public.posts(author_id);
+CREATE INDEX IF NOT EXISTS idx_posts_created ON public.posts(created_at DESC);
+ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "posts_public_read"  ON public.posts;
+DROP POLICY IF EXISTS "posts_author_write" ON public.posts;
+CREATE POLICY "posts_public_read"  ON public.posts FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "posts_author_write" ON public.posts FOR ALL   USING (auth.uid()::text = author_id) WITH CHECK (auth.uid()::text = author_id);
+
+-- ─── favorites ──────────────────────────────────────────────────────────────
+-- Referenced in pages/Favorites.tsx, Worksheets.tsx, Words.tsx
+-- Originally only in FIX_DATABASE.sql — adding here for completeness
+CREATE TABLE IF NOT EXISTS public.favorites (
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id     text NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    item_type   text NOT NULL DEFAULT 'game',
+    item_id     text NOT NULL,
+    item_name   text,
+    item_image  text,
+    created_at  timestamptz NOT NULL DEFAULT now(),
+    UNIQUE(user_id, item_type, item_id)
+);
+CREATE INDEX IF NOT EXISTS idx_favorites_user ON public.favorites(user_id);
+ALTER TABLE public.favorites ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "favorites_select_own" ON public.favorites;
+DROP POLICY IF EXISTS "favorites_insert_own" ON public.favorites;
+DROP POLICY IF EXISTS "favorites_delete_own" ON public.favorites;
+CREATE POLICY "favorites_select_own" ON public.favorites FOR SELECT USING (auth.uid()::text = user_id);
+CREATE POLICY "favorites_insert_own" ON public.favorites FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+CREATE POLICY "favorites_delete_own" ON public.favorites FOR DELETE USING (auth.uid()::text = user_id);
+
+-- ─── tts_cache ──────────────────────────────────────────────────────────────
+-- Referenced in scripts/create-tts-cache.sql — adding here for single-migration convenience
+CREATE TABLE IF NOT EXISTS public.tts_cache (
+    id          serial PRIMARY KEY,
+    text_hash   varchar(32) UNIQUE NOT NULL,
+    text        varchar(200) NOT NULL,
+    audio_url   text NOT NULL,
+    created_at  timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_tts_cache_hash ON public.tts_cache(text_hash);
+ALTER TABLE public.tts_cache ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tts_cache_public_read" ON public.tts_cache;
+CREATE POLICY "tts_cache_public_read" ON public.tts_cache FOR SELECT USING (true);
+
+-- ─── learn_audio ────────────────────────────────────────────────────────────
+-- Referenced in FIX_DATABASE.sql — adding here for single-migration convenience
+CREATE TABLE IF NOT EXISTS public.learn_audio (
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    key         text UNIQUE NOT NULL,
+    audio_base64 text NOT NULL,
+    created_at  timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE public.learn_audio ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "learn_audio_public_read" ON public.learn_audio;
+CREATE POLICY "learn_audio_public_read" ON public.learn_audio FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Tables created: games, videos, worksheets, words, follows,
 --   blog_posts, reports, achievements, user_achievements,
---   story_progress, curriculum_worlds, curriculum_lessons, pets
--- Fixed: friends (UUID → TEXT foreign keys)
+--   story_progress, curriculum_worlds, curriculum_lessons, pets,
+--   posts, favorites, tts_cache, learn_audio
+-- Fixed: friends (UUID -> TEXT foreign keys), pets (id = user_id TEXT PK)
 -- ============================================================

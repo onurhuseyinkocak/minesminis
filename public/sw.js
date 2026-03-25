@@ -11,12 +11,20 @@ const APP_SHELL = [
     '/index.html',
     '/manifest.json',
     '/images/mine-logo.jpg',
+    '/lottie/mimi_happy.json',
+    '/lottie/mimi_idle.json',
+    '/lottie/mimi_sad.json',
+    '/lottie/mimi_talk.json',
+    '/lottie/mimi_wave.json',
+    '/lottie/mimi_walk.json',
+    '/lottie/mimi_sit.json',
 ];
 
 // Static asset extensions — cache-first strategy
 const STATIC_EXTENSIONS = [
     '.js', '.css', '.woff', '.woff2', '.ttf', '.eot',
-    '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico',
+    '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.avif', '.ico',
+    '.json',
 ];
 
 // API paths to cache with network-first + stale-while-revalidate
@@ -34,6 +42,8 @@ const SKIP_CACHE_PATTERNS = [
 ];
 
 function isStaticAsset(url) {
+    // API routes that return JSON should not be treated as static assets
+    if (url.pathname.startsWith('/api/')) return false;
     return STATIC_EXTENSIONS.some((ext) => url.pathname.endsWith(ext));
 }
 
@@ -223,8 +233,8 @@ self.addEventListener('push', (event) => {
     event.waitUntil(
         self.registration.showNotification(data.title || 'MinesMinis', {
             body: data.body || '',
-            icon: '/icon-192.png',
-            badge: '/icon-192.png',
+            icon: '/images/mine-logo.jpg',
+            badge: '/images/mine-logo.jpg',
             data: { url: data.url || '/' },
         })
     );
