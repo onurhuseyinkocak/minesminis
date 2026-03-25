@@ -26,7 +26,6 @@
     "db:migrate:dry": "node scripts/run-migration.mjs --dry"
   },
   "dependencies": {
-    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@supabase/supabase-js": "^2.76.1",
     "firebase": "^12.9.0",
     "framer-motion": "11.15.0",
@@ -37,14 +36,14 @@
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^6.23.1",
-    "recharts": "^3.3.0",
-    "stripe": "^20.0.0"
+    "recharts": "^3.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.5.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",

@@ -151,6 +151,24 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/** Wrapper that requires authentication and the 'parent' role */
+function ParentRoute({ children }: { children: React.ReactNode }) {
+  const { user, userProfile, loading } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  if (loading) return <PageLoader />;
+  if (userProfile && userProfile.role !== 'parent') return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+}
+
+/** Wrapper that requires authentication and the 'teacher' role */
+function TeacherRoute({ children }: { children: React.ReactNode }) {
+  const { user, userProfile, loading } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  if (loading) return <PageLoader />;
+  if (userProfile && userProfile.role !== 'teacher') return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+}
+
 /** Time limit overlay shown when student exceeds daily limit */
 function TimeLimitOverlay({ minutes, limit }: { minutes: number; limit: number }) {
   const isTr = navigator.language.startsWith('tr');
@@ -382,11 +400,11 @@ function AppRoutes() {
             <Route
               path="/parent"
               element={
-                <ProtectedRoute>
+                <ParentRoute>
                   <AppShell showSidebar={false}>
                     <ParentDashboard />
                   </AppShell>
-                </ProtectedRoute>
+                </ParentRoute>
               }
             />
 
@@ -394,11 +412,11 @@ function AppRoutes() {
             <Route
               path="/teacher"
               element={
-                <ProtectedRoute>
+                <TeacherRoute>
                   <AppShell showSidebar={false}>
                     <TeacherDashboard />
                   </AppShell>
-                </ProtectedRoute>
+                </TeacherRoute>
               }
             />
 

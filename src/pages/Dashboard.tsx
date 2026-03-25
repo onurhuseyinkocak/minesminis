@@ -31,11 +31,7 @@ import { useGamification, ALL_BADGES } from '../contexts/GamificationContext';
 import { SFX } from '../data/soundLibrary';
 import { speak } from '../services/ttsService';
 import MimiGuide from '../components/MimiGuide';
-import { WORLDS, getWorldById, getLessonById } from '../data/curriculum';
-import {
-  getCurrentLesson as getTrackerCurrentLesson,
-  getWorldCompletionCount,
-} from '../data/progressTracker';
+
 import { getTodayLesson, isDailyLessonCompletedToday, getStreakFreezeCount } from '../services/dailyLessonService';
 import StreakProtectionBadge from '../components/StreakProtectionBadge';
 import { XPBoosterBadge, getActiveBoost } from '../components/XPBooster';
@@ -54,32 +50,6 @@ import {
 // ============================================================
 // HELPERS
 // ============================================================
-
-function getCurrentLessonData(userId: string) {
-  const current = getTrackerCurrentLesson(userId);
-  if (!current) {
-    const firstWorld = WORLDS[0];
-    return {
-      worldName: firstWorld?.name || 'Hello World',
-      lessonName: 'All caught up!',
-      currentLesson: firstWorld?.lessons.length || 10,
-      totalLessons: firstWorld?.lessons.length || 10,
-      path: '/worlds',
-    };
-  }
-  const world = getWorldById(current.worldId);
-  const lesson = getLessonById(current.worldId, current.lessonId);
-  const completedCount = getWorldCompletionCount(userId, current.worldId);
-  const totalLessons = world?.lessons.length || 10;
-
-  return {
-    worldName: world?.name || 'Unknown World',
-    lessonName: lesson?.title || 'Next Lesson',
-    currentLesson: completedCount + 1,
-    totalLessons,
-    path: `/worlds/${current.worldId}`,
-  };
-}
 
 // ============================================================
 // ANIMATION VARIANTS
@@ -188,7 +158,6 @@ export default function Dashboard() {
   const learnedCount = stats.wordsLearned ?? 0;
   const freezeCount = getStreakFreezeCount(userId);
 
-  const [_lesson, setLesson] = useState(() => getCurrentLessonData(userId));
   const [showStreakShame, setShowStreakShame] = useState(false);
 
   // Streak shame: show after 4pm if user hasn't practiced and has streak
@@ -204,7 +173,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     const onFocus = () => {
-      setLesson(getCurrentLessonData(userId));
       setLessonDone(isDailyLessonCompletedToday(userId));
     };
     window.addEventListener('focus', onFocus);
@@ -252,7 +220,7 @@ export default function Dashboard() {
           ============================================================ */}
       <motion.div className="flex items-center justify-between mb-5" variants={itemVariants}>
         <div className="flex items-center gap-3">
-          <Link to="/avatar" title="Avatarını düzenle" className="flex-shrink-0">
+          <Link to="/avatar" title={lang === 'tr' ? 'Avatarını düzenle' : 'Edit avatar'} className="flex-shrink-0">
             <AvatarDisplay
               config={getAvatarConfig(userId)}
               letter={displayName}

@@ -139,7 +139,7 @@ function Games() {
     };
     fetchGames();
     return () => { cancelled = true; };
-  }, [user]);
+  }, [user, isTr]);
 
   // ---- Helpers ----
   const isGameLocked = useCallback(
@@ -205,7 +205,7 @@ function Games() {
         return;
       }
     },
-    [playingGame, dailySession],
+    [playingGame, dailySession, isTr],
   );
 
   const handleExitGame = useCallback(() => {

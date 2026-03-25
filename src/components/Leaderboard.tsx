@@ -8,6 +8,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './Leaderboard.css';
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Trophy, Crown, Star, Clock } from 'lucide-react';
 import { errorLogger } from '../services/errorLogger';
 import {
@@ -22,11 +23,16 @@ import {
 // HELPERS
 // ============================================================
 
-function formatReset(): string {
+function formatReset(lang: string): string {
     const { days, hours, minutes } = getTimeUntilReset();
-    if (days > 0) return `${days}g ${hours}s`;
-    if (hours > 0) return `${hours}s ${minutes}d`;
-    return `${minutes}d`;
+    if (lang === 'tr') {
+        if (days > 0) return `${days}g ${hours}s`;
+        if (hours > 0) return `${hours}s ${minutes}d`;
+        return `${minutes}d`;
+    }
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
 }
 
 // ============================================================
@@ -83,10 +89,11 @@ function Podium({ entries, currentUserId }: PodiumProps) {
 const Leaderboard: React.FC = () => {
     const { user } = useAuth();
     const { stats } = useGamification();
+    const { lang } = useLanguage();
 
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(formatReset());
+    const [timeLeft, setTimeLeft] = useState(() => formatReset(lang));
 
     const currentUserId = user?.uid;
     const weeklyXP = stats.weekly_xp ?? 0;
@@ -117,11 +124,11 @@ const Leaderboard: React.FC = () => {
     }, [fetchLeaderboard]);
 
     useEffect(() => {
-        const tick = () => setTimeLeft(formatReset());
+        const tick = () => setTimeLeft(formatReset(lang));
         tick();
         const timer = setInterval(tick, 60_000);
         return () => clearInterval(timer);
-    }, []);
+    }, [lang]);
 
     const podiumEntries = entries.slice(0, 3);
     const listEntries = entries.slice(3);
@@ -135,11 +142,11 @@ const Leaderboard: React.FC = () => {
             <div className="leader-header">
                 <div className="header-title">
                     <Trophy className="trophy-gold" size={24} />
-                    <h3>Weekly <span>Challenge</span></h3>
+                    <h3>{lang === 'tr' ? 'Haftalık ' : 'Weekly '}<span>{lang === 'tr' ? 'Meydan Okuma' : 'Challenge'}</span></h3>
                 </div>
                 <div className="prize-pill">
                     <Crown size={14} />
-                    <span>WIN 1 WEEK PREMIUM</span>
+                    <span>{lang === 'tr' ? 'PREMIUM KAZAN' : 'WIN PREMIUM'}</span>
                 </div>
             </div>
 
@@ -150,11 +157,11 @@ const Leaderboard: React.FC = () => {
                     style={{ '--tier-color': tier.color } as React.CSSProperties}
                 >
                     <span className="tier-icon">{tier.icon}</span>
-                    <span className="tier-name">{tier.nameTr}</span>
+                    <span className="tier-name">{lang === 'tr' ? tier.nameTr : tier.name}</span>
                 </div>
                 <div className="reset-timer">
                     <Clock size={13} />
-                    <span>Yeni hafta: {timeLeft}</span>
+                    <span>{lang === 'tr' ? `Yeni hafta: ${timeLeft}` : `Resets in: ${timeLeft}`}</span>
                 </div>
             </div>
 
@@ -162,21 +169,28 @@ const Leaderboard: React.FC = () => {
             {nextTier && weeklyXP > 0 && (
                 <div className="promotion-hint">
                     <Star size={13} />
-                    <span>
-                        Bu hafta{' '}
-                        <strong>{xpToNextTier} XP</strong> daha kazan ve{' '}
-                        <strong>{nextTier.nameTr}</strong>&apos;a yüksel!
-                    </span>
+                    {lang === 'tr' ? (
+                        <span>
+                            Bu hafta{' '}
+                            <strong>{xpToNextTier} XP</strong> daha kazan ve{' '}
+                            <strong>{nextTier.nameTr}</strong>&apos;a yüksel!
+                        </span>
+                    ) : (
+                        <span>
+                            Earn <strong>{xpToNextTier} XP</strong> more this week to reach{' '}
+                            <strong>{nextTier.name}</strong>!
+                        </span>
+                    )}
                 </div>
             )}
 
             {/* ---- Content ---- */}
             {loading ? (
-                <div className="loading-state">Finding the stars...</div>
+                <div className="loading-state">{lang === 'tr' ? 'Yıldızlar aranıyor...' : 'Finding the stars...'}</div>
             ) : entries.length === 0 ? (
                 <div className="empty-state">
                     <Star className="star-bounce" size={32} />
-                    <p>No champions yet this week. Be the first!</p>
+                    <p>{lang === 'tr' ? 'Bu hafta henüz şampiyon yok. İlk sen ol!' : 'No champions yet this week. Be the first!'}</p>
                 </div>
             ) : (
                 <>

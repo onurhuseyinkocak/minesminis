@@ -660,8 +660,8 @@ function RecentBadges({ badgeIds, lang }: { badgeIds: string[]; lang: string }) 
                     <BadgeIconNode icon={badge.icon} />
                   </div>
                   <div>
-                    <div className="pd-badge-name">{badge.name}</div>
-                    <div className="pd-badge-desc">{badge.description}</div>
+                    <div className="pd-badge-name">{lang === 'tr' ? badge.nameTr : badge.name}</div>
+                    <div className="pd-badge-desc">{lang === 'tr' ? badge.descriptionTr : badge.description}</div>
                   </div>
                 </div>
               );

@@ -14,12 +14,12 @@ interface AppShellProps {
   showBottomNav?: boolean;
 }
 
-const NAV_ITEMS: { path: string; label: string; icon: KidIconName }[] = [
-  { path: '/dashboard', label: 'Home', icon: 'home' },
-  { path: '/worlds', label: 'Learn', icon: 'learn' },
-  { path: '/games', label: 'Games', icon: 'games' },
-  { path: '/words', label: 'Library', icon: 'library' },
-  { path: '/stories', label: 'Stories', icon: 'stories' },
+const NAV_ITEMS: { path: string; label: string; labelTr: string; icon: KidIconName }[] = [
+  { path: '/dashboard', label: 'Home', labelTr: 'Ana Sayfa', icon: 'home' },
+  { path: '/worlds', label: 'Learn', labelTr: 'Öğren', icon: 'learn' },
+  { path: '/games', label: 'Games', labelTr: 'Oyunlar', icon: 'games' },
+  { path: '/words', label: 'Library', labelTr: 'Kütüphane', icon: 'library' },
+  { path: '/stories', label: 'Stories', labelTr: 'Hikayeler', icon: 'stories' },
 ];
 
 /** Action that triggered the ParentGate, used to resume after success. */
@@ -119,7 +119,7 @@ export default function AppShell({
 
         {/* Center nav links */}
         <nav className="flex items-center gap-1">
-          {NAV_ITEMS.map(({ path, label, icon }) => {
+          {NAV_ITEMS.map(({ path, label, labelTr, icon }) => {
             const active = isActive(path);
             return (
               <Link
@@ -132,7 +132,7 @@ export default function AppShell({
                 }`}
               >
                 <KidIcon name={icon} size={18} />
-                <span>{label}</span>
+                <span>{lang === 'tr' ? labelTr : label}</span>
               </Link>
             );
           })}
@@ -168,7 +168,7 @@ export default function AppShell({
               }`}
             >
               <LayoutDashboard size={18} />
-              <span>Sınıfım</span>
+              <span>{lang === 'tr' ? 'Sınıfım' : 'My Class'}</span>
             </Link>
           )}
         </nav>
@@ -204,7 +204,7 @@ export default function AppShell({
                   className="flex items-center gap-2.5 px-4 py-2 text-sm text-ink-600 hover:bg-ink-50 hover:text-ink-900 transition-colors font-display font-semibold"
                 >
                   <KidIcon name="home" size={16} />
-                  Profile
+                  {lang === 'tr' ? 'Profil' : 'Profile'}
                 </Link>
                 <button
                   type="button"
@@ -217,7 +217,7 @@ export default function AppShell({
                   className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink-600 hover:bg-ink-50 hover:text-ink-900 transition-colors font-display font-semibold"
                 >
                   <KidIcon name="learn" size={16} />
-                  Settings
+                  {lang === 'tr' ? 'Ayarlar' : 'Settings'}
                 </button>
                 <button
                   type="button"
@@ -230,7 +230,7 @@ export default function AppShell({
                   className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-error-500 hover:bg-error-50 transition-colors font-display font-semibold"
                 >
                   <KidIcon name="logout" size={16} />
-                  Logout
+                  {lang === 'tr' ? 'Çıkış Yap' : 'Sign Out'}
                 </button>
               </div>
             )}
@@ -258,7 +258,7 @@ export default function AppShell({
           </div>
           <div className="flex items-center gap-1 bg-gold-50 text-gold-600 font-bold px-2.5 py-1 rounded-full text-xs font-display">
             <KidIcon name="star" size={13} />
-            <span>{stats?.xp?.toLocaleString() || 0}</span>
+            <span>{stats?.xp?.toLocaleString() || 0} XP</span>
           </div>
           <Link
             to="/profile"
@@ -281,7 +281,7 @@ export default function AppShell({
           ══════════════════════════════════════════════════ */}
       {showBottomNav && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-ink-100 flex z-50 lg:hidden pb-[env(safe-area-inset-bottom)]">
-          {NAV_ITEMS.map(({ path, label, icon }) => {
+          {NAV_ITEMS.map(({ path, label, labelTr, icon }) => {
             const active = isActive(path);
             return (
               <Link
@@ -295,7 +295,7 @@ export default function AppShell({
                   <KidIcon name={icon} size={22} />
                 </div>
                 <span className={`text-[10px] font-display ${active ? 'font-bold' : 'font-semibold'}`}>
-                  {label}
+                  {lang === 'tr' ? labelTr : label}
                 </span>
               </Link>
             );
@@ -337,7 +337,7 @@ export default function AppShell({
                 <LayoutDashboard size={22} />
               </div>
               <span className={`text-[10px] font-display ${isActive('/teacher') ? 'font-bold' : 'font-semibold'}`}>
-                Sınıfım
+                {lang === 'tr' ? 'Sınıfım' : 'My Class'}
               </span>
             </Link>
           )}
