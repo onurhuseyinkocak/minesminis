@@ -62,7 +62,7 @@ const defaultSettings: SEOSettings = {
     twitterHandle: '@minesminis',
 };
 
-import { getApiBase } from '../../utils/apiBase';
+import { adminFetch } from '../../utils/adminApi';
 import './SEOManager.css';
 
 function SEOManager() {
@@ -81,8 +81,18 @@ function SEOManager() {
 
     useEffect(() => {
         const loadBlogSlugs = async () => {
-            const { data } = await supabase.from('blog_posts').select('slug');
-            if (data) setBlogSlugs(data.map((r: { slug?: string }) => r.slug).filter(Boolean) as string[]);
+            try {
+                const { data, error } = await supabase.from('blog_posts').select('slug');
+                if (error) {
+                    if (error.code !== '42P01' && !error.message?.includes('does not exist')) {
+                        toast.error(`Blog slug\'lari yuklenemedi: ${error.message}`);
+                    }
+                    return;
+                }
+                if (data) setBlogSlugs(data.map((r: { slug?: string }) => r.slug).filter(Boolean) as string[]);
+            } catch {
+                // blog_posts table may not exist yet — silently ignore
+            }
         };
         loadBlogSlugs();
     }, []);
@@ -216,12 +226,14 @@ Sitemap: ${settings.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
     const handleOneClickSEO = async () => {
         setSeoApplying(true);
         try {
-            const res = await fetch(`${getApiBase()}/api/seo/apply`, { method: 'POST' });
-            const json = await res.json().catch(() => ({}));
+            const res = await adminFetch('/api/seo/apply', { method: 'POST' });
+            const json = await res.json().catch(() => ({})) as { ok?: boolean; error?: string };
             if (res.ok && json.ok) {
                 toast.success('SEO uygulandı! Sitemap Google ve Bing\'e bildirildi.');
             } else if (res.status === 429) {
                 toast.error('Çok fazla istek. Bir dakika bekleyip tekrar deneyin.');
+            } else if (res.status === 401 || res.status === 403) {
+                toast.error('Yetkisiz. Admin olarak giris yapin.');
             } else {
                 toast.error(json.error || 'Hata oluştu. Backend çalışıyor mu?');
             }

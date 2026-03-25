@@ -4,7 +4,7 @@
  * Each sound = a plant. Mastery = growth stages.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Droplets, Sprout, Flower2, TreePine, ArrowLeft, Leaf } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -59,24 +59,20 @@ function LearningGarden() {
     setWaterDrops(getWaterDrops());
   }, []);
 
-  const stats = getGardenStats();
+  const stats = useMemo(() => getGardenStats(), [gardenState]);
 
   // Garden level based on blooming plants
-  const gardenLevel = stats.blooming >= 35
-    ? 7
-    : stats.blooming >= 25
-      ? 6
-      : stats.blooming >= 18
-        ? 5
-        : stats.blooming >= 12
-          ? 4
-          : stats.blooming >= 7
-            ? 3
-            : stats.blooming >= 3
-              ? 2
-              : 1;
+  const gardenLevel = useMemo(() => {
+    if (stats.blooming >= 35) return 7;
+    if (stats.blooming >= 25) return 6;
+    if (stats.blooming >= 18) return 5;
+    if (stats.blooming >= 12) return 4;
+    if (stats.blooming >= 7) return 3;
+    if (stats.blooming >= 3) return 2;
+    return 1;
+  }, [stats.blooming]);
 
-  const gardenLevelNames = [
+  const gardenLevelNames: readonly string[] = [
     'Bare Soil',
     'Seedling Patch',
     'Little Garden',
@@ -136,8 +132,12 @@ function LearningGarden() {
         // Refresh selected plant info
         if (plant && selectedPlant) {
           const s = newState[soundId];
+          const updatedMastery = s?.mastery ?? selectedPlant.mastery;
+          const updatedStage = getPlantStage(plant, updatedMastery);
           setSelectedPlant({
             ...selectedPlant,
+            mastery: updatedMastery,
+            stage: updatedStage,
             waterCount: s?.waterCount ?? 0,
           });
         }
@@ -147,13 +147,16 @@ function LearningGarden() {
   );
 
   // Group plants by group number
-  const groups: Record<number, GardenPlant[]> = {};
-  for (const plant of GARDEN_PLANTS) {
-    const sound = ALL_SOUNDS.find((s) => s.id === plant.soundId);
-    const groupNum = sound?.group ?? 1;
-    if (!groups[groupNum]) groups[groupNum] = [];
-    groups[groupNum].push(plant);
-  }
+  const groups = useMemo(() => {
+    const result: Record<number, GardenPlant[]> = {};
+    for (const plant of GARDEN_PLANTS) {
+      const sound = ALL_SOUNDS.find((s) => s.id === plant.soundId);
+      const groupNum = sound?.group ?? 1;
+      if (!result[groupNum]) result[groupNum] = [];
+      result[groupNum].push(plant);
+    }
+    return result;
+  }, []);
 
   return (
     <div className="lg-container">
@@ -228,9 +231,7 @@ function LearningGarden() {
                       animate={
                         didJustGrow
                           ? { scale: [1, 1.3, 1] }
-                          : isBlooming
-                            ? {}
-                            : {}
+                          : {}
                       }
                     >
                       {/* Watering animation */}

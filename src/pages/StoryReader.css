@@ -336,6 +336,20 @@
   font-size: 0.9rem;
 }
 
+.story-reader__vocab-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--primary, #FF6B35);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
 .story-reader__vocab-word {
   font-weight: 700;
   color: white;

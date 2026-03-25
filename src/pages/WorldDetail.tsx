@@ -363,6 +363,7 @@ interface UnitDetailViewProps {
 
 function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   // Read progress from localStorage
   let activitiesCompleted = 0;
   try {
@@ -395,7 +396,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
       {/* Back */}
       <Link to="/worlds" className="world-detail-back">
         <ArrowLeft size={18} />
-        Dünya Haritasına Dön
+        {t('worlds.backToWorldMap')}
       </Link>
 
       {/* Unit Header */}
@@ -415,7 +416,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
           <div className="world-detail-header__progress">
             <ProgressBar value={progressPct} size="sm" variant="default" showLabel />
             <span className="world-detail-header__count">
-              {activitiesCompleted}/{totalActivities} activities completed
+              {activitiesCompleted}/{totalActivities} {t('worlds.activitiesCompleted')}
             </span>
           </div>
         </div>
@@ -424,7 +425,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
       {/* Phonics Focus */}
       {unit.phonicsFocus.length > 0 && (
         <section className="world-detail-vocab">
-          <h2 className="world-detail-section-title">Phonics Focus</h2>
+          <h2 className="world-detail-section-title">{t('worlds.phonicsFocus')}</h2>
           <div className="world-detail-vocab__scroll">
             {unit.phonicsFocus.map((sound, i) => (
               <div key={i} className="vocab-preview-card">
@@ -438,7 +439,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
 
       {/* Activities List */}
       <section className="world-detail-lessons">
-        <h2 className="world-detail-section-title">Activities</h2>
+        <h2 className="world-detail-section-title">{t('worlds.activities')}</h2>
         <motion.div
           className="world-detail-lessons__list"
           variants={listVariants}
@@ -494,12 +495,12 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
                   <div className="lesson-card__status">
                     {isCurrent && (
                       <Button variant="primary" size="sm" icon={<Play size={14} />} onClick={() => navigate(`/worlds/${unit.id}/lessons/${idx}`)}>
-                        Start
+                        {t('worlds.start')}
                       </Button>
                     )}
                     {isDone && (
                       <span className="lesson-card__done-badge">
-                        <Check size={14} /> Done
+                        <Check size={14} /> {t('worlds.complete')}
                       </span>
                     )}
                     {!isDone && !isCurrent && (

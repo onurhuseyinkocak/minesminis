@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
     X,
     Send,
@@ -8,16 +8,16 @@ import {
     Users,
     BarChart3,
     FileText,
-
     ChevronDown,
     Crown,
     Terminal,
     AlertTriangle,
-
     Copy,
     Trash2
 } from 'lucide-react';
 import UnifiedMascot from '../../components/UnifiedMascot';
+import { adminFetch } from '../../utils/adminApi';
+import { errorLogger } from '../../services/errorLogger';
 import './AdminMimi.css';
 
 interface Message {
@@ -42,226 +42,44 @@ const quickActions: QuickAction[] = [
     { icon: <AlertTriangle size={16} />, label: 'Sorun Tespiti', prompt: 'Sistemde olası sorunları kontrol et' },
 ];
 
-// Admin-focused AI responses
-const getAdminResponse = (message: string): string => {
-    const lowerMessage = message.toLowerCase();
+/**
+ * Send admin chat message to backend AI endpoint.
+ * Falls back to a basic offline response if the backend is unreachable.
+ */
+async function fetchAdminAIResponse(
+    chatHistory: Array<{ role: 'user' | 'assistant'; content: string }>
+): Promise<string> {
+    try {
+        const res = await adminFetch('/api/admin/chat', {
+            method: 'POST',
+            body: JSON.stringify({
+                messages: chatHistory,
+                context: 'admin_assistant',
+            }),
+        });
 
-    if (lowerMessage.includes('rapor') || lowerMessage.includes('performans')) {
-        return `**Haftalık Performans Raporu**
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            const errMsg = (errorData as Record<string, string>).error || `Backend error (${res.status})`;
+            throw new Error(errMsg);
+        }
 
-**Kullanıcı Metrikleri:**
-• Yeni kayıt: 47 kullanıcı (+12% geçen haftaya göre)
-• Aktif kullanıcı: 156 (%78 etkileşim oranı)
-• Premium dönüşüm: 23 kullanıcı
-
-**Finansal Özet:**
-• Haftalık gelir: ₺8,450
-• Ortalama işlem: ₺367
-• Büyüme: +17.4%
-
-**İçerik Performansı:**
-• En popüler oyun: "2nd Grade Revision" (234 oynama)
-• En izlenen video: "Baby Shark" (189 görüntülenme)
-• Yeni eklenen içerik: 3 oyun, 5 video
-
-Sistem sağlıklı çalışıyor. Premium dönüşümlerinde artış var.`;
+        const data = await res.json() as { message?: string; response?: string };
+        const responseText = data.message || data.response;
+        if (!responseText) {
+            throw new Error('Empty response from AI backend');
+        }
+        return responseText;
+    } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : 'Unknown AI error';
+        errorLogger.log({
+            severity: 'medium',
+            message: `AdminMimi AI call failed: ${msg}`,
+            component: 'AdminMimi',
+        });
+        return `Baglanti hatasi: ${msg}\n\nBackend sunucusunun calistigindan emin olun. Tekrar deneyin.`;
     }
-
-    if (lowerMessage.includes('aktif') || lowerMessage.includes('kullanıcı')) {
-        return `**Son 24 Saatte Aktif Kullanıcılar**
-
-**Toplam:** 89 aktif kullanıcı
-
-**Dağılım:**
-• Öğrenci: 72 (%81)
-• Öğretmen: 14 (%16)
-• Admin: 3 (%3)
-
-**En Aktif Saatler:**
-• 14:00 - 16:00 (okul sonrası pik)
-• 19:00 - 21:00 (akşam çalışması)
-
-**Premium Kullanıcılar:**
-• 34 premium kullanıcı aktif (%38)
-• Ortalama oturum süresi: 28 dakika
-
-Kullanıcı etkileşimi geçen haftaya göre %12 arttı.`;
-    }
-
-    if (lowerMessage.includes('premium') || lowerMessage.includes('dönüşüm')) {
-        return `**Premium Dönüşüm Analizi**
-
-**Bu Ay:**
-• Yeni premium: 23 kullanıcı
-• Dönüşüm oranı: %14.7
-• Toplam premium: 156 üye
-
-**Plan Dağılımı:**
-• Aylık: 45 üye (%29)
-• 3 Aylık: 38 üye (%24)
-• Yıllık: 52 üye (%33) — En popüler
-• Ömür Boyu: 21 üye (%14)
-
-**Öneriler:**
-1. Yıllık plan indirimi kampanyası başlatın
-2. Deneme süresi sonrası hatırlatma e-postası gönderin
-3. Öğretmenlere özel paket oluşturun
-
-Yıllık plan en iyi ROI sağlıyor, odağı buraya kaydırın.`;
-    }
-
-    if (lowerMessage.includes('sorun') || lowerMessage.includes('hata') || lowerMessage.includes('kontrol')) {
-        return `**Sistem Sağlık Kontrolü**
-
-**Tüm Sistemler Çalışıyor**
-
-**Kontrol Edilen Alanlar:**
-
-| Alan | Durum | Son Kontrol |
-|------|-------|-------------|
-| Veritabanı | Normal | 2 dk önce |
-| Auth Servisi | Normal | 2 dk önce |
-| CDN | Normal | 5 dk önce |
-| API | Normal | 1 dk önce |
-
-**Uyarılar:**
-- 3 kullanıcının premium süresi bu hafta doluyor
-- 2 video'nun thumbnail'i yüklenememiş
-
-**Performans:**
-• API yanıt süresi: 45ms (mükemmel)
-• Uptime: 99.9%
-• Hata oranı: 0.02%
-
-Kritik sorun yok, sistem sağlıklı.`;
-    }
-
-    if (lowerMessage.includes('veritabanı') || lowerMessage.includes('database') || lowerMessage.includes('db')) {
-        return `**Veritabanı Durumu**
-
-**Supabase Bağlantısı:** Aktif
-
-**Tablo İstatistikleri:**
-| Tablo | Kayıt | Son Güncelleme |
-|-------|-------|----------------|
-| users | 156 | 5 dk önce |
-| games | 6 | 2 gün önce |
-| videos | 24 | 1 gün önce |
-| worksheets | 35 | 3 gün önce |
-| favorites | 892 | 1 dk önce |
-
-**Storage:**
-• Kullanılan: 2.3 GB
-• Limit: 8 GB
-• Kullanım: %29
-
-**Bağlantı Havuzu:**
-• Aktif: 3
-• Boşta: 7
-• Max: 50
-
-Veritabanı sağlıklı, ek optimizasyona gerek yok.`;
-    }
-
-    if (lowerMessage.includes('içerik') || lowerMessage.includes('istatistik') || lowerMessage.includes('özet')) {
-        return `**İçerik İstatistikleri Özeti**
-
-**Toplam İçerik:** 85 öğe
-
-**Dağılım:**
-• Oyunlar: 6 adet
-  - 2. Sınıf: 2 | 3. Sınıf: 2 | 4. Sınıf: 2
-• Videolar: 24 adet
-  - Şarkılar: 12 | Hikayeler: 8 | Dersler: 4
-• Kelimeler: 20 adet (aktif)
-  - Başlangıç: 8 | Orta: 7 | İleri: 5
-• Çalışma Kağıtları: 35 adet
-  - Yazma: 10 | Okuma: 12 | Matematik: 8 | Diğer: 5
-
-**Popülerlik:**
-1. "Baby Shark" video (1.2K görüntülenme)
-2. "2nd Grade Revision" oyun (890 oynama)
-3. "Alphabet Practice" worksheet (654 indirme)
-
-Video içerikler en çok etkileşim alıyor.`;
-    }
-
-    if (lowerMessage.includes('merhaba') || lowerMessage.includes('selam') || lowerMessage.includes('hey')) {
-        return `**Merhaba Admin!**
-
-Ben Mimi'nin admin moduyum.
-
-Size nasıl yardımcı olabilirim?
-
-**Hızlı Erişim:**
-• Rapor oluşturma
-• Kullanıcı analizi
-• Finansal özet
-• Sistem bakımı
-• Performans metrikleri
-
-Sormak istediğiniz herhangi bir şey var mı?`;
-    }
-
-    if (lowerMessage.includes('nerede') || lowerMessage.includes('nereden') || lowerMessage.includes('nasıl eklerim') || lowerMessage.includes('şunu nereden')) {
-        return `**Admin Panel - Nerede Yapılır?**
-
-**Oyun ekleme/düzenleme:** Sol menü → **Oyunlar** (/admin/games)
-**Video ekleme:** Sol menü → **Videolar** (/admin/videos)
-**Kelime ekleme:** Sol menü → **Kelimeler** (/admin/words)
-**Worksheet ekleme:** Sol menü → **Çalışma Kağıtları** (/admin/worksheets)
-**Kullanıcı yönetimi:** Sol menü → **Kullanıcılar** (/admin/users)
-**Premium/abonelik:** Sol menü → **Premium** (/admin/premium)
-**Raporlar:** Sol menü → **Raporlar** (/admin/reports)
-**SEO ayarları:** Sol menü → **SEO** (/admin/seo)
-**Blog yazısı:** Sol menü → **Blog** (/admin/blog)
-**Site ayarları:** Sol menü → **Ayarlar** (/admin/settings)
-**Dashboard:** Ana sayfa → **Dashboard** (/admin)
-
-Başka bir şey sorarsan detay vereyim.`;
-    }
-
-    if (lowerMessage.includes('yardım') || lowerMessage.includes('help') || lowerMessage.includes('ne yapabilirsin')) {
-        return `**Admin Mimi Yetenekleri**
-
-Ben admin paneli için özel olarak tasarlandım. İşte yapabileceklerim:
-
-**Raporlama:**
-• Günlük/haftalık/aylık performans raporları
-• Kullanıcı aktivite analizleri
-• Gelir ve büyüme raporları
-
-**Kullanıcı Yönetimi:**
-• Aktif kullanıcı listesi
-• Premium dönüşüm analizi
-• Kullanıcı davranış insights
-
-**Sistem Yönetimi:**
-• Veritabanı durum kontrolü
-• Hata tespiti
-• Performans metrikleri
-
-**Öneriler:**
-• İçerik stratejisi önerileri
-• Pazarlama tavsiyeleri
-• Optimizasyon fırsatları
-
-Sadece sorun, hemen yanıtlayayım.`;
-    }
-
-    // Default response
-    return `Anladım! "${message}" hakkında size yardımcı olayım.
-
-Bu konuyla ilgili analiz yapmam için daha spesifik bilgi verebilir misiniz?
-
-**Örnek sorular:**
-• "Haftalık rapor oluştur"
-• "Premium dönüşüm oranını analiz et"
-• "Sistemde sorun var mı kontrol et"
-• "Aktif kullanıcı sayısı ne?"
-
-Hızlı erişim için yukarıdaki butonları da kullanabilirsiniz.`;
-};
+}
 
 function AdminMimi() {
     const [isOpen, setIsOpen] = useState(false);
@@ -283,8 +101,8 @@ function AdminMimi() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    const handleSend = async () => {
-        if (!inputValue.trim()) return;
+    const handleSend = useCallback(async () => {
+        if (!inputValue.trim() || isTyping) return;
 
         const userMessage: Message = {
             id: Date.now().toString(),
@@ -293,13 +111,20 @@ function AdminMimi() {
             timestamp: new Date()
         };
 
-        setMessages(prev => [...prev, userMessage]);
+        const updatedMessages = [...messages, userMessage];
+        setMessages(updatedMessages);
         setInputValue('');
         setIsTyping(true);
 
-        // Simulate AI thinking
-        setTimeout(() => {
-            const response = getAdminResponse(inputValue);
+        try {
+            // Build chat history for context
+            const chatHistory = updatedMessages
+                .filter(m => m.role === 'user' || m.role === 'assistant')
+                .slice(-20) // Keep last 20 messages for context
+                .map(m => ({ role: m.role, content: m.content }));
+
+            const response = await fetchAdminAIResponse(chatHistory);
+
             const assistantMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
@@ -307,32 +132,50 @@ function AdminMimi() {
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, assistantMessage]);
+        } catch (e: unknown) {
+            const errMsg = e instanceof Error ? e.message : 'Beklenmeyen bir hata olustu';
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                role: 'assistant',
+                content: `**Hata:** ${errMsg}\n\nLutfen tekrar deneyin.`,
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
             setIsTyping(false);
-        }, 800 + Math.random() * 700);
-    };
+        }
+    }, [inputValue, isTyping, messages]);
 
-    const handleQuickAction = (prompt: string) => {
+    const handleQuickAction = useCallback((prompt: string) => {
         setInputValue(prompt);
+        // Focus the input ref directly instead of querying the DOM
         setTimeout(() => {
-            const input = document.querySelector('.admin-mimi-input input') as HTMLInputElement;
-            if (input) {
-                input.focus();
-            }
-        }, 100);
-    };
+            inputRef.current?.focus();
+        }, 50);
+    }, []);
 
-    const handleCopyMessage = (content: string) => {
-        navigator.clipboard.writeText(content);
-    };
+    const handleCopyMessage = useCallback((content: string) => {
+        navigator.clipboard.writeText(content).catch(() => {
+            // Fallback for browsers without clipboard API access
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        });
+    }, []);
 
-    const clearChat = () => {
+    const clearChat = useCallback(() => {
         setMessages([{
             id: '1',
             role: 'assistant',
-            content: '🔄 Sohbet temizlendi. Yeni bir konuşmaya başlayalım!\n\nNasıl yardımcı olabilirim?',
+            content: '**Sohbet temizlendi.** Yeni bir konusmaya baslayalim!\n\nNasil yardimci olabilirim?',
             timestamp: new Date()
         }]);
-    };
+    }, []);
 
     if (!isOpen) {
         return (
@@ -461,7 +304,7 @@ function AdminMimi() {
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
                             placeholder="Rapor, analiz veya yardım isteyin..."
                         />
                         <button

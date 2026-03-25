@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useGamification } from '../contexts/GamificationContext';
 import { ArrowLeft, MapPin, Volume2, BookOpen, RotateCcw } from 'lucide-react';
 import { speak } from '../services/ttsService';
 import SceneBackground from '../components/Story/StoryScene';
@@ -147,6 +148,7 @@ export default function StoryReader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { lang } = useLanguage();
+  const { addXP } = useGamification();
 
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
@@ -155,6 +157,7 @@ export default function StoryReader() {
   const [showChoices, setShowChoices] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [completionXPAwarded, setCompletionXPAwarded] = useState(false);
 
   // Fetch story
   useEffect(() => {
@@ -207,8 +210,10 @@ export default function StoryReader() {
 
     // Find next scene by id or leadsTo number
     setTimeout(() => {
-      const targetId = choice.next_scene_id || String(choice.leadsTo);
-      const nextIdx = story?.scenes?.findIndex(s => String(s.id) === targetId) ?? -1;
+      const targetId = choice.next_scene_id ?? (choice.leadsTo != null ? String(choice.leadsTo) : null);
+      const nextIdx = targetId != null
+        ? (story?.scenes?.findIndex(s => String(s.id) === targetId) ?? -1)
+        : -1;
       if (nextIdx !== -1) {
         setSceneIndex(nextIdx);
       } else if (sceneIndex + 1 < totalScenes) {
@@ -311,7 +316,7 @@ export default function StoryReader() {
             <div className="story-reader__characters">
               {currentScene.characters.map((char, i) => (
                 <div key={i} className="story-reader__char">
-                  <span>{typeof char === 'string' ? char : (char as { name?: string }).name || ''}</span>
+                  <span>{char}</span>
                 </div>
               ))}
             </div>
@@ -351,7 +356,7 @@ export default function StoryReader() {
               <div className="story-reader__vocab-list">
                 {(currentScene.vocabulary || (sceneIndex === 0 ? story?.vocabulary : []) || []).map((v, i) => (
                   <div key={i} className="story-reader__vocab-item">
-                    <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-display font-bold">{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
+                    <div className="story-reader__vocab-icon">{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
                     <span className="story-reader__vocab-word">{v.word}</span>
                     {(v.word_tr || v.turkish) && (
                       <span className="story-reader__vocab-tr">— {v.word_tr || v.turkish}</span>
@@ -429,7 +434,7 @@ export default function StoryReader() {
                 <div className="story-reader__completion-vocab-list">
                   {unique.map((v, i) => (
                     <div key={i} className="story-reader__completion-vocab-chip">
-                      <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-display font-bold">{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
+                      <div className="story-reader__vocab-icon">{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
                       <strong>{v.word}</strong>
                       {(v.word_tr || v.turkish) && (
                         <span>— {v.word_tr || v.turkish}</span>
@@ -456,10 +461,11 @@ export default function StoryReader() {
                 setShowCompletion(false);
                 setSceneIndex(0);
                 setShowChoices(false);
+                setCompletionXPAwarded(false);
               }}
             >
               <RotateCcw size={16} />
-              {lang === 'tr' ? 'Başa Dön' : 'Back to Stories'}
+              {lang === 'tr' ? 'Baştan Oku' : 'Read Again'}
             </button>
           </div>
         </div>
@@ -499,7 +505,14 @@ export default function StoryReader() {
             // Last scene — show completion screen
             <button
               className="story-reader__choice-btn"
-              onClick={() => setShowCompletion(true)}
+              onClick={() => {
+                setShowCompletion(true);
+                if (!completionXPAwarded) {
+                  const xpAmount = Math.max(10, totalScenes * 5);
+                  addXP(xpAmount, 'Story completion').catch(() => { /* gamification unavailable */ });
+                  setCompletionXPAwarded(true);
+                }
+              }}
             >
               <span className="story-reader__choice-icon"><BookOpen size={16} /></span>
               {lang === 'tr' ? 'Hikayeyi Tamamla!' : 'Complete Story!'}

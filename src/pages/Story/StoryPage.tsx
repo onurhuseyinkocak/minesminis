@@ -172,7 +172,8 @@ const StoryPage = React.memo(() => {
   // ─── Reset story ───
   const handleReset = useCallback(async () => {
     if (!user || !storyState) return;
-    if (!window.confirm('Are you sure you want to restart your adventure? All progress will be lost.')) return;
+    const confirmMsg = 'Are you sure you want to restart your adventure? All progress will be lost.';
+    if (!window.confirm(confirmMsg)) return;
 
     await resetStoryProgress(user.uid);
     const displayName = userProfile?.display_name || 'Mimi';
@@ -200,9 +201,9 @@ const StoryPage = React.memo(() => {
   }
 
   // ─── TTS helper ───
-  const speakWord = (word: string) => {
+  const speakWord = useCallback((word: string) => {
     speak(word);
-  };
+  }, []);
 
   const hasVocabulary = currentNode.vocabulary && currentNode.vocabulary.length > 0;
   const showVocabCard = hasVocabulary && showChoices && !vocabDismissed;

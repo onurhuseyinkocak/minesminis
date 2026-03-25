@@ -4,7 +4,7 @@
  * Warm, clean, large touch targets.
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LottieCharacter from '../../components/LottieCharacter';
 import {
@@ -109,7 +109,7 @@ const fadeIn = {
   }),
 };
 
-const PracticeMode: React.FC = () => {
+const PracticeMode = () => {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedWorld, setSelectedWorld] = useState('All');
@@ -381,14 +381,14 @@ const PracticeMode: React.FC = () => {
             </div>
           </div>
           <ProgressBar
-            value={(stats.mastered / stats.total) * 100}
+            value={stats.total > 0 ? (stats.mastered / stats.total) * 100 : 0}
             variant="success"
             size="md"
             showLabel
             animated
           />
           <p className="pm-summary__note">
-            {stats.mastered} of {stats.total} words mastered ({Math.round((stats.mastered / stats.total) * 100)}%)
+            {stats.mastered} of {stats.total} words mastered ({stats.total > 0 ? Math.round((stats.mastered / stats.total) * 100) : 0}%)
           </p>
         </Card>
       </div>

@@ -11,12 +11,20 @@ const DEFAULT_MASCOT_ID = 'mimi_dragon';
 
 /** Returns the currently selected mascot id. Defaults to 'mimi_dragon'. */
 export function getSelectedMascotId(): string {
-  return localStorage.getItem(LS_KEY) ?? DEFAULT_MASCOT_ID;
+  try {
+    return localStorage.getItem(LS_KEY) ?? DEFAULT_MASCOT_ID;
+  } catch {
+    return DEFAULT_MASCOT_ID;
+  }
 }
 
 /** Persists the selected mascot id to localStorage. */
 export function setSelectedMascotId(id: string): void {
-  localStorage.setItem(LS_KEY, id);
+  try {
+    localStorage.setItem(LS_KEY, id);
+  } catch {
+    // Storage unavailable — fail silently
+  }
 }
 
 /**

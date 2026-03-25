@@ -395,7 +395,7 @@ function Videos() {
               <iframe
                 src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
                 title="YouTube video player"
-                frameBorder="0"
+                style={{ border: 0 }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />

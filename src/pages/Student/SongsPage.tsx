@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Music, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -101,17 +101,19 @@ export default function SongsPage() {
   const navigate = useNavigate();
   const [activeSong, setActiveSong] = useState<PhonicsSong | null>(null);
   const [mode, setMode] = useState<'singalong' | 'karaoke'>('karaoke');
+  const [playDataVersion, setPlayDataVersion] = useState(0);
 
   const mastered = useMemo(() => getMasteredSounds(), []);
   const unlockedGroups = useMemo(() => getUnlockedGroups(mastered), [mastered]);
-  const playData = useMemo(() => getSongPlayData(), []);
+  const playData = useMemo(() => getSongPlayData(), [playDataVersion]);
 
-  const handleSongComplete = () => {
+  const handleSongComplete = useCallback(() => {
     if (activeSong) {
       recordSongPlay(activeSong.id);
+      setPlayDataVersion((v) => v + 1);
     }
     setActiveSong(null);
-  };
+  }, [activeSong]);
 
   // ── Playing a song ──
   if (activeSong) {
@@ -131,6 +133,7 @@ export default function SongsPage() {
           {/* Mode toggle */}
           <div style={styles.modeToggle}>
             <button
+              type="button"
               style={{
                 ...styles.modeBtn,
                 ...(mode === 'karaoke' ? styles.modeBtnActive : {}),
@@ -140,6 +143,7 @@ export default function SongsPage() {
               Karaoke
             </button>
             <button
+              type="button"
               style={{
                 ...styles.modeBtn,
                 ...(mode === 'singalong' ? styles.modeBtnActive : {}),
@@ -178,6 +182,7 @@ export default function SongsPage() {
       {/* Header */}
       <motion.div style={styles.header} variants={itemVariants}>
         <button
+          type="button"
           onClick={() => navigate('/dashboard')}
           style={styles.backBtn}
           aria-label="Back to dashboard"
@@ -198,12 +203,13 @@ export default function SongsPage() {
         {PHONICS_SONGS.map((song) => {
           const isUnlocked = unlockedGroups.has(song.groupNumber);
           const data = playData[song.id];
-          const starCount = data?.stars || 0;
-          const plays = data?.playCount || 0;
+          const starCount = data?.stars ?? 0;
+          const plays = data?.playCount ?? 0;
           const groupData = PHONICS_GROUPS.find((g) => g.group === song.groupNumber);
 
           return (
             <motion.button
+              type="button"
               key={song.id}
               variants={itemVariants}
               whileTap={isUnlocked ? { scale: 0.95 } : {}}

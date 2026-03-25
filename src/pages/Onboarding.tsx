@@ -145,7 +145,7 @@ const Onboarding: React.FC = () => {
   const isTr = lang === 'tr';
   const navigate = useNavigate();
 
-  // Shared state — start at step 2, role auto-set to student
+  // Step 1 (role) is skipped — role auto-set to 'student', start directly at step 2
   const [step, setStep] = useState(2);
   const [direction, setDirection] = useState(1);
   const [role] = useState<UserRole | ''>('student');
@@ -328,7 +328,7 @@ const Onboarding: React.FC = () => {
         if (classroomName && classroomGrade) {
           const teacherUid = user.uid ?? (user as unknown as { id?: string }).id;
           if (teacherUid) {
-            createClassroom(teacherUid, classroomName, classroomGrade);
+            await createClassroom(teacherUid, classroomName, classroomGrade);
           }
         }
       }
@@ -567,9 +567,12 @@ const Onboarding: React.FC = () => {
         <div className="onboarding-step-icon-large">
           <MapPin size={32} />
         </div>
-        <h2>Your Learning Path</h2>
+        <h2>{isTr ? 'Ogrenme Yolun' : 'Your Learning Path'}</h2>
         <p className="onboarding-step-sub">
-          Starting in {phase?.phase || 'Phase 1'} with {group.name}
+          {isTr
+            ? <>{phase?.phaseTr || 'Asama 1'} ile {group.name} basliyor</>
+            : <>Starting in {phase?.phase || 'Phase 1'} with {group.name}</>
+          }
         </p>
 
         <div className="onboarding-path-units">
@@ -579,7 +582,7 @@ const Onboarding: React.FC = () => {
               <strong>{group.name}</strong>
               <span>{group.sounds}</span>
             </div>
-            <span className="onboarding-path-unit-badge">Start Here</span>
+            <span className="onboarding-path-unit-badge">{isTr ? 'Buradan Basla' : 'Start Here'}</span>
           </div>
           {nextGroups.map((ng) => (
             <div key={ng.id} className="onboarding-path-unit upcoming">
@@ -613,22 +616,22 @@ const Onboarding: React.FC = () => {
       <div className="onboarding-step-icon-large">
         <UserPlus size={32} />
       </div>
-      <h2>About You</h2>
-      <p className="onboarding-step-sub">Tell us a bit about your teaching</p>
+      <h2>{isTr ? 'Hakkinda' : 'About You'}</h2>
+      <p className="onboarding-step-sub">{isTr ? 'Ogretmenligin hakkinda biraz bilgi ver' : 'Tell us a bit about your teaching'}</p>
 
       <div className="onboarding-form-group">
-        <label className="onboarding-label">School / Institution (optional)</label>
+        <label className="onboarding-label">{isTr ? 'Okul / Kurum (istege bagli)' : 'School / Institution (optional)'}</label>
         <input
           type="text"
           className="onboarding-input"
-          placeholder="e.g. Sunshine Primary School"
+          placeholder={isTr ? 'orn. Ataturk Ilkokulu' : 'e.g. Sunshine Primary School'}
           value={schoolName}
           onChange={(e) => setSchoolName(e.target.value)}
         />
       </div>
 
       <div className="onboarding-form-group">
-        <label className="onboarding-label">Grade levels you teach</label>
+        <label className="onboarding-label">{isTr ? 'Ogrettigin sinif seviyeleri' : 'Grade levels you teach'}</label>
         <div className="onboarding-chip-grid">
           {GRADE_LEVELS.map((gl) => (
             <button
@@ -645,7 +648,7 @@ const Onboarding: React.FC = () => {
       </div>
 
       <div className="onboarding-form-group">
-        <label className="onboarding-label">How many students?</label>
+        <label className="onboarding-label">{isTr ? 'Kac ogrencin var?' : 'How many students?'}</label>
         <div className="onboarding-chip-grid">
           {STUDENT_RANGES.map((sr) => (
             <button
@@ -679,28 +682,28 @@ const Onboarding: React.FC = () => {
       <div className="onboarding-step-icon-large">
         <Users size={32} />
       </div>
-      <h2>Create First Classroom</h2>
-      <p className="onboarding-step-sub">Set up a classroom so students can join</p>
+      <h2>{isTr ? 'Ilk Sinifini Olustur' : 'Create First Classroom'}</h2>
+      <p className="onboarding-step-sub">{isTr ? 'Ogrencilerin katilabilmesi icin bir sinif olustur' : 'Set up a classroom so students can join'}</p>
 
       <div className="onboarding-form-group">
-        <label className="onboarding-label">Classroom Name</label>
+        <label className="onboarding-label">{isTr ? 'Sinif Adi' : 'Classroom Name'}</label>
         <input
           type="text"
           className="onboarding-input"
-          placeholder='e.g. "3-A Sinifi" or "Grade 3 Class A"'
+          placeholder={isTr ? 'orn. 3-A Sinifi' : 'e.g. Grade 3 Class A'}
           value={classroomName}
           onChange={(e) => setClassroomName(e.target.value)}
         />
       </div>
 
       <div className="onboarding-form-group">
-        <label className="onboarding-label">Grade Level</label>
+        <label className="onboarding-label">{isTr ? 'Sinif Seviyesi' : 'Grade Level'}</label>
         <select
           className="onboarding-select"
           value={classroomGrade}
           onChange={(e) => setClassroomGrade(e.target.value)}
         >
-          <option value="">Select grade...</option>
+          <option value="">{isTr ? 'Sinif sec...' : 'Select grade...'}</option>
           {GRADE_LEVELS.map((gl) => (
             <option key={gl} value={gl}>{gl}</option>
           ))}
@@ -708,9 +711,9 @@ const Onboarding: React.FC = () => {
       </div>
 
       <div className="onboarding-join-code-box">
-        <label className="onboarding-label">Share this code with your students</label>
+        <label className="onboarding-label">{isTr ? 'Bu kodu ogrencilerinle paylas' : 'Share this code with your students'}</label>
         <div className="onboarding-join-code">{joinCode}</div>
-        <p className="onboarding-join-code-hint">Students enter this code to join your classroom</p>
+        <p className="onboarding-join-code-hint">{isTr ? 'Ogrenciler bu kodu girerek sinifina katilir' : 'Students enter this code to join your classroom'}</p>
       </div>
 
       {renderNavActions({ nextLabel: 'Continue', nextLabelTr: 'Devam' })}
@@ -733,8 +736,8 @@ const Onboarding: React.FC = () => {
         <div className="onboarding-step-icon-large">
           <BookOpen size={32} />
         </div>
-        <h2>Choose Starting Point</h2>
-        <p className="onboarding-step-sub">Select which Phonics Group your class should start with. You can change this anytime.</p>
+        <h2>{isTr ? 'Baslangic Noktasini Sec' : 'Choose Starting Point'}</h2>
+        <p className="onboarding-step-sub">{isTr ? 'Sinifinin hangi Fonetik Gruptan baslamasi gerektigini sec. Istedigin zaman degistirebilirsin.' : 'Select which Phonics Group your class should start with. You can change this anytime.'}</p>
 
         <div className="onboarding-phonics-list">
           {PHONICS_GROUPS.map((pg) => (
@@ -753,7 +756,7 @@ const Onboarding: React.FC = () => {
                 <strong>{pg.name}</strong>
                 <span className="onboarding-phonics-item-sounds">{pg.sounds}</span>
                 {pg.id === recommended && (
-                  <span className="onboarding-phonics-recommended">Recommended</span>
+                  <span className="onboarding-phonics-recommended">{isTr ? 'Onerilen' : 'Recommended'}</span>
                 )}
               </div>
               <span className="onboarding-phonics-item-desc">{pg.description}</span>
@@ -782,14 +785,14 @@ const Onboarding: React.FC = () => {
       <div className="onboarding-step-icon-large">
         <Heart size={32} />
       </div>
-      <h2>Add Your Child</h2>
-      <p className="onboarding-step-sub">Tell us about your child (up to 4)</p>
+      <h2>{isTr ? 'Cocugunu Ekle' : 'Add Your Child'}</h2>
+      <p className="onboarding-step-sub">{isTr ? 'Cocugun hakkinda bilgi ver (en fazla 4)' : 'Tell us about your child (up to 4)'}</p>
 
       <div className="onboarding-children-list">
         {children.map((child, idx) => (
           <div key={idx} className="onboarding-child-card">
             <div className="onboarding-child-header">
-              <span className="onboarding-child-number">Child {idx + 1}</span>
+              <span className="onboarding-child-number">{isTr ? `Cocuk ${idx + 1}` : `Child ${idx + 1}`}</span>
               {children.length > 1 && (
                 <button type="button" className="onboarding-child-remove" onClick={() => removeChild(idx)}>
                   <Trash2 size={14} />
@@ -801,7 +804,7 @@ const Onboarding: React.FC = () => {
               <input
                 type="text"
                 className="onboarding-input"
-                placeholder="Child's name"
+                placeholder={isTr ? 'Cocugun adi' : "Child's name"}
                 value={child.name}
                 onChange={(e) => updateChild(idx, 'name', e.target.value)}
               />
@@ -813,9 +816,9 @@ const Onboarding: React.FC = () => {
                 value={child.age}
                 onChange={(e) => updateChild(idx, 'age', e.target.value)}
               >
-                <option value="">Age...</option>
+                <option value="">{isTr ? 'Yas...' : 'Age...'}</option>
                 {[3, 4, 5, 6, 7, 8, 9, 10].map((a) => (
-                  <option key={a} value={String(a)}>{a} years old</option>
+                  <option key={a} value={String(a)}>{isTr ? `${a} yasinda` : `${a} years old`}</option>
                 ))}
               </select>
             </div>
@@ -845,7 +848,7 @@ const Onboarding: React.FC = () => {
 
       {children.length < 4 && (
         <button type="button" className="onboarding-add-child-btn" onClick={addChild}>
-          <Plus size={16} /> Add Another Child
+          <Plus size={16} /> {isTr ? 'Baska Cocuk Ekle' : 'Add Another Child'}
         </button>
       )}
 
@@ -867,12 +870,12 @@ const Onboarding: React.FC = () => {
       <div className="onboarding-step-icon-large">
         <Settings size={32} />
       </div>
-      <h2>Preferences</h2>
-      <p className="onboarding-step-sub">Set up daily limits and notifications</p>
+      <h2>{isTr ? 'Tercihler' : 'Preferences'}</h2>
+      <p className="onboarding-step-sub">{isTr ? 'Gunluk limitleri ve bildirimleri ayarla' : 'Set up daily limits and notifications'}</p>
 
       <div className="onboarding-form-group">
         <label className="onboarding-label">
-          Daily time limit: <strong>{dailyTimeLimit} min</strong>
+          {isTr ? 'Gunluk sure limiti: ' : 'Daily time limit: '}<strong>{dailyTimeLimit} {isTr ? 'dk' : 'min'}</strong>
         </label>
         <input
           type="range"
@@ -884,14 +887,14 @@ const Onboarding: React.FC = () => {
           onChange={(e) => setDailyTimeLimit(Number(e.target.value))}
         />
         <div className="onboarding-slider-labels">
-          <span>15 min</span>
-          <span>60 min</span>
+          <span>15 {isTr ? 'dk' : 'min'}</span>
+          <span>60 {isTr ? 'dk' : 'min'}</span>
         </div>
       </div>
 
       <div className="onboarding-form-group">
         <label className="onboarding-toggle-row">
-          <span>Get weekly progress emails</span>
+          <span>{isTr ? 'Haftalik ilerleme e-postalari al' : 'Get weekly progress emails'}</span>
           <button
             type="button"
             className={`onboarding-toggle ${weeklyEmails ? 'on' : ''}`}
@@ -904,10 +907,10 @@ const Onboarding: React.FC = () => {
 
       <div className="onboarding-ready-banner">
         <CheckCircle size={20} />
-        <span>Your dashboard is ready!</span>
+        <span>{isTr ? 'Panelin hazir!' : 'Your dashboard is ready!'}</span>
       </div>
 
-      {renderNavActions({ nextLabel: "Let's Start!", isLast: true })}
+      {renderNavActions({ nextLabel: "Let's Start!", nextLabelTr: 'Baslayalim!', isLast: true })}
     </motion.div>
   );
 
@@ -915,7 +918,7 @@ const Onboarding: React.FC = () => {
 
   const renderCurrentStep = () => {
     // Step 1 (role selection) is skipped — role auto-set to 'student'
-    if (step === 1) { nextStep(); return null; }
+    if (step === 1) return null;
 
     if (role === 'student') {
       if (step === 2) return renderStudentAge();

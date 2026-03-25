@@ -8,6 +8,7 @@ import type { DecodableBook, CompQuestion } from '../../data/readingLibrary';
 import { BookReader } from '../../components/phonics/BookReader';
 import { useGamification } from '../../contexts/GamificationContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { LS_READ_BOOKS, LS_PHONICS_MASTERY } from '../../config/storageKeys';
 import ReadingPlayer from '../../components/ReadingPlayer';
 import type { ReadingStats, ComprehensionQuestion } from '../../components/ReadingPlayer';
@@ -154,6 +155,7 @@ const ReadingLibrary: React.FC = () => {
   const { bookId } = useParams<{ bookId?: string }>();
   const { addXP } = useGamification();
   const { user } = useAuth();
+  const { lang } = useLanguage();
 
   const [selectedBook, setSelectedBook] = useState<DecodableBook | null>(() => {
     if (bookId) {
@@ -164,7 +166,8 @@ const ReadingLibrary: React.FC = () => {
   // When true, use ReadingPlayer instead of BookReader for selectedBook
   const [useReadingPlayer, setUseReadingPlayer] = useState(false);
 
-  const readBooks = useMemo(() => getReadBooks(), []);
+  const [readBooksVersion, setReadBooksVersion] = useState(0);
+  const readBooks = useMemo(() => getReadBooks(), [readBooksVersion]);
   const masteredGroup = useMemo(() => getMasteredGroup(), []);
   const userId = user?.uid ?? 'guest';
 
@@ -183,6 +186,7 @@ const ReadingLibrary: React.FC = () => {
 
     saveReadBook(selectedBook.id, stars);
     addXP(stars * 10, 'Reading completion');
+    setReadBooksVersion(v => v + 1);
 
     setSelectedBook(null);
     if (bookId) {
@@ -218,6 +222,7 @@ const ReadingLibrary: React.FC = () => {
     else if (quizRatio >= 0.6) stars = 2;
     saveReadBook(selectedBook.id, stars);
     addXP(stars * 10 + 5, 'Reading completion');
+    setReadBooksVersion(v => v + 1);
 
     setSelectedBook(null);
     setUseReadingPlayer(false);
@@ -271,12 +276,12 @@ const ReadingLibrary: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h1 className="rl-title">Reading Library</h1>
-          <p className="rl-subtitle">Decodable books for your level</p>
+          <h1 className="rl-title">{lang === 'tr' ? 'Okuma Kutuphanesi' : 'Reading Library'}</h1>
+          <p className="rl-subtitle">{lang === 'tr' ? 'Seviyene uygun kitaplar' : 'Decodable books for your level'}</p>
         </div>
         <div className="rl-counter">
           <BookOpen size={18} />
-          <span>{totalBooksRead} read</span>
+          <span>{totalBooksRead} {lang === 'tr' ? 'okundu' : 'read'}</span>
         </div>
       </div>
 
@@ -291,8 +296,8 @@ const ReadingLibrary: React.FC = () => {
             <div key={group} className="rl-shelfSection">
               {/* Shelf label */}
               <div className="rl-shelfLabel">
-                <span className="rl-shelfGroupNum">Group {group}</span>
-                <span className="rl-shelfGroupName">{groupInfo.en}</span>
+                <span className="rl-shelfGroupNum">{lang === 'tr' ? `Grup ${group}` : `Group ${group}`}</span>
+                <span className="rl-shelfGroupName">{lang === 'tr' ? groupInfo.tr : groupInfo.en}</span>
                 <span className="rl-shelfSounds">{groupInfo.sounds}</span>
                 {isLocked && <Lock size={14} style={{ color: 'var(--text-muted, #9CA3AF)', marginLeft: 4 }} />}
               </div>
@@ -330,7 +335,7 @@ const ReadingLibrary: React.FC = () => {
                           opacity: isLocked ? 0.5 : 1,
                         }}
                         disabled={isLocked}
-                        aria-label={isLocked ? `${book.title} (locked)` : book.title}
+                        aria-label={isLocked ? `${book.title} (${lang === 'tr' ? 'kilitli' : 'locked'})` : book.title}
                       >
                         <div style={{
                           width: 32,

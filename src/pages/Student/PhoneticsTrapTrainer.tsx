@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useHearts } from '../../contexts/HeartsContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { PHONETIC_TRAPS, TRAP_STORAGE_KEY } from '../../data/turkishPhoneticTraps';
 import type { PhoneticTrap } from '../../data/turkishPhoneticTraps';
 import PhoneticTrapGame from '../../components/games/PhoneticTrapGame';
@@ -37,14 +38,14 @@ function saveMastery(userId: string | undefined, data: Record<string, number>): 
 
 // ─── Score badge ──────────────────────────────────────────────────────────────
 
-function ScoreBadge({ score }: { score: number | undefined }) {
+function ScoreBadge({ score, isTr }: { score: number | undefined; isTr: boolean }) {
   if (score === undefined) {
-    return <span className="ptt__card-score-badge ptt__card-score-badge--none">Not started</span>;
+    return <span className="ptt__card-score-badge ptt__card-score-badge--none">{isTr ? 'Henüz başlanmadı' : 'Not started'}</span>;
   }
   if (score >= 80) {
-    return <span className="ptt__card-score-badge ptt__card-score-badge--mastered">Mastered {score}%</span>;
+    return <span className="ptt__card-score-badge ptt__card-score-badge--mastered">{isTr ? `Ustalaştı %${score}` : `Mastered ${score}%`}</span>;
   }
-  return <span className="ptt__card-score-badge ptt__card-score-badge--partial">{score}% done</span>;
+  return <span className="ptt__card-score-badge ptt__card-score-badge--partial">{isTr ? `%${score} tamamlandı` : `${score}% done`}</span>;
 }
 
 // ─── Trap card ────────────────────────────────────────────────────────────────
@@ -52,10 +53,12 @@ function ScoreBadge({ score }: { score: number | undefined }) {
 function TrapCard({
   trap,
   score,
+  isTr,
   onSelect,
 }: {
   trap: PhoneticTrap;
   score: number | undefined;
+  isTr: boolean;
   onSelect: (trap: PhoneticTrap) => void;
 }) {
   const isMastered = score !== undefined && score >= 80;
@@ -66,7 +69,7 @@ function TrapCard({
       className={`ptt__card${isMastered ? ' ptt__card--mastered' : ''}`}
       style={{ ...cssVars, borderColor: isMastered ? 'var(--success, #10B981)' : `${trap.color}44` }}
       onClick={() => onSelect(trap)}
-      aria-label={`Open trainer for ${trap.targetSound}`}
+      aria-label={isTr ? `${trap.targetSound} eğitmeni aç` : `Open trainer for ${trap.targetSound}`}
     >
       <div className="ptt__card-top">
         <div
@@ -77,8 +80,12 @@ function TrapCard({
         </div>
         <div className="ptt__card-meta">
           <p className="ptt__card-name">{trap.targetSound}</p>
-          <p className="ptt__card-ipa">{trap.turkishEquivalent} → confused with Turkish</p>
-          <div className="ptt__card-difficulty" aria-label={`Difficulty: ${trap.difficulty} of 3`}>
+          <p className="ptt__card-ipa">
+            {isTr
+              ? `${trap.turkishEquivalent} → Türkçe ile karıştırılır`
+              : `${trap.turkishEquivalent} → confused with Turkish`}
+          </p>
+          <div className="ptt__card-difficulty" aria-label={isTr ? `Zorluk: ${trap.difficulty}/3` : `Difficulty: ${trap.difficulty} of 3`}>
             {[1, 2, 3].map((d) => (
               <span
                 key={d}
@@ -87,10 +94,10 @@ function TrapCard({
             ))}
           </div>
         </div>
-        <ScoreBadge score={score} />
+        <ScoreBadge score={score} isTr={isTr} />
       </div>
 
-      <p className="ptt__card-error">{trap.commonError}</p>
+      <p className="ptt__card-error">{isTr ? trap.commonErrorTr : trap.commonError}</p>
 
       <div className="ptt__card-pairs-row">
         {trap.minimalPairs.slice(0, 3).map((pair) => (
@@ -104,7 +111,7 @@ function TrapCard({
 
       <div className="ptt__card-cta">
         <span className="ptt__start-btn" style={{ '--trap-color': trap.color } as React.CSSProperties}>
-          {score !== undefined ? 'Practice Again' : 'Start'}
+          {score !== undefined ? (isTr ? 'Tekrar Pratik' : 'Practice Again') : (isTr ? 'Başla' : 'Start')}
         </span>
       </div>
     </button>
@@ -113,7 +120,7 @@ function TrapCard({
 
 // ─── Master progress bar ──────────────────────────────────────────────────────
 
-function MasterProgress({ mastery }: { mastery: Record<string, number> }) {
+function MasterProgress({ mastery, isTr }: { mastery: Record<string, number>; isTr: boolean }) {
   const masteredCount = PHONETIC_TRAPS.filter((t) => (mastery[t.id] ?? 0) >= 80).length;
   const totalCount = PHONETIC_TRAPS.length;
   const pct = Math.round((masteredCount / totalCount) * 100);
@@ -121,8 +128,10 @@ function MasterProgress({ mastery }: { mastery: Record<string, number> }) {
   return (
     <div className="ptt__master-progress">
       <div className="ptt__master-row">
-        <p className="ptt__master-label">Master All Traps</p>
-        <span className="ptt__master-value">{masteredCount}/{totalCount} mastered</span>
+        <p className="ptt__master-label">{isTr ? 'Tüm Tuzakları Ustalaş' : 'Master All Traps'}</p>
+        <span className="ptt__master-value">
+          {isTr ? `${masteredCount}/${totalCount} ustalaşıldı` : `${masteredCount}/${totalCount} mastered`}
+        </span>
       </div>
       <div className="ptt__master-bar-track">
         <div className="ptt__master-bar-fill" style={{ width: `${pct}%` }} />
@@ -135,7 +144,9 @@ function MasterProgress({ mastery }: { mastery: Record<string, number> }) {
 
 export default function PhoneticsTrapTrainer() {
   const { user } = useAuth();
-  useHearts(); // available for hearts system integration
+  const { loseHeart } = useHearts();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
 
   const [mastery, setMastery] = useState<Record<string, number>>(() =>
     loadMastery(user?.uid),
@@ -174,6 +185,7 @@ export default function PhoneticsTrapTrainer() {
         <PhoneticTrapGame
           trap={activeTrap}
           onComplete={handleGameComplete}
+          onWrongAnswer={loseHeart}
           onBack={handleBack}
         />
       </div>
@@ -185,28 +197,31 @@ export default function PhoneticsTrapTrainer() {
       {/* Page header */}
       <div className="ptt__page-header">
         <div className="ptt__title-row">
-          <h1 className="ptt__page-title">Turkish Pronunciation Traps</h1>
+          <h1 className="ptt__page-title">
+            {isTr ? 'Türkçe Telaffuz Tuzakları' : 'Turkish Pronunciation Traps'}
+          </h1>
         </div>
         <p className="ptt__page-subtitle">
-          As a Turkish speaker, these 8 English sounds are the hardest for you.
-          Each trainer shows exactly why — and how to fix it.
-          <br />
-          <em>Türkçe konuşanlar için bu 8 İngilizce ses en zordur.</em>
+          {isTr
+            ? 'Türkçe konuşanlar için bu 8 İngilizce ses en zordur. Her eğitmen tam olarak nedenini gösterir ve nasıl düzeltileceğini öğretir.'
+            : 'As a Turkish speaker, these 8 English sounds are the hardest for you. Each trainer shows exactly why — and how to fix it.'}
         </p>
       </div>
 
       {/* Master all progress */}
-      <MasterProgress mastery={mastery} />
+      <MasterProgress mastery={mastery} isTr={isTr} />
 
       {/* Mascot intro */}
       <div className="ptt__intro-mascot">
         <UnifiedMascot state="waving" size={80} />
         <div className="ptt__intro-text">
-          <p className="ptt__intro-title">These sounds don't exist in Turkish!</p>
+          <p className="ptt__intro-title">
+            {isTr ? 'Bu sesler Türkçede yok!' : "These sounds don't exist in Turkish!"}
+          </p>
           <p className="ptt__intro-body">
-            Your brain automatically replaces them with similar Turkish sounds. Tap
-            each card to learn the exact mouth position and train your ear to hear
-            the difference.
+            {isTr
+              ? 'Beynin otomatik olarak bunları benzer Türkçe seslerle değiştirir. Her karta dokunarak doğru ağız pozisyonunu öğren ve farkı duymak için kulağını eğit.'
+              : 'Your brain automatically replaces them with similar Turkish sounds. Tap each card to learn the exact mouth position and train your ear to hear the difference.'}
           </p>
         </div>
       </div>
@@ -218,6 +233,7 @@ export default function PhoneticsTrapTrainer() {
             key={trap.id}
             trap={trap}
             score={mastery[trap.id]}
+            isTr={isTr}
             onSelect={handleSelectTrap}
           />
         ))}

@@ -108,6 +108,9 @@
 .admin-blog-editor-header {
   padding: 1.5rem 2rem 1rem;
   border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .admin-blog-editor-header h2 {
@@ -115,6 +118,12 @@
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-dark);
+}
+
+.admin-blog-field-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 2px;
 }
 
 .admin-blog-form {

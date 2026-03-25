@@ -20,6 +20,7 @@ interface BlogPost {
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const { lang } = useLanguage();
 
   useEffect(() => {
@@ -35,8 +36,13 @@ export default function Blog() {
         .order('published_at', { ascending: false })
         .limit(20);
 
-      if (!error) setPosts(data || []);
+      if (!error) {
+        setPosts(data || []);
+      } else {
+        setError(true);
+      }
     } catch {
+      setError(true);
       setPosts([]);
     } finally {
       setLoading(false);
@@ -52,7 +58,13 @@ export default function Blog() {
         </header>
 
         {loading ? (
-          <div className="blog-loading">Loading... / Yükleniyor...</div>
+          <div className="blog-loading">{lang === 'tr' ? 'Yukleniyor...' : 'Loading...'}</div>
+        ) : error ? (
+          <div className="blog-empty">
+            <span className="blog-empty-icon"><LottieCharacter state="thinking" size={120} /></span>
+            <p className="blog-empty-title">{lang === 'tr' ? 'Bir hata olustu' : 'Something went wrong'}</p>
+            <p className="blog-empty-sub">{lang === 'tr' ? 'Blog yazilari yuklenirken hata olustu. Lutfen daha sonra tekrar deneyin.' : 'Failed to load blog posts. Please try again later.'}</p>
+          </div>
         ) : posts.length === 0 ? (
           <div className="blog-empty">
             <span className="blog-empty-icon"><LottieCharacter state="wave" size={120} /></span>

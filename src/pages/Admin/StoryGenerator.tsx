@@ -4,9 +4,10 @@
  * Preview, publish, and manage all generated stories.
  */
 
-import { useState, useEffect } from 'react';
-import { BookOpen, RefreshCw, CheckCircle, Trash2, ExternalLink, Loader2 } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { BookOpen, RefreshCw, CheckCircle, Trash2, ExternalLink, Loader2, AlertCircle } from 'lucide-react';
 import { adminFetch } from '../../utils/adminApi';
+import { errorLogger } from '../../services/errorLogger';
 import './StoryGenerator.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -100,25 +101,38 @@ export default function StoryGenerator() {
   // Stories list
   const [stories, setStories] = useState<StoredStory[]>([]);
   const [loadingList, setLoadingList] = useState(true);
+  const [listError, setListError] = useState('');
 
-  useEffect(() => {
-    fetchStoriesList();
-  }, []);
+  // Publish error state (replaces alert)
+  const [publishError, setPublishError] = useState('');
 
-  const fetchStoriesList = async () => {
+  const fetchStoriesList = useCallback(async () => {
     setLoadingList(true);
+    setListError('');
     try {
       const res = await adminFetch('/api/admin/stories');
-      if (res.ok) {
-        const d = await res.json();
-        setStories(d.stories || []);
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || `Failed to load stories (${res.status})`);
       }
-    } catch {
-      // ignore
+      const d = await res.json();
+      setStories(d.stories || []);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to load stories';
+      setListError(msg);
+      errorLogger.log({
+        severity: 'medium',
+        message: `StoryGenerator list fetch failed: ${msg}`,
+        component: 'StoryGenerator',
+      });
     } finally {
       setLoadingList(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchStoriesList();
+  }, [fetchStoriesList]);
 
   const toggleChar = (val: string) => {
     setSelectedChars(prev =>
@@ -128,8 +142,22 @@ export default function StoryGenerator() {
 
   const handleGenerate = async () => {
     if (generating) return;
+
+    // Validate age range
+    const safeAgeMin = Math.max(2, Math.min(12, ageMin));
+    const safeAgeMax = Math.max(safeAgeMin, Math.min(12, ageMax));
+    if (safeAgeMin > safeAgeMax) {
+      setGenError('Minimum age cannot be greater than maximum age.');
+      return;
+    }
+    if (selectedChars.length === 0) {
+      setGenError('Please select at least one character.');
+      return;
+    }
+
     setGenerating(true);
     setGenError('');
+    setPublishError('');
     setGeneratedStory(null);
     setGenProgress(10);
     setGenStep('Connecting to AI...');
@@ -144,7 +172,7 @@ export default function StoryGenerator() {
           theme,
           location,
           characters: selectedChars,
-          target_age: [ageMin, ageMax],
+          target_age: [safeAgeMin, safeAgeMax],
         }),
       });
 
@@ -161,10 +189,15 @@ export default function StoryGenerator() {
       setGenStep('Done!');
       setGeneratedStory(data.story);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Unknown error';
+      const msg = e instanceof Error ? e.message : 'Unknown error during generation';
       setGenError(msg);
       setGenProgress(0);
       setGenStep('');
+      errorLogger.log({
+        severity: 'high',
+        message: `Story generation failed: ${msg}`,
+        component: 'StoryGenerator',
+      });
     } finally {
       setGenerating(false);
     }
@@ -173,6 +206,7 @@ export default function StoryGenerator() {
   const handlePublish = async () => {
     if (!generatedStory || publishing) return;
     setPublishing(true);
+    setPublishError('');
     try {
       const res = await adminFetch('/api/admin/stories', {
         method: 'POST',
@@ -183,7 +217,13 @@ export default function StoryGenerator() {
       setGeneratedStory(null);
       await fetchStoriesList();
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'Publish failed');
+      const msg = e instanceof Error ? e.message : 'Publish failed';
+      setPublishError(msg);
+      errorLogger.log({
+        severity: 'high',
+        message: `Story publish failed: ${msg}`,
+        component: 'StoryGenerator',
+      });
     } finally {
       setPublishing(false);
     }
@@ -199,7 +239,14 @@ export default function StoryGenerator() {
       }
       await fetchStoriesList();
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'Delete failed');
+      const msg = e instanceof Error ? e.message : 'Delete failed';
+      setListError(msg);
+      errorLogger.log({
+        severity: 'high',
+        message: `Story delete failed: ${msg}`,
+        component: 'StoryGenerator',
+        metadata: { storyId },
+      });
     }
   };
 
@@ -215,7 +262,14 @@ export default function StoryGenerator() {
       }
       await fetchStoriesList();
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'Update failed');
+      const msg = e instanceof Error ? e.message : 'Update failed';
+      setListError(msg);
+      errorLogger.log({
+        severity: 'medium',
+        message: `Story toggle publish failed: ${msg}`,
+        component: 'StoryGenerator',
+        metadata: { storyId: story.id },
+      });
     }
   };
 
@@ -356,27 +410,41 @@ export default function StoryGenerator() {
 
             {/* Scenes list */}
             <div className="story-gen-preview-scenes">
-              {generatedStory.scenes?.map((scene, i) => (
-                <div key={scene.id ?? i} className="story-gen-scene-card">
-                  <div className="story-gen-scene-num">Scene {i + 1}</div>
-                  <p className="story-gen-scene-text">{scene.text}</p>
-                  {scene.choices && scene.choices.length > 0 && (
-                    <div className="story-gen-scene-choices">
-                      {scene.choices.map((c, ci) => (
-                        <span key={ci} className="story-gen-scene-choice">{c.text}</span>
-                      ))}
-                    </div>
-                  )}
+              {(!generatedStory.scenes || generatedStory.scenes.length === 0) ? (
+                <div className="story-gen-list-empty">
+                  <AlertCircle size={24} style={{ opacity: 0.5, marginBottom: '0.5rem' }} />
+                  <p>No scenes were generated. Try generating again with different settings.</p>
                 </div>
-              ))}
+              ) : (
+                generatedStory.scenes.map((scene, i) => (
+                  <div key={scene.id ?? i} className="story-gen-scene-card">
+                    <div className="story-gen-scene-num">Scene {i + 1}</div>
+                    <p className="story-gen-scene-text">{scene.text}</p>
+                    {scene.choices && scene.choices.length > 0 && (
+                      <div className="story-gen-scene-choices">
+                        {scene.choices.map((c, ci) => (
+                          <span key={ci} className="story-gen-scene-choice">{c.text}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
+
+            {/* Publish error */}
+            {publishError && (
+              <p className="story-gen-error">
+                <AlertCircle size={14} /> {publishError}
+              </p>
+            )}
 
             {/* Actions */}
             <div className="story-gen-preview-actions">
               <button
                 className="story-gen-publish-btn"
                 onClick={handlePublish}
-                disabled={publishing}
+                disabled={publishing || !generatedStory.scenes || generatedStory.scenes.length === 0}
               >
                 {publishing ? (
                   <><Loader2 size={16} className="spin" /> Publishing...</>
@@ -386,7 +454,7 @@ export default function StoryGenerator() {
               </button>
               <button
                 className="story-gen-discard-btn"
-                onClick={() => setGeneratedStory(null)}
+                onClick={() => { setGeneratedStory(null); setPublishError(''); }}
               >
                 Discard
               </button>
@@ -418,12 +486,18 @@ export default function StoryGenerator() {
           </button>
         </div>
 
+        {listError && (
+          <p className="story-gen-error">
+            <AlertCircle size={14} /> {listError}
+          </p>
+        )}
+
         {loadingList ? (
           <div className="story-gen-list-empty">
             <Loader2 size={24} className="spin" style={{ marginBottom: '0.5rem' }} />
             <p>Loading stories...</p>
           </div>
-        ) : stories.length === 0 ? (
+        ) : stories.length === 0 && !listError ? (
           <div className="story-gen-list-empty">
             <BookOpen size={32} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
             <p>No stories generated yet. Use the form above to create your first story.</p>

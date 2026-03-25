@@ -8,6 +8,7 @@ export interface GameCardProps {
   userLevel: number;
   bestScore?: number;
   isNew?: boolean;
+  isTr?: boolean;
   onPlay: () => void;
 }
 
@@ -37,8 +38,10 @@ function DifficultyStars({ level }: { level: 1 | 2 | 3 }) {
   );
 }
 
-export function GameCard({ game, isLocked, bestScore, isNew, onPlay }: GameCardProps) {
+export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, onPlay }: GameCardProps) {
   const icon = GAME_ICONS[game.type] ?? <Play size={36} />;
+  const displayName = isTr ? game.nameTr : game.name;
+  const displayDesc = isTr ? game.descriptionTr : game.description;
 
   return (
     <div
@@ -46,7 +49,9 @@ export function GameCard({ game, isLocked, bestScore, isNew, onPlay }: GameCardP
       style={{ '--gc-color': game.color } as React.CSSProperties}
       role={isLocked ? 'article' : 'button'}
       tabIndex={isLocked ? -1 : 0}
-      aria-label={isLocked ? `${game.name} — requires level ${game.minLevel}` : `Play ${game.name}`}
+      aria-label={isLocked
+        ? (isTr ? `${displayName} — seviye ${game.minLevel} gerekli` : `${displayName} — requires level ${game.minLevel}`)
+        : (isTr ? `${displayName} oyna` : `Play ${displayName}`)}
       onKeyDown={(e) => {
         if (!isLocked && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
@@ -57,7 +62,9 @@ export function GameCard({ game, isLocked, bestScore, isNew, onPlay }: GameCardP
       {isLocked && (
         <div className="game-card__locked-overlay" aria-hidden="true">
           <span className="game-card__lock-icon"><Lock size={32} /></span>
-          <span className="game-card__lock-label">Level {game.minLevel} required</span>
+          <span className="game-card__lock-label">
+            {isTr ? `Seviye ${game.minLevel} gerekli` : `Level ${game.minLevel} required`}
+          </span>
         </div>
       )}
 
@@ -69,7 +76,7 @@ export function GameCard({ game, isLocked, bestScore, isNew, onPlay }: GameCardP
 
       <div className="game-card__body">
         <div className="game-card__header">
-          <h3 className="game-card__name">{game.name}</h3>
+          <h3 className="game-card__name">{displayName}</h3>
           <div className="game-card__badges">
             {isNew && <span className="game-card__badge--new">New</span>}
             {bestScore !== undefined && (
@@ -81,7 +88,7 @@ export function GameCard({ game, isLocked, bestScore, isNew, onPlay }: GameCardP
           </div>
         </div>
 
-        <p className="game-card__desc">{game.description}</p>
+        <p className="game-card__desc">{displayDesc}</p>
 
         <DifficultyStars level={game.difficulty} />
       </div>
@@ -92,10 +99,10 @@ export function GameCard({ game, isLocked, bestScore, isNew, onPlay }: GameCardP
             type="button"
             className="game-card__play-btn"
             onClick={onPlay}
-            aria-label={`Play ${game.name}`}
+            aria-label={isTr ? `${displayName} oyna` : `Play ${displayName}`}
           >
             <Play size={16} fill="white" />
-            Play!
+            {isTr ? 'Oyna!' : 'Play!'}
           </button>
         </div>
       )}

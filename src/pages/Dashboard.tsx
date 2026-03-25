@@ -339,8 +339,8 @@ export default function Dashboard() {
           ============================================================ */}
       <motion.section className="bg-white rounded-2xl p-4 shadow-card" variants={itemVariants}>
         <div className="flex items-center justify-between mb-3">
-          <span className="font-display font-bold text-ink-900">{lang === 'tr' ? 'Aktivite' : 'Activity'}</span>
-          <span className="text-xs text-ink-400 font-body">{lang === 'tr' ? 'Son 35 gün' : 'Last 35 days'}</span>
+          <span className="font-display font-bold text-ink-900">{t('dashboard.activity')}</span>
+          <span className="text-xs text-ink-400 font-body">{t('dashboard.last35Days')}</span>
         </div>
         <StreakCalendar
           activityDates={getActivityDates(userId)}
@@ -409,12 +409,12 @@ export default function Dashboard() {
           <DailyGoalWidget uid={userId} lang={lang as 'tr' | 'en'} />
           <div className="flex-1">
             <p className="font-display font-extrabold text-ink-900 text-sm mb-1">
-              {lang === 'tr' ? 'Günlük Hedef' : 'Daily Goal'}
+              {t('dashboard.dailyGoal')}
             </p>
             <p className="font-body text-ink-500 text-xs leading-relaxed">
               {getTodayXP(userId) >= getDailyGoal()
-                ? (lang === 'tr' ? 'Bugünkü hedefinizi tamamladınız!' : "You've hit today's goal!")
-                : (lang === 'tr' ? 'Hedefinize ulaşmak için öğrenmeye devam edin.' : 'Keep going to hit your goal.')}
+                ? t('dashboard.dailyGoalDone')
+                : t('dashboard.dailyGoalKeep')}
             </p>
           </div>
         </div>

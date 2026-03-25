@@ -64,17 +64,24 @@ export default function FriendsPage() {
     setLoadingFriends(true);
     setLoadingLeaderboard(true);
 
-    const [friendsData, pendingData, leaderboardData] = await Promise.all([
-      getFriends(user.uid),
-      getPendingRequests(user.uid),
-      getFriendLeaderboard(user.uid),
-    ]);
+    try {
+      const [friendsData, pendingData, leaderboardData] = await Promise.all([
+        getFriends(user.uid),
+        getPendingRequests(user.uid),
+        getFriendLeaderboard(user.uid),
+      ]);
 
-    setFriends(friendsData);
-    setPending(pendingData);
-    setLeaderboard(leaderboardData);
-    setLoadingFriends(false);
-    setLoadingLeaderboard(false);
+      setFriends(friendsData);
+      setPending(pendingData);
+      setLeaderboard(leaderboardData);
+    } catch {
+      setFriends([]);
+      setPending([]);
+      setLeaderboard([]);
+    } finally {
+      setLoadingFriends(false);
+      setLoadingLeaderboard(false);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -85,6 +92,8 @@ export default function FriendsPage() {
     navigator.clipboard.writeText(myCode).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      // Clipboard API can fail in insecure contexts or denied permissions
     });
   };
 
@@ -103,18 +112,30 @@ export default function FriendsPage() {
   };
 
   const handleAccept = async (requestId: string) => {
-    await acceptFriendRequest(requestId);
-    await loadAll();
+    try {
+      await acceptFriendRequest(requestId);
+      await loadAll();
+    } catch {
+      setAddFeedback({ type: 'error', message: 'Failed to accept friend request.' });
+    }
   };
 
   const handleDecline = async (friendRowId: string) => {
-    await removeFriend(friendRowId);
-    await loadAll();
+    try {
+      await removeFriend(friendRowId);
+      await loadAll();
+    } catch {
+      setAddFeedback({ type: 'error', message: 'Failed to decline friend request.' });
+    }
   };
 
   const handleRemove = async (friendRowId: string) => {
-    await removeFriend(friendRowId);
-    await loadAll();
+    try {
+      await removeFriend(friendRowId);
+      await loadAll();
+    } catch {
+      setAddFeedback({ type: 'error', message: 'Failed to remove friend.' });
+    }
   };
 
   if (!user) {

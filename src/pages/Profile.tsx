@@ -45,6 +45,7 @@ const Profile: React.FC = () => {
   const [editDisplayName, setEditDisplayName] = useState('');
   const [childMode, setChildMode] = useState<boolean>(readChildMode);
   const [showParentGateForDisable, setShowParentGateForDisable] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const explorerBadges = allBadges.filter(b => (stats.badges || []).includes(b.id));
 
@@ -78,11 +79,17 @@ const Profile: React.FC = () => {
   }, [userProfile]);
 
   const handleUpdateProfile = async () => {
-    if (!user) return;
+    if (!user || saving) return;
+    const trimmed = editDisplayName.trim();
+    if (!trimmed || trimmed.length < 2) {
+      toast.error(lang === 'tr' ? 'Ad en az 2 karakter olmalı' : 'Name must be at least 2 characters');
+      return;
+    }
+    setSaving(true);
     try {
       const { error } = await supabase
         .from('users')
-        .update({ display_name: editDisplayName })
+        .update({ display_name: trimmed })
         .eq('id', user.uid);
 
       if (error) throw error;
@@ -91,6 +98,8 @@ const Profile: React.FC = () => {
       setShowEditModal(false);
     } catch {
       toast.error(lang === 'tr' ? 'Profil güncellenemedi' : 'Could not update profile');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -317,7 +326,7 @@ const Profile: React.FC = () => {
             </div>
             <div className="edit-modal-footer">
               <button type="button" className="cancel-btn" onClick={() => setShowEditModal(false)}>{t('common.back')}</button>
-              <button type="button" className="save-btn" onClick={handleUpdateProfile}>{lang === 'tr' ? 'Kaydet' : 'Save'}</button>
+              <button type="button" className="save-btn" onClick={handleUpdateProfile} disabled={saving}>{saving ? (lang === 'tr' ? 'Kaydediliyor...' : 'Saving...') : (lang === 'tr' ? 'Kaydet' : 'Save')}</button>
             </div>
           </div>
         </div>

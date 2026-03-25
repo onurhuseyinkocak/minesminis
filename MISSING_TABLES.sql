@@ -257,8 +257,28 @@ CREATE POLICY "friends_delete" ON public.friends FOR DELETE USING (auth.uid()::t
 
 -- ============================================================
 -- DONE
+-- ─── pets ─────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.pets (
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id     text NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    name        text NOT NULL DEFAULT 'Mimi',
+    type        text NOT NULL DEFAULT 'cat',
+    level       int  NOT NULL DEFAULT 1,
+    xp          int  NOT NULL DEFAULT 0,
+    hunger      int  NOT NULL DEFAULT 100,
+    happiness   int  NOT NULL DEFAULT 100,
+    last_fed    timestamptz,
+    last_played timestamptz,
+    created_at  timestamptz NOT NULL DEFAULT now(),
+    updated_at  timestamptz NOT NULL DEFAULT now(),
+    UNIQUE(user_id)
+);
+ALTER TABLE public.pets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own pet" ON public.pets
+    FOR ALL USING (auth.uid()::text = user_id);
+
 -- Tables created: games, videos, worksheets, words, follows,
 --   blog_posts, reports, achievements, user_achievements,
---   story_progress, curriculum_worlds, curriculum_lessons
+--   story_progress, curriculum_worlds, curriculum_lessons, pets
 -- Fixed: friends (UUID → TEXT foreign keys)
 -- ============================================================

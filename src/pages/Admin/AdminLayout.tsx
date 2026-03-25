@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, NavLink, Link } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 import {
     LayoutDashboard,
     Users,
@@ -47,7 +48,19 @@ import './AdminLayout.css';
 
 const ADMIN_SESSION_KEY = 'admin_session';
 
-const navSections = [
+interface NavItem {
+    path: string;
+    icon: LucideIcon;
+    label: string;
+    end?: boolean;
+}
+
+interface NavSection {
+    label: string;
+    items: NavItem[];
+}
+
+const navSections: NavSection[] = [
     {
         label: 'Overview',
         items: [
@@ -128,7 +141,12 @@ function AdminLayout() {
         window.location.href = '/admin';
     };
 
-    const currentTime = new Date();
+    const [currentTime, setCurrentTime] = useState(() => new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 60_000);
+        return () => clearInterval(timer);
+    }, []);
 
     // --- Login Screen ---
     if (!isAdmin) {

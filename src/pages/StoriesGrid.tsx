@@ -3,7 +3,7 @@
  * Browse AI-generated stories — children see a grid of story cards.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Sparkles, Clock, Star, BookOpen } from 'lucide-react';
@@ -41,11 +41,16 @@ export default function StoriesGrid() {
   const navigate = useNavigate();
   const decodableStories = getAllBuiltInStories();
 
-  useEffect(() => {
+  const fetchStories = useCallback(() => {
+    setError(null);
+    setLoading(true);
     fetch('/api/stories')
-      .then(r => r.json())
-      .then(d => {
-        setStories(d.stories || []);
+      .then(r => {
+        if (!r.ok) throw new Error('fetch failed');
+        return r.json();
+      })
+      .then((d: { stories?: StoryCard[] }) => {
+        setStories(d.stories ?? []);
         setLoading(false);
       })
       .catch(() => {
@@ -53,6 +58,10 @@ export default function StoriesGrid() {
         setLoading(false);
       });
   }, [lang]);
+
+  useEffect(() => {
+    fetchStories();
+  }, [fetchStories]);
 
   // Generate covers for stories that don't have one
   useEffect(() => {
@@ -175,17 +184,7 @@ export default function StoriesGrid() {
           <p>{error}</p>
           <button
             className="stories-retry-btn"
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              fetch('/api/stories')
-                .then(r => r.json())
-                .then(d => { setStories(d.stories || []); setLoading(false); })
-                .catch(() => {
-                  setError(lang === 'tr' ? 'Hikayeler yüklenemedi. Tekrar dene.' : 'Could not load stories. Please try again.');
-                  setLoading(false);
-                });
-            }}
+            onClick={fetchStories}
           >
             {lang === 'tr' ? 'Tekrar Dene' : 'Try Again'}
           </button>

@@ -5,6 +5,7 @@ import { Volume2, Play, Check, Star } from 'lucide-react';
 import { Button, ProgressBar, StarBurst } from '../../components/ui';
 import { SFX } from '../../data/soundLibrary';
 import MimiGuide from '../../components/MimiGuide';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { LS_PLACEMENT_RESULT } from '../../config/storageKeys';
 
 // ─── Inline SVG Illustrations ───────────────────────────────────────────────
@@ -161,6 +162,41 @@ function MimiDragonSVG() {
   );
 }
 
+// ─── i18n ───────────────────────────────────────────────────────────────────
+
+const ptContent = {
+  en: {
+    letsPlay: "Let's Play!",
+    funQuestions: '5 fun questions',
+    go: 'Go!',
+    allDone: 'All Done!',
+    startLearning: 'Start Learning!',
+    great: 'Great!',
+    almost: 'Almost!',
+    listen: 'Listen!',
+    whatSound: 'What sound?',
+    buildWord: 'Build the word!',
+    readThis: 'Read this!',
+    whichOne: 'Which one?',
+    sound: 'Sound',
+  },
+  tr: {
+    letsPlay: 'Hadi Oynayalim!',
+    funQuestions: '5 eglenceli soru',
+    go: 'Basla!',
+    allDone: 'Tamamlandi!',
+    startLearning: 'Ogrenmeye Basla!',
+    great: 'Harika!',
+    almost: 'Neredeyse!',
+    listen: 'Dinle!',
+    whatSound: 'Hangi ses?',
+    buildWord: 'Kelimeyi olustur!',
+    readThis: 'Bunu oku!',
+    whichOne: 'Hangisi?',
+    sound: 'Ses',
+  },
+} as const;
+
 // ─── Types ─────────────────────────────────────────────────────────────────
 
 type QuestionType = 'phoneme' | 'letter-sound' | 'blending' | 'decoding' | 'comprehension';
@@ -175,6 +211,7 @@ interface PlacementQuestion {
   options: string[];
   correctIndex: number;
   mimiEncouragement: string;
+  mimiEncouragementTr: string;
 }
 
 interface PlacementResult {
@@ -196,6 +233,7 @@ const QUESTIONS: PlacementQuestion[] = [
     options: ['S', 'M', 'B'],
     correctIndex: 0,
     mimiEncouragement: 'Great listening!',
+    mimiEncouragementTr: 'Harika dinleme!',
   },
   {
     id: 2,
@@ -205,6 +243,7 @@ const QUESTIONS: PlacementQuestion[] = [
     options: ['1', '2', '3'],
     correctIndex: 0,
     mimiEncouragement: 'You know your letters!',
+    mimiEncouragementTr: 'Harfleri biliyorsun!',
   },
   {
     id: 3,
@@ -213,6 +252,7 @@ const QUESTIONS: PlacementQuestion[] = [
     options: ['cat', 'hat', 'bat'],
     correctIndex: 0,
     mimiEncouragement: 'Perfect blending!',
+    mimiEncouragementTr: 'Mukemmel birlestirme!',
   },
   {
     id: 4,
@@ -221,6 +261,7 @@ const QUESTIONS: PlacementQuestion[] = [
     options: ['pin', 'pen', 'pan'],
     correctIndex: 0,
     mimiEncouragement: 'You can read!',
+    mimiEncouragementTr: 'Okuyabiliyorsun!',
   },
   {
     id: 5,
@@ -229,17 +270,18 @@ const QUESTIONS: PlacementQuestion[] = [
     options: ['big', 'small'],
     correctIndex: 0,
     mimiEncouragement: 'You understood it!',
+    mimiEncouragementTr: 'Anladın!',
   },
 ];
 
 // ─── Scoring logic ─────────────────────────────────────────────────────────
 
-function getPlacementResult(score: number): { phase: number; group: number; phaseLabel: string } {
-  if (score <= 1) return { phase: 1, group: 1, phaseLabel: 'Phase 1: First Sounds' };
-  if (score === 2) return { phase: 1, group: 2, phaseLabel: 'Phase 1: More Letters' };
-  if (score === 3) return { phase: 2, group: 3, phaseLabel: 'Phase 2: Growing Letters' };
-  if (score === 4) return { phase: 3, group: 5, phaseLabel: 'Phase 3: Tricky Sounds' };
-  return { phase: 4, group: 7, phaseLabel: 'Phase 4: Final Sounds' };
+function getPlacementResult(score: number, isTr: boolean): { phase: number; group: number; phaseLabel: string } {
+  if (score <= 1) return { phase: 1, group: 1, phaseLabel: isTr ? 'Asama 1: Ilk Sesler' : 'Phase 1: First Sounds' };
+  if (score === 2) return { phase: 1, group: 2, phaseLabel: isTr ? 'Asama 1: Daha Fazla Harf' : 'Phase 1: More Letters' };
+  if (score === 3) return { phase: 2, group: 3, phaseLabel: isTr ? 'Asama 2: Gelisen Harfler' : 'Phase 2: Growing Letters' };
+  if (score === 4) return { phase: 3, group: 5, phaseLabel: isTr ? 'Asama 3: Zor Sesler' : 'Phase 3: Tricky Sounds' };
+  return { phase: 4, group: 7, phaseLabel: isTr ? 'Asama 4: Son Sesler' : 'Phase 4: Final Sounds' };
 }
 
 // ─── TTS helper ────────────────────────────────────────────────────────────
@@ -292,6 +334,9 @@ type Screen = 'intro' | 'question' | 'feedback' | 'result';
 
 function PlacementTest() {
   const navigate = useNavigate();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
+  const t = ptContent[lang];
   const [screen, setScreen] = useState<Screen>('intro');
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
@@ -342,7 +387,7 @@ function PlacementTest() {
         setScreen('question');
       } else {
         const finalScore = correct ? score + 1 : score;
-        const placement = getPlacementResult(finalScore);
+        const placement = getPlacementResult(finalScore, isTr);
         const res: PlacementResult = {
           score: finalScore,
           total: QUESTIONS.length,
@@ -357,7 +402,7 @@ function PlacementTest() {
         setScreen('result');
       }
     }, 1500);
-  }, [selectedIndex, question, currentQ, score]);
+  }, [selectedIndex, question, currentQ, score, isTr]);
 
   // ─── Intro screen ─────────────────────────────────────────────────────
 
@@ -377,10 +422,10 @@ function PlacementTest() {
           </motion.div>
 
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: C.primary, margin: 0, textAlign: 'center' as const }}>
-            Hadi Oynayalım!
+            {t.letsPlay}
           </h1>
           <p style={{ fontSize: '1.2rem', color: C.textSec, margin: 0, textAlign: 'center' as const }}>
-            5 fun questions
+            {t.funQuestions}
           </p>
 
           <motion.button
@@ -389,7 +434,7 @@ function PlacementTest() {
             onClick={() => setScreen('question')}
             style={styles.goButton}
           >
-            Go!
+            {t.go}
           </motion.button>
         </motion.div>
 
@@ -422,7 +467,7 @@ function PlacementTest() {
           </motion.div>
 
           <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: C.primary, margin: 0, textAlign: 'center' as const }}>
-            All Done!
+            {t.allDone}
           </h1>
 
           {/* Score dots */}
@@ -470,7 +515,7 @@ function PlacementTest() {
             style={{ backgroundColor: C.primary, borderColor: C.primary, marginTop: '0.5rem', minHeight: 80, fontSize: '1.3rem' }}
             fullWidth
           >
-            Start Learning!
+            {t.startLearning}
           </Button>
         </motion.div>
       </div>
@@ -522,7 +567,7 @@ function PlacementTest() {
                   <Check size={72} color={C.correct} strokeWidth={3} />
                 </motion.div>
                 <h2 style={{ color: C.correct, fontSize: '2rem', fontWeight: 800, margin: 0 }}>
-                  Great!
+                  {t.great}
                 </h2>
               </>
             ) : (
@@ -539,7 +584,7 @@ function PlacementTest() {
                   <span style={{ fontSize: '2rem', color: C.wrong, fontWeight: 800 }}>~</span>
                 </div>
                 <h2 style={{ color: C.wrong, fontSize: '2rem', fontWeight: 800, margin: 0 }}>
-                  Almost!
+                  {t.almost}
                 </h2>
                 <div style={{
                   marginTop: '0.5rem',
@@ -555,7 +600,7 @@ function PlacementTest() {
                   )}
                   {question.type === 'letter-sound' && (
                     <span style={{ fontSize: '1.2rem', fontWeight: 700, color: C.correct }}>
-                      Sound {question.correctIndex + 1}
+                      {isTr ? 'Ses' : 'Sound'} {question.correctIndex + 1}
                     </span>
                   )}
                   {(question.type === 'blending' || question.type === 'decoding' || question.type === 'comprehension') && (
@@ -576,19 +621,19 @@ function PlacementTest() {
             style={styles.questionCard}
           >
             {question.type === 'phoneme' && (
-              <Q1Phoneme q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} />
+              <Q1Phoneme q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} isTr={isTr} />
             )}
             {question.type === 'letter-sound' && (
-              <Q2LetterSound q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} />
+              <Q2LetterSound q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} isTr={isTr} />
             )}
             {question.type === 'blending' && (
-              <Q3Blending q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} />
+              <Q3Blending q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} isTr={isTr} />
             )}
             {question.type === 'decoding' && (
-              <Q4Decoding q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} />
+              <Q4Decoding q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} isTr={isTr} />
             )}
             {question.type === 'comprehension' && (
-              <Q5Comprehension q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} />
+              <Q5Comprehension q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} isTr={isTr} />
             )}
           </motion.div>
         )}
@@ -603,13 +648,14 @@ interface QProps {
   q: PlacementQuestion;
   selectedIndex: number | null;
   onAnswer: (index: number) => void;
+  isTr: boolean;
 }
 
 /** Q1: "Listen!" -- big speaker, 3 large letter cards */
-function Q1Phoneme({ q, selectedIndex, onAnswer }: QProps) {
+function Q1Phoneme({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>Listen!</h2>
+      <h2 style={styles.qTitle}>{isTr ? 'Dinle!' : 'Listen!'}</h2>
       <motion.button
         whileTap={{ scale: 0.9 }}
         onClick={() => speak(q.ttsPrompt!, 0.7)}
@@ -638,10 +684,10 @@ function Q1Phoneme({ q, selectedIndex, onAnswer }: QProps) {
 }
 
 /** Q2: "What sound?" -- big letter + 3 play buttons */
-function Q2LetterSound({ q, selectedIndex, onAnswer }: QProps) {
+function Q2LetterSound({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>What sound?</h2>
+      <h2 style={styles.qTitle}>{isTr ? 'Hangi ses?' : 'What sound?'}</h2>
       <motion.div
         initial={{ scale: 0.5 }}
         animate={{ scale: 1 }}
@@ -703,10 +749,10 @@ function Q2LetterSound({ q, selectedIndex, onAnswer }: QProps) {
 }
 
 /** Q3: "Build the word!" -- sound tiles + 3 picture cards */
-function Q3Blending({ q, selectedIndex, onAnswer }: QProps) {
+function Q3Blending({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>Build the word!</h2>
+      <h2 style={styles.qTitle}>{isTr ? 'Kelimeyi olustur!' : 'Build the word!'}</h2>
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
         {q.soundTiles!.map((tile, i) => (
           <motion.button
@@ -740,10 +786,10 @@ function Q3Blending({ q, selectedIndex, onAnswer }: QProps) {
 }
 
 /** Q4: "Read this!" -- big word + 3 picture cards */
-function Q4Decoding({ q, selectedIndex, onAnswer }: QProps) {
+function Q4Decoding({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>Read this!</h2>
+      <h2 style={styles.qTitle}>{isTr ? 'Bunu oku!' : 'Read this!'}</h2>
       <motion.div
         initial={{ scale: 0.5 }}
         animate={{ scale: 1 }}
@@ -773,10 +819,10 @@ function Q4Decoding({ q, selectedIndex, onAnswer }: QProps) {
 }
 
 /** Q5: "Which one?" -- sentence + 2 big pictures */
-function Q5Comprehension({ q, selectedIndex, onAnswer }: QProps) {
+function Q5Comprehension({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>Which one?</h2>
+      <h2 style={styles.qTitle}>{isTr ? 'Hangisi?' : 'Which one?'}</h2>
       <div style={{
         textAlign: 'center' as const,
         padding: '1rem',

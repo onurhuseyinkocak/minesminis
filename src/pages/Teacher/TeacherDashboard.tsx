@@ -8,7 +8,7 @@
  * — Homework Assignment Panel
  */
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -216,7 +216,7 @@ function TeacherDashboardInner({
   const selectedClassroom = useMemo<Classroom | null>(() => {
     if (!selectedId) return null;
     return getClassroom(selectedId) ?? null;
-  }, [selectedId, classrooms]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedId, classrooms]);
 
   // ── Sort & filter students ──
   const filteredStudents = useMemo<ClassroomStudent[]>(() => {
@@ -277,7 +277,7 @@ function TeacherDashboardInner({
     setNewGrade('');
     refreshClassrooms();
     setSelectedId(classroom.id);
-  }, [userId, newName, newGrade, refreshClassrooms]);
+  }, [userId, newName, newGrade, lang, refreshClassrooms]);
 
   const handleAssignHomework = useCallback(() => {
     if (!hwAssignment || !hwDueDate) return;
@@ -664,9 +664,8 @@ function TeacherDashboardInner({
                           const level = xpToLevel(student.xp);
 
                           return (
-                            <>
+                            <React.Fragment key={student.id}>
                               <tr
-                                key={student.id}
                                 className={`td-roster-row${isAtRisk ? ' at-risk' : ''}${isExpanded ? ' expanded' : ''}`}
                                 onClick={() =>
                                   setExpandedStudentId(isExpanded ? null : student.id)
@@ -780,7 +779,7 @@ function TeacherDashboardInner({
                                   </td>
                                 </tr>
                               )}
-                            </>
+                            </React.Fragment>
                           );
                         })}
                       </tbody>

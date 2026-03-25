@@ -1018,9 +1018,17 @@ const STORY_TEMPLATES: Array<{ en: string; tr: string }> = [
 ];
 
 function generateMiniStory(rawWords: KidsWord[]): MiniStory {
+  // Guard: if no words at all, return a fallback story
+  if (rawWords.length === 0) {
+    return {
+      sentences: [{ parts: [{ text: 'Once upon a time...', isWord: false }] }],
+      translation: 'Bir varmış bir yokmuş...',
+    };
+  }
+
   // Ensure we always have at least 5 words so no {N} placeholders go unfilled
   const words = [...rawWords];
-  while (words.length < 5) words.push(words[words.length % words.length]);
+  while (words.length < 5) words.push(rawWords[words.length % rawWords.length]);
 
   // Pick a template that only uses placeholders within the word count
   const usableTemplates = STORY_TEMPLATES.filter((t) => {
@@ -1151,7 +1159,7 @@ function levenshtein(a: string, b: string): number {
 
 export default function DailyLesson() {
   const { user } = useAuth();
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
   const { addXP, trackActivity, stats } = useGamification();
   const navigate = useNavigate();
 
@@ -1331,9 +1339,6 @@ export default function DailyLesson() {
     );
   }
 
-  // Suppress unused translation warning
-  void t;
-
   return (
     <div className="dl">
       {/* ── Header ── */}
@@ -1386,7 +1391,7 @@ export default function DailyLesson() {
           </div>
         )}
 
-        {phase === 1 && (
+        {phase === 1 && plan.newWords.length > 0 && plan.newWords[listenIndex] && (
           <PhaseListenStep
             word={plan.newWords[listenIndex]}
             index={listenIndex}
@@ -1395,9 +1400,14 @@ export default function DailyLesson() {
             onNext={handleListenNext}
           />
         )}
+        {phase === 1 && plan.newWords.length === 0 && (
+          <div className="dl-phase-subtitle">
+            {lang === 'tr' ? 'Bugün yeni kelime yok. Harika gidiyorsun!' : 'No new words today. You are doing great!'}
+          </div>
+        )}
 
         {/* ── Phase 2: SEE ── */}
-        {phase === 2 && (
+        {phase === 2 && plan.newWords.length > 0 && plan.newWords[seeIndex] && (
           <PhaseSeeStep
             word={plan.newWords[seeIndex]}
             index={seeIndex}

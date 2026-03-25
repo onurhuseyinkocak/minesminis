@@ -91,9 +91,13 @@ function PremiumManager() {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                // silently fail
+                toast.error('Veritabanı hatası: ' + (error.message || 'Bilinmeyen hata'));
             } else {
-                const allUsers = (data || []).map(u => ({ ...u, settings: (u.settings || {}) as Record<string, unknown>, premium_plan: 'Yıllık' }));
+                const allUsers = (data || []).map(u => {
+                    const settings = (u.settings || {}) as Record<string, unknown>;
+                    const planName = (settings.premium_plan as string) || 'Yıllık';
+                    return { ...u, settings, premium_plan: planName };
+                });
                 setPremiumUsers(allUsers.filter(u => isPremium(u)));
             }
         } catch {
@@ -120,19 +124,23 @@ function PremiumManager() {
 
         try {
             const newSettings = { ...user.settings, premium_until: newPremiumUntil };
-            await supabase
+            const { error } = await supabase
                 .from('users')
                 .update({ settings: newSettings })
                 .eq('id', userId);
+
+            if (error) {
+                toast.error('Premium süre uzatılamadı: ' + error.message);
+                return;
+            }
+
+            setPremiumUsers(prev => prev.map(u =>
+                u.id === userId ? { ...u, settings: { ...u.settings, premium_until: newPremiumUntil } } : u
+            ));
+            toast.success(`Premium ${months} ay uzatıldı!`);
         } catch {
             toast.error('Premium süre uzatılamadı');
         }
-
-        setPremiumUsers(prev => prev.map(u =>
-            u.id === userId ? { ...u, settings: { ...u.settings, premium_until: newPremiumUntil } } : u
-        ));
-
-        toast.success(`Premium ${months} ay uzatıldı!`);
     };
 
     const handleRevokePremium = async (userId: string) => {
@@ -141,16 +149,21 @@ function PremiumManager() {
         try {
             const revokedUser = premiumUsers.find(u => u.id === userId);
             const newSettings = { ...(revokedUser?.settings || {}), is_premium: false, premium_until: null };
-            await supabase
+            const { error } = await supabase
                 .from('users')
                 .update({ settings: newSettings })
                 .eq('id', userId);
+
+            if (error) {
+                toast.error('Premium iptal edilemedi: ' + error.message);
+                return;
+            }
+
+            setPremiumUsers(prev => prev.filter(u => u.id !== userId));
+            toast.success('Premium üyelik iptal edildi');
         } catch {
             toast.error('Premium iptal edilemedi');
         }
-
-        setPremiumUsers(prev => prev.filter(u => u.id !== userId));
-        toast.success('Premium üyelik iptal edildi');
     };
 
     const handleSavePlan = (e: React.FormEvent) => {
@@ -196,8 +209,17 @@ function PremiumManager() {
         toast.success('Plan silindi!');
     };
 
-    // Stats calculations
-    const totalRevenue = premiumUsers.length * 399.99; // Estimate
+    // Stats calculations — per-user plan-based revenue estimation
+    const planPriceMap: Record<string, number> = {
+        'Aylık Plan': 49.99,
+        'Aylık': 49.99,
+        '3 Aylık Plan': 129.99,
+        '3 Aylık': 129.99,
+        'Yıllık Plan': 399.99,
+        'Yıllık': 399.99,
+        'Ömür Boyu': 999.99,
+    };
+    const totalRevenue = premiumUsers.reduce((sum, u) => sum + (planPriceMap[u.premium_plan] ?? 399.99), 0);
     const lifetimeMembers = premiumUsers.filter(u => u.premium_plan === 'Ömür Boyu').length;
     const expiringThisMonth = premiumUsers.filter(u => {
         const pu = getPremiumUntil(u);

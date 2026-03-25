@@ -221,7 +221,7 @@ function Games() {
       ? (isTr
           ? `Oyun ${dailySession.currentIndex + 1} / ${dailySession.games.length}`
           : `Game ${dailySession.currentIndex + 1} / ${dailySession.games.length}`)
-      : activeGameMeta.name;
+      : (isTr ? activeGameMeta.nameTr : activeGameMeta.name);
 
     return (
       <div className="games-page">
@@ -301,14 +301,14 @@ function Games() {
           className="featured-hero-card"
           style={{ '--fhc-color': featuredGame.color } as React.CSSProperties}
           role="region"
-          aria-label="Featured game of the day"
+          aria-label={isTr ? 'Günün öne çıkan oyunu' : 'Featured game of the day'}
         >
           <div className="featured-hero-body">
             <span className="featured-hero-tag">
               <Star size={12} fill="currentColor" /> {isTr ? 'Günün Seçimi' : "Today's Pick"}
             </span>
-            <h2 className="featured-hero-name">{featuredGame.name}</h2>
-            <p className="featured-hero-desc">{featuredGame.description}</p>
+            <h2 className="featured-hero-name">{isTr ? featuredGame.nameTr : featuredGame.name}</h2>
+            <p className="featured-hero-desc">{isTr ? featuredGame.descriptionTr : featuredGame.description}</p>
             {!isGameLocked(featuredGame) ? (
               <button
                 type="button"
@@ -372,6 +372,7 @@ function Games() {
                   userLevel={userLevel}
                   bestScore={best}
                   isNew={isNewGame(game)}
+                  isTr={isTr}
                   onPlay={() => handlePlaySingle(game)}
                 />
               );

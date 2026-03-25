@@ -105,11 +105,11 @@ export default function Pricing() {
   useEffect(() => {
     const status = searchParams.get('status');
     if (status === 'success') {
-      toast.success('Payment successful! Your subscription is being activated.');
+      toast.success(t('pricing.paymentSuccess'));
       refreshSubscription();
       setSearchParams({}, { replace: true });
     } else if (status === 'cancelled') {
-      toast('Checkout cancelled. You can subscribe anytime.');
+      toast(t('pricing.checkoutCancelled'));
       setSearchParams({}, { replace: true });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -132,14 +132,14 @@ export default function Pricing() {
       if (url) {
         window.open(url, '_blank');
       } else {
-        toast.error('Could not open subscription portal. Please try again.');
+        toast.error(t('pricing.portalError'));
       }
       return;
     }
 
     const variantId = isYearly ? plan.yearlyVariantId : plan.monthlyVariantId;
     if (!variantId) {
-      toast('Payment system is being configured. Please check back soon!');
+      toast(t('pricing.paymentConfiguring'));
       return;
     }
 
@@ -163,10 +163,10 @@ export default function Pricing() {
       window.open(url, '_blank');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isYearly, checkoutUrl, customerPortalUrl, navigate, currentPlan, subscriptionStatus]);
+  }, [user, isYearly, checkoutUrl, customerPortalUrl, navigate, currentPlan, subscriptionStatus, t]);
 
   const formatPrice = (price: number) => {
-    if (price === 0) return 'Free';
+    if (price === 0) return t('pricing.free');
     return `${price.toLocaleString('tr-TR')} TL`;
   };
 

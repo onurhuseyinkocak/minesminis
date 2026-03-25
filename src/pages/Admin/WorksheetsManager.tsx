@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Plus, Pencil, Trash2, X, Search, FileText, ExternalLink, Upload } from 'lucide-react';
 import { Worksheet, categories, grades } from '../../data/worksheetsData';
 import { adminFetch } from '../../utils/adminApi';
@@ -6,7 +6,18 @@ import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
 import './WorksheetsManager.css';
 
-function mapSupabaseToWorksheet(ws: { id: string; title: string; description?: string; subject?: string; grade?: string; thumbnail_url?: string; file_url?: string; source?: string }): Worksheet {
+interface SupabaseWorksheetRow {
+    id: string;
+    title: string;
+    description?: string | null;
+    subject?: string | null;
+    grade?: string | null;
+    thumbnail_url?: string | null;
+    file_url?: string | null;
+    source?: string | null;
+}
+
+function mapSupabaseToWorksheet(ws: SupabaseWorksheetRow): Worksheet {
     return {
         id: ws.id,
         title: ws.title,
@@ -38,6 +49,8 @@ function WorksheetsManager() {
         source: ''
     });
     const [uploading, setUploading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -81,23 +94,23 @@ function WorksheetsManager() {
         }
     };
 
-    const fetchWorksheets = async () => {
+    const fetchWorksheets = useCallback(async () => {
         setLoading(true);
         try {
             const { data, error } = await supabase.from('worksheets').select('id, title, description, subject, grade, thumbnail_url, file_url, source');
             if (error) throw error;
-            setWorksheets((data || []).map(mapSupabaseToWorksheet));
+            setWorksheets(((data as SupabaseWorksheetRow[]) || []).map(mapSupabaseToWorksheet));
         } catch {
-            toast.error('Çalışma kağıtları yüklenemedi');
+            toast.error('Calisma kagitlari yuklenemedi');
             setWorksheets([]);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchWorksheets();
-    }, []);
+    }, [fetchWorksheets]);
 
     const filteredWorksheets = useMemo(() => {
         return worksheets.filter(ws => {
@@ -141,14 +154,23 @@ function WorksheetsManager() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!formData.title.trim()) {
+            toast.error('Baslik zorunludur');
+            return;
+        }
+        if (!formData.externalUrl.trim()) {
+            toast.error('Dosya URL zorunludur');
+            return;
+        }
+        setSaving(true);
         const payload = {
-            title: formData.title,
-            description: formData.description,
+            title: formData.title.trim(),
+            description: formData.description.trim(),
             category: formData.category,
             grade: formData.grade,
-            thumbnailUrl: formData.thumbnailUrl || 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=300&h=200&fit=crop',
-            externalUrl: formData.externalUrl,
-            source: formData.source
+            thumbnailUrl: formData.thumbnailUrl.trim() || 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=300&h=200&fit=crop',
+            externalUrl: formData.externalUrl.trim(),
+            source: formData.source.trim()
         };
         try {
             if (editingWorksheet) {
@@ -156,35 +178,40 @@ function WorksheetsManager() {
                     method: 'PATCH',
                     body: JSON.stringify(payload)
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Güncelleme başarısız');
-                toast.success('Çalışma kağıdı güncellendi!');
+                const json: Record<string, unknown> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error((json.error as string) || 'Guncelleme basarisiz');
+                toast.success('Calisma kagidi guncellendi!');
             } else {
                 const res = await adminFetch('/api/admin/worksheets', {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Ekleme başarısız');
-                toast.success('Yeni çalışma kağıdı eklendi!');
+                const json: Record<string, unknown> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error((json.error as string) || 'Ekleme basarisiz');
+                toast.success('Yeni calisma kagidi eklendi!');
             }
             setIsModalOpen(false);
             await fetchWorksheets();
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Kayıt başarısız');
+            toast.error(err instanceof Error ? err.message : 'Kayit basarisiz');
+        } finally {
+            setSaving(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Bu çalışma kağıdını silmek istediğinize emin misiniz?')) return;
+        if (!confirm('Bu calisma kagidini silmek istediginize emin misiniz?')) return;
+        setDeletingId(id);
         try {
             const res = await adminFetch(`/api/admin/worksheets/${id}`, { method: 'DELETE' });
-            const json = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(json.error || 'Silme başarısız');
-            toast.success('Çalışma kağıdı silindi!');
+            const json: Record<string, unknown> = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error((json.error as string) || 'Silme basarisiz');
+            toast.success('Calisma kagidi silindi!');
             await fetchWorksheets();
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Silme başarısız');
+            toast.error(err instanceof Error ? err.message : 'Silme basarisiz');
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -245,7 +272,6 @@ function WorksheetsManager() {
                             key={cat}
                             className={`filter-chip ${selectedCategory === cat ? 'active' : ''}`}
                             onClick={() => setSelectedCategory(cat)}
-                            style={{}}
                         >
                             {cat === 'All' ? 'Tüm Kategoriler' : cat}
                         </button>
@@ -278,7 +304,7 @@ function WorksheetsManager() {
                                         alt={ws.title}
                                         className="table-thumbnail"
                                         onError={(e) => {
-                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="40" viewBox="0 0 60 40"><rect fill="%236366f1" width="60" height="40"/><text x="30" y="25" text-anchor="middle" fill="white" font-size="16">📄</text></svg>';
+                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="40" viewBox="0 0 60 40"><rect fill="%236366f1" width="60" height="40" rx="4"/><text x="30" y="26" text-anchor="middle" fill="white" font-size="14" font-family="sans-serif">PDF</text></svg>';
                                         }}
                                     />
                                 </td>
@@ -306,10 +332,10 @@ function WorksheetsManager() {
                                 </td>
                                 <td>
                                     <div className="action-btns">
-                                        <button type="button" className="edit-btn" onClick={() => openEditModal(ws)}>
+                                        <button type="button" className="edit-btn" onClick={() => openEditModal(ws)} disabled={deletingId === ws.id}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(ws.id)}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(ws.id)} disabled={deletingId === ws.id}>
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
@@ -433,8 +459,8 @@ function WorksheetsManager() {
                                 <button type="button" className="cancel-btn" onClick={() => setIsModalOpen(false)}>
                                     İptal
                                 </button>
-                                <button type="submit" className="save-btn">
-                                    {editingWorksheet ? 'Güncelle' : 'Ekle'}
+                                <button type="submit" className="save-btn" disabled={saving}>
+                                    {saving ? 'Kaydediliyor...' : editingWorksheet ? 'Guncelle' : 'Ekle'}
                                 </button>
                             </div>
                         </form>

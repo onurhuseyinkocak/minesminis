@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Search, Users, Shield, Star, CheckCircle, Plus, X, Mail, Key, Crown, Trash2, AlertTriangle } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import {
+    Search, Users, Shield, Star, CheckCircle, Plus, X, Mail, Key, Crown,
+    Trash2, AlertTriangle, Ban, ChevronLeft, ChevronRight, Eye,
+    ArrowUpDown, ArrowUp, ArrowDown
+} from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
 import './UsersManager.css';
@@ -13,8 +17,9 @@ interface ConfirmModalProps {
     confirmLabel: string;
     confirmVariant?: 'danger' | 'warning' | 'primary';
     loading?: boolean;
+    children?: React.ReactNode;
 }
-function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmLabel, confirmVariant = 'primary', loading }: ConfirmModalProps) {
+function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmLabel, confirmVariant = 'primary', loading, children }: ConfirmModalProps) {
     if (!isOpen) return null;
     const btnClass = confirmVariant === 'danger' ? 'confirm-btn-danger' : confirmVariant === 'warning' ? 'confirm-btn-warning' : 'confirm-btn-primary';
     return (
@@ -26,11 +31,12 @@ function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmLabel
                     </div>
                     <h3>{title}</h3>
                     <p>{message}</p>
+                    {children}
                 </div>
                 <div className="modal-footer um-modal-footer">
-                    <button type="button" className="cancel-btn" onClick={onClose}>İptal</button>
+                    <button type="button" className="cancel-btn" onClick={onClose} disabled={loading}>Iptal</button>
                     <button type="button" className={`save-btn ${btnClass}`} onClick={onConfirm} disabled={loading}>
-                        {loading ? 'İşleniyor...' : confirmLabel}
+                        {loading ? 'Isleniyor...' : confirmLabel}
                     </button>
                 </div>
             </div>
@@ -38,24 +44,37 @@ function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmLabel
     );
 }
 
+type DbRole = 'student' | 'teacher' | 'parent';
+type DisplayRole = 'student' | 'teacher' | 'admin';
+
 interface User {
     id: string;
     email: string;
     display_name: string;
     settings: Record<string, unknown>;
-    role: 'student' | 'teacher' | 'admin';
+    role: DbRole;
     points: number;
     level: number;
     is_online: boolean;
     created_at: string;
 }
 
-// Helper: read premium/admin info from settings JSONB
-const isUserPremium = (u: User) => !!(u.settings?.is_premium);
-const isUserAdmin = (u: User) => u.role === 'admin' || !!(u.settings?.is_admin);
+type SortField = 'display_name' | 'email' | 'role' | 'level' | 'points' | 'created_at';
+type SortDirection = 'asc' | 'desc';
+
+// Helper: read premium/admin/ban info from settings JSONB
+const isUserPremium = (u: User): boolean => !!(u.settings?.is_premium);
+const isUserAdmin = (u: User): boolean => !!(u.settings?.is_admin);
+const isUserBanned = (u: User): boolean => !!(u.settings?.is_banned);
 const getUserPremiumUntil = (u: User): string | null => (u.settings?.premium_until as string) || null;
 
-// Sample users for development mode - REMOVED
+const getDisplayRole = (u: User): DisplayRole => {
+    if (isUserAdmin(u)) return 'admin';
+    if (u.role === 'teacher') return 'teacher';
+    return 'student';
+};
+
+const ITEMS_PER_PAGE = 20;
 
 function UsersManager() {
     const [users, setUsers] = useState<User[]>([]);
@@ -63,22 +82,28 @@ function UsersManager() {
     const [selectedRole, setSelectedRole] = useState('all');
     const [selectedPremium, setSelectedPremium] = useState('all');
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sortField, setSortField] = useState<SortField>('created_at');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [newUserData, setNewUserData] = useState({
         email: '',
         display_name: '',
-        role: 'student' as 'student' | 'teacher' | 'admin',
+        role: 'student' as DisplayRole,
         is_premium: false,
         premium_months: 1
     });
     const [isCreating, setIsCreating] = useState(false);
     const [confirmState, setConfirmState] = useState<{
-        type: 'premium' | 'role' | 'delete';
+        type: 'premium' | 'role' | 'delete' | 'ban';
         user: User;
-        newRole?: 'student' | 'teacher' | 'admin';
+        newRole?: DisplayRole;
         newPremium?: boolean;
+        newBanned?: boolean;
     } | null>(null);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [premiumDurationMonths, setPremiumDurationMonths] = useState(1);
 
     useEffect(() => {
         loadUsers();
@@ -92,61 +117,104 @@ function UsersManager() {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                toast.error('Kullanıcılar yüklenemedi');
-            } else {
-                setUsers((data || []).map(u => ({ ...u, settings: (u.settings || {}) as Record<string, unknown> })));
+                toast.error('Kullanicilar yuklenemedi');
+                return;
             }
+            setUsers((data || []).map(u => ({ ...u, settings: (u.settings || {}) as Record<string, unknown> })));
         } catch {
-            toast.error('Kullanıcılar yüklenemedi');
+            toast.error('Kullanicilar yuklenemedi');
         } finally {
             setLoading(false);
         }
     };
 
-    const filteredUsers = users.filter(user => {
-        const matchesSearch =
-            user.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesRole = selectedRole === 'all' || user.role === selectedRole;
-        const matchesPremium = selectedPremium === 'all' ||
-            (selectedPremium === 'premium' && isUserPremium(user)) ||
-            (selectedPremium === 'free' && !isUserPremium(user));
-        return matchesSearch && matchesRole && matchesPremium;
-    });
+    const handleSort = useCallback((field: SortField) => {
+        setSortDirection(prev => sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'asc');
+        setSortField(field);
+    }, [sortField]);
 
-    const handleRoleChange = async (userId: string, newRole: 'student' | 'teacher' | 'admin') => {
+    const filteredUsers = useMemo(() => {
+        const filtered = users.filter(user => {
+            const matchesSearch =
+                user.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+            const displayRole = getDisplayRole(user);
+            const matchesRole = selectedRole === 'all' || displayRole === selectedRole;
+            const matchesPremium = selectedPremium === 'all' ||
+                (selectedPremium === 'premium' && isUserPremium(user)) ||
+                (selectedPremium === 'free' && !isUserPremium(user));
+            return matchesSearch && matchesRole && matchesPremium;
+        });
+
+        filtered.sort((a, b) => {
+            let comparison = 0;
+            switch (sortField) {
+                case 'display_name':
+                    comparison = (a.display_name || '').localeCompare(b.display_name || '');
+                    break;
+                case 'email':
+                    comparison = (a.email || '').localeCompare(b.email || '');
+                    break;
+                case 'role':
+                    comparison = getDisplayRole(a).localeCompare(getDisplayRole(b));
+                    break;
+                case 'level':
+                    comparison = (a.level || 0) - (b.level || 0);
+                    break;
+                case 'points':
+                    comparison = (a.points || 0) - (b.points || 0);
+                    break;
+                case 'created_at':
+                    comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                    break;
+            }
+            return sortDirection === 'asc' ? comparison : -comparison;
+        });
+
+        return filtered;
+    }, [users, searchTerm, selectedRole, selectedPremium, sortField, sortDirection]);
+
+    const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+    const paginatedUsers = useMemo(() => {
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        return filteredUsers.slice(start, start + ITEMS_PER_PAGE);
+    }, [filteredUsers, currentPage]);
+
+    // Reset page on filter change
+    useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedRole, selectedPremium]);
+
+    const handleRoleChange = async (userId: string, newRole: DisplayRole) => {
         setConfirmLoading(true);
         try {
             const isAdmin = newRole === 'admin';
             const targetUser = users.find(u => u.id === userId);
             const newSettings = { ...(targetUser?.settings || {}), is_admin: isAdmin };
+            // DB role column only accepts 'student' | 'teacher' | 'parent'; admin is a settings flag
+            const dbRole: DbRole = isAdmin ? 'teacher' : (newRole as DbRole);
 
-            // Try Supabase first
-            await supabase
+            const { error } = await supabase
                 .from('users')
                 .update({
-                    role: newRole,
+                    role: dbRole,
                     settings: newSettings
                 })
                 .eq('id', userId);
 
-            // Update locally regardless
+            if (error) {
+                toast.error('Rol guncellenemedi');
+                return;
+            }
+
             setUsers(prev => prev.map(u =>
                 u.id === userId
-                    ? { ...u, role: newRole, settings: { ...u.settings, is_admin: isAdmin } }
+                    ? { ...u, role: dbRole, settings: { ...u.settings, is_admin: isAdmin } }
                     : u
             ));
 
-            toast.success('Kullanıcı rolü güncellendi!');
+            toast.success('Kullanici rolu guncellendi!');
             setConfirmState(null);
         } catch {
-            // Still update locally in dev mode
-            setUsers(prev => prev.map(u =>
-                u.id === userId
-                    ? { ...u, role: newRole, settings: { ...u.settings, is_admin: newRole === 'admin' } }
-                    : u
-            ));
-            toast.success('Kullanıcı rolü güncellendi! (Lokal)');
+            toast.error('Rol guncellenemedi');
         } finally {
             setConfirmLoading(false);
         }
@@ -155,39 +223,70 @@ function UsersManager() {
     const handlePremiumToggle = async (userId: string, premium: boolean) => {
         setConfirmLoading(true);
         const premiumUntil = premium
-            ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            ? new Date(Date.now() + premiumDurationMonths * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
             : null;
 
         const targetUser = users.find(u => u.id === userId);
         const newSettings = { ...(targetUser?.settings || {}), is_premium: premium, premium_until: premiumUntil };
 
         try {
-            await supabase
+            const { error } = await supabase
                 .from('users')
                 .update({ settings: newSettings })
                 .eq('id', userId);
 
+            if (error) {
+                toast.error('Premium durumu guncellenemedi');
+                return;
+            }
+
             setUsers(prev => prev.map(u =>
                 u.id === userId
                     ? { ...u, settings: { ...u.settings, is_premium: premium, premium_until: premiumUntil } }
                     : u
             ));
 
-            toast.success(premium ? 'Premium aktifleştirildi!' : 'Premium kaldırıldı!');
+            toast.success(premium ? 'Premium aktiflestirildi!' : 'Premium kaldirildi!');
             setConfirmState(null);
         } catch {
-            setUsers(prev => prev.map(u =>
-                u.id === userId
-                    ? { ...u, settings: { ...u.settings, is_premium: premium, premium_until: premiumUntil } }
-                    : u
-            ));
-            toast.success(premium ? 'Premium aktifleştirildi! (Lokal)' : 'Premium kaldırıldı! (Lokal)');
+            toast.error('Premium durumu guncellenemedi');
         } finally {
             setConfirmLoading(false);
         }
     };
 
-    const generatePassword = () => {
+    const handleBanToggle = async (userId: string, banned: boolean) => {
+        setConfirmLoading(true);
+        const targetUser = users.find(u => u.id === userId);
+        const newSettings = { ...(targetUser?.settings || {}), is_banned: banned, banned_at: banned ? new Date().toISOString() : null };
+
+        try {
+            const { error } = await supabase
+                .from('users')
+                .update({ settings: newSettings })
+                .eq('id', userId);
+
+            if (error) {
+                toast.error(`Kullanici ${banned ? 'banlanamadi' : 'ban kaldirilamadi'}`);
+                return;
+            }
+
+            setUsers(prev => prev.map(u =>
+                u.id === userId
+                    ? { ...u, settings: newSettings }
+                    : u
+            ));
+
+            toast.success(banned ? 'Kullanici banlandi!' : 'Kullanici bani kaldirildi!');
+            setConfirmState(null);
+        } catch {
+            toast.error(`Kullanici ${banned ? 'banlanamadi' : 'ban kaldirilamadi'}`);
+        } finally {
+            setConfirmLoading(false);
+        }
+    };
+
+    const generatePassword = (): string => {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
         let password = '';
         for (let i = 0; i < 10; i++) {
@@ -206,43 +305,59 @@ function UsersManager() {
             : null;
 
         try {
-            // In production, this would create user via Supabase Auth Admin API
-            // and send welcome email via Edge Function
+            const newId = crypto.randomUUID();
+            const now = new Date().toISOString();
+            const isAdmin = newUserData.role === 'admin';
+            const settings: Record<string, unknown> = {
+                is_admin: isAdmin,
+                is_premium: newUserData.is_premium,
+                premium_until: premiumUntil,
+            };
+            // DB role column only accepts 'student' | 'teacher' | 'parent'
+            const dbRole: DbRole = isAdmin ? 'teacher' : (newUserData.role as DbRole);
 
-            // For now, add to local state
-            const newUser: User = {
-                id: Date.now().toString(),
+            const payload = {
+                id: newId,
                 email: newUserData.email,
                 display_name: newUserData.display_name || newUserData.email.split('@')[0],
-                settings: {
-                    is_admin: newUserData.role === 'admin',
-                    is_premium: newUserData.is_premium,
-                    premium_until: premiumUntil,
-                },
-                role: newUserData.role,
+                settings,
+                role: dbRole,
                 points: 0,
                 level: 1,
                 is_online: false,
-                created_at: new Date().toISOString()
+                created_at: now,
             };
+
+            const { data: insertedData, error: insertError } = await supabase
+                .from('users')
+                .insert(payload)
+                .select()
+                .single();
+
+            if (insertError) {
+                toast.error('Kullanici olusturulamadi');
+                return;
+            }
+
+            const newUser: User = insertedData
+                ? { ...insertedData, settings: (insertedData.settings || {}) as Record<string, unknown> }
+                : { ...payload, settings };
 
             setUsers(prev => [newUser, ...prev]);
 
             // Show the generated password to admin
             toast.success(
                 <div>
-                    <strong>Kullanıcı oluşturuldu!</strong>
+                    <strong>Kullanici olusturuldu!</strong>
                     <br />
                     <small>Email: {newUserData.email}</small>
                     <br />
-                    <small>Şifre: <code>{password}</code></small>
+                    <small>Sifre: <code>{password}</code></small>
                     <br />
-                    <small className="um-toast-warning">Bu şifreyi kaydedin!</small>
+                    <small className="um-toast-warning">Bu sifreyi kaydedin!</small>
                 </div>,
                 { duration: 10000 }
             );
-
-            // TODO: Send welcome email with password in production
 
             setIsModalOpen(false);
             setNewUserData({
@@ -253,15 +368,10 @@ function UsersManager() {
                 premium_months: 1
             });
         } catch {
-            toast.error('Kullanıcı oluşturulamadı');
+            toast.error('Kullanici olusturulamadi');
         } finally {
             setIsCreating(false);
         }
-    };
-
-    const handleDeleteUser = async (userId: string) => {
-        const user = users.find(u => u.id === userId);
-        if (user) setConfirmState({ type: 'delete', user });
     };
 
     const executeDeleteUser = async () => {
@@ -269,23 +379,28 @@ function UsersManager() {
         const userId = confirmState.user.id;
         setConfirmLoading(true);
         try {
-            await supabase
+            const { error } = await supabase
                 .from('users')
                 .delete()
                 .eq('id', userId);
 
+            if (error) {
+                toast.error('Kullanici silinemedi');
+                return;
+            }
+
             setUsers(prev => prev.filter(u => u.id !== userId));
-            toast.success('Kullanıcı silindi!');
+            if (selectedUser?.id === userId) setSelectedUser(null);
+            toast.success('Kullanici silindi!');
             setConfirmState(null);
         } catch {
-            setUsers(prev => prev.filter(u => u.id !== userId));
-            toast.success('Kullanıcı silindi! (Lokal)');
+            toast.error('Kullanici silinemedi');
         } finally {
             setConfirmLoading(false);
         }
     };
 
-    const getRoleBadgeClass = (role: string) => {
+    const getRoleBadgeClass = (role: DisplayRole): string => {
         switch (role) {
             case 'admin': return 'badge-admin';
             case 'teacher': return 'badge-teacher';
@@ -293,19 +408,25 @@ function UsersManager() {
         }
     };
 
-
+    const getSortIcon = (field: SortField) => {
+        if (sortField !== field) return <ArrowUpDown size={12} className="um-sort-icon-inactive" />;
+        return sortDirection === 'asc'
+            ? <ArrowUp size={12} className="um-sort-icon-active" />
+            : <ArrowDown size={12} className="um-sort-icon-active" />;
+    };
 
     // Stats
     const premiumCount = users.filter(u => isUserPremium(u)).length;
     const adminCount = users.filter(u => isUserAdmin(u)).length;
-    const teacherCount = users.filter(u => u.role === 'teacher').length;
+    const teacherCount = users.filter(u => u.role === 'teacher' && !isUserAdmin(u)).length;
+    const bannedCount = users.filter(u => isUserBanned(u)).length;
 
     if (loading) {
         return (
             <div className="admin-page">
                 <div className="admin-loading">
                     <div className="admin-loading-spinner"></div>
-                    <p>Kullanıcılar yükleniyor...</p>
+                    <p>Kullanicilar yukleniyor...</p>
                 </div>
             </div>
         );
@@ -314,8 +435,8 @@ function UsersManager() {
     return (
         <div className="admin-page">
             <div className="admin-header">
-                <h1><Users size={28} /> Kullanıcı Yönetimi</h1>
-                <p>Kayıtlı kullanıcıları görüntüleyin ve yönetin</p>
+                <h1><Users size={28} /> Kullanici Yonetimi</h1>
+                <p>Kayitli kullanicilari goruntuleyin ve yonetin</p>
             </div>
 
             {/* Stats Cards */}
@@ -324,14 +445,14 @@ function UsersManager() {
                     <div className="stat-icon"><Users size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{users.length}</span>
-                        <span className="stat-label">Toplam Kullanıcı</span>
+                        <span className="stat-label">Toplam Kullanici</span>
                     </div>
                 </div>
                 <div className="stat-card" style={{ '--stat-color': '#f59e0b', '--stat-bg': '#fffbeb' } as React.CSSProperties}>
                     <div className="stat-icon"><Crown size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{premiumCount}</span>
-                        <span className="stat-label">Premium Üye</span>
+                        <span className="stat-label">Premium Uye</span>
                     </div>
                 </div>
                 <div className="stat-card" style={{ '--stat-color': '#ec4899', '--stat-bg': '#fdf2f8' } as React.CSSProperties}>
@@ -345,20 +466,29 @@ function UsersManager() {
                     <div className="stat-icon"><Star size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{teacherCount}</span>
-                        <span className="stat-label">Öğretmen</span>
+                        <span className="stat-label">Ogretmen</span>
                     </div>
                 </div>
+                {bannedCount > 0 && (
+                    <div className="stat-card" style={{ '--stat-color': '#ef4444', '--stat-bg': '#fef2f2' } as React.CSSProperties}>
+                        <div className="stat-icon"><Ban size={24} /></div>
+                        <div className="stat-info">
+                            <span className="stat-value">{bannedCount}</span>
+                            <span className="stat-label">Banlanan</span>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="data-table-container">
                 <div className="table-header">
-                    <h2>{filteredUsers.length} Kullanıcı</h2>
+                    <h2>{filteredUsers.length} Kullanici</h2>
                     <div className="table-actions">
                         <div className="um-search-wrap">
                             <Search size={18} className="um-search-icon" />
                             <input
                                 type="text"
-                                placeholder="Kullanıcı ara..."
+                                placeholder="Kullanici ara..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="search-input um-search-input"
@@ -366,140 +496,334 @@ function UsersManager() {
                         </div>
                         <button type="button" className="add-btn" onClick={() => setIsModalOpen(true)}>
                             <Plus size={18} />
-                            Kullanıcı Ekle
+                            Kullanici Ekle
                         </button>
                     </div>
                 </div>
 
                 <div className="filter-chips">
-                    {['all', 'student', 'teacher', 'admin'].map(role => (
+                    {(['all', 'student', 'teacher', 'admin'] as const).map(role => (
                         <button
                             key={role}
                             className={`filter-chip ${selectedRole === role ? 'active' : ''}`}
                             onClick={() => setSelectedRole(role)}
                         >
-                            {role === 'all' ? 'Tümü' :
+                            {role === 'all' ? 'Tumu' :
                                 role === 'admin' ? 'Admin' :
-                                    role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}
+                                    role === 'teacher' ? 'Ogretmen' : 'Ogrenci'}
                         </button>
                     ))}
                     <span className="um-filter-sep">|</span>
-                    {['all', 'premium', 'free'].map(type => (
+                    {(['all', 'premium', 'free'] as const).map(type => (
                         <button
                             key={type}
                             className={`filter-chip ${selectedPremium === type ? 'active' : ''}`}
                             onClick={() => setSelectedPremium(type)}
                         >
-                            {type === 'all' ? 'Tüm Üyelik' :
-                                type === 'premium' ? 'Premium' : 'Ücretsiz'}
+                            {type === 'all' ? 'Tum Uyelik' :
+                                type === 'premium' ? 'Premium' : 'Ucretsiz'}
                         </button>
                     ))}
+                </div>
+
+                <div className="um-table-info">
+                    <span>{filteredUsers.length} kullanici bulundu</span>
+                    <span>Sayfa {currentPage} / {Math.max(1, totalPages)}</span>
                 </div>
 
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Kullanıcı</th>
-                            <th>Email</th>
-                            <th>Rol</th>
+                            <th className="um-th-sortable" onClick={() => handleSort('display_name')}>
+                                Kullanici {getSortIcon('display_name')}
+                            </th>
+                            <th className="um-th-sortable" onClick={() => handleSort('email')}>
+                                Email {getSortIcon('email')}
+                            </th>
+                            <th className="um-th-sortable" onClick={() => handleSort('role')}>
+                                Rol {getSortIcon('role')}
+                            </th>
                             <th>Premium</th>
-                            <th>Puan</th>
+                            <th className="um-th-sortable" onClick={() => handleSort('points')}>
+                                Puan {getSortIcon('points')}
+                            </th>
                             <th>Durum</th>
-                            <th>İşlemler</th>
+                            <th className="um-th-sortable" onClick={() => handleSort('created_at')}>
+                                Katilim {getSortIcon('created_at')}
+                            </th>
+                            <th>Islemler</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredUsers.map(user => (
-                            <tr key={user.id}>
-                                <td>
-                                    <div className="um-user-cell">
-                                        {(user.settings?.avatar_emoji as string) ? (
-                                            <span className="um-avatar-emoji">{user.settings.avatar_emoji as string}</span>
-                                        ) : (
-                                            <div className="um-avatar-initial">
-                                                {(user.display_name || 'U').charAt(0).toUpperCase()}
+                        {paginatedUsers.map(user => {
+                            const banned = isUserBanned(user);
+                            const displayRole = getDisplayRole(user);
+                            return (
+                                <tr key={user.id} className={banned ? 'um-row-banned' : ''}>
+                                    <td>
+                                        <div className="um-user-cell">
+                                            {(user.settings?.avatar_emoji as string) ? (
+                                                <span className="um-avatar-emoji">{user.settings.avatar_emoji as string}</span>
+                                            ) : (
+                                                <div className="um-avatar-initial">
+                                                    {(user.display_name || 'U').charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                            <div>
+                                                <strong>
+                                                    {user.display_name || 'Isimsiz'}
+                                                    {banned && <Ban size={12} className="um-ban-icon" />}
+                                                </strong>
                                             </div>
+                                        </div>
+                                    </td>
+                                    <td className="um-email-cell">{user.email}</td>
+                                    <td>
+                                        <select
+                                            value={displayRole}
+                                            onChange={(e) => {
+                                                const newRole = e.target.value as DisplayRole;
+                                                if (newRole !== displayRole) {
+                                                    setConfirmState({
+                                                        type: 'role',
+                                                        user,
+                                                        newRole
+                                                    });
+                                                }
+                                            }}
+                                            className={`role-select um-role-select ${getRoleBadgeClass(displayRole)}`}
+                                        >
+                                            <option value="student">Ogrenci</option>
+                                            <option value="teacher">Ogretmen</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            onClick={() => setConfirmState({
+                                                type: 'premium',
+                                                user,
+                                                newPremium: !isUserPremium(user)
+                                            })}
+                                            className={`um-premium-btn ${isUserPremium(user) ? 'um-premium-btn--active' : 'um-premium-btn--inactive'}`}
+                                        >
+                                            <Crown size={14} />
+                                            {isUserPremium(user) ? 'Premium' : 'Ucretsiz'}
+                                        </button>
+                                        {isUserPremium(user) && getUserPremiumUntil(user) && (
+                                            <small className="um-premium-expiry">
+                                                {new Date(getUserPremiumUntil(user)!).toLocaleDateString('tr-TR')} &apos;e kadar
+                                            </small>
                                         )}
-                                        <strong>{user.display_name || 'İsimsiz'}</strong>
-                                    </div>
-                                </td>
-                                <td className="um-email-cell">{user.email}</td>
-                                <td>
-                                    <select
-                                        value={user.role}
-                                        onChange={(e) => setConfirmState({
-                                            type: 'role',
-                                            user,
-                                            newRole: e.target.value as 'student' | 'teacher' | 'admin'
-                                        })}
-                                        className={`role-select um-role-select ${getRoleBadgeClass(user.role)}`}
-                                    >
-                                        <option value="student">Öğrenci</option>
-                                        <option value="teacher">Öğretmen</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        onClick={() => setConfirmState({
-                                            type: 'premium',
-                                            user,
-                                            newPremium: !isUserPremium(user)
-                                        })}
-                                        className={`um-premium-btn ${isUserPremium(user) ? 'um-premium-btn--active' : 'um-premium-btn--inactive'}`}
-                                    >
-                                        <Crown size={14} />
-                                        {isUserPremium(user) ? 'Premium' : 'Ücretsiz'}
-                                    </button>
-                                    {isUserPremium(user) && getUserPremiumUntil(user) && (
-                                        <small className="um-premium-expiry">
-                                            {new Date(getUserPremiumUntil(user)!).toLocaleDateString('tr-TR')} 'e kadar
-                                        </small>
-                                    )}
-                                </td>
-                                <td>
-                                    <span className="um-points">
-                                        {user.points || 0}
-                                    </span>
-                                </td>
-                                <td>
-                                    {user.is_online ? (
-                                        <span className="um-status-online">
-                                            <CheckCircle size={14} /> Çevrimiçi
+                                    </td>
+                                    <td>
+                                        <span className="um-points">
+                                            {user.points || 0}
                                         </span>
-                                    ) : (
-                                        <span className="um-status-offline">Çevrimdışı</span>
-                                    )}
-                                </td>
-                                <td>
-                                    <button
-                                        className="delete-btn"
-                                        onClick={() => handleDeleteUser(user.id)}
-                                        title="Kullanıcıyı Sil"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td>
+                                        {banned ? (
+                                            <span className="um-status-banned">
+                                                <Ban size={14} /> Banlandi
+                                            </span>
+                                        ) : user.is_online ? (
+                                            <span className="um-status-online">
+                                                <CheckCircle size={14} /> Cevrimici
+                                            </span>
+                                        ) : (
+                                            <span className="um-status-offline">Cevrimdisi</span>
+                                        )}
+                                    </td>
+                                    <td className="um-cell-date">
+                                        {new Date(user.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </td>
+                                    <td>
+                                        <div className="um-table-actions">
+                                            <button
+                                                className="um-icon-btn"
+                                                title="Detay"
+                                                onClick={() => setSelectedUser(user)}
+                                            >
+                                                <Eye size={14} />
+                                            </button>
+                                            <button
+                                                className={`um-icon-btn ${banned ? 'um-icon-btn-success' : 'um-icon-btn-warning'}`}
+                                                title={banned ? 'Bani Kaldir' : 'Banla'}
+                                                onClick={() => setConfirmState({
+                                                    type: 'ban',
+                                                    user,
+                                                    newBanned: !banned
+                                                })}
+                                            >
+                                                {banned ? <CheckCircle size={14} /> : <Ban size={14} />}
+                                            </button>
+                                            <button
+                                                className="delete-btn"
+                                                onClick={() => setConfirmState({ type: 'delete', user })}
+                                                title="Kullaniciyi Sil"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
 
                 {filteredUsers.length === 0 && (
                     <div className="no-data">
                         <Users size={48} style={{ opacity: 0.3 }} />
-                        <p>Kullanıcı bulunamadı</p>
+                        <p>Kullanici bulunamadi</p>
+                    </div>
+                )}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="um-pagination">
+                        <button
+                            className="um-page-btn"
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                        >
+                            <ChevronLeft size={14} />
+                        </button>
+                        {Array.from({ length: Math.min(7, totalPages) }, (_, i) => {
+                            let page: number;
+                            if (totalPages <= 7) {
+                                page = i + 1;
+                            } else if (currentPage <= 4) {
+                                page = i + 1;
+                            } else if (currentPage >= totalPages - 3) {
+                                page = totalPages - 6 + i;
+                            } else {
+                                page = currentPage - 3 + i;
+                            }
+                            return (
+                                <button
+                                    key={page}
+                                    className={`um-page-btn ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </button>
+                            );
+                        })}
+                        <button
+                            className="um-page-btn"
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                        >
+                            <ChevronRight size={14} />
+                        </button>
                     </div>
                 )}
             </div>
+
+            {/* User Detail Side Panel */}
+            {selectedUser && (
+                <>
+                    <div className="modal-overlay" onClick={() => setSelectedUser(null)} />
+                    <div className="um-detail-panel">
+                        <div className="um-detail-panel-header">
+                            <h3>Kullanici Detayi</h3>
+                            <button type="button" className="modal-close" onClick={() => setSelectedUser(null)}>
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <div className="um-detail-panel-body">
+                            <div className="um-detail-hero">
+                                {(selectedUser.settings?.avatar_emoji as string) ? (
+                                    <span className="um-detail-avatar-emoji">{selectedUser.settings.avatar_emoji as string}</span>
+                                ) : (
+                                    <div className="um-detail-avatar-initial">
+                                        {(selectedUser.display_name || 'U').charAt(0).toUpperCase()}
+                                    </div>
+                                )}
+                                <div className="um-detail-name">{selectedUser.display_name || 'Isimsiz'}</div>
+                                <div className="um-detail-email">{selectedUser.email}</div>
+                            </div>
+
+                            <div className="um-detail-field">
+                                <label>Rol</label>
+                                <span className={`um-detail-badge ${getRoleBadgeClass(getDisplayRole(selectedUser))}`}>
+                                    {getDisplayRole(selectedUser) === 'admin' ? 'Admin' :
+                                        getDisplayRole(selectedUser) === 'teacher' ? 'Ogretmen' : 'Ogrenci'}
+                                </span>
+                            </div>
+                            <div className="um-detail-field">
+                                <label>Plan</label>
+                                <span className={`um-detail-badge ${isUserPremium(selectedUser) ? 'badge-premium' : 'badge-free'}`}>
+                                    {isUserPremium(selectedUser) ? 'Premium' : 'Ucretsiz'}
+                                </span>
+                                {isUserPremium(selectedUser) && getUserPremiumUntil(selectedUser) && (
+                                    <small className="um-detail-premium-until">
+                                        {new Date(getUserPremiumUntil(selectedUser)!).toLocaleDateString('tr-TR')} tarihine kadar
+                                    </small>
+                                )}
+                            </div>
+                            <div className="um-detail-field">
+                                <label>Seviye</label>
+                                <span>Seviye {selectedUser.level || 1}</span>
+                            </div>
+                            <div className="um-detail-field">
+                                <label>Puan</label>
+                                <span>{selectedUser.points || 0}</span>
+                            </div>
+                            <div className="um-detail-field">
+                                <label>Durum</label>
+                                {isUserBanned(selectedUser) ? (
+                                    <span className="um-status-banned"><Ban size={14} /> Banlandi</span>
+                                ) : (
+                                    <span className={selectedUser.is_online ? 'um-status-online' : 'um-status-offline'}>
+                                        {selectedUser.is_online ? 'Cevrimici' : 'Cevrimdisi'}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="um-detail-field">
+                                <label>Katilim</label>
+                                <span>
+                                    {new Date(selectedUser.created_at).toLocaleDateString('tr-TR', {
+                                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                                    })}
+                                </span>
+                            </div>
+
+                            <div className="um-detail-actions">
+                                <button
+                                    type="button"
+                                    className={`um-detail-action-btn ${isUserBanned(selectedUser) ? 'um-btn-success' : 'um-btn-warning'}`}
+                                    onClick={() => setConfirmState({
+                                        type: 'ban',
+                                        user: selectedUser,
+                                        newBanned: !isUserBanned(selectedUser)
+                                    })}
+                                >
+                                    {isUserBanned(selectedUser) ? <CheckCircle size={14} /> : <Ban size={14} />}
+                                    {isUserBanned(selectedUser) ? 'Bani Kaldir' : 'Banla'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="um-detail-action-btn um-btn-danger"
+                                    onClick={() => setConfirmState({ type: 'delete', user: selectedUser })}
+                                >
+                                    <Trash2 size={14} />
+                                    Sil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
 
             {/* Add User Modal */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3><Plus size={20} /> Yeni Kullanıcı Ekle</h3>
+                            <h3><Plus size={20} /> Yeni Kullanici Ekle</h3>
                             <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
                                 <X size={20} />
                             </button>
@@ -517,28 +841,28 @@ function UsersManager() {
                                         required
                                     />
                                     <small className="um-small-muted">
-                                        Bu adrese hoş geldin maili ve otomatik şifre gönderilecek
+                                        Bu adrese hos geldin maili ve otomatik sifre gonderilecek
                                     </small>
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Görünen İsim</label>
+                                    <label>Gorunen Isim</label>
                                     <input
                                         type="text"
                                         value={newUserData.display_name}
                                         onChange={(e) => setNewUserData({ ...newUserData, display_name: e.target.value })}
-                                        placeholder="Örn: Öğrenci Ali"
+                                        placeholder="Orn: Ogrenci Ali"
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Kullanıcı Rolü</label>
+                                    <label>Kullanici Rolu</label>
                                     <select
                                         value={newUserData.role}
-                                        onChange={(e) => setNewUserData({ ...newUserData, role: e.target.value as 'student' | 'teacher' | 'admin' })}
+                                        onChange={(e) => setNewUserData({ ...newUserData, role: e.target.value as DisplayRole })}
                                     >
-                                        <option value="student">Öğrenci</option>
-                                        <option value="teacher">Öğretmen</option>
+                                        <option value="student">Ogrenci</option>
+                                        <option value="teacher">Ogretmen</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </div>
@@ -551,13 +875,13 @@ function UsersManager() {
                                             onChange={(e) => setNewUserData({ ...newUserData, is_premium: e.target.checked })}
                                         />
                                         <Crown size={16} className="um-premium-icon" />
-                                        Premium Üyelik Ver
+                                        Premium Uyelik Ver
                                     </label>
                                 </div>
 
                                 {newUserData.is_premium && (
                                     <div className="form-group">
-                                        <label>Premium Süresi</label>
+                                        <label>Premium Suresi</label>
                                         <select
                                             value={newUserData.premium_months}
                                             onChange={(e) => setNewUserData({ ...newUserData, premium_months: parseInt(e.target.value) })}
@@ -565,8 +889,8 @@ function UsersManager() {
                                             <option value={1}>1 Ay</option>
                                             <option value={3}>3 Ay</option>
                                             <option value={6}>6 Ay</option>
-                                            <option value={12}>1 Yıl</option>
-                                            <option value={120}>Ömür Boyu (10 Yıl)</option>
+                                            <option value={12}>1 Yil</option>
+                                            <option value={120}>Omur Boyu (10 Yil)</option>
                                         </select>
                                     </div>
                                 )}
@@ -574,21 +898,21 @@ function UsersManager() {
                                 <div className="um-password-info">
                                     <div className="um-password-info-header">
                                         <Key size={16} />
-                                        <strong>Otomatik Şifre</strong>
+                                        <strong>Otomatik Sifre</strong>
                                     </div>
                                     <p className="um-password-info-text">
-                                        Kullanıcı oluşturulduğunda otomatik şifre üretilecek ve ekranda gösterilecek.
-                                        Bu şifreyi kaydedin veya kullanıcıya iletin.
+                                        Kullanici olusturuldugunda otomatik sifre uretilecek ve ekranda gosterilecek.
+                                        Bu sifreyi kaydedin veya kullaniciya iletin.
                                     </p>
                                 </div>
                             </div>
 
                             <div className="modal-footer">
                                 <button type="button" className="cancel-btn" onClick={() => setIsModalOpen(false)}>
-                                    İptal
+                                    Iptal
                                 </button>
                                 <button type="submit" className="save-btn" disabled={isCreating}>
-                                    {isCreating ? 'Oluşturuluyor...' : 'Kullanıcı Oluştur'}
+                                    {isCreating ? 'Olusturuluyor...' : 'Kullanici Olustur'}
                                 </button>
                             </div>
                         </form>
@@ -606,34 +930,63 @@ function UsersManager() {
                         handleRoleChange(confirmState.user.id, confirmState.newRole);
                     } else if (confirmState.type === 'premium' && confirmState.newPremium !== undefined) {
                         handlePremiumToggle(confirmState.user.id, confirmState.newPremium);
+                    } else if (confirmState.type === 'ban' && confirmState.newBanned !== undefined) {
+                        handleBanToggle(confirmState.user.id, confirmState.newBanned);
                     } else if (confirmState.type === 'delete') {
                         executeDeleteUser();
                     }
                 }}
                 title={
-                    confirmState?.type === 'role' ? 'Rol Değişikliği' :
-                    confirmState?.type === 'premium' ? (confirmState.newPremium ? 'Premium Ver' : 'Premium Kaldır') :
-                    'Kullanıcıyı Sil'
+                    confirmState?.type === 'role' ? 'Rol Degisikligi' :
+                    confirmState?.type === 'premium' ? (confirmState.newPremium ? 'Premium Ver' : 'Premium Kaldir') :
+                    confirmState?.type === 'ban' ? (confirmState.newBanned ? 'Kullaniciyi Banla' : 'Bani Kaldir') :
+                    'Kullaniciyi Sil'
                 }
                 message={
                     confirmState?.type === 'role' && confirmState.newRole
-                        ? `${confirmState.user.display_name} (${confirmState.user.email}) kullanıcısının rolünü ${confirmState.newRole === 'admin' ? 'Admin' : confirmState.newRole === 'teacher' ? 'Öğretmen' : 'Öğrenci'} yapmak istediğinize emin misiniz?`
+                        ? `${confirmState.user.display_name} (${confirmState.user.email}) kullanicisinin rolunu ${confirmState.newRole === 'admin' ? 'Admin' : confirmState.newRole === 'teacher' ? 'Ogretmen' : 'Ogrenci'} yapmak istediginize emin misiniz?`
                         : confirmState?.type === 'premium' && confirmState.newPremium !== undefined
                             ? confirmState.newPremium
-                                ? `${confirmState.user.display_name} (${confirmState.user.email}) kullanıcısına 1 yıl premium vermek istediğinize emin misiniz?`
-                                : `${confirmState.user.display_name} (${confirmState.user.email}) kullanıcısının premium üyeliğini kaldırmak istediğinize emin misiniz?`
-                            : confirmState?.type === 'delete'
-                                ? `${confirmState.user.display_name} (${confirmState.user.email}) kullanıcısını kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`
-                                : ''
+                                ? `${confirmState.user.display_name} (${confirmState.user.email}) kullanicisina premium vermek istediginize emin misiniz?`
+                                : `${confirmState.user.display_name} (${confirmState.user.email}) kullanicisinin premium uyeligini kaldirmak istediginize emin misiniz?`
+                            : confirmState?.type === 'ban'
+                                ? confirmState.newBanned
+                                    ? `${confirmState.user.display_name} (${confirmState.user.email}) kullanicisini banlamak istediginize emin misiniz? Platforma erisimi engellenecek.`
+                                    : `${confirmState.user.display_name} (${confirmState.user.email}) kullanicisinin banini kaldirmak istediginize emin misiniz?`
+                                : confirmState?.type === 'delete'
+                                    ? `${confirmState?.user.display_name} (${confirmState?.user.email}) kullanicisini kalici olarak silmek istediginize emin misiniz? Bu islem geri alinamaz.`
+                                    : ''
                 }
                 confirmLabel={
                     confirmState?.type === 'delete' ? 'Sil' :
+                    confirmState?.type === 'ban' ? (confirmState.newBanned ? 'Banla' : 'Bani Kaldir') :
                     confirmState?.type === 'premium' && confirmState.newPremium ? 'Premium Ver' :
-                    confirmState?.type === 'premium' ? 'Premium Kaldır' : 'Onayla'
+                    confirmState?.type === 'premium' ? 'Premium Kaldir' : 'Onayla'
                 }
-                confirmVariant={confirmState?.type === 'delete' ? 'danger' : confirmState?.type === 'premium' && !confirmState.newPremium ? 'warning' : 'primary'}
+                confirmVariant={
+                    confirmState?.type === 'delete' ? 'danger' :
+                    confirmState?.type === 'ban' && confirmState.newBanned ? 'danger' :
+                    confirmState?.type === 'premium' && !confirmState.newPremium ? 'warning' : 'primary'
+                }
                 loading={confirmLoading}
-            />
+            >
+                {confirmState?.type === 'premium' && confirmState.newPremium === true && (
+                    <div className="form-group" style={{ marginTop: '10px', textAlign: 'left' }}>
+                        <label style={{ fontSize: '0.82rem', marginBottom: '4px', display: 'block' }}>Sure</label>
+                        <select
+                            className="role-select"
+                            value={premiumDurationMonths}
+                            onChange={(e) => setPremiumDurationMonths(parseInt(e.target.value))}
+                        >
+                            <option value={1}>1 Ay</option>
+                            <option value={3}>3 Ay</option>
+                            <option value={6}>6 Ay</option>
+                            <option value={12}>1 Yil</option>
+                            <option value={120}>Omur Boyu (10 Yil)</option>
+                        </select>
+                    </div>
+                )}
+            </ConfirmModal>
         </div>
     );
 }

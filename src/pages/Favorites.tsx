@@ -53,11 +53,13 @@ const Favorites: React.FC = () => {
   };
 
   const removeFavorite = async (favoriteId: string) => {
+    if (!user) return;
     try {
       const { error } = await supabase
         .from('favorites')
         .delete()
-        .eq('id', favoriteId);
+        .eq('id', favoriteId)
+        .eq('user_id', user.uid);
 
       if (error) throw error;
 
@@ -120,30 +122,35 @@ const Favorites: React.FC = () => {
 
       <div className="filter-tabs">
         <button
+          type="button"
           className={`filter-tab ${activeFilter === 'all' ? 'active' : ''}`}
           onClick={() => setActiveFilter('all')}
         >
           All ({favorites.length})
         </button>
         <button
+          type="button"
           className={`filter-tab ${activeFilter === 'game' ? 'active' : ''}`}
           onClick={() => setActiveFilter('game')}
         >
           <KidIcon name="games" size={16} /> Games ({favorites.filter(f => f.item_type === 'game').length})
         </button>
         <button
+          type="button"
           className={`filter-tab ${activeFilter === 'word' ? 'active' : ''}`}
           onClick={() => setActiveFilter('word')}
         >
           <KidIcon name="book" size={16} /> Words ({favorites.filter(f => f.item_type === 'word').length})
         </button>
         <button
+          type="button"
           className={`filter-tab ${activeFilter === 'worksheet' ? 'active' : ''}`}
           onClick={() => setActiveFilter('worksheet')}
         >
           <KidIcon name="learn" size={16} /> Worksheets ({favorites.filter(f => f.item_type === 'worksheet').length})
         </button>
         <button
+          type="button"
           className={`filter-tab ${activeFilter === 'video' ? 'active' : ''}`}
           onClick={() => setActiveFilter('video')}
         >

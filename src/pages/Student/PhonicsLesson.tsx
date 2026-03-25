@@ -22,6 +22,7 @@ import { updatePlantGrowth, addWaterDrops } from '../../services/gardenService';
 import { syncStudentProgress, getStudentClassroom, updateStudentProgress as updateClassroomProgress } from '../../services/classroomService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -29,16 +30,16 @@ type LessonStep = 'hear' | 'do' | 'see' | 'build' | 'break' | 'write' | 'read' |
 
 const STEPS: LessonStep[] = ['hear', 'do', 'see', 'build', 'break', 'write', 'read', 'sing', 'celebrate'];
 
-const STEP_LABELS: Record<LessonStep, string> = {
-  hear: 'Dinle',
-  do: 'Yap',
-  see: 'Gör',
-  build: 'Oluştur',
-  break: 'Böl',
-  write: 'Yaz',
-  read: 'Oku',
-  sing: 'Söyle',
-  celebrate: 'Tebrikler!',
+const STEP_LABELS: Record<LessonStep, { tr: string; en: string }> = {
+  hear: { tr: 'Dinle', en: 'Listen' },
+  do: { tr: 'Yap', en: 'Do' },
+  see: { tr: 'Gör', en: 'See' },
+  build: { tr: 'Oluştur', en: 'Build' },
+  break: { tr: 'Böl', en: 'Break' },
+  write: { tr: 'Yaz', en: 'Write' },
+  read: { tr: 'Oku', en: 'Read' },
+  sing: { tr: 'Söyle', en: 'Sing' },
+  celebrate: { tr: 'Tebrikler!', en: 'Congrats!' },
 };
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -128,6 +129,8 @@ function PhonicsLesson() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addXP } = useGamification();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
 
   const data = useMemo(() => (soundId ? getSoundData(soundId) : null), [soundId]);
   const [stepIndex, setStepIndex] = useState(0);
@@ -234,10 +237,10 @@ function PhonicsLesson() {
         <Card variant="elevated" padding="xl">
           <div className="pl-not-found">
             <Search size={48} color="var(--green-800, #1A6B5A)" />
-            <h2 className="pl-not-found__title">Ses bulunamadı</h2>
-            <p className="pl-not-found__subtitle">Bu ses dersini bulamadık.</p>
+            <h2 className="pl-not-found__title">{isTr ? 'Ses bulunamadı' : 'Sound not found'}</h2>
+            <p className="pl-not-found__subtitle">{isTr ? 'Bu ses dersini bulamadık.' : 'We could not find this sound lesson.'}</p>
             <Button variant="primary" onClick={() => navigate('/dashboard')}>
-              Ana Sayfaya Dön
+              {isTr ? 'Ana Sayfaya Dön' : 'Back to Dashboard'}
             </Button>
           </div>
         </Card>
@@ -268,7 +271,7 @@ function PhonicsLesson() {
         {sound.grapheme}
       </motion.div>
 
-      <p className="pl-stepDesc">Dinle! Bu harf şunu söyler...</p>
+      <p className="pl-stepDesc">{isTr ? 'Dinle! Bu harf şunu söyler...' : 'Listen! This letter says...'}</p>
 
       <Button
         variant="primary"
@@ -281,7 +284,7 @@ function PhonicsLesson() {
         }}
         style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
       >
-        3 kez dinle
+        {isTr ? '3 kez dinle' : 'Listen 3 times'}
       </Button>
 
       <div className="pl-mimiBox">
@@ -292,7 +295,7 @@ function PhonicsLesson() {
       </div>
 
       <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-        Devam Et
+        {isTr ? 'Devam Et' : 'Continue'}
       </Button>
     </motion.div>
   );
@@ -332,7 +335,7 @@ function PhonicsLesson() {
           onClick={() => speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.6)}
           style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
         >
-          Beraber söyle!
+          {isTr ? 'Beraber söyle!' : 'Say it together!'}
         </Button>
 
         <Button
@@ -343,34 +346,33 @@ function PhonicsLesson() {
             const SpeechRecognitionAPI =
               (window as unknown as Record<string, unknown>).SpeechRecognition ||
               (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
-            if (SpeechRecognitionAPI) {
-              const recognition = new (SpeechRecognitionAPI as new () => SpeechRecognition)();
-              recognition.lang = 'en-US';
-              recognition.interimResults = false;
-              setIsListening(true);
-              recognition.onresult = (event: SpeechRecognitionEvent) => {
-                const transcript = event.results[0][0].transcript.toLowerCase().trim();
-                void transcript; // acknowledged
-                setIsListening(false);
-                // Any result = good effort for kids
-                SFX.correct();
-              };
-              recognition.onerror = () => setIsListening(false);
-              recognition.onend = () => setIsListening(false);
-              recognition.start();
+            if (!SpeechRecognitionAPI) {
+              return;
             }
+            const recognition = new (SpeechRecognitionAPI as new () => SpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            setIsListening(true);
+            recognition.onresult = () => {
+              setIsListening(false);
+              // Any result = good effort for kids
+              SFX.correct();
+            };
+            recognition.onerror = () => setIsListening(false);
+            recognition.onend = () => setIsListening(false);
+            recognition.start();
           }}
           disabled={isListening}
           style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
         >
-          {isListening ? 'Dinleniyor...' : 'Kaydet!'}
+          {isListening ? (isTr ? 'Dinleniyor...' : 'Listening...') : (isTr ? 'Kaydet!' : 'Record!')}
         </Button>
       </div>
 
       <p className="pl-turkishNote">{sound.turkishNote}</p>
 
       <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-        Yaptım!
+        {isTr ? 'Yaptım!' : 'Done!'}
       </Button>
     </motion.div>
   );
@@ -385,7 +387,7 @@ function PhonicsLesson() {
         exit={{ opacity: 0, y: -20 }}
         className="pl-stepContent"
       >
-        <p className="pl-stepDesc">Her kelimeye dokunarak dinle!</p>
+        <p className="pl-stepDesc">{isTr ? 'Her kelimeye dokunarak dinle!' : 'Tap each word to hear it!'}</p>
 
         <div className="pl-keywordsGrid">
           {keywords.map((kw) => {
@@ -429,7 +431,7 @@ function PhonicsLesson() {
         {allClicked && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <Badge variant="success" icon={<Sparkles size={14} />}>
-              Tüm kelimeler dinlendi!
+              {isTr ? 'Tüm kelimeler dinlendi!' : 'All words listened!'}
             </Badge>
           </motion.div>
         )}
@@ -441,7 +443,7 @@ function PhonicsLesson() {
           onClick={goNext}
           disabled={!allClicked}
         >
-          Devam Et
+          {isTr ? 'Devam Et' : 'Continue'}
         </Button>
       </motion.div>
     );
@@ -458,11 +460,11 @@ function PhonicsLesson() {
       {blendingDone ? (
         <div className="pl-blending-done">
           <Badge variant="success" icon={<Sparkles size={14} />}>
-            Birleştirme tamamlandı!
+            {isTr ? 'Birleştirme tamamlandı!' : 'Blending complete!'}
           </Badge>
           <div className="pl-blending-actions">
             <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-              Devam Et
+              {isTr ? 'Devam Et' : 'Continue'}
             </Button>
           </div>
         </div>
@@ -493,9 +495,9 @@ function PhonicsLesson() {
         >
           <div className="pl-not-found">
             <Target size={48} color="var(--green-800, #1A6B5A)" />
-            <h3 className="pl-not-found__title">Harika bölme!</h3>
+            <h3 className="pl-not-found__title">{isTr ? 'Harika bölme!' : 'Great segmenting!'}</h3>
             <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-              Devam Et
+              {isTr ? 'Devam Et' : 'Continue'}
             </Button>
           </div>
         </motion.div>
@@ -510,7 +512,7 @@ function PhonicsLesson() {
         exit={{ opacity: 0, y: -20 }}
         className="pl-stepContent"
       >
-        <p className="pl-stepDesc">Bu kelimeyi seslere böl!</p>
+        <p className="pl-stepDesc">{isTr ? 'Bu kelimeyi seslere böl!' : 'Break this word into sounds!'}</p>
 
         <div className="pl-segmenting-counter">
           <Badge variant="info">{segmentingIndex + 1}/{segmentingWords.length}</Badge>
@@ -538,7 +540,7 @@ function PhonicsLesson() {
             }}
             style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
           >
-            Sesleri göster!
+            {isTr ? 'Sesleri göster!' : 'Show sounds!'}
           </Button>
         ) : (
           <>
@@ -567,7 +569,9 @@ function PhonicsLesson() {
                 setXpEarned((prev) => prev + 10);
               }}
             >
-              {segmentingIndex + 1 < segmentingWords.length ? 'Sonraki kelime' : 'Tamam!'}
+              {segmentingIndex + 1 < segmentingWords.length
+                ? (isTr ? 'Sonraki kelime' : 'Next word')
+                : (isTr ? 'Tamam!' : 'Done!')}
             </Button>
           </>
         )}
@@ -589,7 +593,7 @@ function PhonicsLesson() {
       >
         <div className="pl-reading-header">
           <PenTool size={20} color="var(--green-800, #1A6B5A)" />
-          <p className="pl-stepDesc pl-stepDesc--no-margin">Harfi parmağınla takip et!</p>
+          <p className="pl-stepDesc pl-stepDesc--no-margin">{isTr ? 'Harfi parmağınla takip et!' : 'Trace the letter with your finger!'}</p>
         </div>
 
         <LetterTracing
@@ -620,7 +624,7 @@ function PhonicsLesson() {
       >
         <div className="pl-reading-header">
           <BookOpen size={20} color="var(--green-800, #1A6B5A)" />
-          <p className="pl-stepDesc pl-stepDesc--no-margin">Herhangi bir kelimeye dokunarak dinle!</p>
+          <p className="pl-stepDesc pl-stepDesc--no-margin">{isTr ? 'Herhangi bir kelimeye dokunarak dinle!' : 'Tap any word to hear it!'}</p>
         </div>
 
         <Card variant="elevated" padding="lg">
@@ -648,11 +652,11 @@ function PhonicsLesson() {
           onClick={() => speak(decodableText, 0.8)}
           style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
         >
-          Yüksek sesle oku!
+          {isTr ? 'Yüksek sesle oku!' : 'Read aloud!'}
         </Button>
 
         <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-          Devam Et
+          {isTr ? 'Devam Et' : 'Continue'}
         </Button>
       </motion.div>
     );
@@ -671,9 +675,9 @@ function PhonicsLesson() {
           exit={{ opacity: 0, y: -20 }}
           className="pl-stepContent"
         >
-          <p className="pl-stepDesc">Bu grup için henüz şarkı yok.</p>
+          <p className="pl-stepDesc">{isTr ? 'Bu grup için henüz şarkı yok.' : 'No song available for this group yet.'}</p>
           <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-            Devam Et
+            {isTr ? 'Devam Et' : 'Continue'}
           </Button>
         </motion.div>
       );
@@ -761,26 +765,36 @@ function PhonicsLesson() {
         </motion.div>
 
         <h2 className="pl-completion-title">
-          {isGroupComplete ? 'Grup Tamamlandı!' : 'Harika iş!'}
+          {isGroupComplete
+            ? (isTr ? 'Grup Tamamlandı!' : 'Group Complete!')
+            : (isTr ? 'Harika iş!' : 'Great job!')}
         </h2>
         <p className="pl-completion-subtitle">
           {isGroupComplete
-            ? `${currentGroup?.name || 'Bu gruptaki'} tüm sesleri öğrendin!`
-            : <>&quot;{sound.grapheme}&quot; sesini öğrendin!</>}
+            ? (isTr
+                ? `${currentGroup?.name || 'Bu gruptaki'} tüm sesleri öğrendin!`
+                : `You learned all sounds in ${currentGroup?.name || 'this group'}!`)
+            : (isTr
+                ? <>&quot;{sound.grapheme}&quot; sesini öğrendin!</>
+                : <>You learned the &quot;{sound.grapheme}&quot; sound!</>)}
         </p>
 
         <Card variant="elevated" padding="lg">
           <div className="pl-completion-card">
             <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{totalXP} XP kazandın!
+              +{totalXP} XP {isTr ? 'kazandın!' : 'earned!'}
             </Badge>
             {gardenPlant && plantStage && (
               <p className="pl-plant-grew">
-                Bitkini büyüdü! Artık {plantStage.name === 'flowering' ? 'tam çiçek açtı' : `${plantStage.name} aşamasında`}!
+                {isTr
+                  ? `Bitkini büyüdü! Artık ${plantStage.name === 'flowering' ? 'tam çiçek açtı' : `${plantStage.name} aşamasında`}!`
+                  : `Your plant grew! It is now ${plantStage.name === 'flowering' ? 'in full bloom' : `at the ${plantStage.name} stage`}!`}
               </p>
             )}
             <p className="pl-mastery-note">
-              &quot;{sound.grapheme}&quot; sesi ustalık tablona eklendi
+              {isTr
+                ? <>&quot;{sound.grapheme}&quot; sesi ustalık tablona eklendi</>
+                : <>The &quot;{sound.grapheme}&quot; sound was added to your mastery board</>}
             </p>
           </div>
         </Card>
@@ -795,7 +809,7 @@ function PhonicsLesson() {
               style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
               fullWidth
             >
-              Sonraki Ses: {nextSoundInGroup.grapheme.toUpperCase()}
+              {isTr ? `Sonraki Ses: ${nextSoundInGroup.grapheme.toUpperCase()}` : `Next Sound: ${nextSoundInGroup.grapheme.toUpperCase()}`}
             </Button>
           ) : (
             isGroupComplete && (
@@ -807,7 +821,7 @@ function PhonicsLesson() {
                 style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
                 fullWidth
               >
-                Tüm Sesler Tamamlandı!
+                {isTr ? 'Tüm Sesler Tamamlandı!' : 'All Sounds Complete!'}
               </Button>
             )
           )}
@@ -817,7 +831,7 @@ function PhonicsLesson() {
             onClick={() => navigate('/dashboard')}
             fullWidth
           >
-            Ana Sayfaya Dön
+            {isTr ? 'Ana Sayfaya Dön' : 'Back to Dashboard'}
           </Button>
         </div>
       </motion.div>
@@ -836,7 +850,7 @@ function PhonicsLesson() {
         <div className="pl-progress-row">
           <ProgressBar value={progress} variant="success" size="sm" animated />
         </div>
-        <Badge variant="info">{STEP_LABELS[currentStep]}</Badge>
+        <Badge variant="info">{isTr ? STEP_LABELS[currentStep].tr : STEP_LABELS[currentStep].en}</Badge>
       </div>
 
       {/* Step indicators */}
@@ -889,7 +903,7 @@ function PhonicsLesson() {
             background: 'transparent',
           }}
         >
-          Türkçe Zorluklarım
+          {isTr ? 'Türkçe Zorluklarım' : 'My Turkish Challenges'}
         </Link>
       </div>
 

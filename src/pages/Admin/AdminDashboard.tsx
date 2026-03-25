@@ -30,13 +30,28 @@ import { fallbackGames, fallbackVideos, fallbackWorksheets } from '../../data/fa
 import { kidsWords } from '../../data/wordsData';
 import './AdminDashboard.css';
 
+interface UserSettings {
+    is_premium?: boolean;
+    [key: string]: unknown;
+}
+
 interface RecentUser {
     id: string;
     display_name: string;
     email?: string;
-    settings?: Record<string, unknown>;
+    settings?: UserSettings;
     role: string;
     created_at: string;
+}
+
+interface SupabaseUserRow {
+    id: string;
+    display_name: string;
+    email?: string;
+    settings?: UserSettings;
+    role: string;
+    created_at: string;
+    is_online?: boolean;
 }
 
 const buildGrowthData = (dailyCounts: Record<string, number>) => {
@@ -88,15 +103,17 @@ function AdminDashboard() {
         ]);
 
         if (usersRes.status === 'fulfilled' && !usersRes.value.error && usersRes.value.data) {
-            const data = usersRes.value.data;
-            setRecentUsers(data.slice(0, 6) as RecentUser[]);
+            const data = usersRes.value.data as SupabaseUserRow[];
+            setRecentUsers(data.slice(0, 6).map(({ id, display_name, email, settings, role, created_at }) => ({
+                id, display_name, email, settings, role, created_at,
+            })));
 
-            const premium = data.filter(u => (u.settings as Record<string, unknown>)?.is_premium).length;
+            const premium = data.filter(u => u.settings?.is_premium === true).length;
             setPremiumUsers(premium);
 
             const today = new Date().toISOString().split('T')[0];
             const active = data.filter(u =>
-                u.is_online || (u.created_at && u.created_at.startsWith(today))
+                u.is_online === true || (u.created_at && u.created_at.startsWith(today))
             ).length;
             setActiveToday(active);
         }
@@ -137,8 +154,8 @@ function AdminDashboard() {
 
         if (growthRes.status === 'fulfilled' && !growthRes.value.error && growthRes.value.data) {
             const dailyCounts: Record<string, number> = {};
-            for (const row of growthRes.value.data) {
-                const day = (row.created_at as string).split('T')[0];
+            for (const row of growthRes.value.data as { created_at: string }[]) {
+                const day = row.created_at.split('T')[0];
                 dailyCounts[day] = (dailyCounts[day] ?? 0) + 1;
             }
             setGrowthData(buildGrowthData(dailyCounts));
@@ -295,7 +312,7 @@ function AdminDashboard() {
                                     <div className="adm-activity-text">
                                         <strong>{user.display_name || 'Anonymous'}</strong>
                                         {' '}registered
-                                        {(user.settings?.is_premium as boolean) && (
+                                        {user.settings?.is_premium === true && (
                                             <Crown size={12} className="adm-crown-inline" />
                                         )}
                                     </div>

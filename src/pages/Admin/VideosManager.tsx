@@ -6,26 +6,46 @@ import { adminFetch, getAdminApiBase } from '../../utils/adminApi';
 import toast from 'react-hot-toast';
 import './VideosManager.css';
 
+type VideoType = 'song' | 'lesson' | 'story';
+
+interface VideoFormData {
+    id: string;
+    title: string;
+    description: string;
+    grade: string;
+    type: VideoType;
+    duration: string;
+    isPopular: boolean;
+}
+
+const INITIAL_FORM: VideoFormData = {
+    id: '',
+    title: '',
+    description: '',
+    grade: '2nd Grade',
+    type: 'song',
+    duration: '',
+    isPopular: false
+};
+
 function VideosManager() {
     const [videos, setVideos] = useState<Video[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('all');
     const [selectedType, setSelectedType] = useState('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingVideo, setEditingVideo] = useState<Video | null>(null);
     const [previewVideo, setPreviewVideo] = useState<string | null>(null);
-    const [formData, setFormData] = useState({
-        id: '',
-        title: '',
-        description: '',
-        grade: '2nd Grade',
-        type: 'song' as 'song' | 'lesson' | 'story',
-        duration: '',
-        isPopular: false
-    });
+    const [formData, setFormData] = useState<VideoFormData>(INITIAL_FORM);
 
     useEffect(() => {
-        videoStore.fetchVideos().then(() => setVideos(videoStore.getVideos()));
+        setLoading(true);
+        videoStore.fetchVideos()
+            .then(() => setVideos(videoStore.getVideos()))
+            .catch(() => toast.error('Videolar yüklenirken hata oluştu'))
+            .finally(() => setLoading(false));
     }, []);
     useEffect(() => {
         const unsubscribe = videoStore.subscribe((updatedVideos) => {
@@ -47,15 +67,7 @@ function VideosManager() {
 
     const openAddModal = () => {
         setEditingVideo(null);
-        setFormData({
-            id: '',
-            title: '',
-            description: '',
-            grade: '2nd Grade',
-            type: 'song',
-            duration: '',
-            isPopular: false
-        });
+        setFormData({ ...INITIAL_FORM });
         setIsModalOpen(true);
     };
 
@@ -66,23 +78,25 @@ function VideosManager() {
             title: video.title,
             description: video.description,
             grade: video.grade,
-            type: (video.category || 'song') as 'song' | 'lesson' | 'story',
+            type: (video.category || 'song') as VideoType,
             duration: video.duration,
             isPopular: video.isPopular || false
         });
         setIsModalOpen(true);
     };
 
-    const extractYouTubeId = (url: string): string => {
+    const extractYouTubeId = (url: string): string | null => {
+        const trimmed = url.trim();
+        if (!trimmed) return null;
         const patterns = [
             /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
             /^([a-zA-Z0-9_-]{11})$/
         ];
         for (const pattern of patterns) {
-            const match = url.match(pattern);
+            const match = trimmed.match(pattern);
             if (match) return match[1];
         }
-        return url;
+        return null;
     };
 
     const [fetchingMeta, setFetchingMeta] = useState(false);
@@ -95,7 +109,7 @@ function VideosManager() {
         setFetchingMeta(true);
         try {
             const res = await fetch(`${getAdminApiBase()}/api/youtube/metadata?url=${encodeURIComponent(raw)}`);
-            const json = await res.json().catch(() => ({}));
+            const json: Record<string, string | undefined> = await res.json().catch(() => ({}));
             if (json.videoId) {
                 setFormData(f => ({
                     ...f,
@@ -116,15 +130,24 @@ function VideosManager() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const videoId = extractYouTubeId(formData.id);
+        if (!videoId) {
+            toast.error('Gecerli bir YouTube URL veya Video ID girin');
+            return;
+        }
+        if (!formData.title.trim()) {
+            toast.error('Video baslligi zorunludur');
+            return;
+        }
+        setSaving(true);
         const thumbnail = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
         const payload = {
             youtube_id: videoId,
-            title: formData.title,
-            description: formData.description,
+            title: formData.title.trim(),
+            description: formData.description.trim(),
             thumbnail,
             grade: formData.grade,
             category: formData.type,
-            duration: formData.duration,
+            duration: formData.duration.trim(),
             isPopular: formData.isPopular
         };
         try {
@@ -133,39 +156,46 @@ function VideosManager() {
                     method: 'PATCH',
                     body: JSON.stringify(payload)
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Güncelleme başarısız');
+                const json: Record<string, unknown> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error((json.error as string) || 'Guncelleme basarisiz');
                 await videoStore.fetchVideos();
                 setVideos(videoStore.getVideos());
-                toast.success('Video güncellendi!');
+                toast.success('Video guncellendi!');
             } else {
                 const res = await adminFetch('/api/admin/videos', {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
+                const json: Record<string, unknown> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error((json.error as string) || 'Kayit basarisiz');
                 await videoStore.fetchVideos();
                 setVideos(videoStore.getVideos());
                 toast.success('Yeni video eklendi!');
             }
             setIsModalOpen(false);
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Kayıt başarısız');
+            toast.error(err instanceof Error ? err.message : 'Kayit basarisiz');
+        } finally {
+            setSaving(false);
         }
     };
 
+    const [deleting, setDeleting] = useState<string | null>(null);
+
     const handleDelete = async (id: string) => {
-        if (!confirm('Bu videoyu silmek istediğinize emin misiniz?')) return;
+        if (!confirm('Bu videoyu silmek istediginize emin misiniz?')) return;
+        setDeleting(id);
         try {
             const res = await adminFetch(`/api/admin/videos/${id}`, { method: 'DELETE' });
-            const json = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(json.error || 'Silinemedi');
+            const json: Record<string, unknown> = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error((json.error as string) || 'Silinemedi');
             await videoStore.fetchVideos();
             setVideos(videoStore.getVideos());
             toast.success('Video silindi!');
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Silinemedi');
+        } finally {
+            setDeleting(null);
         }
     };
 
@@ -219,19 +249,27 @@ function VideosManager() {
                     ))}
                 </div>
 
+                {loading ? (
+                    <div className="no-data">
+                        <p>Yukluyor...</p>
+                    </div>
+                ) : (
+                <>
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Görsel</th>
-                            <th>Başlık</th>
-                            <th>Sınıf</th>
-                            <th>Tür</th>
-                            <th>Süre</th>
-                            <th>İşlemler</th>
+                            <th>Gorsel</th>
+                            <th>Baslik</th>
+                            <th>Sinif</th>
+                            <th>Tur</th>
+                            <th>Sure</th>
+                            <th>Islemler</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredVideos.map(video => (
+                        {filteredVideos.map(video => {
+                            const gradeColor = gradeInfo[video.grade]?.color ?? '#6b7280';
+                            return (
                             <tr key={video.id}>
                                 <td>
                                     <div
@@ -249,7 +287,7 @@ function VideosManager() {
                                 <td>
                                     <div>
                                         <strong>{video.title}</strong>
-                                        {video.isPopular && <span className="adm-badge-popular">POPÜLER</span>}
+                                        {video.isPopular && <span className="adm-badge-popular">POPULER</span>}
                                         <div className="adm-video-desc">{video.description}</div>
                                     </div>
                                 </td>
@@ -257,8 +295,8 @@ function VideosManager() {
                                     <span
                                         className="badge"
                                         style={{
-                                            background: `${gradeInfo[video.grade]?.color}15`,
-                                            color: gradeInfo[video.grade]?.color
+                                            background: `${gradeColor}15`,
+                                            color: gradeColor
                                         }}
                                     >
                                         {video.grade}
@@ -272,24 +310,27 @@ function VideosManager() {
                                 <td>{video.duration}</td>
                                 <td>
                                     <div className="action-btns">
-                                        <button type="button" className="edit-btn" onClick={() => openEditModal(video)}>
+                                        <button type="button" className="edit-btn" onClick={() => openEditModal(video)} disabled={deleting === video.id}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(video.id)}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(video.id)} disabled={deleting === video.id}>
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                        ))}
+                            );
+                        })}
                     </tbody>
                 </table>
 
                 {filteredVideos.length === 0 && (
                     <div className="no-data">
                         <VideoIcon size={48} style={{ opacity: 0.3 }} />
-                        <p>Video bulunamadı</p>
+                        <p>Video bulunamadi</p>
                     </div>
+                )}
+                </>
                 )}
             </div>
 
@@ -395,8 +436,8 @@ function VideosManager() {
                                 <button type="button" className="cancel-btn" onClick={() => setIsModalOpen(false)}>
                                     İptal
                                 </button>
-                                <button type="submit" className="save-btn">
-                                    {editingVideo ? 'Güncelle' : 'Ekle'}
+                                <button type="submit" className="save-btn" disabled={saving}>
+                                    {saving ? 'Kaydediliyor...' : editingVideo ? 'Guncelle' : 'Ekle'}
                                 </button>
                             </div>
                         </form>
@@ -422,10 +463,10 @@ function VideosManager() {
                                 src={`https://www.youtube.com/embed/${previewVideo}`}
                                 width="100%"
                                 height="400"
-                                frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
-                                style={{ display: 'block' }}
+                                style={{ display: 'block', border: 'none' }}
+                                title="Video onizleme"
                             />
                         </div>
                     </div>

@@ -1,31 +1,50 @@
 import { useState } from 'react';
 import {
-    Save, Bell, Globe, Shield, CreditCard, BookOpen, Eye, EyeOff
+    Save, Bell, Globe, Shield, CreditCard, BookOpen
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './AdminSettings.css';
 
-const DEFAULT_SETTINGS = {
+type AnnouncementType = 'info' | 'success' | 'warning' | 'error';
+
+interface SiteSettingsData {
+    siteName: string;
+    siteDescription: string;
+    defaultLanguage: string;
+    planFree: string;
+    planPremium: string;
+    defaultWorld: string;
+    featuredContentEnabled: boolean;
+    announcementEnabled: boolean;
+    announcementText: string;
+    announcementType: AnnouncementType;
+    maintenanceMode: boolean;
+    allowRegistration: boolean;
+}
+
+const DEFAULT_SETTINGS: SiteSettingsData = {
     siteName: 'MinesMinis',
     siteDescription: 'Premium English education for children ages 1-10',
     defaultLanguage: 'tr',
-    lemonSqueezyApiKey: '',
     planFree: 'Free - Limited content',
     planPremium: 'Premium - Full access',
     defaultWorld: 'w1',
     featuredContentEnabled: true,
     announcementEnabled: false,
     announcementText: '',
-    announcementType: 'info' as 'info' | 'success' | 'warning' | 'error',
+    announcementType: 'info',
     maintenanceMode: false,
     allowRegistration: true,
 };
 
 function AdminSettings() {
-    const [settings, setSettings] = useState(() => {
+    const [settings, setSettings] = useState<SiteSettingsData>(() => {
         try {
             const saved = localStorage.getItem('siteSettings');
-            if (saved) return { ...DEFAULT_SETTINGS, ...(JSON.parse(saved) as typeof DEFAULT_SETTINGS) };
+            if (saved) {
+                const parsed = JSON.parse(saved) as Partial<SiteSettingsData>;
+                return { ...DEFAULT_SETTINGS, ...parsed };
+            }
         } catch {
             // ignore parse errors
         }
@@ -33,14 +52,17 @@ function AdminSettings() {
     });
 
     const [isSaving, setIsSaving] = useState(false);
-    const [showApiKey, setShowApiKey] = useState(false);
 
     const handleSave = async () => {
         setIsSaving(true);
-        await new Promise(resolve => setTimeout(resolve, 800));
-        localStorage.setItem('siteSettings', JSON.stringify(settings));
-        setIsSaving(false);
-        toast.success('Settings saved successfully');
+        try {
+            localStorage.setItem('siteSettings', JSON.stringify(settings));
+            toast.success('Settings saved successfully');
+        } catch (err) {
+            toast.error(`Failed to save settings: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -118,25 +140,11 @@ function AdminSettings() {
                 <div className="adm-settings-section-body">
                     <div className="adm-settings-field">
                         <div className="adm-settings-label">
-                            Lemon Squeezy API Key
-                            <small>For payment processing</small>
+                            Payment Provider
+                            <small>API keys are managed via environment variables on the server</small>
                         </div>
                         <div className="adm-settings-input">
-                            <div className="adm-api-key-input">
-                                <input
-                                    type={showApiKey ? 'text' : 'password'}
-                                    value={settings.lemonSqueezyApiKey}
-                                    onChange={(e) => setSettings({ ...settings, lemonSqueezyApiKey: e.target.value })}
-                                    placeholder="sk_live_..."
-                                />
-                                <button
-                                    type="button"
-                                    className="adm-api-key-toggle"
-                                    onClick={() => setShowApiKey(!showApiKey)}
-                                >
-                                    {showApiKey ? <EyeOff size={14} /> : <Eye size={14} />}
-                                </button>
-                            </div>
+                            <span className="adm-settings-hint">Configured via LEMON_SQUEEZY_API_KEY env var</span>
                         </div>
                     </div>
                     <div className="adm-settings-field">
@@ -248,7 +256,7 @@ function AdminSettings() {
                                     />
                                     <select
                                         value={settings.announcementType}
-                                        onChange={(e) => setSettings({ ...settings, announcementType: e.target.value as 'info' | 'success' | 'warning' | 'error' })}
+                                        onChange={(e) => setSettings({ ...settings, announcementType: e.target.value as AnnouncementType })}
                                     >
                                         <option value="info">Info</option>
                                         <option value="success">Success</option>

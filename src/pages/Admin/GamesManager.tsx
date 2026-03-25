@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, Search, Gamepad2 } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { Plus, Pencil, Trash2, X, Search, Gamepad2, Loader2 } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import { gameStore } from '../../data/gameStore';
 import { adminFetch } from '../../utils/adminApi';
+import type { Database } from '../../config/supabase';
 import toast from 'react-hot-toast';
 import './GamesManager.css';
+
+type SupabaseGameRow = Database['public']['Tables']['games']['Row'];
 
 const extractEmbedFromIframe = (text: string): string => {
     const m = text.match(/src=["']([^"']+)["']/i) || text.match(/https?:\/\/[^\s"']+/);
@@ -24,6 +27,33 @@ type GameRow = {
     grade: string;
 };
 
+interface GameFormData {
+    title: string;
+    embedUrl: string;
+    thumbnailUrl: string;
+    type: string;
+    grade: string;
+}
+
+const INITIAL_FORM: GameFormData = {
+    title: '',
+    embedUrl: '',
+    thumbnailUrl: '',
+    type: 'Quiz',
+    grade: '2'
+};
+
+function mapSupabaseRow(r: SupabaseGameRow): GameRow {
+    return {
+        id: String(r.id),
+        title: String(r.title),
+        embedUrl: String(r.url),
+        thumbnailUrl: String(r.thumbnail_url || ''),
+        type: String(r.category || 'Quiz'),
+        grade: String(r.target_audience || '2')
+    };
+}
+
 function GamesManager() {
     const [games, setGames] = useState<GameRow[]>([]);
     const [gamesLoading, setGamesLoading] = useState(true);
@@ -31,13 +61,15 @@ function GamesManager() {
     const [selectedGrade, setSelectedGrade] = useState('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingGame, setEditingGame] = useState<GameRow | null>(null);
-    const [formData, setFormData] = useState({
-        title: '',
-        embedUrl: '',
-        thumbnailUrl: '',
-        type: 'Quiz',
-        grade: '2'
-    });
+    const [saving, setSaving] = useState(false);
+    const [deletingGameId, setDeletingGameId] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [formData, setFormData] = useState<GameFormData>(INITIAL_FORM);
+
+    const loadLocalGames = useCallback((): GameRow[] => {
+        const local = gameStore.getGames();
+        return local.map(g => ({ id: String(g.id), title: g.title, embedUrl: g.embedUrl, thumbnailUrl: g.thumbnailUrl, type: g.type, grade: g.grade || '2' }));
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -46,42 +78,50 @@ function GamesManager() {
                 const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 if (data && data.length > 0) {
-                    setGames(data.map((r: Record<string, unknown>) => ({
-                        id: String(r.id),
-                        title: String(r.title),
-                        embedUrl: String(r.url),
-                        thumbnailUrl: String(r.thumbnail_url || ''),
-                        type: String(r.category || 'Quiz'),
-                        grade: String(r.target_audience || '2')
-                    })));
+                    setGames(data.map((r) => mapSupabaseRow(r as SupabaseGameRow)));
                 } else {
-                    const local = gameStore.getGames();
-                    setGames(local.map(g => ({ id: String(g.id), title: g.title, embedUrl: g.embedUrl, thumbnailUrl: g.thumbnailUrl, type: g.type, grade: g.grade || '2' })));
+                    setGames(loadLocalGames());
                 }
             } catch {
-                toast.error('Oyunlar yüklenirken hata. Yerel veri kullanılıyor.');
-                const local = gameStore.getGames();
-                setGames(local.map(g => ({ id: String(g.id), title: g.title, embedUrl: g.embedUrl, thumbnailUrl: g.thumbnailUrl, type: g.type, grade: g.grade || '2' })));
+                toast.error('Oyunlar yuklenirken hata. Yerel veri kullaniliyor.');
+                setGames(loadLocalGames());
             } finally {
                 setGamesLoading(false);
             }
         })();
-    }, []);
+    }, [loadLocalGames]);
+
+    // Sync with gameStore for cross-tab updates
+    useEffect(() => {
+        const unsubscribe = gameStore.subscribe(() => {
+            setGames(loadLocalGames());
+        });
+        return unsubscribe;
+    }, [loadLocalGames]);
 
     const grades = ['all', '2', '3', '4', 'primary'];
     const gameTypes = ['Quiz', 'Match Up', 'Maze Chase', 'Whack-a-Mole', 'Open Box', 'Memory Game'];
 
-    const filteredGames = games.filter(game => {
+    const itemsPerPage = 12;
+
+    const filteredGames = useMemo(() => games.filter(game => {
         const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesGrade = selectedGrade === 'all' || game.grade === selectedGrade;
         return matchesSearch && matchesGrade;
-    });
+    }), [games, searchTerm, selectedGrade]);
 
-    const openAddModal = () => {
+    const totalPages = Math.ceil(filteredGames.length / itemsPerPage);
+
+    const paginatedGames = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage;
+        return filteredGames.slice(start, start + itemsPerPage);
+    }, [filteredGames, currentPage]);
+
+    const openAddModal = useCallback(() => {
         setEditingGame(null);
-        setFormData({ title: '', embedUrl: '', thumbnailUrl: '', type: 'Quiz', grade: '2' });
+        setFormData(INITIAL_FORM);
         setIsModalOpen(true);
-    };
+    }, []);
 
     const openEditModal = (game: GameRow) => {
         setEditingGame(game);
@@ -97,17 +137,22 @@ function GamesManager() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const url = extractEmbedFromIframe(formData.embedUrl) || formData.embedUrl;
+        const title = formData.title.trim();
+        if (!title) { toast.error('Oyun adi zorunlu'); return; }
+
+        const url = extractEmbedFromIframe(formData.embedUrl) || formData.embedUrl.trim();
         if (!url.startsWith('http')) {
-            toast.error('Geçerli bir embed URL veya iframe kodu girin');
+            toast.error('Gecerli bir embed URL veya iframe kodu girin');
             return;
         }
+
+        setSaving(true);
         try {
             const body = {
-                title: formData.title,
+                title,
                 url,
                 category: formData.type,
-                thumbnail_url: formData.thumbnailUrl || null,
+                thumbnail_url: formData.thumbnailUrl.trim() || null,
                 description: formData.type,
                 target_audience: formData.grade
             };
@@ -116,47 +161,51 @@ function GamesManager() {
                     method: 'PATCH',
                     body: JSON.stringify(body)
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Güncelleme başarısız');
-                setGames(prev => prev.map(g => g.id === editingGame.id ? { ...g, ...formData, embedUrl: url } : g));
-                toast.success('Oyun güncellendi!');
+                const json: Record<string, string> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(json.error || 'Guncelleme basarisiz');
+                setGames(prev => prev.map(g => g.id === editingGame.id ? { ...g, title, embedUrl: url, thumbnailUrl: formData.thumbnailUrl.trim(), type: formData.type, grade: formData.grade } : g));
+                toast.success('Oyun guncellendi!');
             } else {
                 const res = await adminFetch('/api/admin/games', {
                     method: 'POST',
                     body: JSON.stringify(body)
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
-                setGames(prev => [{ id: json.id, ...formData, embedUrl: url }, ...prev]);
+                const json: Record<string, string> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(json.error || 'Kayit basarisiz');
+                const newId = json.id || `temp-${Date.now()}`;
+                setGames(prev => [{ id: newId, title, embedUrl: url, thumbnailUrl: formData.thumbnailUrl.trim(), type: formData.type, grade: formData.grade }, ...prev]);
                 toast.success('Yeni oyun eklendi!');
+                // Refresh from DB to get accurate data
                 try {
                     const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
-                    if (!error && data?.length) setGames(data.map((r: Record<string, unknown>) => ({
-                        id: String(r.id),
-                        title: String(r.title),
-                        embedUrl: String(r.url),
-                        thumbnailUrl: String(r.thumbnail_url || ''),
-                        type: String(r.category || 'Quiz'),
-                        grade: String(r.target_audience || '2')
-                    })));
-                } catch { /* ignore load error */ }
+                    if (!error && data?.length) {
+                        setGames(data.map((r) => mapSupabaseRow(r as SupabaseGameRow)));
+                    }
+                } catch {
+                    // DB refresh failed, local state is still valid
+                }
             }
             setIsModalOpen(false);
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Kayıt başarısız');
+            toast.error(err instanceof Error ? err.message : 'Kayit basarisiz');
+        } finally {
+            setSaving(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Bu oyunu silmek istediğinize emin misiniz?')) return;
+        if (!confirm('Bu oyunu silmek istediginize emin misiniz?')) return;
+        setDeletingGameId(id);
         try {
             const res = await adminFetch(`/api/admin/games/${id}`, { method: 'DELETE' });
-            const json = await res.json().catch(() => ({}));
+            const json: Record<string, string> = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.error || 'Silinemedi');
             setGames(prev => prev.filter(g => g.id !== id));
             toast.success('Oyun silindi!');
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Silinemedi');
+        } finally {
+            setDeletingGameId(null);
         }
     };
 
@@ -197,7 +246,7 @@ function GamesManager() {
                                 type="text"
                                 placeholder="Oyun ara..."
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                                 className="search-input adm-search-input"
                             />
                         </div>
@@ -213,7 +262,7 @@ function GamesManager() {
                         <button
                             key={grade}
                             className={`filter-chip ${selectedGrade === grade ? 'active' : ''}`}
-                            onClick={() => setSelectedGrade(grade)}
+                            onClick={() => { setSelectedGrade(grade); setCurrentPage(1); }}
                         >
                             {grade === 'all' ? 'Tümü' :
                                 grade === 'primary' ? 'İlkokul' :
@@ -233,15 +282,15 @@ function GamesManager() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredGames.map(game => (
+                        {paginatedGames.map(game => (
                             <tr key={game.id}>
                                 <td>
                                     <img
-                                        src={game.thumbnailUrl}
+                                        src={game.thumbnailUrl || undefined}
                                         alt={game.title}
                                         className="table-thumbnail"
                                         onError={(e) => {
-                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="40" viewBox="0 0 60 40"><rect fill="%236366f1" width="60" height="40"/><text x="30" y="25" text-anchor="middle" fill="white" font-size="16">🎮</text></svg>';
+                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="40" viewBox="0 0 60 40"><rect fill="%236366f1" width="60" height="40"/><text x="30" y="25" text-anchor="middle" fill="white" font-size="16">G</text></svg>';
                                         }}
                                     />
                                 </td>
@@ -249,14 +298,14 @@ function GamesManager() {
                                 <td>
                                     <span className="badge badge-beginner">{game.type}</span>
                                 </td>
-                                <td>{game.grade}. Sınıf</td>
+                                <td>{game.grade === 'primary' ? 'Ilkokul' : `${game.grade}. Sinif`}</td>
                                 <td>
                                     <div className="action-btns">
-                                        <button type="button" className="edit-btn" onClick={() => openEditModal(game)}>
+                                        <button type="button" className="edit-btn" onClick={() => openEditModal(game)} disabled={deletingGameId === game.id}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(String(game.id))}>
-                                            <Trash2 size={16} />
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(String(game.id))} disabled={deletingGameId === game.id}>
+                                            {deletingGameId === game.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                         </button>
                                     </div>
                                 </td>
@@ -268,7 +317,47 @@ function GamesManager() {
                 {filteredGames.length === 0 && (
                     <div className="no-data">
                         <Gamepad2 size={48} style={{ opacity: 0.3 }} />
-                        <p>Oyun bulunamadı</p>
+                        <p>Oyun bulunamadi</p>
+                    </div>
+                )}
+
+                {totalPages > 1 && (
+                    <div className="pagination">
+                        <button
+                            className="pagination-btn"
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                        >
+                            Onceki
+                        </button>
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            let page: number;
+                            if (totalPages <= 5) {
+                                page = i + 1;
+                            } else if (currentPage <= 3) {
+                                page = i + 1;
+                            } else if (currentPage >= totalPages - 2) {
+                                page = totalPages - 4 + i;
+                            } else {
+                                page = currentPage - 2 + i;
+                            }
+                            return (
+                                <button
+                                    key={page}
+                                    className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </button>
+                            );
+                        })}
+                        <button
+                            className="pagination-btn"
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                        >
+                            Sonraki
+                        </button>
                     </div>
                 )}
             </div>
@@ -350,8 +439,8 @@ function GamesManager() {
                                 <button type="button" className="cancel-btn" onClick={() => setIsModalOpen(false)}>
                                     İptal
                                 </button>
-                                <button type="submit" className="save-btn">
-                                    {editingGame ? 'Güncelle' : 'Ekle'}
+                                <button type="submit" className="save-btn" disabled={saving}>
+                                    {saving ? <><Loader2 size={16} className="animate-spin" /> Kaydediliyor...</> : (editingGame ? 'Guncelle' : 'Ekle')}
                                 </button>
                             </div>
                         </form>

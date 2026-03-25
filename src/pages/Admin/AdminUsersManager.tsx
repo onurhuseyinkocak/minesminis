@@ -1,27 +1,41 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
     Search, Users, Shield, Crown, Trash2, Plus, X, Mail, Key,
-    ChevronLeft, ChevronRight, Download, AlertTriangle, Eye
+    ChevronLeft, ChevronRight, Download, AlertTriangle, Eye,
+    ArrowUpDown, ArrowUp, ArrowDown, Ban, CheckCircle
 } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
 import './AdminUsersManager.css';
+
+type DbRole = 'student' | 'teacher' | 'parent';
+type DisplayRole = 'student' | 'teacher' | 'admin';
 
 interface User {
     id: string;
     email: string;
     display_name: string;
     settings: Record<string, unknown>;
-    role: 'student' | 'teacher' | 'parent';
+    role: DbRole;
     points: number;
     level: number;
     is_online: boolean;
     created_at: string;
 }
 
-const isUserPremium = (u: User) => !!(u.settings?.is_premium);
-const isUserAdmin = (u: User) => !!(u.settings?.is_admin);
+type SortField = 'display_name' | 'email' | 'role' | 'level' | 'points' | 'created_at';
+type SortDirection = 'asc' | 'desc';
+
+const isUserPremium = (u: User): boolean => !!(u.settings?.is_premium);
+const isUserAdmin = (u: User): boolean => !!(u.settings?.is_admin);
+const isUserBanned = (u: User): boolean => !!(u.settings?.is_banned);
 const getUserPremiumUntil = (u: User): string | null => (u.settings?.premium_until as string) || null;
+
+const getDisplayRole = (u: User): DisplayRole => {
+    if (isUserAdmin(u)) return 'admin';
+    if (u.role === 'teacher') return 'teacher';
+    return 'student';
+};
 
 const ITEMS_PER_PAGE = 15;
 
@@ -32,15 +46,18 @@ function AdminUsersManager() {
     const [selectedPremium, setSelectedPremium] = useState('all');
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortField, setSortField] = useState<SortField>('created_at');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
     // Modals
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [confirmState, setConfirmState] = useState<{
-        type: 'premium' | 'role' | 'delete';
+        type: 'premium' | 'role' | 'delete' | 'ban';
         user: User;
-        newRole?: 'student' | 'teacher' | 'admin';
+        newRole?: DisplayRole;
         newPremium?: boolean;
+        newBanned?: boolean;
     } | null>(null);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [premiumDurationMonths, setPremiumDurationMonths] = useState(1);
@@ -49,7 +66,7 @@ function AdminUsersManager() {
     const [newUserData, setNewUserData] = useState({
         email: '',
         display_name: '',
-        role: 'student' as 'student' | 'teacher' | 'admin',
+        role: 'student' as DisplayRole,
         is_premium: false,
         premium_months: 1
     });
@@ -64,31 +81,62 @@ function AdminUsersManager() {
                 .select('id, email, display_name, settings, role, points, level, is_online, created_at')
                 .order('created_at', { ascending: false });
             if (error) {
-                console.error('Supabase error:', error);
                 toast.error('Failed to load users');
-            } else {
-                setUsers((data || []).map(u => ({ ...u, settings: (u.settings || {}) as Record<string, unknown> })));
+                return;
             }
-        } catch (error) {
-            console.error('Error loading users:', error);
+            setUsers((data || []).map(u => ({ ...u, settings: (u.settings || {}) as Record<string, unknown> })));
+        } catch {
             toast.error('Failed to load users');
         } finally {
             setLoading(false);
         }
     };
 
+    const handleSort = useCallback((field: SortField) => {
+        setSortDirection(prev => sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'asc');
+        setSortField(field);
+    }, [sortField]);
+
     const filteredUsers = useMemo(() => {
-        return users.filter(user => {
+        const filtered = users.filter(user => {
             const matchesSearch =
                 user.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesRole = selectedRole === 'all' || user.role === selectedRole;
+            const displayRole = getDisplayRole(user);
+            const matchesRole = selectedRole === 'all' || displayRole === selectedRole;
             const matchesPremium = selectedPremium === 'all' ||
                 (selectedPremium === 'premium' && isUserPremium(user)) ||
                 (selectedPremium === 'free' && !isUserPremium(user));
             return matchesSearch && matchesRole && matchesPremium;
         });
-    }, [users, searchTerm, selectedRole, selectedPremium]);
+
+        filtered.sort((a, b) => {
+            let comparison = 0;
+            switch (sortField) {
+                case 'display_name':
+                    comparison = (a.display_name || '').localeCompare(b.display_name || '');
+                    break;
+                case 'email':
+                    comparison = (a.email || '').localeCompare(b.email || '');
+                    break;
+                case 'role':
+                    comparison = getDisplayRole(a).localeCompare(getDisplayRole(b));
+                    break;
+                case 'level':
+                    comparison = (a.level || 0) - (b.level || 0);
+                    break;
+                case 'points':
+                    comparison = (a.points || 0) - (b.points || 0);
+                    break;
+                case 'created_at':
+                    comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                    break;
+            }
+            return sortDirection === 'asc' ? comparison : -comparison;
+        });
+
+        return filtered;
+    }, [users, searchTerm, selectedRole, selectedPremium, sortField, sortDirection]);
 
     const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
     const paginatedUsers = useMemo(() => {
@@ -99,10 +147,10 @@ function AdminUsersManager() {
     // Reset page on filter change
     useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedRole, selectedPremium]);
 
-    const handleRoleChange = async (userId: string, newRole: 'student' | 'teacher' | 'admin') => {
+    const handleRoleChange = async (userId: string, newRole: DisplayRole) => {
         const isAdmin = newRole === 'admin';
         // DB role column only accepts 'student' | 'teacher' | 'parent'; admin is a settings flag
-        const dbRole: 'student' | 'teacher' | 'parent' = isAdmin ? 'teacher' : newRole as 'student' | 'teacher' | 'parent';
+        const dbRole: DbRole = isAdmin ? 'teacher' : (newRole as DbRole);
         setConfirmLoading(true);
         try {
             const targetUser = users.find(u => u.id === userId);
@@ -111,7 +159,10 @@ function AdminUsersManager() {
                 .from('users')
                 .update({ role: dbRole, settings: newSettings })
                 .eq('id', userId);
-            if (error) console.error('Supabase error:', error);
+            if (error) {
+                toast.error('Failed to update role');
+                return;
+            }
             setUsers(prev => prev.map(u =>
                 u.id === userId
                     ? { ...u, role: dbRole, settings: { ...u.settings, is_admin: isAdmin } }
@@ -119,14 +170,8 @@ function AdminUsersManager() {
             ));
             toast.success('User role updated');
             setConfirmState(null);
-        } catch (error) {
-            console.error('Error updating role:', error);
-            setUsers(prev => prev.map(u =>
-                u.id === userId
-                    ? { ...u, role: dbRole, settings: { ...u.settings, is_admin: isAdmin } }
-                    : u
-            ));
-            toast.success('User role updated (local)');
+        } catch {
+            toast.error('Failed to update role');
         } finally {
             setConfirmLoading(false);
         }
@@ -144,7 +189,10 @@ function AdminUsersManager() {
                 .from('users')
                 .update({ settings: newSettings })
                 .eq('id', userId);
-            if (error) console.error('Supabase error:', error);
+            if (error) {
+                toast.error('Failed to update premium status');
+                return;
+            }
             setUsers(prev => prev.map(u =>
                 u.id === userId
                     ? { ...u, settings: { ...u.settings, is_premium: premium, premium_until: premiumUntil } }
@@ -152,14 +200,35 @@ function AdminUsersManager() {
             ));
             toast.success(premium ? 'Premium activated' : 'Premium removed');
             setConfirmState(null);
-        } catch (error) {
-            console.error('Error updating premium:', error);
+        } catch {
+            toast.error('Failed to update premium status');
+        } finally {
+            setConfirmLoading(false);
+        }
+    };
+
+    const handleBanToggle = async (userId: string, banned: boolean) => {
+        setConfirmLoading(true);
+        const targetUser = users.find(u => u.id === userId);
+        const newSettings = { ...(targetUser?.settings || {}), is_banned: banned, banned_at: banned ? new Date().toISOString() : null };
+        try {
+            const { error } = await supabase
+                .from('users')
+                .update({ settings: newSettings })
+                .eq('id', userId);
+            if (error) {
+                toast.error(`Failed to ${banned ? 'ban' : 'unban'} user`);
+                return;
+            }
             setUsers(prev => prev.map(u =>
                 u.id === userId
-                    ? { ...u, settings: { ...u.settings, is_premium: premium, premium_until: premiumUntil } }
+                    ? { ...u, settings: newSettings }
                     : u
             ));
-            toast.success(premium ? 'Premium activated (local)' : 'Premium removed (local)');
+            toast.success(banned ? 'User banned' : 'User unbanned');
+            setConfirmState(null);
+        } catch {
+            toast.error(`Failed to ${banned ? 'ban' : 'unban'} user`);
         } finally {
             setConfirmLoading(false);
         }
@@ -171,21 +240,22 @@ function AdminUsersManager() {
         setConfirmLoading(true);
         try {
             const { error } = await supabase.from('users').delete().eq('id', userId);
-            if (error) console.error('Supabase error:', error);
+            if (error) {
+                toast.error('Failed to delete user');
+                return;
+            }
             setUsers(prev => prev.filter(u => u.id !== userId));
             toast.success('User deleted');
             setConfirmState(null);
             if (selectedUser?.id === userId) setSelectedUser(null);
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            setUsers(prev => prev.filter(u => u.id !== userId));
-            toast.success('User deleted (local)');
+        } catch {
+            toast.error('Failed to delete user');
         } finally {
             setConfirmLoading(false);
         }
     };
 
-    const generatePassword = () => {
+    const generatePassword = (): string => {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
         let p = '';
         for (let i = 0; i < 10; i++) p += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -202,13 +272,14 @@ function AdminUsersManager() {
         try {
             const newId = crypto.randomUUID();
             const now = new Date().toISOString();
-            const settings = {
-                is_admin: newUserData.role === 'admin',
+            const isAdmin = newUserData.role === 'admin';
+            const settings: Record<string, unknown> = {
+                is_admin: isAdmin,
                 is_premium: newUserData.is_premium,
                 premium_until: premiumUntil,
             };
             // DB role column only accepts 'student' | 'teacher' | 'parent'
-            const dbRole = newUserData.role === 'admin' ? 'teacher' : newUserData.role;
+            const dbRole: DbRole = isAdmin ? 'teacher' : (newUserData.role as DbRole);
             const payload = {
                 id: newId,
                 email: newUserData.email,
@@ -226,7 +297,8 @@ function AdminUsersManager() {
                 .select()
                 .single();
             if (insertError) {
-                throw insertError;
+                toast.error('Failed to create user');
+                return;
             }
             const newUser: User = insertedData
                 ? { ...insertedData, settings: (insertedData.settings || {}) as Record<string, unknown> }
@@ -243,8 +315,7 @@ function AdminUsersManager() {
             );
             setIsCreateOpen(false);
             setNewUserData({ email: '', display_name: '', role: 'student', is_premium: false, premium_months: 1 });
-        } catch (error) {
-            console.error('Error creating user:', error);
+        } catch {
             toast.error('Failed to create user');
         } finally {
             setIsCreating(false);
@@ -252,8 +323,12 @@ function AdminUsersManager() {
     };
 
     const exportUsers = () => {
+        if (filteredUsers.length === 0) {
+            toast.error('No users to export');
+            return;
+        }
         const csv = filteredUsers.map(u =>
-            `"${u.display_name}","${u.email}","${u.role}","${isUserPremium(u) ? 'Premium' : 'Free'}","${u.points}","${u.level}","${u.created_at}"`
+            `"${u.display_name}","${u.email}","${getDisplayRole(u)}","${isUserPremium(u) ? 'Premium' : 'Free'}","${u.points}","${u.level}","${u.created_at}"`
         ).join('\n');
         const blob = new Blob([`Name,Email,Role,Plan,Points,Level,Created\n${csv}`], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -261,13 +336,22 @@ function AdminUsersManager() {
         a.href = url;
         a.download = 'users_export.csv';
         a.click();
+        URL.revokeObjectURL(url);
         toast.success('Users exported');
+    };
+
+    const getSortIcon = (field: SortField) => {
+        if (sortField !== field) return <ArrowUpDown size={12} className="adm-sort-icon-inactive" />;
+        return sortDirection === 'asc'
+            ? <ArrowUp size={12} className="adm-sort-icon-active" />
+            : <ArrowDown size={12} className="adm-sort-icon-active" />;
     };
 
     // Stats
     const premiumCount = users.filter(u => isUserPremium(u)).length;
     const adminCount = users.filter(u => isUserAdmin(u)).length;
-    const teacherCount = users.filter(u => u.role === 'teacher').length;
+    const teacherCount = users.filter(u => u.role === 'teacher' && !isUserAdmin(u)).length;
+    const bannedCount = users.filter(u => isUserBanned(u)).length;
 
     if (loading) {
         return (
@@ -336,6 +420,17 @@ function AdminUsersManager() {
                         <div className="adm-users-stat-label">Teachers</div>
                     </div>
                 </div>
+                {bannedCount > 0 && (
+                    <div className="adm-users-stat">
+                        <div className="adm-users-stat-icon adm-stat-icon-red">
+                            <Ban size={18} />
+                        </div>
+                        <div>
+                            <div className="adm-users-stat-val">{bannedCount}</div>
+                            <div className="adm-users-stat-label">Banned</div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Toolbar */}
@@ -380,96 +475,131 @@ function AdminUsersManager() {
                 <table className="adm-table">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Role</th>
+                            <th className="adm-th-sortable" onClick={() => handleSort('display_name')}>
+                                User {getSortIcon('display_name')}
+                            </th>
+                            <th className="adm-th-sortable" onClick={() => handleSort('role')}>
+                                Role {getSortIcon('role')}
+                            </th>
                             <th>Plan</th>
-                            <th>Level</th>
-                            <th>Points</th>
+                            <th className="adm-th-sortable" onClick={() => handleSort('level')}>
+                                Level {getSortIcon('level')}
+                            </th>
+                            <th className="adm-th-sortable" onClick={() => handleSort('points')}>
+                                Points {getSortIcon('points')}
+                            </th>
                             <th>Status</th>
-                            <th>Joined</th>
+                            <th className="adm-th-sortable" onClick={() => handleSort('created_at')}>
+                                Joined {getSortIcon('created_at')}
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {paginatedUsers.map(user => (
-                            <tr key={user.id}>
-                                <td>
-                                    <div className="adm-user-cell">
-                                        <div className="adm-user-avatar">
-                                            {(user.settings?.avatar_emoji as string) || '\u{1F464}'}
-                                        </div>
-                                        <div>
-                                            <div className="adm-user-name">
-                                                {user.display_name || 'Unnamed'}
-                                                {isUserPremium(user) && <Crown size={12} className="adm-crown-icon" />}
+                        {paginatedUsers.map(user => {
+                            const banned = isUserBanned(user);
+                            const displayRole = getDisplayRole(user);
+                            return (
+                                <tr key={user.id} className={banned ? 'adm-row-banned' : ''}>
+                                    <td>
+                                        <div className="adm-user-cell">
+                                            <div className="adm-user-avatar">
+                                                {(user.settings?.avatar_emoji as string) || '\u{1F464}'}
                                             </div>
-                                            <div className="adm-user-email">{user.email}</div>
+                                            <div>
+                                                <div className="adm-user-name">
+                                                    {user.display_name || 'Unnamed'}
+                                                    {isUserPremium(user) && <Crown size={12} className="adm-crown-icon" />}
+                                                    {banned && <Ban size={12} className="adm-ban-icon" />}
+                                                </div>
+                                                <div className="adm-user-email">{user.email}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <select
-                                        className="adm-role-select"
-                                        value={user.role}
-                                        onChange={(e) => setConfirmState({
-                                            type: 'role',
-                                            user,
-                                            newRole: e.target.value as 'student' | 'teacher' | 'admin'
-                                        })}
-                                    >
-                                        <option value="student">Student</option>
-                                        <option value="teacher">Teacher</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button
-                                        className={`adm-badge adm-badge-btn ${isUserPremium(user) ? 'premium' : 'free'}`}
-                                        onClick={() => setConfirmState({
-                                            type: 'premium',
-                                            user,
-                                            newPremium: !isUserPremium(user)
-                                        })}
-                                    >
-                                        <Crown size={11} />
-                                        {isUserPremium(user) ? 'Premium' : 'Free'}
-                                    </button>
-                                    {isUserPremium(user) && getUserPremiumUntil(user) && (
-                                        <div className="adm-premium-until">
-                                            Until {new Date(getUserPremiumUntil(user)!).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </td>
+                                    <td>
+                                        <select
+                                            className="adm-role-select"
+                                            value={displayRole}
+                                            onChange={(e) => {
+                                                const newRole = e.target.value as DisplayRole;
+                                                if (newRole !== displayRole) {
+                                                    setConfirmState({
+                                                        type: 'role',
+                                                        user,
+                                                        newRole
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            <option value="student">Student</option>
+                                            <option value="teacher">Teacher</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button
+                                            className={`adm-badge adm-badge-btn ${isUserPremium(user) ? 'premium' : 'free'}`}
+                                            onClick={() => setConfirmState({
+                                                type: 'premium',
+                                                user,
+                                                newPremium: !isUserPremium(user)
+                                            })}
+                                        >
+                                            <Crown size={11} />
+                                            {isUserPremium(user) ? 'Premium' : 'Free'}
+                                        </button>
+                                        {isUserPremium(user) && getUserPremiumUntil(user) && (
+                                            <div className="adm-premium-until">
+                                                Until {new Date(getUserPremiumUntil(user)!).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                            </div>
+                                        )}
+                                    </td>
+                                    <td className="adm-cell-level">Lv. {user.level || 1}</td>
+                                    <td className="adm-cell-points">{user.points || 0}</td>
+                                    <td>
+                                        {banned ? (
+                                            <span className="adm-badge banned">Banned</span>
+                                        ) : (
+                                            <span className={`adm-badge ${user.is_online ? 'online' : 'offline'}`}>
+                                                {user.is_online ? 'Online' : 'Offline'}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="adm-cell-date">
+                                        {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </td>
+                                    <td>
+                                        <div className="adm-table-actions">
+                                            <button
+                                                className="adm-icon-btn"
+                                                title="View details"
+                                                onClick={() => setSelectedUser(user)}
+                                            >
+                                                <Eye size={14} />
+                                            </button>
+                                            <button
+                                                className={`adm-icon-btn ${banned ? 'success' : 'warning'}`}
+                                                title={banned ? 'Unban user' : 'Ban user'}
+                                                onClick={() => setConfirmState({
+                                                    type: 'ban',
+                                                    user,
+                                                    newBanned: !banned
+                                                })}
+                                            >
+                                                {banned ? <CheckCircle size={14} /> : <Ban size={14} />}
+                                            </button>
+                                            <button
+                                                className="adm-icon-btn danger"
+                                                title="Delete user"
+                                                onClick={() => setConfirmState({ type: 'delete', user })}
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
                                         </div>
-                                    )}
-                                </td>
-                                <td className="adm-cell-level">Lv. {user.level || 1}</td>
-                                <td className="adm-cell-points">{user.points || 0}</td>
-                                <td>
-                                    <span className={`adm-badge ${user.is_online ? 'online' : 'offline'}`}>
-                                        {user.is_online ? 'Online' : 'Offline'}
-                                    </span>
-                                </td>
-                                <td className="adm-cell-date">
-                                    {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                </td>
-                                <td>
-                                    <div className="adm-table-actions">
-                                        <button
-                                            className="adm-icon-btn"
-                                            title="View details"
-                                            onClick={() => setSelectedUser(user)}
-                                        >
-                                            <Eye size={14} />
-                                        </button>
-                                        <button
-                                            className="adm-icon-btn danger"
-                                            title="Delete user"
-                                            onClick={() => setConfirmState({ type: 'delete', user })}
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
 
@@ -549,8 +679,8 @@ function AdminUsersManager() {
                             <div className="adm-panel-field">
                                 <label>Role</label>
                                 <div className="adm-panel-field-val">
-                                    <span className={`adm-badge ${selectedUser.role}`}>
-                                        {selectedUser.role.charAt(0).toUpperCase() + selectedUser.role.slice(1)}
+                                    <span className={`adm-badge ${getDisplayRole(selectedUser)}`}>
+                                        {getDisplayRole(selectedUser).charAt(0).toUpperCase() + getDisplayRole(selectedUser).slice(1)}
                                     </span>
                                 </div>
                             </div>
@@ -578,9 +708,13 @@ function AdminUsersManager() {
                             <div className="adm-panel-field">
                                 <label>Status</label>
                                 <div className="adm-panel-field-val">
-                                    <span className={`adm-badge ${selectedUser.is_online ? 'online' : 'offline'}`}>
-                                        {selectedUser.is_online ? 'Online' : 'Offline'}
-                                    </span>
+                                    {isUserBanned(selectedUser) ? (
+                                        <span className="adm-badge banned">Banned</span>
+                                    ) : (
+                                        <span className={`adm-badge ${selectedUser.is_online ? 'online' : 'offline'}`}>
+                                            {selectedUser.is_online ? 'Online' : 'Offline'}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                             <div className="adm-panel-field">
@@ -590,6 +724,29 @@ function AdminUsersManager() {
                                         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
                                     })}
                                 </div>
+                            </div>
+
+                            <div className="adm-panel-actions">
+                                <button
+                                    type="button"
+                                    className={`adm-btn ${isUserBanned(selectedUser) ? 'primary' : 'warning'}`}
+                                    onClick={() => setConfirmState({
+                                        type: 'ban',
+                                        user: selectedUser,
+                                        newBanned: !isUserBanned(selectedUser)
+                                    })}
+                                >
+                                    {isUserBanned(selectedUser) ? <CheckCircle size={14} /> : <Ban size={14} />}
+                                    {isUserBanned(selectedUser) ? 'Unban User' : 'Ban User'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="adm-btn danger"
+                                    onClick={() => setConfirmState({ type: 'delete', user: selectedUser })}
+                                >
+                                    <Trash2 size={14} />
+                                    Delete User
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -632,7 +789,7 @@ function AdminUsersManager() {
                                     <label>Role</label>
                                     <select
                                         value={newUserData.role}
-                                        onChange={(e) => setNewUserData({ ...newUserData, role: e.target.value as 'student' | 'teacher' | 'admin' })}
+                                        onChange={(e) => setNewUserData({ ...newUserData, role: e.target.value as DisplayRole })}
                                     >
                                         <option value="student">Student</option>
                                         <option value="teacher">Teacher</option>
@@ -690,14 +847,15 @@ function AdminUsersManager() {
                 <div className="adm-modal-overlay" onClick={() => !confirmLoading && setConfirmState(null)}>
                     <div className="adm-modal adm-modal-narrow" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-body adm-confirm-body">
-                            <div className={`adm-confirm-icon ${confirmState.type === 'delete' ? 'danger' : 'warning'}`}>
+                            <div className={`adm-confirm-icon ${confirmState.type === 'delete' || (confirmState.type === 'ban' && confirmState.newBanned) ? 'danger' : 'warning'}`}>
                                 <AlertTriangle size={24} />
                             </div>
                             <div className="adm-confirm-text">
                                 <h4>
                                     {confirmState.type === 'role' ? 'Change Role' :
                                         confirmState.type === 'premium' ? (confirmState.newPremium ? 'Grant Premium' : 'Remove Premium') :
-                                            'Delete User'}
+                                            confirmState.type === 'ban' ? (confirmState.newBanned ? 'Ban User' : 'Unban User') :
+                                                'Delete User'}
                                 </h4>
                                 <p>
                                     {confirmState.type === 'role' && confirmState.newRole
@@ -706,7 +864,11 @@ function AdminUsersManager() {
                                             ? confirmState.newPremium
                                                 ? `Grant premium access to ${confirmState.user.display_name}?`
                                                 : `Remove premium from ${confirmState.user.display_name}?`
-                                            : `Permanently delete ${confirmState.user.display_name}? This cannot be undone.`}
+                                            : confirmState.type === 'ban'
+                                                ? confirmState.newBanned
+                                                    ? `Ban ${confirmState.user.display_name}? They will not be able to access the platform.`
+                                                    : `Unban ${confirmState.user.display_name}? They will regain access to the platform.`
+                                                : `Permanently delete ${confirmState.user.display_name}? This cannot be undone.`}
                                 </p>
                                 {confirmState.type === 'premium' && confirmState.newPremium === true && (
                                     <div className="adm-form-group" style={{ marginTop: '10px' }}>
@@ -731,19 +893,24 @@ function AdminUsersManager() {
                                 Cancel
                             </button>
                             <button
-                                className={`adm-btn ${confirmState.type === 'delete' ? 'danger' : 'primary'}`}
+                                className={`adm-btn ${confirmState.type === 'delete' || (confirmState.type === 'ban' && confirmState.newBanned) ? 'danger' : 'primary'}`}
                                 disabled={confirmLoading}
                                 onClick={() => {
                                     if (confirmState.type === 'role' && confirmState.newRole) {
                                         handleRoleChange(confirmState.user.id, confirmState.newRole);
                                     } else if (confirmState.type === 'premium' && confirmState.newPremium !== undefined) {
                                         handlePremiumToggle(confirmState.user.id, confirmState.newPremium);
+                                    } else if (confirmState.type === 'ban' && confirmState.newBanned !== undefined) {
+                                        handleBanToggle(confirmState.user.id, confirmState.newBanned);
                                     } else if (confirmState.type === 'delete') {
                                         executeDeleteUser();
                                     }
                                 }}
                             >
-                                {confirmLoading ? 'Processing...' : confirmState.type === 'delete' ? 'Delete' : 'Confirm'}
+                                {confirmLoading ? 'Processing...' :
+                                    confirmState.type === 'delete' ? 'Delete' :
+                                        confirmState.type === 'ban' ? (confirmState.newBanned ? 'Ban' : 'Unban') :
+                                            'Confirm'}
                             </button>
                         </div>
                     </div>

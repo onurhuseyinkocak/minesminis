@@ -15,6 +15,7 @@ import { ProgressBar, KidIcon } from '../components/ui';
 import LottieCharacter from '../components/LottieCharacter';
 import { PHASES, type LearningUnit } from '../data/curriculumPhases';
 import MimiGuide from '../components/MimiGuide';
+import { useLanguage } from '../contexts/LanguageContext';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import './WorldMap.css';
 
@@ -168,6 +169,7 @@ const tooltipVariants = {
 
 const WorldMap = () => {
   const navigate = useNavigate();
+  const { t, lang } = useLanguage();
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
   const [lockedTooltip, setLockedTooltip] = useState<string | null>(null);
 
@@ -221,9 +223,9 @@ const WorldMap = () => {
             <span className="journey-header__phase-emoji">
               {PHASE_ICONS[phase.id] || <KidIcon name="learn" size={20} />}
             </span>
-            {phase.name}
+            {lang === 'tr' ? phase.nameTr : phase.name}
           </h1>
-          <span className="journey-header__age">{phase.ageRange} yrs</span>
+          <span className="journey-header__age">{phase.ageRange} {t('worlds.years')}</span>
         </div>
 
         <div className="journey-header__progress">
@@ -233,7 +235,7 @@ const WorldMap = () => {
             variant={overallPct === 100 ? 'success' : 'default'}
             animated
           />
-          <span className="journey-header__pct">{overallPct}% complete</span>
+          <span className="journey-header__pct">{overallPct}{t('worlds.percentComplete')}</span>
         </div>
 
         {/* Phase tabs */}
@@ -251,7 +253,7 @@ const WorldMap = () => {
               }
             >
               <span className="journey-phase-tab__icon">{PHASE_ICONS[p.id] || <KidIcon name="learn" size={16} />}</span>
-              <span className="journey-phase-tab__label">{p.name}</span>
+              <span className="journey-phase-tab__label">{lang === 'tr' ? p.nameTr : p.name}</span>
             </button>
           ))}
         </div>
@@ -308,7 +310,7 @@ const WorldMap = () => {
               onClick={() => handleStopClick(stop)}
               role="button"
               tabIndex={0}
-              aria-label={`${stop.unit.title} - ${stop.progress.status}`}
+              aria-label={`${lang === 'tr' ? stop.unit.titleTr : stop.unit.title} - ${stop.progress.status}`}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
@@ -350,7 +352,7 @@ const WorldMap = () => {
 
               {/* Label */}
               <div className="journey-stop__info">
-                <span className="journey-stop__title">{stop.unit.title}</span>
+                <span className="journey-stop__title">{lang === 'tr' ? stop.unit.titleTr : stop.unit.title}</span>
                 {/* Stars */}
                 <span className="journey-stop__stars">
                   {[1, 2, 3].map((s) => (
@@ -377,7 +379,7 @@ const WorldMap = () => {
                     animate="visible"
                     exit="exit"
                   >
-                    Complete the previous unit first!
+                    {t('worlds.completePreviousUnit')}
                   </motion.div>
                 )}
               </AnimatePresence>

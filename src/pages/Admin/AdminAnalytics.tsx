@@ -1,27 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
-    BarChart3, Users, BookOpen, Target, Flame, TrendingUp, Gamepad2, Award
+    BarChart3, Users, BookOpen, Target, Flame, TrendingUp, Gamepad2, Award,
+    Download, RefreshCw, Calendar,
 } from 'lucide-react';
 import {
     AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import { supabase } from '../../config/supabase';
+import toast from 'react-hot-toast';
 import './AdminAnalytics.css';
 
 interface MonthlyPoint { month: string; users: number }
 interface GameStat { name: string; plays: number; color: string }
 interface MasteryPoint { name: string; value: number; color: string }
 interface StreakPoint { streak: string; users: number }
+interface CompletionPoint { world: string; completed: number; started: number }
+interface WeeklyPoint { day: string; active: number; new: number }
 
-const COMPLETION_DATA = [
-    { world: 'Letters & Sounds', completed: 0, started: 0 },
-    { world: 'Family & Home', completed: 0, started: 0 },
-    { world: 'Animals', completed: 0, started: 0 },
-    { world: 'Food & Drink', completed: 0, started: 0 },
-    { world: 'Numbers', completed: 0, started: 0 },
-    { world: 'Emotions', completed: 0, started: 0 },
-];
+type DateRange = '7d' | '30d' | '90d' | '12m';
+
+const DATE_RANGE_LABELS: Record<DateRange, string> = {
+    '7d': 'Last 7 Days',
+    '30d': 'Last 30 Days',
+    '90d': 'Last 90 Days',
+    '12m': 'Last 12 Months',
+};
 
 const GAME_COLORS = [
     'var(--warning)',
@@ -30,6 +34,16 @@ const GAME_COLORS = [
     'var(--accent-pink)',
     'var(--accent-emerald)',
 ];
+
+function getDateRangeStart(range: DateRange): Date {
+    const now = new Date();
+    switch (range) {
+        case '7d': { const d = new Date(); d.setDate(d.getDate() - 7); d.setHours(0, 0, 0, 0); return d; }
+        case '30d': { const d = new Date(); d.setDate(d.getDate() - 30); d.setHours(0, 0, 0, 0); return d; }
+        case '90d': { const d = new Date(); d.setDate(d.getDate() - 90); d.setHours(0, 0, 0, 0); return d; }
+        case '12m': { const d = new Date(now.getFullYear(), now.getMonth() - 11, 1); d.setHours(0, 0, 0, 0); return d; }
+    }
+}
 
 function buildMonthlyData(rows: { created_at: string }[]): MonthlyPoint[] {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -47,14 +61,22 @@ function buildMonthlyData(rows: { created_at: string }[]): MonthlyPoint[] {
     });
 }
 
-function buildWeeklyData(rows: { created_at: string }[]): { day: string; active: number; new: number }[] {
+function buildWeeklyData(
+    signupRows: { created_at: string }[],
+    activityRows: { user_id: string; created_at: string }[],
+): WeeklyPoint[] {
     const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const newCounts = new Array(7).fill(0);
-    for (const row of rows) {
-        const dow = (new Date(row.created_at).getDay() + 6) % 7; // 0=Mon
+    const newCounts = new Array(7).fill(0) as number[];
+    const activeSets: Set<string>[] = Array.from({ length: 7 }, () => new Set<string>());
+    for (const row of signupRows) {
+        const dow = (new Date(row.created_at).getDay() + 6) % 7;
         newCounts[dow]++;
     }
-    return dayLabels.map((day, i) => ({ day, active: 0, new: newCounts[i] }));
+    for (const row of activityRows) {
+        const dow = (new Date(row.created_at).getDay() + 6) % 7;
+        if (row.user_id) activeSets[dow].add(row.user_id);
+    }
+    return dayLabels.map((day, i) => ({ day, active: activeSets[i].size, new: newCounts[i] }));
 }
 
 function buildStreakData(users: { streak_days: number | null }[]): StreakPoint[] {
@@ -95,11 +117,31 @@ function buildMasteryData(rows: { mastery: number | null }[]): MasteryPoint[] {
     ];
 }
 
+function computeAvgStreak(users: { streak_days: number | null }[]): string {
+    if (users.length === 0) return '0';
+    const total = users.reduce((sum, u) => sum + (u.streak_days ?? 0), 0);
+    return (total / users.length).toFixed(1);
+}
+
+function computeAvgCompletion(rows: { mastery: number | null }[]): string {
+    if (rows.length === 0) return '0%';
+    const total = rows.reduce((sum, r) => sum + (r.mastery ?? 0), 0);
+    return `${Math.round((total / rows.length) * 100)}%`;
+}
+
+interface EngagementData {
+    dailyActive: number;
+    weeklyActive: number;
+    avgSessionDuration: string;
+    retention7d: string;
+    contentEngagement: string;
+}
+
 function AdminAnalytics() {
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalGames, setTotalGames] = useState(0);
     const [monthlyData, setMonthlyData] = useState<MonthlyPoint[]>([]);
-    const [weeklyData, setWeeklyData] = useState<{ day: string; active: number; new: number }[]>([]);
+    const [weeklyData, setWeeklyData] = useState<WeeklyPoint[]>([]);
     const [topGames, setTopGames] = useState<GameStat[]>([]);
     const [masteryData, setMasteryData] = useState<MasteryPoint[]>([
         { name: 'Mastered', value: 0, color: 'var(--accent-emerald)' },
@@ -114,28 +156,38 @@ function AdminAnalytics() {
         { streak: '15-30', users: 0 },
         { streak: '30+', users: 0 },
     ]);
+    const [completionData, setCompletionData] = useState<CompletionPoint[]>([]);
+    const [avgStreak, setAvgStreak] = useState('0');
+    const [avgCompletion, setAvgCompletion] = useState('0%');
+    const [engagement, setEngagement] = useState<EngagementData>({
+        dailyActive: 0,
+        weeklyActive: 0,
+        avgSessionDuration: '-',
+        retention7d: '-',
+        contentEngagement: '-',
+    });
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [dateRange, setDateRange] = useState<DateRange>('12m');
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
-
-    const fetchAnalytics = async () => {
+    const fetchAnalytics = useCallback(async () => {
         setLoading(true);
+        setError(null);
         try {
-            const twelveMonthsAgo = new Date();
-            twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
-            twelveMonthsAgo.setDate(1);
-            twelveMonthsAgo.setHours(0, 0, 0, 0);
+            const rangeStart = getDateRangeStart(dateRange);
 
-            const [userCountRes, gamesCountRes, userRowsRes, gamesRes, streakRes, masteryRes, activityRes] = await Promise.allSettled([
+            const [
+                userCountRes, gamesCountRes, userRowsRes, gamesRes,
+                streakRes, masteryRes, activityRes, weeklyActivityRes,
+            ] = await Promise.allSettled([
                 supabase.from('users').select('*', { count: 'exact', head: true }),
                 supabase.from('games').select('*', { count: 'exact', head: true }),
-                supabase.from('users').select('created_at').gte('created_at', twelveMonthsAgo.toISOString()),
+                supabase.from('users').select('created_at').gte('created_at', rangeStart.toISOString()),
                 supabase.from('games').select('title, plays').order('plays', { ascending: false }).limit(5),
                 supabase.from('users').select('streak_days'),
                 supabase.from('phonics_mastery').select('mastery'),
                 supabase.from('activity_logs').select('type').eq('type', 'game'),
+                supabase.from('activity_logs').select('user_id, created_at').gte('created_at', rangeStart.toISOString()),
             ]);
 
             if (userCountRes.status === 'fulfilled' && !userCountRes.value.error) {
@@ -146,18 +198,23 @@ function AdminAnalytics() {
                 setTotalGames(gamesCountRes.value.count ?? 0);
             }
 
+            // Weekly activity data for active users per day
+            const activityRows: { user_id: string; created_at: string }[] =
+                weeklyActivityRes.status === 'fulfilled' && !weeklyActivityRes.value.error && weeklyActivityRes.value.data
+                    ? weeklyActivityRes.value.data as { user_id: string; created_at: string }[]
+                    : [];
+
             if (userRowsRes.status === 'fulfilled' && !userRowsRes.value.error && userRowsRes.value.data) {
                 const rows = userRowsRes.value.data as { created_at: string }[];
                 setMonthlyData(buildMonthlyData(rows));
-                setWeeklyData(buildWeeklyData(rows));
+                setWeeklyData(buildWeeklyData(rows, activityRows));
             } else {
                 setMonthlyData(buildMonthlyData([]));
-                setWeeklyData(buildWeeklyData([]));
+                setWeeklyData(buildWeeklyData([], activityRows));
             }
 
             if (gamesRes.status === 'fulfilled' && !gamesRes.value.error && gamesRes.value.data) {
                 const games = gamesRes.value.data as { title: string; plays: number | null }[];
-                // If games table has plays column, use it; otherwise fall back to activity_logs count
                 const hasPlays = games.some(g => (g.plays ?? 0) > 0);
                 if (hasPlays) {
                     setTopGames(games.map((g, i) => ({
@@ -166,7 +223,6 @@ function AdminAnalytics() {
                         color: GAME_COLORS[i] ?? 'var(--admin-text-muted)',
                     })));
                 } else if (activityRes.status === 'fulfilled' && !activityRes.value.error && activityRes.value.data) {
-                    // Count plays per game from activity_logs
                     const actRows = activityRes.value.data as { type: string }[];
                     setTopGames([{
                         name: 'Games (total)',
@@ -179,15 +235,126 @@ function AdminAnalytics() {
             if (streakRes.status === 'fulfilled' && !streakRes.value.error && streakRes.value.data) {
                 const rows = streakRes.value.data as { streak_days: number | null }[];
                 setStreakData(buildStreakData(rows));
+                setAvgStreak(computeAvgStreak(rows));
             }
 
             if (masteryRes.status === 'fulfilled' && !masteryRes.value.error && masteryRes.value.data) {
                 const rows = masteryRes.value.data as { mastery: number | null }[];
                 setMasteryData(buildMasteryData(rows));
+                setAvgCompletion(computeAvgCompletion(rows));
             }
+
+            // Build lesson completion from phonics_mastery grouped by sound categories
+            if (masteryRes.status === 'fulfilled' && !masteryRes.value.error) {
+                const { data: fullMastery } = await supabase
+                    .from('phonics_mastery')
+                    .select('mastery, sound_id');
+                if (fullMastery && fullMastery.length > 0) {
+                    const typedRows = fullMastery as { mastery: number | null; sound_id: string }[];
+                    // Group by first letter category as proxy for "world"
+                    const categories: Record<string, { completed: number; started: number }> = {};
+                    for (const r of typedRows) {
+                        const cat = r.sound_id?.charAt(0)?.toUpperCase() ?? '?';
+                        if (!categories[cat]) categories[cat] = { completed: 0, started: 0 };
+                        if ((r.mastery ?? 0) >= 0.8) categories[cat].completed++;
+                        else if ((r.mastery ?? 0) > 0) categories[cat].started++;
+                    }
+                    setCompletionData(
+                        Object.entries(categories)
+                            .sort(([a], [b]) => a.localeCompare(b))
+                            .slice(0, 8)
+                            .map(([world, vals]) => ({ world, ...vals }))
+                    );
+                } else {
+                    setCompletionData([]);
+                }
+            }
+
+            // Compute engagement metrics from activity_logs
+            if (activityRows.length > 0) {
+                const now = new Date();
+                const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+                const dailyUsers = new Set<string>();
+                const weeklyUsers = new Set<string>();
+                const userDays = new Map<string, Set<string>>();
+
+                for (const row of activityRows) {
+                    const rowDate = new Date(row.created_at);
+                    if (rowDate >= oneDayAgo) dailyUsers.add(row.user_id);
+                    if (rowDate >= oneWeekAgo) weeklyUsers.add(row.user_id);
+
+                    const dayKey = row.created_at.slice(0, 10);
+                    if (!userDays.has(row.user_id)) userDays.set(row.user_id, new Set());
+                    userDays.get(row.user_id)!.add(dayKey);
+                }
+
+                // Retention: users with activity on 2+ distinct days
+                let retainedUsers = 0;
+                for (const [, days] of userDays) {
+                    if (days.size >= 2) retainedUsers++;
+                }
+                const totalUniqueUsers = userDays.size;
+                const retentionPct = totalUniqueUsers > 0 ? Math.round((retainedUsers / totalUniqueUsers) * 100) : 0;
+
+                // Avg items per session (activities per unique user)
+                const avgItems = totalUniqueUsers > 0 ? (activityRows.length / totalUniqueUsers).toFixed(1) : '0';
+
+                setEngagement({
+                    dailyActive: dailyUsers.size,
+                    weeklyActive: weeklyUsers.size,
+                    avgSessionDuration: '-',
+                    retention7d: `${retentionPct}%`,
+                    contentEngagement: avgItems,
+                });
+            } else {
+                setEngagement({
+                    dailyActive: 0,
+                    weeklyActive: 0,
+                    avgSessionDuration: '-',
+                    retention7d: '-',
+                    contentEngagement: '-',
+                });
+            }
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Failed to load analytics';
+            setError(msg);
         } finally {
             setLoading(false);
         }
+    }, [dateRange]);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
+
+    const handleExport = () => {
+        const exportData = {
+            exportedAt: new Date().toISOString(),
+            dateRange,
+            totalUsers,
+            totalGames,
+            avgStreak,
+            avgCompletion,
+            engagement,
+            monthlyData,
+            weeklyData,
+            topGames,
+            masteryData,
+            streakData,
+            completionData,
+        };
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics-${dateRange}-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success('Analytics exported');
     };
 
     const maxPlays = topGames.length > 0 ? Math.max(...topGames.map(g => g.plays), 1) : 1;
@@ -204,9 +371,58 @@ function AdminAnalytics() {
     return (
         <div className="adm-analytics">
             <div className="adm-analytics-header">
-                <h1>Analytics</h1>
-                <p>User engagement, content performance, and learning metrics</p>
+                <div>
+                    <h1>Analytics</h1>
+                    <p>User engagement, content performance, and learning metrics</p>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-card, #fff)', borderRadius: '8px', padding: '2px', border: '1px solid var(--cloud, #e5e7eb)' }}>
+                        {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).map(range => (
+                            <button
+                                key={range}
+                                type="button"
+                                onClick={() => setDateRange(range)}
+                                style={{
+                                    padding: '6px 12px',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    fontSize: '0.78rem',
+                                    fontWeight: dateRange === range ? 600 : 400,
+                                    background: dateRange === range ? 'var(--accent-blue, #6366f1)' : 'transparent',
+                                    color: dateRange === range ? '#fff' : 'var(--admin-text-muted, #888)',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s',
+                                }}
+                            >
+                                <Calendar size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                {DATE_RANGE_LABELS[range]}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => fetchAnalytics()}
+                        style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--cloud, #e5e7eb)', background: 'var(--bg-card, #fff)', cursor: 'pointer' }}
+                        title="Refresh"
+                    >
+                        <RefreshCw size={16} />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleExport}
+                        style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--cloud, #e5e7eb)', background: 'var(--bg-card, #fff)', cursor: 'pointer' }}
+                        title="Export JSON"
+                    >
+                        <Download size={16} />
+                    </button>
+                </div>
             </div>
+
+            {error && (
+                <div style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', color: '#dc2626', fontSize: '0.85rem', marginBottom: '16px' }}>
+                    {error}
+                </div>
+            )}
 
             {/* Key Stats */}
             <div className="adm-analytics-stats">
@@ -224,7 +440,7 @@ function AdminAnalytics() {
                         <Target size={20} />
                     </div>
                     <div>
-                        <div className="adm-analytics-stat-val">N/A</div>
+                        <div className="adm-analytics-stat-val">{avgCompletion}</div>
                         <div className="adm-analytics-stat-label">Avg. Completion</div>
                     </div>
                 </div>
@@ -233,7 +449,7 @@ function AdminAnalytics() {
                         <Flame size={20} />
                     </div>
                     <div>
-                        <div className="adm-analytics-stat-val">N/A</div>
+                        <div className="adm-analytics-stat-val">{avgStreak}</div>
                         <div className="adm-analytics-stat-label">Avg. Streak</div>
                     </div>
                 </div>
@@ -255,7 +471,7 @@ function AdminAnalytics() {
                         <div className="adm-analytics-chart-title">
                             <TrendingUp size={16} /> User Registrations Over Time
                         </div>
-                        <span className="adm-analytics-chart-period">Last 12 months</span>
+                        <span className="adm-analytics-chart-period">{DATE_RANGE_LABELS[dateRange]}</span>
                     </div>
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -282,7 +498,7 @@ function AdminAnalytics() {
                 <div className="adm-analytics-chart">
                     <div className="adm-analytics-chart-header">
                         <div className="adm-analytics-chart-title">
-                            <BarChart3 size={16} /> Weekly Signups
+                            <BarChart3 size={16} /> Weekly Activity
                         </div>
                     </div>
                     <div className="adm-analytics-chart-body">
@@ -293,6 +509,7 @@ function AdminAnalytics() {
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
                                 <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
+                                <Bar dataKey="active" fill="var(--accent-blue)" radius={[4, 4, 0, 0]} name="Active Users" />
                                 <Bar dataKey="new" fill="var(--accent-emerald)" radius={[4, 4, 0, 0]} name="New Users" />
                             </BarChart>
                         </ResponsiveContainer>
@@ -302,20 +519,26 @@ function AdminAnalytics() {
                 <div className="adm-analytics-chart">
                     <div className="adm-analytics-chart-header">
                         <div className="adm-analytics-chart-title">
-                            <BookOpen size={16} /> Lesson Completion by World
+                            <BookOpen size={16} /> Lesson Completion by Category
                         </div>
                     </div>
                     <div className="adm-analytics-chart-body">
-                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                            <BarChart data={COMPLETION_DATA} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" horizontal={false} />
-                                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
-                                <YAxis type="category" dataKey="world" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} width={60} />
-                                <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
-                                <Bar dataKey="completed" fill="var(--accent-emerald)" radius={[0, 4, 4, 0]} name="Completed" stackId="a" />
-                                <Bar dataKey="started" fill="var(--accent-amber)" radius={[0, 4, 4, 0]} name="In Progress" stackId="a" />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {completionData.length === 0 ? (
+                            <div className="adm-empty" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                No lesson completion data yet
+                            </div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+                                <BarChart data={completionData} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" horizontal={false} />
+                                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
+                                    <YAxis type="category" dataKey="world" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} width={60} />
+                                    <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
+                                    <Bar dataKey="completed" fill="var(--accent-emerald)" radius={[0, 4, 4, 0]} name="Completed" stackId="a" />
+                                    <Bar dataKey="started" fill="var(--accent-amber)" radius={[0, 4, 4, 0]} name="In Progress" stackId="a" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
             </div>
@@ -411,11 +634,11 @@ function AdminAnalytics() {
                     <div className="adm-engagement-body">
                         <div className="adm-engagement-grid">
                             {[
-                                { label: 'Daily Active Users', value: 'N/A', sub: 'No activity data yet', color: 'var(--accent-blue)' },
-                                { label: 'Weekly Active Users', value: 'N/A', sub: 'No activity data yet', color: 'var(--accent-emerald)' },
-                                { label: 'Avg. Session Duration', value: 'N/A', sub: 'Per user per day', color: 'var(--warning)' },
-                                { label: 'Retention (7-day)', value: 'N/A', sub: 'Users returning within 7 days', color: 'var(--accent-purple)' },
-                                { label: 'Content Engagement', value: 'N/A', sub: 'Avg. items per session', color: 'var(--accent-pink)' },
+                                { label: 'Daily Active Users', value: String(engagement.dailyActive), sub: 'Unique users today', color: 'var(--accent-blue)' },
+                                { label: 'Weekly Active Users', value: String(engagement.weeklyActive), sub: 'Unique users this week', color: 'var(--accent-emerald)' },
+                                { label: 'Avg. Session Duration', value: engagement.avgSessionDuration, sub: 'Per user per day', color: 'var(--warning)' },
+                                { label: 'Retention (7-day)', value: engagement.retention7d, sub: 'Users returning within 7 days', color: 'var(--accent-purple)' },
+                                { label: 'Content Engagement', value: engagement.contentEngagement, sub: 'Avg. items per user', color: 'var(--accent-pink)' },
                             ].map(item => (
                                 <div key={item.label} className="adm-engagement-row">
                                     <div className="adm-engagement-bar" style={{ background: item.color }} />

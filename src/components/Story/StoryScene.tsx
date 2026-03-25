@@ -3,7 +3,7 @@
  * Renders CSS/SVG backgrounds for 25 background types across 5 worlds
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import type { BackgroundId } from '../../data/storyWorlds';
 import type { CameraAngleId } from '../../data/cameraAngles';
 import { CAMERA_ANGLES } from '../../data/cameraAngles';
@@ -171,10 +171,44 @@ const SCENE_CONFIG: Record<BackgroundId, {
   },
 };
 
+// Seeded pseudo-random for stable SVG renders
+function seededRandom(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+
 const StoryScene: React.FC<StorySceneProps> = ({ background, children, cameraAngle = 'wide', mascotId }) => {
   const config = SCENE_CONFIG[background];
   const angle = CAMERA_ANGLES[cameraAngle];
   const [mounted, setMounted] = useState(false);
+
+  // Generate stable star positions using seeded random
+  const stableStars = useMemo(() => {
+    const seed = background.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const rng = seededRandom(seed);
+    return Array.from({ length: 40 }, () => ({
+      cx: rng() * 1200,
+      cy: rng() * 400,
+      r: rng() * 2 + 0.5,
+      opacity: rng() * 0.5 + 0.3,
+    }));
+  }, [background]);
+
+  // Generate stable particle positions
+  const stableParticles = useMemo(() => {
+    const count = config.particles === 'stars' ? 30 : 15;
+    const seed = background.split('').reduce((acc, c) => acc + c.charCodeAt(0), 100);
+    const rng = seededRandom(seed);
+    return Array.from({ length: count }, () => ({
+      left: rng() * 100,
+      top: rng() * 80,
+      delay: rng() * 5,
+      duration: 3 + rng() * 4,
+    }));
+  }, [background, config.particles]);
 
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true));
@@ -321,14 +355,14 @@ const StoryScene: React.FC<StorySceneProps> = ({ background, children, cameraAng
         {/* Stars background */}
         {config.elements.includes('stars-bg') && (
           <g className="story-scene__stars-bg">
-            {Array.from({ length: 40 }, (_, i) => (
+            {stableStars.map((star, i) => (
               <circle
                 key={i}
-                cx={Math.random() * 1200}
-                cy={Math.random() * 400}
-                r={Math.random() * 2 + 0.5}
+                cx={star.cx}
+                cy={star.cy}
+                r={star.r}
                 fill="white"
-                opacity={Math.random() * 0.5 + 0.3}
+                opacity={star.opacity}
               />
             ))}
           </g>
@@ -526,15 +560,15 @@ const StoryScene: React.FC<StorySceneProps> = ({ background, children, cameraAng
       {/* Particle effects */}
       {config.particles && (
         <div className={`story-scene__particles story-scene__particles--${config.particles}`}>
-          {Array.from({ length: config.particles === 'stars' ? 30 : 15 }, (_, i) => (
+          {stableParticles.map((p, i) => (
             <span
               key={i}
               className="story-scene__particle"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 80}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${3 + Math.random() * 4}s`,
+                left: `${p.left}%`,
+                top: `${p.top}%`,
+                animationDelay: `${p.delay}s`,
+                animationDuration: `${p.duration}s`,
               }}
             />
           ))}

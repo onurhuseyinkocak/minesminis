@@ -163,6 +163,39 @@ export function getWeeklyActivityData(userId?: string): DayActivity[] {
 }
 
 /**
+ * Get activity data for the last 30 days (for monthly calendar view).
+ * If userId is provided, reads from per-user scoped storage.
+ */
+export function getMonthlyActivityData(userId?: string): DayActivity[] {
+  const logs = loadLogs(userId);
+  const now = new Date();
+  const days: DayActivity[] = [];
+
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const dateKey = toDateKey(d);
+    const dayLabel = getDayLabel(d.toISOString());
+
+    const dayLogs = logs.filter(
+      (l) => l.timestamp.slice(0, 10) === dateKey,
+    );
+
+    const totalSeconds = dayLogs.reduce((sum, l) => sum + l.duration, 0);
+
+    days.push({
+      date: dateKey,
+      dayLabel,
+      totalMinutes: Math.round(totalSeconds / 60),
+      sessionCount: dayLogs.length,
+      activities: dayLogs,
+    });
+  }
+
+  return days;
+}
+
+/**
  * Get time breakdown by activity type (for pie chart).
  * Returns seconds spent in each category.
  * If userId is provided, reads from per-user scoped storage.

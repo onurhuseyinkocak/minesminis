@@ -57,7 +57,11 @@ export default function FlashcardReview() {
     supabase
       .from('words')
       .select('word,turkish,example,exampleSentence:example_sentence,exampleSentenceTr:example_sentence_tr')
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) {
+          // Silently fall back to local word data
+          return;
+        }
         if (data && data.length > 0) {
           const m = new Map<string, RawWord>();
           for (const w of data as RawWord[]) {
@@ -135,9 +139,7 @@ export default function FlashcardReview() {
 
         <div className="flashcard-review__body">
           <div className="flashcard-review__empty">
-            <div className="flashcard-review__empty-icon">
-              {knownCount === totalCount ? '🏆' : '⭐'}
-            </div>
+            <div className="flashcard-review__empty-icon" aria-hidden="true" />
             <h2 className="flashcard-review__empty-title">
               {lang === 'tr' ? 'Oturum tamamlandı!' : 'Session complete!'}
             </h2>
@@ -173,7 +175,7 @@ export default function FlashcardReview() {
 
         <div className="flashcard-review__body">
           <div className="flashcard-review__empty">
-            <div className="flashcard-review__empty-icon">✅</div>
+            <div className="flashcard-review__empty-icon" aria-hidden="true" />
             <h2 className="flashcard-review__empty-title">{noCardsTitle}</h2>
             <p className="flashcard-review__empty-sub">{noCardsSub}</p>
             <button
@@ -214,7 +216,7 @@ export default function FlashcardReview() {
           </div>
           <div className="flashcard-review__stat">
             <span className="flashcard-review__stat-value">
-              {dueWords[0]?.correctCount ?? 0 > 0 ? dueWords[0].correctCount : '-'}
+              {(dueWords[0]?.correctCount ?? 0) > 0 ? dueWords[0].correctCount : '-'}
             </span>
             <span className="flashcard-review__stat-label">
               {lang === 'tr' ? 'Tekrar' : 'Retries'}

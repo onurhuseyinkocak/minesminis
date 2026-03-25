@@ -103,9 +103,14 @@ export async function saveUserFCMToken(userId: string, token: string): Promise<v
       .eq('id', userId)
       .single();
     const existing = (data?.settings as Record<string, unknown>) ?? {};
+    const updatedSettings: Record<string, unknown> = {
+      ...existing,
+      fcm_token: token,
+      fcm_updated_at: new Date().toISOString(),
+    };
     await supabase
       .from('users')
-      .update({ settings: { ...existing, fcm_token: token, fcm_updated_at: new Date().toISOString() } } as never)
+      .update({ settings: updatedSettings })
       .eq('id', userId);
   } catch {
     // Non-fatal — token save failure does not block the UI

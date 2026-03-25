@@ -146,26 +146,29 @@ function PageLoader() {
 
 /** Wrapper that requires authentication; redirects to /login otherwise */
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return <PageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
 
 /** Wrapper that requires authentication and the 'parent' role */
 function ParentRoute({ children }: { children: React.ReactNode }) {
-  const { user, userProfile, loading } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  const { user, userProfile, loading, profileLoading } = useAuth();
   if (loading) return <PageLoader />;
-  if (userProfile && userProfile.role !== 'parent') return <Navigate to="/dashboard" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (profileLoading) return <PageLoader />;
+  if (!userProfile || userProfile.role !== 'parent') return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 }
 
 /** Wrapper that requires authentication and the 'teacher' role */
 function TeacherRoute({ children }: { children: React.ReactNode }) {
-  const { user, userProfile, loading } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  const { user, userProfile, loading, profileLoading } = useAuth();
   if (loading) return <PageLoader />;
-  if (userProfile && userProfile.role !== 'teacher') return <Navigate to="/dashboard" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (profileLoading) return <PageLoader />;
+  if (!userProfile || userProfile.role !== 'teacher') return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 }
 
@@ -211,7 +214,9 @@ function TimeGuardedRoute({ children }: { children: React.ReactNode }) {
 
   const parsed = parseInt(localStorage.getItem(LS_DAILY_TIME_LIMIT) || '0', 10);
   const savedLimit = isNaN(parsed) ? 0 : parsed;
-  const dailyLimit = savedLimit || (userProfile?.settings?.dailyTimeLimit as number) || 60;
+  const rawLimit = userProfile?.settings?.dailyTimeLimit;
+  const profileLimit = typeof rawLimit === 'number' ? rawLimit : 0;
+  const dailyLimit = savedLimit || profileLimit || 60;
   const todayMinutes = getTodayMinutes();
 
   if (todayMinutes >= dailyLimit) {
@@ -280,6 +285,13 @@ function AppRoutes() {
 
   // Admin routes have their own layout — no AppShell
   if (isAdminRoute) {
+    if (!user || !isAdmin) {
+      return (
+        <Routes>
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      );
+    }
     return (
       <Routes>
         <Route

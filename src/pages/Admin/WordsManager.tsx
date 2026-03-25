@@ -1,10 +1,30 @@
-import { useState, useMemo, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, Search, BookOpen, Download, Sparkles, Info } from 'lucide-react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { Plus, Pencil, Trash2, X, Search, BookOpen, Download, Sparkles, Info, Loader2 } from 'lucide-react';
 import { KidsWord } from '../../data/wordsData';
 import { wordStore } from '../../data/wordStore';
 import { adminFetch } from '../../utils/adminApi';
 import toast from 'react-hot-toast';
 import './WordsManager.css';
+
+type WordLevel = 'beginner' | 'intermediate' | 'advanced';
+
+interface WordFormData {
+    word: string;
+    turkish: string;
+    level: WordLevel;
+    category: string;
+    emoji: string;
+    example: string;
+}
+
+const INITIAL_FORM: WordFormData = {
+    word: '',
+    turkish: '',
+    level: 'beginner',
+    category: 'Animals',
+    emoji: '',
+    example: ''
+};
 
 function WordsManager() {
     const [words, setWords] = useState<KidsWord[]>([]);
@@ -15,14 +35,9 @@ function WordsManager() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingWord, setEditingWord] = useState<KidsWord | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [formData, setFormData] = useState({
-        word: '',
-        turkish: '',
-        level: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
-        category: 'Animals',
-        emoji: '',
-        example: ''
-    });
+    const [saving, setSaving] = useState(false);
+    const [deletingWordKey, setDeletingWordKey] = useState<string | null>(null);
+    const [formData, setFormData] = useState<WordFormData>(INITIAL_FORM);
 
     // Load words from in-memory wordStore (words table doesn't exist in Supabase yet)
     useEffect(() => {
@@ -64,18 +79,11 @@ function WordsManager() {
 
     const totalPages = Math.ceil(filteredWords.length / itemsPerPage);
 
-    const openAddModal = () => {
+    const openAddModal = useCallback(() => {
         setEditingWord(null);
-        setFormData({
-            word: '',
-            turkish: '',
-            level: 'beginner',
-            category: 'Animals',
-            emoji: '',
-            example: ''
-        });
+        setFormData(INITIAL_FORM);
         setIsModalOpen(true);
-    };
+    }, []);
 
     const [enriching, setEnriching] = useState(false);
     const fetchWordEnrich = async () => {
@@ -90,7 +98,7 @@ function WordsManager() {
                 method: 'POST',
                 body: JSON.stringify({ word: w })
             });
-            const json = await res.json().catch(() => ({}));
+            const json: Record<string, string> = await res.json().catch(() => ({}));
             if (json.turkish) {
                 setFormData(f => ({
                     ...f,
@@ -122,20 +130,33 @@ function WordsManager() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const wordData = { ...formData, example: formData.example || undefined };
         const w = formData.word.trim();
-        if (!w) return;
+        const tr = formData.turkish.trim();
+        if (!w) { toast.error('Ingilizce kelime zorunlu'); return; }
+        if (!tr) { toast.error('Turkce karsiligi zorunlu'); return; }
+        if (!formData.category.trim()) { toast.error('Kategori zorunlu'); return; }
+
+        const wordData: KidsWord = {
+            word: w,
+            turkish: tr,
+            level: formData.level,
+            category: formData.category.trim(),
+            emoji: formData.emoji.trim(),
+            example: formData.example.trim() || undefined
+        };
+
+        setSaving(true);
         try {
             if (editingWord) {
                 const res = await adminFetch(`/api/admin/words/${encodeURIComponent(editingWord.word)}`, {
                     method: 'PATCH',
                     body: JSON.stringify({ turkish: wordData.turkish, level: wordData.level, category: wordData.category, emoji: wordData.emoji, example: wordData.example ?? null })
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Güncelleme başarısız');
+                const json: Record<string, string> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(json.error || 'Guncelleme basarisiz');
                 wordStore.updateWord(editingWord.word, wordData);
-                setWords(prev => prev.map(x => x.word === editingWord.word ? { ...wordData, word: editingWord.word } as KidsWord : x));
-                toast.success('Kelime güncellendi!');
+                setWords(prev => prev.map(x => x.word === editingWord.word ? { ...wordData, word: editingWord.word } : x));
+                toast.success('Kelime guncellendi!');
             } else {
                 if (words.some(x => x.word.toLowerCase() === w.toLowerCase())) {
                     toast.error('Bu kelime zaten mevcut!');
@@ -145,44 +166,59 @@ function WordsManager() {
                     method: 'POST',
                     body: JSON.stringify({ word: w, turkish: wordData.turkish, level: wordData.level, category: wordData.category, emoji: wordData.emoji, example: wordData.example ?? null })
                 });
-                const json = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
-                wordStore.addWord(wordData as KidsWord);
-                setWords(prev => [...prev, wordData as KidsWord]);
+                const json: Record<string, string> = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(json.error || 'Kayit basarisiz');
+                wordStore.addWord(wordData);
+                setWords(prev => [...prev, wordData]);
                 toast.success('Yeni kelime eklendi!');
             }
             setIsModalOpen(false);
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Kayıt başarısız');
+            toast.error(err instanceof Error ? err.message : 'Kayit basarisiz');
+        } finally {
+            setSaving(false);
         }
     };
 
     const handleDelete = async (word: string) => {
-        if (!confirm('Bu kelimeyi silmek istediğinize emin misiniz?')) return;
+        if (!confirm('Bu kelimeyi silmek istediginize emin misiniz?')) return;
+        setDeletingWordKey(word);
         try {
             const res = await adminFetch(`/api/admin/words/${encodeURIComponent(word)}`, { method: 'DELETE' });
-            const json = await res.json().catch(() => ({}));
+            const json: Record<string, string> = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.error || 'Silinemedi');
             wordStore.deleteWord(word);
             setWords(prev => prev.filter(x => x.word !== word));
             toast.success('Kelime silindi!');
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Silinemedi');
+        } finally {
+            setDeletingWordKey(null);
         }
+    };
+
+    const escapeCsvField = (field: string): string => {
+        if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+            return `"${field.replace(/"/g, '""')}"`;
+        }
+        return field;
     };
 
     const exportWords = () => {
         const csv = words.map(w =>
-            `${w.word},${w.turkish},${w.level},${w.category},${w.emoji},${w.example || ''}`
+            [w.word, w.turkish, w.level, w.category, w.emoji, w.example || '']
+                .map(escapeCsvField)
+                .join(',')
         ).join('\n');
 
-        const blob = new Blob([`word,turkish,level,category,emoji,example\n${csv}`], { type: 'text/csv' });
+        const blob = new Blob([`word,turkish,level,category,emoji,example\n${csv}`], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'words_export.csv';
         a.click();
-        toast.success('Kelimeler dışa aktarıldı!');
+        URL.revokeObjectURL(url);
+        toast.success('Kelimeler disa aktarildi!');
     };
 
     const getLevelBadgeClass = (level: string) => {
@@ -292,11 +328,11 @@ function WordsManager() {
                                 </td>
                                 <td>
                                     <div className="action-btns">
-                                        <button type="button" className="edit-btn" onClick={() => openEditModal(word)}>
+                                        <button type="button" className="edit-btn" onClick={() => openEditModal(word)} disabled={deletingWordKey === word.word}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(word.word)}>
-                                            <Trash2 size={16} />
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(word.word)} disabled={deletingWordKey === word.word}>
+                                            {deletingWordKey === word.word ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                         </button>
                                     </div>
                                 </td>
@@ -444,8 +480,8 @@ function WordsManager() {
                                 <button type="button" className="cancel-btn" onClick={() => setIsModalOpen(false)}>
                                     İptal
                                 </button>
-                                <button type="submit" className="save-btn">
-                                    {editingWord ? 'Güncelle' : 'Ekle'}
+                                <button type="submit" className="save-btn" disabled={saving}>
+                                    {saving ? <><Loader2 size={16} className="animate-spin" /> Kaydediliyor...</> : (editingWord ? 'Guncelle' : 'Ekle')}
                                 </button>
                             </div>
                         </form>

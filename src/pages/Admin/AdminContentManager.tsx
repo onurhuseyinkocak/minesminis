@@ -18,6 +18,10 @@ type TabType = 'words' | 'games' | 'videos' | 'worksheets';
 
 type GameRow = { id: string; title: string; embedUrl: string; thumbnailUrl: string; type: string; grade: string; };
 
+type EditingItem = KidsWord | GameRow | VideoType | Worksheet | null;
+
+type ContentFormData = Record<string, string | boolean>;
+
 const extractEmbedFromIframe = (text: string): string => {
     const m = text.match(/src=["']([^"']+)["']/i) || text.match(/https?:\/\/[^\s"']+/);
     return m ? (m[1] || m[0]).trim() : '';
@@ -68,10 +72,11 @@ function AdminContentManager() {
 
     // --- Modal State ---
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingItem, setEditingItem] = useState<unknown>(null);
-    const [formData, setFormData] = useState<Record<string, unknown>>({});
+    const [editingItem, setEditingItem] = useState<EditingItem>(null);
+    const [formData, setFormData] = useState<ContentFormData>({});
     const [enriching, setEnriching] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     // ========== Load Data ==========
     useEffect(() => {
@@ -183,7 +188,7 @@ function AdminContentManager() {
         setIsModalOpen(true);
     };
 
-    const openEditModal = (item: unknown) => {
+    const openEditModal = (item: KidsWord | GameRow | VideoType | Worksheet) => {
         setEditingItem(item);
         if (activeTab === 'words') {
             const w = item as KidsWord;
@@ -260,11 +265,18 @@ function AdminContentManager() {
     // Submit handler
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setSubmitting(true);
         try {
             if (activeTab === 'words') {
                 const w = String(formData.word || '').trim();
-                if (!w) return;
-                const wordData = { ...formData, example: formData.example || undefined } as unknown as KidsWord;
+                if (!w) { setSubmitting(false); return; }
+                const wordData: KidsWord = {
+                    word: w, turkish: String(formData.turkish || ''),
+                    level: (formData.level as KidsWord['level']) || 'beginner',
+                    category: String(formData.category || 'Animals'),
+                    emoji: String(formData.emoji || ''),
+                    example: formData.example ? String(formData.example) : undefined
+                };
                 if (editingItem) {
                     const oldWord = (editingItem as KidsWord).word;
                     const res = await adminFetch(`/api/admin/words/${encodeURIComponent(oldWord)}`, {
@@ -290,13 +302,13 @@ function AdminContentManager() {
                     const g = editingItem as GameRow;
                     const res = await adminFetch(`/api/admin/games/${g.id}`, { method: 'PATCH', body: JSON.stringify(body) });
                     if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Update failed'); }
-                    setGames(prev => prev.map(x => x.id === g.id ? { ...x, ...formData as unknown as GameRow, embedUrl: url } : x));
+                    setGames(prev => prev.map(x => x.id === g.id ? { ...x, title: String(formData.title || ''), thumbnailUrl: String(formData.thumbnailUrl || ''), type: String(formData.type || ''), grade: String(formData.grade || ''), embedUrl: url } : x));
                     toast.success('Game updated');
                 } else {
                     const res = await adminFetch('/api/admin/games', { method: 'POST', body: JSON.stringify(body) });
                     const json = await res.json().catch(() => ({}));
                     if (!res.ok) throw new Error(json.error || 'Create failed');
-                    setGames(prev => [{ ...formData as unknown as GameRow, id: json.id || Date.now().toString(), embedUrl: url }, ...prev]);
+                    setGames(prev => [{ id: json.id || Date.now().toString(), title: String(formData.title || ''), embedUrl: url, thumbnailUrl: String(formData.thumbnailUrl || ''), type: String(formData.type || 'Quiz'), grade: String(formData.grade || '2') }, ...prev]);
                     toast.success('Game added');
                 }
             } else if (activeTab === 'videos') {
@@ -336,8 +348,10 @@ function AdminContentManager() {
                 await loadWorksheets();
             }
             setIsModalOpen(false);
-        } catch (err) {
+        } catch (err: unknown) {
             toast.error(err instanceof Error ? err.message : 'Operation failed');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -350,7 +364,7 @@ function AdminContentManager() {
             wordStore.deleteWord(word);
             setWords(prev => prev.filter(x => x.word !== word));
             toast.success('Word deleted');
-        } catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+        } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
     };
 
     const handleDeleteGame = async (id: string) => {
@@ -360,7 +374,7 @@ function AdminContentManager() {
             if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
             setGames(prev => prev.filter(g => g.id !== id));
             toast.success('Game deleted');
-        } catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+        } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
     };
 
     const handleDeleteVideo = async (id: string) => {
@@ -371,7 +385,7 @@ function AdminContentManager() {
             await videoStore.fetchVideos();
             setVideos(videoStore.getVideos());
             toast.success('Video deleted');
-        } catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+        } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
     };
 
     const handleDeleteWorksheet = async (id: string) => {
@@ -381,7 +395,7 @@ function AdminContentManager() {
             if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
             toast.success('Worksheet deleted');
             await loadWorksheets();
-        } catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+        } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
     };
 
     const exportWords = () => {
@@ -884,8 +898,8 @@ function AdminContentManager() {
                                 )}
                             </div>
                             <div className="adm-modal-footer">
-                                <button type="button" className="adm-btn" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="adm-btn primary">{editingItem ? 'Update' : 'Add'}</button>
+                                <button type="button" className="adm-btn" onClick={() => setIsModalOpen(false)} disabled={submitting}>Cancel</button>
+                                <button type="submit" className="adm-btn primary" disabled={submitting}>{submitting ? 'Saving...' : editingItem ? 'Update' : 'Add'}</button>
                             </div>
                         </form>
                     </div>

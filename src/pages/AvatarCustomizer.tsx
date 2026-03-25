@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
 import { usePremium } from '../contexts/PremiumContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import AvatarDisplay from '../components/AvatarDisplay';
 import {
   getAvatarConfig,
@@ -23,11 +24,18 @@ interface TabDef {
   label: string;
 }
 
-const TABS: TabDef[] = [
+const TABS_TR: TabDef[] = [
   { category: 'color',      label: 'Renk'     },
   { category: 'hat',        label: 'Şapka'    },
   { category: 'accessory',  label: 'Aksesuar' },
   { category: 'background', label: 'Arka Plan' },
+];
+
+const TABS_EN: TabDef[] = [
+  { category: 'color',      label: 'Color'      },
+  { category: 'hat',        label: 'Hat'         },
+  { category: 'accessory',  label: 'Accessory'   },
+  { category: 'background', label: 'Background'  },
 ];
 
 // Parse a simple CSS gradient/color string into something we can use as a background-color.
@@ -81,17 +89,21 @@ const AvatarCustomizer: React.FC = () => {
   const { user, userProfile } = useAuth();
   const { stats } = useGamification();
   const { isPremium } = usePremium();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
 
   const userId = user?.uid ?? 'guest';
   const letter = (userProfile?.display_name ?? user?.displayName ?? '?').charAt(0);
 
-  const unlockStats = {
+  const TABS = isTr ? TABS_TR : TABS_EN;
+
+  const unlockStats = useMemo(() => ({
     xp: stats.xp,
     streak: stats.streakDays,
     badges: stats.badges,
     level: stats.level,
     isPremium,
-  };
+  }), [stats.xp, stats.streakDays, stats.badges, stats.level, isPremium]);
 
   const [activeTab, setActiveTab] = useState<AvatarItemCategory>('color');
   const [config, setConfig] = useState<AvatarConfig>(() => getAvatarConfig(userId));
@@ -141,8 +153,8 @@ const AvatarCustomizer: React.FC = () => {
   const handleSave = useCallback(() => {
     saveAvatarConfig(userId, config);
     setDirty(false);
-    toast.success('Avatar kaydedildi!');
-  }, [userId, config]);
+    toast.success(isTr ? 'Avatar kaydedildi!' : 'Avatar saved!');
+  }, [userId, config, isTr]);
 
   return (
     <div className="avatar-customizer">
@@ -152,18 +164,18 @@ const AvatarCustomizer: React.FC = () => {
           type="button"
           className="avatar-customizer__back-btn"
           onClick={() => navigate(-1)}
-          aria-label="Geri"
+          aria-label={isTr ? 'Geri' : 'Back'}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <polyline points="15,18 9,12 15,6" />
           </svg>
         </button>
-        <h1 className="avatar-customizer__title">Avatarını Tasarla</h1>
+        <h1 className="avatar-customizer__title">{isTr ? 'Avatarını Tasarla' : 'Design Your Avatar'}</h1>
       </header>
 
       {/* ── Live preview ── */}
       <section className="avatar-customizer__preview">
-        <span className="avatar-customizer__preview-label">Önizleme</span>
+        <span className="avatar-customizer__preview-label">{isTr ? 'Önizleme' : 'Preview'}</span>
         <AvatarDisplay
           config={config}
           letter={letter}
@@ -176,12 +188,12 @@ const AvatarCustomizer: React.FC = () => {
           onClick={handleSave}
           disabled={!dirty}
         >
-          Kaydet
+          {isTr ? 'Kaydet' : 'Save'}
         </button>
       </section>
 
       {/* ── Category tabs ── */}
-      <nav className="avatar-customizer__tabs" role="tablist" aria-label="Avatar kategorileri">
+      <nav className="avatar-customizer__tabs" role="tablist" aria-label={isTr ? 'Avatar kategorileri' : 'Avatar categories'}>
         {TABS.map((tab) => (
           <button
             key={tab.category}
@@ -208,7 +220,7 @@ const AvatarCustomizer: React.FC = () => {
             <button
               key={item.id}
               type="button"
-              title={unlocked ? item.nameTr : hint}
+              title={unlocked ? (isTr ? item.nameTr : item.name) : hint}
               aria-pressed={selected}
               onClick={() => handleSelect(item.id, item.category)}
               className={[
@@ -234,7 +246,7 @@ const AvatarCustomizer: React.FC = () => {
                 <div className="avatar-item-card__swatch" style={{ background: '#E2E8F0' }} aria-hidden="true" />
               )}
 
-              <span className="avatar-item-card__name">{item.nameTr}</span>
+              <span className="avatar-item-card__name">{isTr ? item.nameTr : item.name}</span>
 
               {/* Selected checkmark */}
               {selected && (

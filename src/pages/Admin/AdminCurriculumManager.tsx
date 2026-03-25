@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
     GraduationCap, BookOpen, Plus, Pencil, Trash2, X,
-    GripVertical, Layers, Music, Gamepad2, Mic, Eye
+    ChevronUp, ChevronDown, Layers, Music, Gamepad2, Mic, Eye, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
@@ -113,6 +113,7 @@ function AdminCurriculumManager() {
     const [selectedWorldId, setSelectedWorldId] = useState<string | null>('w1');
     const [expandedLessonId, setExpandedLessonId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     // Modal state
     const [isLessonModal, setIsLessonModal] = useState(false);
@@ -154,8 +155,8 @@ function AdminCurriculumManager() {
                     duration: Number(l.duration || 15), status: String(l.status || 'draft') as 'draft' | 'published'
                 })));
             }
-        } catch {
-            // Use default data
+        } catch (_err: unknown) {
+            toast.error('Could not load from database, using default data');
         } finally {
             setLoading(false);
         }
@@ -182,20 +183,57 @@ function AdminCurriculumManager() {
         setIsWorldModal(true);
     };
 
-    const handleWorldSubmit = (e: React.FormEvent) => {
+    const handleWorldSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (editingWorld) {
-            setWorlds(prev => prev.map(w => w.id === editingWorld.id ? { ...w, ...worldForm } : w));
-            toast.success('World updated');
-        } else {
-            const newWorld: World = {
-                id: `w${Date.now()}`, order: worlds.length + 1,
-                ...worldForm, lessonCount: 0
-            };
-            setWorlds(prev => [...prev, newWorld]);
-            toast.success('World added');
+        if (!worldForm.name.trim()) { toast.error('World name is required'); return; }
+        setSaving(true);
+        try {
+            if (editingWorld) {
+                const { error } = await supabase.from('curriculum_worlds').update({
+                    name: worldForm.name, name_en: worldForm.nameEn, emoji: worldForm.emoji,
+                    color: worldForm.color, description: worldForm.description, age_range: worldForm.ageRange
+                }).eq('id', editingWorld.id);
+                if (error) toast.error('DB update failed, saved locally');
+                setWorlds(prev => prev.map(w => w.id === editingWorld.id ? { ...w, ...worldForm } : w));
+                toast.success('World updated');
+            } else {
+                const newWorld: World = {
+                    id: `w${Date.now()}`, order: worlds.length + 1,
+                    ...worldForm, lessonCount: 0
+                };
+                const { error } = await supabase.from('curriculum_worlds').insert({
+                    id: newWorld.id, order: newWorld.order, name: worldForm.name,
+                    name_en: worldForm.nameEn, emoji: worldForm.emoji, color: worldForm.color,
+                    description: worldForm.description, age_range: worldForm.ageRange, lesson_count: 0
+                });
+                if (error) toast.error('DB insert failed, saved locally');
+                setWorlds(prev => [...prev, newWorld]);
+                toast.success('World added');
+            }
+            setIsWorldModal(false);
+        } catch (_err: unknown) {
+            toast.error('Failed to save world');
+        } finally {
+            setSaving(false);
         }
-        setIsWorldModal(false);
+    };
+
+    const handleDeleteWorld = async (worldId: string) => {
+        const worldLessonCount = lessons.filter(l => l.worldId === worldId).length;
+        const msg = worldLessonCount > 0
+            ? `Delete this world and its ${worldLessonCount} lesson(s)?`
+            : 'Delete this world?';
+        if (!confirm(msg)) return;
+        try {
+            await supabase.from('curriculum_lessons').delete().eq('world_id', worldId);
+            await supabase.from('curriculum_worlds').delete().eq('id', worldId);
+            setLessons(prev => prev.filter(l => l.worldId !== worldId));
+            setWorlds(prev => prev.filter(w => w.id !== worldId));
+            if (selectedWorldId === worldId) setSelectedWorldId(null);
+            toast.success('World deleted');
+        } catch (_err: unknown) {
+            toast.error('Failed to delete world');
+        }
     };
 
     // ---- Lesson CRUD ----
@@ -216,32 +254,58 @@ function AdminCurriculumManager() {
         setIsLessonModal(true);
     };
 
-    const handleLessonSubmit = (e: React.FormEvent) => {
+    const handleLessonSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!lessonForm.title.trim()) { toast.error('Lesson title is required'); return; }
+        setSaving(true);
         const vocabWords = lessonForm.vocabularyWords.split(',').map(w => w.trim()).filter(Boolean);
-        if (editingLesson) {
-            setLessons(prev => prev.map(l => l.id === editingLesson.id ? {
-                ...l, title: lessonForm.title, titleTr: lessonForm.titleTr,
-                objective: lessonForm.objective, vocabularyWords: vocabWords,
-                duration: lessonForm.duration, status: lessonForm.status
-            } : l));
-            toast.success('Lesson updated');
-        } else {
-            const newLesson: Lesson = {
-                id: `l${Date.now()}`, worldId: selectedWorldId!,
-                order: worldLessons.length + 1,
-                title: lessonForm.title, titleTr: lessonForm.titleTr,
-                objective: lessonForm.objective, vocabularyWords: vocabWords,
-                activities: [], duration: lessonForm.duration, status: lessonForm.status
-            };
-            setLessons(prev => [...prev, newLesson]);
-            toast.success('Lesson added');
+        try {
+            if (editingLesson) {
+                const { error } = await supabase.from('curriculum_lessons').update({
+                    title: lessonForm.title, title_tr: lessonForm.titleTr,
+                    objective: lessonForm.objective, vocabulary_words: vocabWords,
+                    duration: lessonForm.duration, status: lessonForm.status
+                }).eq('id', editingLesson.id);
+                if (error) toast.error('DB update failed, saved locally');
+                setLessons(prev => prev.map(l => l.id === editingLesson.id ? {
+                    ...l, title: lessonForm.title, titleTr: lessonForm.titleTr,
+                    objective: lessonForm.objective, vocabularyWords: vocabWords,
+                    duration: lessonForm.duration, status: lessonForm.status
+                } : l));
+                toast.success('Lesson updated');
+            } else {
+                const newLesson: Lesson = {
+                    id: `l${Date.now()}`, worldId: selectedWorldId!,
+                    order: worldLessons.length + 1,
+                    title: lessonForm.title, titleTr: lessonForm.titleTr,
+                    objective: lessonForm.objective, vocabularyWords: vocabWords,
+                    activities: [], duration: lessonForm.duration, status: lessonForm.status
+                };
+                const { error } = await supabase.from('curriculum_lessons').insert({
+                    id: newLesson.id, world_id: newLesson.worldId, order: newLesson.order,
+                    title: newLesson.title, title_tr: newLesson.titleTr,
+                    objective: newLesson.objective, vocabulary_words: vocabWords,
+                    activities: [], duration: newLesson.duration, status: newLesson.status
+                });
+                if (error) toast.error('DB insert failed, saved locally');
+                setLessons(prev => [...prev, newLesson]);
+                toast.success('Lesson added');
+            }
+            setIsLessonModal(false);
+        } catch (_err: unknown) {
+            toast.error('Failed to save lesson');
+        } finally {
+            setSaving(false);
         }
-        setIsLessonModal(false);
     };
 
-    const handleDeleteLesson = (lessonId: string) => {
+    const handleDeleteLesson = async (lessonId: string) => {
         if (!confirm('Delete this lesson?')) return;
+        try {
+            await supabase.from('curriculum_lessons').delete().eq('id', lessonId);
+        } catch (_err: unknown) {
+            toast.error('DB delete failed, removed locally');
+        }
         setLessons(prev => prev.filter(l => l.id !== lessonId));
         if (expandedLessonId === lessonId) setExpandedLessonId(null);
         toast.success('Lesson deleted');
@@ -259,6 +323,31 @@ function AdminCurriculumManager() {
                 return l;
             });
         });
+    };
+
+    const moveLessonDown = (lesson: Lesson) => {
+        setLessons(prev => {
+            const wl = prev.filter(l => l.worldId === lesson.worldId).sort((a, b) => a.order - b.order);
+            const idx = wl.findIndex(l => l.id === lesson.id);
+            if (idx < 0 || idx >= wl.length - 1) return prev;
+            const swapWith = wl[idx + 1];
+            return prev.map(l => {
+                if (l.id === lesson.id) return { ...l, order: swapWith.order };
+                if (l.id === swapWith.id) return { ...l, order: lesson.order };
+                return l;
+            });
+        });
+    };
+
+    const toggleLessonStatus = async (lesson: Lesson) => {
+        const newStatus = lesson.status === 'published' ? 'draft' : 'published';
+        try {
+            await supabase.from('curriculum_lessons').update({ status: newStatus }).eq('id', lesson.id);
+        } catch (_err: unknown) {
+            // local-only fallback
+        }
+        setLessons(prev => prev.map(l => l.id === lesson.id ? { ...l, status: newStatus } : l));
+        toast.success(newStatus === 'published' ? 'Lesson published' : 'Lesson set to draft');
     };
 
 
@@ -309,8 +398,16 @@ function AdminCurriculumManager() {
                             <button
                                 className="adm-icon-btn adm-world-edit-btn"
                                 onClick={(e) => { e.stopPropagation(); openEditWorld(world); }}
+                                title="Edit world"
                             >
                                 <Pencil size={12} />
+                            </button>
+                            <button
+                                className="adm-icon-btn danger adm-world-edit-btn"
+                                onClick={(e) => { e.stopPropagation(); handleDeleteWorld(world.id); }}
+                                title="Delete world"
+                            >
+                                <Trash2 size={12} />
                             </button>
                         </div>
                     ))}
@@ -364,7 +461,23 @@ function AdminCurriculumManager() {
                                                     disabled={idx === 0}
                                                     title="Move up"
                                                 >
-                                                    <GripVertical size={14} />
+                                                    <ChevronUp size={14} />
+                                                </button>
+                                                <button
+                                                    className={`adm-icon-btn ${idx === worldLessons.length - 1 ? 'adm-move-btn-disabled' : 'adm-move-btn-active'}`}
+                                                    onClick={() => moveLessonDown(lesson)}
+                                                    disabled={idx === worldLessons.length - 1}
+                                                    title="Move down"
+                                                >
+                                                    <ChevronDown size={14} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="adm-icon-btn"
+                                                    onClick={() => toggleLessonStatus(lesson)}
+                                                    title={lesson.status === 'published' ? 'Set to draft' : 'Publish'}
+                                                >
+                                                    {lesson.status === 'published' ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
                                                 </button>
                                                 <button type="button" className="adm-icon-btn" onClick={() => openEditLesson(lesson)}><Pencil size={13} /></button>
                                                 <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteLesson(lesson.id)}><Trash2 size={13} /></button>
@@ -444,8 +557,8 @@ function AdminCurriculumManager() {
                                 </div>
                                 <div className="adm-world-form-bottom">
                                     <div className="adm-form-group">
-                                        <label>Color</label>
-                                        <input type="color" value={worldForm.color} onChange={e => setWorldForm({ ...worldForm, color: e.target.value })} className="adm-color-input" />
+                                        <label>Color (CSS variable or hex)</label>
+                                        <input type="text" value={worldForm.color} onChange={e => setWorldForm({ ...worldForm, color: e.target.value })} placeholder="var(--accent-blue) or #3b82f6" />
                                     </div>
                                     <div className="adm-form-group">
                                         <label>Age Range</label>
@@ -454,8 +567,8 @@ function AdminCurriculumManager() {
                                 </div>
                             </div>
                             <div className="adm-modal-footer">
-                                <button type="button" className="adm-btn" onClick={() => setIsWorldModal(false)}>Cancel</button>
-                                <button type="submit" className="adm-btn primary">{editingWorld ? 'Update' : 'Add World'}</button>
+                                <button type="button" className="adm-btn" onClick={() => setIsWorldModal(false)} disabled={saving}>Cancel</button>
+                                <button type="submit" className="adm-btn primary" disabled={saving}>{saving ? 'Saving...' : editingWorld ? 'Update' : 'Add World'}</button>
                             </div>
                         </form>
                     </div>
@@ -504,8 +617,8 @@ function AdminCurriculumManager() {
                                 </div>
                             </div>
                             <div className="adm-modal-footer">
-                                <button type="button" className="adm-btn" onClick={() => setIsLessonModal(false)}>Cancel</button>
-                                <button type="submit" className="adm-btn primary">{editingLesson ? 'Update' : 'Add Lesson'}</button>
+                                <button type="button" className="adm-btn" onClick={() => setIsLessonModal(false)} disabled={saving}>Cancel</button>
+                                <button type="submit" className="adm-btn primary" disabled={saving}>{saving ? 'Saving...' : editingLesson ? 'Update' : 'Add Lesson'}</button>
                             </div>
                         </form>
                     </div>

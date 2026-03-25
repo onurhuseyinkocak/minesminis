@@ -151,8 +151,9 @@ const ReportsManager: React.FC = () => {
                         .map(([date, set]) => ({ date, count: set.size }))
                 );
             }
-        } catch {
-            // Analytics silently degrade — not critical
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Analitik verisi yuklenemedi';
+            toast.error(msg);
         } finally {
             setAnalyticsLoading(false);
         }
@@ -166,14 +167,16 @@ const ReportsManager: React.FC = () => {
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
+            if (error) {
+                toast.error(`Raporlar yuklenemedi: ${error.message}`);
+                setReports([]);
+                return;
+            }
             setReports(data || []);
-        } catch {
-            // Simulated data for demo if table doesn't exist yet
-            setReports([
-                { id: '1', user_id: 'dev', page_url: '/games', content: 'Oyun yüklenmiyor, siyah ekran kalıyor.', status: 'open', created_at: new Date().toISOString() },
-                { id: '2', user_id: null, page_url: '/words', content: 'Kelime telaffuzları bazen çalışmıyor.', status: 'resolved', created_at: new Date(Date.now() - 86400000).toISOString() }
-            ]);
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Bilinmeyen hata';
+            toast.error(`Raporlar yuklenemedi: ${msg}`);
+            setReports([]);
         } finally {
             setLoading(false);
         }

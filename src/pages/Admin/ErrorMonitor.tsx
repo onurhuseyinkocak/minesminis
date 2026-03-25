@@ -3,6 +3,7 @@ import {
   AlertTriangle, Bug, CheckCircle, Trash2, Download, RefreshCw,
   Search, ChevronDown, ChevronUp, Clock, Monitor, Globe, User
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { errorLogger, SEVERITY_COLORS, SEVERITY_BG } from '../../services/errorLogger';
 import './ErrorMonitor.css';
 import type { ErrorSeverity, ErrorLog } from '../../services/errorLogger';
@@ -94,8 +95,11 @@ function ErrorMonitor() {
     const a = document.createElement('a');
     a.href = url;
     a.download = `error-logs-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    toast.success('Hata loglari indirildi');
   };
 
   return (
@@ -332,7 +336,9 @@ function ErrorMonitor() {
                           className="em-copy-btn"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigator.clipboard.writeText(JSON.stringify(log, null, 2));
+                            navigator.clipboard.writeText(JSON.stringify(log, null, 2))
+                              .then(() => toast.success('Panoya kopyalandi'))
+                              .catch(() => toast.error('Kopyalama basarisiz'));
                           }}
                         >
                           Kopyala

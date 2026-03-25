@@ -91,26 +91,31 @@ export const getUserPet = async (userId: string): Promise<VirtualPet | null> => 
         // Fallback to localStorage
         const local = localStorage.getItem(`${LS_PET_PREFIX}${userId}`);
         if (local) {
-            try { return JSON.parse(local); } catch { /* corrupted */ }
+            try { return JSON.parse(local) as VirtualPet; } catch { /* corrupted */ }
         }
         return null;
     }
 
-    const type: PetType = LEGACY_TO_PET[data.type] || (['cat', 'dog', 'bird'].includes(data.type) ? data.type : 'cat');
+    const dbData = data as {
+        id: string; name: string; type: string; level: number; experience: number;
+        happiness: number; hunger: number; energy: number; last_fed: string;
+        last_played: string; created_at: string;
+    };
+    const type: PetType = LEGACY_TO_PET[dbData.type] || (['cat', 'dog', 'bird'].includes(dbData.type) ? dbData.type as PetType : 'cat');
     const emoji = PET_EMOJI[type];
     return {
-        id: data.id,
-        name: data.name,
+        id: dbData.id,
+        name: dbData.name,
         type,
         emoji,
-        level: data.level,
-        experience: data.experience,
-        happiness: data.happiness,
-        hunger: data.hunger,
-        energy: data.energy,
-        lastFed: data.last_fed,
-        lastPlayed: data.last_played,
-        createdAt: data.created_at
+        level: dbData.level,
+        experience: dbData.experience,
+        happiness: dbData.happiness,
+        hunger: dbData.hunger,
+        energy: dbData.energy,
+        lastFed: dbData.last_fed,
+        lastPlayed: dbData.last_played,
+        createdAt: dbData.created_at
     };
 };
 
@@ -141,7 +146,7 @@ export const renamePet = async (userId: string, newName: string): Promise<void> 
     const local = localStorage.getItem(`${LS_PET_PREFIX}${userId}`);
     if (local) {
         try {
-            const pet = JSON.parse(local);
+            const pet = JSON.parse(local) as VirtualPet;
             pet.name = newName;
             localStorage.setItem(`${LS_PET_PREFIX}${userId}`, JSON.stringify(pet));
         } catch { /* corrupted */ }

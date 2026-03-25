@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import { useLanguage } from '../contexts/LanguageContext';
+import PublicLayout from '../components/layout/PublicLayout';
 import './Blog.css';
 import { ArrowLeft } from 'lucide-react';
 
@@ -32,6 +34,7 @@ interface BlogPostData {
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
+  const { lang } = useLanguage();
   const [post, setPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -65,13 +68,28 @@ export default function BlogPost() {
     fetchPost();
   }, [slug, fetchPost]);
 
-  if (loading) return <div className="blog-page"><div className="blog-loading">Yükleniyor...</div></div>;
-  if (error) return <div className="blog-page"><div className="blog-empty"><p>Yazı yüklenirken bir hata oluştu.</p><Link to="/blog">← Bloga dön</Link></div></div>;
-  if (!post) return <div className="blog-page"><div className="blog-empty"><p>Yazı bulunamadı.</p><Link to="/blog">← Bloga dön</Link></div></div>;
+  const backLabel = lang === 'tr' ? 'Bloga don' : 'Back to Blog';
+
+  if (loading) return (
+    <PublicLayout>
+      <div className="blog-page"><div className="blog-loading">{lang === 'tr' ? 'Yukleniyor...' : 'Loading...'}</div></div>
+    </PublicLayout>
+  );
+  if (error) return (
+    <PublicLayout>
+      <div className="blog-page"><div className="blog-empty"><p>{lang === 'tr' ? 'Yazi yuklenirken bir hata olustu.' : 'An error occurred while loading the post.'}</p><Link to="/blog">{backLabel}</Link></div></div>
+    </PublicLayout>
+  );
+  if (!post) return (
+    <PublicLayout>
+      <div className="blog-page"><div className="blog-empty"><p>{lang === 'tr' ? 'Yazi bulunamadi.' : 'Post not found.'}</p><Link to="/blog">{backLabel}</Link></div></div>
+    </PublicLayout>
+  );
 
   return (
+    <PublicLayout>
     <div className="blog-page blog-post-page">
-      <Link to="/blog" className="blog-back"><ArrowLeft size={18} /> Bloga dön</Link>
+      <Link to="/blog" className="blog-back"><ArrowLeft size={18} /> {backLabel}</Link>
       <article className="blog-post">
         <header>
           <h1>{post.title}</h1>
@@ -85,5 +103,6 @@ export default function BlogPost() {
         />
       </article>
     </div>
+    </PublicLayout>
   );
 }

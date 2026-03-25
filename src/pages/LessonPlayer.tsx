@@ -182,9 +182,10 @@ interface FallbackActivityProps {
   activity: Activity;
   words: { english: string; turkish: string; emoji: string; phonetic?: string; exampleSentence?: string }[];
   onComplete: (score: number, total: number) => void;
+  t: (key: string) => string;
 }
 
-function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityProps & { t: (key: string) => string }) {
+function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityProps) {
   const [currentCard, setCurrentCard] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [reviewedCount, setReviewedCount] = useState(0);
@@ -430,10 +431,9 @@ const LessonPlayer = () => {
         setCompleted(true);
         const totalXP = lesson.xpReward || 30;
         // Heart bonus: +10 XP per remaining heart
-        setHearts((currentHearts) => {
-          const heartBonus = currentHearts * HEART_BONUS_XP;
-          addXP(totalXP + heartBonus, 'lesson_completed', { lessonId, worldId });
-          return currentHearts;
+        const heartBonus = hearts * HEART_BONUS_XP;
+        addXP(totalXP + heartBonus, 'lesson_completed', { lessonId, worldId }).catch(() => {
+          // XP sync failed silently
         });
 
         // Save progress via progressTracker (unlocks next lesson/world)
@@ -459,10 +459,10 @@ const LessonPlayer = () => {
         }
       }
     }, 1500);
-  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId, activityWords, user?.uid]);
+  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId, activityWords, user?.uid, hearts]);
 
   const handleXpEarned = useCallback((xp: number) => {
-    addXP(xp, 'activity_completed', { lessonId, worldId });
+    addXP(xp, 'activity_completed', { lessonId, worldId }).catch(() => { /* XP sync failed silently */ });
   }, [addXP, lessonId, worldId]);
 
   const handleWrongAnswer = useCallback(() => {
@@ -487,7 +487,7 @@ const LessonPlayer = () => {
     } else {
       setCompleted(true);
       const totalXP = lesson.xpReward || 30;
-      addXP(totalXP, 'lesson_completed', { lessonId, worldId });
+      addXP(totalXP, 'lesson_completed', { lessonId, worldId }).catch(() => { /* XP sync failed silently */ });
 
       // Save progress so next lesson unlocks (same as handleActivityComplete for last activity)
       try {
@@ -502,9 +502,9 @@ const LessonPlayer = () => {
           duration: Math.round(totalActivities * 60),
           accuracy,
           xpEarned: totalXP,
-        }, user?.uid);
+        }, user?.uid).catch(() => { /* activity log failed silently */ });
 
-        syncStudentProgress(totalXP);
+        syncStudentProgress(totalXP).catch(() => { /* classroom sync failed silently */ });
       } catch {
         // localStorage might be unavailable
       }
@@ -671,11 +671,26 @@ const LessonPlayer = () => {
     );
   }
 
+  // ========== NO ACTIVITIES GUARD ==========
+  if (totalActivities === 0 || !currentActivity) {
+    return (
+      <div className="lesson-player-page lesson-player-page--not-found">
+        <h2>{t('lesson.noActivities') || 'No activities in this lesson'}</h2>
+        <p className="lesson-not-found__desc">
+          {t('lesson.noActivitiesDesc') || 'This lesson has no activities to play.'}
+        </p>
+        <Link to={`/worlds/${worldId}`}>
+          <Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('lesson.backToWorld')}</Button>
+        </Link>
+      </div>
+    );
+  }
+
   // ========== ACTIVE LESSON ==========
-  const ActivityIcon = ACTIVITY_ICONS[currentActivity?.type || 'word-match'] || Gamepad2;
-  const activityColor = ACTIVITY_COLORS[currentActivity?.type || 'word-match'] || 'var(--accent-emerald)';
+  const ActivityIcon = ACTIVITY_ICONS[currentActivity.type] || Gamepad2;
+  const activityColor = ACTIVITY_COLORS[currentActivity.type] || 'var(--accent-emerald)';
   const encouragementKey = getEncouragementKey(currentIndex);
-  const isSupported = currentActivity ? SUPPORTED_GAME_TYPES.has(currentActivity.type) : false;
+  const isSupported = SUPPORTED_GAME_TYPES.has(currentActivity.type);
 
   return (
     <div className="lesson-player-page">
@@ -736,7 +751,7 @@ const LessonPlayer = () => {
       <div className="lesson-player-main">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
-            key={currentActivity?.id}
+            key={currentActivity.id}
             className="lesson-activity"
             custom={direction}
             variants={slideVariants}
@@ -750,20 +765,20 @@ const LessonPlayer = () => {
                 <ActivityIcon size={28} color="var(--white)" />
               </div>
               <div>
-                <h2 className="lesson-activity__title">{lang === 'tr' && (currentActivity as unknown as { titleTr?: string })?.titleTr ? (currentActivity as unknown as { titleTr: string }).titleTr : currentActivity?.title}</h2>
+                <h2 className="lesson-activity__title">{lang === 'tr' && 'titleTr' in currentActivity && (currentActivity as Activity & { titleTr?: string }).titleTr ? (currentActivity as Activity & { titleTr: string }).titleTr : currentActivity.title}</h2>
                 <span className="lesson-activity__type">{({
                   'word-match': 'Kelime Eşleştir', 'spelling-bee': 'Heceleme', 'quick-quiz': 'Hızlı Test',
                   'sentence-scramble': 'Cümle Kur', 'listening-challenge': 'Dinleme', 'phonics-builder': 'Ses Birleştir',
                   'story-choices': 'Hikaye', 'sound-intro': 'Ses Tanıtımı', 'blending': 'Birleştirme',
                   'segmenting': 'Parçalama', 'tpr': 'Hareket', 'listening': 'Dinleme', 'pronunciation': 'Telaffuz',
                   'reading': 'Okuma', 'song': 'Şarkı',
-                } as Record<string, string>)[currentActivity?.type || ''] || currentActivity?.type}</span>
+                } as Record<string, string>)[currentActivity.type] || currentActivity.type}</span>
               </div>
             </div>
 
             {/* Activity Content - Real Games */}
             <Card variant="outlined" padding="xl" className="lesson-activity__content">
-              {currentActivity && isSupported ? (
+              {isSupported ? (
                 <GameSelector
                   type={currentActivity.type}
                   words={activityWords}
@@ -771,14 +786,14 @@ const LessonPlayer = () => {
                   onXpEarned={handleXpEarned}
                   onWrongAnswer={handleWrongAnswer}
                 />
-              ) : currentActivity ? (
+              ) : (
                 <FallbackActivity
                   activity={currentActivity}
                   words={activityWords}
                   onComplete={handleActivityComplete}
                   t={t}
                 />
-              ) : null}
+              )}
             </Card>
           </motion.div>
         </AnimatePresence>

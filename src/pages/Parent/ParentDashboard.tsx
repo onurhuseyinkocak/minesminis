@@ -14,6 +14,7 @@ import {
   getWeeklySummary,
   getActivityBreakdown,
   getWeeklyActivityData,
+  getMonthlyActivityData,
 } from '../../services/activityLogger';
 import {
   getLearnerProfile,
@@ -35,6 +36,7 @@ interface DashboardData {
   weeklySummary: ReturnType<typeof getWeeklySummary>;
   activityBreakdown: Record<string, number>;
   weeklyActivity: ReturnType<typeof getWeeklyActivityData>;
+  monthlyActivity: ReturnType<typeof getMonthlyActivityData>;
   srsBox1: number;
   srsBox2: number;
   srsBox3: number;
@@ -51,12 +53,12 @@ function toDateKey(d: Date): string {
 }
 
 function buildCalendar(
-  weeklyActivity: ReturnType<typeof getWeeklyActivityData>,
+  monthlyActivity: ReturnType<typeof getMonthlyActivityData>,
   streakDays: number,
 ): Array<{ date: string; hasActivity: boolean; isStreak: boolean; isToday: boolean }> {
   const today = toDateKey(new Date());
   const activityDates = new Set(
-    weeklyActivity.filter((d) => d.totalMinutes > 0).map((d) => d.date),
+    monthlyActivity.filter((d) => d.totalMinutes > 0).map((d) => d.date),
   );
 
   // Build last 30 days
@@ -334,17 +336,17 @@ function SummaryCards({
 }
 
 function StreakCalendar({
-  weeklyActivity,
+  monthlyActivity,
   streakDays,
   lang,
 }: {
-  weeklyActivity: ReturnType<typeof getWeeklyActivityData>;
+  monthlyActivity: ReturnType<typeof getMonthlyActivityData>;
   streakDays: number;
   lang: string;
 }) {
   const calendar = useMemo(
-    () => buildCalendar(weeklyActivity, streakDays),
-    [weeklyActivity, streakDays],
+    () => buildCalendar(monthlyActivity, streakDays),
+    [monthlyActivity, streakDays],
   );
 
   const activeDays = calendar.filter((d) => d.hasActivity).length;
@@ -498,6 +500,15 @@ function ActivityBreakdown({
   breakdown: Record<string, number>;
   lang: string;
 }) {
+  const ACTIVITY_LABELS_TR: Record<string, string> = {
+    phonics:   'Fonik',
+    game:      'Oyun',
+    reading:   'Okuma',
+    song:      'Sarki',
+    review:    'Tekrar',
+    challenge: 'Meydan Okuma',
+  };
+
   const entries = Object.entries(breakdown)
     .map(([type, seconds]) => ({ type, minutes: Math.round(seconds / 60) }))
     .filter((e) => e.minutes > 0)
@@ -541,7 +552,7 @@ function ActivityBreakdown({
                   {type === 'challenge' && <IconFlame size={14} />}
                   {!['phonics','game','reading','song','review','challenge'].includes(type) && <IconBarChart size={14} />}
                 </div>
-                <span className="pd-activity-label">{type}</span>
+                <span className="pd-activity-label">{lang === 'tr' ? (ACTIVITY_LABELS_TR[type] ?? type) : type}</span>
                 <div className="pd-activity-bar-wrap">
                   <div
                     className="pd-activity-bar-fill"
@@ -675,7 +686,28 @@ function RecentBadges({ badgeIds, lang }: { badgeIds: string[]; lang: string }) 
 
 function WeeklyInsight({ data, lang }: { data: DashboardData; lang: string }) {
   const { weeklyReport, insights } = data;
-  const firstInsight = insights[0];
+  const firstInsight = insights.length > 0 ? insights[0] : null;
+
+  if (weeklyReport.sessionsCompleted === 0 && !firstInsight) {
+    return (
+      <div className="pd-card">
+        <div className="pd-card-header">
+          <h2 className="pd-card-title">
+            <IconLightbulb size={16} />
+            {lang === 'tr' ? 'Haftalık İpucu' : 'Weekly Insight'}
+          </h2>
+        </div>
+        <EmptyCard
+          message={
+            lang === 'tr'
+              ? 'Bu hafta henüz oturum tamamlanmadı. Öneriler için pratik yapmaya başla.'
+              : 'No sessions completed this week. Start practicing to get insights.'
+          }
+          lang={lang}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="pd-card">
@@ -690,7 +722,7 @@ function WeeklyInsight({ data, lang }: { data: DashboardData; lang: string }) {
           <p className="pd-insight-recommendation">{weeklyReport.recommendation}</p>
           {firstInsight && (
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 12px', lineHeight: 1.6 }}>
-              {firstInsight.description}
+              {lang === 'tr' ? firstInsight.descriptionTr : firstInsight.description}
             </p>
           )}
           <div className="pd-insight-meta">
@@ -760,8 +792,13 @@ export default function ParentDashboard() {
 
   const handleGenerateReport = useCallback(() => {
     if (!activeChildId) return;
-    const assessment = generateAssessment(activeChildId, '30days');
-    setReportData(assessment);
+    try {
+      const assessment = generateAssessment(activeChildId, '30days');
+      setReportData(assessment);
+    } catch {
+      // Assessment generation can fail if there is no data yet
+      setReportData(null);
+    }
   }, [activeChildId]);
 
   const handlePrintReport = useCallback(() => {
@@ -792,6 +829,7 @@ export default function ParentDashboard() {
     const weeklySummary     = getWeeklySummary(activeChildId);
     const activityBreakdown = getActivityBreakdown(activeChildId);
     const weeklyActivity    = getWeeklyActivityData(activeChildId);
+    const monthlyActivity   = getMonthlyActivityData(activeChildId);
     const srsState          = getSRSState(activeChildId);
     const weeklyReport      = generateWeeklyReport();
     const insights          = getLearnerInsights();
@@ -814,6 +852,7 @@ export default function ParentDashboard() {
       weeklySummary,
       activityBreakdown,
       weeklyActivity,
+      monthlyActivity,
       srsBox1,
       srsBox2,
       srsBox3,
@@ -898,7 +937,23 @@ export default function ParentDashboard() {
       </header>
 
       {/* Content */}
-      {loading || !dashData ? (
+      {!loading && children.length === 0 ? (
+        <main className="pd-content">
+          <div className="pd-card">
+            <div className="pd-empty">
+              <IconUsers size={40} />
+              <p className="pd-empty-title">
+                {lang === 'tr' ? 'Henüz bir profil eklenmedi' : 'No child profiles yet'}
+              </p>
+              <p className="pd-empty-sub">
+                {lang === 'tr'
+                  ? 'Ilerlemeyi takip etmek icin cocuk profili ekleyin.'
+                  : 'Add a child profile to start tracking progress.'}
+              </p>
+            </div>
+          </div>
+        </main>
+      ) : loading || !dashData ? (
         <LoadingSkeleton />
       ) : (
         <main className="pd-content">
@@ -911,7 +966,7 @@ export default function ParentDashboard() {
           {/* Streak calendar + Word mastery */}
           <div className="pd-three-col">
             <StreakCalendar
-              weeklyActivity={dashData.weeklyActivity}
+              monthlyActivity={dashData.monthlyActivity}
               streakDays={activeChild?.streak_days ?? 0}
               lang={lang}
             />

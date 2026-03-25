@@ -1,7 +1,35 @@
-import { useState } from 'react';
-import { PenSquare, Plus, Construction } from 'lucide-react';
-import { adminFetch, getAdminApiBase } from '../../utils/adminApi';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  PenSquare,
+  Plus,
+  Trash2,
+  Edit3,
+  Eye,
+  EyeOff,
+  ExternalLink,
+  RefreshCw,
+  Save,
+  X,
+  AlertCircle,
+  FileText,
+} from 'lucide-react';
+import { adminFetch } from '../../utils/adminApi';
+import { supabase } from '../../config/supabase';
+import toast from 'react-hot-toast';
 import './BlogManager.css';
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  published_at: string | null;
+  meta_title: string;
+  meta_description: string;
+  created_at: string;
+  updated_at: string;
+}
 
 interface DraftForm {
   title: string;
@@ -13,120 +41,442 @@ interface DraftForm {
   meta_description: string;
 }
 
+interface FormErrors {
+  title?: string;
+  slug?: string;
+  content?: string;
+}
+
 const emptyForm = (): DraftForm => ({
   title: '',
   slug: '',
   excerpt: '',
   content: '',
-  published_at: '',
+  published_at: new Date().toISOString().split('T')[0],
   meta_title: '',
   meta_description: '',
 });
 
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function validateForm(form: DraftForm): FormErrors {
+  const errors: FormErrors = {};
+  if (!form.title.trim()) errors.title = 'Baslik zorunlu';
+  if (!form.slug.trim()) errors.slug = 'Slug zorunlu';
+  else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(form.slug)) errors.slug = 'Slug sadece kucuk harf, rakam ve tire icermelidir';
+  if (!form.content.trim()) errors.content = 'Icerik zorunlu';
+  return errors;
+}
+
 export default function BlogManager() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [form, setForm] = useState<DraftForm>(emptyForm());
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  const [dbAvailable, setDbAvailable] = useState(true);
+
+  const loadPosts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes('does not exist')) {
+          setDbAvailable(false);
+          setPosts([]);
+        } else {
+          toast.error(`Blog yazilari yuklenemedi: ${error.message}`);
+        }
+        return;
+      }
+      setDbAvailable(true);
+      setPosts((data as BlogPost[]) || []);
+    } catch {
+      toast.error('Blog yazilari yuklenirken hata olustu');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
 
   const closeEditor = () => {
     setShowEditor(false);
+    setEditingId(null);
     setForm(emptyForm());
+    setErrors({});
+    setSlugManuallyEdited(false);
+  };
+
+  const openNewEditor = () => {
+    setEditingId(null);
+    setForm(emptyForm());
+    setErrors({});
+    setSlugManuallyEdited(false);
+    setShowEditor(true);
+  };
+
+  const openEditEditor = (post: BlogPost) => {
+    setEditingId(post.id);
+    setForm({
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt || '',
+      content: post.content,
+      published_at: post.published_at ? post.published_at.split('T')[0] : '',
+      meta_title: post.meta_title || '',
+      meta_description: post.meta_description || '',
+    });
+    setErrors({});
+    setSlugManuallyEdited(true);
+    setShowEditor(true);
+  };
+
+  const handleTitleChange = (title: string) => {
+    setForm(f => {
+      const updated = { ...f, title };
+      if (!slugManuallyEdited) {
+        updated.slug = generateSlug(title);
+      }
+      if (!f.meta_title) {
+        updated.meta_title = title;
+      }
+      return updated;
+    });
+  };
+
+  const handleSlugChange = (slug: string) => {
+    setSlugManuallyEdited(true);
+    setForm(f => ({ ...f, slug }));
+  };
+
+  const handleSave = async () => {
+    const validationErrors = validateForm(form);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      toast.error('Lutfen zorunlu alanlari doldurun');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (editingId) {
+        const { error } = await supabase
+          .from('blog_posts')
+          .update({
+            title: form.title,
+            slug: form.slug,
+            excerpt: form.excerpt || form.content.slice(0, 200),
+            content: form.content,
+            published_at: form.published_at ? new Date(form.published_at).toISOString() : null,
+            meta_title: form.meta_title || form.title,
+            meta_description: form.meta_description || form.excerpt || '',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', editingId);
+
+        if (error) throw error;
+        toast.success('Blog yazisi guncellendi');
+      } else {
+        const res = await adminFetch('/api/admin/blog', {
+          method: 'POST',
+          body: JSON.stringify({
+            title: form.title,
+            slug: form.slug,
+            excerpt: form.excerpt || form.content.slice(0, 200),
+            content: form.content,
+            published_at: form.published_at ? new Date(form.published_at).toISOString() : new Date().toISOString(),
+            meta_title: form.meta_title || form.title,
+            meta_description: form.meta_description || form.excerpt || '',
+          }),
+        });
+
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({ error: 'Bilinmeyen hata' }));
+          const errMsg =
+            res.status === 401 || res.status === 403
+              ? 'Yetkisiz. Admin olarak giris yapin.'
+              : res.status === 429
+                ? 'Cok fazla istek. Bir dakika bekleyip tekrar deneyin.'
+                : (json as { error?: string }).error || 'Kaydetme basarisiz';
+          throw new Error(errMsg);
+        }
+        toast.success('Blog yazisi kaydedildi');
+      }
+      closeEditor();
+      await loadPosts();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
+      toast.error(msg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (post: BlogPost) => {
+    if (!window.confirm(`"${post.title}" yazisini silmek istediginize emin misiniz?`)) return;
+
+    setDeleting(post.id);
+    try {
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', post.id);
+
+      if (error) throw error;
+      toast.success('Blog yazisi silindi');
+      await loadPosts();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Silme basarisiz';
+      toast.error(msg);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleTogglePublish = async (post: BlogPost) => {
+    const isPublished = !!post.published_at;
+    try {
+      const { error } = await supabase
+        .from('blog_posts')
+        .update({
+          published_at: isPublished ? null : new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', post.id);
+
+      if (error) throw error;
+      toast.success(isPublished ? 'Yazi yayin disina alindi' : 'Yazi yayinlandi');
+      await loadPosts();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Guncelleme basarisiz';
+      toast.error(msg);
+    }
   };
 
   const handleGenerateDaily = async () => {
     setGenerating(true);
     try {
-      const healthRes = await fetch(`${getAdminApiBase()}/api/health`).catch(() => null);
-      if (!healthRes?.ok) {
-        alert('Backend sunucusu erişilemiyor. Lütfen "npm run dev" ile hem frontend hem backend\'i başlatın (port 3001).');
-        return;
-      }
       const genRes = await adminFetch('/api/blog/generate', { method: 'POST' });
-      const genJson = await genRes.json().catch(() => ({}));
+      const genJson = await genRes.json().catch(() => ({})) as { ok?: boolean; error?: string };
       if (!genRes.ok || !genJson.ok) {
         const err =
           genRes.status === 401 || genRes.status === 403
-            ? 'Yetkisiz. Admin olarak giriş yapın.'
+            ? 'Yetkisiz. Admin olarak giris yapin.'
             : genRes.status === 429
-              ? 'Çok fazla istek. Bir dakika bekleyip tekrar deneyin.'
-              : genJson.error || 'Oluşturma başarısız';
-        alert(err);
+              ? 'Cok fazla istek. Bir dakika bekleyip tekrar deneyin.'
+              : genJson.error || 'Olusturma basarisiz';
+        toast.error(err);
         return;
       }
-      alert('Blog yazısı oluşturuldu! blog_posts tablosu oluşturulduğunda buraya kaydedilecek.');
+      toast.success('Blog yazisi AI ile olusturuldu!');
+      await loadPosts();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
-      alert(`API bağlantısı kurulamadı. Hata: ${msg}`);
+      toast.error(`API baglantisi kurulamadi: ${msg}`);
     } finally {
       setGenerating(false);
     }
   };
 
+  const publishedCount = posts.filter(p => !!p.published_at).length;
+  const draftCount = posts.length - publishedCount;
+
   return (
     <div className="admin-page admin-blog-manager">
       <div className="admin-header">
         <div>
-          <h1><PenSquare size={28} /> Blog Yönetimi</h1>
-          <p>SEO odaklı blog yazıları</p>
+          <h1><PenSquare size={28} /> Blog Yonetimi</h1>
+          <p>SEO odakli blog yazilari ({posts.length} yazi, {publishedCount} yayinda, {draftCount} taslak)</p>
         </div>
         <div className="admin-blog-actions">
           <button
-            className="admin-btn admin-btn-primary"
+            className="admin-btn admin-btn-secondary"
             onClick={handleGenerateDaily}
-            disabled={generating}
+            disabled={generating || !dbAvailable}
+            title={!dbAvailable ? 'blog_posts tablosu gerekli' : ''}
           >
-            {generating ? 'Oluşturuluyor...' : 'Günlük Makale Oluştur'}
+            <RefreshCw size={18} className={generating ? 'spin' : ''} />
+            {generating ? 'Olusturuluyor...' : 'AI Makale Olustur'}
           </button>
-          <button type="button" className="admin-btn admin-btn-secondary" onClick={() => setShowEditor(true)}>
-            <Plus size={18} /> Yeni Yazı
+          <button
+            type="button"
+            className="admin-btn admin-btn-primary"
+            onClick={openNewEditor}
+            disabled={!dbAvailable}
+            title={!dbAvailable ? 'blog_posts tablosu gerekli' : ''}
+          >
+            <Plus size={18} /> Yeni Yazi
           </button>
         </div>
       </div>
 
-      {/* Coming Soon Notice */}
-      <div
-        className="adm-coming-soon-notice"
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '14px',
-          background: 'var(--bg-muted, #fff8e6)',
-          border: '1px solid var(--warning, #f59e0b)',
-          borderRadius: '10px',
-          padding: '18px 20px',
-          marginBottom: '24px',
-        }}
-      >
-        <Construction size={24} style={{ color: 'var(--warning, #f59e0b)', flexShrink: 0, marginTop: '2px' }} />
-        <div>
-          <strong style={{ display: 'block', marginBottom: '4px', fontSize: '1rem' }}>
-            Blog feature is under development
-          </strong>
-          <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary, #666)', lineHeight: '1.5' }}>
-            The <code>blog_posts</code> table does not yet exist in Supabase. Once the database migration is run,
-            blog posts will be stored and listed here. You can preview the editor form below, but saving is disabled
-            until the table is available.
+      {/* DB not available notice */}
+      {!dbAvailable && (
+        <div
+          className="adm-coming-soon-notice"
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '14px',
+            background: 'var(--bg-muted, #fff8e6)',
+            border: '1px solid var(--warning, #f59e0b)',
+            borderRadius: '10px',
+            padding: '18px 20px',
+            marginBottom: '24px',
+          }}
+        >
+          <AlertCircle size={24} style={{ color: 'var(--warning, #f59e0b)', flexShrink: 0, marginTop: '2px' }} />
+          <div>
+            <strong style={{ display: 'block', marginBottom: '4px', fontSize: '1rem' }}>
+              blog_posts tablosu bulunamadi
+            </strong>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary, #666)', lineHeight: '1.5' }}>
+              Supabase veritabaninda <code>blog_posts</code> tablosu henuz olusturulmamis.
+              Migration dosyasini calistirin veya Supabase Dashboard uzerinden tabloyu olusturun.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {loading && (
+        <div className="admin-blog-empty">
+          <RefreshCw size={32} className="spin" style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }} />
+          <p>Blog yazilari yukleniyor...</p>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && dbAvailable && posts.length === 0 && (
+        <div className="admin-blog-empty">
+          <FileText size={40} style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }} />
+          <p>Henuz blog yazisi yok</p>
+          <p className="admin-blog-empty-hint">
+            "Yeni Yazi" butonuna tiklayarak ilk yaziyi olusturun veya AI ile otomatik olusturun.
           </p>
         </div>
-      </div>
+      )}
 
-      {/* Editor Preview */}
+      {/* Blog post list */}
+      {!loading && posts.length > 0 && (
+        <div className="admin-blog-list">
+          {posts.map(post => (
+            <div key={post.id} className="admin-blog-card">
+              <div style={{ flex: 1 }}>
+                <h3>
+                  {post.title}
+                  {!post.published_at && (
+                    <span style={{
+                      marginLeft: '8px',
+                      fontSize: '0.7rem',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      background: 'var(--bg-muted, #f59e0b20)',
+                      color: 'var(--warning, #f59e0b)',
+                      fontWeight: 600,
+                      verticalAlign: 'middle',
+                    }}>
+                      TASLAK
+                    </span>
+                  )}
+                </h3>
+                <p className="admin-blog-excerpt">{post.excerpt || post.content?.slice(0, 150)}</p>
+                <div className="admin-blog-meta">
+                  <span>/{post.slug}</span>
+                  {post.published_at && (
+                    <span className="published">
+                      Yayinlanma: {new Date(post.published_at).toLocaleDateString('tr-TR')}
+                    </span>
+                  )}
+                  {post.created_at && (
+                    <span style={{ marginLeft: '0.75rem' }}>
+                      Olusturulma: {new Date(post.created_at).toLocaleDateString('tr-TR')}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="admin-blog-card-actions">
+                <button
+                  type="button"
+                  className="admin-btn-icon"
+                  onClick={() => handleTogglePublish(post)}
+                  title={post.published_at ? 'Yayin disina al' : 'Yayinla'}
+                >
+                  {post.published_at ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+                <a
+                  href={`/blog/${post.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="admin-btn-icon"
+                  title="Onizle"
+                >
+                  <ExternalLink size={16} />
+                </a>
+                <button
+                  type="button"
+                  className="admin-btn-icon"
+                  onClick={() => openEditEditor(post)}
+                  title="Duzenle"
+                >
+                  <Edit3 size={16} />
+                </button>
+                <button
+                  type="button"
+                  className="admin-btn-icon admin-btn-icon-danger"
+                  onClick={() => handleDelete(post)}
+                  disabled={deleting === post.id}
+                  title="Sil"
+                >
+                  {deleting === post.id ? <RefreshCw size={16} className="spin" /> : <Trash2 size={16} />}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Editor Modal */}
       {showEditor && (
         <div className="admin-blog-editor-overlay" onClick={closeEditor}>
           <div className="admin-blog-editor" onClick={(e) => e.stopPropagation()}>
             <div className="admin-blog-editor-header">
-              <h2>Yeni Yazı (Preview — DB not available)</h2>
+              <h2>{editingId ? 'Yaziyi Duzenle' : 'Yeni Yazi'}</h2>
+              <button type="button" className="admin-btn-icon" onClick={closeEditor} title="Kapat">
+                <X size={18} />
+              </button>
             </div>
 
             <div className="admin-blog-form">
               <div className="admin-blog-form-row">
-                <label>Başlık *</label>
+                <label>Baslik *</label>
                 <input
                   type="text"
                   value={form.title}
-                  onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                  placeholder="Blog yazısı başlığı"
+                  onChange={(e) => handleTitleChange(e.target.value)}
+                  placeholder="Blog yazisi basligi"
+                  style={errors.title ? { borderColor: '#ef4444' } : undefined}
                 />
+                {errors.title && <span className="admin-blog-field-error">{errors.title}</span>}
               </div>
 
               <div className="admin-blog-form-row">
@@ -134,81 +484,97 @@ export default function BlogManager() {
                 <input
                   type="text"
                   value={form.slug}
-                  onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                  onChange={(e) => handleSlugChange(e.target.value)}
                   placeholder="url-dostu-slug"
+                  style={errors.slug ? { borderColor: '#ef4444' } : undefined}
                 />
+                {errors.slug && <span className="admin-blog-field-error">{errors.slug}</span>}
+                {form.slug && (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    /blog/{form.slug}
+                  </span>
+                )}
               </div>
 
               <div className="admin-blog-form-row">
-                <label>Özet</label>
+                <label>Ozet</label>
                 <input
                   type="text"
                   value={form.excerpt}
                   onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))}
-                  placeholder="Kısa özet (liste görünümünde gösterilir)"
+                  placeholder="Kisa ozet (liste gorunumunde gosterilir)"
                 />
               </div>
 
               <div className="admin-blog-form-row">
-                <label>İçerik</label>
+                <label>Icerik *</label>
                 <textarea
                   value={form.content}
                   onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                  placeholder="Blog yazısının tam içeriği..."
-                  rows={8}
+                  placeholder="Blog yazisinin tam icerigi..."
+                  rows={12}
+                  style={errors.content ? { borderColor: '#ef4444' } : undefined}
                 />
+                {errors.content && <span className="admin-blog-field-error">{errors.content}</span>}
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'right' }}>
+                  {form.content.length} karakter
+                </span>
               </div>
 
               <div className="admin-blog-form-row">
-                <label>Yayın Tarihi</label>
+                <label>Yayin Tarihi</label>
                 <input
                   type="date"
                   value={form.published_at}
                   onChange={(e) => setForm((f) => ({ ...f, published_at: e.target.value }))}
                 />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  Bos birakilirsa taslak olarak kaydedilir
+                </span>
               </div>
 
               <div className="admin-blog-form-row">
-                <label>Meta Başlık</label>
+                <label>Meta Baslik (SEO)</label>
                 <input
                   type="text"
                   value={form.meta_title}
                   onChange={(e) => setForm((f) => ({ ...f, meta_title: e.target.value }))}
-                  placeholder="SEO için meta başlık"
+                  placeholder="SEO icin meta baslik"
                 />
+                <span style={{ fontSize: '0.75rem', color: form.meta_title.length > 60 ? '#ef4444' : 'var(--text-muted)', textAlign: 'right' }}>
+                  {form.meta_title.length}/60 karakter
+                </span>
               </div>
 
               <div className="admin-blog-form-row">
-                <label>Meta Açıklama</label>
+                <label>Meta Aciklama (SEO)</label>
                 <textarea
                   value={form.meta_description}
                   onChange={(e) => setForm((f) => ({ ...f, meta_description: e.target.value }))}
-                  placeholder="SEO için meta açıklama (155 karakter önerilir)"
+                  placeholder="SEO icin meta aciklama (155 karakter onerilir)"
                   rows={3}
                 />
-              </div>
-
-              <div
-                style={{
-                  background: 'var(--bg-muted, #fff8e6)',
-                  border: '1px solid var(--warning, #f59e0b)',
-                  borderRadius: '6px',
-                  padding: '10px 14px',
-                  fontSize: '0.82rem',
-                  color: 'var(--text-secondary, #666)',
-                }}
-              >
-                Saving is disabled — <code>blog_posts</code> table not yet created in Supabase.
-                Run the migration to enable this feature.
+                <span style={{ fontSize: '0.75rem', color: form.meta_description.length > 155 ? '#ef4444' : 'var(--text-muted)', textAlign: 'right' }}>
+                  {form.meta_description.length}/155 karakter
+                </span>
               </div>
             </div>
 
             <div className="admin-blog-editor-footer">
-              <button type="button" className="admin-btn admin-btn-secondary" onClick={closeEditor}>
-                Kapat
+              <button type="button" className="admin-btn admin-btn-secondary" onClick={closeEditor} disabled={saving}>
+                Iptal
               </button>
-              <button type="button" className="admin-btn admin-btn-primary" disabled title="blog_posts tablosu gerekli">
-                Kaydet (Devre Disi)
+              <button
+                type="button"
+                className="admin-btn admin-btn-primary"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? (
+                  <><RefreshCw size={16} className="spin" /> Kaydediliyor...</>
+                ) : (
+                  <><Save size={16} /> {editingId ? 'Guncelle' : 'Kaydet'}</>
+                )}
               </button>
             </div>
           </div>
