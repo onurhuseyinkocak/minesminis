@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Lock, Award, Check } from 'lucide-react';
+import { Lock, Award, Check, X } from 'lucide-react';
 import './BadgeShowcase.css';
 import { useGamification, Badge } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -15,11 +15,12 @@ interface BadgeShowcaseProps {
     maxDisplay?: number;
 }
 
-const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDisplay }) => {
+const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDisplay: initialMaxDisplay }) => {
     const { hasBadge, allBadges } = useGamification();
     const { t } = useLanguage();
     const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
     const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
+    const [maxDisplay, setMaxDisplay] = useState(initialMaxDisplay);
 
     const earnedBadges = allBadges.filter(b => hasBadge(b.id));
     const lockedBadges = allBadges.filter(b => !hasBadge(b.id));
@@ -111,7 +112,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
             </div>
 
             {maxDisplay && displayBadges.length > maxDisplay && (
-                <button type="button" className="view-all-btn">
+                <button type="button" className="view-all-btn" onClick={() => setMaxDisplay(undefined)}>
                     {t('badgeShowcase.viewAll')} ({displayBadges.length})
                 </button>
             )}
@@ -120,7 +121,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
             {selectedBadge && (
                 <div className="badge-modal-overlay" onClick={() => setSelectedBadge(null)}>
                     <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
-                        <button type="button" className="close-modal" onClick={() => setSelectedBadge(null)}><Check size={14} /></button>
+                        <button type="button" className="close-modal" onClick={() => setSelectedBadge(null)}><X size={14} /></button>
 
                         <div className={`modal-badge-icon ${hasBadge(selectedBadge.id) ? 'earned' : 'locked'}`}>
                             {hasBadge(selectedBadge.id) ? <KidIcon name={selectedBadge.icon as import('./ui/KidIcon').KidIconName} size={24} /> : <Lock size={16} />}

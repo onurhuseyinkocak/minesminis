@@ -336,6 +336,18 @@
   text-align: center;
 }
 
+.next-reward-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .next-reward p,
 .next-reward-fade-in p {
   font-family: var(--font-body);

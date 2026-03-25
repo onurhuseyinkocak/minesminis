@@ -77,7 +77,7 @@ async function fetchAdminAIResponse(
             message: `AdminMimi AI call failed: ${msg}`,
             component: 'AdminMimi',
         });
-        return `Baglanti hatasi: ${msg}\n\nBackend sunucusunun calistigindan emin olun. Tekrar deneyin.`;
+        return `Bağlantı hatası: ${msg}\n\nBackend sunucusunun çalıştığından emin olun. Tekrar deneyin.`;
     }
 }
 
@@ -133,11 +133,11 @@ function AdminMimi() {
             };
             setMessages(prev => [...prev, assistantMessage]);
         } catch (e: unknown) {
-            const errMsg = e instanceof Error ? e.message : 'Beklenmeyen bir hata olustu';
+            const errMsg = e instanceof Error ? e.message : 'Beklenmeyen bir hata oluştu';
             const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: `**Hata:** ${errMsg}\n\nLutfen tekrar deneyin.`,
+                content: `**Hata:** ${errMsg}\n\nLütfen tekrar deneyin.`,
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, errorMessage]);
@@ -172,7 +172,7 @@ function AdminMimi() {
         setMessages([{
             id: '1',
             role: 'assistant',
-            content: '**Sohbet temizlendi.** Yeni bir konusmaya baslayalim!\n\nNasil yardimci olabilirim?',
+            content: '**Sohbet temizlendi.** Yeni bir konuşmaya başlayalım!\n\nNasıl yardımcı olabilirim?',
             timestamp: new Date()
         }]);
     }, []);

@@ -4,7 +4,7 @@
  * Clicking opens goal selector (Casual / Normal / Serious / Intense).
  * Duolingo-style commitment device — shown prominently in Dashboard.
  */
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check } from 'lucide-react';
 import {
@@ -27,8 +27,18 @@ const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_R;
 
 export function DailyGoalWidget({ uid, lang = 'tr' }: DailyGoalWidgetProps) {
   const [goal, setGoalState] = useState<DailyGoalLevel>(getDailyGoal);
-  const [todayXP] = useState(() => getTodayXP(uid));
+  const [todayXP, setTodayXP] = useState(() => getTodayXP(uid));
   const [showSelector, setShowSelector] = useState(false);
+
+  const refreshXP = useCallback(() => {
+    setTodayXP(getTodayXP(uid));
+  }, [uid]);
+
+  useEffect(() => {
+    refreshXP();
+    const interval = setInterval(refreshXP, 30_000);
+    return () => clearInterval(interval);
+  }, [refreshXP]);
 
   const isMet = isDailyGoalMet(uid);
   const progress = Math.min(todayXP / goal, 1);
@@ -40,7 +50,7 @@ export function DailyGoalWidget({ uid, lang = 'tr' }: DailyGoalWidgetProps) {
     setShowSelector(false);
   };
 
-  const currentOption = DAILY_GOAL_OPTIONS.find(o => o.xp === goal)!;
+  const currentOption = DAILY_GOAL_OPTIONS.find(o => o.xp === goal) ?? DAILY_GOAL_OPTIONS[0];
 
   return (
     <div className="dgw">

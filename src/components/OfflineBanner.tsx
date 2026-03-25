@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
+import { useLanguage } from '../contexts/LanguageContext';
 import './OfflineBanner.css';
 
 // Wifi-off icon
@@ -62,6 +63,7 @@ const TRANSITION = { duration: 0.3, ease: 'easeInOut' };
 
 export default function OfflineBanner() {
   const isOnline = useOnlineStatus();
+  const { t } = useLanguage();
   const wasOffline = useRef(false);
   const [showBackOnline, setShowBackOnline] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -104,12 +106,12 @@ export default function OfflineBanner() {
           {showBackOnline ? (
             <>
               <IconOnline />
-              <span>{navigator.language?.startsWith('tr') ? 'Tekrar bağlandın!' : 'Back online!'}</span>
+              <span>{t('common.backOnline')}</span>
             </>
           ) : (
             <>
               <IconOffline />
-              <span>{navigator.language?.startsWith('tr') ? 'Çevrimdışısın — bazı özellikler çalışmayabilir' : "You're offline — some features may not work"}</span>
+              <span>{t('common.youreOffline')}</span>
             </>
           )}
         </motion.div>

@@ -1,4 +1,6 @@
 import React, { useEffect, useCallback, useRef, ReactNode } from 'react';
+import { X } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './Modal.css';
 
 /**
@@ -55,9 +57,12 @@ export const Modal: React.FC<ModalProps> = ({
   size = 'md',
   className = '',
 }) => {
+  const { lang } = useLanguage();
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
   const handleFocusTrap = useFocusTrap(modalRef, isOpen);
+
+  if (!isOpen) return null;
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -96,9 +101,8 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className={`mm-modal-overlay ${isOpen ? 'mm-modal-overlay--open' : ''}`}
+      className="mm-modal-overlay mm-modal-overlay--open"
       onClick={handleOverlayClick}
-      aria-hidden={!isOpen}
     >
       <div
         ref={modalRef}
@@ -114,10 +118,10 @@ export const Modal: React.FC<ModalProps> = ({
             <button
               className="mm-modal__close"
               onClick={onClose}
-              aria-label="Close dialog"
+              aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
               type="button"
             >
-              &#x2715;
+              <X size={16} />
             </button>
           </div>
         <div className="mm-modal__body">{children}</div>

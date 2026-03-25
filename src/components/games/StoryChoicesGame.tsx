@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Check, X } from 'lucide-react';
+import { Sparkles, Star, Check, X, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHearts } from '../../contexts/HeartsContext';
 import './StoryChoicesGame.css';
 
 interface WordItem {
@@ -50,6 +51,7 @@ function buildQuestions(words: WordItem[]): Question[] {
 
 export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWrongAnswer }) => {
   const { t } = useLanguage();
+  const { loseHeart } = useHearts();
   const questions = useMemo(() => buildQuestions(words), [words]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -94,13 +96,25 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
       setTimeout(() => advance(true), 1200);
     } else {
       setFeedback('wrong');
+      loseHeart();
       onWrongAnswer?.();
       SFX.wrong();
       setTimeout(() => advance(false), 1200);
     }
   };
 
+  const handlePlayAgain = () => {
+    setCurrentIndex(0);
+    setScore(0);
+    scoreRef.current = 0;
+    setFeedback(null);
+    setSelectedIdx(null);
+    setCompleted(false);
+  };
+
   if (completed) {
+    const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="story-choices-game__complete">
         <Card variant="elevated" padding="xl">
@@ -119,9 +133,22 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
             <p className="story-choices-game__complete-score">
               {t('games.xOutOfYCorrect').replace('{score}', String(score)).replace('{total}', String(questions.length))}
             </p>
+            <span className="game-stars">
+              {Array.from({ length: 3 }, (_, i) => (
+                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+              ))}
+            </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 10} XP
             </Badge>
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
+              <button type="button" onClick={() => onComplete(score, questions.length)} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: '2px solid var(--border, #e2e8f0)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+                <ArrowLeft size={16} /> {t('games.backToGames') || 'Back'}
+              </button>
+              <button type="button" onClick={handlePlayAgain} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: 'none', background: 'var(--primary, #FF6B35)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+                <RotateCcw size={16} /> {t('games.playAgain') || 'Play Again'}
+              </button>
+            </div>
           </motion.div>
         </Card>
       </div>
@@ -151,7 +178,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
           animate={{ opacity: 1, y: 0 }}
           className="story-choices-game__prompt"
         >
-          <div className="story-choices-game__prompt-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{question.word.english.charAt(0).toUpperCase()}</div>
+          <div className="story-choices-game__prompt-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: question.word.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: question.word.emoji ? 32 : 20, fontWeight: 900 }}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
           <p className="story-choices-game__prompt-word">
             {question.word.english}
           </p>

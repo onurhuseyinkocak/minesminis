@@ -705,7 +705,7 @@ function PhaseSpeak({
         <button
           className={`dl-mic-btn${listening ? ' dl-mic-btn--listening' : ''}`}
           onClick={listening ? stopListening : startListening}
-          aria-label={listening ? 'Stop listening' : 'Start speaking'}
+          aria-label={listening ? (lang === 'tr' ? 'Dinlemeyi durdur' : 'Stop listening') : (lang === 'tr' ? 'Konuşmaya başla' : 'Start speaking')}
         >
           {listening ? <MicOff size={28} /> : <Mic size={28} />}
         </button>
@@ -1115,7 +1115,7 @@ function PhaseStory({
                   onClick={() => speak(part.text)}
                   role="button"
                   tabIndex={0}
-                  aria-label={`Hear ${part.text}`}
+                  aria-label={lang === 'tr' ? `${part.text} kelimesini dinle` : `Hear ${part.text}`}
                 >
                   {part.text}
                 </span>
@@ -1131,7 +1131,7 @@ function PhaseStory({
 
       <div className="dl-nav">
         <button type="button" className="dl-btn dl-btn--primary" onClick={onComplete}>
-          {lang === 'tr' ? 'Devam Et →' : 'Continue →'}
+          {lang === 'tr' ? 'Devam Et' : 'Continue'} <ChevronRight size={20} />
         </button>
       </div>
     </div>
@@ -1348,7 +1348,7 @@ export default function DailyLesson() {
         <button
           className="dl-header__close"
           onClick={() => navigate('/dashboard')}
-          aria-label="Close lesson"
+          aria-label={lang === 'tr' ? 'Dersi kapat' : 'Close lesson'}
         >
           <X size={20} />
         </button>

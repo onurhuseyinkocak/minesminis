@@ -5,7 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const MESSAGES: Record<'en' | 'tr', string[]> = {
   en: ['Keep going!', 'Amazing!', 'Well done!', 'You got this!', 'Fantastic!', 'Brilliant!', 'Nice work!', 'Super!'],
-  tr: ['Harika!', 'Devam et!', 'Bravo!', 'Supersin!', 'Muhtesem!', 'Aferin!', 'Guzel is!', 'Harikasın!'],
+  tr: ['Harika!', 'Devam et!', 'Bravo!', 'Süpersin!', 'Muhteşem!', 'Aferin!', 'Güzel iş!', 'Harikasın!'],
 };
 
 const IDLE_STATES: MascotState[] = ['idle', 'waving', 'dancing', 'jumping'];
@@ -22,6 +22,7 @@ export default function FloatingMascot() {
 
   const messageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const secondTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showMessage = useCallback((msg: string) => {
     setMessage(msg);
@@ -40,7 +41,7 @@ export default function FloatingMascot() {
         const msg = pool[Math.floor(Math.random() * pool.length)];
         showMessage(msg);
       }
-      setTimeout(() => {
+      secondTimeoutRef.current = setTimeout(() => {
         setState('idle');
         scheduleNextIdleChange();
       }, 2500);
@@ -52,6 +53,7 @@ export default function FloatingMascot() {
     return () => {
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       if (messageTimerRef.current) clearTimeout(messageTimerRef.current);
+      if (secondTimeoutRef.current) clearTimeout(secondTimeoutRef.current);
     };
   }, [scheduleNextIdleChange]);
 
@@ -61,7 +63,7 @@ export default function FloatingMascot() {
     const pool = MESSAGES[lang];
     const msg = pool[Math.floor(Math.random() * pool.length)];
     showMessage(msg);
-    setTimeout(() => {
+    secondTimeoutRef.current = setTimeout(() => {
       setState('idle');
       scheduleNextIdleChange();
     }, 2000);

@@ -15,6 +15,34 @@ interface State {
   error: Error | null;
 }
 
+// Bilingual messages — class components cannot use hooks, so detect from DOM/localStorage
+const MESSAGES = {
+  tr: {
+    title: 'Bir şeyler ters gitti',
+    description: 'Beklenmedik bir hata oluştu. Lütfen sayfayı yenilemeyi veya ana sayfaya dönmeyi deneyin.',
+    details: 'Hata Detayları (Geliştirme)',
+    refresh: 'Sayfayı Yenile',
+    home: 'Ana Sayfa',
+  },
+  en: {
+    title: 'Something went wrong',
+    description: 'We encountered an unexpected error. Please try refreshing the page or returning to the home page.',
+    details: 'Error Details (Development Only)',
+    refresh: 'Refresh Page',
+    home: 'Go Home',
+  },
+};
+
+function getErrorLang(): 'tr' | 'en' {
+  try {
+    const stored = localStorage.getItem('lang');
+    if (stored === 'tr' || stored === 'en') return stored;
+  } catch { /* localStorage may be unavailable */ }
+  const htmlLang = document.documentElement.lang;
+  if (htmlLang?.startsWith('tr')) return 'tr';
+  return 'en';
+}
+
 /**
  * Error Boundary Component
  * Catches errors in child components and displays fallback UI
@@ -45,6 +73,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       return this.props.fallback;
     }
     if (this.state.hasError) {
+      const msg = MESSAGES[getErrorLang()];
       return (
         <div style={{
           display: 'flex',
@@ -70,7 +99,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               marginBottom: '1rem',
             }}>
               <AlertCircle size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.5rem' }} />
-              Something went wrong
+              {msg.title}
             </h1>
             <p style={{
               fontSize: '1rem',
@@ -78,7 +107,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               marginBottom: '1.5rem',
               lineHeight: '1.6',
             }}>
-              We encountered an unexpected error. Please try refreshing the page or returning to the home page.
+              {msg.description}
             </p>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details style={{
@@ -89,7 +118,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 textAlign: 'left',
               }}>
                 <summary style={{ cursor: 'pointer', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  Error Details (Development Only)
+                  {msg.details}
                 </summary>
                 <pre style={{
                   overflow: 'auto',
@@ -129,7 +158,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-indigo)')}
               >
                 <RotateCw size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} />
-                Refresh Page
+                {msg.refresh}
               </button>
               <a
                 href="/"
@@ -150,7 +179,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--slate)')}
               >
                 <Home size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} />
-                Go Home
+                {msg.home}
               </a>
             </div>
           </div>

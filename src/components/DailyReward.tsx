@@ -20,7 +20,7 @@ const DailyReward: React.FC = () => {
         getDailyRewardForDay,
         getNextClaimTime
     } = useGamification();
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
 
     const [isOpen, setIsOpen] = useState(false);
     const [claiming, setClaiming] = useState(false);
@@ -69,7 +69,7 @@ const DailyReward: React.FC = () => {
                 const diff = nextClaim.getTime() - now.getTime();
 
                 if (diff <= 0) {
-                    setCountdown('Available now!');
+                    setCountdown(lang === 'tr' ? 'Şimdi mevcut!' : 'Available now!');
                     return;
                 }
 
@@ -155,7 +155,7 @@ const DailyReward: React.FC = () => {
                                 key={day}
                                 className={`reward-day ${isPast ? 'past' : ''} ${isCurrent ? 'current' : ''} ${isFuture ? 'future' : ''} ${reward.special ? 'special' : ''}`}
                             >
-                                <div className="day-label">Day {day}</div>
+                                <div className="day-label">{lang === 'tr' ? `${day}. Gün` : `Day ${day}`}</div>
                                 <div className="reward-icon">
                                     {isPast ? <KidIcon name="check" size={20} /> : reward.special ? <KidIcon name="star" size={20} /> : <KidIcon name="trophy" size={20} />}
                                 </div>
@@ -194,7 +194,7 @@ const DailyReward: React.FC = () => {
                         disabled={claiming}
                     >
                         {claiming ? (
-                            <span className="claiming">Claiming...</span>
+                            <span className="claiming">{lang === 'tr' ? 'Alınıyor...' : 'Claiming...'}</span>
                         ) : (
                             <>
                                 <span>{t('dailyReward.claimReward')}</span>
@@ -215,20 +215,7 @@ const DailyReward: React.FC = () => {
                 </div>
             </div>
 
-            <style>{`
-                .next-reward-fade-in {
-                    animation: fadeIn 0.8s ease-out forwards;
-                    margin-top: 1.5rem;
-                    padding-top: 1rem;
-                    border-top: 1px solid rgba(255, 255, 255, 0.1);
-                    text-align: center;
-                }
-                
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-            `}</style>
+            {/* Fade-in animation styles moved to DailyReward.css */}
         </div>
     );
 };

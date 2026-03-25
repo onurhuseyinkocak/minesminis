@@ -277,7 +277,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
+                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: item.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: item.emoji ? 32 : 20, fontWeight: 900 }}>{item.emoji || item.english.charAt(0).toUpperCase()}</div>
                   <span className="word-match__card-text">{item.english}</span>
                 </motion.button>
               </div>
@@ -307,7 +307,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{item.english.charAt(0).toUpperCase()}</div>
+                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: item.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: item.emoji ? 32 : 20, fontWeight: 900 }}>{item.emoji || item.english.charAt(0).toUpperCase()}</div>
                   <span className="word-match__card-text">{item.turkish}</span>
                 </motion.button>
               </div>

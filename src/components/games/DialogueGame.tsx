@@ -4,6 +4,7 @@ import UnifiedMascot from '../UnifiedMascot';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { SFX } from '../../data/soundLibrary';
+import { RotateCcw, ArrowLeft } from 'lucide-react';
 import './DialogueGame.css';
 
 export interface DialogueLine {
@@ -130,6 +131,16 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
     return `dialogue-game__option dialogue-game__option--${state}`;
   };
 
+  const handlePlayAgain = () => {
+    setVisibleCount(0);
+    setCurrentQuestionIndex(null);
+    setOptionState({});
+    setAnswered([]);
+    setCompleted(false);
+    setIsAdvancing(false);
+    setMascotState('waving');
+  };
+
   if (completed) {
     return (
       <motion.div
@@ -148,6 +159,14 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
         <p className="dialogue-game__summary-label">
           {lang === 'tr' ? 'Doğru cevap' : 'Correct answers'}
         </p>
+        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
+          <button type="button" onClick={() => onComplete(correctCount, totalQuestions)} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: '2px solid var(--border, #e2e8f0)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+            <ArrowLeft size={16} /> {lang === 'tr' ? 'Geri Dön' : 'Back'}
+          </button>
+          <button type="button" onClick={handlePlayAgain} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: 'none', background: 'var(--primary, #FF6B35)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+            <RotateCcw size={16} /> {lang === 'tr' ? 'Tekrar Oyna' : 'Play Again'}
+          </button>
+        </div>
       </motion.div>
     );
   }

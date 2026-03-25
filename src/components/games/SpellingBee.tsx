@@ -221,9 +221,9 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300 }}
-          style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontWeight: 900 }}
+          style={{ width: 64, height: 64, borderRadius: '50%', background: currentWord.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: currentWord.emoji ? 40 : 28, fontWeight: 900 }}
         >
-          {currentWord.english.charAt(0).toUpperCase()}
+          {currentWord.emoji || currentWord.english.charAt(0).toUpperCase()}
         </motion.div>
         <p id="sb-word-prompt" className="spelling-bee__turkish">{currentWord.turkish}</p>
         <SpeakButton

@@ -296,7 +296,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           animate={{ opacity: 1, y: 0 }}
           className="quick-quiz__question-content"
         >
-          <div className="quick-quiz__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{question.word.english.charAt(0).toUpperCase()}</div>
+          <div className="quick-quiz__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: question.word.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: question.word.emoji ? 32 : 20, fontWeight: 900 }}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
           {question.mode === 'en-to-tr' && (
             <SpeakButton text={question.word.english} autoPlay size="md" />
           )}

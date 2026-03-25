@@ -83,7 +83,7 @@ function GamesManager() {
                     setGames(loadLocalGames());
                 }
             } catch {
-                toast.error('Oyunlar yuklenirken hata. Yerel veri kullaniliyor.');
+                toast.error('Oyunlar yüklenirken hata. Yerel veri kullanılıyor.');
                 setGames(loadLocalGames());
             } finally {
                 setGamesLoading(false);
@@ -138,11 +138,11 @@ function GamesManager() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const title = formData.title.trim();
-        if (!title) { toast.error('Oyun adi zorunlu'); return; }
+        if (!title) { toast.error('Oyun adı zorunlu'); return; }
 
         const url = extractEmbedFromIframe(formData.embedUrl) || formData.embedUrl.trim();
         if (!url.startsWith('http')) {
-            toast.error('Gecerli bir embed URL veya iframe kodu girin');
+            toast.error('Geçerli bir embed URL veya iframe kodu girin');
             return;
         }
 
@@ -162,16 +162,16 @@ function GamesManager() {
                     body: JSON.stringify(body)
                 });
                 const json: Record<string, string> = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Guncelleme basarisiz');
+                if (!res.ok) throw new Error(json.error || 'Güncelleme başarısız');
                 setGames(prev => prev.map(g => g.id === editingGame.id ? { ...g, title, embedUrl: url, thumbnailUrl: formData.thumbnailUrl.trim(), type: formData.type, grade: formData.grade } : g));
-                toast.success('Oyun guncellendi!');
+                toast.success('Oyun güncellendi!');
             } else {
                 const res = await adminFetch('/api/admin/games', {
                     method: 'POST',
                     body: JSON.stringify(body)
                 });
                 const json: Record<string, string> = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Kayit basarisiz');
+                if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
                 const newId = json.id || `temp-${Date.now()}`;
                 setGames(prev => [{ id: newId, title, embedUrl: url, thumbnailUrl: formData.thumbnailUrl.trim(), type: formData.type, grade: formData.grade }, ...prev]);
                 toast.success('Yeni oyun eklendi!');
@@ -187,14 +187,14 @@ function GamesManager() {
             }
             setIsModalOpen(false);
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Kayit basarisiz');
+            toast.error(err instanceof Error ? err.message : 'Kayıt başarısız');
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Bu oyunu silmek istediginize emin misiniz?')) return;
+        if (!confirm('Bu oyunu silmek istediğinizden emin misiniz?')) return;
         setDeletingGameId(id);
         try {
             const res = await adminFetch(`/api/admin/games/${id}`, { method: 'DELETE' });
@@ -298,7 +298,7 @@ function GamesManager() {
                                 <td>
                                     <span className="badge badge-beginner">{game.type}</span>
                                 </td>
-                                <td>{game.grade === 'primary' ? 'Ilkokul' : `${game.grade}. Sinif`}</td>
+                                <td>{game.grade === 'primary' ? 'İlkokul' : `${game.grade}. Sınıf`}</td>
                                 <td>
                                     <div className="action-btns">
                                         <button type="button" className="edit-btn" onClick={() => openEditModal(game)} disabled={deletingGameId === game.id}>
@@ -317,7 +317,7 @@ function GamesManager() {
                 {filteredGames.length === 0 && (
                     <div className="no-data">
                         <Gamepad2 size={48} style={{ opacity: 0.3 }} />
-                        <p>Oyun bulunamadi</p>
+                        <p>Oyun bulunamadı</p>
                     </div>
                 )}
 
@@ -328,7 +328,7 @@ function GamesManager() {
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
                         >
-                            Onceki
+                            Önceki
                         </button>
                         {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                             let page: number;
@@ -440,7 +440,7 @@ function GamesManager() {
                                     İptal
                                 </button>
                                 <button type="submit" className="save-btn" disabled={saving}>
-                                    {saving ? <><Loader2 size={16} className="animate-spin" /> Kaydediliyor...</> : (editingGame ? 'Guncelle' : 'Ekle')}
+                                    {saving ? <><Loader2 size={16} className="animate-spin" /> Kaydediliyor...</> : (editingGame ? 'Güncelle' : 'Ekle')}
                                 </button>
                             </div>
                         </form>

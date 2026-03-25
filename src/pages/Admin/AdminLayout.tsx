@@ -244,7 +244,7 @@ function AdminLayout() {
             {/* Main Content */}
             <div className="adm-main">
                 <header className="adm-topbar">
-                    <button type="button" className="adm-hamburger" onClick={() => setSidebarOpen(true)}>
+                    <button type="button" className="adm-hamburger" onClick={() => setSidebarOpen(prev => !prev)}>
                         {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
                     </button>
 

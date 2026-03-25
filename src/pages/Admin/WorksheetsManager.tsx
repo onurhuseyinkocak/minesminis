@@ -101,7 +101,7 @@ function WorksheetsManager() {
             if (error) throw error;
             setWorksheets(((data as SupabaseWorksheetRow[]) || []).map(mapSupabaseToWorksheet));
         } catch {
-            toast.error('Calisma kagitlari yuklenemedi');
+            toast.error('Çalışma kağıtları yüklenemedi');
             setWorksheets([]);
         } finally {
             setLoading(false);
@@ -155,7 +155,7 @@ function WorksheetsManager() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.title.trim()) {
-            toast.error('Baslik zorunludur');
+            toast.error('Başlık zorunludur');
             return;
         }
         if (!formData.externalUrl.trim()) {
@@ -179,34 +179,34 @@ function WorksheetsManager() {
                     body: JSON.stringify(payload)
                 });
                 const json: Record<string, unknown> = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error((json.error as string) || 'Guncelleme basarisiz');
-                toast.success('Calisma kagidi guncellendi!');
+                if (!res.ok) throw new Error((json.error as string) || 'Güncelleme başarısız');
+                toast.success('Çalışma kağıdı güncellendi!');
             } else {
                 const res = await adminFetch('/api/admin/worksheets', {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
                 const json: Record<string, unknown> = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error((json.error as string) || 'Ekleme basarisiz');
-                toast.success('Yeni calisma kagidi eklendi!');
+                if (!res.ok) throw new Error((json.error as string) || 'Ekleme başarısız');
+                toast.success('Yeni çalışma kağıdı eklendi!');
             }
             setIsModalOpen(false);
             await fetchWorksheets();
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Kayit basarisiz');
+            toast.error(err instanceof Error ? err.message : 'Kayıt başarısız');
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Bu calisma kagidini silmek istediginize emin misiniz?')) return;
+        if (!confirm('Bu çalışma kağıdını silmek istediğinizden emin misiniz?')) return;
         setDeletingId(id);
         try {
             const res = await adminFetch(`/api/admin/worksheets/${id}`, { method: 'DELETE' });
             const json: Record<string, unknown> = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error((json.error as string) || 'Silme basarisiz');
-            toast.success('Calisma kagidi silindi!');
+            if (!res.ok) throw new Error((json.error as string) || 'Silme başarısız');
+            toast.success('Çalışma kağıdı silindi!');
             await fetchWorksheets();
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Silme basarisiz');
@@ -460,7 +460,7 @@ function WorksheetsManager() {
                                     İptal
                                 </button>
                                 <button type="submit" className="save-btn" disabled={saving}>
-                                    {saving ? 'Kaydediliyor...' : editingWorksheet ? 'Guncelle' : 'Ekle'}
+                                    {saving ? 'Kaydediliyor...' : editingWorksheet ? 'Güncelle' : 'Ekle'}
                                 </button>
                             </div>
                         </form>

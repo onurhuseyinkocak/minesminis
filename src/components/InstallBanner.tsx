@@ -94,7 +94,7 @@ export default function InstallBanner() {
             </span>
             <span className="install-banner__subtitle">
               <ShareIcon />
-              {lang === 'tr' ? 'Paylas > Ana Ekrana Ekle' : 'Share > Add to Home Screen'}
+              {lang === 'tr' ? 'Paylaş > Ana Ekrana Ekle' : 'Share > Add to Home Screen'}
             </span>
           </>
         ) : (
@@ -103,7 +103,7 @@ export default function InstallBanner() {
               {lang === 'tr' ? 'Uygulamayı Yükle' : 'Install App'}
             </span>
             <span className="install-banner__subtitle">
-              {lang === 'tr' ? 'Ana ekrana ekle, hizlica ac' : 'Add to home screen for quick access'}
+              {lang === 'tr' ? 'Ana ekrana ekle, hızlıca aç' : 'Add to home screen for quick access'}
             </span>
           </>
         )}

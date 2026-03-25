@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, BookOpen, PenTool, Zap } from 'lucide-react';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { SFX } from '../../data/soundLibrary';
@@ -167,7 +167,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
     <div className="ptg__panel">
       {/* Error description */}
       <div className="ptg__error-card" style={{ '--trap-color': trap.color } as React.CSSProperties}>
-        <p className="ptg__error-label">Common Mistake</p>
+        <p className="ptg__error-label">{isTr ? 'Sık Yapılan Hata' : 'Common Mistake'}</p>
         <p className="ptg__error-text">{trap.commonError}</p>
         <p className="ptg__error-text--tr">{trap.commonErrorTr}</p>
       </div>
@@ -175,7 +175,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
       {/* Mouth position diagram */}
       <div className="ptg__mouth-section">
         <p className="ptg__mouth-title">
-          How to make this sound:
+          {isTr ? 'Bu sesi nasıl çıkarırsın:' : 'How to make this sound:'}
         </p>
         <div className="ptg__mouth-diagram">
           <div className="ptg__mouth-svg-wrap">
@@ -190,7 +190,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
 
       {/* Minimal pairs */}
       <div>
-        <p className="ptg__pairs-title">Correct vs. Common Error:</p>
+        <p className="ptg__pairs-title">{isTr ? 'Doğru ve Sık Yapılan Hata:' : 'Correct vs. Common Error:'}</p>
         <div className="ptg__pairs-list">
           {trap.minimalPairs.map((pair) => (
             <div key={pair.english} className="ptg__pair">
@@ -202,7 +202,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
               <span className="ptg__pair-divider">vs</span>
               <div className="ptg__pair-wrong">
                 <span className="ptg__pair-word--wrong">{pair.errorVersion}</span>
-                <span className="ptg__pair-label">Common error</span>
+                <span className="ptg__pair-label">{isTr ? 'Sık yapılan hata' : 'Common error'}</span>
               </div>
             </div>
           ))}
@@ -269,9 +269,9 @@ function PracticeTab({
           <div className="ptg__complete-mascot">
             <UnifiedMascot state="celebrating" size={100} />
           </div>
-          <h3 className="ptg__complete-title">Practice done!</h3>
+          <h3 className="ptg__complete-title">{isTr ? 'Alıştırma bitti!' : 'Practice done!'}</h3>
           <p className="ptg__complete-score">
-            {correctCount}/{trap.exercises.length} correct
+            {correctCount}/{trap.exercises.length} {isTr ? 'doğru' : 'correct'}
           </p>
         </div>
       </div>
@@ -284,7 +284,7 @@ function PracticeTab({
     <div className="ptg__panel">
       <div className="ptg__exercise-counter">
         <span className="ptg__exercise-label">
-          Question {exerciseIndex + 1} of {trap.exercises.length}
+          {isTr ? `Soru ${exerciseIndex + 1} / ${trap.exercises.length}` : `Question ${exerciseIndex + 1} of ${trap.exercises.length}`}
         </span>
       </div>
 
@@ -322,11 +322,13 @@ function PracticeTab({
         <>
           <div className={`ptg__feedback ${selected === exercise.correctOption ? 'ptg__feedback--correct' : 'ptg__feedback--wrong'}`}>
             {selected === exercise.correctOption
-              ? 'Correct! Great pronunciation awareness!'
-              : `The right answer is "${exercise.correctOption}"`}
+              ? (isTr ? 'Doğru! Harika telaffuz farkındalığı!' : 'Correct! Great pronunciation awareness!')
+              : (isTr ? `Doğru cevap: "${exercise.correctOption}"` : `The right answer is "${exercise.correctOption}"`)}
           </div>
           <button type="button" className="ptg__next-btn" style={{ '--trap-color': trap.color } as React.CSSProperties} onClick={handleNext}>
-            {exerciseIndex + 1 >= trap.exercises.length ? 'Finish Practice' : 'Next Question'}
+            {exerciseIndex + 1 >= trap.exercises.length
+              ? (isTr ? 'Alıştırmayı Bitir' : 'Finish Practice')
+              : (isTr ? 'Sonraki Soru' : 'Next Question')}
           </button>
         </>
       )}
@@ -402,9 +404,9 @@ function ChallengeTab({
           <div className="ptg__complete-mascot">
             <UnifiedMascot state={finalScore >= 60 ? 'celebrating' : 'waving'} size={100} />
           </div>
-          <h3 className="ptg__complete-title">Challenge Complete!</h3>
+          <h3 className="ptg__complete-title">{isTr ? 'Meydan Okuma Tamamlandı!' : 'Challenge Complete!'}</h3>
           <p className="ptg__complete-score">
-            Score: {correctCount}/{questions.length} — {finalScore}%
+            {isTr ? `Skor: ${correctCount}/${questions.length} — ${finalScore}%` : `Score: ${correctCount}/${questions.length} — ${finalScore}%`}
           </p>
         </div>
       </div>
@@ -417,7 +419,7 @@ function ChallengeTab({
     <div className="ptg__panel">
       <div className="ptg__challenge">
         <div className="ptg__challenge-header">
-          <h3 className="ptg__challenge-title">Speed Challenge</h3>
+          <h3 className="ptg__challenge-title">{isTr ? 'Hız Meydan Okuması' : 'Speed Challenge'}</h3>
           <p className="ptg__challenge-subtitle">
             {isTr
               ? 'Doğru İngilizce kelimeye bas!'
@@ -477,6 +479,8 @@ export default function PhoneticTrapGame({
   onBack,
 }: PhoneticTrapGameProps) {
   const { loseHeart } = useHearts();
+  const { lang: language } = useLanguage();
+  const isTr = language === 'tr';
   const [activeTab, setActiveTab] = useState<TabId>('learn');
   const [practiceScore, setPracticeScore] = useState<number | null>(null);
   const [challengeScore, setChallengeScore] = useState<number | null>(null);
@@ -524,16 +528,16 @@ export default function PhoneticTrapGame({
           className={`ptg__tab${activeTab === 'learn' ? ' ptg__tab--active' : ''}`}
           onClick={() => setActiveTab('learn')}
         >
-          <span className="ptg__tab-icon">&#128218;</span>
-          <span className="ptg__tab-label">Learn</span>
+          <span className="ptg__tab-icon"><BookOpen size={16} /></span>
+          <span className="ptg__tab-label">{isTr ? 'Öğren' : 'Learn'}</span>
         </button>
         <button
           type="button"
           className={`ptg__tab${activeTab === 'practice' ? ' ptg__tab--active' : ''}`}
           onClick={() => setActiveTab('practice')}
         >
-          <span className="ptg__tab-icon">&#9997;</span>
-          <span className="ptg__tab-label">Practice</span>
+          <span className="ptg__tab-icon"><PenTool size={16} /></span>
+          <span className="ptg__tab-label">{isTr ? 'Alıştırma' : 'Practice'}</span>
           {practiceScore !== null && <span style={{ fontSize: '0.65rem', color: 'var(--success, #10B981)' }}>{practiceScore}%</span>}
         </button>
         <button
@@ -541,8 +545,8 @@ export default function PhoneticTrapGame({
           className={`ptg__tab${activeTab === 'challenge' ? ' ptg__tab--active' : ''}`}
           onClick={() => setActiveTab('challenge')}
         >
-          <span className="ptg__tab-icon">&#9889;</span>
-          <span className="ptg__tab-label">Challenge</span>
+          <span className="ptg__tab-icon"><Zap size={16} /></span>
+          <span className="ptg__tab-label">{isTr ? 'Meydan Okuma' : 'Challenge'}</span>
           {challengeScore !== null && <span style={{ fontSize: '0.65rem', color: 'var(--success, #10B981)' }}>{challengeScore}%</span>}
         </button>
       </div>

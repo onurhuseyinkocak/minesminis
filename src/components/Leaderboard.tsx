@@ -211,7 +211,7 @@ const Leaderboard: React.FC = () => {
                                     </div>
                                     <div className="leader-name-group">
                                         <span className="leader-name">{entry.displayName}</span>
-                                        <span className="leader-lvl">Level {entry.level}</span>
+                                        <span className="leader-lvl">{lang === 'tr' ? 'Seviye' : 'Level'} {entry.level}</span>
                                     </div>
                                     <div className="leader-xp">
                                         <strong>{entry.weeklyXP}</strong>

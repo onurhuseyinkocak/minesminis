@@ -6,16 +6,16 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
-type Lang = 'en' | 'tr';
-const tl = (lang: Lang, tr: string, en: string) => (lang === 'tr' ? tr : en);
+const tl = (lang: string, tr: string, en: string) => (lang === 'tr' ? tr : en);
 
 interface PublicLayoutProps {
   children: React.ReactNode;
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
-  const [lang, setLang] = useState<Lang>('tr');
+  const { lang, setLang } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -51,7 +51,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           {/* Right side */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
-              onClick={() => setLang(l => (l === 'tr' ? 'en' : 'tr'))}
+              onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
               className="font-display font-bold text-sm text-ink-500 hover:text-ink-900 transition-colors px-2 py-1"
             >
               {lang === 'tr' ? 'EN' : 'TR'}

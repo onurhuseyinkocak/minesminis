@@ -132,8 +132,8 @@ function WordsManager() {
         e.preventDefault();
         const w = formData.word.trim();
         const tr = formData.turkish.trim();
-        if (!w) { toast.error('Ingilizce kelime zorunlu'); return; }
-        if (!tr) { toast.error('Turkce karsiligi zorunlu'); return; }
+        if (!w) { toast.error('İngilizce kelime zorunlu'); return; }
+        if (!tr) { toast.error('Türkçe karşılığı zorunlu'); return; }
         if (!formData.category.trim()) { toast.error('Kategori zorunlu'); return; }
 
         const wordData: KidsWord = {
@@ -153,10 +153,10 @@ function WordsManager() {
                     body: JSON.stringify({ turkish: wordData.turkish, level: wordData.level, category: wordData.category, emoji: wordData.emoji, example: wordData.example ?? null })
                 });
                 const json: Record<string, string> = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Guncelleme basarisiz');
+                if (!res.ok) throw new Error(json.error || 'Güncelleme başarısız');
                 wordStore.updateWord(editingWord.word, wordData);
                 setWords(prev => prev.map(x => x.word === editingWord.word ? { ...wordData, word: editingWord.word } : x));
-                toast.success('Kelime guncellendi!');
+                toast.success('Kelime güncellendi!');
             } else {
                 if (words.some(x => x.word.toLowerCase() === w.toLowerCase())) {
                     toast.error('Bu kelime zaten mevcut!');
@@ -167,21 +167,21 @@ function WordsManager() {
                     body: JSON.stringify({ word: w, turkish: wordData.turkish, level: wordData.level, category: wordData.category, emoji: wordData.emoji, example: wordData.example ?? null })
                 });
                 const json: Record<string, string> = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(json.error || 'Kayit basarisiz');
+                if (!res.ok) throw new Error(json.error || 'Kayıt başarısız');
                 wordStore.addWord(wordData);
                 setWords(prev => [...prev, wordData]);
                 toast.success('Yeni kelime eklendi!');
             }
             setIsModalOpen(false);
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Kayit basarisiz');
+            toast.error(err instanceof Error ? err.message : 'Kayıt başarısız');
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (word: string) => {
-        if (!confirm('Bu kelimeyi silmek istediginize emin misiniz?')) return;
+        if (!confirm('Bu kelimeyi silmek istediğinizden emin misiniz?')) return;
         setDeletingWordKey(word);
         try {
             const res = await adminFetch(`/api/admin/words/${encodeURIComponent(word)}`, { method: 'DELETE' });
@@ -218,7 +218,7 @@ function WordsManager() {
         a.download = 'words_export.csv';
         a.click();
         URL.revokeObjectURL(url);
-        toast.success('Kelimeler disa aktarildi!');
+        toast.success('Kelimeler dışa aktarıldı!');
     };
 
     const getLevelBadgeClass = (level: string) => {
@@ -481,7 +481,7 @@ function WordsManager() {
                                     İptal
                                 </button>
                                 <button type="submit" className="save-btn" disabled={saving}>
-                                    {saving ? <><Loader2 size={16} className="animate-spin" /> Kaydediliyor...</> : (editingWord ? 'Guncelle' : 'Ekle')}
+                                    {saving ? <><Loader2 size={16} className="animate-spin" /> Kaydediliyor...</> : (editingWord ? 'Güncelle' : 'Ekle')}
                                 </button>
                             </div>
                         </form>

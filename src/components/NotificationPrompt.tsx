@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 import './NotificationPrompt.css';
 
 // ─── Bell SVG ─────────────────────────────────────────────────────────────────
@@ -32,6 +33,8 @@ interface NotificationPromptProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function NotificationPrompt({ onAccept, onDecline }: NotificationPromptProps) {
+  const { lang } = useLanguage();
+
   return (
     <AnimatePresence>
       <motion.div
@@ -55,10 +58,10 @@ export default function NotificationPrompt({ onAccept, onDecline }: Notification
 
           <div className="notif-prompt-text">
             <p id="notif-prompt-title" className="notif-prompt-title">
-              Streak hatırlatıcılarını aç
+              {lang === 'tr' ? 'Streak hatırlatıcılarını aç' : 'Enable streak reminders'}
             </p>
             <p className="notif-prompt-subtitle">
-              Her gün 20:00'de hatırlatırız
+              {lang === 'tr' ? 'Her gün 20:00\'de hatırlatırız' : 'We\'ll remind you daily at 8 PM'}
             </p>
           </div>
         </div>
@@ -70,14 +73,14 @@ export default function NotificationPrompt({ onAccept, onDecline }: Notification
             onClick={onAccept}
             type="button"
           >
-            Evet, aç
+            {lang === 'tr' ? 'Evet, aç' : 'Yes, enable'}
           </button>
           <button
             className="notif-prompt-btn notif-prompt-btn--ghost"
             onClick={onDecline}
             type="button"
           >
-            Hayır
+            {lang === 'tr' ? 'Hayır' : 'No, thanks'}
           </button>
         </div>
       </motion.div>

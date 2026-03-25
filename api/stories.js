@@ -22,7 +22,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 export default async function handler(req, res) {
   // CORS
-  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5000').split(',');
+  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5000').split(',').map(o => o.trim());
   const origin = req.headers.origin;
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);

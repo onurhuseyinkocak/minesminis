@@ -14,8 +14,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Star, Flame } from 'lucide-react';
 import UnifiedMascot from './UnifiedMascot';
 import { ConfettiRain } from './ui/Celebrations';
+import { useLanguage } from '../contexts/LanguageContext';
 import './LessonCompleteScreen.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -72,6 +74,7 @@ export function LessonCompleteScreen({
   mascotId = 'mimi_dragon',
   newBadge,
 }: LessonCompleteScreenProps) {
+  const { lang, t } = useLanguage();
   const [mascotVisible, setMascotVisible] = useState(false);
   const [starsVisible, setStarsVisible] = useState<boolean[]>([false, false, false]);
   const [xpDisplayed, setXpDisplayed] = useState(0);
@@ -140,7 +143,7 @@ export function LessonCompleteScreen({
   };
 
   return (
-    <div className="lcs-overlay" role="dialog" aria-modal="true" aria-label="Lesson complete">
+    <div className="lcs-overlay" role="dialog" aria-modal="true" aria-label={lang === 'tr' ? 'Ders tamamlandı' : 'Lesson complete'}>
       {/* Confetti layer */}
       {confettiVisible && <ConfettiRain duration={3000} />}
 
@@ -171,8 +174,8 @@ export function LessonCompleteScreen({
         </div>
 
         {/* Heading */}
-        <h1 className="lcs-title">Harika!</h1>
-        <p className="lcs-subtitle">Dersi tamamladın!</p>
+        <h1 className="lcs-title">{lang === 'tr' ? 'Harika!' : 'Amazing!'}</h1>
+        <p className="lcs-subtitle">{t('lesson.complete')}</p>
 
         {/* Stars */}
         <div className="lcs-stars" aria-label="3 stars earned">
@@ -185,29 +188,29 @@ export function LessonCompleteScreen({
               transition={{ type: 'spring', stiffness: 400, damping: 15 }}
               aria-hidden="true"
             >
-              &#9733;
+              <Star size={28} fill="currentColor" />
             </motion.span>
           ))}
         </div>
 
         {/* XP counter */}
         <div className="lcs-xp-row">
-          <span className="lcs-xp-label">XP Kazandın</span>
+          <span className="lcs-xp-label">{lang === 'tr' ? 'XP Kazandın' : 'XP Earned'}</span>
           <span className="lcs-xp-value">+{xpDisplayed}</span>
         </div>
 
         {/* Streak */}
         {streakDays !== undefined && streakDays > 0 && (
           <div className="lcs-streak">
-            <span className="lcs-streak-fire">&#128293;</span>
-            <span className="lcs-streak-text">{streakDays} günlük seri!</span>
+            <span className="lcs-streak-fire"><Flame size={20} /></span>
+            <span className="lcs-streak-text">{streakDays} {t('common.dayStreak')}!</span>
           </div>
         )}
 
         {/* Words learned */}
         {wordsLearned.length > 0 && (
           <div className="lcs-words">
-            <p className="lcs-words-label">Öğrendiğin kelimeler</p>
+            <p className="lcs-words-label">{lang === 'tr' ? 'Öğrendiğin kelimeler' : 'Words you learned'}</p>
             <div className="lcs-words-list">
               {wordsLearned.slice(0, 8).map((w) => (
                 <span key={w} className="lcs-word-chip">{w}</span>
@@ -240,9 +243,9 @@ export function LessonCompleteScreen({
               transition={{ type: 'spring', stiffness: 260, damping: 22 }}
               onClick={handleContinue}
               disabled={!buttonTappable}
-              aria-label="Devam et"
+              aria-label={t('common.continue')}
             >
-              Devam Et
+              {t('common.continue')}
             </motion.button>
           )}
         </AnimatePresence>

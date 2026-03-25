@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Volume2, Mic, Sparkles } from 'lucide-react';
+import { Volume2, Mic, Sparkles, Trophy, Star, Check, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
@@ -163,8 +163,19 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
     );
   }
 
+  const handlePlayAgain = () => {
+    setCurrentIndex(0);
+    setScore(0);
+    setIsListening(false);
+    setFeedback(null);
+    setHeardText('');
+    setCompleted(false);
+  };
+
   // Completed
   if (completed) {
+    const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="pronunciation-game">
         <Card variant="elevated" padding="xl" className="pronunciation-game__results">
@@ -175,7 +186,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
             className="pronunciation-game__results-content"
           >
             <span className="pronunciation-game__results-emoji" role="img" aria-label="celebration">
-              {score >= total * 0.8 ? '\uD83C\uDF89' : score >= total * 0.5 ? '\uD83D\uDCAA' : '\uD83D\uDE0A'}
+              {score >= total * 0.8 ? <Trophy size={48} color="#E8A317" /> : score >= total * 0.5 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
             </span>
             <h2 className="pronunciation-game__results-title">
               {score >= total * 0.8 ? t('games.amazingPronunciation') : score >= total * 0.5 ? t('games.goodEffort') : t('games.keepPracticing')}
@@ -183,9 +194,22 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
             <p className="pronunciation-game__results-score">
               {t('games.youPronounced').replace('{score}', String(score)).replace('{total}', String(total))}
             </p>
+            <span className="game-stars">
+              {Array.from({ length: 3 }, (_, i) => (
+                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+              ))}
+            </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
             </Badge>
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
+              <button type="button" onClick={() => onComplete(score, total)} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: '2px solid var(--border, #e2e8f0)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+                <ArrowLeft size={16} /> {t('games.backToGames') || 'Back'}
+              </button>
+              <button type="button" onClick={handlePlayAgain} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: 'none', background: 'var(--primary, #FF6B35)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+                <RotateCcw size={16} /> {t('games.playAgain') || 'Play Again'}
+              </button>
+            </div>
           </motion.div>
         </Card>
       </div>
@@ -220,7 +244,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
         animate={{ opacity: 1, y: 0 }}
         className={cardClass}
       >
-        <div className="pronunciation-game__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 900 }}>{currentWord.english.charAt(0).toUpperCase()}</div>
+        <div className="pronunciation-game__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: currentWord.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: currentWord.emoji ? 32 : 20, fontWeight: 900 }}>{currentWord.emoji || currentWord.english.charAt(0).toUpperCase()}</div>
         <div className="pronunciation-game__word">{currentWord.english}</div>
         <div className="pronunciation-game__turkish">{currentWord.turkish}</div>
 

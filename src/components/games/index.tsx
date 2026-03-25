@@ -37,7 +37,7 @@ interface WordItem {
   emoji: string;
 }
 
-interface GameProps {
+export interface GameProps {
   words: WordItem[];
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
@@ -46,33 +46,56 @@ interface GameProps {
 
 type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing' | 'phonics-builder' | 'story-choices' | 'dialogue' | 'image-label' | 'say-it' | 'phonics-blend' | 'phoneme-manipulation' | 'syllable' | 'word-family' | 'rhyme' | 'phonetic-trap';
 
+// Games that accept standard GameProps (words: WordItem[])
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyGameComponent = React.FC<any>;
+
 // Lazy imports to keep bundle size down
-const gameComponents: Record<GameType, React.LazyExoticComponent<React.FC<GameProps>>> = {
+const gameComponents: Record<GameType, React.LazyExoticComponent<AnyGameComponent>> = {
   'word-match': React.lazy(() => import('./WordMatch').then((m) => ({ default: m.WordMatch }))),
   'spelling-bee': React.lazy(() => import('./SpellingBee').then((m) => ({ default: m.SpellingBee }))),
   'quick-quiz': React.lazy(() => import('./QuickQuiz').then((m) => ({ default: m.QuickQuiz }))),
   'sentence-scramble': React.lazy(() => import('./SentenceScramble').then((m) => ({ default: m.SentenceScramble }))),
   'listening-challenge': React.lazy(() => import('./ListeningChallenge').then((m) => ({ default: m.ListeningChallenge }))),
   'pronunciation': React.lazy(() => import('./PronunciationGame').then((m) => ({ default: m.PronunciationGame }))),
-  'blending': React.lazy(() => import('../phonics/BlendingBoard').then((m) => ({ default: m.BlendingBoard as unknown as React.FC<GameProps> }))),
-  'segmenting': React.lazy(() => import('../phonics/SegmentingBoard').then((m) => ({ default: m.SegmentingBoard as unknown as React.FC<GameProps> }))),
-  'tpr': React.lazy(() => import('../phonics/TPRActivity').then((m) => ({ default: m.TPRActivity as unknown as React.FC<GameProps> }))),
-  'sound-intro': React.lazy(() => import('../phonics/SoundCard').then((m) => ({ default: m.SoundCard as unknown as React.FC<GameProps> }))),
-  'reading': React.lazy(() => import('../phonics/DecodableReader').then((m) => ({ default: m.DecodableReader as unknown as React.FC<GameProps> }))),
-  'letter-tracing': React.lazy(() => import('../phonics/LetterTracing').then((m) => ({ default: m.LetterTracing as unknown as React.FC<GameProps> }))),
-  'word-writing': React.lazy(() => import('../phonics/WordWriting').then((m) => ({ default: m.WordWriting as unknown as React.FC<GameProps> }))),
-  'phonics-builder': React.lazy(() => import('../phonics/BlendingBoard').then((m) => ({ default: m.BlendingBoard as unknown as React.FC<GameProps> }))),
+  'blending': React.lazy(() => import('../phonics/BlendingBoard').then((m) => ({ default: m.BlendingBoard }))),
+  'segmenting': React.lazy(() => import('../phonics/SegmentingBoard').then((m) => ({ default: m.SegmentingBoard }))),
+  'tpr': React.lazy(() => import('../phonics/TPRActivity').then((m) => ({ default: m.TPRActivity }))),
+  'sound-intro': React.lazy(() => import('../phonics/SoundCard').then((m) => ({ default: m.SoundCard }))),
+  'reading': React.lazy(() => import('../phonics/DecodableReader').then((m) => ({ default: m.DecodableReader }))),
+  'letter-tracing': React.lazy(() => import('../phonics/LetterTracing').then((m) => ({ default: m.LetterTracing }))),
+  'word-writing': React.lazy(() => import('../phonics/WordWriting').then((m) => ({ default: m.WordWriting }))),
+  'phonics-builder': React.lazy(() => import('../phonics/BlendingBoard').then((m) => ({ default: m.BlendingBoard }))),
   'story-choices': React.lazy(() => import('./StoryChoicesGame').then((m) => ({ default: m.StoryChoicesGame }))),
-  'dialogue': React.lazy(() => import('./DialogueGame').then((m) => ({ default: m.DialogueGame as unknown as React.FC<GameProps> }))),
-  'image-label': React.lazy(() => import('./ImageLabelGame').then((m) => ({ default: m.ImageLabelGame as unknown as React.FC<GameProps> }))),
-  'say-it': React.lazy(() => import('./SayItGame').then((m) => ({ default: m.SayItGame as unknown as React.FC<GameProps> }))),
-  'phonics-blend': React.lazy(() => import('./PhonicsBlendGame').then((m) => ({ default: m.PhonicsBlendGame as unknown as React.FC<GameProps> }))),
-  'phoneme-manipulation': React.lazy(() => import('./PhonemeManipulationGame').then((m) => ({ default: m.PhonemeManipulationGame as unknown as React.FC<GameProps> }))),
-  'syllable': React.lazy(() => import('./SyllableGame').then((m) => ({ default: m.SyllableGame as unknown as React.FC<GameProps> }))),
-  'word-family': React.lazy(() => import('./WordFamilyGame').then((m) => ({ default: m.WordFamilyGame as unknown as React.FC<GameProps> }))),
-  'rhyme': React.lazy(() => import('./RhymeGame').then((m) => ({ default: m.RhymeGame as unknown as React.FC<GameProps> }))),
-  'phonetic-trap': React.lazy(() => import('./PhoneticTrapGame').then((m) => ({ default: m.default as unknown as React.FC<GameProps> }))),
+  'dialogue': React.lazy(() => import('./DialogueGame').then((m) => ({ default: m.DialogueGame }))),
+  'image-label': React.lazy(() => import('./ImageLabelGame').then((m) => ({ default: m.ImageLabelGame }))),
+  'say-it': React.lazy(() => import('./SayItGame').then((m) => ({ default: m.SayItGame }))),
+  'phonics-blend': React.lazy(() => import('./PhonicsBlendGame').then((m) => ({ default: m.PhonicsBlendGame }))),
+  'phoneme-manipulation': React.lazy(() => import('./PhonemeManipulationGame').then((m) => ({ default: m.PhonemeManipulationGame }))),
+  'syllable': React.lazy(() => import('./SyllableGame').then((m) => ({ default: m.SyllableGame }))),
+  'word-family': React.lazy(() => import('./WordFamilyGame').then((m) => ({ default: m.WordFamilyGame }))),
+  'rhyme': React.lazy(() => import('./RhymeGame').then((m) => ({ default: m.RhymeGame }))),
+  'phonetic-trap': React.lazy(() => import('./PhoneticTrapGame').then((m) => ({ default: m.default }))),
 };
+
+// Games that require specialized props (not standard GameProps with words[]).
+// These need their own data passed via the `extra` prop on GameSelectorProps.
+const SPECIALIZED_GAME_TYPES = new Set<GameType>([
+  'dialogue',        // needs: lines: DialogueLine[]
+  'image-label',     // needs: questions: LabelQuestion[]
+  'say-it',          // needs: questions: SayItQuestion[]
+  'phonics-blend',   // needs: questions: BlendQuestion[]
+  'phoneme-manipulation', // needs: questions: PhonemeManipulationQuestion[]
+  'syllable',        // needs: questions: SyllableQuestion[]
+  'word-family',     // needs: families: WordFamily[]
+  'rhyme',           // needs: questions: RhymeQuestion[]
+  'phonetic-trap',   // needs: trap: PhoneticTrap
+  'tpr',             // needs: commands: string[]
+  'sound-intro',     // needs: sound: PhonicsSound
+  'reading',         // needs: text, highlightSounds
+  'letter-tracing',  // needs: letter: string
+  'word-writing',    // needs: word: string
+]);
 
 const GAME_TYPE_MAP: Record<string, GameType> = {
   'word-match': 'word-match',
@@ -160,9 +183,12 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
 
 export interface GameSelectorProps extends GameProps {
   type: string;
+  /** Extra props for specialized games (e.g. lines, questions, trap, etc.) */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extra?: Record<string, any>;
 }
 
-export function GameSelector({ type, ...props }: GameSelectorProps) {
+export function GameSelector({ type, extra, ...props }: GameSelectorProps) {
   const { t } = useLanguage();
   const resolvedType = GAME_TYPE_MAP[type];
 
@@ -174,7 +200,24 @@ export function GameSelector({ type, ...props }: GameSelectorProps) {
     );
   }
 
+  // Guard: specialized games require their own props via `extra`
+  if (SPECIALIZED_GAME_TYPES.has(resolvedType) && !extra) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem' }}>
+        <p>{t('games.loadingGame')}: {type}</p>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          This game requires specific data that is not available.
+        </p>
+      </div>
+    );
+  }
+
   const GameComponent = gameComponents[resolvedType];
+
+  // For specialized games, pass extra props; for standard games, pass words-based props
+  const gameProps = SPECIALIZED_GAME_TYPES.has(resolvedType)
+    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, ...extra }
+    : props;
 
   return (
     <React.Suspense
@@ -184,7 +227,7 @@ export function GameSelector({ type, ...props }: GameSelectorProps) {
         </div>
       }
     >
-      <GameComponent {...props} />
+      <GameComponent {...gameProps} />
     </React.Suspense>
   );
 }

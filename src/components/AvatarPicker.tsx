@@ -79,16 +79,16 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="avatar-picker-overlay" onClick={onClose}>
-      <div className="avatar-picker-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="picker-header">
-          <h3>{lang === 'tr' ? 'Avatarini Sec' : 'Choose Your Avatar'}</h3>
-          <button type="button" className="picker-close" onClick={onClose} aria-label={lang === 'tr' ? 'Kapat' : 'Close'}>
+    <div className="avatar-picker-overlay" onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+      <div className="avatar-picker-modal" onClick={(e) => e.stopPropagation()} style={{ background: 'var(--bg-main, #1C2236)', borderRadius: 24, padding: 28, width: '90%', maxWidth: 420, maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+        <div className="picker-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main, #333)' }}>{lang === 'tr' ? 'Avatarını Seç' : 'Choose Your Avatar'}</h3>
+          <button type="button" className="picker-close" onClick={onClose} aria-label={lang === 'tr' ? 'Kapat' : 'Close'} style={{ width: 36, height: 36, borderRadius: 12, border: 'none', background: 'var(--bg-soft, #f0f0f0)', color: 'var(--text-muted, #666)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <X size={20} />
           </button>
         </div>
 
-        <div className="picker-grid">
+        <div className="picker-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(56px, 1fr))', gap: 10 }}>
           {AVATAR_OPTIONS.map((opt) => (
             <button
               type="button"
@@ -96,11 +96,12 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
               className={`picker-item ${selected === opt.id ? 'selected' : ''}`}
               onClick={() => handleSelect(opt.id)}
               disabled={saving}
-              aria-label={lang === 'tr' ? `${opt.letter} avatarini sec` : `Select ${opt.letter} avatar`}
+              aria-label={lang === 'tr' ? `${opt.letter} avatarını seç` : `Select ${opt.letter} avatar`}
+              style={{ width: 56, height: 56, borderRadius: 16, border: selected === opt.id ? '2px solid var(--secondary)' : '2px solid transparent', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
             >
               <span
                 className="picker-letter-avatar"
-                style={{ background: opt.bg, color: opt.fg }}
+                style={{ background: opt.bg, color: opt.fg, width: 48, height: 48, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', fontWeight: 800, lineHeight: 1, userSelect: 'none' }}
               >
                 {opt.letter}
               </span>
@@ -109,135 +110,11 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({ onClose }) => {
         </div>
 
         {saving && (
-          <div className="picker-saving">{lang === 'tr' ? 'Kaydediliyor...' : 'Saving...'}</div>
+          <div className="picker-saving" style={{ textAlign: 'center', marginTop: 16, fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted, #666)' }}>{lang === 'tr' ? 'Kaydediliyor...' : 'Saving...'}</div>
         )}
 
-        <style>{`
-          .avatar-picker-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.2s ease;
-          }
-
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-
-          .avatar-picker-modal {
-            background: var(--bg-main, #1C2236);
-            border-radius: 24px;
-            padding: 28px;
-            width: 90%;
-            max-width: 420px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            animation: slideUp 0.25s ease;
-          }
-
-          @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-          }
-
-          .picker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-          }
-
-          .picker-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--text-main, #333);
-          }
-
-          .picker-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            border: none;
-            background: var(--bg-soft, #f0f0f0);
-            color: var(--text-muted, #666);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-          }
-
-          .picker-close:hover {
-            background: var(--glass-border, #ddd);
-            color: var(--text-main, #333);
-          }
-
-          .picker-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-            gap: 10px;
-          }
-
-          .picker-item {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            border: 2px solid transparent;
-            background: transparent;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            padding: 0;
-          }
-
-          .picker-item:hover {
-            transform: scale(1.12);
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(232, 163, 23, 0.25);
-          }
-
-          .picker-item.selected {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.2);
-          }
-
-          .picker-item:disabled {
-            opacity: 0.6;
-            cursor: wait;
-          }
-
-          .picker-letter-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: 800;
-            line-height: 1;
-            letter-spacing: -0.02em;
-            user-select: none;
-          }
-
-          .picker-saving {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted, #666);
-          }
-        `}</style>
+        {/* Global <style> tag removed — critical layout styles moved to inline style objects on elements above.
+           Original CSS class names kept for any external stylesheet overrides. */}
       </div>
     </div>
   );

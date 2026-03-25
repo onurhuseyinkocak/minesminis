@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked, Flame, Star } from 'lucide-react';
 import './TopNav.css';
 import ParentGate, { hasParentGatePassed } from '../ParentGate';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface TopNavProps {
   /** User display name or initials for avatar fallback */
@@ -20,17 +21,17 @@ interface TopNavProps {
 }
 
 const NAV_ITEMS = [
-  { path: '/dashboard', label: 'Home', icon: Home },
-  { path: '/worlds', label: 'Learn', icon: Globe },
-  { path: '/games', label: 'Games', icon: Gamepad2 },
-  { path: '/words', label: 'Library', icon: BookOpen },
-  { path: '/stories', label: 'Stories', icon: BookText },
+  { path: '/dashboard', i18nKey: 'nav.home', icon: Home },
+  { path: '/worlds', i18nKey: 'nav.learn', icon: Globe },
+  { path: '/games', i18nKey: 'nav.games', icon: Gamepad2 },
+  { path: '/words', i18nKey: 'nav.library', icon: BookOpen },
+  { path: '/stories', i18nKey: 'nav.stories', icon: BookText },
 ];
 
 /** Extra nav items shown in mobile slide-out menu */
 const EXTRA_NAV_ITEMS = [
-  { path: '/garden', label: 'Garden', icon: Flower2 },
-  { path: '/reading', label: 'Reading', icon: BookMarked },
+  { path: '/garden', i18nKey: 'nav.garden', icon: Flower2 },
+  { path: '/reading', i18nKey: 'nav.reading', icon: BookMarked },
 ];
 
 type GateAction = 'logout' | 'settings';
@@ -45,6 +46,7 @@ export default function TopNav({
 }: TopNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -139,7 +141,7 @@ export default function TopNav({
         {/* Desktop Nav */}
         <nav aria-label="Main navigation">
           <ul className="topnav__links">
-            {NAV_ITEMS.map(({ path, label, icon: Icon }) => (
+            {NAV_ITEMS.map(({ path, i18nKey, icon: Icon }) => (
               <li key={path}>
                 <Link
                   to={path}
@@ -147,7 +149,7 @@ export default function TopNav({
                   aria-current={isActive(path) ? 'page' : undefined}
                 >
                   <Icon size={18} />
-                  <span>{label}</span>
+                  <span>{t(i18nKey)}</span>
                 </Link>
               </li>
             ))}
@@ -199,14 +201,14 @@ export default function TopNav({
                   className="topnav__dropdown-item"
                   onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
                 >
-                  <User size={16} /> Profile
+                  <User size={16} /> {t('common.profile')}
                 </button>
                 <button
                   type="button"
                   className="topnav__dropdown-item"
                   onClick={() => requestGate('settings', 'To access Settings')}
                 >
-                  <Settings size={16} /> Settings
+                  <Settings size={16} /> {t('common.settings')}
                 </button>
                 {onLogout && (
                   <>
@@ -216,7 +218,7 @@ export default function TopNav({
                       className="topnav__dropdown-item topnav__dropdown-item--danger"
                       onClick={() => requestGate('logout', 'To sign out')}
                     >
-                      <LogOut size={16} /> Logout
+                      <LogOut size={16} /> {t('common.logout')}
                     </button>
                   </>
                 )}
@@ -268,7 +270,7 @@ export default function TopNav({
         </div>
 
         <ul className="topnav__mobile-links">
-          {NAV_ITEMS.map(({ path, label, icon: Icon }) => (
+          {NAV_ITEMS.map(({ path, i18nKey, icon: Icon }) => (
             <li key={path}>
               <Link
                 to={path}
@@ -277,11 +279,11 @@ export default function TopNav({
                 onClick={() => setMobileOpen(false)}
               >
                 <Icon size={22} />
-                <span>{label}</span>
+                <span>{t(i18nKey)}</span>
               </Link>
             </li>
           ))}
-          {EXTRA_NAV_ITEMS.map(({ path, label, icon: Icon }) => (
+          {EXTRA_NAV_ITEMS.map(({ path, i18nKey, icon: Icon }) => (
             <li key={path}>
               <Link
                 to={path}
@@ -290,7 +292,7 @@ export default function TopNav({
                 onClick={() => setMobileOpen(false)}
               >
                 <Icon size={22} />
-                <span>{label}</span>
+                <span>{t(i18nKey)}</span>
               </Link>
             </li>
           ))}
@@ -309,11 +311,11 @@ export default function TopNav({
           {streak > 0 && (
             <div className="topnav__streak">
               <span className="topnav__streak-icon"><Flame size={16} color="#FF6B35" /></span>
-              <span>{streak} day streak</span>
+              <span>{streak} {t('common.dayStreak')}</span>
             </div>
           )}
           <Link to="/profile" className="topnav__mobile-link" onClick={() => setMobileOpen(false)}>
-            <User size={22} /> <span>Profile</span>
+            <User size={22} /> <span>{t('common.profile')}</span>
           </Link>
           {onLogout && (
             <button
@@ -321,7 +323,7 @@ export default function TopNav({
               className="topnav__mobile-logout"
               onClick={() => requestGate('logout', 'To sign out')}
             >
-              <LogOut size={20} /> Logout
+              <LogOut size={20} /> {t('common.logout')}
             </button>
           )}
         </div>
