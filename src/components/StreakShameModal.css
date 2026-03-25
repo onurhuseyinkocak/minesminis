@@ -1,0 +1,122 @@
+/* ── StreakShameModal ─────────────────────────────────────────────────────── */
+
+.ssm__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.ssm__card {
+  background: #fff;
+  border-radius: 28px;
+  padding: 32px 24px 24px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.22);
+  position: relative;
+}
+
+/* ── Mascot ── */
+
+.ssm__mascot {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+/* ── Streak badge ── */
+
+.ssm__streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-cream-100, #f5f4f0);
+  border-radius: 999px;
+  padding: 4px 14px 4px 10px;
+  margin-bottom: 14px;
+}
+
+.ssm__streak-count {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ── Text ── */
+
+.ssm__title {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--color-ink-900, #1c1917);
+  margin: 0 0 10px;
+  line-height: 1.2;
+}
+
+.ssm__body {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 14px;
+  color: var(--color-ink-600, #57534e);
+  line-height: 1.55;
+  margin: 0 0 14px;
+}
+
+/* ── Urgency row ── */
+
+.ssm__urgency {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 800;
+  font-size: 13px;
+  background: var(--color-cream-100, #f5f4f0);
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-bottom: 20px;
+}
+
+/* ── CTA ── */
+
+.ssm__cta {
+  display: block;
+  width: 100%;
+  background: var(--color-primary-500, #f97316);
+  color: #fff;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 900;
+  font-size: 17px;
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+  margin-bottom: 10px;
+}
+
+.ssm__cta:hover { background: var(--color-primary-600, #ea6c0b); transform: scale(1.02); }
+.ssm__cta:active { transform: scale(0.98); }
+
+/* ── Dismiss ── */
+
+.ssm__dismiss {
+  background: none;
+  border: none;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 13px;
+  color: var(--color-ink-400, #a8a29e);
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ssm__dismiss:hover { color: var(--color-ink-600, #57534e); }

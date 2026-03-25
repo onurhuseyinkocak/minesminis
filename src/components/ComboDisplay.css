@@ -1,0 +1,45 @@
+/* ── ComboDisplay ─────────────────────────────────────────────────────────── */
+
+.combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-ink-900, #1c1917);
+  color: #fff;
+  border-radius: 999px;
+  padding: 5px 12px 5px 9px;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 900;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.combo--tier {
+  background: var(--combo-color, var(--color-primary-500));
+}
+
+.combo__icon {
+  flex-shrink: 0;
+  stroke-width: 2.5;
+}
+
+.combo__count {
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.combo__label {
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0.9;
+  letter-spacing: 0.03em;
+}
+
+.combo__mult {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.2);
+  border-radius: 999px;
+  padding: 1px 7px;
+  margin-left: 2px;
+}

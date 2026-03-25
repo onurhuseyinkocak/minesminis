@@ -1,0 +1,35 @@
+/* ── PerfectLessonBanner ─────────────────────────────────────────────────── */
+
+.plb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--color-gold-500, #eab308), var(--color-primary-500, #f97316));
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 18px 8px 14px;
+  box-shadow: 0 4px 16px rgba(234,179,8,0.35);
+  margin-top: 12px;
+}
+
+.plb__stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #fff;
+}
+
+.plb__label {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.plb__bonus {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-weight: 800;
+  font-size: 13px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 999px;
+  padding: 2px 9px;
+}

@@ -43,6 +43,13 @@ import WeeklyTournamentBanner from '../components/WeeklyTournamentBanner';
 import StreakCalendar from '../components/StreakCalendar';
 import { getActivityDates } from '../services/habitTracker';
 import SoundOfTheDay from '../components/SoundOfTheDay';
+import DailyGoalWidget from '../components/DailyGoalWidget';
+import StreakShameModal from '../components/StreakShameModal';
+import {
+  shouldShowStreakShame,
+  getTodayXP,
+  getDailyGoal,
+} from '../services/psychGamification';
 
 // ============================================================
 // HELPERS
@@ -146,7 +153,7 @@ function getWordOfTheDay(): WodEntry {
 
 export default function Dashboard() {
   const { user, userProfile, isAdmin } = useAuth();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const {
     stats,
     loading,
@@ -182,6 +189,18 @@ export default function Dashboard() {
   const freezeCount = getStreakFreezeCount();
 
   const [_lesson, setLesson] = useState(() => getCurrentLessonData(userId));
+  const [showStreakShame, setShowStreakShame] = useState(false);
+
+  // Streak shame: show after 4pm if user hasn't practiced and has streak
+  useEffect(() => {
+    const check = () => {
+      if (shouldShowStreakShame(stats.streakDays, stats.lastLoginDate)) {
+        setShowStreakShame(true);
+      }
+    };
+    const timer = setTimeout(check, 3000); // 3s delay after mount
+    return () => clearTimeout(timer);
+  }, [stats.streakDays, stats.lastLoginDate]);
 
   useEffect(() => {
     const onFocus = () => {
@@ -213,6 +232,14 @@ export default function Dashboard() {
   }
 
   return (
+    <>
+    {showStreakShame && (
+      <StreakShameModal
+        streakDays={stats.streakDays}
+        lang={lang as 'tr' | 'en'}
+        onDismiss={() => setShowStreakShame(false)}
+      />
+    )}
     <motion.div
       className="min-h-screen bg-gradient-to-b from-cream-100 to-white"
       variants={containerVariants}
@@ -407,6 +434,25 @@ export default function Dashboard() {
       <div className="lg:col-span-1 space-y-4">
 
       {/* ============================================================
+          DAILY GOAL WIDGET
+          ============================================================ */}
+      <motion.section className="bg-white rounded-2xl p-5 shadow-card" variants={itemVariants}>
+        <div className="flex items-center gap-4">
+          <DailyGoalWidget uid={userId} lang={lang as 'tr' | 'en'} />
+          <div className="flex-1">
+            <p className="font-display font-extrabold text-ink-900 text-sm mb-1">
+              {lang === 'tr' ? 'Günlük Hedef' : 'Daily Goal'}
+            </p>
+            <p className="font-body text-ink-500 text-xs leading-relaxed">
+              {getTodayXP(userId) >= getDailyGoal()
+                ? (lang === 'tr' ? 'Bugünkü hedefinizi tamamladınız!' : "You've hit today's goal!")
+                : (lang === 'tr' ? 'Hedefinize ulaşmak için öğrenmeye devam edin.' : 'Keep going to hit your goal.')}
+            </p>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ============================================================
           5. WORD OF THE DAY
           ============================================================ */}
       <motion.section
@@ -493,5 +539,6 @@ export default function Dashboard() {
         showOnce="mimi_guide_dashboard"
       />
     </motion.div>
+    </>
   );
 }
