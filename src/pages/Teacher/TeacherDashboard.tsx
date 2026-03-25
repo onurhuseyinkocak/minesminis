@@ -306,10 +306,10 @@ function TeacherDashboardInner({
 
   // ── Medals for top performers ──
   const medals = ['gold', 'silver', 'bronze'];
-  const medalEmojis: Record<string, string> = {
-    gold: '\u{1F947}',
-    silver: '\u{1F948}',
-    bronze: '\u{1F949}',
+  const medalLabels: Record<string, string> = {
+    gold: '1',
+    silver: '2',
+    bronze: '3',
   };
 
   // ── Grade options ──
@@ -564,7 +564,7 @@ function TeacherDashboardInner({
                         <div className="td-performers-list" style={{ paddingBottom: 'var(--space-4)' }}>
                           {progressStats.topThree.map((s, idx) => (
                             <div key={s.id} className="td-performer-item">
-                              <span className="td-performer-medal">{medalEmojis[medals[idx]]}</span>
+                              <span className={`td-performer-medal td-performer-medal--${medals[idx]}`}>{medalLabels[medals[idx]]}</span>
                               <div className="td-avatar-circle" style={{ background: 'var(--primary-pale)', color: 'var(--primary)' }}>
                                 {s.name.charAt(0).toUpperCase()}
                               </div>

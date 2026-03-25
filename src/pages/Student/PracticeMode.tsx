@@ -173,6 +173,27 @@ const PracticeMode = () => {
 
   return (
     <div className="pm">
+      {/* ---- DEMO DATA BANNER ---- */}
+      <div style={{
+        background: 'var(--gold-50, #fef9ec)',
+        border: '1.5px solid var(--gold-300, #f6cc60)',
+        borderRadius: '12px',
+        padding: '10px 16px',
+        marginBottom: '16px',
+        fontSize: '13px',
+        color: 'var(--gold-700, #92600a)',
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 500,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+      }}>
+        <BookOpen size={15} style={{ flexShrink: 0 }} />
+        <span>
+          Practice Mode — coming soon. Word data shown below is a preview, not your real progress.
+        </span>
+      </div>
+
       {/* ---- HEADER ---- */}
       <div className="pm-header">
         <div className="pm-header__left">

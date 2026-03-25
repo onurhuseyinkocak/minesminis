@@ -37,12 +37,12 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 function generateSentences(wordItems: WordItem[]): SentenceData[] {
   const templates = [
-    (w: string) => `The ${w} is big`,
     (w: string) => `I like the ${w}`,
     (w: string) => `This is a ${w}`,
     (w: string) => `I see a ${w}`,
-    (w: string) => `The ${w} is here`,
     (w: string) => `Look at the ${w}`,
+    (w: string) => `I have a ${w}`,
+    (w: string) => `We can see the ${w}`,
   ];
 
   return wordItems.slice(0, 5).map((item, i) => {

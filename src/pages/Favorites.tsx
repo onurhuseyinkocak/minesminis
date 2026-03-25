@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../config/supabase';
 import { Heart, Lock, HeartCrack } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -19,6 +20,8 @@ interface Favorite {
 
 const Favorites: React.FC = () => {
   const { user } = useAuth();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +49,7 @@ const Favorites: React.FC = () => {
 
       setFavorites(data || []);
     } catch {
-      toast.error('Failed to load favorites');
+      toast.error(isTr ? 'Favoriler yüklenemedi.' : 'Failed to load favorites');
     } finally {
       setLoading(false);
     }
@@ -64,9 +67,9 @@ const Favorites: React.FC = () => {
       if (error) throw error;
 
       setFavorites(prev => prev.filter(fav => fav.id !== favoriteId));
-      toast.success('Removed from favorites!');
+      toast.success(isTr ? 'Favorilerden kaldırıldı!' : 'Removed from favorites!');
     } catch {
-      toast.error('Failed to remove favorite');
+      toast.error(isTr ? 'Favori kaldırılamadı.' : 'Failed to remove favorite');
     }
   };
 
@@ -74,13 +77,13 @@ const Favorites: React.FC = () => {
     return (
       <div className="favorites-empty">
         <div className="empty-state-icon"><Lock size={48} /></div>
-        <h2>Please Sign In</h2>
-        <p>Sign in to view and manage your favorite items</p>
+        <h2>{isTr ? 'Giriş Yapmalısınız' : 'Please Sign In'}</h2>
+        <p>{isTr ? 'Favorilerinizi görüntülemek için giriş yapın.' : 'Sign in to view and manage your favorite items'}</p>
         <Link
           to="/login"
           className="inline-block mt-4 px-8 py-3 bg-primary-500 text-white rounded-xl no-underline font-semibold text-base"
         >
-          Giriş Yap
+          {isTr ? 'Giriş Yap' : 'Sign In'}
         </Link>
       </div>
     );
@@ -126,35 +129,35 @@ const Favorites: React.FC = () => {
           className={`filter-tab ${activeFilter === 'all' ? 'active' : ''}`}
           onClick={() => setActiveFilter('all')}
         >
-          All ({favorites.length})
+          {isTr ? 'Tümü' : 'All'} ({favorites.length})
         </button>
         <button
           type="button"
           className={`filter-tab ${activeFilter === 'game' ? 'active' : ''}`}
           onClick={() => setActiveFilter('game')}
         >
-          <KidIcon name="games" size={16} /> Games ({favorites.filter(f => f.item_type === 'game').length})
+          <KidIcon name="games" size={16} /> {isTr ? 'Oyunlar' : 'Games'} ({favorites.filter(f => f.item_type === 'game').length})
         </button>
         <button
           type="button"
           className={`filter-tab ${activeFilter === 'word' ? 'active' : ''}`}
           onClick={() => setActiveFilter('word')}
         >
-          <KidIcon name="book" size={16} /> Words ({favorites.filter(f => f.item_type === 'word').length})
+          <KidIcon name="book" size={16} /> {isTr ? 'Kelimeler' : 'Words'} ({favorites.filter(f => f.item_type === 'word').length})
         </button>
         <button
           type="button"
           className={`filter-tab ${activeFilter === 'worksheet' ? 'active' : ''}`}
           onClick={() => setActiveFilter('worksheet')}
         >
-          <KidIcon name="learn" size={16} /> Worksheets ({favorites.filter(f => f.item_type === 'worksheet').length})
+          <KidIcon name="learn" size={16} /> {isTr ? 'Çalışmalar' : 'Worksheets'} ({favorites.filter(f => f.item_type === 'worksheet').length})
         </button>
         <button
           type="button"
           className={`filter-tab ${activeFilter === 'video' ? 'active' : ''}`}
           onClick={() => setActiveFilter('video')}
         >
-          <KidIcon name="video" size={16} /> Videos ({favorites.filter(f => f.item_type === 'video').length})
+          <KidIcon name="video" size={16} /> {isTr ? 'Videolar' : 'Videos'} ({favorites.filter(f => f.item_type === 'video').length})
         </button>
       </div>
 
@@ -162,14 +165,14 @@ const Favorites: React.FC = () => {
         loading ? (
           <div className="favorites-loading">
             <div className="spinner-large"></div>
-            <p>Loading your favorites...</p>
+            <p>{isTr ? 'Favorileriniz yükleniyor...' : 'Loading your favorites...'}</p>
           </div>
         ) : filteredFavorites.length === 0 ? (
           <div className="favorites-empty">
             <div className="empty-state-icon"><LottieCharacter state="idle" size={64} /></div>
-            <h2>No Treasures Yet!</h2>
-            <p>Collect your favorite games, words, worksheets, and videos!</p>
-            <p className="hint">Tap the heart icon on any item to add it here</p>
+            <h2>{isTr ? 'Henüz Hazine Yok!' : 'No Treasures Yet!'}</h2>
+            <p>{isTr ? 'Favori oyunlarını, kelimelerini, çalışmalarını ve videolarını topla!' : 'Collect your favorite games, words, worksheets, and videos!'}</p>
+            <p className="hint">{isTr ? 'Herhangi bir öğenin kalp simgesine dokun ve buraya ekle' : 'Tap the heart icon on any item to add it here'}</p>
           </div>
         ) : (
           <div className="favorites-grid">
@@ -186,7 +189,9 @@ const Favorites: React.FC = () => {
                 <div className="favorite-content">
                   <h3>{favorite.item_name}</h3>
                   <span className="favorite-type-label">
-                    {favorite.item_type.charAt(0).toUpperCase() + favorite.item_type.slice(1)}
+                    {isTr
+                      ? { game: 'Oyun', word: 'Kelime', worksheet: 'Çalışma', video: 'Video' }[favorite.item_type] ?? favorite.item_type
+                      : favorite.item_type.charAt(0).toUpperCase() + favorite.item_type.slice(1)}
                   </span>
                 </div>
                 <button

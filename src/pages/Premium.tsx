@@ -14,12 +14,12 @@ interface PremiumFeature {
 }
 
 const premiumFeatures: PremiumFeature[] = [
-  { icon: <MessageCircle size={32} strokeWidth={2.5} />, title: { tr: 'Sinirsiz AI Sohbet', en: 'Unlimited AI Chat' }, description: { tr: 'AI ejderha rehberinizle istediginiz kadar Ingilizce pratik yapin!', en: 'Practice English as much as you want with your AI dragon guide!' } },
-  { icon: <Gamepad2 size={32} strokeWidth={2.5} />, title: { tr: 'Tum Egitici Oyunlar', en: 'All Educational Games' }, description: { tr: 'Kelime eslestirme, hafiza oyunlari, hiz turlari ve daha fazlasi!', en: 'Word matching, memory games, speed rounds, and more!' } },
-  { icon: <BookOpen size={32} strokeWidth={2.5} />, title: { tr: 'Kelime Pratigi', en: 'Word Practice' }, description: { tr: '100+ kelimeyle gorsel ve isitsel ogrenme deneyimi', en: 'Visual and auditory learning experience with 100+ words' } },
-  { icon: <Trophy size={32} strokeWidth={2.5} />, title: { tr: 'Gunluk Gorevler', en: 'Daily Quests' }, description: { tr: 'Her gun yeni sorularla ogrenmeye devam et!', en: 'Keep learning with new questions every day!' } },
-  { icon: <Zap size={32} strokeWidth={2.5} />, title: { tr: 'Cumle Kurucusu', en: 'Sentence Builder' }, description: { tr: 'Eglenirken Ingilizce cumle yapisini ogren', en: 'Learn English sentence structure while having fun' } },
-  { icon: <Star size={32} strokeWidth={2.5} />, title: { tr: 'Balon Patlat', en: 'Balloon Pop' }, description: { tr: 'Zamana karsi heyecanli kelime yarismasi!', en: 'Exciting word race against the clock!' } },
+  { icon: <MessageCircle size={32} strokeWidth={2.5} />, title: { tr: 'Sınırsız AI Sohbet', en: 'Unlimited AI Chat' }, description: { tr: 'AI ejderha rehberinizle istediğiniz kadar İngilizce pratik yapın!', en: 'Practice English as much as you want with your AI dragon guide!' } },
+  { icon: <Gamepad2 size={32} strokeWidth={2.5} />, title: { tr: 'Tüm Eğitici Oyunlar', en: 'All Educational Games' }, description: { tr: 'Kelime eşleştirme, hafıza oyunları, hız turları ve daha fazlası!', en: 'Word matching, memory games, speed rounds, and more!' } },
+  { icon: <BookOpen size={32} strokeWidth={2.5} />, title: { tr: 'Kelime Pratiği', en: 'Word Practice' }, description: { tr: '100+ kelimeyle görsel ve işitsel öğrenme deneyimi', en: 'Visual and auditory learning experience with 100+ words' } },
+  { icon: <Trophy size={32} strokeWidth={2.5} />, title: { tr: 'Günlük Görevler', en: 'Daily Quests' }, description: { tr: 'Her gün yeni sorularla öğrenmeye devam et!', en: 'Keep learning with new questions every day!' } },
+  { icon: <Zap size={32} strokeWidth={2.5} />, title: { tr: 'Cümle Kurucusu', en: 'Sentence Builder' }, description: { tr: 'Eğlenirken İngilizce cümle yapısını öğren', en: 'Learn English sentence structure while having fun' } },
+  { icon: <Star size={32} strokeWidth={2.5} />, title: { tr: 'Balon Patlat', en: 'Balloon Pop' }, description: { tr: 'Zamana karşı heyecanlı kelime yarışması!', en: 'Exciting word race against the clock!' } },
 ];
 
 export default function Premium() {
@@ -39,11 +39,11 @@ export default function Premium() {
             <Sparkles size={20} />
             <span>Premium</span>
           </div>
-          <h1>{isPremium ? (tr ? 'Premium Uyesiniz!' : 'You Are Premium!') : (tr ? 'Her Seyin Kilidini Ac!' : 'Unlock Everything!')}</h1>
+          <h1>{isPremium ? (tr ? 'Premium Üyesiniz!' : 'You Are Premium!') : (tr ? 'Her Şeyin Kilidini Aç!' : 'Unlock Everything!')}</h1>
           <p>
             {isPremium
-              ? (tr ? 'Premium uyeliginiz icin tesekkurler! Tum ozelliklere sinirsiz erisimin keyfini cikarin.' : 'Thank you for your Premium membership! Enjoy unlimited access to all features.')
-              : (tr ? 'Sinirsiz Ingilizce pratigi ve tum egitim iceriklerine erismek icin Premium\'a gecin.' : 'Upgrade to Premium for unlimited English practice and access to all educational content.')}
+              ? (tr ? 'Premium üyeliğiniz için teşekkürler! Tüm özelliklere sınırsız erişimin keyfini çıkarın.' : 'Thank you for your Premium membership! Enjoy unlimited access to all features.')
+              : (tr ? 'Sınırsız İngilizce pratiği ve tüm eğitim içeriklerine erişmek için Premium\'a geçin.' : 'Upgrade to Premium for unlimited English practice and access to all educational content.')}
           </p>
           <div className="hero-sparkles">
             <Sparkles className="sparkle-1" size={24} />
@@ -55,17 +55,17 @@ export default function Premium() {
         {isLoading ? (
           <div className="premium-coming-soon-card">
             <Crown size={48} className="coming-soon-icon" />
-            <h2>{tr ? 'Yukleniyor...' : 'Loading...'}</h2>
+            <h2>{tr ? 'Yükleniyor...' : 'Loading...'}</h2>
           </div>
         ) : isPremium ? (
           <div className="premium-coming-soon-card">
             <Crown size={48} className="coming-soon-icon" />
-            <h2>{tr ? 'Aktif' : 'Active'} {plan.charAt(0).toUpperCase() + plan.slice(1)} {tr ? 'Plani' : 'Plan'}</h2>
+            <h2>{tr ? 'Aktif' : 'Active'} {plan.charAt(0).toUpperCase() + plan.slice(1)} {tr ? 'Planı' : 'Plan'}</h2>
             <p>
               {tr
-                ? 'Tum dunyalara, sinirsiz Mimi sohbetine, egitici oyunlara, ilerleme takibine ve daha fazlasina tam erisim.'
+                ? 'Tüm dünyalara, sınırsız Mimi sohbetine, eğitici oyunlara, ilerleme takibine ve daha fazlasına tam erişim.'
                 : 'Full access to all worlds, unlimited Mimi chat, educational games, progress tracking, and more.'}
-              {subscriptionStatus === 'active' && (tr ? ' Aboneliginiz aktif.' : ' Your subscription is active.')}
+              {subscriptionStatus === 'active' && (tr ? ' Aboneliğiniz aktif.' : ' Your subscription is active.')}
             </p>
             <button type="button" className="back-btn" onClick={() => navigate('/dashboard')}>
               {tr ? 'Panele Git' : 'Go to Dashboard'}
@@ -74,16 +74,16 @@ export default function Premium() {
         ) : (
           <div className="premium-coming-soon-card">
             <Crown size={48} className="coming-soon-icon" />
-            <h2>{tr ? 'Premium\'a Yukselt' : 'Upgrade to Premium'}</h2>
-            <p>{tr ? 'Sinirsiz Mimi sohbeti, tum 12 dunya, ilerleme takibi, basari rozetleri ve reklamsiz deneyimin kilidini ac!' : 'Unlock unlimited Mimi chat, all 12 worlds, progress tracking, achievement badges, and ad-free experience!'}</p>
+            <h2>{tr ? 'Premium\'a Yükselt' : 'Upgrade to Premium'}</h2>
+            <p>{tr ? 'Sınırsız Mimi sohbeti, tüm 12 dünya, ilerleme takibi, başarı rozetleri ve reklamsız deneyimin kilidini aç!' : 'Unlock unlimited Mimi chat, all 12 worlds, progress tracking, achievement badges, and ad-free experience!'}</p>
             <button type="button" className="back-btn" onClick={() => navigate('/pricing')}>
-              {tr ? 'Planlari ve Fiyatlari Gor' : 'View Plans & Pricing'}
+              {tr ? 'Planları ve Fiyatları Gör' : 'View Plans & Pricing'}
             </button>
           </div>
         )}
 
         <div className="features-section animate-up" style={{ animationDelay: '0.2s' }}>
-          <div className="section-badge">{tr ? 'Premium Ayricaliklari' : 'Premium Perks'}</div>
+          <div className="section-badge">{tr ? 'Premium Ayrıcalıkları' : 'Premium Perks'}</div>
           <h2>{tr ? 'Neden Premium?' : 'Why Premium?'}</h2>
           <div className="features-grid">
             {premiumFeatures.map((feature, index) => (
@@ -97,46 +97,46 @@ export default function Premium() {
         </div>
 
         <div className="comparison-section">
-          <h2>{tr ? 'Ucretsiz vs Premium' : 'Free vs Premium'}</h2>
+          <h2>{tr ? 'Ücretsiz vs Premium' : 'Free vs Premium'}</h2>
           <div className="comparison-table">
             <div className="comparison-header">
-              <div className="feature-col">{tr ? 'Ozellik' : 'Feature'}</div>
-              <div className="free-col">{tr ? 'Ucretsiz' : 'Free'}</div>
+              <div className="feature-col">{tr ? 'Özellik' : 'Feature'}</div>
+              <div className="free-col">{tr ? 'Ücretsiz' : 'Free'}</div>
               <div className="premium-col">Premium</div>
             </div>
             <div className="comparison-row">
               <div className="feature-col">{tr ? 'Mimi ile Sohbet' : 'Chat with Mimi'}</div>
-              <div className="free-col">{tr ? 'Gunluk 10 mesaj' : '10 messages/day'}</div>
-              <div className="premium-col"><Check size={18} /> {tr ? 'Sinirsiz' : 'Unlimited'}</div>
+              <div className="free-col">{tr ? 'Günlük 10 mesaj' : '10 messages/day'}</div>
+              <div className="premium-col"><Check size={18} /> {tr ? 'Sınırsız' : 'Unlimited'}</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">{tr ? 'Egitici oyunlar' : 'Educational games'}</div>
-              <div className="free-col"><Check size={18} /> {tr ? 'Tumu' : 'All'}</div>
-              <div className="premium-col"><Check size={18} /> {tr ? 'Tumu' : 'All'}</div>
+              <div className="feature-col">{tr ? 'Eğitici oyunlar' : 'Educational games'}</div>
+              <div className="free-col"><Check size={18} /> {tr ? 'Tümü' : 'All'}</div>
+              <div className="premium-col"><Check size={18} /> {tr ? 'Tümü' : 'All'}</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">{tr ? 'Kelime pratigi' : 'Word practice'}</div>
-              <div className="free-col"><Check size={18} /> {tr ? 'Tumu' : 'All'}</div>
-              <div className="premium-col"><Check size={18} /> {tr ? 'Tumu' : 'All'}</div>
+              <div className="feature-col">{tr ? 'Kelime pratiği' : 'Word practice'}</div>
+              <div className="free-col"><Check size={18} /> {tr ? 'Tümü' : 'All'}</div>
+              <div className="premium-col"><Check size={18} /> {tr ? 'Tümü' : 'All'}</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">{tr ? 'Gunluk gorev' : 'Daily quests'}</div>
-              <div className="free-col">{tr ? 'Sinirli' : 'Limited'}</div>
-              <div className="premium-col"><Check size={18} /> {tr ? 'Sinirsiz' : 'Unlimited'}</div>
+              <div className="feature-col">{tr ? 'Günlük görev' : 'Daily quests'}</div>
+              <div className="free-col">{tr ? 'Sınırlı' : 'Limited'}</div>
+              <div className="premium-col"><Check size={18} /> {tr ? 'Sınırsız' : 'Unlimited'}</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">{tr ? 'Ilerleme takibi' : 'Progress tracking'}</div>
+              <div className="feature-col">{tr ? 'İlerleme takibi' : 'Progress tracking'}</div>
               <div className="free-col">{tr ? 'Temel' : 'Basic'}</div>
-              <div className="premium-col"><Check size={18} /> {tr ? 'Gelismis' : 'Advanced'}</div>
+              <div className="premium-col"><Check size={18} /> {tr ? 'Gelişmiş' : 'Advanced'}</div>
             </div>
           </div>
         </div>
 
         {!user && (
           <div className="login-prompt">
-            <p>{tr ? 'MinesMinis\'ten en iyi sekilde yararlanmak icin giris yap.' : 'Sign in to get the most out of MinesMinis.'}</p>
+            <p>{tr ? 'MinesMinis\'ten en iyi şekilde yararlanmak için giriş yap.' : 'Sign in to get the most out of MinesMinis.'}</p>
             <button type="button" onClick={() => navigate('/login', { state: { from: '/premium' } })}>
-              {tr ? 'Giris Yap / Uye Ol' : 'Sign In / Sign Up'}
+              {tr ? 'Giriş Yap / Üye Ol' : 'Sign In / Sign Up'}
             </button>
           </div>
         )}
