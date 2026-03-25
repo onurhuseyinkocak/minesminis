@@ -74,7 +74,7 @@ export async function getGlobalLeaderboard(currentUserId?: string): Promise<Lead
             .from('users')
             .select('id, display_name, avatar_url, level, xp, streak_days, settings')
             .order('xp', { ascending: false })
-            .limit(50);
+            .limit(500);
 
         if (error) throw error;
         if (!data) return [];

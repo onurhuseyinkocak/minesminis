@@ -391,7 +391,7 @@ const LessonPlayer = () => {
     const activityXp = currentActivity?.xpReward || 10;
     const scoreRatio = total > 0 ? score / total : 1;
     const earnedXp = Math.round(activityXp * scoreRatio);
-    if (earnedXp > 0) {
+    if (earnedXp > 0 && currentIndex !== totalActivities - 1) {
       addXP(earnedXp, 'activity_completed', { lessonId, worldId, activityId: currentActivity?.id });
     }
 

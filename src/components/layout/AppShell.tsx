@@ -6,7 +6,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { LottieIcon, KidIcon } from '../ui';
 import type { KidIconName } from '../ui';
 import ParentGate, { hasParentGatePassed } from '../ParentGate';
-import { Users2, LayoutDashboard } from 'lucide-react';
+import { Users2, LayoutDashboard, Trophy } from 'lucide-react';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -137,6 +137,17 @@ export default function AppShell({
             );
           })}
           <Link
+            to="/leaderboard"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-display font-semibold transition-all duration-150 ${
+              isActive('/leaderboard')
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-ink-500 hover:bg-ink-50 hover:text-ink-800'
+            }`}
+          >
+            <Trophy size={18} />
+            <span>{lang === 'tr' ? 'Turnuva' : 'Leaderboard'}</span>
+          </Link>
+          <Link
             to="/social/friends"
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-display font-semibold transition-all duration-150 ${
               isActive('/social/friends')
@@ -145,7 +156,7 @@ export default function AppShell({
             }`}
           >
             <Users2 size={18} />
-            <span>Friends</span>
+            <span>{lang === 'tr' ? 'Arkadaşlar' : 'Friends'}</span>
           </Link>
           {isTeacher && (
             <Link
@@ -290,6 +301,19 @@ export default function AppShell({
             );
           })}
           <Link
+            to="/leaderboard"
+            className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-colors duration-200 ${
+              isActive('/leaderboard') ? 'text-primary-500' : 'text-ink-400'
+            }`}
+          >
+            <div className={`p-1 rounded-full transition-colors duration-200 ${isActive('/leaderboard') ? 'bg-primary-50' : ''}`}>
+              <Trophy size={22} />
+            </div>
+            <span className={`text-[10px] font-display ${isActive('/leaderboard') ? 'font-bold' : 'font-semibold'}`}>
+              {lang === 'tr' ? 'Turnuva' : 'Ranks'}
+            </span>
+          </Link>
+          <Link
             to="/social/friends"
             className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-colors duration-200 ${
               isActive('/social/friends') ? 'text-primary-500' : 'text-ink-400'
@@ -299,7 +323,7 @@ export default function AppShell({
               <Users2 size={22} />
             </div>
             <span className={`text-[10px] font-display ${isActive('/social/friends') ? 'font-bold' : 'font-semibold'}`}>
-              Friends
+              {lang === 'tr' ? 'Arkadaş' : 'Friends'}
             </span>
           </Link>
           {isTeacher && (

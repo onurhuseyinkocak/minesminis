@@ -186,7 +186,7 @@ export default function Dashboard() {
 
   const completedDays = weeklyDots.filter(Boolean).length;
   const learnedCount = stats.wordsLearned ?? 0;
-  const freezeCount = getStreakFreezeCount();
+  const freezeCount = getStreakFreezeCount(userId);
 
   const [_lesson, setLesson] = useState(() => getCurrentLessonData(userId));
   const [showStreakShame, setShowStreakShame] = useState(false);

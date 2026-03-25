@@ -129,7 +129,7 @@ function Games() {
           if (cached && cached.length > 0) {
             setExternalGames(cached);
           } else {
-            toast.error('Oyunlar yüklenirken sorun oluştu.');
+            toast.error(isTr ? 'Oyunlar yüklenirken sorun oluştu.' : 'Failed to load games.');
             setExternalGames(fallbackGames as ExternalGame[]);
           }
         }
@@ -174,7 +174,7 @@ function Games() {
       if (playingGame) {
         saveBestScore(playingGame.type, score);
         setScoreVersion((v) => v + 1);
-        toast.success(`Great job! ${score}/${total}`);
+        toast.success(isTr ? `Harika! ${score}/${total}` : `Great job! ${score}/${total}`);
         setPlayingGame(null);
         return;
       }
@@ -190,7 +190,7 @@ function Games() {
           setDailyStreak(streak);
           setScoreVersion((v) => v + 1);
           const total5 = newScores.reduce((a, b) => a + b, 0);
-          toast.success(`Daily Practice done! ${total5} points today!`);
+          toast.success(isTr ? `Günlük Pratik tamamlandı! Bugün ${total5} puan!` : `Daily Practice done! ${total5} points today!`);
           setDailySession(null);
         } else {
           saveBestScore(dailySession.games[dailySession.currentIndex].type, score);
@@ -218,7 +218,9 @@ function Games() {
 
   if (activeGameMeta) {
     const progressLabel = dailySession
-      ? `Game ${dailySession.currentIndex + 1} / ${dailySession.games.length}`
+      ? (isTr
+          ? `Oyun ${dailySession.currentIndex + 1} / ${dailySession.games.length}`
+          : `Game ${dailySession.currentIndex + 1} / ${dailySession.games.length}`)
       : activeGameMeta.name;
 
     return (
@@ -264,7 +266,7 @@ function Games() {
           <Gamepad2 size={48} />
         </span>
         <h1 className="games-hero-title">{t('games.letsPlay')}</h1>
-        <p className="games-hero-sub">Pick a game and start learning!</p>
+        <p className="games-hero-sub">{isTr ? 'Bir oyun seç ve öğrenmeye başla!' : 'Pick a game and start learning!'}</p>
       </div>
 
       {/* Daily Practice pinned banner */}
@@ -272,14 +274,14 @@ function Games() {
         <div className="daily-practice-left">
           <Flame size={28} className="daily-flame" />
           <div className="daily-practice-text">
-            <span className="daily-practice-title">Daily Practice</span>
+            <span className="daily-practice-title">{isTr ? 'Günlük Pratik' : 'Daily Practice'}</span>
             <span className="daily-practice-streak">
               {dailyStreak > 0 ? (
                 <>
-                  <Trophy size={12} /> {dailyStreak} day streak!
+                  <Trophy size={12} /> {isTr ? `${dailyStreak} günlük seri!` : `${dailyStreak} day streak!`}
                 </>
               ) : (
-                'Start your streak today!'
+                isTr ? 'Bugün serine başla!' : 'Start your streak today!'
               )}
             </span>
           </div>
@@ -289,7 +291,7 @@ function Games() {
           className="daily-practice-btn"
           onClick={handleStartDailyPractice}
         >
-          Start <ChevronRight size={16} />
+          {isTr ? 'Başla' : 'Start'} <ChevronRight size={16} />
         </button>
       </div>
 
@@ -303,7 +305,7 @@ function Games() {
         >
           <div className="featured-hero-body">
             <span className="featured-hero-tag">
-              <Star size={12} fill="currentColor" /> Today's Pick
+              <Star size={12} fill="currentColor" /> {isTr ? 'Günün Seçimi' : "Today's Pick"}
             </span>
             <h2 className="featured-hero-name">{featuredGame.name}</h2>
             <p className="featured-hero-desc">{featuredGame.description}</p>
@@ -313,11 +315,11 @@ function Games() {
                 className="featured-hero-play-btn"
                 onClick={() => handlePlaySingle(featuredGame)}
               >
-                <Play size={18} fill="white" /> Play Now
+                <Play size={18} fill="white" /> {isTr ? 'Oyna' : 'Play Now'}
               </button>
             ) : (
               <span className="featured-hero-locked">
-                Unlock at Level {featuredGame.minLevel}
+                {isTr ? `Seviye ${featuredGame.minLevel}'de açılır` : `Unlock at Level ${featuredGame.minLevel}`}
               </span>
             )}
           </div>
@@ -351,7 +353,7 @@ function Games() {
         {filteredGames.length === 0 ? (
           <div className="games-empty-state">
             <Gamepad2 size={48} />
-            <p>No games in this category yet.</p>
+            <p>{isTr ? 'Bu kategoride henüz oyun yok.' : 'No games in this category yet.'}</p>
           </div>
         ) : (
           <div
@@ -381,7 +383,7 @@ function Games() {
         {gamesLoading && (
           <div className="games-loading-indicator">
             <div className="page-loader__spinner" />
-            <p>Loading more games...</p>
+            <p>{isTr ? 'Daha fazla oyun yükleniyor...' : 'Loading more games...'}</p>
           </div>
         )}
 

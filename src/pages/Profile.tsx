@@ -87,21 +87,21 @@ const Profile: React.FC = () => {
 
       if (error) throw error;
       await refreshUserProfile();
-      toast.success('Profil güncellendi!');
+      toast.success(lang === 'tr' ? 'Profil güncellendi!' : 'Profile updated!');
       setShowEditModal(false);
     } catch {
-      toast.error('Profil güncellenemedi');
+      toast.error(lang === 'tr' ? 'Profil güncellenemedi' : 'Could not update profile');
     }
   };
 
   if (!user) return (
     <div className="profile-loading text-center px-4 py-12">
-      <p className="text-[1.2rem] mb-4">Please sign in to view your backpack!</p>
+      <p className="text-[1.2rem] mb-4">{lang === 'tr' ? 'Çantanı görmek için giriş yap!' : 'Please sign in to view your backpack!'}</p>
       <Link
         to="/login"
         className="inline-block px-8 py-3 bg-primary-500 text-white rounded-xl no-underline font-semibold text-base"
       >
-        Sign In
+        {lang === 'tr' ? 'Giriş Yap' : 'Sign In'}
       </Link>
     </div>
   );
@@ -114,7 +114,7 @@ const Profile: React.FC = () => {
         className="profile-content"
       >
         <header className="profile-hero">
-          <Link to="/avatar" className="profile-avatar-large" title="Avatarını düzenle">
+          <Link to="/avatar" className="profile-avatar-large" title={lang === 'tr' ? 'Avatarını düzenle' : 'Edit your avatar'}>
             <AvatarDisplay
               config={getAvatarConfig(user.uid)}
               letter={userProfile?.display_name ?? user.displayName ?? '?'}
@@ -177,15 +177,15 @@ const Profile: React.FC = () => {
 
           <div className="stat-card profile-reading-speed-card">
             <div className="stat-header">
-              <h3>Okuma Hızı</h3>
+              <h3>{lang === 'tr' ? 'Okuma Hızı' : 'Reading Speed'}</h3>
               <Zap size={20} color="var(--warning)" />
             </div>
             <div className="profile-wpm-display">
               <span className="profile-wpm-value">{avgWpm > 0 ? avgWpm : '—'}</span>
-              <span className="profile-wpm-unit">kelime/dk</span>
+              <span className="profile-wpm-unit">{lang === 'tr' ? 'kelime/dk' : 'wpm'}</span>
             </div>
             {avgWpm === 0 && (
-              <p className="profile-wpm-hint">Okuma bitirince burada WPM görünür!</p>
+              <p className="profile-wpm-hint">{lang === 'tr' ? 'Okuma bitirince burada WPM görünür!' : 'Complete a reading to see your WPM here!'}</p>
             )}
           </div>
         </section>
@@ -196,8 +196,8 @@ const Profile: React.FC = () => {
               <Star size={20} fill="var(--primary)" color="var(--primary)" />
             </span>
             <span className="mascot-link-text">
-              <strong>Maskotlarım</strong>
-              <span className="mascot-link-sub">My Mascots</span>
+              <strong>{lang === 'tr' ? 'Maskotlarım' : 'My Mascots'}</strong>
+              <span className="mascot-link-sub">{lang === 'tr' ? 'Maskotlarını gör' : 'View your mascots'}</span>
             </span>
           </Link>
         </section>
@@ -271,7 +271,7 @@ const Profile: React.FC = () => {
             <h3>{t('profile.myBadges')}</h3>
             <div className="badges-header-right">
               <Link to="/achievements" className="view-achievements-btn">
-                Rozetlerim
+                {lang === 'tr' ? 'Rozetlerim' : 'My Badges'}
               </Link>
               <Trophy size={24} color="var(--warning)" />
             </div>
@@ -289,7 +289,7 @@ const Profile: React.FC = () => {
             ) : (
               <div className="no-badges">
                 <span className="no-badges-emoji"><LottieCharacter state="happy" size={48} /></span>
-                <p>Rozet kazanmak için keşfetmeye devam et!</p>
+                <p>{lang === 'tr' ? 'Rozet kazanmak için keşfetmeye devam et!' : 'Keep exploring to earn badges!'}</p>
               </div>
             )}
           </div>
@@ -300,24 +300,24 @@ const Profile: React.FC = () => {
         <div className="edit-modal-overlay">
           <div className="edit-modal">
             <div className="edit-modal-header">
-              <h2><Palette size={20} style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />Profil Düzenle</h2>
+              <h2><Palette size={20} style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />{lang === 'tr' ? 'Profil Düzenle' : 'Edit Profile'}</h2>
               <button type="button" onClick={() => setShowEditModal(false)} aria-label="Close"><X size={24} /></button>
             </div>
             <div className="edit-modal-body">
               <div className="edit-field">
-                <label>Sana ne diyelim?</label>
+                <label>{lang === 'tr' ? 'Sana ne diyelim?' : 'What should we call you?'}</label>
                 <input
                   type="text"
                   value={editDisplayName}
                   onChange={(e) => setEditDisplayName(e.target.value)}
-                  placeholder="Kaşif adını gir"
+                  placeholder={lang === 'tr' ? 'Kaşif adını gir' : 'Enter your explorer name'}
                   maxLength={30}
                 />
               </div>
             </div>
             <div className="edit-modal-footer">
               <button type="button" className="cancel-btn" onClick={() => setShowEditModal(false)}>{t('common.back')}</button>
-              <button type="button" className="save-btn" onClick={handleUpdateProfile}>Kaydet</button>
+              <button type="button" className="save-btn" onClick={handleUpdateProfile}>{lang === 'tr' ? 'Kaydet' : 'Save'}</button>
             </div>
           </div>
         </div>

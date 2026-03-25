@@ -82,6 +82,7 @@ const FriendsPage = lazy(() =>
 const Achievements = lazy(() => import("./pages/Achievements"));
 const MascotSelector = lazy(() => import("./pages/MascotSelector"));
 const AvatarCustomizer = lazy(() => import("./pages/AvatarCustomizer"));
+const LeaderboardPage = lazy(() => import("./components/Leaderboard"));
 
 // Parent
 const ParentDashboard = lazy(() => import("./pages/Parent/ParentDashboard"));
@@ -370,6 +371,7 @@ function AppRoutes() {
             <Route path="/daily-lesson" element={<StudentRoute><DailyLesson /></StudentRoute>} />
             <Route path="/social/friends" element={<StudentRoute><FriendsPage /></StudentRoute>} />
             <Route path="/achievements" element={<StudentRoute><Achievements /></StudentRoute>} />
+            <Route path="/leaderboard" element={<StudentRoute><LeaderboardPage /></StudentRoute>} />
             <Route path="/mascots" element={<StudentRoute><MascotSelector /></StudentRoute>} />
             <Route path="/avatar" element={<StudentRoute><AvatarCustomizer /></StudentRoute>} />
             <Route path="/phonetics/traps" element={<StudentRoute><PhoneticsTrapTrainer /></StudentRoute>} />

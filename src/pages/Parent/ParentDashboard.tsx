@@ -9,6 +9,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGamification, ALL_BADGES } from '../../contexts/GamificationContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import {
   getWeeklySummary,
   getActivityBreakdown,
@@ -239,11 +240,11 @@ function BadgeIconNode({ icon }: { icon: string }) {
 
 // ─── Subcomponents ────────────────────────────────────────────────────────────
 
-function EmptyCard({ message }: { message: string }) {
+function EmptyCard({ message, lang }: { message: string; lang: string }) {
   return (
     <div className="pd-empty">
       <IconBarChart size={32} />
-      <p className="pd-empty-title">No data yet</p>
+      <p className="pd-empty-title">{lang === 'tr' ? 'Henüz veri yok' : 'No data yet'}</p>
       <p className="pd-empty-sub">{message}</p>
     </div>
   );
@@ -252,9 +253,11 @@ function EmptyCard({ message }: { message: string }) {
 function SummaryCards({
   data,
   childProfile,
+  lang,
 }: {
   data: DashboardData;
   childProfile: ChildProfile | null;
+  lang: string;
 }) {
   const { weeklySummary } = data;
   const prevDiff = weeklySummary.totalMinutes - weeklySummary.previousWeekMinutes;
@@ -268,10 +271,18 @@ function SummaryCards({
           <IconClock size={18} />
         </div>
         <div className="pd-stat-value">{fmtMinutes(weeklySummary.totalMinutes)}</div>
-        <div className="pd-stat-label">Minutes this week</div>
+        <div className="pd-stat-label">
+          {lang === 'tr' ? 'Bu haftaki dakika' : 'Minutes this week'}
+        </div>
         {weeklySummary.previousWeekMinutes > 0 && (
           <div className={`pd-stat-delta${prevDiff <= 0 ? ' pd-stat-delta--neutral' : ''}`}>
-            {prevDiff > 0 ? `+${fmtMinutes(prevDiff)} vs last week` : `${fmtMinutes(Math.abs(prevDiff))} less than last week`}
+            {prevDiff > 0
+              ? lang === 'tr'
+                ? `+${fmtMinutes(prevDiff)} geçen haftaya göre`
+                : `+${fmtMinutes(prevDiff)} vs last week`
+              : lang === 'tr'
+                ? `Geçen haftadan ${fmtMinutes(Math.abs(prevDiff))} az`
+                : `${fmtMinutes(Math.abs(prevDiff))} less than last week`}
           </div>
         )}
       </div>
@@ -281,8 +292,12 @@ function SummaryCards({
           <IconBook size={18} />
         </div>
         <div className="pd-stat-value">{data.srsTotal}</div>
-        <div className="pd-stat-label">Words tracked</div>
-        <div className="pd-stat-delta">{data.srsBox3} mastered</div>
+        <div className="pd-stat-label">
+          {lang === 'tr' ? 'Takip edilen kelime' : 'Words tracked'}
+        </div>
+        <div className="pd-stat-delta">
+          {data.srsBox3} {lang === 'tr' ? 'öğrenildi' : 'mastered'}
+        </div>
       </div>
 
       <div className="pd-stat-card">
@@ -290,9 +305,13 @@ function SummaryCards({
           <IconFlame size={18} />
         </div>
         <div className="pd-stat-value">{streakDays}</div>
-        <div className="pd-stat-label">Day streak</div>
+        <div className="pd-stat-label">
+          {lang === 'tr' ? 'Günlük seri' : 'Day streak'}
+        </div>
         {streakDays >= 3 && (
-          <div className="pd-stat-delta">Keep it going!</div>
+          <div className="pd-stat-delta">
+            {lang === 'tr' ? 'Devam et!' : 'Keep it going!'}
+          </div>
         )}
       </div>
 
@@ -301,9 +320,13 @@ function SummaryCards({
           <IconZap size={18} />
         </div>
         <div className="pd-stat-value">{weeklyXp.toLocaleString()}</div>
-        <div className="pd-stat-label">Total XP earned</div>
+        <div className="pd-stat-label">
+          {lang === 'tr' ? 'Toplam XP kazanıldı' : 'Total XP earned'}
+        </div>
         {childProfile?.level !== undefined && (
-          <div className="pd-stat-delta">Level {childProfile.level}</div>
+          <div className="pd-stat-delta">
+            {lang === 'tr' ? `Seviye ${childProfile.level}` : `Level ${childProfile.level}`}
+          </div>
         )}
       </div>
     </div>
@@ -313,9 +336,11 @@ function SummaryCards({
 function StreakCalendar({
   weeklyActivity,
   streakDays,
+  lang,
 }: {
   weeklyActivity: ReturnType<typeof getWeeklyActivityData>;
   streakDays: number;
+  lang: string;
 }) {
   const calendar = useMemo(
     () => buildCalendar(weeklyActivity, streakDays),
@@ -329,10 +354,12 @@ function StreakCalendar({
       <div className="pd-card-header">
         <h2 className="pd-card-title">
           <IconCalendar size={16} />
-          Activity — last 30 days
+          {lang === 'tr' ? 'Aktivite — son 30 gün' : 'Activity — last 30 days'}
         </h2>
         <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)' }}>
-          {activeDays} / 30 days active
+          {lang === 'tr'
+            ? `${activeDays} / 30 gün aktif`
+            : `${activeDays} / 30 days active`}
         </span>
       </div>
       <div className="pd-card-body">
@@ -353,15 +380,15 @@ function StreakCalendar({
         <div className="pd-cal-legend">
           <div className="pd-cal-legend-item">
             <span className="pd-cal-dot pd-cal-dot--streak" />
-            Streak day
+            {lang === 'tr' ? 'Seri günü' : 'Streak day'}
           </div>
           <div className="pd-cal-legend-item">
             <span className="pd-cal-dot pd-cal-dot--active" />
-            Active
+            {lang === 'tr' ? 'Aktif' : 'Active'}
           </div>
           <div className="pd-cal-legend-item">
             <span className="pd-cal-dot pd-cal-dot--missed" />
-            Missed
+            {lang === 'tr' ? 'Kaçırıldı' : 'Missed'}
           </div>
         </div>
       </div>
@@ -369,28 +396,68 @@ function StreakCalendar({
   );
 }
 
-function WordMasteryChart({ box1, box2, box3, total }: { box1: number; box2: number; box3: number; total: number }) {
+function WordMasteryChart({
+  box1,
+  box2,
+  box3,
+  total,
+  lang,
+}: {
+  box1: number;
+  box2: number;
+  box3: number;
+  total: number;
+  lang: string;
+}) {
   if (total === 0) {
     return (
       <div className="pd-card">
         <div className="pd-card-header">
-          <h2 className="pd-card-title"><IconBook size={16} />Word Mastery</h2>
+          <h2 className="pd-card-title">
+            <IconBook size={16} />
+            {lang === 'tr' ? 'Kelime Hakimiyeti' : 'Word Mastery'}
+          </h2>
         </div>
-        <EmptyCard message="No words tracked yet. Start practicing to see progress." />
+        <EmptyCard
+          message={
+            lang === 'tr'
+              ? 'Henüz kelime takip edilmiyor. İlerlemeyi görmek için pratik yapmaya başla.'
+              : 'No words tracked yet. Start practicing to see progress.'
+          }
+          lang={lang}
+        />
       </div>
     );
   }
 
   const rows: Array<{ label: string; count: number; fillClass: string; desc: string }> = [
-    { label: 'Learning (Box 1)', count: box1, fillClass: 'pd-bar-fill--box1', desc: 'Needs daily review' },
-    { label: 'Getting better (Box 2)', count: box2, fillClass: 'pd-bar-fill--box2', desc: 'Review every 3 days' },
-    { label: 'Mastered (Box 3)', count: box3, fillClass: 'pd-bar-fill--box3', desc: 'Review every 7 days' },
+    {
+      label: lang === 'tr' ? 'Öğreniliyor (Kutu 1)' : 'Learning (Box 1)',
+      count: box1,
+      fillClass: 'pd-bar-fill--box1',
+      desc: lang === 'tr' ? 'Her gün tekrar gerekli' : 'Needs daily review',
+    },
+    {
+      label: lang === 'tr' ? 'Gelişiyor (Kutu 2)' : 'Getting better (Box 2)',
+      count: box2,
+      fillClass: 'pd-bar-fill--box2',
+      desc: lang === 'tr' ? '3 günde bir tekrar' : 'Review every 3 days',
+    },
+    {
+      label: lang === 'tr' ? 'Öğrenildi (Kutu 3)' : 'Mastered (Box 3)',
+      count: box3,
+      fillClass: 'pd-bar-fill--box3',
+      desc: lang === 'tr' ? '7 günde bir tekrar' : 'Review every 7 days',
+    },
   ];
 
   return (
     <div className="pd-card">
       <div className="pd-card-header">
-        <h2 className="pd-card-title"><IconBook size={16} />Word Mastery</h2>
+        <h2 className="pd-card-title">
+          <IconBook size={16} />
+          {lang === 'tr' ? 'Kelime Hakimiyeti' : 'Word Mastery'}
+        </h2>
       </div>
       <div className="pd-card-body">
         <div className="pd-mastery-bars">
@@ -398,7 +465,9 @@ function WordMasteryChart({ box1, box2, box3, total }: { box1: number; box2: num
             <div key={row.label} className="pd-mastery-row">
               <div className="pd-mastery-labels">
                 <span className="pd-mastery-box-label">{row.label}</span>
-                <span className="pd-mastery-count">{row.count} words</span>
+                <span className="pd-mastery-count">
+                  {row.count} {lang === 'tr' ? 'kelime' : 'words'}
+                </span>
               </div>
               <div className="pd-bar-track">
                 <div
@@ -412,13 +481,23 @@ function WordMasteryChart({ box1, box2, box3, total }: { box1: number; box2: num
             </div>
           ))}
         </div>
-        <p className="pd-mastery-total">{total} words total in spaced repetition system</p>
+        <p className="pd-mastery-total">
+          {lang === 'tr'
+            ? `Aralıklı tekrar sisteminde toplam ${total} kelime`
+            : `${total} words total in spaced repetition system`}
+        </p>
       </div>
     </div>
   );
 }
 
-function ActivityBreakdown({ breakdown }: { breakdown: Record<string, number> }) {
+function ActivityBreakdown({
+  breakdown,
+  lang,
+}: {
+  breakdown: Record<string, number>;
+  lang: string;
+}) {
   const entries = Object.entries(breakdown)
     .map(([type, seconds]) => ({ type, minutes: Math.round(seconds / 60) }))
     .filter((e) => e.minutes > 0)
@@ -438,10 +517,16 @@ function ActivityBreakdown({ breakdown }: { breakdown: Record<string, number> })
   return (
     <div className="pd-card">
       <div className="pd-card-header">
-        <h2 className="pd-card-title"><IconBarChart size={16} />Activity Breakdown</h2>
+        <h2 className="pd-card-title">
+          <IconBarChart size={16} />
+          {lang === 'tr' ? 'Aktivite Dağılımı' : 'Activity Breakdown'}
+        </h2>
       </div>
       {entries.length === 0 ? (
-        <EmptyCard message="No activities logged yet." />
+        <EmptyCard
+          message={lang === 'tr' ? 'Henüz aktivite kaydedilmedi.' : 'No activities logged yet.'}
+          lang={lang}
+        />
       ) : (
         <div className="pd-card-body">
           <div className="pd-activity-list">
@@ -476,7 +561,13 @@ function ActivityBreakdown({ breakdown }: { breakdown: Record<string, number> })
   );
 }
 
-function PhonicsProgress({ soundMastery }: { soundMastery: Record<string, number> }) {
+function PhonicsProgress({
+  soundMastery,
+  lang,
+}: {
+  soundMastery: Record<string, number>;
+  lang: string;
+}) {
   const soundsWithData = ALL_SOUNDS.map((sound) => ({
     id: sound.id,
     grapheme: sound.grapheme,
@@ -490,9 +581,14 @@ function PhonicsProgress({ soundMastery }: { soundMastery: Record<string, number
   return (
     <div className="pd-card">
       <div className="pd-card-header">
-        <h2 className="pd-card-title"><IconGrid size={16} />Phonics Progress</h2>
+        <h2 className="pd-card-title">
+          <IconGrid size={16} />
+          {lang === 'tr' ? 'Fonik İlerleme' : 'Phonics Progress'}
+        </h2>
         <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)' }}>
-          {mastered} mastered · {learning} in progress · {ALL_SOUNDS.length} total sounds
+          {lang === 'tr'
+            ? `${mastered} öğrenildi · ${learning} devam ediyor · toplam ${ALL_SOUNDS.length} ses`
+            : `${mastered} mastered · ${learning} in progress · ${ALL_SOUNDS.length} total sounds`}
         </span>
       </div>
       <div className="pd-card-body">
@@ -515,15 +611,15 @@ function PhonicsProgress({ soundMastery }: { soundMastery: Record<string, number
         <div className="pd-phonics-legend">
           <div className="pd-phonics-legend-item">
             <span className="pd-phonics-legend-dot pd-phonics-legend-dot--mastered" />
-            Mastered (80%+)
+            {lang === 'tr' ? 'Öğrenildi (%80+)' : 'Mastered (80%+)'}
           </div>
           <div className="pd-phonics-legend-item">
             <span className="pd-phonics-legend-dot pd-phonics-legend-dot--learning" />
-            In progress
+            {lang === 'tr' ? 'Devam ediyor' : 'In progress'}
           </div>
           <div className="pd-phonics-legend-item">
             <span className="pd-phonics-legend-dot pd-phonics-legend-dot--new" />
-            Not started
+            {lang === 'tr' ? 'Başlanmadı' : 'Not started'}
           </div>
         </div>
       </div>
@@ -531,17 +627,27 @@ function PhonicsProgress({ soundMastery }: { soundMastery: Record<string, number
   );
 }
 
-function RecentBadges({ badgeIds }: { badgeIds: string[] }) {
+function RecentBadges({ badgeIds, lang }: { badgeIds: string[]; lang: string }) {
   const recent = badgeIds.slice(-3).reverse();
   const badgeMap = Object.fromEntries(ALL_BADGES.map((b) => [b.id, b]));
 
   return (
     <div className="pd-card">
       <div className="pd-card-header">
-        <h2 className="pd-card-title"><IconAward size={16} />Recent Achievements</h2>
+        <h2 className="pd-card-title">
+          <IconAward size={16} />
+          {lang === 'tr' ? 'Son Başarımlar' : 'Recent Achievements'}
+        </h2>
       </div>
       {recent.length === 0 ? (
-        <EmptyCard message="No badges earned yet — keep practicing!" />
+        <EmptyCard
+          message={
+            lang === 'tr'
+              ? 'Henüz rozet kazanılmadı — pratik yapmaya devam et!'
+              : 'No badges earned yet — keep practicing!'
+          }
+          lang={lang}
+        />
       ) : (
         <div className="pd-card-body">
           <div className="pd-badges-list">
@@ -567,14 +673,17 @@ function RecentBadges({ badgeIds }: { badgeIds: string[] }) {
   );
 }
 
-function WeeklyInsight({ data }: { data: DashboardData }) {
+function WeeklyInsight({ data, lang }: { data: DashboardData; lang: string }) {
   const { weeklyReport, insights } = data;
   const firstInsight = insights[0];
 
   return (
     <div className="pd-card">
       <div className="pd-card-header">
-        <h2 className="pd-card-title"><IconLightbulb size={16} />Weekly Insight</h2>
+        <h2 className="pd-card-title">
+          <IconLightbulb size={16} />
+          {lang === 'tr' ? 'Haftalık İpucu' : 'Weekly Insight'}
+        </h2>
       </div>
       <div className="pd-card-body">
         <div className="pd-insight">
@@ -587,15 +696,24 @@ function WeeklyInsight({ data }: { data: DashboardData }) {
           <div className="pd-insight-meta">
             <div className="pd-insight-stat">
               <IconClock size={12} />
-              <span>Sessions this week: <strong>{weeklyReport.sessionsCompleted}</strong></span>
+              <span>
+                {lang === 'tr' ? 'Bu haftaki oturum: ' : 'Sessions this week: '}
+                <strong>{weeklyReport.sessionsCompleted}</strong>
+              </span>
             </div>
             <div className="pd-insight-stat">
               <IconStar size={12} />
-              <span>Accuracy: <strong>{weeklyReport.overallAccuracy}%</strong></span>
+              <span>
+                {lang === 'tr' ? 'Doğruluk: ' : 'Accuracy: '}
+                <strong>{weeklyReport.overallAccuracy}%</strong>
+              </span>
             </div>
             <div className="pd-insight-stat">
               <IconAward size={12} />
-              <span>Sounds mastered: <strong>{weeklyReport.soundsMastered.length}</strong></span>
+              <span>
+                {lang === 'tr' ? 'Öğrenilen sesler: ' : 'Sounds mastered: '}
+                <strong>{weeklyReport.soundsMastered.length}</strong>
+              </span>
             </div>
           </div>
         </div>
@@ -632,6 +750,7 @@ function LoadingSkeleton() {
 export default function ParentDashboard() {
   const { user, userProfile } = useAuth();
   const { stats } = useGamification();
+  const { lang } = useLanguage();
 
   const [children, setChildren] = useState<ChildProfile[]>([]);
   const [activeChildId, setActiveChildId] = useState<string | null>(null);
@@ -648,11 +767,6 @@ export default function ParentDashboard() {
   const handlePrintReport = useCallback(() => {
     window.print();
   }, []);
-
-  // Guard: only parent role
-  if (userProfile && userProfile.role !== 'parent') {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   // Load children list
   useEffect(() => {
@@ -718,7 +832,12 @@ export default function ParentDashboard() {
   );
 
   // When no children and using parent's own stats (fallback)
-  const badgeIds: string[] = activeChild ? [] : (stats.badges ?? []);
+  const badgeIds: string[] = stats.badges ?? [];
+
+  // Guard: only parent role
+  if (userProfile && userProfile.role !== 'parent') {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="pd-page">
@@ -729,18 +848,22 @@ export default function ParentDashboard() {
             <IconUsers size={22} />
           </div>
           <div>
-            <h1>Parent Dashboard</h1>
+            <h1>{lang === 'tr' ? 'Ebeveyn Paneli' : 'Parent Dashboard'}</h1>
             <p className="pd-header-sub">
               {activeChild
-                ? `Viewing progress for ${activeChild.name}`
-                : 'Your child\'s learning progress at a glance'}
+                ? lang === 'tr'
+                  ? `${activeChild.name} için ilerleme görüntüleniyor`
+                  : `Viewing progress for ${activeChild.name}`
+                : lang === 'tr'
+                  ? 'Çocuğunuzun öğrenme ilerlemesine genel bakış'
+                  : "Your child's learning progress at a glance"}
             </p>
           </div>
         </div>
 
         {/* Child selector tabs */}
         {children.length > 0 && (
-          <div className="pd-child-selector" role="tablist" aria-label="Child selector">
+          <div className="pd-child-selector" role="tablist" aria-label={lang === 'tr' ? 'Çocuk seçici' : 'Child selector'}>
             {children.map((child) => (
               <button
                 key={child.id}
@@ -761,7 +884,7 @@ export default function ParentDashboard() {
           <button
             className="pd-report-btn"
             onClick={handleGenerateReport}
-            title="Generate Phonics Assessment Report"
+            title={lang === 'tr' ? 'Fonik Değerlendirme Raporu Oluştur' : 'Generate Phonics Assessment Report'}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -769,7 +892,7 @@ export default function ParentDashboard() {
               <line x1="16" y1="13" x2="8" y2="13" />
               <line x1="16" y1="17" x2="8" y2="17" />
             </svg>
-            Rapor Oluştur
+            {lang === 'tr' ? 'Rapor Oluştur' : 'Generate Report'}
           </button>
         )}
       </header>
@@ -780,9 +903,9 @@ export default function ParentDashboard() {
       ) : (
         <main className="pd-content">
           {/* This week summary */}
-          <section aria-label="Weekly summary">
-            <p className="pd-section-label">This week</p>
-            <SummaryCards data={dashData} childProfile={activeChild} />
+          <section aria-label={lang === 'tr' ? 'Haftalık özet' : 'Weekly summary'}>
+            <p className="pd-section-label">{lang === 'tr' ? 'Bu hafta' : 'This week'}</p>
+            <SummaryCards data={dashData} childProfile={activeChild} lang={lang} />
           </section>
 
           {/* Streak calendar + Word mastery */}
@@ -790,29 +913,31 @@ export default function ParentDashboard() {
             <StreakCalendar
               weeklyActivity={dashData.weeklyActivity}
               streakDays={activeChild?.streak_days ?? 0}
+              lang={lang}
             />
             <WordMasteryChart
               box1={dashData.srsBox1}
               box2={dashData.srsBox2}
               box3={dashData.srsBox3}
               total={dashData.srsTotal}
+              lang={lang}
             />
           </div>
 
           {/* Activity breakdown + Recent badges */}
           <div className="pd-two-col">
-            <ActivityBreakdown breakdown={dashData.activityBreakdown} />
-            <RecentBadges badgeIds={activeChild ? [] : badgeIds} />
+            <ActivityBreakdown breakdown={dashData.activityBreakdown} lang={lang} />
+            <RecentBadges badgeIds={badgeIds} lang={lang} />
           </div>
 
           {/* Phonics progress */}
-          <section aria-label="Phonics progress">
-            <PhonicsProgress soundMastery={dashData.soundMastery} />
+          <section aria-label={lang === 'tr' ? 'Fonik ilerleme' : 'Phonics progress'}>
+            <PhonicsProgress soundMastery={dashData.soundMastery} lang={lang} />
           </section>
 
           {/* Weekly insight */}
-          <section aria-label="Weekly insight">
-            <WeeklyInsight data={dashData} />
+          <section aria-label={lang === 'tr' ? 'Haftalık ipucu' : 'Weekly insight'}>
+            <WeeklyInsight data={dashData} lang={lang} />
           </section>
         </main>
       )}
@@ -821,7 +946,7 @@ export default function ParentDashboard() {
       {reportData && activeChildId && (
         <AssessmentReport
           assessment={reportData}
-          studentName={activeChild?.name ?? 'Student'}
+          studentName={activeChild?.name ?? (lang === 'tr' ? 'Öğrenci' : 'Student')}
           userId={activeChildId}
           onPrint={handlePrintReport}
           onClose={() => setReportData(null)}

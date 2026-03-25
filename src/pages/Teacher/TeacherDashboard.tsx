@@ -11,6 +11,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import {
   getClassrooms,
   createClassroom,
@@ -56,11 +57,11 @@ function daysSince(isoDate: string): number {
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-function formatLastActive(isoDate: string): string {
+function formatLastActive(isoDate: string, lang: string): string {
   const days = daysSince(isoDate);
-  if (days === 0) return 'Today';
-  if (days === 1) return 'Yesterday';
-  return `${days}d ago`;
+  if (days === 0) return lang === 'tr' ? 'Bugün' : 'Today';
+  if (days === 1) return lang === 'tr' ? 'Dün' : 'Yesterday';
+  return lang === 'tr' ? `${days}g önce` : `${days}d ago`;
 }
 
 function getMasteryClass(mastery: number | undefined): string {
@@ -71,12 +72,9 @@ function getMasteryClass(mastery: number | undefined): string {
   return 'mastery-full';
 }
 
-/** Compute per-student streak from lastActive (approximate using days since active) */
+/** Compute per-student streak from lastActive — honest: 1 if active today, 0 otherwise */
 function estimateStreak(student: ClassroomStudent): number {
-  const days = daysSince(student.lastActive);
-  if (days >= 3) return 0;
-  // Streak stored nowhere per-student in service — approximate from XP/10
-  return Math.min(30, Math.max(0, Math.floor(student.xp / 10)));
+  return daysSince(student.lastActive) === 0 ? 1 : 0;
 }
 
 /** Get student's level from XP */
@@ -88,11 +86,12 @@ function xpToLevel(xp: number): number {
 
 interface CopyToastProps {
   visible: boolean;
+  lang: string;
 }
 
-function CopyToast({ visible }: CopyToastProps) {
+function CopyToast({ visible, lang }: CopyToastProps) {
   if (!visible) return null;
-  return <div className="td-copy-toast">Join code copied!</div>;
+  return <div className="td-copy-toast">{lang === 'tr' ? 'Katılım kodu kopyalandı!' : 'Join code copied!'}</div>;
 }
 
 interface ClassCardProps {
@@ -100,9 +99,10 @@ interface ClassCardProps {
   isActive: boolean;
   onSelect: (id: string) => void;
   onCopy: (code: string) => void;
+  lang: string;
 }
 
-function ClassCard({ classroom, isActive, onSelect, onCopy }: ClassCardProps) {
+function ClassCard({ classroom, isActive, onSelect, onCopy, lang }: ClassCardProps) {
   return (
     <div
       className={`td-class-card${isActive ? ' active' : ''}`}
@@ -115,22 +115,25 @@ function ClassCard({ classroom, isActive, onSelect, onCopy }: ClassCardProps) {
         <div>
           <p className="td-class-name">{classroom.name}</p>
           <p className="td-class-meta">
-            Grade {classroom.gradeLevel} &middot; {classroom.students.length} student
-            {classroom.students.length !== 1 ? 's' : ''}
+            {lang === 'tr' ? `${classroom.gradeLevel}. Sınıf` : `Grade ${classroom.gradeLevel}`}
+            &middot; {classroom.students.length}{' '}
+            {lang === 'tr'
+              ? 'öğrenci'
+              : `student${classroom.students.length !== 1 ? 's' : ''}`}
           </p>
         </div>
       </div>
 
       <button
         className="td-join-code"
-        title="Click to copy"
+        title={lang === 'tr' ? 'Kopyalamak için tıkla' : 'Click to copy'}
         onClick={(e) => {
           e.stopPropagation();
           onCopy(classroom.joinCode);
         }}
       >
         <span className="td-join-code-text">{classroom.joinCode}</span>
-        <span className="td-join-code-hint">copy</span>
+        <span className="td-join-code-hint">{lang === 'tr' ? 'kopyala' : 'copy'}</span>
       </button>
     </div>
   );
@@ -158,6 +161,8 @@ function TeacherDashboardInner({
   userId: string;
   displayName: string;
 }) {
+  const { lang } = useLanguage();
+
   // ── Classrooms state ──
   const [classrooms, setClassrooms] = useState<Classroom[]>(() =>
     getClassrooms(userId),
@@ -258,11 +263,11 @@ function TeacherDashboardInner({
 
   const handleCreateSubmit = useCallback(() => {
     if (!newName.trim()) {
-      setCreateError('Please enter a classroom name.');
+      setCreateError(lang === 'tr' ? 'Lütfen bir sınıf adı girin.' : 'Please enter a classroom name.');
       return;
     }
     if (!newGrade.trim()) {
-      setCreateError('Please enter a grade level.');
+      setCreateError(lang === 'tr' ? 'Lütfen bir sınıf seviyesi girin.' : 'Please enter a grade level.');
       return;
     }
     setCreateError('');
@@ -322,9 +327,11 @@ function TeacherDashboardInner({
             </svg>
           </div>
           <div>
-            <h1>Classroom Dashboard</h1>
+            <h1>{lang === 'tr' ? 'Sınıf Paneli' : 'Classroom Dashboard'}</h1>
             <p className="td-header-sub">
-              {displayName ? `Welcome, ${displayName}` : 'Manage your classrooms and track student progress'}
+              {displayName
+                ? (lang === 'tr' ? `Hoş geldin, ${displayName}` : `Welcome, ${displayName}`)
+                : (lang === 'tr' ? 'Sınıflarını yönet ve öğrenci ilerlemesini takip et' : 'Manage your classrooms and track student progress')}
             </p>
           </div>
         </div>
@@ -346,7 +353,7 @@ function TeacherDashboardInner({
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                   <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
-                My Classrooms
+                {lang === 'tr' ? 'Sınıflarım' : 'My Classrooms'}
               </h2>
               <button
                 className="td-btn td-btn-primary td-btn-sm"
@@ -356,7 +363,7 @@ function TeacherDashboardInner({
                   setCreateError('');
                 }}
               >
-                {showCreateForm ? 'Cancel' : '+ New'}
+                {showCreateForm ? (lang === 'tr' ? 'İptal' : 'Cancel') : '+ ' + (lang === 'tr' ? 'Yeni' : 'New')}
               </button>
             </div>
 
@@ -364,18 +371,18 @@ function TeacherDashboardInner({
               {/* Create form */}
               {showCreateForm && (
                 <div className="td-create-form">
-                  <h3>Create New Classroom</h3>
+                  <h3>{lang === 'tr' ? 'Yeni Sınıf Oluştur' : 'Create New Classroom'}</h3>
 
                   <div className="td-form-row" style={{ marginBottom: 'var(--space-3)' }}>
                     <div className="td-form-field" style={{ flex: 2 }}>
                       <label className="td-label" htmlFor="td-class-name-input">
-                        Class Name
+                        {lang === 'tr' ? 'Sınıf Adı' : 'Class Name'}
                       </label>
                       <input
                         id="td-class-name-input"
                         className="td-input"
                         type="text"
-                        placeholder="e.g. Sunflower Class"
+                        placeholder={lang === 'tr' ? 'örn. Ayçiçeği Sınıfı' : 'e.g. Sunflower Class'}
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCreateSubmit()}
@@ -383,7 +390,7 @@ function TeacherDashboardInner({
                     </div>
                     <div className="td-form-field">
                       <label className="td-label" htmlFor="td-grade-select">
-                        Grade
+                        {lang === 'tr' ? 'Sınıf Seviyesi' : 'Grade'}
                       </label>
                       <select
                         id="td-grade-select"
@@ -391,10 +398,12 @@ function TeacherDashboardInner({
                         value={newGrade}
                         onChange={(e) => setNewGrade(e.target.value)}
                       >
-                        <option value="">Select…</option>
+                        <option value="">{lang === 'tr' ? 'Seçin…' : 'Select…'}</option>
                         {gradeOptions.map((g) => (
                           <option key={g} value={g}>
-                            {g === 'K' ? 'Kindergarten' : `Grade ${g}`}
+                            {g === 'K'
+                              ? (lang === 'tr' ? 'Anaokulu' : 'Kindergarten')
+                              : (lang === 'tr' ? `${g}. Sınıf` : `Grade ${g}`)}
                           </option>
                         ))}
                       </select>
@@ -408,12 +417,14 @@ function TeacherDashboardInner({
                   )}
 
                   <button className="td-btn td-btn-primary" onClick={handleCreateSubmit}>
-                    Create Classroom
+                    {lang === 'tr' ? 'Sınıf Oluştur' : 'Create Classroom'}
                   </button>
 
                   {createdCode && (
                     <div className="td-code-banner">
-                      <div className="td-code-banner-label">Classroom created! Join code:</div>
+                      <div className="td-code-banner-label">
+                        {lang === 'tr' ? 'Sınıf oluşturuldu! Katılım kodu:' : 'Classroom created! Join code:'}
+                      </div>
                       <div
                         className="td-code-banner-code"
                         role="button"
@@ -421,12 +432,14 @@ function TeacherDashboardInner({
                         onClick={() => handleCopy(createdCode)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCopy(createdCode)}
                         style={{ cursor: 'pointer' }}
-                        title="Click to copy"
+                        title={lang === 'tr' ? 'Kopyalamak için tıkla' : 'Click to copy'}
                       >
                         {createdCode}
                       </div>
                       <div className="td-code-banner-hint">
-                        Share this code with students — they can enter it in their app.
+                        {lang === 'tr'
+                          ? 'Bu kodu öğrencilerle paylaş — uygulamada girebilirler.'
+                          : 'Share this code with students — they can enter it in their app.'}
                       </div>
                     </div>
                   )}
@@ -442,8 +455,12 @@ function TeacherDashboardInner({
                       <path d="M3 9h18M9 21V9" />
                     </svg>
                   </div>
-                  <p className="td-empty-title">No classrooms yet</p>
-                  <p className="td-empty-sub">Click "+ New" to create your first classroom and get a join code for students.</p>
+                  <p className="td-empty-title">{lang === 'tr' ? 'Henüz sınıf yok' : 'No classrooms yet'}</p>
+                  <p className="td-empty-sub">
+                    {lang === 'tr'
+                      ? '"+ Yeni" butonuna tıklayarak ilk sınıfını oluştur ve öğrenciler için katılım kodu al.'
+                      : 'Click "+ New" to create your first classroom and get a join code for students.'}
+                  </p>
                 </div>
               ) : (
                 classrooms.map((cls) => (
@@ -453,6 +470,7 @@ function TeacherDashboardInner({
                     isActive={selectedId === cls.id}
                     onSelect={setSelectedId}
                     onCopy={handleCopy}
+                    lang={lang}
                   />
                 ))
               )}
@@ -471,7 +489,7 @@ function TeacherDashboardInner({
                     <polyline points="9 22 9 12 15 12 15 22" />
                   </svg>
                 </div>
-                <p>Select a classroom on the left to view its roster and progress.</p>
+                <p>{lang === 'tr' ? 'Öğrenci listesini ve ilerlemeyi görmek için soldan bir sınıf seçin.' : 'Select a classroom on the left to view its roster and progress.'}</p>
               </div>
             </div>
           ) : (
@@ -483,7 +501,7 @@ function TeacherDashboardInner({
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                     </svg>
-                    Class Progress
+                    {lang === 'tr' ? 'Sınıf İlerlemesi' : 'Class Progress'}
                   </h2>
                 </div>
 
@@ -492,23 +510,23 @@ function TeacherDashboardInner({
                     <div className="td-summary-grid">
                       <div className="td-stat-card">
                         <div className="td-stat-value">{selectedClassroom?.students.length ?? 0}</div>
-                        <div className="td-stat-label">Students</div>
+                        <div className="td-stat-label">{lang === 'tr' ? 'Öğrenci' : 'Students'}</div>
                       </div>
                       <div className="td-stat-card">
                         <div className="td-stat-value">{progressStats.avgStreak}</div>
-                        <div className="td-stat-label">Avg Streak</div>
+                        <div className="td-stat-label">{lang === 'tr' ? 'Ort. Seri' : 'Avg Streak'}</div>
                       </div>
                       <div className="td-stat-card">
                         <div className="td-stat-value" style={{ color: progressStats.atRisk.length > 0 ? 'var(--warning)' : 'var(--success)' }}>
                           {progressStats.atRisk.length}
                         </div>
-                        <div className="td-stat-label">At Risk</div>
+                        <div className="td-stat-label">{lang === 'tr' ? 'Risk Altında' : 'At Risk'}</div>
                       </div>
                       <div className="td-stat-card">
                         <div className="td-stat-value" style={{ color: 'var(--accent-amber)', fontSize: 22 }}>
                           {selectedClassroom?.students.reduce((sum, s) => sum + s.xp, 0).toLocaleString() ?? 0}
                         </div>
-                        <div className="td-stat-label">Total XP</div>
+                        <div className="td-stat-label">{lang === 'tr' ? 'Toplam XP' : 'Total XP'}</div>
                       </div>
                     </div>
 
@@ -517,7 +535,7 @@ function TeacherDashboardInner({
                       <>
                         <div style={{ padding: '0 var(--space-5)', paddingTop: 'var(--space-2)' }}>
                           <div className="td-section-title" style={{ fontSize: 12, color: 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                            Inactive 3+ days
+                            {lang === 'tr' ? '3+ Gündür Aktif Değil' : 'Inactive 3+ days'}
                           </div>
                         </div>
                         <div className="td-atrisk-list">
@@ -525,8 +543,10 @@ function TeacherDashboardInner({
                             <div key={s.id} className="td-atrisk-item">
                               <div className="td-avatar-circle">{s.name.charAt(0).toUpperCase()}</div>
                               <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{s.name}</span>
-                              <span className="td-at-risk-badge">inactive</span>
-                              <span className="td-atrisk-days">{daysSince(s.lastActive)}d ago</span>
+                              <span className="td-at-risk-badge">{lang === 'tr' ? 'pasif' : 'inactive'}</span>
+                              <span className="td-atrisk-days">
+                                {lang === 'tr' ? `${daysSince(s.lastActive)}g önce` : `${daysSince(s.lastActive)}d ago`}
+                              </span>
                             </div>
                           ))}
                         </div>
@@ -538,7 +558,7 @@ function TeacherDashboardInner({
                       <>
                         <div style={{ padding: '0 var(--space-5)', paddingTop: 'var(--space-3)' }}>
                           <div className="td-section-title" style={{ fontSize: 12, color: 'var(--accent-amber)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                            Top Performers
+                            {lang === 'tr' ? 'En İyi Öğrenciler' : 'Top Performers'}
                           </div>
                         </div>
                         <div className="td-performers-list" style={{ paddingBottom: 'var(--space-4)' }}>
@@ -558,8 +578,12 @@ function TeacherDashboardInner({
                   </>
                 ) : (
                   <div className="td-empty">
-                    <p className="td-empty-title">No students yet</p>
-                    <p className="td-empty-sub">Share the join code and students will appear here once they join.</p>
+                    <p className="td-empty-title">{lang === 'tr' ? 'Henüz öğrenci yok' : 'No students yet'}</p>
+                    <p className="td-empty-sub">
+                      {lang === 'tr'
+                        ? 'Katılım kodunu paylaş ve öğrenciler katıldığında burada görünecekler.'
+                        : 'Share the join code and students will appear here once they join.'}
+                    </p>
                   </div>
                 )}
               </div>
@@ -572,7 +596,7 @@ function TeacherDashboardInner({
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                       <circle cx="9" cy="7" r="4" />
                     </svg>
-                    Student Roster
+                    {lang === 'tr' ? 'Öğrenci Listesi' : 'Student Roster'}
                     {selectedClassroom && (
                       <span style={{ fontWeight: 400, fontSize: 12, color: 'var(--text-muted)', marginLeft: 4 }}>
                         ({selectedClassroom.students.length})
@@ -587,7 +611,7 @@ function TeacherDashboardInner({
                     <input
                       className="td-input"
                       type="text"
-                      placeholder="Search students…"
+                      placeholder={lang === 'tr' ? 'Öğrenci ara…' : 'Search students…'}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       style={{ width: '100%', boxSizing: 'border-box' }}
@@ -599,9 +623,9 @@ function TeacherDashboardInner({
                     onChange={(e) => setSortKey(e.target.value as SortKey)}
                     aria-label="Sort students"
                   >
-                    <option value="name">Sort: Name</option>
-                    <option value="xp">Sort: XP</option>
-                    <option value="streak">Sort: Streak</option>
+                    <option value="name">{lang === 'tr' ? 'Sırala: Ad' : 'Sort: Name'}</option>
+                    <option value="xp">{lang === 'tr' ? 'Sırala: XP' : 'Sort: XP'}</option>
+                    <option value="streak">{lang === 'tr' ? 'Sırala: Seri' : 'Sort: Streak'}</option>
                   </select>
                 </div>
 
@@ -609,12 +633,14 @@ function TeacherDashboardInner({
                 {filteredStudents.length === 0 ? (
                   <div className="td-empty">
                     <p className="td-empty-title">
-                      {searchQuery ? 'No results' : 'No students in this class'}
+                      {searchQuery
+                        ? (lang === 'tr' ? 'Sonuç yok' : 'No results')
+                        : (lang === 'tr' ? 'Bu sınıfta öğrenci yok' : 'No students in this class')}
                     </p>
                     <p className="td-empty-sub">
                       {searchQuery
-                        ? 'Try a different search term.'
-                        : 'Share the join code so students can join this classroom.'}
+                        ? (lang === 'tr' ? 'Farklı bir arama terimi deneyin.' : 'Try a different search term.')
+                        : (lang === 'tr' ? 'Öğrencilerin katılması için katılım kodunu paylaşın.' : 'Share the join code so students can join this classroom.')}
                     </p>
                   </div>
                 ) : (
@@ -622,11 +648,11 @@ function TeacherDashboardInner({
                     <table className="td-roster-table">
                       <thead>
                         <tr>
-                          <th>Student</th>
-                          <th>Last Active</th>
-                          <th>Streak</th>
+                          <th>{lang === 'tr' ? 'Öğrenci' : 'Student'}</th>
+                          <th>{lang === 'tr' ? 'Son Aktif' : 'Last Active'}</th>
+                          <th>{lang === 'tr' ? 'Seri' : 'Streak'}</th>
                           <th>XP</th>
-                          <th>Level</th>
+                          <th>{lang === 'tr' ? 'Seviye' : 'Level'}</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -653,12 +679,12 @@ function TeacherDashboardInner({
                                     </div>
                                     {student.name}
                                     {isAtRisk && (
-                                      <span className="td-at-risk-badge">inactive</span>
+                                      <span className="td-at-risk-badge">{lang === 'tr' ? 'pasif' : 'inactive'}</span>
                                     )}
                                   </div>
                                 </td>
                                 <td style={{ color: isAtRisk ? 'var(--warning)' : 'var(--text-muted)' }}>
-                                  {formatLastActive(student.lastActive)}
+                                  {formatLastActive(student.lastActive, lang)}
                                 </td>
                                 <td>
                                   <span style={{ fontFamily: 'Nunito, sans-serif', fontWeight: 700, color: streak > 0 ? 'var(--primary)' : 'var(--text-muted)' }}>
@@ -704,10 +730,10 @@ function TeacherDashboardInner({
                                 <tr key={`${student.id}-expand`} className="td-phonics-expand">
                                   <td colSpan={6}>
                                     <div className="td-phonics-expand-inner">
-                                      <div className="td-phonics-title">Phonics Mastery</div>
+                                      <div className="td-phonics-title">{lang === 'tr' ? 'Fonik Ustalığı' : 'Phonics Mastery'}</div>
                                       {Object.keys(student.phonicsProgress).length === 0 ? (
                                         <p style={{ fontSize: 13, color: 'var(--text-muted)', fontFamily: 'Inter, sans-serif', margin: 0 }}>
-                                          No phonics progress recorded yet.
+                                          {lang === 'tr' ? 'Henüz fonik ilerleme kaydedilmedi.' : 'No phonics progress recorded yet.'}
                                         </p>
                                       ) : (
                                         <div className="td-phonics-dots">
@@ -735,7 +761,7 @@ function TeacherDashboardInner({
                                       {/* Legend */}
                                       <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap', marginTop: 'var(--space-1)' }}>
                                         {[
-                                          { cls: 'mastery-none', label: 'Not started' },
+                                          { cls: 'mastery-none', label: lang === 'tr' ? 'Başlanmadı' : 'Not started' },
                                           { cls: 'mastery-low', label: '1–29%' },
                                           { cls: 'mastery-mid', label: '30–59%' },
                                           { cls: 'mastery-high', label: '60–89%' },
@@ -774,7 +800,7 @@ function TeacherDashboardInner({
                       <line x1="16" y1="17" x2="8" y2="17" />
                       <polyline points="10 9 9 9 8 9" />
                     </svg>
-                    Assign Homework
+                    {lang === 'tr' ? 'Ödev Ata' : 'Assign Homework'}
                   </h2>
                 </div>
 
@@ -782,7 +808,7 @@ function TeacherDashboardInner({
                   <div className="td-hw-row">
                     <div className="td-form-field">
                       <label className="td-label" htmlFor="td-hw-assignment">
-                        Activity
+                        {lang === 'tr' ? 'Etkinlik' : 'Activity'}
                       </label>
                       <select
                         id="td-hw-assignment"
@@ -791,15 +817,15 @@ function TeacherDashboardInner({
                         onChange={(e) => setHwAssignment(e.target.value)}
                         style={{ width: '100%' }}
                       >
-                        <option value="">Select phonics or vocab…</option>
-                        <optgroup label="Phonics Sounds">
+                        <option value="">{lang === 'tr' ? 'Fonik veya kelime seçin…' : 'Select phonics or vocab…'}</option>
+                        <optgroup label={lang === 'tr' ? 'Fonik Sesler' : 'Phonics Sounds'}>
                           {PHONICS_CURRICULUM.map((p) => (
                             <option key={p.id} value={p.id}>
                               {p.label}
                             </option>
                           ))}
                         </optgroup>
-                        <optgroup label="Vocabulary Sets">
+                        <optgroup label={lang === 'tr' ? 'Kelime Setleri' : 'Vocabulary Sets'}>
                           {VOCAB_SETS.map((v) => (
                             <option key={v.id} value={v.id}>
                               {v.label}
@@ -811,7 +837,7 @@ function TeacherDashboardInner({
 
                     <div className="td-form-field">
                       <label className="td-label" htmlFor="td-hw-due">
-                        Due Date
+                        {lang === 'tr' ? 'Son Tarih' : 'Due Date'}
                       </label>
                       <input
                         id="td-hw-due"
@@ -829,7 +855,7 @@ function TeacherDashboardInner({
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      Assigned: {hwAssigned}
+                      {lang === 'tr' ? 'Atandı:' : 'Assigned:'} {hwAssigned}
                     </div>
                   ) : (
                     <button
@@ -838,7 +864,7 @@ function TeacherDashboardInner({
                       disabled={!hwAssignment || !hwDueDate}
                       style={{ opacity: !hwAssignment || !hwDueDate ? 0.5 : 1, cursor: !hwAssignment || !hwDueDate ? 'not-allowed' : 'pointer' }}
                     >
-                      Assign to Class
+                      {lang === 'tr' ? 'Sınıfa Ata' : 'Assign to Class'}
                     </button>
                   )}
                 </div>
@@ -848,7 +874,7 @@ function TeacherDashboardInner({
         </div>
       </div>
 
-      <CopyToast visible={showCopyToast} />
+      <CopyToast visible={showCopyToast} lang={lang} />
 
       {/* Assessment report overlay */}
       {activeReport && (
