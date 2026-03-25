@@ -18,7 +18,8 @@ import {
   Layout,
   ExternalLink,
   FileText,
-  Gamepad2
+  Gamepad2,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
@@ -41,6 +42,7 @@ const categories = ['All', 'Vocabulary', 'Grammar', 'Reading', 'Writing', 'Phoni
 
 function Worksheets() {
   const [worksheets, setWorksheets] = useState<Worksheet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeGrade, setActiveGrade] = useState('All');
   const [activeCategory, setActiveCategory] = useState('All');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -59,6 +61,7 @@ function Worksheets() {
   const fetchWorksheets = async () => {
     // Try localStorage cache for instant load
     const cached = getCachedData<Worksheet[]>('worksheets');
+    setIsLoading(true);
 
     try {
       const { data, error } = await supabase
@@ -92,6 +95,8 @@ function Worksheets() {
       } else {
         setWorksheets(fallbackWorksheets);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -272,6 +277,13 @@ function Worksheets() {
       <div className="worksheets-count">
         {t('worksheets.showing')} <strong>{filteredWorksheets.length}</strong> {t('worksheets.worksheetsLabel')}
       </div>
+
+      {isLoading && (
+        <div className="worksheets-loading">
+          <Loader2 size={40} className="worksheets-loading__spinner" />
+          <p>{t('common.loading')}</p>
+        </div>
+      )}
 
       <div className="worksheets-grid">
         <AnimatePresence mode="popLayout">

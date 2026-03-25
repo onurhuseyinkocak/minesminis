@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PenSquare, Plus, Edit2, ExternalLink, RefreshCw } from 'lucide-react';
+import { PenSquare, Plus, Edit2, ExternalLink, RefreshCw, Trash2 } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import { adminFetch, getAdminApiBase } from '../../utils/adminApi';
 import './BlogManager.css';
@@ -17,16 +17,41 @@ interface BlogPost {
   updated_at: string;
 }
 
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error';
+}
+
+const emptyForm = (): Omit<BlogPost, 'id' | 'created_at' | 'updated_at'> => ({
+  title: '',
+  slug: '',
+  excerpt: '',
+  content: '',
+  published_at: '',
+  meta_title: '',
+  meta_description: '',
+});
+
 export default function BlogManager() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [form, setForm] = useState(emptyForm());
 
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  const addToast = (message: string, type: 'success' | 'error') => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
+  };
 
   const fetchPosts = async () => {
     try {
@@ -44,6 +69,98 @@ export default function BlogManager() {
       setPosts([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openEditor = (post: BlogPost | null) => {
+    setEditingPost(post);
+    if (post) {
+      setForm({
+        title: post.title ?? '',
+        slug: post.slug ?? '',
+        excerpt: post.excerpt ?? '',
+        content: post.content ?? '',
+        published_at: post.published_at ? post.published_at.slice(0, 10) : '',
+        meta_title: post.meta_title ?? '',
+        meta_description: post.meta_description ?? '',
+      });
+    } else {
+      setForm(emptyForm());
+    }
+    setShowEditor(true);
+  };
+
+  const closeEditor = () => {
+    setShowEditor(false);
+    setEditingPost(null);
+    setForm(emptyForm());
+  };
+
+  const handleSave = async () => {
+    if (!form.title.trim() || !form.slug.trim()) {
+      addToast('Başlık ve slug zorunludur.', 'error');
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        title: form.title.trim(),
+        slug: form.slug.trim(),
+        excerpt: form.excerpt.trim(),
+        content: form.content.trim(),
+        published_at: form.published_at ? new Date(form.published_at).toISOString() : null,
+        meta_title: form.meta_title.trim(),
+        meta_description: form.meta_description.trim(),
+        updated_at: new Date().toISOString(),
+      };
+
+      if (editingPost) {
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .update(payload)
+          .eq('id', editingPost.id)
+          .select()
+          .single();
+
+        if (error) throw new Error(error.message);
+        setPosts((prev) => prev.map((p) => (p.id === editingPost.id ? (data as BlogPost) : p)));
+        addToast('Blog yazısı güncellendi.', 'success');
+      } else {
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .insert({ ...payload, created_at: new Date().toISOString() })
+          .select()
+          .single();
+
+        if (error) throw new Error(error.message);
+        setPosts((prev) => [data as BlogPost, ...prev]);
+        addToast('Blog yazısı oluşturuldu.', 'success');
+      }
+      closeEditor();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
+      addToast(`Kayıt başarısız: ${msg}`, 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (post: BlogPost) => {
+    const confirmed = window.confirm(`"${post.title}" yazısını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`);
+    if (!confirmed) return;
+
+    try {
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', post.id);
+
+      if (error) throw new Error(error.message);
+      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+      addToast('Blog yazısı silindi.', 'success');
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
+      addToast(`Silme başarısız: ${msg}`, 'error');
     }
   };
 
@@ -81,7 +198,7 @@ export default function BlogManager() {
         return;
       }
       await fetchPosts();
-      alert('Günlük blog yazısı oluşturuldu!');
+      addToast('Günlük blog yazısı oluşturuldu!', 'success');
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
       alert(`API bağlantısı kurulamadı. Sunucu çalışıyor olmalı (npm run dev). Hata: ${msg}`);
@@ -92,6 +209,15 @@ export default function BlogManager() {
 
   return (
     <div className="admin-page admin-blog-manager">
+      {/* Toast notifications */}
+      <div className="admin-toast-container">
+        {toasts.map((t) => (
+          <div key={t.id} className={`admin-toast admin-toast-${t.type}`}>
+            {t.message}
+          </div>
+        ))}
+      </div>
+
       <div className="admin-header">
         <div>
           <h1><PenSquare size={28} /> Blog Yönetimi</h1>
@@ -106,7 +232,7 @@ export default function BlogManager() {
             <RefreshCw size={18} className={generating ? 'spin' : ''} />
             {generating ? 'Oluşturuluyor...' : 'Günlük Makale Oluştur'}
           </button>
-          <button className="admin-btn admin-btn-secondary" onClick={() => { setEditingPost(null); setShowEditor(true); }}>
+          <button className="admin-btn admin-btn-secondary" onClick={() => openEditor(null)}>
             <Plus size={18} /> Yeni Yazı
           </button>
         </div>
@@ -140,8 +266,11 @@ export default function BlogManager() {
                   <a href={`/blog/${p.slug}`} target="_blank" rel="noopener noreferrer" className="admin-btn-icon" title="Görüntüle">
                     <ExternalLink size={18} />
                   </a>
-                  <button className="admin-btn-icon" onClick={() => { setEditingPost(p); setShowEditor(true); }} title="Düzenle">
+                  <button className="admin-btn-icon" onClick={() => openEditor(p)} title="Düzenle">
                     <Edit2 size={18} />
+                  </button>
+                  <button className="admin-btn-icon admin-btn-icon-danger" onClick={() => handleDelete(p)} title="Sil">
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </div>
@@ -151,11 +280,91 @@ export default function BlogManager() {
       )}
 
       {showEditor && (
-        <div className="admin-blog-editor-overlay" onClick={() => setShowEditor(false)}>
+        <div className="admin-blog-editor-overlay" onClick={closeEditor}>
           <div className="admin-blog-editor" onClick={(e) => e.stopPropagation()}>
-            <h2>{editingPost ? 'Yazıyı Düzenle' : 'Yeni Yazı'}</h2>
-            <p className="admin-blog-editor-hint">SEO için: meta_title, meta_description ve slug önemli. Supabase blog_posts tablosuna kaydedilir.</p>
-            <button className="admin-btn" onClick={() => setShowEditor(false)}>Kapat</button>
+            <div className="admin-blog-editor-header">
+              <h2>{editingPost ? 'Yazıyı Düzenle' : 'Yeni Yazı'}</h2>
+            </div>
+
+            <div className="admin-blog-form">
+              <div className="admin-blog-form-row">
+                <label>Başlık *</label>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                  placeholder="Blog yazısı başlığı"
+                />
+              </div>
+
+              <div className="admin-blog-form-row">
+                <label>Slug *</label>
+                <input
+                  type="text"
+                  value={form.slug}
+                  onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                  placeholder="url-dostu-slug"
+                />
+              </div>
+
+              <div className="admin-blog-form-row">
+                <label>Özet</label>
+                <input
+                  type="text"
+                  value={form.excerpt}
+                  onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))}
+                  placeholder="Kısa özet (liste görünümünde gösterilir)"
+                />
+              </div>
+
+              <div className="admin-blog-form-row">
+                <label>İçerik</label>
+                <textarea
+                  value={form.content}
+                  onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+                  placeholder="Blog yazısının tam içeriği..."
+                  rows={8}
+                />
+              </div>
+
+              <div className="admin-blog-form-row">
+                <label>Yayın Tarihi</label>
+                <input
+                  type="date"
+                  value={form.published_at}
+                  onChange={(e) => setForm((f) => ({ ...f, published_at: e.target.value }))}
+                />
+              </div>
+
+              <div className="admin-blog-form-row">
+                <label>Meta Başlık</label>
+                <input
+                  type="text"
+                  value={form.meta_title}
+                  onChange={(e) => setForm((f) => ({ ...f, meta_title: e.target.value }))}
+                  placeholder="SEO için meta başlık"
+                />
+              </div>
+
+              <div className="admin-blog-form-row">
+                <label>Meta Açıklama</label>
+                <textarea
+                  value={form.meta_description}
+                  onChange={(e) => setForm((f) => ({ ...f, meta_description: e.target.value }))}
+                  placeholder="SEO için meta açıklama (155 karakter önerilir)"
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="admin-blog-editor-footer">
+              <button className="admin-btn admin-btn-secondary" onClick={closeEditor} disabled={saving}>
+                İptal
+              </button>
+              <button className="admin-btn admin-btn-primary" onClick={handleSave} disabled={saving}>
+                {saving ? 'Kaydediliyor...' : (editingPost ? 'Güncelle' : 'Kaydet')}
+              </button>
+            </div>
           </div>
         </div>
       )}

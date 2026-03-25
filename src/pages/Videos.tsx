@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Star, Clock, Users, Music, BookOpen, Heart, Search, X, Check, Eye } from 'lucide-react';
 import ContentPageHeader from '../components/ContentPageHeader';
 import './Videos.css';
-import { videoStore } from '../data/videoStore';
+import { videoStore, type Video } from '../data/videoStore';
 import {
   PHONICS_GROUP_LABELS,
   getVideosForGroup,
@@ -13,18 +13,6 @@ import {
 } from '../data/phonicsVideos';
 import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
-
-type Video = {
-  id: string;
-  youtube_id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  grade: string;
-  category: 'song' | 'lesson' | 'story';
-  duration: string;
-  isPopular?: boolean;
-};
 
 
 const categoryIcons: Record<string, { icon: React.ReactNode; label: string }> = {
@@ -52,10 +40,10 @@ function Videos() {
 
   useEffect(() => {
     videoStore.fetchVideos().then((list) => {
-      setVideos(list as unknown as Video[]);
+      setVideos(list);
     });
     const unsubscribe = videoStore.subscribe((updatedVideos) => {
-      setVideos(updatedVideos as unknown as Video[]);
+      setVideos(updatedVideos);
     });
     setWatchedIds(getWatchedVideoIds());
     return () => unsubscribe?.();

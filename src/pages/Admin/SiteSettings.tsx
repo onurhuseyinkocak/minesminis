@@ -1,6 +1,8 @@
+// TODO: merge with AdminSettings.tsx
 import { useState } from 'react';
 import { Settings, Save, Bell, Palette, Shield, Globe } from 'lucide-react';
 import toast from 'react-hot-toast';
+import './SiteSettings.css';
 
 function SiteSettings() {
     const [settings, setSettings] = useState({
@@ -69,8 +71,8 @@ function SiteSettings() {
                                 value={settings.defaultLanguage}
                                 onChange={(e) => setSettings({ ...settings, defaultLanguage: e.target.value })}
                             >
-                                <option value="tr">🇹🇷 Türkçe</option>
-                                <option value="en">🇬🇧 English</option>
+                                <option value="tr">TR — Türkçe</option>
+                                <option value="en">EN — English</option>
                             </select>
                         </div>
                     </div>
@@ -85,30 +87,23 @@ function SiteSettings() {
                     <div className="settings-card-body">
                         <div className="form-group">
                             <label>Ana Tema Rengi</label>
-                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            <div className="ss-color-row">
                                 <input
                                     type="color"
                                     value={settings.themeColor}
                                     onChange={(e) => setSettings({ ...settings, themeColor: e.target.value })}
-                                    style={{ width: '50px', height: '40px', padding: 0, border: 'none', cursor: 'pointer' }}
+                                    className="ss-color-swatch"
                                 />
                                 <input
                                     type="text"
                                     value={settings.themeColor}
                                     onChange={(e) => setSettings({ ...settings, themeColor: e.target.value })}
-                                    style={{ width: '100px' }}
+                                    className="ss-color-text"
                                 />
                             </div>
                         </div>
 
-                        <div className="color-preview" style={{
-                            background: settings.themeColor,
-                            padding: '1rem',
-                            borderRadius: '8px',
-                            color: 'white',
-                            textAlign: 'center',
-                            fontWeight: 600
-                        }}>
+                        <div className="ss-color-preview" style={{ background: settings.themeColor }}>
                             Tema Rengi Önizleme
                         </div>
                     </div>
@@ -203,16 +198,9 @@ function SiteSettings() {
 
             <div className="settings-actions">
                 <button
-                    className="save-btn"
+                    className="save-btn ss-save-btn"
                     onClick={handleSave}
                     disabled={isSaving}
-                    style={{
-                        padding: '1rem 2rem',
-                        fontSize: '1rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                    }}
                 >
                     {isSaving ? (
                         <>
@@ -228,78 +216,6 @@ function SiteSettings() {
                 </button>
             </div>
 
-            <style>{`
-        .settings-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .settings-card {
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-          border: 1px solid #e2e8f0;
-          overflow: hidden;
-        }
-
-        .settings-card-header {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 1.25rem 1.5rem;
-          background: #f8fafc;
-          border-bottom: 1px solid #e2e8f0;
-        }
-
-        .settings-card-header h2 {
-          font-size: 1rem;
-          font-weight: 600;
-          color: #1e293b;
-          margin: 0;
-        }
-
-        .settings-card-body {
-          padding: 1.5rem;
-        }
-
-        .toggle-label {
-          display: flex;
-          align-items: flex-start;
-          gap: 12px;
-          cursor: pointer;
-        }
-
-        .toggle-label input[type="checkbox"] {
-          width: 20px;
-          height: 20px;
-          margin-top: 2px;
-          cursor: pointer;
-        }
-
-        .toggle-text {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
-
-        .toggle-text small {
-          color: #64748b;
-          font-size: 0.75rem;
-        }
-
-        .settings-actions {
-          display: flex;
-          justify-content: flex-end;
-        }
-
-        @media (max-width: 640px) {
-          .settings-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
         </div>
     );
 }

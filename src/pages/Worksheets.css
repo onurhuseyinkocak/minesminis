@@ -10,6 +10,27 @@
   padding-bottom: var(--space-3xl);
 }
 
+/* ---- LOADING ---- */
+.worksheets-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl);
+  gap: var(--space-md);
+  color: var(--text-muted);
+}
+
+.worksheets-loading__spinner {
+  animation: spin 1s linear infinite;
+  color: var(--primary);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* ---- CONTROLS ---- */
 .controls-section {
   max-width: var(--container-max);
@@ -249,7 +270,7 @@
 .print-btn {
   background: var(--bg-card);
   color: var(--primary);
-  border-left: 1px solid var(--border-light) !important;
+  border-left: 1px solid var(--border-light);
 }
 
 .print-btn:hover {

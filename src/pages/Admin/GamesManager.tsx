@@ -4,6 +4,7 @@ import { supabase } from '../../config/supabase';
 import { gameStore } from '../../data/gameStore';
 import { adminFetch } from '../../utils/adminApi';
 import toast from 'react-hot-toast';
+import './GamesManager.css';
 
 const extractEmbedFromIframe = (text: string): string => {
     const m = text.match(/src=["']([^"']+)["']/i) || text.match(/https?:\/\/[^\s"']+/);
@@ -190,15 +191,14 @@ function GamesManager() {
                 <div className="table-header">
                     <h2>{filteredGames.length} Oyun</h2>
                     <div className="table-actions">
-                        <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                        <div className="adm-search-wrap">
+                            <Search size={18} className="adm-search-icon" />
                             <input
                                 type="text"
                                 placeholder="Oyun ara..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="search-input"
-                                style={{ paddingLeft: '40px' }}
+                                className="search-input adm-search-input"
                             />
                         </div>
                         <button className="add-btn" onClick={openAddModal}>

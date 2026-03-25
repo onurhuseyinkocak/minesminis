@@ -1,0 +1,81 @@
+/* ==========================================================================
+   WORKSHEETS MANAGER — MinesMinis Admin
+   ========================================================================== */
+
+/* ── Search icon wrapper ── */
+.adm-search-wrap {
+  position: relative;
+}
+
+.adm-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.adm-search-input {
+  padding-left: 40px;
+}
+
+/* ── Worksheet description subtitle ── */
+.adm-ws-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* ── Source link ── */
+.adm-ws-source-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6366f1;
+  text-decoration: none;
+}
+
+.adm-ws-source-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Category badge (color applied via inline style from getCategoryClass helper) ── */
+.adm-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2em 0.65em;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Category color tokens: bg uses <color>15 (10% opacity), text uses full color */
+.adm-badge--vocab    { background: #eef2ff; color: #4f46e5; }
+.adm-badge--grammar  { background: #ecfdf5; color: #059669; }
+.adm-badge--reading  { background: #fffbeb; color: #d97706; }
+.adm-badge--writing  { background: #fdf2f8; color: #db2777; }
+.adm-badge--phonics  { background: #f5f3ff; color: #7c3aed; }
+.adm-badge--default  { background: #eef2ff; color: #4f46e5; }
+
+/* ── File upload row ── */
+.adm-upload-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.adm-upload-hint {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.adm-url-input-mt {
+  margin-top: 0.5rem;
+}
+
+/* ── Filter chips secondary row (no top padding) ── */
+.adm-filter-chips-dense {
+  padding-top: 0;
+}

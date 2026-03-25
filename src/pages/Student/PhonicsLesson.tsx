@@ -29,15 +29,15 @@ type LessonStep = 'hear' | 'do' | 'see' | 'build' | 'break' | 'write' | 'read' |
 const STEPS: LessonStep[] = ['hear', 'do', 'see', 'build', 'break', 'write', 'read', 'sing', 'celebrate'];
 
 const STEP_LABELS: Record<LessonStep, string> = {
-  hear: 'Hear It',
-  do: 'Do It',
-  see: 'See It',
-  build: 'Build It',
-  break: 'Break It',
-  write: 'Write It',
-  read: 'Read It',
-  sing: 'Sing It',
-  celebrate: 'Celebrate!',
+  hear: 'Dinle',
+  do: 'Yap',
+  see: 'Gör',
+  build: 'Oluştur',
+  break: 'Böl',
+  write: 'Yaz',
+  read: 'Oku',
+  sing: 'Söyle',
+  celebrate: 'Tebrikler!',
 };
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -223,7 +223,8 @@ function PhonicsLesson() {
     if (membership && soundId) {
       updateClassroomProgress(membership.classroomId, membership.studentId, soundId, 100);
     }
-  }, [currentStep, soundId]); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: celebrate runs once when step becomes 'celebrate'; other deps (data, user, addXP, etc.) are stable refs
+  }, [currentStep, soundId]);
 
   // ── Not found ──
   if (!data) {
@@ -232,8 +233,8 @@ function PhonicsLesson() {
         <Card variant="elevated" padding="xl">
           <div style={{ textAlign: 'center' }}>
             <Search size={48} color="#1A6B5A" />
-            <h2 style={{ color: '#1A6B5A' }}>Sound not found</h2>
-            <p style={{ color: '#94A3B8' }}>We couldn&apos;t find this sound lesson.</p>
+            <h2 style={{ color: '#1A6B5A' }}>Ses bulunamadı</h2>
+            <p style={{ color: '#94A3B8' }}>Bu ses dersini bulamadık.</p>
             <Button variant="primary" onClick={() => navigate('/dashboard')}>
               Ana Sayfaya Dön
             </Button>
@@ -266,7 +267,7 @@ function PhonicsLesson() {
         {sound.grapheme}
       </motion.div>
 
-      <p style={styles.stepDesc}>Listen! This letter says...</p>
+      <p style={styles.stepDesc}>Dinle! Bu harf şunu söyler...</p>
 
       <Button
         variant="primary"
@@ -277,9 +278,9 @@ function PhonicsLesson() {
           setTimeout(() => speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.5), 1000);
           setTimeout(() => speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.5), 2000);
         }}
-        style={{ backgroundColor: '#E8A317', borderColor: '#E8A317' }}
+        style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
       >
-        Listen 3 times
+        3 kez dinle
       </Button>
 
       <div style={styles.mimiBox}>
@@ -290,7 +291,7 @@ function PhonicsLesson() {
       </div>
 
       <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-        Continue
+        Devam Et
       </Button>
     </motion.div>
   );
@@ -330,7 +331,7 @@ function PhonicsLesson() {
           onClick={() => speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.6)}
           style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
         >
-          Say it with me!
+          Beraber söyle!
         </Button>
 
         <Button
@@ -359,16 +360,16 @@ function PhonicsLesson() {
             }
           }}
           disabled={isListening}
-          style={{ backgroundColor: '#E8A317', borderColor: '#E8A317' }}
+          style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
         >
-          {isListening ? 'Listening...' : 'Record me!'}
+          {isListening ? 'Dinleniyor...' : 'Kaydet!'}
         </Button>
       </div>
 
       <p style={styles.turkishNote}>{sound.turkishNote}</p>
 
       <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-        I did it!
+        Yaptım!
       </Button>
     </motion.div>
   );
@@ -383,7 +384,7 @@ function PhonicsLesson() {
         exit={{ opacity: 0, y: -20 }}
         style={styles.stepContent}
       >
-        <p style={styles.stepDesc}>Tap each word to hear it!</p>
+        <p style={styles.stepDesc}>Her kelimeye dokunarak dinle!</p>
 
         <div style={styles.keywordsGrid}>
           {keywords.map((kw) => {
@@ -415,7 +416,7 @@ function PhonicsLesson() {
                   {idx >= 0 ? (
                     <>
                       {kw.word.slice(0, idx)}
-                      <span style={{ color: '#E8A317', fontWeight: 800 }}>
+                      <span style={{ color: 'var(--gold-500)', fontWeight: 800 }}>
                         {kw.word.slice(idx, idx + sound.grapheme.length)}
                       </span>
                       {kw.word.slice(idx + sound.grapheme.length)}
@@ -432,7 +433,7 @@ function PhonicsLesson() {
         {allClicked && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <Badge variant="success" icon={<Sparkles size={14} />}>
-              All words heard!
+              Tüm kelimeler dinlendi!
             </Badge>
           </motion.div>
         )}
@@ -444,7 +445,7 @@ function PhonicsLesson() {
           onClick={goNext}
           disabled={!allClicked}
         >
-          Continue
+          Devam Et
         </Button>
       </motion.div>
     );
@@ -461,11 +462,11 @@ function PhonicsLesson() {
       {blendingDone ? (
         <div style={{ textAlign: 'center' }}>
           <Badge variant="success" icon={<Sparkles size={14} />}>
-            Blending complete!
+            Birleştirme tamamlandı!
           </Badge>
           <div style={{ marginTop: '1rem' }}>
             <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-              Continue
+              Devam Et
             </Button>
           </div>
         </div>
@@ -496,9 +497,9 @@ function PhonicsLesson() {
         >
           <div style={{ textAlign: 'center' }}>
             <Target size={48} color="#1A6B5A" />
-            <h3 style={{ color: '#1A6B5A' }}>Great segmenting!</h3>
+            <h3 style={{ color: '#1A6B5A' }}>Harika bölme!</h3>
             <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-              Continue
+              Devam Et
             </Button>
           </div>
         </motion.div>
@@ -513,7 +514,7 @@ function PhonicsLesson() {
         exit={{ opacity: 0, y: -20 }}
         style={styles.stepContent}
       >
-        <p style={styles.stepDesc}>Break this word into sounds!</p>
+        <p style={styles.stepDesc}>Bu kelimeyi seslere böl!</p>
 
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Badge variant="info">{segmentingIndex + 1}/{segmentingWords.length}</Badge>
@@ -539,9 +540,9 @@ function PhonicsLesson() {
                 setTimeout(() => speak(s, 0.5), i * 600);
               });
             }}
-            style={{ backgroundColor: '#E8A317', borderColor: '#E8A317' }}
+            style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
           >
-            Show sounds!
+            Sesleri göster!
           </Button>
         ) : (
           <>
@@ -570,7 +571,7 @@ function PhonicsLesson() {
                 setXpEarned((prev) => prev + 10);
               }}
             >
-              {segmentingIndex + 1 < segmentingWords.length ? 'Next word' : 'Done!'}
+              {segmentingIndex + 1 < segmentingWords.length ? 'Sonraki kelime' : 'Tamam!'}
             </Button>
           </>
         )}
@@ -592,7 +593,7 @@ function PhonicsLesson() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
           <PenTool size={20} color="#1A6B5A" />
-          <p style={{ ...styles.stepDesc, margin: 0 }}>Trace the letter with your finger!</p>
+          <p style={{ ...styles.stepDesc, margin: 0 }}>Harfi parmağınla takip et!</p>
         </div>
 
         <LetterTracing
@@ -623,7 +624,7 @@ function PhonicsLesson() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
           <BookOpen size={20} color="#1A6B5A" />
-          <p style={{ ...styles.stepDesc, margin: 0 }}>Tap any word to hear it!</p>
+          <p style={{ ...styles.stepDesc, margin: 0 }}>Herhangi bir kelimeye dokunarak dinle!</p>
         </div>
 
         <Card variant="elevated" padding="lg">
@@ -649,13 +650,13 @@ function PhonicsLesson() {
           size="lg"
           icon={<Volume2 size={18} />}
           onClick={() => speak(decodableText, 0.8)}
-          style={{ backgroundColor: '#E8A317', borderColor: '#E8A317' }}
+          style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
         >
-          Read it aloud!
+          Yüksek sesle oku!
         </Button>
 
         <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-          Continue
+          Devam Et
         </Button>
       </motion.div>
     );
@@ -674,9 +675,9 @@ function PhonicsLesson() {
           exit={{ opacity: 0, y: -20 }}
           style={styles.stepContent}
         >
-          <p style={styles.stepDesc}>No song available yet for this group.</p>
+          <p style={styles.stepDesc}>Bu grup için henüz şarkı yok.</p>
           <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
-            Continue
+            Devam Et
           </Button>
         </motion.div>
       );
@@ -755,35 +756,35 @@ function PhonicsLesson() {
           transition={{ repeat: Infinity, duration: 1.5 }}
           style={{
             width: 96, height: 96, borderRadius: '50%',
-            background: 'linear-gradient(135deg, #E8A317 0%, #FF6B35 100%)',
+            background: 'linear-gradient(135deg, var(--gold-500) 0%, #FF6B35 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto', boxShadow: '0 8px 24px rgba(232,163,23,0.4)',
+            margin: '0 auto', boxShadow: '0 8px 24px color-mix(in srgb, var(--gold-500) 40%, transparent)',
           }}
         >
           <Trophy size={48} color="#fff" />
         </motion.div>
 
         <h2 style={{ textAlign: 'center', color: '#1A6B5A', margin: 0 }}>
-          {isGroupComplete ? 'Group Complete!' : 'Amazing work!'}
+          {isGroupComplete ? 'Grup Tamamlandı!' : 'Harika iş!'}
         </h2>
         <p style={{ textAlign: 'center', color: '#94A3B8', margin: 0 }}>
           {isGroupComplete
-            ? `You mastered all sounds in ${currentGroup?.name || 'this group'}!`
-            : <>You learned the &quot;{sound.grapheme}&quot; sound!</>}
+            ? `${currentGroup?.name || 'Bu gruptaki'} tüm sesleri öğrendin!`
+            : <>&quot;{sound.grapheme}&quot; sesini öğrendin!</>}
         </p>
 
         <Card variant="elevated" padding="lg">
           <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
             <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{totalXP} XP earned!
+              +{totalXP} XP kazandın!
             </Badge>
             {gardenPlant && plantStage && (
               <p style={{ fontSize: '0.95rem', color: '#1A6B5A', margin: 0, fontWeight: 700 }}>
-                Your plant grew! It&apos;s now {plantStage.name === 'flowering' ? 'fully bloomed' : `a ${plantStage.name}`}!
+                Bitkini büyüdü! Artık {plantStage.name === 'flowering' ? 'tam çiçek açtı' : `${plantStage.name} aşamasında`}!
               </p>
             )}
             <p style={{ fontSize: '0.85rem', color: '#64748B', margin: 0 }}>
-              Sound &quot;{sound.grapheme}&quot; added to your mastery chart
+              &quot;{sound.grapheme}&quot; sesi ustalık tablona eklendi
             </p>
           </div>
         </Card>
@@ -798,7 +799,7 @@ function PhonicsLesson() {
               style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
               fullWidth
             >
-              Next Sound: {nextSoundInGroup.grapheme.toUpperCase()}
+              Sonraki Ses: {nextSoundInGroup.grapheme.toUpperCase()}
             </Button>
           ) : (
             isGroupComplete && (
@@ -807,10 +808,10 @@ function PhonicsLesson() {
                 size="lg"
                 icon={<Sparkles size={18} />}
                 onClick={() => navigate('/dashboard')}
-                style={{ backgroundColor: '#E8A317', borderColor: '#E8A317' }}
+                style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
                 fullWidth
               >
-                All Sounds Complete!
+                Tüm Sesler Tamamlandı!
               </Button>
             )
           )}
@@ -952,7 +953,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   actionBox: {
     padding: '1.25rem',
-    background: 'rgba(232,163,23,0.1)',
+    background: 'color-mix(in srgb, var(--gold-500) 10%, transparent)',
     borderRadius: '1rem',
     width: '100%',
     textAlign: 'center' as const,
@@ -1012,11 +1013,11 @@ const styles: Record<string, React.CSSProperties> = {
     width: '3.5rem',
     height: '3.5rem',
     borderRadius: '0.75rem',
-    border: '3px solid #E8A317',
-    backgroundColor: 'rgba(232,163,23,0.1)',
+    border: '3px solid var(--gold-500)',
+    backgroundColor: 'color-mix(in srgb, var(--gold-500) 10%, transparent)',
     fontSize: '1.5rem',
     fontWeight: 800,
-    color: '#E8A317',
+    color: 'var(--gold-500)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

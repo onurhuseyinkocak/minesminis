@@ -26,6 +26,7 @@ const SKELETON_COUNT = 6;
 export default function StoriesGrid() {
   const [stories, setStories] = useState<StoryCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { lang } = useLanguage();
   const navigate = useNavigate();
 
@@ -36,8 +37,11 @@ export default function StoriesGrid() {
         setStories(d.stories || []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, []);
+      .catch(() => {
+        setError(lang === 'tr' ? 'Hikayeler yüklenemedi. Tekrar dene.' : 'Could not load stories. Please try again.');
+        setLoading(false);
+      });
+  }, [lang]);
 
   return (
     <div className="stories-grid-page">
@@ -55,7 +59,28 @@ export default function StoriesGrid() {
         </p>
       </div>
 
-      {loading ? (
+      {error ? (
+        <div className="stories-empty stories-error">
+          <Sparkles size={48} />
+          <p>{error}</p>
+          <button
+            className="stories-retry-btn"
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              fetch('/api/stories')
+                .then(r => r.json())
+                .then(d => { setStories(d.stories || []); setLoading(false); })
+                .catch(() => {
+                  setError(lang === 'tr' ? 'Hikayeler yüklenemedi. Tekrar dene.' : 'Could not load stories. Please try again.');
+                  setLoading(false);
+                });
+            }}
+          >
+            {lang === 'tr' ? 'Tekrar Dene' : 'Try Again'}
+          </button>
+        </div>
+      ) : loading ? (
         <div className="stories-loading-grid">
           {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <div key={i} className="story-skeleton">

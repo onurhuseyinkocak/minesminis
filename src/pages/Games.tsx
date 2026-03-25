@@ -211,6 +211,12 @@ function Games() {
       <div className="games-content">
         {/* Featured Internal Games */}
         <h2 className="games-section-title"><Star size={20} /> {t('games.ourGames')}</h2>
+        {filteredInternal.length === 0 ? (
+          <div className="games-empty-state">
+            <Puzzle size={48} />
+            <p>Bu kategoride oyun yok.</p>
+          </div>
+        ) : null}
         <div className="featured-games-grid">
           {filteredInternal.map(game => (
             <button
@@ -304,7 +310,7 @@ function Games() {
       )}
 
       <MimiGuide
-        message="Tap a game to play! The golden \u2B50 one is next!"
+        message="Tap a game to play! The golden star one is next!"
         messageTr="Oynamak için bir oyuna dokun!"
         showOnce="mimi_guide_worldmap"
         position="bottom-left"

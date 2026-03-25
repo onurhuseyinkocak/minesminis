@@ -30,14 +30,10 @@ import { SFX } from '../data/soundLibrary';
 import { speak } from '../services/ttsService';
 import MimiGuide from '../components/MimiGuide';
 import { WORLDS, getWorldById, getLessonById } from '../data/curriculum';
-import { PHASES } from '../data/curriculumPhases';
 import {
   getCurrentLesson as getTrackerCurrentLesson,
   getWorldCompletionCount,
 } from '../data/progressTracker';
-import { getDueWords } from '../data/spacedRepetition';
-import { getCurrentPhonicsSound } from '../services/learningPathService';
-import { getTodayMinutes } from '../services/activityLogger';
 import { getTodayLesson, isDailyLessonCompletedToday } from '../services/dailyLessonService';
 
 // ============================================================
@@ -67,23 +63,6 @@ function getCurrentLessonData(userId: string) {
     currentLesson: completedCount + 1,
     totalLessons,
     path: `/worlds/${current.worldId}`,
-  };
-}
-
-function getPhaseInfo(): { name: string; unitLabel: string } {
-  const currentSound = getCurrentPhonicsSound();
-  if (!currentSound) {
-    const phase = PHASES[0];
-    return {
-      name: phase?.name || 'Little Ears',
-      unitLabel: `${phase?.name || 'Little Ears'} -- Unit 1`,
-    };
-  }
-  const phaseIdx = currentSound.group <= 3 ? 0 : currentSound.group <= 5 ? 1 : currentSound.group <= 6 ? 2 : 3;
-  const phase = PHASES[phaseIdx] || PHASES[0];
-  return {
-    name: phase?.name || 'Little Ears',
-    unitLabel: `${phase?.name || 'Little Ears'} -- Group ${currentSound.group}`,
   };
 }
 
@@ -195,23 +174,15 @@ export default function Dashboard() {
   const learnedCount = stats.wordsLearned ?? 0;
 
   const [lesson, setLesson] = useState(() => getCurrentLessonData(userId));
-  const [dueWords, setDueWords] = useState(() => getDueWords());
-  const [todayMin, setTodayMin] = useState(() => getTodayMinutes(user?.uid));
 
   useEffect(() => {
     const onFocus = () => {
       setLesson(getCurrentLessonData(userId));
-      setDueWords(getDueWords());
-      setTodayMin(getTodayMinutes(userId));
       setLessonDone(isDailyLessonCompletedToday(userId));
     };
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
   }, [userId, today]);
-
-  const lessonProgress = Math.round((lesson.currentLesson / lesson.totalLessons) * 100);
-  const phaseInfo = useMemo(() => getPhaseInfo(), []);
-  const xpProgress = getXPProgress();
 
   const recentBadges = useMemo(() => {
     return stats.badges
@@ -220,13 +191,6 @@ export default function Dashboard() {
       .map((id) => allBadges.find((b) => b.id === id) || ALL_BADGES.find((b) => b.id === id))
       .filter(Boolean);
   }, [stats.badges, allBadges]);
-
-  // Suppress unused var warnings
-  void dueWords;
-  void xpProgress;
-  void todayMin;
-  void lessonProgress;
-  void phaseInfo;
 
   const wod = getWordOfTheDay();
 

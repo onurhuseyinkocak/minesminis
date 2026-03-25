@@ -25,6 +25,7 @@ import {
     Type
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { setAdminPassword, clearAdminPassword } from '../../utils/adminSession';
 import AdminDashboard from './AdminDashboard';
 import AdminUsersManager from './AdminUsersManager';
 import AdminContentManager from './AdminContentManager';
@@ -107,7 +108,7 @@ function AdminLayout() {
             });
             if (res.ok) {
                 sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-                sessionStorage.setItem('admin_pw', password.trim());
+                setAdminPassword(password.trim());
                 setIsAdmin(true);
                 setPassword('');
             } else {
@@ -120,7 +121,7 @@ function AdminLayout() {
 
     const handleLogout = () => {
         sessionStorage.removeItem(ADMIN_SESSION_KEY);
-        sessionStorage.removeItem('admin_pw');
+        clearAdminPassword();
         setIsAdmin(false);
         setPassword('');
         signOut();

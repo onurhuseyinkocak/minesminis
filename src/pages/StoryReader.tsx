@@ -313,7 +313,7 @@ export default function StoryReader() {
               <div className="story-reader__vocab-list">
                 {(currentScene.vocabulary || (sceneIndex === 0 ? story?.vocabulary : []) || []).map((v, i) => (
                   <div key={i} className="story-reader__vocab-item">
-                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
+                    <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-display font-bold">{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
                     <span className="story-reader__vocab-word">{v.word}</span>
                     {(v.word_tr || v.turkish) && (
                       <span className="story-reader__vocab-tr">— {v.word_tr || v.turkish}</span>
@@ -348,7 +348,7 @@ export default function StoryReader() {
       {showCompletion && (
         <div className="story-reader__completion">
           <div className="story-reader__completion-confetti" aria-hidden="true">
-            <BookOpen size={48} style={{ color: '#E8A317' }} />
+            <BookOpen size={48} className="text-gold-500" />
           </div>
           <h2 className="story-reader__completion-title">
             {lang === 'tr' ? 'Hikaye Bitti!' : 'Story Complete!'}
@@ -391,7 +391,7 @@ export default function StoryReader() {
                 <div className="story-reader__completion-vocab-list">
                   {unique.map((v, i) => (
                     <div key={i} className="story-reader__completion-vocab-chip">
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
+                      <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-display font-bold">{v.word?.charAt(0).toUpperCase() ?? '?'}</div>
                       <strong>{v.word}</strong>
                       {(v.word_tr || v.turkish) && (
                         <span>— {v.word_tr || v.turkish}</span>

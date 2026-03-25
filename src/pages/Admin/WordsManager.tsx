@@ -5,6 +5,7 @@ import { wordStore } from '../../data/wordStore';
 import { adminFetch } from '../../utils/adminApi';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import './WordsManager.css';
 
 function WordsManager() {
     const [words, setWords] = useState<KidsWord[]>([]);
@@ -240,18 +241,17 @@ function WordsManager() {
                 <div className="table-header">
                     <h2>{filteredWords.length} Kelime</h2>
                     <div className="table-actions">
-                        <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                        <div className="adm-search-wrap">
+                            <Search size={18} className="adm-search-icon" />
                             <input
                                 type="text"
                                 placeholder="Kelime ara..."
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                                className="search-input"
-                                style={{ paddingLeft: '40px' }}
+                                className="search-input adm-search-input"
                             />
                         </div>
-                        <button className="add-btn" style={{ background: '#10b981' }} onClick={exportWords}>
+                        <button className="add-btn adm-export-btn" onClick={exportWords}>
                             <Download size={18} />
                             Dışa Aktar
                         </button>
@@ -274,7 +274,7 @@ function WordsManager() {
                     ))}
                 </div>
 
-                <div className="filter-chips" style={{ paddingTop: 0 }}>
+                <div className="filter-chips adm-filter-chips-dense">
                     {categories.slice(0, 10).map(cat => (
                         <button
                             key={cat}
@@ -285,7 +285,7 @@ function WordsManager() {
                         </button>
                     ))}
                     {categories.length > 10 && (
-                        <span style={{ color: '#64748b', fontSize: '0.8rem' }}>+{categories.length - 10} daha...</span>
+                        <span className="adm-cat-overflow">+{categories.length - 10} daha...</span>
                     )}
                 </div>
 
@@ -303,7 +303,7 @@ function WordsManager() {
                     <tbody>
                         {paginatedWords.map(word => (
                             <tr key={word.word}>
-                                <td style={{ fontSize: '1.5rem' }}>{word.emoji}</td>
+                                <td className="adm-word-emoji">{word.emoji}</td>
                                 <td><strong>{word.word}</strong></td>
                                 <td>{word.turkish}</td>
                                 <td>{word.category}</td>
@@ -390,13 +390,12 @@ function WordsManager() {
                             <div className="modal-body">
                                 <div className="form-group">
                                     <label>İngilizce Kelime</label>
-                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                    <div className="adm-enrich-row">
                                         <input
                                             type="text"
                                             value={formData.word}
                                             onChange={(e) => setFormData({ ...formData, word: e.target.value })}
                                             placeholder="Örn: apple"
-                                            style={{ flex: 1 }}
                                             required
                                         />
                                         <button type="button" className="cancel-btn" onClick={fetchWordEnrich} disabled={enriching} style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Otomatik doldur">
@@ -404,7 +403,7 @@ function WordsManager() {
                                             {enriching ? '...' : 'Otomatik Doldur'}
                                         </button>
                                     </div>
-                                    <small style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Kelime yazıp tıklayın — Türkçe, emoji, örnek cümle otomatik gelir. İsterseniz değiştirebilirsiniz.</small>
+                                    <small className="adm-enrich-hint">Kelime yazıp tıklayın — Türkçe, emoji, örnek cümle otomatik gelir. İsterseniz değiştirebilirsiniz.</small>
                                 </div>
 
                                 <div className="form-group">
@@ -425,7 +424,7 @@ function WordsManager() {
                                         value={formData.emoji}
                                         onChange={(e) => setFormData({ ...formData, emoji: e.target.value })}
                                         placeholder="🍎"
-                                        style={{ width: '80px', fontSize: '1.5rem', textAlign: 'center' }}
+                                        className="adm-emoji-input"
                                     />
                                 </div>
 

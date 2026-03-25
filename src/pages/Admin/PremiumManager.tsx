@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Crown, Users, CreditCard, TrendingUp, Calendar, Gift, Trash2, Plus, X, Search } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import './PremiumManager.css';
 
 interface PremiumUser {
     id: string;
@@ -225,29 +226,29 @@ function PremiumManager() {
             </div>
 
             {/* Stats Cards */}
-            <div className="stats-grid" style={{ marginBottom: '1.5rem' }}>
-                <div className="stat-card" style={{ '--stat-color': '#f59e0b', '--stat-bg': '#fffbeb' } as React.CSSProperties}>
+            <div className="stats-grid adm-stats-mb">
+                <div className="stat-card adm-stat-amber">
                     <div className="stat-icon"><Crown size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{premiumUsers.length}</span>
                         <span className="stat-label">Premium Üye</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#10b981', '--stat-bg': '#ecfdf5' } as React.CSSProperties}>
+                <div className="stat-card adm-stat-green">
                     <div className="stat-icon"><TrendingUp size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">₺{totalRevenue.toLocaleString()}</span>
                         <span className="stat-label">Tahmini Gelir</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#8b5cf6', '--stat-bg': '#f5f3ff' } as React.CSSProperties}>
+                <div className="stat-card adm-stat-violet">
                     <div className="stat-icon"><Gift size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{lifetimeMembers}</span>
                         <span className="stat-label">Ömür Boyu Üye</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#ef4444', '--stat-bg': '#fef2f2' } as React.CSSProperties}>
+                <div className="stat-card adm-stat-red">
                     <div className="stat-icon"><Calendar size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{expiringThisMonth}</span>
@@ -257,7 +258,7 @@ function PremiumManager() {
             </div>
 
             {/* Tabs */}
-            <div className="filter-chips" style={{ marginBottom: '1rem' }}>
+            <div className="filter-chips adm-tabs">
                 <button
                     className={`filter-chip ${activeTab === 'users' ? 'active' : ''}`}
                     onClick={() => setActiveTab('users')}
@@ -278,15 +279,14 @@ function PremiumManager() {
                     <div className="table-header">
                         <h2>{filteredUsers.length} Premium Üye</h2>
                         <div className="table-actions">
-                            <div style={{ position: 'relative' }}>
-                                <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                            <div className="adm-search-wrap">
+                                <Search size={18} className="adm-search-icon" />
                                 <input
                                     type="text"
                                     placeholder="Üye ara..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="search-input"
-                                    style={{ paddingLeft: '40px' }}
+                                    className="search-input adm-search-input"
                                 />
                             </div>
                         </div>
@@ -315,41 +315,31 @@ function PremiumManager() {
                                 return (
                                     <tr key={user.id}>
                                         <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div className="adm-user-row">
                                                 {(user.settings?.avatar_emoji as string) ? (
-                                                    <span style={{ fontSize: '1.5rem' }}>{user.settings.avatar_emoji as string}</span>
+                                                    <span className="adm-avatar-emoji">{user.settings.avatar_emoji as string}</span>
                                                 ) : (
-                                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 14 }}>
+                                                    <div className="adm-avatar-circle">
                                                         {(user.display_name || 'U').charAt(0).toUpperCase()}
                                                     </div>
                                                 )}
                                                 <strong>{user.display_name}</strong>
                                             </div>
                                         </td>
-                                        <td style={{ color: '#64748b' }}>{user.email}</td>
+                                        <td className="adm-cell-muted">{user.email}</td>
                                         <td>
-                                            <span style={{
-                                                background: '#fef3c7',
-                                                color: '#d97706',
-                                                padding: '0.25rem 0.75rem',
-                                                borderRadius: '100px',
-                                                fontSize: '0.75rem',
-                                                fontWeight: 600
-                                            }}>
+                                            <span className="adm-badge-premium">
                                                 {user.premium_plan}
                                             </span>
                                         </td>
                                         <td>{getPremiumUntil(user) ? new Date(getPremiumUntil(user)!).toLocaleDateString('tr-TR') : '-'}</td>
                                         <td>
-                                            <span style={{
-                                                color: isExpired ? '#ef4444' : isExpiringSoon ? '#f59e0b' : '#22c55e',
-                                                fontWeight: 600
-                                            }}>
+                                            <span className={isExpired ? 'adm-expiry-expired' : isExpiringSoon ? 'adm-expiry-soon' : 'adm-expiry-ok'}>
                                                 {isExpired ? 'Süresi Doldu' : `${daysRemaining} gün`}
                                             </span>
                                         </td>
                                         <td>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <div className="adm-action-row">
                                                 <select
                                                     onChange={(e) => {
                                                         if (e.target.value) {
@@ -357,13 +347,7 @@ function PremiumManager() {
                                                             e.target.value = '';
                                                         }
                                                     }}
-                                                    style={{
-                                                        padding: '0.4rem',
-                                                        borderRadius: '6px',
-                                                        border: '1px solid #e2e8f0',
-                                                        fontSize: '0.8rem',
-                                                        cursor: 'pointer'
-                                                    }}
+                                                    className="adm-extend-select"
                                                     defaultValue=""
                                                 >
                                                     <option value="" disabled>Uzat</option>
@@ -411,52 +395,33 @@ function PremiumManager() {
                         </button>
                     </div>
 
-                    <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+                    <div className="adm-plans-grid">
                         {plans.map(plan => (
                             <div
                                 key={plan.id}
-                                style={{
-                                    background: plan.is_popular ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : 'white',
-                                    border: plan.is_popular ? '2px solid #f59e0b' : '1px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    padding: '1.5rem',
-                                    position: 'relative'
-                                }}
+                                className={`adm-plan-card${plan.is_popular ? ' adm-plan-card--popular' : ''}`}
                             >
                                 {plan.is_popular && (
-                                    <span style={{
-                                        position: 'absolute',
-                                        top: '-10px',
-                                        right: '10px',
-                                        background: '#f59e0b',
-                                        color: 'white',
-                                        padding: '0.25rem 0.75rem',
-                                        borderRadius: '100px',
-                                        fontSize: '0.7rem',
-                                        fontWeight: 700
-                                    }}>
-                                        POPÜLER
-                                    </span>
+                                    <span className="adm-plan-popular-badge">POPÜLER</span>
                                 )}
-                                <h3 style={{ margin: '0 0 0.5rem', color: '#1e293b' }}>{plan.name}</h3>
-                                <p style={{ fontSize: '2rem', fontWeight: 700, color: '#6366f1', margin: '0.5rem 0' }}>
+                                <h3 className="adm-plan-title">{plan.name}</h3>
+                                <p className="adm-plan-price">
                                     ₺{plan.price}
-                                    <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 400 }}>
+                                    <span className="adm-plan-price-unit">
                                         /{plan.duration_months === 1 ? 'ay' : plan.duration_months === 12 ? 'yıl' : `${plan.duration_months} ay`}
                                     </span>
                                 </p>
-                                <ul style={{ listStyle: 'none', padding: 0, margin: '1rem 0' }}>
+                                <ul className="adm-plan-features">
                                     {plan.features.map((feature, i) => (
-                                        <li key={i} style={{ padding: '0.25rem 0', color: '#475569', fontSize: '0.875rem' }}>
+                                        <li key={i} className="adm-plan-feature">
                                             ✓ {feature}
                                         </li>
                                     ))}
                                 </ul>
-                                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                                <div className="adm-plan-actions">
                                     <button
-                                        className="edit-btn"
+                                        className="edit-btn adm-plan-edit-btn"
                                         onClick={() => openEditPlanModal(plan)}
-                                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                                     >
                                         Düzenle
                                     </button>
@@ -533,7 +498,7 @@ function PremiumManager() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <label className="adm-check-label" style={{ cursor: 'pointer' }}>
                                         <input
                                             type="checkbox"
                                             checked={planFormData.is_popular}

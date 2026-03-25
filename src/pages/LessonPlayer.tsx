@@ -218,17 +218,13 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
   if (!word) {
     // For phonics activities without words, show description and auto-complete
     return (
-      <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <p style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
+      <div className="text-center p-8">
+        <p className="text-[1.1rem] text-[var(--text-primary)] mb-4">
           {activity.instructions || t('lesson.noWordsToReview')}
         </p>
         <button
           onClick={() => onComplete(1, 1)}
-          style={{
-            background: 'var(--primary)', color: 'white', border: 'none',
-            borderRadius: 12, padding: '12px 32px', fontSize: '1rem',
-            fontWeight: 700, cursor: 'pointer',
-          }}
+          className="bg-primary-500 text-white border-none rounded-xl px-8 py-3 text-base font-bold cursor-pointer"
         >
           {t('lesson.doneNext')}
         </button>
@@ -238,108 +234,61 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
 
   return (
     <div className="fallback-activity">
-      <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+      <p className="text-center text-[var(--text-secondary)] mb-2 text-sm">
         {activity.instructions}
       </p>
-      <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', marginBottom: '1rem', fontSize: '0.8rem' }}>
+      <p className="text-center text-[var(--text-tertiary)] mb-4 text-xs">
         {t('lesson.card')} {currentCard + 1} {t('lesson.of')} {words.length}
       </p>
 
       <div
         onClick={handleFlip}
-        style={{
-          background: 'var(--bg-card)',
-          borderRadius: 'var(--radius-md)',
-          padding: '2rem',
-          textAlign: 'center',
-          cursor: 'pointer',
-          minHeight: '200px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '0.75rem',
-          boxShadow: 'var(--shadow-sm)',
-          border: '2px solid var(--border-light)',
-          transition: 'transform 0.2s',
-        }}
+        className="bg-[var(--bg-card)] rounded-[var(--radius-md)] p-8 text-center cursor-pointer min-h-[200px] flex flex-col items-center justify-center gap-3 shadow-[var(--shadow-sm)] border-2 border-[var(--border-light)] transition-transform duration-200"
       >
-        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontWeight: 900, margin: '0 auto' }}>{word.english.charAt(0).toUpperCase()}</div>
-        <span style={{ fontSize: '2rem', fontWeight: 700 }}>{word.english}</span>
+        <div className="w-16 h-16 rounded-full bg-primary-500 text-white flex items-center justify-center text-[28px] font-black mx-auto">{word.english.charAt(0).toUpperCase()}</div>
+        <span className="text-[2rem] font-bold">{word.english}</span>
 
         {flipped ? (
           <>
-            <span style={{ fontSize: '1.4rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>
+            <span className="text-[1.4rem] text-[var(--accent-emerald)] font-semibold">
               {word.turkish}
             </span>
             {word.phonetic && (
-              <span style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', fontStyle: 'italic' }}>
+              <span className="text-sm text-[var(--text-tertiary)] italic">
                 {word.phonetic}
               </span>
             )}
             {word.exampleSentence && (
-              <span style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontStyle: 'italic', marginTop: '0.5rem' }}>
+              <span className="text-base text-[var(--text-secondary)] italic mt-2">
                 "{word.exampleSentence}"
               </span>
             )}
           </>
         ) : (
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)' }}>
+          <span className="text-sm text-[var(--text-tertiary)]">
             {t('lesson.tapToReveal')}
           </span>
         )}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1.5rem' }}>
+      <div className="flex justify-center gap-4 mt-6">
         <button
           onClick={(e) => { e.stopPropagation(); handleFlip(); }}
-          style={{
-            padding: '0.75rem 1.5rem',
-            borderRadius: '0.75rem',
-            border: '2px solid var(--border-light)',
-            background: 'var(--bg-card)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '1rem',
-          }}
+          className="py-3 px-6 rounded-xl border-2 border-[var(--border-light)] bg-[var(--bg-card)] cursor-pointer flex items-center gap-2 text-base"
         >
           {flipped ? <EyeOff size={18} /> : <Eye size={18} />}
           {flipped ? t('lesson.hide') : t('lesson.reveal')}
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); speakWord(); }}
-          style={{
-            padding: '0.75rem 1.5rem',
-            borderRadius: '0.75rem',
-            border: '2px solid var(--border-light)',
-            background: 'var(--bg-card)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '1rem',
-          }}
+          className="py-3 px-6 rounded-xl border-2 border-[var(--border-light)] bg-[var(--bg-card)] cursor-pointer flex items-center gap-2 text-base"
         >
           <Volume2 size={18} />
           {t('lesson.listen')}
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); handleNextCard(); }}
-          style={{
-            padding: '0.75rem 1.5rem',
-            borderRadius: '0.75rem',
-            border: 'none',
-            background: 'var(--primary)',
-            color: 'var(--text-on-primary)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '1rem',
-            fontWeight: 600,
-          }}
+          className="py-3 px-6 rounded-xl border-none bg-primary-500 text-[var(--text-on-primary)] cursor-pointer flex items-center gap-2 text-base font-semibold"
         >
           {currentCard < words.length - 1 ? t('lesson.next') : t('lesson.done')}
           <ChevronRight size={18} />
@@ -658,7 +607,7 @@ const LessonPlayer = () => {
           animate="visible"
         >
           <div className="lesson-complete__confetti" aria-hidden="true">
-            <Trophy size={48} color="#E8A317" />
+            <Trophy size={48} className="text-gold-500" />
           </div>
           <div className="lesson-complete__trophy">
             <Trophy size={64} />
@@ -695,7 +644,7 @@ const LessonPlayer = () => {
           </div>
 
           <div className="lesson-complete__mimi">
-            <span className="lesson-complete__mimi-avatar"><Star size={32} fill="#E8A317" color="#E8A317" /></span>
+            <span className="lesson-complete__mimi-avatar"><Star size={32} className="text-gold-500 fill-gold-500" /></span>
             <p>{t('lesson.iKnewYouCouldDoIt')}</p>
           </div>
 
@@ -841,7 +790,7 @@ const LessonPlayer = () => {
 
         {/* Mimi Encouragement */}
         <div className="lesson-player-mimi">
-          <span className="lesson-player-mimi__avatar"><Star size={20} fill="#E8A317" color="#E8A317" /></span>
+          <span className="lesson-player-mimi__avatar"><Star size={20} className="text-gold-500 fill-gold-500" /></span>
           <div className="lesson-player-mimi__bubble">
             <Star size={16} /> {t(encouragementKey)}
           </div>

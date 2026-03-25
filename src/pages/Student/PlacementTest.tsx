@@ -273,15 +273,15 @@ function renderPicture(key: string) {
 // ─── Color constants ───────────────────────────────────────────────────────
 
 const C: Record<string, string> = {
-  bg: '#0C0F1A',
-  card: '#1C2236',
-  cardAlt: '#151929',
-  text: '#F1F5F9',
-  textSec: '#94A3B8',
-  border: '#334155',
+  bg: '#FFF8F0',
+  card: '#FFFFFF',
+  cardAlt: '#F8FAFC',
+  text: '#1a1a2e',
+  textSec: '#475569',
+  border: '#E2E8F0',
   correct: '#22C55E',
   wrong: '#F59E0B',
-  primary: '#E8A317',
+  primary: '#FF6B35',
 };
 
 const SOUND_COLORS = ['#EF4444', '#3B82F6', '#22C55E'];
@@ -455,7 +455,7 @@ function PlacementTest() {
             gap: '0.5rem',
             padding: '0.6rem 1.2rem',
             borderRadius: '2rem',
-            backgroundColor: 'rgba(232,163,23,0.15)',
+            backgroundColor: 'rgba(255,107,53,0.10)',
             border: `1px solid ${C.primary}`,
             alignSelf: 'center',
           }}>
@@ -890,8 +890,10 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '1.25rem',
     padding: '1.5rem',
     background: C.card,
+    border: `1px solid ${C.border}`,
     borderRadius: '1.5rem',
     width: '100%',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
   },
   qTitle: {
     textAlign: 'center' as const,
@@ -941,9 +943,11 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.75rem',
     padding: '2.5rem',
     background: C.card,
+    border: `1px solid ${C.border}`,
     borderRadius: '1.5rem',
     width: '100%',
     textAlign: 'center' as const,
+    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
   },
   goButton: {
     minHeight: 80,
@@ -951,7 +955,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: '1.5rem',
     border: 'none',
     backgroundColor: C.primary,
-    color: '#0C0F1A',
+    color: '#FFFFFF',
     fontSize: '2rem',
     fontWeight: 800,
     cursor: 'pointer',

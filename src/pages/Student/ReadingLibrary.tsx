@@ -87,16 +87,34 @@ const GROUP_NAMES: Record<number, { en: string; tr: string; sounds: string }> = 
   7: { en: 'Final Sounds', tr: 'Son Sesler', sounds: 'qu, ou, oi, ue, er, ar' },
 };
 
+// Shelf wood colors as CSS custom properties / Tailwind-compatible hex values
+// Using warm-brown palette mapped to Tailwind amber/stone tones
 const SHELF_COLORS = [
-  '#8B5E3C', '#7A5230', '#9B6B4A', '#6E4528',
-  '#8B5E3C', '#7A5230', '#9B6B4A',
+  '#92400E', // amber-800
+  '#78350F', // amber-900
+  '#9A3412', // orange-800  (closest warm brown)
+  '#7C2D12', // orange-900
+  '#92400E',
+  '#78350F',
+  '#9A3412',
 ];
 
+// Book spine colors as Tailwind color values
 const BOOK_SPINE_COLORS = [
-  '#EF4444', '#3B82F6', '#10B981', '#F59E0B',
-  '#8B5CF6', '#EC4899', '#14B8A6', '#F97316',
-  '#6366F1', '#84CC16', '#E11D48', '#0EA5E9',
-  '#A855F7', '#22C55E',
+  '#EF4444', // red-500
+  '#3B82F6', // blue-500
+  '#10B981', // emerald-500
+  '#F59E0B', // amber-500
+  '#8B5CF6', // violet-500
+  '#EC4899', // pink-500
+  '#14B8A6', // teal-500
+  '#F97316', // orange-500
+  '#6366F1', // indigo-500
+  '#84CC16', // lime-500
+  '#E11D48', // rose-600
+  '#0EA5E9', // sky-500
+  '#A855F7', // purple-500
+  '#22C55E', // green-500
 ];
 
 // --- MAIN COMPONENT ---
@@ -196,7 +214,7 @@ const ReadingLibrary: React.FC = () => {
                 <span style={styles.shelfGroupNum}>Group {group}</span>
                 <span style={styles.shelfGroupName}>{groupInfo.en}</span>
                 <span style={styles.shelfSounds}>{groupInfo.sounds}</span>
-                {isLocked && <Lock size={14} style={{ color: '#9CA3AF', marginLeft: 4 }} />}
+                {isLocked && <Lock size={14} style={{ color: 'var(--text-muted, #9CA3AF)', marginLeft: 4 }} />}
               </div>
 
               {/* Shelf with books */}
@@ -227,7 +245,20 @@ const ReadingLibrary: React.FC = () => {
                         disabled={isLocked}
                         aria-label={isLocked ? `${book.title} (locked)` : book.title}
                       >
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900, color: '#fff' }}>{book.title.charAt(0).toUpperCase()}</div>
+                        <div style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          background: 'rgba(255,255,255,0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 14,
+                          fontWeight: 900,
+                          color: '#fff',
+                        }}>
+                          {book.title.charAt(0).toUpperCase()}
+                        </div>
                         <span style={styles.bookSpineTitle}>{book.title}</span>
                         {bookStars > 0 && (
                           <div style={styles.bookStars}>
@@ -236,7 +267,7 @@ const ReadingLibrary: React.FC = () => {
                                 key={s}
                                 size={12}
                                 fill={s <= bookStars ? '#F59E0B' : 'none'}
-                                stroke={s <= bookStars ? '#F59E0B' : '#D1D5DB'}
+                                stroke={s <= bookStars ? '#F59E0B' : 'var(--border-light, #D1D5DB)'}
                               />
                             ))}
                           </div>
@@ -271,7 +302,6 @@ const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
     backgroundColor: '#FFFFFF',
-    fontFamily: 'Nunito, sans-serif',
     paddingBottom: 80,
   },
   header: {
@@ -279,8 +309,8 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: 12,
     padding: '16px 20px',
-    backgroundColor: '#F8F9FA',
-    borderBottom: '1px solid #E5E7EB',
+    backgroundColor: 'var(--bg-elevated, #F8F9FA)',
+    borderBottom: '1px solid var(--border-light, #E5E7EB)',
     position: 'sticky',
     top: 0,
     zIndex: 10,
@@ -289,7 +319,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: 40,
     height: 40,
     borderRadius: '50%',
-    border: '1px solid #E5E7EB',
+    border: '1px solid var(--border-light, #E5E7EB)',
     backgroundColor: '#ffffff',
     cursor: 'pointer',
     display: 'flex',
@@ -317,7 +347,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '6px 14px',
     borderRadius: 20,
     backgroundColor: '#F0FDF4',
-    color: '#1A6B5A',
+    color: 'var(--color-emerald-800, #065F46)',
     fontSize: 14,
     fontWeight: 700,
   },
@@ -342,7 +372,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 12,
     fontWeight: 800,
     color: '#ffffff',
-    backgroundColor: '#1A6B5A',
+    backgroundColor: 'var(--color-emerald-800, #065F46)',
     padding: '2px 8px',
     borderRadius: 8,
   },
@@ -354,7 +384,7 @@ const styles: Record<string, React.CSSProperties> = {
   shelfSounds: {
     fontSize: 12,
     fontWeight: 600,
-    color: '#9CA3AF',
+    color: 'var(--text-muted, #9CA3AF)',
     fontStyle: 'italic',
   },
   shelf: {
@@ -395,14 +425,10 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 6,
     padding: '12px 6px',
     boxShadow: '2px 0 4px rgba(0,0,0,0.15), -1px 0 2px rgba(0,0,0,0.08)',
-    fontFamily: 'Nunito, sans-serif',
     transition: 'transform 0.2s ease',
   },
-  bookSpineEmoji: {
-    fontSize: 28,
-  },
   bookSpineTitle: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: 800,
     color: '#ffffff',
     textAlign: 'center',

@@ -3,11 +3,6 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Music, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Badge } from '../../components/ui';
-
-function getSongColor(g: number): string {
-  const colors = ['#FF6B35', '#7C3AED', '#22C55E', '#3B82F6', '#F59E0B', '#EC4899', '#14B8A6'];
-  return colors[(g - 1) % colors.length];
-}
 import { SongPlayer } from '../../components/phonics/SongPlayer';
 import { PHONICS_SONGS } from '../../data/phonicsSongs';
 import { PHONICS_GROUPS } from '../../data/phonics';
@@ -15,6 +10,21 @@ import type { PhonicsSong } from '../../data/phonicsSongs';
 import { LS_MASTERED_SOUNDS, LS_SONG_PLAYS } from '../../config/storageKeys';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
+
+// Returns a Tailwind background color class for each group (1-based)
+const SONG_GROUP_COLORS = [
+  '#FF6B35', // orange-500-ish
+  '#7C3AED', // violet-600
+  '#22C55E', // green-500
+  '#3B82F6', // blue-500
+  '#F59E0B', // amber-500
+  '#EC4899', // pink-500
+  '#14B8A6', // teal-500
+];
+
+function getSongColor(g: number): string {
+  return SONG_GROUP_COLORS[(g - 1) % SONG_GROUP_COLORS.length];
+}
 
 function getMasteredSounds(): string[] {
   try {
@@ -174,11 +184,11 @@ export default function SongsPage() {
             >
               {!isUnlocked && (
                 <div style={styles.lockOverlay}>
-                  <Lock size={24} color="#999" />
+                  <Lock size={24} color="var(--text-muted, #999)" />
                 </div>
               )}
 
-              <div style={{...styles.songGroupBadge, background: getSongColor(song.groupNumber)}}>
+              <div style={{ ...styles.songGroupBadge, background: getSongColor(song.groupNumber) }}>
                 {song.groupNumber}
               </div>
 
@@ -209,7 +219,7 @@ export default function SongsPage() {
                           key={n}
                           size={14}
                           fill={n <= starCount ? '#E8A317' : 'none'}
-                          color={n <= starCount ? '#E8A317' : '#d1d5db'}
+                          color={n <= starCount ? '#E8A317' : 'var(--border, #d1d5db)'}
                         />
                       ))}
                     </div>
@@ -247,7 +257,6 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1rem 1.5rem 2rem',
     maxWidth: 600,
     margin: '0 auto',
-    fontFamily: 'Nunito, sans-serif',
   },
   header: {
     display: 'flex',
@@ -258,7 +267,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    color: '#1A6B5A',
+    color: 'var(--color-emerald-800, #065F46)',
     padding: '0.25rem',
     display: 'flex',
     alignItems: 'center',
@@ -266,12 +275,12 @@ const styles: Record<string, React.CSSProperties> = {
   title: {
     fontSize: '1.5rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: 'var(--color-emerald-800, #065F46)',
     margin: 0,
   },
   subtitle: {
     fontSize: '0.85rem',
-    color: '#888',
+    color: 'var(--text-muted, #888)',
     margin: 0,
   },
   grid: {
@@ -286,10 +295,9 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.75rem',
     padding: '1rem',
     borderRadius: '1rem',
-    border: '2px solid #E5E7EB',
+    border: '2px solid var(--border-light, #E5E7EB)',
     backgroundColor: '#ffffff',
     textAlign: 'left' as const,
-    fontFamily: 'Nunito, sans-serif',
     transition: 'all 0.2s',
     boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
   },
@@ -320,12 +328,12 @@ const styles: Record<string, React.CSSProperties> = {
   songTitle: {
     fontSize: '1rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: 'var(--color-emerald-800, #065F46)',
     margin: 0,
   },
   songTitleTr: {
     fontSize: '0.75rem',
-    color: '#999',
+    color: 'var(--text-muted, #999)',
     fontStyle: 'italic',
     margin: 0,
   },
@@ -337,12 +345,12 @@ const styles: Record<string, React.CSSProperties> = {
   },
   songStyle: {
     fontSize: '0.75rem',
-    color: '#888',
+    color: 'var(--text-muted, #888)',
     textTransform: 'capitalize' as const,
   },
   soundsList: {
     fontSize: '0.75rem',
-    color: '#aaa',
+    color: 'var(--text-muted, #aaa)',
     margin: 0,
     fontFamily: 'monospace',
   },
@@ -358,7 +366,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   playCount: {
     fontSize: '0.7rem',
-    color: '#999',
+    color: 'var(--text-muted, #999)',
   },
   playerWrapper: {
     display: 'flex',
@@ -368,7 +376,6 @@ const styles: Record<string, React.CSSProperties> = {
     maxWidth: 540,
     margin: '0 auto',
     minHeight: '100vh',
-    fontFamily: 'Nunito, sans-serif',
   },
   playerHeader: {
     display: 'flex',
@@ -378,7 +385,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0.75rem 1rem',
     background: '#F1F5F9',
     borderRadius: '0.75rem',
-    border: '1px solid #E5E7EB',
+    border: '1px solid var(--border-light, #E5E7EB)',
   },
   infoText: {
     fontSize: '0.8rem',

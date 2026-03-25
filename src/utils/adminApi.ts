@@ -3,18 +3,20 @@
  */
 import { auth } from '../config/firebase';
 import { getApiBase } from './apiBase';
+import { getAdminPassword } from './adminSession';
 
 const ADMIN_SESSION_KEY = 'admin_session';
 
 /**
  * Returns headers for admin API: şifre ile giriş yapıldıysa X-Admin-Password, yoksa Bearer token.
+ * Password is read from in-memory store only — never from sessionStorage.
  */
 export async function getAdminAuthHeaders(): Promise<HeadersInit> {
   if (typeof window !== 'undefined' && sessionStorage.getItem(ADMIN_SESSION_KEY) === '1') {
-    const storedPw = sessionStorage.getItem('admin_pw') || '';
+    const pw = getAdminPassword();
     return {
       'Content-Type': 'application/json',
-      'X-Admin-Password': storedPw,
+      'X-Admin-Password': pw,
     };
   }
   const user = auth.currentUser;

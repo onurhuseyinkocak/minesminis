@@ -19,6 +19,7 @@ import {
   initGardenFromMasteredSounds,
 } from '../../services/gardenService';
 import type { GardenPlantState } from '../../services/gardenService';
+import './LearningGarden.css';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -34,7 +35,7 @@ interface SelectedPlantInfo {
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function PlantStageIcon({ stageName, color, size = 20 }: { stageName: string; color: string; size?: number }) {
-  if (stageName === 'seed') return <Sprout size={size} color="#9CA3AF" />;
+  if (stageName === 'seed') return <Sprout size={size} color="var(--color-gray-400, #9CA3AF)" />;
   if (stageName === 'sprout') return <Sprout size={size} color={color} />;
   if (stageName === 'growing') return <Leaf size={size} color={color} />;
   if (stageName === 'blooming') return <Flower2 size={size} color={color} />;
@@ -168,7 +169,7 @@ function LearningGarden() {
           </p>
         </div>
         <div style={styles.waterBadge}>
-          <Droplets size={18} color="#3B82F6" />
+          <Droplets size={18} color="var(--color-blue-500, #3B82F6)" />
           <span style={styles.waterCount}>{waterDrops}</span>
         </div>
       </div>
@@ -176,17 +177,17 @@ function LearningGarden() {
       {/* Stats bar */}
       <div style={styles.statsBar}>
         <div style={styles.statItem}>
-          <Flower2 size={16} color="#EC4899" />
+          <Flower2 size={16} color="var(--color-pink-500, #EC4899)" />
           <span style={styles.statValue}>{stats.blooming}</span>
           <span style={styles.statLabel}>Blooming</span>
         </div>
         <div style={styles.statItem}>
-          <Sprout size={16} color="#22C55E" />
+          <Sprout size={16} color="var(--color-green-500, #22C55E)" />
           <span style={styles.statValue}>{stats.growing}</span>
           <span style={styles.statLabel}>Growing</span>
         </div>
         <div style={styles.statItem}>
-          <TreePine size={16} color="#A8A29E" />
+          <TreePine size={16} color="var(--color-stone-400, #A8A29E)" />
           <span style={styles.statValue}>{42 - stats.total + stats.seeds}</span>
           <span style={styles.statLabel}>Seeds</span>
         </div>
@@ -220,8 +221,8 @@ function LearningGarden() {
                       onClick={() => handlePlantTap(plant)}
                       style={{
                         ...styles.plantCell,
-                        borderColor: isBlooming ? plant.color : isStarted ? '#D1D5DB' : '#E5E7EB',
-                        backgroundColor: isBlooming ? `${plant.color}15` : '#F8F9FA',
+                        borderColor: isBlooming ? plant.color : isStarted ? '#D1D5DB' : 'var(--border-light, #E5E7EB)',
+                        backgroundColor: isBlooming ? `${plant.color}15` : 'var(--bg-elevated, #F8F9FA)',
                       }}
                       whileTap={{ scale: 0.9 }}
                       animate={
@@ -242,7 +243,7 @@ function LearningGarden() {
                             transition={{ duration: 1 }}
                             style={styles.waterDrop}
                           >
-                            <Droplets size={16} color="#3B82F6" />
+                            <Droplets size={16} color="var(--color-blue-500, #3B82F6)" />
                           </motion.span>
                         )}
                       </AnimatePresence>
@@ -276,13 +277,13 @@ function LearningGarden() {
                             width: '1.4rem',
                             height: '1.4rem',
                             borderRadius: '50%',
-                            background: '#E5E7EB',
-                            border: '2px dashed #CBD5E1',
+                            background: 'var(--border-light, #E5E7EB)',
+                            border: '2px dashed var(--border, #CBD5E1)',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '0.55rem',
                             fontWeight: 800,
-                            color: '#94A3B8',
+                            color: 'var(--text-muted, #94A3B8)',
                             verticalAlign: 'middle',
                           }}>?</span>
                         )}
@@ -352,13 +353,13 @@ function LearningGarden() {
                     width: '3.5rem',
                     height: '3.5rem',
                     borderRadius: '50%',
-                    background: '#E5E7EB',
-                    border: '3px dashed #CBD5E1',
+                    background: 'var(--border-light, #E5E7EB)',
+                    border: '3px dashed var(--border, #CBD5E1)',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '1.2rem',
                     fontWeight: 800,
-                    color: '#94A3B8',
+                    color: 'var(--text-muted, #94A3B8)',
                     verticalAlign: 'middle',
                   }}>?</span>
                 )}
@@ -411,7 +412,7 @@ function LearningGarden() {
                       <span
                         style={{
                           ...styles.timelineLabel,
-                          color: reached ? '#1A6B5A' : '#A8A29E',
+                          color: reached ? 'var(--color-emerald-800, #065F46)' : 'var(--color-stone-400, #A8A29E)',
                           fontWeight: selectedPlant.stage.name === s.name ? 700 : 400,
                         }}
                       >
@@ -440,7 +441,7 @@ function LearningGarden() {
 
               {/* Watered count */}
               {selectedPlant.waterCount > 0 && (
-                <p style={{ fontSize: '0.8rem', color: '#888', margin: 0, textAlign: 'center' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted, #888)', margin: 0, textAlign: 'center' }}>
                   Watered {selectedPlant.waterCount} time{selectedPlant.waterCount !== 1 ? 's' : ''}
                 </p>
               )}
@@ -453,23 +454,6 @@ function LearningGarden() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* CSS animations injected inline */}
-      <style>{`
-        @keyframes gardenSway {
-          0%, 100% { transform: rotate(0deg); }
-          25% { transform: rotate(-2deg); }
-          75% { transform: rotate(2deg); }
-        }
-        @keyframes gardenSparkle {
-          0%, 100% { opacity: 0.4; transform: scale(0.8); }
-          50% { opacity: 1; transform: scale(1.1); }
-        }
-        @keyframes waterFall {
-          0% { opacity: 1; transform: translateY(-15px); }
-          100% { opacity: 0; transform: translateY(15px); }
-        }
-      `}</style>
     </div>
   );
 }
@@ -480,7 +464,6 @@ const styles: Record<string, React.CSSProperties> = {
   container: {
     minHeight: '100vh',
     background: 'linear-gradient(180deg, rgba(16,185,129,0.05) 0%, rgba(16,185,129,0.08) 50%, rgba(16,185,129,0.1) 100%)',
-    fontFamily: 'Nunito, sans-serif',
     paddingBottom: '2rem',
   },
   header: {
@@ -499,7 +482,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    color: '#1A6B5A',
+    color: 'var(--color-emerald-800, #065F46)',
     padding: '0.25rem',
     display: 'flex',
     alignItems: 'center',
@@ -507,7 +490,7 @@ const styles: Record<string, React.CSSProperties> = {
   title: {
     fontSize: '1.3rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: 'var(--color-emerald-800, #065F46)',
     margin: 0,
     lineHeight: 1.2,
   },
@@ -550,7 +533,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   statLabel: {
     fontSize: '0.75rem',
-    color: '#888',
+    color: 'var(--text-muted, #888)',
     fontWeight: 500,
   },
   gardenArea: {
@@ -573,7 +556,7 @@ const styles: Record<string, React.CSSProperties> = {
   groupLabelText: {
     fontSize: '0.7rem',
     fontWeight: 700,
-    color: '#888',
+    color: 'var(--text-muted, #888)',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.5px',
   },
@@ -591,17 +574,16 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.15rem',
     padding: '0.4rem 0.2rem',
     borderRadius: '0.75rem',
-    border: '2px solid #E5E7EB',
-    background: '#F8F9FA',
+    border: '2px solid var(--border-light, #E5E7EB)',
+    background: 'var(--bg-elevated, #F8F9FA)',
     cursor: 'pointer',
-    fontFamily: 'Nunito, sans-serif',
     aspectRatio: '1',
     minHeight: '60px',
   },
   soundLabel: {
     fontSize: '0.6rem',
     fontWeight: 700,
-    color: '#999',
+    color: 'var(--text-muted, #999)',
     textTransform: 'lowercase' as const,
   },
   sparkle: {
@@ -646,7 +628,7 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: 'center' as const,
     fontSize: '1.2rem',
     fontWeight: 800,
-    color: '#1A6B5A',
+    color: 'var(--color-emerald-800, #065F46)',
     margin: 0,
   },
   modalStage: {
@@ -659,7 +641,7 @@ const styles: Record<string, React.CSSProperties> = {
   masteryBarBg: {
     width: '100%',
     height: '10px',
-    background: '#E5E7EB',
+    background: 'var(--border-light, #E5E7EB)',
     borderRadius: '5px',
     overflow: 'hidden',
   },
@@ -700,11 +682,10 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.5rem',
     padding: '0.6rem 1.2rem',
     borderRadius: '0.75rem',
-    border: '2px solid #3B82F6',
+    border: '2px solid var(--color-blue-500, #3B82F6)',
     background: '#EFF6FF',
     color: '#2563EB',
     fontWeight: 700,
-    fontFamily: 'Nunito, sans-serif',
     fontSize: '0.9rem',
     cursor: 'pointer',
     margin: '0 auto',
@@ -716,7 +697,6 @@ const styles: Record<string, React.CSSProperties> = {
     background: '#F3F4F6',
     color: '#555',
     fontWeight: 700,
-    fontFamily: 'Nunito, sans-serif',
     fontSize: '0.9rem',
     cursor: 'pointer',
     margin: '0 auto',

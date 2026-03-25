@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { Heart, Lock, HeartCrack } from 'lucide-react';
@@ -74,6 +74,12 @@ const Favorites: React.FC = () => {
         <div className="empty-state-icon"><Lock size={48} /></div>
         <h2>Please Sign In</h2>
         <p>Sign in to view and manage your favorite items</p>
+        <Link
+          to="/login"
+          className="inline-block mt-4 px-8 py-3 bg-primary-500 text-white rounded-xl no-underline font-semibold text-base"
+        >
+          Giriş Yap
+        </Link>
       </div>
     );
   }

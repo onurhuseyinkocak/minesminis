@@ -1,0 +1,66 @@
+/* ==========================================================================
+   WORDS MANAGER — MinesMinis Admin
+   ========================================================================== */
+
+/* ── Search icon wrapper ── */
+.adm-search-wrap {
+  position: relative;
+}
+
+.adm-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.adm-search-input {
+  padding-left: 40px;
+}
+
+/* ── Word emoji cell ── */
+.adm-word-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* ── Export button variant ── */
+.adm-export-btn {
+  background: #10b981;
+}
+
+/* ── Category overflow hint ── */
+.adm-cat-overflow {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+/* ── Filter chips secondary row (no top padding) ── */
+.adm-filter-chips-dense {
+  padding-top: 0;
+}
+
+/* ── Enrich / autocomplete row ── */
+.adm-enrich-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.adm-enrich-row input {
+  flex: 1;
+}
+
+.adm-enrich-hint {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+/* ── Emoji input cell ── */
+.adm-emoji-input {
+  width: 80px;
+  font-size: 1.5rem;
+  text-align: center;
+}

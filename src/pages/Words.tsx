@@ -408,7 +408,7 @@ const Words: React.FC = () => {
                               className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                               onClick={() => toggleLearned(word.word)}
                             >
-                              {learnedWords.has(word.word) ? '✓ Learned!' : '✓ I know this!'}
+                              {learnedWords.has(word.word) ? <><Check size={14} /> Learned!</> : <><Check size={14} /> I know this!</>}
                             </button>
                           </div>
 

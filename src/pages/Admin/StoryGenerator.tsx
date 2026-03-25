@@ -350,7 +350,7 @@ export default function StoryGenerator() {
             <p className="story-gen-preview-summary">{generatedStory.summary}</p>
             {generatedStory.title_tr && (
               <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
-                🇹🇷 {generatedStory.title_tr}
+                <span className="story-gen-lang-badge">TR</span> {generatedStory.title_tr}
               </p>
             )}
 

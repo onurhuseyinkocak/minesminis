@@ -1,0 +1,108 @@
+/* ==========================================================================
+   VIDEOS MANAGER — MinesMinis Admin
+   ========================================================================== */
+
+/* ── Search icon wrapper ── */
+.adm-search-wrap {
+  position: relative;
+}
+
+.adm-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.adm-search-input {
+  padding-left: 40px;
+}
+
+/* ── Video thumbnail overlay (play icon) ── */
+.adm-thumb-wrap {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 0;
+}
+
+.adm-thumb-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+
+/* ── Popular badge ── */
+.adm-badge-popular {
+  margin-left: 8px;
+  color: #fbbf24;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ── Video meta subtitle ── */
+.adm-video-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* ── Filter separator ── */
+.adm-filter-sep {
+  margin: 0 0.5rem;
+  color: #cbd5e1;
+  user-select: none;
+}
+
+/* ── Preview modal wide ── */
+.adm-modal-wide {
+  max-width: 800px;
+}
+
+.adm-iframe-wrap {
+  padding: 0;
+}
+
+.adm-iframe-wrap iframe {
+  display: block;
+}
+
+/* ── Badge tokens (grade colors come from gradeInfo) ── */
+.adm-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2em 0.65em;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── YouTube meta fetch row ── */
+.adm-fetch-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.adm-fetch-row input {
+  flex: 1;
+}
+
+.adm-fetch-hint {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+/* ── Checkbox label row ── */
+.adm-check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

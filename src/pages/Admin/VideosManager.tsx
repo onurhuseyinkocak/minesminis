@@ -4,6 +4,7 @@ import { gradeInfo } from '../../data/videosData';
 import { videoStore, type Video } from '../../data/videoStore';
 import { adminFetch, getAdminApiBase } from '../../utils/adminApi';
 import toast from 'react-hot-toast';
+import './VideosManager.css';
 
 function VideosManager() {
     const [videos, setVideos] = useState<Video[]>([]);
@@ -179,15 +180,14 @@ function VideosManager() {
                 <div className="table-header">
                     <h2>{filteredVideos.length} Video</h2>
                     <div className="table-actions">
-                        <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                        <div className="adm-search-wrap">
+                            <Search size={18} className="adm-search-icon" />
                             <input
                                 type="text"
                                 placeholder="Video ara..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="search-input"
-                                style={{ paddingLeft: '40px' }}
+                                className="search-input adm-search-input"
                             />
                         </div>
                         <button className="add-btn" onClick={openAddModal}>
@@ -207,7 +207,7 @@ function VideosManager() {
                             {grade === 'all' ? 'Tümü' : grade}
                         </button>
                     ))}
-                    <span style={{ margin: '0 0.5rem', color: '#cbd5e1' }}>|</span>
+                    <span className="adm-filter-sep">|</span>
                     {types.map(type => (
                         <button
                             key={type}
@@ -235,7 +235,7 @@ function VideosManager() {
                             <tr key={video.id}>
                                 <td>
                                     <div
-                                        style={{ position: 'relative', cursor: 'pointer' }}
+                                        className="adm-thumb-wrap"
                                         onClick={() => setPreviewVideo(video.youtube_id)}
                                     >
                                         <img
@@ -243,21 +243,14 @@ function VideosManager() {
                                             alt={video.title}
                                             className="table-thumbnail"
                                         />
-                                        <Play size={16} style={{
-                                            position: 'absolute',
-                                            top: '50%',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            color: 'white',
-                                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
-                                        }} />
+                                        <Play size={16} className="adm-thumb-play" />
                                     </div>
                                 </td>
                                 <td>
                                     <div>
                                         <strong>{video.title}</strong>
-                                        {video.isPopular && <span style={{ marginLeft: '8px', color: '#fbbf24', fontSize: '0.7rem', fontWeight: 700 }}>POPÜLER</span>}
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{video.description}</div>
+                                        {video.isPopular && <span className="adm-badge-popular">POPÜLER</span>}
+                                        <div className="adm-video-desc">{video.description}</div>
                                     </div>
                                 </td>
                                 <td>
@@ -315,13 +308,12 @@ function VideosManager() {
                             <div className="modal-body">
                                 <div className="form-group">
                                     <label>YouTube Video ID veya URL</label>
-                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                    <div className="adm-fetch-row">
                                         <input
                                             type="text"
                                             value={formData.id}
                                             onChange={(e) => setFormData({ ...formData, id: e.target.value })}
                                             placeholder="XqZsoesa55w veya https://youtube.com/watch?v=..."
-                                            style={{ flex: 1 }}
                                             required
                                         />
                                         <button type="button" className="cancel-btn" onClick={fetchYouTubeMeta} disabled={fetchingMeta} style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Otomatik çek">
@@ -329,7 +321,7 @@ function VideosManager() {
                                             {fetchingMeta ? '...' : 'Otomatik Çek'}
                                         </button>
                                     </div>
-                                    <small style={{ color: '#94a3b8', fontSize: '0.75rem' }}>URL yapıştırıp "Otomatik Çek" ile başlık, açıklama ve süre gelir</small>
+                                    <small className="adm-fetch-hint">URL yapıştırıp "Otomatik Çek" ile başlık, açıklama ve süre gelir</small>
                                 </div>
 
                                 <div className="form-group">
@@ -387,7 +379,7 @@ function VideosManager() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <label className="adm-check-label">
                                         <input
                                             type="checkbox"
                                             checked={formData.isPopular}
@@ -416,9 +408,8 @@ function VideosManager() {
             {previewVideo && (
                 <div className="modal-overlay" onClick={() => setPreviewVideo(null)}>
                     <div
-                        className="modal"
+                        className="modal adm-modal-wide"
                         onClick={e => e.stopPropagation()}
-                        style={{ maxWidth: '800px' }}
                     >
                         <div className="modal-header">
                             <h3>Video Önizleme</h3>
@@ -426,7 +417,7 @@ function VideosManager() {
                                 <X size={20} />
                             </button>
                         </div>
-                        <div style={{ padding: 0 }}>
+                        <div className="adm-iframe-wrap">
                             <iframe
                                 src={`https://www.youtube.com/embed/${previewVideo}`}
                                 width="100%"

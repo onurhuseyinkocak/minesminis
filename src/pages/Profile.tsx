@@ -55,20 +55,11 @@ const Profile: React.FC = () => {
   };
 
   if (!user) return (
-    <div className="profile-loading" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-      <p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Please sign in to view your backpack!</p>
+    <div className="profile-loading text-center px-4 py-12">
+      <p className="text-[1.2rem] mb-4">Please sign in to view your backpack!</p>
       <Link
         to="/login"
-        style={{
-          display: 'inline-block',
-          padding: '0.75rem 2rem',
-          background: 'var(--primary, #6c63ff)',
-          color: '#fff',
-          borderRadius: '12px',
-          textDecoration: 'none',
-          fontWeight: 600,
-          fontSize: '1rem',
-        }}
+        className="inline-block px-8 py-3 bg-primary-500 text-white rounded-xl no-underline font-semibold text-base"
       >
         Sign In
       </Link>

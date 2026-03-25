@@ -508,3 +508,19 @@
   color: var(--error);
   background: var(--error-pale);
 }
+
+/* Language badge (replaces flag emoji) */
+.story-gen-lang-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1em 0.45em;
+  border-radius: var(--radius-sm, 4px);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-light);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  vertical-align: middle;
+}

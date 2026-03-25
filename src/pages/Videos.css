@@ -605,7 +605,7 @@
   height: 24px;
   border-radius: 50%;
   background: var(--mimi-green, #22c55e);
-  color: #fff;
+  color: var(--color-white, #fff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -621,8 +621,8 @@
   gap: 3px;
   padding: 2px 8px;
   border-radius: 8px;
-  background: rgba(0,0,0,0.7);
-  color: #fff;
+  background: var(--overlay-dark, rgba(0,0,0,0.7));
+  color: var(--color-white, #fff);
   font-size: 0.7rem;
   font-weight: 600;
 }
@@ -646,7 +646,7 @@
   border-radius: 6px;
   font-size: 0.65rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-white, #fff);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }

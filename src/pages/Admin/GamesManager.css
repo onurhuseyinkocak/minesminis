@@ -1,0 +1,91 @@
+/* ==========================================================================
+   GAMES MANAGER — MinesMinis Admin
+   ========================================================================== */
+
+/* ── Wrapper ── */
+.adm-manager {
+  padding: 0;
+  max-width: 100%;
+}
+
+/* ── Search icon wrapper (shared across managers) ── */
+.adm-search-wrap {
+  position: relative;
+}
+
+.adm-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.adm-search-input {
+  padding-left: 40px;
+}
+
+/* ── Table ── */
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.adm-table th,
+.adm-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-light, #e2e8f0);
+  text-align: left;
+}
+
+.adm-table th {
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--bg-surface, #f8fafc);
+}
+
+/* ── Badge tokens ── */
+.adm-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2em 0.65em;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.adm-badge--indigo {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.adm-badge--green {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.adm-badge--amber {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.adm-badge--pink {
+  background: #fdf2f8;
+  color: #db2777;
+}
+
+.adm-badge--violet {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.adm-badge--default {
+  background: #f1f5f9;
+  color: #475569;
+}

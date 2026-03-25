@@ -4,6 +4,7 @@ import { Worksheet, categories, grades } from '../../data/worksheetsData';
 import { adminFetch } from '../../utils/adminApi';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import './WorksheetsManager.css';
 
 function mapSupabaseToWorksheet(ws: { id: string; title: string; description?: string; subject?: string; grade?: string; thumbnail_url?: string; file_url?: string; source?: string }): Worksheet {
     return {
@@ -187,14 +188,14 @@ function WorksheetsManager() {
         }
     };
 
-    const getCategoryColor = (category: string) => {
+    const getCategoryClass = (category: string) => {
         switch (category) {
-            case 'Vocabulary': return '#6366f1';
-            case 'Grammar': return '#10b981';
-            case 'Reading': return '#f59e0b';
-            case 'Writing': return '#ec4899';
-            case 'Phonics': return '#8b5cf6';
-            default: return '#6366f1';
+            case 'Vocabulary': return 'adm-badge--vocab';
+            case 'Grammar':    return 'adm-badge--grammar';
+            case 'Reading':    return 'adm-badge--reading';
+            case 'Writing':    return 'adm-badge--writing';
+            case 'Phonics':    return 'adm-badge--phonics';
+            default:           return 'adm-badge--default';
         }
     };
 
@@ -209,15 +210,14 @@ function WorksheetsManager() {
                 <div className="table-header">
                     <h2>{filteredWorksheets.length} Çalışma Kağıdı</h2>
                     <div className="table-actions">
-                        <div style={{ position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                        <div className="adm-search-wrap">
+                            <Search size={18} className="adm-search-icon" />
                             <input
                                 type="text"
                                 placeholder="Çalışma kağıdı ara..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="search-input"
-                                style={{ paddingLeft: '40px' }}
+                                className="search-input adm-search-input"
                             />
                         </div>
                         <button className="add-btn" onClick={openAddModal}>
@@ -239,13 +239,13 @@ function WorksheetsManager() {
                     ))}
                 </div>
 
-                <div className="filter-chips" style={{ paddingTop: 0 }}>
+                <div className="filter-chips adm-filter-chips-dense">
                     {categories.map(cat => (
                         <button
                             key={cat}
                             className={`filter-chip ${selectedCategory === cat ? 'active' : ''}`}
                             onClick={() => setSelectedCategory(cat)}
-                            style={selectedCategory === cat && cat !== 'All' ? { background: getCategoryColor(cat) } : {}}
+                            style={{}}
                         >
                             {cat === 'All' ? 'Tüm Kategoriler' : cat}
                         </button>
@@ -285,17 +285,11 @@ function WorksheetsManager() {
                                 <td>
                                     <div>
                                         <strong>{ws.title}</strong>
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{ws.description}</div>
+                                        <div className="adm-ws-desc">{ws.description}</div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span
-                                        className="badge"
-                                        style={{
-                                            background: `${getCategoryColor(ws.category)}15`,
-                                            color: getCategoryColor(ws.category)
-                                        }}
-                                    >
+                                    <span className={`adm-badge ${getCategoryClass(ws.category)}`}>
                                         {ws.category}
                                     </span>
                                 </td>
@@ -305,13 +299,7 @@ function WorksheetsManager() {
                                         href={ws.externalUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            color: '#6366f1',
-                                            textDecoration: 'none'
-                                        }}
+                                        className="adm-ws-source-link"
                                     >
                                         {ws.source} <ExternalLink size={12} />
                                     </a>
@@ -411,20 +399,20 @@ function WorksheetsManager() {
 
                                 <div className="form-group">
                                     <label>Dosya veya Harici URL</label>
-                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <div className="adm-upload-row">
                                         <label className="add-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', margin: 0 }}>
                                             <Upload size={18} />
                                             {uploading ? 'Yükleniyor...' : 'PDF / JPEG / PNG Yükle'}
                                             <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileUpload} disabled={uploading} style={{ display: 'none' }} />
                                         </label>
-                                        <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>veya URL girin:</span>
+                                        <span className="adm-upload-hint">veya URL girin:</span>
                                     </div>
                                     <input
                                         type="url"
                                         value={formData.externalUrl}
                                         onChange={(e) => setFormData({ ...formData, externalUrl: e.target.value })}
                                         placeholder="https://... veya yukarıdan dosya yükleyin"
-                                        style={{ marginTop: '0.5rem' }}
+                                        className="adm-url-input-mt"
                                         required
                                     />
                                 </div>
