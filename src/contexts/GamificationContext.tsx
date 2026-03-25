@@ -387,8 +387,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             setNewLevel(newLevelValue);
             setShowLevelUp(true);
 
-            // Mimi: bonus XP on level up
-            if (stats.mascotId === 'mimi_dragon') {
+            // Mimi: bonus XP on level up (skip if this IS the bonus, to prevent recursion)
+            if (stats.mascotId === 'mimi_dragon' && reason !== 'mimi_level_bonus') {
                 setTimeout(() => addXP(20, 'mimi_level_bonus'), 500);
             }
 
@@ -511,7 +511,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             newStreak = stats.streakDays + 1;
         } else {
             // Streak broken — try to consume a freeze
-            const protected_ = consumeStreakFreeze();
+            const protected_ = consumeStreakFreeze(user?.uid);
             if (protected_) {
                 // Freeze absorbed the miss: keep existing streak
                 newStreak = stats.streakDays;

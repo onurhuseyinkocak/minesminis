@@ -266,6 +266,9 @@ const Onboarding: React.FC = () => {
           '7-9': 'grade2',
           '9-10': 'grade4',
         };
+        const userId = user.uid ?? (user as unknown as { id?: string }).id;
+        const placementScore = PLACEMENT_QUESTIONS.filter(q => placementAnswers[q.id] === q.correct).length;
+
         await userService.createOrUpdateUserProfile(user, {
           role: 'student',
           displayName: user.displayName || 'Explorer',
@@ -274,19 +277,20 @@ const Onboarding: React.FC = () => {
           mascotId: 'mimi_dragon',
         });
 
-        const userId = user.uid ?? (user as unknown as { id?: string }).id;
+        // Extend settings with placement data — read first to merge safely
         if (userId) {
+          const existing = await userService.getUserProfile(userId);
+          const baseSettings = (existing?.settings as Record<string, unknown>) ?? {};
           await userService.updateUserProfile(userId, {
             settings: {
+              ...baseSettings,
               setup_completed: true,
               setup_date: new Date().toISOString(),
               avatar_emoji: 'A',
               mascotId: 'mimi_dragon',
               startingPhonicsGroup,
               ageGroup,
-              placementScore: PLACEMENT_QUESTIONS.filter(q =>
-              placementAnswers[q.id] === q.correct
-            ).length,
+              placementScore,
             },
           });
         }

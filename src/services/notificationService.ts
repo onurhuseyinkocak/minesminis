@@ -15,7 +15,7 @@ export interface NotificationPermissionResult {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const VAPID_KEY = 'YOUR_VAPID_KEY_HERE';
+const VAPID_KEY = import.meta.env.VITE_VAPID_KEY ?? '';
 
 const LS_LESSON_COUNT = 'mm_lesson_complete_count';
 const LS_NOTIFICATION_PROMPT = 'mm_notification_prompt_shown';
@@ -96,9 +96,16 @@ export async function getFCMToken(): Promise<string | null> {
  */
 export async function saveUserFCMToken(userId: string, token: string): Promise<void> {
   try {
+    // Fetch current settings first to avoid overwriting other fields
+    const { data } = await supabase
+      .from('users')
+      .select('settings')
+      .eq('id', userId)
+      .single();
+    const existing = (data?.settings as Record<string, unknown>) ?? {};
     await supabase
       .from('users')
-      .update({ settings: { fcm_token: token, fcm_updated_at: new Date().toISOString() } } as never)
+      .update({ settings: { ...existing, fcm_token: token, fcm_updated_at: new Date().toISOString() } } as never)
       .eq('id', userId);
   } catch {
     // Non-fatal — token save failure does not block the UI

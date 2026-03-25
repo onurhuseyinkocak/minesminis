@@ -12,7 +12,7 @@ interface User {
     email: string;
     display_name: string;
     settings: Record<string, unknown>;
-    role: 'student' | 'teacher' | 'admin';
+    role: 'student' | 'teacher' | 'parent';
     points: number;
     level: number;
     is_online: boolean;
@@ -20,7 +20,7 @@ interface User {
 }
 
 const isUserPremium = (u: User) => !!(u.settings?.is_premium);
-const isUserAdmin = (u: User) => u.role === 'admin' || !!(u.settings?.is_admin);
+const isUserAdmin = (u: User) => !!(u.settings?.is_admin);
 const getUserPremiumUntil = (u: User): string | null => (u.settings?.premium_until as string) || null;
 
 const ITEMS_PER_PAGE = 15;
@@ -100,19 +100,21 @@ function AdminUsersManager() {
     useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedRole, selectedPremium]);
 
     const handleRoleChange = async (userId: string, newRole: 'student' | 'teacher' | 'admin') => {
+        const isAdmin = newRole === 'admin';
+        // DB role column only accepts 'student' | 'teacher' | 'parent'; admin is a settings flag
+        const dbRole: 'student' | 'teacher' | 'parent' = isAdmin ? 'teacher' : newRole as 'student' | 'teacher' | 'parent';
         setConfirmLoading(true);
         try {
-            const isAdmin = newRole === 'admin';
             const targetUser = users.find(u => u.id === userId);
             const newSettings = { ...(targetUser?.settings || {}), is_admin: isAdmin };
             const { error } = await supabase
                 .from('users')
-                .update({ role: newRole, settings: newSettings })
+                .update({ role: dbRole, settings: newSettings })
                 .eq('id', userId);
             if (error) console.error('Supabase error:', error);
             setUsers(prev => prev.map(u =>
                 u.id === userId
-                    ? { ...u, role: newRole, settings: { ...u.settings, is_admin: isAdmin } }
+                    ? { ...u, role: dbRole, settings: { ...u.settings, is_admin: isAdmin } }
                     : u
             ));
             toast.success('User role updated');
@@ -121,7 +123,7 @@ function AdminUsersManager() {
             console.error('Error updating role:', error);
             setUsers(prev => prev.map(u =>
                 u.id === userId
-                    ? { ...u, role: newRole, settings: { ...u.settings, is_admin: newRole === 'admin' } }
+                    ? { ...u, role: dbRole, settings: { ...u.settings, is_admin: isAdmin } }
                     : u
             ));
             toast.success('User role updated (local)');
@@ -205,12 +207,14 @@ function AdminUsersManager() {
                 is_premium: newUserData.is_premium,
                 premium_until: premiumUntil,
             };
+            // DB role column only accepts 'student' | 'teacher' | 'parent'
+            const dbRole = newUserData.role === 'admin' ? 'teacher' : newUserData.role;
             const payload = {
                 id: newId,
                 email: newUserData.email,
                 display_name: newUserData.display_name || newUserData.email.split('@')[0],
                 settings,
-                role: newUserData.role,
+                role: dbRole,
                 points: 0,
                 level: 1,
                 is_online: false,

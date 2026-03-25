@@ -421,15 +421,15 @@ export function getTodayCVCWords(): CVCWord[] {
 
 // ─── Streak freeze / protection packs ────────────────────────────────────────
 
-const FREEZE_COUNT_KEY = 'mm_streak_freezes';
-const FREEZE_EARNED_AT_KEY = 'mm_streak_freeze_earned_at';
+const FREEZE_COUNT_KEY = (uid?: string) => uid ? `mm_streak_freezes_${uid}` : 'mm_streak_freezes';
+const FREEZE_EARNED_AT_KEY = (uid?: string) => uid ? `mm_streak_freeze_earned_at_${uid}` : 'mm_streak_freeze_earned_at';
 
 /**
  * Returns the number of streak freeze charges the user currently has.
  */
-export function getStreakFreezeCount(): number {
+export function getStreakFreezeCount(userId?: string): number {
   try {
-    const raw = localStorage.getItem(FREEZE_COUNT_KEY);
+    const raw = localStorage.getItem(FREEZE_COUNT_KEY(userId));
     if (raw === null) return 0;
     const val = parseInt(raw, 10);
     return isNaN(val) ? 0 : Math.max(0, val);
@@ -441,10 +441,10 @@ export function getStreakFreezeCount(): number {
 /**
  * Adds `count` freeze charges to the user's balance.
  */
-export function addStreakFreeze(count: number): void {
+export function addStreakFreeze(count: number, userId?: string): void {
   try {
-    const current = getStreakFreezeCount();
-    localStorage.setItem(FREEZE_COUNT_KEY, String(current + count));
+    const current = getStreakFreezeCount(userId);
+    localStorage.setItem(FREEZE_COUNT_KEY(userId), String(current + count));
   } catch {
     // storage full — ignore
   }
@@ -454,11 +454,11 @@ export function addStreakFreeze(count: number): void {
  * Consumes 1 freeze charge if available.
  * Returns true if a freeze was consumed, false if balance was 0.
  */
-export function consumeStreakFreeze(): boolean {
-  const current = getStreakFreezeCount();
+export function consumeStreakFreeze(userId?: string): boolean {
+  const current = getStreakFreezeCount(userId);
   if (current <= 0) return false;
   try {
-    localStorage.setItem(FREEZE_COUNT_KEY, String(current - 1));
+    localStorage.setItem(FREEZE_COUNT_KEY(userId), String(current - 1));
     return true;
   } catch {
     return false;
@@ -468,9 +468,9 @@ export function consumeStreakFreeze(): boolean {
 /**
  * Returns the ISO timestamp of when the last freeze was earned, or null.
  */
-export function getStreakFreezeEarnedAt(): string | null {
+export function getStreakFreezeEarnedAt(userId?: string): string | null {
   try {
-    return localStorage.getItem(FREEZE_EARNED_AT_KEY);
+    return localStorage.getItem(FREEZE_EARNED_AT_KEY(userId));
   } catch {
     return null;
   }
@@ -486,13 +486,14 @@ export function getStreakFreezeEarnedAt(): string | null {
 export function checkAndAwardStreakFreeze(
   streakDays: number,
   isPremium: boolean,
+  userId?: string,
 ): boolean {
   // Bootstrap: premium users start with 5, free users start with 1
-  if (streakDays === 1 && getStreakFreezeCount() === 0) {
+  if (streakDays === 1 && getStreakFreezeCount(userId) === 0) {
     const bootstrap = isPremium ? 5 : 1;
-    addStreakFreeze(bootstrap);
+    addStreakFreeze(bootstrap, userId);
     try {
-      localStorage.setItem(FREEZE_EARNED_AT_KEY, new Date().toISOString());
+      localStorage.setItem(FREEZE_EARNED_AT_KEY(userId), new Date().toISOString());
     } catch {
       // ignore
     }
@@ -501,9 +502,9 @@ export function checkAndAwardStreakFreeze(
 
   const milestone = isPremium ? 3 : 7;
   if (streakDays > 1 && streakDays % milestone === 0) {
-    addStreakFreeze(1);
+    addStreakFreeze(1, userId);
     try {
-      localStorage.setItem(FREEZE_EARNED_AT_KEY, new Date().toISOString());
+      localStorage.setItem(FREEZE_EARNED_AT_KEY(userId), new Date().toISOString());
     } catch {
       // ignore
     }
@@ -515,18 +516,16 @@ export function checkAndAwardStreakFreeze(
 
 /**
  * Returns true if the user has at least one freeze available.
- * Kept for backwards-compatibility with any callers that used shouldFreezeStreak.
  */
-export function shouldFreezeStreak(_userId: string): boolean {
-  return getStreakFreezeCount() > 0;
+export function shouldFreezeStreak(userId?: string): boolean {
+  return getStreakFreezeCount(userId) > 0;
 }
 
 /**
- * Consumes a streak freeze (new implementation).
- * Kept for backwards-compatibility — prefer consumeStreakFreeze() directly.
+ * Consumes a streak freeze.
  */
-export function useStreakFreeze(_userId: string): void {
-  consumeStreakFreeze();
+export function useStreakFreeze(userId?: string): void {
+  consumeStreakFreeze(userId);
 }
 
 // ─── Total learned count ──────────────────────────────────────────────────────
