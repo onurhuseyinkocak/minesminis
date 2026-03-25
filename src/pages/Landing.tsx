@@ -20,10 +20,10 @@ const t = (lang: Lang, tr: string, en: string) => lang === 'tr' ? tr : en;
 // ─── Stats ──────────────────────────────────────────────────────────────────
 
 const STATS = [
-  { value: '42',   label: { tr: 'Fonetik Ses',    en: 'Phonics Sounds'   } },
-  { value: '5K+',  label: { tr: 'Kelime & Cümle', en: 'Words & Sentences' } },
-  { value: '20',   label: { tr: 'Dünya & Tema',   en: 'Worlds & Themes'  } },
-  { value: '%100', label: { tr: 'Türk Çocuğuna Özel', en: 'Turkish-Specific' } },
+  { value: '42',   label: { tr: 'Fonetik Ses',       en: 'Phonics Sounds'   } },
+  { value: '16',   label: { tr: 'Oyun Türü',          en: 'Game Types'       } },
+  { value: '220',  label: { tr: 'Sight Word',         en: 'Sight Words'      } },
+  { value: '50+',  label: { tr: 'Fonetik Hikaye',     en: 'Phonics Stories'  } },
 ];
 
 // ─── Unique features (no competitor has these) ─────────────────────────────
@@ -104,43 +104,43 @@ const FEATURES = [
     icon: <Mic size={28} />,
     bg: 'bg-orange-100',
     iconColor: 'text-primary-500',
-    title: { tr: 'Sesi Duy, Tekrar Et', en: 'Hear It, Repeat It' },
-    desc: { tr: '42 fonetik ses animasyonlarla öğretilir. Web Speech API ile konuşma pratiği.', en: '42 phonics sounds taught with animations. Speech practice via Web Speech API.' },
+    title: { tr: 'Konuşarak Öğren', en: 'Learn by Speaking' },
+    desc: { tr: 'Sesi duy, tekrar et, telaffuzunu kontrol et. Mikrofon destekli konuşma pratiği her derste.', en: 'Hear it, repeat it, check your pronunciation. Microphone-supported speaking practice in every lesson.' },
   },
   {
     icon: <Gamepad2 size={28} />,
     bg: 'bg-purple-100',
     iconColor: 'text-purple-600',
-    title: { tr: '16 Oyun Türü', en: '16 Game Types' },
-    desc: { tr: 'Eşleştirme, hece sayma, kelime ailesi, fonem manipülasyonu, diyalog, görsel etiketleme ve daha fazlası.', en: 'Matching, syllable counting, word families, phoneme manipulation, dialogue, image labelling and more.' },
+    title: { tr: 'Oynarken Öğrensin', en: 'Learn While Playing' },
+    desc: { tr: '16 farklı oyun türü: eşleştirme, hece sayma, kelime ailesi, fonem manipülasyonu ve daha fazlası.', en: '16 game types: matching, syllable counting, word families, phoneme manipulation and more.' },
   },
   {
     icon: <Music size={28} />,
     bg: 'bg-pink-100',
     iconColor: 'text-pink-600',
-    title: { tr: 'Fonetik Karaoke', en: 'Phonics Karaoke' },
-    desc: { tr: '7 fonetik grubun şarkıları. Otomatik ilerleyen sözler, TTS ile canlı okuma.', en: 'Songs for all 7 phonics groups. Auto-advancing lyrics, live reading with TTS.' },
+    title: { tr: 'Şarkıyla Pekiştir', en: 'Reinforce with Songs' },
+    desc: { tr: '7 fonetik grubun şarkıları. Söylerken okuma. Çocuklar en iyi müzikle öğrenir.', en: 'Songs for all 7 phonics groups. Reading while singing. Kids learn best with music.' },
   },
   {
     icon: <Eye size={28} />,
     bg: 'bg-blue-100',
     iconColor: 'text-blue-600',
-    title: { tr: '220 Sight Word', en: '220 Sight Words' },
-    desc: { tr: 'Dolch listesinin tamamı. Aralıklı tekrar (SRS) ile kalıcı ezber. 5 seviye.', en: 'Complete Dolch list. Spaced repetition (SRS) for permanent recall. 5 levels.' },
+    title: { tr: '220 Temel Kelime', en: '220 Core Words' },
+    desc: { tr: 'ABD müfredatının 220 Dolch kelimesi. Aralıklı tekrar sistemiyle akılda kalıcı.', en: '220 Dolch words from the US curriculum. Spaced repetition keeps them memorable.' },
   },
   {
     icon: <PenTool size={28} />,
     bg: 'bg-gold-100',
     iconColor: 'text-gold-600',
-    title: { tr: 'Harf İz Sürme', en: 'Letter Tracing' },
-    desc: { tr: 'Canvas üzerinde dokunmatik harf takibi. Montessori duyusal öğrenme dijitale taşındı.', en: 'Touch-based letter tracing on canvas. Montessori sensorimotor learning gone digital.' },
+    title: { tr: 'Elleriyle Hisseder', en: 'Feel It With Their Hands' },
+    desc: { tr: 'Dokunmatik harf takibi. Montessori\'nin duyusal öğrenme ilkesi dijital ortama taşındı.', en: 'Touch-based letter tracing. Montessori\'s sensory learning principle brought to the screen.' },
   },
   {
     icon: <Star size={28} />,
     bg: 'bg-success-100',
     iconColor: 'text-success-600',
-    title: { tr: 'Ödüller & Rozetler', en: 'Rewards & Badges' },
-    desc: { tr: 'Yıldızlar, XP, seri koruması, haftalık turnuva, maskot koleksiyonu.', en: 'Stars, XP, streak shields, weekly tournament, mascot collection.' },
+    title: { tr: 'Motivasyon Hiç Düşmez', en: 'Motivation Never Drops' },
+    desc: { tr: 'Yıldızlar, XP, seriler, günlük hedef, haftalık turnuva. Her ders bir başarı hissi bırakır.', en: 'Stars, XP, streaks, daily goals, weekly tournaments. Every lesson ends with a sense of achievement.' },
   },
 ];
 
@@ -149,27 +149,27 @@ const HOW_STEPS = [
     num: '1',
     bg: 'bg-primary-500',
     title: { tr: 'Seviyeni Bul', en: 'Find Your Level' },
-    desc: { tr: 'Kısa bir yerleştirme testiyle tam başlangıç noktanı belirle.', en: 'A quick placement test finds exactly where to start.' },
+    desc: { tr: 'Ücretsiz kaydol. Kısa bir yerleştirme testi tam başlangıç noktanı belirler.', en: 'Sign up free. A quick placement test finds exactly where to start.' },
   },
   {
     num: '2',
     bg: 'bg-purple-600',
-    title: { tr: 'Günde 10 Dakika', en: '10 Minutes a Day' },
-    desc: { tr: 'Sesler, kelimeler, oyunlar, hikayeler — sıkılma garantisi yok.', en: 'Sounds, words, games, stories — guaranteed zero boredom.' },
+    title: { tr: 'Her Gün Oyna', en: 'Play Every Day' },
+    desc: { tr: 'Günde 10 dakika. Sesler, kelimeler, oyunlar, şarkılar, hikayeler — sıkılma diye bir şey yok.', en: '10 minutes a day. Sounds, words, games, songs, stories — zero boredom, always.' },
   },
   {
     num: '3',
     bg: 'bg-success-600',
-    title: { tr: 'İlerlemeyi İzle', en: 'Track Progress' },
-    desc: { tr: 'Ebeveyn & öğretmen paneli, haftalık rapor, fonetik ustalaşma grafiği.', en: 'Parent & teacher panel, weekly report, phonics mastery chart.' },
+    title: { tr: 'Sonucu Gör', en: 'See the Results' },
+    desc: { tr: 'Ebeveyn panelinden her dersi, her ilerlemeyi canlı takip et.', en: 'Track every lesson and every milestone live from the parent dashboard.' },
   },
 ];
 
 const RESULTS_DATA = [
-  { stat: '3 ay',  detail: { tr: 'Ortalama ilk bağımsız okuma süresi',    en: 'Average time to first independent reading' }, source: 'Phonics studies' },
-  { stat: '42',    detail: { tr: 'Sistematik fonem öğretimi',              en: 'Systematic phoneme instruction' },           source: 'Jolly Phonics method' },
-  { stat: '220',   detail: { tr: 'Dolch sight words dahil kelime',         en: 'Words incl. Dolch sight words' },             source: 'US school curriculum' },
-  { stat: '%94',   detail: { tr: 'Fonik yöntemin okuma başarısı',          en: 'Phonics reading success rate' },              source: 'NRP 2000' },
+  { stat: '42',    detail: { tr: 'Ses öğretilen fonetik program (Jolly Phonics yöntemi)', en: 'Sounds in phonics programme (Jolly Phonics method)' },  source: 'Jolly Phonics' },
+  { stat: '220',   detail: { tr: 'Dolch listesinden sight word — ABD müfredatı standardı', en: 'Sight words from Dolch list — US curriculum standard' }, source: 'Dolch Word List' },
+  { stat: '%94',   detail: { tr: 'Fonetik yöntemle okuryazarlık başarısı (NRP 2000)', en: 'Literacy success rate with phonics (NRP 2000)' },            source: 'NRP 2000' },
+  { stat: '50+',   detail: { tr: 'Yalnızca öğrenilen seslerle yazılmış hikaye', en: 'Stories written using only learned sounds' },                     source: 'MinesMinis' },
 ];
 
 const WHO_FOR = [
@@ -458,7 +458,7 @@ export default function Landing() {
                 className="inline-flex items-center gap-2 bg-white border-2 border-primary-200 text-primary-700 font-display font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full shadow-sm mb-6"
               >
                 <Zap size={13} className="text-primary-500" />
-                {t(lang, 'Türkiye\'nin Fonetik + Montessori Platformu', "Turkey's Phonics + Montessori Platform")}
+                {t(lang, 'Ücretsiz · Eğlenceli · Gerçekten İşe Yarıyor', 'Free · Fun · Actually Works')}
               </motion.div>
 
               <motion.h1
@@ -469,9 +469,9 @@ export default function Landing() {
                 style={{ fontSize: 'clamp(2rem, 5.5vw, 3.5rem)' }}
               >
                 {lang === 'tr' ? (
-                  <>Çocuğunuz İngilizceyi<br /><span className="text-primary-500">Gerçekten Okutsun</span></>
+                  <>Her çocuk İngilizce<br /><span className="text-primary-500">okumayı öğrenebilir.</span></>
                 ) : (
-                  <>Your Child Doesn't Just<br /><span className="text-primary-500">Learn — They Read</span></>
+                  <>Every child can learn<br /><span className="text-primary-500">to read in English.</span></>
                 )}
               </motion.h1>
 
@@ -482,8 +482,8 @@ export default function Landing() {
                 className="font-body text-ink-500 text-lg mb-8 max-w-lg leading-relaxed"
               >
                 {t(lang,
-                  'Lingokids kelime öğretir. Duolingo cümle kurar. MinesMinis okumayı öğretir — bilimsel fonetik yöntemle, Montessori metodolojisiyle, Türk çocuklarına özel.',
-                  "Lingokids teaches words. Duolingo builds sentences. MinesMinis teaches reading — with scientific phonics, Montessori methodology, built for Turkish children."
+                  'Günde 10 dakika yeterli. Bilimsel fonetik yöntemiyle, adım adım, harften hikayeye — eğlenerek.',
+                  'Just 10 minutes a day. Science-backed phonics, step by step, from letters to stories — with joy.'
                 )}
               </motion.p>
 
@@ -539,9 +539,9 @@ export default function Landing() {
                 className="flex flex-wrap gap-4 mt-6"
               >
                 {[
-                  t(lang, 'Kayıt gerekmez', 'No sign-up needed'),
-                  t(lang, 'İlk 7 gün ücretsiz', '7 days free'),
+                  t(lang, 'Hemen başla, ücretsiz', 'Start free, no card'),
                   t(lang, 'İstediğin zaman iptal', 'Cancel anytime'),
+                  t(lang, 'Reklam yok', 'No ads'),
                 ].map(chip => (
                   <span key={chip} className="flex items-center gap-1.5 font-display font-semibold text-xs text-ink-500">
                     <Check size={12} className="text-success-500" />
@@ -597,8 +597,8 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <p className="font-display font-bold text-ink-400 text-sm uppercase tracking-widest">
             {t(lang,
-              'Fonetik biliminin kanıtlanmış yöntemi — 44 dilde kullanılıyor',
-              'Proven by phonics science — used in 44 languages worldwide'
+              'Jolly Phonics yöntemi · NRP 2000 araştırması · Montessori prensiplerine dayalı',
+              'Jolly Phonics method · NRP 2000 research · Montessori principles'
             )}
           </p>
         </div>
@@ -611,15 +611,15 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-purple-600 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Hiçbir rakipte yok', 'No competitor has these')}
+              {t(lang, 'Okuma biliminin temeli', 'Foundation of reading science')}
             </p>
             <h2 className="font-display font-black text-ink-900 mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Sadece MinesMinis\'te', 'Only in MinesMinis')}
+              {t(lang, 'Fark Yaratan Özellikler', 'What Makes the Difference')}
             </h2>
             <p className="font-body text-ink-500 max-w-2xl mx-auto">
               {t(lang,
-                'Rakiplerimiz kelime ve cümle öğretir. Biz okuma biliminin temelini öğretiyoruz — fonem bilinci, Montessori, Türkçe-özgü antrenman.',
-                'Competitors teach words and sentences. We teach the foundation of reading science — phonemic awareness, Montessori, Turkish-specific training.'
+                'Kelime ezberlemek okumayı öğretmez. Ses bilinci olmadan okuma olmaz. MinesMinis, okuma biliminin kanıtlanmış temelinden başlar.',
+                'Memorising words doesn\'t teach reading. Without phonemic awareness, there\'s no reading. MinesMinis starts from the proven foundation of reading science.'
               )}
             </p>
           </div>
@@ -665,15 +665,15 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Yan yana karşılaştırma', 'Side-by-side comparison')}
+              {t(lang, 'Özellik karşılaştırması', 'Feature comparison')}
             </p>
             <h2 className="font-display font-black text-ink-900 mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Rakiplerle Karşılaştır', 'Compare to Competitors')}
+              {t(lang, 'Hangi Uygulama Ne Öğretiyor?', 'What Does Each App Teach?')}
             </h2>
             <p className="font-body text-ink-500 max-w-xl mx-auto">
               {t(lang,
-                'Lingokids kelime öğretir. Duolingo ABC kelime + cümle öğretir. MinesMinis okumayı öğretir.',
-                'Lingokids teaches vocabulary. Duolingo ABC teaches words + sentences. MinesMinis teaches reading.'
+                'Her İngilizce uygulaması aynı şeyi yapmıyor. Özellikler, yöntemler ve hedefler farklı.',
+                'Not every English app does the same thing. Features, methods, and goals differ.'
               )}
             </p>
           </div>
@@ -723,8 +723,8 @@ export default function Landing() {
             <div className="bg-primary-50 border-t-2 border-primary-100 p-5 text-center">
               <p className="font-display font-bold text-primary-700 text-sm mb-3">
                 {t(lang,
-                  '7 rakip özelliği MinesMinis\'te var, 3 özellik sadece MinesMinis\'te.',
-                  '7 competitor features in MinesMinis, 3 features only in MinesMinis.'
+                  'Tabloyu kendin değerlendir. İhtiyacına göre seç.',
+                  'Evaluate the table yourself. Choose what fits your needs.'
                 )}
               </p>
               <Link
@@ -746,15 +746,15 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Verilerle kanıtlandı', 'Backed by research')}
+              {t(lang, 'Araştırma temelli', 'Research-backed')}
             </p>
             <h2 className="font-display font-black text-ink-900 mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Neden Fonetik Yöntem?', 'Why the Phonics Method?')}
+              {t(lang, 'Neden Fonetik Yöntemi Seçtik?', 'Why We Chose Phonics')}
             </h2>
             <p className="font-body text-ink-500 max-w-xl mx-auto">
               {t(lang,
-                'NRP 2000 araştırması: sistematik fonetik öğretimi, diğer tüm yöntemlerden %94 daha etkilidir.',
-                'NRP 2000: systematic phonics instruction is 94% more effective than all other methods.'
+                'NRP 2000 (ABD Ulusal Okuma Paneli): sistematik fonetik öğretimi, çocukların okuma becerisini diğer yöntemlerden çok daha hızlı geliştiriyor.',
+                'NRP 2000 (US National Reading Panel): systematic phonics instruction develops children\'s reading skills significantly faster than other methods.'
               )}
             </p>
           </div>
@@ -826,10 +826,10 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Her şey tek bir uygulamada', 'Everything in one app')}
+              {t(lang, 'Özellikler', 'Features')}
             </p>
             <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Neden MinesMinis?', 'Why MinesMinis?')}
+              {t(lang, 'Sıkılma Garantisi Yok', 'Zero Boredom Guaranteed')}
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -864,10 +864,10 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Basit, etkili, eğlenceli', 'Simple, effective, fun')}
+              {t(lang, '3 adım, hepsi bu kadar', '3 steps, that\'s it')}
             </p>
             <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Nasıl Çalışır?', 'How It Works?')}
+              {t(lang, 'Nasıl Çalışıyor?', 'How Does It Work?')}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -941,10 +941,10 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-purple-600 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Herkese uygun', 'Designed for everyone')}
+              {t(lang, 'Herkes için tasarlandı', 'Built for everyone')}
             </p>
             <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Kimler İçin?', 'Who Is It For?')}
+              {t(lang, 'Senin için de var.', 'There\'s a place for you.')}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -1065,18 +1065,18 @@ export default function Landing() {
             <LottieCharacter state="wave" size={120} />
           </div>
           <h2 className="font-display font-black text-white mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
-            {t(lang, 'Bugün Ücretsiz Başla!', 'Start Free Today!')}
+            {t(lang, 'Bugün başla. Ücretsiz.', 'Start today. Free.')}
           </h2>
           <p className="font-body text-white/80 text-lg mb-4">
             {t(lang,
-              'Fonem manipülasyon, Türkçe ses tuzakları, Montessori alfabe — hepsini dene.',
-              'Phoneme manipulation, Turkish sound traps, Montessori alphabet — try them all.'
+              'İlk dersin bugün. Sonuçlar kendiliğinden görünüyor.',
+              'First lesson today. Results speak for themselves.'
             )}
           </p>
           <p className="font-display font-bold text-white/60 text-sm mb-8">
             {t(lang,
-              '10.000+ çocuk zaten başladı. Duolingo, Lingokids\'te olmayan özellikler burada.',
-              '10,000+ kids already started. Features Duolingo and Lingokids don\'t have — here.'
+              'Kredi kartı yok. Reklam yok. İstediğin zaman iptal.',
+              'No credit card. No ads. Cancel anytime.'
             )}
           </p>
 
@@ -1097,7 +1097,7 @@ export default function Landing() {
             to="/login?tab=signup"
             className="inline-flex items-center gap-3 bg-white hover:bg-ink-50 text-primary-600 font-display font-extrabold text-xl px-10 py-5 rounded-2xl shadow-xl transition-all duration-150 hover:scale-105 active:scale-95"
           >
-            {t(lang, 'Hemen Başla', 'Get Started Now')}
+            {t(lang, 'Ücretsiz Başla', 'Start Free')}
             <ArrowRight size={22} />
           </Link>
 
@@ -1134,7 +1134,7 @@ export default function Landing() {
                   { to: '#features', label: t(lang, 'Özellikler', 'Features') },
                   { to: '#compare', label: t(lang, 'Karşılaştırma', 'Compare') },
                   { to: '#school', label: t(lang, 'Okullar', 'Schools') },
-                  { to: '/dashboard', label: t(lang, 'Ücretsiz Başla', 'Start Free') },
+                  { to: '/login?tab=signup', label: t(lang, 'Ücretsiz Başla', 'Start Free') },
                 ].map(item => (
                   item.to.startsWith('#')
                     ? <li key={item.label}><a href={item.to} className="font-display font-semibold text-ink-500 hover:text-white transition-colors text-sm">{item.label}</a></li>
