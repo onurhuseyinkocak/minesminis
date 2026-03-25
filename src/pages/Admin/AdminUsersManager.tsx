@@ -197,28 +197,42 @@ function AdminUsersManager() {
             ? new Date(Date.now() + newUserData.premium_months * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
             : null;
         try {
-            const newUser: User = {
-                id: Date.now().toString(),
+            const newId = crypto.randomUUID();
+            const now = new Date().toISOString();
+            const settings = {
+                is_admin: newUserData.role === 'admin',
+                is_premium: newUserData.is_premium,
+                premium_until: premiumUntil,
+            };
+            const payload = {
+                id: newId,
                 email: newUserData.email,
                 display_name: newUserData.display_name || newUserData.email.split('@')[0],
-                settings: {
-                    is_admin: newUserData.role === 'admin',
-                    is_premium: newUserData.is_premium,
-                    premium_until: premiumUntil,
-                },
+                settings,
                 role: newUserData.role,
                 points: 0,
                 level: 1,
                 is_online: false,
-                created_at: new Date().toISOString()
+                created_at: now,
             };
+            const { data: insertedData, error: insertError } = await supabase
+                .from('users')
+                .insert(payload)
+                .select()
+                .single();
+            if (insertError) {
+                throw insertError;
+            }
+            const newUser: User = insertedData
+                ? { ...insertedData, settings: (insertedData.settings || {}) as Record<string, unknown> }
+                : { ...payload, settings };
             setUsers(prev => [newUser, ...prev]);
             toast.success(
                 <div>
                     <strong>User created</strong><br />
                     <small>Email: {newUserData.email}</small><br />
                     <small>Password: <code>{password}</code></small><br />
-                    <small style={{ color: 'var(--primary-dark)' }}>Save this password!</small>
+                    <small className="adm-toast-save-note">Save this password!</small>
                 </div>,
                 { duration: 10000 }
             );
@@ -282,7 +296,7 @@ function AdminUsersManager() {
             {/* Stats */}
             <div className="adm-users-stats">
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: 'var(--info-pale)', color: 'var(--accent-blue)' }}>
+                    <div className="adm-users-stat-icon adm-stat-icon-blue">
                         <Users size={18} />
                     </div>
                     <div>
@@ -291,7 +305,7 @@ function AdminUsersManager() {
                     </div>
                 </div>
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: 'var(--warning-pale)', color: 'var(--warning)' }}>
+                    <div className="adm-users-stat-icon adm-stat-icon-yellow">
                         <Crown size={18} />
                     </div>
                     <div>
@@ -300,7 +314,7 @@ function AdminUsersManager() {
                     </div>
                 </div>
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: 'var(--error-pale)', color: 'var(--accent-red)' }}>
+                    <div className="adm-users-stat-icon adm-stat-icon-red">
                         <Shield size={18} />
                     </div>
                     <div>
@@ -309,7 +323,7 @@ function AdminUsersManager() {
                     </div>
                 </div>
                 <div className="adm-users-stat">
-                    <div className="adm-users-stat-icon" style={{ background: 'var(--accent-purple-pale)', color: 'var(--accent-purple)' }}>
+                    <div className="adm-users-stat-icon adm-stat-icon-purple">
                         <Users size={18} />
                     </div>
                     <div>
@@ -382,7 +396,7 @@ function AdminUsersManager() {
                                         <div>
                                             <div className="adm-user-name">
                                                 {user.display_name || 'Unnamed'}
-                                                {isUserPremium(user) && <Crown size={12} style={{ color: 'var(--warning)' }} />}
+                                                {isUserPremium(user) && <Crown size={12} className="adm-crown-icon" />}
                                             </div>
                                             <div className="adm-user-email">{user.email}</div>
                                         </div>
@@ -405,31 +419,30 @@ function AdminUsersManager() {
                                 </td>
                                 <td>
                                     <button
-                                        className={`adm-badge ${isUserPremium(user) ? 'premium' : 'free'}`}
+                                        className={`adm-badge adm-badge-btn ${isUserPremium(user) ? 'premium' : 'free'}`}
                                         onClick={() => setConfirmState({
                                             type: 'premium',
                                             user,
                                             newPremium: !isUserPremium(user)
                                         })}
-                                        style={{ cursor: 'pointer', border: 'none' }}
                                     >
                                         <Crown size={11} />
                                         {isUserPremium(user) ? 'Premium' : 'Free'}
                                     </button>
                                     {isUserPremium(user) && getUserPremiumUntil(user) && (
-                                        <div style={{ fontSize: '0.65rem', color: 'var(--admin-text-muted)', marginTop: 2 }}>
+                                        <div className="adm-premium-until">
                                             Until {new Date(getUserPremiumUntil(user)!).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </div>
                                     )}
                                 </td>
-                                <td style={{ fontWeight: 600 }}>Lv. {user.level || 1}</td>
-                                <td style={{ fontWeight: 600, color: 'var(--warning)' }}>{user.points || 0}</td>
+                                <td className="adm-cell-level">Lv. {user.level || 1}</td>
+                                <td className="adm-cell-points">{user.points || 0}</td>
                                 <td>
                                     <span className={`adm-badge ${user.is_online ? 'online' : 'offline'}`}>
                                         {user.is_online ? 'Online' : 'Offline'}
                                     </span>
                                 </td>
-                                <td style={{ fontSize: '0.775rem', color: 'var(--admin-text-secondary)' }}>
+                                <td className="adm-cell-date">
                                     {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </td>
                                 <td>
@@ -516,14 +529,14 @@ function AdminUsersManager() {
                             </button>
                         </div>
                         <div className="adm-panel-body">
-                            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>
+                            <div className="adm-panel-user-hero">
+                                <div className="adm-panel-user-emoji">
                                     {(selectedUser.settings?.avatar_emoji as string) || '\u{1F464}'}
                                 </div>
-                                <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--admin-text)' }}>
+                                <div className="adm-panel-user-name">
                                     {selectedUser.display_name || 'Unnamed'}
                                 </div>
-                                <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>
+                                <div className="adm-panel-user-email">
                                     {selectedUser.email}
                                 </div>
                             </div>
@@ -543,7 +556,7 @@ function AdminUsersManager() {
                                         {isUserPremium(selectedUser) ? 'Premium' : 'Free'}
                                     </span>
                                     {isUserPremium(selectedUser) && getUserPremiumUntil(selectedUser) && (
-                                        <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)', marginLeft: 8 }}>
+                                        <span className="adm-panel-premium-until">
                                             Until {new Date(getUserPremiumUntil(selectedUser)!).toLocaleDateString()}
                                         </span>
                                     )}
@@ -591,7 +604,7 @@ function AdminUsersManager() {
                         <form onSubmit={handleCreateUser}>
                             <div className="adm-modal-body">
                                 <div className="adm-form-group">
-                                    <label><Mail size={13} style={{ verticalAlign: 'middle', marginRight: 4 }} />Email</label>
+                                    <label><Mail size={13} className="adm-label-icon" />Email</label>
                                     <input
                                         type="email"
                                         value={newUserData.email}
@@ -628,8 +641,8 @@ function AdminUsersManager() {
                                             checked={newUserData.is_premium}
                                             onChange={(e) => setNewUserData({ ...newUserData, is_premium: e.target.checked })}
                                         />
-                                        <label style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                            <Crown size={14} style={{ color: 'var(--warning)' }} />
+                                        <label className="adm-grant-premium-label">
+                                            <Crown size={14} className="adm-grant-premium-icon" />
                                             Grant Premium
                                         </label>
                                     </div>
@@ -649,16 +662,9 @@ function AdminUsersManager() {
                                         </select>
                                     </div>
                                 )}
-                                <div style={{
-                                    background: 'var(--warning-pale)',
-                                    padding: '0.75rem 1rem',
-                                    borderRadius: 8,
-                                    display: 'flex',
-                                    gap: 8,
-                                    alignItems: 'flex-start'
-                                }}>
-                                    <Key size={16} style={{ color: 'var(--primary-dark)', marginTop: 2, flexShrink: 0 }} />
-                                    <div style={{ fontSize: '0.8rem', color: 'var(--primary-dark)' }}>
+                                <div className="adm-password-notice">
+                                    <Key size={16} className="adm-password-notice-icon" />
+                                    <div className="adm-password-notice-text">
                                         An auto-generated password will be shown after creation. Make sure to save it.
                                     </div>
                                 </div>
@@ -677,8 +683,8 @@ function AdminUsersManager() {
             {/* Confirm Modal */}
             {confirmState && (
                 <div className="adm-modal-overlay" onClick={() => !confirmLoading && setConfirmState(null)}>
-                    <div className="adm-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 400 }}>
-                        <div className="adm-modal-body" style={{ textAlign: 'center', padding: '2rem 1.5rem' }}>
+                    <div className="adm-modal adm-modal-narrow" onClick={e => e.stopPropagation()}>
+                        <div className="adm-modal-body adm-confirm-body">
                             <div className={`adm-confirm-icon ${confirmState.type === 'delete' ? 'danger' : 'warning'}`}>
                                 <AlertTriangle size={24} />
                             </div>
@@ -699,7 +705,7 @@ function AdminUsersManager() {
                                 </p>
                             </div>
                         </div>
-                        <div className="adm-modal-footer" style={{ justifyContent: 'center' }}>
+                        <div className="adm-modal-footer adm-modal-footer-center">
                             <button className="adm-btn" onClick={() => setConfirmState(null)} disabled={confirmLoading}>
                                 Cancel
                             </button>

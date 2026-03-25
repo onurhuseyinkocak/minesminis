@@ -154,19 +154,23 @@ function StoryCover({ scene }: StoryCoverProps) {
   const isMountain = s.includes('mountain') || s.includes('snow') || s.includes('dağ') || s.includes('kar');
   const isDesert = s.includes('desert') || s.includes('sand') || s.includes('çöl');
 
-  const bg1 = isForest ? '#1a4a2e'
-    : isOcean ? '#0a3d62'
-    : isSpace ? '#0c0c2e'
-    : isMountain ? '#2c3e50'
-    : isDesert ? '#7a4a1e'
-    : '#1a2332';
+  // Tailwind color equivalents (used as SVG fill values)
+  // #1a4a2e ≈ emerald-900, #2d6a4f ≈ emerald-700, #0a3d62 ≈ blue-900
+  // #0c0c2e/#1a1a4e ≈ indigo-950/indigo-900, #2c3e50/#4a6572 ≈ slate-700/slate-600
+  // #7a4a1e/#c8841c ≈ amber-900/amber-600, #1a2332/#2a3f55 ≈ slate-800/slate-700
+  const bg1 = isForest ? '#14532d'  /* emerald-900 */
+    : isOcean ? '#1e3a5f'           /* blue-900 */
+    : isSpace ? '#1e1b4b'           /* indigo-950 */
+    : isMountain ? '#334155'        /* slate-700 */
+    : isDesert ? '#78350f'          /* amber-900 */
+    : '#1e293b';                    /* slate-800 */
 
-  const bg2 = isForest ? '#2d6a4f'
-    : isOcean ? '#1e6f9f'
-    : isSpace ? '#1a1a4e'
-    : isMountain ? '#4a6572'
-    : isDesert ? '#c8841c'
-    : '#2a3f55';
+  const bg2 = isForest ? '#065f46'  /* emerald-800 */
+    : isOcean ? '#1d4ed8'           /* blue-700 */
+    : isSpace ? '#312e81'           /* indigo-900 */
+    : isMountain ? '#475569'        /* slate-600 */
+    : isDesert ? '#d97706'          /* amber-600 */
+    : '#334155';                    /* slate-700 */
 
   // Stable random-looking star positions (seeded by scene string hash)
   const starSeeds = React.useMemo(() => {
@@ -201,58 +205,58 @@ function StoryCover({ scene }: StoryCoverProps) {
 
       {isForest && (
         <>
-          <ellipse cx="75" cy="148" rx="36" ry="52" fill="#2d6a4f" opacity="0.85" />
-          <rect x="70" y="148" width="10" height="32" fill="#5c4033" />
-          <ellipse cx="225" cy="155" rx="30" ry="42" fill="#40916c" opacity="0.75" />
-          <rect x="220" y="155" width="10" height="26" fill="#5c4033" />
-          <ellipse cx="150" cy="160" rx="28" ry="38" fill="#52b788" opacity="0.55" />
-          <rect x="145" y="160" width="10" height="22" fill="#6b4c3b" />
+          <ellipse cx="75" cy="148" rx="36" ry="52" fill="#065f46" opacity="0.85" />{/* emerald-800 */}
+          <rect x="70" y="148" width="10" height="32" fill="#78350f" />{/* amber-900 trunk */}
+          <ellipse cx="225" cy="155" rx="30" ry="42" fill="#059669" opacity="0.75" />{/* emerald-600 */}
+          <rect x="220" y="155" width="10" height="26" fill="#78350f" />{/* amber-900 trunk */}
+          <ellipse cx="150" cy="160" rx="28" ry="38" fill="#34d399" opacity="0.55" />{/* emerald-400 */}
+          <rect x="145" y="160" width="10" height="22" fill="#92400e" />{/* amber-800 trunk */}
           {/* Moon */}
-          <circle cx="250" cy="30" r="16" fill="#FFD54F" opacity="0.7" />
+          <circle cx="250" cy="30" r="16" fill="#fcd34d" opacity="0.7" />{/* yellow-300 */}
         </>
       )}
 
       {isOcean && (
         <>
-          <ellipse cx="150" cy="185" rx="210" ry="28" fill="#1e6f9f" opacity="0.7" />
-          <ellipse cx="150" cy="195" rx="220" ry="22" fill="#0a3d62" opacity="0.6" />
-          <circle cx="90" cy="130" r="9" fill="#48cae4" opacity="0.45" />
-          <circle cx="210" cy="140" r="7" fill="#48cae4" opacity="0.35" />
+          <ellipse cx="150" cy="185" rx="210" ry="28" fill="#1d4ed8" opacity="0.7" />{/* blue-700 */}
+          <ellipse cx="150" cy="195" rx="220" ry="22" fill="#1e3a5f" opacity="0.6" />{/* blue-900 */}
+          <circle cx="90" cy="130" r="9" fill="#67e8f9" opacity="0.45" />{/* cyan-300 */}
+          <circle cx="210" cy="140" r="7" fill="#67e8f9" opacity="0.35" />{/* cyan-300 */}
           {/* Sun/moon */}
-          <circle cx="240" cy="35" r="22" fill="#FFD54F" opacity="0.75" />
+          <circle cx="240" cy="35" r="22" fill="#fcd34d" opacity="0.75" />{/* yellow-300 */}
         </>
       )}
 
       {isSpace && (
         <>
-          <circle cx="245" cy="42" r="22" fill="#FFD54F" opacity="0.82" />
-          <circle cx="62" cy="58" r="14" fill="#90CAF9" opacity="0.55" />
-          <ellipse cx="150" cy="175" rx="140" ry="20" fill="#1a237e" opacity="0.4" />
+          <circle cx="245" cy="42" r="22" fill="#fcd34d" opacity="0.82" />{/* yellow-300 */}
+          <circle cx="62" cy="58" r="14" fill="#93c5fd" opacity="0.55" />{/* blue-300 */}
+          <ellipse cx="150" cy="175" rx="140" ry="20" fill="#1e1b4b" opacity="0.4" />{/* indigo-950 */}
         </>
       )}
 
       {isMountain && (
         <>
-          <polygon points="40,200 140,55 240,200" fill="#4a6572" opacity="0.75" />
-          <polygon points="130,200 215,75 300,200" fill="#5a7582" opacity="0.65" />
+          <polygon points="40,200 140,55 240,200" fill="#475569" opacity="0.75" />{/* slate-600 */}
+          <polygon points="130,200 215,75 300,200" fill="#64748b" opacity="0.65" />{/* slate-500 */}
           <polygon points="118,62 140,55 162,62 152,48" fill="white" opacity="0.88" />
-          <circle cx="240" cy="32" r="18" fill="#FFD54F" opacity="0.7" />
+          <circle cx="240" cy="32" r="18" fill="#fcd34d" opacity="0.7" />{/* yellow-300 */}
         </>
       )}
 
       {isDesert && (
         <>
-          <ellipse cx="150" cy="185" rx="220" ry="30" fill="#c8841c" opacity="0.45" />
-          <polygon points="40,200 80,140 120,200" fill="#b5690f" opacity="0.6" />
-          <polygon points="180,200 230,130 280,200" fill="#a05c0b" opacity="0.55" />
-          <circle cx="245" cy="35" r="24" fill="#FFD54F" opacity="0.85" />
+          <ellipse cx="150" cy="185" rx="220" ry="30" fill="#d97706" opacity="0.45" />{/* amber-600 */}
+          <polygon points="40,200 80,140 120,200" fill="#b45309" opacity="0.6" />{/* amber-700 */}
+          <polygon points="180,200 230,130 280,200" fill="#92400e" opacity="0.55" />{/* amber-800 */}
+          <circle cx="245" cy="35" r="24" fill="#fcd34d" opacity="0.85" />{/* yellow-300 */}
         </>
       )}
 
       {/* Fallback pattern for generic scenes */}
       {!isForest && !isOcean && !isSpace && !isMountain && !isDesert && (
         <>
-          <circle cx="240" cy="35" r="20" fill="#FFD54F" opacity="0.7" />
+          <circle cx="240" cy="35" r="20" fill="#fcd34d" opacity="0.7" />{/* yellow-300 */}
           <ellipse cx="150" cy="185" rx="180" ry="22" fill="rgba(255,255,255,0.06)" />
         </>
       )}

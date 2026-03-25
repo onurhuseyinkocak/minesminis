@@ -273,7 +273,7 @@ function AdminCurriculumManager() {
 
     return (
         <div className="adm-curriculum">
-            <div className="adm-curriculum-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="adm-curriculum-header">
                 <div>
                     <h1>Curriculum</h1>
                     <p>Manage the 12 worlds, their lessons, vocabulary, and activities</p>
@@ -299,7 +299,7 @@ function AdminCurriculumManager() {
                             <div className="adm-world-item-color" style={{ background: world.color }} />
                             <div className="adm-world-item-info">
                                 <div className="adm-world-item-name">
-                                    <span style={{ fontSize: '1rem' }}>{world.emoji}</span>
+                                    <span className="adm-world-emoji">{world.emoji}</span>
                                     {world.name}
                                 </div>
                                 <div className="adm-world-item-count">
@@ -307,9 +307,8 @@ function AdminCurriculumManager() {
                                 </div>
                             </div>
                             <button
-                                className="adm-icon-btn"
+                                className="adm-icon-btn adm-world-edit-btn"
                                 onClick={(e) => { e.stopPropagation(); openEditWorld(world); }}
-                                style={{ flexShrink: 0 }}
                             >
                                 <Pencil size={12} />
                             </button>
@@ -322,9 +321,9 @@ function AdminCurriculumManager() {
                     <div className="adm-lessons-panel">
                         <div className="adm-lessons-header">
                             <div className="adm-lessons-title">
-                                <span style={{ fontSize: '1.25rem' }}>{selectedWorld.emoji}</span>
+                                <span className="adm-lessons-title-emoji">{selectedWorld.emoji}</span>
                                 {selectedWorld.name}
-                                <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)', fontWeight: 400 }}>
+                                <span className="adm-lessons-title-desc">
                                     ({selectedWorld.description})
                                 </span>
                             </div>
@@ -344,11 +343,11 @@ function AdminCurriculumManager() {
                                     <div key={lesson.id}>
                                         <div className="adm-lesson-row">
                                             <div className="adm-lesson-order">{idx + 1}</div>
-                                            <div className="adm-lesson-info" style={{ cursor: 'pointer' }} onClick={() => setExpandedLessonId(expandedLessonId === lesson.id ? null : lesson.id)}>
+                                            <div className="adm-lesson-info adm-lesson-info-clickable" onClick={() => setExpandedLessonId(expandedLessonId === lesson.id ? null : lesson.id)}>
                                                 <div className="adm-lesson-name">
                                                     {lesson.title}
                                                     {lesson.status === 'draft' && (
-                                                        <span style={{ marginLeft: 6, fontSize: '0.65rem', padding: '1px 6px', borderRadius: 100, background: 'var(--warning-pale)', color: 'var(--primary-dark)', fontWeight: 600 }}>DRAFT</span>
+                                                        <span className="adm-lesson-draft-badge">DRAFT</span>
                                                     )}
                                                 </div>
                                                 <div className="adm-lesson-details">
@@ -360,13 +359,12 @@ function AdminCurriculumManager() {
                                             </div>
                                             <div className="adm-lesson-actions">
                                                 <button
-                                                    className="adm-icon-btn"
+                                                    className={`adm-icon-btn ${idx === 0 ? 'adm-move-btn-disabled' : 'adm-move-btn-active'}`}
                                                     onClick={() => moveLessonUp(lesson)}
                                                     disabled={idx === 0}
                                                     title="Move up"
-                                                    style={{ opacity: idx === 0 ? 0.3 : 1 }}
                                                 >
-                                                    <GripVertical size={14} style={{ transform: 'rotate(0deg)' }} />
+                                                    <GripVertical size={14} />
                                                 </button>
                                                 <button className="adm-icon-btn" onClick={() => openEditLesson(lesson)}><Pencil size={13} /></button>
                                                 <button className="adm-icon-btn danger" onClick={() => handleDeleteLesson(lesson.id)}><Trash2 size={13} /></button>
@@ -397,7 +395,7 @@ function AdminCurriculumManager() {
                                                     </div>
                                                 )}
                                                 {lesson.objective && (
-                                                    <div style={{ padding: '0.75rem 1.25rem', fontSize: '0.8rem', color: 'var(--admin-text-secondary)', borderTop: '1px solid var(--admin-border-light)' }}>
+                                                    <div className="adm-lesson-objective">
                                                         <strong>Objective:</strong> {lesson.objective}
                                                     </div>
                                                 )}
@@ -409,7 +407,7 @@ function AdminCurriculumManager() {
                         )}
                     </div>
                 ) : (
-                    <div className="adm-curriculum-empty" style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', borderRadius: 'var(--admin-radius-lg)' }}>
+                    <div className="adm-curriculum-empty adm-curriculum-empty-panel">
                         <GraduationCap size={40} />
                         <p>Select a world to view its lessons</p>
                     </div>
@@ -426,10 +424,10 @@ function AdminCurriculumManager() {
                         </div>
                         <form onSubmit={handleWorldSubmit}>
                             <div className="adm-modal-body">
-                                <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '0.75rem' }}>
+                                <div className="adm-world-form-top">
                                     <div className="adm-form-group">
                                         <label>Emoji</label>
-                                        <input type="text" value={worldForm.emoji} onChange={e => setWorldForm({ ...worldForm, emoji: e.target.value })} style={{ textAlign: 'center', fontSize: '1.5rem' }} />
+                                        <input type="text" value={worldForm.emoji} onChange={e => setWorldForm({ ...worldForm, emoji: e.target.value })} className="adm-emoji-input" />
                                     </div>
                                     <div className="adm-form-group">
                                         <label>World Name</label>
@@ -444,10 +442,10 @@ function AdminCurriculumManager() {
                                     <label>Description</label>
                                     <input type="text" value={worldForm.description} onChange={e => setWorldForm({ ...worldForm, description: e.target.value })} />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                <div className="adm-world-form-bottom">
                                     <div className="adm-form-group">
                                         <label>Color</label>
-                                        <input type="color" value={worldForm.color} onChange={e => setWorldForm({ ...worldForm, color: e.target.value })} style={{ height: 40, padding: 2, border: '1px solid var(--admin-border)', borderRadius: 6, cursor: 'pointer' }} />
+                                        <input type="color" value={worldForm.color} onChange={e => setWorldForm({ ...worldForm, color: e.target.value })} className="adm-color-input" />
                                     </div>
                                     <div className="adm-form-group">
                                         <label>Age Range</label>
@@ -467,7 +465,7 @@ function AdminCurriculumManager() {
             {/* Lesson Modal */}
             {isLessonModal && (
                 <div className="adm-modal-overlay" onClick={() => setIsLessonModal(false)}>
-                    <div className="adm-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
+                    <div className="adm-modal adm-modal-lesson" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>{editingLesson ? 'Edit Lesson' : 'Add Lesson'}</h3>
                             <button className="adm-icon-btn" onClick={() => setIsLessonModal(false)}><X size={16} /></button>
@@ -491,7 +489,7 @@ function AdminCurriculumManager() {
                                     <input type="text" value={lessonForm.vocabularyWords} onChange={e => setLessonForm({ ...lessonForm, vocabularyWords: e.target.value })} placeholder="hello, hi, goodbye, bye" />
                                     <small>Enter words separated by commas</small>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                <div className="adm-lesson-form-bottom">
                                     <div className="adm-form-group">
                                         <label>Duration (minutes)</label>
                                         <input type="number" value={lessonForm.duration} onChange={e => setLessonForm({ ...lessonForm, duration: parseInt(e.target.value) || 15 })} min={1} max={60} />

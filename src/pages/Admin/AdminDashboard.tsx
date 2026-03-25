@@ -40,20 +40,17 @@ interface RecentUser {
     created_at: string;
 }
 
-// Simulated growth data (replace with real analytics)
-const generateGrowthData = (totalUsers: number) => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const buildGrowthData = (dailyCounts: Record<string, number>) => {
+    const days: { day: string; users: number }[] = [];
     const now = new Date();
-    const data = [];
     for (let i = 6; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const factor = Math.max(0.1, (7 - i) / 7);
-        data.push({
-            month: months[d.getMonth()],
-            users: Math.round(totalUsers * factor * (0.8 + Math.random() * 0.4)),
-        });
+        const d = new Date(now);
+        d.setDate(now.getDate() - i);
+        const key = d.toISOString().split('T')[0];
+        const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        days.push({ day: label, users: dailyCounts[key] ?? 0 });
     }
-    return data;
+    return days;
 };
 
 function AdminDashboard() {
@@ -65,6 +62,7 @@ function AdminDashboard() {
     const [wordsCount, setWordsCount] = useState(0);
     const [worksheetsCount, setWorksheetsCount] = useState(0);
     const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
+    const [growthData, setGrowthData] = useState<{ day: string; users: number }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -74,13 +72,18 @@ function AdminDashboard() {
     const loadDashboardData = async () => {
         setLoading(true);
 
-        const [usersRes, userCountRes, gamesRes, videosRes, wordsRes, worksheetsRes] = await Promise.allSettled([
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+
+        const [usersRes, userCountRes, gamesRes, videosRes, wordsRes, worksheetsRes, growthRes] = await Promise.allSettled([
             supabase.from('users').select('id, display_name, email, settings, role, created_at, is_online').order('created_at', { ascending: false }).limit(10),
             supabase.from('users').select('*', { count: 'exact', head: true }),
             supabase.from('games').select('*', { count: 'exact', head: true }),
             supabase.from('videos').select('*', { count: 'exact', head: true }),
             supabase.from('words').select('*', { count: 'exact', head: true }),
             supabase.from('worksheets').select('*', { count: 'exact', head: true }),
+            supabase.from('users').select('created_at').gte('created_at', sevenDaysAgo.toISOString()),
         ]);
 
         if (usersRes.status === 'fulfilled' && !usersRes.value.error && usersRes.value.data) {
@@ -125,11 +128,21 @@ function AdminDashboard() {
             setWorksheetsCount(fallbackWorksheets.length);
         }
 
+        if (growthRes.status === 'fulfilled' && !growthRes.value.error && growthRes.value.data) {
+            const dailyCounts: Record<string, number> = {};
+            for (const row of growthRes.value.data) {
+                const day = (row.created_at as string).split('T')[0];
+                dailyCounts[day] = (dailyCounts[day] ?? 0) + 1;
+            }
+            setGrowthData(buildGrowthData(dailyCounts));
+        } else {
+            setGrowthData(buildGrowthData({}));
+        }
+
         setLoading(false);
     };
 
     const totalContent = gamesCount + videosCount + wordsCount + worksheetsCount;
-    const growthData = generateGrowthData(totalUsers);
 
     if (loading) {
         return (
@@ -206,7 +219,7 @@ function AdminDashboard() {
                             <BarChart3 size={16} />
                             User Growth
                         </div>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)' }}>Last 7 months</span>
+                        <span className="adm-card-header-sub">Last 7 days</span>
                     </div>
                     <div className="adm-chart-container">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -219,7 +232,7 @@ function AdminDashboard() {
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis
-                                    dataKey="month"
+                                    dataKey="day"
                                     axisLine={false}
                                     tickLine={false}
                                     tick={{ fontSize: 11, fill: 'var(--stone)' }}
@@ -258,9 +271,8 @@ function AdminDashboard() {
                             Recent Signups
                         </div>
                         <button
-                            className="adm-action-btn"
+                            className="adm-action-btn adm-action-btn-sm"
                             onClick={loadDashboardData}
-                            style={{ padding: '0.25rem 0.5rem' }}
                         >
                             <RefreshCw size={12} />
                         </button>
@@ -277,7 +289,7 @@ function AdminDashboard() {
                                         <strong>{user.display_name || 'Anonymous'}</strong>
                                         {' '}registered
                                         {(user.settings?.is_premium as boolean) && (
-                                            <Crown size={12} style={{ color: 'var(--warning)', marginLeft: 4, verticalAlign: 'middle' }} />
+                                            <Crown size={12} className="adm-crown-inline" />
                                         )}
                                     </div>
                                     <div className="adm-activity-time">
@@ -294,7 +306,7 @@ function AdminDashboard() {
             </div>
 
             {/* Content Inventory + Quick Actions + System Health */}
-            <div className="adm-dash-row" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+            <div className="adm-dash-row cols-3">
                 {/* Content Inventory */}
                 <div className="adm-card">
                     <div className="adm-card-header">
@@ -303,8 +315,8 @@ function AdminDashboard() {
                     <div className="adm-card-body no-pad">
                         <div className="adm-inventory-grid">
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: 'var(--warning-pale)' }}>
-                                    <Gamepad2 size={18} style={{ color: 'var(--warning)' }} />
+                                <div className="adm-inventory-icon warning">
+                                    <Gamepad2 size={18} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{gamesCount}</div>
@@ -312,8 +324,8 @@ function AdminDashboard() {
                                 </div>
                             </div>
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: 'var(--error-pale)' }}>
-                                    <Video size={18} style={{ color: 'var(--error)' }} />
+                                <div className="adm-inventory-icon error">
+                                    <Video size={18} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{videosCount}</div>
@@ -321,8 +333,8 @@ function AdminDashboard() {
                                 </div>
                             </div>
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: 'var(--success-pale)' }}>
-                                    <BookOpen size={18} style={{ color: 'var(--accent-emerald)' }} />
+                                <div className="adm-inventory-icon success">
+                                    <BookOpen size={18} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{wordsCount}</div>
@@ -330,8 +342,8 @@ function AdminDashboard() {
                                 </div>
                             </div>
                             <div className="adm-inventory-item">
-                                <div className="adm-inventory-icon" style={{ background: 'var(--accent-purple-pale)' }}>
-                                    <FileText size={18} style={{ color: 'var(--accent-purple)' }} />
+                                <div className="adm-inventory-icon purple">
+                                    <FileText size={18} />
                                 </div>
                                 <div className="adm-inventory-info">
                                     <div className="adm-inventory-count">{worksheetsCount}</div>
@@ -370,17 +382,17 @@ function AdminDashboard() {
                     </div>
                     <div className="adm-card-body no-pad">
                         <div className="adm-health-bar">
-                            <Server size={15} style={{ color: 'var(--admin-text-muted)' }} />
+                            <Server size={15} className="adm-icon-muted" />
                             <span className="adm-health-label">API Server</span>
                             <span className="adm-health-status ok">Operational</span>
                         </div>
                         <div className="adm-health-bar">
-                            <Database size={15} style={{ color: 'var(--admin-text-muted)' }} />
+                            <Database size={15} className="adm-icon-muted" />
                             <span className="adm-health-label">Database</span>
                             <span className="adm-health-status ok">Healthy</span>
                         </div>
                         <div className="adm-health-bar">
-                            <Wifi size={15} style={{ color: 'var(--admin-text-muted)' }} />
+                            <Wifi size={15} className="adm-icon-muted" />
                             <span className="adm-health-label">CDN</span>
                             <span className="adm-health-status ok">Online</span>
                         </div>

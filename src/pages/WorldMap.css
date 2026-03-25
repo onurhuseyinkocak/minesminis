@@ -6,11 +6,11 @@
 
 /* ---- CUSTOM PROPERTIES ---- */
 :root {
-  --journey-path-color: #E8C547;
+  --journey-path-color: var(--mimi-gold, #E8C547);
   --journey-stop-size: 80px;
   --journey-current-glow: rgba(232, 197, 71, 0.5);
-  --journey-completed-color: #4CAF50;
-  --journey-locked-color: #9E9E9E;
+  --journey-completed-color: var(--mimi, #4CAF50);
+  --journey-locked-color: var(--stone, #9E9E9E);
   --journey-unlocked-glow: rgba(255, 215, 0, 0.35);
 }
 
@@ -19,7 +19,7 @@
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
-  background: linear-gradient(180deg, #87CEEB 0%, #E0F0FF 40%, #F0FFF0 100%);
+  background: linear-gradient(180deg, var(--info-soft, #BAE6FD) 0%, var(--info-pale, #F0F9FF) 40%, var(--gradient-mimi, #F0FDF4) 100%);
   padding-bottom: var(--space-2xl, 3rem);
 }
 
@@ -322,7 +322,7 @@
 /* --- Completed --- */
 .journey-stop--completed .journey-stop__circle {
   border-color: var(--journey-completed-color);
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  background: linear-gradient(135deg, var(--success-pale, #ECFDF5), var(--success-soft, rgba(16,185,129,0.12)));
 }
 
 [data-theme="dark"] .journey-stop--completed .journey-stop__circle {
@@ -590,6 +590,6 @@
 }
 
 [data-theme="dark"] .journey-star-icon {
-  color: #555;
-  fill: #555;
+  color: var(--text-muted, #555);
+  fill: var(--text-muted, #555);
 }

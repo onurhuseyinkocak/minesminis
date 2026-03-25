@@ -9,93 +9,125 @@ import {
 import { supabase } from '../../config/supabase';
 import './AdminAnalytics.css';
 
-// Generate sample analytics data
-const generateActiveUsersData = () => {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days.map(day => ({
-        day,
-        active: Math.floor(Math.random() * 40 + 20),
-        new: Math.floor(Math.random() * 10 + 2),
-    }));
-};
-
-const generateCompletionData = () => {
-    const worlds = ['Hello', 'Body', 'Colors', 'Animals', 'Family', 'Food'];
-    return worlds.map(world => ({
-        world,
-        completed: Math.floor(Math.random() * 70 + 30),
-        started: Math.floor(Math.random() * 30 + 10),
-    }));
-};
-
-const generateMasteryData = () => [
+const MASTERY_DATA = [
     { name: 'Mastered', value: 45, color: 'var(--accent-emerald)' },
     { name: 'Learning', value: 30, color: 'var(--warning)' },
     { name: 'New', value: 25, color: 'var(--cloud)' },
 ];
 
-const generateStreakData = () => [
-    { streak: '0 days', users: 35 },
-    { streak: '1-3', users: 25 },
-    { streak: '4-7', users: 18 },
-    { streak: '8-14', users: 12 },
-    { streak: '15-30', users: 7 },
-    { streak: '30+', users: 3 },
+const STREAK_DATA = [
+    { streak: '0 days', users: 0 },
+    { streak: '1-3', users: 0 },
+    { streak: '4-7', users: 0 },
+    { streak: '8-14', users: 0 },
+    { streak: '15-30', users: 0 },
+    { streak: '30+', users: 0 },
 ];
 
-const topGames = [
-    { name: 'Animals Quiz', plays: 342, color: 'var(--warning)' },
-    { name: 'Colors Match', plays: 289, color: 'var(--accent-purple)' },
-    { name: 'Body Parts Maze', plays: 256, color: 'var(--error)' },
-    { name: 'Family Words', plays: 198, color: 'var(--accent-pink)' },
-    { name: 'Food Memory', plays: 167, color: 'var(--accent-emerald)' },
+const COMPLETION_DATA = [
+    { world: 'Hello', completed: 0, started: 0 },
+    { world: 'Body', completed: 0, started: 0 },
+    { world: 'Colors', completed: 0, started: 0 },
+    { world: 'Animals', completed: 0, started: 0 },
+    { world: 'Family', completed: 0, started: 0 },
+    { world: 'Food', completed: 0, started: 0 },
 ];
 
-const generateMonthlyUsers = () => {
+interface MonthlyPoint { month: string; users: number }
+interface GameStat { name: string; plays: number; color: string }
+
+const GAME_COLORS = [
+    'var(--warning)',
+    'var(--accent-purple)',
+    'var(--error)',
+    'var(--accent-pink)',
+    'var(--accent-emerald)',
+];
+
+function buildMonthlyData(rows: { created_at: string }[]): MonthlyPoint[] {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const now = new Date();
+    const counts: Record<string, number> = {};
+    for (const row of rows) {
+        const d = new Date(row.created_at);
+        const key = `${d.getFullYear()}-${d.getMonth()}`;
+        counts[key] = (counts[key] ?? 0) + 1;
+    }
     return Array.from({ length: 12 }, (_, i) => {
         const d = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
-        return {
-            month: months[d.getMonth()],
-            users: Math.floor(Math.random() * 50 + 10 + i * 5),
-        };
+        const key = `${d.getFullYear()}-${d.getMonth()}`;
+        return { month: months[d.getMonth()], users: counts[key] ?? 0 };
     });
-};
+}
+
+function buildWeeklyData(rows: { created_at: string }[]): { day: string; active: number; new: number }[] {
+    const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const newCounts = new Array(7).fill(0);
+    for (const row of rows) {
+        const dow = (new Date(row.created_at).getDay() + 6) % 7; // 0=Mon
+        newCounts[dow]++;
+    }
+    return dayLabels.map((day, i) => ({ day, active: 0, new: newCounts[i] }));
+}
 
 function AdminAnalytics() {
     const [totalUsers, setTotalUsers] = useState(0);
-    const [avgCompletion, setAvgCompletion] = useState(0);
-    const [avgStreak, setAvgStreak] = useState(0);
-    const [totalLessonsCompleted, setTotalLessonsCompleted] = useState(0);
+    const [totalGames, setTotalGames] = useState(0);
+    const [monthlyData, setMonthlyData] = useState<MonthlyPoint[]>([]);
+    const [weeklyData, setWeeklyData] = useState<{ day: string; active: number; new: number }[]>([]);
+    const [topGames, setTopGames] = useState<GameStat[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const activeUsersData = generateActiveUsersData();
-    const completionData = generateCompletionData();
-    const masteryData = generateMasteryData();
-    const streakData = generateStreakData();
-    const monthlyData = generateMonthlyUsers();
-
     useEffect(() => {
-        loadAnalytics();
+        fetchAnalytics();
     }, []);
 
-    const loadAnalytics = async () => {
+    const fetchAnalytics = async () => {
+        setLoading(true);
         try {
-            const { count } = await supabase.from('users').select('*', { count: 'exact', head: true });
-            setTotalUsers(count || 0);
-            // Simulated metrics (replace with real queries)
-            setAvgCompletion(Math.floor(Math.random() * 30 + 45));
-            setAvgStreak(Math.floor(Math.random() * 5 + 3));
-            setTotalLessonsCompleted(Math.floor(Math.random() * 500 + 200));
-        } catch {
-            // Use defaults
+            const twelveMonthsAgo = new Date();
+            twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+            twelveMonthsAgo.setDate(1);
+            twelveMonthsAgo.setHours(0, 0, 0, 0);
+
+            const [userCountRes, gamesCountRes, userRowsRes, gamesRes] = await Promise.allSettled([
+                supabase.from('users').select('*', { count: 'exact', head: true }),
+                supabase.from('games').select('*', { count: 'exact', head: true }),
+                supabase.from('users').select('created_at').gte('created_at', twelveMonthsAgo.toISOString()),
+                supabase.from('games').select('title, plays').order('plays', { ascending: false }).limit(5),
+            ]);
+
+            if (userCountRes.status === 'fulfilled' && !userCountRes.value.error) {
+                setTotalUsers(userCountRes.value.count ?? 0);
+            }
+
+            if (gamesCountRes.status === 'fulfilled' && !gamesCountRes.value.error) {
+                setTotalGames(gamesCountRes.value.count ?? 0);
+            }
+
+            if (userRowsRes.status === 'fulfilled' && !userRowsRes.value.error && userRowsRes.value.data) {
+                const rows = userRowsRes.value.data as { created_at: string }[];
+                setMonthlyData(buildMonthlyData(rows));
+                setWeeklyData(buildWeeklyData(rows));
+            } else {
+                setMonthlyData(buildMonthlyData([]));
+                setWeeklyData(buildWeeklyData([]));
+            }
+
+            if (gamesRes.status === 'fulfilled' && !gamesRes.value.error && gamesRes.value.data) {
+                const games = gamesRes.value.data as { title: string; plays: number | null }[];
+                setTopGames(games.map((g, i) => ({
+                    name: g.title,
+                    plays: g.plays ?? 0,
+                    color: GAME_COLORS[i] ?? 'var(--admin-text-muted)',
+                })));
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    const maxPlays = Math.max(...topGames.map(g => g.plays));
+    const maxPlays = topGames.length > 0 ? Math.max(...topGames.map(g => g.plays), 1) : 1;
 
     if (loading) {
         return (
@@ -129,7 +161,7 @@ function AdminAnalytics() {
                         <Target size={20} />
                     </div>
                     <div>
-                        <div className="adm-analytics-stat-val">{avgCompletion}%</div>
+                        <div className="adm-analytics-stat-val">N/A</div>
                         <div className="adm-analytics-stat-label">Avg. Completion</div>
                     </div>
                 </div>
@@ -138,7 +170,7 @@ function AdminAnalytics() {
                         <Flame size={20} />
                     </div>
                     <div>
-                        <div className="adm-analytics-stat-val">{avgStreak} days</div>
+                        <div className="adm-analytics-stat-val">N/A</div>
                         <div className="adm-analytics-stat-label">Avg. Streak</div>
                     </div>
                 </div>
@@ -147,8 +179,8 @@ function AdminAnalytics() {
                         <Award size={20} />
                     </div>
                     <div>
-                        <div className="adm-analytics-stat-val">{totalLessonsCompleted}</div>
-                        <div className="adm-analytics-stat-label">Lessons Completed</div>
+                        <div className="adm-analytics-stat-val">{totalGames}</div>
+                        <div className="adm-analytics-stat-label">Total Games</div>
                     </div>
                 </div>
             </div>
@@ -158,7 +190,7 @@ function AdminAnalytics() {
                 <div className="adm-analytics-chart full">
                     <div className="adm-analytics-chart-header">
                         <div className="adm-analytics-chart-title">
-                            <TrendingUp size={16} /> Active Users Over Time
+                            <TrendingUp size={16} /> User Registrations Over Time
                         </div>
                         <span style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)' }}>Last 12 months</span>
                     </div>
@@ -187,18 +219,17 @@ function AdminAnalytics() {
                 <div className="adm-analytics-chart">
                     <div className="adm-analytics-chart-header">
                         <div className="adm-analytics-chart-title">
-                            <BarChart3 size={16} /> Weekly Activity
+                            <BarChart3 size={16} /> Weekly Signups
                         </div>
                     </div>
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                            <BarChart data={activeUsersData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                            <BarChart data={weeklyData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
                                 <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--cloud)', borderRadius: 8, fontSize: '0.8rem' }} />
                                 <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
-                                <Bar dataKey="active" fill="var(--accent-blue)" radius={[4, 4, 0, 0]} name="Active Users" />
                                 <Bar dataKey="new" fill="var(--accent-emerald)" radius={[4, 4, 0, 0]} name="New Users" />
                             </BarChart>
                         </ResponsiveContainer>
@@ -213,7 +244,7 @@ function AdminAnalytics() {
                     </div>
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                            <BarChart data={completionData} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
+                            <BarChart data={COMPLETION_DATA} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" horizontal={false} />
                                 <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
                                 <YAxis type="category" dataKey="world" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} width={60} />
@@ -238,7 +269,7 @@ function AdminAnalytics() {
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <PieChart>
                                 <Pie
-                                    data={masteryData}
+                                    data={MASTERY_DATA}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={60}
@@ -246,7 +277,7 @@ function AdminAnalytics() {
                                     paddingAngle={3}
                                     dataKey="value"
                                 >
-                                    {masteryData.map((entry, index) => (
+                                    {MASTERY_DATA.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
@@ -265,7 +296,7 @@ function AdminAnalytics() {
                     </div>
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                            <BarChart data={streakData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                            <BarChart data={STREAK_DATA} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="streak" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'var(--stone)' }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />
@@ -286,6 +317,9 @@ function AdminAnalytics() {
                         </div>
                     </div>
                     <div style={{ padding: '0.5rem 0' }}>
+                        {topGames.length === 0 && (
+                            <div className="adm-empty">No game data available</div>
+                        )}
                         {topGames.map((game, i) => (
                             <div key={game.name} className="adm-top-item">
                                 <div className={`adm-top-rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}`}>
@@ -314,11 +348,11 @@ function AdminAnalytics() {
                     <div style={{ padding: '1.25rem' }}>
                         <div style={{ display: 'grid', gap: '1rem' }}>
                             {[
-                                { label: 'Daily Active Users', value: `${Math.floor(totalUsers * 0.15)}`, sub: `${((totalUsers * 0.15 / Math.max(totalUsers, 1)) * 100).toFixed(0)}% of total`, color: 'var(--accent-blue)' },
-                                { label: 'Weekly Active Users', value: `${Math.floor(totalUsers * 0.45)}`, sub: `${((totalUsers * 0.45 / Math.max(totalUsers, 1)) * 100).toFixed(0)}% of total`, color: 'var(--accent-emerald)' },
-                                { label: 'Avg. Session Duration', value: '12 min', sub: 'Per user per day', color: 'var(--warning)' },
-                                { label: 'Retention (7-day)', value: '68%', sub: 'Users returning within 7 days', color: 'var(--accent-purple)' },
-                                { label: 'Content Engagement', value: '4.2', sub: 'Avg. items per session', color: 'var(--accent-pink)' },
+                                { label: 'Daily Active Users', value: 'N/A', sub: 'No activity data yet', color: 'var(--accent-blue)' },
+                                { label: 'Weekly Active Users', value: 'N/A', sub: 'No activity data yet', color: 'var(--accent-emerald)' },
+                                { label: 'Avg. Session Duration', value: 'N/A', sub: 'Per user per day', color: 'var(--warning)' },
+                                { label: 'Retention (7-day)', value: 'N/A', sub: 'Users returning within 7 days', color: 'var(--accent-purple)' },
+                                { label: 'Content Engagement', value: 'N/A', sub: 'Avg. items per session', color: 'var(--accent-pink)' },
                             ].map(item => (
                                 <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid var(--admin-border-light)' }}>
                                     <div style={{ width: 4, height: 32, borderRadius: 2, background: item.color, flexShrink: 0 }} />

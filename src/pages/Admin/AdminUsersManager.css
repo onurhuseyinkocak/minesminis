@@ -553,6 +553,135 @@
 .adm-no-data svg { opacity: 0.3; margin-bottom: var(--space-md); }
 .adm-no-data p { font-size: 0.85rem; margin: 0; }
 
+/* ---- Stat icon color variants ---- */
+.adm-stat-icon-blue   { background: var(--info-pale);           color: var(--accent-blue); }
+.adm-stat-icon-yellow { background: var(--warning-pale);        color: var(--warning); }
+.adm-stat-icon-red    { background: var(--error-pale);          color: var(--accent-red); }
+.adm-stat-icon-purple { background: var(--accent-purple-pale);  color: var(--accent-purple); }
+
+/* ---- Premium badge clickable ---- */
+.adm-badge-btn {
+  cursor: pointer;
+  border: none;
+}
+
+/* ---- Premium until text ---- */
+.adm-premium-until {
+  font-size: 0.65rem;
+  color: var(--admin-text-muted);
+  margin-top: 2px;
+}
+
+/* ---- Table cell: level & points ---- */
+.adm-cell-level {
+  font-weight: 600;
+}
+
+.adm-cell-points {
+  font-weight: 600;
+  color: var(--warning);
+}
+
+/* ---- Table cell: date ---- */
+.adm-cell-date {
+  font-size: 0.775rem;
+  color: var(--admin-text-secondary);
+}
+
+/* ---- User detail panel: avatar block ---- */
+.adm-panel-user-hero {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.adm-panel-user-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.adm-panel-user-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--admin-text);
+}
+
+.adm-panel-user-email {
+  font-size: 0.8rem;
+  color: var(--admin-text-muted);
+}
+
+/* ---- Panel: premium until inline span ---- */
+.adm-panel-premium-until {
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+  margin-left: 8px;
+}
+
+/* ---- Modal: confirm footer centered ---- */
+.adm-modal-footer-center {
+  justify-content: center;
+}
+
+/* ---- Modal: confirm body ---- */
+.adm-confirm-body {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+/* ---- Modal: max-width narrow ---- */
+.adm-modal-narrow {
+  max-width: 400px;
+}
+
+/* ---- Create modal: password notice box ---- */
+.adm-password-notice {
+  background: var(--warning-pale);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.adm-password-notice-icon {
+  color: var(--primary-dark);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.adm-password-notice-text {
+  font-size: 0.8rem;
+  color: var(--primary-dark);
+}
+
+/* ---- Form: Grant Premium label ---- */
+.adm-grant-premium-label {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.adm-grant-premium-icon {
+  color: var(--warning);
+}
+
+/* ---- Toast: save password note ---- */
+.adm-toast-save-note {
+  color: var(--primary-dark);
+}
+
+/* ---- Crown icon in user name cell ---- */
+.adm-crown-icon {
+  color: var(--warning);
+}
+
+/* ---- Inline icon inside label ---- */
+.adm-label-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 1024px) { .adm-users-stats { grid-template-columns: repeat(2, 1fr); } }
 

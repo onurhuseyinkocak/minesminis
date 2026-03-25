@@ -5,12 +5,12 @@ import { Crown, Check, Star, Sparkles, Zap, MessageCircle, Gamepad2, BookOpen, T
 import './Premium.css';
 
 const premiumFeatures = [
-  { icon: <MessageCircle size={32} strokeWidth={2.5} />, title: 'Unlimited AI Chat', description: 'Practice English as much as you want with your AI dragon guide!' },
-  { icon: <Gamepad2 size={32} strokeWidth={2.5} />, title: 'All Educational Games', description: 'Word matching, memory games, speed rounds, and more!' },
-  { icon: <BookOpen size={32} strokeWidth={2.5} />, title: 'Vocabulary Practice', description: 'Visual and audio learning experience with 100+ words' },
-  { icon: <Trophy size={32} strokeWidth={2.5} />, title: 'Daily Challenges', description: 'Keep learning with new questions every day!' },
-  { icon: <Zap size={32} strokeWidth={2.5} />, title: 'Sentence Builder', description: 'Learn English sentence structure while having fun' },
-  { icon: <Star size={32} strokeWidth={2.5} />, title: 'Balloon Pop', description: 'Exciting timed vocabulary competition!' },
+  { icon: <MessageCircle size={32} strokeWidth={2.5} />, title: 'Sınırsız AI Sohbet', description: 'AI ejderha rehberinizle istediğiniz kadar İngilizce pratik yapın!' },
+  { icon: <Gamepad2 size={32} strokeWidth={2.5} />, title: 'Tüm Eğitici Oyunlar', description: 'Kelime eşleştirme, hafıza oyunları, hız turları ve daha fazlası!' },
+  { icon: <BookOpen size={32} strokeWidth={2.5} />, title: 'Kelime Pratiği', description: '100+ kelimeyle görsel ve işitsel öğrenme deneyimi' },
+  { icon: <Trophy size={32} strokeWidth={2.5} />, title: 'Günlük Görevler', description: 'Her gün yeni sorularla öğrenmeye devam et!' },
+  { icon: <Zap size={32} strokeWidth={2.5} />, title: 'Cümle Kurucusu', description: 'Eğlenirken İngilizce cümle yapısını öğren' },
+  { icon: <Star size={32} strokeWidth={2.5} />, title: 'Balon Patlat', description: 'Zamana karşı heyecanlı kelime yarışması!' },
 ];
 
 export default function Premium() {
@@ -26,11 +26,11 @@ export default function Premium() {
             <Sparkles size={20} />
             <span>Premium</span>
           </div>
-          <h1>{isPremium ? 'You\'re Premium!' : 'Unlock Everything!'}</h1>
+          <h1>{isPremium ? 'Premium Üyesiniz!' : 'Her Şeyin Kilidini Aç!'}</h1>
           <p>
             {isPremium
-              ? 'Thank you for being a Premium member! Enjoy unlimited access to all features.'
-              : 'Upgrade to Premium to unlock unlimited English practice and all educational content.'}
+              ? 'Premium üyeliğiniz için teşekkürler! Tüm özelliklere sınırsız erişimin keyfini çıkarın.'
+              : 'Sınırsız İngilizce pratiği ve tüm eğitim içeriklerine erişmek için Premium\'a geçin.'}
           </p>
           <div className="hero-sparkles">
             <Sparkles className="sparkle-1" size={24} />
@@ -42,25 +42,25 @@ export default function Premium() {
         {isLoading ? (
           <div className="premium-coming-soon-card">
             <Crown size={48} className="coming-soon-icon" />
-            <h2>Loading your subscription...</h2>
+            <h2>Yükleniyor...</h2>
           </div>
         ) : isPremium ? (
           <div className="premium-coming-soon-card">
             <Crown size={48} className="coming-soon-icon" />
             <h2>Active {plan.charAt(0).toUpperCase() + plan.slice(1)} Plan</h2>
             <p>
-              You have full access to all worlds, unlimited Mimi chat, educational games, progress tracking, and more.
-              {subscriptionStatus === 'active' && ' Your subscription is active.'}
+              Tüm dünyalara, sınırsız Mimi sohbetine, eğitici oyunlara, ilerleme takibine ve daha fazlasına tam erişiminiz var.
+              {subscriptionStatus === 'active' && ' Aboneliğiniz aktif.'}
             </p>
             <button type="button" className="back-btn" onClick={() => navigate('/dashboard')}>
-              Go to Dashboard
+              Panele Git
             </button>
           </div>
         ) : (
           <div className="premium-coming-soon-card">
             <Crown size={48} className="coming-soon-icon" />
-            <h2>Upgrade to Premium</h2>
-            <p>Unlock unlimited Mimi chat, all 12 worlds, progress tracking, achievement badges, and an ad-free experience!</p>
+            <h2>Premium'a Yükselt</h2>
+            <p>Sınırsız Mimi sohbeti, tüm 12 dünya, ilerleme takibi, başarı rozetleri ve reklamsız deneyimin kilidini aç!</p>
             <button type="button" className="back-btn" onClick={() => navigate('/pricing')}>
               View Plans &amp; Pricing
             </button>
@@ -68,11 +68,11 @@ export default function Premium() {
         )}
 
         <div className="features-section animate-up" style={{ animationDelay: '0.2s' }}>
-          <div className="section-badge">Premium Perks</div>
-          <h2>Why Choose Premium?</h2>
+          <div className="section-badge">Premium Ayrıcalıkları</div>
+          <h2>Neden Premium?</h2>
           <div className="features-grid">
             {premiumFeatures.map((feature, index) => (
-              <div key={index} className="feature-card glass-morphism">
+              <div key={index} className="feature-card bg-white/10 backdrop-blur-sm">
                 <div className="feature-icon">{feature.icon}</div>
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
@@ -82,46 +82,46 @@ export default function Premium() {
         </div>
 
         <div className="comparison-section">
-          <h2>Free vs Premium</h2>
+          <h2>Ücretsiz vs Premium</h2>
           <div className="comparison-table">
             <div className="comparison-header">
-              <div className="feature-col">Feature</div>
-              <div className="free-col">Free</div>
+              <div className="feature-col">Özellik</div>
+              <div className="free-col">Ücretsiz</div>
               <div className="premium-col">Premium</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">Chat with Mimi</div>
-              <div className="free-col">10 messages / day</div>
-              <div className="premium-col"><Check size={18} /> Unlimited</div>
+              <div className="feature-col">Mimi ile Sohbet</div>
+              <div className="free-col">Günlük 10 mesaj</div>
+              <div className="premium-col"><Check size={18} /> Sınırsız</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">Educational games</div>
-              <div className="free-col"><Check size={18} /> All</div>
-              <div className="premium-col"><Check size={18} /> All</div>
+              <div className="feature-col">Eğitici oyunlar</div>
+              <div className="free-col"><Check size={18} /> Tümü</div>
+              <div className="premium-col"><Check size={18} /> Tümü</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">Vocabulary practice</div>
-              <div className="free-col"><Check size={18} /> All</div>
-              <div className="premium-col"><Check size={18} /> All</div>
+              <div className="feature-col">Kelime pratiği</div>
+              <div className="free-col"><Check size={18} /> Tümü</div>
+              <div className="premium-col"><Check size={18} /> Tümü</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">Daily challenge</div>
-              <div className="free-col">Limited</div>
-              <div className="premium-col"><Check size={18} /> Unlimited</div>
+              <div className="feature-col">Günlük görev</div>
+              <div className="free-col">Sınırlı</div>
+              <div className="premium-col"><Check size={18} /> Sınırsız</div>
             </div>
             <div className="comparison-row">
-              <div className="feature-col">Progress tracking</div>
-              <div className="free-col">Basic</div>
-              <div className="premium-col"><Check size={18} /> Advanced</div>
+              <div className="feature-col">İlerleme takibi</div>
+              <div className="free-col">Temel</div>
+              <div className="premium-col"><Check size={18} /> Gelişmiş</div>
             </div>
           </div>
         </div>
 
         {!user && (
           <div className="login-prompt">
-            <p>Log in to get the most out of MinesMinis.</p>
+            <p>MinesMinis'ten en iyi şekilde yararlanmak için giriş yap.</p>
             <button type="button" onClick={() => navigate('/login', { state: { from: '/premium' } })}>
-              Log In / Sign Up
+              Giriş Yap / Üye Ol
             </button>
           </div>
         )}

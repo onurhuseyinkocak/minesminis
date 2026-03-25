@@ -251,6 +251,118 @@
 .adm-curriculum-empty svg { opacity: 0.3; margin-bottom: var(--space-md); }
 .adm-curriculum-empty p { font-size: 0.85rem; }
 
+/* ---- Curriculum Header ---- */
+.adm-curriculum-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* ---- World item color swatch (dynamic bg set inline) ---- */
+/* .adm-world-item-color background is set dynamically per-world via style prop */
+
+/* ---- World emoji in item name ---- */
+.adm-world-emoji {
+  font-size: 1rem;
+}
+
+/* ---- Edit button in world item ---- */
+.adm-world-edit-btn {
+  flex-shrink: 0;
+}
+
+/* ---- Lesson info: clickable row ---- */
+.adm-lesson-info-clickable {
+  cursor: pointer;
+}
+
+/* ---- Draft badge inline ---- */
+.adm-lesson-draft-badge {
+  margin-left: 6px;
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 100px;
+  background: var(--warning-pale);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* ---- Move-up button: disabled opacity ---- */
+.adm-move-btn-disabled {
+  opacity: 0.3;
+}
+
+.adm-move-btn-active {
+  opacity: 1;
+}
+
+/* ---- Lesson objective section ---- */
+.adm-lesson-objective {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8rem;
+  color: var(--admin-text-secondary);
+  border-top: 1px solid var(--admin-border-light);
+}
+
+/* ---- Empty state with panel style ---- */
+.adm-curriculum-empty-panel {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+}
+
+/* ---- Lessons title parts ---- */
+.adm-lessons-title-emoji {
+  font-size: 1.25rem;
+}
+
+.adm-lessons-title-desc {
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+  font-weight: 400;
+}
+
+/* ---- World modal: emoji+name grid ---- */
+.adm-world-form-top {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0.75rem;
+}
+
+/* ---- World modal: emoji input ---- */
+.adm-emoji-input {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+/* ---- World modal: color+age grid ---- */
+.adm-world-form-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* ---- Color picker input ---- */
+.adm-color-input {
+  height: 40px;
+  padding: 2px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ---- Lesson modal: duration+status grid ---- */
+.adm-lesson-form-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* ---- Lesson modal max-width ---- */
+.adm-modal-lesson {
+  max-width: 520px;
+}
+
 @media (max-width: 1024px) {
   .adm-curriculum-layout { grid-template-columns: 1fr; }
 }

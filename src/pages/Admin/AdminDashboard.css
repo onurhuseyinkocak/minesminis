@@ -70,6 +70,10 @@
   box-shadow: var(--shadow-md);
 }
 
+.adm-action-btn.adm-action-btn-sm {
+  padding: 0.25rem 0.5rem;
+}
+
 /* ---- Metrics Grid ---- */
 .adm-metrics-grid {
   display: grid;
@@ -154,6 +158,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-md);
+}
+
+.adm-dash-row.cols-3 {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 /* ---- Cards ---- */
@@ -268,6 +276,19 @@
 }
 
 .adm-inventory-info { flex: 1; }
+
+.adm-inventory-icon.warning { background: var(--warning-pale); color: var(--warning); }
+.adm-inventory-icon.error   { background: var(--error-pale);   color: var(--error); }
+.adm-inventory-icon.success { background: var(--success-pale); color: var(--accent-emerald); }
+.adm-inventory-icon.purple  { background: var(--accent-purple-pale); color: var(--accent-purple); }
+
+.adm-icon-muted { color: var(--admin-text-muted); }
+.adm-card-header-sub { font-size: 0.7rem; color: var(--admin-text-muted); }
+.adm-crown-inline { color: var(--warning); margin-left: 4px; vertical-align: middle; }
+.adm-panel-center { text-align: center; margin-bottom: 1.5rem; }
+.adm-panel-avatar { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.adm-panel-name { font-weight: 700; font-size: 1.1rem; color: var(--admin-text); }
+.adm-panel-email { font-size: 0.8rem; color: var(--admin-text-muted); }
 
 .adm-inventory-count {
   font-family: var(--admin-font-heading);

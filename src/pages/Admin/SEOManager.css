@@ -1,0 +1,222 @@
+/* =============================================
+   SEO Manager — Admin Panel
+   ============================================= */
+
+/* spin animation — used on RefreshCw icon */
+.spin {
+    animation: seo-spin 1s linear infinite;
+}
+
+@keyframes seo-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---- Tabs bar margin override ---- */
+.seo-tabs-bar {
+    margin-bottom: 1.5rem;
+    padding: 0;
+}
+
+/* ---- Description paragraphs ---- */
+.seo-desc {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.seo-desc-sm {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 1rem;
+}
+
+.seo-page-count {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* ---- Form labels ---- */
+.seo-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-body);
+}
+
+/* ---- Form field wrapper ---- */
+.seo-field {
+    margin-bottom: 1rem;
+}
+
+/* ---- Action button row ---- */
+.seo-action-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* ---- One-click SEO button ---- */
+.seo-apply-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ---- Code / pre blocks ---- */
+.seo-pre {
+    background: var(--bg-elevated);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow: auto;
+    font-size: 0.85rem;
+    color: var(--text-body);
+    border: 1px solid #e5e7eb;
+}
+
+.seo-pre-sm {
+    background: var(--bg-elevated);
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: var(--text-body);
+    overflow: auto;
+    border: 1px solid #e5e7eb;
+}
+
+.seo-schema-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+/* ---- Meta page row header ---- */
+.seo-page-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.seo-page-label {
+    color: var(--text-body);
+    font-weight: 500;
+}
+
+.seo-copy-btn {
+    padding: 0.35rem 0.75rem;
+}
+
+/* ---- Input full width helper ---- */
+.seo-input-full {
+    width: 100%;
+    max-width: 400px;
+}
+
+.seo-input-wide {
+    width: 100%;
+    max-width: 500px;
+}
+
+.seo-input-medium {
+    width: 100%;
+    max-width: 300px;
+}
+
+/* ---- Inspect URL row ---- */
+.seo-inspect-row {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.seo-inspect-input {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* ---- Inspection result panel ---- */
+.seo-result-ok {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.seo-result-error {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.seo-result-error-text {
+    color: #dc2626;
+}
+
+.seo-result-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.seo-result-key {
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+.seo-result-val {
+    color: var(--text-primary);
+}
+
+.seo-result-val-ok {
+    color: #059669;
+}
+
+.seo-result-val-missing {
+    color: #dc2626;
+}
+
+/* ---- Google Tools grid ---- */
+.seo-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.seo-tool-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+}
+
+.seo-tool-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.seo-tool-info {
+    flex: 1;
+}
+
+.seo-tool-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.seo-tool-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.seo-tool-ext-icon {
+    color: var(--text-muted);
+}
