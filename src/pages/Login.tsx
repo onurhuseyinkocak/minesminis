@@ -81,7 +81,7 @@ const content = {
 };
 
 const Login: React.FC = () => {
-  const [lang, setLang] = useState<Lang>('en');
+  const [lang, setLang] = useState<Lang>('tr');
   const t = content[lang];
   const [searchParams] = useSearchParams();
 

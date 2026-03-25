@@ -371,8 +371,8 @@ export default function Dashboard() {
           ============================================================ */}
       <motion.section className="bg-white rounded-2xl p-4 shadow-card" variants={itemVariants}>
         <div className="flex items-center justify-between mb-3">
-          <span className="font-display font-bold text-ink-900">Activity</span>
-          <span className="text-xs text-ink-400 font-body">Last 35 days</span>
+          <span className="font-display font-bold text-ink-900">{lang === 'tr' ? 'Aktivite' : 'Activity'}</span>
+          <span className="text-xs text-ink-400 font-body">{lang === 'tr' ? 'Son 35 gün' : 'Last 35 days'}</span>
         </div>
         <StreakCalendar
           activityDates={getActivityDates(userId)}

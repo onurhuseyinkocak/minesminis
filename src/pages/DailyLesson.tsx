@@ -41,7 +41,7 @@ import './DailyLesson.css';
 const PHASES_EN = [
   { id: 1, key: 'listen', title: 'New Words!',    subtitle: 'This is SAT. This is SIT. Tap to hear!', icon: '1' },
   { id: 2, key: 'see',    title: 'Watch & Learn!', subtitle: 'See each word in a sentence', icon: '2' },
-  { id: 3, key: 'play',   title: "Hadi Oynayalım!",    subtitle: 'Hangisi SAT göster bana!', icon: '3' },
+  { id: 3, key: 'play',   title: "Let's Play!",    subtitle: 'Show me SAT!', icon: '3' },
   { id: 4, key: 'speak',  title: 'Say It!',        subtitle: 'What is this word? Say it!', icon: '4' },
   { id: 5, key: 'review', title: 'Remember?',      subtitle: 'Test what you learned', icon: '5' },
   { id: 6, key: 'story',  title: 'Mini Story!',    subtitle: 'See the words in a story', icon: '6' },

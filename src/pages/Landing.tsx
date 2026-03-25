@@ -374,7 +374,7 @@ export default function Landing() {
               {lang === 'tr' ? 'EN' : 'TR'}
             </button>
             <Link
-              to="/dashboard"
+              to="/login?tab=signup"
               className="font-display font-extrabold text-sm bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 rounded-xl transition-all duration-150 hover:scale-105 active:scale-95 shadow-sm"
             >
               {t(lang, 'Ücretsiz Başla', 'Start Free')}
@@ -426,7 +426,7 @@ export default function Landing() {
                     {lang === 'tr' ? 'EN' : 'TR'}
                   </button>
                   <Link
-                    to="/dashboard"
+                    to="/login?tab=signup"
                     className="font-display font-extrabold text-sm bg-primary-500 text-white px-5 py-2.5 rounded-xl flex-1 text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -517,7 +517,7 @@ export default function Landing() {
                 className="flex flex-col sm:flex-row gap-3"
               >
                 <Link
-                  to="/dashboard"
+                  to="/login?tab=signup"
                   className="inline-flex items-center justify-center gap-3 bg-primary-500 hover:bg-primary-600 text-white font-display font-extrabold text-lg px-8 py-4 rounded-2xl shadow-lg transition-all duration-150 hover:scale-105 active:scale-95"
                 >
                   {t(lang, 'Ücretsiz Başla', 'Start Free')}
@@ -728,7 +728,7 @@ export default function Landing() {
                 )}
               </p>
               <Link
-                to="/dashboard"
+                to="/login?tab=signup"
                 className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-display font-extrabold text-sm px-6 py-3 rounded-xl transition-all duration-150 hover:scale-105"
               >
                 {t(lang, 'Ücretsiz Dene', 'Try Free')}
@@ -1018,7 +1018,7 @@ export default function Landing() {
                 ))}
               </div>
               <Link
-                to="/dashboard"
+                to="/login?tab=signup"
                 className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white font-display font-extrabold text-base px-7 py-4 rounded-2xl transition-all duration-150 hover:scale-105"
               >
                 {t(lang, 'Öğretmen Hesabı Aç', 'Open Teacher Account')}
@@ -1094,7 +1094,7 @@ export default function Landing() {
           </div>
 
           <Link
-            to="/dashboard"
+            to="/login?tab=signup"
             className="inline-flex items-center gap-3 bg-white hover:bg-ink-50 text-primary-600 font-display font-extrabold text-xl px-10 py-5 rounded-2xl shadow-xl transition-all duration-150 hover:scale-105 active:scale-95"
           >
             {t(lang, 'Hemen Başla', 'Get Started Now')}

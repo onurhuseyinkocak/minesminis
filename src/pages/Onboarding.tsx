@@ -28,22 +28,24 @@ interface ChildEntry {
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 
-const STUDENT_AGE_GROUPS: { value: string; label: string; phase: string; icon: React.ReactNode; color: string }[] = [
-  { value: '3-5', label: 'Ages 3-5', phase: 'Little Ears', icon: <Baby size={24} />, color: 'var(--primary)' },
-  { value: '5-7', label: 'Ages 5-7', phase: 'Word Builders', icon: <User size={24} />, color: 'var(--primary)' },
-  { value: '7-9', label: 'Ages 7-9', phase: 'Story Makers', icon: <BookOpen size={24} />, color: 'var(--primary)' },
-  { value: '9-10', label: 'Ages 9-10', phase: 'Young Explorers', icon: <Globe size={24} />, color: 'var(--primary)' },
+const STUDENT_AGE_GROUPS: { value: string; label: string; labelTr: string; phase: string; phaseTr: string; icon: React.ReactNode; color: string }[] = [
+  { value: '3-5', label: 'Ages 3-5', labelTr: '3-5 Yaş', phase: 'Little Ears', phaseTr: 'Küçük Kulaklar', icon: <Baby size={24} />, color: 'var(--primary)' },
+  { value: '5-7', label: 'Ages 5-7', labelTr: '5-7 Yaş', phase: 'Word Builders', phaseTr: 'Kelime Ustası', icon: <User size={24} />, color: 'var(--primary)' },
+  { value: '7-9', label: 'Ages 7-9', labelTr: '7-9 Yaş', phase: 'Story Makers', phaseTr: 'Hikaye Yazarı', icon: <BookOpen size={24} />, color: 'var(--primary)' },
+  { value: '9-10', label: 'Ages 9-10', labelTr: '9-10 Yaş', phase: 'Young Explorers', phaseTr: 'Genç Kaşif', icon: <Globe size={24} />, color: 'var(--primary)' },
 ];
 
 const PLACEMENT_QUESTIONS = [
   {
     id: 1,
     title: 'Can you hear the first sound?',
+    titleTr: 'İlk sesi duyabiliyor musun?',
     instruction: 'What sound does "Ball" start with?',
+    instructionTr: '"Ball" kelimesi hangi sesle başlar?',
     options: [
-      { label: 'B', value: 'correct' },
-      { label: 'D', value: 'wrong1' },
-      { label: 'P', value: 'wrong2' },
+      { label: 'B', labelTr: 'B', value: 'correct' },
+      { label: 'D', labelTr: 'D', value: 'wrong1' },
+      { label: 'P', labelTr: 'P', value: 'wrong2' },
     ],
     correct: 'correct',
     skill: 'phoneme_awareness',
@@ -51,11 +53,13 @@ const PLACEMENT_QUESTIONS = [
   {
     id: 2,
     title: 'What does this letter say?',
+    titleTr: 'Bu harf ne sesini çıkarır?',
     instruction: 'The letter "S" makes the sound...',
+    instructionTr: '"S" harfinin sesi...',
     options: [
-      { label: '"sss" like a snake', value: 'correct' },
-      { label: '"mmm" like humming', value: 'wrong1' },
-      { label: '"zzz" like a bee', value: 'wrong2' },
+      { label: '"sss" like a snake', labelTr: '"sss" yılan gibi', value: 'correct' },
+      { label: '"mmm" like humming', labelTr: '"mmm" mırıldanma gibi', value: 'wrong1' },
+      { label: '"zzz" like a bee', labelTr: '"zzz" arı gibi', value: 'wrong2' },
     ],
     correct: 'correct',
     skill: 'letter_sound',
@@ -63,11 +67,13 @@ const PLACEMENT_QUESTIONS = [
   {
     id: 3,
     title: 'Blend these sounds!',
+    titleTr: 'Bu sesleri birleştir!',
     instruction: 's - a - t  =  ?',
+    instructionTr: 's - a - t  =  ?',
     options: [
-      { label: 'sat', value: 'correct' },
-      { label: 'set', value: 'wrong1' },
-      { label: 'sit', value: 'wrong2' },
+      { label: 'sat', labelTr: 'sat', value: 'correct' },
+      { label: 'set', labelTr: 'set', value: 'wrong1' },
+      { label: 'sit', labelTr: 'sit', value: 'wrong2' },
     ],
     correct: 'correct',
     skill: 'blending',
@@ -347,7 +353,7 @@ const Onboarding: React.FC = () => {
       }
 
       await refreshUserProfile();
-      toast.success('Welcome to MinesMinis!');
+      toast.success(isTr ? "MinesMinis'e hoş geldin!" : 'Welcome to MinesMinis!');
       navigate('/dashboard');
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Please try again.';
@@ -436,8 +442,8 @@ const Onboarding: React.FC = () => {
             <span className="onboarding-age-icon-wrap">
               {ag.icon}
             </span>
-            <span className="onboarding-age-range">{ag.label}</span>
-            <span className="onboarding-age-label">{ag.phase}</span>
+            <span className="onboarding-age-range">{isTr ? ag.labelTr : ag.label}</span>
+            <span className="onboarding-age-label">{isTr ? ag.phaseTr : ag.phase}</span>
           </motion.button>
         ))}
       </div>
@@ -462,9 +468,12 @@ const Onboarding: React.FC = () => {
           <div className="onboarding-step-icon-large onboarding-step-icon-success">
             <CheckCircle size={40} />
           </div>
-          <h2>Great job!</h2>
+          <h2>{isTr ? 'Harika!' : 'Great job!'}</h2>
           <p className="onboarding-step-sub">
-            Based on your answers, we recommend starting at <strong>Phonics {PHONICS_GROUPS[startingPhonicsGroup - 1].name}</strong>
+            {isTr
+              ? <><strong>Fonetik {PHONICS_GROUPS[startingPhonicsGroup - 1].name}</strong>'den başlamanı öneriyoruz</>
+              : <>Based on your answers, we recommend starting at <strong>Phonics {PHONICS_GROUPS[startingPhonicsGroup - 1].name}</strong></>
+            }
           </p>
           <div className="onboarding-placement-result">
             <div className="onboarding-phonics-result-card">
@@ -490,8 +499,8 @@ const Onboarding: React.FC = () => {
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="onboarding-step"
       >
-        <h2>{q.title}</h2>
-        <p className="onboarding-step-sub onboarding-step-sub-large">{q.instruction}</p>
+        <h2>{isTr ? q.titleTr : q.title}</h2>
+        <p className="onboarding-step-sub onboarding-step-sub-large">{isTr ? q.instructionTr : q.instruction}</p>
 
         <div className="onboarding-placement-progress">
           {PLACEMENT_QUESTIONS.map((_, i) => (
@@ -517,7 +526,7 @@ const Onboarding: React.FC = () => {
                 <span className="onboarding-placement-option-indicator">
                   {isSelected ? <Check size={16} /> : null}
                 </span>
-                <span>{opt.label}</span>
+                <span>{isTr ? opt.labelTr : opt.label}</span>
               </motion.button>
             );
           })}
@@ -525,7 +534,7 @@ const Onboarding: React.FC = () => {
 
         <div className="onboarding-actions">
           <Button variant="ghost" size="lg" onClick={prevStep} icon={<ArrowLeft size={18} />}>
-            Back
+            {isTr ? 'Geri' : 'Back'}
           </Button>
           <span className="onboarding-question-counter">
             {currentQuestion + 1} / {PLACEMENT_QUESTIONS.length}

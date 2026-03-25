@@ -152,6 +152,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 /** Time limit overlay shown when student exceeds daily limit */
 function TimeLimitOverlay({ minutes, limit }: { minutes: number; limit: number }) {
+  const isTr = navigator.language.startsWith('tr');
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -160,19 +161,21 @@ function TimeLimitOverlay({ minutes, limit }: { minutes: number; limit: number }
     }}>
       <div style={{ fontSize: 72, color: 'var(--primary, #E8A317)' }}><Star size={72} /></div>
       <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-        Great job today!
+        {isTr ? 'Harika iş bugün!' : 'Great job today!'}
       </h1>
       <p style={{ fontSize: 18, color: 'var(--text-secondary)', margin: 0, maxWidth: 360 }}>
-        You learned for <strong>{minutes} minutes</strong> today. Come back tomorrow for more fun!
+        {isTr
+          ? <><strong>{minutes} dakika</strong> öğrendin bugün. Yarın daha fazlası için geri gel!</>
+          : <>You learned for <strong>{minutes} minutes</strong> today. Come back tomorrow for more fun!</>}
       </p>
       <div style={{ display: 'flex', gap: 24, marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
         <div style={{ background: 'var(--primary-pale, #eff6ff)', borderRadius: 16, padding: '16px 24px', textAlign: 'center' }}>
-          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary)' }}>{minutes} min</div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Time Learned</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary)' }}>{minutes} {isTr ? 'dk' : 'min'}</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{isTr ? 'Öğrenme Süresi' : 'Time Learned'}</div>
         </div>
       </div>
       <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 8 }}>
-        Daily limit: {limit} minutes
+        {isTr ? `Günlük limit: ${limit} dakika` : `Daily limit: ${limit} minutes`}
       </p>
     </div>
   );

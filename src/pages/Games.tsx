@@ -58,12 +58,12 @@ interface DailyPracticeSession {
   scores: number[];
 }
 
-const TAB_DEFS: { id: TabCategory; icon: React.ReactNode; label: string }[] = [
-  { id: 'all', icon: <Gamepad2 size={16} />, label: 'All' },
-  { id: 'vocabulary', icon: <BookMarked size={16} />, label: 'Vocabulary' },
-  { id: 'phonics', icon: <Layers size={16} />, label: 'Phonics' },
-  { id: 'reading', icon: <BookOpen size={16} />, label: 'Reading' },
-  { id: 'speaking', icon: <Mic size={16} />, label: 'Speaking' },
+const TAB_DEFS: { id: TabCategory; icon: React.ReactNode; label: string; labelTr: string }[] = [
+  { id: 'all', icon: <Gamepad2 size={16} />, label: 'All', labelTr: 'Tümü' },
+  { id: 'vocabulary', icon: <BookMarked size={16} />, label: 'Vocabulary', labelTr: 'Kelime' },
+  { id: 'phonics', icon: <Layers size={16} />, label: 'Phonics', labelTr: 'Fonetik' },
+  { id: 'reading', icon: <BookOpen size={16} />, label: 'Reading', labelTr: 'Okuma' },
+  { id: 'speaking', icon: <Mic size={16} />, label: 'Speaking', labelTr: 'Konuşma' },
 ];
 
 function getGameWords() {
@@ -102,7 +102,8 @@ function Games() {
 
   const { user } = useAuth();
   const { stats } = useGamification();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const isTr = lang === 'tr';
 
   const userLevel = stats?.level ?? 1;
 
@@ -337,7 +338,7 @@ function Games() {
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.icon}
-              <span>{tab.label}</span>
+              <span>{isTr ? tab.labelTr : tab.label}</span>
             </button>
           ))}
         </div>
