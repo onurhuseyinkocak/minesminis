@@ -9,32 +9,19 @@ import {
 import { supabase } from '../../config/supabase';
 import './AdminAnalytics.css';
 
-const MASTERY_DATA = [
-    { name: 'Mastered', value: 45, color: 'var(--accent-emerald)' },
-    { name: 'Learning', value: 30, color: 'var(--warning)' },
-    { name: 'New', value: 25, color: 'var(--cloud)' },
-];
-
-const STREAK_DATA = [
-    { streak: '0 days', users: 0 },
-    { streak: '1-3', users: 0 },
-    { streak: '4-7', users: 0 },
-    { streak: '8-14', users: 0 },
-    { streak: '15-30', users: 0 },
-    { streak: '30+', users: 0 },
-];
-
-const COMPLETION_DATA = [
-    { world: 'Hello', completed: 0, started: 0 },
-    { world: 'Body', completed: 0, started: 0 },
-    { world: 'Colors', completed: 0, started: 0 },
-    { world: 'Animals', completed: 0, started: 0 },
-    { world: 'Family', completed: 0, started: 0 },
-    { world: 'Food', completed: 0, started: 0 },
-];
-
 interface MonthlyPoint { month: string; users: number }
 interface GameStat { name: string; plays: number; color: string }
+interface MasteryPoint { name: string; value: number; color: string }
+interface StreakPoint { streak: string; users: number }
+
+const COMPLETION_DATA = [
+    { world: 'Letters & Sounds', completed: 0, started: 0 },
+    { world: 'Family & Home', completed: 0, started: 0 },
+    { world: 'Animals', completed: 0, started: 0 },
+    { world: 'Food & Drink', completed: 0, started: 0 },
+    { world: 'Numbers', completed: 0, started: 0 },
+    { world: 'Emotions', completed: 0, started: 0 },
+];
 
 const GAME_COLORS = [
     'var(--warning)',
@@ -70,12 +57,63 @@ function buildWeeklyData(rows: { created_at: string }[]): { day: string; active:
     return dayLabels.map((day, i) => ({ day, active: 0, new: newCounts[i] }));
 }
 
+function buildStreakData(users: { streak_days: number | null }[]): StreakPoint[] {
+    const buckets: StreakPoint[] = [
+        { streak: '0 days', users: 0 },
+        { streak: '1-3', users: 0 },
+        { streak: '4-7', users: 0 },
+        { streak: '8-14', users: 0 },
+        { streak: '15-30', users: 0 },
+        { streak: '30+', users: 0 },
+    ];
+    for (const u of users) {
+        const d = u.streak_days ?? 0;
+        if (d === 0) buckets[0].users++;
+        else if (d <= 3) buckets[1].users++;
+        else if (d <= 7) buckets[2].users++;
+        else if (d <= 14) buckets[3].users++;
+        else if (d <= 30) buckets[4].users++;
+        else buckets[5].users++;
+    }
+    return buckets;
+}
+
+function buildMasteryData(rows: { mastery: number | null }[]): MasteryPoint[] {
+    let mastered = 0;
+    let learning = 0;
+    let newWords = 0;
+    for (const r of rows) {
+        const m = r.mastery ?? 0;
+        if (m >= 0.8) mastered++;
+        else if (m >= 0.3) learning++;
+        else newWords++;
+    }
+    return [
+        { name: 'Mastered', value: mastered, color: 'var(--accent-emerald)' },
+        { name: 'Learning', value: learning, color: 'var(--warning)' },
+        { name: 'New', value: newWords, color: 'var(--cloud)' },
+    ];
+}
+
 function AdminAnalytics() {
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalGames, setTotalGames] = useState(0);
     const [monthlyData, setMonthlyData] = useState<MonthlyPoint[]>([]);
     const [weeklyData, setWeeklyData] = useState<{ day: string; active: number; new: number }[]>([]);
     const [topGames, setTopGames] = useState<GameStat[]>([]);
+    const [masteryData, setMasteryData] = useState<MasteryPoint[]>([
+        { name: 'Mastered', value: 0, color: 'var(--accent-emerald)' },
+        { name: 'Learning', value: 0, color: 'var(--warning)' },
+        { name: 'New', value: 0, color: 'var(--cloud)' },
+    ]);
+    const [streakData, setStreakData] = useState<StreakPoint[]>([
+        { streak: '0 days', users: 0 },
+        { streak: '1-3', users: 0 },
+        { streak: '4-7', users: 0 },
+        { streak: '8-14', users: 0 },
+        { streak: '15-30', users: 0 },
+        { streak: '30+', users: 0 },
+    ]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -90,11 +128,14 @@ function AdminAnalytics() {
             twelveMonthsAgo.setDate(1);
             twelveMonthsAgo.setHours(0, 0, 0, 0);
 
-            const [userCountRes, gamesCountRes, userRowsRes, gamesRes] = await Promise.allSettled([
+            const [userCountRes, gamesCountRes, userRowsRes, gamesRes, streakRes, masteryRes, activityRes] = await Promise.allSettled([
                 supabase.from('users').select('*', { count: 'exact', head: true }),
                 supabase.from('games').select('*', { count: 'exact', head: true }),
                 supabase.from('users').select('created_at').gte('created_at', twelveMonthsAgo.toISOString()),
                 supabase.from('games').select('title, plays').order('plays', { ascending: false }).limit(5),
+                supabase.from('users').select('streak_days'),
+                supabase.from('phonics_mastery').select('mastery'),
+                supabase.from('activity_logs').select('type').eq('type', 'game'),
             ]);
 
             if (userCountRes.status === 'fulfilled' && !userCountRes.value.error) {
@@ -116,11 +157,33 @@ function AdminAnalytics() {
 
             if (gamesRes.status === 'fulfilled' && !gamesRes.value.error && gamesRes.value.data) {
                 const games = gamesRes.value.data as { title: string; plays: number | null }[];
-                setTopGames(games.map((g, i) => ({
-                    name: g.title,
-                    plays: g.plays ?? 0,
-                    color: GAME_COLORS[i] ?? 'var(--admin-text-muted)',
-                })));
+                // If games table has plays column, use it; otherwise fall back to activity_logs count
+                const hasPlays = games.some(g => (g.plays ?? 0) > 0);
+                if (hasPlays) {
+                    setTopGames(games.map((g, i) => ({
+                        name: g.title,
+                        plays: g.plays ?? 0,
+                        color: GAME_COLORS[i] ?? 'var(--admin-text-muted)',
+                    })));
+                } else if (activityRes.status === 'fulfilled' && !activityRes.value.error && activityRes.value.data) {
+                    // Count plays per game from activity_logs
+                    const actRows = activityRes.value.data as { type: string }[];
+                    setTopGames([{
+                        name: 'Games (total)',
+                        plays: actRows.length,
+                        color: GAME_COLORS[0],
+                    }]);
+                }
+            }
+
+            if (streakRes.status === 'fulfilled' && !streakRes.value.error && streakRes.value.data) {
+                const rows = streakRes.value.data as { streak_days: number | null }[];
+                setStreakData(buildStreakData(rows));
+            }
+
+            if (masteryRes.status === 'fulfilled' && !masteryRes.value.error && masteryRes.value.data) {
+                const rows = masteryRes.value.data as { mastery: number | null }[];
+                setMasteryData(buildMasteryData(rows));
             }
         } finally {
             setLoading(false);
@@ -269,7 +332,7 @@ function AdminAnalytics() {
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <PieChart>
                                 <Pie
-                                    data={MASTERY_DATA}
+                                    data={masteryData}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={60}
@@ -277,7 +340,7 @@ function AdminAnalytics() {
                                     paddingAngle={3}
                                     dataKey="value"
                                 >
-                                    {MASTERY_DATA.map((entry, index) => (
+                                    {masteryData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
@@ -296,7 +359,7 @@ function AdminAnalytics() {
                     </div>
                     <div className="adm-analytics-chart-body">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                            <BarChart data={STREAK_DATA} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                            <BarChart data={streakData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--mist)" vertical={false} />
                                 <XAxis dataKey="streak" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'var(--stone)' }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--stone)' }} />

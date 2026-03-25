@@ -1,9 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, Search, BookOpen, Download, Sparkles } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Search, BookOpen, Download, Sparkles, Info } from 'lucide-react';
 import { KidsWord } from '../../data/wordsData';
 import { wordStore } from '../../data/wordStore';
 import { adminFetch } from '../../utils/adminApi';
-import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
 import './WordsManager.css';
 
@@ -25,45 +24,19 @@ function WordsManager() {
         example: ''
     });
 
-    // Load words from Supabase (public read), fallback to wordStore
+    // Load words from in-memory wordStore (words table doesn't exist in Supabase yet)
     useEffect(() => {
-        let cancelled = false;
-        (async () => {
-            setWordsLoading(true);
-            try {
-                const { data, error } = await supabase.from('words').select('*').order('word');
-                if (!cancelled && !error && data && data.length > 0) {
-                    const list: KidsWord[] = data.map((r: Record<string, unknown>) => ({
-                        word: String(r.word),
-                        turkish: String(r.turkish),
-                        level: (r.level as KidsWord['level']) || 'beginner',
-                        category: String(r.category || 'Animals'),
-                        emoji: String(r.emoji || '📚'),
-                        example: r.example ? String(r.example) : undefined
-                    }));
-                    setWords(list);
-                } else if (!cancelled) {
-                    setWords(wordStore.getWords());
-                }
-            } catch {
-                if (!cancelled) {
-                    toast.error('Kelimeler yüklenirken hata. Yerel veri kullanılıyor.');
-                    setWords(wordStore.getWords());
-                }
-            } finally {
-                if (!cancelled) setWordsLoading(false);
-            }
-        })();
-        return () => { cancelled = true; };
+        setWords(wordStore.getWords());
+        setWordsLoading(false);
     }, []);
 
     // Keep in sync with wordStore when it updates (e.g. from another tab)
     useEffect(() => {
         const unsubscribe = wordStore.subscribe((updatedWords) => {
-            if (words.length === 0 && !wordsLoading) setWords(updatedWords);
+            setWords(updatedWords);
         });
         return unsubscribe;
-    }, [words.length, wordsLoading]);
+    }, []);
 
     const itemsPerPage = 10;
 
@@ -235,6 +208,11 @@ function WordsManager() {
             <div className="admin-header">
                 <h1><BookOpen size={28} /> Kelime Yönetimi</h1>
                 <p>İngilizce kelime listesini düzenleyin {wordsLoading ? '(yükleniyor…)' : `(${words.length} kelime)`}</p>
+            </div>
+
+            <div className="adm-notice-banner" style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'var(--bg-muted, #f0f4ff)', border: '1px solid var(--accent-blue, #6366f1)', borderRadius: '8px', padding: '12px 16px', marginBottom: '16px', fontSize: '0.85rem', color: 'var(--text-secondary, #555)' }}>
+                <Info size={18} style={{ flexShrink: 0, color: 'var(--accent-blue, #6366f1)', marginTop: '1px' }} />
+                <span>Words are managed via the source code (<code>wordsData.ts</code>). Database sync coming soon. Changes made here are stored in-memory and reflected instantly in the app, but will reset on page reload.</span>
             </div>
 
             <div className="data-table-container">

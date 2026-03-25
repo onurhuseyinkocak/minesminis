@@ -363,6 +363,9 @@ export default function Landing() {
             <a href="#school" className="font-display font-semibold text-sm text-ink-600 hover:text-primary-500 transition-colors">
               {t(lang, 'Okul', 'School')}
             </a>
+            <a href="#pricing" className="font-display font-semibold text-sm text-amber-600 hover:text-amber-700 transition-colors">
+              {t(lang, 'Erken Kayıt', 'Early Bird')}
+            </a>
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
@@ -1049,6 +1052,131 @@ export default function Landing() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          EARLY BIRD PRICING
+          ══════════════════════════════════════ */}
+      <section id="pricing" className="py-16 lg:py-24 bg-gradient-to-b from-cream-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 lg:px-8">
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 bg-amber-100 border-2 border-amber-300 text-amber-800 font-display font-black text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-4"
+            >
+              <Zap size={13} />
+              {t(lang, 'Erken Kayıt Avantajı', 'Early Bird Offer')}
+            </motion.div>
+            <h2 className="font-display font-black text-ink-900 mb-3" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
+              {t(lang, 'Şimdi Başla, Avantajı Yakala', 'Start Now, Grab the Advantage')}
+            </h2>
+            <p className="font-body text-ink-500 max-w-xl mx-auto">
+              {t(lang,
+                'MinesMinis şu an ücretsiz erken erişim aşamasında. İlk kullanıcılar gelecekteki ücretli planlarda özel indirim alacak.',
+                'MinesMinis is currently in free early access. Early users will receive special discounts on future paid plans.'
+              )}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {/* Free Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-white border-2 border-ink-200 rounded-3xl p-7"
+            >
+              <p className="font-display font-bold text-ink-500 text-sm uppercase tracking-wide mb-2">
+                {t(lang, 'Ücretsiz', 'Free')}
+              </p>
+              <div className="font-display font-black text-ink-900 text-4xl mb-1">₺0</div>
+              <p className="font-body text-ink-400 text-sm mb-6">{t(lang, 'Sonsuza kadar ücretsiz', 'Free forever')}</p>
+              <ul className="flex flex-col gap-2.5 mb-7">
+                {(lang === 'tr' ? [
+                  'Günlük 1 ders',
+                  '7 fonetik grup — tümüne erişim',
+                  '5 oyun türü',
+                  'Ebeveyn özet görünümü',
+                ] : [
+                  '1 lesson per day',
+                  '7 phonics groups — full access',
+                  '5 game types',
+                  'Parent summary view',
+                ]).map(item => (
+                  <li key={item} className="flex items-start gap-2">
+                    <Check size={14} className="text-success-500 flex-shrink-0 mt-0.5" />
+                    <span className="font-body text-ink-600 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/login?tab=signup"
+                className="block w-full text-center font-display font-extrabold text-sm bg-ink-100 hover:bg-ink-200 text-ink-700 px-5 py-3 rounded-xl transition-all duration-150"
+              >
+                {t(lang, 'Ücretsiz Başla', 'Start Free')}
+              </Link>
+            </motion.div>
+
+            {/* Early Bird Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-primary-500 border-2 border-primary-400 rounded-3xl p-7 relative overflow-hidden"
+            >
+              <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 font-display font-black text-xs px-3 py-1 rounded-full">
+                {t(lang, 'Erken Kayıt', 'Early Bird')}
+              </div>
+              <p className="font-display font-bold text-primary-200 text-sm uppercase tracking-wide mb-2">
+                {t(lang, 'Premium — Erken Fiyat', 'Premium — Early Price')}
+              </p>
+              <div className="font-display font-black text-white text-4xl mb-1">
+                {t(lang, 'Yakında', 'Coming Soon')}
+              </div>
+              <p className="font-body text-primary-200 text-sm mb-6">
+                {t(lang, 'Fiyat açıklandığında erken kayıt indirimi', 'Early bird discount when price launches')}
+              </p>
+              <ul className="flex flex-col gap-2.5 mb-7">
+                {(lang === 'tr' ? [
+                  'Sınırsız ders',
+                  'Tüm 16 oyun türü',
+                  'Tam ebeveyn + öğretmen paneli',
+                  'Haftalık ilerleme raporu',
+                  'Reklamsız deneyim',
+                  'Öncelikli destek',
+                ] : [
+                  'Unlimited lessons',
+                  'All 16 game types',
+                  'Full parent + teacher dashboard',
+                  'Weekly progress reports',
+                  'Ad-free experience',
+                  'Priority support',
+                ]).map(item => (
+                  <li key={item} className="flex items-start gap-2">
+                    <Check size={14} className="text-white flex-shrink-0 mt-0.5" />
+                    <span className="font-body text-primary-100 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/login?tab=signup"
+                className="block w-full text-center font-display font-extrabold text-sm bg-white hover:bg-primary-50 text-primary-600 px-5 py-3 rounded-xl transition-all duration-150 hover:scale-105"
+              >
+                {t(lang, 'Erken Kaydı Garantile', 'Lock In Early Access')}
+              </Link>
+            </motion.div>
+          </div>
+
+          <p className="text-center font-body text-ink-400 text-xs mt-8">
+            {t(lang,
+              'Erken kayıt, gelecekteki ücretli planlar açıklandığında özel fiyat garantisi anlamına gelir. Şu an tamamen ücretsiz.',
+              'Early registration guarantees a special price when paid plans launch. Completely free for now.'
+            )}
+          </p>
         </div>
       </section>
 

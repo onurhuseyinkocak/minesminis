@@ -43,6 +43,7 @@ function AdminUsersManager() {
         newPremium?: boolean;
     } | null>(null);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [premiumDurationMonths, setPremiumDurationMonths] = useState(1);
 
     // Create form
     const [newUserData, setNewUserData] = useState({
@@ -132,7 +133,7 @@ function AdminUsersManager() {
     const handlePremiumToggle = async (userId: string, premium: boolean) => {
         setConfirmLoading(true);
         const premiumUntil = premium
-            ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            ? new Date(Date.now() + premiumDurationMonths * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
             : null;
         const targetUser = users.find(u => u.id === userId);
         const newSettings = { ...(targetUser?.settings || {}), is_premium: premium, premium_until: premiumUntil };
@@ -699,10 +700,26 @@ function AdminUsersManager() {
                                         ? `Change ${confirmState.user.display_name}'s role to ${confirmState.newRole}?`
                                         : confirmState.type === 'premium' && confirmState.newPremium !== undefined
                                             ? confirmState.newPremium
-                                                ? `Grant premium access to ${confirmState.user.display_name} for 1 year?`
+                                                ? `Grant premium access to ${confirmState.user.display_name}?`
                                                 : `Remove premium from ${confirmState.user.display_name}?`
                                             : `Permanently delete ${confirmState.user.display_name}? This cannot be undone.`}
                                 </p>
+                                {confirmState.type === 'premium' && confirmState.newPremium === true && (
+                                    <div className="adm-form-group" style={{ marginTop: '10px' }}>
+                                        <label style={{ fontSize: '0.82rem', marginBottom: '4px', display: 'block' }}>Duration</label>
+                                        <select
+                                            className="adm-filter-select"
+                                            value={premiumDurationMonths}
+                                            onChange={(e) => setPremiumDurationMonths(parseInt(e.target.value))}
+                                        >
+                                            <option value={1}>1 Month</option>
+                                            <option value={3}>3 Months</option>
+                                            <option value={6}>6 Months</option>
+                                            <option value={12}>1 Year</option>
+                                            <option value={120}>Lifetime (10 Years)</option>
+                                        </select>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="adm-modal-footer adm-modal-footer-center">
