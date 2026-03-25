@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import './PhonicsLesson.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, ArrowRight, ArrowLeft, Sparkles, Mic, BookOpen, PenTool, Trophy, Search, Target } from 'lucide-react';
@@ -229,7 +230,7 @@ function PhonicsLesson() {
   // ── Not found ──
   if (!data) {
     return (
-      <div style={styles.container}>
+      <div className="pl-container">
         <Card variant="elevated" padding="xl">
           <div style={{ textAlign: 'center' }}>
             <Search size={48} color="#1A6B5A" />
@@ -257,17 +258,17 @@ function PhonicsLesson() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      style={styles.stepContent}
+      className="pl-stepContent"
     >
       <motion.div
         animate={{ scale: [1, 1.1, 1] }}
         transition={{ repeat: Infinity, duration: 2 }}
-        style={styles.bigLetter}
+        className="pl-bigLetter"
       >
         {sound.grapheme}
       </motion.div>
 
-      <p style={styles.stepDesc}>Dinle! Bu harf şunu söyler...</p>
+      <p className="pl-stepDesc">Dinle! Bu harf şunu söyler...</p>
 
       <Button
         variant="primary"
@@ -283,9 +284,9 @@ function PhonicsLesson() {
         3 kez dinle
       </Button>
 
-      <div style={styles.mimiBox}>
+      <div className="pl-mimiBox">
         <LottieCharacter state="happy" size={40} />
-        <p style={styles.mimiText}>
+        <p className="pl-mimiText">
           {sound.story}
         </p>
       </div>
@@ -302,7 +303,7 @@ function PhonicsLesson() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      style={styles.stepContent}
+      className="pl-stepContent"
     >
       <motion.div
         animate={{ scale: [1, 1.15, 1] }}
@@ -319,8 +320,8 @@ function PhonicsLesson() {
         </span>
       </motion.div>
 
-      <div style={styles.actionBox}>
-        <p style={styles.actionText}>{sound.action}</p>
+      <div className="pl-actionBox">
+        <p className="pl-actionText">{sound.action}</p>
       </div>
 
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -366,7 +367,7 @@ function PhonicsLesson() {
         </Button>
       </div>
 
-      <p style={styles.turkishNote}>{sound.turkishNote}</p>
+      <p className="pl-turkishNote">{sound.turkishNote}</p>
 
       <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
         Yaptım!
@@ -382,11 +383,11 @@ function PhonicsLesson() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        style={styles.stepContent}
+        className="pl-stepContent"
       >
-        <p style={styles.stepDesc}>Her kelimeye dokunarak dinle!</p>
+        <p className="pl-stepDesc">Her kelimeye dokunarak dinle!</p>
 
-        <div style={styles.keywordsGrid}>
+        <div className="pl-keywordsGrid">
           {keywords.map((kw) => {
             const idx = kw.word.toLowerCase().indexOf(sound.grapheme.toLowerCase());
             const clicked = clickedKeywords.has(kw.word);
@@ -398,8 +399,8 @@ function PhonicsLesson() {
                   speak(kw.word, 0.8);
                   setClickedKeywords((prev) => new Set(prev).add(kw.word));
                 }}
+                className="pl-keywordCard"
                 style={{
-                  ...styles.keywordCard,
                   borderColor: clicked ? '#1A6B5A' : '#E5E7EB',
                   backgroundColor: clicked ? 'rgba(34,197,94,0.1)' : '#F8F9FA',
                 }}
@@ -457,7 +458,7 @@ function PhonicsLesson() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      style={styles.stepContent}
+      className="pl-stepContent"
     >
       {blendingDone ? (
         <div style={{ textAlign: 'center' }}>
@@ -493,7 +494,7 @@ function PhonicsLesson() {
           key="break-done"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          style={styles.stepContent}
+          className="pl-stepContent"
         >
           <div style={{ textAlign: 'center' }}>
             <Target size={48} color="#1A6B5A" />
@@ -512,9 +513,9 @@ function PhonicsLesson() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        style={styles.stepContent}
+        className="pl-stepContent"
       >
-        <p style={styles.stepDesc}>Bu kelimeyi seslere böl!</p>
+        <p className="pl-stepDesc">Bu kelimeyi seslere böl!</p>
 
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Badge variant="info">{segmentingIndex + 1}/{segmentingWords.length}</Badge>
@@ -522,7 +523,7 @@ function PhonicsLesson() {
 
         <motion.button
           onClick={() => speak(currentWord, 0.8)}
-          style={styles.wordDisplay}
+          className="pl-wordDisplay"
           whileTap={{ scale: 0.95 }}
         >
           <Volume2 size={18} style={{ marginRight: '0.5rem' }} />
@@ -546,7 +547,7 @@ function PhonicsLesson() {
           </Button>
         ) : (
           <>
-            <div style={styles.tilesRow}>
+            <div className="pl-tilesRow">
               {currentSounds.map((s, i) => (
                 <motion.div
                   key={i}
@@ -554,7 +555,7 @@ function PhonicsLesson() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.2 }}
                   onClick={() => speak(s, 0.5)}
-                  style={styles.revealedTile}
+                  className="pl-revealedTile"
                 >
                   {s}
                 </motion.div>
@@ -589,11 +590,11 @@ function PhonicsLesson() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        style={styles.stepContent}
+        className="pl-stepContent"
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
           <PenTool size={20} color="#1A6B5A" />
-          <p style={{ ...styles.stepDesc, margin: 0 }}>Harfi parmağınla takip et!</p>
+          <p className="pl-stepDesc" style={{ margin: 0 }}>Harfi parmağınla takip et!</p>
         </div>
 
         <LetterTracing
@@ -620,11 +621,11 @@ function PhonicsLesson() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        style={styles.stepContent}
+        className="pl-stepContent"
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
           <BookOpen size={20} color="#1A6B5A" />
-          <p style={{ ...styles.stepDesc, margin: 0 }}>Herhangi bir kelimeye dokunarak dinle!</p>
+          <p className="pl-stepDesc" style={{ margin: 0 }}>Herhangi bir kelimeye dokunarak dinle!</p>
         </div>
 
         <Card variant="elevated" padding="lg">
@@ -637,7 +638,7 @@ function PhonicsLesson() {
                   const clean = word.replace(/[^a-zA-Z']/g, '');
                   if (clean) speak(clean, 0.75);
                 }}
-                style={styles.readableWord}
+                className="pl-readableWord"
               >
                 {word}
               </motion.button>
@@ -673,9 +674,9 @@ function PhonicsLesson() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          style={styles.stepContent}
+          className="pl-stepContent"
         >
-          <p style={styles.stepDesc}>Bu grup için henüz şarkı yok.</p>
+          <p className="pl-stepDesc">Bu grup için henüz şarkı yok.</p>
           <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>
             Devam Et
           </Button>
@@ -689,7 +690,7 @@ function PhonicsLesson() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        style={styles.stepContent}
+        className="pl-stepContent"
       >
         <SongPlayer
           song={groupSong}
@@ -749,7 +750,7 @@ function PhonicsLesson() {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: 'spring', stiffness: 200 }}
-        style={styles.stepContent}
+        className="pl-stepContent"
       >
         <motion.div
           animate={{ rotate: [0, -8, 8, 0], scale: [1, 1.15, 1] }}
@@ -831,10 +832,10 @@ function PhonicsLesson() {
   // ─── Main render ─────────────────────────────────────────────────────
 
   return (
-    <div style={styles.container}>
+    <div className="pl-container">
       {/* Header */}
-      <div style={styles.header}>
-        <button type="button" onClick={goBack} disabled={stepIndex === 0} style={styles.backBtn}>
+      <div className="pl-header">
+        <button type="button" onClick={goBack} disabled={stepIndex === 0} className="pl-backBtn">
           <ArrowLeft size={20} />
         </button>
         <div style={{ flex: 1 }}>
@@ -844,7 +845,7 @@ function PhonicsLesson() {
       </div>
 
       {/* Step indicators */}
-      <div style={styles.stepsRow}>
+      <div className="pl-stepsRow">
         {STEPS.map((step, i) => (
           <div
             key={step}
@@ -882,159 +883,5 @@ function PhonicsLesson() {
   );
 }
 
-// ─── Styles ────────────────────────────────────────────────────────────────
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    padding: '1rem 1.5rem 2rem',
-    minHeight: '100vh',
-    fontFamily: 'Nunito, sans-serif',
-    maxWidth: '540px',
-    margin: '0 auto',
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-  },
-  backBtn: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    color: '#1A6B5A',
-    padding: '0.25rem',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  stepsRow: {
-    display: 'flex',
-    gap: '0.4rem',
-    justifyContent: 'center',
-  },
-  stepContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.25rem',
-    alignItems: 'center',
-    padding: '1rem 0',
-  },
-  bigLetter: {
-    fontSize: '6rem',
-    fontWeight: 800,
-    color: '#1A6B5A',
-    lineHeight: 1,
-    textAlign: 'center' as const,
-  },
-  stepDesc: {
-    fontSize: '1.1rem',
-    fontWeight: 600,
-    color: '#64748B',
-    textAlign: 'center' as const,
-    margin: 0,
-  },
-  mimiBox: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '0.75rem',
-    padding: '1rem',
-    background: 'rgba(34,197,94,0.1)',
-    borderRadius: '1rem',
-    width: '100%',
-  },
-  mimiText: {
-    fontSize: '0.95rem',
-    color: '#334155',
-    fontStyle: 'italic',
-    margin: 0,
-    lineHeight: 1.5,
-  },
-  actionBox: {
-    padding: '1.25rem',
-    background: 'color-mix(in srgb, var(--gold-500) 10%, transparent)',
-    borderRadius: '1rem',
-    width: '100%',
-    textAlign: 'center' as const,
-  },
-  actionText: {
-    fontSize: '1.15rem',
-    fontWeight: 700,
-    color: '#1a1a2e',
-    margin: 0,
-  },
-  turkishNote: {
-    fontSize: '0.85rem',
-    color: '#64748B',
-    fontStyle: 'italic',
-    textAlign: 'center' as const,
-    margin: 0,
-  },
-  keywordsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '0.75rem',
-    width: '100%',
-  },
-  keywordCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0.3rem',
-    padding: '0.75rem 0.5rem',
-    borderRadius: '0.75rem',
-    border: '2px solid #E5E7EB',
-    background: '#F8F9FA',
-    cursor: 'pointer',
-    fontFamily: 'Nunito, sans-serif',
-    transition: 'all 0.2s',
-  },
-  wordDisplay: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '1rem 2rem',
-    fontSize: '2rem',
-    fontWeight: 800,
-    color: '#1A6B5A',
-    background: 'rgba(34,197,94,0.1)',
-    borderRadius: '1rem',
-    border: '3px solid #1A6B5A',
-    cursor: 'pointer',
-    fontFamily: 'Nunito, sans-serif',
-  },
-  tilesRow: {
-    display: 'flex',
-    gap: '0.75rem',
-    justifyContent: 'center',
-  },
-  revealedTile: {
-    width: '3.5rem',
-    height: '3.5rem',
-    borderRadius: '0.75rem',
-    border: '3px solid var(--gold-500)',
-    backgroundColor: 'color-mix(in srgb, var(--gold-500) 10%, transparent)',
-    fontSize: '1.5rem',
-    fontWeight: 800,
-    color: 'var(--gold-500)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-  },
-  readableWord: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '1.2rem',
-    fontWeight: 600,
-    color: '#334155',
-    fontFamily: 'Nunito, sans-serif',
-    padding: '0.15rem 0.3rem',
-    borderRadius: '0.25rem',
-    transition: 'background 0.15s',
-  },
-};
 
 export default PhonicsLesson;

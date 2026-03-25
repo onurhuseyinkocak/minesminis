@@ -156,55 +156,55 @@ function LearningGarden() {
   }
 
   return (
-    <div style={styles.container}>
+    <div className="lg-container">
       {/* Header */}
-      <div style={styles.header}>
-        <button type="button" onClick={() => navigate('/dashboard')} style={styles.backBtn}>
+      <div className="lg-header">
+        <button type="button" onClick={() => navigate('/dashboard')} className="lg-backBtn">
           <ArrowLeft size={20} />
         </button>
         <div style={{ flex: 1 }}>
-          <h1 style={styles.title}>My Learning Garden</h1>
-          <p style={styles.subtitle}>
+          <h1 className="lg-title">My Learning Garden</h1>
+          <p className="lg-subtitle">
             {gardenLevelNames[gardenLevel - 1]} (Level {gardenLevel})
           </p>
         </div>
-        <div style={styles.waterBadge}>
+        <div className="lg-waterBadge">
           <Droplets size={18} color="var(--color-blue-500, #3B82F6)" />
-          <span style={styles.waterCount}>{waterDrops}</span>
+          <span className="lg-waterCount">{waterDrops}</span>
         </div>
       </div>
 
       {/* Stats bar */}
-      <div style={styles.statsBar}>
-        <div style={styles.statItem}>
+      <div className="lg-statsBar">
+        <div className="lg-statItem">
           <Flower2 size={16} color="var(--color-pink-500, #EC4899)" />
-          <span style={styles.statValue}>{stats.blooming}</span>
-          <span style={styles.statLabel}>Blooming</span>
+          <span className="lg-statValue">{stats.blooming}</span>
+          <span className="lg-statLabel">Blooming</span>
         </div>
-        <div style={styles.statItem}>
+        <div className="lg-statItem">
           <Sprout size={16} color="var(--color-green-500, #22C55E)" />
-          <span style={styles.statValue}>{stats.growing}</span>
-          <span style={styles.statLabel}>Growing</span>
+          <span className="lg-statValue">{stats.growing}</span>
+          <span className="lg-statLabel">Growing</span>
         </div>
-        <div style={styles.statItem}>
+        <div className="lg-statItem">
           <TreePine size={16} color="var(--color-stone-400, #A8A29E)" />
-          <span style={styles.statValue}>{42 - stats.total + stats.seeds}</span>
-          <span style={styles.statLabel}>Seeds</span>
+          <span className="lg-statValue">{42 - stats.total + stats.seeds}</span>
+          <span className="lg-statLabel">Seeds</span>
         </div>
       </div>
 
       {/* Garden Grid */}
-      <div style={styles.gardenArea}>
+      <div className="lg-gardenArea">
         {[1, 2, 3, 4, 5, 6, 7].map((groupNum) => {
           const groupPlants = groups[groupNum] || [];
           const groupInfo = GARDEN_GROUP_LABELS[groupNum];
 
           return (
-            <div key={groupNum} style={{ ...styles.groupRow, backgroundColor: groupInfo?.bgColor ?? '#F9FAFB' }}>
-              <div style={styles.groupLabel}>
-                <span style={styles.groupLabelText}>{groupInfo?.name ?? `Group ${groupNum}`}</span>
+            <div key={groupNum} className="lg-groupRow" style={{ backgroundColor: groupInfo?.bgColor ?? '#F9FAFB' }}>
+              <div className="lg-groupLabel">
+                <span className="lg-groupLabelText">{groupInfo?.name ?? `Group ${groupNum}`}</span>
               </div>
-              <div style={styles.plantsRow}>
+              <div className="lg-plantsRow">
                 {groupPlants.map((plant) => {
                   const state = gardenState[plant.soundId];
                   const mastery = state?.mastery ?? 0;
@@ -219,8 +219,8 @@ function LearningGarden() {
                     <motion.button
                       key={plant.soundId}
                       onClick={() => handlePlantTap(plant)}
+                      className="lg-plantCell"
                       style={{
-                        ...styles.plantCell,
                         borderColor: isBlooming ? plant.color : isStarted ? '#D1D5DB' : 'var(--border-light, #E5E7EB)',
                         backgroundColor: isBlooming ? `${plant.color}15` : 'var(--bg-elevated, #F8F9FA)',
                       }}
@@ -241,7 +241,7 @@ function LearningGarden() {
                             animate={{ opacity: 0, y: 10 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1 }}
-                            style={styles.waterDrop}
+                            className="lg-waterDrop"
                           >
                             <Droplets size={16} color="var(--color-blue-500, #3B82F6)" />
                           </motion.span>
@@ -292,7 +292,7 @@ function LearningGarden() {
                       {/* Blooming indicator */}
                       {isBlooming && (
                         <motion.span
-                          style={styles.sparkle}
+                          className="lg-sparkle"
                           animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
                           transition={{ repeat: Infinity, duration: 2 }}
                         >
@@ -301,7 +301,7 @@ function LearningGarden() {
                       )}
 
                       {/* Sound label */}
-                      <span style={styles.soundLabel}>
+                      <span className="lg-soundLabel">
                         {sound?.grapheme ?? ''}
                       </span>
                     </motion.button>
@@ -320,7 +320,7 @@ function LearningGarden() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={styles.overlay}
+            className="lg-overlay"
             onClick={() => setSelectedPlant(null)}
           >
             <motion.div
@@ -328,7 +328,7 @@ function LearningGarden() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              style={styles.plantModal}
+              className="lg-plantModal"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Plant display */}
@@ -366,20 +366,20 @@ function LearningGarden() {
               </motion.span>
 
               {/* Sound info */}
-              <h3 style={styles.modalTitle}>
+              <h3 className="lg-modalTitle">
                 Sound: &quot;{selectedPlant.grapheme}&quot;
               </h3>
 
               {/* Stage name */}
-              <p style={styles.modalStage}>
+              <p className="lg-modalStage">
                 {selectedPlant.mastery > 0 ? selectedPlant.stage.description : 'Not started yet'}
               </p>
 
               {/* Mastery bar */}
-              <div style={styles.masteryBarBg}>
+              <div className="lg-masteryBarBg">
                 <motion.div
+                  className="lg-masteryBarFill"
                   style={{
-                    ...styles.masteryBarFill,
                     backgroundColor: selectedPlant.plant.color,
                   }}
                   initial={{ width: 0 }}
@@ -387,19 +387,19 @@ function LearningGarden() {
                   transition={{ duration: 0.8, ease: 'easeOut' }}
                 />
               </div>
-              <p style={styles.masteryText}>
+              <p className="lg-masteryText">
                 Mastery: {selectedPlant.mastery}%
               </p>
 
               {/* Growth stages timeline */}
-              <div style={styles.stagesTimeline}>
+              <div className="lg-stagesTimeline">
                 {selectedPlant.plant.stages.map((s, i) => {
                   const reached = selectedPlant.mastery >= s.masteryThreshold;
                   return (
-                    <div key={i} style={styles.timelineItem}>
+                    <div key={i} className="lg-timelineItem">
                       <span
+                        className="lg-timelineEmoji"
                         style={{
-                          ...styles.timelineEmoji,
                           opacity: reached ? 1 : 0.3,
                         }}
                       >
@@ -410,8 +410,8 @@ function LearningGarden() {
                         />
                       </span>
                       <span
+                        className="lg-timelineLabel"
                         style={{
-                          ...styles.timelineLabel,
                           color: reached ? 'var(--color-emerald-800, #065F46)' : 'var(--color-stone-400, #A8A29E)',
                           fontWeight: selectedPlant.stage.name === s.name ? 700 : 400,
                         }}
@@ -426,8 +426,8 @@ function LearningGarden() {
               {/* Water button */}
               {selectedPlant.mastery > 0 && selectedPlant.mastery < 95 && (
                 <button
+                  className="lg-waterBtn"
                   style={{
-                    ...styles.waterBtn,
                     opacity: waterDrops > 0 ? 1 : 0.5,
                     cursor: waterDrops > 0 ? 'pointer' : 'not-allowed',
                   }}
@@ -447,7 +447,7 @@ function LearningGarden() {
               )}
 
               {/* Close button */}
-              <button type="button" style={styles.closeBtn} onClick={() => setSelectedPlant(null)}>
+              <button type="button" className="lg-closeBtn" onClick={() => setSelectedPlant(null)}>
                 Close
               </button>
             </motion.div>
@@ -458,249 +458,5 @@ function LearningGarden() {
   );
 }
 
-// ─── Styles ─────────────────────────────────────────────────────────────────
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    minHeight: '100vh',
-    background: 'linear-gradient(180deg, rgba(16,185,129,0.05) 0%, rgba(16,185,129,0.08) 50%, rgba(16,185,129,0.1) 100%)',
-    paddingBottom: '2rem',
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    padding: '1rem 1.25rem',
-    background: 'rgba(255,255,255,0.95)',
-    backdropFilter: 'blur(10px)',
-    borderBottom: '1px solid #D1FAE5',
-    position: 'sticky' as const,
-    top: 0,
-    zIndex: 10,
-  },
-  backBtn: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    color: 'var(--color-emerald-800, #065F46)',
-    padding: '0.25rem',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: '1.3rem',
-    fontWeight: 800,
-    color: 'var(--color-emerald-800, #065F46)',
-    margin: 0,
-    lineHeight: 1.2,
-  },
-  subtitle: {
-    fontSize: '0.8rem',
-    color: '#16A34A',
-    margin: 0,
-    fontWeight: 600,
-  },
-  waterBadge: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.3rem',
-    background: '#EFF6FF',
-    borderRadius: '1rem',
-    padding: '0.4rem 0.75rem',
-    border: '1px solid #BFDBFE',
-  },
-  waterCount: {
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    color: '#2563EB',
-  },
-  statsBar: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '1.5rem',
-    padding: '0.75rem 1rem',
-    background: 'rgba(255,255,255,0.8)',
-  },
-  statItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.3rem',
-  },
-  statValue: {
-    fontSize: '1rem',
-    fontWeight: 800,
-    color: '#333',
-  },
-  statLabel: {
-    fontSize: '0.75rem',
-    color: 'var(--text-muted, #888)',
-    fontWeight: 500,
-  },
-  gardenArea: {
-    padding: '0.75rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    maxWidth: '600px',
-    margin: '0 auto',
-  },
-  groupRow: {
-    borderRadius: '1rem',
-    padding: '0.5rem',
-    border: '1px solid rgba(0,0,0,0.05)',
-  },
-  groupLabel: {
-    padding: '0.2rem 0.5rem',
-    marginBottom: '0.3rem',
-  },
-  groupLabelText: {
-    fontSize: '0.7rem',
-    fontWeight: 700,
-    color: 'var(--text-muted, #888)',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.5px',
-  },
-  plantsRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    gap: '0.4rem',
-  },
-  plantCell: {
-    position: 'relative' as const,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.15rem',
-    padding: '0.4rem 0.2rem',
-    borderRadius: '0.75rem',
-    border: '2px solid var(--border-light, #E5E7EB)',
-    background: 'var(--bg-elevated, #F8F9FA)',
-    cursor: 'pointer',
-    aspectRatio: '1',
-    minHeight: '60px',
-  },
-  soundLabel: {
-    fontSize: '0.6rem',
-    fontWeight: 700,
-    color: 'var(--text-muted, #999)',
-    textTransform: 'lowercase' as const,
-  },
-  sparkle: {
-    position: 'absolute' as const,
-    top: '2px',
-    right: '2px',
-    fontSize: '0.7rem',
-  },
-  waterDrop: {
-    position: 'absolute' as const,
-    top: '-5px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    fontSize: '1rem',
-    pointerEvents: 'none' as const,
-    zIndex: 2,
-  },
-
-  // Modal
-  overlay: {
-    position: 'fixed' as const,
-    inset: 0,
-    background: 'rgba(0,0,0,0.4)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100,
-    padding: '1rem',
-  },
-  plantModal: {
-    background: '#ffffff',
-    borderRadius: '1.5rem',
-    padding: '1.5rem',
-    maxWidth: '360px',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem',
-    boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-  },
-  modalTitle: {
-    textAlign: 'center' as const,
-    fontSize: '1.2rem',
-    fontWeight: 800,
-    color: 'var(--color-emerald-800, #065F46)',
-    margin: 0,
-  },
-  modalStage: {
-    textAlign: 'center' as const,
-    fontSize: '0.9rem',
-    color: '#666',
-    margin: 0,
-    fontStyle: 'italic',
-  },
-  masteryBarBg: {
-    width: '100%',
-    height: '10px',
-    background: 'var(--border-light, #E5E7EB)',
-    borderRadius: '5px',
-    overflow: 'hidden',
-  },
-  masteryBarFill: {
-    height: '100%',
-    borderRadius: '5px',
-    transition: 'width 0.8s ease',
-  },
-  masteryText: {
-    textAlign: 'center' as const,
-    fontSize: '0.85rem',
-    fontWeight: 700,
-    color: '#555',
-    margin: 0,
-  },
-  stagesTimeline: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '0.5rem 0',
-  },
-  timelineItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0.2rem',
-  },
-  timelineEmoji: {
-    fontSize: '1.3rem',
-    transition: 'all 0.3s',
-  },
-  timelineLabel: {
-    fontSize: '0.65rem',
-  },
-  waterBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-    padding: '0.6rem 1.2rem',
-    borderRadius: '0.75rem',
-    border: '2px solid var(--color-blue-500, #3B82F6)',
-    background: '#EFF6FF',
-    color: '#2563EB',
-    fontWeight: 700,
-    fontSize: '0.9rem',
-    cursor: 'pointer',
-    margin: '0 auto',
-  },
-  closeBtn: {
-    padding: '0.6rem 1.5rem',
-    borderRadius: '0.75rem',
-    border: 'none',
-    background: '#F3F4F6',
-    color: '#555',
-    fontWeight: 700,
-    fontSize: '0.9rem',
-    cursor: 'pointer',
-    margin: '0 auto',
-  },
-};
 
 export default LearningGarden;

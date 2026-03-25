@@ -1,0 +1,169 @@
+/* ─── PhonicsLesson styles ───────────────────────────────────────────────── */
+
+.pl-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1.5rem 2rem;
+  min-height: 100vh;
+  font-family: Nunito, sans-serif;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.pl-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pl-backBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1A6B5A;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.pl-stepsRow {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.pl-stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.pl-bigLetter {
+  font-size: 6rem;
+  font-weight: 800;
+  color: #1A6B5A;
+  line-height: 1;
+  text-align: center;
+}
+
+.pl-stepDesc {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #64748B;
+  text-align: center;
+  margin: 0;
+}
+
+.pl-mimiBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 1rem;
+  width: 100%;
+}
+
+.pl-mimiText {
+  font-size: 0.95rem;
+  color: #334155;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.pl-actionBox {
+  padding: 1.25rem;
+  background: color-mix(in srgb, var(--gold-500) 10%, transparent);
+  border-radius: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.pl-actionText {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.pl-turkishNote {
+  font-size: 0.85rem;
+  color: #64748B;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+}
+
+.pl-keywordsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.pl-keywordCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid #E5E7EB;
+  background: #F8F9FA;
+  cursor: pointer;
+  font-family: Nunito, sans-serif;
+  transition: all 0.2s;
+}
+
+.pl-wordDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1A6B5A;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 1rem;
+  border: 3px solid #1A6B5A;
+  cursor: pointer;
+  font-family: Nunito, sans-serif;
+}
+
+.pl-tilesRow {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.pl-revealedTile {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  border: 3px solid var(--gold-500);
+  background-color: color-mix(in srgb, var(--gold-500) 10%, transparent);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--gold-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.pl-readableWord {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #334155;
+  font-family: Nunito, sans-serif;
+  padding: 0.15rem 0.3rem;
+  border-radius: 0.25rem;
+  transition: background 0.15s;
+}

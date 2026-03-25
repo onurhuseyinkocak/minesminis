@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import './ReadingLibrary.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen, Lock, ArrowLeft, Star } from 'lucide-react';
@@ -184,45 +185,47 @@ const ReadingLibrary: React.FC = () => {
   }
 
   return (
-    <div style={styles.page}>
+    <div className="rl-page">
       {/* Header */}
-      <div style={styles.header}>
-        <button type="button" onClick={() => navigate('/dashboard')} style={styles.backBtn}>
+      <div className="rl-header">
+        <button type="button" onClick={() => navigate('/dashboard')} className="rl-backBtn">
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h1 style={styles.title}>Reading Library</h1>
-          <p style={styles.subtitle}>Decodable books for your level</p>
+          <h1 className="rl-title">Reading Library</h1>
+          <p className="rl-subtitle">Decodable books for your level</p>
         </div>
-        <div style={styles.counter}>
+        <div className="rl-counter">
           <BookOpen size={18} />
           <span>{totalBooksRead} read</span>
         </div>
       </div>
 
       {/* Bookshelf */}
-      <div style={styles.shelves}>
+      <div className="rl-shelves">
         {[1, 2, 3, 4, 5, 6, 7].map((group) => {
           const books = booksByGroup[group] || [];
           const isLocked = group > masteredGroup;
           const groupInfo = GROUP_NAMES[group];
 
           return (
-            <div key={group} style={styles.shelfSection}>
+            <div key={group} className="rl-shelfSection">
               {/* Shelf label */}
-              <div style={styles.shelfLabel}>
-                <span style={styles.shelfGroupNum}>Group {group}</span>
-                <span style={styles.shelfGroupName}>{groupInfo.en}</span>
-                <span style={styles.shelfSounds}>{groupInfo.sounds}</span>
+              <div className="rl-shelfLabel">
+                <span className="rl-shelfGroupNum">Group {group}</span>
+                <span className="rl-shelfGroupName">{groupInfo.en}</span>
+                <span className="rl-shelfSounds">{groupInfo.sounds}</span>
                 {isLocked && <Lock size={14} style={{ color: 'var(--text-muted, #9CA3AF)', marginLeft: 4 }} />}
               </div>
 
               {/* Shelf with books */}
-              <div style={{
-                ...styles.shelf,
-                borderBottomColor: SHELF_COLORS[group - 1],
-              }}>
-                <div style={styles.booksRow}>
+              <div
+                className="rl-shelf"
+                style={{
+                  borderBottomColor: SHELF_COLORS[group - 1],
+                }}
+              >
+                <div className="rl-booksRow">
                   {books.map((book, i) => {
                     const record = readBooks[book.id];
                     const bookStars = record?.stars || 0;
@@ -236,8 +239,8 @@ const ReadingLibrary: React.FC = () => {
                         onClick={() => {
                           if (!isLocked) setSelectedBook(book);
                         }}
+                        className="rl-bookSpine"
                         style={{
-                          ...styles.bookSpine,
                           backgroundColor: isLocked ? '#D1D5DB' : spineColor,
                           cursor: isLocked ? 'not-allowed' : 'pointer',
                           opacity: isLocked ? 0.5 : 1,
@@ -259,9 +262,9 @@ const ReadingLibrary: React.FC = () => {
                         }}>
                           {book.title.charAt(0).toUpperCase()}
                         </div>
-                        <span style={styles.bookSpineTitle}>{book.title}</span>
+                        <span className="rl-bookSpineTitle">{book.title}</span>
                         {bookStars > 0 && (
-                          <div style={styles.bookStars}>
+                          <div className="rl-bookStars">
                             {[1, 2, 3].map((s) => (
                               <Star
                                 key={s}
@@ -281,10 +284,10 @@ const ReadingLibrary: React.FC = () => {
                 </div>
 
                 {/* Wood shelf bottom */}
-                <div style={{
-                  ...styles.woodShelf,
-                  backgroundColor: SHELF_COLORS[group - 1],
-                }} />
+                <div
+                  className="rl-woodShelf"
+                  style={{ backgroundColor: SHELF_COLORS[group - 1] }}
+                />
               </div>
             </div>
           );
@@ -296,147 +299,3 @@ const ReadingLibrary: React.FC = () => {
 
 export default ReadingLibrary;
 
-// --- STYLES ---
-
-const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: '#FFFFFF',
-    paddingBottom: 80,
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    padding: '16px 20px',
-    backgroundColor: 'var(--bg-elevated, #F8F9FA)',
-    borderBottom: '1px solid var(--border-light, #E5E7EB)',
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: '50%',
-    border: '1px solid var(--border-light, #E5E7EB)',
-    backgroundColor: '#ffffff',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#64748B',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 900,
-    color: '#1a1a2e',
-    margin: 0,
-  },
-  subtitle: {
-    fontSize: 13,
-    fontWeight: 600,
-    color: '#64748B',
-    margin: 0,
-  },
-  counter: {
-    marginLeft: 'auto',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    padding: '6px 14px',
-    borderRadius: 20,
-    backgroundColor: '#F0FDF4',
-    color: 'var(--color-emerald-800, #065F46)',
-    fontSize: 14,
-    fontWeight: 700,
-  },
-  shelves: {
-    padding: '20px 16px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 24,
-  },
-  shelfSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8,
-  },
-  shelfLabel: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    paddingLeft: 4,
-  },
-  shelfGroupNum: {
-    fontSize: 12,
-    fontWeight: 800,
-    color: '#ffffff',
-    backgroundColor: 'var(--color-emerald-800, #065F46)',
-    padding: '2px 8px',
-    borderRadius: 8,
-  },
-  shelfGroupName: {
-    fontSize: 14,
-    fontWeight: 700,
-    color: '#334155',
-  },
-  shelfSounds: {
-    fontSize: 12,
-    fontWeight: 600,
-    color: 'var(--text-muted, #9CA3AF)',
-    fontStyle: 'italic',
-  },
-  shelf: {
-    position: 'relative',
-    minHeight: 160,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    backgroundColor: '#F1F5F9',
-    borderRadius: 12,
-    padding: '12px 12px 0',
-    boxShadow: 'inset 0 -2px 8px rgba(0,0,0,0.04)',
-  },
-  booksRow: {
-    display: 'flex',
-    gap: 10,
-    alignItems: 'flex-end',
-    flexWrap: 'wrap',
-    paddingBottom: 6,
-  },
-  woodShelf: {
-    height: 8,
-    borderRadius: '0 0 8px 8px',
-    marginLeft: -12,
-    marginRight: -12,
-    marginBottom: 0,
-    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  },
-  bookSpine: {
-    width: 90,
-    minHeight: 120,
-    borderRadius: '4px 4px 0 0',
-    border: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    padding: '12px 6px',
-    boxShadow: '2px 0 4px rgba(0,0,0,0.15), -1px 0 2px rgba(0,0,0,0.08)',
-    transition: 'transform 0.2s ease',
-  },
-  bookSpineTitle: {
-    fontSize: 12,
-    fontWeight: 800,
-    color: '#ffffff',
-    textAlign: 'center',
-    lineHeight: 1.2,
-    textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-  },
-  bookStars: {
-    display: 'flex',
-    gap: 2,
-  },
-};
