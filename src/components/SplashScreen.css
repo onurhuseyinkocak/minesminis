@@ -1,6 +1,6 @@
 /* ============================================================
-   SplashScreen.css — Light brand splash, orange/cream theme
-   MinesMinis Design System v5. All var() tokens.
+   SplashScreen.css — Cat-themed loading screen
+   MinesMinis Design System v6
    ============================================================ */
 
 .splash {
@@ -11,61 +11,71 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(160deg, #fff9f5 0%, #fff3eb 50%, #ffeede 100%);
   opacity: 0;
-  transform: scale(1.02);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-  background: var(--bg-page);
+  transform: scale(1.03);
+  transition: opacity 0.5s ease, transform 0.5s ease;
   overflow: hidden;
 }
 
-.splash.show {
-  opacity: 1;
-  transform: scale(1);
-}
+.splash.show  { opacity: 1; transform: scale(1); }
+.splash.hide  { opacity: 0; transform: scale(0.96); pointer-events: none; }
 
-.splash.hide {
-  opacity: 0;
-  transform: scale(0.97);
-  pointer-events: none;
-}
-
-/* ---- Decorative background blobs ---- */
+/* ---- Soft background glow blobs ---- */
 .splash-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
-
 .splash-bg::before {
   content: '';
   position: absolute;
-  top: -10%;
-  right: -15%;
-  width: 420px;
-  height: 420px;
-  border-radius: var(--radius-full);
-  background: radial-gradient(circle, rgba(255, 107, 53, 0.18) 0%, transparent 70%);
-  filter: blur(50px);
-  animation: splashPulse 3s ease-in-out infinite alternate;
+  top: -8%;
+  right: -12%;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,107,53,0.14) 0%, transparent 68%);
+  filter: blur(56px);
+  animation: splashPulse 3.5s ease-in-out infinite alternate;
 }
-
 .splash-bg::after {
   content: '';
   position: absolute;
-  bottom: -10%;
-  left: -10%;
-  width: 360px;
-  height: 360px;
-  border-radius: var(--radius-full);
-  background: radial-gradient(circle, rgba(255, 107, 53, 0.12) 0%, transparent 70%);
-  filter: blur(60px);
-  animation: splashPulse 4s ease-in-out infinite alternate-reverse;
+  bottom: -8%;
+  left: -8%;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 68%);
+  filter: blur(64px);
+  animation: splashPulse 4.5s ease-in-out infinite alternate-reverse;
 }
-
 @keyframes splashPulse {
   0%   { opacity: 0.5; transform: scale(1); }
-  100% { opacity: 1;   transform: scale(1.15); }
+  100% { opacity: 1;   transform: scale(1.2); }
+}
+
+/* ---- Floating paw prints ---- */
+.splash-paw {
+  position: absolute;
+  color: var(--primary);
+  opacity: 0.1;
+  pointer-events: none;
+  animation: pawDrift linear infinite;
+}
+.splash-paw--1 { top: 12%;  left: 8%;   animation-duration: 9s;  animation-delay: 0s;   opacity: 0.12; transform: rotate(-18deg); }
+.splash-paw--2 { top: 22%;  right: 10%; animation-duration: 11s; animation-delay: 1.5s; opacity: 0.09; transform: rotate(25deg); }
+.splash-paw--3 { bottom: 28%; left: 6%; animation-duration: 8s;  animation-delay: 0.8s; opacity: 0.11; transform: rotate(10deg); }
+.splash-paw--4 { top: 55%;  right: 7%;  animation-duration: 13s; animation-delay: 3s;   opacity: 0.07; transform: rotate(-30deg); }
+.splash-paw--5 { bottom: 14%; right: 15%;animation-duration: 10s; animation-delay: 2s;  opacity: 0.10; transform: rotate(15deg); }
+.splash-paw--6 { top: 68%;  left: 18%;  animation-duration: 12s; animation-delay: 0.3s; opacity: 0.08; transform: rotate(-8deg); }
+
+@keyframes pawDrift {
+  0%   { transform: translateY(0) rotate(var(--r, -18deg)) scale(1); }
+  50%  { transform: translateY(-14px) rotate(var(--r, -18deg)) scale(1.06); }
+  100% { transform: translateY(0) rotate(var(--r, -18deg)) scale(1); }
 }
 
 /* ---- Center Content ---- */
@@ -75,92 +85,107 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-5);
-  animation: splashFloat 2.8s ease-in-out infinite alternate;
+  gap: 14px;
+  animation: splashFloat 3s ease-in-out infinite alternate;
 }
-
 @keyframes splashFloat {
   0%   { transform: translateY(0); }
-  100% { transform: translateY(-8px); }
+  100% { transform: translateY(-10px); }
 }
 
-/* ---- Logo ---- */
+/* ---- Logo with cat ears ---- */
 .logo-box {
-  width: 120px;
-  height: 120px;
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
+  position: relative;
+  width: 128px;
+  height: 128px;
+  border-radius: 28px;
+  overflow: visible;
   box-shadow:
-    0 0 0 4px rgba(255, 107, 53, 0.15),
-    0 12px 40px rgba(255, 107, 53, 0.25),
-    0 4px 12px rgba(0, 0, 0, 0.08);
-  animation: logoPulse 2.5s ease-in-out infinite;
+    0 0 0 5px rgba(255,107,53,0.18),
+    0 16px 48px rgba(255,107,53,0.28),
+    0 4px 16px rgba(0,0,0,0.07);
+  animation: logoPulse 2.8s ease-in-out infinite;
 }
+
+/* Cat ears */
+.logo-cat-ear {
+  position: absolute;
+  top: -18px;
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-bottom: 28px solid var(--primary);
+  border-radius: 3px 3px 0 0;
+  filter: drop-shadow(0 -2px 4px rgba(255,107,53,0.3));
+  z-index: 2;
+}
+.logo-cat-ear--l { left: 12px; transform: rotate(-8deg); }
+.logo-cat-ear--r { right: 12px; transform: rotate(8deg); }
 
 @keyframes logoPulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 4px rgba(255, 107, 53, 0.15),
-      0 12px 40px rgba(255, 107, 53, 0.25),
-      0 4px 12px rgba(0, 0, 0, 0.08);
+  0%,100% {
+    box-shadow: 0 0 0 5px rgba(255,107,53,0.18), 0 16px 48px rgba(255,107,53,0.28), 0 4px 16px rgba(0,0,0,0.07);
   }
   50% {
-    box-shadow:
-      0 0 0 6px rgba(255, 107, 53, 0.22),
-      0 16px 60px rgba(255, 107, 53, 0.35),
-      0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 0 7px rgba(255,107,53,0.24), 0 20px 64px rgba(255,107,53,0.36), 0 4px 16px rgba(0,0,0,0.07);
   }
 }
 
 .logo-img {
-  width: 100%;
-  height: 100%;
+  width: 128px;
+  height: 128px;
+  border-radius: 28px;
   object-fit: cover;
+  display: block;
 }
 
 /* ---- Brand Text ---- */
 .brand {
   font-family: var(--font-display);
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 900;
-  color: var(--primary);
-  letter-spacing: -0.02em;
+  color: #2d1a0e;
+  letter-spacing: -0.03em;
   margin: 0;
 }
-
-.brand span {
-  color: var(--primary-hover);
-}
+.brand span { color: var(--primary); }
 
 .tagline {
   font-family: var(--font-display);
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  color: rgba(45,26,14,0.5);
   margin: 0;
-  letter-spacing: 0.1em;
-  font-weight: 600;
+  letter-spacing: 0.14em;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
-/* ---- Loading Bar ---- */
-.loader {
-  width: 200px;
-  height: 4px;
-  border-radius: var(--radius-full);
-  background: var(--bg-soft);
-  overflow: hidden;
-  margin-top: var(--space-1);
+/* ---- Cat Loader (Lottie) ---- */
+.splash-cat-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 130px;
+  height: 130px;
+  margin-top: 2px;
 }
 
+/* Fallback bar (if Lottie fails) */
+.loader {
+  width: 190px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: rgba(255,107,53,0.15);
+  overflow: hidden;
+}
 .loader-bar {
   height: 100%;
   border-radius: var(--radius-full);
-  background: linear-gradient(90deg, var(--primary), var(--warning-light), var(--primary));
+  background: linear-gradient(90deg, var(--primary), #fbbf24, var(--primary));
   background-size: 200% 100%;
   animation: loaderSlide 1.6s ease-in-out infinite;
-  box-shadow: 0 0 10px var(--primary-glow);
 }
-
 @keyframes loaderSlide {
   0%   { width: 0%;   background-position: 0% 0; }
   60%  { width: 85%;  background-position: 100% 0; }
@@ -170,15 +195,14 @@
 /* ---- Credits Footer ---- */
 .credits {
   position: absolute;
-  bottom: 36px;
+  bottom: 32px;
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: 12px;
   font-family: var(--font-display);
   font-size: 0.75rem;
 }
-
 .credits p {
   margin: 0;
   display: flex;
@@ -186,42 +210,30 @@
   align-items: center;
   gap: 2px;
 }
-
 .credits .role {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--border-hover);
+  letter-spacing: 0.13em;
+  color: rgba(45,26,14,0.38);
   font-weight: 700;
 }
-
 .credits strong {
-  color: var(--text-secondary);
-  font-weight: 700;
+  color: rgba(45,26,14,0.72);
+  font-weight: 800;
+  font-size: 0.8rem;
 }
-
-.credits .dot {
-  color: var(--border-hover);
-  font-size: 0.5rem;
+.credits-paw {
+  color: var(--primary);
+  opacity: 0.45;
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 480px) {
-  .logo-box {
-    width: 96px;
-    height: 96px;
-    border-radius: var(--radius-xl);
-  }
-
-  .brand {
-    font-size: 1.875rem;
-  }
-
-  .loader {
-    width: 160px;
-  }
-
-  .credits {
-    bottom: 24px;
-  }
+  .logo-box, .logo-img { width: 100px; height: 100px; border-radius: 22px; }
+  .logo-cat-ear { border-left-width: 14px; border-right-width: 14px; border-bottom-width: 22px; top: -14px; }
+  .logo-cat-ear--l { left: 8px; }
+  .logo-cat-ear--r { right: 8px; }
+  .brand { font-size: 2rem; }
+  .splash-cat-loader { width: 110px; height: 110px; }
+  .credits { bottom: 20px; }
 }
