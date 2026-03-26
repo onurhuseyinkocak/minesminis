@@ -320,7 +320,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                             <button
                                 key={reply.id}
                                 type="button"
-                                onClick={() => { setInputValue(reply.value); inputRef.current?.focus(); }}
+                                onClick={() => handleSend(reply.value)}
                                 disabled={!canSendMessage() && !isPremium}
                             >
                                 {reply.text}

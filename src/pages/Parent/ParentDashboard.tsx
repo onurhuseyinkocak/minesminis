@@ -870,8 +870,9 @@ export default function ParentDashboard() {
     [children, activeChildId],
   );
 
-  // When no children and using parent's own stats (fallback)
-  const badgeIds: string[] = stats.badges ?? [];
+  // Only show badges when viewing parent's own data (no child selected)
+  // Child badge data lives in their own session and can't be read here
+  const badgeIds: string[] = activeChild ? [] : (stats.badges ?? []);
 
   // Guard: only parent role
   if (userProfile && userProfile.role !== 'parent') {
@@ -911,7 +912,7 @@ export default function ParentDashboard() {
                 className={`pd-child-tab${child.id === activeChildId ? ' pd-child-tab--active' : ''}`}
                 onClick={() => setActiveChildId(child.id)}
               >
-                <span className="pd-child-avatar">{child.avatar}</span>
+                <span className="pd-child-avatar">{child.name.charAt(0).toUpperCase()}</span>
                 {child.name}
               </button>
             ))}
@@ -947,7 +948,7 @@ export default function ParentDashboard() {
               </p>
               <p className="pd-empty-sub">
                 {lang === 'tr'
-                  ? 'Ilerlemeyi takip etmek icin cocuk profili ekleyin.'
+                  ? 'İlerlemeyi takip etmek için çocuk profili ekleyin.'
                   : 'Add a child profile to start tracking progress.'}
               </p>
             </div>

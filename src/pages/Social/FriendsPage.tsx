@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import {
   getFriendCode,
   sendFriendRequest,
@@ -15,7 +16,9 @@ import './FriendsPage.css';
 
 function AvatarCircle({ name, url, size = 40 }: { name: string; url?: string; size?: number }) {
   const initial = name ? name.charAt(0).toUpperCase() : '?';
-  const isEmoji = url && !url.startsWith('http') && !url.startsWith('/');
+  // Zero-emoji rule: never render raw emoji as avatar.
+  // If the URL doesn't look like a real image URL (http/https or /path), treat it as missing.
+  const isRealImage = url && (url.startsWith('http') || url.startsWith('/'));
 
   return (
     <div
@@ -23,9 +26,7 @@ function AvatarCircle({ name, url, size = 40 }: { name: string; url?: string; si
       style={{ width: size, height: size, fontSize: size * 0.4 }}
       aria-label={name}
     >
-      {isEmoji ? (
-        <span>{url}</span>
-      ) : url ? (
+      {isRealImage ? (
         <img src={url} alt={name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
       ) : (
         initial
@@ -34,15 +35,35 @@ function AvatarCircle({ name, url, size = 40 }: { name: string; url?: string; si
   );
 }
 
-function MedalBadge({ rank }: { rank: number }) {
-  if (rank === 1) return <span className="friends-medal friends-medal--gold" aria-label="1st place">1st</span>;
-  if (rank === 2) return <span className="friends-medal friends-medal--silver" aria-label="2nd place">2nd</span>;
-  if (rank === 3) return <span className="friends-medal friends-medal--bronze" aria-label="3rd place">3rd</span>;
-  return <span className="friends-rank-num" aria-label={`Rank ${rank}`}>{rank}</span>;
+function MedalBadge({ rank, lang }: { rank: number; lang: 'en' | 'tr' }) {
+  if (rank === 1)
+    return (
+      <span className="friends-medal friends-medal--gold" aria-label={lang === 'tr' ? '1. sıra' : '1st place'}>
+        {lang === 'tr' ? '1.' : '1st'}
+      </span>
+    );
+  if (rank === 2)
+    return (
+      <span className="friends-medal friends-medal--silver" aria-label={lang === 'tr' ? '2. sıra' : '2nd place'}>
+        {lang === 'tr' ? '2.' : '2nd'}
+      </span>
+    );
+  if (rank === 3)
+    return (
+      <span className="friends-medal friends-medal--bronze" aria-label={lang === 'tr' ? '3. sıra' : '3rd place'}>
+        {lang === 'tr' ? '3.' : '3rd'}
+      </span>
+    );
+  return (
+    <span className="friends-rank-num" aria-label={lang === 'tr' ? `${rank}. sıra` : `Rank ${rank}`}>
+      {rank}
+    </span>
+  );
 }
 
 export default function FriendsPage() {
   const { user } = useAuth();
+  const { lang } = useLanguage();
 
   const [friends, setFriends] = useState<Friend[]>([]);
   const [pending, setPending] = useState<Friend[]>([]);
@@ -104,10 +125,16 @@ export default function FriendsPage() {
     const result = await sendFriendRequest(user.uid, addCode.trim());
     setAddLoading(false);
     if (result.success) {
-      setAddFeedback({ type: 'success', message: 'Friend request sent!' });
+      setAddFeedback({
+        type: 'success',
+        message: lang === 'tr' ? 'Arkadaşlık isteği gönderildi!' : 'Friend request sent!',
+      });
       setAddCode('');
     } else {
-      setAddFeedback({ type: 'error', message: result.error ?? 'Failed to send request.' });
+      setAddFeedback({
+        type: 'error',
+        message: result.error ?? (lang === 'tr' ? 'İstek gönderilemedi.' : 'Failed to send request.'),
+      });
     }
   };
 
@@ -116,7 +143,10 @@ export default function FriendsPage() {
       await acceptFriendRequest(requestId);
       await loadAll();
     } catch {
-      setAddFeedback({ type: 'error', message: 'Failed to accept friend request.' });
+      setAddFeedback({
+        type: 'error',
+        message: lang === 'tr' ? 'Arkadaşlık isteği kabul edilemedi.' : 'Failed to accept friend request.',
+      });
     }
   };
 
@@ -125,7 +155,10 @@ export default function FriendsPage() {
       await removeFriend(friendRowId);
       await loadAll();
     } catch {
-      setAddFeedback({ type: 'error', message: 'Failed to decline friend request.' });
+      setAddFeedback({
+        type: 'error',
+        message: lang === 'tr' ? 'Arkadaşlık isteği reddedilemedi.' : 'Failed to decline friend request.',
+      });
     }
   };
 
@@ -134,7 +167,10 @@ export default function FriendsPage() {
       await removeFriend(friendRowId);
       await loadAll();
     } catch {
-      setAddFeedback({ type: 'error', message: 'Failed to remove friend.' });
+      setAddFeedback({
+        type: 'error',
+        message: lang === 'tr' ? 'Arkadaş kaldırılamadı.' : 'Failed to remove friend.',
+      });
     }
   };
 
@@ -142,7 +178,11 @@ export default function FriendsPage() {
     return (
       <div className="friends-page">
         <div className="friends-empty-state">
-          <p>Please log in to see your friends.</p>
+          <p>
+            {lang === 'tr'
+              ? 'Arkadaşlarını görmek için giriş yap.'
+              : 'Please log in to see your friends.'}
+          </p>
         </div>
       </div>
     );
@@ -154,13 +194,21 @@ export default function FriendsPage() {
 
         {/* Page Header */}
         <div className="friends-header">
-          <h1 className="friends-title">Friends &amp; Weekly Challenge</h1>
-          <p className="friends-subtitle">Connect with friends and compete on the weekly XP leaderboard!</p>
+          <h1 className="friends-title">
+            {lang === 'tr' ? 'Arkadaşlar & Haftalık Yarışma' : 'Friends & Weekly Challenge'}
+          </h1>
+          <p className="friends-subtitle">
+            {lang === 'tr'
+              ? 'Arkadaşlarınla bağlan ve haftalık XP sıralamasında yarış!'
+              : 'Connect with friends and compete on the weekly XP leaderboard!'}
+          </p>
         </div>
 
         {/* My Friend Code */}
         <section className="friends-section friends-code-section">
-          <h2 className="friends-section-title">My Friend Code</h2>
+          <h2 className="friends-section-title">
+            {lang === 'tr' ? 'Arkadaş Kodum' : 'My Friend Code'}
+          </h2>
           <div className="friends-code-card">
             <div className="friends-code-display">
               <span className="friends-code-value">{myCode}</span>
@@ -169,14 +217,14 @@ export default function FriendsPage() {
               type="button"
               className={`friends-btn friends-btn--outline ${copied ? 'friends-btn--copied' : ''}`}
               onClick={handleCopy}
-              aria-label="Copy friend code"
+              aria-label={lang === 'tr' ? 'Arkadaş kodunu kopyala' : 'Copy friend code'}
             >
               {copied ? (
                 <>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
-                  Copied!
+                  {lang === 'tr' ? 'Kopyalandı!' : 'Copied!'}
                 </>
               ) : (
                 <>
@@ -184,27 +232,33 @@ export default function FriendsPage() {
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
-                  Copy Code
+                  {lang === 'tr' ? 'Kodu Kopyala' : 'Copy Code'}
                 </>
               )}
             </button>
           </div>
-          <p className="friends-code-hint">Share this code with friends so they can add you!</p>
+          <p className="friends-code-hint">
+            {lang === 'tr'
+              ? 'Bu kodu arkadaşlarınla paylaş, seni ekleyebilsinler!'
+              : 'Share this code with friends so they can add you!'}
+          </p>
         </section>
 
         {/* Add Friend */}
         <section className="friends-section">
-          <h2 className="friends-section-title">Add a Friend</h2>
+          <h2 className="friends-section-title">
+            {lang === 'tr' ? 'Arkadaş Ekle' : 'Add a Friend'}
+          </h2>
           <div className="friends-add-form">
             <input
               type="text"
               className="friends-input"
-              placeholder="Enter 8-character friend code"
+              placeholder={lang === 'tr' ? '8 karakterli arkadaş kodunu gir' : 'Enter 8-character friend code'}
               value={addCode}
               onChange={(e) => setAddCode(e.target.value)}
               maxLength={8}
               onKeyDown={(e) => { if (e.key === 'Enter') handleSendRequest(); }}
-              aria-label="Friend code input"
+              aria-label={lang === 'tr' ? 'Arkadaş kodu girişi' : 'Friend code input'}
             />
             <button
               type="button"
@@ -222,7 +276,7 @@ export default function FriendsPage() {
                     <line x1="19" y1="8" x2="19" y2="14" />
                     <line x1="22" y1="11" x2="16" y2="11" />
                   </svg>
-                  Send Request
+                  {lang === 'tr' ? 'İstek Gönder' : 'Send Request'}
                 </>
               )}
             </button>
@@ -238,17 +292,17 @@ export default function FriendsPage() {
         {(loadingFriends || pending.length > 0) && (
           <section className="friends-section">
             <h2 className="friends-section-title">
-              Pending Requests
+              {lang === 'tr' ? 'Bekleyen İstekler' : 'Pending Requests'}
               {pending.length > 0 && (
                 <span className="friends-badge">{pending.length}</span>
               )}
             </h2>
             {loadingFriends ? (
-              <div className="friends-loading" role="status" aria-label="Loading requests">
+              <div className="friends-loading" role="status" aria-label={lang === 'tr' ? 'İstekler yükleniyor' : 'Loading requests'}>
                 <span className="friends-spinner friends-spinner--lg" aria-hidden="true" />
               </div>
             ) : (
-              <ul className="friends-pending-list" aria-label="Pending friend requests">
+              <ul className="friends-pending-list" aria-label={lang === 'tr' ? 'Bekleyen arkadaşlık istekleri' : 'Pending friend requests'}>
                 {pending.map((req) => (
                   <li key={req.id} className="friends-pending-item">
                     <AvatarCircle name={req.friendDisplayName} url={req.friendAvatarUrl} size={44} />
@@ -258,17 +312,25 @@ export default function FriendsPage() {
                         type="button"
                         className="friends-btn friends-btn--sm friends-btn--accept"
                         onClick={() => handleAccept(req.id)}
-                        aria-label={`Accept request from ${req.friendDisplayName}`}
+                        aria-label={
+                          lang === 'tr'
+                            ? `${req.friendDisplayName} isteğini kabul et`
+                            : `Accept request from ${req.friendDisplayName}`
+                        }
                       >
-                        Accept
+                        {lang === 'tr' ? 'Kabul Et' : 'Accept'}
                       </button>
                       <button
                         type="button"
                         className="friends-btn friends-btn--sm friends-btn--decline"
                         onClick={() => handleDecline(req.id)}
-                        aria-label={`Decline request from ${req.friendDisplayName}`}
+                        aria-label={
+                          lang === 'tr'
+                            ? `${req.friendDisplayName} isteğini reddet`
+                            : `Decline request from ${req.friendDisplayName}`
+                        }
                       >
-                        Decline
+                        {lang === 'tr' ? 'Reddet' : 'Decline'}
                       </button>
                     </div>
                   </li>
@@ -281,13 +343,13 @@ export default function FriendsPage() {
         {/* Friends Grid */}
         <section className="friends-section">
           <h2 className="friends-section-title">
-            My Friends
+            {lang === 'tr' ? 'Arkadaşlarım' : 'My Friends'}
             {friends.length > 0 && (
               <span className="friends-count">{friends.length}</span>
             )}
           </h2>
           {loadingFriends ? (
-            <div className="friends-loading" role="status" aria-label="Loading friends">
+            <div className="friends-loading" role="status" aria-label={lang === 'tr' ? 'Arkadaşlar yükleniyor' : 'Loading friends'}>
               <span className="friends-spinner friends-spinner--lg" aria-hidden="true" />
             </div>
           ) : friends.length === 0 ? (
@@ -298,10 +360,14 @@ export default function FriendsPage() {
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              <p>No friends yet. Share your code to get started!</p>
+              <p>
+                {lang === 'tr'
+                  ? 'Henüz arkadaş yok. Başlamak için kodunu paylaş!'
+                  : 'No friends yet. Share your code to get started!'}
+              </p>
             </div>
           ) : (
-            <ul className="friends-grid" aria-label="Friends list">
+            <ul className="friends-grid" aria-label={lang === 'tr' ? 'Arkadaş listesi' : 'Friends list'}>
               {friends.map((friend) => (
                 <li key={friend.id} className="friends-card">
                   <AvatarCircle name={friend.friendDisplayName} url={friend.friendAvatarUrl} size={52} />
@@ -313,8 +379,12 @@ export default function FriendsPage() {
                     type="button"
                     className="friends-btn friends-btn--ghost friends-btn--sm"
                     onClick={() => handleRemove(friend.id)}
-                    aria-label={`Remove ${friend.friendDisplayName} from friends`}
-                    title="Remove friend"
+                    aria-label={
+                      lang === 'tr'
+                        ? `${friend.friendDisplayName} arkadaşlıktan çıkar`
+                        : `Remove ${friend.friendDisplayName} from friends`
+                    }
+                    title={lang === 'tr' ? 'Arkadaşı kaldır' : 'Remove friend'}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polyline points="3 6 5 6 21 6" />
@@ -329,18 +399,28 @@ export default function FriendsPage() {
 
         {/* Weekly Leaderboard */}
         <section className="friends-section">
-          <h2 className="friends-section-title">Weekly XP Leaderboard</h2>
-          <p className="friends-section-desc">Resets every Monday — keep learning to climb the ranks!</p>
+          <h2 className="friends-section-title">
+            {lang === 'tr' ? 'Haftalık XP Sıralaması' : 'Weekly XP Leaderboard'}
+          </h2>
+          <p className="friends-section-desc">
+            {lang === 'tr'
+              ? 'Her Pazartesi sıfırlanır — sıralamada yükselmek için öğrenmeye devam et!'
+              : 'Resets every Monday — keep learning to climb the ranks!'}
+          </p>
           {loadingLeaderboard ? (
-            <div className="friends-loading" role="status" aria-label="Loading leaderboard">
+            <div className="friends-loading" role="status" aria-label={lang === 'tr' ? 'Sıralama yükleniyor' : 'Loading leaderboard'}>
               <span className="friends-spinner friends-spinner--lg" aria-hidden="true" />
             </div>
           ) : leaderboard.length === 0 ? (
             <div className="friends-empty-state">
-              <p>Add friends to see the weekly leaderboard!</p>
+              <p>
+                {lang === 'tr'
+                  ? 'Haftalık sıralamayı görmek için arkadaş ekle!'
+                  : 'Add friends to see the weekly leaderboard!'}
+              </p>
             </div>
           ) : (
-            <ol className="friends-leaderboard" aria-label="Weekly XP leaderboard">
+            <ol className="friends-leaderboard" aria-label={lang === 'tr' ? 'Haftalık XP sıralaması' : 'Weekly XP leaderboard'}>
               {leaderboard.map((entry, index) => {
                 const rank = index + 1;
                 const isMe = entry.userId === user.uid;
@@ -350,13 +430,17 @@ export default function FriendsPage() {
                     className={`friends-leaderboard__row ${isMe ? 'friends-leaderboard__row--me' : ''} ${rank <= 3 ? `friends-leaderboard__row--top${rank}` : ''}`}
                   >
                     <div className="friends-leaderboard__rank">
-                      <MedalBadge rank={rank} />
+                      <MedalBadge rank={rank} lang={lang} />
                     </div>
                     <AvatarCircle name={entry.displayName} url={entry.avatarUrl} size={40} />
                     <div className="friends-leaderboard__info">
                       <span className="friends-leaderboard__name">
                         {entry.displayName}
-                        {isMe && <span className="friends-leaderboard__you"> (You)</span>}
+                        {isMe && (
+                          <span className="friends-leaderboard__you">
+                            {lang === 'tr' ? ' (Sen)' : ' (You)'}
+                          </span>
+                        )}
                       </span>
                       <div className="friends-leaderboard__stats">
                         <span className="friends-stat">
@@ -369,7 +453,7 @@ export default function FriendsPage() {
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                           </svg>
-                          {entry.streak}d streak
+                          {entry.streak}{lang === 'tr' ? 'g seri' : 'd streak'}
                         </span>
                       </div>
                     </div>

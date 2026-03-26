@@ -205,6 +205,7 @@ export default function Dashboard() {
         streakDays={stats.streakDays}
         lang={lang as 'tr' | 'en'}
         onDismiss={() => setShowStreakShame(false)}
+        mascotId={(userProfile?.settings as Record<string, string>)?.mascotId ?? 'mimi_dragon'}
       />
     )}
     <motion.div

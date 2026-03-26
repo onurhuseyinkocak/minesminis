@@ -103,12 +103,12 @@ const Favorites: React.FC = () => {
     }
   };
 
-  const handleNavigate = (type: string) => {
+  const handleNavigate = (type: string, itemId?: string) => {
     switch (type) {
-      case 'game': navigate('/games'); break;
+      case 'game': navigate(itemId ? `/games/${itemId}` : '/games'); break;
       case 'word': navigate('/words'); break;
       case 'worksheet': navigate('/worksheets'); break;
-      case 'video': navigate('/videos'); break;
+      case 'video': navigate(itemId ? `/videos/${itemId}` : '/videos'); break;
       default: navigate('/games');
     }
   };
@@ -118,9 +118,9 @@ const Favorites: React.FC = () => {
       <div className="favorites-header">
         <h1>
           <Heart size={32} className="favorites-header-icon" />
-          Hazinelerim
+          {isTr ? 'Hazinelerim' : 'My Favorites'}
         </h1>
-        <p>Favori oyunların, kelimelerin ve daha fazlası!</p>
+        <p>{isTr ? 'Favori oyunların, kelimelerin ve daha fazlası!' : 'Your favorite games, words, and more!'}</p>
       </div>
 
       <div className="filter-tabs">
@@ -177,7 +177,7 @@ const Favorites: React.FC = () => {
         ) : (
           <div className="favorites-grid">
             {filteredFavorites.map((favorite) => (
-              <div key={favorite.id} className="favorite-card favorite-card--clickable" onClick={() => handleNavigate(favorite.item_type)}>
+              <div key={favorite.id} className="favorite-card favorite-card--clickable" onClick={() => handleNavigate(favorite.item_type, favorite.item_id)}>
                 <div className="favorite-type-badge">
                   {getTypeIcon(favorite.item_type)}
                 </div>
@@ -195,6 +195,7 @@ const Favorites: React.FC = () => {
                   </span>
                 </div>
                 <button
+                  type="button"
                   className="remove-favorite-btn"
                   onClick={(e) => {
                     e.stopPropagation();

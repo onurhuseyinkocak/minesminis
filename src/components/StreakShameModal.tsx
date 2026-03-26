@@ -7,7 +7,7 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Flame } from 'lucide-react';
+import { Flame, X } from 'lucide-react';
 import UnifiedMascot from './UnifiedMascot';
 import {
   markStreakShameShown,
@@ -20,9 +20,10 @@ interface StreakShameModalProps {
   streakDays: number;
   lang?: 'tr' | 'en';
   onDismiss: () => void;
+  mascotId?: string;
 }
 
-export function StreakShameModal({ streakDays, lang = 'tr', onDismiss }: StreakShameModalProps) {
+export function StreakShameModal({ streakDays, lang = 'tr', onDismiss, mascotId = 'mimi_dragon' }: StreakShameModalProps) {
   const navigate = useNavigate();
   const hoursLeft = getStreakSafeHours();
   const hasPlayedSound = useRef(false);
@@ -62,9 +63,19 @@ export function StreakShameModal({ streakDays, lang = 'tr', onDismiss }: StreakS
           transition={{ type: 'spring', stiffness: 280, damping: 22 }}
           onClick={e => e.stopPropagation()}
         >
+          {/* Close button */}
+          <button
+            type="button"
+            className="ssm__close"
+            onClick={onDismiss}
+            aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
+          >
+            <X size={18} />
+          </button>
+
           {/* Mascot — sad state */}
           <div className="ssm__mascot">
-            <UnifiedMascot id="mimi_dragon" state="sleeping" size={100} />
+            <UnifiedMascot id={mascotId} state="sleeping" size={100} />
           </div>
 
           {/* Streak fire badge */}
