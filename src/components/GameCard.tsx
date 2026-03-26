@@ -1,4 +1,4 @@
-import { Link, Play, Zap, Bug, Mic, Puzzle, Headphones, BookOpen, MessageSquare, Tag, Volume2, Layers, Star, Lock } from 'lucide-react';
+import { Link, Play, Zap, Bug, Mic, Puzzle, Headphones, BookOpen, MessageSquare, Tag, Volume2, Layers, Star, Lock, BookMarked } from 'lucide-react';
 import type { GameMeta } from '../data/miniGamesData';
 import './GameCard.css';
 
@@ -38,10 +38,18 @@ function DifficultyStars({ level }: { level: 1 | 2 | 3 }) {
   );
 }
 
+const CATEGORY_LABELS: Record<string, { en: string; tr: string }> = {
+  vocabulary: { en: 'Vocab', tr: 'Kelime' },
+  phonics: { en: 'Phonics', tr: 'Fonetik' },
+  reading: { en: 'Reading', tr: 'Okuma' },
+  speaking: { en: 'Speaking', tr: 'Konuşma' },
+};
+
 export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, onPlay }: GameCardProps) {
   const icon = GAME_ICONS[game.type] ?? <Play size={36} />;
   const displayName = isTr ? game.nameTr : game.name;
   const displayDesc = isTr ? game.descriptionTr : game.description;
+  const categoryLabel = CATEGORY_LABELS[game.category];
 
   return (
     <div
@@ -72,6 +80,12 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, onPla
 
       <div className="game-card__icon-wrap">
         <span className="game-card__icon">{icon}</span>
+        {categoryLabel && (
+          <span className="game-card__category-badge">
+            <BookMarked size={10} />
+            {isTr ? categoryLabel.tr : categoryLabel.en}
+          </span>
+        )}
       </div>
 
       <div className="game-card__body">

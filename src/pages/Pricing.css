@@ -103,10 +103,12 @@
 /* ---- PRICING GRID ---- */
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-lg);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xl);
   margin-bottom: var(--space-3xl);
   align-items: start;
+  max-width: 720px;
+  margin-inline: auto;
 }
 
 /* ---- PLAN CARD ---- */
@@ -428,10 +430,6 @@
 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 1024px) {
-  .pricing-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .plan-card--highlight {
     transform: none;
   }

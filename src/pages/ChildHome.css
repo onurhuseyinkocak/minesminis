@@ -44,16 +44,22 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-display);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
   min-height: 40px;
   z-index: 10;
 }
 
-.child-home__parent-btn:hover,
+.child-home__parent-btn:hover {
+  background: var(--primary-pale);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 .child-home__parent-btn:active {
   background: var(--primary-pale);
   border-color: var(--primary);
   color: var(--primary);
+  transform: scale(0.95);
 }
 
 /* ── Mascot area ─────────────────────────────────────────────── */
@@ -198,7 +204,7 @@
 
 .child-home__lesson-btn--done {
   background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
-  box-shadow: 0 8px 28px rgba(16,185,129,0.35);
+  box-shadow: 0 8px 28px var(--success-soft);
 }
 
 .child-home__lesson-label {
@@ -228,16 +234,17 @@
 
 .child-home__ring-bg {
   fill: none;
-  stroke: rgba(255,255,255,0.25);
+  stroke: var(--glass-shine);
   stroke-width: 4;
 }
 
 .child-home__ring-fill {
   fill: none;
-  stroke: rgba(255,255,255,0.92);
+  stroke: var(--text-on-primary);
   stroke-width: 4;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.6s ease;
+  opacity: 0.92;
 }
 
 /* ── Secondary buttons row ───────────────────────────────────── */
@@ -286,12 +293,12 @@
 
 .child-home__secondary-btn--game {
   background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-indigo) 100%);
-  box-shadow: 0 6px 20px rgba(139,92,246,0.35);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-purple) 35%, transparent);
 }
 
 .child-home__secondary-btn--story {
   background: linear-gradient(135deg, var(--accent-teal) 0%, var(--secondary-light) 100%);
-  box-shadow: 0 6px 20px rgba(20,184,166,0.35);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-teal) 35%, transparent);
 }
 
 .child-home__secondary-btn-icon {

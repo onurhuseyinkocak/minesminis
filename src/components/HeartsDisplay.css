@@ -63,10 +63,19 @@
     filter 0.2s var(--ease-out, ease-out);
 }
 
-/* Full heart: vivid red with glow */
+/* Full heart: vivid red with glow + subtle pulse */
 .hearts-display__icon--full {
   color: var(--error, #ef4444);
-  filter: drop-shadow(0 1px 3px rgba(239, 68, 68, 0.4));
+  filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--error) 40%, transparent));
+  animation: heartbeat 2.8s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.1); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.06); }
+  56% { transform: scale(1); }
 }
 
 /* Empty heart: gray outline, clearly distinct from full */

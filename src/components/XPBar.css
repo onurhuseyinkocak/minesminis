@@ -86,8 +86,15 @@
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   box-shadow: var(--shadow-card);
-  transition: box-shadow var(--transition-base),
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-base),
               border-color var(--transition-base);
+}
+
+.xp-bar-container:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--primary-light);
 }
 
 [data-theme="dark"] .xp-bar-container {
@@ -231,4 +238,32 @@
   font-weight: 600;
   color: var(--text-muted);
   margin-left: auto;
+}
+
+/* ---- Flame icon color via CSS var (no hardcoded hex) ---- */
+.streak-flame-icon {
+  color: var(--primary);
+}
+
+/* ---- Shine sweep on full progress bar ---- */
+.xp-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  );
+  animation: xp-shine-sweep 3s ease-in-out infinite;
+}
+
+@keyframes xp-shine-sweep {
+  0% { left: -60%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
 }

@@ -198,6 +198,11 @@
   margin: 0;
 }
 
+/* ---- Trophies card accent ---- */
+.stat-card:nth-child(2) {
+  border-left: 4px solid var(--accent-indigo);
+}
+
 /* ---- ACTIVITY LIST ---- */
 .activity-list {
   display: flex;
@@ -216,9 +221,13 @@
   width: 8px;
   height: 8px;
   border-radius: var(--radius-full);
-  background: var(--primary);
+  background: var(--accent-indigo);
   flex-shrink: 0;
 }
+
+.activity-item:nth-child(1) .activity-dot { background: var(--primary); }
+.activity-item:nth-child(2) .activity-dot { background: var(--accent-purple); }
+.activity-item:nth-child(3) .activity-dot { background: var(--success); }
 
 .activity-desc {
   font-family: var(--font-body);

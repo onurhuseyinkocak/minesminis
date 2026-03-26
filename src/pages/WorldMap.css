@@ -339,31 +339,69 @@
 }
 
 @keyframes currentPulse {
-  0%, 100% { box-shadow: 0 0 0 4px var(--primary-glow), var(--shadow-md); }
-  50% { box-shadow: 0 0 0 10px var(--primary-glow), var(--shadow-lg); }
+  0%, 100% {
+    box-shadow: 0 0 0 4px var(--primary-glow), 0 0 12px rgba(255, 107, 53, 0.2), var(--shadow-md);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 12px var(--primary-glow), 0 0 28px rgba(255, 107, 53, 0.35), var(--shadow-lg);
+    transform: scale(1.05);
+  }
 }
 
-/* --- Unlocked (next available) --- */
+/* --- Unlocked (next available) — inviting pulse glow --- */
 .journey-stop--unlocked .journey-stop__circle {
-  border-color: var(--journey-unlocked-glow);
-  box-shadow: 0 0 0 3px var(--journey-unlocked-glow),
-              var(--shadow-sm);
+  border-color: var(--mimi-gold);
+  border-width: 3px;
+  background: linear-gradient(135deg, var(--warning-pale), var(--bg-card));
+  box-shadow: 0 0 0 4px var(--journey-unlocked-glow),
+              0 0 16px rgba(255, 215, 0, 0.25),
+              var(--shadow-md);
+  animation: unlockPulse 2.5s ease-in-out infinite;
 }
 
-/* --- Locked --- */
+@keyframes unlockPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px var(--journey-unlocked-glow),
+                0 0 12px rgba(255, 215, 0, 0.2),
+                var(--shadow-md);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px var(--journey-unlocked-glow),
+                0 0 24px rgba(255, 215, 0, 0.35),
+                var(--shadow-lg);
+    transform: scale(1.06);
+  }
+}
+
+/* --- Locked — grayed out with subtle lock shake on tap --- */
 .journey-stop--locked .journey-stop__circle {
   border-color: var(--journey-locked-color);
   background: var(--bg-muted, #f5f5f5);
-  opacity: 0.7;
-  filter: grayscale(0.6);
+  opacity: 0.55;
+  filter: grayscale(0.8);
+  transition: all 200ms ease-out;
 }
 
 .journey-stop--locked .journey-stop__emoji {
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
 .journey-stop--locked:hover {
   transform: none;
+}
+
+.journey-stop--locked:active .journey-stop__circle {
+  animation: lockShake 0.4s ease-in-out;
+}
+
+@keyframes lockShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px) rotate(-2deg); }
+  40% { transform: translateX(4px) rotate(2deg); }
+  60% { transform: translateX(-3px) rotate(-1deg); }
+  80% { transform: translateX(3px) rotate(1deg); }
 }
 
 /* ---- Badges ---- */
@@ -404,10 +442,12 @@
 }
 
 .journey-stop__badge--unlocked {
-  background: transparent;
-  border: none;
-  font-size: 1rem;
+  background: linear-gradient(135deg, var(--mimi-gold), var(--warning));
+  border: 2px solid var(--bg-card, #fff);
+  color: var(--white);
+  font-size: 0.85rem;
   animation: badgeBounce 2s ease-in-out infinite;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
 /* ---- Stop Info ---- */

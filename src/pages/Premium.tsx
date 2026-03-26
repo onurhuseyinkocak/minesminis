@@ -76,7 +76,8 @@ export default function Premium() {
             <Crown size={48} className="coming-soon-icon" />
             <h2>{tr ? 'Premium\'a Yükselt' : 'Upgrade to Premium'}</h2>
             <p>{tr ? 'Sınırsız Mimi sohbeti, tüm 12 dünya, ilerleme takibi, başarı rozetleri ve reklamsız deneyimin kilidini aç!' : 'Unlock unlimited Mimi chat, all 12 worlds, progress tracking, achievement badges, and ad-free experience!'}</p>
-            <button type="button" className="back-btn" onClick={() => navigate('/pricing')}>
+            <button type="button" className="premium-upgrade-cta" onClick={() => navigate('/pricing')}>
+              <Crown size={20} />
               {tr ? 'Planları ve Fiyatları Gör' : 'View Plans & Pricing'}
             </button>
           </div>

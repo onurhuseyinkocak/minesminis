@@ -23,7 +23,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
         return (
             <div className="xp-bar-compact">
                 <div className="xp-level-badge">
-                    <Star size={14} fill="#E8A317" color="#E8A317" className="level-icon" />
+                    <Star size={14} fill="var(--warning)" color="var(--warning)" className="level-icon" />
                     <span className="level-num">{stats.level}</span>
                 </div>
                 <div className="xp-mini-bar">
@@ -31,7 +31,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                 </div>
                 {stats.streakDays > 0 && (
                     <div className="streak-badge-mini">
-                        <Flame size={14} color="#FF6B35" />
+                        <Flame size={14} className="streak-flame-icon" />
                         <span>{stats.streakDays}</span>
                     </div>
                 )}
@@ -65,7 +65,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
             <div className="xp-bar-footer">
                 {stats.streakDays > 0 && (
                     <div className="streak-info">
-                        <Flame size={16} color="#FF6B35" className="streak-icon" />
+                        <Flame size={16} className="streak-icon streak-flame-icon" />
                         <span className="streak-days">{stats.streakDays} day streak</span>
                         {streakBonus > 0 && (
                             <span className="streak-bonus">+{streakBonus}% XP bonus</span>

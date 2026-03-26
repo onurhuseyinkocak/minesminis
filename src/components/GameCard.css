@@ -22,8 +22,10 @@
 .game-card:not(.game-card--locked):hover,
 .game-card:not(.game-card--locked):focus-visible {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-card-hover);
-  border-color: var(--border-hover);
+  box-shadow:
+    var(--shadow-card-hover),
+    0 12px 32px color-mix(in srgb, var(--gc-color, var(--primary)) 20%, transparent);
+  border-color: color-mix(in srgb, var(--gc-color, var(--primary)) 40%, transparent);
 }
 
 /* Accent stripe at top */
@@ -43,6 +45,27 @@
   background: color-mix(in srgb, var(--gc-color, var(--primary)) 10%, var(--bg-card));
   flex-shrink: 0;
   transition: background 0.25s var(--ease-out);
+  position: relative;
+}
+
+/* Category badge (top-right of icon area) */
+.game-card__category-badge {
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  background: color-mix(in srgb, var(--gc-color, var(--primary)) 15%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--gc-color, var(--primary)) 25%, transparent);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gc-color, var(--primary));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .game-card:not(.game-card--locked):hover .game-card__icon-wrap {
@@ -171,6 +194,7 @@
   background: var(--gc-color, var(--primary));
   color: var(--text-on-primary);
   border: none;
+  border-bottom: 4px solid color-mix(in srgb, var(--gc-color, var(--primary)) 70%, black);
   border-radius: var(--radius-full);
   font-family: var(--font-display);
   font-size: 14px;
@@ -179,7 +203,8 @@
   transition:
     filter 0.15s ease,
     transform 0.15s var(--ease-spring),
-    box-shadow 0.15s ease;
+    box-shadow 0.15s ease,
+    border-bottom-width 0.1s ease;
   box-shadow: var(--shadow-button);
 }
 
@@ -190,7 +215,9 @@
 }
 
 .game-card__play-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.95) translateY(2px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: transform 60ms ease, box-shadow 60ms ease;
 }
 
 /* ---- LOCKED STATE ---- */

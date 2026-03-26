@@ -91,13 +91,35 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 340px;
-  height: 340px;
+  width: 400px;
+  height: 400px;
   border-radius: var(--radius-full);
-  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
-  filter: blur(45px);
+  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 60%);
+  filter: blur(50px);
   pointer-events: none;
   animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+/* Celebration ring behind modal */
+.level-up-modal::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: conic-gradient(
+    var(--primary) 0%,
+    var(--warning) 25%,
+    var(--accent-green) 50%,
+    var(--accent-sky, var(--primary-light)) 75%,
+    var(--primary) 100%
+  );
+  opacity: 0.3;
+  z-index: -1;
+  animation: luRingSpin 3s linear infinite;
+}
+
+@keyframes luRingSpin {
+  to { transform: rotate(360deg); }
 }
 
 @keyframes glowPulse {
@@ -122,7 +144,9 @@
 
 .star {
   font-size: 2rem;
-  display: inline-block;
+  display: inline-flex;
+  color: var(--primary);
+  filter: drop-shadow(0 2px 8px var(--primary-glow));
   animation: starSpin 1s ease-out forwards;
 }
 

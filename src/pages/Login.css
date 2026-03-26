@@ -334,7 +334,8 @@
 .login-google-btn:hover {
   border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
-  background: var(--bg-elevated);
+  background: var(--bg-soft);
+  transform: translateY(-1px);
 }
 
 .login-google-btn:disabled {

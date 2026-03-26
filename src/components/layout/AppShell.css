@@ -43,6 +43,18 @@ nav.fixed.bottom-0 a .bg-primary-50 {
 /* Active bottom nav text color uses Tailwind's text-primary-500 which maps
    to var(--primary) via tailwind config — no override needed */
 
+/* Bottom nav item press feedback */
+nav.fixed.bottom-0 a:active {
+  transform: scale(0.92);
+  transition: transform 100ms var(--ease-out);
+}
+
+/* Bottom nav active indicator dot */
+nav.fixed.bottom-0 a .bg-primary-50 {
+  transition: background var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-spring);
+}
+
 /* -- Desktop nav active state reinforcement ----------------------------- */
 
 /* Active nav link pill */

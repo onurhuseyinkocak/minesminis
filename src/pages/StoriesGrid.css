@@ -221,13 +221,13 @@
   }
 }
 
-/* ---- Story Card — Book Cover Style ---- */
+/* ---- Story Card — Physical Book Style ---- */
 .story-card {
   all: unset;
   display: flex;
   flex-direction: column;
   background: var(--bg-card);
-  border-radius: var(--radius-xl);
+  border-radius: 4px 12px 12px 4px;
   overflow: hidden;
   cursor: pointer;
   transition:
@@ -235,20 +235,57 @@
     box-shadow 0.3s var(--ease-out),
     border-color 0.2s ease;
   text-align: left;
-  /* Book-like depth */
+  /* Physical book depth — spine on left, page edges on right */
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    0 8px 24px rgba(0, 0, 0, 0.06),
-    4px 4px 0 0 var(--slate-200);
+    -6px 0 0 0 var(--primary),
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    5px 5px 0 0 var(--border-light);
   border: 1px solid var(--border-light);
+  border-left: none;
+  position: relative;
+}
+
+/* Book spine gradient on left edge */
+.story-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-hover) 100%);
+  z-index: 2;
+  border-radius: 4px 0 0 4px;
+}
+
+/* Page edge lines on right side */
+.story-card::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 10%;
+  bottom: 10%;
+  width: 4px;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--border-light) 0px,
+    var(--border-light) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.5;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .story-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px) scale(1.02) rotate(-0.5deg);
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(255, 107, 53, 0.15),
-    6px 6px 0 0 var(--primary);
+    -6px 0 0 0 var(--primary-hover),
+    0 16px 48px rgba(0, 0, 0, 0.14),
+    0 4px 12px rgba(255, 107, 53, 0.2),
+    7px 7px 0 0 var(--primary);
   border-color: var(--primary);
 }
 
@@ -261,13 +298,13 @@
   outline-offset: 3px;
 }
 
-/* Cover — book-cover proportions */
+/* Cover — book-cover proportions (3:4 portrait for realistic book) */
 .story-card__cover {
   position: relative;
   width: 100%;
   overflow: hidden;
   background: var(--bg-elevated);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
 }
 
 .story-card__cover .story-cover-svg {
@@ -353,9 +390,9 @@
 /* --- Generated Cover Image --- */
 .story-grid__card-cover {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: 0 var(--radius-lg) 0 0;
   display: block;
 }
 
@@ -451,7 +488,25 @@
   line-height: 1.55;
 }
 
-/* Decodable card variant */
+/* Decodable card variant — use teal spine instead of orange */
+.story-card--decodable {
+  box-shadow:
+    -6px 0 0 0 var(--secondary),
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    5px 5px 0 0 var(--border-light);
+}
+.story-card--decodable::before {
+  background: linear-gradient(180deg, var(--secondary) 0%, var(--secondary-hover) 100%);
+}
+.story-card--decodable:hover {
+  box-shadow:
+    -6px 0 0 0 var(--secondary-hover),
+    0 16px 48px rgba(0, 0, 0, 0.14),
+    0 4px 12px rgba(13, 92, 77, 0.2),
+    7px 7px 0 0 var(--secondary);
+}
+
 .story-card--decodable .story-card__cover--decodable {
   background: linear-gradient(135deg, var(--secondary, #0D5C4D) 0%, var(--secondary-light, #1A8A78) 100%);
   display: flex;
@@ -460,7 +515,7 @@
   justify-content: center;
   gap: 0.625rem;
   position: relative;
-  min-height: 180px;
+  min-height: 220px;
 }
 
 /* Decorative pattern on decodable covers */

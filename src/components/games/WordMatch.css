@@ -50,11 +50,28 @@
   background: var(--success-pale);
   color: var(--mimi-green-dark);
   box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12);
+  animation: wm-correct-flash 0.6s ease-out;
+}
+
+@keyframes wm-correct-flash {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  40% { transform: scale(1.08); box-shadow: 0 0 24px 8px rgba(16, 185, 129, 0.25); }
+  100% { transform: scale(1); box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12); }
 }
 
 .word-match__feedback--wrong {
   background: var(--error-pale);
   color: var(--error);
+  animation: wm-wrong-shake 0.5s ease;
+}
+
+@keyframes wm-wrong-shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-8px); }
+  30% { transform: translateX(8px); }
+  45% { transform: translateX(-6px); }
+  60% { transform: translateX(6px); }
+  75% { transform: translateX(-3px); }
 }
 
 /* -- Board ------------------------------------------------------------ */
@@ -84,9 +101,10 @@
   padding: var(--space-md) var(--space-lg);
   min-height: 72px;
   border: 2.5px solid var(--border-light);
+  border-bottom: 5px solid color-mix(in srgb, var(--border-light) 80%, black);
   border-radius: var(--radius-lg);
   background: var(--bg-card);
-  box-shadow: var(--shadow-card), 0 2px 0 0 rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-card), 0 3px 0 0 rgba(0, 0, 0, 0.06);
   cursor: pointer;
   font-family: var(--font-display);
   font-size: 1.2rem;
@@ -97,7 +115,8 @@
     box-shadow var(--transition-base),
     transform var(--transition-base),
     background var(--transition-fast),
-    opacity var(--transition-base);
+    opacity var(--transition-base),
+    border-bottom-width 0.1s ease;
   text-align: left;
   width: 100%;
 }
@@ -109,7 +128,9 @@
 }
 
 .word-match__card:active:not(:disabled) {
-  transform: translateY(-1px) scale(0.98);
+  transform: translateY(1px) scale(0.98);
+  border-bottom-width: 2.5px;
+  box-shadow: var(--shadow-sm);
 }
 
 .word-match__card:focus-visible {
@@ -147,9 +168,10 @@
 }
 
 @keyframes wm-flash {
-  0% { background: var(--bg-card); box-shadow: var(--shadow-card); }
-  40% { background: var(--success-pale); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
-  100% { background: var(--bg-card); box-shadow: var(--shadow-card); }
+  0% { background: var(--bg-card); box-shadow: var(--shadow-card); transform: scale(1); }
+  25% { background: var(--success); box-shadow: 0 0 32px rgba(16, 185, 129, 0.5); transform: scale(1.06); }
+  50% { background: var(--success-pale); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); transform: scale(1.02); }
+  100% { background: var(--bg-card); box-shadow: var(--shadow-card); transform: scale(1); }
 }
 
 /* Connection line animation for matched pairs */

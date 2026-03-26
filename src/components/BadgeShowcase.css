@@ -138,6 +138,11 @@
 
 .filter-tab:hover {
   color: var(--text-primary);
+  background: var(--bg-elevated);
+}
+
+.filter-tab:active {
+  transform: scale(0.96);
 }
 
 .filter-tab.active {
@@ -173,8 +178,13 @@
 }
 
 .badge-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
+}
+
+.badge-card:active {
+  transform: scale(0.96);
+  box-shadow: var(--shadow-sm);
 }
 
 .badge-card.earned {
@@ -290,6 +300,11 @@
   transform: translateY(-1px);
 }
 
+.view-all-btn:active {
+  transform: scale(0.97);
+  box-shadow: none;
+}
+
 /* ---- Badge Detail Modal Overlay ---- */
 .badge-modal-overlay {
   position: fixed;
@@ -357,6 +372,10 @@
 .close-modal:hover {
   background: var(--error-soft);
   color: var(--error);
+}
+
+.close-modal:active {
+  transform: scale(0.9);
 }
 
 /* ---- Modal Badge Icon ---- */
@@ -430,6 +449,37 @@
   color: var(--text-primary);
   font-weight: 700;
   text-transform: capitalize;
+}
+
+/* ---- Empty State ---- */
+.badge-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-3xl) var(--space-xl);
+  text-align: center;
+}
+
+.badge-empty-state__icon {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.badge-empty-state__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.badge-empty-state__desc {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* ---- Responsive ---- */

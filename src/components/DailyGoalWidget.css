@@ -43,6 +43,12 @@
   stroke: var(--primary);
   transition: stroke-dashoffset 0.8s var(--ease-out);
   filter: drop-shadow(0 0 4px var(--primary-glow));
+  animation: dgw-ring-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes dgw-ring-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--primary-glow)); }
+  50% { filter: drop-shadow(0 0 10px var(--primary-glow)); }
 }
 
 .dgw__progress--done {
@@ -196,6 +202,11 @@
   border-color: var(--primary-light);
   background: var(--primary-pale);
   transform: translateY(-1px);
+}
+
+.dgw__option:active {
+  transform: scale(0.97);
+  box-shadow: none;
 }
 
 .dgw__option--active {

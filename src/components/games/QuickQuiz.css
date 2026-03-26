@@ -116,6 +116,7 @@
   padding: var(--space-lg) var(--space-xl);
   min-height: 68px;
   border: 2.5px solid var(--border-light);
+  border-bottom: 5px solid color-mix(in srgb, var(--border-light) 80%, black);
   border-radius: var(--radius-lg);
   background: var(--bg-card);
   cursor: pointer;
@@ -128,10 +129,11 @@
     background var(--transition-fast),
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
-    color var(--transition-fast);
+    color var(--transition-fast),
+    border-bottom-width 0.1s ease;
   text-align: left;
   width: 100%;
-  box-shadow: var(--shadow-card), 0 2px 0 0 rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-card), 0 3px 0 0 rgba(0, 0, 0, 0.06);
 }
 
 .quick-quiz__option:hover:not(:disabled) {
@@ -142,7 +144,9 @@
 }
 
 .quick-quiz__option:active:not(:disabled) {
-  transform: translateX(2px) scale(0.98);
+  transform: translateY(2px) scale(0.98);
+  border-bottom-width: 2.5px;
+  box-shadow: var(--shadow-sm);
 }
 
 .quick-quiz__option:focus-visible {
@@ -159,32 +163,37 @@
   border-color: var(--success);
   background: var(--success);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 4px 16px rgba(16, 185, 129, 0.25);
-  animation: qq-bounce 0.5s var(--ease-spring);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 4px 24px rgba(16, 185, 129, 0.35);
+  animation: qq-correct-pop 0.6s var(--ease-spring);
 }
 
-@keyframes qq-bounce {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.05); }
-  60% { transform: scale(0.97); }
-  100% { transform: scale(1); }
+@keyframes qq-correct-pop {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  20% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.2), 0 8px 32px rgba(16, 185, 129, 0.4); }
+  40% { transform: scale(0.96); }
+  60% { transform: scale(1.03); }
+  100% { transform: scale(1); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 4px 24px rgba(16, 185, 129, 0.35); }
 }
 
 .quick-quiz__option--wrong {
   border-color: var(--error);
   background: var(--error);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
-  animation: qq-shake 0.45s ease;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25), 0 4px 16px rgba(239, 68, 68, 0.3);
+  animation: qq-wrong-shake 0.55s ease;
 }
 
-@keyframes qq-shake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-  100% { transform: translateX(0); }
+@keyframes qq-wrong-shake {
+  0% { transform: translateX(0); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  10% { transform: translateX(-10px); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+  20% { transform: translateX(10px); }
+  30% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  50% { transform: translateX(-5px); }
+  60% { transform: translateX(5px); }
+  70% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+  100% { transform: translateX(0); box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25), 0 4px 16px rgba(239, 68, 68, 0.3); }
 }
 
 /* -- Option label (letter circle) ------------------------------------- */
