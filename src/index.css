@@ -58,6 +58,9 @@
   --error-light: #F87171;
   --error-soft: #FECACA;
   --error-pale: #FEF2F2;
+  /* Aliases used by game components */
+  --danger: #EF4444;
+  --danger-pale: #FEF2F2;
   --info: #0EA5E9;
   --info-light: #38BDF8;
   --info-pale: #F0F9FF;
@@ -91,6 +94,13 @@
   --accent-red: #dc2626;
   --accent-red-dark: #991b1b;
 
+  /* ---- WORLD MAP JOURNEY COLORS ---- */
+  --journey-stop-size: 64px;
+  --journey-completed-color: #10B981;
+  --journey-unlocked-glow: rgba(255, 107, 53, 0.4);
+  --journey-path-color: #FF6B35;
+  --journey-locked-color: #CBD5E1;
+
   /* ---- STORY WORLD COLORS ---- */
   --world-forest: #2D5A27;
   --world-ocean: #1A5276;
@@ -120,6 +130,13 @@
   --mist: var(--slate-100);
   --snow: var(--slate-50);
   --white: #FFFFFF;
+
+  /* ---- BACKGROUNDS ---- */
+  --bg-secondary: #F8FAFC;
+
+  /* ---- PER-ELEMENT TOKENS (set inline via JS, fallback here) ---- */
+  --cat-color: var(--primary);
+  --card-color: var(--primary);
 
   /* ---- TEXT: Light theme ---- */
   --text-primary: #1a1a2e;
