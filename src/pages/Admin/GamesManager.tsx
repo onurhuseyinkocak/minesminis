@@ -54,9 +54,26 @@ function mapSupabaseRow(r: SupabaseGameRow): GameRow {
     };
 }
 
+const gameTypeBadgeClass = (type: string) => {
+    const map: Record<string, string> = {
+        'quiz': 'badge-primary',
+        'memory': 'badge-purple',
+        'memory game': 'badge-purple',
+        'match': 'badge-success',
+        'match up': 'badge-success',
+        'phonics': 'badge-orange',
+        'spelling': 'badge-blue',
+        'maze chase': 'badge-blue',
+        'whack-a-mole': 'badge-orange',
+        'open box': 'badge-primary',
+    };
+    return map[type?.toLowerCase()] || 'badge-beginner';
+};
+
 function GamesManager() {
     const [games, setGames] = useState<GameRow[]>([]);
     const [gamesLoading, setGamesLoading] = useState(true);
+    const [isUsingLocalData, setIsUsingLocalData] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,12 +96,15 @@ function GamesManager() {
                 if (error) throw error;
                 if (data && data.length > 0) {
                     setGames(data.map((r) => mapSupabaseRow(r as SupabaseGameRow)));
+                    setIsUsingLocalData(false);
                 } else {
                     setGames(loadLocalGames());
+                    setIsUsingLocalData(true);
                 }
             } catch {
                 toast.error('Oyunlar yüklenirken hata. Yerel veri kullanılıyor.');
                 setGames(loadLocalGames());
+                setIsUsingLocalData(true);
             } finally {
                 setGamesLoading(false);
             }
@@ -236,6 +256,12 @@ function GamesManager() {
                 <p>Eğitici oyunları ekleyin, düzenleyin ve yönetin {gamesLoading ? '(yükleniyor…)' : `(${games.length} oyun)`}</p>
             </div>
 
+            {isUsingLocalData && (
+                <div className="adm-warning-banner">
+                    Showing local demo data — Supabase returned no results
+                </div>
+            )}
+
             <div className="data-table-container">
                 <div className="table-header">
                     <h2>{filteredGames.length} Oyun</h2>
@@ -296,7 +322,7 @@ function GamesManager() {
                                 </td>
                                 <td><strong>{game.title}</strong></td>
                                 <td>
-                                    <span className="badge badge-beginner">{game.type}</span>
+                                    <span className={`badge ${gameTypeBadgeClass(game.type)}`}>{game.type}</span>
                                 </td>
                                 <td>{game.grade === 'primary' ? 'İlkokul' : `${game.grade}. Sınıf`}</td>
                                 <td>
@@ -318,6 +344,9 @@ function GamesManager() {
                     <div className="no-data">
                         <Gamepad2 size={48} style={{ opacity: 0.3 }} />
                         <p>Oyun bulunamadı</p>
+                        <button type="button" onClick={openAddModal} className="adm-btn adm-btn-primary">
+                            Add First Game
+                        </button>
                     </div>
                 )}
 

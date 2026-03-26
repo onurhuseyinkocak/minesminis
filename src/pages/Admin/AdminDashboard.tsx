@@ -92,7 +92,10 @@ function AdminDashboard() {
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
         sevenDaysAgo.setHours(0, 0, 0, 0);
 
-        const [usersRes, userCountRes, gamesRes, videosRes, wordsRes, worksheetsRes, growthRes] = await Promise.allSettled([
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        const [usersRes, userCountRes, gamesRes, videosRes, wordsRes, worksheetsRes, growthRes, premiumCountRes, activeTodayRes] = await Promise.allSettled([
             supabase.from('users').select('id, display_name, email, settings, role, created_at, is_online').order('created_at', { ascending: false }).limit(10),
             supabase.from('users').select('*', { count: 'exact', head: true }),
             supabase.from('games').select('*', { count: 'exact', head: true }),
@@ -100,6 +103,8 @@ function AdminDashboard() {
             supabase.from('words').select('*', { count: 'exact', head: true }),
             supabase.from('worksheets').select('*', { count: 'exact', head: true }),
             supabase.from('users').select('created_at').gte('created_at', sevenDaysAgo.toISOString()),
+            supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_premium', true),
+            supabase.from('users').select('*', { count: 'exact', head: true }).gte('last_active', todayStart.toISOString()),
         ]);
 
         if (usersRes.status === 'fulfilled' && !usersRes.value.error && usersRes.value.data) {
@@ -107,15 +112,14 @@ function AdminDashboard() {
             setRecentUsers(data.slice(0, 6).map(({ id, display_name, email, settings, role, created_at }) => ({
                 id, display_name, email, settings, role, created_at,
             })));
+        }
 
-            const premium = data.filter(u => u.settings?.is_premium === true).length;
-            setPremiumUsers(premium);
+        if (premiumCountRes.status === 'fulfilled' && !premiumCountRes.value.error) {
+            setPremiumUsers(premiumCountRes.value.count ?? 0);
+        }
 
-            const today = new Date().toISOString().split('T')[0];
-            const active = data.filter(u =>
-                u.is_online === true || (u.created_at && u.created_at.startsWith(today))
-            ).length;
-            setActiveToday(active);
+        if (activeTodayRes.status === 'fulfilled' && !activeTodayRes.value.error) {
+            setActiveToday(activeTodayRes.value.count ?? 0);
         }
 
         if (userCountRes.status === 'fulfilled' && !userCountRes.value.error) {
@@ -394,7 +398,7 @@ function AdminDashboard() {
                         </Link>
                         <Link to="/admin/analytics" className="adm-quick-btn">
                             <BarChart3 size={20} />
-                            <span>View Reports</span>
+                            <span>Analytics</span>
                         </Link>
                     </div>
                 </div>

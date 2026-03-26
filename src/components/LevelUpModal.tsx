@@ -14,7 +14,7 @@ import { Star, Sprout } from 'lucide-react';
 
 const LevelUpModal: React.FC = () => {
     const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number; color: string }>>([]);
     const [showStarBurst, setShowStarBurst] = useState(false);
     const starBurstTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -104,7 +104,9 @@ const LevelUpModal: React.FC = () => {
                             if (gardenStats.blooming > 0) {
                                 return (
                                     <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', marginTop: '0.3rem', fontSize: '0.85em' }}>
-                                        <Sprout size={20} /> Your garden has {gardenStats.blooming} blooming plant{gardenStats.blooming !== 1 ? 's' : ''}!
+                                        <Sprout size={20} /> {lang === 'tr'
+                                            ? `Bahçende ${gardenStats.blooming} çiçek açmış bitkin var!`
+                                            : `Your garden has ${gardenStats.blooming} blooming plant${gardenStats.blooming !== 1 ? 's' : ''}!`}
                                     </span>
                                 );
                             }
@@ -113,7 +115,7 @@ const LevelUpModal: React.FC = () => {
                     </p>
 
                     <button type="button" className="continue-btn" onClick={dismissLevelUp}>
-                        <span>Continue</span>
+                        <span>{t('common.continue') || (lang === 'tr' ? 'Devam' : 'Continue')}</span>
                         <span className="btn-arrow">→</span>
                     </button>
                 </div>

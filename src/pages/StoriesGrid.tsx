@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Sparkles, Clock, Star, BookOpen } from 'lucide-react';
+import { Sparkles, Clock, Star, BookOpen, AlertTriangle } from 'lucide-react';
 import { KidIcon } from '../components/ui';
 import { generateStoryCover } from '../utils/storyCoverGenerator';
 import { getAllBuiltInStories, type DecodableStory } from '../services/decodableStoryService';
@@ -180,9 +180,10 @@ export default function StoriesGrid() {
 
       {activeTab === 'all' && (error ? (
         <div className="stories-empty stories-error">
-          <Sparkles size={48} />
+          <AlertTriangle size={48} />
           <p>{error}</p>
           <button
+            type="button"
             className="stories-retry-btn"
             onClick={fetchStories}
           >
@@ -240,7 +241,7 @@ export default function StoriesGrid() {
                     className="story-grid__card-cover"
                   />
                 ) : (
-                  <StoryCover scene={story.cover_scene} />
+                  <StoryCover scene={story.cover_scene} storyId={story.id} />
                 )}
               </div>
               <div className="story-card__info">
@@ -272,9 +273,10 @@ export default function StoriesGrid() {
 
 interface StoryCoverProps {
   scene: string;
+  storyId: string;
 }
 
-function StoryCover({ scene }: StoryCoverProps) {
+function StoryCover({ scene, storyId }: StoryCoverProps) {
   const s = scene?.toLowerCase() ?? '';
 
   const isForest = s.includes('forest') || s.includes('tree') || s.includes('orman');
@@ -315,7 +317,7 @@ function StoryCover({ scene }: StoryCoverProps) {
     });
   }, [scene]);
 
-  const gradId = `sg-${bg1.replace('#', '')}`;
+  const gradId = `sg-${storyId}-${bg1.replace('#', '')}`;
 
   return (
     <svg viewBox="0 0 300 200" className="story-cover-svg" aria-hidden="true">

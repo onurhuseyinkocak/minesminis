@@ -134,8 +134,6 @@ export default function Dashboard() {
   const userId = user?.uid || 'guest';
 
   // Daily lesson state
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const [lessonDone, setLessonDone] = useState<boolean>(() =>
     isDailyLessonCompletedToday(userId)
   );
@@ -177,7 +175,8 @@ export default function Dashboard() {
     };
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
-  }, [userId, today]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   const recentBadges = useMemo(() => {
     return stats.badges
@@ -265,9 +264,11 @@ export default function Dashboard() {
             <div className="absolute top-4 right-16 w-16 h-16 bg-white/15 rounded-full" />
 
             <div className="relative z-10">
-              <div className="text-white/80 text-sm font-display font-semibold mb-1">
-                {lessonDone ? '' : t('dashboard.todaysLesson').toUpperCase()}
-              </div>
+              {!lessonDone && (
+                <div className="text-white/80 text-sm font-display font-semibold mb-1">
+                  {t('dashboard.todaysLesson').toUpperCase()}
+                </div>
+              )}
               <h2 className="font-display font-black text-2xl lg:text-3xl text-white mt-2 leading-tight mb-2">
                 {lessonDone ? t('dashboard.completedToday') : t('dashboard.continueLearning')}
               </h2>
@@ -465,7 +466,10 @@ export default function Dashboard() {
               {recentBadges.map((badge) => badge && (
                 <div key={badge.id} className="flex flex-col items-center gap-1 flex-shrink-0">
                   <div className="w-14 h-14 bg-gold-50 rounded-xl flex items-center justify-center">
-                    <Award size={28} className="text-gold-500" />
+                    {badge.icon
+                      ? <KidIcon name={badge.icon as any} size={28} />
+                      : <Award size={28} className="text-gold-500" />
+                    }
                   </div>
                   <span className="text-xs font-body text-ink-500 text-center max-w-[3.5rem] truncate">{badge.name}</span>
                 </div>

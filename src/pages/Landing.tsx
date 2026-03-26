@@ -352,7 +352,7 @@ function FAQSection({ lang }: { lang: Lang }) {
       <div className="max-w-3xl mx-auto px-4 lg:px-8">
         <div className="text-center mb-12">
           <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
-            {t(lang, 'Sik Sorulan Sorular', 'Frequently Asked Questions')}
+            {t(lang, 'Sık Sorulan Sorular', 'Frequently Asked Questions')}
           </p>
           <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
             {t(lang, 'Merak Edilenler', 'Common Questions')}
@@ -489,8 +489,9 @@ export default function Landing() {
                 {[
                   { href: '#features', label: t(lang, 'Özellikler', 'Features') },
                   { href: '#compare', label: t(lang, 'Karşılaştır', 'Compare') },
-                  { href: '#how', label: t(lang, 'Nasil Calisir', 'How It Works') },
+                  { href: '#how', label: t(lang, 'Nasıl Çalışır', 'How It Works') },
                   { href: '#faq', label: t(lang, 'SSS', 'FAQ') },
+                  { href: '#pricing', label: t(lang, 'Erken Kayıt', 'Early Bird') },
                 ].map(item => (
                   <a
                     key={item.href}
@@ -544,7 +545,7 @@ export default function Landing() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2.5s_ease-in-out_infinite] -translate-x-full" style={{ animation: 'shimmer 2.5s ease-in-out infinite' }} />
                 <Sparkles size={14} className="text-white relative z-10" />
-                <span className="relative z-10">{t(lang, 'Ucretsiz Erken Erisim Basladl', 'Free Early Access is Live')}</span>
+                <span className="relative z-10">{t(lang, 'Ücretsiz Erken Erişim Başladı', 'Free Early Access is Live')}</span>
               </motion.div>
 
               <motion.h1
@@ -608,7 +609,7 @@ export default function Landing() {
                   className="group relative inline-flex items-center justify-center gap-3 bg-primary-500 hover:bg-primary-600 text-white font-display font-extrabold text-lg px-8 py-4 rounded-2xl shadow-primary hover:shadow-primary-lg transition-all duration-200 hover:scale-105 active:scale-95"
                 >
                   <span className="absolute inset-0 rounded-2xl animate-ping bg-primary-400/20 pointer-events-none" style={{ animationDuration: '2s' }} />
-                  {t(lang, 'Ucretsiz Basla', 'Start Free')}
+                  {t(lang, 'Ücretsiz Başla', 'Start Free')}
                   <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
                 </Link>
                 <a
@@ -656,17 +657,7 @@ export default function Landing() {
                     ))}
                   </div>
                   <span className="font-display font-bold text-xs text-ink-600">
-                    {t(lang, '500+ erken erisim kullanicisi', '500+ early access users')}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="flex gap-0.5">
-                    {[1, 2, 3, 4, 5].map(s => (
-                      <Star key={s} size={13} className="text-gold-400 fill-gold-400" />
-                    ))}
-                  </div>
-                  <span className="font-display font-bold text-xs text-ink-600">
-                    {t(lang, 'Ebeveyn puani 4.9/5', 'Parent rating 4.9/5')}
+                    {t(lang, 'Binlerce Türk çocuğu bekliyor', 'Thousands of Turkish kids waiting')}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -1277,7 +1268,7 @@ export default function Landing() {
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             {[
-              t(lang, 'İlk 7 gün ücretsiz', 'First 7 days free'),
+              t(lang, 'Ücretsiz erken erişim', 'Free early access'),
               t(lang, 'Kredi kartı gerekmez', 'No credit card needed'),
               t(lang, 'İstediğin zaman iptal et', 'Cancel anytime'),
             ].map(chip => (

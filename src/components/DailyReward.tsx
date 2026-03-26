@@ -110,8 +110,8 @@ const DailyReward: React.FC = () => {
                 if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
                 celebrationTimerRef.current = setTimeout(() => setShowClaimCelebration(false), 3000);
             }
-        } catch {
-            // Claim failed silently — user can retry
+        } catch (err) {
+            console.error('Claim failed:', err);
         } finally {
             setClaiming(false);
         }
@@ -123,6 +123,7 @@ const DailyReward: React.FC = () => {
                 type="button"
                 className={`daily-reward-trigger ${canClaimDaily ? 'available' : ''}`}
                 onClick={() => setIsOpen(true)}
+                aria-label={lang === 'tr' ? 'Günlük ödül' : 'Daily reward'}
             >
                 <span className="trigger-icon"><Gift size={20} /></span>
                 {canClaimDaily && <span className="trigger-badge">!</span>}

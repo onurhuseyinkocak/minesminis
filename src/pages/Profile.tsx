@@ -134,7 +134,7 @@ const Profile: React.FC = () => {
 
           <div className="profile-main-info">
             <div className="name-row">
-              <h1>{userProfile?.display_name || 'My Space'}</h1>
+              <h1>{userProfile?.display_name || (lang === 'tr' ? 'Benim Alanım' : 'My Space')}</h1>
               <button
                 className="edit-profile-btn"
                 onClick={() => setShowEditModal(true)}
@@ -288,7 +288,7 @@ const Profile: React.FC = () => {
           <div className="badges-grid">
             {explorerBadges.length > 0 ? (
               explorerBadges.map((badge, i) => (
-                <div key={i} className="badge-item">
+                <div key={badge.id || badge.name || i} className="badge-item">
                   <div className="badge-circle">
                     <KidIcon name={badge.icon as KidIconName} size={28} />
                   </div>

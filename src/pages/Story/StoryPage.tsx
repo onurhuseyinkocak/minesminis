@@ -7,6 +7,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Volume2, VolumeX, Star, Package, RotateCcw } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useGamification } from '../../contexts/GamificationContext';
 import { WORLDS, TRAIT_NAMES } from '../../data/storyWorlds';
 import type { TraitId } from '../../data/storyWorlds';
@@ -35,6 +36,7 @@ const StoryPage = React.memo(() => {
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
   const { addXP } = useGamification();
+  const { lang } = useLanguage();
 
   const [storyState, setStoryState] = useState<StoryState | null>(null);
   const [currentNode, setCurrentNode] = useState<StoryNode | null>(null);
@@ -172,7 +174,9 @@ const StoryPage = React.memo(() => {
   // ─── Reset story ───
   const handleReset = useCallback(async () => {
     if (!user || !storyState) return;
-    const confirmMsg = 'Are you sure you want to restart your adventure? All progress will be lost.';
+    const confirmMsg = lang === 'tr'
+      ? 'Maceranı yeniden başlatmak istediğine emin misin? Tüm ilerleme kaybolacak.'
+      : 'Are you sure you want to restart your adventure? All progress will be lost.';
     if (!window.confirm(confirmMsg)) return;
 
     await resetStoryProgress(user.uid);
@@ -186,7 +190,7 @@ const StoryPage = React.memo(() => {
     setShowChoices(false);
     setChoiceResult(null);
     await saveStoryState(newState);
-  }, [user, storyState, userProfile]);
+  }, [user, storyState, userProfile, lang]);
 
   // ─── TTS helper ───
   const speakWord = useCallback((word: string) => {
@@ -199,7 +203,7 @@ const StoryPage = React.memo(() => {
       <div className="story-page">
         <div className="story-page__loading">
           <div className="story-page__loading-spinner" />
-          <p>Preparing your adventure...</p>
+          <p>{lang === 'tr' ? 'Macera hazırlanıyor...' : 'Preparing your adventure...'}</p>
         </div>
       </div>
     );

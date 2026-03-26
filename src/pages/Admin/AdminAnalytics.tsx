@@ -132,7 +132,6 @@ function computeAvgCompletion(rows: { mastery: number | null }[]): string {
 interface EngagementData {
     dailyActive: number;
     weeklyActive: number;
-    avgSessionDuration: string;
     retention7d: string;
     contentEngagement: string;
 }
@@ -162,7 +161,6 @@ function AdminAnalytics() {
     const [engagement, setEngagement] = useState<EngagementData>({
         dailyActive: 0,
         weeklyActive: 0,
-        avgSessionDuration: '-',
         retention7d: '-',
         contentEngagement: '-',
     });
@@ -304,7 +302,6 @@ function AdminAnalytics() {
                 setEngagement({
                     dailyActive: dailyUsers.size,
                     weeklyActive: weeklyUsers.size,
-                    avgSessionDuration: '-',
                     retention7d: `${retentionPct}%`,
                     contentEngagement: avgItems,
                 });
@@ -312,7 +309,6 @@ function AdminAnalytics() {
                 setEngagement({
                     dailyActive: 0,
                     weeklyActive: 0,
-                    avgSessionDuration: '-',
                     retention7d: '-',
                     contentEngagement: '-',
                 });
@@ -636,7 +632,6 @@ function AdminAnalytics() {
                             {[
                                 { label: 'Daily Active Users', value: String(engagement.dailyActive), sub: 'Unique users today', color: 'var(--accent-blue)' },
                                 { label: 'Weekly Active Users', value: String(engagement.weeklyActive), sub: 'Unique users this week', color: 'var(--accent-emerald)' },
-                                { label: 'Avg. Session Duration', value: engagement.avgSessionDuration, sub: 'Per user per day', color: 'var(--warning)' },
                                 { label: 'Retention (7-day)', value: engagement.retention7d, sub: 'Users returning within 7 days', color: 'var(--accent-purple)' },
                                 { label: 'Content Engagement', value: engagement.contentEngagement, sub: 'Avg. items per user', color: 'var(--accent-pink)' },
                             ].map(item => (

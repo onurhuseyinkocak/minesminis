@@ -61,7 +61,8 @@ const Words: React.FC = () => {
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [pronunciationResult, setPronunciationResult] = useState<Record<string, 'correct' | 'wrong' | 'listening'>>({});
   const [pronunciationWord, setPronunciationWord] = useState<string | null>(null);
-  const [showMoreWords, setShowMoreWords] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showMoreWords, setShowMoreWords] = useState(false);
 
   // Review state
   const [dueWords, setDueWords] = useState<WordProgress[]>([]);
@@ -139,6 +140,7 @@ const Words: React.FC = () => {
   }, [user]);
 
   const fetchKidsWords = async () => {
+    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('words')
@@ -148,6 +150,8 @@ const Words: React.FC = () => {
       setKidsWords((data && data.length > 0) ? data : fallbackWords);
     } catch {
       setKidsWords(fallbackWords);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -312,7 +316,11 @@ const Words: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {showMoreWords ? (
+              {isLoading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+                  <div className="words-loading-spinner" />
+                </div>
+              ) : showMoreWords ? (
                 /* Grouped view when showing all words */
                 <div className="kid-words-grouped">
                   {groupedByCategory.map(({ category, words: catWords }) => (
@@ -325,8 +333,8 @@ const Words: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: Math.min(idx * 0.03, 0.4) }}
-                            className={`kid-word-card ${flippedCard === word.word ? 'flipped' : ''}`}
-                            onClick={() => setFlippedCard(flippedCard === word.word ? null : word.word)}
+                            className={`kid-word-card ${flippedCard === (word.id ?? word.word + '_' + word.category) ? 'flipped' : ''}`}
+                            onClick={() => { const key = word.id ?? word.word + '_' + word.category; setFlippedCard(flippedCard === key ? null : key); }}
                           >
                             <div className="kid-card-inner">
                               <div className="kid-card-front">
@@ -380,8 +388,8 @@ const Words: React.FC = () => {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: Math.min(idx * 0.03, 0.6) }}
-                      className={`kid-word-card ${flippedCard === word.word ? 'flipped' : ''}`}
-                      onClick={() => setFlippedCard(flippedCard === word.word ? null : word.word)}
+                      className={`kid-word-card ${flippedCard === (word.id ?? word.word + '_' + word.category) ? 'flipped' : ''}`}
+                      onClick={() => { const key = word.id ?? word.word + '_' + word.category; setFlippedCard(flippedCard === key ? null : key); }}
                     >
                       <div className="kid-card-inner">
                         <div className="kid-card-front">
@@ -560,8 +568,8 @@ const Words: React.FC = () => {
       </div>
 
       <MimiGuide
-        message="Tap a word to hear how it sounds!"
-        messageTr="Bir kelimeye dokun ve nasıl söylendiğini duy!"
+        message="Tap a card to flip it, then listen to the word!"
+        messageTr="Kartı çevirmek için dokun, sonra kelimeyi dinle!"
         showOnce="mimi_guide_words"
       />
     </div>
