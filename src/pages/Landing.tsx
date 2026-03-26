@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, Check, Menu, X, Mic, Gamepad2, BookOpen,
-  Star, GraduationCap,
+  Star, GraduationCap, Shield, Users, Sparkles, ChevronDown,
   ChevronRight, Zap, Brain, Globe, Music,
   PenTool, Eye,
 } from 'lucide-react';
@@ -207,6 +207,7 @@ const WORLDS_PREVIEW = [
   { num: '...', title: { tr: '+13 Dünya daha', en: '+13 More Worlds' }, color: 'bg-ink-400' },
 ];
 
+
 // ─── Demo Question ──────────────────────────────────────────────────────────
 
 type DemoState = 'idle' | 'correct' | 'wrong';
@@ -318,6 +319,85 @@ function LiveDemo({ lang }: { lang: Lang }) {
   );
 }
 
+
+// ─── FAQ Data ─────────────────────────────────────────────────────────────────
+
+const FAQ_DATA = [
+  { q: { tr: 'MinesMinis hangi yaş grubuna uygun?', en: 'What age group is MinesMinis for?' }, a: { tr: 'MinesMinis 3–10 yaş arası çocuklar için tasarlanmıştır. Yerleştirme testi her çocuğun seviyesine uygun başlangıç noktasını belirler.', en: 'MinesMinis is designed for children aged 3–10. The placement test finds the right starting point for every child.' } },
+  { q: { tr: 'Fonetik yöntem nedir ve neden önemli?', en: 'What is the phonics method and why does it matter?' }, a: { tr: 'Harfleri seslerle eşleştirerek okuma öğretir. Sistematik fonetik öğretimi en etkili okuma yöntemidir.', en: 'Phonics maps letters to sounds. Systematic phonics instruction is the most effective reading method.' } },
+  { q: { tr: 'Günde ne kadar süre yeterli?', en: 'How much time per day is enough?' }, a: { tr: 'Günde sadece 10 dakika yeterli. Kısa ve odaklı dersler çocukların dikkat süresine uygun tasarlanmıştır.', en: "Just 10 minutes a day. Short focused lessons match children's attention spans." } },
+  { q: { tr: 'Ücretsiz plan sonsuza kadar geçerli mi?', en: 'Is the free plan valid forever?' }, a: { tr: 'Evet. Günde 1 ders, 7 fonetik grup ve 5 oyun türüne erişim sonsuza kadar ücretsizdir.', en: 'Yes. 1 lesson per day, 7 phonics groups, and 5 game types — free forever.' } },
+  { q: { tr: 'Türkçe konuşan çocuklar için özel bir şey var mı?', en: 'Is there anything special for Turkish-speaking children?' }, a: { tr: '8 Türkçe ses tuzağı için özel antrenman modülümüz var: TH sesi, W/V karışıklığı, kısa ünlüler ve daha fazlası.', en: 'We have a special training module for 8 Turkish sound traps: TH sounds, W/V confusion, short vowels and more.' } },
+];
+
+// ─── FAQ Component ────────────────────────────────────────────────────────────
+
+function FAQSection({ lang }: { lang: Lang }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <section id="faq" className="py-16 lg:py-24 bg-cream-50">
+      <div className="max-w-3xl mx-auto px-4 lg:px-8">
+        <div className="text-center mb-12">
+          <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
+            {t(lang, 'Sik Sorulan Sorular', 'Frequently Asked Questions')}
+          </p>
+          <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
+            {t(lang, 'Merak Edilenler', 'Common Questions')}
+          </h2>
+        </div>
+        <div className="flex flex-col gap-3">
+          {FAQ_DATA.map((faq, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-white border-2 border-ink-100 rounded-2xl overflow-hidden hover:border-primary-200 transition-colors duration-200"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  className="w-full flex items-center justify-between text-left px-6 py-5 gap-4"
+                  aria-expanded={isOpen}
+                >
+                  <span className="font-display font-bold text-ink-900 text-base">
+                    {t(lang, faq.q.tr, faq.q.en)}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    className={`text-ink-400 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5">
+                        <p className="font-body text-ink-500 text-sm leading-relaxed">
+                          {t(lang, faq.a.tr, faq.a.en)}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Main Component ─────────────────────────────────────────────────────────
 
 export default function Landing() {
@@ -347,8 +427,11 @@ export default function Landing() {
             <a href="#how" className="font-display font-semibold text-sm text-ink-600 hover:text-primary-500 transition-colors">
               {t(lang, 'Nasıl Çalışır', 'How It Works')}
             </a>
+            <a href="#faq" className="font-display font-semibold text-sm text-ink-600 hover:text-primary-500 transition-colors">
+              {t(lang, 'SSS', 'FAQ')}
+            </a>
             <a href="#pricing" className="font-display font-semibold text-sm text-amber-600 hover:text-amber-700 transition-colors">
-              {t(lang, 'Erken Kayıt', 'Early Bird')}
+              {t(lang, 'Erken Kayit', 'Early Bird')}
             </a>
           </nav>
 
@@ -394,7 +477,8 @@ export default function Landing() {
                 {[
                   { href: '#features', label: t(lang, 'Özellikler', 'Features') },
                   { href: '#compare', label: t(lang, 'Karşılaştır', 'Compare') },
-                  { href: '#how', label: t(lang, 'Nasıl Çalışır', 'How It Works') },
+                  { href: '#how', label: t(lang, 'Nasil Calisir', 'How It Works') },
+                  { href: '#faq', label: t(lang, 'SSS', 'FAQ') },
                 ].map(item => (
                   <a
                     key={item.href}
@@ -440,14 +524,15 @@ export default function Landing() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: copy */}
             <div>
-              {/* Trust badge */}
+              {/* Animated trust badge with shimmer */}
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 bg-white border-2 border-primary-200 text-primary-700 font-display font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full shadow-sm mb-6"
+                className="relative inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500 text-white font-display font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-full shadow-primary mb-6 overflow-hidden"
               >
-                <Zap size={13} className="text-primary-500" />
-                {t(lang, 'Ücretsiz · Eğlenceli · Gerçekten İşe Yarıyor', 'Free · Fun · Actually Works')}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2.5s_ease-in-out_infinite] -translate-x-full" style={{ animation: 'shimmer 2.5s ease-in-out infinite' }} />
+                <Sparkles size={14} className="text-white relative z-10" />
+                <span className="relative z-10">{t(lang, 'Ucretsiz Erken Erisim Basladl', 'Free Early Access is Live')}</span>
               </motion.div>
 
               <motion.h1
@@ -484,7 +569,8 @@ export default function Landing() {
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.3 + i * 0.07, type: 'spring', stiffness: 300, damping: 20 }}
-                    className="w-12 h-12 bg-white border-2 border-ink-100 rounded-2xl flex items-center justify-center shadow-sm font-display font-black text-xl text-primary-500"
+                    className="w-12 h-12 bg-white border-2 border-ink-100 rounded-2xl flex items-center justify-center shadow-sm font-display font-black text-xl text-primary-500 hover:border-primary-300 hover:shadow-card transition-all duration-200"
+                    style={{ animation: `float 3s ease-in-out ${i * 0.4}s infinite` }}
                   >
                     {letter}
                   </motion.div>
@@ -507,10 +593,11 @@ export default function Landing() {
               >
                 <Link
                   to="/login?tab=signup"
-                  className="inline-flex items-center justify-center gap-3 bg-primary-500 hover:bg-primary-600 text-white font-display font-extrabold text-lg px-8 py-4 rounded-2xl shadow-lg transition-all duration-150 hover:scale-105 active:scale-95"
+                  className="group relative inline-flex items-center justify-center gap-3 bg-primary-500 hover:bg-primary-600 text-white font-display font-extrabold text-lg px-8 py-4 rounded-2xl shadow-primary hover:shadow-primary-lg transition-all duration-200 hover:scale-105 active:scale-95"
                 >
-                  {t(lang, 'Ücretsiz Başla', 'Start Free')}
-                  <ArrowRight size={20} />
+                  <span className="absolute inset-0 rounded-2xl animate-ping bg-primary-400/20 pointer-events-none" style={{ animationDuration: '2s' }} />
+                  {t(lang, 'Ucretsiz Basla', 'Start Free')}
+                  <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
                 </Link>
                 <a
                   href="#features"
@@ -528,8 +615,8 @@ export default function Landing() {
                 className="flex flex-wrap gap-4 mt-6"
               >
                 {[
-                  t(lang, 'Hemen başla, ücretsiz', 'Start free, no card'),
-                  t(lang, 'İstediğin zaman iptal', 'Cancel anytime'),
+                  t(lang, 'Hemen basla, ucretsiz', 'Start free, no card'),
+                  t(lang, 'Istedigin zaman iptal', 'Cancel anytime'),
                   t(lang, 'Reklam yok', 'No ads'),
                 ].map(chip => (
                   <span key={chip} className="flex items-center gap-1.5 font-display font-semibold text-xs text-ink-500">
@@ -537,6 +624,45 @@ export default function Landing() {
                     {chip}
                   </span>
                 ))}
+              </motion.div>
+
+              {/* Social proof */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="flex flex-wrap items-center gap-5 mt-5"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {[
+                      'bg-primary-400', 'bg-purple-400', 'bg-success-400', 'bg-blue-400',
+                    ].map((bg, i) => (
+                      <div key={i} className={`w-7 h-7 ${bg} rounded-full border-2 border-white flex items-center justify-center`}>
+                        <Users size={10} className="text-white" />
+                      </div>
+                    ))}
+                  </div>
+                  <span className="font-display font-bold text-xs text-ink-600">
+                    {t(lang, '500+ erken erisim kullanicisi', '500+ early access users')}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <Star key={s} size={13} className="text-gold-400 fill-gold-400" />
+                    ))}
+                  </div>
+                  <span className="font-display font-bold text-xs text-ink-600">
+                    {t(lang, 'Ebeveyn puani 4.9/5', 'Parent rating 4.9/5')}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Shield size={13} className="text-success-500" />
+                  <span className="font-display font-bold text-xs text-ink-600">
+                    {t(lang, 'COPPA & KVKK Uyumlu', 'COPPA & KVKK Compliant')}
+                  </span>
+                </div>
               </motion.div>
             </div>
 
@@ -621,10 +747,10 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-white border-2 border-ink-100 rounded-3xl p-7 hover:border-primary-200 hover:shadow-card transition-all duration-200"
+                className="group bg-white border-2 border-ink-100 rounded-3xl p-7 hover:border-primary-200 hover:shadow-card-hover transition-all duration-200 hover:-translate-y-1"
               >
                 <div className="flex items-start gap-4">
-                  <div className={`${item.bg} ${item.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0`}>
+                  <div className={`${item.bg} ${item.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110`}>
                     {item.icon}
                   </div>
                   <div className="flex-1">
@@ -668,7 +794,8 @@ export default function Landing() {
           </div>
 
           <div className="bg-white border-2 border-ink-100 rounded-3xl overflow-hidden shadow-sm">
-            <table className="w-full" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px]" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
               <thead>
                 <tr className="bg-ink-900 text-white text-center">
                   <th scope="col" className="font-display font-bold text-sm text-ink-400 text-left pl-4 pr-2 py-4">
@@ -711,6 +838,7 @@ export default function Landing() {
                 ))}
               </tbody>
             </table>
+            </div>
 
             {/* Footer CTA */}
             <div className="bg-primary-50 border-t-2 border-primary-100 p-5 text-center">
@@ -833,9 +961,9 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07 }}
-                className="bg-white border-2 border-ink-100 rounded-3xl p-6 hover:border-primary-200 hover:shadow-card transition-all duration-200"
+                className="group bg-white border-2 border-ink-100 rounded-3xl p-6 hover:border-primary-200 hover:shadow-card-hover transition-all duration-200 hover:-translate-y-1"
               >
-                <div className={`${f.bg} ${f.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center mb-4`}>
+                <div className={`${f.bg} ${f.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-110`}>
                   {f.icon}
                 </div>
                 <h3 className="font-display font-extrabold text-ink-900 text-xl mb-2">
@@ -863,7 +991,9 @@ export default function Landing() {
               {t(lang, 'Nasıl Çalışıyor?', 'How Does It Work?')}
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="relative grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {/* Connector line (desktop only) */}
+            <div className="hidden md:block absolute top-8 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-primary-300 via-purple-300 to-success-300 z-0" />
             {HOW_STEPS.map((step, i) => (
               <motion.div
                 key={step.num}
@@ -871,9 +1001,9 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="text-center"
+                className="text-center relative z-10"
               >
-                <div className={`${step.bg} w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg`}>
+                <div className={`${step.bg} w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg ring-4 ring-white`}>
                   <span className="font-display font-black text-white text-2xl">{step.num}</span>
                 </div>
                 <h3 className="font-display font-extrabold text-ink-900 text-xl mb-2">
@@ -940,7 +1070,7 @@ export default function Landing() {
               {t(lang, 'Senin için de var.', 'There\'s a place for you.')}
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {WHO_FOR.map((w, i) => (
               <motion.div
                 key={i}
@@ -948,9 +1078,9 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white border-2 border-ink-100 rounded-3xl p-7 hover:border-primary-200 hover:shadow-card transition-all duration-200"
+                className="group bg-white border-2 border-ink-100 rounded-3xl p-7 hover:border-primary-200 hover:shadow-card-hover transition-all duration-200 hover:-translate-y-1"
               >
-                <div className={`${w.bg} ${w.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center mb-5`}>
+                <div className={`${w.bg} ${w.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-transform duration-200 group-hover:scale-110`}>
                   {w.icon}
                 </div>
                 <h3 className="font-display font-extrabold text-ink-900 text-xl mb-1">
@@ -1005,7 +1135,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-white border-2 border-ink-200 rounded-3xl p-7"
+              className="bg-white border-2 border-ink-200 rounded-3xl p-7 hover:border-ink-300 hover:shadow-card transition-all duration-200"
             >
               <p className="font-display font-bold text-ink-500 text-sm uppercase tracking-wide mb-2">
                 {t(lang, 'Ücretsiz', 'Free')}
@@ -1044,7 +1174,7 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="bg-primary-500 border-2 border-primary-400 rounded-3xl p-7 relative overflow-hidden"
+              className="bg-primary-500 border-2 border-primary-400 rounded-3xl p-7 relative overflow-hidden hover:shadow-primary-lg transition-all duration-200 hover:-translate-y-1"
             >
               <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 font-display font-black text-xs px-3 py-1 rounded-full">
                 {t(lang, 'Erken Kayıt', 'Early Bird')}
@@ -1095,6 +1225,11 @@ export default function Landing() {
           </p>
         </div>
       </section>
+
+      {/* ══════════════════════════════════════
+          FAQ
+          ══════════════════════════════════════ */}
+      <FAQSection lang={lang} />
 
       {/* ══════════════════════════════════════
           FINAL CTA

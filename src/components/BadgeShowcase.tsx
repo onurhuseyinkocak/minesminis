@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Lock, Award, Check, X } from 'lucide-react';
+import { Lock, Award, Check, X, Medal } from 'lucide-react';
 import './BadgeShowcase.css';
 import { useGamification, Badge } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -17,7 +17,7 @@ interface BadgeShowcaseProps {
 
 const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDisplay: initialMaxDisplay }) => {
     const { hasBadge, allBadges } = useGamification();
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
     const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
     const [maxDisplay, setMaxDisplay] = useState(initialMaxDisplay);
@@ -90,6 +90,25 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
             </div>
 
             <div className="badges-grid">
+                {limitedBadges.length === 0 && (
+                    <div className="badge-empty-state" style={{ gridColumn: '1 / -1' }}>
+                        <Medal size={48} className="badge-empty-state__icon" />
+                        <p className="badge-empty-state__title">
+                            {filter === 'earned'
+                                ? t('badgeShowcase.noEarnedYet') || (lang === 'tr' ? 'Henuz rozet kazanmadin' : 'No badges earned yet')
+                                : filter === 'locked'
+                                    ? t('badgeShowcase.allUnlocked') || (lang === 'tr' ? 'Tum rozetler acildi!' : 'All badges unlocked!')
+                                    : t('badgeShowcase.noBadges') || (lang === 'tr' ? 'Henuz rozet yok' : 'No badges available')}
+                        </p>
+                        <p className="badge-empty-state__desc">
+                            {filter === 'earned'
+                                ? (lang === 'tr' ? 'Ders tamamla ve rozet kazan!' : 'Complete lessons to earn badges!')
+                                : filter === 'locked'
+                                    ? (lang === 'tr' ? 'Harika is cikardim!' : 'Great job!')
+                                    : (lang === 'tr' ? 'Yakinda rozetler eklenecek' : 'Badges coming soon')}
+                        </p>
+                    </div>
+                )}
                 {limitedBadges.map((badge) => {
                     const isEarned = hasBadge(badge.id);
                     return (
