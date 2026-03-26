@@ -21,10 +21,10 @@ export interface VirtualPet {
 
 // Map mascot types to pet types
 const LEGACY_TO_PET: Record<string, PetType> = {
-    mimi_dragon: 'cat', nova_fox: 'dog', bubbles_octo: 'bird', sparky_alien: 'cat',
+    mimi_cat: 'cat', mimi_dragon: 'cat', nova_fox: 'dog', bubbles_octo: 'bird', sparky_alien: 'cat',
     // Legacy mappings for old users
     mimi_panda: 'dog', mimi_fox: 'dog', mimi_bunny: 'bird',
-    mimi_monster: 'dog', mimi_cat: 'cat', mimi_robot: 'cat',
+    mimi_monster: 'dog', mimi_robot: 'cat',
     ruby_fox: 'dog', moss_panda: 'dog', indigo_bunny: 'bird', volt_monster: 'dog', luna_cat: 'cat', atlas_robot: 'cat'
 };
 

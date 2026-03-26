@@ -236,14 +236,14 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
             <div className="pbg__completion-actions">
               <button
                 type="button"
-                className="pbg__completion-btn pbg__completion-btn--secondary"
+                className="pbg__completion-btn pbg__completion-btn--secondary kbtn kbtn--blue"
                 onClick={() => onComplete(score, questions.length)}
               >
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="pbg__completion-btn pbg__completion-btn--primary"
+                className="pbg__completion-btn pbg__completion-btn--primary kbtn kbtn--blue"
                 onClick={handlePlayAgain}
               >
                 {t('games.playAgain')}
@@ -368,7 +368,7 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
               <motion.button
                 type="button"
                 className={[
-                  'pbg__blend-btn',
+                  'pbg__blend-btn kbtn kbtn--blue',
                   !allTilesTapped && 'pbg__blend-btn--disabled',
                 ]
                   .filter(Boolean)
@@ -398,9 +398,9 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
                     key={option}
                     type="button"
                     className={[
-                      'pbg__option',
-                      state === 'correct' && 'pbg__option--correct',
-                      state === 'wrong' && 'pbg__option--wrong',
+                      'pbg__option kbtn kbtn--option',
+                      state === 'correct' && 'pbg__option--correct correct',
+                      state === 'wrong' && 'pbg__option--wrong wrong',
                     ]
                       .filter(Boolean)
                       .join(' ')}

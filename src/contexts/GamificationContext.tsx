@@ -358,23 +358,14 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
     // ==================== XP FUNCTIONS ====================
 
-    const addXP = async (amount: number, reason: string, metadata?: Record<string, unknown>) => {
+    const addXP = async (amount: number, reason: string, _metadata?: Record<string, unknown>) => {
         const currentStats = statsRef.current;
         const streakBonus = getStreakBonus();
         let totalXP = Math.floor(amount * (1 + streakBonus / 100));
 
         // Apply Character Power Multipliers
-        if (currentStats.mascotId === 'mimi_dragon') {
+        if (currentStats.mascotId === 'mimi_cat' || currentStats.mascotId === 'mimi_dragon') {
             totalXP = Math.floor(totalXP * 1.2); // Mimi: +20% XP on all activities
-        }
-        if (currentStats.mascotId === 'nova_fox' && (reason === 'word_learned' || reason === 'word_game')) {
-            totalXP *= 2; // Nova: 2x points in word games
-        }
-        if (currentStats.mascotId === 'bubbles_octo' && (reason === 'listening' || reason === 'pronunciation')) {
-            totalXP *= 2; // Bubbles: 2x points in listening/speaking
-        }
-        if (currentStats.mascotId === 'sparky_alien' && (reason === 'grammar' || metadata?.isFastAnswer)) {
-            totalXP = Math.floor(totalXP * 1.5); // Sparky: 1.5x in grammar + fast answers
         }
 
         // Apply active XP boost multiplier
@@ -404,7 +395,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             setShowLevelUp(true);
 
             // Mimi: bonus XP on level up (skip if this IS the bonus, to prevent recursion)
-            if (currentStats.mascotId === 'mimi_dragon' && reason !== 'mimi_level_bonus') {
+            if ((currentStats.mascotId === 'mimi_cat' || currentStats.mascotId === 'mimi_dragon') && reason !== 'mimi_level_bonus') {
                 setTimeout(() => addXP(20, 'mimi_level_bonus'), 500);
             }
 

@@ -178,7 +178,7 @@ function clampPosition(pos: Position): Position {
 
 class MascotRoamingService {
     private position: Position = { x: 85, y: 75 };
-    private mascotId: string = 'mimi_dragon';
+    private mascotId: string = 'mimi_cat';
     private state: AnimationState = 'idle';
     private viewDirection: ViewDirection = 'front';
     private isRoaming: boolean = false;
@@ -268,7 +268,7 @@ class MascotRoamingService {
     }
 
     setMascotId(id: string): void {
-        this.mascotId = id || 'mimi_dragon';
+        this.mascotId = id || 'mimi_cat';
     }
 
     private showRandomBubble(): void {

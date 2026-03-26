@@ -26,10 +26,8 @@ interface ChatHomeProps {
 const DAILY_MESSAGE_LIMIT = 10;
 
 const WELCOME_BY_MASCOT: Record<string, string> = {
+    mimi_cat: "Merhaba! Welcome to my cozy corner! Let's learn English together! What would you like to do today?",
     mimi_dragon: "Merhaba! Welcome to my cozy cave! Let's learn English together! What would you like to do today?",
-    nova_fox: "Hey there! I'm Nova the cosmic fox! Let's zoom through words at lightning speed! What shall we explore?",
-    bubbles_octo: "Hello friend! I'm Bubbles! Let's dive into sounds and music together! What would you like to listen to?",
-    sparky_alien: "Greetings earthling! I'm Sparky! My brain works super fast - let's solve puzzles and grammar together! Ready?",
 };
 
 const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
@@ -37,8 +35,8 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     const { userProfile } = useAuth();
     const { isPremium } = usePremium();
     const { t } = useLanguage();
-    const mascotId = ((userProfile?.settings as Record<string, string>)?.mascotId) || 'mimi_dragon';
-    const mascotConfig = useMemo(() => GLINTS[mascotId] || GLINTS.mimi_dragon, [mascotId]);
+    const mascotId = ((userProfile?.settings as Record<string, string>)?.mascotId) || 'mimi_cat';
+    const mascotConfig = useMemo(() => GLINTS[mascotId] || GLINTS.mimi_cat, [mascotId]);
 
     // Daily usage tracking
     const [dailyUsage, setDailyUsage] = useState(() => {

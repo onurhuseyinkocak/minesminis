@@ -61,7 +61,7 @@ export const userService = {
         setup_completed: true,
         setup_date: new Date().toISOString(),
         avatar_emoji: profileData.avatar_emoji || null,
-        mascotId: profileData.mascotId || 'mimi_dragon',
+        mascotId: profileData.mascotId || 'mimi_cat',
       }
     };
 

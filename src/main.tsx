@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import "./cat-theme.css";
+import "./kenney-ui.css";
 
 // Global unhandled error / rejection handler (belt-and-suspenders alongside errorLogger.init)
 window.addEventListener("unhandledrejection", (event) => {

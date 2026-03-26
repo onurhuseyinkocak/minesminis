@@ -17,7 +17,7 @@ export interface GlintConfig {
     secondaryColor: string;
     accentColor: string;
     glowColor: string;
-    type: 'mimi_dragon' | 'nova_fox' | 'bubbles_octo' | 'sparky_alien';
+    type: 'mimi_cat' | 'mimi_dragon' | 'nova_fox' | 'bubbles_octo' | 'sparky_alien';
     behaviorPattern: 'harmonic' | 'energetic' | 'zen' | 'erratic';
     element: 'fire' | 'cosmic' | 'water' | 'electric';
     powerMultiplier: {
@@ -30,6 +30,30 @@ export interface GlintConfig {
 }
 
 export const GLINTS: Record<string, GlintConfig> = {
+    mimi_cat: {
+        id: 'mimi_cat',
+        name: 'Mimi',
+        title: 'Uyum Koruyucusu',
+        titleEn: 'Guardian of Harmony',
+        lore: 'Echo Vadisinin sevimli kedi koruyucusu. Tatlı patileriyle öğrencilere rehberlik eden, meraklı ve zeki bir kedi. Neşesi ile öğrenmeyi eğlenceye dönüştürür.',
+        loreEn: 'The adorable cat guardian of Echo Valley. A curious and clever cat who guides learners with gentle paws. Turns learning into fun with boundless joy.',
+        story: 'Sitenin ana maskotu - her macerada seninle!',
+        storyEn: 'The main mascot - always by your side!',
+        trait: 'Meraklı & Sevimli',
+        traitEn: 'Curious & Adorable',
+        benefit: 'Tüm oyunlardan %20 daha fazla yıldız kazanırsın!',
+        benefitEn: 'Earn 20% more stars from all games!',
+        power: 'Kedi Patisi',
+        powerEn: 'Cat Paw',
+        color: '#FF6B35',
+        secondaryColor: '#FFF4EE',
+        accentColor: '#FFD93D',
+        glowColor: 'rgba(255,107,53,0.4)',
+        type: 'mimi_cat',
+        behaviorPattern: 'harmonic',
+        element: 'fire',
+        powerMultiplier: { words: 1.2, listening: 1.2, grammar: 1.2, stories: 1.2, games: 1.2 },
+    },
     mimi_dragon: {
         id: 'mimi_dragon',
         name: 'Mimi',
@@ -129,4 +153,4 @@ export const GLINTS: Record<string, GlintConfig> = {
 };
 
 export const GLINT_IDS = Object.keys(GLINTS) as Array<keyof typeof GLINTS>;
-export const DEFAULT_MASCOT = 'mimi_dragon';
+export const DEFAULT_MASCOT = 'mimi_cat';

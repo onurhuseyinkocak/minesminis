@@ -34,7 +34,7 @@ const LOCATIONS = [
 ];
 
 const CHARACTERS = [
-  { value: 'mimi_dragon', label: 'Mimi (Dragon)' },
+  { value: 'mimi_cat', label: 'Mimi (Dragon)' },
   { value: 'luna_owl', label: 'Luna (Owl)' },
   { value: 'rocky_bear', label: 'Rocky (Bear)' },
   { value: 'stella_fox', label: 'Stella (Fox)' },
@@ -84,7 +84,7 @@ export default function StoryGenerator() {
   // Form state
   const [theme, setTheme] = useState('adventure');
   const [location, setLocation] = useState('enchanted_forest');
-  const [selectedChars, setSelectedChars] = useState<string[]>(['mimi_dragon']);
+  const [selectedChars, setSelectedChars] = useState<string[]>(['mimi_cat']);
   const [ageMin, setAgeMin] = useState(4);
   const [ageMax, setAgeMax] = useState(8);
 

@@ -28,6 +28,7 @@ import {
 import { Star } from "lucide-react";
 import LottieCharacter from "./components/LottieCharacter";
 import FloatingMascot from "./components/FloatingMascot";
+import CatHouseWidget from "./components/CatHouseWidget";
 import { validateCurriculumData } from "./utils/dataValidation";
 import { LS_DAILY_TIME_LIMIT } from "./config/storageKeys";
 import { initTTS } from "./services/ttsService";
@@ -632,6 +633,11 @@ function AppContent() {
       {/* Floating mascot (authenticated students only) */}
       {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
         <FloatingMascot />
+      )}
+
+      {/* Cat house widget — always visible for students */}
+      {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
+        <CatHouseWidget />
       )}
 
       {/* Chat modal */}

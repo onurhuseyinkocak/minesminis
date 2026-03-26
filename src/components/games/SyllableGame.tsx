@@ -197,14 +197,14 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
             <div className="syg__completion-actions">
               <button
                 type="button"
-                className="syg__completion-btn syg__completion-btn--secondary"
+                className="syg__completion-btn syg__completion-btn--secondary kbtn kbtn--blue"
                 onClick={() => onComplete(score, questions.length)}
               >
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="syg__completion-btn syg__completion-btn--primary"
+                className="syg__completion-btn syg__completion-btn--primary kbtn kbtn--blue"
                 onClick={handlePlayAgain}
               >
                 {t('games.playAgain')}
@@ -306,7 +306,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                 {tapCount > 0 && (
                   <button
                     type="button"
-                    className="syg__reset-btn"
+                    className="syg__reset-btn kbtn kbtn--blue"
                     onClick={handleReset}
                     aria-label="Reset taps"
                   >
@@ -315,7 +315,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                 )}
                 <motion.button
                   type="button"
-                  className="syg__done-btn"
+                  className="syg__done-btn kbtn kbtn--blue"
                   onClick={handleDone}
                   disabled={tapCount === 0}
                   whileTap={{ scale: 0.96 }}
@@ -337,9 +337,9 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                     key={num}
                     type="button"
                     className={[
-                      'syg__choice-btn',
-                      state === 'correct' && 'syg__choice-btn--correct',
-                      state === 'wrong' && 'syg__choice-btn--wrong',
+                      'syg__choice-btn kbtn kbtn--option',
+                      state === 'correct' && 'syg__choice-btn--correct correct',
+                      state === 'wrong' && 'syg__choice-btn--wrong wrong',
                     ]
                       .filter(Boolean)
                       .join(' ')}

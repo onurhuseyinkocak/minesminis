@@ -7,9 +7,9 @@ import { ALL_MASCOTS, isMascotUnlocked } from '../data/mascotRegistry';
 import type { MascotDefinition } from '../data/mascotRegistry';
 
 const LS_KEY = 'mm_selected_mascot';
-const DEFAULT_MASCOT_ID = 'mimi_dragon';
+const DEFAULT_MASCOT_ID = 'mimi_cat';
 
-/** Returns the currently selected mascot id. Defaults to 'mimi_dragon'. */
+/** Returns the currently selected mascot id. Defaults to 'mimi_cat'. */
 export function getSelectedMascotId(): string {
   try {
     return localStorage.getItem(LS_KEY) ?? DEFAULT_MASCOT_ID;

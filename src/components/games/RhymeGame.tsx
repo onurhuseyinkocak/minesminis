@@ -167,7 +167,7 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
       <div className="rg__detect-btns">
         <motion.button
           type="button"
-          className="rg__detect-btn rg__detect-btn--yes"
+          className="rg__detect-btn rg__detect-btn--yes kbtn kbtn--blue"
           onClick={() => handleAnswer(true)}
           disabled={answered}
           whileTap={{ scale: 0.94 }}
@@ -177,7 +177,7 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
         </motion.button>
         <motion.button
           type="button"
-          className="rg__detect-btn rg__detect-btn--no"
+          className="rg__detect-btn rg__detect-btn--no kbtn kbtn--blue"
           onClick={() => handleAnswer(false)}
           disabled={answered}
           whileTap={{ scale: 0.94 }}
@@ -244,9 +244,9 @@ function ProduceTask({ question, onAnswer, answered }: ProduceTaskProps) {
               key={option}
               type="button"
               className={[
-                'rg__option-card',
-                state === 'correct' && 'rg__option-card--correct',
-                state === 'wrong' && 'rg__option-card--wrong',
+                'rg__option-card kbtn kbtn--option',
+                state === 'correct' && 'rg__option-card--correct correct',
+                state === 'wrong' && 'rg__option-card--wrong wrong',
               ]
                 .filter(Boolean)
                 .join(' ')}
@@ -593,14 +593,14 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
             <div className="rg__completion-actions">
               <button
                 type="button"
-                className="rg__completion-btn rg__completion-btn--secondary"
+                className="rg__completion-btn rg__completion-btn--secondary kbtn kbtn--blue"
                 onClick={() => onComplete(score, questions.length)}
               >
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="rg__completion-btn rg__completion-btn--primary"
+                className="rg__completion-btn rg__completion-btn--primary kbtn kbtn--blue"
                 onClick={handlePlayAgain}
               >
                 {t('games.playAgain')}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Lottie from 'lottie-react';
 import { GLINTS } from '../config/GlintsConfig';
 
 export type MascotState = 'idle' | 'walking' | 'dancing' | 'sleeping' | 'celebrating' | 'waving' | 'laughing' | 'thinking' | 'love' | 'jumping' | 'surprised' | 'singing' | 'following';
@@ -14,11 +15,55 @@ interface UnifiedMascotProps {
     hidden?: boolean;
 }
 
-const VALID_MASCOT_IDS = ['mimi_dragon', 'nova_fox', 'bubbles_octo', 'sparky_alien'];
+const VALID_MASCOT_IDS = ['mimi_cat', 'mimi_dragon', 'nova_fox', 'bubbles_octo', 'sparky_alien'];
+
+/* ── Cat Lottie state → file mapping ────────────────────────── */
+function getCatLottieFile(state: MascotState): string {
+    switch (state) {
+        case 'walking':
+        case 'following': return '/mascot/mimi_walk.json';
+        case 'waving':    return '/mascot/mimi_wave.json';
+        case 'sleeping':  return '/mascot/mimi_idle.json';
+        case 'thinking':  return '/mascot/mimi_sit.json';
+        case 'celebrating':
+        case 'laughing':
+        case 'dancing':
+        case 'love':
+        case 'jumping':
+        case 'surprised':
+        case 'singing':   return '/mascot/mimi_happy.json';
+        default:          return '/mascot/mimi_idle.json';
+    }
+}
+
+/* ── CatLottie: loads and renders Mimi cat Lottie by state ──── */
+const CatLottie: React.FC<{ state: MascotState; size: number }> = ({ state, size }) => {
+    const [animData, setAnimData] = useState<unknown>(null);
+    const lottieFile = getCatLottieFile(state);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetch(lottieFile)
+            .then(r => r.json())
+            .then(d => { if (!cancelled) setAnimData(d); })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, [lottieFile]);
+
+    if (!animData) return <div style={{ width: size, height: size }} />;
+    return (
+        <Lottie
+            animationData={animData}
+            loop
+            autoplay
+            style={{ width: size, height: size }}
+        />
+    );
+};
 
 const UnifiedMascot: React.FC<UnifiedMascotProps> = ({
     id: idProp,
-    type = 'mimi_dragon',
+    type = 'mimi_cat',
     state,
     onClick,
     isHovered = false,
@@ -812,6 +857,22 @@ const UnifiedMascot: React.FC<UnifiedMascotProps> = ({
     if (hidden) return null;
 
     const displayType = config.type || type;
+
+    /* ── Cat mascot: Lottie-based rendering ─────────────────── */
+    if (config.type === 'mimi_cat') {
+        return (
+            <div
+                ref={containerRef}
+                className={`mascot-container type-${displayType} pattern-${config.behaviorPattern} state-${state} ${isHovered ? 'hovered' : ''}`}
+                onClick={onClick}
+                style={{ width: size, height: size, cursor: onClick ? 'pointer' : 'default' }}
+            >
+                <CatLottie state={state} size={size} />
+                <div className="mascot-shadow" />
+            </div>
+        );
+    }
+
     return (
         <div ref={containerRef} className={`mascot-container type-${displayType} pattern-${config.behaviorPattern} state-${state} ${isHovered ? 'hovered' : ''}`} onClick={onClick} style={{ width: size, height: size }}>
             <div className="mascot-wrapper"><svg viewBox="0 0 200 220" className="mascot-svg">{renderCharacter()}</svg></div>

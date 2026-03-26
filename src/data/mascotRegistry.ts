@@ -21,11 +21,11 @@ export interface MascotDefinition {
 
 export const ALL_MASCOTS: MascotDefinition[] = [
   {
-    id: 'mimi_dragon',
-    name: 'Mimi Dragon',
-    nameTr: 'Ejderha Mimi',
-    description: 'Your loyal dragon companion — always ready to learn!',
-    descriptionTr: 'Sadık ejderha arkadaşın — öğrenmeye her zaman hazır!',
+    id: 'mimi_cat',
+    name: 'Mimi',
+    nameTr: 'Mimi',
+    description: 'Your adorable cat companion — always curious and ready to learn!',
+    descriptionTr: 'Sevimli kedi arkadaşın — her zaman meraklı ve öğrenmeye hazır!',
     unlockRequirement: {
       type: 'level',
       value: 1,
@@ -33,52 +33,7 @@ export const ALL_MASCOTS: MascotDefinition[] = [
       descriptionTr: 'Başlangıçtan itibaren mevcut',
     },
     primaryColor: 'var(--primary)',
-    accentColor: 'var(--secondary)',
-  },
-  {
-    id: 'nova_fox',
-    name: 'Nova Fox',
-    nameTr: 'Tilki Nova',
-    description: 'Quick and clever — Nova loves word puzzles!',
-    descriptionTr: 'Hızlı ve zeki — Nova kelime bulmacalarını sever!',
-    unlockRequirement: {
-      type: 'level',
-      value: 5,
-      description: 'Reach Level 5',
-      descriptionTr: "Seviye 5'e ulaş",
-    },
-    primaryColor: 'var(--accent, #f97316)',
-    accentColor: 'var(--warning, #f59e0b)',
-  },
-  {
-    id: 'bubbles_octo',
-    name: 'Bubbles the Octopus',
-    nameTr: 'Ahtapot Bubbles',
-    description: 'Bubbles has 8 arms — and loves giving high-fives!',
-    descriptionTr: "Bubbles'ın 8 kolu var — çak beşlik yapmayı sever!",
-    unlockRequirement: {
-      type: 'streak',
-      value: 14,
-      description: 'Reach a 14-day streak',
-      descriptionTr: '14 günlük seri yap',
-    },
-    primaryColor: 'var(--info, #3b82f6)',
-    accentColor: 'var(--primary)',
-  },
-  {
-    id: 'sparky_alien',
-    name: 'Sparky the Alien',
-    nameTr: 'Uzaylı Sparky',
-    description: 'Sparky came from Planet Vocab to master Earth words!',
-    descriptionTr: 'Sparky, Dünya kelimelerini öğrenmek için Kelime Gezegeninden geldi!',
-    unlockRequirement: {
-      type: 'words',
-      value: 100,
-      description: 'Learn 100 words',
-      descriptionTr: '100 kelime öğren',
-    },
-    primaryColor: 'var(--success, #22c55e)',
-    accentColor: 'var(--info, #3b82f6)',
+    accentColor: '#FFD93D',
   },
 ];
 

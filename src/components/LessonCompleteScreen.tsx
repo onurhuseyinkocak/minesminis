@@ -71,7 +71,7 @@ export function LessonCompleteScreen({
   wordsLearned = [],
   streakDays,
   onContinue,
-  mascotId = 'mimi_dragon',
+  mascotId = 'mimi_cat',
   newBadge,
 }: LessonCompleteScreenProps) {
   const { lang, t } = useLanguage();

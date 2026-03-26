@@ -235,10 +235,10 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   +{score * 10} XP
                 </Badge>
                 <div className="quick-quiz__results-actions">
-                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
+                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary kbtn kbtn--blue" onClick={() => onComplete(score, questions.length)}>
                     {t('games.backToGames')}
                   </button>
-                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
+                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary kbtn kbtn--blue" onClick={handlePlayAgain}>
                     {t('games.playAgain')}
                   </button>
                 </div>
@@ -316,11 +316,11 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       >
         <AnimatePresence mode="wait">
           {question.options.map((option, index) => {
-            let optionClass = 'quick-quiz__option';
+            let optionClass = 'quick-quiz__option kbtn kbtn--option';
             if (feedback && index === question.correctIndex) {
-              optionClass += ' quick-quiz__option--correct';
+              optionClass += ' quick-quiz__option--correct correct';
             } else if (feedback === 'wrong' && index === selected) {
-              optionClass += ' quick-quiz__option--wrong';
+              optionClass += ' quick-quiz__option--wrong wrong';
             } else if (selected === index) {
               optionClass += ' quick-quiz__option--selected';
             }

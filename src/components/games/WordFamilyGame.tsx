@@ -185,14 +185,14 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
             <div className="wfg__completion-actions">
               <button
                 type="button"
-                className="wfg__completion-btn wfg__completion-btn--secondary"
+                className="wfg__completion-btn wfg__completion-btn--secondary kbtn kbtn--blue"
                 onClick={() => onComplete(totalScore, families.length)}
               >
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="wfg__completion-btn wfg__completion-btn--primary"
+                className="wfg__completion-btn wfg__completion-btn--primary kbtn kbtn--blue"
                 onClick={handlePlayAgain}
               >
                 {t('games.playAgain')}
@@ -326,10 +326,10 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
                   key={onset}
                   type="button"
                   className={[
-                    'wfg__onset-tile',
+                    'wfg__onset-tile kbtn kbtn--option',
                     isFound && 'wfg__onset-tile--used',
-                    isInvalid && 'wfg__onset-tile--invalid',
-                    isActive && 'wfg__onset-tile--active',
+                    isInvalid && 'wfg__onset-tile--invalid wrong',
+                    isActive && 'wfg__onset-tile--active correct',
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -375,7 +375,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
               <UnifiedMascot state="celebrating" size={64} />
               <button
                 type="button"
-                className="wfg__next-btn"
+                className="wfg__next-btn kbtn kbtn--blue"
                 onClick={handleNextFamily}
               >
                 {familyIndex + 1 < families.length ? t('games.nextFamily') : t('games.finishExcl')}

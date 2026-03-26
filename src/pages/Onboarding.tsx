@@ -180,7 +180,7 @@ const Onboarding: React.FC = () => {
         displayName: nickname.trim() || user.displayName || 'Explorer',
         grade: gradeMap[ageGroup] || 'primary',
         avatar_emoji: 'A',
-        mascotId: 'mimi_dragon',
+        mascotId: 'mimi_cat',
       });
 
       if (uid) {
@@ -192,7 +192,7 @@ const Onboarding: React.FC = () => {
             setup_completed: true,
             setup_date: new Date().toISOString(),
             avatar_emoji: 'A',
-            mascotId: 'mimi_dragon',
+            mascotId: 'mimi_cat',
             startingPhonicsGroup: startingGroup,
             ageGroup,
             placementScore,
@@ -203,7 +203,7 @@ const Onboarding: React.FC = () => {
       localStorage.setItem(LS_PLACEMENT_RESULT, String(startingGroup));
 
       const { createPet } = await import('../services/petService');
-      await createPet(user.uid, 'mimi_dragon', nickname.trim() || user.displayName || 'Explorer');
+      await createPet(user.uid, 'mimi_cat', nickname.trim() || user.displayName || 'Explorer');
 
       await refreshUserProfile();
       toast.success(isTr ? `Hoş geldin, ${nickname}! Macera başlıyor!` : `Welcome, ${nickname}! Adventure starts!`);
