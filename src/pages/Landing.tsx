@@ -1,9 +1,9 @@
 /**
  * Landing Page — MinesMinis
- * Dominating rewrite: phonics + Montessori niche, competitor differentiation,
+ * Dominating rewrite: phonics-based, competitor differentiation,
  * unique features, school section. Zero TS errors, zero emoji, all tokens.
  */
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -55,11 +55,11 @@ const ONLY_US = [
     icon: <PenTool size={28} />,
     bg: 'bg-success-100',
     iconColor: 'text-success-600',
-    badge: { tr: 'Montessori', en: 'Montessori' },
+    badge: { tr: 'Dijital Yöntem', en: 'Digital Method' },
     title: { tr: 'Hareketli Alfabe', en: 'Moveable Alphabet' },
     desc: {
-      tr: 'Montessori\'nin hareketli alfabe yöntemi dijitale taşındı. Harfleri sürükle, kelime kur, sesleri birleştir.',
-      en: "Montessori's moveable alphabet goes digital. Drag letters, build words, blend sounds together.",
+      tr: 'Harfleri ekranda sürükle, kelime kur, sesleri birleştir. Dil yapısını keşfederek öğrenme — bilimsel okuma yönteminin dijital versiyonu.',
+      en: 'Drag letters on screen, build words, blend sounds. Learning by discovering language structure — the digital version of evidence-based reading method.',
     },
   },
   {
@@ -88,7 +88,7 @@ const COMP_ROWS: CompRow[] = [
   { feature: { tr: 'Fonetik yöntem (42 ses)', en: 'Phonics method (42 sounds)' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Fonem manipülasyon oyunu', en: 'Phoneme manipulation game' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Türk fonetik tuzak antrenörü', en: 'Turkish phonetic trap trainer' }, us: true, duolingo: false, lingokids: false },
-  { feature: { tr: 'Montessori hareketli alfabe', en: 'Montessori moveable alphabet' }, us: true, duolingo: false, lingokids: false },
+  { feature: { tr: 'Hareketli alfabe (sürükle-bırak)', en: 'Moveable alphabet (drag-and-drop)' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Fonetik kısıtlamalı hikayeler', en: 'Phonics-constrained stories' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Hece sayma oyunu', en: 'Syllable counting game' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Konuşma tanıma (SayIt)', en: 'Speech recognition (SayIt)' }, us: true, duolingo: true, lingokids: false },
@@ -97,46 +97,58 @@ const COMP_ROWS: CompRow[] = [
 
 // ─── Features ──────────────────────────────────────────────────────────────
 
-const FEATURES = [
+const FEATURES: { icon: React.ReactNode; gradient: string; border: string; iconBg: string; iconColor: string; title: { tr: string; en: string }; desc: { tr: string; en: string } }[] = [
   {
     icon: <Mic size={28} />,
-    bg: 'bg-orange-100',
-    iconColor: 'text-primary-500',
+    gradient: 'from-orange-50 via-amber-50 to-orange-100',
+    border: 'border-orange-200',
+    iconBg: 'bg-primary-500',
+    iconColor: 'text-white',
     title: { tr: 'Konuşarak Öğren', en: 'Learn by Speaking' },
     desc: { tr: 'Sesi duy, tekrar et, telaffuzunu kontrol et. Mikrofon destekli konuşma pratiği her derste.', en: 'Hear it, repeat it, check your pronunciation. Microphone-supported speaking practice in every lesson.' },
   },
   {
     icon: <Gamepad2 size={28} />,
-    bg: 'bg-purple-100',
-    iconColor: 'text-purple-600',
+    gradient: 'from-purple-50 via-violet-50 to-purple-100',
+    border: 'border-purple-200',
+    iconBg: 'bg-purple-600',
+    iconColor: 'text-white',
     title: { tr: 'Oynarken Öğrensin', en: 'Learn While Playing' },
     desc: { tr: '16 farklı oyun türü: eşleştirme, hece sayma, kelime ailesi, fonem manipülasyonu ve daha fazlası.', en: '16 game types: matching, syllable counting, word families, phoneme manipulation and more.' },
   },
   {
     icon: <Music size={28} />,
-    bg: 'bg-pink-100',
-    iconColor: 'text-pink-600',
+    gradient: 'from-pink-50 via-rose-50 to-pink-100',
+    border: 'border-pink-200',
+    iconBg: 'bg-pink-500',
+    iconColor: 'text-white',
     title: { tr: 'Şarkıyla Pekiştir', en: 'Reinforce with Songs' },
     desc: { tr: '7 fonetik grubun şarkıları. Söylerken okuma. Çocuklar en iyi müzikle öğrenir.', en: 'Songs for all 7 phonics groups. Reading while singing. Kids learn best with music.' },
   },
   {
     icon: <Eye size={28} />,
-    bg: 'bg-blue-100',
-    iconColor: 'text-blue-600',
+    gradient: 'from-blue-50 via-sky-50 to-blue-100',
+    border: 'border-blue-200',
+    iconBg: 'bg-blue-600',
+    iconColor: 'text-white',
     title: { tr: '220 Temel Kelime', en: '220 Core Words' },
     desc: { tr: 'ABD müfredatının 220 Dolch kelimesi. Aralıklı tekrar sistemiyle akılda kalıcı.', en: '220 Dolch words from the US curriculum. Spaced repetition keeps them memorable.' },
   },
   {
     icon: <PenTool size={28} />,
-    bg: 'bg-gold-100',
-    iconColor: 'text-gold-600',
-    title: { tr: 'Elleriyle Hisseder', en: 'Feel It With Their Hands' },
-    desc: { tr: 'Dokunmatik harf takibi. Montessori\'nin duyusal öğrenme ilkesi dijital ortama taşındı.', en: 'Touch-based letter tracing. Montessori\'s sensory learning principle brought to the screen.' },
+    gradient: 'from-amber-50 via-yellow-50 to-amber-100',
+    border: 'border-amber-200',
+    iconBg: 'bg-amber-500',
+    iconColor: 'text-white',
+    title: { tr: 'Harf Takibi', en: 'Letter Tracing' },
+    desc: { tr: 'Ekranda harfi çiz, kas hafızasını etkinleştir. Dokunmatik ekran ve mouse destekli — her cihazda çalışır.', en: 'Trace letters on screen, activate muscle memory. Touch and mouse-supported — works on any device.' },
   },
   {
     icon: <Star size={28} />,
-    bg: 'bg-success-100',
-    iconColor: 'text-success-600',
+    gradient: 'from-green-50 via-emerald-50 to-green-100',
+    border: 'border-green-200',
+    iconBg: 'bg-success-600',
+    iconColor: 'text-white',
     title: { tr: 'Motivasyon Hiç Düşmez', en: 'Motivation Never Drops' },
     desc: { tr: 'Yıldızlar, XP, seriler, günlük hedef, haftalık turnuva. Her ders bir başarı hissi bırakır.', en: 'Stars, XP, streaks, daily goals, weekly tournaments. Every lesson ends with a sense of achievement.' },
   },
@@ -686,19 +698,19 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           STATS BAND
           ══════════════════════════════════════ */}
-      <section className="bg-white border-y border-ink-100 py-8">
+      <section className="bg-gradient-to-r from-primary-600 via-primary-500 to-orange-400 py-10 lg:py-12">
         <div className="max-w-4xl mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {STATS.map((s, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07 }}
               >
-                <div className="font-display font-black text-primary-500 text-3xl">{s.value}</div>
-                <div className="font-body text-ink-500 text-sm mt-1">{t(lang, s.label.tr, s.label.en)}</div>
+                <div className="font-display font-black text-white text-4xl lg:text-5xl">{s.value}</div>
+                <div className="font-display font-semibold text-primary-100 text-sm mt-2">{t(lang, s.label.tr, s.label.en)}</div>
               </motion.div>
             ))}
           </div>
@@ -712,8 +724,8 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <p className="font-display font-bold text-ink-400 text-sm uppercase tracking-widest">
             {t(lang,
-              'Jolly Phonics yöntemi · NRP 2000 araştırması · Montessori prensiplerine dayalı',
-              'Jolly Phonics method · NRP 2000 research · Montessori principles'
+              'Jolly Phonics yöntemi · NRP 2000 araştırması · Bilim temelli sistematik okuma öğretimi',
+              'Jolly Phonics method · NRP 2000 research · Science of Reading — systematic instruction'
             )}
           </p>
         </div>
@@ -722,16 +734,20 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           ONLY US: Unique Features
           ══════════════════════════════════════ */}
-      <section className="py-16 lg:py-24 bg-gradient-to-b from-purple-50 to-white">
-        <div className="max-w-6xl mx-auto px-4 lg:px-8">
+      <section className="py-16 lg:py-24 bg-ink-900 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/3 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl" />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
-            <p className="font-display font-bold text-purple-600 text-sm uppercase tracking-widest mb-3">
+            <p className="font-display font-bold text-purple-400 text-sm uppercase tracking-widest mb-3">
               {t(lang, 'Okuma biliminin temeli', 'Foundation of reading science')}
             </p>
-            <h2 className="font-display font-black text-ink-900 mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
+            <h2 className="font-display font-black text-white mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
               {t(lang, 'Fark Yaratan Özellikler', 'What Makes the Difference')}
             </h2>
-            <p className="font-body text-ink-500 max-w-2xl mx-auto">
+            <p className="font-body text-ink-400 max-w-2xl mx-auto">
               {t(lang,
                 'Kelime ezberlemek okumayı öğretmez. Ses bilinci olmadan okuma olmaz. MinesMinis, okuma biliminin kanıtlanmış temelinden başlar.',
                 'Memorising words doesn\'t teach reading. Without phonemic awareness, there\'s no reading. MinesMinis starts from the proven foundation of reading science.'
@@ -747,7 +763,7 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group bg-white border-2 border-ink-100 rounded-3xl p-7 hover:border-primary-200 hover:shadow-card-hover transition-all duration-200 hover:-translate-y-1"
+                className="group bg-ink-800 border-2 border-ink-700 rounded-3xl p-7 hover:border-primary-500 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
               >
                 <div className="flex items-start gap-4">
                   <div className={`${item.bg} ${item.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110`}>
@@ -755,14 +771,14 @@ export default function Landing() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="inline-block font-display font-black text-xs uppercase tracking-wide text-white bg-ink-900 px-3 py-1 rounded-full">
+                      <span className="inline-block font-display font-black text-xs uppercase tracking-wide text-primary-300 bg-primary-900/60 border border-primary-800 px-3 py-1 rounded-full">
                         {t(lang, item.badge.tr, item.badge.en)}
                       </span>
                     </div>
-                    <h3 className="font-display font-extrabold text-ink-900 text-xl mb-2">
+                    <h3 className="font-display font-extrabold text-white text-xl mb-2">
                       {t(lang, item.title.tr, item.title.en)}
                     </h3>
-                    <p className="font-body text-ink-500 text-sm leading-relaxed">
+                    <p className="font-body text-ink-400 text-sm leading-relaxed">
                       {t(lang, item.desc.tr, item.desc.en)}
                     </p>
                   </div>
@@ -943,7 +959,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           FEATURES
           ══════════════════════════════════════ */}
-      <section id="features" className="py-16 lg:py-24 bg-cream-50">
+      <section id="features" className="py-16 lg:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
@@ -961,15 +977,15 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07 }}
-                className="group bg-white border-2 border-ink-100 rounded-3xl p-6 hover:border-primary-200 hover:shadow-card-hover transition-all duration-200 hover:-translate-y-1"
+                className={`group bg-gradient-to-br ${f.gradient} border-2 ${f.border} rounded-3xl p-6 hover:shadow-card-hover transition-all duration-200 hover:-translate-y-1`}
               >
-                <div className={`${f.bg} ${f.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-110`}>
+                <div className={`${f.iconBg} ${f.iconColor} w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-110 shadow-sm`}>
                   {f.icon}
                 </div>
                 <h3 className="font-display font-extrabold text-ink-900 text-xl mb-2">
                   {t(lang, f.title.tr, f.title.en)}
                 </h3>
-                <p className="font-body text-ink-500 text-sm leading-relaxed">
+                <p className="font-body text-ink-600 text-sm leading-relaxed">
                   {t(lang, f.desc.tr, f.desc.en)}
                 </p>
               </motion.div>
@@ -1282,8 +1298,8 @@ export default function Landing() {
 
           <p className="font-body text-white/50 text-xs mt-6">
             {t(lang,
-              'NRP 2000 • Jolly Phonics • Montessori Educational Trust',
-              'NRP 2000 • Jolly Phonics • Montessori Educational Trust'
+              'NRP 2000 (ABD Ulusal Okuma Paneli) • Jolly Phonics • Science of Reading',
+              'NRP 2000 (US National Reading Panel) • Jolly Phonics • Science of Reading'
             )}
           </p>
         </div>
@@ -1299,8 +1315,8 @@ export default function Landing() {
               <span className="font-display font-black text-2xl text-primary-400 block mb-3">MinesMinis</span>
               <p className="font-body text-ink-400 text-sm leading-relaxed">
                 {t(lang,
-                  'Türk çocukları için fonetik + Montessori İngilizce öğrenme platformu.',
-                  'Phonics + Montessori English learning platform for Turkish children.'
+                  'Türk çocukları için bilim temelli fonetik İngilizce öğrenme platformu.',
+                  'Science-based phonics English learning platform for Turkish children.'
                 )}
               </p>
             </div>
