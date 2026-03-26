@@ -364,7 +364,7 @@
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: 1100;
+  z-index: var(--z-overlay);
   opacity: 0;
   transition: opacity var(--transition-base);
 }
@@ -379,7 +379,7 @@
   width: 280px;
   max-width: 85vw;
   background: var(--bg-card);
-  z-index: 1101;
+  z-index: var(--z-modal);
   transform: translateX(100%);
   transition: transform var(--transition-spring);
   display: flex;

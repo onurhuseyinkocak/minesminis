@@ -67,7 +67,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 800;
+  z-index: var(--z-overlay); /* 300 — below modals (400) */
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 .floating-chat-btn:hover {

@@ -120,3 +120,12 @@
   background: var(--info-pale);
   color: var(--info);
 }
+
+/* ── Game type badge variants (used by gameTypeBadgeClass()) ── */
+.badge { display: inline-flex; align-items: center; padding: 0.2em 0.65em; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+.badge-primary   { background: var(--primary-pale);         color: var(--primary); }
+.badge-purple    { background: var(--accent-purple-pale);   color: var(--accent-purple); }
+.badge-success   { background: var(--success-pale);         color: var(--success); }
+.badge-orange    { background: var(--warning-pale);         color: var(--accent-orange); }
+.badge-blue      { background: var(--info-pale);            color: var(--info); }
+.badge-beginner  { background: var(--bg-muted);             color: var(--text-secondary); }
