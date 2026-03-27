@@ -535,6 +535,7 @@ function AppContent() {
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isSetupRoute = location.pathname === "/setup";
+  const isGamesRoute = location.pathname === "/games";
 
   const { user, userProfile, hasSkippedSetup, loading, profileLoading, isAdmin } = useAuth();
 
@@ -629,13 +630,13 @@ function AppContent() {
         <WhatsNextButton />
       )}
 
-      {/* Floating mascot (authenticated students only) */}
-      {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
+      {/* Floating mascot — hidden on /games (GameMascot handles it there) */}
+      {user && !isAdmin && !isAdminRoute && !isSetupRoute && !isGamesRoute && (
         <FloatingMascot />
       )}
 
-      {/* Cat house widget — always visible for students */}
-      {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
+      {/* Cat house widget — hidden on /games to avoid mascot overload */}
+      {user && !isAdmin && !isAdminRoute && !isSetupRoute && !isGamesRoute && (
         <CatHouseWidget />
       )}
 
