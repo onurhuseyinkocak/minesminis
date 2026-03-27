@@ -1,0 +1,181 @@
+/* ── GameMascot — right-rail wandering mascot ────────────────────────────────
+   Lives in .game-mascot-rail (dedicated right column next to game canvas).
+   Wanders up/down with spring physics.
+   Speech bubble extends LEFT when feedback is active.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Green flash overlay (pointer-events: none) ── */
+.gm-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 360;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(34, 197, 94, 0.38) 0%,
+    rgba(34, 197, 94, 0.12) 50%,
+    transparent 72%
+  );
+}
+
+/* ── Mascot character wrapper (positioned inside .game-mascot-rail) ── */
+.gm-char {
+  position: absolute;
+  right: 0;
+  /* top is animated via framer-motion */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.18));
+}
+
+/* ── Speech bubble ── */
+.gm-bubble {
+  position: relative;
+  background: #fff;
+  border-radius: 14px 14px 14px 4px;
+  padding: 10px 12px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.14),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 148px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+.gm-bubble--correct {
+  border-top: 3px solid #22c55e;
+}
+
+.gm-bubble--wrong {
+  border-top: 3px solid #f97316;
+}
+
+/* Tail pointing RIGHT toward mascot */
+.gm-bubble__tail {
+  position: absolute;
+  top: 18px;
+  right: -8px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 9px solid #fff;
+}
+
+.gm-bubble--correct .gm-bubble__tail {
+  filter: drop-shadow(1px 0 1px rgba(0,0,0,0.06));
+}
+
+/* ── Bubble message ── */
+.gm-bubble__msg {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-primary, #1a1a2e);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ── XP badge ── */
+.gm-bubble__xp {
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 0.73rem;
+  font-weight: 800;
+  color: #16a34a;
+  background: rgba(34, 197, 94, 0.12);
+  padding: 2px 8px;
+  border-radius: 99px;
+  align-self: flex-start;
+  display: inline-block;
+}
+
+/* ── Correct answer hint ── */
+.gm-bubble__answer {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.72rem;
+  color: var(--text-secondary, #666);
+  line-height: 1.3;
+}
+
+.gm-bubble__answer strong {
+  font-weight: 700;
+  color: var(--text-primary, #1a1a2e);
+}
+
+/* ── Continue button ── */
+.gm-bubble__btn {
+  background: var(--primary, #FF6B35);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 7px 12px;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: transform 0.12s, filter 0.12s;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.35);
+}
+
+.gm-bubble--correct .gm-bubble__btn {
+  background: #22c55e;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35);
+}
+
+.gm-bubble__btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.gm-bubble__btn:active {
+  transform: translateY(0);
+}
+
+/* ── Rail itself (defined in Games.css, but extra overrides here) ── */
+.game-mascot-rail {
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible; /* bubble can extend left over canvas */
+  width: 96px;
+  /* height inherits from flex container */
+}
+
+@media (max-width: 768px) {
+  .game-mascot-rail {
+    width: 72px;
+  }
+
+  .gm-bubble {
+    width: 136px;
+  }
+
+  .gm-char > :last-child { /* LottieCharacter */
+    transform: scale(0.85);
+    transform-origin: right top;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-mascot-rail {
+    width: 60px;
+  }
+
+  .gm-bubble {
+    width: 130px;
+    padding: 8px 10px;
+  }
+
+  .gm-char > :last-child {
+    transform: scale(0.72);
+    transform-origin: right top;
+  }
+}

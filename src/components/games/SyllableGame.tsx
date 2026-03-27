@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -155,12 +155,13 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
 
     return (
       <div className="syg">
+        {pct >= 90 && <ConfettiRain />}
         <Card variant="elevated" padding="xl" className="syg__completion">
           <motion.div
             className="syg__completion-content"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
           >
             <UnifiedMascot state="celebrating" size={120} />
 
@@ -181,32 +182,46 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
 
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star
+                <motion.span
                   key={i}
-                  size={18}
-                  fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
-                  color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
-                />
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
+                >
+                  <Star
+                    size={32}
+                    fill={i < stars ? '#E8A317' : 'none'}
+                    color={i < stars ? '#E8A317' : '#ccc'}
+                  />
+                </motion.span>
               ))}
             </span>
 
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 10} XP
-            </Badge>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
+            >
+              <Badge variant="success" icon={<Sparkles size={14} />}>
+                +{score * 10} XP
+              </Badge>
+            </motion.div>
 
             <div className="syg__completion-actions">
               <button
                 type="button"
-                className="syg__completion-btn syg__completion-btn--secondary kbtn kbtn--blue"
+                className="syg__completion-btn syg__completion-btn--secondary"
                 onClick={() => onComplete(score, questions.length)}
               >
+                <ArrowLeft size={16} />
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="syg__completion-btn syg__completion-btn--primary kbtn kbtn--blue"
+                className="syg__completion-btn syg__completion-btn--primary"
                 onClick={handlePlayAgain}
               >
+                <RotateCcw size={16} />
                 {t('games.playAgain')}
               </button>
             </div>
@@ -330,22 +345,25 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
           {/* Multiple choice */}
           {showChoices && (
             <div className="syg__choices" role="group" aria-label="Choose syllable count">
-              {choices.map((num) => {
+              {choices.map((num, idx) => {
                 const state: ChoiceState = choiceStates[num] ?? 'idle';
                 return (
                   <motion.button
                     key={num}
                     type="button"
                     className={[
-                      'syg__choice-btn kbtn kbtn--option',
-                      state === 'correct' && 'syg__choice-btn--correct correct',
-                      state === 'wrong' && 'syg__choice-btn--wrong wrong',
+                      'syg__choice-btn',
+                      state === 'correct' && 'syg__choice-btn--correct',
+                      state === 'wrong' && 'syg__choice-btn--wrong',
                     ]
                       .filter(Boolean)
                       .join(' ')}
                     onClick={() => handleChoice(num)}
                     disabled={answered && state === 'idle'}
                     aria-pressed={state !== 'idle'}
+                    initial={{ opacity: 0, y: 20, scale: 0.85 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.07 }}
                     whileTap={{ scale: 0.92 }}
                   >
                     {num}

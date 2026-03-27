@@ -299,7 +299,7 @@
 .pmg__options-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-sm, 8px);
+  gap: var(--space-md, 12px);
 }
 
 .pmg__option {
@@ -309,9 +309,10 @@
   padding: var(--space-md) var(--space-lg);
   min-height: 72px;
   border: 2.5px solid var(--border-light);
+  border-bottom: 5px solid color-mix(in srgb, var(--border-light) 80%, black);
   border-radius: var(--radius-lg);
   background: var(--bg-card);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), 0 3px 0 0 rgba(0, 0, 0, 0.06);
   cursor: pointer;
   font-family: var(--font-display);
   font-size: 1.5rem;
@@ -321,7 +322,8 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-base),
     transform var(--transition-base),
-    background var(--transition-fast);
+    background var(--transition-fast),
+    border-bottom-width 0.1s ease;
   text-align: center;
   width: 100%;
   letter-spacing: -0.01em;
@@ -334,7 +336,8 @@
 }
 
 .pmg__option:active:not(:disabled) {
-  transform: translateY(0) scale(0.97);
+  transform: translateY(1px) scale(0.98);
+  border-bottom-width: 2.5px;
 }
 
 .pmg__option:focus-visible {
@@ -488,13 +491,17 @@
 }
 
 .pmg__completion-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 2rem;
   border-radius: var(--radius-lg);
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   border: none;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -507,14 +514,19 @@
 }
 
 .pmg__completion-btn--primary {
-  background: var(--primary);
+  background: var(--gradient-primary, var(--primary));
   color: #fff;
-  box-shadow: 0 4px 12px rgba(232, 163, 23, 0.35);
+  box-shadow: var(--shadow-button, 0 4px 12px rgba(232, 163, 23, 0.35));
+}
+
+.pmg__completion-btn--primary:hover {
+  box-shadow: var(--shadow-button-hover, 0 6px 16px rgba(232, 163, 23, 0.45));
 }
 
 .pmg__completion-btn--secondary {
   background: var(--bg-soft, #f5f5f5);
   color: var(--text-secondary);
+  border: 2px solid var(--border-light);
 }
 
 /* -- Responsive ------------------------------------------------------------ */

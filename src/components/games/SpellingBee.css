@@ -47,6 +47,20 @@
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.08));
 }
 
+.spelling-bee__big-emoji--fallback {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary, #FF6B35);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 900;
+  filter: none;
+}
+
 .spelling-bee__turkish {
   font-family: var(--font-display);
   font-size: 1.5rem;
@@ -281,13 +295,17 @@
 }
 
 .spelling-bee__results-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 2rem;
   border-radius: var(--radius-lg);
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 52px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -340,6 +358,17 @@
   .spelling-bee__tile { width: 52px; height: 60px; font-size: 1.5rem; }
   .spelling-bee__slot { width: 48px; height: 56px; font-size: 1.5rem; }
   .spelling-bee__big-emoji { font-size: 3.5rem; }
+}
+
+@media (max-width: 480px) {
+  .spelling-bee__results-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .spelling-bee__results-btn {
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 @media (min-width: 1600px) {

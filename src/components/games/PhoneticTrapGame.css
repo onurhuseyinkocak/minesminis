@@ -1,6 +1,7 @@
 /* ==========================================================================
-   PHONETIC TRAP GAME — MinesMinis Design System v5
+   PHONETIC TRAP GAME — MinesMinis Design System v6
    Turkish phonetic interference trainer for English learners
+   Matches WordMatch quality: 3D buttons, spring animations, polished results
    ========================================================================== */
 
 .ptg {
@@ -13,7 +14,7 @@
   font-family: var(--font-body, Nunito, sans-serif);
 }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
+/* -- Header -- */
 
 .ptg__header {
   display: flex;
@@ -60,7 +61,7 @@
   line-height: 1.2;
 }
 
-/* ── Tab Navigation — visually clear segmented control ────────────────── */
+/* -- Tab Navigation -- */
 
 .ptg__tabs {
   display: grid;
@@ -116,7 +117,7 @@
   letter-spacing: 0.02em;
 }
 
-/* ── Tab Panel ───────────────────────────────────────────────────────────── */
+/* -- Tab Panel -- */
 
 .ptg__panel {
   display: flex;
@@ -130,7 +131,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Learn Tab ───────────────────────────────────────────────────────────── */
+/* -- Learn Tab -- */
 
 .ptg__error-card {
   background: var(--accent-purple-pale, #EDE9FE);
@@ -166,7 +167,7 @@
   font-style: italic;
 }
 
-/* ── Mouth Diagram ───────────────────────────────────────────────────────── */
+/* -- Mouth Diagram -- */
 
 .ptg__mouth-section {
   display: flex;
@@ -220,7 +221,7 @@
   line-height: 1.4;
 }
 
-/* ── Minimal Pairs ───────────────────────────────────────────────────────── */
+/* -- Minimal Pairs -- */
 
 .ptg__pairs-title {
   font-size: 0.875rem;
@@ -295,7 +296,7 @@
   display: block;
 }
 
-/* ── Practice Tab ────────────────────────────────────────────────────────── */
+/* -- Practice Tab -- */
 
 .ptg__exercise {
   display: flex;
@@ -348,7 +349,8 @@
 .ptg__option {
   background: var(--bg-card);
   border: 2.5px solid var(--border);
-  border-radius: var(--radius-md);
+  border-bottom: 5px solid color-mix(in srgb, var(--border) 80%, black);
+  border-radius: var(--radius-lg);
   padding: var(--space-md) var(--space-lg);
   font-family: var(--font-display, Nunito, sans-serif);
   font-size: 1.125rem;
@@ -356,24 +358,41 @@
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;
-  transition: all 0.15s var(--ease-out);
+  transition:
+    all 0.15s var(--ease-out),
+    border-bottom-width 0.1s ease;
   min-height: 56px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-card), 0 3px 0 0 rgba(0, 0, 0, 0.06);
+}
+
+.ptg__option-text {
+  flex: 1;
 }
 
 .ptg__option:hover:not(:disabled) {
   border-color: var(--accent-purple);
   background: var(--accent-purple-pale);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.ptg__option:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98) !important;
+  border-bottom-width: 2.5px;
   box-shadow: var(--shadow-sm);
 }
 
 .ptg__option--correct {
   border-color: var(--success) !important;
-  background: var(--success-pale) !important;
+  border-bottom-color: var(--success) !important;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08)) !important;
   color: var(--success) !important;
+  opacity: 1 !important;
   animation: ptg-correct-bounce 0.4s var(--ease-spring);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), var(--shadow-sm);
 }
 
 @keyframes ptg-correct-bounce {
@@ -384,6 +403,7 @@
 
 .ptg__option--wrong {
   border-color: var(--error) !important;
+  border-bottom-color: var(--error) !important;
   background: var(--error-pale) !important;
   color: var(--error) !important;
   animation: ptg-shake 0.4s ease;
@@ -403,7 +423,6 @@
   border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 0.9375rem;
-  animation: ptg-fade-in 200ms ease-out;
 }
 
 .ptg__feedback--correct {
@@ -435,7 +454,6 @@
 }
 
 .ptg__next-btn:hover {
-  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
 }
 
@@ -443,7 +461,7 @@
   transform: scale(0.98);
 }
 
-/* ── Challenge Tab ───────────────────────────────────────────────────────── */
+/* -- Challenge Tab -- */
 
 .ptg__challenge {
   display: flex;
@@ -476,13 +494,7 @@
   color: var(--trap-color, var(--accent-purple));
   font-family: var(--font-display, Nunito, sans-serif);
   text-align: center;
-  animation: ptg-pop-in 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
   letter-spacing: -0.02em;
-}
-
-@keyframes ptg-pop-in {
-  from { opacity: 0; transform: scale(0.6); }
-  to   { opacity: 1; transform: scale(1); }
 }
 
 .ptg__challenge-options {
@@ -495,6 +507,7 @@
 .ptg__challenge-option {
   background: var(--bg-card);
   border: 2.5px solid var(--border);
+  border-bottom: 5px solid color-mix(in srgb, var(--border) 80%, black);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   font-family: var(--font-display, Nunito, sans-serif);
@@ -503,24 +516,33 @@
   color: var(--text-primary);
   cursor: pointer;
   text-align: center;
-  transition: all 0.15s var(--ease-out);
+  transition:
+    all 0.15s var(--ease-out),
+    border-bottom-width 0.1s ease;
   display: flex;
   flex-direction: column;
   gap: 4px;
   align-items: center;
   min-height: 56px;
+  box-shadow: var(--shadow-card), 0 3px 0 0 rgba(0, 0, 0, 0.06);
 }
 
 .ptg__challenge-option:hover:not(:disabled) {
   border-color: var(--accent-purple);
-  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   background: var(--accent-purple-pale);
 }
 
+.ptg__challenge-option:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98) !important;
+  border-bottom-width: 2.5px;
+  box-shadow: var(--shadow-sm);
+}
+
 .ptg__challenge-option--correct {
   border-color: var(--success) !important;
-  background: var(--success-pale) !important;
+  border-bottom-color: var(--success) !important;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08)) !important;
   color: var(--success);
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
   animation: ptg-correct-bounce 0.4s var(--ease-spring);
@@ -528,6 +550,7 @@
 
 .ptg__challenge-option--wrong {
   border-color: var(--error) !important;
+  border-bottom-color: var(--error) !important;
   background: var(--error-pale) !important;
   color: var(--error);
   animation: ptg-shake 0.4s ease;
@@ -550,7 +573,90 @@
   color: var(--text-secondary);
 }
 
-/* ── Complete state ──────────────────────────────────────────────────────── */
+/* -- Results Screen (shared for Practice & Challenge) -- */
+
+.ptg__results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+}
+
+.ptg__results-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  font-family: var(--font-display, Nunito, sans-serif);
+}
+
+.ptg__results-score {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent-purple);
+  margin: 0;
+}
+
+.game-stars {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.ptg__results-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.ptg__results-btn {
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 52px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ptg__results-btn:hover {
+  transform: translateY(-2px);
+}
+
+.ptg__results-btn:active {
+  transform: scale(0.97);
+}
+
+.ptg__results-btn--primary {
+  background: var(--accent-purple);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.ptg__results-btn--primary:hover {
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+
+.ptg__results-btn--secondary {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-light);
+}
+
+[data-theme="dark"] .ptg__results-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+/* -- Complete state (legacy/mascot) -- */
 
 .ptg__complete {
   display: flex;
@@ -562,12 +668,7 @@
 }
 
 .ptg__complete-mascot {
-  animation: ptg-bounce 1s ease-in-out infinite;
-}
-
-@keyframes ptg-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-10px); }
+  /* No infinite bounce - let framer handle it */
 }
 
 .ptg__complete-title {
@@ -605,7 +706,7 @@
   box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
 }
 
-/* ── Progress bar ────────────────────────────────────────────────────────── */
+/* -- Progress bar -- */
 
 .ptg__progress-bar-track {
   height: 6px;
@@ -619,4 +720,21 @@
   background: var(--trap-color, var(--accent-purple));
   border-radius: 99px;
   transition: width 0.4s ease;
+}
+
+/* -- Responsive -- */
+@media (max-width: 480px) {
+  .ptg__results-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .ptg__results-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ptg__challenge-options {
+    grid-template-columns: 1fr;
+  }
 }

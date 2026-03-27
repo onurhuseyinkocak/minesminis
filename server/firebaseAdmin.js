@@ -1,41 +1,76 @@
-// TODO: Firebase Admin SDK Integration
-// To enable full Firebase Admin functionality:
-// 1. Install: npm install firebase-admin
-// 2. Generate a service account key from Firebase Console > Project Settings > Service Accounts
-// 3. Set environment variable FIREBASE_SERVICE_ACCOUNT_KEY with the JSON key path
-// 4. Replace the stub functions below with real implementations
+// Firebase Admin SDK — real implementation
+// Priority: FIREBASE_SERVICE_ACCOUNT_JSON > FIREBASE_PROJECT_ID + ADC > graceful stub
 
-const FIREBASE_NOT_CONFIGURED_MSG =
-  '[Firebase Admin] Not configured. Set FIREBASE_SERVICE_ACCOUNT_KEY env var to enable server-side auth.';
+import admin from 'firebase-admin';
 
-// Startup warning
-console.warn(FIREBASE_NOT_CONFIGURED_MSG);
+let app = null;
+let ready = false;
+
+try {
+  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+
+  if (admin.apps.length > 0) {
+    // Already initialized (e.g. by lib/firebase.js) — reuse default
+    app = admin.apps[0];
+    ready = true;
+    console.log('[Firebase Admin] Reusing existing app');
+  } else if (serviceAccountJson) {
+    const credential = JSON.parse(serviceAccountJson);
+    app = admin.initializeApp({
+      credential: admin.credential.cert(credential),
+      projectId: credential.project_id,
+    });
+    ready = true;
+    console.log('[Firebase Admin] Initialized with service account JSON');
+  } else if (projectId) {
+    app = admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+      projectId,
+    });
+    ready = true;
+    console.log('[Firebase Admin] Initialized with ADC, project:', projectId);
+  } else {
+    console.warn(
+      '[Firebase Admin] Not configured. Set FIREBASE_SERVICE_ACCOUNT_JSON or FIREBASE_PROJECT_ID env var to enable server-side auth.'
+    );
+  }
+} catch (err) {
+  console.warn('[Firebase Admin] Init error:', err.message, '— running in stub mode.');
+}
 
 export function isFirebaseAdminReady() {
-  return false;
+  return ready;
 }
 
 export async function verifyIdToken(token) {
   if (!token) {
     throw new Error('[Firebase Admin] verifyIdToken called without a token.');
   }
-  throw new Error(
-    '[Firebase Admin] Cannot verify token — Firebase Admin SDK is not configured. ' +
-    'Set FIREBASE_SERVICE_ACCOUNT_KEY environment variable with the path to your service account JSON.'
-  );
+  if (!ready || !app) {
+    throw new Error('[Firebase Admin] Not configured — cannot verify token.');
+  }
+  try {
+    return await app.auth().verifyIdToken(token);
+  } catch (err) {
+    // Return null on verification failure so callers can handle gracefully
+    return null;
+  }
 }
 
 export async function getUser(uid) {
   if (!uid) {
     throw new Error('[Firebase Admin] getUser called without a uid.');
   }
-  throw new Error(
-    '[Firebase Admin] Cannot fetch user — Firebase Admin SDK is not configured.'
-  );
+  if (!ready || !app) {
+    throw new Error('[Firebase Admin] Not configured — cannot fetch user.');
+  }
+  return app.auth().getUser(uid);
 }
 
 export async function setCustomClaims(uid, claims) {
-  throw new Error(
-    '[Firebase Admin] Cannot set custom claims — Firebase Admin SDK is not configured.'
-  );
+  if (!ready || !app) {
+    throw new Error('[Firebase Admin] Not configured — cannot set custom claims.');
+  }
+  return app.auth().setCustomUserClaims(uid, claims);
 }

@@ -1,12 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, Sparkles, Trophy, Star, Check } from 'lucide-react';
-import { Card, Badge, ProgressBar, FloatingEmoji } from '../ui';
+import { Sparkles, Trophy, Star, Check, CheckCircle2, ArrowRight, RotateCcw } from 'lucide-react';
+import { Badge, ProgressBar, FloatingEmoji } from '../ui';
 import { SFX } from '../../data/soundLibrary';
+import { speak } from '../../services/ttsService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
 import { announceToScreenReader } from '../../utils/accessibility';
+import AnswerFeedbackPanel from '../AnswerFeedbackPanel';
 import './WordMatch.css';
 
 interface WordItem {
@@ -27,144 +29,164 @@ interface MatchPair {
   english: string;
   turkish: string;
   emoji: string;
+  displayEmoji: string;
   matched: boolean;
 }
 
 function shuffleArray<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+  const s = [...arr];
+  for (let i = s.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [s[i], s[j]] = [s[j], s[i]];
   }
-  return shuffled;
+  return s;
 }
 
 export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
+
   const roundSize = 3;
-  const totalRounds = Math.ceil(Math.min(words.length, 6) / roundSize);
+  const totalWords = Math.min(words.length, 6);
+  const totalRounds = Math.ceil(totalWords / roundSize);
 
   const [round, setRound] = useState(0);
-  const [pairs, setPairs] = useState<MatchPair[]>([]);
+  // leftItems / rightItems are the source of truth for cards — kept in sync with matched state
   const [leftItems, setLeftItems] = useState<MatchPair[]>([]);
   const [rightItems, setRightItems] = useState<MatchPair[]>([]);
+
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState<{ type: 'correct' | 'wrong'; pairId?: number } | null>(null);
+
+  // null = no feedback, 'correct', 'wrong'
+  const [matchState, setMatchState] = useState<'correct' | 'wrong' | null>(null);
+  // which pair IDs were involved in the last wrong attempt
+  const [wrongPairIds, setWrongPairIds] = useState<{ l: number; r: number } | null>(null);
+
   const [score, setScore] = useState(0);
   const [totalAttempted, setTotalAttempted] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [floatingEmoji, setFloatingEmoji] = useState<string | null>(null);
 
+  // ── Build pairs for a round ──────────────────────────────────────────────
   const initRound = useCallback((roundIndex: number) => {
     const start = roundIndex * roundSize;
     const roundWords = words.slice(start, start + roundSize);
-    const newPairs: MatchPair[] = roundWords.map((w, i) => ({
-      id: i,
-      english: w.english,
-      turkish: w.turkish,
-      emoji: w.emoji,
-      matched: false,
-    }));
-    setPairs(newPairs);
+
+    const emojiCount: Record<string, number> = {};
+    roundWords.forEach(w => { emojiCount[w.emoji] = (emojiCount[w.emoji] || 0) + 1; });
+    const emojiIdx: Record<string, number> = {};
+    const labels = ['①', '②', '③', '④', '⑤'];
+
+    const newPairs: MatchPair[] = roundWords.map((w, i) => {
+      let displayEmoji = w.emoji;
+      if (emojiCount[w.emoji] > 1) {
+        emojiIdx[w.emoji] = emojiIdx[w.emoji] ?? 0;
+        displayEmoji = w.emoji + (labels[emojiIdx[w.emoji]] ?? String(emojiIdx[w.emoji] + 1));
+        emojiIdx[w.emoji] += 1;
+      }
+      return { id: i, english: w.english, turkish: w.turkish, emoji: w.emoji, displayEmoji, matched: false };
+    });
+
     setLeftItems(shuffleArray(newPairs));
     setRightItems(shuffleArray(newPairs));
     setSelectedLeft(null);
     setSelectedRight(null);
-    setFeedback(null);
+    setMatchState(null);
+    setWrongPairIds(null);
   }, [words]);
 
-  useEffect(() => {
-    initRound(0);
-  }, [initRound]);
+  useEffect(() => { initRound(0); }, [initRound]);
 
+  // ── Match attempt ────────────────────────────────────────────────────────
   const tryMatch = useCallback((leftId: number, rightId: number) => {
-    setTotalAttempted((prev) => prev + 1);
+    setTotalAttempted(n => n + 1);
 
     if (leftId === rightId) {
-      setScore((prev) => prev + 1);
-      setFeedback({ type: 'correct', pairId: leftId });
+      // ── CORRECT ──
+      const nextScore = score + 1;
+      setScore(nextScore);
+      setMatchState('correct');
       onXpEarned?.(10);
       SFX.correct();
-      announceToScreenReader('Correct!', 'polite');
+      announceToScreenReader(t('games.correct') || 'Doğru!', 'polite');
 
-      // Floating emoji celebration
-      const matchedEmoji = pairs[leftId]?.emoji;
-      if (matchedEmoji) {
-        setFloatingEmoji(matchedEmoji);
+      // Mark matched in both columns immediately — this is the key fix
+      const markMatched = (items: MatchPair[]) =>
+        items.map(p => p.id === leftId ? { ...p, matched: true } : p);
+      setLeftItems(prev => markMatched(prev));
+      setRightItems(prev => markMatched(prev));
+
+      // Floating emoji
+      const matchedItem = leftItems.find(p => p.id === leftId);
+      if (matchedItem?.emoji) {
+        setFloatingEmoji(matchedItem.emoji);
         setTimeout(() => setFloatingEmoji(null), 2200);
       }
 
-      // Speak the word
-      if (window.speechSynthesis) {
-        const utter = new SpeechSynthesisUtterance(pairs[leftId]?.english || '');
-        utter.lang = 'en-US';
-        utter.rate = 0.8;
-        window.speechSynthesis.speak(utter);
+      // Speak the English word
+      if (matchedItem?.english) {
+        speak(matchedItem.english, { lang: 'en-US', rate: 0.8 });
       }
 
-      setPairs((prev) =>
-        prev.map((p) => (p.id === leftId ? { ...p, matched: true } : p))
-      );
+      // Check if all matched (derive from updated state)
+      const allMatched = leftItems.every(p => p.id === leftId ? true : p.matched);
 
       setTimeout(() => {
-        setFeedback(null);
+        setMatchState(null);
         setSelectedLeft(null);
         setSelectedRight(null);
-
-        const updatedPairs = pairs.map((p) =>
-          p.id === leftId ? { ...p, matched: true } : p
-        );
-        const allMatched = updatedPairs.every((p) => p.matched);
 
         if (allMatched) {
-          if (round + 1 < totalRounds) {
-            setRound((prev) => prev + 1);
-            initRound(round + 1);
+          const nextRound = round + 1;
+          if (nextRound < totalRounds) {
+            setRound(nextRound);
+            initRound(nextRound);
           } else {
             setCompleted(true);
-            const finalScore = score + 1;
-            const total = totalAttempted + 1;
-            onComplete(finalScore, total);
+            // Do NOT call onComplete here — let the results screen handle it
           }
         }
-      }, 1200);
+      }, 900);
+
     } else {
-      setFeedback({ type: 'wrong' });
-      announceToScreenReader('Try again', 'assertive');
+      // ── WRONG ──
+      setMatchState('wrong');
+      setWrongPairIds({ l: leftId, r: rightId });
+      announceToScreenReader(t('games.tryAgain') || 'Tekrar Dene', 'assertive');
+      SFX.wrong();
       loseHeart();
       onWrongAnswer?.();
-      if (hearts - 1 <= 0) {
-        setShowNoHearts(true);
-      }
-      setTimeout(() => {
-        setFeedback(null);
-        setSelectedLeft(null);
-        setSelectedRight(null);
-      }, 800);
+      if (hearts - 1 <= 0) setShowNoHearts(true);
     }
-  }, [pairs, round, totalRounds, score, totalAttempted, onComplete, onXpEarned, onWrongAnswer, initRound, loseHeart, hearts]);
+  }, [score, leftItems, round, totalRounds, totalWords, onComplete, onXpEarned, onWrongAnswer, initRound, loseHeart, hearts, t]);
 
+  // ── Click handlers ───────────────────────────────────────────────────────
   const handleLeftClick = (id: number) => {
-    if (pairs[id]?.matched || feedback) return;
+    const item = leftItems.find(p => p.id === id);
+    if (!item || item.matched || matchState) return;
     setSelectedLeft(id);
-    if (selectedRight !== null) {
-      tryMatch(id, selectedRight);
-    }
+    if (selectedRight !== null) tryMatch(id, selectedRight);
   };
 
   const handleRightClick = (id: number) => {
-    if (pairs[id]?.matched || feedback) return;
+    const item = rightItems.find(p => p.id === id);
+    if (!item || item.matched || matchState) return;
     setSelectedRight(id);
-    if (selectedLeft !== null) {
-      tryMatch(selectedLeft, id);
-    }
+    if (selectedLeft !== null) tryMatch(selectedLeft, id);
   };
 
-  const progress = ((score) / Math.min(words.length, 6)) * 100;
+  const handleContinueAfterWrong = () => {
+    setMatchState(null);
+    setWrongPairIds(null);
+    setSelectedLeft(null);
+    setSelectedRight(null);
+  };
 
+  const progress = (score / totalWords) * 100;
+
+  // ── Play again ───────────────────────────────────────────────────────────
   const handlePlayAgain = () => {
     setScore(0);
     setTotalAttempted(0);
@@ -173,149 +195,246 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     initRound(0);
   };
 
-  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
+  // ── Guard ────────────────────────────────────────────────────────────────
+  if (words.length < 2) {
+    return <div className="word-match__empty">{t('games.noWordsToReview')}</div>;
+  }
 
+  // ── Results screen ───────────────────────────────────────────────────────
   if (completed) {
-    const pct = totalAttempted > 0 ? Math.round((score / Math.min(words.length, 6)) * 100) : 0;
+    const pct = totalAttempted > 0 ? Math.round((score / totalWords) * 100) : 0;
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
+    const isPerfect = pct >= 90;
+
     return (
-      <div className="word-match">
-        <Card variant="elevated" padding="xl" className="word-match__results">
+      <div className="word-match word-match--results">
+        {/* Confetti burst */}
+        <AnimatePresence>
+          {isPerfect && (
+            <motion.div
+              className="wm-confetti-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {['🎉','⭐','🌟','✨','🎊','💫'].map((e, i) => (
+                <motion.span
+                  key={i}
+                  className="wm-confetti-piece"
+                  initial={{ y: 0, x: 0, opacity: 1, scale: 0 }}
+                  animate={{
+                    y: [0, -80 - i * 30, 200],
+                    x: [(i % 2 === 0 ? -1 : 1) * (20 + i * 25), (i % 2 === 0 ? 1 : -1) * (40 + i * 15)],
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.4, 0.8],
+                  }}
+                  transition={{ duration: 1.4, delay: i * 0.1, ease: 'easeOut' }}
+                  style={{ left: `${10 + i * 14}%` }}
+                >
+                  {e}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <motion.div
+          className="word-match__results-content"
+          initial={{ scale: 0.7, opacity: 0, y: 40 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+        >
+          {/* Trophy / icon */}
+          <motion.div
+            className="word-match__results-icon"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 12, delay: 0.2 }}
+          >
+            {isPerfect
+              ? <Trophy size={64} color="#E8A317" />
+              : pct >= 60
+              ? <Star size={64} fill="#E8A317" color="#E8A317" />
+              : <Check size={64} color="#22C55E" />}
+          </motion.div>
+
+          {/* Title */}
+          <motion.h2
+            className="word-match__results-title"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+          >
+            {isPerfect ? '🏆 Mükemmel!' : pct >= 60 ? '⭐ Harika!' : t('games.greatJob')}
+          </motion.h2>
+
+          {/* Score line */}
+          <motion.p
+            className="word-match__results-score"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.45 }}
+          >
+            {t('games.youMatched')
+              .replace('{score}', String(score))
+              .replace('{total}', String(totalWords))}
+          </motion.p>
+
+          {/* Stars — staggered pop-in */}
+          <div className="word-match__results-stars">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.55 + i * 0.12 }}
+              >
+                <Star
+                  size={32}
+                  fill={i < stars ? '#E8A317' : 'none'}
+                  color={i < stars ? '#E8A317' : '#ddd'}
+                />
+              </motion.span>
+            ))}
+          </div>
+
+          {/* XP badge */}
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
-            className="word-match__results-content"
+            transition={{ type: 'spring', stiffness: 400, delay: 0.9 }}
           >
-            <span className="word-match__results-emoji">
-              {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
-            </span>
-            <h2 className="word-match__results-title">{t('games.greatJob')}</h2>
-            <p className="word-match__results-score">
-              {t('games.youMatched').replace('{score}', String(score)).replace('{total}', String(totalAttempted))}
-            </p>
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
-              ))}
-            </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 10} XP
             </Badge>
-            <div className="word-match__results-actions">
-              <button type="button" className="word-match__results-btn word-match__results-btn--secondary" onClick={() => onComplete(score, totalAttempted)}>
-                {t('games.backToGames')}
-              </button>
-              <button type="button" className="word-match__results-btn word-match__results-btn--primary" onClick={handlePlayAgain}>
-                {t('games.playAgain')}
-              </button>
-            </div>
           </motion.div>
-        </Card>
+
+          {/* Action buttons */}
+          <motion.div
+            className="word-match__results-actions"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.05 }}
+          >
+            <button
+              type="button"
+              className="word-match__results-btn word-match__results-btn--secondary"
+              onClick={() => onComplete(score, totalWords)}
+            >
+              <ArrowRight size={16} /> {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              className="word-match__results-btn word-match__results-btn--primary"
+              onClick={handlePlayAgain}
+            >
+              <RotateCcw size={16} /> {t('games.playAgain')}
+            </button>
+          </motion.div>
+        </motion.div>
       </div>
     );
   }
 
+  // ── Game board ───────────────────────────────────────────────────────────
   return (
     <>
-    {showNoHearts && (
-      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
-    )}
-    <div className="word-match" role="application" aria-label="Word matching game">
-      {floatingEmoji && <FloatingEmoji emoji={floatingEmoji} count={5} />}
-      <div className="word-match__header">
-        <h2 className="word-match__title">{t('games.matchTheWords')}</h2>
-        <Badge variant="info">{t('games.round')} {round + 1}/{totalRounds}</Badge>
-      </div>
+      {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      <div className="word-match" role="application" aria-label="Word matching game">
+        {floatingEmoji && <FloatingEmoji emoji={floatingEmoji} count={5} />}
 
-      <div aria-live="assertive" aria-atomic="true">
-        {feedback?.type === 'correct' && (
-          <motion.div
-            className="word-match__feedback word-match__feedback--correct"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-          >
-            <CheckCircle size={24} /> {t('games.amazing')}
-          </motion.div>
-        )}
+        <div className="word-match__header">
+          <h2 className="word-match__title">{t('games.matchTheWords')}</h2>
+          <Badge variant="info">{t('games.round')} {round + 1}/{totalRounds}</Badge>
+        </div>
 
-        {feedback?.type === 'wrong' && (
-          <motion.div
-            className="word-match__feedback word-match__feedback--wrong"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, x: [0, -8, 8, -8, 0] }}
-            exit={{ opacity: 0 }}
-          >
-            {t('games.tryAgainYouGotThis')}
-          </motion.div>
-        )}
-      </div>
+        <ProgressBar value={progress} variant="success" size="md" animated />
 
-      <div className="word-match__board">
-        <div className="word-match__column" role="list" aria-label="English words">
-          <AnimatePresence>
-            {leftItems.map((item) => (
-              <div key={`left-${item.id}`} role="listitem">
+        <div className="word-match__board">
+          {/* ── LEFT: English — letter avatar only, no emoji ── */}
+          <div className="word-match__column" role="list" aria-label="English words">
+            {leftItems.map(item => {
+              const isSelected = selectedLeft === item.id;
+              const isWrong = wrongPairIds?.l === item.id && matchState === 'wrong';
+              const isFlashing = matchState === 'correct' && isSelected;
+              return (
                 <motion.button
+                  key={`left-${item.id}`}
                   type="button"
+                  role="listitem"
                   className={[
                     'word-match__card',
                     'word-match__card--left',
-                    selectedLeft === item.id && 'word-match__card--selected',
                     item.matched && 'word-match__card--matched',
-                    feedback?.type === 'correct' && feedback.pairId === item.id && 'word-match__card--flash',
+                    isSelected && !item.matched && 'word-match__card--selected',
+                    isWrong && 'word-match__card--wrong',
+                    isFlashing && 'word-match__card--flash',
                   ].filter(Boolean).join(' ')}
                   onClick={() => handleLeftClick(item.id)}
-                  disabled={item.matched || !!feedback}
-                  aria-label={`English: ${item.english}`}
-                  aria-pressed={selectedLeft === item.id}
+                  disabled={item.matched || !!matchState}
+                  aria-label={`English: ${item.english}${item.matched ? ' (matched)' : ''}`}
+                  aria-pressed={isSelected}
                   layout
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: item.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: item.emoji ? 32 : 20, fontWeight: 900 }}>{item.emoji || item.english.charAt(0).toUpperCase()}</div>
+                  {item.matched
+                    ? <div className="word-match__card-check"><CheckCircle2 size={22} /></div>
+                    : <div className="word-match__card-avatar">{item.english.charAt(0).toUpperCase()}</div>
+                  }
                   <span className="word-match__card-text">{item.english}</span>
                 </motion.button>
-              </div>
-            ))}
-          </AnimatePresence>
-        </div>
+              );
+            })}
+          </div>
 
-        <div className="word-match__column" role="list" aria-label="Turkish translations">
-          <AnimatePresence>
-            {rightItems.map((item) => (
-              <div key={`right-${item.id}`} role="listitem">
+          {/* ── RIGHT: Turkish — emoji shown ── */}
+          <div className="word-match__column" role="list" aria-label="Turkish translations">
+            {rightItems.map(item => {
+              const isSelected = selectedRight === item.id;
+              const isWrong = wrongPairIds?.r === item.id && matchState === 'wrong';
+              const isFlashing = matchState === 'correct' && isSelected;
+              return (
                 <motion.button
+                  key={`right-${item.id}`}
                   type="button"
+                  role="listitem"
                   className={[
                     'word-match__card',
                     'word-match__card--right',
-                    selectedRight === item.id && 'word-match__card--selected',
                     item.matched && 'word-match__card--matched',
-                    feedback?.type === 'correct' && feedback.pairId === item.id && 'word-match__card--flash',
+                    isSelected && !item.matched && 'word-match__card--selected',
+                    isWrong && 'word-match__card--wrong',
+                    isFlashing && 'word-match__card--flash',
                   ].filter(Boolean).join(' ')}
                   onClick={() => handleRightClick(item.id)}
-                  disabled={item.matched || !!feedback}
-                  aria-label={`Turkish: ${item.turkish}`}
-                  aria-pressed={selectedRight === item.id}
+                  disabled={item.matched || !!matchState}
+                  aria-label={`Turkish: ${item.turkish}${item.matched ? ' (matched)' : ''}`}
+                  aria-pressed={isSelected}
                   layout
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  <div className="word-match__card-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: item.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: item.emoji ? 32 : 20, fontWeight: 900 }}>{item.emoji || item.english.charAt(0).toUpperCase()}</div>
+                  {item.matched
+                    ? <div className="word-match__card-check"><CheckCircle2 size={22} /></div>
+                    : <div className="word-match__card-emoji">{item.displayEmoji || item.turkish.charAt(0)}</div>
+                  }
                   <span className="word-match__card-text">{item.turkish}</span>
                 </motion.button>
-              </div>
-            ))}
-          </AnimatePresence>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+
+      <AnswerFeedbackPanel
+        feedback={matchState}
+        onContinue={handleContinueAfterWrong}
+        xpEarned={10}
+      />
     </>
   );
 };

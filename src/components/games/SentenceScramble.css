@@ -261,6 +261,9 @@
   font-weight: 700;
   cursor: pointer;
   border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   min-height: 52px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -306,6 +309,17 @@
   .sentence-scramble__chip { min-height: 44px; font-size: 1rem; padding: var(--space-sm) var(--space-md); }
 }
 
+@media (max-width: 480px) {
+  .sentence-scramble__results-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .sentence-scramble__results-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
 @media (min-width: 1600px) {
   .sentence-scramble { max-width: 850px; }
   .sentence-scramble__chip { min-height: 72px; font-size: 1.5rem; }
@@ -338,4 +352,9 @@
 
 [data-theme="dark"] .sentence-scramble__feedback--wrong {
   background: var(--error-pale);
+}
+
+[data-theme="dark"] .sentence-scramble__results-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
 }

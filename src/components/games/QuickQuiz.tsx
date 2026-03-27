@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, Zap, Trophy, Sparkles, Star, Lightbulb } from 'lucide-react';
+import { Timer, Zap, Trophy, Sparkles, Star, Lightbulb, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar, StreakFlame } from '../ui';
+import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { SpeakButton } from '../SpeakButton';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -209,21 +210,36 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
         {/* Fallback inline results (visible if overlay was dismissed) */}
         {!showComplete && (
           <div className="quick-quiz">
+            {pct >= 90 && <ConfettiRain duration={3000} />}
             <Card variant="elevated" padding="xl" className="quick-quiz__results">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
                 className="quick-quiz__results-content"
               >
-                <Trophy size={56} className="quick-quiz__trophy" />
+                <motion.span
+                  className="quick-quiz__results-emoji"
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+                >
+                  {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
+                </motion.span>
                 <h2 className="quick-quiz__results-title">{t('games.quizComplete')}</h2>
                 <p className="quick-quiz__results-score">
                   {score} / {questions.length} {t('games.xCorrect')}
                 </p>
                 <span className="game-stars">
                   {Array.from({ length: 3 }, (_, i) => (
-                    <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                    <motion.span
+                      key={i}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
+                    >
+                      <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                    </motion.span>
                   ))}
                 </span>
                 {bestStreak >= 2 && (
@@ -235,11 +251,11 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   +{score * 10} XP
                 </Badge>
                 <div className="quick-quiz__results-actions">
-                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary kbtn kbtn--blue" onClick={() => onComplete(score, questions.length)}>
-                    {t('games.backToGames')}
+                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
+                    <ArrowRight size={16} /> {t('games.backToGames')}
                   </button>
-                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary kbtn kbtn--blue" onClick={handlePlayAgain}>
-                    {t('games.playAgain')}
+                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
+                    <RotateCcw size={16} /> {t('games.playAgain')}
                   </button>
                 </div>
               </motion.div>
@@ -296,7 +312,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           animate={{ opacity: 1, y: 0 }}
           className="quick-quiz__question-content"
         >
-          <div className="quick-quiz__emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: question.word.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: question.word.emoji ? 32 : 20, fontWeight: 900 }}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
+          <div className={`quick-quiz__emoji${question.word.emoji ? '' : ' quick-quiz__emoji--fallback'}`}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
           {question.mode === 'en-to-tr' && (
             <SpeakButton text={question.word.english} autoPlay size="md" />
           )}
@@ -335,9 +351,9 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                 role="radio"
                 aria-checked={selected === index}
                 aria-label={option}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.08 }}
+                initial={{ opacity: 0, x: -30, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20, delay: index * 0.08 }}
                 whileTap={{ scale: 0.97 }}
               >
                 <span className="quick-quiz__option-label">

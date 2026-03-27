@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check } from 'lucide-react';
+import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
@@ -123,13 +123,17 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
         <Card variant="elevated" padding="xl" className="ilg__completion">
           <motion.div
             className="ilg__completion-content"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            initial={{ scale: 0.8, opacity: 0, y: 30 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
             <UnifiedMascot state="celebrating" size={120} />
 
-            <span>
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
               {pct >= 90 ? (
                 <Trophy size={48} color="var(--primary, #E8A317)" />
               ) : pct >= 60 ? (
@@ -137,7 +141,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
               ) : (
                 <Check size={48} color="var(--mimi-green, #4caf50)" />
               )}
-            </span>
+            </motion.span>
 
             <h2 className="ilg__completion-title">{t('games.greatJob')}</h2>
 
@@ -147,18 +151,30 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
 
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star
+                <motion.span
                   key={i}
-                  size={18}
-                  fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
-                  color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
-                />
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 12, delay: 0.4 + i * 0.15 }}
+                >
+                  <Star
+                    size={32}
+                    fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
+                    color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
+                  />
+                </motion.span>
               ))}
             </span>
 
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 10} XP
-            </Badge>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.9 }}
+            >
+              <Badge variant="success" icon={<Sparkles size={14} />}>
+                +{score * 10} XP
+              </Badge>
+            </motion.div>
 
             <div className="ilg__completion-actions">
               <button
@@ -166,6 +182,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
                 className="ilg__completion-btn ilg__completion-btn--secondary"
                 onClick={() => onComplete(score, questions.length)}
               >
+                <ArrowRight size={16} />
                 {t('games.backToGames')}
               </button>
               <button
@@ -173,6 +190,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
                 className="ilg__completion-btn ilg__completion-btn--primary"
                 onClick={handlePlayAgain}
               >
+                <RotateCcw size={16} />
                 {t('games.playAgain')}
               </button>
             </div>
@@ -254,7 +272,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
 
           {/* Options */}
           <div className="ilg-options-grid" role="group" aria-label={t('games.labelThePicture')}>
-            {currentQuestion.options.map((option) => {
+            {currentQuestion.options.map((option, idx) => {
               const state: OptionState = optionStates[option] ?? 'idle';
               return (
                 <motion.button
@@ -270,6 +288,9 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
                   onClick={() => handleOptionPress(option)}
                   disabled={answered && state === 'idle'}
                   aria-pressed={state !== 'idle'}
+                  initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20, delay: idx * 0.07 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {option}

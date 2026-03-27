@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Check, X, RotateCcw, ArrowLeft } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Sparkles, Star, Check, X, RotateCcw, ArrowRight, CheckCircle2, Trophy } from 'lucide-react';
+import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
@@ -115,37 +115,67 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
+    const isPerfect = pct >= 90;
     return (
       <div className="story-choices-game__complete">
+        {isPerfect && <ConfettiRain duration={3000} />}
         <Card variant="elevated" padding="xl">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            initial={{ scale: 0.7, opacity: 0, y: 40 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             className="story-choices-game__complete-content"
           >
-            <span className="story-choices-game__complete-emoji">
-              {score >= questions.length * 0.8
-                ? <Star size={48} fill="#E8A317" color="#E8A317" />
-                : <Check size={48} color="#22C55E" />}
-            </span>
+            <motion.span
+              className="story-choices-game__complete-emoji"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 }}
+            >
+              {pct >= 90
+                ? <Trophy size={48} color="#E8A317" />
+                : pct >= 60
+                  ? <Star size={48} fill="#E8A317" color="#E8A317" />
+                  : <Check size={48} color="#22C55E" />}
+            </motion.span>
             <h2 className="story-choices-game__complete-title">{t('games.storyComplete')}</h2>
             <p className="story-choices-game__complete-score">
               {t('games.xOutOfYCorrect').replace('{score}', String(score)).replace('{total}', String(questions.length))}
             </p>
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                <motion.span
+                  key={i}
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.55 + i * 0.12 }}
+                >
+                  <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                </motion.span>
               ))}
             </span>
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 10} XP
-            </Badge>
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
-              <button type="button" onClick={() => onComplete(score, questions.length)} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: '2px solid var(--border, #e2e8f0)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
-                <ArrowLeft size={16} /> {t('games.backToGames') || 'Back'}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.9 }}
+            >
+              <Badge variant="success" icon={<Sparkles size={14} />}>
+                +{score * 10} XP
+              </Badge>
+            </motion.div>
+            <div className="story-choices-game__complete-actions">
+              <button
+                type="button"
+                className="story-choices-game__complete-btn story-choices-game__complete-btn--secondary"
+                onClick={() => onComplete(score, questions.length)}
+              >
+                <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
               </button>
-              <button type="button" onClick={handlePlayAgain} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: 'none', background: 'var(--primary, #FF6B35)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+              <button
+                type="button"
+                className="story-choices-game__complete-btn story-choices-game__complete-btn--primary"
+                onClick={handlePlayAgain}
+              >
                 <RotateCcw size={16} /> {t('games.playAgain') || 'Play Again'}
               </button>
             </div>
@@ -176,9 +206,10 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
           key={currentIndex}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           className="story-choices-game__prompt"
         >
-          <div className="story-choices-game__prompt-emoji" style={{ width: 48, height: 48, borderRadius: '50%', background: question.word.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: question.word.emoji ? 32 : 20, fontWeight: 900 }}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
+          <div className={`story-choices-game__prompt-emoji${question.word.emoji ? '' : ' story-choices-game__prompt-emoji--fallback'}`}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
           <p className="story-choices-game__prompt-word">
             {question.word.english}
           </p>
@@ -199,6 +230,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
 
             const choiceClass = [
               'story-choices-game__choice',
+              isSelected && !feedback && 'story-choices-game__choice--selected',
               showCorrect && 'story-choices-game__choice--correct',
               showWrong && 'story-choices-game__choice--wrong',
             ].filter(Boolean).join(' ');
@@ -209,16 +241,17 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
                 type="button"
                 onClick={() => handleChoice(idx, choice.correct)}
                 disabled={feedback !== null}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, x: -20, y: 10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.08 }}
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.97, y: 1 }}
                 className={choiceClass}
                 aria-label={`Choice: ${choice.text}`}
               >
-                {choice.text}
-                {showCorrect && <Check size={14} strokeWidth={3} />}
-                {showWrong && <X size={14} />}
+                <span className="story-choices-game__choice-text">{choice.text}</span>
+                {showCorrect && <CheckCircle2 size={18} strokeWidth={2.5} />}
+                {showWrong && <X size={18} strokeWidth={2.5} />}
               </motion.button>
             );
           })}

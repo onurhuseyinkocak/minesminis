@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star } from 'lucide-react';
+import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star, Trophy, Check, ArrowRight } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
+import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
@@ -151,29 +152,51 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
   if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
 
   if (completed) {
+    const pct = sentences.length > 0 ? Math.round((score / sentences.length) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="sentence-scramble">
+        {pct >= 90 && <ConfettiRain duration={3000} />}
         <Card variant="elevated" padding="xl" className="sentence-scramble__results">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             className="sentence-scramble__results-content"
           >
-            <Star size={48} fill="#E8A317" color="#E8A317" />
+            <motion.span
+              className="sentence-scramble__big-emoji"
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
+              {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
+            </motion.span>
             <h2 className="sentence-scramble__results-title">{t('games.sentenceMaster')}</h2>
             <p className="sentence-scramble__results-score">
               {t('games.outOfSentences').replace('{score}', String(score)).replace('{total}', String(sentences.length))}
             </p>
+            <span className="game-stars">
+              {Array.from({ length: 3 }, (_, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
+                >
+                  <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                </motion.span>
+              ))}
+            </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 15} XP
             </Badge>
             <div className="sentence-scramble__results-actions">
               <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--secondary" onClick={() => onComplete(score, sentences.length)}>
-                {t('games.backToGames')}
+                <ArrowRight size={16} /> {t('games.backToGames')}
               </button>
               <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--primary" onClick={() => { setCurrentIndex(0); setScore(0); setCompleted(false); initSentence(0); }}>
-                {t('games.playAgain')}
+                <RotateCcw size={16} /> {t('games.playAgain')}
               </button>
             </div>
           </motion.div>

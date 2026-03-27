@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw, CheckCircle } from 'lucide-react';
+import { Card, Badge, ProgressBar } from '../ui';
 import UnifiedMascot from '../UnifiedMascot';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { SFX } from '../../data/soundLibrary';
-import { RotateCcw, ArrowLeft } from 'lucide-react';
 import './DialogueGame.css';
 
 export interface DialogueLine {
@@ -142,40 +143,103 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
   };
 
   if (completed) {
+    const pct = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
+
     return (
-      <motion.div
-        className="dialogue-game__summary"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-      >
-        <UnifiedMascot id="mimi_dragon" state="celebrating" size={96} />
-        <h2 className="dialogue-game__summary-title">
-          {lang === 'tr' ? 'Harika!' : 'Awesome!'}
-        </h2>
-        <p className="dialogue-game__summary-score">
-          {correctCount} / {totalQuestions}
-        </p>
-        <p className="dialogue-game__summary-label">
-          {lang === 'tr' ? 'Doğru cevap' : 'Correct answers'}
-        </p>
-        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
-          <button type="button" onClick={() => onComplete(correctCount, totalQuestions)} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: '2px solid var(--border, #e2e8f0)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
-            <ArrowLeft size={16} /> {lang === 'tr' ? 'Geri Dön' : 'Back'}
-          </button>
-          <button type="button" onClick={handlePlayAgain} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: 'none', background: 'var(--primary, #FF6B35)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
-            <RotateCcw size={16} /> {lang === 'tr' ? 'Tekrar Oyna' : 'Play Again'}
-          </button>
-        </div>
-      </motion.div>
+      <div className="dialogue-game">
+        <Card variant="elevated" padding="xl" className="dialogue-game__summary">
+          <motion.div
+            className="dialogue-game__summary-content"
+            initial={{ scale: 0.8, opacity: 0, y: 30 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          >
+            <UnifiedMascot id="mimi_dragon" state="celebrating" size={120} />
+
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
+              {pct >= 90 ? (
+                <Trophy size={48} color="var(--primary, #E8A317)" />
+              ) : pct >= 60 ? (
+                <Star size={48} fill="var(--primary, #E8A317)" color="var(--primary, #E8A317)" />
+              ) : (
+                <Check size={48} color="var(--mimi-green, #4caf50)" />
+              )}
+            </motion.span>
+
+            <h2 className="dialogue-game__summary-title">
+              {lang === 'tr' ? 'Harika!' : 'Awesome!'}
+            </h2>
+            <p className="dialogue-game__summary-score">
+              {correctCount} / {totalQuestions}
+            </p>
+            <p className="dialogue-game__summary-label">
+              {lang === 'tr' ? 'Doğru cevap' : 'Correct answers'}
+            </p>
+
+            <span className="game-stars">
+              {Array.from({ length: 3 }, (_, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 12, delay: 0.4 + i * 0.15 }}
+                >
+                  <Star
+                    size={32}
+                    fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
+                    color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
+                  />
+                </motion.span>
+              ))}
+            </span>
+
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.9 }}
+            >
+              <Badge variant="success" icon={<Sparkles size={14} />}>
+                +{correctCount * 10} XP
+              </Badge>
+            </motion.div>
+
+            <div className="dialogue-game__summary-actions">
+              <button
+                type="button"
+                className="dialogue-game__summary-btn dialogue-game__summary-btn--secondary"
+                onClick={() => onComplete(correctCount, totalQuestions)}
+              >
+                <ArrowRight size={16} />
+                {lang === 'tr' ? 'Geri Don' : 'Back'}
+              </button>
+              <button
+                type="button"
+                className="dialogue-game__summary-btn dialogue-game__summary-btn--primary"
+                onClick={handlePlayAgain}
+              >
+                <RotateCcw size={16} />
+                {lang === 'tr' ? 'Tekrar Oyna' : 'Play Again'}
+              </button>
+            </div>
+          </motion.div>
+        </Card>
+      </div>
     );
   }
 
   const currentLine = currentQuestionIndex !== null ? lines[currentQuestionIndex] : null;
   const celebratingMascot = mascotState === 'celebrating';
 
+  const dialogueProgress = totalQuestions > 0 ? (answered.filter((a) => a.correct).length / totalQuestions) * 100 : 0;
+
   return (
     <div className="dialogue-game">
+      <ProgressBar value={dialogueProgress} variant="success" size="sm" animated />
       {/* Chat feed */}
       <div className="dialogue-game__feed">
         <AnimatePresence initial={false}>
@@ -269,26 +333,31 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
             <p className="dialogue-game__options-label">
               {lang === 'tr' ? 'Sen ne dersin?' : 'What do you say?'}
             </p>
-            {currentLine.options.map((option) => (
-              <motion.button
-                key={option.id}
-                type="button"
-                className={getOptionClass(option.id)}
-                onClick={() => handleOptionSelect(currentQuestionIndex!, option)}
-                disabled={isAdvancing}
-                whileTap={{ scale: 0.97 }}
-                animate={
-                  optionState[option.id] === 'wrong'
-                    ? { x: [-6, 6, -5, 5, -3, 3, 0] }
-                    : { x: 0 }
-                }
-                transition={{ duration: 0.4 }}
-              >
-                <span className="dialogue-game__option-text">
-                  {lang === 'tr' && option.textTr ? option.textTr : option.text}
-                </span>
-              </motion.button>
-            ))}
+            {currentLine.options.map((option, idx) => {
+              const state = optionState[option.id] ?? 'idle';
+              return (
+                <motion.button
+                  key={option.id}
+                  type="button"
+                  className={getOptionClass(option.id)}
+                  onClick={() => handleOptionSelect(currentQuestionIndex!, option)}
+                  disabled={isAdvancing}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={
+                    state === 'wrong'
+                      ? { opacity: 1, y: 0, x: [-6, 6, -5, 5, -3, 3, 0] }
+                      : { opacity: 1, y: 0, x: 0 }
+                  }
+                  transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.05 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {state === 'correct' && <CheckCircle size={18} style={{ flexShrink: 0 }} />}
+                  <span className="dialogue-game__option-text">
+                    {lang === 'tr' && option.textTr ? option.textTr : option.text}
+                  </span>
+                </motion.button>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>

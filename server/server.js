@@ -16,6 +16,9 @@ const __dirname = path.dirname(__filename);
 import multer from 'multer';
 import security from './security.js';
 import billingRoutes from './routes/billing.js';
+import paymentRoutes from './routes/payment.js';
+import ttsGenerateRoutes from './routes/tts-generate.js';
+import apiRoutes from './routes/api/index.js';
 
 // Load .env - MUST use override: true so .env wins over any parent-process empty vars
 const rootEnv = path.resolve(__dirname, '..', '.env');
@@ -81,6 +84,10 @@ const allowedOrigins = [
   'http://localhost:5000',
   'http://localhost:3000',
   'http://localhost:3001',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://minesminis.com',
+  'https://www.minesminis.com',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -1492,6 +1499,21 @@ app.get('/api/stories/:id',
 // BILLING ROUTES (Lemon Squeezy)
 // ============================================================
 app.use('/api/billing', billingRoutes);
+
+// ============================================================
+// PAYMENT ROUTES (Stripe + Iyzico)
+// ============================================================
+app.use('/api/payment', paymentRoutes);
+
+// ============================================================
+// TTS GENERATE ROUTES (Local Qwen TTS)
+// ============================================================
+app.use('/api/tts', ttsGenerateRoutes);
+
+// ============================================================
+// PHASE 1 API ROUTES (user, progress, gamification, parent, premium)
+// ============================================================
+app.use('/api', apiRoutes);
 
 // ============================================================
 // STATIC FILE SERVING (Production)

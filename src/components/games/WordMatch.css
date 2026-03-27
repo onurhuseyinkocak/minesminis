@@ -31,48 +31,7 @@
   letter-spacing: -0.01em;
 }
 
-/* -- Feedback --------------------------------------------------------- */
-
-.word-match__feedback {
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 700;
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-}
-
-.word-match__feedback--correct {
-  background: var(--success-pale);
-  color: var(--mimi-green-dark);
-  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12);
-  animation: wm-correct-flash 0.6s ease-out;
-}
-
-@keyframes wm-correct-flash {
-  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  40% { transform: scale(1.08); box-shadow: 0 0 24px 8px rgba(16, 185, 129, 0.25); }
-  100% { transform: scale(1); box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12); }
-}
-
-.word-match__feedback--wrong {
-  background: var(--error-pale);
-  color: var(--error);
-  animation: wm-wrong-shake 0.5s ease;
-}
-
-@keyframes wm-wrong-shake {
-  0%, 100% { transform: translateX(0); }
-  15% { transform: translateX(-8px); }
-  30% { transform: translateX(8px); }
-  45% { transform: translateX(-6px); }
-  60% { transform: translateX(6px); }
-  75% { transform: translateX(-3px); }
-}
+/* Feedback handled by GameMascot — inline banner removed */
 
 /* -- Board ------------------------------------------------------------ */
 
@@ -148,29 +107,30 @@
 
 .word-match__card--matched {
   border-color: var(--success);
-  background: var(--success-pale);
-  opacity: 0.75;
+  background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
+  color: var(--success, #10B981);
+  opacity: 1;
   pointer-events: none;
-  transform: scale(0.97);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-  animation: wm-match-pop 0.5s var(--ease-spring);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.2);
+  animation: wm-match-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes wm-match-pop {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.08); }
-  60% { transform: scale(0.95); }
-  100% { transform: scale(0.97); }
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.12) rotate(-1deg); }
+  65%  { transform: scale(0.96) rotate(0.5deg); }
+  85%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }
 
 .word-match__card--flash {
-  animation: wm-flash 0.7s ease;
+  animation: wm-flash 0.65s ease;
 }
 
 @keyframes wm-flash {
-  0% { background: var(--bg-card); box-shadow: var(--shadow-card); transform: scale(1); }
-  25% { background: var(--success); box-shadow: 0 0 32px rgba(16, 185, 129, 0.5); transform: scale(1.06); }
-  50% { background: var(--success-pale); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); transform: scale(1.02); }
+  0%   { background: var(--bg-card); box-shadow: var(--shadow-card); transform: scale(1); }
+  20%  { background: #10B981; box-shadow: 0 0 0 6px rgba(16,185,129,0.35), 0 0 32px rgba(16,185,129,0.5); transform: scale(1.07); }
+  50%  { background: #BBF7D0; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); transform: scale(1.03); }
   100% { background: var(--bg-card); box-shadow: var(--shadow-card); transform: scale(1); }
 }
 
@@ -189,10 +149,61 @@
 
 .word-match__card:disabled { cursor: default; }
 
+/* Wrong answer — red shake */
+.word-match__card--wrong {
+  border-color: var(--error, #EF4444) !important;
+  background: var(--error-pale, #FEF2F2) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+  animation: wm-shake 0.4s ease;
+}
+
+@keyframes wm-shake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-6px); }
+  30%  { transform: translateX(6px); }
+  45%  { transform: translateX(-4px); }
+  60%  { transform: translateX(4px); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+/* Checkmark shown on matched cards */
+.word-match__card-check {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--success, #10B981);
+}
+
+/* Letter avatar — shown on LEFT (English) cards instead of emoji */
+.word-match__card-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary, #FF6B35);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+}
+
+/* Emoji — shown on RIGHT (Turkish) cards */
 .word-match__card-emoji {
-  font-size: 2rem;
+  font-size: 1.9rem;
   line-height: 1;
   flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .word-match__card-text {
@@ -201,24 +212,58 @@
 
 /* -- Results ---------------------------------------------------------- */
 
-.word-match__results { text-align: center; }
+.word-match--results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.wm-confetti-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.wm-confetti-piece {
+  position: absolute;
+  font-size: 1.8rem;
+  top: 40%;
+}
 
 .word-match__results-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
+  padding: var(--space-2xl) var(--space-xl);
+  background: var(--bg-card);
+  border-radius: var(--radius-2xl, 24px);
+  border: 2px solid var(--border-light);
+  box-shadow: var(--shadow-lg, 0 20px 60px rgba(0,0,0,0.12));
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
 }
 
-.word-match__results-emoji {
-  font-size: 4.5rem;
-  animation: celebrate 0.6s ease-out;
+.word-match__results-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFF3CD 100%);
+  box-shadow: 0 8px 24px rgba(232, 163, 23, 0.25);
 }
 
 .word-match__results-title {
   font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 2.2rem;
+  font-weight: 900;
   color: var(--secondary);
   margin: 0;
   letter-spacing: -0.02em;
@@ -231,19 +276,29 @@
   line-height: 1.6;
 }
 
+.word-match__results-emoji {
+  font-size: 4.5rem;
+}
+
 .word-match__results-stars {
-  font-size: 1.75rem;
-  letter-spacing: 0.1em;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .word-match__results-actions {
   display: flex;
   gap: var(--space-md);
-  margin-top: var(--space-sm);
+  width: 100%;
 }
 
 .word-match__results-btn {
-  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  padding: 0.85rem 1.5rem;
   border-radius: var(--radius-lg);
   font-family: var(--font-display);
   font-size: 1rem;
@@ -251,23 +306,22 @@
   cursor: pointer;
   border: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-height: 52px;
 }
 
 .word-match__results-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .word-match__results-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .word-match__results-btn--primary {
   background: var(--gradient-primary);
   color: #fff;
   box-shadow: var(--shadow-button);
-  min-height: 52px;
-  padding: 0.85rem 2rem;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .word-match__results-btn--primary:hover {
@@ -301,10 +355,36 @@
 }
 
 @media (max-width: 768px) {
-  .word-match { padding: var(--space-md); }
-  .word-match__board { flex-direction: column; gap: var(--space-md); }
-  .word-match__column { max-width: 100%; }
-  .word-match__title { font-size: 1.5rem; }
+  .word-match {
+    padding: var(--space-sm);
+    gap: var(--space-md);
+  }
+  /* Keep 2 columns side by side on mobile — do NOT stack */
+  .word-match__board {
+    gap: var(--space-sm);
+  }
+  .word-match__column {
+    max-width: 100%;
+    gap: var(--space-sm);
+  }
+  .word-match__title { font-size: 1.3rem; }
+  .word-match__card {
+    padding: var(--space-sm) var(--space-md);
+    min-height: 60px;
+    gap: var(--space-sm);
+    font-size: 1rem;
+  }
+  .word-match__card-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 0.95rem;
+  }
+  .word-match__card-emoji {
+    font-size: 1.5rem;
+    width: 34px;
+    height: 34px;
+  }
+  .word-match__card-text { font-size: 0.95rem; }
 }
 
 @media (min-width: 1600px) {

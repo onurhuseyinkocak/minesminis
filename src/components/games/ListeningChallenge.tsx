@@ -1,11 +1,13 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, Sparkles, Headphones, Lightbulb, Star, RotateCcw, ArrowLeft } from 'lucide-react';
+import { Volume2, Sparkles, Headphones, Lightbulb, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
+import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
+import NoHeartsModal from '../NoHeartsModal';
 import './ListeningChallenge.css';
 
 interface WordItem {
@@ -46,7 +48,8 @@ function generateRounds(words: WordItem[]): Round[] {
 
 export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
-  const { loseHeart } = useHearts();
+  const { loseHeart, hearts } = useHearts();
+  const [showNoHearts, setShowNoHearts] = useState(false);
   const rounds = useMemo(() => generateRounds(words), [words]);
   const [currentRound, setCurrentRound] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -89,6 +92,9 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
       SFX.wrong();
       loseHeart();
       onWrongAnswer?.();
+      if (hearts - 1 <= 0) {
+        setShowNoHearts(true);
+      }
     }
 
     setTimeout(() => {
@@ -121,31 +127,46 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="listening-challenge">
+        {pct >= 90 && <ConfettiRain duration={3000} />}
         <Card variant="elevated" padding="xl" className="listening-challenge__results">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             className="listening-challenge__results-content"
           >
-            <Headphones size={48} className="listening-challenge__results-icon" />
+            <motion.span
+              className="listening-challenge__results-icon"
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
+              {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Headphones size={48} color="var(--primary)" /> : <Check size={48} color="#22C55E" />}
+            </motion.span>
             <h2 className="listening-challenge__results-title">{t('games.greatListening') || 'Great Listening!'}</h2>
             <p className="listening-challenge__results-score">
               {score} / {rounds.length}
             </p>
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                <motion.span
+                  key={i}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
+                >
+                  <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                </motion.span>
               ))}
             </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
               +{score * 12} XP
             </Badge>
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
-              <button type="button" className="listening-challenge__results-btn" onClick={() => onComplete(score, rounds.length)} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: '2px solid var(--border, #e2e8f0)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
-                <ArrowLeft size={16} /> {t('games.backToGames') || 'Back'}
+            <div className="listening-challenge__results-actions">
+              <button type="button" className="listening-challenge__results-btn listening-challenge__results-btn--secondary" onClick={() => onComplete(score, rounds.length)}>
+                <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
               </button>
-              <button type="button" className="listening-challenge__results-btn" onClick={handlePlayAgain} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.75rem', border: 'none', background: 'var(--primary, #FF6B35)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+              <button type="button" className="listening-challenge__results-btn listening-challenge__results-btn--primary" onClick={handlePlayAgain}>
                 <RotateCcw size={16} /> {t('games.playAgain') || 'Play Again'}
               </button>
             </div>
@@ -158,6 +179,10 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   if (!round) return null;
 
   return (
+    <>
+    {showNoHearts && (
+      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
+    )}
     <div className="listening-challenge" role="application" aria-label="Listening challenge game">
       <div className="listening-challenge__header">
         <h2 className="listening-challenge__title">{t('games.listenAndPick') || 'Listen & Pick!'}</h2>
@@ -224,14 +249,13 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
                 onClick={() => handleSelect(index)}
                 disabled={feedback !== null || !hasPlayed}
                 aria-label={`Option: ${option.english}`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
+                initial={{ opacity: 0, scale: 0.7, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20, delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span className="listening-challenge__option-emoji"
-                  style={{ background: option.emoji ? 'transparent' : 'var(--primary)', color: '#fff', borderRadius: '50%', width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: option.emoji ? '1.4rem' : '1rem', flexShrink: 0 }}
+                <span className={`listening-challenge__option-emoji${option.emoji ? '' : ' listening-challenge__option-emoji--fallback'}`}
                 >{option.emoji || option.english[0].toUpperCase()}</span>
                 <span className="listening-challenge__option-label">{option.english}</span>
               </motion.button>
@@ -246,6 +270,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
         </p>
       )}
     </div>
+    </>
   );
 };
 

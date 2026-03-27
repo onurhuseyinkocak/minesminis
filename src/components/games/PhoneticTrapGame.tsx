@@ -1,13 +1,15 @@
 import { useState, useCallback } from 'react';
-import { ArrowLeft, BookOpen, PenTool, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, ArrowRight, BookOpen, PenTool, Zap, Star, Sparkles, Trophy, Check, RotateCcw, CheckCircle2, X } from 'lucide-react';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { SFX } from '../../data/soundLibrary';
+import { Badge, ConfettiRain } from '../ui';
 import UnifiedMascot from '../UnifiedMascot';
 import type { PhoneticTrap } from '../../data/turkishPhoneticTraps';
 import './PhoneticTrapGame.css';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ---- Types ----
 
 export interface PhoneticTrapGameProps {
   trap: PhoneticTrap;
@@ -25,29 +27,22 @@ interface ChallengeQuestion {
   options: Array<{ word: string; meaning: string; meaningTr: string; isCorrect: boolean }>;
 }
 
-// ─── Mouth SVG diagrams ───────────────────────────────────────────────────────
+// ---- Mouth SVG diagrams ----
 
 function MouthDiagramTH() {
   return (
     <svg width="90" height="72" viewBox="0 0 90 72" fill="none" aria-label="Mouth position for TH sound">
-      {/* Outer lips */}
       <ellipse cx="45" cy="44" rx="38" ry="22" fill="#FBBCB0" stroke="#E57373" strokeWidth="1.5" />
-      {/* Upper lip line */}
       <path d="M 15 40 Q 30 32 45 36 Q 60 32 75 40" stroke="#C0504D" strokeWidth="1.5" fill="none" />
-      {/* Teeth upper */}
       <rect x="22" y="38" width="46" height="10" rx="2" fill="#FFFDE7" stroke="#E0E0E0" strokeWidth="0.8" />
-      {/* Teeth lower */}
       <rect x="22" y="50" width="46" height="10" rx="2" fill="#FFFDE7" stroke="#E0E0E0" strokeWidth="0.8" />
-      {/* Tongue between teeth */}
       <ellipse cx="45" cy="48" rx="20" ry="5" fill="#E57373" opacity="0.9" />
-      {/* Arrow showing tongue out */}
       <path d="M 62 48 L 74 48" stroke="#7C3AED" strokeWidth="2" markerEnd="url(#arr)" />
       <defs>
         <marker id="arr" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
           <path d="M0,0 L6,3 L0,6 Z" fill="#7C3AED" />
         </marker>
       </defs>
-      {/* Label */}
       <text x="45" y="14" textAnchor="middle" fontSize="10" fontWeight="700" fill="#7C3AED">tongue out</text>
     </svg>
   );
@@ -56,15 +51,10 @@ function MouthDiagramTH() {
 function MouthDiagramW() {
   return (
     <svg width="90" height="72" viewBox="0 0 90 72" fill="none" aria-label="Mouth position for W sound">
-      {/* Outer lips — rounded/puckered */}
       <ellipse cx="45" cy="44" rx="22" ry="18" fill="#FBBCB0" stroke="#E57373" strokeWidth="1.5" />
-      {/* Inner opening small */}
       <ellipse cx="45" cy="46" rx="10" ry="8" fill="#4A1942" />
-      {/* Lip roundness indicator */}
       <path d="M 26 38 Q 35 26 45 28 Q 55 26 64 38" stroke="#C0504D" strokeWidth="1.5" fill="none" />
-      {/* Label */}
       <text x="45" y="14" textAnchor="middle" fontSize="10" fontWeight="700" fill="#2563EB">round lips</text>
-      {/* Arrow showing lip shape */}
       <path d="M 23 44 L 10 44" stroke="#2563EB" strokeWidth="2" markerEnd="url(#arrW)" />
       <defs>
         <marker id="arrW" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
@@ -78,15 +68,10 @@ function MouthDiagramW() {
 function MouthDiagramR() {
   return (
     <svg width="90" height="72" viewBox="0 0 90 72" fill="none" aria-label="Mouth position for English R sound">
-      {/* Outer lips */}
       <ellipse cx="45" cy="44" rx="34" ry="20" fill="#FBBCB0" stroke="#E57373" strokeWidth="1.5" />
-      {/* Upper row teeth */}
       <rect x="24" y="38" width="42" height="9" rx="2" fill="#FFFDE7" stroke="#E0E0E0" strokeWidth="0.8" />
-      {/* Lower row teeth */}
       <rect x="24" y="49" width="42" height="9" rx="2" fill="#FFFDE7" stroke="#E0E0E0" strokeWidth="0.8" />
-      {/* Tongue curled back */}
       <path d="M 28 52 Q 40 44 55 50 Q 62 46 65 38" stroke="#E57373" strokeWidth="3" fill="none" strokeLinecap="round" />
-      {/* Arrow showing curl direction */}
       <path d="M 60 36 Q 68 30 72 36" stroke="#0891B2" strokeWidth="1.5" fill="none" markerEnd="url(#arrR)" />
       <defs>
         <marker id="arrR" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
@@ -101,17 +86,12 @@ function MouthDiagramR() {
 function MouthDiagramNG() {
   return (
     <svg width="90" height="72" viewBox="0 0 90 72" fill="none" aria-label="Mouth position for NG sound">
-      {/* Outer lips — slightly open */}
       <ellipse cx="45" cy="44" rx="36" ry="20" fill="#FBBCB0" stroke="#E57373" strokeWidth="1.5" />
-      {/* Teeth */}
       <rect x="22" y="38" width="46" height="8" rx="2" fill="#FFFDE7" stroke="#E0E0E0" strokeWidth="0.8" />
       <rect x="22" y="48" width="46" height="8" rx="2" fill="#FFFDE7" stroke="#E0E0E0" strokeWidth="0.8" />
-      {/* Back of tongue rises */}
       <path d="M 22 56 Q 36 52 55 46 Q 65 42 68 40" stroke="#E57373" strokeWidth="3" fill="none" strokeLinecap="round" />
-      {/* Palate */}
       <path d="M 28 36 Q 45 28 62 36" stroke="#FBBCB0" strokeWidth="8" fill="none" />
       <path d="M 28 36 Q 45 28 62 36" stroke="#E57373" strokeWidth="1.5" fill="none" />
-      {/* Contact point marker */}
       <circle cx="58" cy="38" r="4" fill="#BE185D" opacity="0.85" />
       <text x="45" y="14" textAnchor="middle" fontSize="10" fontWeight="700" fill="#BE185D">back tongue up</text>
     </svg>
@@ -138,16 +118,15 @@ function MouthDiagram({ trapId, color }: { trapId: string; color: string }) {
   return <MouthDiagramDefault color={color} />;
 }
 
-// ─── Build challenge questions from minimal pairs ─────────────────────────────
+// ---- Build challenge questions from minimal pairs ----
 
 function buildChallengeQuestions(trap: PhoneticTrap): ChallengeQuestion[] {
   const pairs = [...trap.minimalPairs];
-  // Use up to 5 pairs; shuffle lightly by reversing every other
   const selected = pairs.slice(0, 5);
   return selected.map((pair) => {
     const isCorrectFirst = Math.random() > 0.5;
     const correctOpt = { word: pair.english, meaning: pair.meaning, meaningTr: pair.meaningTr, isCorrect: true };
-    const wrongOpt = { word: pair.errorVersion, meaning: `"${pair.errorVersion}" (Yanlış)`, meaningTr: `"${pair.errorVersion}" (Hata)`, isCorrect: false };
+    const wrongOpt = { word: pair.errorVersion, meaning: `"${pair.errorVersion}" (Wrong)`, meaningTr: `"${pair.errorVersion}" (Hata)`, isCorrect: false };
     return {
       word: pair.english,
       meaning: pair.meaning,
@@ -157,7 +136,99 @@ function buildChallengeQuestions(trap: PhoneticTrap): ChallengeQuestion[] {
   });
 }
 
-// ─── Learn Tab ────────────────────────────────────────────────────────────────
+// ---- Results Screen (shared between Practice and Challenge tabs) ----
+
+function TabResultsScreen({
+  correctCount,
+  totalCount,
+  title,
+  onPlayAgain,
+  onBack,
+  xpPerCorrect,
+}: {
+  correctCount: number;
+  totalCount: number;
+  title: string;
+  onPlayAgain: () => void;
+  onBack: () => void;
+  xpPerCorrect: number;
+}) {
+  const pct = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+  const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
+  const isPerfect = pct >= 90;
+
+  return (
+    <div className="ptg__panel" style={{ position: 'relative' }}>
+      {isPerfect && <ConfettiRain duration={3000} />}
+      <motion.div
+        className="ptg__results"
+        initial={{ scale: 0.7, opacity: 0, y: 40 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+      >
+        <motion.div
+          className="ptg__complete-mascot"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.2 }}
+        >
+          <UnifiedMascot state={pct >= 60 ? 'celebrating' : 'waving'} size={100} />
+        </motion.div>
+
+        <motion.span
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 }}
+        >
+          {pct >= 90
+            ? <Trophy size={48} color="#E8A317" />
+            : pct >= 60
+              ? <Star size={48} fill="#E8A317" color="#E8A317" />
+              : <Check size={48} color="#22C55E" />}
+        </motion.span>
+
+        <h3 className="ptg__results-title">{title}</h3>
+        <p className="ptg__results-score">
+          {correctCount}/{totalCount} ({pct}%)
+        </p>
+
+        <span className="game-stars">
+          {Array.from({ length: 3 }, (_, i) => (
+            <motion.span
+              key={i}
+              initial={{ scale: 0, rotate: -30 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.55 + i * 0.12 }}
+            >
+              <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+            </motion.span>
+          ))}
+        </span>
+
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.9 }}
+        >
+          <Badge variant="success" icon={<Sparkles size={14} />}>
+            +{correctCount * xpPerCorrect} XP
+          </Badge>
+        </motion.div>
+
+        <div className="ptg__results-actions">
+          <button type="button" className="ptg__results-btn ptg__results-btn--secondary" onClick={onBack}>
+            <ArrowRight size={16} /> Back
+          </button>
+          <button type="button" className="ptg__results-btn ptg__results-btn--primary" onClick={onPlayAgain}>
+            <RotateCcw size={16} /> Play Again
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ---- Learn Tab ----
 
 function LearnTab({ trap }: { trap: PhoneticTrap }) {
   const { lang: language } = useLanguage();
@@ -167,7 +238,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
     <div className="ptg__panel">
       {/* Error description */}
       <div className="ptg__error-card" style={{ '--trap-color': trap.color } as React.CSSProperties}>
-        <p className="ptg__error-label">{isTr ? 'Sık Yapılan Hata' : 'Common Mistake'}</p>
+        <p className="ptg__error-label">{isTr ? 'Sik Yapilan Hata' : 'Common Mistake'}</p>
         <p className="ptg__error-text">{trap.commonError}</p>
         <p className="ptg__error-text--tr">{trap.commonErrorTr}</p>
       </div>
@@ -175,7 +246,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
       {/* Mouth position diagram */}
       <div className="ptg__mouth-section">
         <p className="ptg__mouth-title">
-          {isTr ? 'Bu sesi nasıl çıkarırsın:' : 'How to make this sound:'}
+          {isTr ? 'Bu sesi nasil cikarirsin:' : 'How to make this sound:'}
         </p>
         <div className="ptg__mouth-diagram">
           <div className="ptg__mouth-svg-wrap">
@@ -190,7 +261,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
 
       {/* Minimal pairs */}
       <div>
-        <p className="ptg__pairs-title">{isTr ? 'Doğru ve Sık Yapılan Hata:' : 'Correct vs. Common Error:'}</p>
+        <p className="ptg__pairs-title">{isTr ? 'Dogru ve Sik Yapilan Hata:' : 'Correct vs. Common Error:'}</p>
         <div className="ptg__pairs-list">
           {trap.minimalPairs.map((pair) => (
             <div key={pair.english} className="ptg__pair">
@@ -202,7 +273,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
               <span className="ptg__pair-divider">vs</span>
               <div className="ptg__pair-wrong">
                 <span className="ptg__pair-word--wrong">{pair.errorVersion}</span>
-                <span className="ptg__pair-label">{isTr ? 'Sık yapılan hata' : 'Common error'}</span>
+                <span className="ptg__pair-label">{isTr ? 'Sik yapilan hata' : 'Common error'}</span>
               </div>
             </div>
           ))}
@@ -212,18 +283,20 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
   );
 }
 
-// ─── Practice Tab ─────────────────────────────────────────────────────────────
+// ---- Practice Tab ----
 
 function PracticeTab({
   trap,
   onComplete,
   onWrongAnswer,
   loseHeart,
+  onBack,
 }: {
   trap: PhoneticTrap;
   onComplete: (score: number) => void;
   onWrongAnswer?: () => void;
   loseHeart: () => void;
+  onBack: () => void;
 }) {
   const { lang: language } = useLanguage();
   const isTr = language === 'tr';
@@ -262,19 +335,23 @@ function PracticeTab({
     }
   }, [exerciseIndex, trap.exercises.length, correctCount, onComplete]);
 
+  const handlePlayAgain = () => {
+    setExerciseIndex(0);
+    setSelected(null);
+    setCorrectCount(0);
+    setDone(false);
+  };
+
   if (done) {
     return (
-      <div className="ptg__panel">
-        <div className="ptg__complete">
-          <div className="ptg__complete-mascot">
-            <UnifiedMascot state="celebrating" size={100} />
-          </div>
-          <h3 className="ptg__complete-title">{isTr ? 'Alıştırma bitti!' : 'Practice done!'}</h3>
-          <p className="ptg__complete-score">
-            {correctCount}/{trap.exercises.length} {isTr ? 'doğru' : 'correct'}
-          </p>
-        </div>
-      </div>
+      <TabResultsScreen
+        correctCount={correctCount}
+        totalCount={trap.exercises.length}
+        title={isTr ? 'Alistirma bitti!' : 'Practice done!'}
+        onPlayAgain={handlePlayAgain}
+        onBack={onBack}
+        xpPerCorrect={10}
+      />
     );
   }
 
@@ -292,62 +369,92 @@ function PracticeTab({
         <div className="ptg__progress-bar-fill" style={{ width: `${progress}%`, ['--trap-color' as string]: trap.color }} />
       </div>
 
-      <div className="ptg__prompt-card">
+      <motion.div
+        className="ptg__prompt-card"
+        key={exerciseIndex}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      >
         <p className="ptg__prompt-en">{exercise.prompt}</p>
         {isTr && <p className="ptg__prompt-tr">{exercise.promptTr}</p>}
-      </div>
+      </motion.div>
 
       <div className="ptg__options">
-        {(exercise.options ?? []).map((option) => {
+        {(exercise.options ?? []).map((option, idx) => {
           let optClass = 'ptg__option';
           if (selected !== null) {
             if (option === exercise.correctOption) optClass += ' ptg__option--correct';
             else if (option === selected) optClass += ' ptg__option--wrong';
           }
           return (
-            <button
+            <motion.button
               type="button"
               key={option}
               className={optClass}
               onClick={() => handleSelect(option)}
               disabled={selected !== null}
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.06 }}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.97, y: 1 }}
             >
-              {option}
-            </button>
+              <span className="ptg__option-text">{option}</span>
+              {selected !== null && option === exercise.correctOption && <CheckCircle2 size={18} strokeWidth={2.5} />}
+              {selected !== null && option === selected && option !== exercise.correctOption && <X size={18} strokeWidth={2.5} />}
+            </motion.button>
           );
         })}
       </div>
 
       {selected !== null && (
         <>
-          <div className={`ptg__feedback ${selected === exercise.correctOption ? 'ptg__feedback--correct' : 'ptg__feedback--wrong'}`}>
+          <motion.div
+            className={`ptg__feedback ${selected === exercise.correctOption ? 'ptg__feedback--correct' : 'ptg__feedback--wrong'}`}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          >
             {selected === exercise.correctOption
-              ? (isTr ? 'Doğru! Harika telaffuz farkındalığı!' : 'Correct! Great pronunciation awareness!')
-              : (isTr ? `Doğru cevap: "${exercise.correctOption}"` : `The right answer is "${exercise.correctOption}"`)}
-          </div>
-          <button type="button" className="ptg__next-btn" style={{ '--trap-color': trap.color } as React.CSSProperties} onClick={handleNext}>
+              ? (isTr ? 'Dogru! Harika telaffuz farkindali!' : 'Correct! Great pronunciation awareness!')
+              : (isTr ? `Dogru cevap: "${exercise.correctOption}"` : `The right answer is "${exercise.correctOption}"`)}
+          </motion.div>
+          <motion.button
+            type="button"
+            className="ptg__next-btn"
+            style={{ '--trap-color': trap.color } as React.CSSProperties}
+            onClick={handleNext}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.97 }}
+          >
             {exerciseIndex + 1 >= trap.exercises.length
-              ? (isTr ? 'Alıştırmayı Bitir' : 'Finish Practice')
+              ? (isTr ? 'Alistirmayi Bitir' : 'Finish Practice')
               : (isTr ? 'Sonraki Soru' : 'Next Question')}
-          </button>
+          </motion.button>
         </>
       )}
     </div>
   );
 }
 
-// ─── Challenge Tab ────────────────────────────────────────────────────────────
+// ---- Challenge Tab ----
 
 function ChallengeTab({
   trap,
   onComplete,
   onWrongAnswer,
   loseHeart,
+  onBack,
 }: {
   trap: PhoneticTrap;
   onComplete: (score: number) => void;
   onWrongAnswer?: () => void;
   loseHeart: () => void;
+  onBack: () => void;
 }) {
   const { lang: language } = useLanguage();
   const isTr = language === 'tr';
@@ -366,7 +473,6 @@ function ChallengeTab({
       if (isCorrect) {
         SFX.correct();
         setCorrectCount((c) => c + 1);
-        // Auto-advance after 900ms
         setTimeout(() => {
           if (questionIndex + 1 >= questions.length) {
             const score = Math.round(((correctCount + 1) / questions.length) * 100);
@@ -396,20 +502,23 @@ function ChallengeTab({
     [selected, questionIndex, questions.length, correctCount, onComplete, onWrongAnswer, loseHeart],
   );
 
+  const handlePlayAgain = () => {
+    setQuestionIndex(0);
+    setSelected(null);
+    setCorrectCount(0);
+    setDone(false);
+  };
+
   if (done) {
-    const finalScore = Math.round((correctCount / questions.length) * 100);
     return (
-      <div className="ptg__panel">
-        <div className="ptg__complete">
-          <div className="ptg__complete-mascot">
-            <UnifiedMascot state={finalScore >= 60 ? 'celebrating' : 'waving'} size={100} />
-          </div>
-          <h3 className="ptg__complete-title">{isTr ? 'Meydan Okuma Tamamlandı!' : 'Challenge Complete!'}</h3>
-          <p className="ptg__complete-score">
-            {isTr ? `Skor: ${correctCount}/${questions.length} — ${finalScore}%` : `Score: ${correctCount}/${questions.length} — ${finalScore}%`}
-          </p>
-        </div>
-      </div>
+      <TabResultsScreen
+        correctCount={correctCount}
+        totalCount={questions.length}
+        title={isTr ? 'Meydan Okuma Tamamlandi!' : 'Challenge Complete!'}
+        onPlayAgain={handlePlayAgain}
+        onBack={onBack}
+        xpPerCorrect={15}
+      />
     );
   }
 
@@ -419,10 +528,10 @@ function ChallengeTab({
     <div className="ptg__panel">
       <div className="ptg__challenge">
         <div className="ptg__challenge-header">
-          <h3 className="ptg__challenge-title">{isTr ? 'Hız Meydan Okuması' : 'Speed Challenge'}</h3>
+          <h3 className="ptg__challenge-title">{isTr ? 'Hiz Meydan Okumasi' : 'Speed Challenge'}</h3>
           <p className="ptg__challenge-subtitle">
             {isTr
-              ? 'Doğru İngilizce kelimeye bas!'
+              ? 'Dogru Ingilizce kelimeye bas!'
               : 'Tap the correct English word!'}
           </p>
         </div>
@@ -435,33 +544,46 @@ function ChallengeTab({
           {questionIndex + 1} / {questions.length}
         </span>
 
-        <div key={question.word} className="ptg__challenge-word" style={{ color: trap.color }}>
+        <motion.div
+          key={question.word}
+          className="ptg__challenge-word"
+          style={{ color: trap.color }}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        >
           {question.word}
-        </div>
+        </motion.div>
 
         <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0 }}>
           {isTr ? question.meaningTr : question.meaning}
         </p>
 
         <div className="ptg__challenge-options">
-          {question.options.map((opt) => {
+          {question.options.map((opt, idx) => {
             let cls = 'ptg__challenge-option';
-            if (selected === opt.word) {
-              cls += opt.isCorrect ? ' ptg__challenge-option--correct' : ' ptg__challenge-option--wrong';
+            if (selected !== null) {
+              if (opt.isCorrect) cls += ' ptg__challenge-option--correct';
+              else if (selected === opt.word) cls += ' ptg__challenge-option--wrong';
             }
             return (
-              <button
+              <motion.button
                 type="button"
                 key={opt.word}
                 className={cls}
                 onClick={() => handleSelect(opt.word, opt.isCorrect)}
                 disabled={selected !== null}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.06 }}
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.97 }}
               >
                 <span className="ptg__challenge-option-word">{opt.word}</span>
                 <span className="ptg__challenge-option-meaning">
                   {isTr ? opt.meaningTr : opt.meaning}
                 </span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -470,7 +592,7 @@ function ChallengeTab({
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// ---- Main Component ----
 
 export default function PhoneticTrapGame({
   trap,
@@ -529,7 +651,7 @@ export default function PhoneticTrapGame({
           onClick={() => setActiveTab('learn')}
         >
           <span className="ptg__tab-icon"><BookOpen size={16} /></span>
-          <span className="ptg__tab-label">{isTr ? 'Öğren' : 'Learn'}</span>
+          <span className="ptg__tab-label">{isTr ? 'Ogren' : 'Learn'}</span>
         </button>
         <button
           type="button"
@@ -537,7 +659,7 @@ export default function PhoneticTrapGame({
           onClick={() => setActiveTab('practice')}
         >
           <span className="ptg__tab-icon"><PenTool size={16} /></span>
-          <span className="ptg__tab-label">{isTr ? 'Alıştırma' : 'Practice'}</span>
+          <span className="ptg__tab-label">{isTr ? 'Alistirma' : 'Practice'}</span>
           {practiceScore !== null && <span style={{ fontSize: '0.65rem', color: 'var(--success, #10B981)' }}>{practiceScore}%</span>}
         </button>
         <button
@@ -559,6 +681,7 @@ export default function PhoneticTrapGame({
           onComplete={handlePracticeComplete}
           onWrongAnswer={onWrongAnswer}
           loseHeart={loseHeart}
+          onBack={onBack}
         />
       )}
       {activeTab === 'challenge' && (
@@ -567,6 +690,7 @@ export default function PhoneticTrapGame({
           onComplete={handleChallengeComplete}
           onWrongAnswer={onWrongAnswer}
           loseHeart={loseHeart}
+          onBack={onBack}
         />
       )}
     </div>

@@ -175,6 +175,20 @@
   transition: transform var(--transition-fast);
 }
 
+.listening-challenge__option-emoji--fallback {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
 .listening-challenge__option:hover:not(:disabled) .listening-challenge__option-emoji {
   transform: scale(1.08);
 }
@@ -248,6 +262,9 @@
   font-weight: 700;
   cursor: pointer;
   border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   min-height: 52px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -304,6 +321,17 @@
   .listening-challenge__option-label { font-size: 0.9rem; }
 }
 
+@media (max-width: 480px) {
+  .listening-challenge__results-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .listening-challenge__results-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
 @media (min-width: 1600px) {
   .listening-challenge { max-width: 850px; }
   .listening-challenge__option {
@@ -341,4 +369,9 @@
 
 [data-theme="dark"] .listening-challenge__feedback--wrong {
   background: var(--error-pale);
+}
+
+[data-theme="dark"] .listening-challenge__results-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
 }

@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Delete, Lightbulb, Sparkles, Trophy, Star, Check } from 'lucide-react';
+import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
+import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { speakElevenLabs } from '../../services/ttsService';
 import { SpeakButton } from '../SpeakButton';
@@ -92,6 +93,39 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     speakElevenLabs(text, 0.9).catch(() => {/* fallback handled inside speakElevenLabs() */});
   }, []);
 
+  // Physical keyboard support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (completed || feedback) return;
+
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleBackspace();
+        return;
+      }
+
+      if (e.key === 'Enter' && typed.length === currentWord?.english.length) {
+        e.preventDefault();
+        handleSubmit();
+        return;
+      }
+
+      const key = e.key.toUpperCase();
+      if (key.length === 1 && /[A-Z]/.test(key)) {
+        // Find first unused pool letter matching this key
+        const poolIndex = letterPool.findIndex(
+          (letter, i) => letter === key && !usedIndices.includes(i)
+        );
+        if (poolIndex !== -1) {
+          handleLetterTap(letterPool[poolIndex], poolIndex);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [completed, feedback, typed, letterPool, usedIndices, currentWord]);
+
   const handleLetterTap = (letter: string, poolIndex: number) => {
     if (feedback || usedIndices.includes(poolIndex)) return;
     setTyped((prev) => [...prev, letter]);
@@ -161,23 +195,36 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="spelling-bee">
+        {pct >= 90 && <ConfettiRain duration={3000} />}
         <Card variant="elevated" padding="xl" className="spelling-bee__results">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             className="spelling-bee__results-content"
           >
-            <span className="spelling-bee__big-emoji">
+            <motion.span
+              className="spelling-bee__big-emoji"
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
               {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
-            </span>
+            </motion.span>
             <h2 className="spelling-bee__results-title">{t('games.spellingStar')}</h2>
             <p className="spelling-bee__results-score">
               {t('games.outOfCorrect').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
             </p>
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star key={i} size={18} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                <motion.span
+                  key={i}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
+                >
+                  <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                </motion.span>
               ))}
             </span>
             <Badge variant="success" icon={<Sparkles size={14} />}>
@@ -185,10 +232,10 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
             </Badge>
             <div className="spelling-bee__results-actions">
               <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => onComplete(score, gameWords.length)}>
-                {t('games.backToGames')}
+                <ArrowRight size={16} /> {t('games.backToGames')}
               </button>
               <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain}>
-                {t('games.playAgain')}
+                <RotateCcw size={16} /> {t('games.playAgain')}
               </button>
             </div>
           </motion.div>
@@ -216,12 +263,11 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
 
       <Card variant="elevated" padding="lg" className="spelling-bee__prompt">
         <motion.div
-          className="spelling-bee__big-emoji"
+          className={`spelling-bee__big-emoji${currentWord.emoji ? '' : ' spelling-bee__big-emoji--fallback'}`}
           key={currentWord.english}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300 }}
-          style={{ width: 64, height: 64, borderRadius: '50%', background: currentWord.emoji ? 'transparent' : 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: currentWord.emoji ? 40 : 28, fontWeight: 900 }}
         >
           {currentWord.emoji || currentWord.english.charAt(0).toUpperCase()}
         </motion.div>

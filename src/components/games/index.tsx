@@ -1,6 +1,35 @@
 import React from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
+// ── Error Boundary ────────────────────────────────────────────────────────────
+interface ErrorBoundaryState { hasError: boolean; }
+class GameErrorBoundary extends React.Component<{ children: React.ReactNode }, ErrorBoundaryState> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ textAlign: 'center', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>Something went wrong in this game.</p>
+          <button
+            type="button"
+            style={{ padding: '0.6rem 1.5rem', borderRadius: '999px', background: 'var(--primary)', color: '#fff', border: 'none', fontFamily: 'var(--font-display)', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem' }}
+            onClick={() => this.setState({ hasError: false })}
+          >
+            Try Again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export { WordMatch } from './WordMatch';
 export { SpellingBee } from './SpellingBee';
 export { QuickQuiz } from './QuickQuiz';
@@ -220,15 +249,17 @@ export function GameSelector({ type, extra, ...props }: GameSelectorProps) {
     : props;
 
   return (
-    <React.Suspense
-      fallback={
-        <div style={{ textAlign: 'center', padding: '2rem', fontSize: '1.5rem' }}>
-          {t('games.loadingGame')}
-        </div>
-      }
-    >
-      <GameComponent {...gameProps} />
-    </React.Suspense>
+    <GameErrorBoundary>
+      <React.Suspense
+        fallback={
+          <div style={{ textAlign: 'center', padding: '2rem', fontSize: '1.5rem' }}>
+            {t('games.loadingGame')}
+          </div>
+        }
+      >
+        <GameComponent {...gameProps} />
+      </React.Suspense>
+    </GameErrorBoundary>
   );
 }
 

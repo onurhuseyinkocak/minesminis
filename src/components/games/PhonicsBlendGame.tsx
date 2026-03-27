@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check, Volume2 } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Sparkles, Star, Trophy, Check, Volume2, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -193,12 +193,13 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
 
     return (
       <div className="pbg">
+        {pct >= 90 && <ConfettiRain />}
         <Card variant="elevated" padding="xl" className="pbg__completion">
           <motion.div
             className="pbg__completion-content"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
           >
             <UnifiedMascot state="celebrating" size={120} />
 
@@ -220,32 +221,46 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
 
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star
+                <motion.span
                   key={i}
-                  size={18}
-                  fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
-                  color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
-                />
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
+                >
+                  <Star
+                    size={32}
+                    fill={i < stars ? '#E8A317' : 'none'}
+                    color={i < stars ? '#E8A317' : '#ccc'}
+                  />
+                </motion.span>
               ))}
             </span>
 
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 10} XP
-            </Badge>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
+            >
+              <Badge variant="success" icon={<Sparkles size={14} />}>
+                +{score * 10} XP
+              </Badge>
+            </motion.div>
 
             <div className="pbg__completion-actions">
               <button
                 type="button"
-                className="pbg__completion-btn pbg__completion-btn--secondary kbtn kbtn--blue"
+                className="pbg__completion-btn pbg__completion-btn--secondary"
                 onClick={() => onComplete(score, questions.length)}
               >
+                <ArrowLeft size={16} />
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="pbg__completion-btn pbg__completion-btn--primary kbtn kbtn--blue"
+                className="pbg__completion-btn pbg__completion-btn--primary"
                 onClick={handlePlayAgain}
               >
+                <RotateCcw size={16} />
                 {t('games.playAgain')}
               </button>
             </div>
@@ -391,22 +406,25 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
           {/* Multiple choice options */}
           {phase === 'choices' && (
             <div className="pbg__options-grid" role="group" aria-label="Choose the blended word">
-              {options.map((option) => {
+              {options.map((option, idx) => {
                 const state: OptionState = optionStates[option] ?? 'idle';
                 return (
                   <motion.button
                     key={option}
                     type="button"
                     className={[
-                      'pbg__option kbtn kbtn--option',
-                      state === 'correct' && 'pbg__option--correct correct',
-                      state === 'wrong' && 'pbg__option--wrong wrong',
+                      'pbg__option',
+                      state === 'correct' && 'pbg__option--correct',
+                      state === 'wrong' && 'pbg__option--wrong',
                     ]
                       .filter(Boolean)
                       .join(' ')}
                     onClick={() => handleOptionPress(option)}
                     disabled={answered && state === 'idle'}
                     aria-pressed={state !== 'idle'}
+                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.08 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     {option}

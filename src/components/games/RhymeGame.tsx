@@ -1,7 +1,7 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -83,8 +83,6 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
   const [showArc, setShowArc] = useState(false);
   const [cardState, setCardState] = useState<'idle' | 'correct' | 'wrong'>('idle');
 
-  const cardRef1 = useRef<HTMLDivElement>(null);
-  const cardRef2 = useRef<HTMLDivElement>(null);
 
   const handleAnswer = useCallback(
     (userSaysYes: boolean) => {
@@ -112,7 +110,7 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
         {t('games.doTheseRhyme') || 'Do these words rhyme?'}
       </p>
 
-      <div className="rg__detect-cards" ref={cardRef1 as React.RefObject<HTMLDivElement>}>
+      <div className="rg__detect-cards">
         {/* Word 1 */}
         <motion.div
           className={[
@@ -147,7 +145,6 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
 
         {/* Word 2 */}
         <motion.div
-          ref={cardRef2}
           className={[
             'rg__detect-card',
             cardState === 'correct' && 'rg__detect-card--correct',
@@ -551,12 +548,13 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
     return (
       <div className="rg">
+        {pct >= 90 && <ConfettiRain />}
         <Card variant="elevated" padding="xl" className="rg__completion">
           <motion.div
             className="rg__completion-content"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
           >
             <UnifiedMascot state="celebrating" size={120} />
 
@@ -577,32 +575,46 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star
+                <motion.span
                   key={i}
-                  size={18}
-                  fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
-                  color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
-                />
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
+                >
+                  <Star
+                    size={32}
+                    fill={i < stars ? '#E8A317' : 'none'}
+                    color={i < stars ? '#E8A317' : '#ccc'}
+                  />
+                </motion.span>
               ))}
             </span>
 
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 10} XP
-            </Badge>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
+            >
+              <Badge variant="success" icon={<Sparkles size={14} />}>
+                +{score * 10} XP
+              </Badge>
+            </motion.div>
 
             <div className="rg__completion-actions">
               <button
                 type="button"
-                className="rg__completion-btn rg__completion-btn--secondary kbtn kbtn--blue"
+                className="rg__completion-btn rg__completion-btn--secondary"
                 onClick={() => onComplete(score, questions.length)}
               >
+                <ArrowLeft size={16} />
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="rg__completion-btn rg__completion-btn--primary kbtn kbtn--blue"
+                className="rg__completion-btn rg__completion-btn--primary"
                 onClick={handlePlayAgain}
               >
+                <RotateCcw size={16} />
                 {t('games.playAgain')}
               </button>
             </div>

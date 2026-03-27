@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check } from 'lucide-react';
+import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
@@ -146,13 +146,17 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
         <Card variant="elevated" padding="xl" className="wfg__completion">
           <motion.div
             className="wfg__completion-content"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            initial={{ scale: 0.8, opacity: 0, y: 30 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
             <UnifiedMascot state="celebrating" size={120} />
 
-            <span>
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
               {pct >= 80 ? (
                 <Trophy size={48} color="var(--primary, #E8A317)" />
               ) : pct >= 50 ? (
@@ -160,7 +164,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
               ) : (
                 <Check size={48} color="var(--mimi-green, #4caf50)" />
               )}
-            </span>
+            </motion.span>
 
             <h2 className="wfg__completion-title">{t('games.greatJob')}</h2>
             <p className="wfg__completion-score">
@@ -169,32 +173,46 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
 
             <span className="game-stars">
               {Array.from({ length: 3 }, (_, i) => (
-                <Star
+                <motion.span
                   key={i}
-                  size={18}
-                  fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
-                  color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
-                />
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 12, delay: 0.4 + i * 0.15 }}
+                >
+                  <Star
+                    size={32}
+                    fill={i < stars ? 'var(--primary, #E8A317)' : 'none'}
+                    color={i < stars ? 'var(--primary, #E8A317)' : '#ccc'}
+                  />
+                </motion.span>
               ))}
             </span>
 
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{totalScore * 10} XP
-            </Badge>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.9 }}
+            >
+              <Badge variant="success" icon={<Sparkles size={14} />}>
+                +{totalScore * 10} XP
+              </Badge>
+            </motion.div>
 
             <div className="wfg__completion-actions">
               <button
                 type="button"
-                className="wfg__completion-btn wfg__completion-btn--secondary kbtn kbtn--blue"
+                className="wfg__completion-btn wfg__completion-btn--secondary"
                 onClick={() => onComplete(totalScore, families.length)}
               >
+                <ArrowRight size={16} />
                 {t('games.backToGames')}
               </button>
               <button
                 type="button"
-                className="wfg__completion-btn wfg__completion-btn--primary kbtn kbtn--blue"
+                className="wfg__completion-btn wfg__completion-btn--primary"
                 onClick={handlePlayAgain}
               >
+                <RotateCcw size={16} />
                 {t('games.playAgain')}
               </button>
             </div>
@@ -315,7 +333,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
           {/* Onset tiles */}
           <p className="wfg__onsets-label">{t('games.tapLetterToMakeWord')}</p>
           <div className="wfg__onsets" role="group" aria-label="Letter tiles">
-            {currentFamily.onsets.map((onset) => {
+            {currentFamily.onsets.map((onset, idx) => {
               const candidate = onset + rimeText;
               const isFound = foundWords.includes(candidate);
               const isInvalid = invalidOnset === onset;
@@ -326,10 +344,10 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
                   key={onset}
                   type="button"
                   className={[
-                    'wfg__onset-tile kbtn kbtn--option',
+                    'wfg__onset-tile',
                     isFound && 'wfg__onset-tile--used',
-                    isInvalid && 'wfg__onset-tile--invalid wrong',
-                    isActive && 'wfg__onset-tile--active correct',
+                    isInvalid && 'wfg__onset-tile--invalid',
+                    isActive && 'wfg__onset-tile--active',
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -337,6 +355,9 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
                   disabled={isFound || familyDone}
                   aria-label={`Letter ${onset}`}
                   aria-pressed={isFound}
+                  initial={{ opacity: 0, y: 20, scale: 0.7 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 18, delay: idx * 0.06 }}
                   whileTap={{ scale: 0.88 }}
                 >
                   {onset}

@@ -1,6 +1,7 @@
 /* ==========================================================================
-   PRONUNCIATION GAME — MinesMinis Design System v5
+   PRONUNCIATION GAME — MinesMinis Design System v6
    Microphone-centric pronunciation practice with polished feedback states
+   Matches WordMatch quality: spring animations, 3D buttons, proper results
    ========================================================================== */
 
 .pronunciation-game {
@@ -42,12 +43,14 @@
   text-align: center;
   box-shadow: var(--shadow-card);
   border: 2.5px solid var(--border);
+  border-bottom: 5px solid color-mix(in srgb, var(--border) 80%, black);
   margin-bottom: var(--space-6);
   transition: border-color 0.3s var(--ease-out), background 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
 }
 
 .pronunciation-game__card--correct {
   border-color: var(--success);
+  border-bottom-color: var(--success);
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(16, 185, 129, 0.02));
   box-shadow: var(--shadow-card), 0 0 0 4px rgba(16, 185, 129, 0.12);
   animation: pronunciation-card-correct 0.4s var(--ease-spring);
@@ -55,6 +58,7 @@
 
 .pronunciation-game__card--wrong {
   border-color: var(--error);
+  border-bottom-color: var(--error);
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.02));
   box-shadow: var(--shadow-card), 0 0 0 4px rgba(239, 68, 68, 0.12);
   animation: pronunciation-shake 0.4s ease;
@@ -79,6 +83,20 @@
   margin-bottom: 0.75rem;
   display: block;
   line-height: 1.2;
+}
+
+.pronunciation-game__emoji--fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary, #FF6B35);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 0 auto 0.75rem;
 }
 
 .pronunciation-game__word {
@@ -138,6 +156,19 @@
   box-shadow: var(--shadow-button);
 }
 
+/* Playing state — wave animation on listen button */
+.pronunciation-game__btn--listen.playing {
+  background: var(--primary);
+  color: #fff;
+  animation: pronunciation-listen-wave 0.8s ease infinite;
+}
+
+@keyframes pronunciation-listen-wave {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4), 0 2px 8px rgba(255, 107, 53, 0.12); }
+  50%  { box-shadow: 0 0 0 10px rgba(255, 107, 53, 0), 0 2px 8px rgba(255, 107, 53, 0.12); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4), 0 2px 8px rgba(255, 107, 53, 0.12); }
+}
+
 /* Speak / Microphone button — HERO button, large circle */
 .pronunciation-game__btn--speak {
   width: 80px;
@@ -191,6 +222,25 @@
   box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
 }
 
+/* Skip button — muted secondary */
+.pronunciation-game__btn--skip {
+  background: var(--text-secondary, #64748b);
+  color: #fff;
+  box-shadow: none;
+}
+
+.pronunciation-game__btn--skip:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.pronunciation-game__feedback-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
 .pronunciation-game__btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -208,18 +258,16 @@
   font-size: 1rem;
   font-family: var(--font-display);
   text-align: center;
-  animation: pronunciation-feedback-in 0.3s var(--ease-spring);
-}
-
-@keyframes pronunciation-feedback-in {
-  0%   { opacity: 0; transform: translateY(8px) scale(0.95); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .pronunciation-game__feedback--correct {
   background: var(--success-pale);
   color: var(--success);
   border: 1.5px solid rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .pronunciation-game__feedback--wrong {
@@ -245,7 +293,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-md);
   padding: var(--space-8) var(--space-4);
 }
 
@@ -260,12 +308,65 @@
   color: var(--text-primary);
   font-family: var(--font-display);
   letter-spacing: -0.02em;
+  margin: 0;
 }
 
 .pronunciation-game__results-score {
   font-size: 1.15rem;
   color: var(--text-secondary);
   font-weight: 600;
+  margin: 0;
+}
+
+.pronunciation-game__results-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.pronunciation-game__results-btn {
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 52px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pronunciation-game__results-btn:hover {
+  transform: translateY(-2px);
+}
+
+.pronunciation-game__results-btn:active {
+  transform: scale(0.97);
+}
+
+.pronunciation-game__results-btn--primary {
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: var(--shadow-button);
+}
+
+.pronunciation-game__results-btn--primary:hover {
+  box-shadow: var(--shadow-button-hover);
+}
+
+.pronunciation-game__results-btn--secondary {
+  background: var(--bg-soft, #f5f5f5);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-light);
+}
+
+[data-theme="dark"] .pronunciation-game__results-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
 }
 
 /* ---- Unsupported Browser ---- */
@@ -289,4 +390,17 @@
 .pronunciation-game__unsupported p {
   color: var(--text-secondary);
   font-size: 1rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .pronunciation-game__results-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .pronunciation-game__results-btn {
+    justify-content: center;
+    width: 100%;
+  }
 }
