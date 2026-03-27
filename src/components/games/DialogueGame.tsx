@@ -50,6 +50,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
   const [mascotState, setMascotState] = useState<'idle' | 'talk' | 'celebrating' | 'waving'>('waving');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const questionLines = lines.filter((l) => l.speaker === 'child' && l.options && l.options.length > 0);
   const totalQuestions = questionLines.length;
@@ -62,7 +63,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
       const correctCount = answered.filter((a) => a.correct).length;
       setCompleted(true);
       setMascotState('celebrating');
-      onComplete(correctCount, totalQuestions);
+      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(correctCount, totalQuestions), 4000);
       return;
     }
 
@@ -133,6 +134,10 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
   };
 
   const handlePlayAgain = () => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setVisibleCount(0);
     setCurrentQuestionIndex(null);
     setOptionState({});
@@ -212,7 +217,10 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
               <button
                 type="button"
                 className="dialogue-game__summary-btn dialogue-game__summary-btn--secondary"
-                onClick={() => onComplete(correctCount, totalQuestions)}
+                onClick={() => {
+                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                  onComplete(correctCount, totalQuestions);
+                }}
               >
                 <ArrowRight size={16} />
                 {lang === 'tr' ? 'Geri Don' : 'Back'}

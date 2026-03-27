@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star, Trophy, Check, ArrowRight } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
@@ -71,6 +71,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentSentence = sentences[currentIndex];
 
@@ -120,7 +121,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
           initSentence(currentIndex + 1);
         } else {
           setCompleted(true);
-          onComplete(score + 1, sentences.length);
+          autoCompleteTimeoutRef.current = setTimeout(() => onComplete(score + 1, sentences.length), 4000);
         }
       }, 2000);
     } else {
@@ -192,10 +193,10 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
               +{score * 15} XP
             </Badge>
             <div className="sentence-scramble__results-actions">
-              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--secondary" onClick={() => onComplete(score, sentences.length)}>
+              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--secondary" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, sentences.length); }}>
                 <ArrowRight size={16} /> {t('games.backToGames')}
               </button>
-              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--primary" onClick={() => { setCurrentIndex(0); setScore(0); setCompleted(false); initSentence(0); }}>
+              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--primary" onClick={() => { if (autoCompleteTimeoutRef.current) { clearTimeout(autoCompleteTimeoutRef.current); autoCompleteTimeoutRef.current = null; } setCurrentIndex(0); setScore(0); setCompleted(false); initSentence(0); }}>
                 <RotateCcw size={16} /> {t('games.playAgain')}
               </button>
             </div>

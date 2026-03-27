@@ -114,7 +114,8 @@
   color: #fff;
   border: none;
   border-radius: 9px;
-  padding: 7px 12px;
+  padding: 8px 12px;
+  min-height: 36px;
   font-family: var(--font-display, 'Nunito', sans-serif);
   font-size: 0.82rem;
   font-weight: 900;
@@ -122,6 +123,9 @@
   cursor: pointer;
   width: 100%;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.12s, filter 0.12s;
   box-shadow: 0 2px 8px rgba(255, 107, 53, 0.35);
 }

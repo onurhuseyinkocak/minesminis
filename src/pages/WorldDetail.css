@@ -31,11 +31,20 @@
   color: var(--text-secondary);
   text-decoration: none;
   margin-bottom: var(--space-lg);
-  transition: color 200ms ease-out;
+  transition: color 200ms ease-out, background 200ms ease-out;
+  min-height: var(--touch-target, 44px);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
 }
 
 .world-detail-back:hover {
   color: var(--primary);
+  background: var(--primary-pale);
+}
+
+.world-detail-back:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* ==========================================================================
@@ -120,6 +129,11 @@
   overflow-x: auto;
   padding-bottom: var(--space-xs);
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.world-detail-vocab__scroll::-webkit-scrollbar {
+  display: none;
 }
 
 .vocab-preview-card {
@@ -130,16 +144,18 @@
   padding: var(--space-sm) var(--space-md);
   background: var(--bg-card);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   box-shadow: var(--shadow-card);
   min-width: 80px;
   flex-shrink: 0;
   transition: all var(--transition-base);
+  cursor: default;
 }
 
 .vocab-preview-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
+  border-color: var(--primary);
 }
 
 .vocab-preview-card__letter {
@@ -198,11 +214,18 @@
 
 .lesson-card--available {
   cursor: pointer;
+  border-color: var(--border);
 }
 
 .lesson-card--available:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
+  border-color: var(--primary);
+}
+
+.lesson-card--available:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .lesson-card--completed {
@@ -211,13 +234,15 @@
 }
 
 .lesson-card--locked {
-  opacity: 0.55;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ---- NUMBER CIRCLE ---- */
 .lesson-card__number {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -299,11 +324,16 @@
 }
 
 [data-theme="dark"] .lesson-card--completed {
-  background: var(--success-pale);
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
 }
 
 [data-theme="dark"] .vocab-preview-card {
   background: var(--bg-card);
+}
+
+[data-theme="dark"] .world-detail-back:hover {
+  background: var(--bg-muted);
 }
 
 /* ==========================================================================

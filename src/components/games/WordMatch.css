@@ -216,9 +216,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  /* min-height ensures centering even with short content */
+  min-height: 100%;
   position: relative;
-  overflow: hidden;
+  /* allow confetti overlay to show within bounds */
+  overflow: clip;
+  padding: var(--space-lg);
 }
 
 .wm-confetti-overlay {

@@ -80,6 +80,7 @@ export const SayItGame: React.FC<SayItGameProps> = ({
   const [completed, setCompleted] = useState(false);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const SRConstructor = getSpeechRecognitionConstructor();
   const isSpeechSupported = SRConstructor !== null;
@@ -106,7 +107,7 @@ export const SayItGame: React.FC<SayItGameProps> = ({
       if (nextIndex >= questions.length) {
         setCompleted(true);
         SFX.celebration();
-        onComplete(nextScore, questions.length);
+        autoCompleteTimeoutRef.current = setTimeout(() => onComplete(nextScore, questions.length), 4000);
       } else {
         setTimeout(() => {
           setCurrentIndex(nextIndex);
@@ -246,6 +247,10 @@ export const SayItGame: React.FC<SayItGameProps> = ({
   // ── Play again ───────────────────────────────────────────────────────────
 
   const handlePlayAgain = useCallback(() => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setCurrentIndex(0);
     setScore(0);
     setMicState('idle');
@@ -364,7 +369,10 @@ export const SayItGame: React.FC<SayItGameProps> = ({
               <button
                 type="button"
                 className="sig__completion-btn sig__completion-btn--secondary"
-                onClick={() => onComplete(score, questions.length)}
+                onClick={() => {
+                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                  onComplete(score, questions.length);
+                }}
               >
                 <ArrowRight size={16} />
                 {t('games.backToGames')}

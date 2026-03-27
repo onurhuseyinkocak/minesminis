@@ -306,7 +306,8 @@
 @media (max-width: 768px) {
   .sentence-scramble { padding: var(--space-md); }
   .sentence-scramble__title { font-size: 1.5rem; }
-  .sentence-scramble__chip { min-height: 44px; font-size: 1rem; padding: var(--space-sm) var(--space-md); }
+  /* Keep 52px minimum touch target even on mobile */
+  .sentence-scramble__chip { min-height: 52px; font-size: 1rem; padding: var(--space-sm) var(--space-md); }
 }
 
 @media (max-width: 480px) {

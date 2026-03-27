@@ -42,6 +42,14 @@ function PlantStageIcon({ stageName, color, size = 20 }: { stageName: string; co
   return <TreePine size={size} color={color} />;
 }
 
+function getStage(mastery: number): string {
+  if (mastery === 0) return 'seed';
+  if (mastery < 25) return 'sprout';
+  if (mastery < 50) return 'growing';
+  if (mastery < 75) return 'blooming';
+  return 'flowering';
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 function LearningGarden() {
@@ -242,6 +250,7 @@ function LearningGarden() {
                       key={plant.soundId}
                       onClick={() => handlePlantTap(plant)}
                       className="lg-plantCell"
+                      data-stage={getStage(mastery)}
                       style={{
                         borderColor: isBlooming ? plant.color : isStarted ? '#D1D5DB' : 'var(--border-light, #E5E7EB)',
                         backgroundColor: isBlooming ? `${plant.color}15` : 'var(--bg-elevated, #F8F9FA)',

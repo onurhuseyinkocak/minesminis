@@ -413,6 +413,8 @@ const Words: React.FC = () => {
                                 <div className="kid-card-visual">
                                   {word.image_url ? (
                                     <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
+                                  ) : word.emoji ? (
+                                    <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                                   ) : (
                                     <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                                   )}
@@ -468,6 +470,8 @@ const Words: React.FC = () => {
                           <div className="kid-card-visual">
                             {word.image_url ? (
                               <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
+                            ) : word.emoji ? (
+                              <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                             ) : (
                               <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                             )}
@@ -641,6 +645,8 @@ const Words: React.FC = () => {
                         <div className="kid-card-visual">
                           {word.image_url ? (
                             <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
+                          ) : word.emoji ? (
+                            <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                           ) : (
                             <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                           )}

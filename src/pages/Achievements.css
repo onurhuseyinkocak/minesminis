@@ -158,6 +158,15 @@
   box-shadow: var(--shadow-card);
 }
 
+@keyframes achievements-recent-shimmer {
+  0% { box-shadow: 0 0 0 0 rgba(232, 163, 23, 0); }
+  50% { box-shadow: 0 0 0 8px rgba(232, 163, 23, 0.25); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 163, 23, 0); }
+}
+.achievements-recent-card {
+  animation: achievements-recent-shimmer 2s ease 0.5s 2;
+}
+
 .achievements-recent-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));

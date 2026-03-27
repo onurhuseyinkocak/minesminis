@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
@@ -72,6 +72,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [deletedIndex, setDeletedIndex] = useState<number | null>(null);
   const [slideDir] = useState<1 | -1>(1);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentQuestion = questions[currentIndex];
 
@@ -88,8 +89,8 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
       const nextIndex = currentIndex + 1;
       if (nextIndex >= questions.length) {
         setCompleted(true);
-        onComplete(nextScore, questions.length);
         SFX.celebration();
+        autoCompleteTimeoutRef.current = setTimeout(() => onComplete(nextScore, questions.length), 4000);
       } else {
         setTimeout(() => {
           setCurrentIndex(nextIndex);
@@ -154,6 +155,10 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
   );
 
   const handlePlayAgain = useCallback(() => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setCurrentIndex(0);
     setScore(0);
     setCompleted(false);
@@ -225,7 +230,10 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
               <button
                 type="button"
                 className="pmg__completion-btn pmg__completion-btn--secondary"
-                onClick={() => onComplete(score, questions.length)}
+                onClick={() => {
+                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                  onComplete(score, questions.length);
+                }}
               >
                 <ArrowLeft size={16} />
                 {t('games.backToGames')}

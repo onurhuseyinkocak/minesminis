@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
@@ -51,6 +51,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [completed, setCompleted] = useState(false);
   const [familyDone, setFamilyDone] = useState(false);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentFamily = families[familyIndex];
 
@@ -58,8 +59,8 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
     const nextIndex = familyIndex + 1;
     if (nextIndex >= families.length) {
       setCompleted(true);
-      onComplete(totalScore, families.length);
       SFX.celebration();
+      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(totalScore, families.length), 4000);
     } else {
       setFamilyIndex(nextIndex);
       setFoundWords([]);
@@ -124,6 +125,10 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
   );
 
   const handlePlayAgain = useCallback(() => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setFamilyIndex(0);
     setTotalScore(0);
     setFoundWords([]);
@@ -202,7 +207,10 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
               <button
                 type="button"
                 className="wfg__completion-btn wfg__completion-btn--secondary"
-                onClick={() => onComplete(totalScore, families.length)}
+                onClick={() => {
+                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                  onComplete(totalScore, families.length);
+                }}
               >
                 <ArrowRight size={16} />
                 {t('games.backToGames')}

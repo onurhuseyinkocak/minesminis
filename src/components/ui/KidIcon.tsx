@@ -4,7 +4,7 @@ export type KidIconName =
   | 'home' | 'learn' | 'games' | 'library' | 'stories'
   | 'garden' | 'reading' | 'fire' | 'star' | 'trophy'
   | 'book' | 'music' | 'video' | 'puzzle' | 'heart'
-  | 'check' | 'lock' | 'play' | 'mic' | 'logout';
+  | 'check' | 'lock' | 'play' | 'mic' | 'logout' | 'profile';
 
 export interface KidIconProps {
   name: KidIconName;
@@ -314,6 +314,17 @@ const icons: Record<KidIconName, React.ReactElement> = {
       <line x1="13" y1="12" x2="21" y2="12" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" />
       {/* Arrow head */}
       <path d="M17.5 8.5L21.5 12L17.5 15.5" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  ),
+
+  profile: (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Head */}
+      <circle cx="12" cy="8" r="4" fill="#FF6B35" />
+      {/* Head shine */}
+      <circle cx="10.5" cy="6.5" r="1.5" fill="#FFD5C2" opacity="0.5" />
+      {/* Body / shoulders */}
+      <path d="M4 21C4 17.13 7.58 14 12 14C16.42 14 20 17.13 20 21" fill="#FF6B35" />
     </svg>
   ),
 };

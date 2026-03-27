@@ -124,8 +124,11 @@
    HEADER
    ========================================================================== */
 .journey-header {
-  position: relative;
-  z-index: 2;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   max-width: 600px;
   margin: 0 auto;
   padding: var(--space-lg, 1.5rem) var(--space-lg, 1.5rem) 0;
@@ -271,7 +274,7 @@
   transition: transform 200ms ease-out;
 }
 
-.journey-stop:hover {
+.journey-stop:hover:not(.journey-stop--locked) {
   transform: scale(1.03);
 }
 
@@ -382,6 +385,10 @@
   opacity: 0.55;
   filter: grayscale(0.8);
   transition: all 200ms ease-out;
+}
+
+.journey-stop--locked {
+  cursor: not-allowed;
 }
 
 .journey-stop--locked .journey-stop__emoji {

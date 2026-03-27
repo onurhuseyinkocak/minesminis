@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
@@ -71,6 +71,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentWord = gameWords[currentIndex];
 
@@ -93,52 +94,21 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     speakElevenLabs(text, 0.9).catch(() => {/* fallback handled inside speakElevenLabs() */});
   }, []);
 
-  // Physical keyboard support
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (completed || feedback) return;
-
-      if (e.key === 'Backspace') {
-        e.preventDefault();
-        handleBackspace();
-        return;
-      }
-
-      if (e.key === 'Enter' && typed.length === currentWord?.english.length) {
-        e.preventDefault();
-        handleSubmit();
-        return;
-      }
-
-      const key = e.key.toUpperCase();
-      if (key.length === 1 && /[A-Z]/.test(key)) {
-        // Find first unused pool letter matching this key
-        const poolIndex = letterPool.findIndex(
-          (letter, i) => letter === key && !usedIndices.includes(i)
-        );
-        if (poolIndex !== -1) {
-          handleLetterTap(letterPool[poolIndex], poolIndex);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [completed, feedback, typed, letterPool, usedIndices, currentWord]);
-
-  const handleLetterTap = (letter: string, poolIndex: number) => {
-    if (feedback || usedIndices.includes(poolIndex)) return;
+  const handleLetterTap = useCallback((letter: string, poolIndex: number) => {
+    if (usedIndices.includes(poolIndex)) return;
     setTyped((prev) => [...prev, letter]);
     setUsedIndices((prev) => [...prev, poolIndex]);
-  };
+  }, [usedIndices]);
 
-  const handleBackspace = () => {
-    if (feedback || typed.length === 0) return;
+  const handleBackspace = useCallback(() => {
     setTyped((prev) => prev.slice(0, -1));
     setUsedIndices((prev) => prev.slice(0, -1));
-  };
+  }, []);
 
-  const handleSubmit = () => {
+  // Use a ref for submit so the keyboard handler always gets the latest version
+  const submitRef = useRef<() => void>(() => {});
+
+  const handleSubmit = useCallback(() => {
     if (feedback) return;
     const attempt = typed.join('').toLowerCase();
     const correct = currentWord.english.toLowerCase();
@@ -156,7 +126,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           initWord(currentIndex + 1);
         } else {
           setCompleted(true);
-          onComplete(score + 1, gameWords.length);
+          autoCompleteTimeoutRef.current = setTimeout(() => onComplete(score + 1, gameWords.length), 4000);
         }
       }, 2000);
     } else {
@@ -177,11 +147,50 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         setUsedIndices([]);
       }, 800);
     }
-  };
+  }, [feedback, typed, currentWord, onXpEarned, speakWord, currentIndex, gameWords.length, initWord, score, onComplete, loseHeart, onWrongAnswer, hearts, wrongAttempts]);
+
+  submitRef.current = handleSubmit;
+
+  // Physical keyboard support — uses stable ref to avoid stale closures
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (completed || feedback) return;
+
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleBackspace();
+        return;
+      }
+
+      if (e.key === 'Enter' && typed.length === currentWord?.english.length) {
+        e.preventDefault();
+        submitRef.current();
+        return;
+      }
+
+      const key = e.key.toUpperCase();
+      if (key.length === 1 && /[A-Z]/.test(key)) {
+        // Find first unused pool letter matching this key
+        const poolIndex = letterPool.findIndex(
+          (letter, i) => letter === key && !usedIndices.includes(i)
+        );
+        if (poolIndex !== -1) {
+          handleLetterTap(letterPool[poolIndex], poolIndex);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [completed, feedback, typed, letterPool, usedIndices, currentWord, handleBackspace, handleLetterTap]);
 
   const progress = gameWords.length > 0 ? ((currentIndex) / gameWords.length) * 100 : 0;
 
   const handlePlayAgain = () => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setCurrentIndex(0);
     setScore(0);
     setCompleted(false);
@@ -231,7 +240,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
               +{score * 15} XP
             </Badge>
             <div className="spelling-bee__results-actions">
-              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => onComplete(score, gameWords.length)}>
+              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, gameWords.length); }}>
                 <ArrowRight size={16} /> {t('games.backToGames')}
               </button>
               <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain}>
@@ -298,19 +307,23 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         aria-live="polite"
         aria-atomic="true"
       >
-        {currentWord.english.split('').map((_, i) => (
-          <div
-            key={i}
-            className={[
-              'spelling-bee__slot',
-              typed[i] && 'spelling-bee__slot--filled',
-              feedback === 'correct' && 'spelling-bee__slot--correct',
-              feedback === 'wrong' && typed[i] && 'spelling-bee__slot--wrong',
-            ].filter(Boolean).join(' ')}
-          >
-            {typed[i] || ''}
-          </div>
-        ))}
+        {currentWord.english.split('').map((letter, i) => {
+          const isReveal = feedback === 'wrong' && wrongAttempts >= 2;
+          return (
+            <div
+              key={i}
+              className={[
+                'spelling-bee__slot',
+                (typed[i] || isReveal) && 'spelling-bee__slot--filled',
+                feedback === 'correct' && 'spelling-bee__slot--correct',
+                feedback === 'wrong' && !isReveal && typed[i] && 'spelling-bee__slot--wrong',
+                isReveal && 'spelling-bee__slot--reveal',
+              ].filter(Boolean).join(' ')}
+            >
+              {isReveal ? letter.toUpperCase() : (typed[i] || '')}
+            </div>
+          );
+        })}
       </div>
 
       <div aria-live="polite" aria-atomic="true">
@@ -330,7 +343,9 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
           >
-            {t('games.almostTryAgain')}
+            {wrongAttempts >= 2
+              ? `${t('games.theAnswerWas') || 'The answer was'}: ${currentWord.english.toUpperCase()}`
+              : t('games.almostTryAgain')}
           </motion.p>
         )}
       </div>

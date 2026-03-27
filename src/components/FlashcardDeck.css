@@ -6,7 +6,7 @@
 /* -- Scene wrapper (perspective root) -- */
 
 .flashcard-scene {
-  perspective: 900px;
+  perspective: 1200px;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;

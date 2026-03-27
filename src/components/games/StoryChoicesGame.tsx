@@ -59,6 +59,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
   const scoreRef = useRef(0);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (words.length < 3) {
     return (
@@ -82,7 +83,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
       setSelectedIdx(null);
     } else {
       setCompleted(true);
-      onComplete(newScore, questions.length);
+      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(newScore, questions.length), 4000);
     }
   }, [currentIndex, questions.length, onComplete]);
 
@@ -104,6 +105,10 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
   };
 
   const handlePlayAgain = () => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setCurrentIndex(0);
     setScore(0);
     scoreRef.current = 0;
@@ -167,7 +172,10 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
               <button
                 type="button"
                 className="story-choices-game__complete-btn story-choices-game__complete-btn--secondary"
-                onClick={() => onComplete(score, questions.length)}
+                onClick={() => {
+                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                  onComplete(score, questions.length);
+                }}
               >
                 <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
               </button>

@@ -149,6 +149,22 @@
   animation: sb-wrong-shake 0.5s ease;
 }
 
+/* Reveal correct answer after 2+ failed attempts */
+.spelling-bee__slot--reveal {
+  border-style: solid;
+  border-color: var(--primary, #E8A317);
+  background: var(--warning-pale, #fff8e1);
+  color: var(--primary-dark, #e65100);
+  box-shadow: 0 0 0 3px rgba(232, 163, 23, 0.25);
+  animation: sb-reveal 0.4s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+@keyframes sb-reveal {
+  0%   { transform: scale(0.8) rotateX(90deg); opacity: 0; }
+  60%  { transform: scale(1.08) rotateX(0deg); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
 @keyframes sb-wrong-shake {
   0% { transform: translateX(0); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
   10% { transform: translateX(-8px); background: var(--error); color: #fff; box-shadow: 0 0 16px rgba(239, 68, 68, 0.3); }

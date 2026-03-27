@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Sparkles, Headphones, Lightbulb, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
@@ -57,6 +57,8 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [ttsAvailable] = useState(() => typeof window !== 'undefined' && 'speechSynthesis' in window);
 
   const round = rounds[currentRound];
 
@@ -64,7 +66,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
     try {
       speak(text);
     } catch {
-      /* TTS not available — fail silently */
+      /* TTS not available — silent fallback */
     }
   }, []);
 
@@ -106,7 +108,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
       } else {
         setCompleted(true);
         const finalScore = isCorrect ? score + 1 : score;
-        onComplete(finalScore, rounds.length);
+        autoCompleteTimeoutRef.current = setTimeout(() => onComplete(finalScore, rounds.length), 4000);
       }
     }, 1800);
   };
@@ -114,6 +116,10 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   const progress = (currentRound / rounds.length) * 100;
 
   const handlePlayAgain = () => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setCurrentRound(0);
     setSelected(null);
     setFeedback(null);
@@ -163,7 +169,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
               +{score * 12} XP
             </Badge>
             <div className="listening-challenge__results-actions">
-              <button type="button" className="listening-challenge__results-btn listening-challenge__results-btn--secondary" onClick={() => onComplete(score, rounds.length)}>
+              <button type="button" className="listening-challenge__results-btn listening-challenge__results-btn--secondary" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, rounds.length); }}>
                 <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
               </button>
               <button type="button" className="listening-challenge__results-btn listening-challenge__results-btn--primary" onClick={handlePlayAgain}>
@@ -207,6 +213,11 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
             {hasPlayed ? (t('games.playAgainAudio') || 'Play Again') : (t('games.listen') || 'Listen')}
           </Button>
         </motion.div>
+        {!ttsAvailable && (
+          <p className="listening-challenge__no-audio" aria-live="polite">
+            {t('games.noAudioAvailable') || 'Audio not available on this device.'}
+          </p>
+        )}
       </Card>
 
       <div aria-live="assertive" aria-atomic="true">

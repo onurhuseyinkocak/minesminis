@@ -41,6 +41,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   const [completed, setCompleted] = useState(false);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentWord = roundWords[currentIndex];
   const SRConstructor = getSpeechRecognitionConstructor();
@@ -62,7 +63,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   const goToNext = useCallback(() => {
     if (currentIndex + 1 >= total) {
       setCompleted(true);
-      onComplete(score, total);
+      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(score, total), 4000);
     } else {
       setCurrentIndex((i) => i + 1);
       setFeedback(null);
@@ -87,7 +88,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
       setTimeout(() => {
         if (currentIndex + 1 >= total) {
           setCompleted(true);
-          onComplete(newScore, total);
+          autoCompleteTimeoutRef.current = setTimeout(() => onComplete(newScore, total), 4000);
         } else {
           setCurrentIndex((i) => i + 1);
           setFeedback(null);
@@ -168,6 +169,10 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   }
 
   const handlePlayAgain = () => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setCurrentIndex(0);
     setScore(0);
     setIsListening(false);
@@ -232,7 +237,10 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
               <button
                 type="button"
                 className="pronunciation-game__results-btn pronunciation-game__results-btn--secondary"
-                onClick={() => onComplete(score, total)}
+                onClick={() => {
+                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                  onComplete(score, total);
+                }}
               >
                 <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
               </button>

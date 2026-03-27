@@ -387,6 +387,15 @@
 }
 
 @media (max-width: 480px) {
+  .quick-quiz__option {
+    /* Ensure 52px minimum touch target on small phones */
+    min-height: 52px;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
   .quick-quiz__results-actions {
     flex-direction: column;
     width: 100%;

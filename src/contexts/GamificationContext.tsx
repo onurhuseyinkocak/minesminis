@@ -153,6 +153,7 @@ export const ALL_BADGES: Badge[] = [
     { id: 'story_master', name: 'Story Master', nameTr: 'Hikaye Ustası', description: 'Read 10 stories', descriptionTr: '10 hikaye okudun', icon: 'stories', category: 'learning', requirement: 10, requirementType: 'stories', rarity: 'rare' },
     { id: 'dialogue_star', name: 'Dialogue Star', nameTr: 'Diyalog Yıldızı', description: 'Complete 5 dialogue exercises', descriptionTr: '5 diyalog alıştırması tamamladın', icon: 'mic', category: 'learning', requirement: 5, requirementType: 'dialogues', rarity: 'rare' },
     { id: 'pronunciation_pro', name: 'Pronunciation Pro', nameTr: 'Telaffuz Ustası', description: 'Score 100% on 3 pronunciation exercises', descriptionTr: '3 telaffuz alıştırmasında tam puan aldın', icon: 'mic', category: 'learning', requirement: 3, requirementType: 'perfect_pronunciation', rarity: 'epic' },
+    // word_collector_50 and word_collector_100 removed — duplicate of words_50 and words_100
 
     // New Social Badges
     { id: 'first_friend', name: 'First Friend', nameTr: 'İlk Arkadaş', description: 'Add your first friend', descriptionTr: 'İlk arkadaşını ekledin', icon: 'heart', category: 'social', requirement: 1, requirementType: 'friends', rarity: 'common' },
@@ -236,15 +237,22 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const [newLevel, setNewLevel] = useState(1);
     const [canClaimDaily, setCanClaimDaily] = useState(false);
 
+    // Stable user ID to prevent re-renders when Firebase user object reference changes
+    const userId = user?.uid ?? null;
+
     // Keep a ref to stats so async callbacks never read stale closures
     const statsRef = useRef(stats);
     statsRef.current = stats;
+
+    // Keep a ref to user so async functions always have latest without causing re-runs
+    const userRef = useRef(user);
+    userRef.current = user;
 
     // Load stats from localStorage (works without database)
     useEffect(() => {
         let cancelled = false;
 
-        if (user) {
+        if (userId) {
             loadStats(cancelled);
         } else {
             setStats(DEFAULT_STATS);
@@ -254,10 +262,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         return () => {
             cancelled = true;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user is available only
-    }, [user]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user ID changes only
+    }, [userId]);
 
     const loadStats = async (cancelled: boolean) => {
+        const user = userRef.current;
         if (!user?.uid) return;
 
         try {
@@ -290,7 +299,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             const { data, error } = await supabase
                 .from('users')
                 .select('xp, points, streak_days, badges, last_login, settings')
-                .eq('id', user.uid)
+                .eq('id', userRef.current!.uid)
                 .maybeSingle();
 
             if (cancelled) return;
@@ -338,8 +347,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     };
 
     const saveStatsLocally = (newStats: UserStats) => {
-        if (user?.uid) {
-            localStorage.setItem(`${LS_GAMIFICATION_PREFIX}${user.uid}`, JSON.stringify(newStats));
+        if (userRef.current?.uid) {
+            localStorage.setItem(`${LS_GAMIFICATION_PREFIX}${userRef.current.uid}`, JSON.stringify(newStats));
         }
     };
 
@@ -418,9 +427,9 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         await trackActivity('xp_earned', { amount: totalXP, reason, streakBonus });
 
         // Try to sync with server (XP + weekly_xp via settings JSONB)
-        if (user?.uid) {
+        if (userRef.current?.uid) {
             try {
-                const { data: curr } = await supabase.from('users').select('settings').eq('id', user.uid).maybeSingle();
+                const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
                 const settings = { ...((curr?.settings || {}) as Record<string, unknown>), weekly_xp: newWeeklyXP };
                 await supabase
                     .from('users')
@@ -429,7 +438,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                         points: newXP,
                         settings,
                     })
-                    .eq('id', user.uid);
+                    .eq('id', userRef.current!.uid);
             } catch (error) {
                 errorLogger.log({
                     severity: 'high',
@@ -485,11 +494,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             saveStatsLocally(newStats);
 
             // 3. Sync weekly reset via settings JSONB (no dedicated columns)
-            if (user?.uid) {
+            if (userRef.current?.uid) {
                 try {
-                    const { data: curr } = await supabase.from('users').select('settings').eq('id', user.uid).maybeSingle();
+                    const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
                     const settings = { ...((curr?.settings || {}) as Record<string, unknown>), weekly_xp: 0, last_weekly_reset: now.toISOString() };
-                    await supabase.from('users').update({ settings }).eq('id', user.uid);
+                    await supabase.from('users').update({ settings }).eq('id', userRef.current!.uid);
                 } catch (error) {
                     errorLogger.log({
                         severity: 'medium',
@@ -518,7 +527,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             newStreak = currentStats.streakDays + 1;
         } else {
             // Streak broken — try to consume a freeze
-            const protected_ = consumeStreakFreeze(user?.uid);
+            const protected_ = consumeStreakFreeze(userRef.current?.uid);
             if (protected_) {
                 // Freeze absorbed the miss: keep existing streak
                 newStreak = currentStats.streakDays;
@@ -538,8 +547,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         saveStatsLocally(newStats);
 
         // Log today's activity in the habit tracker (idempotent)
-        if (user?.uid) {
-            logActivityToday(user.uid);
+        if (userRef.current?.uid) {
+            logActivityToday(userRef.current!.uid);
         }
 
         // Award freeze if streak milestone reached (only on actual increments)
@@ -559,7 +568,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         }
 
         // Sync with server
-        if (user?.uid) {
+        if (userRef.current?.uid) {
             try {
                 await supabase
                     .from('users')
@@ -567,7 +576,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                         streak_days: newStreak,
                         last_login: now.toISOString()
                     })
-                    .eq('id', user.uid);
+                    .eq('id', userRef.current!.uid);
             } catch (error) {
                 errorLogger.log({
                     severity: 'medium',
@@ -611,11 +620,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         setCanClaimDaily(false);
 
         // Sync with server
-        if (user?.uid) {
+        if (userRef.current?.uid) {
             try {
-                const { data: curr } = await supabase.from('users').select('settings').eq('id', user.uid).maybeSingle();
+                const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
                 const settings = { ...((curr?.settings || {}) as Record<string, unknown>), last_daily_claim: now.toISOString() };
-                await supabase.from('users').update({ settings }).eq('id', user.uid);
+                await supabase.from('users').update({ settings }).eq('id', userRef.current!.uid);
             } catch (error) {
                 errorLogger.log({
                     severity: 'medium',
@@ -673,12 +682,12 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         saveStatsLocally(newStats);
 
         // Sync with server
-        if (user?.uid) {
+        if (userRef.current?.uid) {
             try {
                 await supabase
                     .from('users')
                     .update({ badges: newBadges })
-                    .eq('id', user.uid);
+                    .eq('id', userRef.current!.uid);
             } catch (error) {
                 errorLogger.log({
                     severity: 'medium',
@@ -754,9 +763,9 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         saveStatsLocally(newStats);
 
         // Sync activity counters to server via settings JSONB
-        if (user?.uid) {
+        if (userRef.current?.uid) {
             try {
-                const { data: curr } = await supabase.from('users').select('settings').eq('id', user.uid).maybeSingle();
+                const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
                 const settings = {
                     ...((curr?.settings || {}) as Record<string, unknown>),
                     wordsLearned: newStats.wordsLearned,
@@ -765,7 +774,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     worksheetsCompleted: newStats.worksheetsCompleted,
                     dailyChallengesCompleted: newStats.dailyChallengesCompleted,
                 };
-                await supabase.from('users').update({ settings }).eq('id', user.uid);
+                await supabase.from('users').update({ settings }).eq('id', userRef.current!.uid);
             } catch (error) {
                 errorLogger.log({
                     severity: 'medium',
@@ -785,10 +794,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         setShowLevelUp(false);
     };
 
-    // Check streak on mount
+    // Check streak on mount (use stable userId to avoid re-runs from user object ref changes)
     useEffect(() => {
         let cancelled = false;
-        if (user && !loading) {
+        if (userId && !loading) {
             // Wrap in async IIFE with cancellation guard
             (async () => {
                 try {
@@ -802,8 +811,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         return () => {
             cancelled = true;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user and loading state are ready
-    }, [user, loading]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user ID and loading state are ready
+    }, [userId, loading]);
 
     const value: GamificationContextType = useMemo(() => ({
         stats,

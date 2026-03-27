@@ -682,8 +682,16 @@
   margin-right: 0 !important;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  /* Allow scroll so results screens and tall content are reachable */
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Thin scrollbar so it doesn't feel broken */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
 }
+.game-canvas > *::-webkit-scrollbar { width: 4px; }
+.game-canvas > *::-webkit-scrollbar-track { background: transparent; }
+.game-canvas > *::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 99px; }
 
 @media (max-width: 768px) {
   .internal-game-container {

@@ -29,7 +29,7 @@ const MOBILE_NAV_ITEMS: { path: string; label: string; labelTr: string; icon: Ki
   { path: '/worlds', label: 'Learn', labelTr: 'Öğren', icon: 'learn' },
   { path: '/games', label: 'Games', labelTr: 'Oyunlar', icon: 'games' },
   { path: '/stories', label: 'Stories', labelTr: 'Hikayeler', icon: 'stories' },
-  { path: '/profile', label: 'Me', labelTr: 'Ben', icon: 'home' },
+  { path: '/profile', label: 'Me', labelTr: 'Ben', icon: 'profile' },
 ];
 
 export default function AppShell({

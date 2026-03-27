@@ -78,6 +78,7 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
   const [slideDir, setSlideDir] = useState<1 | -1>(1);
 
   const blendTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentQuestion = questions[currentIndex];
 
@@ -91,8 +92,9 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
       const nextIndex = currentIndex + 1;
       if (nextIndex >= questions.length) {
         setCompleted(true);
-        onComplete(nextScore, questions.length);
         SFX.celebration();
+        // Delay auto-complete so the results screen has time to show
+        autoCompleteTimeoutRef.current = setTimeout(() => onComplete(nextScore, questions.length), 4000);
       } else {
         setSlideDir(1);
         setTimeout(() => {
@@ -173,6 +175,10 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
   );
 
   const handlePlayAgain = useCallback(() => {
+    if (autoCompleteTimeoutRef.current) {
+      clearTimeout(autoCompleteTimeoutRef.current);
+      autoCompleteTimeoutRef.current = null;
+    }
     setCurrentIndex(0);
     setScore(0);
     setPhase('explore');
@@ -250,7 +256,10 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
               <button
                 type="button"
                 className="pbg__completion-btn pbg__completion-btn--secondary"
-                onClick={() => onComplete(score, questions.length)}
+                onClick={() => {
+                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                  onComplete(score, questions.length);
+                }}
               >
                 <ArrowLeft size={16} />
                 {t('games.backToGames')}

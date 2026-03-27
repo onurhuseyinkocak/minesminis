@@ -404,3 +404,13 @@
   line-height: 1.5;
   max-width: 280px;
 }
+
+.lg-plantCell[data-stage="seed"] { background: var(--bg-soft, #f8f9fa); }
+.lg-plantCell[data-stage="sprout"] { background: linear-gradient(135deg, #F0FFF4, #DCFCE7); border-color: #86EFAC; }
+.lg-plantCell[data-stage="growing"] { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); border-color: #4ADE80; }
+.lg-plantCell[data-stage="blooming"] { background: linear-gradient(135deg, #BBF7D0, #86EFAC); border-color: #22C55E; }
+.lg-plantCell[data-stage="flowering"] {
+  background: linear-gradient(135deg, #86EFAC, #4ADE80);
+  border-color: #16A34A;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.3), var(--shadow-sm);
+}

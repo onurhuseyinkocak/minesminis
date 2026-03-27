@@ -82,13 +82,15 @@ const Achievements: React.FC = () => {
     });
   }, [allBadges, activeCategory]);
 
-  // Last 3 earned badges, newest first
+  // Last 3 earned badges, newest first (most recently earned = last in earnedIds array)
   const recentBadges = useMemo(() => {
-    return allBadges
-      .filter(b => hasBadge(b.id))
-      .slice(-3)
-      .reverse();
-  }, [allBadges, hasBadge]);
+    const earnedIdsList = stats.badges ?? [];
+    // Most recently earned are last in the array — reverse and take 3
+    const recentIds = [...earnedIdsList].reverse().slice(0, 3);
+    return recentIds
+      .map(id => allBadges.find(b => b.id === id))
+      .filter(Boolean) as Badge[];
+  }, [stats.badges, allBadges]);
 
   const categories: Category[] = ['all', 'learning', 'streak', 'social', 'special'];
 
