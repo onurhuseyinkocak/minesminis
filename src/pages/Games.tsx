@@ -49,7 +49,6 @@ import {
   Shuffle,
 } from 'lucide-react';
 import { GameSelector } from '../components/games/index';
-import GameMascot from '../components/games/GameMascot';
 import MimiGuide from '../components/MimiGuide';
 import LottieCharacter from '../components/LottieCharacter';
 import './Games.css';
@@ -343,9 +342,6 @@ function Games() {
                   }
                 />
               </Suspense>
-            </div>
-            <div className="game-mascot-rail">
-              <GameMascot />
             </div>
           </div>
         </div>

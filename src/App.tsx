@@ -27,8 +27,8 @@ import {
 
 import { Star } from "lucide-react";
 import LottieCharacter from "./components/LottieCharacter";
-import FloatingMascot from "./components/FloatingMascot";
-import CatHouseWidget from "./components/CatHouseWidget";
+import GlobalMascot from "./components/GlobalMascot";
+import { MascotProvider } from "./contexts/MascotContext";
 import { validateCurriculumData } from "./utils/dataValidation";
 import { LS_DAILY_TIME_LIMIT } from "./config/storageKeys";
 import { initTTS } from "./services/ttsService";
@@ -535,7 +535,6 @@ function AppContent() {
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isSetupRoute = location.pathname === "/setup";
-  const isGamesRoute = location.pathname === "/games";
 
   const { user, userProfile, hasSkippedSetup, loading, profileLoading, isAdmin } = useAuth();
 
@@ -630,14 +629,9 @@ function AppContent() {
         <WhatsNextButton />
       )}
 
-      {/* Floating mascot — hidden on /games (GameMascot handles it there) */}
-      {user && !isAdmin && !isAdminRoute && !isSetupRoute && !isGamesRoute && (
-        <FloatingMascot />
-      )}
-
-      {/* Cat house widget — hidden on /games to avoid mascot overload */}
-      {user && !isAdmin && !isAdminRoute && !isSetupRoute && !isGamesRoute && (
-        <CatHouseWidget />
+      {/* Single global mascot — always visible for authenticated students */}
+      {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
+        <GlobalMascot />
       )}
 
       {/* Chat modal */}
@@ -713,7 +707,9 @@ function App() {
                 <HeartsProvider>
                 <GamificationProvider>
                   <ToastProvider>
-                    <AppContent />
+                    <MascotProvider>
+                      <AppContent />
+                    </MascotProvider>
                   </ToastProvider>
                 </GamificationProvider>
                 </HeartsProvider>

@@ -622,22 +622,7 @@
   gap: 0;
 }
 
-/* ── Mascot rail — right column next to game canvas ── */
-.game-mascot-rail {
-  position: relative;
-  flex-shrink: 0;
-  width: 96px;
-  overflow: visible;
-  /* height fills flex container */
-}
-
-@media (max-width: 768px) {
-  .game-mascot-rail { width: 72px; }
-}
-
-@media (max-width: 480px) {
-  .game-mascot-rail { width: 60px; }
-}
+/* game-mascot-rail removed — mascot is now GlobalMascot (fixed bottom-right) */
 
 /* ── Centered game canvas ─────────────────────────────────────────────── */
 .game-canvas {
