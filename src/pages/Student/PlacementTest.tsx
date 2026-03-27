@@ -396,7 +396,10 @@ function PlacementTest() {
         };
         setResult(res);
         localStorage.setItem(LS_PLACEMENT_RESULT, String(res.group));
-        localStorage.setItem('mimi_placement_detail', JSON.stringify(res));
+        localStorage.setItem('mimi_placement_detail', JSON.stringify({
+          ...res,
+          phaseIndex: res.phase - 1,
+        }));
         setShowStarBurst(true);
         setTimeout(() => setShowStarBurst(false), 1500);
         setScreen('result');

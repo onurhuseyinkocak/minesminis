@@ -11,6 +11,8 @@ import { getDueWords, updateWordProgress, loadAllProgress } from '../data/spaced
 import { ALL_SOUNDS } from '../data/phonics';
 import { curriculumWords, type CurriculumWord } from '../data/curriculumWords';
 import { getProgress } from './learningPathService';
+import { PHASES } from '../data/curriculumPhases';
+import { getCurrentUnit } from './lessonProgressService';
 
 function localDateStr(d: Date = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -264,6 +266,63 @@ export function markWordLearned(userId: string, english: string): void {
   }
 }
 
+// ─── Curriculum-aware word selection ─────────────────────────────────────────
+
+/**
+ * Map a phase index (0-based) + unit index to a phonics level (1-5)
+ * used by curriculumWords. Phase 1 → levels 1-2, Phase 2 → 2-3,
+ * Phase 3 → 3-4, Phase 4 → 4-5.
+ */
+function phaseToLevel(phaseIndex: number): 1 | 2 | 3 | 4 | 5 {
+  if (phaseIndex === 0) return 1;
+  if (phaseIndex === 1) return 2;
+  if (phaseIndex === 2) return 4;
+  return 5;
+}
+
+/**
+ * Return KidsWord objects that are relevant to the user's current unit.
+ *
+ * Strategy (priority order):
+ * 1. kidsWords whose category matches the unit's vocabularyTheme keyword
+ * 2. curriculumWords at the phase's phonics level, converted back to KidsWord-like shape
+ * 3. Empty array when unit info is unavailable
+ */
+function getCurrentUnitWords(): KidsWord[] {
+  const unitInfo = getCurrentUnit();
+  const phase = PHASES[unitInfo.phaseIndex];
+  if (!phase) return [];
+
+  const unit = phase.units?.[unitInfo.unitIndex];
+  const theme = (unit?.vocabularyTheme ?? '').toLowerCase();
+
+  // 1. kidsWords filtered by theme keyword match
+  const fromTheme = theme
+    ? kidsWords.filter((w) =>
+        w.category?.toLowerCase().includes(theme.split(' ')[0]) ||
+        theme.includes(w.category?.toLowerCase() ?? ''),
+      )
+    : [];
+
+  if (fromTheme.length >= 5) return fromTheme;
+
+  // 2. curriculumWords at the phase's phonics level → map to KidsWord shape
+  const level = phaseToLevel(unitInfo.phaseIndex);
+  const fromLevel: KidsWord[] = curriculumWords
+    .filter((cw) => cw.level === level)
+    .sort((a, b) => (b.frequency ?? 50) - (a.frequency ?? 50))
+    .slice(0, 10)
+    .map((cw) => ({
+      word: cw.english,
+      turkish: cw.turkish,
+      emoji: cw.emoji,
+      category: cw.category,
+      level: 'beginner' as const,
+    }));
+
+  return [...fromTheme, ...fromLevel.filter((w) => !fromTheme.find((t) => t.word === w.word))];
+}
+
 // ─── Review word resolver ─────────────────────────────────────────────────────
 
 /**
@@ -332,11 +391,22 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
   // Determine word count based on recent performance
   const wordCount = getAdaptiveWordCount(userId);
 
-  // Pick new words not yet learned
+  // Pick new words not yet learned — prioritise current unit's vocabulary
   const learned = getLearnedWords(userId);
-  const newWords = kidsWords
-    .filter((w) => !learned.includes(w.word.toLowerCase()))
-    .slice(0, wordCount);
+  const unitWords = getCurrentUnitWords();
+
+  // Priority pool: unit-relevant words not yet learned
+  const priorityPool = unitWords.filter((w) => !learned.includes(w.word.toLowerCase()));
+
+  // Fallback pool: all kidsWords not yet learned (for when unit pool is exhausted)
+  const fallbackPool = kidsWords.filter(
+    (w) =>
+      !learned.includes(w.word.toLowerCase()) &&
+      !unitWords.find((u) => u.word === w.word),
+  );
+
+  const combinedPool = [...priorityPool, ...fallbackPool];
+  const newWords = combinedPool.slice(0, wordCount);
 
   // Fill with first words if everything is learned (demo users)
   const safeNewWords = newWords.length >= wordCount

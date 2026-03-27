@@ -1068,3 +1068,21 @@
     overflow: visible;
   }
 }
+
+/* ---- Adaptive recommendation badge (in GameCard, scoped here for co-location) ---- */
+.game-card__recommended {
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  background: var(--warning, #F59E0B);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+  white-space: nowrap;
+  font-family: var(--font-display);
+  pointer-events: none;
+  z-index: 2;
+}

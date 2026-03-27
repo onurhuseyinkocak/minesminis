@@ -7,7 +7,7 @@
  * Renders REAL interactive game components from curriculum data.
  * Smart-board friendly with large text and large buttons.
  */
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -40,9 +40,11 @@ import { completeLesson } from '../data/progressTracker';
 import { updateWordProgress } from '../data/spacedRepetition';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getAgeGroupFromSettings, isActivityAllowedForAge, getAgeGroupConfig } from '../services/ageGroupService';
 import { SFX } from '../data/soundLibrary';
 import { logActivity } from '../services/activityLogger';
 import { syncStudentProgress } from '../services/classroomService';
+import { setActiveUser, startSession, recordActivity } from '../services/adaptiveEngine';
 import { PHASES } from '../data/curriculumPhases';
 import type { LearningUnit, UnitActivity } from '../data/curriculumPhases';
 import './LessonPlayer.css';
@@ -374,9 +376,19 @@ const LessonPlayer = () => {
   const { worldId = '', lessonId = '' } = useParams<{ worldId: string; lessonId: string }>();
   const navigate = useNavigate();
   const { addXP } = useGamification();
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const { t, lang } = useLanguage();
   const userId = user?.uid || 'guest';
+
+  // ---- Adaptive Engine ----
+  const activityStartTimeRef = useRef<number>(Date.now());
+
+  useEffect(() => {
+    if (user?.uid) {
+      setActiveUser(user.uid);
+      startSession();
+    }
+  }, [user?.uid]);
 
   // Load real lesson data from curriculum
   const oldLesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
@@ -437,6 +449,27 @@ const LessonPlayer = () => {
     return [];
   }, [lesson, vocabulary, worldId]);
 
+  // Age group filtering
+  const ageGroup = getAgeGroupFromSettings(userProfile?.settings as Record<string, unknown> | null | undefined);
+  const ageConfig = getAgeGroupConfig(ageGroup);
+
+  // Filter lesson activities by age group and cap words per game
+  const ageFilteredLesson = useMemo(() => {
+    if (!lesson) return null;
+    if (!ageGroup) return lesson;
+    const filteredActivities = lesson.activities.filter((a) => isActivityAllowedForAge(a.type, ageGroup));
+    // Keep at least one activity to avoid an empty lesson
+    return {
+      ...lesson,
+      activities: filteredActivities.length > 0 ? filteredActivities : lesson.activities,
+    };
+  }, [lesson, ageGroup]);
+
+  const ageFilteredWords = useMemo(
+    () => activityWords.slice(0, ageConfig.maxWordsPerGame),
+    [activityWords, ageConfig.maxWordsPerGame],
+  );
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [completed, setCompleted] = useState(false);
@@ -449,9 +482,9 @@ const LessonPlayer = () => {
   const [showPerfect, setShowPerfect] = useState(false);
   const [xpPopAmount, setXpPopAmount] = useState<number | null>(null);
 
-  const totalActivities = lesson?.activities.length || 0;
+  const totalActivities = ageFilteredLesson?.activities.length || 0;
   const progressPct = totalActivities > 0 ? Math.round(((currentIndex + (completed ? 1 : 0)) / totalActivities) * 100) : 0;
-  const currentActivity = lesson?.activities[currentIndex];
+  const currentActivity = ageFilteredLesson?.activities[currentIndex];
 
   // Lock body scroll while lesson is active
   useEffect(() => {
@@ -495,9 +528,24 @@ const LessonPlayer = () => {
 
     // Update spaced repetition for each word used in this activity
     const wasCorrect = total > 0 ? score / total >= 0.5 : true;
-    for (const w of activityWords) {
+    for (const w of ageFilteredWords) {
       updateWordProgress(w.english, wasCorrect);
     }
+
+    // Record activity in adaptive engine
+    try {
+      const soundId = currentUnit?.phonicsFocus[0] ?? lessonId;
+      recordActivity({
+        soundId,
+        activityType: currentActivity?.type ?? 'unknown',
+        correct: wasCorrect,
+        responseTimeMs: Date.now() - activityStartTimeRef.current,
+        totalQuestions: total,
+        correctAnswers: score,
+      });
+    } catch { /* adaptive engine is non-critical */ }
+    // Reset timer for next activity
+    activityStartTimeRef.current = Date.now();
 
     // Auto-advance to next activity after a short delay
     setTimeout(() => {
@@ -547,7 +595,7 @@ const LessonPlayer = () => {
         }
       }
     }, 1500);
-  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId, activityWords, user?.uid, hearts, currentUnit]);
+  }, [currentIndex, totalActivities, ageFilteredLesson, addXP, lessonId, worldId, currentActivity, activityScores, userId, ageFilteredWords, user?.uid, hearts, currentUnit]);
 
   const handleXpEarned = useCallback((xp: number) => {
     addXP(xp, 'activity_completed', { lessonId, worldId }).catch(() => { /* XP sync failed silently */ });
@@ -880,7 +928,7 @@ const LessonPlayer = () => {
               {isSupported ? (
                 <GameSelector
                   type={currentActivity.type}
-                  words={activityWords}
+                  words={ageFilteredWords}
                   onComplete={handleActivityComplete}
                   onXpEarned={handleXpEarned}
                   onWrongAnswer={handleWrongAnswer}
@@ -889,7 +937,7 @@ const LessonPlayer = () => {
               ) : (
                 <FallbackActivity
                   activity={currentActivity}
-                  words={activityWords}
+                  words={ageFilteredWords}
                   onComplete={handleActivityComplete}
                   t={t}
                 />

@@ -1,6 +1,9 @@
 import { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
 import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
+import { getAgeGroupFromSettings, isGameAllowedForAge } from '../services/ageGroupService';
+import { setActiveUser, recordActivity, getOptimalActivity } from '../services/adaptiveEngine';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { kidsWords, getWordsByCategory } from '../data/wordsData';
 import { getCurrentPhonicsSound } from '../services/learningPathService';
@@ -215,11 +218,26 @@ function Games() {
 
   const { stats } = useGamification();
   const { t, lang } = useLanguage();
+  const { user, userProfile } = useAuth();
   const isTr = lang === 'tr';
+
+  const ageGroup = getAgeGroupFromSettings(userProfile?.settings as Record<string, unknown> | null | undefined);
 
   const userLevel = stats?.level ?? 1;
 
   const featuredGame = getDailyFeaturedGame();
+
+  // ---- Adaptive Engine ----
+  const [recommendedType, setRecommendedType] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    setActiveUser(user.uid);
+    try {
+      const optimal = getOptimalActivity();
+      setRecommendedType(optimal.activityType);
+    } catch { /* no profile yet, ignore */ }
+  }, [user?.uid]);
 
   // ---- Helpers ----
   const isGameLocked = useCallback(
@@ -229,10 +247,12 @@ function Games() {
     [userLevel],
   );
 
-  const filteredGames = useMemo<GameMeta[]>(
-    () => activeTab === 'all' ? MINI_GAMES : MINI_GAMES.filter((g) => g.category === activeTab),
-    [activeTab],
-  );
+  const filteredGames = useMemo<GameMeta[]>(() => {
+    const byTab = activeTab === 'all' ? MINI_GAMES : MINI_GAMES.filter((g) => g.category === activeTab);
+    return ageGroup
+      ? byTab.filter((g) => isGameAllowedForAge(g.type, ageGroup))
+      : byTab;
+  }, [activeTab, ageGroup]);
 
   // ---- Play handlers ----
   const handlePlaySingle = useCallback((game: GameMeta) => {
@@ -253,7 +273,24 @@ function Games() {
 
   const handleGameComplete = useCallback(
     (score: number, total: number) => {
+      // Helper to report to adaptive engine
+      const reportToAdaptive = (gameMeta: GameMeta) => {
+        try {
+          recordActivity({
+            soundId: (gameMeta as GameMeta & { soundId?: string; topicId?: string }).soundId
+              ?? (gameMeta as GameMeta & { soundId?: string; topicId?: string }).topicId
+              ?? 'game',
+            activityType: gameMeta.type,
+            correct: total > 0 ? score / total >= 0.7 : false,
+            responseTimeMs: 0,
+            totalQuestions: total,
+            correctAnswers: score,
+          });
+        } catch { /* adaptive engine is non-critical */ }
+      };
+
       if (playingGame) {
+        reportToAdaptive(playingGame);
         saveBestScore(playingGame.type, score);
         setScoreVersion((v) => v + 1);
         toast.success(isTr ? `Harika! ${score}/${total}` : `Great job! ${score}/${total}`);
@@ -263,6 +300,8 @@ function Games() {
       }
 
       if (dailySession) {
+        const currentGame = dailySession.games[dailySession.currentIndex];
+        reportToAdaptive(currentGame);
         const newScores = [...dailySession.scores, score];
         const nextIndex = dailySession.currentIndex + 1;
 
@@ -488,6 +527,7 @@ function Games() {
                   isNew={isNewGame(game)}
                   isTr={isTr}
                   activeTopic={activeTopic}
+                  isRecommended={!!recommendedType && game.type === recommendedType}
                   onPlay={() => handlePlaySingle(game)}
                 />
               );

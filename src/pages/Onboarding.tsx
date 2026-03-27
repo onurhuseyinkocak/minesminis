@@ -357,6 +357,14 @@ const Onboarding: React.FC = () => {
       }
 
       localStorage.setItem(LS_PLACEMENT_RESULT, String(startingGroup));
+      // Also store structured detail for WorldMap phase lookup
+      const phaseFromGroup = startingGroup <= 2 ? 1 : startingGroup === 3 ? 2 : startingGroup <= 5 ? 3 : 4;
+      localStorage.setItem('mimi_placement_detail', JSON.stringify({
+        phase: phaseFromGroup,
+        group: startingGroup,
+        phaseLabel: `Phase ${phaseFromGroup}`,
+        ageGroup,
+      }));
 
       const { createPet } = await import('../services/petService');
       await createPet(user.uid, 'mimi_cat', nickname.trim() || user.displayName || 'Explorer');

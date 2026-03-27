@@ -7,7 +7,7 @@
  * Each stop = a curriculum phase unit.
  * Completed = green check, Current = golden pulse, Locked = gray lock.
  */
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Star, Check } from 'lucide-react';
@@ -17,6 +17,8 @@ import { PHASES, type LearningUnit } from '../data/curriculumPhases';
 import MimiGuide from '../components/MimiGuide';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
+import { saveCurrentUnit } from '../services/lessonProgressService';
+import toast from 'react-hot-toast';
 import './WorldMap.css';
 
 // ============================================================
@@ -50,12 +52,30 @@ function getUnitProgress(unit: LearningUnit, phaseIndex: number, unitIndex: numb
   // Check localStorage for placement result
   let startPhase = 0;
   try {
-    const placement = localStorage.getItem(LS_PLACEMENT_RESULT);
-    if (placement) {
-      const parsed = JSON.parse(placement);
-      if (parsed.phaseIndex !== undefined) startPhase = parsed.phaseIndex;
+    // Try new structured format first (mimi_placement_detail)
+    const detailRaw = localStorage.getItem('mimi_placement_detail');
+    if (detailRaw) {
+      const detail = JSON.parse(detailRaw);
+      // detail.phase is 1-based, phaseIndex is 0-based
+      if (detail.phase !== undefined) startPhase = Math.max(0, detail.phase - 1);
     }
   } catch { /* ignore */ }
+  // Fallback: legacy format (plain group number string)
+  if (startPhase === 0) {
+    try {
+      const legacyRaw = localStorage.getItem(LS_PLACEMENT_RESULT);
+      if (legacyRaw) {
+        const group = parseInt(legacyRaw, 10);
+        if (!isNaN(group)) {
+          // Map phonics group (1-7) to phase index (0-3)
+          if (group <= 2) startPhase = 0;
+          else if (group === 3) startPhase = 1;
+          else if (group <= 5) startPhase = 2;
+          else startPhase = 3;
+        }
+      }
+    } catch { /* ignore */ }
+  }
 
   // Check localStorage for unit completion
   let activitiesCompleted = 0;
@@ -173,6 +193,25 @@ const WorldMap = () => {
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
   const [lockedTooltip, setLockedTooltip] = useState<string | null>(null);
 
+  // Show placement done banner once after placement test / onboarding
+  useEffect(() => {
+    const placementShown = localStorage.getItem('mimi_placement_shown');
+    const placementDetail = localStorage.getItem('mimi_placement_detail');
+    if (placementDetail && !placementShown) {
+      localStorage.setItem('mimi_placement_shown', '1');
+      try {
+        const detail = JSON.parse(placementDetail) as { phaseLabel?: string };
+        const label = detail.phaseLabel ?? 'your level';
+        toast.success(
+          lang === 'tr'
+            ? `Seviyene uygun başlangıç noktasına yerleştirildin! (${label})`
+            : `You've been placed at the right starting point! (${label})`,
+          { duration: 4000 },
+        );
+      } catch { /* ignore */ }
+    }
+  }, [lang]);
+
   const phase = PHASES[activePhaseIndex];
   const allUnits = phase.units;
 
@@ -190,6 +229,12 @@ const WorldMap = () => {
 
   // Find current stop index for Mimi placement
   const currentStopIndex = stops.findIndex((s) => s.progress.status === 'current');
+
+  // Persist the active unit so dailyLessonService can pick curriculum-relevant words
+  React.useEffect(() => {
+    const effectiveIdx = currentStopIndex >= 0 ? currentStopIndex : 0;
+    saveCurrentUnit(activePhaseIndex, effectiveIdx);
+  }, [activePhaseIndex, currentStopIndex]);
 
   const handleStopClick = useCallback(
     (stop: (typeof stops)[number]) => {

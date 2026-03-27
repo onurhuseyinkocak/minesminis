@@ -28,6 +28,8 @@ import {
   type DailyLessonPlan,
 } from '../services/dailyLessonService';
 import { getHomeworkWords } from '../services/homeworkService';
+import { getCurrentUnit } from '../services/lessonProgressService';
+import { PHASES as CURRICULUM_PHASES } from '../data/curriculumPhases';
 import type { KidsWord } from '../data/wordsData';
 import './DailyLesson.css';
 
@@ -1168,6 +1170,11 @@ export default function DailyLesson() {
 
   const userId = user?.uid || 'guest';
 
+  // Current curriculum unit info for header display
+  const currentUnitInfo = getCurrentUnit();
+  const currentPhaseData = CURRICULUM_PHASES[currentUnitInfo.phaseIndex];
+  const currentUnitData  = currentPhaseData?.units?.[currentUnitInfo.unitIndex];
+
   const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId));
 
   // Homework words assigned by parent — injected into review phase
@@ -1358,6 +1365,21 @@ export default function DailyLesson() {
 
         <span className="dl-phase-label">{phase}/{TOTAL_PHASES}</span>
       </div>
+
+      {/* ── Current Unit Badge ── */}
+      {currentUnitData && currentPhaseData && (
+        <div className="dl-current-unit">
+          <span className="dl-current-unit__phase">
+            {lang === 'tr' ? currentPhaseData.nameTr : currentPhaseData.name}
+          </span>
+          <span className="dl-current-unit__sep">—</span>
+          <span className="dl-current-unit__unit">
+            {lang === 'tr'
+              ? (currentUnitData.titleTr ?? `Ünite ${currentUnitInfo.unitIndex + 1}`)
+              : (currentUnitData.title  ?? `Unit ${currentUnitInfo.unitIndex + 1}`)}
+          </span>
+        </div>
+      )}
 
       {/* ── Montessori Nav Bar (appears after Phase 1 is done) ── */}
       <MontessoriNav

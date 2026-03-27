@@ -12,6 +12,7 @@ export interface GameCardProps {
   isNew?: boolean;
   isTr?: boolean;
   activeTopic?: WordTopic;
+  isRecommended?: boolean;
   onPlay: () => void;
 }
 
@@ -53,7 +54,7 @@ const CATEGORY_LABELS: Record<string, { en: string; tr: string }> = {
   speaking: { en: 'Speaking', tr: 'Konuşma' },
 };
 
-export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activeTopic, onPlay }: GameCardProps) {
+export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activeTopic, isRecommended = false, onPlay }: GameCardProps) {
   const icon = GAME_ICONS[game.type] ?? <Play size={36} />;
   const displayName = isTr ? game.nameTr : game.name;
   const displayDesc = isTr ? game.descriptionTr : game.description;
@@ -142,6 +143,11 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activ
             {isTr ? 'Oyna!' : 'Play!'}
           </button>
         </div>
+      )}
+      {isRecommended && (
+        <span className="game-card__recommended" aria-label={isTr ? 'Mimi tarafından önerilen' : 'Recommended by Mimi'}>
+          {isTr ? 'Bugün İçin' : 'For Today'}
+        </span>
       )}
     </div>
   );

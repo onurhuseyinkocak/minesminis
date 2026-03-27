@@ -163,6 +163,54 @@ export function getTotalCurriculumProgress(): number {
   return Math.round((done / total) * 100);
 }
 
+// ── Current Unit (phaseIndex + unitIndex) ─────────────────────
+
+const CURRENT_UNIT_PHASE_KEY = () => `${prefix()}current_unit_phase_idx`;
+const CURRENT_UNIT_UNIT_KEY  = () => `${prefix()}current_unit_unit_idx`;
+
+/**
+ * Save the currently active unit by phase/unit index (0-based).
+ * Called from WorldMap whenever the active unit is identified.
+ */
+export function saveCurrentUnit(phaseIndex: number, unitIndex: number): void {
+  try {
+    localStorage.setItem(CURRENT_UNIT_PHASE_KEY(), String(phaseIndex));
+    localStorage.setItem(CURRENT_UNIT_UNIT_KEY(),  String(unitIndex));
+  } catch {
+    // storage full — ignore
+  }
+}
+
+/**
+ * Read the currently active unit (phaseIndex + unitIndex, both 0-based).
+ * Falls back to placement result, then to { phaseIndex: 0, unitIndex: 0 }.
+ */
+export function getCurrentUnit(): { phaseIndex: number; unitIndex: number } {
+  try {
+    const phaseRaw = localStorage.getItem(CURRENT_UNIT_PHASE_KEY());
+    const unitRaw  = localStorage.getItem(CURRENT_UNIT_UNIT_KEY());
+    if (phaseRaw !== null && unitRaw !== null) {
+      const phaseIndex = parseInt(phaseRaw, 10);
+      const unitIndex  = parseInt(unitRaw,  10);
+      if (!isNaN(phaseIndex) && !isNaN(unitIndex)) {
+        return { phaseIndex, unitIndex };
+      }
+    }
+  } catch { /* ignore */ }
+
+  // Fallback: derive from placement detail
+  try {
+    const detail = localStorage.getItem('mimi_placement_detail');
+    if (detail) {
+      const parsed = JSON.parse(detail) as { phase?: number };
+      const phaseIndex = Math.max(0, (parsed.phase ?? 1) - 1);
+      return { phaseIndex, unitIndex: 0 };
+    }
+  } catch { /* ignore */ }
+
+  return { phaseIndex: 0, unitIndex: 0 };
+}
+
 /** Reset progress (for testing / profile switch) — resets for current child only */
 export function resetAllProgress(): void {
   try {

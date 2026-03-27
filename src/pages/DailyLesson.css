@@ -78,6 +78,40 @@
   text-align: right;
 }
 
+/* ── CURRENT UNIT BADGE ── */
+.dl-current-unit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 700;
+  color: var(--text-secondary, #475569);
+  padding: 4px 14px;
+  background: var(--bg-elevated, #F8F9FA);
+  border-radius: var(--radius-full, 9999px);
+  width: fit-content;
+  margin: 0 20px 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 40px);
+}
+
+.dl-current-unit__phase {
+  color: var(--primary, #FF6B35);
+  font-weight: 800;
+}
+
+.dl-current-unit__sep {
+  color: var(--text-muted, #94a3b8);
+}
+
+.dl-current-unit__unit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── LESSON OVERALL PROGRESS BAR (thin strip below header) ── */
 .dl-lesson-progress {
   width: 100%;
