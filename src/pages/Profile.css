@@ -269,6 +269,11 @@
   margin: 0;
 }
 
+/* ---- STREAK CARD ---- */
+.profile-streak-card {
+  border-left: 4px solid var(--error);
+}
+
 /* ---- BADGES SECTION ---- */
 .profile-badges-section {
   background: var(--bg-card);

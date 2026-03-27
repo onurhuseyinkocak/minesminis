@@ -1,0 +1,235 @@
+/* ── PhonicsIntroActivity ── */
+.phonics-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3, 12px);
+  padding: var(--spacing-2, 8px) 0;
+  width: 100%;
+}
+
+.phonics-intro__counter {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+/* Tappable grapheme button */
+.phonics-intro__grapheme-btn {
+  background: linear-gradient(135deg, var(--primary-500, #FF6B35), var(--primary-400, #FF8C5A));
+  border: none;
+  border-radius: var(--radius-2xl, 24px);
+  padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1, 4px);
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.phonics-intro__grapheme-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 107, 53, 0.45);
+}
+
+.phonics-intro__grapheme {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.phonics-intro__grapheme-ipa {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+  font-family: var(--font-mono, monospace);
+}
+
+.phonics-intro__play-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Mnemonic action */
+.phonics-intro__action {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2, 8px);
+  background: var(--bg-soft, #f8f9fa);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
+  width: 100%;
+  max-width: 360px;
+}
+
+.phonics-intro__mnemonic-emoji {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.phonics-intro__action-text {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Story text */
+.phonics-intro__story {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 340px;
+}
+
+/* Turkish note */
+.phonics-intro__turkish-note {
+  background: var(--warning-light, #fff3cd);
+  border-left: 3px solid var(--warning, #f59e0b);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  max-width: 340px;
+  line-height: 1.4;
+}
+
+.phonics-intro__turkish-note-label {
+  font-weight: 700;
+  margin-right: 4px;
+  color: var(--warning, #f59e0b);
+}
+
+/* Keywords */
+.phonics-intro__keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2, 8px);
+  justify-content: center;
+  max-width: 360px;
+}
+
+.phonics-intro__keyword {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: white;
+  border: 2px solid var(--primary-200, #ffd4c4);
+  border-radius: var(--radius-full, 999px);
+  padding: var(--spacing-1, 4px) var(--spacing-3, 12px);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-600, #d44e1a);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.phonics-intro__keyword:hover {
+  background: var(--primary-50, #fff5f2);
+  border-color: var(--primary-400, #FF8C5A);
+  transform: translateY(-1px);
+}
+
+.phonics-intro__kw-icon {
+  color: var(--primary-400, #FF8C5A);
+}
+
+/* Next / Done button */
+.phonics-intro__next-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2, 8px);
+  background: var(--primary-500, #FF6B35);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  padding: var(--spacing-3, 12px) var(--spacing-6, 24px);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: var(--spacing-2, 8px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.phonics-intro__next-btn:hover {
+  background: var(--primary-600, #d44e1a);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+}
+
+.phonics-intro__next-btn--disabled {
+  background: var(--primary-300, #ffb89a);
+  cursor: default;
+  box-shadow: none;
+}
+
+.phonics-intro__next-btn--disabled:hover {
+  transform: none;
+  background: var(--primary-300, #ffb89a);
+}
+
+/* Done state */
+.phonics-intro--done {
+  justify-content: center;
+  min-height: 200px;
+}
+
+.phonics-intro__done-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--success-500, #22c55e);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.phonics-intro__done-text {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--success-600, #16a34a);
+}
+
+/* Description-only fallback */
+.phonics-intro--description-only {
+  gap: var(--spacing-4, 16px);
+  justify-content: center;
+  min-height: 160px;
+}
+
+.phonics-intro__desc {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 340px;
+}
+
+.phonics-intro__done-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2, 8px);
+  background: var(--primary-500, #FF6B35);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  padding: var(--spacing-3, 12px) var(--spacing-6, 24px);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -16,6 +16,7 @@ import {
   getWeeklyActivityData,
   getMonthlyActivityData,
 } from '../../services/activityLogger';
+import { fetchActivityLogs, loadUserStats } from '../../services/supabaseSync';
 import {
   getLearnerProfile,
   getLearnerInsights,
@@ -28,6 +29,9 @@ import { ALL_SOUNDS } from '../../data/phonics';
 import { generateAssessment } from '../../services/assessmentService';
 import type { PhonicsAssessment } from '../../services/assessmentService';
 import AssessmentReport from '../../components/AssessmentReport';
+import { getNextAction } from '../../services/unifiedProgress';
+import { MINI_GAMES, LS_GAME_BEST_SCORE_PREFIX } from '../../data/miniGamesData';
+import { kidsWords } from '../../data/wordsData';
 import './ParentDashboard.css';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -754,6 +758,497 @@ function WeeklyInsight({ data, lang }: { data: DashboardData; lang: string }) {
   );
 }
 
+// ─── Supabase activity feed (cross-device real data) ─────────────────────────
+
+type SupabaseLog = Awaited<ReturnType<typeof fetchActivityLogs>>[number];
+
+function RecentSupabaseActivity({
+  logs,
+  cloudStats,
+  lang,
+}: {
+  logs: SupabaseLog[];
+  cloudStats: Awaited<ReturnType<typeof loadUserStats>>;
+  lang: string;
+}) {
+  if (logs.length === 0 && !cloudStats) return null;
+
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const weekLogs = logs.filter(a => new Date(a.created_at) >= weekAgo);
+  const totalWeekXP = weekLogs.reduce((sum, a) => sum + (a.xp_earned ?? 0), 0);
+  const activeDaysThisWeek = new Set(weekLogs.map(a => a.created_at.slice(0, 10))).size;
+
+  return (
+    <div className="pd-card">
+      <div className="pd-card-header">
+        <h2 className="pd-card-title">
+          <IconBarChart size={16} />
+          {lang === 'tr' ? 'Cihazlar Arası İlerleme' : 'Cross-Device Progress'}
+        </h2>
+        {cloudStats && (
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)' }}>
+            {lang === 'tr' ? `Seviye ${cloudStats.level} · ${cloudStats.xp} XP` : `Level ${cloudStats.level} · ${cloudStats.xp} XP`}
+          </span>
+        )}
+      </div>
+      <div className="pd-card-body">
+        {/* Quick stats row */}
+        {weekLogs.length > 0 && (
+          <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-secondary)', borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-primary)' }}>{activeDaysThisWeek}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{lang === 'tr' ? 'Aktif gün' : 'Active days'}</div>
+            </div>
+            <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-secondary)', borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--primary)' }}>{totalWeekXP}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{lang === 'tr' ? 'XP bu hafta' : 'XP this week'}</div>
+            </div>
+            {cloudStats && (
+              <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-secondary)', borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--success, #10b981)' }}>{cloudStats.wordsLearned}</div>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{lang === 'tr' ? 'Kelime' : 'Words'}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Recent activity list */}
+        {logs.length === 0 ? (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
+            {lang === 'tr' ? 'Henüz bulut aktivitesi yok.' : 'No cloud activity recorded yet.'}
+          </p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {logs.slice(0, 8).map((a) => (
+              <div
+                key={a.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 0',
+                  borderBottom: '1px solid var(--border-light, #f3f4f6)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: getActivityColor(a.type), flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>{a.title}</div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                      {new Date(a.created_at).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                      {a.accuracy != null && ` · ${Math.round(a.accuracy)}% ${lang === 'tr' ? 'doğru' : 'correct'}`}
+                    </div>
+                  </div>
+                </div>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.82rem', color: 'var(--primary)', whiteSpace: 'nowrap', paddingLeft: 8 }}>
+                  +{a.xp_earned} XP
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── A. Weekly Activity Chart ─────────────────────────────────────────────────
+
+const TR_DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+
+function getWeekDayIndex(date: Date): number {
+  // JS getDay(): 0=Sun … 6=Sat — map to Mon=0 … Sun=6
+  return (date.getDay() + 6) % 7;
+}
+
+function buildWeekActivityData(
+  supabaseLogs: Array<{ created_at: string }>,
+  userId: string,
+): Array<{ day: string; minutes: number }> {
+  // Build Mon–Sun of the current week
+  const today = new Date();
+  const todayIdx = getWeekDayIndex(today);
+
+  const days = TR_DAYS.map((label, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() - todayIdx + i);
+    return { label, dateKey: d.toISOString().slice(0, 10) };
+  });
+
+  if (supabaseLogs.length > 0) {
+    const countByDay = new Map<string, number>();
+    for (const log of supabaseLogs) {
+      const dk = log.created_at.slice(0, 10);
+      countByDay.set(dk, (countByDay.get(dk) ?? 0) + 1);
+    }
+    return days.map(({ label, dateKey }) => ({
+      day: label,
+      minutes: (countByDay.get(dateKey) ?? 0) * 5,
+    }));
+  }
+
+  // localStorage fallback: parse mm_learned_<userId> additions per day
+  try {
+    const raw = localStorage.getItem(`mm_learned_${userId}`);
+    const learned: string[] = raw ? JSON.parse(raw) : [];
+    // We only know total count — distribute evenly for current week as a rough estimate
+    const perDay = Math.round((learned.length * 5) / 7);
+    return days.map(({ label, dateKey }) => {
+      const isToday = dateKey === today.toISOString().slice(0, 10);
+      return { day: label, minutes: isToday ? Math.min(perDay * 2, 30) : perDay };
+    });
+  } catch {
+    return days.map(({ label }) => ({ day: label, minutes: 0 }));
+  }
+}
+
+function WeeklyActivityChart({
+  supabaseLogs,
+  userId,
+  lang,
+}: {
+  supabaseLogs: Array<{ created_at: string }>;
+  userId: string;
+  lang: string;
+}) {
+  const today = new Date();
+  const todayKey = today.toISOString().slice(0, 10);
+  const todayDayIdx = getWeekDayIndex(today);
+
+  const bars = useMemo(
+    () => buildWeekActivityData(supabaseLogs, userId),
+    [supabaseLogs, userId],
+  );
+
+  const MAX_MINUTES = 30;
+
+  return (
+    <div className="pd-card">
+      <div className="pd-card-header">
+        <h2 className="pd-card-title">
+          <IconBarChart size={16} />
+          {lang === 'tr' ? 'Bu Hafta Aktivite' : 'Weekly Activity'}
+        </h2>
+      </div>
+      <div className="pd-card-body">
+        <div className="pd-weekly-chart">
+          {bars.map(({ day, minutes }, i) => {
+            const d = new Date(today);
+            d.setDate(today.getDate() - todayDayIdx + i);
+            const isToday = d.toISOString().slice(0, 10) === todayKey;
+            const heightPct = Math.min((minutes / MAX_MINUTES) * 100, 100);
+            return (
+              <div key={day} className="pd-weekly-col">
+                <div className="pd-weekly-bar-wrap">
+                  <div
+                    className={`pd-weekly-bar-fill${isToday ? ' pd-weekly-bar-fill--today' : ''}`}
+                    style={{ height: `${heightPct}%` }}
+                    title={`${minutes}m`}
+                  />
+                </div>
+                <span className={`pd-weekly-day-label${isToday ? ' pd-weekly-day-label--today' : ''}`}>
+                  {day}
+                </span>
+                <span className="pd-weekly-min-label">
+                  {minutes > 0 ? `${minutes}m` : '–'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="pd-mastery-total" style={{ marginTop: 12 }}>
+          {lang === 'tr'
+            ? `Toplam bu hafta: ${bars.reduce((s, b) => s + b.minutes, 0)} dk`
+            : `Total this week: ${bars.reduce((s, b) => s + b.minutes, 0)} min`}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── B. Words Learned This Week ───────────────────────────────────────────────
+
+const CATEGORY_FLAGS: Record<string, string> = {
+  Animals:    '🐾',
+  Colors:     '🎨',
+  Food:       '🍎',
+  Fruits:     '🍓',
+  Vegetables: '🥦',
+  Numbers:    '🔢',
+  Body:       '🫀',
+  Clothes:    '👕',
+  Family:     '👨‍👩‍👧',
+  Nature:     '🌿',
+  Sports:     '⚽',
+  School:     '🏫',
+  Phonics:    '🔤',
+  Transport:  '🚗',
+  House:      '🏠',
+};
+
+function getCategoryFlag(category: string): string {
+  return CATEGORY_FLAGS[category] ?? '📚';
+}
+
+function WordsLearnedThisWeek({
+  userId,
+  lang,
+}: {
+  userId: string;
+  lang: string;
+}) {
+  const wordMap = useMemo(() => {
+    const m = new Map<string, { category: string; emoji: string }>();
+    for (const w of kidsWords) {
+      m.set(w.word.toLowerCase(), { category: w.category, emoji: w.emoji });
+    }
+    return m;
+  }, []);
+
+  // mm_learned_<userId> is a simple string[] — no timestamps, so we take the
+  // last N learned words as a reasonable "this week" proxy. If there's an
+  // activity log count for this week we use that to slice, otherwise 10 max.
+  const allLearned = useMemo(() => {
+    try {
+      const raw = localStorage.getItem(`mm_learned_${userId}`);
+      return raw ? (JSON.parse(raw) as string[]) : [];
+    } catch {
+      return [];
+    }
+  }, [userId]);
+
+  // We can't know exact timestamps from this key, so show last 10 as "this week"
+  const thisWeekWords = allLearned.slice(-10);
+  const overflowCount = Math.max(0, allLearned.length - 10);
+
+  return (
+    <div className="pd-card">
+      <div className="pd-card-header">
+        <h2 className="pd-card-title">
+          <IconBook size={16} />
+          {lang === 'tr' ? 'Bu Hafta Kelimeler' : 'Words This Week'}
+        </h2>
+      </div>
+      <div className="pd-card-body">
+        <p className="pd-words-week-count">
+          {lang === 'tr'
+            ? `Bu hafta: ${thisWeekWords.length} yeni kelime`
+            : `This week: ${thisWeekWords.length} new words`}
+        </p>
+        {thisWeekWords.length === 0 ? (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
+            {lang === 'tr' ? 'Bu hafta henüz yeni kelime yok.' : 'No new words this week yet.'}
+          </p>
+        ) : (
+          <div className="pd-word-chips">
+            {thisWeekWords.map((w) => {
+              const info = wordMap.get(w.toLowerCase());
+              const flag = info ? getCategoryFlag(info.category) : '📚';
+              return (
+                <span key={w} className="pd-word-chip" title={info?.category}>
+                  {flag} {w}
+                </span>
+              );
+            })}
+            {overflowCount > 0 && (
+              <span className="pd-word-chip pd-word-chip--more">
+                +{overflowCount} {lang === 'tr' ? 'daha' : 'more'}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── C. Pronunciation Accuracy Trend ─────────────────────────────────────────
+
+function PronunciationAccuracy({ lang }: { lang: string }) {
+  const score = useMemo(() => {
+    try {
+      const raw = localStorage.getItem('mm_game_best_pronunciation');
+      if (!raw) return null;
+      const n = parseInt(raw, 10);
+      return isNaN(n) ? null : Math.min(100, Math.max(0, n));
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const color =
+    score === null
+      ? 'var(--text-muted)'
+      : score < 40
+        ? 'var(--error, #ef4444)'
+        : score < 70
+          ? 'var(--warning)'
+          : 'var(--success)';
+
+  return (
+    <div className="pd-card">
+      <div className="pd-card-header">
+        <h2 className="pd-card-title">
+          <IconStar size={16} />
+          {lang === 'tr' ? 'Telaffuz Doğruluğu' : 'Pronunciation Accuracy'}
+        </h2>
+      </div>
+      <div className="pd-card-body">
+        {score === null ? (
+          <EmptyCard
+            message={
+              lang === 'tr'
+                ? 'Henüz telaffuz oynanmadı.'
+                : 'No pronunciation game played yet.'
+            }
+            lang={lang}
+          />
+        ) : (
+          <>
+            <div className="pd-pronun-score" style={{ color }}>
+              {lang === 'tr' ? `Telaffuz: ${score}%` : `Pronunciation: ${score}%`}
+            </div>
+            <div className="pd-bar-track" style={{ marginTop: 10 }}>
+              <div
+                className="pd-bar-fill"
+                style={{ width: `${score}%`, background: color, transition: 'width 600ms ease' }}
+              />
+            </div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
+              {score < 40
+                ? lang === 'tr' ? 'Daha fazla pratik gerekiyor' : 'Needs more practice'
+                : score < 70
+                  ? lang === 'tr' ? 'Gelişiyor, devam et!' : 'Getting better, keep going!'
+                  : lang === 'tr' ? 'Harika telaffuz!' : 'Great pronunciation!'}
+            </p>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── D. Strengths & Weaknesses Summary ───────────────────────────────────────
+
+function StrengthsWeaknesses({ lang }: { lang: string }) {
+  const gameScores = useMemo(() => {
+    return MINI_GAMES.map((g) => {
+      try {
+        const raw = localStorage.getItem(`${LS_GAME_BEST_SCORE_PREFIX}${g.type}`);
+        const score = raw !== null ? parseInt(raw, 10) : undefined;
+        return { type: g.type, nameTr: g.nameTr, score: isNaN(score ?? NaN) ? undefined : score };
+      } catch {
+        return { type: g.type, nameTr: g.nameTr, score: undefined };
+      }
+    }).filter((g) => g.score !== undefined) as Array<{ type: string; nameTr: string; score: number }>;
+  }, []);
+
+  if (gameScores.length < 2) {
+    return (
+      <div className="pd-card">
+        <div className="pd-card-header">
+          <h2 className="pd-card-title">
+            <IconZap size={16} />
+            {lang === 'tr' ? 'Güçlü / Geliştirilecek' : 'Strengths / Weaknesses'}
+          </h2>
+        </div>
+        <EmptyCard
+          message={
+            lang === 'tr'
+              ? 'Analiz için en az 2 oyun oynanmalı.'
+              : 'Play at least 2 games to see analysis.'
+          }
+          lang={lang}
+        />
+      </div>
+    );
+  }
+
+  const sorted = [...gameScores].sort((a, b) => b.score - a.score);
+  const strengths = sorted.slice(0, 2);
+  const weaknesses = sorted.slice(-2).reverse();
+
+  return (
+    <div className="pd-card">
+      <div className="pd-card-header">
+        <h2 className="pd-card-title">
+          <IconZap size={16} />
+          {lang === 'tr' ? 'Güçlü / Geliştirilecek' : 'Strengths / Weaknesses'}
+        </h2>
+      </div>
+      <div className="pd-card-body">
+        <div className="pd-sw-section">
+          <span className="pd-sw-label pd-sw-label--strong">
+            {lang === 'tr' ? 'Güçlü' : 'Strong'}
+          </span>
+          <div className="pd-sw-chips">
+            {strengths.map((g) => (
+              <span key={g.type} className="pd-sw-chip pd-sw-chip--strong">
+                {g.nameTr} <span className="pd-sw-score">{g.score}%</span>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="pd-sw-section" style={{ marginTop: 12 }}>
+          <span className="pd-sw-label pd-sw-label--weak">
+            {lang === 'tr' ? 'Geliştirilecek' : 'Needs Work'}
+          </span>
+          <div className="pd-sw-chips">
+            {weaknesses.map((g) => (
+              <span key={g.type} className="pd-sw-chip pd-sw-chip--weak">
+                {g.nameTr} <span className="pd-sw-score">{g.score}%</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── E. Next Lesson Recommendation ───────────────────────────────────────────
+
+function NextLessonRecommendation({
+  userId,
+  lang,
+}: {
+  userId: string;
+  lang: string;
+}) {
+  const action = useMemo(() => {
+    try {
+      return getNextAction(userId);
+    } catch {
+      return null;
+    }
+  }, [userId]);
+
+  if (!action) return null;
+
+  return (
+    <div className="pd-card pd-card--next-lesson">
+      <div className="pd-card-header">
+        <h2 className="pd-card-title">
+          <IconLightbulb size={16} />
+          {lang === 'tr' ? "Mimi'nin Önerisi" : "Mimi's Recommendation"}
+        </h2>
+      </div>
+      <div className="pd-card-body">
+        <div className="pd-next-lesson">
+          <span className="pd-next-lesson-emoji" role="img" aria-hidden="true">
+            {action.emoji}
+          </span>
+          <div>
+            <div className="pd-next-lesson-title">{action.titleTr}</div>
+            <div className="pd-next-lesson-desc">{action.description}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Loading skeleton ─────────────────────────────────────────────────────────
 
 function LoadingSkeleton() {
@@ -789,6 +1284,10 @@ export default function ParentDashboard() {
   const [dashData, setDashData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [reportData, setReportData] = useState<PhonicsAssessment | null>(null);
+
+  // Supabase activity logs for cross-device real data
+  const [supabaseLogs, setSupabaseLogs] = useState<Awaited<ReturnType<typeof fetchActivityLogs>>>([]);
+  const [supabaseChildStats, setSupabaseChildStats] = useState<Awaited<ReturnType<typeof loadUserStats>>>(null);
 
   const handleGenerateReport = useCallback(() => {
     if (!activeChildId) return;
@@ -863,6 +1362,19 @@ export default function ParentDashboard() {
     });
 
     setLoading(false);
+
+    // Also fetch from Supabase for real cross-device data
+    fetchActivityLogs(activeChildId, 30).then(logs => {
+      setSupabaseLogs(logs);
+    }).catch(() => {
+      setSupabaseLogs([]);
+    });
+
+    loadUserStats(activeChildId).then(cloudStats => {
+      setSupabaseChildStats(cloudStats);
+    }).catch(() => {
+      setSupabaseChildStats(null);
+    });
   }, [activeChildId]);
 
   const activeChild = useMemo(
@@ -994,6 +1506,37 @@ export default function ParentDashboard() {
           {/* Weekly insight */}
           <section aria-label={lang === 'tr' ? 'Haftalık ipucu' : 'Weekly insight'}>
             <WeeklyInsight data={dashData} lang={lang} />
+          </section>
+
+          {/* Cross-device Supabase activity feed */}
+          <section aria-label={lang === 'tr' ? 'Cihazlar arası ilerleme' : 'Cross-device progress'}>
+            <RecentSupabaseActivity logs={supabaseLogs} cloudStats={supabaseChildStats} lang={lang} />
+          </section>
+
+          {/* Detailed reports section */}
+          <section aria-label={lang === 'tr' ? 'Detaylı raporlar' : 'Detailed reports'}>
+            <p className="pd-section-label">
+              {lang === 'tr' ? 'Detaylı Raporlar' : 'Detailed Reports'}
+            </p>
+
+            {/* Weekly activity chart */}
+            <WeeklyActivityChart
+              supabaseLogs={supabaseLogs}
+              userId={activeChildId!}
+              lang={lang}
+            />
+
+            {/* Words this week + Pronunciation accuracy */}
+            <div className="pd-two-col" style={{ marginTop: 20 }}>
+              <WordsLearnedThisWeek userId={activeChildId!} lang={lang} />
+              <PronunciationAccuracy lang={lang} />
+            </div>
+
+            {/* Strengths/Weaknesses + Next recommendation */}
+            <div className="pd-two-col" style={{ marginTop: 20 }}>
+              <StrengthsWeaknesses lang={lang} />
+              <NextLessonRecommendation userId={activeChildId!} lang={lang} />
+            </div>
           </section>
         </main>
       )}

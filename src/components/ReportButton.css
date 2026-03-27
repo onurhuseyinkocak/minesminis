@@ -9,7 +9,7 @@
   position: fixed;
   bottom: var(--space-xl);
   right: var(--space-lg);
-  z-index: 999;
+  z-index: var(--z-max);
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
@@ -82,7 +82,7 @@
 .report-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 10001;
+  z-index: var(--z-above-all);
   background: var(--overlay-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);

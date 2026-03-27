@@ -6,21 +6,21 @@ import { useEffect, useState } from 'react';
 import Lottie from 'lottie-react';
 
 const STATE_MAP: Record<string, string> = {
-  idle:        '/mascot/mimi_idle.json',
-  happy:       '/mascot/mimi_happy.json',
-  sad:         '/mascot/mimi_sad.json',
-  sit:         '/mascot/mimi_sit.json',
-  talk:        '/mascot/mimi_talk.json',
-  walk:        '/mascot/mimi_walk.json',
-  wave:        '/mascot/mimi_wave.json',
+  idle:        '/mascot/cat_idle.json',
+  happy:       '/mascot/cat_happy.json',
+  sad:         '/mascot/cat_idle.json',
+  sit:         '/mascot/cat_idle.json',
+  talk:        '/mascot/cat_idle.json',
+  walk:        '/mascot/cat_walk.json',
+  wave:        '/mascot/cat_wave.json',
   // aliases
-  celebrating: '/mascot/mimi_happy.json',
-  thinking:    '/mascot/mimi_sit.json',
-  sleeping:    '/mascot/mimi_sit.json',
-  star:        '/mascot/mimi_happy.json',
-  waving:      '/mascot/mimi_wave.json',
-  excited:     '/mascot/mimi_happy.json',
-  cool:        '/mascot/mimi_idle.json',
+  celebrating: '/mascot/cat_happy.json',
+  thinking:    '/mascot/cat_idle.json',
+  sleeping:    '/mascot/cat_sleeping.json',
+  star:        '/mascot/cat_happy.json',
+  waving:      '/mascot/cat_wave.json',
+  excited:     '/mascot/cat_happy.json',
+  cool:        '/mascot/cat_idle.json',
 };
 
 export type CharacterState = keyof typeof STATE_MAP;

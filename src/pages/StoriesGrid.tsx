@@ -3,14 +3,16 @@
  * Browse AI-generated stories — children see a grid of story cards.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Sparkles, Clock, Star, BookOpen, AlertTriangle } from 'lucide-react';
+import { usePageTitle } from '../hooks/usePageTitle';
+import { Sparkles, Clock, Star, BookOpen, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { KidIcon } from '../components/ui';
 import { generateStoryCover } from '../utils/storyCoverGenerator';
-import { getAllBuiltInStories, type DecodableStory } from '../services/decodableStoryService';
+import { getStoriesForUser, type DecodableStory, type ScoredStory } from '../services/decodableStoryService';
 import DecodableStoryReader from '../components/DecodableStoryReader';
+import { useAuth } from '../contexts/AuthContext';
 import './StoriesGrid.css';
 
 interface StoryCard {
@@ -31,18 +33,23 @@ const SKELETON_COUNT = 6;
 type Tab = 'all' | 'decodable';
 
 export default function StoriesGrid() {
+  usePageTitle('Hikayeler', 'Stories');
   const [stories, setStories] = useState<StoryCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isStale, setIsStale] = useState(false);
   const [coverUrls, setCoverUrls] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<Tab>('all');
   const [activeDecodableStory, setActiveDecodableStory] = useState<DecodableStory | null>(null);
   const { lang } = useLanguage();
   const navigate = useNavigate();
-  const decodableStories = getAllBuiltInStories();
+  const { user } = useAuth();
+  const userId = user?.uid ?? 'guest';
+  const scoredStories = useMemo(() => getStoriesForUser(userId), [userId]);
 
   const fetchStories = useCallback(() => {
     setError(null);
+    setIsStale(false);
     setLoading(true);
     fetch('/api/stories')
       .then(r => {
@@ -50,11 +57,26 @@ export default function StoriesGrid() {
         return r.json();
       })
       .then((d: { stories?: StoryCard[] }) => {
-        setStories(d.stories ?? []);
+        const fetched = d.stories ?? [];
+        setStories(fetched);
+        localStorage.setItem('mm_stories_cache', JSON.stringify({ data: fetched, savedAt: Date.now() }));
         setLoading(false);
       })
       .catch(() => {
-        setError(lang === 'tr' ? 'Hikayeler yüklenemedi. Tekrar dene.' : 'Could not load stories. Please try again.');
+        const cached = localStorage.getItem('mm_stories_cache');
+        if (cached) {
+          try {
+            const { data, savedAt } = JSON.parse(cached) as { data: StoryCard[]; savedAt: number };
+            const ageHours = (Date.now() - savedAt) / 3600000;
+            setStories(data);
+            if (ageHours > 24) setIsStale(true);
+            setError(null);
+          } catch {
+            setError(lang === 'tr' ? 'Hikayeler yüklenemedi. Tekrar dene.' : 'Could not load stories. Please try again.');
+          }
+        } else {
+          setError(lang === 'tr' ? 'Hikayeler yüklenemedi. Tekrar dene.' : 'Could not load stories. Please try again.');
+        }
         setLoading(false);
       });
   }, [lang]);
@@ -113,6 +135,13 @@ export default function StoriesGrid() {
         </p>
       </div>
 
+      {/* ── Offline stale cache banner ── */}
+      {isStale && (
+        <div className="stories-stale-banner">
+          Çevrimdışı — son kaydedilen içerik gösteriliyor
+        </div>
+      )}
+
       {/* ── Tab Filter ── */}
       <div className="stories-tabs">
         <button
@@ -128,7 +157,7 @@ export default function StoriesGrid() {
         >
           <BookOpen size={15} />
           {lang === 'tr' ? 'Fonik Hikayeler' : 'Decodable'}
-          <span className="stories-tab__badge">{decodableStories.length}</span>
+          <span className="stories-tab__badge">{scoredStories.length}</span>
         </button>
       </div>
 
@@ -141,11 +170,11 @@ export default function StoriesGrid() {
               : 'These stories only use sounds you have already learned. You can decode every word!'}
           </p>
           <div className="stories-grid">
-            {decodableStories.map(ds => (
+            {scoredStories.map(({ story: ds, knownWords, totalWords, level }: ScoredStory) => (
               <button
                 key={ds.id}
                 type="button"
-                className="story-card story-card--decodable"
+                className={`story-card story-card--decodable story-card--coverage-${level}`}
                 onClick={() => setActiveDecodableStory(ds)}
                 aria-label={lang === 'tr' ? ds.titleTr : ds.title}
               >
@@ -153,11 +182,17 @@ export default function StoriesGrid() {
                   <span className="story-card__group-badge">
                     {lang === 'tr' ? `Grup ${ds.phonicsGroup}` : `Group ${ds.phonicsGroup}`}
                   </span>
+                  {level === 'ready' && (
+                    <span className="story-card__ready-badge">
+                      <CheckCircle2 size={13} strokeWidth={2.5} />
+                      {lang === 'tr' ? 'Hazır!' : 'Ready!'}
+                    </span>
+                  )}
                   <BookOpen size={40} color="white" strokeWidth={1.5} />
                 </div>
                 <div className="story-card__info">
                   <h3>{lang === 'tr' ? ds.titleTr : ds.title}</h3>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--slate-500)' }}>
+                  <p className="story-card__decodable-meta">
                     {lang === 'tr'
                       ? `${ds.wordCount} kelime · %${ds.decodabilityScore} çözümlenebilir`
                       : `${ds.wordCount} words · ${ds.decodabilityScore}% decodable`}
@@ -167,8 +202,12 @@ export default function StoriesGrid() {
                       <Star size={14} />
                       {ds.topic}
                     </span>
-                    <span className="story-decodable-tag">
-                      {lang === 'tr' ? 'Fonik' : 'Phonics'}
+                    <span className={`story-coverage-tag story-coverage-tag--${level}`}>
+                      {totalWords > 0
+                        ? (lang === 'tr'
+                          ? `${knownWords}/${totalWords} kelime biliniyor`
+                          : `Knows ${knownWords}/${totalWords} words`)
+                        : (lang === 'tr' ? 'Fonik' : 'Phonics')}
                     </span>
                   </div>
                 </div>
@@ -206,10 +245,10 @@ export default function StoriesGrid() {
       ) : stories.length === 0 ? (
         <div className="stories-empty">
           <BookOpen size={48} />
-          <h3 style={{ margin: '8px 0 4px', fontSize: '1.2rem' }}>
+          <h3 className="stories-empty__title">
             {lang === 'tr' ? 'Henüz hikaye eklenmedi' : 'No stories yet'}
           </h3>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 16 }}>
+          <p className="stories-empty__hint">
             {lang === 'tr'
               ? 'Fonik Hikayeler sekmesinde seni bekleyen hikayeler var!'
               : 'Check out the Decodable tab for stories waiting for you!'}

@@ -1,14 +1,14 @@
 /**
- * StreakShameModal
- * Loss aversion popup: "Mimi sizi özlüyor" when streak is at risk.
- * Shown in Dashboard when user hasn't practiced today and it's after 4pm.
- * Duolingo's most powerful retention mechanism: fear of losing the streak.
+ * StreakReminderModal
+ * Positive reminder: "Mimi özlüyor seni!" when streak is at risk.
+ * Shows after 4pm if user hasn't practiced today.
+ * Encouraging tone — never shame or fear.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Flame, X } from 'lucide-react';
-import UnifiedMascot from './UnifiedMascot';
+import { Flame, X, Clock } from 'lucide-react';
+import LottieCharacter from './LottieCharacter';
 import {
   markStreakShameShown,
   getStreakSafeHours,
@@ -23,25 +23,29 @@ interface StreakShameModalProps {
   mascotId?: string;
 }
 
-export function StreakShameModal({ streakDays, lang = 'tr', onDismiss, mascotId = 'mimi_dragon' }: StreakShameModalProps) {
+export function StreakShameModal({ streakDays, lang = 'tr', onDismiss }: StreakShameModalProps) {
   const navigate = useNavigate();
   const hoursLeft = getStreakSafeHours();
   const hasPlayedSound = useRef(false);
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') onDismiss();
+  }, [onDismiss]);
+
   useEffect(() => {
     if (!hasPlayedSound.current) {
-      SFX.wrong();
+      SFX.correct(); // positive sound instead of wrong
       hasPlayedSound.current = true;
     }
     markStreakShameShown();
-  }, []);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const handleStart = () => {
     onDismiss();
     navigate('/lesson');
   };
-
-  const urgencyColor = hoursLeft <= 2 ? 'var(--color-error-500)' : 'var(--color-primary-500)';
 
   return (
     <AnimatePresence>
@@ -53,10 +57,10 @@ export function StreakShameModal({ streakDays, lang = 'tr', onDismiss, mascotId 
         onClick={onDismiss}
         role="dialog"
         aria-modal="true"
-        aria-label={lang === 'tr' ? 'Seri uyarısı' : 'Streak warning'}
+        aria-label={lang === 'tr' ? 'Hatırlatma' : 'Reminder'}
       >
         <motion.div
-          className="ssm__card"
+          className="ssm__card ssm__card--positive"
           initial={{ scale: 0.85, opacity: 0, y: 30 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0 }}
@@ -73,50 +77,55 @@ export function StreakShameModal({ streakDays, lang = 'tr', onDismiss, mascotId 
             <X size={18} />
           </button>
 
-          {/* Mascot — sad state */}
+          {/* Mascot — wave state */}
           <div className="ssm__mascot">
-            <UnifiedMascot id={mascotId} state="sleeping" size={100} />
+            <LottieCharacter state="wave" size={100} />
           </div>
 
-          {/* Streak fire badge */}
-          <div className="ssm__streak-badge">
-            <Flame size={18} style={{ color: urgencyColor }} />
-            <span className="ssm__streak-count" style={{ color: urgencyColor }}>
-              {streakDays}
-            </span>
-          </div>
+          {/* Streak badge — positive color */}
+          {streakDays > 0 && (
+            <div className="ssm__streak-badge ssm__streak-badge--gold">
+              <Flame size={18} className="ssm__streak-flame" />
+              <span className="ssm__streak-count">
+                {streakDays}
+              </span>
+            </div>
+          )}
 
-          {/* Headline */}
+          {/* Headline — positive */}
           <h2 className="ssm__title">
             {lang === 'tr'
-              ? 'Serinizi kaybetmek üzeresiniz!'
-              : "You're about to lose your streak!"}
+              ? 'Mimi seni bekliyor!'
+              : 'Mimi is waiting for you!'}
           </h2>
 
           {/* Message */}
           <p className="ssm__body">
             {lang === 'tr' ? (
               <>
-                Mimi <strong>{streakDays} günlük</strong> serinizin gitmesini istemiyor.
-                Bugün henüz pratik yapmadınız.
+                Bugün henüz ders yapmadın.{' '}
+                {streakDays > 0 && <><strong>{streakDays} günlük</strong> serine devam et!</>}
+                {streakDays === 0 && <>Hadi birlikte başlayalım!</>}
               </>
             ) : (
               <>
-                Mimi doesn't want your <strong>{streakDays}-day</strong> streak to end.
-                You haven't practiced today yet.
+                You haven't practiced today yet.{' '}
+                {streakDays > 0 && <>Keep your <strong>{streakDays}-day</strong> streak going!</>}
+                {streakDays === 0 && <>Let's start together!</>}
               </>
             )}
           </p>
 
-          {/* Urgency countdown */}
-          <div className="ssm__urgency" style={{ color: urgencyColor }}>
-            <Flame size={14} />
-            <span>
-              {lang === 'tr'
-                ? `${hoursLeft} saat içinde biter`
-                : `Ends in ${hoursLeft} hours`}
-            </span>
-          </div>
+          {hoursLeft > 0 && hoursLeft <= 4 && (
+            <div className="ssm__urgency">
+              <Clock size={14} />
+              <span>
+                {lang === 'tr'
+                  ? `Bugün ${hoursLeft} saat kaldı`
+                  : `${hoursLeft} hours left today`}
+              </span>
+            </div>
+          )}
 
           {/* CTA */}
           <button
@@ -124,7 +133,7 @@ export function StreakShameModal({ streakDays, lang = 'tr', onDismiss, mascotId 
             className="ssm__cta"
             onClick={handleStart}
           >
-            {lang === 'tr' ? 'Hemen Başla' : 'Start Now'}
+            {lang === 'tr' ? 'Hadi Başlayalım!' : "Let's Go!"}
           </button>
 
           {/* Dismiss */}
@@ -133,7 +142,7 @@ export function StreakShameModal({ streakDays, lang = 'tr', onDismiss, mascotId 
             className="ssm__dismiss"
             onClick={onDismiss}
           >
-            {lang === 'tr' ? 'Serime izin ver' : 'Let my streak end'}
+            {lang === 'tr' ? 'Sonra hatırlat' : 'Remind me later'}
           </button>
         </motion.div>
       </motion.div>

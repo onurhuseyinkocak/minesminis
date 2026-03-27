@@ -23,7 +23,8 @@ import {
     FileBarChart,
     BookOpen,
     Video,
-    Type
+    Type,
+    Volume2
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { setAdminPassword, clearAdminPassword } from '../../utils/adminSession';
@@ -44,6 +45,7 @@ import SEOManager from './SEOManager';
 import VideosManager from './VideosManager';
 import WordsManager from './WordsManager';
 import WorksheetsManager from './WorksheetsManager';
+import AudioManager from './AudioManager';
 import './AdminLayout.css';
 
 const ADMIN_SESSION_KEY = 'admin_session';
@@ -87,6 +89,12 @@ const navSections: NavSection[] = [
             { path: '/admin/stories', icon: BookOpen, label: 'Story Generator' },
             { path: '/admin/mimi', icon: Bot, label: 'Mimi (AI Chat)' },
             { path: '/admin/premium', icon: Crown, label: 'Premium' },
+        ]
+    },
+    {
+        label: 'Media',
+        items: [
+            { path: '/admin/audio', icon: Volume2, label: 'Audio' },
         ]
     },
     {
@@ -278,6 +286,7 @@ function AdminLayout() {
                         <Route path="errors" element={<ErrorMonitor />} />
                         <Route path="reports" element={<ReportsManager />} />
                         <Route path="settings" element={<AdminSettings />} />
+                        <Route path="audio" element={<AudioManager />} />
                     </Routes>
                 </div>
             </div>

@@ -3,7 +3,7 @@
 .notif-prompt-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1200;
+  z-index: var(--z-max);
   pointer-events: none; /* overlay itself is not clickable */
 }
 
@@ -12,7 +12,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1201;
+  z-index: calc(var(--z-max) + 1);
 
   /* Card */
   background: var(--bg-elevated, #1e293b);
@@ -55,7 +55,7 @@
   font-weight: 800;
   color: var(--text-primary, #f1f5f9);
   margin: 0 0 4px;
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-display);
   line-height: 1.3;
 }
 
@@ -63,7 +63,7 @@
   font-size: 13px;
   color: var(--text-muted, #94a3b8);
   margin: 0;
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-display);
   line-height: 1.5;
 }
 
@@ -81,7 +81,7 @@
   border-radius: var(--radius-md, 12px);
   font-size: 15px;
   font-weight: 700;
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-display);
   cursor: pointer;
   border: none;
   transition: opacity 0.15s ease, transform 0.1s ease;

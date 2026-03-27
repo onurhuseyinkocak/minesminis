@@ -98,7 +98,7 @@
   position: relative;
   width: 128px;
   height: 128px;
-  border-radius: 28px;
+  border-radius: var(--radius-2xl);
   overflow: visible;
   box-shadow:
     0 0 0 5px rgba(255,107,53,0.18),
@@ -135,7 +135,7 @@
 .logo-img {
   width: 128px;
   height: 128px;
-  border-radius: 28px;
+  border-radius: var(--radius-2xl);
   object-fit: cover;
   display: block;
 }
@@ -229,7 +229,7 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 480px) {
-  .logo-box, .logo-img { width: 100px; height: 100px; border-radius: 22px; }
+  .logo-box, .logo-img { width: 100px; height: 100px; border-radius: var(--radius-xl); }
   .logo-cat-ear { border-left-width: 14px; border-right-width: 14px; border-bottom-width: 22px; top: -14px; }
   .logo-cat-ear--l { left: 8px; }
   .logo-cat-ear--r { right: 8px; }

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import './PhonicsLesson.css';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -347,6 +348,7 @@ function PhonicsLesson() {
               (window as unknown as Record<string, unknown>).SpeechRecognition ||
               (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
             if (!SpeechRecognitionAPI) {
+              toast.error(isTr ? 'Tarayıcın ses tanıma desteklemiyor. Chrome dene!' : 'Your browser does not support speech recognition. Try Chrome!');
               return;
             }
             const recognition = new (SpeechRecognitionAPI as new () => SpeechRecognition)();

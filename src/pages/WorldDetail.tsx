@@ -211,8 +211,8 @@ const WorldDetail = () => {
       <section className="world-detail-vocab">
         <h2 className="world-detail-section-title">{t('worlds.vocabularyPreview')}</h2>
         <div className="world-detail-vocab__scroll">
-          {vocabPreview.map((v, i) => (
-            <div key={i} className="vocab-preview-card">
+          {vocabPreview.map((v) => (
+            <div key={v.english} className="vocab-preview-card">
               <div className="vocab-preview-card__letter">{v.english.charAt(0).toUpperCase()}</div>
               <span className="vocab-preview-card__word">{v.english}</span>
             </div>
@@ -427,8 +427,8 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
         <section className="world-detail-vocab">
           <h2 className="world-detail-section-title">{t('worlds.phonicsFocus')}</h2>
           <div className="world-detail-vocab__scroll">
-            {unit.phonicsFocus.map((sound, i) => (
-              <div key={i} className="vocab-preview-card">
+            {unit.phonicsFocus.map((sound) => (
+              <div key={sound} className="vocab-preview-card">
                 <div className="vocab-preview-card__letter">{sound.replace(/^g\d+_/, '').charAt(0).toUpperCase()}</div>
                 <span className="vocab-preview-card__word">{sound.replace(/^g\d+_/, '')}</span>
               </div>
@@ -453,7 +453,7 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
             const isCurrent = idx === activitiesCompleted;
 
             return (
-              <motion.div key={idx} variants={itemVariants}>
+              <motion.div key={`${activity.type}-${idx}`} variants={itemVariants}>
                 <Card
                   variant={isCurrent ? 'interactive' : 'default'}
                   padding="md"

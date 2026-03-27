@@ -21,18 +21,17 @@ const VALID_MASCOT_IDS = ['mimi_cat', 'mimi_dragon', 'nova_fox', 'bubbles_octo',
 function getCatLottieFile(state: MascotState): string {
     switch (state) {
         case 'walking':
-        case 'following': return '/mascot/mimi_walk.json';
-        case 'waving':    return '/mascot/mimi_wave.json';
-        case 'sleeping':  return '/mascot/mimi_idle.json';
-        case 'thinking':  return '/mascot/mimi_sit.json';
+        case 'following': return '/mascot/cat_walk.json';
+        case 'waving':    return '/mascot/cat_wave.json';
+        case 'sleeping':  return '/mascot/cat_sleeping.json';
         case 'celebrating':
         case 'laughing':
         case 'dancing':
         case 'love':
         case 'jumping':
         case 'surprised':
-        case 'singing':   return '/mascot/mimi_happy.json';
-        default:          return '/mascot/mimi_idle.json';
+        case 'singing':   return '/mascot/cat_happy.json';
+        default:          return '/mascot/cat_idle.json';
     }
 }
 

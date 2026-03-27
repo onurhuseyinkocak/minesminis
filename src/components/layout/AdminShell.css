@@ -364,7 +364,7 @@
 @media (max-width: 1023px) {
   .admin-shell__sidebar {
     transform: translateX(-100%);
-    z-index: 1100;
+    z-index: var(--z-max);
     width: 280px;
     transition: transform var(--transition-spring);
   }
@@ -380,7 +380,7 @@
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    z-index: 1099;
+    z-index: calc(var(--z-max) - 1);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--transition-base);

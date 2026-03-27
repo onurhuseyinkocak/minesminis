@@ -180,7 +180,7 @@
 
 [data-theme="dark"] .mm-modal {
   background: var(--bg-card);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-xl);
 }
 
 [data-theme="dark"] .mm-modal__header {

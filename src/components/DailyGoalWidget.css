@@ -53,14 +53,14 @@
 
 .dgw__progress--done {
   stroke: var(--success);
-  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4));
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--success) 40%, transparent));
   animation: ring-complete 0.6s var(--ease-spring);
 }
 
 @keyframes ring-complete {
   0% { opacity: 0.5; }
-  50% { opacity: 1; filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.6)); }
-  100% { filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--success) 60%, transparent)); }
+  100% { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--success) 40%, transparent)); }
 }
 
 /* ---- Center ---- */
@@ -128,7 +128,7 @@
   position: fixed;
   inset: 0;
   z-index: var(--z-overlay);
-  background: rgba(26, 26, 46, 0.5);
+  background: var(--overlay-dark);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -235,4 +235,25 @@
   color: var(--primary);
   stroke-width: 3;
   flex-shrink: 0;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 480px) {
+  .dgw__overlay {
+    padding: var(--space-md);
+    align-items: flex-end;
+  }
+
+  .dgw__selector {
+    max-width: 100%;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .dgw__ring-btn {
+    width: 72px;
+    height: 72px;
+  }
 }

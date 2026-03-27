@@ -58,7 +58,10 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
     return (
         <div className="badge-showcase">
             <div className="showcase-header">
-                <h3><Award size={18} /> {t('badgeShowcase.title')}</h3>
+                <h3>
+              <Award size={18} aria-hidden="true" />
+              {t('badgeShowcase.title')}
+            </h3>
                 <div className="badge-stats">
                     <span className="earned-count">{earnedBadges.length}</span>
                     <span className="total-count">/ {allBadges.length}</span>
@@ -91,7 +94,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
 
             <div className="badges-grid">
                 {limitedBadges.length === 0 && (
-                    <div className="badge-empty-state" style={{ gridColumn: '1 / -1' }}>
+                    <div className="badge-empty-state">
                         <Medal size={48} className="badge-empty-state__icon" />
                         <p className="badge-empty-state__title">
                             {filter === 'earned'

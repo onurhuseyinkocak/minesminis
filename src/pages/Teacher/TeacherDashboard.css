@@ -42,7 +42,7 @@
 }
 
 .td-header h1 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   color: var(--text-primary);
@@ -54,7 +54,7 @@
   font-size: 13px;
   color: var(--text-muted);
   margin: 2px 0 0;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
 }
 
 /* ── Main body container ── */
@@ -94,7 +94,7 @@
 }
 
 .td-section-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 800;
   color: var(--text-primary);
@@ -142,7 +142,7 @@
 }
 
 .td-class-name {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 800;
   color: var(--text-primary);
@@ -152,7 +152,7 @@
 .td-class-meta {
   font-size: 12px;
   color: var(--text-muted);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
 }
 
 .td-join-code {
@@ -173,7 +173,7 @@
 }
 
 .td-join-code-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 900;
   letter-spacing: 3px;
@@ -184,7 +184,7 @@
 .td-join-code-hint {
   font-size: 10px;
   color: var(--text-muted);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
 }
 
 /* ── Buttons ── */
@@ -194,7 +194,7 @@
   gap: var(--space-2);
   padding: 8px var(--space-4);
   border-radius: var(--radius-md);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   border: none;
@@ -251,7 +251,7 @@
 }
 
 .td-create-form h3 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 800;
   color: var(--secondary);
@@ -274,7 +274,7 @@
 }
 
 .td-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
@@ -286,7 +286,7 @@
   padding: 9px var(--space-3);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   color: var(--text-primary);
   background: var(--bg-card);
@@ -316,7 +316,7 @@
 .td-code-banner-label {
   font-size: 12px;
   color: var(--success);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -324,7 +324,7 @@
 }
 
 .td-code-banner-code {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 36px;
   font-weight: 900;
   letter-spacing: 8px;
@@ -335,7 +335,7 @@
   font-size: 12px;
   color: var(--text-muted);
   margin-top: var(--space-2);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
 }
 
 /* ── Right panel (detail) ── */
@@ -364,7 +364,7 @@
   padding: 8px var(--space-3);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-secondary);
   background: var(--bg-card);
@@ -383,7 +383,7 @@
 }
 
 .td-roster-table thead th {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -431,7 +431,7 @@
 
 .td-roster-row td {
   padding: var(--space-3) var(--space-3);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-body);
   vertical-align: middle;
@@ -451,7 +451,7 @@
   border-radius: 50%;
   background: var(--secondary-pale);
   color: var(--secondary);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 13px;
   display: flex;
@@ -470,7 +470,7 @@
   font-weight: 700;
   padding: 2px 6px;
   border-radius: var(--radius-full);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   border: 1px solid var(--warning-light);
 }
 
@@ -483,7 +483,7 @@
   font-weight: 700;
   padding: 2px var(--space-2);
   border-radius: var(--radius-full);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ── Expanded phonics row ── */
@@ -503,7 +503,7 @@
 }
 
 .td-phonics-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 800;
   color: var(--text-secondary);
@@ -564,7 +564,7 @@
 
 .td-phonics-dot-label {
   font-size: 9px;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   color: var(--text-muted);
   text-align: center;
@@ -587,7 +587,7 @@
 }
 
 .td-stat-value {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 900;
   color: var(--text-primary);
@@ -596,7 +596,7 @@
 }
 
 .td-stat-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
@@ -620,7 +620,7 @@
   background: var(--warning-pale);
   border: 1px solid var(--warning-light);
   border-radius: var(--radius-md);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-body);
 }
@@ -646,7 +646,7 @@
   gap: var(--space-3);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-body);
   border: 1px solid var(--border);
@@ -662,7 +662,7 @@
   justify-content: center;
   font-size: 11px;
   font-weight: 800;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   flex-shrink: 0;
   color: #fff;
   background: var(--ink-300, #94a3b8);
@@ -690,7 +690,7 @@
   font-size: 12px;
   font-weight: 700;
   color: var(--accent-amber);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ── Homework section ── */
@@ -718,7 +718,7 @@
   border: 1.5px solid var(--success-light);
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   color: var(--success);
@@ -744,7 +744,7 @@
 }
 
 .td-empty-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 800;
   color: var(--text-secondary);
@@ -752,7 +752,7 @@
 }
 
 .td-empty-sub {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-muted);
   margin: 0;
@@ -777,7 +777,7 @@
 }
 
 .td-select-prompt p {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   margin: 0;
 }
@@ -790,7 +790,7 @@
   transform: translateX(-50%);
   background: var(--secondary);
   color: var(--text-on-primary);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   padding: var(--space-3) var(--space-5);
@@ -845,10 +845,10 @@
   background: var(--primary-pale);
   color: var(--primary);
   border: 1.5px solid var(--primary);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 700;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;

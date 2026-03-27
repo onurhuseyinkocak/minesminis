@@ -1,9 +1,14 @@
+/* Bottom nav height on mobile (AppShell uses min-h-[56px] + pb-safe). Keep in sync. */
+:root {
+  --bottom-nav-height: 56px;
+}
+
 .install-banner {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
+  z-index: var(--z-banner);
 
   display: flex;
   align-items: center;
@@ -11,7 +16,7 @@
   padding: 0 16px;
   height: 64px;
 
-  background: var(--bg-elevated, #1a1f35);
+  background: var(--bg-elevated);
   border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
 
@@ -36,13 +41,13 @@
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 
-  background: var(--primary, #e8a317);
+  background: var(--primary);
   color: #fff;
   font-size: 13px;
   font-weight: 800;
-  font-family: "Nunito", sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.02em;
 
   display: flex;
@@ -65,8 +70,8 @@
 .install-banner__title {
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-primary, #f0f4ff);
-  font-family: "Nunito", sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-display);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -74,8 +79,8 @@
 
 .install-banner__subtitle {
   font-size: 12px;
-  color: var(--text-muted, #94a3b8);
-  font-family: "Nunito", sans-serif;
+  color: var(--text-muted);
+  font-family: var(--font-display);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -90,7 +95,7 @@
   width: 13px;
   height: 13px;
   flex-shrink: 0;
-  color: var(--primary, #e8a317);
+  color: var(--primary);
 }
 
 /* ── Install button ─────────────────────────────────────────────────────── */
@@ -99,14 +104,14 @@
   flex-shrink: 0;
   height: 34px;
   padding: 0 16px;
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   border: none;
 
-  background: var(--primary, #e8a317);
+  background: var(--primary);
   color: #fff;
   font-size: 13px;
   font-weight: 700;
-  font-family: "Nunito", sans-serif;
+  font-family: var(--font-display);
   cursor: pointer;
 
   transition: opacity 0.15s ease, transform 0.12s ease;
@@ -133,7 +138,7 @@
   padding: 0;
 
   background: var(--bg-surface, rgba(255, 255, 255, 0.06));
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted);
   cursor: pointer;
 
   display: flex;
@@ -145,7 +150,7 @@
 
 .install-banner__dismiss-btn:hover {
   background: var(--bg-hover, rgba(255, 255, 255, 0.1));
-  color: var(--text-primary, #f0f4ff);
+  color: var(--text-primary);
 }
 
 .install-banner__dismiss-btn svg {
@@ -162,10 +167,29 @@
   }
 }
 
+/* ── On mobile, sit above bottom nav so it stays accessible ──────────────── */
+
+@media (max-width: 1023px) {
+  .install-banner {
+    bottom: var(--bottom-nav-height);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--glass-border, var(--border));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .install-banner {
+      bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+      padding-bottom: 0;
+      height: 64px;
+    }
+  }
+}
+
 /* ── Light theme override ───────────────────────────────────────────────── */
 
 [data-theme="light"] .install-banner {
-  background: var(--bg-elevated, #ffffff);
+  background: var(--bg-elevated);
   border-top-color: var(--glass-border, rgba(0, 0, 0, 0.08));
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.1);
 }

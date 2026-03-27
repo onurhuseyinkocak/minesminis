@@ -196,6 +196,25 @@ function LearningGarden() {
         </div>
       </div>
 
+      {/* Empty garden hint */}
+      {stats.total === 0 && (
+        <div className="lg-emptyHint">
+          <Sprout size={32} color="var(--mimi, #4CAF50)" />
+          <p className="lg-emptyHintText">
+            Your garden is waiting! Complete phonics lessons to plant your first seed.
+          </p>
+          <button
+            type="button"
+            className="lg-waterBtn"
+            style={{ backgroundColor: 'var(--mimi, #4CAF50)', borderColor: 'var(--mimi, #4CAF50)', color: '#fff' }}
+            onClick={() => navigate('/dashboard')}
+          >
+            <Sprout size={18} />
+            Start Learning
+          </button>
+        </div>
+      )}
+
       {/* Garden Grid */}
       <div className="lg-gardenArea">
         {[1, 2, 3, 4, 5, 6, 7].map((groupNum) => {
@@ -446,6 +465,17 @@ function LearningGarden() {
                   Watered {selectedPlant.waterCount} time{selectedPlant.waterCount !== 1 ? 's' : ''}
                 </p>
               )}
+
+              {/* Practice this sound button */}
+              <button
+                type="button"
+                className="lg-waterBtn"
+                style={{ backgroundColor: 'var(--mimi, #4CAF50)', borderColor: 'var(--mimi, #4CAF50)', color: '#fff' }}
+                onClick={() => navigate(`/phonics/${selectedPlant.plant.soundId}`)}
+              >
+                <Sprout size={18} />
+                {selectedPlant.mastery > 0 ? 'Practice Again' : 'Start Learning'}
+              </button>
 
               {/* Close button */}
               <button type="button" className="lg-closeBtn" onClick={() => setSelectedPlant(null)}>

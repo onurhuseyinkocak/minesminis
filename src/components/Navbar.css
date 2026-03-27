@@ -8,7 +8,7 @@
 .nav-top {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: var(--z-dropdown);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -288,7 +288,7 @@
 .nav-mobile-overlay {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: var(--z-overlay);
   background: var(--overlay-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -428,7 +428,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 90;
+  z-index: var(--z-raised);
   height: 68px;
   background: var(--bg-elevated);
   backdrop-filter: blur(24px) saturate(1.9);

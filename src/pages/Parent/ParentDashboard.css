@@ -31,7 +31,7 @@
   width: 40px;
   height: 40px;
   background: var(--primary-pale);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,7 @@
 }
 
 .pd-header h1 {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   color: var(--text-primary);
@@ -52,7 +52,7 @@
   font-size: 13px;
   color: var(--text-muted);
   margin: 2px 0 0;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
 }
 
 /* ── Child selector ── */
@@ -67,11 +67,11 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   border: 1.5px solid var(--border);
   background: var(--bg-card);
   color: var(--text-secondary);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -112,7 +112,7 @@
 
 /* ── Section label ── */
 .pd-section-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -124,7 +124,7 @@
 /* ── Cards shared ── */
 .pd-card {
   background: var(--bg-card);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
   overflow: hidden;
@@ -139,7 +139,7 @@
 }
 
 .pd-card-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
@@ -168,7 +168,7 @@
 .pd-stat-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   padding: 20px;
   box-shadow: var(--shadow-card);
   display: flex;
@@ -179,7 +179,7 @@
 .pd-stat-icon {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -192,7 +192,7 @@
 .pd-stat-icon--xp     { background: var(--primary-pale);  color: var(--primary); }
 
 .pd-stat-value {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 800;
   color: var(--text-primary);
@@ -200,14 +200,14 @@
 }
 
 .pd-stat-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--text-muted);
   font-weight: 500;
 }
 
 .pd-stat-delta {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   color: var(--success);
@@ -239,13 +239,13 @@
 
 .pd-cal-day {
   aspect-ratio: 1;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-muted);
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 10px;
   font-weight: 600;
   color: var(--text-muted);
@@ -282,7 +282,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 11px;
   color: var(--text-secondary);
 }
@@ -317,14 +317,14 @@
 }
 
 .pd-mastery-box-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
 }
 
 .pd-mastery-count {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
@@ -332,14 +332,14 @@
 
 .pd-bar-track {
   height: 8px;
-  border-radius: 99px;
+  border-radius: var(--radius-full);
   background: var(--bg-muted);
   overflow: hidden;
 }
 
 .pd-bar-fill {
   height: 100%;
-  border-radius: 99px;
+  border-radius: var(--radius-full);
   transition: width 600ms ease;
 }
 
@@ -348,7 +348,7 @@
 .pd-bar-fill--box3 { background: var(--success); }
 
 .pd-mastery-total {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 8px;
@@ -370,7 +370,7 @@
 .pd-activity-icon {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,7 +387,7 @@
 
 .pd-activity-label {
   flex: 1;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
@@ -398,19 +398,19 @@
   flex: 2;
   height: 6px;
   background: var(--bg-muted);
-  border-radius: 99px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .pd-activity-bar-fill {
   height: 100%;
-  border-radius: 99px;
+  border-radius: var(--radius-full);
   background: var(--primary);
   transition: width 500ms ease;
 }
 
 .pd-activity-minutes {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
@@ -426,7 +426,7 @@
 }
 
 .pd-phonics-chip {
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 8px 4px;
   display: flex;
   flex-direction: column;
@@ -454,7 +454,7 @@
 }
 
 .pd-phonics-grapheme {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 800;
   line-height: 1;
@@ -465,7 +465,7 @@
 .pd-phonics-chip--new      .pd-phonics-grapheme { color: var(--text-muted); }
 
 .pd-phonics-pct {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 10px;
   font-weight: 600;
   line-height: 1;
@@ -486,7 +486,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 11px;
   color: var(--text-secondary);
 }
@@ -514,14 +514,14 @@
   gap: 12px;
   padding: 10px 12px;
   background: var(--bg-elevated);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
 }
 
 .pd-badge-icon {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--warning-pale);
   display: flex;
   align-items: center;
@@ -531,14 +531,14 @@
 }
 
 .pd-badge-name {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .pd-badge-desc {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 2px;
@@ -549,12 +549,12 @@
   background: var(--secondary-pale);
   border: 1px solid var(--border);
   border-left: 4px solid var(--secondary);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 20px 24px;
 }
 
 .pd-insight-recommendation {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   color: var(--text-body);
   line-height: 1.7;
@@ -568,7 +568,7 @@
 }
 
 .pd-insight-stat {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--text-secondary);
   display: flex;
@@ -599,7 +599,7 @@
 }
 
 .pd-empty-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
   color: var(--text-secondary);
@@ -607,7 +607,7 @@
 }
 
 .pd-empty-sub {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-muted);
   margin: 0;
@@ -633,7 +633,7 @@
   background: linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-elevated) 50%, var(--bg-muted) 75%);
   background-size: 200% 100%;
   animation: pd-shimmer 1.4s infinite;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 .pd-skel--h80  { height: 80px; }
@@ -712,7 +712,7 @@
   border-radius: 9px;
   font-size: 14px;
   font-weight: 700;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
   white-space: nowrap;
@@ -731,4 +731,195 @@
   .pd-report-btn {
     display: none;
   }
+}
+
+/* ── Weekly Activity Bar Chart ── */
+.pd-weekly-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  padding-bottom: 0;
+}
+
+.pd-weekly-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+
+.pd-weekly-bar-wrap {
+  flex: 1;
+  width: 100%;
+  background: var(--bg-muted);
+  border-radius: 6px 6px 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.pd-weekly-bar-fill {
+  width: 100%;
+  background: var(--primary-pale);
+  border-radius: 6px 6px 0 0;
+  min-height: 4px;
+  transition: height 500ms ease;
+  border-top: 2px solid transparent;
+}
+
+.pd-weekly-bar-fill--today {
+  background: var(--primary);
+  border-top-color: var(--primary-hover);
+}
+
+.pd-weekly-day-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.pd-weekly-day-label--today {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.pd-weekly-min-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+/* ── Words Learned This Week ── */
+.pd-words-week-count {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+}
+
+.pd-word-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pd-word-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pd-word-chip--more {
+  background: var(--primary-pale);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ── Pronunciation accuracy ── */
+.pd-pronun-score {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+/* ── Strengths & Weaknesses ── */
+.pd-sw-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pd-sw-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pd-sw-label--strong { color: var(--success); }
+.pd-sw-label--weak   { color: var(--warning); }
+
+.pd-sw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pd-sw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-xl);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pd-sw-chip--strong {
+  background: var(--success-pale);
+  border: 1px solid var(--success-light);
+  color: var(--success);
+}
+
+.pd-sw-chip--weak {
+  background: var(--warning-pale);
+  border: 1px solid var(--warning-light);
+  color: var(--warning);
+}
+
+.pd-sw-score {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+/* ── Next Lesson Recommendation ── */
+.pd-card--next-lesson {
+  border-left: 4px solid var(--primary);
+}
+
+.pd-next-lesson {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pd-next-lesson-emoji {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pd-next-lesson-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.pd-next-lesson-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  line-height: 1.5;
 }

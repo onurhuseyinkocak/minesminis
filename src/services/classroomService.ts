@@ -5,7 +5,6 @@
  */
 
 import { syncCreateClassroom, syncJoinClassroom } from './supabaseSync';
-import { supabase } from '../config/supabase';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -209,23 +208,7 @@ export function removeStudent(classroomId: string, studentId: string): boolean {
     saveClassrooms(classroom.teacherId, teacherClassrooms);
   }
 
-  // Sync to Supabase (fire-and-forget)
-  try {
-    void supabase
-      .from('classrooms')
-      .select('id')
-      .eq('join_code', classroom.joinCode)
-      .single()
-      .then(({ data: cls }) => {
-        if (cls) {
-          void supabase
-            .from('classroom_students')
-            .delete()
-            .eq('classroom_id', cls.id)
-            .eq('student_id', studentId);
-        }
-      });
-  } catch { /* Supabase sync is best-effort; localStorage is primary */ }
+  // No-op: classrooms/classroom_students tables do not exist in DB
 
   return true;
 }
@@ -245,13 +228,7 @@ export function assignPhonicsGroup(classroomId: string, group: number): boolean 
     saveClassrooms(classroom.teacherId, teacherClassrooms);
   }
 
-  // Sync to Supabase (fire-and-forget)
-  try {
-    void supabase
-      .from('classrooms')
-      .update({ phonics_group_assigned: group })
-      .eq('join_code', classroom.joinCode);
-  } catch { /* Supabase sync is best-effort; localStorage is primary */ }
+  // No-op: classrooms table does not exist in DB
 
   return true;
 }
@@ -314,15 +291,8 @@ export function deleteClassroom(teacherId: string, classroomId: string): boolean
   if (filtered.length === classrooms.length) return false;
   saveClassrooms(teacherId, filtered);
 
-  // Sync to Supabase (fire-and-forget)
-  if (classroom) {
-    try {
-      void supabase
-        .from('classrooms')
-        .delete()
-        .eq('join_code', classroom.joinCode);
-    } catch { /* Supabase sync is best-effort; localStorage is primary */ }
-  }
+  // No-op: classrooms table does not exist in DB
+  void classroom;
 
   return true;
 }

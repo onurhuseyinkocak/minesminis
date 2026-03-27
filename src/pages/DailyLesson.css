@@ -9,11 +9,11 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: var(--bg-primary, #0f172a);
+  background: var(--bg-primary, #FFF8F2);
   overflow: hidden;
-  z-index: 10;
+  z-index: var(--z-modal, 100);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 1.1rem; /* Montessori: larger base font */
+  font-size: var(--text-lg, 1.1rem); /* Montessori: larger base font */
 }
 
 /* ── PHASE HEADER ── */
@@ -59,7 +59,7 @@
 }
 .dl-dot--active {
   width: 28px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--primary, #f59e0b);
   border-color: var(--primary, #f59e0b);
 }
@@ -70,7 +70,7 @@
 
 /* Phase label */
 .dl-phase-label {
-  font-size: 13px;
+  font-size: var(--text-sm, 13px);
   font-weight: 700;
   color: var(--text-muted, #64748b);
   min-width: 56px;
@@ -100,11 +100,11 @@
   padding: 10px 14px;
   min-height: 44px;
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 999px; /* pill shape */
+  border-radius: var(--radius-full); /* pill shape */
   background: var(--bg-elevated, #1e293b);
   color: var(--text-secondary, #94a3b8);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 11px;
+  font-size: var(--text-xs, 11px);
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
@@ -117,11 +117,11 @@
 }
 
 .dl-phase-btn__icon {
-  font-size: 18px;
+  font-size: var(--text-lg, 18px);
   line-height: 1;
 }
 .dl-phase-btn__label {
-  font-size: 10px;
+  font-size: var(--text-xs, 10px);
   letter-spacing: 0.02em;
 }
 .dl-phase-btn__check {
@@ -189,7 +189,7 @@
 
 /* Phase title — larger, bolder */
 .dl-phase-title {
-  font-size: 2rem; /* Montessori: big headings */
+  font-size: var(--text-3xl, 2rem); /* Montessori: big headings */
   font-weight: 800;
   color: var(--text-primary, #f8fafc);
   text-align: center;
@@ -198,7 +198,7 @@
 }
 
 .dl-phase-subtitle {
-  font-size: 1rem;
+  font-size: var(--text-base, 1rem);
   font-weight: 600;
   color: var(--text-secondary, #94a3b8);
   text-align: center;
@@ -209,7 +209,7 @@
 .dl-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 28px; /* Montessori: very round, safe feeling */
+  border-radius: var(--radius-2xl); /* Montessori: very round, safe feeling */
   padding: 40px 44px; /* more breathing room */
   display: flex;
   flex-direction: column;
@@ -250,7 +250,7 @@
 }
 
 .dl-card__word {
-  font-size: 40px; /* Montessori: big and clear */
+  font-size: var(--text-4xl, 40px); /* Montessori: big and clear */
   font-weight: 900;
   color: var(--text-primary, #f8fafc);
   letter-spacing: -0.5px;
@@ -258,14 +258,14 @@
 }
 
 .dl-card__tr {
-  font-size: 20px;
+  font-size: var(--text-xl, 20px);
   font-weight: 600;
   color: var(--primary, #f59e0b);
   text-align: center;
 }
 
 .dl-card__tap-hint {
-  font-size: 12px;
+  font-size: var(--text-sm, 12px);
   color: var(--text-muted, #64748b);
   margin-top: 4px;
   display: flex;
@@ -312,7 +312,7 @@
 .dl-sentence-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 28px;
+  border-radius: var(--radius-2xl);
   padding: 36px 32px;
   width: 100%;
   max-width: 360px;
@@ -329,18 +329,18 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: var(--secondary, #7C3AED);
-  color: #fff;
+  background: var(--secondary, #0D5C4D);
+  color: var(--white, #fff);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: var(--text-2xl, 28px);
   font-weight: 900;
   margin: 0 auto 12px;
 }
 
 .dl-sentence {
-  font-size: 1.25rem;
+  font-size: var(--text-xl, 1.25rem);
   font-weight: 700;
   color: var(--text-secondary, #94a3b8);
   text-align: center;
@@ -355,7 +355,7 @@
 }
 
 .dl-sentence__tr {
-  font-size: 1rem;
+  font-size: var(--text-base, 1rem);
   font-weight: 600;
   color: var(--text-muted, #64748b);
   text-align: center;
@@ -376,7 +376,7 @@
   border: none;
   border-radius: var(--radius-lg, 16px);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 1.05rem;
+  font-size: var(--text-base, 1.05rem);
   font-weight: 800;
   cursor: pointer;
   transition:
@@ -411,7 +411,7 @@
   background: transparent;
   color: var(--text-muted, #64748b);
   border: 1.5px solid var(--glass-border, #334155);
-  font-size: 0.9rem;
+  font-size: var(--text-sm, 0.9rem);
   min-height: 44px;
 }
 .dl-btn--ghost:hover {
@@ -436,7 +436,7 @@
 }
 
 .dl-phase-complete__msg {
-  font-size: 1.4rem;
+  font-size: var(--text-xl, 1.4rem);
   font-weight: 800;
   color: var(--text-primary, #f8fafc);
   margin: 0;
@@ -445,7 +445,7 @@
 /* ── PHASE 3: PLAY ── */
 .dl-game-section {
   width: 100%;
-  max-width: 420px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -462,11 +462,11 @@
   min-height: 64px; /* taller — more tangible */
   padding: 14px 10px;
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 18px; /* Montessori round */
+  border-radius: var(--radius-lg); /* Montessori round */
   background: var(--bg-elevated, #1e293b);
   color: var(--text-primary, #f8fafc);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 1rem;
+  font-size: var(--text-base, 1rem);
   font-weight: 700;
   cursor: pointer;
   text-align: center;
@@ -516,9 +516,9 @@
   gap: 6px;
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 6px 16px;
-  font-size: 14px;
+  font-size: var(--text-sm, 14px);
   font-weight: 700;
   color: var(--text-primary, #f8fafc);
 }
@@ -527,7 +527,7 @@
 .dl-speak-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 28px;
+  border-radius: var(--radius-2xl);
   padding: 40px 32px;
   width: 100%;
   max-width: 360px;
@@ -541,7 +541,7 @@
 }
 
 .dl-speak-word {
-  font-size: 48px; /* large and clear for pronunciation */
+  font-size: var(--text-5xl, 48px); /* large and clear for pronunciation */
   font-weight: 900;
   color: var(--text-primary, #f8fafc);
   letter-spacing: -1px;
@@ -575,7 +575,7 @@
 }
 
 .dl-speak-feedback {
-  font-size: 1.3rem;
+  font-size: var(--text-xl, 1.3rem);
   font-weight: 800;
   text-align: center;
   min-height: 28px;
@@ -585,7 +585,7 @@
 
 /* ── PHASE 5: REVIEW ── */
 .dl-review-question {
-  font-size: 1rem;
+  font-size: var(--text-base, 1rem);
   font-weight: 600;
   color: var(--text-secondary, #94a3b8);
   text-align: center;
@@ -593,7 +593,7 @@
 }
 
 .dl-review-prompt-word {
-  font-size: 1.8rem;
+  font-size: var(--text-2xl, 1.8rem);
   font-weight: 800;
   color: var(--text-primary, #f8fafc);
   text-align: center;
@@ -612,11 +612,11 @@
 .dl-choice-btn {
   min-height: 64px; /* taller, more tangible */
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: var(--bg-elevated, #1e293b);
   color: var(--text-primary, #f8fafc);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 1.1rem;
+  font-size: var(--text-lg, 1.1rem);
   font-weight: 700;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s, transform 0.1s;
@@ -671,14 +671,14 @@
 }
 
 .dl-celebration__title {
-  font-size: 2.2rem;
+  font-size: var(--text-3xl, 2.2rem);
   font-weight: 900;
   color: var(--text-primary, #f8fafc);
   margin: 0;
 }
 
 .dl-celebration__subtitle {
-  font-size: 1.1rem;
+  font-size: var(--text-lg, 1.1rem);
   font-weight: 600;
   color: var(--text-secondary, #94a3b8);
   margin: 0;
@@ -694,7 +694,7 @@
 .dl-stat-card {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   padding: 20px 28px;
   display: flex;
   flex-direction: column;
@@ -711,14 +711,14 @@
 }
 
 .dl-stat-card__value {
-  font-size: 36px;
+  font-size: var(--text-4xl, 36px);
   font-weight: 900;
   color: var(--primary, #f59e0b);
   line-height: 1;
 }
 
 .dl-stat-card__label {
-  font-size: 12px;
+  font-size: var(--text-sm, 12px);
   font-weight: 700;
   color: var(--text-muted, #64748b);
   text-transform: uppercase;
@@ -757,23 +757,28 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--success, #22c55e);
-  color: #052e16;
+  color: var(--success-text, #052e16);
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 1.1rem;
+  font-size: var(--text-lg, 1.1rem);
   font-weight: 800;
   padding: 12px 28px;
-  border-radius: 999px;
-  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
-  z-index: 20;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 20px var(--success-glow, rgba(34, 197, 94, 0.4));
+  z-index: var(--z-toast, 20);
   pointer-events: none;
   animation: dlFeedbackIn 0.25s ease both;
   white-space: nowrap;
 }
+
+@media (max-height: 650px) {
+  .dl-feedback { bottom: 130px; }
+}
+
 /* "reveal" class: warm amber hint, gentle — replaces "sad"/"wrong" */
 .dl-feedback--reveal {
   background: rgba(245, 158, 11, 0.9);
-  color: #451a03;
-  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
+  color: var(--warning-text, #451a03);
+  box-shadow: 0 4px 20px var(--warning-glow, rgba(245, 158, 11, 0.35));
 }
 
 @keyframes dlFeedbackIn {
@@ -813,7 +818,7 @@
 .dl-story__text {
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 28px;
+  border-radius: var(--radius-2xl);
   padding: 32px 28px;
   width: 100%;
   display: flex;
@@ -823,7 +828,7 @@
 }
 
 .dl-story__sentence {
-  font-size: 1.2rem;
+  font-size: var(--text-xl, 1.2rem);
   font-weight: 700;
   color: var(--text-secondary, #94a3b8);
   line-height: 1.8;
@@ -835,7 +840,7 @@
   display: inline-block;
   background: rgba(245, 158, 11, 0.25);
   color: var(--primary, #f59e0b);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 2px 8px;
   font-weight: 900;
   cursor: pointer;
@@ -851,15 +856,14 @@
 }
 
 .dl-story__translation {
-  font-size: 0.95rem;
+  font-size: var(--text-sm, 0.95rem);
   font-weight: 600;
   color: var(--text-muted, #64748b);
   text-align: center;
   line-height: 1.7;
-  padding: 0 8px;
+  padding: 18px 8px 0;
   margin: 0;
   border-top: 1px solid var(--glass-border, #334155);
-  padding-top: 18px;
 }
 
 /* ── CELEBRATION: STAR RATING ── */
@@ -871,7 +875,7 @@
 }
 
 .dl-star {
-  font-size: 52px;
+  font-size: var(--text-5xl, 52px);
   line-height: 1;
   animation: dlStarPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
@@ -903,7 +907,7 @@
 }
 
 .dl-celebration__wordlist-label {
-  font-size: 13px;
+  font-size: var(--text-sm, 13px);
   font-weight: 700;
   color: var(--text-muted, #64748b);
   text-transform: uppercase;
@@ -924,10 +928,10 @@
   gap: 6px;
   background: var(--bg-elevated, #1e293b);
   border: 2px solid var(--glass-border, #334155);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 8px 16px;
   font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 15px;
+  font-size: var(--text-base, 15px);
   font-weight: 700;
   color: var(--text-primary, #f8fafc);
   cursor: pointer;
@@ -947,18 +951,18 @@
   gap: 10px;
   background: rgba(245, 158, 11, 0.08);
   border: 1.5px solid rgba(245, 158, 11, 0.25);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   padding: 14px 22px;
   max-width: 300px;
   text-align: left;
-  font-size: 14px;
+  font-size: var(--text-sm, 14px);
   font-weight: 700;
   color: var(--text-secondary, #94a3b8);
   line-height: 1.5;
 }
 
 .dl-celebration__parent-share-icon {
-  font-size: 28px;
+  font-size: var(--text-2xl, 28px);
   flex-shrink: 0;
 }
 
@@ -967,7 +971,7 @@
 .dl-phonics-card {
   background: linear-gradient(135deg, rgba(20, 184, 166, 0.18) 0%, rgba(6, 182, 212, 0.10) 100%);
   border: 2px solid rgba(20, 184, 166, 0.45);
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   padding: 24px 32px;
   display: flex;
   flex-direction: column;
@@ -981,25 +985,25 @@
 
 /* Large letter — the grapheme itself */
 .dl-phonics-card__sound {
-  font-size: 3rem;
+  font-size: var(--text-4xl, 3rem);
   font-weight: 900;
-  color: #2dd4bf; /* teal-400 */
+  color: var(--teal-400, #2dd4bf);
   letter-spacing: -1px;
   line-height: 1.1;
-  text-shadow: 0 0 24px rgba(45, 212, 191, 0.4);
+  text-shadow: 0 0 24px var(--teal-glow, rgba(45, 212, 191, 0.4));
 }
 
 /* IPA phoneme in brackets */
 .dl-phonics-card__phoneme {
-  font-size: 1.1rem;
+  font-size: var(--text-lg, 1.1rem);
   font-weight: 700;
-  color: rgba(45, 212, 191, 0.75);
+  color: var(--teal-300, rgba(45, 212, 191, 0.75));
   letter-spacing: 0.05em;
 }
 
-/* Keyword with emoji */
+/* Keyword */
 .dl-phonics-card__keyword {
-  font-size: 1rem;
+  font-size: var(--text-base, 1rem);
   font-weight: 700;
   color: var(--text-secondary, #94a3b8);
   text-align: center;
@@ -1045,7 +1049,7 @@
 
 /* ── PHASE NAV: MINI PROGRESS LABEL ── */
 .dl-phase-btn__progress {
-  font-size: 11px;
+  font-size: var(--text-xs, 11px);
   font-weight: 800;
   color: var(--text-muted, #64748b);
   position: absolute;
@@ -1063,12 +1067,12 @@
 
 /* Responsive adjustments */
 @media (max-width: 360px) {
-  .dl-card__word { font-size: 30px; }
-  .dl-card__letter { width: 60px; height: 60px; font-size: 28px; }
-  .dl-phase-title { font-size: 1.6rem; }
-  .dl-btn { font-size: 0.95rem; padding: 0 20px; }
-  .dl-story__sentence { font-size: 1.05rem; }
-  .dl-phase-btn__icon { font-size: 16px; }
+  .dl-card__word { font-size: var(--text-3xl, 30px); }
+  .dl-card__letter { width: 60px; height: 60px; font-size: var(--text-2xl, 28px); }
+  .dl-phase-title { font-size: var(--text-2xl, 1.6rem); }
+  .dl-btn { font-size: var(--text-sm, 0.95rem); padding: 0 20px; }
+  .dl-story__sentence { font-size: var(--text-base, 1.05rem); }
+  .dl-phase-btn__icon { font-size: var(--text-base, 16px); }
   .dl-phase-btn__label { font-size: 9px; }
 }
 
@@ -1126,7 +1130,7 @@
   gap: 10px;
   background: linear-gradient(135deg, var(--warning-pale, #fffbeb) 0%, var(--accent-amber, #fbbf24) 100%);
   border: 2px solid var(--warning, #f59e0b);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 10px 18px;
   margin-bottom: 20px;
   box-shadow: 0 2px 10px rgba(245, 158, 11, 0.2);
@@ -1141,7 +1145,7 @@
 .dl-streak-banner__text {
   font-size: 1rem;
   font-weight: 700;
-  color: #92400e; /* amber-800 — no exact token available */
+  color: var(--color-amber-dark, #92400e); /* amber-800 */
   letter-spacing: 0.01em;
 }
 
@@ -1153,7 +1157,7 @@
   gap: 14px;
   background: linear-gradient(135deg, var(--accent-purple-pale, #ede9fe) 0%, #ddd6fe 100%);
   border: 2px solid var(--accent-purple, #8b5cf6);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   padding: 14px 20px;
   margin-bottom: 24px;
   box-shadow: 0 3px 12px rgba(139, 92, 246, 0.15);
@@ -1183,7 +1187,7 @@
 .dl-today-theme__name {
   font-size: 1.35rem;
   font-weight: 800;
-  color: #4c1d95; /* purple-900 — no exact token, nearest: --accent-purple at 500 */
+  color: var(--color-accent, #4c1d95); /* purple-900 */
   letter-spacing: -0.01em;
 }
 
@@ -1221,7 +1225,7 @@
   min-width: 100px;
   padding: 4px 14px;
   border: 2.5px dashed var(--warning, #f59e0b);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--warning-pale, #fffbeb);
   color: #92400e; /* amber-800 — no exact token available */
   font-weight: 700;
@@ -1262,7 +1266,7 @@
   gap: 8px;
   background: linear-gradient(135deg, var(--warning-pale, #fef3c7) 0%, var(--accent-amber, #fcd34d) 100%);
   border: 2.5px solid var(--warning, #f59e0b);
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   padding: 10px 24px;
   margin-bottom: 20px;
   box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
@@ -1294,7 +1298,7 @@
   gap: 12px;
   background: var(--bg-elevated, #f8fafc);
   border: 1.5px solid var(--border-light, #e2e8f0);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   padding: 12px 16px;
 }
 
@@ -1329,7 +1333,7 @@
   gap: 4px;
   background: linear-gradient(135deg, var(--accent-purple-pale, #ede9fe) 0%, #ddd6fe 100%);
   border: 2px solid var(--accent-purple, #8b5cf6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 14px 24px;
   margin-bottom: 16px;
   max-width: 340px;

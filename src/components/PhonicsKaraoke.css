@@ -20,13 +20,13 @@
   width: 100%;
   height: 6px;
   background: var(--border-light, #e5e7eb);
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .karaoke-progress-fill {
   height: 100%;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(
     90deg,
     var(--color-emerald-500, #10b981),
@@ -72,7 +72,7 @@
   min-width: 2.25rem;
   height: 2.25rem;
   padding: 0 0.5rem;
-  border-radius: 0.625rem;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 900;
   color: #fff;
@@ -90,7 +90,7 @@
 /* ── Lyric display area ── */
 .karaoke-lyrics-area {
   background: var(--surface, #ffffff);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-xl);
   border: 2px solid var(--border-light, #e5e7eb);
   padding: 1.25rem 1.25rem 1rem;
   min-height: 240px;
@@ -145,7 +145,7 @@
 /* ── Individual words ── */
 .karaoke-word {
   display: inline;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   padding: 0 2px;
   cursor: default;
   transition: all 0.2s ease;
@@ -153,7 +153,7 @@
 
 .karaoke-word.highlighted {
   font-weight: 900;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 1px 4px;
   /* Color applied inline per sound */
 }
@@ -179,7 +179,7 @@
 
 .karaoke-word.glowing {
   animation: word-glow 1.2s ease-in-out infinite;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 /* ── Controls bar ── */
@@ -235,7 +235,7 @@
   align-items: center;
   gap: 0.25rem;
   background: var(--border-light, #f3f4f6);
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   padding: 3px;
 }
 
@@ -243,7 +243,7 @@
   padding: 4px 10px;
   border: none;
   background: transparent;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-secondary, #6b7280);
@@ -253,7 +253,7 @@
 }
 
 .karaoke-speed-btn.active {
-  background: #fff;
+  background: var(--bg-card);
   color: var(--color-emerald-700, #047857);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
@@ -264,7 +264,7 @@
   padding: 0.625rem 1rem;
   background: none;
   border: 1.5px solid var(--border-light, #e5e7eb);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   font-family: var(--font-display, 'Nunito', sans-serif);
   font-size: 0.85rem;
   font-weight: 700;
@@ -286,7 +286,7 @@
 .karaoke-full-lyrics {
   background: var(--surface, #ffffff);
   border: 1.5px solid var(--border-light, #e5e7eb);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -320,7 +320,7 @@
   gap: 0.75rem;
   padding: 1.5rem 1rem;
   background: linear-gradient(135deg, #ecfdf5, #d1fae5);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-xl);
   border: 2px solid var(--color-emerald-300, #6ee7b7);
   text-align: center;
 }
@@ -344,5 +344,5 @@
   font-weight: 800;
   font-size: 0.85rem;
   padding: 0.35rem 0.9rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
 }

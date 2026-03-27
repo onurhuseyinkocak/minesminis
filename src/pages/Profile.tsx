@@ -11,7 +11,8 @@ import {
   Clock,
   X,
   Palette,
-  Zap
+  Zap,
+  Flame
 } from 'lucide-react';
 import AvatarDisplay from '../components/AvatarDisplay';
 import { getAvatarConfig } from '../services/avatarService';
@@ -195,6 +196,22 @@ const Profile: React.FC = () => {
             </div>
             {avgWpm === 0 && (
               <p className="profile-wpm-hint">{lang === 'tr' ? 'Okuma bitirince burada WPM görünür!' : 'Complete a reading to see your WPM here!'}</p>
+            )}
+          </div>
+
+          <div className="stat-card profile-streak-card">
+            <div className="stat-header">
+              <h3>{lang === 'tr' ? 'Giriş Serisi' : 'Login Streak'}</h3>
+              <Flame size={20} color="var(--error)" />
+            </div>
+            <div className="profile-wpm-display">
+              <span className="profile-wpm-value" style={{ color: 'var(--error)' }}>
+                {stats.streakDays > 0 ? stats.streakDays : '—'}
+              </span>
+              <span className="profile-wpm-unit">{lang === 'tr' ? 'gün' : 'days'}</span>
+            </div>
+            {stats.streakDays === 0 && (
+              <p className="profile-wpm-hint">{lang === 'tr' ? 'Her gün giriş yap ve serini büyüt!' : 'Log in every day to build your streak!'}</p>
             )}
           </div>
         </section>

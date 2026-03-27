@@ -142,6 +142,8 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
   'listening-challenge': 'listening-challenge',
   'listeningchallenge': 'listening-challenge',
   'ListeningChallenge': 'listening-challenge',
+  'listening': 'listening-challenge',
+  'Listening': 'listening-challenge',
   'pronunciation': 'pronunciation',
   'Pronunciation': 'pronunciation',
   'PronunciationGame': 'pronunciation',

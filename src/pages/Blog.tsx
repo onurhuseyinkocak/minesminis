@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { useLanguage } from '../contexts/LanguageContext';
 import LottieCharacter from '../components/LottieCharacter';
@@ -58,7 +59,10 @@ export default function Blog() {
         </header>
 
         {loading ? (
-          <div className="blog-loading">{lang === 'tr' ? 'Yukleniyor...' : 'Loading...'}</div>
+          <div className="blog-loading">
+            <Loader2 size={36} className="blog-loading-spinner" />
+            <span>{lang === 'tr' ? 'Yükleniyor...' : 'Loading...'}</span>
+          </div>
         ) : error ? (
           <div className="blog-empty">
             <span className="blog-empty-icon"><LottieCharacter state="thinking" size={120} /></span>
@@ -79,7 +83,7 @@ export default function Blog() {
                   <h2>{p.title}</h2>
                   <p className="blog-excerpt">{p.excerpt || p.meta_description}</p>
                   <time dateTime={p.published_at}>
-                    {new Date(p.published_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {new Date(p.published_at).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </time>
                 </Link>
               </article>

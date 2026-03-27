@@ -266,7 +266,6 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- inline refresh with cancellation guard; depends on user and API
   }, [user, API]);
 
   // ── Create checkout URL ──────────────────────────────────────────────────

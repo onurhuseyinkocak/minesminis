@@ -381,3 +381,26 @@
   background: var(--bg-muted);
   border-color: var(--border-hover);
 }
+
+/* ── Empty garden hint ── */
+.lg-emptyHint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem;
+  margin: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-lg);
+  border: 2px dashed rgba(76, 175, 80, 0.3);
+  text-align: center;
+}
+
+.lg-emptyHintText {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  max-width: 280px;
+}

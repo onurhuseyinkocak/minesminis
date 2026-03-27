@@ -41,7 +41,7 @@ const TABS_EN: TabDef[] = [
 // Parse a simple CSS gradient/color string into something we can use as a background-color.
 // For linear-gradient strings we use them directly; plain hex we use directly too.
 function colorToCSSBackground(color: string | undefined): string {
-  if (!color) return '#E2E8F0';
+  if (!color) return 'var(--border)';
   return color;
 }
 
@@ -243,7 +243,7 @@ const AvatarCustomizer: React.FC = () => {
                   <ItemSVGPreview svgPath={item.svgPath} />
                 </div>
               ) : (
-                <div className="avatar-item-card__swatch" style={{ background: '#E2E8F0' }} aria-hidden="true" />
+                <div className="avatar-item-card__swatch" style={{ background: 'var(--border)' }} aria-hidden="true" />
               )}
 
               <span className="avatar-item-card__name">{isTr ? item.nameTr : item.name}</span>

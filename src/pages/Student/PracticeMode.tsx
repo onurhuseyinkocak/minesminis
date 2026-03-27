@@ -73,27 +73,27 @@ const MOCK_WORDS: WordCard[] = [
 const WORLDS = ['All', 'Animals', 'Colors', 'Food', 'Family', 'Numbers'];
 
 const FILTER_TABS = [
-  { id: 'all', label: 'All Words', icon: <BookOpen size={16} /> },
-  { id: 'mimi', label: "My Picks", icon: <Sparkles size={16} /> },
-  { id: 'mastered', label: 'Mastered', icon: <CheckCircle2 size={16} /> },
-  { id: 'reviewing', label: 'Reviewing', icon: <Clock size={16} /> },
-  { id: 'learning', label: 'Learning', icon: <Star size={16} /> },
-  { id: 'new', label: 'New', icon: <Zap size={16} /> },
+  { id: 'all', label: 'Tüm Kelimeler', icon: <BookOpen size={16} /> },
+  { id: 'mimi', label: 'Seçtiklerim', icon: <Sparkles size={16} /> },
+  { id: 'mastered', label: 'Öğrenildi', icon: <CheckCircle2 size={16} /> },
+  { id: 'reviewing', label: 'Tekrarda', icon: <Clock size={16} /> },
+  { id: 'learning', label: 'Öğreniyor', icon: <Star size={16} /> },
+  { id: 'new', label: 'Yeni', icon: <Zap size={16} /> },
 ];
 
 const MASTERY_CONFIG: Record<MasteryLevel, { label: string; color: string; bg: string }> = {
-  mastered: { label: 'Mastered', color: 'var(--success)', bg: 'var(--success-pale)' },
-  reviewing: { label: 'Reviewing', color: 'var(--primary)', bg: 'var(--primary-pale)' },
-  learning: { label: 'Learning', color: 'var(--info)', bg: 'var(--info-pale)' },
-  new: { label: 'New', color: 'var(--stone)', bg: 'var(--bg-muted)' },
+  mastered: { label: 'Öğrenildi', color: 'var(--success)', bg: 'var(--success-pale)' },
+  reviewing: { label: 'Tekrarda', color: 'var(--primary)', bg: 'var(--primary-pale)' },
+  learning: { label: 'Öğreniyor', color: 'var(--info)', bg: 'var(--info-pale)' },
+  new: { label: 'Yeni', color: 'var(--stone)', bg: 'var(--bg-muted)' },
 };
 
 const ENCOURAGEMENTS = [
-  "You are doing great! Keep it up!",
-  "Practice makes perfect!",
-  "You can do it!",
-  "Every word counts!",
-  "You are a word champion!",
+  "Harika gidiyorsun! Devam et!",
+  "Pratik mükemmelleştirir!",
+  "Yapabilirsin!",
+  "Her kelime önemli!",
+  "Sen bir kelime şampiyonusun!",
 ];
 
 // ============================================================
@@ -190,7 +190,7 @@ const PracticeMode = () => {
       }}>
         <BookOpen size={15} style={{ flexShrink: 0 }} />
         <span>
-          Practice Mode — coming soon. Word data shown below is a preview, not your real progress.
+          Pratik Modu — yakında. Aşağıdaki kelime verileri önizlemedir, gerçek ilerlemenizi yansıtmaz.
         </span>
       </div>
 
@@ -206,14 +206,14 @@ const PracticeMode = () => {
             <LottieCharacter state="happy" size={40} />
           </motion.div>
           <div>
-            <h1 className="pm-header__title">Practice Time!</h1>
+            <h1 className="pm-header__title">Pratik Zamanı!</h1>
             <p className="pm-header__subtitle">{encouragement}</p>
           </div>
         </div>
         <div className="pm-header__right">
           {stats.dueForReview > 0 && (
             <Badge variant="warning" icon={<RotateCcw size={14} />}>
-              {stats.dueForReview} due for review
+              {stats.dueForReview} tekrar bekliyor
             </Badge>
           )}
           <Button
@@ -221,7 +221,7 @@ const PracticeMode = () => {
             icon={<Zap size={18} />}
             onClick={() => navigate('/games')}
           >
-            Quick Quiz
+            Hızlı Test
           </Button>
         </div>
       </div>
@@ -242,10 +242,10 @@ const PracticeMode = () => {
             className="pm-world-select"
             value={selectedWorld}
             onChange={(e) => setSelectedWorld(e.target.value)}
-            aria-label="Filter by world"
+            aria-label="Konuya göre filtrele"
           >
             {WORLDS.map(w => (
-              <option key={w} value={w}>{w === 'All' ? 'All Worlds' : w}</option>
+              <option key={w} value={w}>{w === 'All' ? 'Tüm Konular' : w}</option>
             ))}
           </select>
         </div>
@@ -255,7 +255,7 @@ const PracticeMode = () => {
       {filteredWords.length === 0 ? (
         <div className="pm-empty">
           <span className="pm-empty__emoji"><LottieCharacter state="thinking" size={48} /></span>
-          <p className="pm-empty__text">No words found here. Try a different filter!</p>
+          <p className="pm-empty__text">Burada kelime bulunamadı. Farklı bir filtre dene!</p>
         </div>
       ) : (
         <div className="pm-grid">
@@ -342,16 +342,16 @@ const PracticeMode = () => {
                 onClick={() => handlePronounce(selectedWord.english)}
               >
                 <Volume2 size={22} />
-                <span>Listen to pronunciation</span>
+                <span>Telaffuzu dinle</span>
               </button>
 
               <div className="pm-modal__example">
-                <span className="pm-modal__example-label">Example:</span>
+                <span className="pm-modal__example-label">Örnek:</span>
                 <p className="pm-modal__example-text">{selectedWord.exampleSentence}</p>
               </div>
 
               <div className="pm-modal__mastery">
-                <span className="pm-modal__mastery-label">Mastery</span>
+                <span className="pm-modal__mastery-label">Ustalık</span>
                 <ProgressBar
                   value={selectedWord.confidence}
                   variant={selectedWord.confidence >= 80 ? 'success' : selectedWord.confidence >= 50 ? 'warning' : 'default'}
@@ -382,23 +382,23 @@ const PracticeMode = () => {
       {/* ---- PROGRESS SUMMARY ---- */}
       <div className="pm-summary">
         <Card variant="elevated" padding="lg" className="pm-summary-card">
-          <h3 className="pm-summary__title">Your Progress</h3>
+          <h3 className="pm-summary__title">İlerlemen</h3>
           <div className="pm-summary__stats">
             <div className="pm-summary__stat">
               <span className="pm-summary__stat-value" style={{ color: 'var(--success)' }}>{stats.mastered}</span>
-              <span className="pm-summary__stat-label">Mastered</span>
+              <span className="pm-summary__stat-label">Öğrenildi</span>
             </div>
             <div className="pm-summary__stat">
               <span className="pm-summary__stat-value" style={{ color: 'var(--primary)' }}>{stats.reviewing}</span>
-              <span className="pm-summary__stat-label">Reviewing</span>
+              <span className="pm-summary__stat-label">Tekrarda</span>
             </div>
             <div className="pm-summary__stat">
               <span className="pm-summary__stat-value" style={{ color: 'var(--info)' }}>{stats.learning}</span>
-              <span className="pm-summary__stat-label">Learning</span>
+              <span className="pm-summary__stat-label">Öğreniyor</span>
             </div>
             <div className="pm-summary__stat">
               <span className="pm-summary__stat-value" style={{ color: 'var(--stone)' }}>{stats.new}</span>
-              <span className="pm-summary__stat-label">New</span>
+              <span className="pm-summary__stat-label">Yeni</span>
             </div>
           </div>
           <ProgressBar
@@ -409,7 +409,7 @@ const PracticeMode = () => {
             animated
           />
           <p className="pm-summary__note">
-            {stats.mastered} of {stats.total} words mastered ({stats.total > 0 ? Math.round((stats.mastered / stats.total) * 100) : 0}%)
+            {stats.total} kelimeden {stats.mastered} tanesi öğrenildi (%{stats.total > 0 ? Math.round((stats.mastered / stats.total) * 100) : 0})
           </p>
         </Card>
       </div>

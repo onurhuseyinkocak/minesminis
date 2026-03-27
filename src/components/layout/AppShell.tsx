@@ -14,12 +14,22 @@ interface AppShellProps {
   showBottomNav?: boolean;
 }
 
+/** All nav items for the DESKTOP top bar */
 const NAV_ITEMS: { path: string; label: string; labelTr: string; icon: KidIconName }[] = [
   { path: '/dashboard', label: 'Home', labelTr: 'Ana Sayfa', icon: 'home' },
   { path: '/worlds', label: 'Learn', labelTr: 'Öğren', icon: 'learn' },
   { path: '/games', label: 'Games', labelTr: 'Oyunlar', icon: 'games' },
   { path: '/words', label: 'Library', labelTr: 'Kütüphane', icon: 'library' },
   { path: '/stories', label: 'Stories', labelTr: 'Hikayeler', icon: 'stories' },
+];
+
+/** Mobile bottom nav: max 5 items to prevent overflow */
+const MOBILE_NAV_ITEMS: { path: string; label: string; labelTr: string; icon: KidIconName }[] = [
+  { path: '/dashboard', label: 'Home', labelTr: 'Ana Sayfa', icon: 'home' },
+  { path: '/worlds', label: 'Learn', labelTr: 'Öğren', icon: 'learn' },
+  { path: '/games', label: 'Games', labelTr: 'Oyunlar', icon: 'games' },
+  { path: '/stories', label: 'Stories', labelTr: 'Hikayeler', icon: 'stories' },
+  { path: '/profile', label: 'Me', labelTr: 'Ben', icon: 'home' },
 ];
 
 export default function AppShell({
@@ -237,7 +247,7 @@ export default function AppShell({
           ══════════════════════════════════════════════════ */}
       {showBottomNav && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-ink-100 flex z-50 lg:hidden pb-[env(safe-area-inset-bottom)]">
-          {NAV_ITEMS.map(({ path, label, labelTr, icon }) => {
+          {MOBILE_NAV_ITEMS.map(({ path, label, labelTr, icon }) => {
             const active = isActive(path);
             return (
               <Link
@@ -256,47 +266,6 @@ export default function AppShell({
               </Link>
             );
           })}
-          <Link
-            to="/leaderboard"
-            className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-colors duration-200 ${
-              isActive('/leaderboard') ? 'text-primary-500' : 'text-ink-400'
-            }`}
-          >
-            <div className={`p-1 rounded-full transition-colors duration-200 ${isActive('/leaderboard') ? 'bg-primary-50' : ''}`}>
-              <Trophy size={22} />
-            </div>
-            <span className={`text-[10px] font-display ${isActive('/leaderboard') ? 'font-bold' : 'font-semibold'}`}>
-              {lang === 'tr' ? 'Turnuva' : 'Ranks'}
-            </span>
-          </Link>
-          <Link
-            to="/social/friends"
-            className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-colors duration-200 ${
-              isActive('/social/friends') ? 'text-primary-500' : 'text-ink-400'
-            }`}
-          >
-            <div className={`p-1 rounded-full transition-colors duration-200 ${isActive('/social/friends') ? 'bg-primary-50' : ''}`}>
-              <Users2 size={22} />
-            </div>
-            <span className={`text-[10px] font-display ${isActive('/social/friends') ? 'font-bold' : 'font-semibold'}`}>
-              {lang === 'tr' ? 'Arkadaş' : 'Friends'}
-            </span>
-          </Link>
-          {isTeacher && (
-            <Link
-              to="/teacher"
-              className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-colors duration-200 ${
-                isActive('/teacher') ? 'text-primary-500' : 'text-ink-400'
-              }`}
-            >
-              <div className={`p-1 rounded-full transition-colors duration-200 ${isActive('/teacher') ? 'bg-primary-50' : ''}`}>
-                <LayoutDashboard size={22} />
-              </div>
-              <span className={`text-[10px] font-display ${isActive('/teacher') ? 'font-bold' : 'font-semibold'}`}>
-                {lang === 'tr' ? 'Sınıfım' : 'My Class'}
-              </span>
-            </Link>
-          )}
         </nav>
       )}
 

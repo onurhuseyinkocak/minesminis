@@ -42,7 +42,7 @@
   position: absolute;
   width: 120px;
   height: 50px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.35);
   border-radius: 50px;
   filter: blur(2px);
 }
@@ -51,7 +51,7 @@
 .journey-cloud::after {
   content: '';
   position: absolute;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.35);
   border-radius: 50%;
 }
 
@@ -96,7 +96,7 @@
 [data-theme="dark"] .journey-cloud,
 [data-theme="dark"] .journey-cloud::before,
 [data-theme="dark"] .journey-cloud::after {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 @keyframes cloudDrift {

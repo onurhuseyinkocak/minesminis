@@ -236,7 +236,7 @@
 /* GOLD — 1st place */
 .podium-pos-1 .podium-avatar {
   width: 56px; height: 56px; font-size: 1.2rem;
-  border: 3px solid #FFD700;
+  border: 3px solid var(--medal-gold);
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.45), 0 0 40px rgba(255, 215, 0, 0.15);
   animation: goldShimmer 3s ease-in-out infinite;
 }
@@ -249,7 +249,7 @@
 .podium-pos-1 .podium-bar {
   height: 76px;
   background: linear-gradient(180deg, #FFF8E1, rgba(255, 215, 0, 0.12), rgba(255, 215, 0, 0.04));
-  border-color: #FFD700;
+  border-color: var(--medal-gold);
   position: relative;
   overflow: hidden;
 }
@@ -267,8 +267,8 @@
   50%, 100% { transform: translateX(100%); }
 }
 
-.podium-pos-1 .podium-rank { color: #D4A300; font-size: 1rem; font-weight: 900; }
-.podium-pos-1 .podium-name { font-weight: 900; color: #B8860B; }
+.podium-pos-1 .podium-rank { color: var(--medal-gold-dark); font-size: 1rem; font-weight: 900; }
+.podium-pos-1 .podium-name { font-weight: 900; color: var(--medal-gold-dark); }
 
 /* SILVER — 2nd place */
 .podium-pos-2 .podium-avatar {
@@ -278,7 +278,7 @@
 .podium-pos-2 .podium-bar {
   height: 56px;
   background: linear-gradient(180deg, #F5F5F5, #E8E8E8, var(--bg-elevated));
-  border-color: #C0C0C0;
+  border-color: var(--medal-silver);
   position: relative;
   overflow: hidden;
 }
@@ -289,12 +289,12 @@
   background: linear-gradient(105deg, transparent 40%, rgba(192, 192, 192, 0.25) 50%, transparent 60%);
   animation: barShine 4s ease-in-out infinite;
 }
-.podium-pos-2 .podium-rank { color: #808080; }
+.podium-pos-2 .podium-rank { color: var(--medal-silver-dark); }
 .podium-pos-2 .podium-name { font-weight: 800; }
 
 /* BRONZE — 3rd place */
 .podium-pos-3 .podium-avatar {
-  border: 2.5px solid #CD7F32;
+  border: 2.5px solid var(--medal-bronze);
   box-shadow: 0 0 10px rgba(205, 127, 50, 0.25);
 }
 .podium-pos-3 .podium-bar {
@@ -311,7 +311,7 @@
   background: linear-gradient(105deg, transparent 40%, rgba(205, 127, 50, 0.2) 50%, transparent 60%);
   animation: barShine 5s ease-in-out infinite;
 }
-.podium-pos-3 .podium-rank { color: #CD7F32; }
+.podium-pos-3 .podium-rank { color: var(--medal-bronze); }
 .podium-pos-3 .podium-name { font-weight: 800; }
 
 /* ---- Leader List ---- */
@@ -329,7 +329,7 @@
 
 .leader-list::-webkit-scrollbar { width: 4px; }
 .leader-list::-webkit-scrollbar-track { background: transparent; }
-.leader-list::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+.leader-list::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: var(--radius-xs); }
 
 /* ---- Leader Row ---- */
 .leader-row {

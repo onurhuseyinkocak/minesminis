@@ -48,7 +48,7 @@ function Worksheets() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const { user } = useAuth();
   const { trackActivity, addXP } = useGamification();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   useEffect(() => {
     fetchWorksheets();
@@ -122,7 +122,7 @@ function Worksheets() {
 
   const handleToggleFavorite = async (worksheet: Worksheet) => {
     if (!user) {
-      toast.error('Please sign in to add favorites!');
+      toast.error(lang === 'tr' ? 'Favori eklemek için giriş yap!' : 'Please sign in to add favorites!');
       return;
     }
 
@@ -144,7 +144,7 @@ function Worksheets() {
           newSet.delete(worksheet.id);
           return newSet;
         });
-        toast.success('Removed from favorites!');
+        toast.success(lang === 'tr' ? 'Favorilerden kaldırıldı!' : 'Removed from favorites!');
       } else {
         const { error } = await supabase
           .from('favorites')
@@ -159,11 +159,11 @@ function Worksheets() {
         if (error) throw error;
 
         setFavorites(prev => new Set(prev).add(worksheet.id));
-        toast.success('Added to favorites!');
+        toast.success(lang === 'tr' ? 'Favorilere eklendi!' : 'Added to favorites!');
       }
     } catch (error) {
       errorLogger.log({ severity: 'medium', message: 'Error toggling favorite', component: 'Worksheets', metadata: { error: String(error) } });
-      toast.error('Failed to update favorites');
+      toast.error(lang === 'tr' ? 'Favori güncellenemedi' : 'Failed to update favorites');
     }
   };
 
@@ -178,7 +178,7 @@ function Worksheets() {
       if (user) {
         await trackActivity('worksheet_completed', { worksheetId: worksheet.id, title: worksheet.title });
         await addXP(15, 'worksheet_completed');
-        toast.success('You earned 15 XP for practicing!');
+        toast.success(lang === 'tr' ? 'Pratik yaptığın için 15 XP kazandın!' : 'You earned 15 XP for practicing!');
       }
     } catch (err) {
       errorLogger.log({ severity: 'low', message: 'Error tracking activity', component: 'Worksheets', metadata: { error: String(err) } });
@@ -319,7 +319,7 @@ function Worksheets() {
                   <button
                     className={`favorite-btn ${favorites.has(worksheet.id) ? 'favorited' : ''}`}
                     onClick={() => handleToggleFavorite(worksheet)}
-                    title={favorites.has(worksheet.id) ? 'Remove from favorites' : 'Add to favorites'}
+                    title={favorites.has(worksheet.id) ? (lang === 'tr' ? 'Favorilerden kaldır' : 'Remove from favorites') : (lang === 'tr' ? 'Favorilere ekle' : 'Add to favorites')}
                   >
                     <Heart size={20} fill={favorites.has(worksheet.id) ? "currentColor" : "none"} />
                   </button>

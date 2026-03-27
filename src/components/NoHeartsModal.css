@@ -9,16 +9,16 @@
 .no-hearts-overlay {
   position: fixed;
   inset: 0;
-  z-index: 600;
+  z-index: var(--z-modal);
   display: flex;
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(ellipse at center, transparent 40%, rgba(239, 68, 68, 0.15) 100%),
-    var(--overlay-bg, rgba(0, 0, 0, 0.6));
+    radial-gradient(ellipse at center, transparent 40%, color-mix(in srgb, var(--error) 15%, transparent) 100%),
+    var(--overlay-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: var(--space-md, 16px);
+  padding: var(--space-md);
   animation: nhOverlayIn 200ms ease both;
 }
 
@@ -60,16 +60,16 @@
   width: 80px;
   height: 80px;
   color: var(--error);
-  filter: drop-shadow(0 6px 20px rgba(239, 68, 68, 0.4));
+  filter: drop-shadow(0 6px 20px color-mix(in srgb, var(--error) 40%, transparent));
   animation: nhHeartBreak 1.2s ease-out forwards, nhHeartPulse 1.4s ease-in-out 1.2s infinite;
 }
 
 @keyframes nhHeartBreak {
-  0% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 30px rgba(239, 68, 68, 0.6)); }
-  15% { transform: scale(1.5) rotate(-5deg); filter: drop-shadow(0 0 40px rgba(239, 68, 68, 0.8)); }
+  0% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 30px color-mix(in srgb, var(--error) 60%, transparent)); }
+  15% { transform: scale(1.5) rotate(-5deg); filter: drop-shadow(0 0 40px color-mix(in srgb, var(--error) 80%, transparent)); }
   30% { transform: scale(0.9) rotate(3deg); }
   50% { transform: scale(1.1) rotate(-2deg); opacity: 0.8; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; filter: drop-shadow(0 6px 20px rgba(239, 68, 68, 0.4)); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; filter: drop-shadow(0 6px 20px color-mix(in srgb, var(--error) 40%, transparent)); }
 }
 
 @keyframes nhHeartPulse {
@@ -188,7 +188,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.25) 50%,
+    var(--glass-shine) 50%,
     transparent 100%
   );
   animation: nhBtnShine 2.5s ease-in-out infinite;

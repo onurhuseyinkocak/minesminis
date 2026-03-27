@@ -5,10 +5,10 @@
 .assessment-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(26, 26, 46, 0.6);
+  background: var(--overlay-dark);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 1000;
+  z-index: var(--z-max);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -50,10 +50,10 @@
   align-items: center;
   gap: 6px;
   padding: 8px 18px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   border: none;
   cursor: pointer;
   transition: background 0.15s, opacity 0.15s;
@@ -100,7 +100,7 @@
 }
 
 .ar-logo {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   color: var(--primary);
@@ -124,7 +124,7 @@
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
 }
 
 .ar-header-date {
@@ -143,7 +143,7 @@
   color: var(--primary);
   background: var(--primary-pale);
   padding: 2px 10px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
 }
 
 /* ─── Summary strip ──────────────────────────────────────── */
@@ -157,7 +157,7 @@
 .ar-metric-card {
   background: var(--bg-page);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: var(--space-4);
   text-align: center;
 }
@@ -165,7 +165,7 @@
 .ar-metric-value {
   font-size: 28px;
   font-weight: 800;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   line-height: 1.1;
 }
 
@@ -219,13 +219,13 @@
   height: 10px;
   background: var(--bg-page);
   border: 1px solid var(--border);
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .ar-group-fill {
   height: 100%;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   transition: width 0.4s ease;
   background: var(--primary);
 }
@@ -254,7 +254,7 @@
 }
 
 .ar-sound-cell {
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 6px 4px;
   text-align: center;
   border: 1.5px solid transparent;
@@ -263,7 +263,7 @@
 .ar-sound-grapheme {
   font-size: 15px;
   font-weight: 800;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display);
   display: block;
 }
 
@@ -318,7 +318,7 @@
 .ar-legend-dot {
   width: 12px;
   height: 12px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   border: 1.5px solid transparent;
   flex-shrink: 0;
 }
@@ -343,7 +343,7 @@
   padding: var(--space-2) var(--space-3);
   background: var(--bg-page);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
 }
 
@@ -353,7 +353,7 @@
   letter-spacing: 0.07em;
   text-transform: uppercase;
   padding: 2px 8px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   background: var(--primary-pale);
   color: var(--primary);
   white-space: nowrap;
@@ -473,35 +473,35 @@
   .ar-activity-item,
   .ar-group-track,
   .ar-sound-cell--not-started {
-    background: #f8f8f8 !important;
-    border-color: #ccc !important;
+    background: var(--bg-elevated) !important;
+    border-color: var(--border) !important;
     box-shadow: none !important;
   }
 
   .ar-sound-cell--mastered {
-    background: #e0f2e9 !important;
-    border-color: #6dbf8a !important;
+    background: var(--success-pale) !important;
+    border-color: var(--success-light) !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
   .ar-sound-cell--in-progress {
-    background: #fdf8d8 !important;
-    border-color: #e6c84a !important;
+    background: var(--warning-pale) !important;
+    border-color: var(--warning-light) !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
   .ar-sound-cell--needs-work {
-    background: #fde8e8 !important;
-    border-color: #e88a8a !important;
+    background: var(--error-pale) !important;
+    border-color: var(--error-light) !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
   .ar-recommendations {
-    background: #f0f7ff !important;
-    border-color: #6baed6 !important;
+    background: var(--info-pale) !important;
+    border-color: var(--info-light) !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
@@ -515,7 +515,7 @@
   }
 
   .ar-metric-value {
-    color: #111 !important;
+    color: var(--text-primary) !important;
   }
 
   .ar-group-fill {

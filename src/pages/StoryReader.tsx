@@ -158,6 +158,8 @@ export default function StoryReader() {
   const [transitioning, setTransitioning] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
   const [completionXPAwarded, setCompletionXPAwarded] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   // Fetch story
   useEffect(() => {
@@ -233,6 +235,53 @@ export default function StoryReader() {
     speak(word);
   }, []);
 
+  // ── Swipe gesture for mobile page turning ──
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+
+    // Only trigger on horizontal swipes (|dx| > |dy| and |dx| > 60px threshold)
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return;
+
+    if (!done || transitioning || showCompletion) return;
+
+    if (dx < 0) {
+      // Swipe left → next scene
+      if (sceneIndex + 1 < totalScenes) {
+        setTransitioning(true);
+        setShowChoices(false);
+        setTimeout(() => {
+          setSceneIndex(i => i + 1);
+          setTransitioning(false);
+        }, 300);
+      } else if (sceneIndex + 1 >= totalScenes) {
+        // Last scene → show completion
+        setShowCompletion(true);
+        if (!completionXPAwarded) {
+          const xpAmount = Math.max(10, totalScenes * 5);
+          addXP(xpAmount, 'Story completion').catch(() => { /* gamification unavailable */ });
+          setCompletionXPAwarded(true);
+        }
+      }
+    } else if (dx > 0 && sceneIndex > 0) {
+      // Swipe right → previous scene
+      setTransitioning(true);
+      setShowChoices(false);
+      setTimeout(() => {
+        setSceneIndex(i => i - 1);
+        setTransitioning(false);
+      }, 300);
+    }
+  }, [done, transitioning, showCompletion, sceneIndex, totalScenes, completionXPAwarded, addXP]);
+
   // ── Render ──
 
   if (loading) {
@@ -264,7 +313,7 @@ export default function StoryReader() {
   const storyTitle = lang === 'tr' ? story.title_tr : story.title;
 
   return (
-    <div className="story-reader" onClick={!done ? handleSkipTypewriter : undefined}>
+    <div className="story-reader" onClick={!done ? handleSkipTypewriter : undefined} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {/* Cinematic background with camera angles */}
       <div className="story-reader__scene-wrapper">
         <SceneBackground

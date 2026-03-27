@@ -65,7 +65,7 @@
 .seo-pre {
     background: var(--bg-elevated);
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     overflow: auto;
     font-size: 0.85rem;
     color: var(--text-body);
@@ -75,7 +75,7 @@
 .seo-pre-sm {
     background: var(--bg-elevated);
     padding: 0.75rem;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.75rem;
     color: var(--text-body);
     overflow: auto;
@@ -138,14 +138,14 @@
 .seo-result-ok {
     background: #f9fafb;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 1rem;
 }
 
 .seo-result-error {
     background: rgba(239, 68, 68, 0.05);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 1rem;
 }
 
@@ -195,7 +195,7 @@
 .seo-tool-icon {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;

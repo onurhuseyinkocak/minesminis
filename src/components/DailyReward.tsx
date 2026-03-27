@@ -84,7 +84,7 @@ const DailyReward: React.FC = () => {
             const interval = setInterval(updateCountdown, 1000);
             return () => clearInterval(interval);
         }
-    }, [canClaimDaily, getNextClaimTime]);
+    }, [canClaimDaily, getNextClaimTime, lang]);
 
     const celebrationTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -110,8 +110,8 @@ const DailyReward: React.FC = () => {
                 if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
                 celebrationTimerRef.current = setTimeout(() => setShowClaimCelebration(false), 3000);
             }
-        } catch (err) {
-            console.error('Claim failed:', err);
+        } catch {
+            // Claim failed silently
         } finally {
             setClaiming(false);
         }

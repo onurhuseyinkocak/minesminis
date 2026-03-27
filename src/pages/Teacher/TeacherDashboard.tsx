@@ -222,7 +222,7 @@ function TeacherDashboardInner({
   const filteredStudents = useMemo<ClassroomStudent[]>(() => {
     if (!selectedClassroom) return [];
     const q = searchQuery.toLowerCase().trim();
-    let list = q
+    const list = q
       ? selectedClassroom.students.filter((s) =>
           s.name.toLowerCase().includes(q),
         )

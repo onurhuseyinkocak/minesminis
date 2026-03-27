@@ -6,7 +6,7 @@
 .sotd-card {
   background: linear-gradient(135deg, #ecfdf5, #d1fae5);
   border: 2px solid var(--color-emerald-200, #a7f3d0);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-xl);
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -32,7 +32,7 @@
 .sotd-sound-badge {
   width: 60px;
   height: 60px;
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   background: var(--color-emerald-500, #10b981);
   color: #fff;
   display: flex;
@@ -118,9 +118,9 @@
 }
 
 .sotd-word-chip {
-  background: #fff;
+  background: var(--bg-card);
   border: 1.5px solid var(--color-emerald-200, #a7f3d0);
-  border-radius: 0.625rem;
+  border-radius: var(--radius-md);
   padding: 0.3rem 0.75rem;
   font-size: 0.85rem;
   font-weight: 700;

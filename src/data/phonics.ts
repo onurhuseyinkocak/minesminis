@@ -47,7 +47,7 @@ const group1Sounds: PhonicsSound[] = [
     storyTr: 'Yılan güneşli çimlerin arasında sürünüyor ve ssssss sesi çıkartıyor.',
     keywords: ['sun', 'sit', 'sat', 'sip', 'sad', 'six', 'set', 'see'],
     mnemonicEmoji: '\u{1F40D}',
-    turkishNote: "Turkish has this sound too, same as 's' in 'su'. Very familiar!",
+    turkishNote: "Türkçe'de de bu ses var — 'su' kelimesindeki 's' gibi. Çok tanıdık!",
     order: 1,
   },
   {
@@ -62,7 +62,7 @@ const group1Sounds: PhonicsSound[] = [
     storyTr: 'Eyvah! Karıncalar koluna tırmanıyorlar! A, a, a!',
     keywords: ['ant', 'at', 'an', 'and', 'add', 'app', 'am', 'as'],
     mnemonicEmoji: '\u{1F41C}',
-    turkishNote: "This short 'a' is different from Turkish 'a'. It's between Turkish 'a' and 'e'. Open your mouth wider.",
+    turkishNote: "Bu kısa 'a', Türkçe 'a'sından farklı. 'a' ile 'e' arasında bir sestir. Ağzını daha geniş aç.",
     order: 2,
   },
   {
@@ -77,7 +77,7 @@ const group1Sounds: PhonicsSound[] = [
     storyTr: 'Tenis topunu ileri geri izle: t, t, t!',
     keywords: ['tap', 'tin', 'ten', 'top', 'tip', 'tan', 'tub', 'tag'],
     mnemonicEmoji: '\u{1F3BE}',
-    turkishNote: "Similar to Turkish 't' but with a small puff of air. Hold your hand in front of your mouth to feel it.",
+    turkishNote: "Türkçe 't'ye benzer ama küçük bir hava üflemesiyle. Hissetmek için elini ağzının önünde tut.",
     order: 3,
   },
   {
@@ -92,7 +92,7 @@ const group1Sounds: PhonicsSound[] = [
     storyTr: 'Minik bir fare peynir kemirirken i-i-i diye cıyaklıyor.',
     keywords: ['in', 'it', 'is', 'if', 'ill', 'ink', 'inn', 'itch'],
     mnemonicEmoji: '\u{1F42D}',
-    turkishNote: "This short 'i' is different from Turkish 'i'. It's closer to Turkish 'I' (dotless i). Keep it short.",
+    turkishNote: "Bu kısa 'i', Türkçe 'i'sinden farklı. Türkçe 'ı'ya daha yakın. Kısa tut.",
     order: 4,
   },
   {
@@ -107,7 +107,7 @@ const group1Sounds: PhonicsSound[] = [
     storyTr: 'Pat! Pat! Pat! diye patlak mısır tavada patlıyor!',
     keywords: ['pan', 'pin', 'pat', 'pit', 'pip', 'pad', 'peg', 'pen'],
     mnemonicEmoji: '\u{1F382}',
-    turkishNote: "Similar to Turkish 'p' but with a stronger puff of air. Feel the air on your hand!",
+    turkishNote: "Türkçe 'p'ye benzer ama daha güçlü hava üflemesiyle. Elinde havayı hisset!",
     order: 5,
   },
   {
@@ -122,7 +122,7 @@ const group1Sounds: PhonicsSound[] = [
     storyTr: 'Uçak gökyüzünde uçuyor: nnnnnn!',
     keywords: ['nap', 'nit', 'net', 'nip', 'not', 'nut', 'nab', 'nag'],
     mnemonicEmoji: '\u{2708}\u{FE0F}',
-    turkishNote: "Same as Turkish 'n'. This one is easy for you!",
+    turkishNote: "Türkçe 'n' ile aynı. Bu sesi zaten biliyorsun!",
     order: 6,
   },
 ];
@@ -142,7 +142,7 @@ const group2Sounds: PhonicsSound[] = [
     storyTr: 'Kedi tıklayan bir kastanyetle oynuyor: k, k, k!',
     keywords: ['cat', 'cap', 'can', 'kit', 'kid', 'kip', 'cup', 'cut'],
     mnemonicEmoji: '\u{1F408}',
-    turkishNote: "Same as Turkish 'k'. In English, both 'c' and 'k' can make this sound.",
+    turkishNote: "Türkçe 'k' ile aynı. İngilizce'de hem 'c' hem 'k' bu sesi çıkarabilir.",
     order: 1,
   },
   {
@@ -157,7 +157,7 @@ const group2Sounds: PhonicsSound[] = [
     storyTr: 'Çıirt! Yumurta kırılıyor: eh, eh, eh!',
     keywords: ['egg', 'end', 'elf', 'get', 'set', 'net', 'pet', 'pen'],
     mnemonicEmoji: '\u{1F95A}',
-    turkishNote: "Similar to Turkish 'e' but slightly more open. Think of saying 'e' while yawning a tiny bit.",
+    turkishNote: "Türkçe 'e'ye benzer ama biraz daha açık. 'e' derken hafifçe esnermiş gibi düşün.",
     order: 2,
   },
   {
@@ -172,7 +172,7 @@ const group2Sounds: PhonicsSound[] = [
     storyTr: 'Mutlu köpek uzun bir koşunun ardından soluyuyor: h, h, h!',
     keywords: ['hat', 'hit', 'him', 'his', 'hen', 'hip', 'hug', 'hut'],
     mnemonicEmoji: '\u{1F436}',
-    turkishNote: "Similar to Turkish 'h' but softer and breathier. Just breathe out with your mouth open.",
+    turkishNote: "Türkçe 'h'ye benzer ama daha yumuşak ve nefesli. Sadece ağzın açıkken nefes ver.",
     order: 3,
   },
   {
@@ -187,7 +187,7 @@ const group2Sounds: PhonicsSound[] = [
     storyTr: 'Küçük aslan yavrusu kükrümeyi öğreniyor: rrrrrr!',
     keywords: ['rat', 'ran', 'rip', 'rag', 'red', 'rug', 'run', 'rut'],
     mnemonicEmoji: '\u{1F981}',
-    turkishNote: "Very different from Turkish rolled 'r'! Keep your tongue tip slightly curled but DON'T touch the roof of your mouth. Your lips round slightly.",
+    turkishNote: "Türkçe yuvarlanma 'r'sından çok farklı! Dil ucunu hafifçe kıvır ama damağına DOKUNDURMA. Dudakların hafifçe yuvarlansın.",
     order: 4,
   },
   {
@@ -202,7 +202,7 @@ const group2Sounds: PhonicsSound[] = [
     storyTr: 'Mmmm, bu muffin çok lezzetli! Mmmmm!',
     keywords: ['man', 'map', 'mat', 'met', 'mix', 'mug', 'mud', 'mum'],
     mnemonicEmoji: '\u{1F9C1}',
-    turkishNote: "Same as Turkish 'm'. Press your lips together and hum. Easy!",
+    turkishNote: "Türkçe 'm' ile aynı. Dudaklarını birleştir ve uğulda. Kolay!",
     order: 5,
   },
   {
@@ -217,7 +217,7 @@ const group2Sounds: PhonicsSound[] = [
     storyTr: 'Davulu güçlüce çal: d, d, d!',
     keywords: ['dad', 'did', 'dig', 'dip', 'den', 'dim', 'dug', 'dam'],
     mnemonicEmoji: '\u{1FA98}',
-    turkishNote: "Same as Turkish 'd'. Your tongue touches behind your top teeth.",
+    turkishNote: "Türkçe 'd' ile aynı. Dilin üst dişlerinin arkasına dokunur.",
     order: 6,
   },
 ];
@@ -237,7 +237,7 @@ const group3Sounds: PhonicsSound[] = [
     storyTr: 'Glu glu! Büyük bir bardak su iç: g, g, g!',
     keywords: ['gap', 'gas', 'get', 'got', 'gum', 'gun', 'gut', 'gig'],
     mnemonicEmoji: '\u{1F95B}',
-    turkishNote: "Same as Turkish 'g' (hard g). Always a hard sound in these exercises.",
+    turkishNote: "Türkçe 'g' (sert g) ile aynı. Bu alıştırmalarda her zaman sert bir sestir.",
     order: 1,
   },
   {
@@ -252,7 +252,7 @@ const group3Sounds: PhonicsSound[] = [
     storyTr: 'Ah! Ahtapota bak! O, o, o!',
     keywords: ['on', 'off', 'odd', 'hot', 'pot', 'dog', 'log', 'top'],
     mnemonicEmoji: '\u{1F419}',
-    turkishNote: "English short 'o' is rounder and deeper than Turkish 'o'. Drop your jaw more.",
+    turkishNote: "İngilizce kısa 'o', Türkçe 'o'dan daha yuvarlak ve derin. Çeneni daha çok düşür.",
     order: 2,
   },
   {
@@ -267,7 +267,7 @@ const group3Sounds: PhonicsSound[] = [
     storyTr: 'Yağmur yağıyor! Çabuk, şemsiyeyi aç: u, u, u!',
     keywords: ['up', 'us', 'cup', 'cut', 'but', 'bus', 'bug', 'fun'],
     mnemonicEmoji: '\u{2602}\u{FE0F}',
-    turkishNote: "This is between Turkish 'a' and 'ı'. Open your mouth slightly less than for 'a'. Listen carefully — it's a unique English sound!",
+    turkishNote: "Bu, Türkçe 'a' ile 'ı' arasındadır. Ağzını 'a' için açtığından biraz daha az aç. Dikkatle dinle — bu İngilizce'ye özgü bir ses!",
     order: 3,
   },
   {
@@ -282,7 +282,7 @@ const group3Sounds: PhonicsSound[] = [
     storyTr: 'Harika! Limonlu lolipopı yala: llllll!',
     keywords: ['lap', 'lit', 'let', 'lip', 'lid', 'leg', 'lot', 'log'],
     mnemonicEmoji: '\u{1F36D}',
-    turkishNote: "Similar to Turkish 'l' but English has two 'l' sounds. The light 'l' at the start is like Turkish 'l'. The dark 'l' at the end of words is deeper.",
+    turkishNote: "Türkçe 'l'ye benzer ama İngilizce'de iki 'l' sesi vardır. Başta gelen açık 'l', Türkçe 'l' gibidir. Kelime sonundaki koyu 'l' daha derindir.",
     order: 4,
   },
   {
@@ -297,7 +297,7 @@ const group3Sounds: PhonicsSound[] = [
     storyTr: 'Eyvah, lastik patlamış! Havanın kaçışını dinle: fffff!',
     keywords: ['fan', 'fat', 'fin', 'fit', 'fig', 'fun', 'fog', 'fuss'],
     mnemonicEmoji: '\u{1F4A8}',
-    turkishNote: "Same as Turkish 'f'. Bite your bottom lip gently and blow.",
+    turkishNote: "Türkçe 'f' ile aynı. Alt dudağını hafifçe ısır ve üfle.",
     order: 5,
   },
   {
@@ -312,7 +312,7 @@ const group3Sounds: PhonicsSound[] = [
     storyTr: 'Topu zıpplat: b, b, b!',
     keywords: ['bat', 'bit', 'big', 'bin', 'bed', 'bud', 'bun', 'bus'],
     mnemonicEmoji: '\u{26BE}',
-    turkishNote: "Same as Turkish 'b'. Pop your lips together!",
+    turkishNote: "Türkçe 'b' ile aynı. Dudaklarını patlatır gibi birleştir!",
     order: 6,
   },
 ];
@@ -332,7 +332,7 @@ const group4Sounds: PhonicsSound[] = [
     storyTr: 'Eyvah, yağmur yağıyor! Elini uzat: ay, ay, ay!',
     keywords: ['rain', 'pain', 'tail', 'mail', 'sail', 'paid', 'main', 'fail'],
     mnemonicEmoji: '\u{1F327}\u{FE0F}',
-    turkishNote: "This is a long vowel sound like saying 'ey' in Turkish. It has two parts: e + i.",
+    turkishNote: "Bu uzun bir ünlü sestir, Türkçe 'ey' demek gibi. İki bölümü var: e + i.",
     order: 1,
   },
   {
@@ -347,7 +347,7 @@ const group4Sounds: PhonicsSound[] = [
     storyTr: 'Jöle tabakta titriyor: c, c, c!',
     keywords: ['jam', 'jet', 'jig', 'jog', 'jug', 'job', 'jot', 'jab'],
     mnemonicEmoji: '\u{1F36E}',
-    turkishNote: "This is like Turkish 'c' (as in 'cam'). It's a soft, buzzy sound. NOT like Turkish 'j'!",
+    turkishNote: "Türkçe 'c' gibi ('cam' kelimesindeki gibi). Yumuşak, vızıltılı bir sestir. Türkçe 'j' değil!",
     order: 2,
   },
   {
@@ -362,7 +362,7 @@ const group4Sounds: PhonicsSound[] = [
     storyTr: 'Keçi tekneye biniyor: oa, oa, oa!',
     keywords: ['goat', 'boat', 'coat', 'road', 'load', 'soap', 'oak', 'foam'],
     mnemonicEmoji: '\u{1F410}',
-    turkishNote: "This sounds like saying 'ou' slowly. It starts with 'o' and glides to 'u'. Different from Turkish 'o'.",
+    turkishNote: "Bu, 'ou'yu yavaşça söylemek gibidir. 'o'dan başlar ve 'u'ya kayar. Türkçe 'o'dan farklıdır.",
     order: 3,
   },
   {
@@ -377,7 +377,7 @@ const group4Sounds: PhonicsSound[] = [
     storyTr: 'Uçurtma gökte yüksekten uçuyor: ay, ay, ay!',
     keywords: ['tie', 'pie', 'lie', 'die', 'tried', 'cried', 'dried', 'fried'],
     mnemonicEmoji: '\u{1FA81}',
-    turkishNote: "This sounds like Turkish 'ay' (as in 'ay isi gi'). Start with 'a' and glide to 'y'.",
+    turkishNote: "Bu, Türkçe 'ay' gibi sesler. 'a'dan başla ve 'y'ye kay.",
     order: 4,
   },
   {
@@ -392,7 +392,7 @@ const group4Sounds: PhonicsSound[] = [
     storyTr: 'Eşek eee-ooor, eee-ooor diyor!',
     keywords: ['see', 'bee', 'tree', 'free', 'feet', 'seed', 'need', 'feed'],
     mnemonicEmoji: '\u{1F41D}',
-    turkishNote: "This is a long 'i' sound, like Turkish 'i' but held longer. Stretch it out: eeee!",
+    turkishNote: "Bu uzun bir 'i' sesidir, Türkçe 'i' gibi ama daha uzun tutulur. Uzat: iiii!",
     order: 5,
   },
   {
@@ -407,7 +407,7 @@ const group4Sounds: PhonicsSound[] = [
     storyTr: 'Kürek çek, kürek çek kıyıya: or, or, or!',
     keywords: ['for', 'or', 'corn', 'fork', 'torn', 'born', 'sort', 'port'],
     mnemonicEmoji: '\u{1F6A3}',
-    turkishNote: "This long 'or' doesn't exist in Turkish. Round your lips and say 'o' followed by a soft English 'r'.",
+    turkishNote: "Bu uzun 'or' Türkçe'de yok. Dudaklarını yuvarla ve 'o' de, ardından yumuşak bir İngilizce 'r' ekle.",
     order: 6,
   },
 ];
@@ -427,7 +427,7 @@ const group5Sounds: PhonicsSound[] = [
     storyTr: 'Meşgul arı çiçeklerin etrafında vızıldanıyor: zzzzz!',
     keywords: ['zip', 'zoo', 'zap', 'zig', 'zag', 'buzz', 'fizz', 'jazz'],
     mnemonicEmoji: '\u{1F41D}',
-    turkishNote: "Same as Turkish 'z'. Let your throat vibrate as you say sssss. Feel the buzz!",
+    turkishNote: "Türkçe 'z' ile aynı. 'ssss' derken boğazını titret. Vızıltıyı hisset!",
     order: 1,
   },
   {
@@ -442,7 +442,7 @@ const group5Sounds: PhonicsSound[] = [
     storyTr: 'Vuuuus! Rüzgar esiyor: vuh, vuh, vuh!',
     keywords: ['win', 'wet', 'wig', 'wag', 'web', 'will', 'wax', 'wish'],
     mnemonicEmoji: '\u{1F32C}\u{FE0F}',
-    turkishNote: "Turkish doesn't have this sound! Round your lips into a small circle (like saying 'u') then open them. It's NOT like Turkish 'v'.",
+    turkishNote: "Türkçe'de bu ses yok! Dudaklarını küçük bir daire yap ('u' der gibi) sonra aç. Türkçe 'v' değil!",
     order: 2,
   },
   {
@@ -457,7 +457,7 @@ const group5Sounds: PhonicsSound[] = [
     storyTr: 'Güçlü adam kaldırıyor: nnng, nnng! Zili çal: ng!',
     keywords: ['ring', 'sing', 'king', 'song', 'long', 'bang', 'hung', 'thing'],
     mnemonicEmoji: '\u{1F4AA}',
-    turkishNote: "This nasal sound exists in Turkish! It's like the 'n' in 'denk'. The back of your tongue touches the back of your mouth.",
+    turkishNote: "Bu nazal ses Türkçe'de var! 'denk' kelimesindeki 'n' gibi. Dilinizin arkası ağzınızın arkasına dokunur.",
     order: 3,
   },
   {
@@ -472,7 +472,7 @@ const group5Sounds: PhonicsSound[] = [
     storyTr: 'Viiin viiin! Minibüs hızla gidiyor: vvvvv!',
     keywords: ['van', 'vet', 'vim', 'vat', 'vast', 'vest', 'vine', 'vote'],
     mnemonicEmoji: '\u{1F690}',
-    turkishNote: "Same as Turkish 'v'. Bite your bottom lip gently and let your voice buzz.",
+    turkishNote: "Türkçe 'v' ile aynı. Alt dudağını hafifçe ısır ve sesinle vızıltı çıkar.",
     order: 4,
   },
   {
@@ -487,7 +487,7 @@ const group5Sounds: PhonicsSound[] = [
     storyTr: 'Bak! Kitaba iyi bak: oo, oo!',
     keywords: ['book', 'look', 'cook', 'good', 'foot', 'hook', 'wood', 'took'],
     mnemonicEmoji: '\u{1F4D6}',
-    turkishNote: "This short 'oo' is between Turkish 'u' and 'o'. Don't round your lips too much. Keep it quick!",
+    turkishNote: "Bu kısa 'oo', Türkçe 'u' ile 'o' arasındadır. Dudaklarını fazla yuvarlama. Kısa tut!",
     order: 5,
   },
   {
@@ -502,7 +502,7 @@ const group5Sounds: PhonicsSound[] = [
     storyTr: 'Kurt aya uluyor: ooooo!',
     keywords: ['moon', 'zoo', 'food', 'cool', 'pool', 'room', 'boot', 'tool'],
     mnemonicEmoji: '\u{1F31D}',
-    turkishNote: "This long 'oo' is close to Turkish 'u' but longer. Round your lips tight and hold it.",
+    turkishNote: "Bu uzun 'oo', Türkçe 'u'ya yakın ama daha uzun. Dudaklarını sıkıca yuvarla ve tut.",
     order: 6,
   },
 ];
@@ -522,7 +522,7 @@ const group6Sounds: PhonicsSound[] = [
     storyTr: 'Lezzetli! Evet, sarı yoğurdu seviyorum: y, y, y!',
     keywords: ['yes', 'yet', 'yam', 'yell', 'yawn', 'yoga', 'yolk', 'yard'],
     mnemonicEmoji: '\u{1F60B}',
-    turkishNote: "Same as Turkish 'y'. Like the 'y' in 'yemek'. Easy for you!",
+    turkishNote: "Türkçe 'y' ile aynı. 'yemek' kelimesindeki 'y' gibi. Sana kolay!",
     order: 1,
   },
   {
@@ -537,7 +537,7 @@ const group6Sounds: PhonicsSound[] = [
     storyTr: 'X hazine haritasında yeri işaretliyor: ks, ks!',
     keywords: ['fox', 'box', 'mix', 'six', 'fix', 'wax', 'tax', 'Rex'],
     mnemonicEmoji: '\u{274C}',
-    turkishNote: "'x' makes a 'ks' sound. Turkish doesn't use this letter, but you know the sounds 'k' and 's' so just blend them fast!",
+    turkishNote: "'x' harfi 'ks' sesi çıkarır. Türkçe bu harfi kullanmaz ama 'k' ve 's' seslerini zaten biliyorsun, sadece hızlıca birleştir!",
     order: 2,
   },
   {
@@ -552,7 +552,7 @@ const group6Sounds: PhonicsSound[] = [
     storyTr: 'Tren çuf çuf gidiyor: ç, ç, ç!',
     keywords: ['chip', 'chop', 'chin', 'chat', 'chest', 'check', 'child', 'much'],
     mnemonicEmoji: '\u{1F682}',
-    turkishNote: "This is exactly like Turkish '\u00E7' (as in '\u00E7ocuk'). You already know this sound perfectly!",
+    turkishNote: "Bu tam olarak Türkçe 'ç' gibi ('çocuk' kelimesindeki gibi). Bu sesi zaten mükemmel biliyorsun!",
     order: 3,
   },
   {
@@ -567,7 +567,7 @@ const group6Sounds: PhonicsSound[] = [
     storyTr: 'Shhh! Bebek uyuyor! Sessiz ol: shhh!',
     keywords: ['ship', 'shop', 'shed', 'shin', 'shut', 'fish', 'wish', 'push'],
     mnemonicEmoji: '\u{1F92B}',
-    turkishNote: "This is exactly like Turkish '\u015F' (as in '\u015Feker'). Perfect \u2014 you know this one!",
+    turkishNote: "Bu tam olarak Türkçe 'ş' gibi ('şeker' kelimesindeki gibi). Mükemmel — bunu zaten biliyorsun!",
     order: 4,
   },
   {
@@ -582,7 +582,7 @@ const group6Sounds: PhonicsSound[] = [
     storyTr: 'This, that, the, them \u2014 boğazının titreşimini hisset: th, th!',
     keywords: ['the', 'this', 'that', 'them', 'then', 'with', 'than', 'those'],
     mnemonicEmoji: '\u{1F445}',
-    turkishNote: "Turkish does NOT have this sound! Put your tongue between your teeth and let your voice vibrate. Practice with 'the'.",
+    turkishNote: "Türkçe'de bu ses YOK! Dilini dişlerinin arasına koy ve sesinle titret. 'the' ile alıştırma yap.",
     order: 5,
   },
   {
@@ -597,7 +597,7 @@ const group6Sounds: PhonicsSound[] = [
     storyTr: 'Üç ince şey düşün: th, th, th! (vızıltısız)',
     keywords: ['thin', 'thick', 'think', 'thing', 'three', 'moth', 'path', 'math'],
     mnemonicEmoji: '\u{1F9E0}',
-    turkishNote: "Turkish does NOT have this sound either! Same tongue position as voiced 'th' but NO voice \u2014 just air. Like a quiet 'th'.",
+    turkishNote: "Türkçe'de bu ses de YOK! Sesli 'th' ile aynı dil pozisyonu ama SES YOK — sadece hava. Sessiz bir 'th' gibi.",
     order: 6,
   },
 ];
@@ -617,7 +617,7 @@ const group7Sounds: PhonicsSound[] = [
     storyTr: 'Kraliçenin ördeği vakladı: kvu, kvu!',
     keywords: ['queen', 'quick', 'quiz', 'quit', 'quack', 'quest', 'quote', 'quad'],
     mnemonicEmoji: '\u{1F986}',
-    turkishNote: "'qu' always makes a 'kw' sound. Turkish doesn't use this combo. Say 'k' then quickly 'w'. Like 'ku' but with the English 'w'.",
+    turkishNote: "'qu' her zaman 'kw' sesi çıkarır. Türkçe bu kombinasyonu kullanmaz. 'k' de sonra hızlıca 'w' ekle. 'ku' gibi ama İngilizce 'w' ile.",
     order: 1,
   },
   {
@@ -632,7 +632,7 @@ const group7Sounds: PhonicsSound[] = [
     storyTr: 'Ayyy! Fare evden kaçtı: av, av!',
     keywords: ['out', 'our', 'loud', 'round', 'found', 'cloud', 'mouse', 'house'],
     mnemonicEmoji: '\u{1F4A5}',
-    turkishNote: "This sounds like 'av' in Turkish. Start with a wide 'a' sound, then quickly close to 'u'.",
+    turkishNote: "Bu, Türkçe 'av' gibi sesler. Geniş bir 'a' sesiyle başla, sonra hızlıca 'u'ya kapat.",
     order: 2,
   },
   {
@@ -647,7 +647,7 @@ const group7Sounds: PhonicsSound[] = [
     storyTr: 'Ahoy! Korsan bir bozuk para buldu: oy, oy!',
     keywords: ['oil', 'coin', 'join', 'boil', 'foil', 'soil', 'coil', 'toil'],
     mnemonicEmoji: '\u{1FA99}',
-    turkishNote: "This is like saying 'oy' in Turkish (as in 'oy vermek'). Start with a round 'o' and glide to 'y'.",
+    turkishNote: "Bu, Türkçe 'oy' gibidir ('oy vermek' gibi). Yuvarlak bir 'o'dan başla ve 'y'ye kay.",
     order: 3,
   },
   {
@@ -662,7 +662,7 @@ const group7Sounds: PhonicsSound[] = [
     storyTr: 'Ne güzel manzara! Maviye bak: yu, yu!',
     keywords: ['blue', 'clue', 'glue', 'true', 'due', 'Sue', 'cue', 'hue'],
     mnemonicEmoji: '\u{1F535}',
-    turkishNote: "This sounds like 'yu' or just long 'u'. Sometimes it's said as 'yoo', sometimes just 'oo'. Listen carefully to each word.",
+    turkishNote: "Bu 'yu' ya da sadece uzun 'u' gibi sesler. Bazen 'yoo', bazen sadece 'oo' denir. Her kelimede dikkatlice dinle.",
     order: 4,
   },
   {
@@ -677,7 +677,7 @@ const group7Sounds: PhonicsSound[] = [
     storyTr: 'Mikser tereyağını karıştırırken errrr diyor: er, er!',
     keywords: ['her', 'fern', 'term', 'verb', 'herd', 'after', 'better', 'sister'],
     mnemonicEmoji: '\u{1F964}',
-    turkishNote: "This vowel doesn't exist in Turkish! It's like saying 'e' but curling your tongue back slightly. Very common in English word endings (-er, -ir, -ur all sound like this).",
+    turkishNote: "Bu ünlü Türkçe'de YOK! 'e' der gibi ama dili hafifçe geriye kıvırarak. İngilizce kelime sonlarında (-er, -ir, -ur hepsi bu şekilde sesler) çok yaygın.",
     order: 5,
   },
   {
@@ -692,7 +692,7 @@ const group7Sounds: PhonicsSound[] = [
     storyTr: 'Korsan diyor ki: ar, ar, ar! Yıldızlar uzakta!',
     keywords: ['car', 'far', 'star', 'jar', 'bar', 'farm', 'park', 'dark'],
     mnemonicEmoji: '\u{2B50}',
-    turkishNote: "Say a long Turkish 'a' followed by a soft English 'r'. The 'a' is open and long, not short.",
+    turkishNote: "Uzun bir Türkçe 'a'dan sonra yumuşak bir İngilizce 'r' ekle. 'a' açık ve uzun olmalı, kısa değil.",
     order: 6,
   },
 ];

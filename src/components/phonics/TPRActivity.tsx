@@ -20,7 +20,6 @@ function parseCommand(cmd: string): ParsedCommand {
 }
 
 export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }) => {
-  if (!commands || commands.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
   const gameCommands = useMemo(() => commands.slice(0, 5).map(parseCommand), [commands]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAction, setShowAction] = useState(false);
@@ -69,6 +68,8 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
       setTimeout(() => onComplete(), 1500);
     }
   };
+
+  if (!commands || commands.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Gözden geçirilecek kelime yok.</div>; }
 
   const progress = (currentIndex / gameCommands.length) * 100;
 

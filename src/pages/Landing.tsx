@@ -1,54 +1,54 @@
 /**
  * Landing Page — MinesMinis
- * Dominating rewrite: phonics-based, competitor differentiation,
- * unique features, school section. Zero TS errors, zero emoji, all tokens.
+ * Cat-themed, professional school-grade tone, beta-honest, no fake data.
  */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, Check, Menu, X, Mic, Gamepad2, BookOpen,
-  Star, GraduationCap, Shield, Users, Sparkles, ChevronDown,
-  ChevronRight, Zap, Brain, Globe, Music,
-  PenTool, Eye,
+  Star, GraduationCap, Shield, Sparkles, ChevronDown,
+  Zap, Brain, Globe, Music, PenTool, Eye,
 } from 'lucide-react';
 import LottieCharacter from '../components/LottieCharacter';
 
 type Lang = 'en' | 'tr';
 const t = (lang: Lang, tr: string, en: string) => lang === 'tr' ? tr : en;
 
-// ─── Stats ──────────────────────────────────────────────────────────────────
+/* ── Inline paw print SVG ─────────────────────────────────── */
+const PawIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="currentColor" aria-hidden="true" className={className}>
+    <ellipse cx="50" cy="66" rx="23" ry="19" />
+    <ellipse cx="27" cy="43" rx="9" ry="12" transform="rotate(-20 27 43)" />
+    <ellipse cx="43" cy="33" rx="9" ry="12" />
+    <ellipse cx="59" cy="33" rx="9" ry="12" />
+    <ellipse cx="75" cy="43" rx="9" ry="12" transform="rotate(20 75 43)" />
+  </svg>
+);
 
-const STATS = [
-  { value: '42',   label: { tr: 'Fonetik Ses',       en: 'Phonics Sounds'   } },
-  { value: '16',   label: { tr: 'Oyun Türü',          en: 'Game Types'       } },
-  { value: '220',  label: { tr: 'Sight Word',         en: 'Sight Words'      } },
-  { value: '50+',  label: { tr: 'Fonetik Hikaye',     en: 'Phonics Stories'  } },
-];
-
-// ─── Unique features (no competitor has these) ─────────────────────────────
+// ─── Unique features ──────────────────────────────────────────────────────────
 
 const ONLY_US = [
   {
     icon: <Brain size={28} />,
     bg: 'bg-purple-100',
     iconColor: 'text-purple-600',
-    badge: { tr: 'Dünya\'da İlk', en: 'World First' },
+    badge: { tr: 'Okuma Bilimi', en: 'Reading Science' },
     title: { tr: 'Fonem Manipülasyon Oyunu', en: 'Phoneme Manipulation Game' },
     desc: {
-      tr: 'Kelimelerden ses ekle, çıkar, değiştir. "cat" → "hat" → "hat" → "has". Okuma biliminin #1 becerisi — hiçbir rakibin yoktur.',
-      en: 'Add, delete, or swap phonemes. "cat" → "hat" → "has". The #1 skill in reading science — no competitor has it.',
+      tr: 'Kelimelerden ses ekle, çıkar, değiştir. "cat" → "hat" → "has". Sistematik fonetik öğretimin temel becerisi.',
+      en: 'Add, delete, or swap phonemes. "cat" → "hat" → "has". The core skill of systematic phonics instruction.',
     },
   },
   {
     icon: <Globe size={28} />,
     bg: 'bg-orange-100',
     iconColor: 'text-primary-500',
-    badge: { tr: 'Sadece Bizde', en: 'Only Here' },
+    badge: { tr: 'Türkçe Konuşanlara Özel', en: 'For Turkish Speakers' },
     title: { tr: 'Türkçe Fonetik Tuzak Antrenörü', en: 'Turkish Phonetic Trap Trainer' },
     desc: {
-      tr: '8 Türkçe ses tuzağı: TH sesi, W/V karışıklığı, kısa ünlüler, sessiz kümeler. Türk çocuklarına özel.',
-      en: '8 Turkish sound traps: TH sounds, W/V confusion, short vowels, consonant clusters. Built for Turkish kids.',
+      tr: '8 Türkçe ses tuzağı: TH sesi, W/V karışıklığı, kısa ünlüler, ünsüz kümeler. Türkçe konuşan çocuklara özel.',
+      en: '8 Turkish sound traps: TH sounds, W/V confusion, short vowels, consonant clusters. Built for Turkish-speaking children.',
     },
   },
   {
@@ -58,8 +58,8 @@ const ONLY_US = [
     badge: { tr: 'Dijital Yöntem', en: 'Digital Method' },
     title: { tr: 'Hareketli Alfabe', en: 'Moveable Alphabet' },
     desc: {
-      tr: 'Harfleri ekranda sürükle, kelime kur, sesleri birleştir. Dil yapısını keşfederek öğrenme — bilimsel okuma yönteminin dijital versiyonu.',
-      en: 'Drag letters on screen, build words, blend sounds. Learning by discovering language structure — the digital version of evidence-based reading method.',
+      tr: 'Harfleri ekranda sürükle, kelime kur, sesleri birleştir. Dil yapısını keşfederek öğrenme.',
+      en: 'Drag letters on screen, build words, blend sounds. Learning by discovering language structure.',
     },
   },
   {
@@ -75,7 +75,7 @@ const ONLY_US = [
   },
 ];
 
-// ─── Competitor comparison ──────────────────────────────────────────────────
+// ─── Competitor comparison ────────────────────────────────────────────────────
 
 interface CompRow {
   feature: { tr: string; en: string };
@@ -92,12 +92,12 @@ const COMP_ROWS: CompRow[] = [
   { feature: { tr: 'Fonetik kısıtlamalı hikayeler', en: 'Phonics-constrained stories' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Hece sayma oyunu', en: 'Syllable counting game' }, us: true, duolingo: false, lingokids: false },
   { feature: { tr: 'Konuşma tanıma (SayIt)', en: 'Speech recognition (SayIt)' }, us: true, duolingo: true, lingokids: false },
-  { feature: { tr: 'Kelime ezber', en: 'Vocabulary memorisation' }, us: true, duolingo: true, lingokids: true },
+  { feature: { tr: 'Kelime & oyun içeriği', en: 'Vocabulary & game content' }, us: true, duolingo: true, lingokids: true },
 ];
 
-// ─── Features ──────────────────────────────────────────────────────────────
+// ─── Features ─────────────────────────────────────────────────────────────────
 
-const FEATURES: { icon: React.ReactNode; gradient: string; border: string; iconBg: string; iconColor: string; title: { tr: string; en: string }; desc: { tr: string; en: string } }[] = [
+const FEATURES = [
   {
     icon: <Mic size={28} />,
     gradient: 'from-orange-50 via-amber-50 to-orange-100',
@@ -105,7 +105,7 @@ const FEATURES: { icon: React.ReactNode; gradient: string; border: string; iconB
     iconBg: 'bg-primary-500',
     iconColor: 'text-white',
     title: { tr: 'Konuşarak Öğren', en: 'Learn by Speaking' },
-    desc: { tr: 'Sesi duy, tekrar et, telaffuzunu kontrol et. Mikrofon destekli konuşma pratiği her derste.', en: 'Hear it, repeat it, check your pronunciation. Microphone-supported speaking practice in every lesson.' },
+    desc: { tr: 'Sesi duy, tekrar et, telaffuzunu kontrol et. Her derste mikrofon destekli konuşma pratiği.', en: 'Hear it, repeat it, check your pronunciation. Microphone-supported speaking practice every lesson.' },
   },
   {
     icon: <Gamepad2 size={28} />,
@@ -123,7 +123,7 @@ const FEATURES: { icon: React.ReactNode; gradient: string; border: string; iconB
     iconBg: 'bg-pink-500',
     iconColor: 'text-white',
     title: { tr: 'Şarkıyla Pekiştir', en: 'Reinforce with Songs' },
-    desc: { tr: '7 fonetik grubun şarkıları. Söylerken okuma. Çocuklar en iyi müzikle öğrenir.', en: 'Songs for all 7 phonics groups. Reading while singing. Kids learn best with music.' },
+    desc: { tr: '7 fonetik grubun şarkıları. Söylerken oku. Çocuklar en iyi müzikle öğrenir.', en: 'Songs for all 7 phonics groups. Read while singing. Kids learn best with music.' },
   },
   {
     icon: <Eye size={28} />,
@@ -132,7 +132,7 @@ const FEATURES: { icon: React.ReactNode; gradient: string; border: string; iconB
     iconBg: 'bg-blue-600',
     iconColor: 'text-white',
     title: { tr: '220 Temel Kelime', en: '220 Core Words' },
-    desc: { tr: 'ABD müfredatının 220 Dolch kelimesi. Aralıklı tekrar sistemiyle akılda kalıcı.', en: '220 Dolch words from the US curriculum. Spaced repetition keeps them memorable.' },
+    desc: { tr: '220 Dolch kelimesi — ABD müfredatı standardı. Aralıklı tekrar sistemiyle kalıcı öğrenme.', en: '220 Dolch words from the US curriculum. Spaced repetition makes them stick.' },
   },
   {
     icon: <PenTool size={28} />,
@@ -141,7 +141,7 @@ const FEATURES: { icon: React.ReactNode; gradient: string; border: string; iconB
     iconBg: 'bg-amber-500',
     iconColor: 'text-white',
     title: { tr: 'Harf Takibi', en: 'Letter Tracing' },
-    desc: { tr: 'Ekranda harfi çiz, kas hafızasını etkinleştir. Dokunmatik ekran ve mouse destekli — her cihazda çalışır.', en: 'Trace letters on screen, activate muscle memory. Touch and mouse-supported — works on any device.' },
+    desc: { tr: 'Ekranda harfi çiz, kas hafızasını etkinleştir. Dokunmatik ve mouse destekli — her cihazda çalışır.', en: 'Trace letters on screen, activate muscle memory. Touch and mouse-supported — works on any device.' },
   },
   {
     icon: <Star size={28} />,
@@ -149,8 +149,8 @@ const FEATURES: { icon: React.ReactNode; gradient: string; border: string; iconB
     border: 'border-green-200',
     iconBg: 'bg-success-600',
     iconColor: 'text-white',
-    title: { tr: 'Motivasyon Hiç Düşmez', en: 'Motivation Never Drops' },
-    desc: { tr: 'Yıldızlar, XP, seriler, günlük hedef, haftalık turnuva. Her ders bir başarı hissi bırakır.', en: 'Stars, XP, streaks, daily goals, weekly tournaments. Every lesson ends with a sense of achievement.' },
+    title: { tr: 'Motivasyon Sistemi', en: 'Motivation System' },
+    desc: { tr: 'Yıldızlar, XP, seriler, günlük hedef. Her ders bir başarı hissiyle biter.', en: 'Stars, XP, streaks, daily goals. Every lesson ends with a sense of achievement.' },
   },
 ];
 
@@ -165,21 +165,14 @@ const HOW_STEPS = [
     num: '2',
     bg: 'bg-purple-600',
     title: { tr: 'Her Gün Oyna', en: 'Play Every Day' },
-    desc: { tr: 'Günde 10 dakika. Sesler, kelimeler, oyunlar, şarkılar, hikayeler — sıkılma diye bir şey yok.', en: '10 minutes a day. Sounds, words, games, songs, stories — zero boredom, always.' },
+    desc: { tr: 'Günde 10 dakika. Sesler, kelimeler, oyunlar, şarkılar, hikayeler.', en: '10 minutes a day. Sounds, words, games, songs, stories.' },
   },
   {
     num: '3',
     bg: 'bg-success-600',
     title: { tr: 'Sonucu Gör', en: 'See the Results' },
-    desc: { tr: 'XP, seriler, rozetler ve haftalık hedeflerle ilerlemeyi anlık takip et.', en: 'Track progress in real-time with XP, streaks, badges and weekly goals.' },
+    desc: { tr: 'XP, seriler, rozetler ve ilerleme takibiyle her adımı gör.', en: 'Track every step with XP, streaks, badges and progress tracking.' },
   },
-];
-
-const RESULTS_DATA = [
-  { stat: '42',    detail: { tr: 'Ses öğretilen fonetik program (Jolly Phonics yöntemi)', en: 'Sounds in phonics programme (Jolly Phonics method)' },  source: 'Jolly Phonics' },
-  { stat: '220',   detail: { tr: 'Dolch listesinden sight word — ABD müfredatı standardı', en: 'Sight words from Dolch list — US curriculum standard' }, source: 'Dolch Word List' },
-  { stat: '%94',   detail: { tr: 'Fonetik yöntemle okuryazarlık başarısı (NRP 2000)', en: 'Literacy success rate with phonics (NRP 2000)' },            source: 'NRP 2000' },
-  { stat: '50+',   detail: { tr: 'Yalnızca öğrenilen seslerle yazılmış hikaye', en: 'Stories written using only learned sounds' },                     source: 'MinesMinis' },
 ];
 
 const WHO_FOR = [
@@ -207,7 +200,6 @@ const WHO_FOR = [
   },
 ];
 
-// Curriculum worlds preview
 const WORLDS_PREVIEW = [
   { num: '01', title: { tr: 'Harfler & Sesler', en: 'Letters & Sounds' }, color: 'bg-primary-500' },
   { num: '02', title: { tr: 'Aile & Ev', en: 'Family & Home' }, color: 'bg-purple-600' },
@@ -215,134 +207,17 @@ const WORLDS_PREVIEW = [
   { num: '04', title: { tr: 'Hayvanlar', en: 'Animals' }, color: 'bg-success-600' },
   { num: '05', title: { tr: 'Yiyecekler & İçecekler', en: 'Food & Drink' }, color: 'bg-orange-500' },
   { num: '06', title: { tr: 'Sayılar & Matematik', en: 'Numbers & Maths' }, color: 'bg-blue-600' },
-  { num: '07', title: { tr: 'Duygu & Hisler', en: 'Emotions & Feelings' }, color: 'bg-gold-600' },
+  { num: '07', title: { tr: 'Duygular', en: 'Emotions' }, color: 'bg-gold-600' },
   { num: '...', title: { tr: '+13 Dünya daha', en: '+13 More Worlds' }, color: 'bg-ink-400' },
 ];
 
-
-// ─── Demo Question ──────────────────────────────────────────────────────────
-
-type DemoState = 'idle' | 'correct' | 'wrong';
-
-interface DemoQuestion {
-  prompt: { tr: string; en: string };
-  choices: string[];
-  correctIndex: number;
-}
-
-const DEMO_QUESTION: DemoQuestion = {
-  prompt: { tr: '"Cat" kelimesinin başındaki ses hangisi?', en: 'Which sound does "Cat" start with?' },
-  choices: ['/k/', '/s/', '/ch/', '/t/'],
-  correctIndex: 0,
-};
-
-function LiveDemo({ lang }: { lang: Lang }) {
-  const [selected, setSelected] = useState<number | null>(null);
-  const [demoState, setDemoState] = useState<DemoState>('idle');
-
-  const handleChoice = (idx: number) => {
-    if (demoState !== 'idle') return;
-    setSelected(idx);
-    setDemoState(idx === DEMO_QUESTION.correctIndex ? 'correct' : 'wrong');
-  };
-
-  const handleReset = () => {
-    setSelected(null);
-    setDemoState('idle');
-  };
-
-  const buttonBase =
-    'w-full font-display font-bold text-base py-3 px-4 rounded-2xl border-2 transition-all duration-150 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400';
-
-  const buttonStyle = (idx: number) => {
-    if (demoState === 'idle') {
-      return `${buttonBase} bg-white border-ink-200 text-ink-800 hover:border-primary-400 hover:bg-primary-50`;
-    }
-    if (idx === DEMO_QUESTION.correctIndex) {
-      return `${buttonBase} bg-success-50 border-success-500 text-success-700`;
-    }
-    if (idx === selected && demoState === 'wrong') {
-      return `${buttonBase} bg-error-50 border-error-500 text-error-600`;
-    }
-    return `${buttonBase} bg-white border-ink-100 text-ink-400`;
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.35 }}
-      className="bg-white rounded-3xl border-2 border-ink-100 shadow-card p-6 max-w-md mx-auto lg:mx-0"
-    >
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-2 h-2 rounded-full bg-success-500 animate-pulse" />
-        <span className="font-display font-bold text-xs text-success-600 uppercase tracking-widest">
-          {t(lang, 'Canlı Demo — kayıt gerekmez', 'Live Demo — no sign-up')}
-        </span>
-      </div>
-      <p className="font-display font-extrabold text-ink-900 text-lg mb-5 leading-snug">
-        {t(lang, DEMO_QUESTION.prompt.tr, DEMO_QUESTION.prompt.en)}
-      </p>
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        {DEMO_QUESTION.choices.map((choice, idx) => (
-          <button
-            key={idx}
-            type="button"
-            className={buttonStyle(idx)}
-            onClick={() => handleChoice(idx)}
-            disabled={demoState !== 'idle'}
-          >
-            {choice}
-            {demoState !== 'idle' && idx === DEMO_QUESTION.correctIndex && (
-              <Check size={14} className="inline ml-1 text-success-500" />
-            )}
-            {demoState === 'wrong' && idx === selected && idx !== DEMO_QUESTION.correctIndex && (
-              <X size={14} className="inline ml-1 text-error-500" />
-            )}
-          </button>
-        ))}
-      </div>
-      <AnimatePresence>
-        {demoState !== 'idle' && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className={`rounded-2xl p-4 mb-3 ${demoState === 'correct' ? 'bg-success-50 border border-success-200' : 'bg-error-50 border border-error-200'}`}>
-              <p className={`font-display font-bold text-sm ${demoState === 'correct' ? 'text-success-700' : 'text-error-700'}`}>
-                {demoState === 'correct'
-                  ? t(lang, 'Harika! "cat" /k/ sesiyle başlar.', 'Great! "cat" starts with /k/.')
-                  : t(lang, '"cat" /k/ sesiyle başlar. Tekrar dene!', '"cat" starts with /k/. Try again!')}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="w-full font-display font-bold text-sm text-ink-500 hover:text-ink-800 transition-colors py-1"
-            >
-              {t(lang, 'Tekrar Dene', 'Try Again')} →
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-
-// ─── FAQ Data ─────────────────────────────────────────────────────────────────
-
 const FAQ_DATA = [
   { q: { tr: 'MinesMinis hangi yaş grubuna uygun?', en: 'What age group is MinesMinis for?' }, a: { tr: 'MinesMinis 3–10 yaş arası çocuklar için tasarlanmıştır. Yerleştirme testi her çocuğun seviyesine uygun başlangıç noktasını belirler.', en: 'MinesMinis is designed for children aged 3–10. The placement test finds the right starting point for every child.' } },
-  { q: { tr: 'Fonetik yöntem nedir ve neden önemli?', en: 'What is the phonics method and why does it matter?' }, a: { tr: 'Harfleri seslerle eşleştirerek okuma öğretir. Sistematik fonetik öğretimi en etkili okuma yöntemidir.', en: 'Phonics maps letters to sounds. Systematic phonics instruction is the most effective reading method.' } },
+  { q: { tr: 'Fonetik yöntem nedir ve neden önemli?', en: 'What is the phonics method and why does it matter?' }, a: { tr: 'Harfleri seslerle eşleştirerek okuma öğretir. Sistematik fonetik öğretimi, araştırmalarla desteklenmiş en etkili okuma yöntemidir.', en: 'Phonics maps letters to sounds. Systematic phonics instruction is the most research-backed reading method.' } },
   { q: { tr: 'Günde ne kadar süre yeterli?', en: 'How much time per day is enough?' }, a: { tr: 'Günde sadece 10 dakika yeterli. Kısa ve odaklı dersler çocukların dikkat süresine uygun tasarlanmıştır.', en: "Just 10 minutes a day. Short focused lessons match children's attention spans." } },
-  { q: { tr: 'Ücretsiz plan sonsuza kadar geçerli mi?', en: 'Is the free plan valid forever?' }, a: { tr: 'Evet. Günde 1 ders, 7 fonetik grup ve 5 oyun türüne erişim sonsuza kadar ücretsizdir.', en: 'Yes. 1 lesson per day, 7 phonics groups, and 5 game types — free forever.' } },
+  { q: { tr: 'Ücretsiz plan sonsuza kadar geçerli mi?', en: 'Is the free plan valid forever?' }, a: { tr: 'Evet. Temel içeriklere erişim sonsuza kadar ücretsizdir. Beta süresince tüm özellikler açık.', en: 'Yes. Core content access is free forever. All features are open during the beta period.' } },
   { q: { tr: 'Türkçe konuşan çocuklar için özel bir şey var mı?', en: 'Is there anything special for Turkish-speaking children?' }, a: { tr: '8 Türkçe ses tuzağı için özel antrenman modülümüz var: TH sesi, W/V karışıklığı, kısa ünlüler ve daha fazlası.', en: 'We have a special training module for 8 Turkish sound traps: TH sounds, W/V confusion, short vowels and more.' } },
 ];
-
-// ─── FAQ Component ────────────────────────────────────────────────────────────
 
 function FAQSection({ lang }: { lang: Lang }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -410,7 +285,7 @@ function FAQSection({ lang }: { lang: Lang }) {
   );
 }
 
-// ─── Main Component ─────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function Landing() {
   const [lang, setLang] = useState<Lang>('tr');
@@ -420,12 +295,26 @@ export default function Landing() {
     <div className="min-h-screen bg-cream-50 font-body">
 
       {/* ══════════════════════════════════════
+          BETA BANNER
+          ══════════════════════════════════════ */}
+      <div className="bg-amber-50 border-b border-amber-200 py-2 px-4 text-center">
+        <p className="font-display font-bold text-amber-800 text-xs flex items-center justify-center gap-2">
+          <Sparkles size={13} className="text-amber-600" />
+          {t(lang,
+            'MinesMinis şu an Beta aşamasındadır — tüm özellikler ücretsiz, geri bildiriminiz değerli.',
+            'MinesMinis is currently in Beta — all features are free, your feedback matters.'
+          )}
+        </p>
+      </div>
+
+      {/* ══════════════════════════════════════
           NAVBAR
           ══════════════════════════════════════ */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-ink-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
-          <Link to="/" className="font-display font-black text-xl text-primary-500 tracking-tight">
-            MinesMinis
+          <Link to="/" className="flex items-center gap-2">
+            <PawIcon size={22} className="text-primary-500" />
+            <span className="font-display font-black text-xl text-primary-500 tracking-tight">MinesMinis</span>
           </Link>
 
           {/* Desktop nav */}
@@ -441,9 +330,6 @@ export default function Landing() {
             </a>
             <a href="#faq" className="font-display font-semibold text-sm text-ink-600 hover:text-primary-500 transition-colors">
               {t(lang, 'SSS', 'FAQ')}
-            </a>
-            <a href="#pricing" className="font-display font-semibold text-sm text-amber-600 hover:text-amber-700 transition-colors">
-              {t(lang, 'Erken Kayit', 'Early Bird')}
             </a>
           </nav>
 
@@ -491,7 +377,6 @@ export default function Landing() {
                   { href: '#compare', label: t(lang, 'Karşılaştır', 'Compare') },
                   { href: '#how', label: t(lang, 'Nasıl Çalışır', 'How It Works') },
                   { href: '#faq', label: t(lang, 'SSS', 'FAQ') },
-                  { href: '#pricing', label: t(lang, 'Erken Kayıt', 'Early Bird') },
                 ].map(item => (
                   <a
                     key={item.href}
@@ -506,7 +391,6 @@ export default function Landing() {
                   <button
                     type="button"
                     onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
-                    aria-label={lang === 'tr' ? 'Switch to English' : "Türkçe'ye geçiş yap"}
                     className="font-display font-bold text-xs text-ink-500 border border-ink-200 rounded-full px-3 py-1.5"
                   >
                     {lang === 'tr' ? 'EN' : 'TR'}
@@ -532,20 +416,23 @@ export default function Landing() {
         {/* Background blobs */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-100/40 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-100/40 rounded-full translate-y-1/2 -translate-x-1/3 blur-2xl pointer-events-none" />
+        {/* Floating paw prints */}
+        <PawIcon size={48} className="absolute top-12 left-8 text-primary-200 opacity-40 rotate-[-15deg] pointer-events-none" />
+        <PawIcon size={28} className="absolute top-24 right-16 text-primary-300 opacity-30 rotate-[20deg] pointer-events-none" />
+        <PawIcon size={36} className="absolute bottom-16 left-1/4 text-primary-200 opacity-25 rotate-[8deg] pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: copy */}
             <div>
-              {/* Animated trust badge with shimmer */}
+              {/* Beta badge */}
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500 text-white font-display font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-full shadow-primary mb-6 overflow-hidden"
+                className="inline-flex items-center gap-2 bg-amber-100 border-2 border-amber-300 text-amber-800 font-display font-black text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-6"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2.5s_ease-in-out_infinite] -translate-x-full" style={{ animation: 'shimmer 2.5s ease-in-out infinite' }} />
-                <Sparkles size={14} className="text-white relative z-10" />
-                <span className="relative z-10">{t(lang, 'Ücretsiz Erken Erişim Başladı', 'Free Early Access is Live')}</span>
+                <Zap size={12} />
+                {t(lang, 'Beta — Ücretsiz Erken Erişim', 'Beta — Free Early Access')}
               </motion.div>
 
               <motion.h1
@@ -556,9 +443,9 @@ export default function Landing() {
                 style={{ fontSize: 'clamp(2rem, 5.5vw, 3.5rem)' }}
               >
                 {lang === 'tr' ? (
-                  <>Her çocuk İngilizce<br /><span className="text-primary-500">okumayı öğrenebilir.</span></>
+                  <>İngilizce öğrenmek<br /><span className="text-primary-500">bu kadar eğlenceli.</span></>
                 ) : (
-                  <>Every child can learn<br /><span className="text-primary-500">to read in English.</span></>
+                  <>Learning English<br /><span className="text-primary-500">can be this fun.</span></>
                 )}
               </motion.h1>
 
@@ -569,8 +456,8 @@ export default function Landing() {
                 className="font-body text-ink-500 text-lg mb-8 max-w-lg leading-relaxed"
               >
                 {t(lang,
-                  'Günde 10 dakika yeterli. Bilimsel fonetik yöntemiyle, adım adım, harften hikayeye — eğlenerek.',
-                  'Just 10 minutes a day. Science-backed phonics, step by step, from letters to stories — with joy.'
+                  'Günde 10 dakika yeterli. Bilimsel fonetik yöntemiyle, adım adım, harften hikayeye — Mimi ile.',
+                  'Just 10 minutes a day. Science-backed phonics, step by step, from letters to stories — with Mimi.'
                 )}
               </motion.p>
 
@@ -583,7 +470,6 @@ export default function Landing() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.3 + i * 0.07, type: 'spring', stiffness: 300, damping: 20 }}
                     className="w-12 h-12 bg-white border-2 border-ink-100 rounded-2xl flex items-center justify-center shadow-sm font-display font-black text-xl text-primary-500 hover:border-primary-300 hover:shadow-card transition-all duration-200"
-                    style={{ animation: `float 3s ease-in-out ${i * 0.4}s infinite` }}
                   >
                     {letter}
                   </motion.div>
@@ -594,7 +480,7 @@ export default function Landing() {
                   transition={{ delay: 0.58, type: 'spring' }}
                   className="w-12 h-12 bg-primary-500 rounded-2xl flex items-center justify-center shadow-md"
                 >
-                  <ChevronRight size={20} className="text-white" />
+                  <PawIcon size={22} className="text-white" />
                 </motion.div>
               </div>
 
@@ -620,7 +506,7 @@ export default function Landing() {
                 </a>
               </motion.div>
 
-              {/* Micro trust row */}
+              {/* Trust chips */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -628,9 +514,9 @@ export default function Landing() {
                 className="flex flex-wrap gap-4 mt-6"
               >
                 {[
-                  t(lang, 'Hemen basla, ucretsiz', 'Start free, no card'),
-                  t(lang, 'Istedigin zaman iptal', 'Cancel anytime'),
+                  t(lang, 'Kayıt ücretsiz', 'Free sign-up'),
                   t(lang, 'Reklam yok', 'No ads'),
+                  t(lang, 'COPPA & KVKK Uyumlu', 'COPPA & KVKK Compliant'),
                 ].map(chip => (
                   <span key={chip} className="flex items-center gap-1.5 font-display font-semibold text-xs text-ink-500">
                     <Check size={12} className="text-success-500" />
@@ -639,48 +525,63 @@ export default function Landing() {
                 ))}
               </motion.div>
 
-              {/* Social proof */}
+              {/* Privacy note */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="flex flex-wrap items-center gap-5 mt-5"
+                className="flex items-center gap-2 mt-4"
               >
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    {[
-                      'bg-primary-400', 'bg-purple-400', 'bg-success-400', 'bg-blue-400',
-                    ].map((bg, i) => (
-                      <div key={i} className={`w-7 h-7 ${bg} rounded-full border-2 border-white flex items-center justify-center`}>
-                        <Users size={10} className="text-white" />
-                      </div>
-                    ))}
-                  </div>
-                  <span className="font-display font-bold text-xs text-ink-600">
-                    {t(lang, 'Binlerce Türk çocuğu bekliyor', 'Thousands of Turkish kids waiting')}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Shield size={13} className="text-success-500" />
-                  <span className="font-display font-bold text-xs text-ink-600">
-                    {t(lang, 'COPPA & KVKK Uyumlu', 'COPPA & KVKK Compliant')}
-                  </span>
-                </div>
+                <Shield size={13} className="text-success-500 flex-shrink-0" />
+                <span className="font-display font-bold text-xs text-ink-500">
+                  {t(lang, 'Çocuk gizliliği önceliğimiz — COPPA & KVKK uyumlu', "Children's privacy first — COPPA & KVKK compliant")}
+                </span>
               </motion.div>
             </div>
 
-            {/* Right: mascot + live demo */}
-            <div className="flex flex-col items-center gap-6">
+            {/* Right: Mimi cat mascot */}
+            <div className="flex flex-col items-center justify-center gap-6">
               <motion.div
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
+                className="relative"
               >
-                <LottieCharacter state="wave" size={200} />
+                {/* Glow ring */}
+                <div className="absolute inset-0 rounded-full bg-primary-300/20 blur-3xl scale-110 pointer-events-none" />
+                {/* Cat ears decoration */}
+                <div className="relative">
+                  <div className="absolute -top-6 left-6 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[32px] border-l-transparent border-r-transparent border-b-primary-400 rotate-[-8deg] z-10" style={{ filter: 'drop-shadow(0 -2px 4px rgba(255,107,53,0.3))' }} />
+                  <div className="absolute -top-6 right-6 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[32px] border-l-transparent border-r-transparent border-b-primary-400 rotate-[8deg] z-10" style={{ filter: 'drop-shadow(0 -2px 4px rgba(255,107,53,0.3))' }} />
+                  <div className="w-56 h-56 bg-gradient-to-br from-primary-50 to-orange-100 rounded-[40px] border-4 border-primary-200 shadow-xl flex items-center justify-center overflow-hidden">
+                    <LottieCharacter state="wave" size={220} />
+                  </div>
+                </div>
+                {/* Name badge */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white border-2 border-primary-200 rounded-full px-5 py-2 shadow-md flex items-center gap-2 whitespace-nowrap">
+                  <PawIcon size={14} className="text-primary-500" />
+                  <span className="font-display font-black text-sm text-ink-800">Mimi</span>
+                </div>
               </motion.div>
-              <div className="w-full">
-                <LiveDemo lang={lang} />
-              </div>
+
+              {/* Feature pills */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="flex flex-wrap justify-center gap-2 mt-6"
+              >
+                {[
+                  t(lang, '42 Fonetik Ses', '42 Phonics Sounds'),
+                  t(lang, '16 Oyun Türü', '16 Game Types'),
+                  t(lang, '220 Kelime', '220 Words'),
+                ].map(pill => (
+                  <span key={pill} className="inline-flex items-center gap-1.5 bg-white border-2 border-primary-100 text-primary-700 font-display font-bold text-xs px-3 py-1.5 rounded-full shadow-sm">
+                    <PawIcon size={11} className="text-primary-400" />
+                    {pill}
+                  </span>
+                ))}
+              </motion.div>
             </div>
           </div>
         </div>
@@ -692,7 +593,12 @@ export default function Landing() {
       <section className="bg-gradient-to-r from-primary-600 via-primary-500 to-orange-400 py-10 lg:py-12">
         <div className="max-w-4xl mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {STATS.map((s, i) => (
+            {[
+              { value: '42',  label: { tr: 'Fonetik Ses', en: 'Phonics Sounds' } },
+              { value: '16',  label: { tr: 'Oyun Türü',   en: 'Game Types'     } },
+              { value: '220', label: { tr: 'Sight Word',  en: 'Sight Words'    } },
+              { value: '50+', label: { tr: 'Hikaye',      en: 'Stories'        } },
+            ].map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 12 }}
@@ -723,7 +629,7 @@ export default function Landing() {
       </section>
 
       {/* ══════════════════════════════════════
-          ONLY US: Unique Features
+          UNIQUE FEATURES
           ══════════════════════════════════════ */}
       <section className="py-16 lg:py-24 bg-ink-900 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
@@ -736,12 +642,12 @@ export default function Landing() {
               {t(lang, 'Okuma biliminin temeli', 'Foundation of reading science')}
             </p>
             <h2 className="font-display font-black text-white mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Fark Yaratan Özellikler', 'What Makes the Difference')}
+              {t(lang, 'Rakiplerde Olmayan Özellikler', 'Features No Competitor Has')}
             </h2>
             <p className="font-body text-ink-400 max-w-2xl mx-auto">
               {t(lang,
                 'Kelime ezberlemek okumayı öğretmez. Ses bilinci olmadan okuma olmaz. MinesMinis, okuma biliminin kanıtlanmış temelinden başlar.',
-                'Memorising words doesn\'t teach reading. Without phonemic awareness, there\'s no reading. MinesMinis starts from the proven foundation of reading science.'
+                "Memorising words doesn't teach reading. Without phonemic awareness, there's no reading. MinesMinis starts from the proven foundation of reading science."
               )}
             </p>
           </div>
@@ -802,58 +708,53 @@ export default function Landing() {
 
           <div className="bg-white border-2 border-ink-100 rounded-3xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-            <table className="w-full min-w-[480px]" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
-              <thead>
-                <tr className="bg-ink-900 text-white text-center">
-                  <th scope="col" className="font-display font-bold text-sm text-ink-400 text-left pl-4 pr-2 py-4">
-                    {t(lang, 'Özellik', 'Feature')}
-                  </th>
-                  <th scope="col" className="font-display font-black text-sm text-primary-300 py-4">MinesMinis</th>
-                  <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4">Duolingo</th>
-                  <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4">Lingokids</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMP_ROWS.map((row, i) => (
-                  <motion.tr
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.04 }}
-                    className={`${i % 2 === 0 ? 'bg-cream-50' : 'bg-white'} border-b border-ink-50 last:border-0`}
-                  >
-                    <td className="font-body text-sm text-ink-700 pl-4 pr-2 py-3.5">
-                      {t(lang, row.feature.tr, row.feature.en)}
-                    </td>
-                    <td className="text-center py-3.5">
-                      {row.us
-                        ? <><Check size={18} className="text-success-500 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
-                        : <><X size={18} className="text-error-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
-                    </td>
-                    <td className="text-center py-3.5">
-                      {row.duolingo
-                        ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
-                        : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
-                    </td>
-                    <td className="text-center py-3.5">
-                      {row.lingokids
-                        ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
-                        : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
+              <table className="w-full min-w-[480px]" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
+                <thead>
+                  <tr className="bg-ink-900 text-white text-center">
+                    <th scope="col" className="font-display font-bold text-sm text-ink-400 text-left pl-4 pr-2 py-4">
+                      {t(lang, 'Özellik', 'Feature')}
+                    </th>
+                    <th scope="col" className="font-display font-black text-sm text-primary-300 py-4">MinesMinis</th>
+                    <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4">Duolingo</th>
+                    <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4">Lingokids</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMP_ROWS.map((row, i) => (
+                    <motion.tr
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.04 }}
+                      className={`${i % 2 === 0 ? 'bg-cream-50' : 'bg-white'} border-b border-ink-50 last:border-0`}
+                    >
+                      <td className="font-body text-sm text-ink-700 pl-4 pr-2 py-3.5">
+                        {t(lang, row.feature.tr, row.feature.en)}
+                      </td>
+                      <td className="text-center py-3.5">
+                        {row.us
+                          ? <><Check size={18} className="text-success-500 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
+                          : <><X size={18} className="text-error-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
+                      </td>
+                      <td className="text-center py-3.5">
+                        {row.duolingo
+                          ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
+                          : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
+                      </td>
+                      <td className="text-center py-3.5">
+                        {row.lingokids
+                          ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
+                          : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-
-            {/* Footer CTA */}
             <div className="bg-primary-50 border-t-2 border-primary-100 p-5 text-center">
               <p className="font-display font-bold text-primary-700 text-sm mb-3">
-                {t(lang,
-                  'Tabloyu kendin değerlendir. İhtiyacına göre seç.',
-                  'Evaluate the table yourself. Choose what fits your needs.'
-                )}
+                {t(lang, 'Tabloyu kendin değerlendir. İhtiyacına göre seç.', 'Evaluate the table yourself. Choose what fits your needs.')}
               </p>
               <Link
                 to="/login?tab=signup"
@@ -862,86 +763,6 @@ export default function Landing() {
                 {t(lang, 'Ücretsiz Dene', 'Try Free')}
                 <ArrowRight size={16} />
               </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════
-          SCIENCE: Neden Fonetik?
-          ══════════════════════════════════════ */}
-      <section className="py-16 lg:py-24 bg-gradient-to-b from-cream-100 to-white">
-        <div className="max-w-6xl mx-auto px-4 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Araştırma temelli', 'Research-backed')}
-            </p>
-            <h2 className="font-display font-black text-ink-900 mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Neden Fonetik Yöntemi Seçtik?', 'Why We Chose Phonics')}
-            </h2>
-            <p className="font-body text-ink-500 max-w-xl mx-auto">
-              {t(lang,
-                'NRP 2000 (ABD Ulusal Okuma Paneli): sistematik fonetik öğretimi, çocukların okuma becerisini diğer yöntemlerden çok daha hızlı geliştiriyor.',
-                'NRP 2000 (US National Reading Panel): systematic phonics instruction develops children\'s reading skills significantly faster than other methods.'
-              )}
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
-            {RESULTS_DATA.map((r, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="bg-white border-2 border-ink-100 rounded-3xl p-6 text-center hover:border-primary-200 hover:shadow-card transition-all duration-200"
-              >
-                <div className="font-display font-black text-primary-500 text-4xl mb-2">{r.stat}</div>
-                <p className="font-display font-bold text-ink-900 text-base mb-3">{t(lang, r.detail.tr, r.detail.en)}</p>
-                <span className="inline-block font-body text-xs text-ink-400 bg-ink-100 px-3 py-1 rounded-full">{r.source}</span>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Comparison: rote vs phonics */}
-          <div className="bg-white border-2 border-ink-100 rounded-3xl p-6 lg:p-8">
-            <h3 className="font-display font-extrabold text-ink-900 text-xl text-center mb-6">
-              {t(lang, 'Kelime ezber vs. Fonetik yöntem', 'Rote memorisation vs. Phonics')}
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-error-50 border-2 border-error-100 rounded-2xl p-5">
-                <p className="font-display font-bold text-error-700 text-sm uppercase tracking-wide mb-4">
-                  {t(lang, 'Kelime ezber (rakipler)', 'Rote memorisation (competitors)')}
-                </p>
-                {[
-                  t(lang, 'Her kelime ayrı ayrı ezber', 'Each word memorised separately'),
-                  t(lang, 'Yeni kelimeyi okuyamaz', 'Cannot read unfamiliar words'),
-                  t(lang, 'Türkçe ses tuzaklarını atlıyor', 'Skips Turkish sound traps'),
-                  t(lang, 'Uzun vadede motivasyon düşer', 'Motivation drops long-term'),
-                ].map(point => (
-                  <div key={point} className="flex items-start gap-2 mb-2">
-                    <X size={14} className="text-error-500 flex-shrink-0 mt-0.5" />
-                    <span className="font-body text-ink-600 text-sm">{point}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="bg-success-50 border-2 border-success-100 rounded-2xl p-5">
-                <p className="font-display font-bold text-success-700 text-sm uppercase tracking-wide mb-4">
-                  {t(lang, 'Fonetik yöntem (MinesMinis)', 'Phonics method (MinesMinis)')}
-                </p>
-                {[
-                  t(lang, 'Ses-harf ilişkisini içselleştirir', 'Internalises sound-letter mapping'),
-                  t(lang, 'Hiç görmediği kelimeyi okur', 'Reads unfamiliar words independently'),
-                  t(lang, '8 Türkçe ses tuzağı için özel antrenman', '8 Turkish sound traps, specifically trained'),
-                  t(lang, 'Oyun temelli — motivasyon yüksek', 'Game-based — motivation stays high'),
-                ].map(point => (
-                  <div key={point} className="flex items-start gap-2 mb-2">
-                    <Check size={14} className="text-success-500 flex-shrink-0 mt-0.5" />
-                    <span className="font-body text-ink-600 text-sm">{point}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -957,7 +778,7 @@ export default function Landing() {
               {t(lang, 'Özellikler', 'Features')}
             </p>
             <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Sıkılma Garantisi Yok', 'Zero Boredom Guaranteed')}
+              {t(lang, 'Her Ders Bir Macera', 'Every Lesson Is an Adventure')}
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -988,18 +809,17 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           HOW IT WORKS
           ══════════════════════════════════════ */}
-      <section id="how" className="py-16 lg:py-24 bg-white">
+      <section id="how" className="py-16 lg:py-24 bg-gradient-to-b from-cream-100 to-white">
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
               {t(lang, '3 adım, hepsi bu kadar', '3 steps, that\'s it')}
             </p>
             <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Nasıl Çalışıyor?', 'How Does It Work?')}
+              {t(lang, 'Nasıl Çalışır?', 'How Does It Work?')}
             </h2>
           </div>
           <div className="relative grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {/* Connector line (desktop only) */}
             <div className="hidden md:block absolute top-8 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-primary-300 via-purple-300 to-success-300 z-0" />
             {HOW_STEPS.map((step, i) => (
               <motion.div
@@ -1050,7 +870,7 @@ export default function Landing() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="bg-white border-2 border-ink-100 rounded-2xl p-4 text-left"
+                className="bg-white border-2 border-ink-100 rounded-2xl p-4 text-left hover:border-primary-200 transition-colors duration-200"
               >
                 <div className={`${w.color} w-9 h-9 rounded-xl flex items-center justify-center mb-3`}>
                   <span className="font-display font-black text-white text-xs">{w.num}</span>
@@ -1065,16 +885,16 @@ export default function Landing() {
       </section>
 
       {/* ══════════════════════════════════════
-          KIMLER IÇIN? (Who is it for?)
+          WHO IS IT FOR?
           ══════════════════════════════════════ */}
       <section id="who" className="py-16 lg:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-purple-600 text-sm uppercase tracking-widest mb-3">
-              {t(lang, 'Herkes için tasarlandı', 'Built for everyone')}
+              {t(lang, 'Kimler için?', 'Who is it for?')}
             </p>
             <h2 className="font-display font-black text-ink-900" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Senin için de var.', 'There\'s a place for you.')}
+              {t(lang, 'Her Seviyeye Uygun', 'Right for Every Level')}
             </h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
@@ -1111,7 +931,7 @@ export default function Landing() {
       </section>
 
       {/* ══════════════════════════════════════
-          EARLY BIRD PRICING
+          EARLY BIRD / BETA PRICING
           ══════════════════════════════════════ */}
       <section id="pricing" className="py-16 lg:py-24 bg-gradient-to-b from-cream-50 to-white">
         <div className="max-w-4xl mx-auto px-4 lg:px-8">
@@ -1123,21 +943,21 @@ export default function Landing() {
               className="inline-flex items-center gap-2 bg-amber-100 border-2 border-amber-300 text-amber-800 font-display font-black text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-4"
             >
               <Zap size={13} />
-              {t(lang, 'Erken Kayıt Avantajı', 'Early Bird Offer')}
+              {t(lang, 'Beta Dönemi', 'Beta Period')}
             </motion.div>
             <h2 className="font-display font-black text-ink-900 mb-3" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Şimdi Başla, Avantajı Yakala', 'Start Now, Grab the Advantage')}
+              {t(lang, 'Şimdi Ücretsiz, Hep Avantajlı', 'Free Now, Always Advantaged')}
             </h2>
             <p className="font-body text-ink-500 max-w-xl mx-auto">
               {t(lang,
-                'MinesMinis şu an ücretsiz erken erişim aşamasında. İlk kullanıcılar gelecekteki ücretli planlarda özel indirim alacak.',
-                'MinesMinis is currently in free early access. Early users will receive special discounts on future paid plans.'
+                'Beta aşamasında tüm özellikler açık ve tamamen ücretsiz. Erken kayıt olanlara gelecekteki planlar için öncelik tanınacak.',
+                'All features are open and completely free during Beta. Early registrants will get priority for future plans.'
               )}
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            {/* Free Plan */}
+            {/* Beta Free */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1145,21 +965,21 @@ export default function Landing() {
               className="bg-white border-2 border-ink-200 rounded-3xl p-7 hover:border-ink-300 hover:shadow-card transition-all duration-200"
             >
               <p className="font-display font-bold text-ink-500 text-sm uppercase tracking-wide mb-2">
-                {t(lang, 'Ücretsiz', 'Free')}
+                {t(lang, 'Beta — Ücretsiz', 'Beta — Free')}
               </p>
               <div className="font-display font-black text-ink-900 text-4xl mb-1">₺0</div>
-              <p className="font-body text-ink-400 text-sm mb-6">{t(lang, 'Sonsuza kadar ücretsiz', 'Free forever')}</p>
+              <p className="font-body text-ink-400 text-sm mb-6">{t(lang, 'Beta süresince tüm özellikler açık', 'All features open during Beta')}</p>
               <ul className="flex flex-col gap-2.5 mb-7">
                 {(lang === 'tr' ? [
-                  'Günlük 1 ders',
-                  '7 fonetik grup — tümüne erişim',
-                  '5 oyun türü',
+                  'Tüm fonetik dersler',
+                  '16 oyun türü',
                   'XP, rozet ve seri takibi',
+                  'İlerleme raporları',
                 ] : [
-                  '1 lesson per day',
-                  '7 phonics groups — full access',
-                  '5 game types',
-                  'XP, badges and streak tracking',
+                  'All phonics lessons',
+                  '16 game types',
+                  'XP, badges and streaks',
+                  'Progress reports',
                 ]).map(item => (
                   <li key={item} className="flex items-start gap-2">
                     <Check size={14} className="text-success-500 flex-shrink-0 mt-0.5" />
@@ -1175,7 +995,7 @@ export default function Landing() {
               </Link>
             </motion.div>
 
-            {/* Early Bird Plan */}
+            {/* Early Bird */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1184,30 +1004,28 @@ export default function Landing() {
               className="bg-primary-500 border-2 border-primary-400 rounded-3xl p-7 relative overflow-hidden hover:shadow-primary-lg transition-all duration-200 hover:-translate-y-1"
             >
               <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 font-display font-black text-xs px-3 py-1 rounded-full">
-                {t(lang, 'Erken Kayıt', 'Early Bird')}
+                {t(lang, 'Erken Erişim', 'Early Access')}
               </div>
               <p className="font-display font-bold text-primary-200 text-sm uppercase tracking-wide mb-2">
-                {t(lang, 'Premium — Erken Fiyat', 'Premium — Early Price')}
+                {t(lang, 'Erken Kayıt Avantajı', 'Early Registration Benefit')}
               </p>
-              <div className="font-display font-black text-white text-4xl mb-1">
-                {t(lang, 'Yakında', 'Coming Soon')}
+              <div className="font-display font-black text-white text-2xl leading-tight mb-1">
+                {t(lang, 'Öncelikli Erişim', 'Priority Access')}
               </div>
               <p className="font-body text-primary-200 text-sm mb-6">
-                {t(lang, 'Fiyat açıklandığında erken kayıt indirimi', 'Early bird discount when price launches')}
+                {t(lang, 'Gelecekteki planlar açıklandığında erken kayıt indirimi', 'Early bird discount when paid plans launch')}
               </p>
               <ul className="flex flex-col gap-2.5 mb-7">
                 {(lang === 'tr' ? [
-                  'Sınırsız ders',
-                  'Tüm 16 oyun türü',
-                  'Haftalık ilerleme raporu',
-                  'Reklamsız deneyim',
-                  'Öncelikli destek',
+                  'Beta süresince tüm özellikler açık',
+                  'Yeni özelliklere öncelikli erişim',
+                  'Geri bildiriminiz ürünü şekillendirir',
+                  'Fiyat açıklandığında erken indirim garantisi',
                 ] : [
-                  'Unlimited lessons',
-                  'All 16 game types',
-                  'Weekly progress reports',
-                  'Ad-free experience',
-                  'Priority support',
+                  'All features open during Beta',
+                  'Priority access to new features',
+                  'Your feedback shapes the product',
+                  'Early discount guaranteed when pricing launches',
                 ]).map(item => (
                   <li key={item} className="flex items-start gap-2">
                     <Check size={14} className="text-white flex-shrink-0 mt-0.5" />
@@ -1226,8 +1044,8 @@ export default function Landing() {
 
           <p className="text-center font-body text-ink-400 text-xs mt-8">
             {t(lang,
-              'Erken kayıt, gelecekteki ücretli planlar açıklandığında özel fiyat garantisi anlamına gelir. Şu an tamamen ücretsiz.',
-              'Early registration guarantees a special price when paid plans launch. Completely free for now.'
+              'Beta aşamasında kredi kartı gerekmez. Tamamen ücretsiz.',
+              'No credit card required during Beta. Completely free.'
             )}
           </p>
         </div>
@@ -1242,38 +1060,47 @@ export default function Landing() {
           FINAL CTA
           ══════════════════════════════════════ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-500 to-primary-600 py-20 lg:py-28">
+        {/* Background paw prints */}
+        <PawIcon size={80} className="absolute top-8 left-8 text-white/10 rotate-[-20deg] pointer-events-none" />
+        <PawIcon size={50} className="absolute bottom-12 right-12 text-white/10 rotate-[15deg] pointer-events-none" />
+        <PawIcon size={35} className="absolute top-1/2 left-1/3 text-white/10 rotate-[5deg] pointer-events-none" />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 blur-2xl" />
           <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 blur-xl" />
         </div>
         <div className="relative max-w-2xl mx-auto px-4 text-center">
           <div className="flex justify-center mb-6">
-            <LottieCharacter state="wave" size={120} />
+            <div className="relative">
+              {/* Cat ears on Mimi in CTA */}
+              <div className="absolute -top-5 left-4 w-0 h-0 border-l-[14px] border-r-[14px] border-b-[22px] border-l-transparent border-r-transparent border-b-white/80 rotate-[-8deg] z-10" />
+              <div className="absolute -top-5 right-4 w-0 h-0 border-l-[14px] border-r-[14px] border-b-[22px] border-l-transparent border-r-transparent border-b-white/80 rotate-[8deg] z-10" />
+              <LottieCharacter state="wave" size={130} />
+            </div>
           </div>
           <h2 className="font-display font-black text-white mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
             {t(lang, 'Bugün başla. Ücretsiz.', 'Start today. Free.')}
           </h2>
           <p className="font-body text-white/80 text-lg mb-4">
             {t(lang,
-              'İlk dersin bugün. Sonuçlar kendiliğinden görünüyor.',
-              'First lesson today. Results speak for themselves.'
+              'Mimi seninle İngilizce öğrenmeye hazır.',
+              "Mimi is ready to learn English with you."
             )}
           </p>
           <p className="font-display font-bold text-white/60 text-sm mb-8">
             {t(lang,
-              'Kredi kartı yok. Reklam yok. İstediğin zaman iptal.',
-              'No credit card. No ads. Cancel anytime.'
+              'Beta aşaması — tüm özellikler ücretsiz. Kredi kartı gerekmez.',
+              'Beta phase — all features free. No credit card required.'
             )}
           </p>
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             {[
-              t(lang, 'Ücretsiz erken erişim', 'Free early access'),
-              t(lang, 'Kredi kartı gerekmez', 'No credit card needed'),
-              t(lang, 'İstediğin zaman iptal et', 'Cancel anytime'),
+              t(lang, 'Beta — ücretsiz erişim', 'Beta — free access'),
+              t(lang, 'Reklam yok', 'No ads'),
+              t(lang, 'COPPA & KVKK uyumlu', 'COPPA & KVKK compliant'),
             ].map(chip => (
               <span key={chip} className="inline-flex items-center gap-1.5 bg-white/15 text-white font-display font-semibold text-sm px-4 py-1.5 rounded-full border border-white/25">
-                <Check size={13} className="text-white/80" />
+                <PawIcon size={12} className="text-white/70" />
                 {chip}
               </span>
             ))}
@@ -1303,13 +1130,19 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="grid sm:grid-cols-3 gap-8 mb-10">
             <div>
-              <span className="font-display font-black text-2xl text-primary-400 block mb-3">MinesMinis</span>
-              <p className="font-body text-ink-400 text-sm leading-relaxed">
+              <div className="flex items-center gap-2 mb-3">
+                <PawIcon size={20} className="text-primary-400" />
+                <span className="font-display font-black text-2xl text-primary-400">MinesMinis</span>
+              </div>
+              <p className="font-body text-ink-400 text-sm leading-relaxed mb-3">
                 {t(lang,
-                  'Türk çocukları için bilim temelli fonetik İngilizce öğrenme platformu.',
-                  'Science-based phonics English learning platform for Turkish children.'
+                  'Türkçe konuşan çocuklar için bilim temelli fonetik İngilizce öğrenme platformu.',
+                  'Science-based phonics English learning platform for Turkish-speaking children.'
                 )}
               </p>
+              <span className="inline-block font-display font-bold text-amber-600 text-xs bg-amber-900/30 border border-amber-800 px-3 py-1 rounded-full">
+                {t(lang, 'Beta Aşaması', 'Beta Phase')}
+              </span>
             </div>
             <div>
               <p className="font-display font-bold text-ink-300 text-sm uppercase tracking-wide mb-4">

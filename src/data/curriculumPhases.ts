@@ -596,3 +596,11 @@ export const PHASES: LearningPhase[] = [
     units: phase4Units,
   },
 ];
+
+// ─── Merge with full phonics curriculum ──────────────────────────────────────
+// Import lazily to avoid circular deps; phoneticsCurriculum imports types from here
+import { PHONICS_CURRICULUM_PHASES } from './phoneticsCurriculum';
+
+// PHASES now includes both the original 4 Montessori phases AND the 5 new
+// Jolly Phonics stages so getUnitById() in LessonPlayer finds all unit IDs.
+export const ALL_PHASES = [...PHASES, ...PHONICS_CURRICULUM_PHASES];

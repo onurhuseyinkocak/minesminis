@@ -67,7 +67,7 @@ const ReportsManager: React.FC = () => {
         try {
             // Top 10 most active users by activity_logs count
             const { data: logData } = await supabase
-                .from('activity_logs')
+                .from('user_activities')
                 .select('user_id');
 
             if (logData && logData.length > 0) {
@@ -104,9 +104,9 @@ const ReportsManager: React.FC = () => {
 
             // Most played game types from activity_logs where type = 'game'
             const { data: gameData } = await supabase
-                .from('activity_logs')
+                .from('user_activities')
                 .select('metadata')
-                .eq('type', 'game');
+                .eq('activity_type', 'game');
 
             if (gameData && gameData.length > 0) {
                 const typeCount: Record<string, number> = {};
@@ -127,7 +127,7 @@ const ReportsManager: React.FC = () => {
             sevenDaysAgo.setHours(0, 0, 0, 0);
 
             const { data: dailyData } = await supabase
-                .from('activity_logs')
+                .from('user_activities')
                 .select('user_id, created_at')
                 .gte('created_at', sevenDaysAgo.toISOString());
 

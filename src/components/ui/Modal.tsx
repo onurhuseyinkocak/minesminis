@@ -62,8 +62,6 @@ export const Modal: React.FC<ModalProps> = ({
   const previousActiveElement = useRef<Element | null>(null);
   const handleFocusTrap = useFocusTrap(modalRef, isOpen);
 
-  if (!isOpen) return null;
-
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -94,6 +92,8 @@ export const Modal: React.FC<ModalProps> = ({
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen, handleEscape]);
+
+  if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();

@@ -11,6 +11,7 @@ import {
   getWordsByPos,
   type DecodableWord,
 } from '../data/decodableWordbank';
+import { getLearnedWords } from './dailyLessonService';
 import { GENERATED_STORIES } from '../data/generatedStories';
 
 // ─── TYPES ────────────────────────────────────────────────────────────────────
@@ -633,4 +634,96 @@ export function getAllBuiltInStories(): DecodableStory[] {
  */
 export function getStoryById(id: string): DecodableStory | undefined {
   return ENRICHED_BUILT_IN_STORIES.find(s => s.id === id);
+}
+
+// ─── CURRICULUM-AWARE STORY SELECTOR ─────────────────────────────────────────
+
+export type StoryCoverageLevel = 'ready' | 'almost' | 'hard';
+
+export interface ScoredStory {
+  story: DecodableStory;
+  /** Fraction 0–1: (story words the user knows) / (unique content words in story) */
+  coverage: number;
+  /** How many unique content words appear in the story */
+  totalWords: number;
+  /** How many of those the user already knows */
+  knownWords: number;
+  /** Readiness category derived from coverage */
+  level: StoryCoverageLevel;
+}
+
+/**
+ * Extract unique lowercase content words from a story's scenes.
+ * Strips punctuation, filters out short stop-words (≤ 1 char) and
+ * common English sight words that children aren't explicitly "taught"
+ * as vocabulary items (a, I, is, it, …).
+ */
+function extractStoryWords(story: DecodableStory): string[] {
+  const stopwords = new Set([
+    'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to',
+    'it', 'is', 'was', 'are', 'be', 'i', 'he', 'she', 'we', 'they',
+    'of', 'do', 'did', 'not', 'no', 'so', 'up', 'me', 'my', 'his',
+    'her', 'its', 'our', 'can', 'go', 'got', 'had', 'has', 'have',
+    'for', 'with', 'by', 'from', 'said', 'into', 'see', 'saw',
+  ]);
+
+  const wordSet = new Set<string>();
+  for (const scene of story.scenes) {
+    const tokens = scene.text
+      .toLowerCase()
+      .split(/\s+/)
+      .map(t => t.replace(/[^a-z]/g, ''))
+      .filter(t => t.length > 1 && !stopwords.has(t));
+    for (const token of tokens) {
+      wordSet.add(token);
+    }
+  }
+  return Array.from(wordSet);
+}
+
+/**
+ * Get all built-in stories sorted by how well they match the words
+ * the user has already learned. Each story is annotated with:
+ *
+ * - `coverage`  — 0–1 fraction of story words the user knows
+ * - `knownWords` / `totalWords` — raw counts for display
+ * - `level`:
+ *     - 'ready'  → coverage ≥ 0.7  (knows 70%+ of words)
+ *     - 'almost' → coverage 0.4–0.69
+ *     - 'hard'   → coverage < 0.4
+ *
+ * Stories are sorted: ready first (by coverage desc), then almost, then hard.
+ */
+export function getStoriesForUser(userId: string): ScoredStory[] {
+  const learnedSet = new Set(getLearnedWords(userId).map(w => w.toLowerCase()));
+
+  const scored: ScoredStory[] = ENRICHED_BUILT_IN_STORIES.map(story => {
+    const words = extractStoryWords(story);
+    const totalWords = words.length;
+    const knownWords = totalWords > 0
+      ? words.filter(w => learnedSet.has(w)).length
+      : 0;
+    const coverage = totalWords > 0 ? knownWords / totalWords : 0;
+
+    let level: StoryCoverageLevel;
+    if (coverage >= 0.7) {
+      level = 'ready';
+    } else if (coverage >= 0.4) {
+      level = 'almost';
+    } else {
+      level = 'hard';
+    }
+
+    return { story, coverage, totalWords, knownWords, level };
+  });
+
+  // Sort: ready (highest coverage first), then almost, then hard
+  const levelOrder: Record<StoryCoverageLevel, number> = { ready: 0, almost: 1, hard: 2 };
+  scored.sort((a, b) => {
+    const lo = levelOrder[a.level] - levelOrder[b.level];
+    if (lo !== 0) return lo;
+    return b.coverage - a.coverage;
+  });
+
+  return scored;
 }

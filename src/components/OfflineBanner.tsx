@@ -89,6 +89,18 @@ export default function OfflineBanner() {
 
   const showBanner = !isOnline || showBackOnline;
 
+  // Shift fixed navbars down so they don't overlap the banner
+  useEffect(() => {
+    if (showBanner) {
+      document.body.classList.add('offline-banner-visible');
+    } else {
+      document.body.classList.remove('offline-banner-visible');
+    }
+    return () => {
+      document.body.classList.remove('offline-banner-visible');
+    };
+  }, [showBanner]);
+
   return (
     <AnimatePresence>
       {showBanner && (

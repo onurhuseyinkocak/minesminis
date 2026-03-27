@@ -3,29 +3,36 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
+  z-index: var(--z-banner);
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
   font-weight: 500;
-  font-family: Nunito, sans-serif;
-  padding: 0 16px;
+  font-family: var(--font-display);
+  padding: 0 var(--space-md);
   overflow: hidden;
 }
 
 .offline-banner--offline {
-  background: var(--warning, #f59e0b);
-  color: var(--warning-dark, #78350f);
+  background: var(--warning);
+  color: var(--warning-dark);
 }
 
 .offline-banner--online {
-  background: var(--success, #22c55e);
-  color: #fff;
+  background: var(--success);
+  color: var(--white);
 }
 
 .offline-banner__icon {
   flex-shrink: 0;
+}
+
+/* Push fixed navbars below the banner when it is visible */
+body.offline-banner-visible header.fixed.top-0,
+body.offline-banner-visible .topnav {
+  top: 40px;
+  transition: top var(--transition-base);
 }

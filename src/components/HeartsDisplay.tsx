@@ -38,7 +38,7 @@ function formatMs(ms: number): string {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function HeartsDisplay({ size = 'md', showTimer = false, className = '' }: HeartsDisplayProps) {
-  const { hearts, maxHearts, isUnlimited, getRegenTimeMs } = useHearts();
+  const { hearts, maxHearts, isUnlimited, childMode, getRegenTimeMs } = useHearts();
   const { lang } = useLanguage();
   const [regenMs, setRegenMs] = useState<number>(0);
 
@@ -63,6 +63,9 @@ export function HeartsDisplay({ size = 'md', showTimer = false, className = '' }
 
   const sizeClass = `hearts-display--${size}`;
 
+  // Child mode: hearts system disabled — render nothing
+  if (childMode) return null;
+
   if (isUnlimited) {
     return (
       <div
@@ -79,7 +82,7 @@ export function HeartsDisplay({ size = 'md', showTimer = false, className = '' }
 
   return (
     <div
-      className={`hearts-display ${sizeClass} ${className}`}
+      className={`hearts-display ${sizeClass}${hearts === 0 ? ' hearts-display--zero' : ''} ${className}`}
       role="status"
       aria-label={lang === 'tr' ? `${maxHearts} candan ${hearts} kaldi` : `${hearts} out of ${maxHearts} hearts remaining`}
     >

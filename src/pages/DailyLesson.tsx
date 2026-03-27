@@ -11,7 +11,7 @@
  * - Sensorial: hear + see + touch + say on every interaction
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LessonCompleteScreen from '../components/LessonCompleteScreen';
 import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, RotateCcw, Lock } from 'lucide-react';
@@ -808,7 +808,8 @@ function PhaseReview({
   lang: string;
   onComplete: (score: number) => void;
 }) {
-  const allWords = [...newWords, ...reviewWords].slice(0, 8);
+  // Memoize allWords to prevent new array reference on every render
+  const allWords = useMemo(() => [...newWords, ...reviewWords].slice(0, 8), [newWords, reviewWords]);
   const [questions, setQuestions] = useState(() => buildReviewQuestions(allWords, lang));
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);

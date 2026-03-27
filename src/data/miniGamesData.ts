@@ -100,9 +100,9 @@ export const MINI_GAMES: GameMeta[] = [
     type: 'story-choices',
     name: 'Story Choices',
     nameTr: 'Hikaye Seçimleri',
-    description: "Choose your path and shape the story's ending!",
-    descriptionTr: 'Yolunu seç ve hikayenin sonunu şekillendir!',
-    category: 'reading',
+    description: 'Choose the correct Turkish translation for each English word!',
+    descriptionTr: 'Her İngilizce kelime için doğru Türkçe çeviriyi seç!',
+    category: 'vocabulary',
     difficulty: 2,
     minLevel: 5,
     color: 'var(--success)',
@@ -155,6 +155,66 @@ export const MINI_GAMES: GameMeta[] = [
     minLevel: 3,
     color: 'var(--secondary-light, #2A9D8F)',
     addedAt: '2025-03-01',
+  },
+  {
+    type: 'phoneme-manipulation',
+    name: 'Sound Play',
+    nameTr: 'Ses Oyunu',
+    description: 'Add, remove, and swap sounds to make new words!',
+    descriptionTr: 'Ses ekle, çıkar ve değiştirerek yeni kelimeler oluştur!',
+    category: 'phonics',
+    difficulty: 3,
+    minLevel: 4,
+    color: 'var(--accent-indigo)',
+    addedAt: '2025-04-01',
+  },
+  {
+    type: 'syllable',
+    name: 'Syllable Game',
+    nameTr: 'Hece Oyunu',
+    description: 'Tap out the syllables and count them all!',
+    descriptionTr: 'Heceleri say ve doğru sayıyı bul!',
+    category: 'phonics',
+    difficulty: 2,
+    minLevel: 2,
+    color: 'var(--accent-teal)',
+    addedAt: '2025-04-01',
+  },
+  {
+    type: 'word-family',
+    name: 'Word Families',
+    nameTr: 'Kelime Aileleri',
+    description: 'Build words by mixing letter onsets with rhyming endings.',
+    descriptionTr: 'Harf başlangıçlarını kafiyeli sonlarla birleştirerek kelimeler yap.',
+    category: 'phonics',
+    difficulty: 2,
+    minLevel: 3,
+    color: 'var(--secondary-light, #2A9D8F)',
+    addedAt: '2025-04-01',
+  },
+  {
+    type: 'rhyme',
+    name: 'Rhyme Time',
+    nameTr: 'Kafiye Zamanı',
+    description: 'Detect, sort and produce rhyming words!',
+    descriptionTr: 'Kafiyeli kelimeleri tanı, sırala ve bul!',
+    category: 'phonics',
+    difficulty: 2,
+    minLevel: 2,
+    color: 'var(--accent-rose, #f43f5e)',
+    addedAt: '2025-04-01',
+  },
+  {
+    type: 'phonetic-trap',
+    name: 'Phonetic Trap',
+    nameTr: 'Fonetik Tuzak',
+    description: 'Spot the tricky words that look similar but sound different!',
+    descriptionTr: 'Benzer görünen ama farklı seslendirilen kelimeleri yakala!',
+    category: 'phonics',
+    difficulty: 3,
+    minLevel: 5,
+    color: 'var(--accent-amber)',
+    addedAt: '2025-04-01',
   },
 ];
 
@@ -238,7 +298,9 @@ export function recordDailyPractice(): number {
   }
 }
 
-/** Build a randomized 5-game daily practice set (seeded by date so it's the same for the day) */
+/** Build a balanced 5-game daily practice set (seeded by date so it's the same for the day).
+ *  Distribution cap: max 2 phonics games per set to ensure category variety.
+ */
 export function getDailyPracticeSet(): GameMeta[] {
   const today = new Date();
   const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
@@ -248,7 +310,25 @@ export function getDailyPracticeSet(): GameMeta[] {
     const hb = hashString(b.type + seed);
     return ha - hb;
   });
-  return shuffled.slice(0, 5);
+
+  // Cap any single category at 2 to ensure a varied daily set
+  const result: GameMeta[] = [];
+  const categoryCounts: Partial<Record<GameCategory, number>> = {};
+  for (const game of shuffled) {
+    if (result.length >= 5) break;
+    const count = categoryCounts[game.category] ?? 0;
+    if (count >= 2) continue;
+    result.push(game);
+    categoryCounts[game.category] = count + 1;
+  }
+  // Fallback: if we somehow have fewer than 5, pad from the shuffled list
+  if (result.length < 5) {
+    for (const game of shuffled) {
+      if (result.length >= 5) break;
+      if (!result.includes(game)) result.push(game);
+    }
+  }
+  return result;
 }
 
 function hashString(s: string | number): number {

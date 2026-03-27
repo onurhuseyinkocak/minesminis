@@ -183,9 +183,9 @@ function AdminAnalytics() {
                 supabase.from('users').select('created_at').gte('created_at', rangeStart.toISOString()),
                 supabase.from('games').select('title, plays').order('plays', { ascending: false }).limit(5),
                 supabase.from('users').select('streak_days'),
-                supabase.from('phonics_mastery').select('mastery'),
-                supabase.from('activity_logs').select('type').eq('type', 'game'),
-                supabase.from('activity_logs').select('user_id, created_at').gte('created_at', rangeStart.toISOString()),
+                supabase.from('users').select('settings'),
+                supabase.from('user_activities').select('activity_type').eq('activity_type', 'game'),
+                supabase.from('user_activities').select('user_id, created_at').gte('created_at', rangeStart.toISOString()),
             ]);
 
             if (userCountRes.status === 'fulfilled' && !userCountRes.value.error) {
@@ -221,7 +221,7 @@ function AdminAnalytics() {
                         color: GAME_COLORS[i] ?? 'var(--admin-text-muted)',
                     })));
                 } else if (activityRes.status === 'fulfilled' && !activityRes.value.error && activityRes.value.data) {
-                    const actRows = activityRes.value.data as { type: string }[];
+                    const actRows = activityRes.value.data as { activity_type: string }[];
                     setTopGames([{
                         name: 'Games (total)',
                         plays: actRows.length,
@@ -236,22 +236,25 @@ function AdminAnalytics() {
                 setAvgStreak(computeAvgStreak(rows));
             }
 
+            // Extract phonics mastery from users.settings JSONB
             if (masteryRes.status === 'fulfilled' && !masteryRes.value.error && masteryRes.value.data) {
-                const rows = masteryRes.value.data as { mastery: number | null }[];
-                setMasteryData(buildMasteryData(rows));
-                setAvgCompletion(computeAvgCompletion(rows));
-            }
+                const userRows = masteryRes.value.data as { settings: Record<string, unknown> | null }[];
+                // Flatten all phonics_mastery entries from all users
+                const allMastery: { mastery: number | null; sound_id: string }[] = [];
+                for (const u of userRows) {
+                    const pm = (u.settings?.phonics_mastery as Record<string, Record<string, unknown>>) ?? {};
+                    for (const [soundId, entry] of Object.entries(pm)) {
+                        allMastery.push({ mastery: Number(entry.mastery ?? 0), sound_id: soundId });
+                    }
+                }
+                const masteryOnly = allMastery.map(r => ({ mastery: r.mastery }));
+                setMasteryData(buildMasteryData(masteryOnly));
+                setAvgCompletion(computeAvgCompletion(masteryOnly));
 
-            // Build lesson completion from phonics_mastery grouped by sound categories
-            if (masteryRes.status === 'fulfilled' && !masteryRes.value.error) {
-                const { data: fullMastery } = await supabase
-                    .from('phonics_mastery')
-                    .select('mastery, sound_id');
-                if (fullMastery && fullMastery.length > 0) {
-                    const typedRows = fullMastery as { mastery: number | null; sound_id: string }[];
-                    // Group by first letter category as proxy for "world"
+                // Build lesson completion grouped by sound categories
+                if (allMastery.length > 0) {
                     const categories: Record<string, { completed: number; started: number }> = {};
-                    for (const r of typedRows) {
+                    for (const r of allMastery) {
                         const cat = r.sound_id?.charAt(0)?.toUpperCase() ?? '?';
                         if (!categories[cat]) categories[cat] = { completed: 0, started: 0 };
                         if ((r.mastery ?? 0) >= 0.8) categories[cat].completed++;

@@ -7,7 +7,7 @@
  * Renders REAL interactive game components from curriculum data.
  * Smart-board friendly with large text and large buttons.
  */
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -112,6 +112,61 @@ function unitActivityToActivity(ua: UnitActivity, index: number): Activity & { t
   };
 }
 
+/** Build extra props for specialized games from curriculum data */
+function buildExtraProps(
+  activityType: string,
+  unit: LearningUnit | null,
+): Record<string, unknown> | undefined {
+  if (!unit) return undefined;
+
+  switch (activityType) {
+    case 'sound-intro': {
+      // SoundCard needs { sound: PhonicsSound }
+      const soundId = unit.phonicsFocus[0];
+      if (!soundId) return undefined;
+      for (const group of PHONICS_GROUPS) {
+        const found = group.sounds.find((s) => s.id === soundId);
+        if (found) {
+          return {
+            sound: {
+              id: found.id,
+              grapheme: found.grapheme,
+              example: found.keywords[0] || found.sound,
+              emoji: found.mnemonicEmoji,
+              action: found.action,
+              turkishNote: found.turkishNote,
+              keywords: found.keywords.slice(0, 3).map((w) => ({ word: w, emoji: '' })),
+              group: found.group,
+            },
+          };
+        }
+      }
+      return undefined;
+    }
+    case 'tpr': {
+      // TPRActivity needs { commands: string[] }
+      return { commands: unit.tprCommands.length > 0 ? unit.tprCommands : ['Stand up!', 'Sit down!', 'Clap!'] };
+    }
+    case 'reading': {
+      // DecodableReader needs { text: string, highlightSounds: string[] }
+      return {
+        text: unit.decodableText || 'No text available.',
+        highlightSounds: unit.phonicsFocus.map((id) => id.replace(/^g\d+_/, '')),
+      };
+    }
+    default:
+      return undefined;
+  }
+}
+
+/** Save unit progress to localStorage for WorldMap/WorldDetail */
+function saveUnitProgress(unitId: string, activitiesCompleted: number): void {
+  try {
+    const key = `mimi_unit_progress_${unitId}`;
+    localStorage.setItem(key, JSON.stringify({ activitiesCompleted, updatedAt: new Date().toISOString() }));
+  } catch { /* localStorage might be unavailable */ }
+}
+
 // Game types that GameSelector can handle (word-based games only)
 // Phonics-specific types (sound-intro, tpr, reading) need PhonicsSound data, not words
 const SUPPORTED_GAME_TYPES = new Set([
@@ -120,11 +175,15 @@ const SUPPORTED_GAME_TYPES = new Set([
   'quick-quiz',
   'sentence-scramble',
   'listening-challenge',
+  'listening',
   'phonics-builder',
   'story-choices',
   'blending',
   'segmenting',
   'pronunciation',
+  'sound-intro',
+  'tpr',
+  'reading',
 ]);
 
 // ============================================================
@@ -224,6 +283,7 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
           {activity.instructions || t('lesson.noWordsToReview')}
         </p>
         <button
+          type="button"
           onClick={() => onComplete(1, 1)}
           className="bg-primary-500 text-white border-none rounded-xl px-8 py-3 text-base font-bold cursor-pointer"
         >
@@ -278,6 +338,7 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
 
       <div className="flex justify-center gap-4 mt-6">
         <button
+          type="button"
           onClick={(e) => { e.stopPropagation(); handleFlip(); }}
           className="py-3 px-6 rounded-xl border-2 border-[var(--border-light)] bg-[var(--bg-card)] cursor-pointer flex items-center gap-2 text-base"
         >
@@ -285,6 +346,7 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
           {flipped ? t('lesson.hide') : t('lesson.reveal')}
         </button>
         <button
+          type="button"
           onClick={(e) => { e.stopPropagation(); speakWord(); }}
           className="py-3 px-6 rounded-xl border-2 border-[var(--border-light)] bg-[var(--bg-card)] cursor-pointer flex items-center gap-2 text-base"
         >
@@ -292,6 +354,7 @@ function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityPr
           {t('lesson.listen')}
         </button>
         <button
+          type="button"
           onClick={(e) => { e.stopPropagation(); handleNextCard(); }}
           className="py-3 px-6 rounded-xl border-none bg-primary-500 text-[var(--text-on-primary)] cursor-pointer flex items-center gap-2 text-base font-semibold"
         >
@@ -338,6 +401,7 @@ const LessonPlayer = () => {
   }, [worldId, lessonId, oldLesson]);
   const world = useMemo(() => getWorldById(worldId), [worldId]);
   const vocabulary = useMemo(() => getWorldVocabulary(worldId), [worldId]);
+  const currentUnit = useMemo(() => getUnitById(worldId), [worldId]);
 
   // Build word items for game components from lesson's targetWords + world vocabulary
   const activityWords = useMemo(() => {
@@ -389,6 +453,15 @@ const LessonPlayer = () => {
   const progressPct = totalActivities > 0 ? Math.round(((currentIndex + (completed ? 1 : 0)) / totalActivities) * 100) : 0;
   const currentActivity = lesson?.activities[currentIndex];
 
+  // Lock body scroll while lesson is active
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
   const handleActivityComplete = useCallback((score: number, total: number) => {
     setActivityScores((prev) => [...prev, { score, total }]);
 
@@ -397,7 +470,9 @@ const LessonPlayer = () => {
     const scoreRatio = total > 0 ? score / total : 1;
     const earnedXp = Math.round(activityXp * scoreRatio);
     if (earnedXp > 0 && currentIndex !== totalActivities - 1) {
-      addXP(earnedXp, 'activity_completed', { lessonId, worldId, activityId: currentActivity?.id });
+      addXP(earnedXp, 'activity_completed', { lessonId, worldId, activityId: currentActivity?.id }).catch(() => {
+        // XP sync failed silently
+      });
     }
 
     // Trigger celebration animations based on score
@@ -430,6 +505,10 @@ const LessonPlayer = () => {
       setDirection(1);
       if (currentIndex < totalActivities - 1) {
         setCurrentIndex((prev) => prev + 1);
+        // Save incremental unit progress for WorldMap/WorldDetail
+        if (currentUnit) {
+          saveUnitProgress(currentUnit.id, currentIndex + 1);
+        }
       } else {
         // Lesson complete
         setCompleted(true);
@@ -447,6 +526,11 @@ const LessonPlayer = () => {
           const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
           completeLesson(userId, lessonId, worldId, totalXP, accuracy);
 
+          // Save unit completion for WorldMap/WorldDetail
+          if (currentUnit) {
+            saveUnitProgress(currentUnit.id, totalActivities);
+          }
+
           // Log activity for parent dashboard analytics
           logActivity({
             type: 'game',
@@ -463,7 +547,7 @@ const LessonPlayer = () => {
         }
       }
     }, 1500);
-  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId, activityWords, user?.uid, hearts]);
+  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, currentActivity, activityScores, userId, activityWords, user?.uid, hearts, currentUnit]);
 
   const handleXpEarned = useCallback((xp: number) => {
     addXP(xp, 'activity_completed', { lessonId, worldId }).catch(() => { /* XP sync failed silently */ });
@@ -488,6 +572,10 @@ const LessonPlayer = () => {
     setDirection(1);
     if (currentIndex < totalActivities - 1) {
       setCurrentIndex((prev) => prev + 1);
+      // Save incremental unit progress
+      if (currentUnit) {
+        saveUnitProgress(currentUnit.id, currentIndex + 1);
+      }
     } else {
       setCompleted(true);
       const totalXP = lesson.xpReward || 30;
@@ -499,6 +587,11 @@ const LessonPlayer = () => {
         const totalPossible = activityScores.reduce((a, s) => a + s.total, 0);
         const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
         completeLesson(userId, lessonId, worldId, totalXP, accuracy);
+
+        // Save unit completion for WorldMap/WorldDetail
+        if (currentUnit) {
+          saveUnitProgress(currentUnit.id, totalActivities);
+        }
 
         logActivity({
           type: 'game',
@@ -513,7 +606,7 @@ const LessonPlayer = () => {
         // localStorage might be unavailable
       }
     }
-  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, activityScores, userId, user?.uid]);
+  }, [currentIndex, totalActivities, lesson, addXP, lessonId, worldId, activityScores, userId, user?.uid, currentUnit]);
 
   const handleBack = useCallback(() => {
     if (currentIndex > 0) {
@@ -707,6 +800,7 @@ const LessonPlayer = () => {
       {/* Top Bar */}
       <div className="lesson-player-topbar">
         <button
+          type="button"
           className="lesson-player-topbar__back"
           onClick={() => navigate(`/worlds/${worldId}`)}
           aria-label="Exit lesson"
@@ -735,6 +829,7 @@ const LessonPlayer = () => {
         </div>
 
         <button
+          type="button"
           className="lesson-player-topbar__skip"
           onClick={handleSkip}
           aria-label="Skip activity"
@@ -789,6 +884,7 @@ const LessonPlayer = () => {
                   onComplete={handleActivityComplete}
                   onXpEarned={handleXpEarned}
                   onWrongAnswer={handleWrongAnswer}
+                  extra={buildExtraProps(currentActivity.type, currentUnit)}
                 />
               ) : (
                 <FallbackActivity

@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { useLanguage } from '../contexts/LanguageContext';
 import PublicLayout from '../components/layout/PublicLayout';
 import './Blog.css';
-import { ArrowLeft } from 'lucide-react';
 
 function sanitizeHtml(html: string): string {
   const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -72,7 +72,12 @@ export default function BlogPost() {
 
   if (loading) return (
     <PublicLayout>
-      <div className="blog-page"><div className="blog-loading">{lang === 'tr' ? 'Yukleniyor...' : 'Loading...'}</div></div>
+      <div className="blog-page">
+        <div className="blog-loading">
+          <Loader2 size={36} className="blog-loading-spinner" />
+          <span>{lang === 'tr' ? 'Yükleniyor...' : 'Loading...'}</span>
+        </div>
+      </div>
     </PublicLayout>
   );
   if (error) return (
@@ -94,7 +99,7 @@ export default function BlogPost() {
         <header>
           <h1>{post.title}</h1>
           <time dateTime={post.published_at}>
-            {new Date(post.published_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            {new Date(post.published_at).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
           </time>
         </header>
         <div

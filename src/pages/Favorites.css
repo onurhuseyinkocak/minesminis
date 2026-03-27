@@ -141,6 +141,25 @@
   font-style: italic;
 }
 
+.favorites-signin-link {
+  display: inline-block;
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border-radius: var(--radius-xl);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background var(--transition-base), transform var(--transition-fast);
+}
+
+.favorites-signin-link:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
 /* ---- GRID ---- */
 .favorites-grid {
   display: grid;
@@ -270,5 +289,20 @@
 
   .remove-favorite-btn {
     opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .favorites-header h1 {
+    font-size: 22px;
+  }
+
+  .favorites-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+
+  .favorite-content h3 {
+    font-size: 14px;
   }
 }

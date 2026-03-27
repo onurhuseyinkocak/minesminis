@@ -357,3 +357,23 @@
 .flashcard-complete__btn:active {
   transform: scale(0.97);
 }
+
+/* -- Keyboard shortcut hint -- */
+
+.flashcard-keyboard-hint {
+  text-align: center;
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted, #94a3b8);
+  letter-spacing: 0.04em;
+  padding: 8px 0 0;
+  user-select: none;
+}
+
+/* Hide on touch devices (no keyboard) */
+@media (hover: none) and (pointer: coarse) {
+  .flashcard-keyboard-hint {
+    display: none;
+  }
+}

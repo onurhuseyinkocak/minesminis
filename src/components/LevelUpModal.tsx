@@ -3,14 +3,14 @@
  * Celebration modal when user levels up
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import './LevelUpModal.css';
 import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { StarBurst, StreakFlame } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
 import { getGardenStats } from '../services/gardenService';
-import { Star, Sprout } from 'lucide-react';
+import { Star, Sprout, ChevronRight } from 'lucide-react';
 
 const LevelUpModal: React.FC = () => {
     const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
@@ -18,6 +18,11 @@ const LevelUpModal: React.FC = () => {
     const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number; color: string }>>([]);
     const [showStarBurst, setShowStarBurst] = useState(false);
     const starBurstTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.key === 'Escape') dismissLevelUp();
+    }, [dismissLevelUp]);
 
     useEffect(() => {
         if (showLevelUp) {
@@ -41,20 +46,31 @@ const LevelUpModal: React.FC = () => {
                 dismissLevelUp();
             }, 4000);
 
+            // Focus the modal and listen for Escape
+            modalRef.current?.focus();
+            document.addEventListener('keydown', handleKeyDown);
+
             return () => {
                 clearTimeout(timer);
+                document.removeEventListener('keydown', handleKeyDown);
                 if (starBurstTimerRef.current) {
                     clearTimeout(starBurstTimerRef.current);
                     starBurstTimerRef.current = null;
                 }
             };
         }
-    }, [showLevelUp, dismissLevelUp]);
+    }, [showLevelUp, dismissLevelUp, handleKeyDown]);
 
     if (!showLevelUp) return null;
 
     return (
-        <div className="level-up-overlay" onClick={dismissLevelUp}>
+        <div
+            className="level-up-overlay"
+            onClick={dismissLevelUp}
+            role="dialog"
+            aria-modal="true"
+            aria-label={lang === 'tr' ? 'Seviye atladın' : 'Level up'}
+        >
             {/* StarBurst celebration */}
             {showStarBurst && <StarBurst count={16} />}
 
@@ -73,7 +89,12 @@ const LevelUpModal: React.FC = () => {
                 ))}
             </div>
 
-            <div className="level-up-modal" onClick={(e) => e.stopPropagation()}>
+            <div
+                ref={modalRef}
+                className="level-up-modal"
+                onClick={(e) => e.stopPropagation()}
+                tabIndex={-1}
+            >
                 <div className="level-up-glow" />
 
                 <div className="level-up-content">
@@ -91,9 +112,9 @@ const LevelUpModal: React.FC = () => {
                     </div>
 
                     {stats.streakDays >= 2 && (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', margin: '0.5rem 0' }}>
+                        <div className="level-up-streak-row">
                             <StreakFlame days={stats.streakDays} />
-                            <span style={{ fontWeight: 700, color: 'var(--accent-amber)' }}>{stats.streakDays} {t('dailyReward.dayStreak')}!</span>
+                            <span className="level-up-streak-text">{stats.streakDays} {t('dailyReward.dayStreak')}!</span>
                         </div>
                     )}
 
@@ -103,7 +124,7 @@ const LevelUpModal: React.FC = () => {
                             const gardenStats = getGardenStats();
                             if (gardenStats.blooming > 0) {
                                 return (
-                                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', marginTop: '0.3rem', fontSize: '0.85em' }}>
+                                    <span className="level-up-garden-note">
                                         <Sprout size={20} /> {lang === 'tr'
                                             ? `Bahçende ${gardenStats.blooming} çiçek açmış bitkin var!`
                                             : `Your garden has ${gardenStats.blooming} blooming plant${gardenStats.blooming !== 1 ? 's' : ''}!`}
@@ -116,7 +137,7 @@ const LevelUpModal: React.FC = () => {
 
                     <button type="button" className="continue-btn" onClick={dismissLevelUp}>
                         <span>{t('common.continue') || (lang === 'tr' ? 'Devam' : 'Continue')}</span>
-                        <span className="btn-arrow">→</span>
+                        <ChevronRight size={18} className="btn-arrow-icon" />
                     </button>
                 </div>
             </div>

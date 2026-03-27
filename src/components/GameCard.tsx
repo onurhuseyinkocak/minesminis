@@ -1,6 +1,8 @@
-import { Link, Play, Zap, Bug, Mic, Puzzle, Headphones, BookOpen, MessageSquare, Tag, Volume2, Layers, Star, Lock, BookMarked } from 'lucide-react';
+import { Link, Play, Zap, Bug, Mic, Puzzle, Headphones, BookOpen, MessageSquare, Tag, Volume2, Layers, Star, Lock, BookMarked, Music2, Grid2x2, Users, Triangle, AlertTriangle } from 'lucide-react';
 import type { GameMeta } from '../data/miniGamesData';
 import './GameCard.css';
+
+type WordTopic = 'all' | 'Animals' | 'Colors' | 'Food' | 'Family' | 'Body' | 'Numbers' | 'Nature' | 'phonics';
 
 export interface GameCardProps {
   game: GameMeta;
@@ -9,6 +11,7 @@ export interface GameCardProps {
   bestScore?: number;
   isNew?: boolean;
   isTr?: boolean;
+  activeTopic?: WordTopic;
   onPlay: () => void;
 }
 
@@ -24,6 +27,11 @@ const GAME_ICONS: Record<string, React.ReactNode> = {
   'image-label': <Tag size={36} />,
   'say-it': <Volume2 size={36} />,
   'phonics-blend': <Layers size={36} />,
+  'phoneme-manipulation': <Music2 size={36} />,
+  'syllable': <Grid2x2 size={36} />,
+  'word-family': <Users size={36} />,
+  'rhyme': <Triangle size={36} />,
+  'phonetic-trap': <AlertTriangle size={36} />,
 };
 
 function DifficultyStars({ level }: { level: 1 | 2 | 3 }) {
@@ -45,7 +53,7 @@ const CATEGORY_LABELS: Record<string, { en: string; tr: string }> = {
   speaking: { en: 'Speaking', tr: 'Konuşma' },
 };
 
-export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, onPlay }: GameCardProps) {
+export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activeTopic, onPlay }: GameCardProps) {
   const icon = GAME_ICONS[game.type] ?? <Play size={36} />;
   const displayName = isTr ? game.nameTr : game.name;
   const displayDesc = isTr ? game.descriptionTr : game.description;
@@ -60,6 +68,7 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, onPla
       aria-label={isLocked
         ? (isTr ? `${displayName} — seviye ${game.minLevel} gerekli` : `${displayName} — requires level ${game.minLevel}`)
         : (isTr ? `${displayName} oyna` : `Play ${displayName}`)}
+      onClick={() => { if (!isLocked) onPlay(); }}
       onKeyDown={(e) => {
         if (!isLocked && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
@@ -105,6 +114,20 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, onPla
         <p className="game-card__desc">{displayDesc}</p>
 
         <DifficultyStars level={game.difficulty} />
+
+        {activeTopic && activeTopic !== 'all' && game.category === 'vocabulary' && activeTopic !== 'phonics' && (
+          <span className="game-card__topic-pill">
+            {isTr
+              ? `${activeTopic === 'Animals' ? 'Hayvanlar' : activeTopic === 'Colors' ? 'Renkler' : activeTopic === 'Food' ? 'Yiyecekler' : activeTopic === 'Family' ? 'Aile' : activeTopic === 'Body' ? 'Vücut' : activeTopic === 'Numbers' ? 'Sayılar' : activeTopic === 'Nature' ? 'Doğa' : activeTopic} kelimeleri`
+              : `${activeTopic} words`}
+          </span>
+        )}
+
+        {activeTopic === 'phonics' && game.category === 'phonics' && (
+          <span className="game-card__topic-pill game-card__topic-pill--phonics">
+            {isTr ? 'Fonetik modu' : 'Phonics mode'}
+          </span>
+        )}
       </div>
 
       {!isLocked && (
@@ -112,7 +135,7 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, onPla
           <button
             type="button"
             className="game-card__play-btn"
-            onClick={onPlay}
+            onClick={(e) => { e.stopPropagation(); onPlay(); }}
             aria-label={isTr ? `${displayName} oyna` : `Play ${displayName}`}
           >
             <Play size={16} fill="white" />

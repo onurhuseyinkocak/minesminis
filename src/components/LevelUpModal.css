@@ -8,7 +8,7 @@
 .level-up-overlay {
   position: fixed;
   inset: 0;
-  z-index: 500;
+  z-index: var(--z-modal);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,13 +249,37 @@
   box-shadow: var(--shadow-button-hover);
 }
 
-.btn-arrow {
-  font-size: 1.125rem;
+.btn-arrow-icon {
+  flex-shrink: 0;
   transition: transform var(--transition-fast);
 }
 
-.continue-btn:hover .btn-arrow {
+.continue-btn:hover .btn-arrow-icon {
   transform: translateX(4px);
+}
+
+/* ---- Streak row inside modal ---- */
+.level-up-streak-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0;
+}
+
+.level-up-streak-text {
+  font-weight: 700;
+  color: var(--accent-amber);
+}
+
+/* ---- Garden note inside message ---- */
+.level-up-garden-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  font-size: 0.85em;
 }
 
 .continue-btn:focus-visible {

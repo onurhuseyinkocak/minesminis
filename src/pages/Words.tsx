@@ -63,6 +63,8 @@ const Words: React.FC = () => {
   const [pronunciationWord, setPronunciationWord] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showMoreWords, setShowMoreWords] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Review state
   const [dueWords, setDueWords] = useState<WordProgress[]>([]);
@@ -253,18 +255,55 @@ const Words: React.FC = () => {
     }
   };
 
-  // Group words by category for display, show first group by default
-  const categories = Array.from(new Set(kidsWords.map(w => w.category)));
+  // Deduplicate words by word string (same word from supabase + fallback)
+  const deduplicatedWords = React.useMemo(() => {
+    const seen = new Set<string>();
+    return kidsWords.filter(w => {
+      const key = w.word.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [kidsWords]);
+
+  // Categories from deduplicated words
+  const categories = React.useMemo(
+    () => Array.from(new Set(deduplicatedWords.map(w => w.category))),
+    [deduplicatedWords]
+  );
+
+  // Filter words by search query and selected category
+  const filteredWords = React.useMemo(() => {
+    let words = deduplicatedWords;
+    if (selectedCategory !== 'all') {
+      words = words.filter(w => w.category === selectedCategory);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      words = words.filter(w =>
+        w.word.toLowerCase().includes(q) ||
+        w.turkish.toLowerCase().includes(q)
+      );
+    }
+    return words;
+  }, [deduplicatedWords, selectedCategory, searchQuery]);
+
+  // Display words: if not showing more, show first 24 items
+  const INITIAL_DISPLAY_COUNT = 24;
   const displayWords = showMoreWords
-    ? kidsWords
-    : kidsWords.filter(w => w.category === (categories[0] || 'Animals'));
+    ? filteredWords
+    : filteredWords.slice(0, INITIAL_DISPLAY_COUNT);
 
   // When showMoreWords, group words by category for display
-  const groupedByCategory: { category: string; words: KidsWord[] }[] = showMoreWords
-    ? categories.map(cat => ({ category: cat, words: kidsWords.filter(w => w.category === cat) }))
-    : [];
+  const groupedByCategory: { category: string; words: KidsWord[] }[] = React.useMemo(() => {
+    if (!showMoreWords || selectedCategory !== 'all') return [];
+    return categories.map(cat => ({
+      category: cat,
+      words: filteredWords.filter(w => w.category === cat),
+    })).filter(g => g.words.length > 0);
+  }, [showMoreWords, selectedCategory, categories, filteredWords]);
 
-  const myWords = kidsWords.filter(w => learnedWords.has(w.word) || favoriteWords.has(w.word));
+  const myWords = deduplicatedWords.filter(w => learnedWords.has(w.word) || favoriteWords.has(w.word));
 
   const TABS: { id: TabType; icon: React.ReactNode; label: string }[] = [
     { id: 'words', icon: <KidIcon name="book" size={20} />, label: 'All Words' },
@@ -305,6 +344,39 @@ const Words: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {/* Search & Category Filter — only on words tab */}
+      {activeTab === 'words' && (
+        <div className="words-filter-bar">
+          <div className="words-search-wrapper">
+            <input
+              type="text"
+              className="words-search-input"
+              placeholder="Search words..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search words"
+            />
+          </div>
+          <div className="words-category-row">
+            <button
+              className={`words-category-chip ${selectedCategory === 'all' ? 'active' : ''}`}
+              onClick={() => setSelectedCategory('all')}
+            >
+              All
+            </button>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                className={`words-category-chip ${selectedCategory === cat ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="words-content">
         <AnimatePresence mode="wait">
@@ -444,13 +516,32 @@ const Words: React.FC = () => {
                 </div>
               )}
 
-              {!showMoreWords && kidsWords.length > displayWords.length && (
+              {/* Empty state when no words match search */}
+              {!isLoading && filteredWords.length === 0 && (
+                <div className="words-empty">
+                  <span className="words-empty-emoji"><KidIcon name="book" size={48} /></span>
+                  <h3>No words found</h3>
+                  <p>Try a different search or category.</p>
+                </div>
+              )}
+
+              {!showMoreWords && filteredWords.length > INITIAL_DISPLAY_COUNT && (
                 <div className="more-words-row">
                   <button
                     className="more-words-btn"
                     onClick={() => setShowMoreWords(true)}
                   >
-                    More Words ↓ ({kidsWords.length - displayWords.length} more)
+                    More Words ({filteredWords.length - INITIAL_DISPLAY_COUNT} more)
+                  </button>
+                </div>
+              )}
+              {showMoreWords && filteredWords.length > INITIAL_DISPLAY_COUNT && (
+                <div className="more-words-row">
+                  <button
+                    className="more-words-btn"
+                    onClick={() => setShowMoreWords(false)}
+                  >
+                    Show Less
                   </button>
                 </div>
               )}

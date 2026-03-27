@@ -88,7 +88,7 @@ export default function Premium() {
           <h2>{tr ? 'Neden Premium?' : 'Why Premium?'}</h2>
           <div className="features-grid">
             {premiumFeatures.map((feature, index) => (
-              <div key={index} className="feature-card bg-white/10 backdrop-blur-sm">
+              <div key={index} className="feature-card">
                 <div className="feature-icon">{feature.icon}</div>
                 <h3>{tr ? feature.title.tr : feature.title.en}</h3>
                 <p>{tr ? feature.description.tr : feature.description.en}</p>

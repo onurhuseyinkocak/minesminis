@@ -1,17 +1,23 @@
 /**
- * Admin yetkisi verilen e-posta adresleri.
- * Bu hesaplar giriş yaptığında doğrudan admin paneline yönlendirilir; şifre gerekmez.
+ * Admin email check — client-side UI gate only.
  *
- * SECURITY NOTE: Hardcoding admin emails in client-side code is a known concern.
- * This list is exposed in the JS bundle. The real authorization gate is server-side
- * (requireAdminAuth in server.js checks Firebase token + Supabase role).
- * This client-side check only controls UI visibility, not actual access.
+ * SECURITY: Admin emails are NOT stored in the client bundle.
+ * The actual email list is read from VITE_ADMIN_EMAILS env var at build time
+ * (set in your deployment secrets, never commit real values).
+ * The real authorization gate remains server-side (requireAdminAuth in server.js).
+ *
  * TODO: Move admin check entirely to server-side; use Supabase `role='admin'` field.
  */
-export const ADMIN_EMAILS: string[] = [
-  'mineteacheronline@gmail.com',
-  'onurhuseyinkocak1@dream-mining.co',
-].map((e) => e.toLowerCase());
+
+// Populated at build time from VITE_ADMIN_EMAILS secret (comma-separated).
+// Falls back to empty — unknown users are never granted admin UI access.
+const _raw = import.meta.env.VITE_ADMIN_EMAILS ?? '';
+export const ADMIN_EMAILS: string[] = _raw
+  ? _raw
+      .split(',')
+      .map((e: string) => e.trim().toLowerCase())
+      .filter(Boolean)
+  : [];
 
 export function isAdminEmail(email: string | null | undefined): boolean {
   const e = typeof email === 'string' ? email.trim().toLowerCase() : '';

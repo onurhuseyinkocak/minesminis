@@ -30,6 +30,7 @@ interface HeartsContextType {
   maxHearts: number;
   lastHeartLostAt: string | null;
   isUnlimited: boolean;
+  childMode: boolean;
   loseHeart: () => void;
   addHeart: (count?: number) => void;
   refillHearts: () => void;
@@ -37,6 +38,21 @@ interface HeartsContextType {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * Returns true if the user is in "child mode" (age ≤ 7 or age unknown).
+ * Child mode: hearts system fully disabled — unlimited lives, no heart loss.
+ */
+function isChildMode(): boolean {
+  try {
+    const profile = JSON.parse(localStorage.getItem('mm_user_profile') || '{}') as Record<string, unknown>;
+    const settings = profile?.settings as Record<string, unknown> | undefined;
+    const age = (profile?.age ?? settings?.age ?? 0) as number;
+    return age <= 7 || age === 0; // unknown age → child mode (safe default)
+  } catch {
+    return true;
+  }
+}
 
 function readStorage(): HeartsState | null {
   try {
@@ -170,9 +186,10 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
 
   const loseHeart = useCallback(() => {
     if (isPremium) return;
+    if (isChildMode()) return; // no heart loss for young children (age ≤ 7)
 
     setHearts((prev) => {
-      const next = Math.max(0, prev - 1);
+      const next = Math.max(1, prev - 1);
       const now = new Date().toISOString();
 
       setLastHeartLostAt((prevTs) => {
@@ -232,18 +249,22 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
     return remaining;
   }, [lastHeartLostAt, hearts]);
 
+  const childMode = isChildMode();
+
   const value = useMemo<HeartsContextType>(
     () => ({
-      hearts: isPremium ? MAX_HEARTS : hearts,
+      // In child mode, always report full hearts (unlimited lives)
+      hearts: (isPremium || childMode) ? MAX_HEARTS : hearts,
       maxHearts: MAX_HEARTS,
-      lastHeartLostAt,
-      isUnlimited: isPremium,
+      lastHeartLostAt: childMode ? null : lastHeartLostAt,
+      isUnlimited: isPremium || childMode,
+      childMode,
       loseHeart,
       addHeart,
       refillHearts,
       getRegenTimeMs,
     }),
-    [hearts, lastHeartLostAt, isPremium, loseHeart, addHeart, refillHearts, getRegenTimeMs],
+    [hearts, lastHeartLostAt, isPremium, childMode, loseHeart, addHeart, refillHearts, getRegenTimeMs],
   );
 
   return <HeartsContext.Provider value={value}>{children}</HeartsContext.Provider>;

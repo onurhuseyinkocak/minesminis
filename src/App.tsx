@@ -332,7 +332,7 @@ function AppRoutes() {
       <ScrollToTop />
       <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>
-        <div key={location.pathname} className="route-fade">
+        <div className="route-fade">
           <Routes>
             {/* ── Public ────────────────────────────────────────── */}
             <Route
@@ -545,7 +545,7 @@ function AppContent() {
     if (getLessonCount() >= 3) {
       setShowNotifPrompt(true);
     }
-  }, [user, isAdminRoute, isSetupRoute]);
+  }, [user?.uid, isAdminRoute, isSetupRoute]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNotifAccept = useCallback(async () => {
     setShowNotifPrompt(false);
@@ -566,15 +566,14 @@ function AppContent() {
     if (user && isAdmin && !isAdminRoute) {
       navigate("/admin");
     }
-  }, [user, isAdmin, isAdminRoute, navigate]);
+  }, [user?.uid, isAdmin, isAdminRoute, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Redirect to setup if not completed (non-admin only, after profile loads)
+  const isSetupCompleted = userProfile?.settings?.setup_completed === true;
   useEffect(() => {
     if (loading) return;
     if (user && isAdmin) return;
     if (profileLoading) return;
-
-    const isSetupCompleted = userProfile?.settings?.setup_completed === true;
 
     if (user && !isSetupCompleted && !hasSkippedSetup && !isSetupRoute && !isAdminRoute) {
       navigate("/setup");
@@ -583,7 +582,7 @@ function AppContent() {
     if (user && isSetupCompleted && isSetupRoute) {
       navigate("/dashboard");
     }
-  }, [user, userProfile, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileLoading, navigate, isAdmin]);
+  }, [user?.uid, isSetupCompleted, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileLoading, navigate, isAdmin]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

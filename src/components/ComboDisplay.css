@@ -66,10 +66,10 @@
 .combo__mult {
   font-size: 0.6875rem;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--glass-shine);
   border-radius: var(--radius-full);
-  padding: 1px 7px;
-  margin-left: 2px;
+  padding: 1px var(--space-sm);
+  margin-left: var(--space-xs);
   backdrop-filter: blur(4px);
   animation: mult-pulse 1s ease-in-out infinite;
 }
@@ -96,7 +96,7 @@
   position: absolute;
   inset: -3px;
   border-radius: var(--radius-full);
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.15) 50%, transparent 70%);
+  background: linear-gradient(45deg, transparent 30%, color-mix(in srgb, white 15%, transparent) 50%, transparent 70%);
   animation: combo-shine 2s linear infinite;
   pointer-events: none;
 }

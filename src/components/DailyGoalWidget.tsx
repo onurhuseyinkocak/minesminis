@@ -40,6 +40,16 @@ export function DailyGoalWidget({ uid, lang = 'tr' }: DailyGoalWidgetProps) {
     return () => clearInterval(interval);
   }, [refreshXP]);
 
+  // Escape key closes the selector
+  useEffect(() => {
+    if (!showSelector) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowSelector(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showSelector]);
+
   const isMet = isDailyGoalMet(uid);
   const progress = Math.min(todayXP / goal, 1);
   const dashOffset = CIRCUMFERENCE * (1 - progress);
@@ -117,6 +127,9 @@ export function DailyGoalWidget({ uid, lang = 'tr' }: DailyGoalWidgetProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowSelector(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={lang === 'tr' ? 'Günlük hedef seç' : 'Select daily goal'}
           >
             <motion.div
               className="dgw__selector"

@@ -192,126 +192,227 @@ export interface Database {
           created_at: string;
         };
       };
-      activity_logs: {
+      user_activities: {
         Row: {
           id: string;
           user_id: string;
-          type: string;
-          title: string;
-          duration: number;
-          accuracy: number | null;
+          activity_type: string;
+          activity_name: string;
           xp_earned: number;
-          sound_id: string | null;
           metadata: Record<string, unknown>;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
-          type: string;
-          title: string;
-          duration?: number;
-          accuracy?: number | null;
+          activity_type: string;
+          activity_name: string;
           xp_earned?: number;
-          sound_id?: string | null;
           metadata?: Record<string, unknown>;
           created_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
-          type?: string;
-          title?: string;
-          duration?: number;
-          accuracy?: number | null;
+          activity_type?: string;
+          activity_name?: string;
           xp_earned?: number;
-          sound_id?: string | null;
           metadata?: Record<string, unknown>;
           created_at?: string;
         };
       };
-      phonics_mastery: {
+      profiles: {
+        Row: {
+          id: string;
+          email: string;
+          display_name: string;
+          avatar_emoji: string | null;
+          is_premium: boolean;
+          premium_until: string | null;
+          role: string;
+          created_at: string;
+          updated_at: string;
+          onboarding_completed: boolean;
+          grade: string | null;
+          xp: number;
+          level: number;
+          streak_days: number;
+          badges: string[];
+          last_login: string | null;
+          words_learned: number;
+          games_played: number;
+          videos_watched: number;
+          worksheets_completed: number;
+          last_daily_claim: string | null;
+        };
+        Insert: {
+          id: string;
+          email: string;
+          display_name: string;
+          avatar_emoji?: string | null;
+          is_premium?: boolean;
+          premium_until?: string | null;
+          role?: string;
+          onboarding_completed?: boolean;
+          grade?: string | null;
+          xp?: number;
+          level?: number;
+          streak_days?: number;
+          badges?: string[];
+          words_learned?: number;
+          games_played?: number;
+          videos_watched?: number;
+          worksheets_completed?: number;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          display_name?: string;
+          avatar_emoji?: string | null;
+          is_premium?: boolean;
+          premium_until?: string | null;
+          role?: string;
+          updated_at?: string;
+          onboarding_completed?: boolean;
+          grade?: string | null;
+          xp?: number;
+          level?: number;
+          streak_days?: number;
+          badges?: string[];
+          words_learned?: number;
+          games_played?: number;
+          videos_watched?: number;
+          worksheets_completed?: number;
+          last_daily_claim?: string | null;
+        };
+      };
+      user_subscriptions: {
         Row: {
           id: string;
           user_id: string;
-          sound_id: string;
-          mastery: number;
-          attempts: number;
-          correct_attempts: number;
-          last_practiced: string;
-          next_review: string | null;
+          plan_id: string;
+          start_date: string;
+          end_date: string;
+          status: string;
+          payment_method: string;
+          payment_id: string | null;
+          amount_paid: number | null;
+          currency: string;
+          auto_renew: boolean;
+          cancelled_at: string | null;
+          cancellation_reason: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          plan_id: string;
+          start_date: string;
+          end_date: string;
+          status?: string;
+          payment_method?: string;
+          payment_id?: string | null;
+          amount_paid?: number | null;
+          currency?: string;
+          auto_renew?: boolean;
+        };
+        Update: {
+          status?: string;
+          auto_renew?: boolean;
+          cancelled_at?: string | null;
+          cancellation_reason?: string | null;
+          updated_at?: string;
+        };
+      };
+      premium_plans: {
+        Row: {
+          id: string;
+          name: string;
+          price: number;
+          currency: string;
+          duration_months: number;
+          features: string[];
+          is_popular: boolean;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+      };
+      user_progress: {
+        Row: {
+          id: string;
+          user_id: string;
+          challenge_id: string | null;
+          worksheet_id: string | null;
+          game_id: string | null;
+          video_id: string | null;
+          status: string;
+          score: number | null;
+          completed_at: string | null;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
-          sound_id: string;
-          mastery?: number;
-          attempts?: number;
-          correct_attempts?: number;
-          last_practiced?: string;
-          next_review?: string | null;
-          created_at?: string;
+          challenge_id?: string | null;
+          worksheet_id?: string | null;
+          game_id?: string | null;
+          video_id?: string | null;
+          status?: string;
+          score?: number | null;
+          completed_at?: string | null;
         };
         Update: {
-          id?: string;
-          user_id?: string;
-          sound_id?: string;
-          mastery?: number;
-          attempts?: number;
-          correct_attempts?: number;
-          last_practiced?: string;
-          next_review?: string | null;
-          created_at?: string;
+          status?: string;
+          score?: number | null;
+          completed_at?: string | null;
         };
       };
-      classrooms: {
+      daily_streaks: {
         Row: {
           id: string;
-          teacher_id: string;
-          name: string;
-          grade_level: string | null;
-          join_code: string;
-          phonics_group_assigned: number;
+          user_id: string;
+          streak_date: string;
+          activities_completed: number;
+          points_earned: number;
           created_at: string;
         };
         Insert: {
           id?: string;
-          teacher_id: string;
-          name: string;
-          grade_level?: string | null;
-          join_code: string;
-          phonics_group_assigned?: number;
-          created_at?: string;
+          user_id: string;
+          streak_date: string;
+          activities_completed?: number;
+          points_earned?: number;
         };
         Update: {
-          id?: string;
-          teacher_id?: string;
-          name?: string;
-          grade_level?: string | null;
-          join_code?: string;
-          phonics_group_assigned?: number;
-          created_at?: string;
+          activities_completed?: number;
+          points_earned?: number;
         };
       };
-      classroom_students: {
+      game_scores: {
         Row: {
           id: string;
-          classroom_id: string;
-          student_id: string;
-          joined_at: string;
+          user_id: string;
+          game_id: string;
+          score: number;
+          time_taken: number | null;
+          accuracy: number | null;
+          created_at: string;
         };
         Insert: {
           id?: string;
-          classroom_id: string;
-          student_id: string;
-          joined_at?: string;
+          user_id: string;
+          game_id: string;
+          score: number;
+          time_taken?: number | null;
+          accuracy?: number | null;
         };
         Update: {
-          id?: string;
-          classroom_id?: string;
-          student_id?: string;
-          joined_at?: string;
+          score?: number;
+          time_taken?: number | null;
+          accuracy?: number | null;
         };
       };
       parent_children: {

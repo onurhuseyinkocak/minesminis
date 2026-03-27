@@ -24,10 +24,10 @@ const CatHouseWidget: React.FC = () => {
     const [phase, setPhase]   = useState<CatPhase>('outside');
     const [visible, setVisible] = useState(true);
 
-    const idleData     = useLottie('/mascot/mimi_idle.json');
-    const sleepData    = useLottie('/mascot/mimi_idle.json'); // idle serves as sleep until sleep anim is added
-    const waveData     = useLottie('/mascot/mimi_wave.json');
-    const walkData     = useLottie('/mascot/mimi_walk.json');
+    const idleData  = useLottie('/mascot/cat_idle.json');
+    const sleepData = useLottie('/mascot/cat_sleeping.json');
+    const waveData  = useLottie('/mascot/cat_wave.json');
+    const walkData  = useLottie('/mascot/cat_walk.json');
 
     /* Phase cycle:
        on mount: cat is outside (idle) for 12s

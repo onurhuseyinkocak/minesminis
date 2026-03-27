@@ -3,6 +3,7 @@
  * Captures all client-side errors, logs them with severity levels,
  * persists to localStorage, and provides admin panel integration.
  */
+import * as Sentry from '@sentry/react';
 
 export type ErrorSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 
@@ -191,6 +192,29 @@ export const errorLogger = {
     errorLogs.push(log);
     saveLogs();
     notifyListeners();
+
+    // Forward critical/error severity to Sentry when enabled
+    if (log.severity === 'critical' || log.severity === 'high') {
+      try {
+        if (entry.stack) {
+          const err = new Error(log.message);
+          err.stack = entry.stack;
+          Sentry.captureException(err, {
+            level: log.severity === 'critical' ? 'fatal' : 'error',
+            extra: entry.metadata,
+            tags: { component: entry.component ?? 'unknown', page: log.page },
+          });
+        } else {
+          Sentry.captureMessage(log.message, {
+            level: log.severity === 'critical' ? 'fatal' : 'error',
+            extra: entry.metadata,
+            tags: { component: entry.component ?? 'unknown', page: log.page },
+          });
+        }
+      } catch {
+        // Never let Sentry crash the app
+      }
+    }
   },
 
   getLogs(filters?: {

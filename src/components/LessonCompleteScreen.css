@@ -10,11 +10,11 @@
 .lcs-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: var(--z-modal);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--overlay-lg);
   padding: var(--space-4);
   animation: lcs-overlay-in 200ms ease both;
 }
@@ -43,8 +43,8 @@
   gap: var(--space-5);
   box-shadow:
     var(--shadow-xl),
-    0 0 60px rgba(255, 107, 53, 0.15),
-    0 0 120px rgba(16, 185, 129, 0.08);
+    0 0 60px color-mix(in srgb, var(--primary) 15%, transparent),
+    0 0 120px color-mix(in srgb, var(--accent-emerald, var(--success)) 8%, transparent);
   position: relative;
   overflow: hidden;
 }
@@ -78,7 +78,7 @@
   background: linear-gradient(
     45deg,
     transparent 30%,
-    rgba(255, 255, 255, 0.08) 50%,
+    color-mix(in srgb, white 8%, transparent) 50%,
     transparent 70%
   );
   animation: lcs-shimmer 3s ease-in-out infinite;
@@ -105,7 +105,7 @@
   justify-content: center;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 4px 12px rgba(255, 107, 53, 0.2));
+  filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--primary) 20%, transparent));
 }
 
 /* ─── Title / Subtitle ────────────────────────────────────── */
@@ -214,11 +214,13 @@
   padding: var(--space-2) var(--space-4);
   position: relative;
   z-index: 1;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--warning) 15%, transparent);
 }
 
 .lcs-streak-fire {
-  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  color: var(--warning);
 }
 
 .lcs-streak-text {
@@ -265,7 +267,7 @@
   color: var(--primary);
   border-radius: var(--radius-full);
   padding: var(--space-1) var(--space-3);
-  border: 1px solid rgba(255, 107, 53, 0.2);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
   transition: transform var(--transition-fast);
 }
 
@@ -286,11 +288,14 @@
   padding: var(--space-3) var(--space-5);
   position: relative;
   z-index: 1;
-  box-shadow: 0 2px 12px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--warning) 15%, transparent);
 }
 
 .lcs-badge-icon {
-  font-size: 2rem;
+  font-size: var(--text-4xl, 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: lcs-badge-bounce 0.6s var(--ease-spring) 0.8s both;
 }
 

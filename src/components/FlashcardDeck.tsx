@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { WordIllustration } from '../components/WordIllustration';
 import { SFX } from '../data/soundLibrary';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -114,17 +114,6 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
       });
 
       setFlipped(false);
-
-      // Check completion after state flush
-      setDeck((prev) => {
-        if (prev.length === 0) {
-          // All cards processed — fire completion in next tick
-          setTimeout(() => {
-            setDone(true);
-          }, 0);
-        }
-        return prev;
-      });
     },
     [current, onCardResult],
   );
@@ -139,9 +128,39 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
     advance(false);
   }, [advance]);
 
+  // Keyboard shortcuts: Space = flip, ArrowRight/ArrowLeft = know/retry
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (done || !current) return;
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (!flipped) handleFlip();
+      }
+      if (flipped) {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          handleKnow();
+        }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          handleRetry();
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [done, current, flipped, handleFlip, handleKnow, handleRetry]);
+
+  // ── Auto-detect completion when deck is exhausted ──
+  useEffect(() => {
+    if (deck.length === 0 && results.length > 0 && !done) {
+      setDone(true);
+    }
+  }, [deck.length, results.length, done]);
+
   // ── Completion screen ──
 
-  if (done || (deck.length === 0 && results.length > 0)) {
+  if (done) {
     const finalResults = results;
     const knownFinal = finalResults.filter((r) => r.knew).length;
     const pct = total > 0 ? Math.round((knownFinal / total) * 100) : 0;
@@ -231,6 +250,13 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
             )}
           </div>
         </div>
+      </div>
+
+      {/* Keyboard shortcut hint */}
+      <div className="flashcard-keyboard-hint" aria-hidden="true">
+        {!flipped
+          ? (lang === 'tr' ? 'Space = Cevir' : 'Space = Flip')
+          : (lang === 'tr' ? '\u2190 Tekrar  \u2192 Biliyorum' : '\u2190 Retry  \u2192 I Know')}
       </div>
 
       {/* Action buttons — only after flip */}

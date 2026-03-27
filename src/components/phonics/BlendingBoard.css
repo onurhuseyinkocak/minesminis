@@ -45,7 +45,7 @@
 .blending-board__slot {
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   border: 3px dashed #ccc;
   background-color: #fafafa;
   display: flex;
@@ -60,11 +60,11 @@
 .blending-board__slot--filled {
   border: 3px solid var(--secondary, #1A6B5A);
   background-color: #E8F5E9;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .blending-board__slot--merged {
-  border-radius: 0.25rem;
+  border-radius: var(--radius-xs);
   background-color: var(--secondary, #1A6B5A);
   border-color: var(--secondary, #1A6B5A);
   color: #fff;
@@ -103,7 +103,7 @@
 .blending-board__tile {
   width: 4rem;
   height: 4rem;
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   border: none;
   background-color: var(--primary, #E8A317);
   color: #fff;

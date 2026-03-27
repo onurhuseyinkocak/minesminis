@@ -1,0 +1,32 @@
+/* ==========================================================================
+   DailyRewardPanel.css — Compact inline reward panel (navbar slide-up)
+   MinesMinis Design System — token-only, no hardcoded values
+   ========================================================================== */
+
+/* Confetti overlay — pointer-events off, above panel content */
+.daily-reward-panel__confetti {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  pointer-events: none;
+}
+
+/* Claimed XP bounce animation */
+@keyframes drp-bounce {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.1); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.daily-reward-panel__claimed-anim {
+  animation: drp-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Claim button — gradient via design-system token */
+.daily-reward-panel__claim-btn {
+  background: var(--gradient-primary);
+}
+
+.daily-reward-panel__claim-btn:hover:not(:disabled) {
+  filter: brightness(1.05);
+}

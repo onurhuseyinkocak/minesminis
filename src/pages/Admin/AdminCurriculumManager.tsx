@@ -155,7 +155,7 @@ function AdminCurriculumManager() {
                     duration: Number(l.duration || 15), status: String(l.status || 'draft') as 'draft' | 'published'
                 })));
             }
-        } catch (_err: unknown) {
+        } catch {
             toast.error('Could not load from database, using default data');
         } finally {
             setLoading(false);
@@ -211,7 +211,7 @@ function AdminCurriculumManager() {
                 toast.success('World added');
             }
             setIsWorldModal(false);
-        } catch (_err: unknown) {
+        } catch {
             toast.error('Failed to save world');
         } finally {
             setSaving(false);
@@ -231,7 +231,7 @@ function AdminCurriculumManager() {
             setWorlds(prev => prev.filter(w => w.id !== worldId));
             if (selectedWorldId === worldId) setSelectedWorldId(null);
             toast.success('World deleted');
-        } catch (_err: unknown) {
+        } catch {
             toast.error('Failed to delete world');
         }
     };
@@ -292,7 +292,7 @@ function AdminCurriculumManager() {
                 toast.success('Lesson added');
             }
             setIsLessonModal(false);
-        } catch (_err: unknown) {
+        } catch {
             toast.error('Failed to save lesson');
         } finally {
             setSaving(false);
@@ -303,7 +303,7 @@ function AdminCurriculumManager() {
         if (!confirm('Delete this lesson?')) return;
         try {
             await supabase.from('curriculum_lessons').delete().eq('id', lessonId);
-        } catch (_err: unknown) {
+        } catch {
             toast.error('DB delete failed, removed locally');
         }
         setLessons(prev => prev.filter(l => l.id !== lessonId));
@@ -343,7 +343,7 @@ function AdminCurriculumManager() {
         const newStatus = lesson.status === 'published' ? 'draft' : 'published';
         try {
             await supabase.from('curriculum_lessons').update({ status: newStatus }).eq('id', lesson.id);
-        } catch (_err: unknown) {
+        } catch {
             // local-only fallback
         }
         setLessons(prev => prev.map(l => l.id === lesson.id ? { ...l, status: newStatus } : l));

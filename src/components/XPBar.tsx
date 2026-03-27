@@ -6,6 +6,7 @@
 import React from 'react';
 import './XPBar.css';
 import { useGamification } from '../contexts/GamificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Flame, Star } from 'lucide-react';
 
 interface XPBarProps {
@@ -14,10 +15,12 @@ interface XPBarProps {
 
 const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     const { stats, getXPProgress, getXPForNextLevel, getStreakBonus } = useGamification();
+    const { lang } = useLanguage();
 
     const progress = getXPProgress();
     const xpNeeded = getXPForNextLevel();
     const streakBonus = getStreakBonus();
+    const remaining = Math.max(0, 100 - progress);
 
     if (compact) {
         return (
@@ -43,7 +46,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
         <div className="xp-bar-container">
             <div className="xp-bar-header">
                 <div className="xp-level">
-                    <span className="level-label">Level</span>
+                    <span className="level-label">{lang === 'tr' ? 'Seviye' : 'Level'}</span>
                     <span className="level-number">{stats.level}</span>
                 </div>
                 <div className="xp-info">
@@ -66,14 +69,20 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                 {stats.streakDays > 0 && (
                     <div className="streak-info">
                         <Flame size={16} className="streak-icon streak-flame-icon" />
-                        <span className="streak-days">{stats.streakDays} day streak</span>
+                        <span className="streak-days">
+                            {lang === 'tr'
+                                ? `${stats.streakDays} günlük seri`
+                                : `${stats.streakDays} day streak`}
+                        </span>
                         {streakBonus > 0 && (
                             <span className="streak-bonus">+{streakBonus}% XP bonus</span>
                         )}
                     </div>
                 )}
                 <div className="next-level-info">
-                    {100 - progress}% to Level {stats.level + 1}
+                    {lang === 'tr'
+                        ? `Seviye ${stats.level + 1} için %${remaining}`
+                        : `${remaining}% to Level ${stats.level + 1}`}
                 </div>
             </div>
         </div>

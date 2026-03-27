@@ -22,6 +22,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { SFX } from '../data/soundLibrary';
 import { getSelectedMascotId } from '../services/mascotService';
 import { isDailyLessonCompletedToday } from '../services/dailyLessonService';
+import { getTodayXP, getDailyGoal } from '../services/psychGamification';
 import './ChildHome.css';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -132,7 +133,7 @@ function StoryIcon() {
 
 const ChildHome: React.FC = () => {
   const navigate = useNavigate();
-  const { stats } = useGamification();
+  useGamification(); // keep context subscription alive for child mode
   const { hearts } = useHearts();
   const { lang } = useLanguage();
   const { user, userProfile } = useAuth();
@@ -151,14 +152,17 @@ const ChildHome: React.FC = () => {
   const displayName = userProfile?.display_name ?? (lang === 'tr' ? 'Kahraman' : 'Hero');
   const isDone = user ? isDailyLessonCompletedToday(user.uid ?? '') : false;
 
-  // Today's stars: use streak bonus as proxy (0-5 range based on XP context)
-  // We derive today's "stars" from the daily XP progress capped at 5.
-  // Since there's no dedicated today-stars field, we use streakDays % 5 as visual
-  // feedback for the streak, which is the closest available signal.
-  const todayStars = Math.min(MAX_STARS, isDone ? 5 : Math.min(4, stats.streakDays % 5));
+  // Today's stars: based on today's XP progress toward daily goal.
+  // Each 20% of daily goal earns 1 star. Completing lesson = all 5.
+  const uid = user?.uid ?? '';
+  const childTodayXP = uid ? getTodayXP(uid) : 0;
+  const childDailyGoal = getDailyGoal();
+  const xpProgress = childDailyGoal > 0 ? childTodayXP / childDailyGoal : 0;
+  const todayStars = Math.min(MAX_STARS, isDone ? 5 : Math.floor(xpProgress * MAX_STARS));
   const heartsToShow = Math.min(MAX_HEARTS, Math.max(0, hearts));
 
-  const lessonProgress = isDone ? 100 : 30;
+  // Lesson progress: maps XP progress to a percentage ring indicator
+  const lessonProgress = isDone ? 100 : Math.min(90, Math.round(xpProgress * 100));
 
   // ── Mascot tap ─────────────────────────────────────────────────────────────
 

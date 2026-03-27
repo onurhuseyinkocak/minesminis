@@ -4,7 +4,8 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { Trophy, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Trophy, Lock, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import type { Badge } from '../contexts/GamificationContext';
@@ -59,6 +60,7 @@ function getRarestBadge(earnedIds: string[], allBadges: Badge[]): Badge | null {
 }
 
 const Achievements: React.FC = () => {
+  const navigate = useNavigate();
   const { allBadges, hasBadge, stats } = useGamification();
   const { t, lang } = useLanguage();
   const isTr = lang === 'tr';
@@ -101,6 +103,14 @@ const Achievements: React.FC = () => {
         {/* ── Header ─────────────────────────────────────────── */}
         <header className="achievements-header">
           <div className="achievements-title-row">
+            <button
+              type="button"
+              className="achievements-back-btn"
+              onClick={() => navigate(-1)}
+              aria-label={isTr ? 'Geri' : 'Back'}
+            >
+              <ArrowLeft size={20} />
+            </button>
             <Trophy size={28} color="var(--warning)" />
             <h1>{t ? t('achievements.title') : 'Rozetlerim'}</h1>
           </div>

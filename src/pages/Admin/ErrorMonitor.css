@@ -40,7 +40,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.5rem 0.75rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
 .em-top-error-count {
@@ -60,14 +60,14 @@
     flex: 1;
     font-size: 0.82rem;
     font-weight: 500;
-    color: #334155;
+    color: var(--text-body);
 }
 
 .em-severity-badge {
     font-size: 0.7rem;
     font-weight: 700;
     padding: 0.15rem 0.5rem;
-    border-radius: 100px;
+    border-radius: var(--radius-full);
     color: white;
     white-space: nowrap;
 }
@@ -101,11 +101,11 @@
 
 .em-select {
     padding: 0.4rem 0.6rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
     font-size: 0.8rem;
     cursor: pointer;
-    background: white;
+    background: var(--bg-card);
 }
 
 .em-live-btn {
@@ -113,8 +113,8 @@
     align-items: center;
     gap: 4px;
     padding: 0.4rem 0.7rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
     cursor: pointer;
     font-size: 0.8rem;
     font-weight: 600;
@@ -126,8 +126,8 @@
 }
 
 .em-live-btn--paused {
-    background: white;
-    color: #64748b;
+    background: var(--bg-card);
+    color: var(--text-secondary);
 }
 
 .em-action-btn {
@@ -157,7 +157,7 @@
 
 /* ---- Log card ---- */
 .em-log-card {
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     overflow: hidden;
 }
 
@@ -167,7 +167,7 @@
 }
 
 .em-log-card--active {
-    background: white;
+    background: var(--bg-card);
 }
 
 .em-log-header {
@@ -182,7 +182,7 @@
 .em-severity-pill {
     min-width: 70px;
     padding: 0.2rem 0.5rem;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.7rem;
     font-weight: 800;
     text-align: center;
@@ -213,7 +213,7 @@
     font-size: 0.65rem;
     font-weight: 800;
     padding: 0.1rem 0.45rem;
-    border-radius: 100px;
+    border-radius: var(--radius-full);
     min-width: 20px;
     text-align: center;
     flex-shrink: 0;
@@ -248,7 +248,7 @@
 }
 
 .em-detail-meta-val {
-    color: #334155;
+    color: var(--text-body);
 }
 
 .em-details-block {
@@ -258,7 +258,7 @@
 .em-details-summary {
     cursor: pointer;
     font-weight: 600;
-    color: #475569;
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
 }
 
@@ -266,7 +266,7 @@
     background: var(--bg-elevated);
     color: var(--text-body);
     padding: 0.75rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.72rem;
     overflow: auto;
     max-height: 200px;
@@ -276,10 +276,10 @@
 }
 
 .em-pre-meta {
-    background: #f1f5f9;
-    color: #334155;
+    background: var(--bg-muted);
+    color: var(--text-body);
     padding: 0.75rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.72rem;
     overflow: auto;
 }
@@ -287,7 +287,7 @@
 .em-message-box {
     background: #fef2f2;
     padding: 0.75rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: #991b1b;
     font-size: 0.78rem;
     margin-bottom: 0.75rem;
@@ -305,7 +305,7 @@
     align-items: center;
     gap: 4px;
     padding: 0.4rem 0.8rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: none;
     background: #22c55e;
     color: white;
@@ -324,9 +324,9 @@
     align-items: center;
     gap: 4px;
     padding: 0.4rem 0.8rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    background: white;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
     font-size: 0.78rem;
     font-weight: 500;
     cursor: pointer;

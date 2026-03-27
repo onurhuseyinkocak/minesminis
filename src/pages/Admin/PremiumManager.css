@@ -57,7 +57,7 @@
   background: #fef3c7;
   color: #d97706;
   padding: 0.25rem 0.75rem;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -76,8 +76,8 @@
 /* ── Extend select ── */
 .adm-extend-select {
   padding: 0.4rem;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
   font-size: 0.8rem;
   cursor: pointer;
 }
@@ -92,9 +92,9 @@
 
 /* ── Plan card ── */
 .adm-plan-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
   position: relative;
 }
@@ -112,7 +112,7 @@
   background: #f59e0b;
   color: white;
   padding: 0.25rem 0.75rem;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   font-size: 0.7rem;
   font-weight: 700;
 }
@@ -146,7 +146,7 @@
 
 .adm-plan-feature {
   padding: 0.25rem 0;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }
 

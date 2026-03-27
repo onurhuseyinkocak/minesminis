@@ -1064,9 +1064,11 @@
   50%       { transform: translateY(-6px); }
 }
 
-.onboarding-mascot-emoji {
-  font-size: 2.8rem;
-  line-height: 1;
+.onboarding-mascot-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
 }
 
 .onboarding-mascot-sparkles {
@@ -1148,12 +1150,7 @@
   margin: calc(-1 * var(--space-sm)) 0 var(--space-md);
 }
 
-/* ---- Age cards — new fields ---- */
-.onboarding-age-emoji {
-  font-size: 2rem;
-  line-height: 1;
-  margin-bottom: var(--space-xs);
-}
+/* ---- Age cards — icon wrap ---- */
 
 .onboarding-age-phase {
   font-family: var(--font-display);
@@ -1284,4 +1281,88 @@
   font-weight: 700;
   font-size: 0.8rem;
   color: var(--text-secondary);
+}
+
+/* ── FTUE (First-Time User Experience) ──────────────────────────────────────── */
+
+.onboarding-ftue-mascot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: var(--space-md);
+}
+
+.onboarding-ftue-ring {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--color-primary-50);
+  border: 3px solid var(--color-primary-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.onboarding-ftue-ring:active {
+  transform: scale(0.95);
+}
+
+.onboarding-speech-bubble {
+  position: absolute;
+  top: -10px;
+  right: -20px;
+  background: white;
+  border: 2px solid var(--color-primary-300);
+  border-radius: 16px 16px 16px 4px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-ink-900);
+  font-family: var(--font-display);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  pointer-events: none;
+}
+
+.onboarding-speech-bubble--prompt {
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+  animation: bubblePulse 1s ease-in-out infinite;
+}
+
+.onboarding-speech-bubble--happy {
+  border-color: #10b981;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+@keyframes bubblePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.onboarding-ftue-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.onboarding-tap-hint {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary-500);
+  font-family: var(--font-display);
+  animation: tapBounce 0.8s ease-in-out infinite;
+}
+
+@keyframes tapBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }

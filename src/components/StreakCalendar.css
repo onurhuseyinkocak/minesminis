@@ -33,16 +33,16 @@
    ================================================================ */
 .streak-calendar--full {
   background: var(--bg-card);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 2px 8px var(--shadow-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-card);
 }
 
 .streak-calendar--full .sc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
 }
 
 .sc-header-title {
@@ -74,7 +74,7 @@
 .sc-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-xs);
 }
 
 .sc-weekday-label {
@@ -160,9 +160,9 @@
 .sc-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
   border-top: 1px solid var(--border);
 }
 
@@ -191,15 +191,32 @@
 /* ================================================================
    RESPONSIVE
    ================================================================ */
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .streak-calendar--compact .sc-day {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
 
   .streak-calendar--full .sc-day {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.7rem;
+  }
+
+  .streak-calendar--full {
+    padding: var(--space-sm);
+  }
+}
+
+@media (max-width: 400px) {
+  .streak-calendar--compact .sc-day {
+    width: 22px;
+    height: 22px;
+  }
+
+  .streak-calendar--full .sc-day {
+    width: 28px;
+    height: 28px;
     font-size: 0.65rem;
   }
 }

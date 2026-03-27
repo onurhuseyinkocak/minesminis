@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useHearts } from '../contexts/HeartsContext';
@@ -43,8 +43,13 @@ export function NoHeartsModal({ onClose, onWatchAd: _onWatchAd }: NoHeartsModalP
   const navigate = useNavigate();
   const [regenMs, setRegenMs] = useState<number>(getRegenTimeMs());
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') onClose();
+  }, [onClose]);
+
   useEffect(() => {
     setRegenMs(getRegenTimeMs());
+    document.addEventListener('keydown', handleKeyDown);
 
     const id = setInterval(() => {
       const remaining = getRegenTimeMs();
@@ -52,8 +57,11 @@ export function NoHeartsModal({ onClose, onWatchAd: _onWatchAd }: NoHeartsModalP
       if (remaining <= 0) clearInterval(id);
     }, 1000);
 
-    return () => clearInterval(id);
-  }, [getRegenTimeMs]);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [getRegenTimeMs, handleKeyDown]);
 
   const isTR = lang === 'tr';
 

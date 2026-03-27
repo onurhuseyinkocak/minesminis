@@ -8,6 +8,7 @@ import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { RotateCcw, Play, Volume2 } from 'lucide-react';
 import { LETTER_PATHS } from '../data/letterPaths';
 import { SFX } from '../data/soundLibrary';
+import { useLanguage } from '../contexts/LanguageContext';
 import './LetterTracer.css';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -107,6 +108,9 @@ export function LetterTracer({
   const containerRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number | null>(null);
   const animTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawnPoints, setDrawnPoints] = useState<Point[]>([]);
@@ -504,7 +508,7 @@ export function LetterTracer({
       {/* Result feedback */}
       {result && (
         <div className={`lt-result ${result.pass ? 'lt-result--pass' : 'lt-result--fail'}`}>
-          {result.pass ? 'Great job!' : 'Try again!'}
+          {result.pass ? (isTr ? 'Aferin!' : 'Great job!') : (isTr ? 'Tekrar dene!' : 'Try again!')}
         </div>
       )}
 

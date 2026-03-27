@@ -45,8 +45,8 @@
 .tournament-tier {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   border: 1.5px solid var(--tier-color, var(--primary));
   background: var(--bg-elevated);
@@ -100,7 +100,7 @@
 .tournament-countdown {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-family: var(--font-body);
   font-size: 0.72rem;
   font-weight: 700;
@@ -123,4 +123,22 @@
 .tournament-banner:hover .tournament-chevron {
   transform: translateX(3px);
   color: var(--primary);
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 480px) {
+  .tournament-countdown {
+    display: none;
+  }
+
+  .tournament-banner {
+    padding: var(--space-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .tournament-tier-name {
+    display: none;
+  }
 }

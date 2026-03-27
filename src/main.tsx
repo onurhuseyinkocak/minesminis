@@ -1,10 +1,27 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import * as Sentry from '@sentry/react';
 import App from "./App";
 import "./index.css";
 import "./cat-theme.css";
 import "./kenney-ui.css";
+
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_DSN || '',
+  enabled: import.meta.env.PROD && !!import.meta.env.VITE_SENTRY_DSN,
+  environment: import.meta.env.MODE,
+  tracesSampleRate: 0.1,
+  replaysOnErrorSampleRate: 0.5,
+  integrations: [
+    Sentry.browserTracingIntegration(),
+  ],
+  beforeSend(event) {
+    // Don't send events without a real DSN configured
+    if (!import.meta.env.VITE_SENTRY_DSN) return null;
+    return event;
+  },
+});
 
 // Global unhandled error / rejection handler (belt-and-suspenders alongside errorLogger.init)
 window.addEventListener("unhandledrejection", (event) => {

@@ -65,7 +65,7 @@
 
 @keyframes badge-earned-shimmer {
   0%, 100% { box-shadow: 0 0 0 0 transparent; }
-  50% { box-shadow: 0 0 16px rgba(255, 107, 53, 0.18); }
+  50% { box-shadow: 0 0 16px var(--primary-glow); }
 }
 
 /* ---- Rarity: common (earned) ---- */
@@ -85,7 +85,7 @@
 }
 
 .badge-card-item--earned.badge-card-item--rare:hover {
-  box-shadow: 0 0 12px rgba(14, 165, 233, 0.35);
+  box-shadow: 0 0 12px var(--info-glow);
 }
 
 /* ---- Rarity: epic (earned) ---- */
@@ -95,7 +95,7 @@
 }
 
 .badge-card-item--earned.badge-card-item--epic:hover {
-  box-shadow: 0 0 14px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 0 14px var(--accent-purple-glow);
 }
 
 /* ---- Rarity: legendary (earned) ---- */

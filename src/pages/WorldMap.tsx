@@ -7,7 +7,7 @@
  * Each stop = a curriculum phase unit.
  * Completed = green check, Current = golden pulse, Locked = gray lock.
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Star, Check } from 'lucide-react';
@@ -176,13 +176,13 @@ const WorldMap = () => {
   const phase = PHASES[activePhaseIndex];
   const allUnits = phase.units;
 
-  // Build flat stop list with progress
-  const stops = allUnits.map((unit, i) => ({
+  // Build flat stop list with progress (memoized to avoid repeated localStorage reads)
+  const stops = useMemo(() => allUnits.map((unit, i) => ({
     unit,
     icon: getUnitIcon(unit, i),
     progress: getUnitProgress(unit, activePhaseIndex, i),
     index: i,
-  }));
+  })), [allUnits, activePhaseIndex]);
 
   // Overall phase progress
   const completedCount = stops.filter((s) => s.progress.status === 'completed').length;
@@ -242,6 +242,7 @@ const WorldMap = () => {
         <div className="journey-phase-tabs">
           {PHASES.map((p, i) => (
             <button
+              type="button"
               key={p.id}
               className={`journey-phase-tab ${i === activePhaseIndex ? 'journey-phase-tab--active' : ''}`}
               onClick={() => setActivePhaseIndex(i)}

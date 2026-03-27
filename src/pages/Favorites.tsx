@@ -81,7 +81,7 @@ const Favorites: React.FC = () => {
         <p>{isTr ? 'Favorilerinizi görüntülemek için giriş yapın.' : 'Sign in to view and manage your favorite items'}</p>
         <Link
           to="/login"
-          className="inline-block mt-4 px-8 py-3 bg-primary-500 text-white rounded-xl no-underline font-semibold text-base"
+          className="favorites-signin-link"
         >
           {isTr ? 'Giriş Yap' : 'Sign In'}
         </Link>

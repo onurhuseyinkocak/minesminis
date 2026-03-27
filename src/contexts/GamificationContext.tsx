@@ -153,8 +153,6 @@ export const ALL_BADGES: Badge[] = [
     { id: 'story_master', name: 'Story Master', nameTr: 'Hikaye Ustası', description: 'Read 10 stories', descriptionTr: '10 hikaye okudun', icon: 'stories', category: 'learning', requirement: 10, requirementType: 'stories', rarity: 'rare' },
     { id: 'dialogue_star', name: 'Dialogue Star', nameTr: 'Diyalog Yıldızı', description: 'Complete 5 dialogue exercises', descriptionTr: '5 diyalog alıştırması tamamladın', icon: 'mic', category: 'learning', requirement: 5, requirementType: 'dialogues', rarity: 'rare' },
     { id: 'pronunciation_pro', name: 'Pronunciation Pro', nameTr: 'Telaffuz Ustası', description: 'Score 100% on 3 pronunciation exercises', descriptionTr: '3 telaffuz alıştırmasında tam puan aldın', icon: 'mic', category: 'learning', requirement: 3, requirementType: 'perfect_pronunciation', rarity: 'epic' },
-    { id: 'word_collector_50', name: 'Word Collector', nameTr: 'Kelime Koleksiyoncusu 50', description: 'Learn 50 words', descriptionTr: '50 kelime öğrendin', icon: 'book', category: 'learning', requirement: 50, requirementType: 'words', rarity: 'rare' },
-    { id: 'word_collector_100', name: 'Word Collector Pro', nameTr: 'Kelime Koleksiyoncusu 100', description: 'Learn 100 words', descriptionTr: '100 kelime öğrendin', icon: 'reading', category: 'learning', requirement: 100, requirementType: 'words', rarity: 'epic' },
 
     // New Social Badges
     { id: 'first_friend', name: 'First Friend', nameTr: 'İlk Arkadaş', description: 'Add your first friend', descriptionTr: 'İlk arkadaşını ekledin', icon: 'heart', category: 'social', requirement: 1, requirementType: 'friends', rarity: 'common' },

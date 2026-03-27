@@ -65,7 +65,7 @@
 
 /* Full heart: vivid red with glow + subtle pulse */
 .hearts-display__icon--full {
-  color: var(--error, #ef4444);
+  color: var(--error);
   filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--error) 40%, transparent));
   animation: heartbeat 2.8s ease-in-out infinite;
 }
@@ -80,7 +80,7 @@
 
 /* Empty heart: gray outline, clearly distinct from full */
 .hearts-display__icon--empty {
-  color: var(--slate-300, #D4D4D4);
+  color: var(--border-medium);
   opacity: 0.6;
   filter: none;
 }
@@ -91,8 +91,8 @@
 }
 
 @keyframes heartLose {
-  0%   { transform: scale(1); filter: drop-shadow(0 1px 3px rgba(239, 68, 68, 0.4)); }
-  30%  { transform: scale(1.4); filter: drop-shadow(0 2px 8px rgba(239, 68, 68, 0.6)); }
+  0%   { transform: scale(1); filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--error) 40%, transparent)); }
+  30%  { transform: scale(1.4); filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--error) 60%, transparent)); }
   60%  { transform: scale(0.5); filter: none; }
   100% { transform: scale(1); filter: none; }
 }
@@ -104,7 +104,7 @@
   color: var(--primary);
   line-height: 1;
   font-family: var(--font-display, sans-serif);
-  filter: drop-shadow(0 1px 4px var(--primary-glow, rgba(255, 107, 53, 0.3)));
+  filter: drop-shadow(0 1px 4px var(--primary-glow));
 }
 
 /* ── Timer ────────────────────────────────────────────────── */
@@ -112,18 +112,24 @@
 .hearts-display__timer-wrap {
   display: flex;
   align-items: center;
-  gap: var(--space-xs, 4px);
-  margin-left: var(--space-sm, 8px);
-  padding: 2px var(--space-sm, 8px);
-  background: var(--bg-muted, #f1f5f9);
+  gap: var(--space-xs);
+  margin-left: var(--space-sm);
+  padding: 2px var(--space-sm);
+  background: var(--bg-muted);
   border-radius: var(--radius-full);
 }
 
 .hearts-display__timer {
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary);
   font-family: var(--font-body, sans-serif);
   font-weight: 600;
   white-space: nowrap;
+}
+
+/* Zero hearts state — visual emphasis */
+.hearts-display--zero .hearts-display__icon--empty {
+  color: var(--error-soft);
+  opacity: 0.8;
 }
 
 /* ── Mobile ───────────────────────────────────────────────── */

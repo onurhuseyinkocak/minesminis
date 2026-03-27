@@ -421,14 +421,52 @@
   box-shadow: var(--shadow-button-hover);
 }
 
+/* ---- Offline stale banner ---- */
+.stories-stale-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: var(--space-md);
+  background: var(--warning-pale);
+  border: 1px solid var(--warning);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--warning-dark, #92400E);
+  font-family: var(--font-display);
+}
+
+/* ---- Empty state helpers ---- */
+.stories-empty__title {
+  margin: var(--space-sm) 0 var(--space-xs);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stories-empty__hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-md);
+}
+
+/* ---- Decodable meta text ---- */
+.story-card__decodable-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
 /* ---- Tab Filter ---- */
 .stories-tabs {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: var(--space-lg, 1.5rem);
+  margin-bottom: var(--space-lg);
   padding: 4px;
-  background: var(--slate-100, #F5F5F5);
-  border-radius: 999px;
+  background: var(--bg-soft, #F5F5F5);
+  border-radius: var(--radius-full);
   width: fit-content;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
 }
@@ -438,12 +476,12 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 1.25rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: none;
-  font-family: var(--font-display, 'Nunito', sans-serif);
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--slate-500, #737373);
+  color: var(--text-muted);
   background: transparent;
   cursor: pointer;
   transition: all 0.2s var(--ease-out);
@@ -451,14 +489,14 @@
 }
 
 .stories-tab:hover {
-  color: var(--slate-800, #262626);
+  color: var(--text-primary);
   background: rgba(255, 255, 255, 0.7);
 }
 
 .stories-tab--active {
-  background: white;
-  color: var(--primary, #FF6B35);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+  background: var(--bg-card, white);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .stories-tab__badge {
@@ -468,9 +506,9 @@
   min-width: 1.3rem;
   height: 1.3rem;
   padding: 0 0.35rem;
-  border-radius: 999px;
-  background: var(--primary-pale, #FFF4EE);
-  color: var(--primary, #FF6B35);
+  border-radius: var(--radius-full);
+  background: var(--primary-pale);
+  color: var(--primary);
   font-size: 0.7rem;
   font-weight: 800;
 }
@@ -479,12 +517,12 @@
 .stories-decodable__intro {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--slate-500, #737373);
-  margin: 0 0 var(--space-lg, 1.5rem) 0;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-lg) 0;
   padding: 0.875rem 1.125rem;
-  background: var(--secondary-pale, #E6F5F1);
+  background: var(--secondary-pale);
   border-radius: var(--radius-md);
-  border-left: 4px solid var(--secondary, #0D5C4D);
+  border-left: 4px solid var(--secondary);
   line-height: 1.55;
 }
 
@@ -536,7 +574,7 @@
   font-size: 0.65rem;
   font-weight: 800;
   padding: 0.25rem 0.6rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -549,9 +587,69 @@
   font-size: 0.65rem;
   font-weight: 800;
   padding: 0.2rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--secondary-pale, #E6F5F1);
   color: var(--secondary, #0D5C4D);
   letter-spacing: 0.03em;
   text-transform: uppercase;
+}
+
+/* ── Curriculum coverage levels ─────────────────────────────────────────── */
+
+/* Green border glow on ready stories */
+.story-card--coverage-ready {
+  border-color: var(--success);
+  box-shadow:
+    -5px 0 0 0 var(--success),
+    0 8px 24px var(--success-soft),
+    7px 7px 0 0 var(--success);
+}
+.story-card--coverage-ready:hover {
+  box-shadow:
+    -6px 0 0 0 var(--mimi-dark),
+    0 16px 48px var(--success-soft),
+    7px 7px 0 0 var(--mimi-dark);
+}
+
+/* "Ready!" badge in the top-left of the cover */
+.story-card__ready-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  color: var(--white, #fff);
+  letter-spacing: 0.03em;
+  z-index: 2;
+  box-shadow: 0 2px 6px var(--success-soft);
+}
+
+/* Coverage tag variants */
+.story-coverage-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.02em;
+}
+
+.story-coverage-tag--ready {
+  background: var(--success-pale);
+  color: var(--mimi-dark);
+}
+
+.story-coverage-tag--almost {
+  background: var(--warning-pale);
+  color: var(--warning-dark, #92400E);
+}
+
+.story-coverage-tag--hard {
+  background: var(--error-pale);
+  color: var(--error);
 }

@@ -7,9 +7,9 @@
 /* ---- Floating Trigger Button ---- */
 .daily-reward-trigger {
   position: fixed;
-  bottom: 92px;
-  left: 20px;
-  z-index: 80;
+  bottom: calc(68px + var(--space-md));
+  left: var(--space-md);
+  z-index: var(--z-raised);
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full);
@@ -81,7 +81,7 @@
 .daily-reward-overlay {
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: var(--z-overlay);
   display: flex;
   align-items: center;
   justify-content: center;

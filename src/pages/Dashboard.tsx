@@ -154,7 +154,6 @@ export default function Dashboard() {
 
   const completedDays = weeklyDots.filter(Boolean).length;
   const learnedCount = stats.wordsLearned ?? 0;
-  const freezeCount = getStreakFreezeCount(userId);
 
   const [showStreakShame, setShowStreakShame] = useState(false);
 
@@ -186,7 +185,13 @@ export default function Dashboard() {
       .filter(Boolean);
   }, [stats.badges, allBadges]);
 
-  const wod = getWordOfTheDay();
+  const wod = useMemo(() => getWordOfTheDay(), []);
+
+  // Memoize localStorage reads to avoid recalculating on every render
+  const activityDates = useMemo(() => getActivityDates(userId), [userId]);
+  const memoizedFreezeCount = useMemo(() => getStreakFreezeCount(userId), [userId]);
+  const todayXP = useMemo(() => getTodayXP(userId), [userId]);
+  const dailyGoal = useMemo(() => getDailyGoal(), []);
 
   // ---- Loading ----
   if (loading) {
@@ -238,7 +243,7 @@ export default function Dashboard() {
             <Flame size={16} className="text-primary-500" />
             {stats.streakDays} {t('dashboard.dayUnit')}
           </div>
-          <StreakProtectionBadge count={freezeCount} size="sm" />
+          <StreakProtectionBadge count={memoizedFreezeCount} size="sm" />
           <div className="flex items-center gap-1 bg-gold-50 text-gold-600 font-bold px-3 py-1.5 rounded-full text-sm font-display">
             <Star size={16} className="text-gold-600" />
             {stats.xp.toLocaleString()}
@@ -345,7 +350,7 @@ export default function Dashboard() {
           <span className="text-xs text-ink-400 font-body">{t('dashboard.last35Days')}</span>
         </div>
         <StreakCalendar
-          activityDates={getActivityDates(userId)}
+          activityDates={activityDates}
           streakDays={stats.streakDays}
           size="compact"
         />
@@ -414,7 +419,7 @@ export default function Dashboard() {
               {t('dashboard.dailyGoal')}
             </p>
             <p className="font-body text-ink-500 text-xs leading-relaxed">
-              {getTodayXP(userId) >= getDailyGoal()
+              {todayXP >= dailyGoal
                 ? t('dashboard.dailyGoalDone')
                 : t('dashboard.dailyGoalKeep')}
             </p>

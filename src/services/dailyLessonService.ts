@@ -9,6 +9,8 @@
 import { kidsWords, type KidsWord } from '../data/wordsData';
 import { getDueWords, updateWordProgress, loadAllProgress } from '../data/spacedRepetition';
 import { ALL_SOUNDS } from '../data/phonics';
+import { curriculumWords, type CurriculumWord } from '../data/curriculumWords';
+import { getProgress } from './learningPathService';
 
 function localDateStr(d: Date = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -23,6 +25,43 @@ export interface CVCWord {
   letters: string[];
   emoji: string;
   turkish: string;
+}
+
+// ─── Curriculum Word Bridge ───────────────────────────────────────────────────
+
+/** Convert a CurriculumWord to the CVCWord format used by lesson activities */
+function curriculumToCVC(cw: CurriculumWord): CVCWord {
+  return {
+    word: cw.english,
+    letters: cw.english.split(''),
+    emoji: cw.emoji,
+    turkish: cw.turkish,
+  };
+}
+
+/**
+ * Get curriculum words filtered by category, converted to CVCWord format.
+ * Words are sorted by frequency (highest first) so the most common words
+ * appear in early lessons.
+ */
+export function getCurriculumWordsByCategory(category: string, limit = 10): CVCWord[] {
+  return curriculumWords
+    .filter((w) => w.category.toLowerCase() === category.toLowerCase())
+    .sort((a, b) => (b.frequency ?? 50) - (a.frequency ?? 50))
+    .slice(0, limit)
+    .map(curriculumToCVC);
+}
+
+/**
+ * Get curriculum words by phonics level (1–5), converted to CVCWord format.
+ * Level 1 = beginner CVC words, Level 5 = advanced multi-syllable words.
+ */
+export function getCurriculumWordsByLevel(level: 1 | 2 | 3 | 4 | 5, limit = 10): CVCWord[] {
+  return curriculumWords
+    .filter((w) => w.level === level)
+    .sort((a, b) => (b.frequency ?? 50) - (a.frequency ?? 50))
+    .slice(0, limit)
+    .map(curriculumToCVC);
 }
 
 export interface GrammarPattern {
@@ -43,7 +82,8 @@ export interface DailyLessonPlan {
   reviewWords: KidsWord[];
   completed: boolean;
   score: number;           // 0-100
-  themeName?: string;      // display name of today's theme
+  themeName?: string;      // display name of today's theme (English)
+  themeNameTr?: string;   // display name of today's theme (Turkish)
   phrasePair?: { english: string; turkish: string };
   grammarPattern?: GrammarPattern;
 }
@@ -89,6 +129,21 @@ export const THEMED_WORD_GROUPS: ThemedWordGroup[] = [
     words: kidsWords.filter((w) => w.category === 'Phonics').slice(0, 10),
   },
 ];
+
+// ─── Phonics-group word filter ────────────────────────────────────────────────
+
+/**
+ * Filter a set of KidsWords to those at or below `maxGroup`.
+ * Words without a phonicsGroup are always included.
+ * If fewer than `minCount` words pass, also includes words from maxGroup+1
+ * so the child always has enough material.
+ */
+function getWordsForGroup(words: KidsWord[], maxGroup: number, minCount = 5): KidsWord[] {
+  const passing = words.filter((w) => !w.phonicsGroup || w.phonicsGroup <= maxGroup);
+  if (passing.length >= minCount) return passing;
+  // Not enough — include the next group up as well
+  return words.filter((w) => !w.phonicsGroup || w.phonicsGroup <= maxGroup + 1);
+}
 
 // ─── CVC Words pool ──────────────────────────────────────────────────────────
 
@@ -291,8 +346,13 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
   // Pick up to 5 review words due today
   const reviewWords = getDueReviewWords(5);
 
-  // Pick today's theme
-  const themeGroup = THEMED_WORD_GROUPS[Math.floor(Math.random() * THEMED_WORD_GROUPS.length)];
+  // Pick today's theme — filter words to the user's current phonics group
+  const userPhonicsGroup = getProgress().group;
+  const rawThemeGroup = THEMED_WORD_GROUPS[Math.floor(Math.random() * THEMED_WORD_GROUPS.length)];
+  const themeGroup: ThemedWordGroup = {
+    ...rawThemeGroup,
+    words: getWordsForGroup(rawThemeGroup.words, userPhonicsGroup),
+  };
 
   // Pick a random phrase pair for Phase 4
   const phrasePair = PHRASE_PAIRS[Math.floor(Math.random() * PHRASE_PAIRS.length)];
@@ -307,6 +367,7 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
     completed: false,
     score: 0,
     themeName: themeGroup.name,
+    themeNameTr: themeGroup.nameTr,
     phrasePair,
     grammarPattern,
   };

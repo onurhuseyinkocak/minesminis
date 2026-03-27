@@ -139,7 +139,11 @@ export default function FlashcardReview() {
 
         <div className="flashcard-review__body">
           <div className="flashcard-review__empty">
-            <div className="flashcard-review__empty-icon" aria-hidden="true" />
+            <div className="flashcard-review__empty-icon" aria-hidden="true">
+              <span style={{ fontSize: '2.5rem', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {sessionDone ? '\u2728' : '\u2705'}
+              </span>
+            </div>
             <h2 className="flashcard-review__empty-title">
               {lang === 'tr' ? 'Oturum tamamlandı!' : 'Session complete!'}
             </h2>
@@ -175,7 +179,11 @@ export default function FlashcardReview() {
 
         <div className="flashcard-review__body">
           <div className="flashcard-review__empty">
-            <div className="flashcard-review__empty-icon" aria-hidden="true" />
+            <div className="flashcard-review__empty-icon" aria-hidden="true">
+              <span style={{ fontSize: '2.5rem', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {sessionDone ? '\u2728' : '\u2705'}
+              </span>
+            </div>
             <h2 className="flashcard-review__empty-title">{noCardsTitle}</h2>
             <p className="flashcard-review__empty-sub">{noCardsSub}</p>
             <button
@@ -216,10 +224,10 @@ export default function FlashcardReview() {
           </div>
           <div className="flashcard-review__stat">
             <span className="flashcard-review__stat-value">
-              {(dueWords[0]?.correctCount ?? 0) > 0 ? dueWords[0].correctCount : '-'}
+              {dueWords.reduce((sum, w) => sum + w.correctCount, 0)}
             </span>
             <span className="flashcard-review__stat-label">
-              {lang === 'tr' ? 'Tekrar' : 'Retries'}
+              {lang === 'tr' ? 'Toplam Doğru' : 'Total Correct'}
             </span>
           </div>
         </div>

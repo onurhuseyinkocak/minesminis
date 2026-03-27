@@ -74,7 +74,7 @@
   padding: 0.5rem 0.75rem;
   background-color: var(--primary, #E8A317);
   color: #fff;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   font-weight: 800;
   font-size: 1.3rem;
 }
@@ -102,7 +102,7 @@
 .segmenting-board__option {
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   border: none;
   background-color: var(--primary, #E8A317);
   color: #fff;

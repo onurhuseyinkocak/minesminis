@@ -34,9 +34,9 @@
   right: calc(env(safe-area-inset-right, 0px) + 14px);
   background: var(--bg-elevated);
   border: 2px solid var(--border);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: var(--text-xs, 0.8125rem);
   font-weight: 700;
   color: var(--text-secondary);
   cursor: pointer;
@@ -168,7 +168,7 @@
   width: 100%;
   max-width: 400px;
   min-height: 110px;
-  border-radius: 28px;
+  border-radius: var(--radius-2xl);
   border: none;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   color: var(--text-on-primary);
@@ -260,7 +260,7 @@
 .child-home__secondary-btn {
   flex: 1;
   min-height: 88px;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   border: none;
   cursor: pointer;
   font-family: var(--font-display);
@@ -283,7 +283,7 @@
 .child-home__secondary-btn:focus-visible {
   transform: translateY(-2px) scale(1.02);
   box-shadow: var(--shadow-card-hover);
-  outline: 3px solid rgba(255,255,255,0.6);
+  outline: 3px solid var(--glass-shine, rgba(255,255,255,0.6));
   outline-offset: 2px;
 }
 
@@ -302,8 +302,10 @@
 }
 
 .child-home__secondary-btn-icon {
-  font-size: 26px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── Stars strip ─────────────────────────────────────────────── */
@@ -353,12 +355,217 @@
 }
 
 .child-home__heart--full {
-  filter: drop-shadow(0 2px 4px rgba(239,68,68,0.4));
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--error, #ef4444) 40%, transparent));
 }
 
 .child-home__heart--empty {
   opacity: 0.2;
   filter: grayscale(1);
+}
+
+/* ── Word of the Day card ────────────────────────────────────── */
+
+.child-home__word-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.child-home__word-card-icon {
+  flex-shrink: 0;
+}
+
+.child-home__word-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.child-home__word-card-label {
+  font-family: var(--font-display);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.child-home__word-card-word {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--accent-purple, #a855f7);
+  letter-spacing: -0.3px;
+}
+
+/* ── XP bar ─────────────────────────────────────────────────── */
+
+.child-home__xp-bar {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--bg-muted);
+  border: 2px solid var(--border-light);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.child-home__xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--warning) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.child-home__xp-bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-xs, 0.8125rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  text-shadow: 0 1px 2px var(--glass-shine, rgba(255,255,255,0.6));
+  pointer-events: none;
+}
+
+/* ── Decorative floating elements ───────────────────────────── */
+
+.child-home__decorations {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.child-home__deco {
+  position: absolute;
+  will-change: transform;
+}
+
+.child-home__deco--star-1 {
+  top: 8%;
+  left: 6%;
+  animation: deco-float-1 6s ease-in-out infinite alternate;
+}
+
+.child-home__deco--star-2 {
+  top: 18%;
+  right: 8%;
+  animation: deco-float-2 8s ease-in-out infinite alternate;
+}
+
+.child-home__deco--circle-1 {
+  top: 40%;
+  left: 3%;
+  animation: deco-float-3 7s ease-in-out infinite alternate;
+}
+
+.child-home__deco--circle-2 {
+  bottom: 25%;
+  right: 5%;
+  animation: deco-float-1 9s ease-in-out infinite alternate-reverse;
+}
+
+.child-home__deco--diamond {
+  top: 55%;
+  right: 10%;
+  animation: deco-float-2 5s ease-in-out infinite alternate;
+}
+
+.child-home__deco--sparkle {
+  bottom: 15%;
+  left: 8%;
+  animation: deco-float-3 7.5s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes deco-float-1 {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-18px) rotate(15deg); }
+}
+
+@keyframes deco-float-2 {
+  0% { transform: translateY(0) rotate(0deg) scale(1); }
+  100% { transform: translateY(-14px) rotate(-12deg) scale(1.1); }
+}
+
+@keyframes deco-float-3 {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-22px) rotate(20deg); }
+}
+
+/* Floating bubbles */
+.child-home__bubble-deco {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  border: 1.5px solid var(--border-light);
+  opacity: 0.5;
+}
+
+.child-home__bubble-deco--1 {
+  width: 40px;
+  height: 40px;
+  bottom: 30%;
+  left: 5%;
+  animation: bubble-rise-1 12s ease-in-out infinite;
+}
+
+.child-home__bubble-deco--2 {
+  width: 28px;
+  height: 28px;
+  bottom: 20%;
+  right: 12%;
+  animation: bubble-rise-2 10s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.child-home__bubble-deco--3 {
+  width: 20px;
+  height: 20px;
+  bottom: 45%;
+  left: 15%;
+  animation: bubble-rise-1 14s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+@keyframes bubble-rise-1 {
+  0% { transform: translateY(0) scale(1); opacity: 0.4; }
+  50% { transform: translateY(-40px) scale(1.15); opacity: 0.6; }
+  100% { transform: translateY(0) scale(1); opacity: 0.4; }
+}
+
+@keyframes bubble-rise-2 {
+  0% { transform: translateY(0) scale(1); opacity: 0.3; }
+  50% { transform: translateY(-30px) scale(1.1); opacity: 0.5; }
+  100% { transform: translateY(0) scale(1); opacity: 0.3; }
+}
+
+/* Ensure content stays above decorations */
+.child-home__parent-btn,
+.child-home__mascot-wrap,
+.child-home__greeting,
+.child-home__lesson-btn,
+.child-home__secondary-row,
+.child-home__word-card,
+.child-home__xp-bar,
+.child-home__stars,
+.child-home__hearts {
+  position: relative;
+  z-index: 2;
 }
 
 /* ── Responsive tweaks ───────────────────────────────────────── */
@@ -367,6 +574,38 @@
   .child-home__mascot-wrap {
     margin-top: 16px;
     margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .child-home {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+  }
+  .child-home__lesson-btn {
+    max-width: 100%;
+  }
+  .child-home__secondary-row {
+    max-width: 100%;
+  }
+  .child-home__word-card {
+    max-width: 100%;
+  }
+  .child-home__xp-bar {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .child-home__lesson-btn {
+    font-size: 20px;
+    min-height: 100px;
+  }
+  .child-home__secondary-btn {
+    font-size: 17px;
+    min-height: 84px;
+  }
+  .child-home__word-card-word {
+    font-size: 22px;
   }
 }
 

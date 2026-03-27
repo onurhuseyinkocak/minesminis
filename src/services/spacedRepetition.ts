@@ -67,6 +67,13 @@ export function saveSRSState(userId: string, state: SRSState): void {
   try {
     const updated: SRSState = { ...state, lastUpdated: Date.now() };
     localStorage.setItem(storageKey(userId), JSON.stringify(updated));
+
+    // Fire-and-forget: sync to Supabase for cross-device restore
+    import('../services/supabaseSync').then(({ syncSpacedRepetition }) => {
+      void syncSpacedRepetition(userId, updated.words as unknown as Record<string, unknown>);
+    }).catch(() => {
+      // Silent fail — localStorage is primary
+    });
   } catch {
     // localStorage full or unavailable — silently ignore
   }

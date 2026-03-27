@@ -6,6 +6,7 @@
 import React from 'react';
 import { Lock } from 'lucide-react';
 import type { Badge } from '../contexts/GamificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import './BadgeCard.css';
 
 export interface BadgeCardProps {
@@ -16,10 +17,17 @@ export interface BadgeCardProps {
   showDescription?: boolean;
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, lang: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' });
+  return d.toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 }
+
+const RARITY_LABELS_TR: Record<string, string> = {
+  common: 'Yaygın',
+  rare: 'Nadir',
+  epic: 'Epik',
+  legendary: 'Efsanevi',
+};
 
 const BadgeCard: React.FC<BadgeCardProps> = ({
   badge,
@@ -28,7 +36,10 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
   size = 'md',
   showDescription = false,
 }) => {
-  const letter = badge.name.charAt(0).toUpperCase();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
+  const displayName = isTr ? (badge.nameTr ?? badge.name) : badge.name;
+  const letter = displayName.charAt(0).toUpperCase();
 
   return (
     <div
@@ -39,7 +50,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
         earned ? 'badge-card-item--earned' : 'badge-card-item--locked',
       ].join(' ')}
       role="article"
-      aria-label={`${badge.name} — ${earned ? 'earned' : 'locked'}`}
+      aria-label={`${displayName} — ${earned ? (isTr ? 'kazanıldı' : 'earned') : (isTr ? 'kilitli' : 'locked')}`}
     >
       {/* Icon shape */}
       <div className={`badge-card-icon badge-card-icon--${badge.rarity} badge-card-icon--${badge.category}`}>
@@ -54,20 +65,22 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
 
       {/* Badge info */}
       <div className="badge-card-body">
-        <span className="badge-card-name">{badge.nameTr ?? badge.name}</span>
+        <span className="badge-card-name">{displayName}</span>
 
         {showDescription && (
-          <p className="badge-card-desc">{badge.descriptionTr ?? badge.description}</p>
+          <p className="badge-card-desc">
+            {isTr ? (badge.descriptionTr ?? badge.description) : badge.description}
+          </p>
         )}
 
         <span className={`badge-card-rarity badge-card-rarity--${badge.rarity}`}>
-          {badge.rarity}
+          {isTr ? (RARITY_LABELS_TR[badge.rarity] ?? badge.rarity) : badge.rarity}
         </span>
       </div>
 
       {/* Earned date chip */}
       {earned && earnedAt && (
-        <span className="badge-card-date">{formatDate(earnedAt)}</span>
+        <span className="badge-card-date">{formatDate(earnedAt, lang)}</span>
       )}
 
       {/* Earned indicator dot */}

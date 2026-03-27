@@ -107,6 +107,10 @@
   color: var(--text-primary);
   margin: 0;
   line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .game-card__badges {
@@ -252,4 +256,76 @@
   text-align: center;
   padding: 0 var(--space-sm);
   line-height: 1.3;
+}
+
+/* ── Topic Pill Badge ────────────────────────────────────────────────── */
+.game-card__topic-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-top: var(--space-xs);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 107, 53, 0.12);
+  color: var(--primary);
+  border: 1px solid rgba(255, 107, 53, 0.25);
+}
+
+.game-card__topic-pill--phonics {
+  background: rgba(13, 92, 77, 0.12);
+  color: var(--secondary, #0D5C4D);
+  border-color: rgba(13, 92, 77, 0.25);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+
+/* Compact cards on small screens */
+@media (max-width: 480px) {
+  .game-card__icon-wrap {
+    height: 80px;
+  }
+
+  .game-card__name {
+    font-size: 13px;
+  }
+
+  .game-card__desc {
+    font-size: 11px;
+  }
+
+  .game-card__play-btn {
+    font-size: 13px;
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  /* Reduce hover elevation on touch devices */
+  .game-card:not(.game-card--locked):hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* Larger touch targets on mobile */
+@media (max-width: 768px) {
+  .game-card__play-btn {
+    min-height: 44px;
+  }
+
+  .game-card__body {
+    padding: var(--space-sm) var(--space-md);
+  }
+}
+
+/* Slightly larger cards on wide screens */
+@media (min-width: 1200px) {
+  .game-card__icon-wrap {
+    height: 110px;
+  }
+
+  .game-card__name {
+    font-size: 16px;
+  }
 }

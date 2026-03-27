@@ -85,7 +85,7 @@ function SEOManager() {
                 const { data, error } = await supabase.from('blog_posts').select('slug');
                 if (error) {
                     if (error.code !== '42P01' && !error.message?.includes('does not exist')) {
-                        toast.error(`Blog slug\'lari yuklenemedi: ${error.message}`);
+                        toast.error(`Blog sluglari yuklenemedi: ${error.message}`);
                     }
                     return;
                 }

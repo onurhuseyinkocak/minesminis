@@ -36,7 +36,7 @@ function Videos() {
   const [watchedIds, setWatchedIds] = useState<string[]>([]);
   const [expandedGroup, setExpandedGroup] = useState<number | null>(1);
   const { addXP } = useGamification();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   useEffect(() => {
     videoStore.fetchVideos().then((list) => {
@@ -157,7 +157,7 @@ function Videos() {
                   <div className="phonics-group-header-left">
                     <span className="phonics-group-number">G{groupNum}</span>
                     <div className="phonics-group-info">
-                      <h3>Group {groupNum}: {PHONICS_GROUP_LABELS[groupNum]}</h3>
+                      <h3>{lang === 'tr' ? `Grup ${groupNum}` : `Group ${groupNum}`}: {PHONICS_GROUP_LABELS[groupNum]}</h3>
                       <span className="phonics-group-watched">
                         {allWatched ? (
                           <><Check size={14} /> {t('videos.allWatched')}</>
@@ -317,6 +317,13 @@ function Videos() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
+            {filteredVideos.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
+                <p style={{ fontSize: '1.1rem', fontWeight: 600 }}>
+                  {lang === 'tr' ? 'Bu filtreyle eşleşen video bulunamadı.' : 'No videos match this filter.'}
+                </p>
+              </div>
+            )}
             {filteredVideos.map((video, index) => (
               <motion.div
                 key={video.id}
