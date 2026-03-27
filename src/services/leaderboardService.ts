@@ -6,6 +6,7 @@
 
 import { supabase } from '../config/supabase';
 import { errorLogger } from './errorLogger';
+import { withRetry } from '../utils/retryUtils';
 
 // ============================================================
 // TYPES
@@ -70,11 +71,15 @@ interface UserRow {
  */
 export async function getGlobalLeaderboard(currentUserId?: string): Promise<LeaderboardEntry[]> {
     try {
-        const { data, error } = await supabase
-            .from('users')
-            .select('id, display_name, avatar_url, level, xp, streak_days, settings')
-            .order('xp', { ascending: false })
-            .limit(500);
+        // Fetch top 100 by XP — client re-sorts by weekly_xp from settings JSONB.
+        // Keeping under 100 prevents full-table scans while covering all tier groups.
+        const { data, error } = await withRetry(() =>
+            supabase
+                .from('users')
+                .select('id, display_name, avatar_url, level, xp, streak_days, settings')
+                .order('xp', { ascending: false })
+                .limit(100)
+        );
 
         if (error) throw error;
         if (!data) return [];

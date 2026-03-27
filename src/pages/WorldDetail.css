@@ -51,7 +51,7 @@
    HEADER BANNER — world color gradient
    ========================================================================== */
 .world-detail-header {
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-xl) var(--space-xl);
   display: flex;
   align-items: center;
@@ -60,17 +60,41 @@
   color: var(--white);
   position: relative;
   overflow: hidden;
+  min-height: 140px; /* guaranteed banner height on all screens */
+  box-shadow: var(--shadow-lg);
+}
+
+/* Subtle radial vignette for depth on banner */
+.world-detail-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(255,255,255,0.15) 0%, transparent 65%);
+  pointer-events: none;
 }
 
 .world-detail-header__icon {
   font-size: 3.5rem;
   line-height: 1;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.2);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .world-detail-header__info {
   flex: 1;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .world-detail-header__name {
@@ -210,6 +234,7 @@
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
   transition: all var(--transition-base);
+  min-height: 56px; /* 52px+ requirement */
 }
 
 .lesson-card--available {
@@ -234,8 +259,9 @@
 }
 
 .lesson-card--locked {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
+  filter: grayscale(0.3); /* additional visual cue for locked state */
 }
 
 /* ---- NUMBER CIRCLE ---- */
@@ -297,6 +323,10 @@
 /* ---- STATUS ---- */
 .lesson-card__status {
   flex-shrink: 0;
+  min-width: 100px; /* prevent status column from collapsing */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .lesson-card__done-badge {
@@ -391,4 +421,38 @@
     display: flex;
     justify-content: flex-end;
   }
+}
+
+/* ─── Phase Checkpoint Badge ─────────────────────────────────────────────── */
+
+.wd-checkpoint-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--success-pale);
+  color: var(--success);
+  border: 1.5px solid var(--success-light);
+  margin-top: 8px;
+}
+
+.wd-checkpoint-badge--failed {
+  background: var(--warning-pale);
+  color: var(--warning);
+  border-color: var(--warning-light);
+}
+
+[data-theme="dark"] .wd-checkpoint-badge {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success-light);
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+[data-theme="dark"] .wd-checkpoint-badge--failed {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--warning-light);
+  border-color: rgba(251, 191, 36, 0.3);
 }

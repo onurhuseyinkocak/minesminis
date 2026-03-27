@@ -6,7 +6,10 @@ import { Button, ProgressBar, StarBurst } from '../../components/ui';
 import { SFX } from '../../data/soundLibrary';
 import MimiGuide from '../../components/MimiGuide';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { userService } from '../../services/userService';
 import { LS_PLACEMENT_RESULT } from '../../config/storageKeys';
+import './PlacementTest.css';
 
 // ─── Inline SVG Illustrations ───────────────────────────────────────────────
 
@@ -18,8 +21,8 @@ function CatSVG() {
       <polygon points="27,32 23,15 37,30" fill="#F9A8D4" />
       <polygon points="75,35 80,10 60,30" fill="#94A3B8" />
       <polygon points="73,32 77,15 63,30" fill="#F9A8D4" />
-      <circle cx="38" cy="50" r="5" fill="#22C55E" />
-      <circle cx="62" cy="50" r="5" fill="#22C55E" />
+      <circle cx="38" cy="50" r="5" fill="var(--success)" />
+      <circle cx="62" cy="50" r="5" fill="var(--success)" />
       <circle cx="39" cy="49" r="2" fill="#0C0F1A" />
       <circle cx="63" cy="49" r="2" fill="#0C0F1A" />
       <polygon points="50,58 47,62 53,62" fill="#F9A8D4" />
@@ -38,7 +41,7 @@ function HatSVG() {
       <ellipse cx="50" cy="78" rx="45" ry="8" fill="#1E40AF" />
       <rect x="28" y="30" width="44" height="48" rx="3" fill="#2563EB" />
       <rect x="25" y="28" width="50" height="6" rx="2" fill="#1E40AF" />
-      <rect x="28" y="60" width="44" height="6" fill="#E8A317" />
+      <rect x="28" y="60" width="44" height="6" fill="var(--warning)" />
     </svg>
   );
 }
@@ -138,9 +141,9 @@ function SmallDogSVG() {
 function MimiDragonSVG() {
   return (
     <svg viewBox="0 0 120 140" width="120" height="140">
-      <ellipse cx="60" cy="100" rx="30" ry="25" fill="#22C55E" />
+      <ellipse cx="60" cy="100" rx="30" ry="25" fill="var(--success)" />
       <ellipse cx="60" cy="105" rx="20" ry="18" fill="#86EFAC" />
-      <circle cx="60" cy="55" r="28" fill="#22C55E" />
+      <circle cx="60" cy="55" r="28" fill="var(--success)" />
       <ellipse cx="48" cy="48" rx="7" ry="8" fill="#fff" />
       <ellipse cx="72" cy="48" rx="7" ry="8" fill="#fff" />
       <circle cx="50" cy="49" r="4" fill="#FBBF24" />
@@ -154,8 +157,8 @@ function MimiDragonSVG() {
       <path d="M90,85 Q110,60 100,45 Q95,55 90,50 Q92,65 88,75Z" fill="#4ADE80" />
       <polygon points="45,30 40,12 50,28" fill="#FBBF24" />
       <polygon points="75,30 80,12 70,28" fill="#FBBF24" />
-      <ellipse cx="42" cy="122" rx="10" ry="6" fill="#22C55E" />
-      <ellipse cx="78" cy="122" rx="10" ry="6" fill="#22C55E" />
+      <ellipse cx="42" cy="122" rx="10" ry="6" fill="var(--success)" />
+      <ellipse cx="78" cy="122" rx="10" ry="6" fill="var(--success)" />
       <path d="M88,110 Q110,115 105,100 Q108,95 112,98" fill="none" stroke="#22C55E" strokeWidth="6" strokeLinecap="round" />
       <polygon points="110,95 118,90 115,100" fill="#4ADE80" />
     </svg>
@@ -312,21 +315,19 @@ function renderPicture(key: string) {
   }
 }
 
-// ─── Color constants ───────────────────────────────────────────────────────
+// ─── Color constants — use CSS vars; keep minimal palette for dynamic inline borders ───
 
-const C: Record<string, string> = {
-  bg: '#FFF8F0',
-  card: '#FFFFFF',
-  cardAlt: '#F8FAFC',
-  text: '#1a1a2e',
-  textSec: '#475569',
-  border: '#E2E8F0',
-  correct: '#22C55E',
-  wrong: '#F59E0B',
-  primary: '#FF6B35',
+const C = {
+  correct: 'var(--success, #22C55E)',
+  wrong: 'var(--warning, #F59E0B)',
+  primary: 'var(--primary, #FF6B35)',
+  border: 'var(--border, #E2E8F0)',
+  text: 'var(--text-primary)',
+  textSec: 'var(--text-secondary)',
+  cardAlt: 'var(--bg-soft)',
 };
 
-const SOUND_COLORS = ['#EF4444', '#3B82F6', '#22C55E'];
+const SOUND_COLORS = ['var(--error, #EF4444)', 'var(--accent-blue, #3B82F6)', 'var(--success, #22C55E)'];
 
 // ─── Component ─────────────────────────────────────────────────────────────
 
@@ -335,11 +336,11 @@ type Screen = 'intro' | 'question' | 'feedback' | 'result';
 function PlacementTest() {
   const navigate = useNavigate();
   const { lang } = useLanguage();
+  const { user } = useAuth();
   const isTr = lang === 'tr';
   const t = ptContent[lang];
   const [screen, setScreen] = useState<Screen>('intro');
   const [currentQ, setCurrentQ] = useState(0);
-  const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -371,7 +372,6 @@ function PlacementTest() {
     setSelectedIndex(index);
     setIsCorrect(correct);
     if (correct) {
-      setScore((s) => s + 1);
       SFX.correct();
     } else {
       SFX.wrong();
@@ -386,7 +386,11 @@ function PlacementTest() {
         setSelectedIndex(null);
         setScreen('question');
       } else {
-        const finalScore = correct ? score + 1 : score;
+        // FIX: Use the locally-computed `correct` boolean instead of relying on
+        // the `score` state variable, which hasn't been flushed yet (async setState).
+        // `newAnswers` holds the full truth — count directly from it.
+        const newAnswers = [...answers, correct];
+        const finalScore = newAnswers.filter(Boolean).length;
         const placement = getPlacementResult(finalScore, isTr);
         const res: PlacementResult = {
           score: finalScore,
@@ -400,22 +404,46 @@ function PlacementTest() {
           ...res,
           phaseIndex: res.phase - 1,
         }));
+
+        // FIX: Persist placement result to Supabase so it survives cross-device logins.
+        // Fire-and-forget — don't block the UI transition on this.
+        if (user) {
+          const uid = user.uid;
+          if (uid) {
+            userService.getUserProfile(uid).then(existing => {
+              const base = (existing?.settings as Record<string, unknown>) ?? {};
+              userService.updateUserProfile(uid, {
+                settings: {
+                  ...base,
+                  placement_phase: res.phase,
+                  placement_group: res.group,
+                  placement_score: res.score,
+                  placement_date: res.timestamp,
+                  setup_completed: true,
+                },
+              }).catch(() => {
+                // localStorage is already written — non-fatal
+              });
+            }).catch(() => {});
+          }
+        }
+
         setShowStarBurst(true);
         setTimeout(() => setShowStarBurst(false), 1500);
         setScreen('result');
       }
     }, 1500);
-  }, [selectedIndex, question, currentQ, score, isTr]);
+  }, [selectedIndex, question, currentQ, answers, isTr, user]);
 
   // ─── Intro screen ─────────────────────────────────────────────────────
 
   if (screen === 'intro') {
     return (
-      <div style={styles.container}>
+      <div className="pt-container">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          style={styles.centeredColumn}
+          className="pt-centered-col"
         >
           <motion.div
             animate={{ y: [0, -8, 0] }}
@@ -424,10 +452,10 @@ function PlacementTest() {
             <MimiDragonSVG />
           </motion.div>
 
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: C.primary, margin: 0, textAlign: 'center' as const }}>
+          <h1 className="pt-hero-title">
             {t.letsPlay}
           </h1>
-          <p style={{ fontSize: '1.2rem', color: C.textSec, margin: 0, textAlign: 'center' as const }}>
+          <p className="pt-hero-subtitle">
             {t.funQuestions}
           </p>
 
@@ -435,15 +463,15 @@ function PlacementTest() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setScreen('question')}
-            style={styles.goButton}
+            className="pt-go-button"
           >
             {t.go}
           </motion.button>
         </motion.div>
 
         <MimiGuide
-          message="Don't worry, there are no wrong answers! Just try your best!"
-          messageTr="Endişe etme, yanlış cevap yok! Sadece elinden gelenin en iyisini yap!"
+          message="Just try your best! There's no pressure — every answer helps me find the right starting point for you."
+          messageTr="Sadece elinden gelenin en iyisini yap! Her cevap, senin için en iyi başlangıç noktasını bulmama yardımcı oluyor."
           showOnce="mimi_guide_placement"
         />
       </div>
@@ -454,13 +482,13 @@ function PlacementTest() {
 
   if (screen === 'result' && result) {
     return (
-      <div style={styles.container}>
+      <div className="pt-container">
         {showStarBurst && <StarBurst count={16} />}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', stiffness: 200 }}
-          style={styles.centeredColumn}
+          className="pt-centered-col"
         >
           <motion.div
             animate={{ rotate: [0, 5, -5, 0] }}
@@ -469,27 +497,19 @@ function PlacementTest() {
             <MimiDragonSVG />
           </motion.div>
 
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: C.primary, margin: 0, textAlign: 'center' as const }}>
+          <h1 className="pt-hero-title">
             {t.allDone}
           </h1>
 
           {/* Score dots */}
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+          <div className="pt-score-dots">
             {answers.map((correct, i) => (
               <motion.div
                 key={i}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: i * 0.15 }}
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  backgroundColor: correct ? C.correct : '#334155',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                className={`pt-score-dot ${correct ? 'pt-score-dot--correct' : 'pt-score-dot--wrong'}`}
               >
                 {correct && <Check size={18} color="#fff" strokeWidth={3} />}
               </motion.div>
@@ -497,25 +517,16 @@ function PlacementTest() {
           </div>
 
           {/* Phase badge */}
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.6rem 1.2rem',
-            borderRadius: '2rem',
-            backgroundColor: 'rgba(255,107,53,0.10)',
-            border: `1px solid ${C.primary}`,
-            alignSelf: 'center',
-          }}>
+          <div className="pt-phase-badge">
             <Star size={20} color={C.primary} fill={C.primary} />
-            <span style={{ fontSize: '1rem', fontWeight: 700, color: C.primary }}>{result.phaseLabel}</span>
+            <span className="pt-phase-label">{result.phaseLabel}</span>
           </div>
 
           <Button
             variant="primary"
             size="xl"
             onClick={() => navigate('/dashboard')}
-            style={{ backgroundColor: C.primary, borderColor: C.primary, marginTop: '0.5rem', minHeight: 80, fontSize: '1.3rem' }}
+            style={{ marginTop: '0.5rem', minHeight: 80, fontSize: '1.3rem' }}
             fullWidth
           >
             {t.startLearning}
@@ -530,24 +541,15 @@ function PlacementTest() {
   const progress = ((currentQ + (screen === 'feedback' ? 1 : 0)) / QUESTIONS.length) * 100;
 
   return (
-    <div style={styles.container}>
+    <div className="pt-container">
       {/* Progress dots */}
-      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
-        {QUESTIONS.map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: 14,
-              height: 14,
-              borderRadius: '50%',
-              backgroundColor:
-                i < currentQ
-                  ? answers[i] ? C.correct : C.wrong
-                  : i === currentQ ? C.primary : C.border,
-              transition: 'background-color 0.3s',
-            }}
-          />
-        ))}
+      <div className="pt-dots">
+        {QUESTIONS.map((_, i) => {
+          let dotClass = 'pt-dot';
+          if (i < currentQ) dotClass += answers[i] ? ' pt-dot--correct' : ' pt-dot--wrong';
+          else if (i === currentQ) dotClass += ' pt-dot--current';
+          return <div key={i} className={dotClass} />;
+        })}
       </div>
 
       <ProgressBar value={progress} variant="success" size="sm" animated />
@@ -559,7 +561,7 @@ function PlacementTest() {
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.7 }}
-            style={styles.feedbackCard}
+            className="pt-feedback-card"
           >
             {isCorrect ? (
               <>
@@ -569,33 +571,19 @@ function PlacementTest() {
                 >
                   <Check size={72} color={C.correct} strokeWidth={3} />
                 </motion.div>
-                <h2 style={{ color: C.correct, fontSize: '2rem', fontWeight: 800, margin: 0 }}>
+                <p className="pt-feedback-correct-text">
                   {t.great}
-                </h2>
+                </p>
               </>
             ) : (
               <>
-                <div style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(245,158,11,0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
+                <div className="pt-feedback-wrong-icon">
                   <span style={{ fontSize: '2rem', color: C.wrong, fontWeight: 800 }}>~</span>
                 </div>
-                <h2 style={{ color: C.wrong, fontSize: '2rem', fontWeight: 800, margin: 0 }}>
+                <p className="pt-feedback-wrong-text">
                   {t.almost}
-                </h2>
-                <div style={{
-                  marginTop: '0.5rem',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1rem',
-                  border: `2px solid ${C.correct}`,
-                  backgroundColor: 'rgba(34,197,94,0.1)',
-                }}>
+                </p>
+                <div className="pt-answer-reveal">
                   {question.type === 'phoneme' && (
                     <span style={{ fontSize: '2rem', fontWeight: 800, color: C.correct }}>
                       {question.options[question.correctIndex]}
@@ -621,7 +609,7 @@ function PlacementTest() {
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -60 }}
-            style={styles.questionCard}
+            className="pt-question-card"
           >
             {question.type === 'phoneme' && (
               <Q1Phoneme q={question} selectedIndex={selectedIndex} onAnswer={handleAnswer} isTr={isTr} />
@@ -658,15 +646,15 @@ interface QProps {
 function Q1Phoneme({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>{isTr ? 'Dinle!' : 'Listen!'}</h2>
+      <h2 className="pt-q-title">{isTr ? 'Dinle!' : 'Listen!'}</h2>
       <motion.button
         whileTap={{ scale: 0.9 }}
         onClick={() => speak(q.ttsPrompt!, 0.7)}
-        style={styles.speakerButton}
+        className="pt-speaker-btn"
       >
-        <Volume2 size={48} color={C.text} />
+        <Volume2 size={48} color="var(--text-primary)" />
       </motion.button>
-      <div style={styles.optionsRow}>
+      <div className="pt-options-row">
         {q.options.map((letter, i) => (
           <motion.button
             key={i}
@@ -674,9 +662,9 @@ function Q1Phoneme({ q, selectedIndex, onAnswer, isTr }: QProps) {
             whileTap={{ scale: 0.93 }}
             onClick={() => onAnswer(i)}
             disabled={selectedIndex !== null}
-            style={optionCardStyle(i, selectedIndex, q.correctIndex)}
+            className={optionCardClass(i, selectedIndex, q.correctIndex)}
           >
-            <span style={{ fontSize: '4.5rem', fontWeight: 800, color: C.text, lineHeight: 1 }}>
+            <span style={{ fontSize: '4.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>
               {letter}
             </span>
           </motion.button>
@@ -690,18 +678,18 @@ function Q1Phoneme({ q, selectedIndex, onAnswer, isTr }: QProps) {
 function Q2LetterSound({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>{isTr ? 'Hangi ses?' : 'What sound?'}</h2>
+      <h2 className="pt-q-title">{isTr ? 'Hangi ses?' : 'What sound?'}</h2>
       <motion.div
         initial={{ scale: 0.5 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', stiffness: 200 }}
         style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem' }}
       >
-        <span style={{ fontSize: '7.5rem', fontWeight: 800, color: C.primary, lineHeight: 1 }}>
+        <span className="pt-big-letter">
           {q.display}
         </span>
       </motion.div>
-      <div style={styles.optionsRow}>
+      <div className="pt-options-row">
         {q.options.map((label, i) => {
           const isSelected = selectedIndex === i;
           const isCorrectOpt = i === q.correctIndex;
@@ -716,10 +704,8 @@ function Q2LetterSound({ q, selectedIndex, onAnswer, isTr }: QProps) {
                 if (selectedIndex === null) onAnswer(i);
               }}
               disabled={selectedIndex !== null}
+              className="pt-sound-circle"
               style={{
-                width: 90,
-                height: 90,
-                borderRadius: '50%',
                 border: `4px solid ${
                   showResult
                     ? isSelected
@@ -728,21 +714,13 @@ function Q2LetterSound({ q, selectedIndex, onAnswer, isTr }: QProps) {
                     : SOUND_COLORS[i]
                 }`,
                 backgroundColor: showResult && isSelected
-                  ? isCorrectOpt ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)'
-                  : C.cardAlt,
-                cursor: showResult ? 'default' : 'pointer',
-                display: 'flex',
-                flexDirection: 'column' as const,
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.25rem',
+                  ? isCorrectOpt ? 'var(--success-pale)' : 'var(--warning-pale)'
+                  : 'var(--bg-elevated)',
                 opacity: showResult && !isSelected ? 0.4 : 1,
-                transition: 'all 0.2s',
-                fontFamily: 'Nunito, sans-serif',
               }}
             >
               <Play size={28} color={SOUND_COLORS[i]} fill={SOUND_COLORS[i]} />
-              <span style={{ fontSize: '1.1rem', fontWeight: 800, color: C.textSec }}>{label}</span>
+              <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>{label}</span>
             </motion.button>
           );
         })}
@@ -755,22 +733,22 @@ function Q2LetterSound({ q, selectedIndex, onAnswer, isTr }: QProps) {
 function Q3Blending({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>{isTr ? 'Kelimeyi olustur!' : 'Build the word!'}</h2>
+      <h2 className="pt-q-title">{isTr ? 'Kelimeyi olustur!' : 'Build the word!'}</h2>
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-        {q.soundTiles!.map((tile, i) => (
+        {(q.soundTiles ?? []).map((tile, i) => (
           <motion.button
             key={i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.2 }}
             onClick={() => speak(tile, 0.5)}
-            style={styles.soundTile}
+            className="pt-sound-tile"
           >
             {tile}
           </motion.button>
         ))}
       </div>
-      <div style={styles.optionsRow}>
+      <div className="pt-options-row">
         {q.options.map((key, i) => (
           <motion.button
             key={i}
@@ -778,7 +756,7 @@ function Q3Blending({ q, selectedIndex, onAnswer, isTr }: QProps) {
             whileTap={{ scale: 0.93 }}
             onClick={() => onAnswer(i)}
             disabled={selectedIndex !== null}
-            style={pictureCardStyle(i, selectedIndex, q.correctIndex)}
+            className={`${optionCardClass(i, selectedIndex, q.correctIndex)} pt-picture-card`}
           >
             {renderPicture(key)}
           </motion.button>
@@ -792,18 +770,18 @@ function Q3Blending({ q, selectedIndex, onAnswer, isTr }: QProps) {
 function Q4Decoding({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>{isTr ? 'Bunu oku!' : 'Read this!'}</h2>
+      <h2 className="pt-q-title">{isTr ? 'Bunu oku!' : 'Read this!'}</h2>
       <motion.div
         initial={{ scale: 0.5 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', stiffness: 200 }}
         style={{ display: 'flex', justifyContent: 'center', padding: '0.5rem' }}
       >
-        <span style={{ fontSize: '5rem', fontWeight: 800, color: C.primary, lineHeight: 1 }}>
+        <span className="pt-big-word">
           {q.display}
         </span>
       </motion.div>
-      <div style={styles.optionsRow}>
+      <div className="pt-options-row">
         {q.options.map((key, i) => (
           <motion.button
             key={i}
@@ -811,7 +789,7 @@ function Q4Decoding({ q, selectedIndex, onAnswer, isTr }: QProps) {
             whileTap={{ scale: 0.93 }}
             onClick={() => onAnswer(i)}
             disabled={selectedIndex !== null}
-            style={pictureCardStyle(i, selectedIndex, q.correctIndex)}
+            className={`${optionCardClass(i, selectedIndex, q.correctIndex)} pt-picture-card`}
           >
             {renderPicture(key)}
           </motion.button>
@@ -825,15 +803,9 @@ function Q4Decoding({ q, selectedIndex, onAnswer, isTr }: QProps) {
 function Q5Comprehension({ q, selectedIndex, onAnswer, isTr }: QProps) {
   return (
     <>
-      <h2 style={styles.qTitle}>{isTr ? 'Hangisi?' : 'Which one?'}</h2>
-      <div style={{
-        textAlign: 'center' as const,
-        padding: '1rem',
-        borderRadius: '1rem',
-        backgroundColor: C.cardAlt,
-        border: `1px solid ${C.border}`,
-      }}>
-        <span style={{ fontSize: '2.2rem', fontWeight: 700, color: C.text, lineHeight: 1.3 }}>
+      <h2 className="pt-q-title">{isTr ? 'Hangisi?' : 'Which one?'}</h2>
+      <div className="pt-sentence-box">
+        <span className="pt-sentence-text">
           {q.display}
         </span>
       </div>
@@ -845,7 +817,8 @@ function Q5Comprehension({ q, selectedIndex, onAnswer, isTr }: QProps) {
             whileTap={{ scale: 0.93 }}
             onClick={() => onAnswer(i)}
             disabled={selectedIndex !== null}
-            style={{ ...pictureCardStyle(i, selectedIndex, q.correctIndex), flex: 1, minHeight: 140 }}
+            className={`${optionCardClass(i, selectedIndex, q.correctIndex)} pt-picture-card`}
+            style={{ flex: 1, minHeight: 140 }}
           >
             {renderPicture(key)}
           </motion.button>
@@ -855,162 +828,27 @@ function Q5Comprehension({ q, selectedIndex, onAnswer, isTr }: QProps) {
   );
 }
 
-// ─── Style helpers ──────────────────────────────────────────────────────────
+// ─── Class name helpers (replaces old inline style helpers) ──────────────────
 
-function optionCardStyle(
+function optionCardClass(
   index: number,
   selectedIndex: number | null,
   correctIndex: number,
-): React.CSSProperties {
+): string {
   const showResult = selectedIndex !== null;
   const isSelected = selectedIndex === index;
   const isCorrectOpt = index === correctIndex;
-
-  let borderColor = C.border;
-  let bg = C.cardAlt;
-  let opacity = 1;
-
+  let cls = 'pt-option-card';
   if (showResult) {
     if (isSelected) {
-      borderColor = isCorrectOpt ? C.correct : C.wrong;
-      bg = isCorrectOpt ? 'rgba(34,197,94,0.15)' : 'rgba(245,158,11,0.15)';
+      cls += isCorrectOpt ? ' pt-option-card--correct' : ' pt-option-card--wrong';
     } else {
-      opacity = 0.4;
+      cls += ' pt-option-card--dimmed';
     }
   }
-
-  return {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 100,
-    minWidth: 90,
-    flex: 1,
-    borderRadius: '1.25rem',
-    border: `3px solid ${borderColor}`,
-    backgroundColor: bg,
-    cursor: showResult ? 'default' : 'pointer',
-    opacity,
-    transition: 'all 0.2s',
-    fontFamily: 'Nunito, sans-serif',
-    padding: '0.75rem',
-  };
+  return cls;
 }
 
-function pictureCardStyle(
-  index: number,
-  selectedIndex: number | null,
-  correctIndex: number,
-): React.CSSProperties {
-  return {
-    ...optionCardStyle(index, selectedIndex, correctIndex),
-    minHeight: 110,
-    padding: '1rem',
-    flexDirection: 'column',
-  };
-}
-
-// ─── Styles ────────────────────────────────────────────────────────────────
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1.25rem',
-    padding: '1.5rem',
-    minHeight: '100vh',
-    fontFamily: 'Nunito, sans-serif',
-    maxWidth: '500px',
-    margin: '0 auto',
-    backgroundColor: C.bg,
-  },
-  centeredColumn: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1.25rem',
-    width: '100%',
-    marginTop: '2rem',
-  },
-  questionCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.25rem',
-    padding: '1.5rem',
-    background: C.card,
-    border: `1px solid ${C.border}`,
-    borderRadius: '1.5rem',
-    width: '100%',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-  },
-  qTitle: {
-    textAlign: 'center' as const,
-    fontSize: '1.8rem',
-    fontWeight: 800,
-    color: C.primary,
-    margin: 0,
-  },
-  speakerButton: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    border: `3px solid ${C.primary}`,
-    backgroundColor: C.cardAlt,
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    fontFamily: 'Nunito, sans-serif',
-  },
-  optionsRow: {
-    display: 'flex',
-    gap: '0.75rem',
-    justifyContent: 'center',
-    flexWrap: 'wrap' as const,
-  },
-  soundTile: {
-    width: '4rem',
-    height: '4rem',
-    borderRadius: '1rem',
-    border: `3px solid ${C.primary}`,
-    backgroundColor: C.cardAlt,
-    fontSize: '2rem',
-    fontWeight: 800,
-    color: C.primary,
-    cursor: 'pointer',
-    fontFamily: 'Nunito, sans-serif',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  feedbackCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0.75rem',
-    padding: '2.5rem',
-    background: C.card,
-    border: `1px solid ${C.border}`,
-    borderRadius: '1.5rem',
-    width: '100%',
-    textAlign: 'center' as const,
-    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-  },
-  goButton: {
-    minHeight: 80,
-    minWidth: 200,
-    borderRadius: '1.5rem',
-    border: 'none',
-    backgroundColor: C.primary,
-    color: '#FFFFFF',
-    fontSize: '2rem',
-    fontWeight: 800,
-    cursor: 'pointer',
-    fontFamily: 'Nunito, sans-serif',
-    marginTop: '1rem',
-  },
-};
+// All styles are now in PlacementTest.css
 
 export default PlacementTest;

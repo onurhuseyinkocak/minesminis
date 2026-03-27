@@ -28,8 +28,8 @@
 }
 
 .pd-header-icon {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   background: var(--primary-pale);
   border-radius: var(--radius-md);
   display: flex;
@@ -66,7 +66,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  /* 44px min touch target — 10px v-padding + ~24px content */
+  padding: 10px 16px;
+  min-height: 44px;
   border-radius: var(--radius-xl);
   border: 1.5px solid var(--border);
   background: var(--bg-card);
@@ -96,8 +98,13 @@
 }
 
 .pd-child-avatar {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
 }
 
 /* ── Content area ── */
@@ -113,7 +120,7 @@
 /* ── Section label ── */
 .pd-section-label {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -177,8 +184,8 @@
 }
 
 .pd-stat-icon {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -217,6 +224,10 @@
   color: var(--text-muted);
 }
 
+.pd-stat-delta--negative {
+  color: var(--error);
+}
+
 /* ── Two column layout ── */
 .pd-two-col {
   display: grid;
@@ -246,7 +257,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   cursor: default;
@@ -283,7 +294,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
@@ -368,14 +379,14 @@
 }
 
 .pd-activity-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .pd-activity-icon--phonics  { background: var(--accent-indigo-pale); color: var(--accent-indigo); }
@@ -396,7 +407,7 @@
 
 .pd-activity-bar-wrap {
   flex: 2;
-  height: 6px;
+  height: 8px;
   background: var(--bg-muted);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -466,7 +477,7 @@
 
 .pd-phonics-pct {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1;
 }
@@ -487,7 +498,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
@@ -519,8 +530,8 @@
 }
 
 .pd-badge-icon {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-md);
   background: var(--warning-pale);
   display: flex;
@@ -550,7 +561,7 @@
   border: 1px solid var(--border);
   border-left: 4px solid var(--secondary);
   border-radius: var(--radius-md);
-  padding: 20px 24px;
+  padding: 20px 24px 20px 20px;
 }
 
 .pd-insight-recommendation {
@@ -594,8 +605,9 @@
 }
 
 .pd-empty svg {
-  opacity: 0.3;
+  opacity: 0.45;
   margin-bottom: 8px;
+  color: var(--primary);
 }
 
 .pd-empty-title {
@@ -687,6 +699,16 @@
   .pd-phonics-grid {
     grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
   }
+
+  .pd-weekly-chart {
+    height: 120px;
+    gap: 4px;
+  }
+
+  .pd-weekly-day-label,
+  .pd-weekly-min-label {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 380px) {
@@ -705,22 +727,25 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 9px 18px;
-  background: var(--primary);
+  padding: 11px 20px;
+  min-height: 44px;
+  background: var(--gradient-primary);
   color: var(--text-on-primary);
   border: none;
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 700;
   font-family: var(--font-display);
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .pd-report-btn:hover {
-  background: var(--primary-hover);
+  opacity: 0.9;
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .pd-report-btn:active {
@@ -728,8 +753,32 @@
 }
 
 @media print {
-  .pd-report-btn {
+  .pd-report-btn,
+  .pd-child-selector,
+  .pd-header-icon {
     display: none;
+  }
+
+  .pd-page {
+    background: white;
+    padding: 0;
+  }
+
+  .pd-header {
+    box-shadow: none;
+    border-bottom: 2px solid var(--border);
+    padding: 16px 24px;
+  }
+
+  .pd-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid var(--border);
+  }
+
+  .pd-content {
+    padding: 16px;
+    gap: 20px;
   }
 }
 
@@ -738,7 +787,7 @@
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  height: 120px;
+  height: 160px;
   padding-bottom: 0;
 }
 
@@ -767,17 +816,16 @@
   border-radius: 6px 6px 0 0;
   min-height: 4px;
   transition: height 500ms ease;
-  border-top: 2px solid transparent;
 }
 
 .pd-weekly-bar-fill--today {
-  background: var(--primary);
-  border-top-color: var(--primary-hover);
+  background: var(--gradient-primary);
+  box-shadow: 0 -2px 0 0 var(--primary-hover);
 }
 
 .pd-weekly-day-label {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   line-height: 1;
@@ -790,7 +838,7 @@
 
 .pd-weekly-min-label {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-muted);
   line-height: 1;
 }
@@ -837,6 +885,7 @@
   font-weight: 800;
   line-height: 1;
   margin-bottom: 4px;
+  color: var(--text-primary);
 }
 
 /* ── Strengths & Weaknesses ── */
@@ -848,7 +897,7 @@
 
 .pd-sw-label {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -887,7 +936,7 @@
 }
 
 .pd-sw-score {
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.85;
 }
 
@@ -922,4 +971,141 @@
   color: var(--text-muted);
   margin-top: 3px;
   line-height: 1.5;
+}
+
+/* ── Cross-device / Cloud stats ── */
+.pd-cloud-stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.pd-cloud-stat {
+  flex: 1;
+  min-width: 80px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.pd-cloud-stat-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.pd-cloud-stat-value--primary {
+  color: var(--primary);
+}
+
+.pd-cloud-stat-value--success {
+  color: var(--success);
+}
+
+.pd-cloud-stat-label {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+/* ── Cloud activity list ── */
+.pd-cloud-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pd-cloud-activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pd-cloud-activity-item:last-child {
+  border-bottom: none;
+}
+
+.pd-cloud-activity-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pd-cloud-activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pd-cloud-activity-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.pd-cloud-activity-meta {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.pd-cloud-activity-xp {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--primary);
+  white-space: nowrap;
+  padding-left: 8px;
+}
+
+/* ── Card count/meta badge ── */
+.pd-card-meta {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Mastery row description ── */
+.pd-mastery-desc {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── Insight secondary text ── */
+.pd-insight-body {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+
+/* ── Weekly chart label ── */
+.pd-weekly-stat-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Empty cloud activity ── */
+.pd-cloud-empty {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
 }

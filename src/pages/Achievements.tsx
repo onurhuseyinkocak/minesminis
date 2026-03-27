@@ -3,14 +3,16 @@
  * and progress hints for unearned badges.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Lock, ArrowLeft } from 'lucide-react';
+import { Trophy, Lock, ArrowLeft, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import type { Badge } from '../contexts/GamificationContext';
 import BadgeCard from '../components/BadgeCard';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
+import toast from 'react-hot-toast';
 import './Achievements.css';
 
 type Category = 'all' | 'learning' | 'streak' | 'social' | 'special';
@@ -63,9 +65,32 @@ const Achievements: React.FC = () => {
   const navigate = useNavigate();
   const { allBadges, hasBadge, stats } = useGamification();
   const { t, lang } = useLanguage();
+  usePageTitle('Başarılarım', 'Achievements');
   const isTr = lang === 'tr';
   const CATEGORY_LABELS = isTr ? CATEGORY_LABELS_TR : CATEGORY_LABELS_EN;
   const [activeCategory, setActiveCategory] = useState<Category>('all');
+
+  const handleShareAchievements = useCallback(async () => {
+    const count = (stats.badges ?? []).length;
+    const text = isTr
+      ? `MinesMinis'te ${count} rozet kazandım! Sen de öğrenmeye başla: https://minesminis.com`
+      : `I've earned ${count} badges on MinesMinis! Start learning: https://minesminis.com`;
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: 'MinesMinis', text, url: 'https://minesminis.com' });
+        return;
+      } catch {
+        // cancelled or failed — fall through
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(isTr ? 'Kopyalandı!' : 'Copied!');
+    } catch {
+      toast.error(isTr ? 'Paylaşılamadı' : 'Could not share');
+    }
+  }, [isTr, stats.badges]);
 
   const earnedIds = stats.badges ?? [];
   const earnedCount = earnedIds.length;
@@ -100,7 +125,7 @@ const Achievements: React.FC = () => {
         className="achievements-content"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
       >
         {/* ── Header ─────────────────────────────────────────── */}
         <header className="achievements-header">
@@ -115,6 +140,17 @@ const Achievements: React.FC = () => {
             </button>
             <Trophy size={28} color="var(--warning)" />
             <h1>{t ? t('achievements.title') : 'Rozetlerim'}</h1>
+            {earnedCount > 0 && (
+              <button
+                type="button"
+                className="achievements-share-btn"
+                onClick={() => void handleShareAchievements()}
+                aria-label={isTr ? 'Rozetlerini paylaş' : 'Share your badges'}
+              >
+                <Share2 size={16} />
+                <span>{isTr ? 'Paylaş' : 'Share'}</span>
+              </button>
+            )}
           </div>
 
           {/* Summary stats */}

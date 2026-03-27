@@ -48,3 +48,6 @@ export const LS_READING_PROGRESS = 'mm_reading_progress';
 export const LS_GAMES_STORE = 'minesminis_games';
 export const LS_WORDS_STORE = 'minesminis_words';
 export const LS_WORKSHEETS_STORE = 'minesminis_worksheets';
+
+// ── Cookie Consent (GDPR / KVKK) ─────────────────────────────────────────────
+export const LS_COOKIE_CONSENT = 'mm_cookie_consent';

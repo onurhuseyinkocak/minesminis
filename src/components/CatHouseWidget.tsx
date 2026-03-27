@@ -77,8 +77,14 @@ const CatHouseWidget: React.FC = () => {
                     setPhase('waving');
                 }
             }}
-            role="img"
-            aria-label="Mimi the cat"
+            role="button"
+            tabIndex={0}
+            aria-label={phase === 'sleeping' ? 'Wake up Mimi the cat' : 'Mimi the cat'}
+            onKeyDown={e => {
+                if ((e.key === 'Enter' || e.key === ' ') && phase === 'sleeping') {
+                    setPhase('waving');
+                }
+            }}
         >
             {/* House SVG */}
             <div className="cat-house__house">
@@ -139,7 +145,7 @@ const CatHouseWidget: React.FC = () => {
                 type="button"
                 className="cat-house__close"
                 onClick={e => { e.stopPropagation(); setVisible(false); }}
-                aria-label="Close"
+                aria-label="Close cat widget"
             >
                 ×
             </button>

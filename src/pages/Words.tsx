@@ -7,6 +7,7 @@ import './Words.css';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { kidsWords as fallbackWords } from '../data/wordsData';
+import { getCardThumbnailUrl } from '../utils/imageTransform';
 import { getDueWords, updateWordProgress, type WordProgress } from '../data/spacedRepetition';
 import { SFX } from '../data/soundLibrary';
 import MimiGuide from '../components/MimiGuide';
@@ -50,6 +51,10 @@ function saveLearnedToLS(words: Set<string>) {
 const Words: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = 'Kelimeler — MinesMinis';
+    return () => { document.title = 'MinesMinis'; };
+  }, []);
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>(
     (searchParams.get('tab') as TabType) || 'words'
@@ -112,6 +117,15 @@ const Words: React.FC = () => {
     fetchKidsWords();
   }, []);
 
+  // Cancel TTS on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (activeTab === 'review') {
       setDueWords(getDueWords());
@@ -146,8 +160,9 @@ const Words: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('words')
-        .select('*')
-        .order('word');
+        .select('id, word, turkish, level, category, emoji, example, word_audio_url, image_url, example_sentence, example_sentence_tr')
+        .order('word')
+        .limit(500);
       if (error) throw error;
       setKidsWords((data && data.length > 0) ? data : fallbackWords);
     } catch {
@@ -412,7 +427,7 @@ const Words: React.FC = () => {
                               <div className="kid-card-front">
                                 <div className="kid-card-visual">
                                   {word.image_url ? (
-                                    <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
+                                    <img src={getCardThumbnailUrl(word.image_url) ?? word.image_url ?? ''} alt={word.turkish} className="kid-card-image" loading="lazy" width={200} height={200} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                                   ) : word.emoji ? (
                                     <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                                   ) : (
@@ -469,7 +484,7 @@ const Words: React.FC = () => {
                         <div className="kid-card-front">
                           <div className="kid-card-visual">
                             {word.image_url ? (
-                              <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
+                              <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                             ) : word.emoji ? (
                               <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                             ) : (

@@ -74,8 +74,10 @@ function PhaseIcon({ phaseId, size = 40 }: { phaseId: string; size?: number }) {
 import { Card, ProgressBar, Button, Badge } from '../components/ui';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { getWorldById } from '../data/curriculum';
 import type { Lesson } from '../data/curriculum';
+import { hasPassedCheckpoint, getCheckpointResult } from '../services/phaseCheckpointService';
 import {
   isLessonAvailable,
   getWorldCompletionCount,
@@ -144,6 +146,7 @@ const WorldDetail = () => {
   const { worldId } = useParams<{ worldId: string }>();
   const { user } = useAuth();
   const { t, lang } = useLanguage();
+  usePageTitle('Dünya Detayı', 'World Detail');
   const userId = user?.uid || 'guest';
 
   const world = getWorldById(worldId || '');
@@ -377,6 +380,11 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
   const totalActivities = unit.activities.length;
   const progressPct = totalActivities > 0 ? Math.round((activitiesCompleted / totalActivities) * 100) : 0;
 
+  // Phase checkpoint state
+  const phaseIndex = PHASES.findIndex(p => p.id === phase.id);
+  const checkpointPassed = phaseIndex >= 0 ? hasPassedCheckpoint(phaseIndex) : false;
+  const checkpointResult = phaseIndex >= 0 ? getCheckpointResult(phaseIndex) : null;
+
   const activityTypeConfig: Record<string, { label: string; icon: typeof Play }> = {
     'sound-intro':    { label: 'Sound Intro', icon: Music },
     'blending':       { label: 'Blending', icon: Layers },
@@ -419,6 +427,14 @@ function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
               {activitiesCompleted}/{totalActivities} {t('worlds.activitiesCompleted')}
             </span>
           </div>
+          {checkpointPassed && (
+            <span className="wd-checkpoint-badge">Seviye Testi Gecildi</span>
+          )}
+          {checkpointResult && !checkpointPassed && (
+            <span className="wd-checkpoint-badge wd-checkpoint-badge--failed">
+              Test: {checkpointResult.score}/{checkpointResult.total} — Tekrar dene
+            </span>
+          )}
         </div>
       </motion.div>
 

@@ -16,6 +16,7 @@
   border: none;
   border-radius: var(--radius-full, 9999px);
   cursor: pointer;
+  background: var(--speak-btn-bg, rgba(255, 107, 53, 0.12)); /* color-mix fallback */
   background: var(--speak-btn-bg, color-mix(in srgb, var(--primary, #FF6B35) 12%, transparent));
   color: var(--speak-btn-color, var(--primary, #FF6B35));
   transition:
@@ -30,6 +31,7 @@
 }
 
 .speak-btn:hover {
+  background: var(--speak-btn-bg-hover, rgba(255, 107, 53, 0.22)); /* color-mix fallback */
   background: var(--speak-btn-bg-hover, color-mix(in srgb, var(--primary, #FF6B35) 22%, transparent));
   transform: scale(1.08);
 }
@@ -48,12 +50,18 @@
   width: 28px;
   height: 28px;
   font-size: var(--text-xs, 11px);
+  /* Expand touch area without changing visual size */
+  padding: 8px;
+  box-sizing: content-box;
 }
 
 .speak-btn--md {
   width: 36px;
   height: 36px;
   font-size: var(--text-sm, 13px);
+  /* Expand touch area: 36px + 8px×2 = 52px tap target */
+  padding: 4px;
+  box-sizing: content-box;
 }
 
 .speak-btn--lg {
@@ -79,12 +87,20 @@
 /* ── Playing state — pulse animation ────────────────────────────────────── */
 
 @keyframes speak-pulse {
-  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary, #FF6B35) 50%, transparent); }
-  70%  { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary, #FF6B35) 0%, transparent); }
-  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary, #FF6B35) 0%, transparent); }
+  0%   { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.5); } /* color-mix fallback */
+  70%  { box-shadow: 0 0 0 8px rgba(255, 107, 53, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); }
+}
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  @keyframes speak-pulse {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary, #FF6B35) 50%, transparent); }
+    70%  { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary, #FF6B35) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary, #FF6B35) 0%, transparent); }
+  }
 }
 
 .speak-btn--playing {
+  background: var(--speak-btn-bg-active, rgba(255, 107, 53, 0.20)); /* color-mix fallback */
   background: var(--speak-btn-bg-active, color-mix(in srgb, var(--primary, #FF6B35) 20%, transparent));
   animation: speak-pulse 1.2s ease-out infinite;
   color: var(--primary, #FF6B35);

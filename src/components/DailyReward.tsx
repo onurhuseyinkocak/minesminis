@@ -137,7 +137,7 @@ const DailyReward: React.FC = () => {
         <div className="daily-reward-overlay" onClick={() => setIsOpen(false)}>
             {showClaimCelebration && <ConfettiRain />}
             <div className="daily-reward-modal" onClick={(e) => e.stopPropagation()}>
-                <button type="button" className="close-btn" onClick={() => setIsOpen(false)}><X size={18} /></button>
+                <button type="button" className="close-btn" onClick={() => setIsOpen(false)} aria-label={lang === 'tr' ? 'Kapat' : 'Close'}><X size={18} /></button>
 
                 <div className="modal-header">
                     <h2><Gift size={20} style={{ display: 'inline', verticalAlign: 'middle' }} /> {t('dailyReward.title')}</h2>

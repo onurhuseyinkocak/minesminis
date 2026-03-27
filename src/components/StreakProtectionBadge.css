@@ -22,7 +22,7 @@
 
 .spb--sm {
   padding: 3px 10px;
-  font-size: 0.6875rem; /* 11px */
+  font-size: 0.75rem; /* 11px */
 }
 
 .spb--md {
@@ -50,7 +50,7 @@
 
 .spb--empty {
   background-color: var(--ink-50, #F8FAFC);
-  color: var(--ink-400, #94A3B8);
+  color: var(--ink-400, #6B7A99);
 }
 
 .spb--empty .spb__icon {
@@ -79,7 +79,7 @@
   transform: translateX(-50%);
   background-color: var(--ink-900, #0F172A);
   color: var(--cream-50, #FFFDF7);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-family: var(--font-body, 'Inter', sans-serif);
   font-weight: 500;
   padding: 5px 10px;

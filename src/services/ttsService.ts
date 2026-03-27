@@ -11,6 +11,63 @@
 
 import { supabase } from '../config/supabase';
 
+// ─── Global mute + speed state ────────────────────────────────────────────────
+
+const LS_SOUND_KEY = 'mm_sound_enabled';
+const LS_TTS_RATE_KEY = 'mm_tts_rate';
+
+function _isSoundEnabled(): boolean {
+  try {
+    const val = typeof localStorage !== 'undefined' ? localStorage.getItem(LS_SOUND_KEY) : null;
+    return val !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+/** Read user-configured TTS rate from Settings page preference.
+ *  slow → 0.6 | normal → fallback (default 0.8) | fast → 1.1
+ */
+function _getTtsRate(fallback = 0.8): number {
+  try {
+    const val = typeof localStorage !== 'undefined' ? localStorage.getItem(LS_TTS_RATE_KEY) : null;
+    if (val === 'slow') return 0.6;
+    if (val === 'fast') return 1.1;
+  } catch { /* ignore */ }
+  return fallback;
+}
+
+let _ttsEnabled: boolean = _isSoundEnabled();
+let _userRate: number = _getTtsRate();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('mm-sound-toggle', (e: Event) => {
+    const detail = (e as CustomEvent<{ enabled: boolean }>).detail;
+    _ttsEnabled = detail.enabled;
+  });
+
+  window.addEventListener('mm-tts-speed', (e: Event) => {
+    const detail = (e as CustomEvent<{ speed: string }>).detail;
+    if (detail.speed === 'slow') _userRate = 0.6;
+    else if (detail.speed === 'fast') _userRate = 1.1;
+    else _userRate = 0.8;
+  });
+}
+
+// ─── iOS detection ────────────────────────────────────────────────────────────
+
+function _isIOS(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+export { _isIOS };
+
+// ─── Speak debounce — prevents rapid-fire TTS queue overflow ─────────────────
+
+let _lastSpeakTime = 0;
+const SPEAK_DEBOUNCE_MS = 300;
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface TTSOptions {
@@ -107,19 +164,51 @@ async function lookupCache(text: string): Promise<string | null> {
   const storageKey = storageKeyFor(key);
   if (storageKey) {
     const url = `${STORAGE_BASE}/${storageKey}`;
-    // Quick HEAD check to see if the file exists
+    // Quick HEAD check (10s timeout) to see if the file exists
     try {
-      const resp = await fetch(url, { method: 'HEAD' });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const resp = await fetch(url, { method: 'HEAD', signal: controller.signal });
+      clearTimeout(timeoutId);
       if (resp.ok) {
         _urlCache.set(key, url);
         return url;
       }
     } catch {
-      // Storage file not found
+      // Storage file not found or request aborted by timeout
     }
   }
 
-  // 2. Fallback: look up in tts_cache table by text match
+  // 2. Try local /audio/words/{word}.mp3 (bundled in public/)
+  // This is faster and works offline — only for single words
+  if (/^[a-z'-]+$/.test(key) && !PHONICS_GRAPHEMES.has(key)) {
+    const localUrl = `/audio/words/${key}.mp3`;
+    try {
+      const resp = await fetch(localUrl, { method: 'HEAD' });
+      if (resp.ok) {
+        _urlCache.set(key, localUrl);
+        return localUrl;
+      }
+    } catch {
+      // local file not found
+    }
+  }
+
+  // 3. Try local /audio/phonics/{grapheme}.mp3 (bundled in public/)
+  if (PHONICS_GRAPHEMES.has(key)) {
+    const localUrl = `/audio/phonics/${key}.mp3`;
+    try {
+      const resp = await fetch(localUrl, { method: 'HEAD' });
+      if (resp.ok) {
+        _urlCache.set(key, localUrl);
+        return localUrl;
+      }
+    } catch {
+      // local phonics file not found
+    }
+  }
+
+  // 4. Fallback: look up in tts_cache table by text match
   try {
     const { data } = await supabase
       .from('tts_cache')
@@ -213,7 +302,7 @@ function _speakWebSpeech(text: string, options?: TTSOptions): void {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = options?.lang ?? 'en-US';
-    utterance.rate = options?.rate ?? 0.8;
+    utterance.rate = options?.rate ?? _userRate;
     utterance.pitch = options?.pitch ?? 1.1;
     utterance.volume = options?.volume ?? 1;
 
@@ -261,12 +350,30 @@ async function _playUrl(
  * Main speak entry point.
  * 1. Check tts_cache in Supabase → play URL if found
  * 2. Fall back to Web Speech API
+ *
+ * Guards:
+ * - Mute: respects mm_sound_enabled localStorage flag
+ * - Debounce: ignores calls within SPEAK_DEBOUNCE_MS of the previous call
+ * - iOS: on iOS, autoPlay calls from useEffect are silently skipped;
+ *   the call must originate from a direct user gesture to succeed.
  */
 export function speak(text: string, options?: TTSOptions): void {
+  if (!_ttsEnabled) {
+    options?.onEnd?.();
+    return;
+  }
   if (!text.trim()) {
     options?.onError?.();
     return;
   }
+
+  // Debounce: ignore rapid consecutive calls
+  const now = Date.now();
+  if (now - _lastSpeakTime < SPEAK_DEBOUNCE_MS) {
+    options?.onError?.();
+    return;
+  }
+  _lastSpeakTime = now;
 
   const trimmed = text.trim();
 
@@ -286,12 +393,25 @@ export function speak(text: string, options?: TTSOptions): void {
 
 /**
  * Async version of speak — resolves when audio starts or fallback begins.
+ * Same mute + debounce guards as speak().
  */
 export async function playText(text: string, options?: TTSOptions): Promise<void> {
+  if (!_ttsEnabled) {
+    options?.onEnd?.();
+    return;
+  }
   if (!text.trim()) {
     options?.onError?.();
     return;
   }
+
+  // Debounce
+  const now = Date.now();
+  if (now - _lastSpeakTime < SPEAK_DEBOUNCE_MS) {
+    options?.onError?.();
+    return;
+  }
+  _lastSpeakTime = now;
 
   const trimmed = text.trim();
   const url = await lookupCache(trimmed);
@@ -315,6 +435,7 @@ export async function playText(text: string, options?: TTSOptions): Promise<void
  */
 export function speakPhoneme(phoneme: string, options?: Pick<TTSOptions, 'onEnd' | 'onError'>): void {
   if (typeof window === 'undefined') return;
+  if (!_ttsEnabled) { options?.onEnd?.(); return; }
 
   const clean = phoneme.trim().toLowerCase();
 
@@ -348,6 +469,7 @@ export function speakPhoneme(phoneme: string, options?: Pick<TTSOptions, 'onEnd'
  */
 export function speakWordWithTranslation(word: string, translationTr: string): void {
   if (!isTTSAvailable()) return;
+  if (!_ttsEnabled) return;
 
   try {
     window.speechSynthesis.cancel();
@@ -401,6 +523,7 @@ export async function speakElevenLabs(text: string, _speed = 1.0): Promise<void>
  * Narrate story text — same as playText at a slightly slower rate.
  */
 export async function narrateText(text: string): Promise<void> {
+  if (!_ttsEnabled) return;
   const trimmed = text.trim();
   if (!trimmed) return;
 

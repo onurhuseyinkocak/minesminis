@@ -25,7 +25,7 @@ export default function GlobalMascot() {
 
   const handleClick = useCallback(() => {
     if (feedback) return; // don't interrupt active game feedback
-    const msgs = ['Harika!', 'Devam et!', 'Süpersin! 🎉', 'Bravo!', 'Aferin!'];
+    const msgs = ['Harika!', 'Devam et!', 'Süpersin!', 'Bravo!', 'Aferin!'];
     triggerMascot('celebrating', msgs[Math.floor(Math.random() * msgs.length)], 2000);
   }, [feedback, triggerMascot]);
 
@@ -89,7 +89,7 @@ export default function GlobalMascot() {
                 boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
                 pointerEvents: feedback ? 'auto' : 'none',
                 position: 'relative',
-                maxWidth: 200,
+                maxWidth: 240,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 8,
@@ -124,7 +124,7 @@ export default function GlobalMascot() {
                     alignSelf: 'flex-start',
                   }}
                 >
-                  +{feedback!.xpEarned} XP
+                  +{feedback.xpEarned} XP
                 </motion.span>
               )}
 
@@ -144,7 +144,7 @@ export default function GlobalMascot() {
                     fontWeight: 800,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
-                    minHeight: 36,
+                    minHeight: 44,
                     pointerEvents: 'auto',
                   }}
                 >

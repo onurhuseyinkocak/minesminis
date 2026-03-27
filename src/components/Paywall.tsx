@@ -16,15 +16,15 @@ export default function Paywall({ feature }: PaywallProps) {
   const { lang } = useLanguage();
 
   const title = lang === 'tr'
-    ? 'Premium Ozellik'
+    ? 'Premium Özellik'
     : 'Premium Feature';
 
   const description = lang === 'tr'
-    ? `"${feature}" ozelligine erisim icin Premium'a yukselt.`
+    ? `"${feature}" özelliğine erişim için Premium'a yükselt.`
     : `Upgrade to Premium to unlock "${feature}".`;
 
   const ctaText = lang === 'tr'
-    ? 'Planlari Gor'
+    ? 'Planları Gör'
     : 'See Plans';
 
   return (
@@ -131,8 +131,8 @@ export default function Paywall({ feature }: PaywallProps) {
           marginTop: '0.25rem',
         }}
       >
-        <span>{lang === 'tr' ? 'SSL Guvenli' : 'SSL Secure'}</span>
-        <span>{lang === 'tr' ? 'Iptal Kolayca' : 'Cancel Anytime'}</span>
+        <span>{lang === 'tr' ? 'SSL Güvenli' : 'SSL Secure'}</span>
+        <span>{lang === 'tr' ? 'İptal Kolayca' : 'Cancel Anytime'}</span>
       </div>
     </div>
   );

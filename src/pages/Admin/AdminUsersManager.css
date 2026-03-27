@@ -74,7 +74,7 @@
 }
 
 .adm-users-stat-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-secondary);
 }
 
@@ -106,6 +106,7 @@
 
 .adm-search-input input {
   width: 100%;
+  height: 36px;
   padding: var(--space-sm) var(--space-md) var(--space-sm) 38px;
   font-family: var(--admin-font);
   font-size: 0.8rem;
@@ -134,11 +135,15 @@
   color: var(--admin-text);
   cursor: pointer;
   outline: none;
-  transition: border-color var(--admin-transition);
+  transition: border-color var(--admin-transition), box-shadow var(--admin-transition);
+  height: 36px;
+  box-sizing: border-box;
+  appearance: none;
 }
 
 .adm-filter-select:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-pale);
 }
 
 /* ---- Table ---- */
@@ -153,6 +158,7 @@
 .adm-table-wrap .adm-table-scroll {
   overflow-x: auto;
   max-height: 600px;
+  min-height: 120px;
   overflow-y: auto;
 }
 
@@ -173,13 +179,13 @@
 
 .adm-table thead th {
   padding: var(--space-sm) var(--space-md);
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-muted);
+  letter-spacing: 0.06em;
+  color: var(--admin-text-secondary);
   text-align: left;
-  border-bottom: 1px solid var(--admin-border);
+  border-bottom: 2px solid var(--admin-border);
   background: var(--bg-muted);
   white-space: nowrap;
   position: sticky;
@@ -194,7 +200,7 @@
 
 .adm-table tbody tr:last-child { border-bottom: none; }
 .adm-table tbody tr:hover { background: var(--bg-muted); }
-.adm-table tbody tr:nth-child(even) { background: var(--slate-50); }
+.adm-table tbody tr:nth-child(even) { background: var(--bg-elevated); }
 .adm-table tbody tr:nth-child(even):hover { background: var(--bg-muted); }
 
 .adm-table tbody td {
@@ -231,7 +237,7 @@
 }
 
 .adm-user-email {
-  font-size: 0.725rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
 }
 
@@ -242,7 +248,7 @@
   gap: var(--space-xs);
   padding: 3px var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -263,8 +269,17 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--radius-sm);
   background: var(--admin-surface);
+  color: var(--admin-text);
   cursor: pointer;
   outline: none;
+  height: 32px;
+  box-sizing: border-box;
+  transition: border-color var(--admin-transition);
+}
+
+.adm-role-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-pale);
 }
 
 .adm-table-actions {
@@ -339,6 +354,7 @@
   color: var(--white);
   border-color: var(--primary);
   box-shadow: var(--shadow-sm);
+  font-weight: 700;
 }
 
 .adm-page-btn:disabled { opacity: 0.4; cursor: default; }
@@ -397,7 +413,7 @@
 
 .adm-panel-field label {
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -489,7 +505,7 @@
 
 .adm-form-group small {
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
   margin-top: var(--space-xs);
 }
@@ -596,7 +612,7 @@
 
 /* ---- Premium until text ---- */
 .adm-premium-until {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
   margin-top: 2px;
 }

@@ -26,8 +26,8 @@ export const WORD_FAMILIES: WordFamily[] = [
     rime: '-og',
     rimeTr: '-og ile biten kelimeler',
     onsets: ['d', 'l', 'f', 'b', 'h', 'j'],
-    validWords: ['dog', 'log', 'fog', 'bog', 'hog'],
-    invalidOnsets: ['j'],
+    validWords: ['dog', 'log', 'fog', 'bog', 'hog', 'jog'],
+    invalidOnsets: [],
     example: 'dog',
   },
   {
@@ -71,8 +71,8 @@ export const WORD_FAMILIES: WordFamily[] = [
     rime: '-op',
     rimeTr: '-op ile biten kelimeler',
     onsets: ['h', 'm', 'p', 't', 'c', 'b'],
-    validWords: ['hop', 'mop', 'pop', 'top', 'cop'],
-    invalidOnsets: ['b'],
+    validWords: ['hop', 'mop', 'pop', 'top', 'cop', 'bop'],
+    invalidOnsets: [],
     example: 'hop',
   },
   {
@@ -88,9 +88,9 @@ export const WORD_FAMILIES: WordFamily[] = [
     id: 'wf-ell',
     rime: '-ell',
     rimeTr: '-ell ile biten kelimeler',
-    onsets: ['b', 'f', 's', 't', 'w', 'y', 'p'],
+    onsets: ['b', 'f', 's', 't', 'w', 'y', 'j'],
     validWords: ['bell', 'fell', 'sell', 'tell', 'well', 'yell'],
-    invalidOnsets: ['p'],
+    invalidOnsets: ['j'],
     example: 'bell',
   },
   {

@@ -27,7 +27,7 @@ function AvatarCircle({ name, url, size = 40 }: { name: string; url?: string; si
       aria-label={name}
     >
       {isRealImage ? (
-        <img src={url} alt={name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+        <img src={url} alt={name} loading="lazy" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
       ) : (
         initial
       )}
@@ -458,7 +458,7 @@ export default function FriendsPage() {
                       </div>
                     </div>
                     <div className="friends-leaderboard__xp">
-                      <span className="friends-leaderboard__xp-value">{entry.weeklyXP.toLocaleString()}</span>
+                      <span className="friends-leaderboard__xp-value">{entry.weeklyXP.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US')}</span>
                       <span className="friends-leaderboard__xp-label">XP</span>
                     </div>
                   </li>

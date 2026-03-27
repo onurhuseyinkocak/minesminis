@@ -13,6 +13,9 @@ export type { BadgeProps, BadgeVariant, BadgeSize } from './Badge';
 export { Modal } from './Modal';
 export type { ModalProps, ModalSize } from './Modal';
 
+export { ConfirmModal } from './ConfirmModal';
+export type { ConfirmModalProps } from './ConfirmModal';
+
 
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps, ProgressBarVariant, ProgressBarSize } from './ProgressBar';

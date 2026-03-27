@@ -54,4 +54,7 @@ interface SpeechRecognitionConstructor {
 interface Window {
   SpeechRecognition?: SpeechRecognitionConstructor;
   webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  webkitAudioContext?: typeof AudioContext;
+  /** IE11-only — used to detect iOS vs IE in user-agent checks */
+  MSStream?: unknown;
 }

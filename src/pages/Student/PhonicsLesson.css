@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding: 1rem 1.5rem 2.5rem;
+  padding: 1rem 1.5rem calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 1.5rem);
   min-height: 100vh;
   font-family: var(--font-display);
   max-width: 540px;
@@ -52,15 +52,18 @@
   padding: 1.25rem 0;
 }
 
-/* Big letter — prominent sound display */
+/* Big letter — prominent sound display (4rem+ per spec) */
 .pl-bigLetter {
   font-family: var(--font-display);
-  font-size: 6.5rem;
+  font-size: clamp(4rem, 18vw, 7rem);
   font-weight: 900;
   color: var(--accent-purple);
   line-height: 1;
   text-align: center;
-  text-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+  text-shadow:
+    0 4px 0 rgba(139, 92, 246, 0.25),
+    0 8px 24px rgba(139, 92, 246, 0.2);
+  user-select: none;
 }
 
 .pl-stepDesc {
@@ -81,7 +84,7 @@
   padding: 1.1rem;
   background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(129, 199, 132, 0.12));
   border-radius: var(--radius-lg);
-  border: 1.5px solid rgba(76, 175, 80, 0.15);
+  border: 1.5px solid rgba(76, 175, 80, 0.2);
   width: 100%;
 }
 
@@ -98,7 +101,7 @@
   padding: 1.25rem;
   background: linear-gradient(135deg, var(--accent-purple-pale), rgba(139, 92, 246, 0.08));
   border-radius: var(--radius-lg);
-  border: 1.5px solid rgba(139, 92, 246, 0.15);
+  border: 1.5px solid var(--accent-purple-light);
   width: 100%;
   text-align: center;
 }
@@ -245,28 +248,45 @@
   color: var(--text-muted);
 }
 
-/* ── Big letter circle — prominent sound indicator ── */
+/* ── Big letter circle — prominent 3D-card sound indicator ── */
 .pl-letter-circle {
-  width: 110px;
-  height: 110px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25);
-  transition: transform 0.3s var(--ease-spring);
+  box-shadow:
+    0 12px 32px rgba(139, 92, 246, 0.3),
+    0 4px 0 rgba(0, 0, 0, 0.15),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-spring);
+  will-change: transform;
+  cursor: pointer;
 }
 
 .pl-letter-circle:hover {
-  transform: scale(1.06);
+  transform: scale(1.07) translateY(-3px);
+  box-shadow:
+    0 20px 48px rgba(139, 92, 246, 0.35),
+    0 6px 0 rgba(0, 0, 0, 0.12),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.pl-letter-circle:active {
+  transform: scale(0.96) translateY(1px);
+  box-shadow:
+    0 4px 12px rgba(139, 92, 246, 0.2),
+    0 2px 0 rgba(0, 0, 0, 0.1);
 }
 
 .pl-letter-text {
   font-family: var(--font-display);
-  font-size: 2.75rem;
+  font-size: 3.25rem;
   font-weight: 900;
   color: #fff;
   line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Action buttons row ── */
@@ -286,6 +306,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .pl-keyword-label {
@@ -403,4 +428,70 @@
   height: 10px;
   border-radius: 50%;
   transition: all 0.2s;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 480px) {
+  .pl-container {
+    padding: 0.75rem 1rem calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 1rem);
+    gap: 1rem;
+  }
+
+  .pl-bigLetter {
+    font-size: 5rem;
+  }
+
+  .pl-keywordsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pl-wordDisplay {
+    font-size: 1.75rem;
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* ---- DARK MODE ---- */
+@media (prefers-color-scheme: dark) {
+  .pl-container {
+    background: var(--bg-page);
+  }
+
+  .pl-mimiBox {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.08));
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  .pl-mimiText {
+    color: var(--text-body);
+  }
+
+  .pl-actionBox {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.08));
+    border-color: rgba(139, 92, 246, 0.2);
+  }
+
+  .pl-keywordCard {
+    background: var(--bg-elevated);
+    border-color: var(--border);
+  }
+
+  .pl-keywordCard:hover {
+    background: var(--accent-purple-pale);
+    border-color: var(--accent-purple-light);
+  }
+
+  .pl-revealedTile {
+    background: var(--warning-pale);
+    border-color: var(--warning);
+  }
+
+  .pl-wordDisplay {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.06));
+    border-color: var(--accent-purple);
+  }
+
+  .pl-completion-title {
+    color: var(--mimi-dark);
+  }
 }

@@ -34,7 +34,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     const navigate = useNavigate();
     const { userProfile } = useAuth();
     const { isPremium } = usePremium();
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const mascotId = ((userProfile?.settings as Record<string, string>)?.mascotId) || 'mimi_cat';
     const mascotConfig = useMemo(() => GLINTS[mascotId] || GLINTS.mimi_cat, [mascotId]);
 
@@ -57,7 +57,7 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
         const today = new Date().toDateString();
         const newCount = dailyUsage + 1;
         setDailyUsage(newCount);
-        localStorage.setItem(LS_CAVE_DAILY_USAGE, JSON.stringify({ date: today, count: newCount }));
+        try { localStorage.setItem(LS_CAVE_DAILY_USAGE, JSON.stringify({ date: today, count: newCount })); } catch { /* ignore */ }
     };
 
     const canSendMessage = () => {
@@ -107,6 +107,15 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
     useEffect(() => {
         scrollToBottom();
     }, [messages, isTyping]);
+
+    // Cancel any in-progress TTS when component unmounts
+    useEffect(() => {
+        return () => {
+            if (typeof window !== 'undefined' && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
 
     const updateQuickReplies = (allMessages: ChatMessage[]) => {
         const historyForReplies = allMessages.map(m => ({
@@ -262,8 +271,13 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                                     />
                                 </div>
                             )}
-                            <div className={`message-bubble ${msg.role}`}>
-                                {msg.content}
+                            <div className="message-bubble-wrapper">
+                                <div className={`message-bubble ${msg.role}`}>
+                                    {msg.content}
+                                </div>
+                                <time className="message-time" dateTime={new Date(msg.timestamp).toISOString()}>
+                                    {new Date(msg.timestamp).toLocaleTimeString(lang === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                </time>
                             </div>
                         </div>
                     ))}
@@ -277,8 +291,10 @@ const ChatHome: React.FC<ChatHomeProps> = ({ onClose, onSendMessage }) => {
                                     size={40}
                                 />
                             </div>
-                            <div className="message-bubble assistant typing-indicator">
-                                <span></span><span></span><span></span>
+                            <div className="message-bubble-wrapper">
+                                <div className="message-bubble assistant typing-indicator">
+                                    <span></span><span></span><span></span>
+                                </div>
                             </div>
                         </div>
                     )}

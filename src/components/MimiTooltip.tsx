@@ -74,7 +74,7 @@ export default function MimiTooltip({
       transform: 'translateX(-50%)',
       borderLeft: '6px solid transparent',
       borderRight: '6px solid transparent',
-      borderTop: '6px solid #7c3aed',
+      borderTop: '6px solid var(--accent-purple)',
     },
     down: {
       top: -6,
@@ -82,7 +82,7 @@ export default function MimiTooltip({
       transform: 'translateX(-50%)',
       borderLeft: '6px solid transparent',
       borderRight: '6px solid transparent',
-      borderBottom: '6px solid #7c3aed',
+      borderBottom: '6px solid var(--accent-purple)',
     },
     left: {
       right: -6,
@@ -90,7 +90,7 @@ export default function MimiTooltip({
       transform: 'translateY(-50%)',
       borderTop: '6px solid transparent',
       borderBottom: '6px solid transparent',
-      borderLeft: '6px solid #7c3aed',
+      borderLeft: '6px solid var(--accent-purple)',
     },
     right: {
       left: -6,
@@ -98,7 +98,7 @@ export default function MimiTooltip({
       transform: 'translateY(-50%)',
       borderTop: '6px solid transparent',
       borderBottom: '6px solid transparent',
-      borderRight: '6px solid #7c3aed',
+      borderRight: '6px solid var(--accent-purple)',
     },
   };
 
@@ -124,20 +124,23 @@ export default function MimiTooltip({
               ...tooltipPosition[direction],
               zIndex: 9001,
               pointerEvents: 'none',
-              whiteSpace: 'nowrap',
+              maxWidth: 240,
             }}
           >
             <div
               style={{
-                background: '#7c3aed',
+                background: 'var(--accent-purple)',
                 color: '#fff',
                 borderRadius: 10,
                 padding: '6px 12px',
                 fontSize: 12,
                 fontWeight: 700,
-                fontFamily: 'Nunito, sans-serif',
-                boxShadow: '0 3px 12px rgba(124, 58, 237, 0.3)',
+                fontFamily: 'var(--font-display, Nunito, sans-serif)',
+                boxShadow: '0 3px 12px var(--accent-purple-glow)',
                 position: 'relative',
+                whiteSpace: 'normal',
+                wordBreak: 'break-word',
+                lineHeight: 1.5,
               }}
             >
               <LottieCharacter state="happy" size={14} />

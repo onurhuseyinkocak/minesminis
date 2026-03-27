@@ -16,7 +16,7 @@
 /* ---- MAIN CARD ---- */
 .onboarding-card {
   width: 100%;
-  max-width: 640px;
+  max-width: 480px;
   background: var(--bg-card);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border);
@@ -24,6 +24,34 @@
   padding: var(--space-2xl) var(--space-xl) var(--space-lg);
   position: relative;
   overflow: hidden;
+}
+
+/* ---- SKIP BUTTON ---- */
+.onboarding-skip-btn {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  min-height: 36px;
+  transition: color 150ms ease, background 150ms ease;
+  z-index: 10;
+}
+
+.onboarding-skip-btn:hover {
+  color: var(--text-secondary);
+  background: var(--bg-soft);
+}
+
+.onboarding-skip-btn:active {
+  transform: scale(0.96);
 }
 
 /* ==========================================================================
@@ -284,6 +312,18 @@
   color: var(--text-secondary);
 }
 
+.onboarding-age-card.selected .onboarding-age-range {
+  color: var(--primary-dark);
+}
+
+.onboarding-age-card.selected .onboarding-age-phase {
+  color: var(--primary-dark);
+}
+
+.onboarding-age-card.selected .onboarding-age-label {
+  color: var(--primary);
+}
+
 /* ==========================================================================
    PLACEMENT TEST — Clean option buttons
    ========================================================================== */
@@ -410,6 +450,16 @@
   color: var(--text-secondary);
 }
 
+.onboarding-placement-explainer {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
 /* ==========================================================================
    MIMI INTRO — Clean card style
    ========================================================================== */
@@ -532,7 +582,7 @@
 .onboarding-path-unit-badge {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   padding: 2px var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--primary);
@@ -740,7 +790,7 @@
 .onboarding-phonics-recommended {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   padding: 1px var(--space-xs);
   border-radius: var(--radius-full);
   background: var(--primary);
@@ -940,6 +990,12 @@
   width: 100%;
 }
 
+/* Enforce 52px min-height on every button inside onboarding actions */
+.onboarding-actions button,
+.onboarding-actions a {
+  min-height: 52px;
+}
+
 /* ---- SKIP ---- */
 .onboarding-skip {
   text-align: center;
@@ -1008,6 +1064,10 @@
     padding: var(--space-lg) var(--space-md);
   }
 
+  .onboarding-step {
+    min-height: auto;
+  }
+
   .onboarding-role-grid {
     gap: var(--space-sm);
   }
@@ -1021,6 +1081,11 @@
     gap: var(--space-sm);
   }
 
+  .onboarding-age-card {
+    min-height: 100px;
+    padding: var(--space-md) var(--space-sm);
+  }
+
   .onboarding-child-avatars {
     grid-template-columns: repeat(6, 1fr);
   }
@@ -1031,6 +1096,65 @@
 
   .onboarding-phonics-list {
     max-height: 220px;
+  }
+
+  .onboarding-placement-options {
+    max-width: 100%;
+  }
+
+  .onboarding-ftue-ring {
+    width: 130px;
+    height: 130px;
+  }
+
+  .onboarding-speech-bubble {
+    right: -10px;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .onboarding-page {
+    padding: var(--space-sm);
+    padding-top: var(--space-xl);
+  }
+
+  .onboarding-card {
+    padding: var(--space-md) var(--space-sm);
+    border-radius: var(--radius-lg);
+  }
+
+  .onboarding-progress-dot {
+    width: 26px;
+    height: 26px;
+    font-size: 0.75rem;
+  }
+
+  .onboarding-progress-line {
+    width: 16px;
+  }
+
+  .onboarding-age-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+
+  .onboarding-placement-option {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.9rem;
+  }
+
+  .onboarding-actions {
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    flex-direction: column;
+  }
+
+  .onboarding-actions button,
+  .onboarding-actions a {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -1260,6 +1384,22 @@
   color: var(--text-secondary);
 }
 
+/* ---- Reward preview (A/B test) ---- */
+.onboarding-reward-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--warning-pale);
+  border: 1.5px solid var(--warning-light);
+  border-radius: var(--radius-full);
+  padding: 6px 16px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--warning);
+  margin: var(--space-sm) 0;
+}
+
 /* ---- Feature chips row ---- */
 .onboarding-features-row {
   display: flex;
@@ -1299,8 +1439,8 @@
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: var(--color-primary-50);
-  border: 3px solid var(--color-primary-200);
+  background: var(--primary-pale);
+  border: 3px solid var(--primary-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1311,34 +1451,44 @@
   transform: scale(0.95);
 }
 
+@keyframes ftueRingPulse {
+  0%   { box-shadow: 0 0 0 0 var(--primary-glow); }
+  60%  { box-shadow: 0 0 0 16px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.onboarding-ftue-ring--pulse {
+  animation: ftueRingPulse 1.5s ease-out infinite;
+}
+
 .onboarding-speech-bubble {
   position: absolute;
   top: -10px;
   right: -20px;
-  background: white;
-  border: 2px solid var(--color-primary-300);
+  background: var(--bg-card);
+  border: 2px solid var(--primary-light);
   border-radius: 16px 16px 16px 4px;
   padding: 8px 14px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--color-ink-900);
+  color: var(--text-primary);
   font-family: var(--font-display);
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
   pointer-events: none;
 }
 
 .onboarding-speech-bubble--prompt {
-  border-color: var(--color-primary-500);
-  background: var(--color-primary-50);
-  color: var(--color-primary-700);
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  color: var(--primary-dark);
   animation: bubblePulse 1s ease-in-out infinite;
 }
 
 .onboarding-speech-bubble--happy {
-  border-color: #10b981;
-  background: #d1fae5;
-  color: #065f46;
+  border-color: var(--success);
+  background: var(--success-pale);
+  color: var(--mimi-dark);
 }
 
 @keyframes bubblePulse {
@@ -1357,7 +1507,7 @@
 .onboarding-tap-hint {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--color-primary-500);
+  color: var(--primary);
   font-family: var(--font-display);
   animation: tapBounce 0.8s ease-in-out infinite;
 }

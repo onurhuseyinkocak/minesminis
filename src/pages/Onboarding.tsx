@@ -13,6 +13,7 @@ import { speak } from '../services/ttsService';
 import toast from 'react-hot-toast';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import { useABTest } from '../hooks/useABTest';
+import { analytics } from '../services/analytics';
 import {
   ArrowLeft, ArrowRight, Rocket, Check, CheckCircle,
   Baby, BookOpen, Globe, Volume2, Lock as LockIcon, Sparkles, Feather,
@@ -225,11 +226,17 @@ const PHONICS_GROUPS = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function computePhonicsGroup(score: number, ageGroup: string, questionsAnswered: number = 3): number {
+  // FIX: Enforce minimum question count before trusting the percentage.
+  // If fewer than 3 questions were answered (e.g. early stop on 2 wrong + 1 right)
+  // we cap the derived group at 3 to avoid over-placing on thin evidence.
+  const MIN_QUESTIONS_FOR_FULL_RANGE = 3;
+  const thinDataCap = questionsAnswered < MIN_QUESTIONS_FOR_FULL_RANGE ? 3 : 7;
+
   const percentage = questionsAnswered > 0 ? (score / questionsAnswered) * 100 : 0;
 
   // Age-based cap: younger children can't be placed too high
   const ageCap: Record<string, number> = { '3-5': 2, '5-7': 4, '7-9': 6, '9-10': 7 };
-  const cap = ageCap[ageGroup] ?? 4;
+  const cap = Math.min(ageCap[ageGroup] ?? 4, thinDataCap);
 
   let group: number;
   if (percentage < 25) group = 1;
@@ -257,10 +264,15 @@ const TOTAL_STEPS = 4;
 
 const Onboarding: React.FC = () => {
   usePageTitle('Kurulum', 'Setup');
-  const { user, refreshUserProfile } = useAuth();
+  const { user, refreshUserProfile, setHasSkippedSetup } = useAuth();
   const { lang } = useLanguage();
   const isTr = lang === 'tr';
   const navigate = useNavigate();
+
+  const handleSkip = useCallback(() => {
+    setHasSkippedSetup(true);
+    navigate('/dashboard', { replace: true });
+  }, [setHasSkippedSetup, navigate]);
 
   // A/B test: reward style shown on onboarding completion
   // 'stars'    → star animation
@@ -290,7 +302,22 @@ const Onboarding: React.FC = () => {
   const [mimiTapped, setMimiTapped] = useState(false);
 
   const goNext = useCallback(() => { setDir(1); setStep(s => Math.min(s + 1, TOTAL_STEPS)); }, []);
-  const goPrev = useCallback(() => { setDir(-1); setStep(s => Math.max(s - 1, 1)); }, []);
+  const goPrev = useCallback(() => {
+    setDir(-1);
+    setStep(s => {
+      const prev = Math.max(s - 1, 1);
+      // FIX: When navigating back from or within the placement step, reset all
+      // placement state so answers don't carry over and inflate the score on retry.
+      if (s === 3) {
+        setAnswers({});
+        setQuestionIdx(0);
+        setPlacementDone(false);
+        setStartingGroup(1);
+        setConsecutiveWrong(0);
+      }
+      return prev;
+    });
+  }, []);
 
   const canProceed = (): boolean => {
     if (step === 1) return nickname.trim().length >= 2;
@@ -313,7 +340,10 @@ const Onboarding: React.FC = () => {
 
     if (shouldStop) {
       const score = PLACEMENT_QUESTIONS.filter(q => updated[q.id] === q.correct).length;
-      const group = computePhonicsGroup(score, ageGroup, questionIdx + 1);
+      // FIX: `questionsAnswered` must reflect answers actually recorded in `updated`,
+      // not `questionIdx + 1` which can be off-by-one when stopping early.
+      const questionsAnswered = Object.keys(updated).length;
+      const group = computePhonicsGroup(score, ageGroup, questionsAnswered);
       setStartingGroup(group);
       setTimeout(() => setPlacementDone(true), 350);
     } else {
@@ -328,7 +358,7 @@ const Onboarding: React.FC = () => {
       const gradeMap: Record<string, string> = {
         '3-5': 'primary', '5-7': 'primary', '7-9': 'grade2', '9-10': 'grade4',
       };
-      const uid = user.uid ?? (user as unknown as { id?: string }).id;
+      const uid = user.uid;
       const placementScore = PLACEMENT_QUESTIONS.filter(q => answers[q.id] === q.correct).length;
 
       await userService.createOrUpdateUserProfile(user, {
@@ -357,8 +387,15 @@ const Onboarding: React.FC = () => {
       }
 
       localStorage.setItem(LS_PLACEMENT_RESULT, String(startingGroup));
-      // Also store structured detail for WorldMap phase lookup
-      const phaseFromGroup = startingGroup <= 2 ? 1 : startingGroup === 3 ? 2 : startingGroup <= 5 ? 3 : 4;
+      // FIX: Use the same phase-from-group mapping as PlacementTest.tsx (getPlacementResult).
+      // Old formula was: group<=2→1, group==3→2, group<=5→3, else→4
+      // which diverged from the score-based formula used in the standalone test.
+      // Unified rule: group 1-2 = Phase 1, group 3-4 = Phase 2, group 5-6 = Phase 3, group 7 = Phase 4.
+      const phaseFromGroup =
+        startingGroup <= 2 ? 1
+        : startingGroup <= 4 ? 2
+        : startingGroup <= 6 ? 3
+        : 4;
       localStorage.setItem('mimi_placement_detail', JSON.stringify({
         phase: phaseFromGroup,
         group: startingGroup,
@@ -368,6 +405,10 @@ const Onboarding: React.FC = () => {
 
       const { createPet } = await import('../services/petService');
       await createPet(user.uid, 'mimi_cat', nickname.trim() || user.displayName || 'Explorer');
+
+      // Track funnel events
+      analytics.placementTestComplete(placementScore, PLACEMENT_QUESTIONS.length, startingGroup);
+      analytics.onboardingComplete(ageGroup, placementScore, startingGroup);
 
       await refreshUserProfile();
       toast.success(isTr ? `Hoş geldin, ${nickname}! Macera başlıyor!` : `Welcome, ${nickname}! Adventure starts!`);
@@ -406,8 +447,8 @@ const Onboarding: React.FC = () => {
       {/* Mimi mascot — interactive */}
       <div className="onboarding-ftue-mascot" onClick={handleMimiTap} role="button" aria-label="Tap Mimi">
         <motion.div
-          className="onboarding-ftue-ring"
-          animate={welcomeStage === 'tap' ? { scale: [1, 1.05, 1], boxShadow: ['0 0 0 0 rgba(255,107,53,0.4)', '0 0 0 16px rgba(255,107,53,0)', '0 0 0 0 rgba(255,107,53,0)'] } : {}}
+          className={`onboarding-ftue-ring${welcomeStage === 'tap' ? ' onboarding-ftue-ring--pulse' : ''}`}
+          animate={welcomeStage === 'tap' ? { scale: [1, 1.05, 1] } : {}}
           transition={{ repeat: welcomeStage === 'tap' ? Infinity : 0, duration: 1.5 }}
         >
           <LottieCharacter
@@ -636,11 +677,11 @@ const Onboarding: React.FC = () => {
           >
             <CheckCircle size={44} />
           </motion.div>
-          <h2>{isTr ? 'Harika!' : 'Great job!'}</h2>
+          <h2>{isTr ? 'Seviye Belirlendi!' : 'Level Found!'}</h2>
           <p className="onboarding-step-sub">
             {isTr
-              ? <><strong>{group.name}</strong>'den başlamanı öneriyoruz</>
-              : <>We recommend starting at <strong>{group.name}</strong></>
+              ? <>Testine göre <strong>{group.name}</strong> ile başlamanı öneriyoruz.</>
+              : <>Based on your test, we recommend starting at <strong>{group.name}</strong>.</>
             }
           </p>
           <div className="onboarding-phonics-result-card">
@@ -648,6 +689,12 @@ const Onboarding: React.FC = () => {
             <span className="onboarding-phonics-result-sounds">{group.sounds}</span>
             <span className="onboarding-phonics-result-desc">{group.desc}</span>
           </div>
+          <p className="onboarding-placement-explainer">
+            {isTr
+              ? 'Endişelenme! Öğrendikçe seviye atlarsın. Seviyeni istediğin zaman değiştirebilirsin.'
+              : "Don't worry! You'll level up as you learn. You can always change your level later."
+            }
+          </p>
           <div className="onboarding-actions">
             <Button variant="ghost" size="lg" onClick={goPrev} icon={<ArrowLeft size={18} />}>
               {isTr ? 'Geri' : 'Back'}
@@ -709,6 +756,15 @@ const Onboarding: React.FC = () => {
         <div className="onboarding-actions">
           <Button variant="ghost" size="lg" onClick={goPrev} icon={<ArrowLeft size={18} />}>
             {isTr ? 'Geri' : 'Back'}
+          </Button>
+          {/* FIX: "I don't know" skip option — treated as a wrong answer so
+              the algorithm still gets a data point, but without forcing a guess. */}
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={() => handleAnswer(q.id, '__skip__')}
+          >
+            {isTr ? 'Bilmiyorum' : "I don't know"}
           </Button>
         </div>
       </motion.div>
@@ -844,7 +900,7 @@ const Onboarding: React.FC = () => {
         const active = step === s;
         return (
           <div className="onboarding-progress-step" key={s}>
-            {i > 0 && <div className={`onboarding-progress-line ${done || active ? 'active' : ''}`} />}
+            {i > 0 && <div className={`onboarding-progress-line ${done ? 'active' : ''}`} />}
             <motion.div
               className={`onboarding-progress-dot ${active ? 'active' : ''} ${done ? 'completed' : ''}`}
               animate={active ? { scale: [1, 1.1, 1] } : {}}
@@ -868,6 +924,18 @@ const Onboarding: React.FC = () => {
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
+        {/* Skip button — top-right corner, only on steps 1-3 */}
+        {step < 4 && (
+          <button
+            type="button"
+            className="onboarding-skip-btn"
+            onClick={handleSkip}
+            aria-label={isTr ? 'Kurulumu atla' : 'Skip setup'}
+          >
+            {isTr ? 'Atla' : 'Skip'}
+          </button>
+        )}
+
         {renderProgress()}
 
         <AnimatePresence mode="wait" custom={dir}>

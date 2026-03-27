@@ -9,7 +9,8 @@
   align-items: center;
   gap: var(--space-lg);
   padding: var(--space-lg);
-  max-width: 560px;
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  max-width: 480px;
   margin: 0 auto;
   animation: fadeInUp 400ms ease-out;
 }
@@ -85,7 +86,7 @@
   height: 20px;
   border-radius: 50%;
   background: var(--primary);
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.25), 0 2px 6px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-glow) 72%, transparent), 0 2px 6px var(--primary-glow);
   animation: syg-dot-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -119,8 +120,8 @@
   );
   box-shadow:
     0 8px 0 rgba(0, 0, 0, 0.2),
-    0 12px 32px rgba(255, 107, 53, 0.4),
-    inset 0 2px 8px rgba(255, 255, 255, 0.3);
+    0 12px 32px color-mix(in srgb, var(--primary-glow) 114%, transparent),
+    inset 0 2px 8px color-mix(in srgb, var(--white) 30%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,7 +141,7 @@
   position: absolute;
   inset: 8px;
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.25);
+  border: 3px solid color-mix(in srgb, var(--white) 25%, transparent);
   pointer-events: none;
 }
 
@@ -148,8 +149,8 @@
   transform: translateY(-3px);
   box-shadow:
     0 11px 0 rgba(0, 0, 0, 0.2),
-    0 16px 36px rgba(255, 107, 53, 0.5),
-    inset 0 2px 8px rgba(255, 255, 255, 0.3);
+    0 16px 36px color-mix(in srgb, var(--primary) 50%, transparent),
+    inset 0 2px 8px color-mix(in srgb, var(--white) 30%, transparent);
 }
 
 .syg__drum:active,
@@ -157,15 +158,15 @@
   transform: translateY(4px) scale(0.96);
   box-shadow:
     0 4px 0 rgba(0, 0, 0, 0.2),
-    0 6px 16px rgba(255, 107, 53, 0.35),
-    inset 0 2px 8px rgba(255, 255, 255, 0.3);
+    0 6px 16px var(--primary-glow),
+    inset 0 2px 8px color-mix(in srgb, var(--white) 30%, transparent);
   animation: syg-drum-pulse 0.25s ease-out;
 }
 
 @keyframes syg-drum-pulse {
-  0%   { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(255,107,53,.35), 0 0 0 0 rgba(255,107,53,.6); }
-  60%  { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(255,107,53,.35), 0 0 0 28px rgba(255,107,53,.0); }
-  100% { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px rgba(255,107,53,.35), 0 0 0 0 rgba(255,107,53,.0); }
+  0%   { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px var(--primary-glow), 0 0 0 0 color-mix(in srgb, var(--primary) 60%, transparent); }
+  60%  { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px var(--primary-glow), 0 0 0 28px transparent; }
+  100% { box-shadow: 0 4px 0 rgba(0,0,0,.2), 0 6px 16px var(--primary-glow), 0 0 0 0 transparent; }
 }
 
 .syg__drum-label {
@@ -186,32 +187,35 @@
   font-size: 1.25rem;
   font-weight: 800;
   cursor: pointer;
-  border: none;
+  border: 2px solid transparent;
+  border-bottom: 5px solid rgba(0, 0, 0, 0.25);
   background: var(--secondary);
-  color: #fff;
-  box-shadow: 0 6px 20px rgba(13, 92, 77, 0.35);
+  color: var(--white);
+  box-shadow: var(--shadow-button);
   letter-spacing: 0.02em;
   min-height: 56px;
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
-    background var(--transition-fast);
+    border-bottom-width 0.08s ease;
 }
 
 .syg__done-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(13, 92, 77, 0.45);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .syg__done-btn:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: translateY(2px) scale(0.97);
+  border-bottom-width: 2px;
+  box-shadow: none;
 }
 
 .syg__done-btn:disabled {
-  background: var(--slate-300);
+  background: var(--border-medium);
   box-shadow: none;
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 /* -- Multiple choice choices ----------------------------------------------- */
@@ -253,7 +257,7 @@
 }
 
 .syg__choice-btn span {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
   letter-spacing: 0.04em;
@@ -277,15 +281,18 @@
 }
 
 .syg__choice-btn:disabled {
-  cursor: default;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .syg__choice-btn--correct {
   border-color: var(--success) !important;
   background: var(--success-pale) !important;
   color: var(--success) !important;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), var(--shadow-md);
-  animation: syg-scale-up 0.25s ease-out;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 15%, transparent), var(--shadow-md);
+  animation: syg-scale-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 1 !important;
+  cursor: default;
 }
 
 .syg__choice-btn--wrong {
@@ -293,11 +300,14 @@
   background: var(--error-pale) !important;
   color: var(--error) !important;
   animation: syg-shake 0.4s ease;
+  opacity: 1 !important;
+  cursor: default;
 }
 
 @keyframes syg-scale-up {
   0%   { transform: scale(1); }
-  50%  { transform: scale(1.12); }
+  40%  { transform: scale(1.15); }
+  65%  { transform: scale(0.96); }
   100% { transform: scale(1); }
 }
 
@@ -322,11 +332,11 @@
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-lg);
   background: var(--secondary);
-  color: #fff;
+  color: var(--white);
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(13, 92, 77, 0.3);
+  box-shadow: 0 4px 12px var(--secondary-glow);
   letter-spacing: 0.02em;
   animation: syg-tile-enter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -361,13 +371,13 @@
 .syg__feedback--correct {
   background: var(--success-pale);
   color: var(--success);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid color-mix(in srgb, var(--success) 20%, transparent);
 }
 
 .syg__feedback--wrong {
   background: var(--error-pale);
   color: var(--error);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
 }
 
 /* -- Completion screen ----------------------------------------------------- */
@@ -385,11 +395,18 @@
   padding: var(--space-6) 0;
 }
 
+.syg__completion-emoji {
+  font-size: 4rem;
+  line-height: 1;
+  user-select: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+}
+
 .syg__completion-title {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 900;
-  color: var(--secondary);
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.02em;
 }
@@ -397,7 +414,7 @@
 .syg__completion-score {
   font-family: var(--font-display);
   font-size: 1.15rem;
-  color: var(--text-body);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -405,23 +422,25 @@
   display: flex;
   gap: var(--space-md);
   margin-top: var(--space-sm);
-  flex-wrap: wrap;
-  justify-content: center;
+  width: 100%;
 }
 
 .syg__completion-btn {
-  padding: 0.85rem 2rem;
+  padding: 0.85rem 1.5rem;
   border-radius: var(--radius-lg);
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  border: none;
+  border: 2px solid transparent;
+  border-bottom-width: 5px;
   min-height: 52px;
+  flex: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-sm);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-bottom-width 0.08s ease;
 }
 
 .syg__completion-btn:hover {
@@ -429,23 +448,28 @@
 }
 
 .syg__completion-btn:active {
-  transform: scale(0.97);
+  transform: translateY(2px) scale(0.98);
+  border-bottom-width: 2px;
+  box-shadow: none !important;
 }
 
 .syg__completion-btn--primary {
-  background: var(--gradient-primary, var(--primary));
-  color: #fff;
-  box-shadow: var(--shadow-button, 0 4px 12px rgba(255, 107, 53, 0.35));
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-button);
 }
 
 .syg__completion-btn--primary:hover {
-  box-shadow: var(--shadow-button-hover, 0 6px 16px rgba(255, 107, 53, 0.45));
+  box-shadow: var(--shadow-button-hover);
 }
 
 .syg__completion-btn--secondary {
-  background: var(--bg-soft, #f5f5f5);
+  background: var(--bg-soft);
   color: var(--text-secondary);
-  border: 2px solid var(--border-light);
+  border-color: var(--border-light);
+  border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
 /* -- Reset button ---------------------------------------------------------- */

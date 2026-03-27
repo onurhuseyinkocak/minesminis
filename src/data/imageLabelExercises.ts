@@ -60,7 +60,7 @@ export const IMAGE_LABEL_QUESTIONS: LabelQuestion[] = [
   },
   {
     id: 'table',
-    imageEmoji: '🛋️',
+    imageEmoji: '🪵',
     imageAlt: 'A table',
     correctLabel: 'table',
     correctLabelTr: 'masa',

@@ -14,6 +14,7 @@ import {
     Activity,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './Admin.css';
 import './ReportsManager.css';
 
@@ -56,6 +57,7 @@ const ReportsManager: React.FC = () => {
     const [gameStats, setGameStats] = useState<GameTypeStat[]>([]);
     const [dailyActives, setDailyActives] = useState<DailyActive[]>([]);
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
+    const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
     useEffect(() => {
         fetchReports();
@@ -164,15 +166,16 @@ const ReportsManager: React.FC = () => {
         try {
             const { data, error } = await supabase
                 .from('reports')
-                .select('*')
-                .order('created_at', { ascending: false });
+                .select('id, reporter_id, reported_user_id, reason, status, metadata, created_at')
+                .order('created_at', { ascending: false })
+                .limit(100);
 
             if (error) {
                 toast.error(`Raporlar yuklenemedi: ${error.message}`);
                 setReports([]);
                 return;
             }
-            setReports(data || []);
+            setReports((data as unknown as Report[]) || []);
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : 'Bilinmeyen hata';
             toast.error(`Raporlar yuklenemedi: ${msg}`);
@@ -198,9 +201,14 @@ const ReportsManager: React.FC = () => {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm('Bu raporu silmek istediğine emin misin?')) return;
+    const handleDelete = (id: string) => {
+        setDeleteTargetId(id);
+    };
 
+    const doDelete = async () => {
+        if (!deleteTargetId) return;
+        const id = deleteTargetId;
+        setDeleteTargetId(null);
         try {
             const { error } = await supabase
                 .from('reports')
@@ -421,6 +429,16 @@ const ReportsManager: React.FC = () => {
                     ))}
                 </div>
             )}
+
+        <ConfirmModal
+            isOpen={deleteTargetId !== null}
+            onClose={() => setDeleteTargetId(null)}
+            onConfirm={doDelete}
+            title="Raporu Sil"
+            message="Bu raporu silmek istediginize emin misiniz? Bu islem geri alinamaz."
+            confirmLabel="Evet, Sil"
+            variant="danger"
+        />
         </div>
     );
 };

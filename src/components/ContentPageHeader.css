@@ -11,9 +11,12 @@
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-light);
   position: sticky;
-  top: 72px; /* below TopNav */
+  top: 72px; /* below TopNav — overridden per-breakpoint below */
   z-index: var(--z-sticky);
   box-shadow: var(--shadow-sm);
+  /* Safe area: pad left/right for notched devices */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* ---- GLASS INNER ---- */
@@ -64,6 +67,11 @@
   margin: 0 0 2px;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  /* Truncate long titles gracefully */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
 }
 
 .library-text-box p {
@@ -72,6 +80,11 @@
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.4;
+  /* Truncate long descriptions */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
 }
 
 /* ---- ACTIONS SECTION (search bars, stat boxes, etc.) ---- */
@@ -116,9 +129,11 @@
 
   .library-text-box h1 {
     font-size: 18px;
+    max-width: 240px;
   }
 
   .library-text-box p {
     font-size: 13px;
+    max-width: 240px;
   }
 }

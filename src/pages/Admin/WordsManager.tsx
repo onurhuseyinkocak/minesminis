@@ -246,8 +246,8 @@ function WordsManager() {
                 <p>İngilizce kelime listesini düzenleyin {wordsLoading ? '(yükleniyor…)' : `(${words.length} kelime)`}</p>
             </div>
 
-            <div className="adm-notice-banner" style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'var(--bg-muted, #f0f4ff)', border: '1px solid var(--accent-blue, #6366f1)', borderRadius: '8px', padding: '12px 16px', marginBottom: '16px', fontSize: '0.85rem', color: 'var(--text-secondary, #555)' }}>
-                <Info size={18} style={{ flexShrink: 0, color: 'var(--accent-blue, #6366f1)', marginTop: '1px' }} />
+            <div className="adm-notice-banner">
+                <Info size={18} className="adm-notice-icon" />
                 <span>Words are managed via the source code (<code>wordsData.ts</code>). Database sync coming soon. Changes made here are stored in-memory and reflected instantly in the app, but will reset on page reload.</span>
             </div>
 

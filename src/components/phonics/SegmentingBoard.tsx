@@ -4,6 +4,7 @@ import { Sparkles, Trophy, Volume2 } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { shuffleArray } from '../../utils/arrayUtils';
 import './SegmentingBoard.css';
 
 interface WordItem {
@@ -36,14 +37,6 @@ function splitToSounds(word: string): string[] {
   return sounds;
 }
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onComplete, onWrongAnswer }) => {
   const { t } = useLanguage();
@@ -145,7 +138,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             transition={{ type: 'spring', stiffness: 200 }}
             className="segmenting-board__complete-content"
           >
-            <Trophy size={32} color="#E8A317" />
+            <Trophy size={32} color="var(--warning)" />
             <h2 className="segmenting-board__complete-title">{t('games.soundSmasher')}</h2>
             <p className="segmenting-board__complete-score">
               {t('games.wordsSegmented').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
@@ -206,15 +199,23 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
       {/* Sound hint */}
       <p className="segmenting-board__hint">
         {t('games.thisWordHasSounds').replace('{count}', String(sounds.length))}{' '}
-        {sounds.map((_, i) => (
-          <span key={i} className="segmenting-board__hint-slot">
-            {selected[i] ? (
-              <span className="segmenting-board__hint-slot--filled">{selected[i]}</span>
-            ) : (
-              '_'
-            )}
-          </span>
-        ))}
+        {sounds.map((_, i) => {
+          const isNext = i === selected.length && !feedback;
+          return (
+            <span key={i} className="segmenting-board__hint-slot">
+              {selected[i] ? (
+                <span className="segmenting-board__hint-slot--filled">{selected[i]}</span>
+              ) : (
+                <span
+                  className={isNext ? 'segmenting-board__hint-slot--active' : undefined}
+                  aria-label={isNext ? 'Next sound slot' : 'Empty slot'}
+                >
+                  _
+                </span>
+              )}
+            </span>
+          );
+        })}
       </p>
 
       {/* Explode animation */}

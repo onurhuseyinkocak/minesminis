@@ -8,7 +8,8 @@
   flex-direction: column;
   gap: var(--space-lg);
   padding: var(--space-lg);
-  max-width: 600px;
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  max-width: 480px;
   margin: 0 auto;
   animation: fadeInUp 400ms ease-out;
 }
@@ -44,23 +45,23 @@
 }
 
 .pmg__type-badge--delete {
-  background: var(--danger-pale, #ffebee);
-  color: var(--danger-dark, #c62828);
+  background: var(--error-pale);
+  color: var(--error);
 }
 
 .pmg__type-badge--substitute {
-  background: var(--warning-pale, #fff8e1);
-  color: var(--primary-dark, #e65100);
+  background: var(--warning-pale);
+  color: var(--warning);
 }
 
 .pmg__type-badge--add {
-  background: var(--success-pale, #e8f5e9);
-  color: var(--mimi-green-dark, #2e7d32);
+  background: var(--success-pale);
+  color: var(--success);
 }
 
 .pmg__type-badge--reverse {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--info, #3b82f6);
+  background: var(--accent-purple-pale);
+  color: var(--accent-purple);
 }
 
 /* -- Target Word Display --------------------------------------------------- */
@@ -94,8 +95,8 @@
 /* -- Prompt card ----------------------------------------------------------- */
 
 .pmg__prompt-card {
-  background: linear-gradient(135deg, var(--warning-pale, #fff8e1), var(--bg-soft, #f8f9fb));
-  border: 2px solid var(--primary, #E8A317);
+  background: linear-gradient(135deg, var(--warning-pale), var(--bg-soft));
+  border: 2px solid var(--primary);
   border-radius: var(--radius-xl, 20px);
   padding: var(--space-md) var(--space-lg);
   text-align: center;
@@ -171,35 +172,35 @@
 
 /* Consonant tiles — primary color */
 .pmg__tile--consonant {
-  background: var(--primary, #E8A317);
+  background: var(--primary);
   border-color: rgba(0, 0, 0, 0.1);
-  color: #fff;
+  color: var(--white);
 }
 
-/* Vowel tiles — secondary/fuchsia color */
+/* Vowel tiles — secondary color */
 .pmg__tile--vowel {
-  background: var(--secondary, #e879f9);
+  background: var(--secondary);
   border-color: rgba(0, 0, 0, 0.1);
-  color: #fff;
+  color: var(--white);
 }
 
-/* Blend tiles — info/blue color */
+/* Blend tiles — accent purple color */
 .pmg__tile--blend {
-  background: var(--info, #3b82f6);
+  background: var(--accent-purple);
   border-color: rgba(0, 0, 0, 0.1);
-  color: #fff;
+  color: var(--white);
 }
 
 /* Tile about to be deleted — red pulse ring */
 .pmg__tile--deleting {
-  border-color: var(--danger, #f44336);
-  box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.3), var(--shadow-card);
+  border-color: var(--error);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--error) 30%, transparent), var(--shadow-card);
 }
 
 /* Tile being substituted — golden glow */
 .pmg__tile--substituting {
-  border-color: var(--primary, #E8A317);
-  box-shadow: 0 0 0 4px rgba(232, 163, 23, 0.35), var(--shadow-card);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow), var(--shadow-card);
 }
 
 .pmg__tile-phoneme {
@@ -210,7 +211,7 @@
 }
 
 .pmg__tile-slash {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   opacity: 0.75;
   letter-spacing: 0.02em;
@@ -224,7 +225,7 @@
   justify-content: center;
   gap: var(--space-sm);
   padding: var(--space-xs) var(--space-md);
-  background: var(--bg-soft, #f8f9fb);
+  background: var(--bg-soft);
   border-radius: var(--radius-full, 999px);
   border: 1.5px solid var(--border-light);
 }
@@ -255,17 +256,17 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-md) var(--space-lg);
-  background: linear-gradient(135deg, var(--success-pale, #e8f5e9), var(--bg-soft, #f8f9fb));
-  border: 2.5px solid var(--mimi-green, #4caf50);
+  background: linear-gradient(135deg, var(--success-pale), var(--bg-elevated));
+  border: 2.5px solid var(--success);
   border-radius: var(--radius-xl, 20px);
-  box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.15), var(--shadow-card);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--success) 15%, transparent), var(--shadow-card);
 }
 
 .pmg__answer-label {
   font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--mimi-green-dark, #2e7d32);
+  color: var(--success);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -274,7 +275,7 @@
   font-family: var(--font-display);
   font-size: 3rem;
   font-weight: 900;
-  color: var(--mimi-green-dark, #2e7d32);
+  color: var(--success);
   letter-spacing: -0.03em;
   line-height: 1;
 }
@@ -332,7 +333,7 @@
 .pmg__option:hover:not(:disabled) {
   box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
-  border-color: var(--cloud, #b0bec5);
+  border-color: var(--border-hover);
 }
 
 .pmg__option:active:not(:disabled) {
@@ -346,27 +347,33 @@
 }
 
 .pmg__option:disabled {
-  cursor: default;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .pmg__option--correct {
-  border-color: var(--mimi-green, #4caf50);
-  background: var(--success-pale, #e8f5e9);
-  color: var(--mimi-green-dark, #2e7d32);
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25), var(--shadow-md);
-  animation: pmg-scale-up 0.25s ease-out;
+  border-color: var(--success);
+  background: var(--success-pale);
+  color: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 25%, transparent), var(--shadow-md);
+  animation: pmg-scale-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 1 !important;
+  cursor: default;
 }
 
 .pmg__option--wrong {
-  border-color: var(--danger, #f44336);
-  background: var(--danger-pale, #ffebee);
-  color: var(--danger-dark, #c62828);
+  border-color: var(--error);
+  background: var(--error-pale);
+  color: var(--error);
   animation: pmg-shake 0.42s ease;
+  opacity: 1 !important;
+  cursor: default;
 }
 
 @keyframes pmg-scale-up {
   0%   { transform: scale(1); }
-  50%  { transform: scale(1.07); }
+  40%  { transform: scale(1.12); }
+  65%  { transform: scale(0.96); }
   100% { transform: scale(1); }
 }
 
@@ -395,13 +402,15 @@
 }
 
 .pmg__feedback--correct {
-  background: var(--success-pale, #e8f5e9);
-  color: var(--mimi-green-dark, #2e7d32);
+  background: var(--success-pale);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 20%, transparent);
 }
 
 .pmg__feedback--wrong {
-  background: var(--warning-pale, #fff8e1);
-  color: var(--primary-dark, #e65100);
+  background: var(--error-pale);
+  color: var(--error);
+  border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
 }
 
 /* -- Hint ------------------------------------------------------------------ */
@@ -413,7 +422,7 @@
   color: var(--text-secondary);
   text-align: center;
   padding: var(--space-xs) var(--space-md);
-  background: var(--bg-soft, #f8f9fb);
+  background: var(--bg-soft);
   border-radius: var(--radius-lg);
   border: 1.5px dashed var(--border-light);
   margin: 0;
@@ -439,18 +448,18 @@
 }
 
 .pmg__difficulty-badge--1 {
-  background: var(--success-pale, #e8f5e9);
-  color: var(--mimi-green-dark, #2e7d32);
+  background: var(--success-pale);
+  color: var(--success);
 }
 
 .pmg__difficulty-badge--2 {
-  background: var(--warning-pale, #fff8e1);
-  color: var(--primary-dark, #e65100);
+  background: var(--warning-pale);
+  color: var(--warning);
 }
 
 .pmg__difficulty-badge--3 {
-  background: var(--danger-pale, #ffebee);
-  color: var(--danger-dark, #c62828);
+  background: var(--error-pale);
+  color: var(--error);
 }
 
 /* -- Completion Card ------------------------------------------------------- */
@@ -466,11 +475,18 @@
   gap: var(--space-md);
 }
 
+.pmg__completion-emoji {
+  font-size: 4rem;
+  line-height: 1;
+  user-select: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+}
+
 .pmg__completion-title {
   font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--secondary);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.02em;
 }
@@ -478,7 +494,7 @@
 .pmg__completion-score {
   font-family: var(--font-display);
   font-size: 1.15rem;
-  color: var(--text-body);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -486,23 +502,25 @@
   display: flex;
   gap: var(--space-md);
   margin-top: var(--space-sm);
-  flex-wrap: wrap;
-  justify-content: center;
+  width: 100%;
 }
 
 .pmg__completion-btn {
-  padding: 0.85rem 2rem;
+  padding: 0.85rem 1.5rem;
   border-radius: var(--radius-lg);
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  border: none;
+  border: 2px solid transparent;
+  border-bottom-width: 5px;
   min-height: 52px;
+  flex: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-sm);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-bottom-width 0.08s ease;
 }
 
 .pmg__completion-btn:hover {
@@ -510,23 +528,28 @@
 }
 
 .pmg__completion-btn:active {
-  transform: scale(0.97);
+  transform: translateY(2px) scale(0.98);
+  border-bottom-width: 2px;
+  box-shadow: none !important;
 }
 
 .pmg__completion-btn--primary {
-  background: var(--gradient-primary, var(--primary));
-  color: #fff;
-  box-shadow: var(--shadow-button, 0 4px 12px rgba(232, 163, 23, 0.35));
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-button);
 }
 
 .pmg__completion-btn--primary:hover {
-  box-shadow: var(--shadow-button-hover, 0 6px 16px rgba(232, 163, 23, 0.45));
+  box-shadow: var(--shadow-button-hover);
 }
 
 .pmg__completion-btn--secondary {
-  background: var(--bg-soft, #f5f5f5);
+  background: var(--bg-soft);
   color: var(--text-secondary);
-  border: 2px solid var(--border-light);
+  border-color: var(--border-light);
+  border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
 /* -- Responsive ------------------------------------------------------------ */
@@ -583,7 +606,7 @@
 }
 
 [data-theme="dark"] .pmg__option--wrong {
-  background: var(--danger-pale);
+  background: var(--error-pale);
 }
 
 [data-theme="dark"] .pmg__prompt-card {
@@ -593,7 +616,7 @@
 
 [data-theme="dark"] .pmg__answer-area {
   background: var(--bg-elevated);
-  border-color: var(--mimi-green, #4caf50);
+  border-color: var(--success);
 }
 
 [data-theme="dark"] .pmg__completion-btn--secondary {

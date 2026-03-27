@@ -10,7 +10,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { StarBurst, StreakFlame } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
 import { getGardenStats } from '../services/gardenService';
-import { Star, Sprout, ChevronRight } from 'lucide-react';
+import { Star, Sprout, ChevronRight, X } from 'lucide-react';
 
 const LevelUpModal: React.FC = () => {
     const { showLevelUp, newLevel, dismissLevelUp, stats } = useGamification();
@@ -95,6 +95,14 @@ const LevelUpModal: React.FC = () => {
                 onClick={(e) => e.stopPropagation()}
                 tabIndex={-1}
             >
+                <button
+                    type="button"
+                    className="level-up-close-btn"
+                    onClick={dismissLevelUp}
+                    aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
+                >
+                    <X size={20} />
+                </button>
                 <div className="level-up-glow" />
 
                 <div className="level-up-content">

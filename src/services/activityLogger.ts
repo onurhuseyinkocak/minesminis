@@ -6,6 +6,7 @@
  */
 
 import { syncActivityLog } from './supabaseSync';
+import { logger } from '../utils/logger';
 
 // ============================================================
 // TYPES
@@ -116,6 +117,8 @@ export function logActivity(
       accuracy: activity.accuracy,
       xpEarned: activity.xpEarned,
       soundId: activity.soundId,
+    }).catch((e: unknown) => {
+      logger.warn('[activityLogger] Supabase sync failed (local log saved):', e);
     });
   }
 }

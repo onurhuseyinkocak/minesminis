@@ -1,6 +1,7 @@
 /**
  * THEME TOGGLE COMPONENT
- * Toggle between light and dark mode
+ * Toggle between light and dark mode.
+ * Reads real effectiveTheme from ThemeContext — no hardcoding.
  */
 
 import React from 'react';
@@ -12,9 +13,9 @@ interface ThemeToggleProps {
 }
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ showLabel = false }) => {
-    const { toggleTheme } = useTheme();
+    const { toggleTheme, effectiveTheme } = useTheme();
 
-    const isDark = false;
+    const isDark = effectiveTheme === 'dark';
 
     return (
         <button

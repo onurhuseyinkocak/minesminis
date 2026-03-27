@@ -86,73 +86,75 @@ const easyQuestions: BlendQuestion[] = [
 
 // ── Medium: CCVC / CVCC ───────────────────────────────────────────────────────
 
+// NOTE: Synthetic phonics requires each phoneme as a separate tile.
+// Onset clusters like 'cl', 'fr', 'st' must be split into individual graphemes.
 const mediumQuestions: BlendQuestion[] = [
   {
     id: 'med_01',
-    sounds: ['cl', 'a', 'p'],
+    sounds: ['c', 'l', 'a', 'p'],
     word: 'clap',
     wordTr: 'alkış',
     difficulty: 'medium',
   },
   {
     id: 'med_02',
-    sounds: ['fr', 'o', 'g'],
+    sounds: ['f', 'r', 'o', 'g'],
     word: 'frog',
     wordTr: 'kurbağa',
     difficulty: 'medium',
   },
   {
     id: 'med_03',
-    sounds: ['st', 'e', 'p'],
+    sounds: ['s', 't', 'e', 'p'],
     word: 'step',
     wordTr: 'adım',
     difficulty: 'medium',
   },
   {
     id: 'med_04',
-    sounds: ['gr', 'a', 'b'],
+    sounds: ['g', 'r', 'a', 'b'],
     word: 'grab',
     wordTr: 'kavramak',
     difficulty: 'medium',
   },
   {
     id: 'med_05',
-    sounds: ['sp', 'i', 'n'],
+    sounds: ['s', 'p', 'i', 'n'],
     word: 'spin',
     wordTr: 'dönmek',
     difficulty: 'medium',
   },
   {
     id: 'med_06',
-    sounds: ['fl', 'a', 't'],
+    sounds: ['f', 'l', 'a', 't'],
     word: 'flat',
     wordTr: 'düz / daire',
     difficulty: 'medium',
   },
   {
     id: 'med_07',
-    sounds: ['dr', 'i', 'p'],
+    sounds: ['d', 'r', 'i', 'p'],
     word: 'drip',
     wordTr: 'damlamak',
     difficulty: 'medium',
   },
   {
     id: 'med_08',
-    sounds: ['sl', 'i', 'm'],
+    sounds: ['s', 'l', 'i', 'm'],
     word: 'slim',
     wordTr: 'ince / zayıf',
     difficulty: 'medium',
   },
   {
     id: 'med_09',
-    sounds: ['pl', 'o', 'p'],
+    sounds: ['p', 'l', 'o', 'p'],
     word: 'plop',
-    wordTr: 'çöp / düşme sesi',
+    wordTr: 'düşme sesi',
     difficulty: 'medium',
   },
   {
     id: 'med_10',
-    sounds: ['br', 'i', 'm'],
+    sounds: ['b', 'r', 'i', 'm'],
     word: 'brim',
     wordTr: 'kenar / ağız',
     difficulty: 'medium',
@@ -160,74 +162,78 @@ const mediumQuestions: BlendQuestion[] = [
 ];
 
 // ── Hard: CCVCC ───────────────────────────────────────────────────────────────
+// Synthetic phonics: every individual phoneme is a separate tile.
+// 'ck' is a digraph (one sound /k/) → stays together.
+// 'sh' is a digraph (one sound /ʃ/) → stays together.
+// All other onset/coda clusters are split into individual phonemes.
 
 const hardQuestions: BlendQuestion[] = [
   {
     id: 'hard_01',
-    sounds: ['bl', 'a', 'ck'],
+    sounds: ['b', 'l', 'a', 'ck'],
     word: 'black',
     wordTr: 'siyah',
     difficulty: 'hard',
   },
   {
     id: 'hard_02',
-    sounds: ['cl', 'e', 'ft'],
+    sounds: ['c', 'l', 'e', 'f', 't'],
     word: 'cleft',
     wordTr: 'yarık / çatlak',
     difficulty: 'hard',
   },
   {
     id: 'hard_03',
-    sounds: ['shr', 'i', 'mp'],
+    sounds: ['sh', 'r', 'i', 'm', 'p'],
     word: 'shrimp',
     wordTr: 'karides',
     difficulty: 'hard',
   },
   {
     id: 'hard_04',
-    sounds: ['bl', 'e', 'nd'],
+    sounds: ['b', 'l', 'e', 'n', 'd'],
     word: 'blend',
     wordTr: 'karışım / harmanlama',
     difficulty: 'hard',
   },
   {
     id: 'hard_05',
-    sounds: ['tr', 'u', 'st'],
+    sounds: ['t', 'r', 'u', 's', 't'],
     word: 'trust',
     wordTr: 'güven',
     difficulty: 'hard',
   },
   {
     id: 'hard_06',
-    sounds: ['cr', 'a', 'ft'],
+    sounds: ['c', 'r', 'a', 'f', 't'],
     word: 'craft',
     wordTr: 'el işi / zanaat',
     difficulty: 'hard',
   },
   {
     id: 'hard_07',
-    sounds: ['st', 'o', 'mp'],
+    sounds: ['s', 't', 'o', 'm', 'p'],
     word: 'stomp',
     wordTr: 'gümbürdetmek',
     difficulty: 'hard',
   },
   {
     id: 'hard_08',
-    sounds: ['sw', 'i', 'ft'],
+    sounds: ['s', 'w', 'i', 'f', 't'],
     word: 'swift',
     wordTr: 'hızlı / çabuk',
     difficulty: 'hard',
   },
   {
     id: 'hard_09',
-    sounds: ['cr', 'i', 'mp'],
+    sounds: ['c', 'r', 'i', 'm', 'p'],
     word: 'crimp',
     wordTr: 'kıvırmak / bükmek',
     difficulty: 'hard',
   },
   {
     id: 'hard_10',
-    sounds: ['cl', 'a', 'mp'],
+    sounds: ['c', 'l', 'a', 'm', 'p'],
     word: 'clamp',
     wordTr: 'mengene / kıskaç',
     difficulty: 'hard',

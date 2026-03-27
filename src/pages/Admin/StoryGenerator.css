@@ -76,7 +76,7 @@
 }
 
 .story-gen-field label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -268,7 +268,7 @@
 .story-gen-badge {
   padding: 0.2rem 0.6rem;
   border-radius: var(--radius-full);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -319,7 +319,7 @@
 }
 
 .story-gen-scene-num {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
@@ -346,7 +346,7 @@
 }
 
 .story-gen-scene-choice {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   padding: 0.2rem 0.6rem;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
@@ -534,7 +534,7 @@
   border-radius: var(--radius-xs);
   background: var(--bg-muted);
   border: 1px solid var(--border);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--text-secondary);

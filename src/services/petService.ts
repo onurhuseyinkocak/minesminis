@@ -83,7 +83,7 @@ export const createPet = async (userId: string, mascotOrType: string, customName
 export const getUserPet = async (userId: string): Promise<VirtualPet | null> => {
     const { data, error } = await supabase
         .from('pets')
-        .select('*')
+        .select('id, name, type, emoji, level, experience, happiness, hunger, energy, last_fed, last_played, created_at')
         .eq('id', userId)
         .maybeSingle();
 

@@ -216,6 +216,18 @@ export const MINI_GAMES: GameMeta[] = [
     color: 'var(--accent-amber)',
     addedAt: '2025-04-01',
   },
+  {
+    type: 'sentence-builder',
+    name: 'Sentence Builder',
+    nameTr: 'Cümle Kur',
+    description: 'Tap the words in the right order to build a sentence!',
+    descriptionTr: 'Kelimelere doğru sırayla dokun, cümleyi kur!',
+    category: 'reading',
+    difficulty: 2,
+    minLevel: 2,
+    color: 'var(--primary, #FF6B35)',
+    addedAt: '2026-03-27',
+  },
 ];
 
 /** Daily featured game — rotates by date hash so it's consistent for the same calendar day */

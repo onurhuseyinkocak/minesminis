@@ -35,7 +35,7 @@
 }
 
 .xp-level-badge .level-icon {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   line-height: 1;
 }
 
@@ -71,7 +71,7 @@
   align-items: center;
   gap: 2px;
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--primary-dark);
   background: var(--primary-pale);
@@ -86,13 +86,11 @@
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   box-shadow: var(--shadow-card);
-  transition: transform var(--transition-fast),
-              box-shadow var(--transition-base),
+  transition: box-shadow var(--transition-base),
               border-color var(--transition-base);
 }
 
 .xp-bar-container:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
   border-color: var(--primary-light);
 }
@@ -224,7 +222,7 @@
 
 .streak-bonus {
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--success);
   background: var(--success-soft);
@@ -234,7 +232,7 @@
 
 .next-level-info {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
   margin-left: auto;
@@ -245,25 +243,6 @@
   color: var(--primary);
 }
 
-/* ---- Shine sweep on full progress bar ---- */
-.xp-bar-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--glass-shine) 50%,
-    transparent 100%
-  );
-  animation: xp-shine-sweep 3s ease-in-out infinite;
-}
-
-@keyframes xp-shine-sweep {
-  0% { left: -60%; }
-  50% { left: 100%; }
-  100% { left: 100%; }
-}
+/* ---- Shine sweep on fill — only sweeps when bar is visible enough ---- */
+/* Using the existing .xp-bar-shine div child for highlighting; */
+/* The ::after sweep is removed to avoid shimmer on near-empty bars. */

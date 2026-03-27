@@ -11,15 +11,22 @@
 /* ================================================================
    COMPACT MODE  (5 rows × 7 cols, last 35 days)
    ================================================================ */
+.streak-calendar--compact .sc-weekdays--compact {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
 .streak-calendar--compact .sc-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
 
 .streak-calendar--compact .sc-day {
-  width: 28px;
-  height: 28px;
+  aspect-ratio: 1;
+  width: 100%;
+  min-width: 0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -78,7 +85,7 @@
 }
 
 .sc-weekday-label {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-align: center;
   color: var(--text-muted);
@@ -90,12 +97,14 @@
 .streak-calendar--full .sc-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
 
 .streak-calendar--full .sc-day {
-  width: 36px;
-  height: 36px;
+  width: 100%;
+  max-width: 40px;
+  /* Enforce square on all viewport sizes */
+  aspect-ratio: 1;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -123,15 +132,15 @@
   color: var(--text-muted);
 }
 
-/* Active day */
+/* Active day — spec: --primary fill */
 .sc-day--active {
-  background: var(--success);
+  background: var(--primary);
   color: var(--text-on-primary);
 }
 
-/* Streak day (still active, highlighted differently) */
+/* Streak day — warmer orange-amber to differentiate from regular active */
 .sc-day--streak {
-  background: var(--primary);
+  background: var(--warning);
   color: var(--text-on-primary);
 }
 
@@ -141,10 +150,16 @@
   color: var(--text-on-primary);
 }
 
-/* Today ring */
+/* Today ring — orange halo glow per spec, using warning (orange) token */
 .sc-day--today {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+  box-shadow:
+    0 0 0 2px var(--bg-card, white),
+    0 0 0 4px var(--warning),
+    0 0 8px rgba(245, 158, 11, 0.45); /* color-mix fallback */
+  box-shadow:
+    0 0 0 2px var(--bg-card, white),
+    0 0 0 4px var(--warning),
+    0 0 8px color-mix(in srgb, var(--warning) 45%, transparent);
 }
 
 /* Future day */
@@ -170,7 +185,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
   font-family: var(--font-body, 'Inter', sans-serif);
@@ -183,8 +198,8 @@
   flex-shrink: 0;
 }
 
-.sc-legend-dot--active  { background: var(--success); }
-.sc-legend-dot--streak  { background: var(--primary); }
+.sc-legend-dot--active  { background: var(--primary); }
+.sc-legend-dot--streak  { background: var(--warning); }
 .sc-legend-dot--freeze  { background: var(--info); }
 .sc-legend-dot--none    { background: var(--bg-muted); border: 1px solid var(--border); }
 
@@ -192,15 +207,12 @@
    RESPONSIVE
    ================================================================ */
 @media (max-width: 480px) {
-  .streak-calendar--compact .sc-day {
-    width: 26px;
-    height: 26px;
-  }
+  /* Compact: fluid, no fixed px needed — aspect-ratio handles it */
 
   .streak-calendar--full .sc-day {
-    width: 32px;
-    height: 32px;
-    font-size: 0.7rem;
+    /* aspect-ratio: 1 ensures squareness; limit max size on small screens */
+    max-width: 32px;
+    font-size: 0.75rem;
   }
 
   .streak-calendar--full {
@@ -209,14 +221,8 @@
 }
 
 @media (max-width: 400px) {
-  .streak-calendar--compact .sc-day {
-    width: 22px;
-    height: 22px;
-  }
-
   .streak-calendar--full .sc-day {
-    width: 28px;
-    height: 28px;
-    font-size: 0.65rem;
+    max-width: 28px;
+    font-size: 0.75rem;
   }
 }

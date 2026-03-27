@@ -8,7 +8,8 @@
   flex-direction: column;
   gap: var(--space-lg);
   padding: var(--space-lg);
-  max-width: 540px;
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  max-width: 480px;
   margin: 0 auto;
   animation: fadeInUp 400ms ease-out;
 }
@@ -48,18 +49,22 @@
 }
 
 .sig__card--correct {
-  border-color: var(--mimi-green, #4caf50);
-  background: var(--success-pale, #e8f5e9);
+  border-color: var(--mimi-green);
+  background: var(--success-pale);
 }
 
 .sig__card--wrong {
-  border-color: var(--danger, #f44336);
-  background: var(--danger-pale, #ffebee);
+  border-color: var(--error);
+  background: var(--error-pale);
 }
 
 /* -- Word Display --------------------------------------------------------- */
 
 .sig__word {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm, 8px);
   font-family: var(--font-display);
   font-size: 3rem;
   font-weight: 900;
@@ -77,7 +82,7 @@
 .sig__phonetic {
   font-size: 1rem;
   color: var(--text-secondary);
-  background: var(--bg-muted, #efefef);
+  background: var(--bg-muted);
   border-radius: var(--radius-md, 8px);
   padding: 0.2rem 0.75rem;
   letter-spacing: 0.04em;
@@ -100,8 +105,8 @@
 }
 
 .sig__mic-btn {
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
@@ -110,17 +115,18 @@
   justify-content: center;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
   background: var(--primary);
-  color: #fff;
-  box-shadow: var(--shadow-md);
+  color: var(--white);
+  box-shadow: var(--shadow-md), 0 6px 0 rgba(0, 0, 0, 0.18);
 }
 
 .sig__mic-btn:hover:not(:disabled) {
   transform: scale(1.07);
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: var(--shadow-card-hover), 0 8px 0 rgba(0, 0, 0, 0.15);
 }
 
 .sig__mic-btn:active:not(:disabled) {
-  transform: scale(0.95);
+  transform: scale(0.95) translateY(4px);
+  box-shadow: var(--shadow-sm), 0 2px 0 rgba(0, 0, 0, 0.15);
 }
 
 .sig__mic-btn:disabled {
@@ -128,33 +134,36 @@
   opacity: 0.55;
 }
 
-/* Listening — pulsing ring */
+/* Listening — pulsing red ring */
 .sig__mic-btn--listening {
-  background: var(--danger, #f44336);
+  background: var(--error);
+  box-shadow: var(--shadow-md), 0 6px 0 rgba(0, 0, 0, 0.18), 0 0 0 6px color-mix(in srgb, var(--error) 20%, transparent);
   animation: mic-pulse 1.4s ease-in-out infinite;
 }
 
 /* Processing — muted */
 .sig__mic-btn--processing {
-  background: var(--text-secondary, #64748b);
+  background: var(--text-secondary);
 }
 
 /* Success */
 .sig__mic-btn--success {
-  background: var(--mimi-green, #4caf50);
+  background: var(--mimi-green);
 }
 
 /* Error */
 .sig__mic-btn--error {
-  background: var(--accent-amber, #f59e0b);
+  background: var(--warning);
 }
 
 @keyframes mic-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 var(--primary);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--error) 60%, transparent);
+    transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 0 16px transparent;
+    box-shadow: 0 0 0 18px transparent;
+    transform: scale(1.04);
   }
 }
 
@@ -179,13 +188,13 @@
 }
 
 .sig__feedback--correct {
-  background: var(--success-pale, #e8f5e9);
-  color: var(--mimi-green-dark, #2e7d32);
+  background: var(--success-pale);
+  color: var(--mimi-green-dark);
 }
 
 .sig__feedback--wrong {
-  background: var(--warning-pale, #fff8e1);
-  color: var(--primary-dark, #e65100);
+  background: var(--error-pale);
+  color: var(--error);
 }
 
 .sig__heard {
@@ -211,12 +220,14 @@
   gap: 0.4rem;
   padding: 0.65rem 1.25rem;
   border-radius: var(--radius-lg);
-  border: none;
+  border: 2px solid transparent;
+  border-bottom-width: 4px;
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  min-height: 44px;
+  transition: transform 0.15s ease, opacity 0.15s ease, border-bottom-width 0.08s ease;
 }
 
 .sig__btn:hover:not(:disabled) {
@@ -225,7 +236,8 @@
 }
 
 .sig__btn:active:not(:disabled) {
-  transform: scale(0.96);
+  transform: translateY(2px) scale(0.96);
+  border-bottom-width: 2px;
 }
 
 .sig__btn:disabled {
@@ -234,19 +246,29 @@
   transform: none;
 }
 
+.sig__btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .sig__btn--retry {
-  background: var(--accent-amber, #f59e0b);
-  color: #fff;
+  background: var(--warning);
+  color: var(--white);
+  border-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-button);
 }
 
 .sig__btn--skip {
-  background: var(--bg-soft, #f5f5f5);
+  background: var(--bg-soft);
   color: var(--text-secondary);
 }
 
 .sig__btn--mark-done {
   background: var(--primary);
-  color: #fff;
+  color: var(--white);
+  border-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
 }
 
 /* -- Skip Always --------------------------------------------------------- */
@@ -326,12 +348,13 @@
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  border: none;
+  border: 2px solid transparent;
+  border-bottom-width: 5px;
   min-height: 52px;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-bottom-width 0.08s ease;
 }
 
 .sig__completion-btn:hover {
@@ -339,23 +362,33 @@
 }
 
 .sig__completion-btn:active {
-  transform: scale(0.97);
+  transform: translateY(2px) scale(0.97);
+  border-bottom-width: 2px;
+  box-shadow: none !important;
+}
+
+.sig__completion-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .sig__completion-btn--primary {
-  background: var(--gradient-primary, var(--primary));
-  color: #fff;
-  box-shadow: var(--shadow-button, 0 4px 12px rgba(232, 163, 23, 0.35));
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-button);
 }
 
 .sig__completion-btn--primary:hover {
-  box-shadow: var(--shadow-button-hover, 0 6px 18px rgba(232, 163, 23, 0.5));
+  box-shadow: var(--shadow-button-hover);
 }
 
 .sig__completion-btn--secondary {
-  background: var(--bg-soft, #f5f5f5);
+  background: var(--bg-soft);
   color: var(--text-secondary);
-  border: 2px solid var(--border-light);
+  border-color: var(--border-light);
+  border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
 /* -- Score row ----------------------------------------------------------- */
@@ -375,12 +408,13 @@
   }
 
   .sig__word {
-    font-size: 2.25rem;
+    font-size: 2.5rem;
   }
 
   .sig__mic-btn {
-    width: 68px;
-    height: 68px;
+    /* Keep full 88px size — mic is the primary action, never shrink it */
+    width: 88px;
+    height: 88px;
   }
 
   .sig__title {
@@ -400,7 +434,8 @@
 }
 
 [data-theme="dark"] .sig__card--wrong {
-  background: var(--danger-pale);
+  background: var(--error-pale);
+  border-color: var(--error);
 }
 
 [data-theme="dark"] .sig__phonetic {

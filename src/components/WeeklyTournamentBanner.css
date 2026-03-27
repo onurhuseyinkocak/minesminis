@@ -64,7 +64,7 @@
 
 .tournament-tier-name {
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--tier-color, var(--primary));
   text-transform: uppercase;
@@ -91,7 +91,7 @@
 
 .tournament-rank {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--primary);
 }
@@ -102,7 +102,7 @@
   align-items: center;
   gap: var(--space-xs);
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   flex-shrink: 0;

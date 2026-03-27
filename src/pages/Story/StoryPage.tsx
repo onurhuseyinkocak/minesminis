@@ -30,6 +30,7 @@ import type { MusicKey, SFXKey } from '../../data/soundLibrary';
 import StoryScene from '../../components/Story/StoryScene';
 import StoryNarrator from '../../components/Story/StoryNarrator';
 import StoryChoices from '../../components/Story/StoryChoices';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './StoryPage.css';
 
 const StoryPage = React.memo(() => {
@@ -43,6 +44,7 @@ const StoryPage = React.memo(() => {
   const [loading, setLoading] = useState(true);
   const [showChoices, setShowChoices] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
     const saved = localStorage.getItem('mm_story_sound');
     return saved === null ? true : saved === 'true';
@@ -172,12 +174,14 @@ const StoryPage = React.memo(() => {
   }, [storyState, transitioning, addXP]);
 
   // ─── Reset story ───
-  const handleReset = useCallback(async () => {
+  const handleReset = useCallback(() => {
     if (!user || !storyState) return;
-    const confirmMsg = lang === 'tr'
-      ? 'Maceranı yeniden başlatmak istediğine emin misin? Tüm ilerleme kaybolacak.'
-      : 'Are you sure you want to restart your adventure? All progress will be lost.';
-    if (!window.confirm(confirmMsg)) return;
+    setShowResetConfirm(true);
+  }, [user, storyState]);
+
+  const doResetStory = useCallback(async () => {
+    if (!user || !storyState) return;
+    setShowResetConfirm(false);
 
     await resetStoryProgress(user.uid);
     const displayName = userProfile?.display_name || 'Mimi';
@@ -190,7 +194,7 @@ const StoryPage = React.memo(() => {
     setShowChoices(false);
     setChoiceResult(null);
     await saveStoryState(newState);
-  }, [user, storyState, userProfile, lang]);
+  }, [user, storyState, userProfile]);
 
   // ─── TTS helper ───
   const speakWord = useCallback((word: string) => {
@@ -366,7 +370,7 @@ const StoryPage = React.memo(() => {
             <div className="story-page__vocab-card">
               <h4 className="story-page__vocab-title">New Words!</h4>
               <div className="story-page__vocab-list">
-                {currentNode.vocabulary!.map((v) => (
+                {(currentNode.vocabulary ?? []).map((v) => (
                   <div key={v.word} className="story-page__vocab-item">
                     <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }} className="story-page__vocab-emoji">{v.word.charAt(0).toUpperCase()}</div>
                     <span className="story-page__vocab-word">{v.word}</span>
@@ -387,7 +391,7 @@ const StoryPage = React.memo(() => {
                 onClick={() => {
                   if (vocabUpdating) return;
                   setVocabUpdating(true);
-                  const words = currentNode.vocabulary!;
+                  const words = currentNode.vocabulary ?? [];
                   words.forEach((v) => updateWordProgress(v.word, true));
                   toast.success(`${words.length} new word${words.length > 1 ? 's' : ''} added to your review list!`);
                   setVocabDismissed(true);
@@ -407,6 +411,20 @@ const StoryPage = React.memo(() => {
           )}
         </StoryScene>
       </div>
+
+      <ConfirmModal
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={doResetStory}
+        title={lang === 'tr' ? 'Macerani Yeniden Baslat' : 'Restart Adventure'}
+        message={
+          lang === 'tr'
+            ? 'Macerani yeniden baslatmak istedigine emin misin? Tum ilerleme kaybolacak.'
+            : 'Are you sure you want to restart your adventure? All progress will be lost.'
+        }
+        confirmLabel={lang === 'tr' ? 'Evet, Yeniden Baslat' : 'Yes, Restart'}
+        variant="danger"
+      />
     </div>
   );
 });

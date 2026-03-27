@@ -1,5 +1,6 @@
 import { Link, Play, Zap, Bug, Mic, Puzzle, Headphones, BookOpen, MessageSquare, Tag, Volume2, Layers, Star, Lock, BookMarked, Music2, Grid2x2, Users, Triangle, AlertTriangle } from 'lucide-react';
 import type { GameMeta } from '../data/miniGamesData';
+import { useLanguage } from '../contexts/LanguageContext';
 import './GameCard.css';
 
 type WordTopic = 'all' | 'Animals' | 'Colors' | 'Food' | 'Family' | 'Body' | 'Numbers' | 'Nature' | 'phonics';
@@ -10,7 +11,6 @@ export interface GameCardProps {
   userLevel: number;
   bestScore?: number;
   isNew?: boolean;
-  isTr?: boolean;
   activeTopic?: WordTopic;
   isRecommended?: boolean;
   onPlay: () => void;
@@ -54,11 +54,17 @@ const CATEGORY_LABELS: Record<string, { en: string; tr: string }> = {
   speaking: { en: 'Speaking', tr: 'Konuşma' },
 };
 
-export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activeTopic, isRecommended = false, onPlay }: GameCardProps) {
+export function GameCard({ game, isLocked, bestScore, isNew, activeTopic, isRecommended = false, onPlay }: GameCardProps) {
+  const { t, lang } = useLanguage();
   const icon = GAME_ICONS[game.type] ?? <Play size={36} />;
-  const displayName = isTr ? game.nameTr : game.name;
-  const displayDesc = isTr ? game.descriptionTr : game.description;
+  const displayName = lang === 'tr' ? game.nameTr : game.name;
+  const displayDesc = lang === 'tr' ? game.descriptionTr : game.description;
   const categoryLabel = CATEGORY_LABELS[game.category];
+
+  const TOPIC_LABELS_TR: Record<string, string> = {
+    Animals: 'Hayvanlar', Colors: 'Renkler', Food: 'Yiyecekler',
+    Family: 'Aile', Body: 'Vücut', Numbers: 'Sayılar', Nature: 'Doğa',
+  };
 
   return (
     <div
@@ -67,8 +73,8 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activ
       role={isLocked ? 'article' : 'button'}
       tabIndex={isLocked ? -1 : 0}
       aria-label={isLocked
-        ? (isTr ? `${displayName} — seviye ${game.minLevel} gerekli` : `${displayName} — requires level ${game.minLevel}`)
-        : (isTr ? `${displayName} oyna` : `Play ${displayName}`)}
+        ? t('games.levelRequiredAria').replace('{name}', displayName).replace('{level}', String(game.minLevel))
+        : `${t('games.playGame').replace('!', '')} ${displayName}`}
       onClick={() => { if (!isLocked) onPlay(); }}
       onKeyDown={(e) => {
         if (!isLocked && (e.key === 'Enter' || e.key === ' ')) {
@@ -81,7 +87,7 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activ
         <div className="game-card__locked-overlay" aria-hidden="true">
           <span className="game-card__lock-icon"><Lock size={32} /></span>
           <span className="game-card__lock-label">
-            {isTr ? `Seviye ${game.minLevel} gerekli` : `Level ${game.minLevel} required`}
+            {t('games.levelRequired').replace('{level}', String(game.minLevel))}
           </span>
         </div>
       )}
@@ -93,7 +99,7 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activ
         {categoryLabel && (
           <span className="game-card__category-badge">
             <BookMarked size={10} />
-            {isTr ? categoryLabel.tr : categoryLabel.en}
+            {lang === 'tr' ? categoryLabel.tr : categoryLabel.en}
           </span>
         )}
       </div>
@@ -118,15 +124,15 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activ
 
         {activeTopic && activeTopic !== 'all' && game.category === 'vocabulary' && activeTopic !== 'phonics' && (
           <span className="game-card__topic-pill">
-            {isTr
-              ? `${activeTopic === 'Animals' ? 'Hayvanlar' : activeTopic === 'Colors' ? 'Renkler' : activeTopic === 'Food' ? 'Yiyecekler' : activeTopic === 'Family' ? 'Aile' : activeTopic === 'Body' ? 'Vücut' : activeTopic === 'Numbers' ? 'Sayılar' : activeTopic === 'Nature' ? 'Doğa' : activeTopic} kelimeleri`
+            {lang === 'tr'
+              ? `${TOPIC_LABELS_TR[activeTopic] ?? activeTopic} kelimeleri`
               : `${activeTopic} words`}
           </span>
         )}
 
         {activeTopic === 'phonics' && game.category === 'phonics' && (
           <span className="game-card__topic-pill game-card__topic-pill--phonics">
-            {isTr ? 'Fonetik modu' : 'Phonics mode'}
+            {t('games.phonicsMode')}
           </span>
         )}
       </div>
@@ -137,16 +143,16 @@ export function GameCard({ game, isLocked, bestScore, isNew, isTr = false, activ
             type="button"
             className="game-card__play-btn"
             onClick={(e) => { e.stopPropagation(); onPlay(); }}
-            aria-label={isTr ? `${displayName} oyna` : `Play ${displayName}`}
+            aria-label={`${t('games.playGame').replace('!', '')} ${displayName}`}
           >
             <Play size={16} fill="white" />
-            {isTr ? 'Oyna!' : 'Play!'}
+            {t('games.playGame')}
           </button>
         </div>
       )}
       {isRecommended && (
-        <span className="game-card__recommended" aria-label={isTr ? 'Mimi tarafından önerilen' : 'Recommended by Mimi'}>
-          {isTr ? 'Bugün İçin' : 'For Today'}
+        <span className="game-card__recommended" aria-label={t('games.recommendedForToday')}>
+          {t('games.recommendedForToday')}
         </span>
       )}
     </div>

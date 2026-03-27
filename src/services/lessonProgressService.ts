@@ -220,6 +220,9 @@ export function resetAllProgress(): void {
       localStorage.removeItem(KEY_UNIT_ACTIVITY(unit.id));
     }
     localStorage.setItem(KEY_CURRENT_UNIT(), ALL_CURRICULUM_UNITS[0]?.id ?? 's1-u1');
+    // Also reset the phase/unit index cache used by WorldMap
+    localStorage.removeItem(CURRENT_UNIT_PHASE_KEY());
+    localStorage.removeItem(CURRENT_UNIT_UNIT_KEY());
   } catch {
     // ignore
   }

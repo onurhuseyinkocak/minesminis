@@ -280,6 +280,100 @@ const Nose = ({ size }: { size: number }) => (
   </svg>
 );
 
+const Rabbit = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
+    {/* ears */}
+    <ellipse cx="36" cy="28" rx="8" ry="20" fill="#f0e0d0" />
+    <ellipse cx="64" cy="28" rx="8" ry="20" fill="#f0e0d0" />
+    <ellipse cx="36" cy="28" rx="4" ry="15" fill="#e8a0a0" />
+    <ellipse cx="64" cy="28" rx="4" ry="15" fill="#e8a0a0" />
+    {/* body */}
+    <ellipse cx="50" cy="68" rx="26" ry="22" fill="#f0e0d0" />
+    {/* head */}
+    <circle cx="50" cy="50" r="18" fill="#f0e0d0" />
+    {/* eyes */}
+    <circle cx="43" cy="47" r="3" fill="#e8a0a0" />
+    <circle cx="57" cy="47" r="3" fill="#e8a0a0" />
+    <circle cx="43" cy="46" r="1.5" fill="#333" />
+    <circle cx="57" cy="46" r="1.5" fill="#333" />
+    {/* nose */}
+    <ellipse cx="50" cy="54" rx="3" ry="2" fill="#e8a0a0" />
+    {/* mouth */}
+    <path d="M47 56 Q50 59 53 56" fill="none" stroke="#c0808080" strokeWidth="1.5" />
+    {/* tail */}
+    <circle cx="76" cy="80" r="6" fill="#fff" />
+  </svg>
+);
+
+const Elephant = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
+    {/* body */}
+    <ellipse cx="52" cy="65" rx="30" ry="22" fill="#9e9e9e" />
+    {/* head */}
+    <circle cx="30" cy="45" r="20" fill="#9e9e9e" />
+    {/* ear */}
+    <ellipse cx="18" cy="42" rx="10" ry="14" fill="#bdbdbd" />
+    <ellipse cx="18" cy="42" rx="6" ry="10" fill="#e0c8c8" />
+    {/* trunk */}
+    <path d="M20 58 Q10 65 12 78 Q14 86 22 84" fill="none" stroke="#9e9e9e" strokeWidth="8" strokeLinecap="round" />
+    {/* eye */}
+    <circle cx="28" cy="40" r="4" fill="#fff" />
+    <circle cx="28" cy="40" r="2" fill="#333" />
+    <circle cx="27" cy="39" r="1" fill="#fff" />
+    {/* tusk */}
+    <path d="M22 58 Q16 62 18 70" fill="none" stroke="#f5f5dc" strokeWidth="3" strokeLinecap="round" />
+    {/* legs */}
+    <rect x="28" y="82" width="10" height="14" rx="5" fill="#757575" />
+    <rect x="42" y="82" width="10" height="14" rx="5" fill="#757575" />
+    <rect x="56" y="82" width="10" height="14" rx="5" fill="#757575" />
+    <rect x="68" y="80" width="10" height="14" rx="5" fill="#757575" />
+    {/* tail */}
+    <path d="M82 62 Q90 55 88 68" fill="none" stroke="#757575" strokeWidth="3" strokeLinecap="round" />
+  </svg>
+);
+
+const Clock = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
+    {/* clock body */}
+    <circle cx="50" cy="52" r="36" fill="#fff" stroke="#424242" strokeWidth="4" />
+    <circle cx="50" cy="52" r="32" fill="#fafafa" />
+    {/* hour markers */}
+    <line x1="50" y1="22" x2="50" y2="28" stroke="#424242" strokeWidth="2.5" strokeLinecap="round" />
+    <line x1="50" y1="76" x2="50" y2="82" stroke="#424242" strokeWidth="2.5" strokeLinecap="round" />
+    <line x1="18" y1="52" x2="24" y2="52" stroke="#424242" strokeWidth="2.5" strokeLinecap="round" />
+    <line x1="76" y1="52" x2="82" y2="52" stroke="#424242" strokeWidth="2.5" strokeLinecap="round" />
+    {/* hour hand */}
+    <line x1="50" y1="52" x2="50" y2="34" stroke="#212121" strokeWidth="3.5" strokeLinecap="round" />
+    {/* minute hand */}
+    <line x1="50" y1="52" x2="66" y2="52" stroke="#212121" strokeWidth="2.5" strokeLinecap="round" />
+    {/* center dot */}
+    <circle cx="50" cy="52" r="3" fill="#e53935" />
+    {/* bell top */}
+    <rect x="44" y="14" width="12" height="6" rx="2" fill="#424242" />
+  </svg>
+);
+
+const Pizza = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
+    {/* pizza slice */}
+    <polygon points="50,10 10,90 90,90" fill="#f9ca24" />
+    <polygon points="50,10 10,90 90,90" fill="#e8a800" opacity="0.3" />
+    {/* crust */}
+    <path d="M10 90 Q50 100 90 90" fill="#d4a574" stroke="#b8860b" strokeWidth="2" />
+    {/* tomato sauce */}
+    <polygon points="50,22 18,82 82,82" fill="#e53935" opacity="0.85" />
+    {/* cheese */}
+    <polygon points="50,30 24,78 76,78" fill="#f9ca24" opacity="0.9" />
+    {/* toppings - pepperoni circles */}
+    <circle cx="50" cy="52" r="6" fill="#c62828" />
+    <circle cx="38" cy="66" r="5" fill="#c62828" />
+    <circle cx="62" cy="66" r="5" fill="#c62828" />
+    {/* cheese holes */}
+    <circle cx="44" cy="45" r="2" fill="#f0b800" opacity="0.7" />
+    <circle cx="58" cy="58" r="2" fill="#f0b800" opacity="0.7" />
+  </svg>
+);
+
 const Red = ({ size }: { size: number }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
     <circle cx="50" cy="50" r="38" fill="#e53935" />
@@ -351,6 +445,10 @@ const WORD_ILLUSTRATIONS: Record<string, IllustrationComponent> = {
   eye: Eye,
   ear: Ear,
   nose: Nose,
+  rabbit: Rabbit,
+  elephant: Elephant,
+  clock: Clock,
+  pizza: Pizza,
   red: Red,
   blue: Blue,
   green: Green,

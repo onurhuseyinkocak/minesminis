@@ -49,20 +49,22 @@
 }
 
 .topnav__logo-icon {
-  width: 36px;
-  height: 36px;
+  /* 32px enforced height per spec */
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.375rem;
+  font-size: 1.25rem;
   line-height: 1;
 }
 
 .topnav__logo-text {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.25rem;
+  /* Scale to match 32px icon */
+  font-size: 1.125rem;
   letter-spacing: -0.3px;
 }
 
@@ -126,13 +128,104 @@
 .topnav__link.active::after {
   content: '';
   position: absolute;
-  bottom: -1px;
+  bottom: 4px;
   left: 20%;
   right: 20%;
   height: 3px;
   background: var(--gradient-primary);
   border-radius: var(--radius-full);
   box-shadow: 0 1px 6px rgba(255, 107, 53, 0.4);
+}
+
+/* -- Language toggle pill --------------------------------------------- */
+
+.topnav__lang-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--bg-muted);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.topnav__lang-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.topnav__lang-btn--active {
+  background: var(--bg-card);
+  color: var(--primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.topnav__lang-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+[data-theme="dark"] .topnav__lang-toggle { background: rgba(255, 255, 255, 0.08); }
+[data-theme="dark"] .topnav__lang-btn--active {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--primary-light);
+  box-shadow: none;
+}
+
+/* -- CTA button ------------------------------------------------------- */
+
+.topnav__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 var(--space-lg);
+  height: 40px;
+  min-height: var(--touch-target);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.3);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    opacity var(--transition-base);
+}
+
+.topnav__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(232, 163, 23, 0.4);
+  opacity: 0.94;
+}
+
+.topnav__cta:active { transform: scale(0.98); }
+
+.topnav__cta:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 /* -- User section ----------------------------------------------------- */
@@ -262,7 +355,7 @@
 .topnav__dropdown-name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 0.875rem; /* was 14px — rem scales with browser text size */
   color: var(--text-primary);
 }
 
@@ -276,7 +369,7 @@
   background: none;
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 0.875rem; /* was 14px — rem scales with browser text size */
   color: var(--text-secondary);
   cursor: pointer;
   transition: background var(--transition-fast), color var(--transition-fast);
@@ -319,7 +412,7 @@
   background: var(--error-pale);
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 0.9375rem; /* was 15px — rem scales with browser text size */
   font-weight: 600;
   color: var(--error);
   cursor: pointer;
@@ -355,15 +448,16 @@
 
 .topnav__hamburger svg { width: 24px; height: 24px; }
 
-/* -- Mobile slide-out menu -------------------------------------------- */
+/* -- Mobile slide-DOWN menu (full width) -------------------------------- */
 
+/* Overlay: shown behind the full-width slide-down panel */
 .topnav__mobile-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: var(--z-overlay);
   opacity: 0;
   transition: opacity var(--transition-base);
@@ -371,24 +465,28 @@
 
 .topnav__mobile-overlay.open { opacity: 1; }
 
+/* Full-width panel that slides down from the nav bar */
 .topnav__mobile-menu {
   position: fixed;
-  top: 0;
+  top: 64px; /* nav height */
+  left: 0;
   right: 0;
-  bottom: 0;
-  width: 280px;
-  max-width: 85vw;
+  /* No fixed bottom — height is content-driven */
   background: var(--bg-card);
   z-index: var(--z-modal);
-  transform: translateX(100%);
+  /* Slide down: translate from -100% (above) to 0 */
+  transform: translateY(-105%);
   transition: transform var(--transition-spring);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  border-bottom: 1px solid var(--border-light);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  max-height: calc(100vh - 64px);
 }
 
-.topnav__mobile-menu.open { transform: translateX(0); }
+.topnav__mobile-menu.open { transform: translateY(0); }
 
 .topnav__mobile-header {
   display: flex;
@@ -399,8 +497,8 @@
 }
 
 .topnav__mobile-close {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target);
+  height: var(--touch-target);
   min-width: var(--touch-target);
   min-height: var(--touch-target);
   border: none;
@@ -498,6 +596,15 @@
   .topnav__mobile-overlay.open { pointer-events: auto; }
 }
 
+/* -- Tablet (768px–1023px): show compact streak in the nav ------------ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .topnav__streak {
+    display: flex;
+    font-size: 0.8rem;
+    padding: var(--space-xs) var(--space-sm);
+  }
+}
+
 @media (max-width: 480px) {
   .topnav { padding: 0 var(--space-md); }
 }
@@ -549,7 +656,9 @@
 }
 
 [data-theme="dark"] .topnav__mobile-menu {
-  background: var(--ink);
+  background: var(--charcoal);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 [data-theme="dark"] .topnav__mobile-overlay.open {
@@ -557,7 +666,7 @@
 }
 
 [data-theme="dark"] .topnav__hamburger {
-  color: var(--cloud);
+  color: var(--text-secondary);
 }
 
 [data-theme="dark"] .topnav__hamburger:hover {

@@ -14,7 +14,7 @@
   --admin-text-secondary: var(--text-secondary);
   --admin-text-muted: var(--text-muted);
   --admin-primary: var(--primary-dark);
-  --admin-primary-hover: var(--primary-dark);
+  --admin-primary-hover: var(--primary-hover);
   --admin-primary-light: var(--primary-pale);
   --admin-nav-bg: #1E293B;
   --admin-nav-text: rgba(255, 255, 255, 0.6);
@@ -263,7 +263,7 @@
 .adm-sidebar-brand-text small {
   display: block;
   font-family: var(--admin-font);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 400;
   color: var(--admin-nav-text);
   letter-spacing: 0.04em;
@@ -278,7 +278,7 @@
 }
 
 .adm-nav-section-label {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -417,7 +417,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-sm);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   background: var(--success-soft);
   color: var(--success);

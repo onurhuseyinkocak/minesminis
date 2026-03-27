@@ -119,7 +119,7 @@
 }
 
 .adm-analytics-stat-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
 }
 
@@ -145,7 +145,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--admin-font-heading);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--admin-text-muted);
   flex-shrink: 0;
@@ -173,23 +173,27 @@
   width: 80px;
   height: 6px;
   background: var(--admin-bg);
-  border-radius: var(--space-xs);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .adm-top-bar-fill {
   height: 100%;
-  border-radius: var(--space-xs);
+  border-radius: var(--radius-full);
   transition: width var(--transition-slow);
 }
 
 @media (max-width: 1024px) {
   .adm-analytics-grid { grid-template-columns: 1fr; }
   .adm-analytics-stats { grid-template-columns: repeat(2, 1fr); }
+  .adm-analytics-chart-body { height: 240px; }
+  .adm-analytics-chart-body.tall { height: 260px; }
 }
 
 @media (max-width: 640px) {
   .adm-analytics-stats { grid-template-columns: 1fr; }
+  .adm-analytics-chart-body { height: 200px; }
+  .adm-analytics-chart-body.tall { height: 220px; }
 }
 
 /* ── Stat icon variants ── */
@@ -212,7 +216,7 @@
 
 /* ── Chart header period label ── */
 .adm-analytics-chart-period {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
 }
 
@@ -264,7 +268,7 @@
 }
 
 .adm-engagement-sub {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
 }
 

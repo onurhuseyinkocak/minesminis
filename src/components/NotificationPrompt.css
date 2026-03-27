@@ -21,6 +21,8 @@
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.32);
 
   padding: 28px 24px 32px;
+  /* Safe area for devices with home indicator */
+  padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   max-width: 520px;
   margin: 0 auto;
 }
@@ -61,7 +63,7 @@
 
 .notif-prompt-subtitle {
   font-size: 13px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, #6B7A99);
   margin: 0;
   font-family: var(--font-display);
   line-height: 1.5;
@@ -77,6 +79,8 @@
 
 .notif-prompt-btn {
   flex: 1;
+  /* 44px minimum touch target */
+  min-height: 44px;
   padding: 13px 20px;
   border-radius: var(--radius-md, 12px);
   font-size: 15px;
@@ -102,13 +106,13 @@
 
 .notif-prompt-btn--ghost {
   background: transparent;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, #6B7A99);
   border: 1px solid var(--glass-border, #334155);
 }
 
 .notif-prompt-btn--ghost:hover {
   color: var(--text-primary, #f1f5f9);
-  border-color: var(--text-muted, #94a3b8);
+  border-color: var(--text-muted, #6B7A99);
 }
 
 /* ── Drag handle (cosmetic) ──────────────────────────────────────────────── */
@@ -119,4 +123,35 @@
   border-radius: 2px;
   background: var(--glass-border, #334155);
   margin: 0 auto 20px;
+}
+
+/* ── Close (X) button ─────────────────────────────────────────────────────── */
+
+.notif-prompt-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  /* 44px touch target */
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: var(--text-muted, #6B7A99);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.notif-prompt-close:hover {
+  background: var(--glass-border, rgba(255, 255, 255, 0.08));
+  color: var(--text-primary, #f1f5f9);
+}
+
+/* ── Sheet needs relative positioning for the close button ── */
+.notif-prompt-sheet {
+  position: fixed; /* already set above, adding relative via cascade not needed — close btn is absolute in fixed context */
 }

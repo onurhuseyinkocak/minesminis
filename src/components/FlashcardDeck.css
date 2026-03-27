@@ -6,7 +6,8 @@
 /* -- Scene wrapper (perspective root) -- */
 
 .flashcard-scene {
-  perspective: 1200px;
+  /* Closer perspective = more dramatic 3D depth effect */
+  perspective: 900px;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
@@ -17,20 +18,30 @@
 .flashcard {
   position: relative;
   width: 100%;
-  min-height: 360px;
+  /* Taller card — more breathing room */
+  min-height: 400px;
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: transform 0.5s var(--ease-spring);
+  /* Spring overshoot — card "clicks" into place with bounce */
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
   border-radius: var(--radius-2xl, 24px);
+  /* Shadow on container so it doesn't flip */
+  filter: drop-shadow(0 12px 36px rgba(0, 0, 0, 0.12)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
 }
 
 .flashcard.flipped {
   transform: rotateY(180deg);
 }
 
-/* Hover lift effect (only when not flipped) */
+/* Hover lift — tilt implies interactivity */
 .flashcard:not(.flipped):hover {
-  transform: translateY(-4px) rotateY(2deg);
+  transform: translateY(-6px) rotateY(3deg);
+}
+
+/* Tactile press-down feel */
+.flashcard:not(.flipped):active {
+  transform: translateY(-1px) rotateY(1deg) scale(0.985);
+  transition-duration: 0.1s;
 }
 
 /* -- Shared face styles -- */
@@ -42,7 +53,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 36px 28px 32px;
+  /* Extra bottom padding — hint text lives there */
+  padding: 36px 28px 56px;
   border-radius: var(--radius-2xl, 24px);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -57,10 +69,10 @@
 .flashcard__front {
   background: var(--bg-card, #ffffff);
   border: 2px solid var(--border, #e2e8f0);
+  /* Inner bevel for paper-like depth */
   box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.04),
-    0 12px 32px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(0, 0, 0, 0.02);
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
 /* Decorative top accent strip */
@@ -70,39 +82,40 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 5px;
+  height: 6px;
   background: linear-gradient(90deg, var(--primary) 0%, var(--accent-amber) 50%, var(--primary) 100%);
   border-radius: var(--radius-2xl, 24px) var(--radius-2xl, 24px) 0 0;
 }
 
 .flashcard__front-hint {
   position: absolute;
-  bottom: 18px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 12px;
   font-family: var(--font-display, Nunito, sans-serif);
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, #6B7A99);
   white-space: nowrap;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   animation: hintPulse 2.5s ease-in-out infinite;
 }
 
 @keyframes hintPulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
 }
 
 /* -- Back face -- */
 
 .flashcard__back {
-  background: linear-gradient(145deg, var(--secondary-pale, #e6f5f1) 0%, var(--bg-card, #ffffff) 60%, var(--primary-pale, #fff4ee) 100%);
+  background: linear-gradient(155deg, var(--secondary-pale, #e6f5f1) 0%, var(--bg-card, #ffffff) 55%, var(--primary-pale, #fff4ee) 100%);
   border: 2px solid var(--secondary-light, #1a8a78);
   transform: rotateY(180deg);
+  /* Inner bevel matches front */
   box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.04),
-    0 12px 32px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(13, 92, 77, 0.08);
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(13, 92, 77, 0.04);
 }
 
 /* Decorative top accent strip on back */
@@ -112,16 +125,34 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 5px;
+  height: 6px;
   background: linear-gradient(90deg, var(--secondary) 0%, var(--secondary-light) 50%, var(--secondary) 100%);
   border-radius: var(--radius-2xl, 24px) var(--radius-2xl, 24px) 0 0;
+}
+
+/* -- TR→EN direction badge -- */
+
+.flashcard__front-dir-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--secondary, #0d5c4d);
+  background: var(--secondary-pale, #e6f5f1);
+  border: 1px solid var(--secondary-light, #1a8a78);
+  border-radius: 6px;
+  padding: 2px 7px;
 }
 
 /* -- Word (front) -- */
 
 .flashcard__word {
   font-family: var(--font-display, Nunito, sans-serif);
-  font-size: 44px;
+  /* Responsive: clamp prevents overflow on small screens */
+  font-size: clamp(36px, 9vw, 48px);
   font-weight: 900;
   color: var(--text-primary, #1a1a2e);
   letter-spacing: -0.02em;
@@ -129,11 +160,27 @@
   text-align: center;
 }
 
+/* Back-face word shown smaller alongside translation */
+.flashcard__word--back {
+  font-size: 28px;
+}
+
+/* TR→EN front: Turkish word displayed in a distinct colour */
+.flashcard__word--tr {
+  color: var(--secondary, #0d5c4d);
+}
+
+/* TR→EN back: the English word revealed on the back face */
+.flashcard__word--en-reveal {
+  color: var(--primary, #ff6b35);
+  font-size: 32px;
+}
+
 /* -- Translation (back) -- */
 
 .flashcard__translation {
   font-family: var(--font-display, Nunito, sans-serif);
-  font-size: 30px;
+  font-size: clamp(26px, 6.5vw, 34px);
   font-weight: 800;
   color: var(--secondary, #0d5c4d);
   text-align: center;
@@ -146,12 +193,13 @@
   font-family: var(--font-mono, monospace);
   font-size: 15px;
   font-weight: 500;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, #6B7A99);
   text-align: center;
   letter-spacing: 0.06em;
-  padding: 0.25rem 0.75rem;
-  background: rgba(0, 0, 0, 0.03);
+  padding: 0.3rem 0.9rem;
+  background: rgba(0, 0, 0, 0.04);
   border-radius: 99px;
+  border: 1px solid var(--border-light, #e2e8f0);
 }
 
 /* -- Example sentence (back) -- */
@@ -180,7 +228,7 @@
 .flashcard__example-tr {
   font-family: var(--font-body, Inter, sans-serif);
   font-size: 13px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, #6B7A99);
   line-height: 1.4;
 }
 
@@ -201,45 +249,59 @@
   justify-content: center;
   gap: 8px;
   padding: 14px 20px;
-  border: none;
+  border: 2px solid transparent;
+  border-bottom-width: 5px;
   border-radius: var(--radius-xl, 16px);
   font-family: var(--font-display, Nunito, sans-serif);
   font-size: 15px;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s var(--ease-spring);
+  transition:
+    transform 0.15s var(--ease-spring),
+    box-shadow 0.15s var(--ease-spring),
+    border-bottom-width 0.08s ease;
   touch-action: manipulation;
   letter-spacing: 0.01em;
 }
 
 .flashcard-action-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
+/* Tactile press — border collapses, button sinks */
 .flashcard-action-btn:active {
-  transform: scale(0.96) translateY(0);
+  transform: translateY(3px) scale(0.98);
+  border-bottom-width: 2px !important;
+  box-shadow: none !important;
+  transition-duration: 0.08s;
 }
 
+/* "I Know It" — green gradient + dark bottom edge for 3D depth */
 .flashcard-action-btn--know {
-  background: var(--success, #10b981);
+  background: linear-gradient(180deg, #1ecc9a 0%, var(--success, #10b981) 100%);
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+  border-color: transparent;
+  border-bottom-color: var(--mimi-green-dark);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.38);
 }
 
 .flashcard-action-btn--know:hover {
-  background: var(--success-light, #34d399);
-  box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+  background: linear-gradient(180deg, var(--success-light) 0%, var(--success) 100%);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.48);
 }
 
+/* "Try Again" — amber gradient + dark bottom edge */
 .flashcard-action-btn--retry {
-  background: var(--warning, #f59e0b);
+  background: linear-gradient(180deg, #fbbf24 0%, var(--warning, #f59e0b) 100%);
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+  border-color: transparent;
+  border-bottom-color: var(--accent-amber);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.38);
 }
 
 .flashcard-action-btn--retry:hover {
-  background: var(--warning-light, #fbbf24);
-  box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45);
+  background: linear-gradient(180deg, var(--warning-light) 0%, var(--warning) 100%);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.48);
 }
 
 /* -- Progress indicator -- */
@@ -262,11 +324,13 @@
 
 .flashcard-progress__bar-track {
   flex: 1;
-  height: 6px;
+  height: 8px;
   background: var(--bg-muted, #f1f5f9);
   border-radius: 99px;
   margin: 0 12px;
   overflow: hidden;
+  /* Inset so bar looks recessed */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .flashcard-progress__bar-fill {
@@ -284,19 +348,25 @@
   align-items: center;
   justify-content: center;
   gap: 24px;
-  padding: 48px 28px;
+  padding: 56px 32px 48px;
   text-align: center;
-  min-height: 360px;
+  min-height: 400px;
   background: var(--bg-card, #ffffff);
   border: 2px solid var(--border, #e2e8f0);
   border-radius: var(--radius-2xl, 24px);
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.04),
-    0 12px 32px rgba(0, 0, 0, 0.08);
+    0 16px 44px rgba(0, 0, 0, 0.1);
   max-width: 420px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
+  animation: cardCompleteIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cardCompleteIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Confetti-like top bar */
@@ -320,11 +390,17 @@
 
 .flashcard-complete__ratio {
   font-family: var(--font-display, Nunito, sans-serif);
-  font-size: 56px;
+  font-size: 68px;
   font-weight: 900;
   color: var(--success, #10b981);
   line-height: 1;
-  text-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  text-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+  animation: ratioIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+@keyframes ratioIn {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .flashcard-complete__sub {
@@ -338,24 +414,30 @@
   padding: 14px 36px;
   background: var(--primary, #ff6b35);
   color: #ffffff;
-  border: none;
+  border: 2px solid transparent;
+  border-bottom: 5px solid var(--primary-dark);
   border-radius: var(--radius-xl, 16px);
   font-family: var(--font-display, Nunito, sans-serif);
   font-size: 16px;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 4px 16px var(--primary-glow, rgba(255, 107, 53, 0.35));
-  transition: all 0.2s var(--ease-spring);
+  transition:
+    transform 0.15s var(--ease-spring),
+    box-shadow 0.15s var(--ease-spring),
+    border-bottom-width 0.08s ease;
   touch-action: manipulation;
 }
 
 .flashcard-complete__btn:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 28px var(--primary-glow, rgba(255, 107, 53, 0.4));
 }
 
 .flashcard-complete__btn:active {
-  transform: scale(0.97);
+  transform: translateY(2px) scale(0.98);
+  border-bottom-width: 2px;
+  box-shadow: none;
 }
 
 /* -- Keyboard shortcut hint -- */
@@ -363,9 +445,9 @@
 .flashcard-keyboard-hint {
   text-align: center;
   font-family: var(--font-body, Inter, sans-serif);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, #6B7A99);
   letter-spacing: 0.04em;
   padding: 8px 0 0;
   user-select: none;

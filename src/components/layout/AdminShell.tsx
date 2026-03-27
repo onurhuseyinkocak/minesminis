@@ -93,7 +93,7 @@ export default function AdminShell({
         aria-label="Admin navigation"
       >
         <div className="admin-shell__sidebar-header">
-          <div className="admin-shell__sidebar-logo"><Star size={22} fill="#E8A317" color="#E8A317" /></div>
+          <div className="admin-shell__sidebar-logo"><Star size={22} fill="var(--warning)" color="var(--warning)" /></div>
           <div>
             <div className="admin-shell__sidebar-title">MinesMinis</div>
             <div className="admin-shell__sidebar-subtitle">Admin</div>
@@ -132,25 +132,12 @@ export default function AdminShell({
       <div className="admin-shell__body">
         <header className="admin-shell__header">
           <div className="admin-shell__header-left">
-            {/* Mobile hamburger */}
+            {/* Mobile hamburger — visibility controlled via CSS at breakpoint */}
             <button
-              className="admin-shell__header-btn"
+              className="admin-shell__header-btn admin-shell__header-menu-btn"
               onClick={() => setMobileOpen(true)}
               aria-label="Open sidebar"
               type="button"
-              style={{ display: 'none' }}
-              ref={(el) => {
-                // Show only on mobile via CSS would be cleaner, but this ensures it renders
-                if (el) {
-                  el.style.display = '';
-                  const mq = window.matchMedia('(min-width: 1024px)');
-                  const handler = (e: MediaQueryListEvent | MediaQueryList) => {
-                    el.style.display = e.matches ? 'none' : 'flex';
-                  };
-                  handler(mq);
-                  mq.addEventListener('change', handler);
-                }
-              }}
             >
               <Menu size={20} />
             </button>

@@ -19,7 +19,7 @@
 }
 
 .hearts-display--sm .hearts-display__timer {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
 }
 
 .hearts-display--sm .hearts-display__unlimited {
@@ -66,6 +66,7 @@
 /* Full heart: vivid red with glow + subtle pulse */
 .hearts-display__icon--full {
   color: var(--error);
+  filter: drop-shadow(0 1px 3px rgba(239, 68, 68, 0.40)); /* color-mix fallback */
   filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--error) 40%, transparent));
   animation: heartbeat 2.8s ease-in-out infinite;
 }
@@ -91,10 +92,18 @@
 }
 
 @keyframes heartLose {
-  0%   { transform: scale(1); filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--error) 40%, transparent)); }
-  30%  { transform: scale(1.4); filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--error) 60%, transparent)); }
+  0%   { transform: scale(1); filter: drop-shadow(0 1px 3px rgba(239, 68, 68, 0.40)); }
+  30%  { transform: scale(1.4); filter: drop-shadow(0 2px 8px rgba(239, 68, 68, 0.60)); }
   60%  { transform: scale(0.5); filter: none; }
   100% { transform: scale(1); filter: none; }
+}
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  @keyframes heartLose {
+    0%   { transform: scale(1); filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--error) 40%, transparent)); }
+    30%  { transform: scale(1.4); filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--error) 60%, transparent)); }
+    60%  { transform: scale(0.5); filter: none; }
+    100% { transform: scale(1); filter: none; }
+  }
 }
 
 /* ── Unlimited (infinity) icon ────────────────────────────── */
@@ -141,6 +150,6 @@
   }
 
   .hearts-display__timer {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
   }
 }

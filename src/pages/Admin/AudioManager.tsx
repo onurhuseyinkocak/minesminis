@@ -169,9 +169,9 @@ function AudioManager() {
           {ttsServerReachable === null ? (
             <Loader2 size={16} className="spin" />
           ) : ttsServerReachable ? (
-            <CheckCircle size={16} color="#22c55e" />
+            <CheckCircle size={16} color="var(--success)" />
           ) : (
-            <XCircle size={16} color="#ef4444" />
+            <XCircle size={16} color="var(--error)" />
           )}
           <span style={{ fontWeight: 600 }}>
             Local TTS Server (localhost:7700):{' '}

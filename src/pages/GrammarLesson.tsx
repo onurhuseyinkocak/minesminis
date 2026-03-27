@@ -4,7 +4,7 @@
  */
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, Star, ChevronRight, ChevronLeft } from 'lucide-react';
 import { getGrammarLesson, grammarLessons } from '../data/grammarLessons';
 import GrammarMiniLesson from '../components/GrammarMiniLesson';
 import LottieCharacter from '../components/LottieCharacter';
@@ -86,7 +86,7 @@ export default function GrammarLessonPage() {
                   </span>
                   <span className="grammar-page__preview">{previewNote}</span>
                 </div>
-                <span className="grammar-page__arrow">›</span>
+                <ChevronRight size={20} className="grammar-page__arrow" />
               </motion.button>
             );
           })}
@@ -108,22 +108,76 @@ export default function GrammarLessonPage() {
     );
   }
 
+  const currentIndex = grammarLessons.findIndex(l => l.id === lessonId);
+  const total = grammarLessons.length;
+  const progressPct = total > 0 ? Math.round(((currentIndex + 1) / total) * 100) : 0;
+  const prevLesson = currentIndex > 0 ? grammarLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex < total - 1 ? grammarLessons[currentIndex + 1] : null;
+
   return (
     <div className="grammar-page">
       <div className="grammar-page__header">
         <button onClick={() => navigate('/grammar')} className="grammar-page__back">
           <ArrowLeft size={20} /> {isTr ? 'Gramer' : 'Grammar'}
         </button>
-        <h1>{isTr ? lesson.topicTr : lesson.topic}</h1>
+        <h1 className="grammar-page__header-title">
+          {isTr ? lesson.topicTr : lesson.topic}
+        </h1>
       </div>
+
+      {/* Progress indicator */}
+      <div className="grammar-page__progress">
+        <div className="grammar-page__progress-track">
+          <div
+            className="grammar-page__progress-fill"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+        <span className="grammar-page__progress-label">
+          {isTr ? `Ders ${currentIndex + 1} / ${total}` : `Lesson ${currentIndex + 1} of ${total}`}
+        </span>
+      </div>
+
       <div className="grammar-page__content">
         <GrammarMiniLesson
           lesson={lesson}
           lang={lang as 'tr' | 'en'}
           onComplete={(_score) => {
-            setTimeout(() => navigate('/grammar'), 2000);
+            if (nextLesson) {
+              setTimeout(() => navigate(`/grammar/${nextLesson.id}`), 1800);
+            } else {
+              setTimeout(() => navigate('/grammar'), 2000);
+            }
           }}
         />
+      </div>
+
+      {/* Prev / Next lesson navigation */}
+      <div className="grammar-page__lesson-nav">
+        <button
+          className="grammar-page__nav-btn"
+          onClick={() => prevLesson && navigate(`/grammar/${prevLesson.id}`)}
+          disabled={!prevLesson}
+          aria-label={isTr ? 'Önceki ders' : 'Previous lesson'}
+        >
+          <ChevronLeft size={16} />
+          {isTr ? 'Önceki' : 'Previous'}
+        </button>
+
+        <span className="grammar-page__nav-position">
+          {currentIndex + 1} / {total}
+          <span className="grammar-page__nav-position-label">{isTr ? 'ders' : 'lessons'}</span>
+        </span>
+
+        <button
+          className="grammar-page__nav-btn grammar-page__nav-btn--next"
+          onClick={() => nextLesson && navigate(`/grammar/${nextLesson.id}`)}
+          disabled={!nextLesson}
+          aria-label={isTr ? 'Sonraki ders' : 'Next lesson'}
+        >
+          {isTr ? 'Sonraki' : 'Next'}
+          <ChevronRight size={16} />
+        </button>
       </div>
     </div>
   );

@@ -207,7 +207,7 @@
 
 .info-value {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--primary);
   background: var(--primary-pale);
   padding: 2px var(--space-xs);

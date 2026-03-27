@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Star, Heart, BookOpen, Award, Globe, Users, Sparkles, Quote, Languages, Zap, ArrowLeft } from 'lucide-react';
@@ -106,6 +106,13 @@ function Ataturk() {
   const [lang, setLang] = useState<Language>('en');
 
   const t = content[lang];
+
+  useEffect(() => {
+    document.title = lang === 'tr'
+      ? 'Atatürk — MinesMinis'
+      : 'Atatürk — MinesMinis';
+    return () => { document.title = 'MinesMinis'; };
+  }, [lang]);
 
   return (
     <div className="ataturk-page">
@@ -227,7 +234,7 @@ function Ataturk() {
               transition={{ delay: i * 0.1 }}
               whileHover={{ scale: 1.05, y: -10 }}
             >
-              <img src={img} alt={`Atatürk ${i + 1}`} className="ataturk-photo" />
+              <img src={img} alt={`Atatürk ${i + 1}`} className="ataturk-photo" loading="lazy" />
             </motion.div>
           ))}
         </div>
@@ -439,7 +446,7 @@ function Ataturk() {
         />
         <div className="banner-content">
           <h3>{t.footerMain}</h3>
-          <img src={ataturkSignature} alt="İmza" className="footer-signature" />
+          <img src={ataturkSignature} alt="Atatürk İmzası" className="footer-signature" loading="lazy" />
         </div>
       </motion.section>
 

@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
 import { errorLogger } from '../services/errorLogger';
+import { withRetry, debounceAsync } from '../utils/retryUtils';
 import { LS_GAMIFICATION_PREFIX } from '../config/storageKeys';
 import {
     checkAndAwardStreakFreeze,
@@ -19,6 +20,7 @@ import { getActiveBoost, activateBoost } from '../components/XPBooster';
 import { getSelectedMascotId } from '../services/mascotService';
 import { hasNewMascotUnlocked } from '../services/mascotService';
 import { logActivityToday } from '../services/habitTracker';
+import { addTodayXP, getTodayXP, getDailyGoal } from '../services/psychGamification';
 
 // ============================================================
 // TYPES
@@ -58,6 +60,10 @@ export interface UserStats {
     videosWatched: number;
     worksheetsCompleted: number;
     dailyChallengesCompleted: number;
+    storiesRead: number;
+    dialoguesCompleted: number;
+    perfectPronunciationCount: number;
+    dailyRewardsClaimed: number;
     mascotId: string;
     created_at?: string;
 }
@@ -195,14 +201,19 @@ export function getTotalXPForLevel(level: number): number {
     return total;
 }
 
+/** Returns 'YYYY-MM-DD' in the user's local timezone — timezone-safe streak comparison */
+function localDateStr(d: Date = new Date()): string {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function isSameDay(date1: Date, date2: Date): boolean {
-    return date1.toDateString() === date2.toDateString();
+    return localDateStr(date1) === localDateStr(date2);
 }
 
 function isYesterday(date1: Date, date2: Date): boolean {
     const yesterday = new Date(date2);
     yesterday.setDate(yesterday.getDate() - 1);
-    return date1.toDateString() === yesterday.toDateString();
+    return localDateStr(date1) === localDateStr(yesterday);
 }
 
 // ============================================================
@@ -225,6 +236,10 @@ const DEFAULT_STATS: UserStats = {
     videosWatched: 0,
     worksheetsCompleted: 0,
     dailyChallengesCompleted: 0,
+    storiesRead: 0,
+    dialoguesCompleted: 0,
+    perfectPronunciationCount: 0,
+    dailyRewardsClaimed: 0,
     mascotId: getSelectedMascotId(),
 };
 
@@ -247,6 +262,38 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     // Keep a ref to user so async functions always have latest without causing re-runs
     const userRef = useRef(user);
     userRef.current = user;
+
+    // Debounced XP sync — prevents a flood of sequential Supabase writes when XP
+    // is earned rapidly (e.g. rapid-fire flashcard answers). Fires at most once per 1.5 s.
+    const debouncedSyncXP = useRef(
+        debounceAsync(async (uid: string, newXP: number, newWeeklyXP: number, currentSettings: Record<string, unknown>) => {
+            const settings = { ...currentSettings, weekly_xp: newWeeklyXP };
+            await withRetry(() =>
+                supabase.from('users').update({ xp: newXP, points: newXP, settings }).eq('id', uid)
+            );
+        }, 1500),
+    ).current;
+
+    // Debounced activity-counter sync — batches rapid trackActivity calls
+    const debouncedSyncActivity = useRef(
+        debounceAsync(async (uid: string, newStats: UserStats, currentSettings: Record<string, unknown>) => {
+            const settings = {
+                ...currentSettings,
+                wordsLearned: newStats.wordsLearned,
+                gamesPlayed: newStats.gamesPlayed,
+                videosWatched: newStats.videosWatched,
+                worksheetsCompleted: newStats.worksheetsCompleted,
+                dailyChallengesCompleted: newStats.dailyChallengesCompleted,
+                storiesRead: newStats.storiesRead,
+                dialoguesCompleted: newStats.dialoguesCompleted,
+                perfectPronunciationCount: newStats.perfectPronunciationCount,
+                dailyRewardsClaimed: newStats.dailyRewardsClaimed,
+            };
+            await withRetry(() =>
+                supabase.from('users').update({ settings }).eq('id', uid)
+            );
+        }, 1500),
+    ).current;
 
     // Load stats from localStorage (works without database)
     useEffect(() => {
@@ -299,7 +346,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             const { data, error } = await supabase
                 .from('users')
                 .select('xp, points, streak_days, badges, last_login, settings')
-                .eq('id', userRef.current!.uid)
+                .eq('id', user.uid)
                 .maybeSingle();
 
             if (cancelled) return;
@@ -307,23 +354,34 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             if (data && !error) {
                 const settingsObj = (data.settings || {}) as Record<string, unknown>;
                 setStats(prev => {
+                    const serverXp = data.xp || data.points || 0;
+                    // Take the higher XP value — prevents overwriting XP earned during the async fetch
+                    const mergedXp = Math.max(prev.xp ?? 0, serverXp);
                     const serverStats: UserStats = {
                         ...prev,
-                        xp: data.xp || data.points || 0,
-                        weekly_xp: (settingsObj.weekly_xp as number) || prev.weekly_xp || 0,
-                        level: calculateLevel(data.xp || data.points || 0),
-                        streakDays: data.streak_days || 0,
-                        badges: data.badges || [],
+                        xp: mergedXp,
+                        weekly_xp: Math.max(
+                            prev.weekly_xp ?? 0,
+                            (settingsObj.weekly_xp as number) || 0,
+                        ),
+                        level: calculateLevel(mergedXp),
+                        streakDays: Math.max(prev.streakDays ?? 0, data.streak_days || 0),
+                        // Merge badges: union of local + server to prevent badge loss on either side
+                        badges: [...new Set([...(prev.badges || []), ...(data.badges || [])])],
                         lastLoginDate: data.last_login,
                         lastDailyClaim: (settingsObj.last_daily_claim as string) || prev.lastDailyClaim,
                         lastWeeklyReset: (settingsObj.last_weekly_reset as string) || prev.lastWeeklyReset,
                         mascotId: getSelectedMascotId(),
-                        // Restore activity counters from server settings (fallback to local)
-                        wordsLearned: (settingsObj.wordsLearned as number) ?? prev.wordsLearned ?? 0,
-                        gamesPlayed: (settingsObj.gamesPlayed as number) ?? prev.gamesPlayed ?? 0,
-                        videosWatched: (settingsObj.videosWatched as number) ?? prev.videosWatched ?? 0,
-                        worksheetsCompleted: (settingsObj.worksheetsCompleted as number) ?? prev.worksheetsCompleted ?? 0,
-                        dailyChallengesCompleted: (settingsObj.dailyChallengesCompleted as number) ?? prev.dailyChallengesCompleted ?? 0,
+                        // Restore activity counters: take the higher value (local may be ahead of server)
+                        wordsLearned: Math.max((settingsObj.wordsLearned as number) ?? 0, prev.wordsLearned ?? 0),
+                        gamesPlayed: Math.max((settingsObj.gamesPlayed as number) ?? 0, prev.gamesPlayed ?? 0),
+                        videosWatched: Math.max((settingsObj.videosWatched as number) ?? 0, prev.videosWatched ?? 0),
+                        worksheetsCompleted: Math.max((settingsObj.worksheetsCompleted as number) ?? 0, prev.worksheetsCompleted ?? 0),
+                        dailyChallengesCompleted: Math.max((settingsObj.dailyChallengesCompleted as number) ?? 0, prev.dailyChallengesCompleted ?? 0),
+                        storiesRead: Math.max((settingsObj.storiesRead as number) ?? 0, prev.storiesRead ?? 0),
+                        dialoguesCompleted: Math.max((settingsObj.dialoguesCompleted as number) ?? 0, prev.dialoguesCompleted ?? 0),
+                        perfectPronunciationCount: Math.max((settingsObj.perfectPronunciationCount as number) ?? 0, prev.perfectPronunciationCount ?? 0),
+                        dailyRewardsClaimed: Math.max((settingsObj.dailyRewardsClaimed as number) ?? 0, prev.dailyRewardsClaimed ?? 0),
                     };
 
                     // Save the merged result back to local
@@ -348,7 +406,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
     const saveStatsLocally = (newStats: UserStats) => {
         if (userRef.current?.uid) {
-            localStorage.setItem(`${LS_GAMIFICATION_PREFIX}${userRef.current.uid}`, JSON.stringify(newStats));
+            try {
+                localStorage.setItem(`${LS_GAMIFICATION_PREFIX}${userRef.current.uid}`, JSON.stringify(newStats));
+            } catch {
+                // QuotaExceededError — ignore
+            }
         }
     };
 
@@ -396,6 +458,19 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         setStats(newStats);
         saveStatsLocally(newStats);
 
+        // Update today's XP tracker so Daily Goal widget stays in sync
+        if (userRef.current?.uid) {
+            const xpBefore = getTodayXP(userRef.current.uid);
+            addTodayXP(userRef.current.uid, totalXP);
+            const xpAfter = xpBefore + totalXP;
+            const dailyGoal = getDailyGoal();
+            // Daily goal just crossed this addition: award 10 bonus XP once
+            if (xpBefore < dailyGoal && xpAfter >= dailyGoal && reason !== 'daily_goal_bonus') {
+                toast.success('Günlük hedef tamamlandı! +10 bonus XP', { icon: undefined, duration: 3000 });
+                setTimeout(() => addXP(10, 'daily_goal_bonus'), 300);
+            }
+        }
+
         // Level up! Only show when XP actually qualifies (keeps Learning Journey in sync)
         if (newLevelValue > oldLevel && newXP >= getTotalXPForLevel(newLevelValue)) {
             setNewLevel(newLevelValue);
@@ -426,26 +501,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         // Track activity
         await trackActivity('xp_earned', { amount: totalXP, reason, streakBonus });
 
-        // Try to sync with server (XP + weekly_xp via settings JSONB)
+        // Debounced XP sync — avoids a separate settings fetch + update on every XP event.
+        // The latest XP value wins because the debounce captures the closure at fire time.
         if (userRef.current?.uid) {
-            try {
-                const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
-                const settings = { ...((curr?.settings || {}) as Record<string, unknown>), weekly_xp: newWeeklyXP };
-                await supabase
-                    .from('users')
-                    .update({
-                        xp: newXP,
-                        points: newXP,
-                        settings,
-                    })
-                    .eq('id', userRef.current!.uid);
-            } catch (error) {
-                errorLogger.log({
-                    severity: 'high',
-                    message: `Error syncing XP: ${error instanceof Error ? error.message : String(error)}`,
-                    component: 'GamificationContext.addXP',
-                });
-            }
+            const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+            debouncedSyncXP(userRef.current.uid, newXP, newWeeklyXP, currentSettings);
         }
     };
 
@@ -493,19 +553,20 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             setStats(newStats);
             saveStatsLocally(newStats);
 
-            // 3. Sync weekly reset via settings JSONB (no dedicated columns)
+            // 3. Sync weekly reset via settings JSONB — merge without extra fetch
             if (userRef.current?.uid) {
-                try {
-                    const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
-                    const settings = { ...((curr?.settings || {}) as Record<string, unknown>), weekly_xp: 0, last_weekly_reset: now.toISOString() };
-                    await supabase.from('users').update({ settings }).eq('id', userRef.current!.uid);
-                } catch (error) {
+                const weeklyResetUserId = userRef.current.uid;
+                const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+                const settings = { ...currentSettings, weekly_xp: 0, last_weekly_reset: now.toISOString() };
+                withRetry(() =>
+                    supabase.from('users').update({ settings }).eq('id', weeklyResetUserId)
+                ).catch((error: unknown) => {
                     errorLogger.log({
                         severity: 'medium',
                         message: `Error syncing weekly reset: ${error instanceof Error ? error.message : String(error)}`,
                         component: 'GamificationContext.checkWeeklyReset',
                     });
-                }
+                });
             }
         }
     };
@@ -531,9 +592,21 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             if (protected_) {
                 // Freeze absorbed the miss: keep existing streak
                 newStreak = currentStats.streakDays;
+                toast.success(
+                    currentStats.streakDays > 1
+                        ? `Seri koruması devreye girdi! ${currentStats.streakDays} günlük seriniz korundu.`
+                        : 'Seri koruması devreye girdi!',
+                    { icon: undefined, duration: 4000 },
+                );
             } else {
                 newStreak = 1;
                 streakBroken = true;
+                if (currentStats.streakDays > 1) {
+                    toast.error(
+                        `${currentStats.streakDays} günlük seriniz sıfırlandı. Bugün dersinizi yapın!`,
+                        { icon: undefined, duration: 5000 },
+                    );
+                }
             }
         }
 
@@ -548,7 +621,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
         // Log today's activity in the habit tracker (idempotent)
         if (userRef.current?.uid) {
-            logActivityToday(userRef.current!.uid);
+            logActivityToday(userRef.current.uid);
         }
 
         // Award freeze if streak milestone reached (only on actual increments)
@@ -564,11 +637,23 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             // Award 1.5x XP boost for 1 hour at streak milestones 7, 14, 21, 30
             if ([7, 14, 21, 30].includes(newStreak)) {
                 activateBoost(1.5, 60 * 60 * 1000, 'streak_milestone');
+                // Special celebration toast for major streak milestones
+                const milestoneMsg: Record<number, string> = {
+                    7:  'Harika! 7 gunluk seri tamamlandi! 1 saatlik 1.5x XP bonusu aktif!',
+                    14: 'Mukemmel! 14 gunluk seri! 1 saatlik 1.5x XP bonusu aktif!',
+                    21: 'Inanilmaz! 21 gunluk seri! 1 saatlik 1.5x XP bonusu aktif!',
+                    30: 'Efsanevi! 30 gunluk seri! 1 saatlik 1.5x XP bonusu aktif!',
+                };
+                const msg = milestoneMsg[newStreak];
+                if (msg) {
+                    toast.success(msg, { icon: undefined, duration: 5000 });
+                }
             }
         }
 
         // Sync with server
         if (userRef.current?.uid) {
+            const streakUserId = userRef.current.uid;
             try {
                 await supabase
                     .from('users')
@@ -576,7 +661,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                         streak_days: newStreak,
                         last_login: now.toISOString()
                     })
-                    .eq('id', userRef.current!.uid);
+                    .eq('id', streakUserId);
             } catch (error) {
                 errorLogger.log({
                     severity: 'medium',
@@ -619,23 +704,27 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         saveStatsLocally(newStats);
         setCanClaimDaily(false);
 
-        // Sync with server
+        // Sync with server — merge without extra fetch (fire-and-forget with retry)
         if (userRef.current?.uid) {
-            try {
-                const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
-                const settings = { ...((curr?.settings || {}) as Record<string, unknown>), last_daily_claim: now.toISOString() };
-                await supabase.from('users').update({ settings }).eq('id', userRef.current!.uid);
-            } catch (error) {
+            const dailyClaimUserId = userRef.current.uid;
+            const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+            const settings = { ...currentSettings, last_daily_claim: now.toISOString() };
+            withRetry(() =>
+                supabase.from('users').update({ settings }).eq('id', dailyClaimUserId)
+            ).catch((error: unknown) => {
                 errorLogger.log({
                     severity: 'medium',
                     message: `Error syncing daily claim: ${error instanceof Error ? error.message : String(error)}`,
                     component: 'GamificationContext.claimDailyReward',
                 });
-            }
+            });
         }
 
         // Add XP
         await addXP(reward.xp, 'daily_reward');
+
+        // Track daily reward claim count (used by weekly_starter / week_champion badges)
+        await trackActivity('daily_reward_claimed');
 
         // Award badge if included
         if (reward.badge && !currentStats.badges.includes(reward.badge)) {
@@ -681,13 +770,23 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         setStats(newStats);
         saveStatsLocally(newStats);
 
+        // Notify the user — never award a badge silently
+        const badgeDef = ALL_BADGES.find(b => b.id === badgeId);
+        if (badgeDef) {
+            toast.success(
+                `${badgeDef.nameTr} rozeti kazanildi!`,
+                { duration: 4000 }
+            );
+        }
+
         // Sync with server
         if (userRef.current?.uid) {
+            const badgeUserId = userRef.current.uid;
             try {
                 await supabase
                     .from('users')
                     .update({ badges: newBadges })
-                    .eq('id', userRef.current!.uid);
+                    .eq('id', badgeUserId);
             } catch (error) {
                 errorLogger.log({
                     severity: 'medium',
@@ -723,6 +822,32 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                 case 'level':
                     earned = currentStats.level >= badge.requirement;
                     break;
+                case 'stories':
+                    earned = (currentStats.storiesRead ?? 0) >= badge.requirement;
+                    break;
+                case 'dialogues':
+                    earned = (currentStats.dialoguesCompleted ?? 0) >= badge.requirement;
+                    break;
+                case 'perfect_pronunciation':
+                    earned = (currentStats.perfectPronunciationCount ?? 0) >= badge.requirement;
+                    break;
+                case 'daily':
+                    // weekly_starter: 5 claims, week_champion: 7 claims
+                    earned = (currentStats.dailyRewardsClaimed ?? 0) >= badge.requirement;
+                    break;
+                // Time-sensitive and social badges are awarded via direct awardBadge() calls
+                // from their respective trigger sites (lesson completion, friend add, etc.)
+                // They cannot be evaluated retroactively from stats alone.
+                case 'early_lesson':
+                case 'night_lesson':
+                case 'weekend_lesson':
+                case 'friends':
+                case 'leaderboard':
+                case 'favorites':
+                case 'premium':
+                    // These are triggered externally — skip automated check
+                    earned = false;
+                    break;
             }
 
             if (earned) {
@@ -757,31 +882,53 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             case 'daily_challenge':
                 newStats.dailyChallengesCompleted = (currentStats.dailyChallengesCompleted || 0) + 1;
                 break;
+            case 'story_read':
+                newStats.storiesRead = (currentStats.storiesRead || 0) + 1;
+                break;
+            case 'dialogue_completed':
+                newStats.dialoguesCompleted = (currentStats.dialoguesCompleted || 0) + 1;
+                break;
+            case 'perfect_pronunciation':
+                newStats.perfectPronunciationCount = (currentStats.perfectPronunciationCount || 0) + 1;
+                break;
+            case 'daily_reward_claimed':
+                newStats.dailyRewardsClaimed = (currentStats.dailyRewardsClaimed || 0) + 1;
+                break;
+            case 'lesson_completed_timed': {
+                // Check time-based and date-based badges at the moment of lesson completion
+                const now = new Date();
+                const hour = now.getHours();
+                const dayOfWeek = now.getDay(); // 0=Sun, 6=Sat
+
+                if (hour < 9 && !hasBadge('early_bird')) {
+                    await awardBadge('early_bird');
+                }
+                if (hour >= 21 && !hasBadge('night_owl')) {
+                    await awardBadge('night_owl');
+                }
+
+                // Weekend warrior: track which weekend days completed this week
+                const weekKey = `mm_weekend_warrior_${now.getFullYear()}_${Math.floor(now.getTime() / (7 * 86400000))}`;
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    const stored = localStorage.getItem(weekKey) || '';
+                    const daysSet = new Set(stored.split(',').filter(Boolean));
+                    daysSet.add(String(dayOfWeek));
+                    try { localStorage.setItem(weekKey, [...daysSet].join(',')); } catch { /* ignore */ }
+                    if (daysSet.has('0') && daysSet.has('6') && !hasBadge('weekend_warrior')) {
+                        await awardBadge('weekend_warrior');
+                    }
+                }
+                break;
+            }
         }
 
         setStats(newStats);
         saveStatsLocally(newStats);
 
-        // Sync activity counters to server via settings JSONB
+        // Debounced activity-counter sync — batches rapid writes into a single Supabase call
         if (userRef.current?.uid) {
-            try {
-                const { data: curr } = await supabase.from('users').select('settings').eq('id', userRef.current!.uid).maybeSingle();
-                const settings = {
-                    ...((curr?.settings || {}) as Record<string, unknown>),
-                    wordsLearned: newStats.wordsLearned,
-                    gamesPlayed: newStats.gamesPlayed,
-                    videosWatched: newStats.videosWatched,
-                    worksheetsCompleted: newStats.worksheetsCompleted,
-                    dailyChallengesCompleted: newStats.dailyChallengesCompleted,
-                };
-                await supabase.from('users').update({ settings }).eq('id', userRef.current!.uid);
-            } catch (error) {
-                errorLogger.log({
-                    severity: 'medium',
-                    message: `Error syncing activity counters: ${error instanceof Error ? error.message : String(error)}`,
-                    component: 'GamificationContext.trackActivity',
-                });
-            }
+            const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+            debouncedSyncActivity(userRef.current.uid, newStats, currentSettings);
         }
 
         // Check for new badges
@@ -813,6 +960,14 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run when user ID and loading state are ready
     }, [userId, loading]);
+
+    // Award premium_member badge when user becomes premium
+    useEffect(() => {
+        if (isPremium && userId && !loading && !hasBadge('premium_member')) {
+            awardBadge('premium_member').catch(() => {});
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: only re-run when premium status or user changes
+    }, [isPremium, userId, loading]);
 
     const value: GamificationContextType = useMemo(() => ({
         stats,

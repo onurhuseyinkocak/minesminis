@@ -45,6 +45,31 @@ const PATTERN_H: number[] = [FREQ.C4, FREQ.C4, FREQ.G4, FREQ.G4, FREQ.A4, FREQ.A
 
 const ALL_PATTERNS = [PATTERN_A, PATTERN_B, PATTERN_C, PATTERN_D, PATTERN_E, PATTERN_F, PATTERN_G, PATTERN_H];
 
+// ─── Mute state (mirrors mm_sound_enabled in localStorage) ──
+const _LS_SOUND_KEY = 'mm_sound_enabled';
+
+function _isMelodyEnabled(): boolean {
+  try {
+    const val = typeof localStorage !== 'undefined' ? localStorage.getItem(_LS_SOUND_KEY) : null;
+    return val !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+let _melodyEnabled: boolean = _isMelodyEnabled();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('mm-sound-toggle', (e: Event) => {
+    const detail = (e as CustomEvent<{ enabled: boolean }>).detail;
+    _melodyEnabled = detail.enabled;
+    // If sound is disabled while playing, stop immediately
+    if (!_melodyEnabled) {
+      stopMelody();
+    }
+  });
+}
+
 // ─── State ──────────────────────────────────────────────────
 let audioCtx: AudioContext | null = null;
 let activeOscillators: OscillatorNode[] = [];
@@ -52,9 +77,15 @@ let activeGains: GainNode[] = [];
 let isStopRequested = false;
 let kickInterval: ReturnType<typeof setInterval> | null = null;
 
+// webkitAudioContext fallback for older Safari versions
+const AudioCtxConstructor: typeof AudioContext =
+  window.AudioContext ??
+  (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext ??
+  AudioContext;
+
 function getAudioContext(): AudioContext {
   if (!audioCtx || audioCtx.state === 'closed') {
-    audioCtx = new AudioContext();
+    audioCtx = new AudioCtxConstructor();
   }
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
@@ -98,6 +129,7 @@ function playNote(
 
 // ─── Play a melody (array of Notes) ─────────────────────────
 export function playMelody(notes: Note[]): Promise<void> {
+  if (!_melodyEnabled) return Promise.resolve();
   return new Promise((resolve) => {
     isStopRequested = false;
     const ctx = getAudioContext();
@@ -148,6 +180,7 @@ export function playFrequencyArray(frequencies: number[], tempo: number = 250): 
 
 // ─── Background kick drum pattern ───────────────────────────
 export function startBackgroundRhythm(bpm: number = 60): void {
+  if (!_melodyEnabled) return;
   stopBackgroundRhythm();
   const intervalMs = (60 / bpm) * 1000;
 

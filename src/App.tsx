@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { PremiumProvider } from "./contexts/PremiumContext";
+import { PremiumProvider, usePremium } from "./contexts/PremiumContext";
 import { GamificationProvider } from "./contexts/GamificationContext";
 import { HeartsProvider } from "./contexts/HeartsContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -14,6 +14,7 @@ import { sendMessageToAI } from "./services/aiService";
 import { errorLogger } from "./services/errorLogger";
 import OfflineBanner from "./components/OfflineBanner";
 import InstallBanner from "./components/InstallBanner";
+import CookieBanner from "./components/CookieBanner";
 import { getNextAction } from "./services/learningPathService";
 import { getTodayMinutes } from "./services/activityLogger";
 import NotificationPrompt from "./components/NotificationPrompt";
@@ -24,6 +25,7 @@ import {
   requestNotificationPermission,
   scheduleStreakReminder,
 } from "./services/notificationService";
+import { hasParentGatePassed } from "./components/ParentGate";
 
 import { Star } from "lucide-react";
 import LottieCharacter from "./components/LottieCharacter";
@@ -181,13 +183,16 @@ function ParentRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-/** Wrapper that requires authentication and the 'teacher' role */
+/** Wrapper that requires authentication, the 'teacher' role, AND a classroom subscription plan */
 function TeacherRoute({ children }: { children: React.ReactNode }) {
   const { user, userProfile, loading, profileLoading } = useAuth();
-  if (loading) return <AuthPageLoader />;
+  const { plan, isLoading: planLoading } = usePremium();
+  if (loading || planLoading) return <AuthPageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   if (profileLoading) return <AuthPageLoader />;
   if (!userProfile || userProfile.role !== 'teacher') return <Navigate to="/dashboard" replace />;
+  // Classroom dashboard requires the 'classroom' subscription plan
+  if (plan !== 'classroom') return <Navigate to="/pricing?upgrade=classroom" replace />;
   return <>{children}</>;
 }
 
@@ -264,6 +269,22 @@ function isChildMode(settings: Record<string, unknown> | undefined): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * ChildGuardedRoute — blocks access to sensitive pages when the app is in
+ * child mode AND the parent has not yet verified via ParentGate this session.
+ * Redirects the child back to /dashboard (ChildHome).
+ *
+ * Sensitive pages that must be blocked: settings, profile, premium, pricing,
+ * social/friends, leaderboard, achievements, avatar, mascots.
+ */
+function ChildGuardedRoute({ children }: { children: React.ReactNode }) {
+  const { userProfile } = useAuth();
+  if (isChildMode(userProfile?.settings) && !hasParentGatePassed()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <>{children}</>;
 }
 
 /**
@@ -365,12 +386,12 @@ function AppRoutes() {
                 )
               }
             />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/cookies" element={<CookiePolicy />} />
-            <Route path="/ataturk" element={<Ataturk />} />
+            <Route path="/blog" element={<ErrorBoundary><Blog /></ErrorBoundary>} />
+            <Route path="/blog/:slug" element={<ErrorBoundary><BlogPost /></ErrorBoundary>} />
+            <Route path="/privacy" element={<ErrorBoundary><PrivacyPolicy /></ErrorBoundary>} />
+            <Route path="/terms" element={<ErrorBoundary><TermsOfService /></ErrorBoundary>} />
+            <Route path="/cookies" element={<ErrorBoundary><CookiePolicy /></ErrorBoundary>} />
+            <Route path="/ataturk" element={<ErrorBoundary><Ataturk /></ErrorBoundary>} />
 
             {/* ── Onboarding (protected, no shell) ──────────────── */}
             <Route
@@ -406,9 +427,18 @@ function AppRoutes() {
             <Route path="/story" element={<StudentRoute><StoryPage /></StudentRoute>} />
             <Route path="/stories" element={<StudentRoute><StoriesGrid /></StudentRoute>} />
             <Route path="/stories/:id" element={<StudentRoute><StoryReader /></StudentRoute>} />
-            <Route path="/profile" element={<StudentRoute><Profile /></StudentRoute>} />
-            <Route path="/premium" element={<StudentRoute><Premium /></StudentRoute>} />
-            <Route path="/premium/success" element={<StudentRoute><Premium /></StudentRoute>} />
+            {/* ── Child-guarded routes: require ParentGate pass when in child mode ── */}
+            <Route path="/profile" element={<StudentRoute><ChildGuardedRoute><Profile /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/premium" element={<StudentRoute><ChildGuardedRoute><Premium /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/premium/success" element={<StudentRoute><ChildGuardedRoute><Premium /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/settings" element={<StudentRoute><ChildGuardedRoute><SettingsPage /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/social/friends" element={<StudentRoute><ChildGuardedRoute><FriendsPage /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/leaderboard" element={<StudentRoute><ChildGuardedRoute><LeaderboardPage /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/achievements" element={<StudentRoute><ChildGuardedRoute><Achievements /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/mascots" element={<StudentRoute><ChildGuardedRoute><MascotSelector /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/avatar" element={<StudentRoute><ChildGuardedRoute><AvatarCustomizer /></ChildGuardedRoute></StudentRoute>} />
+            <Route path="/pricing" element={<ErrorBoundary><ChildGuardedRoute><Pricing /></ChildGuardedRoute></ErrorBoundary>} />
+            {/* ── Freely accessible student routes ── */}
             <Route path="/worksheets" element={<StudentRoute><Worksheets /></StudentRoute>} />
             <Route path="/favorites" element={<StudentRoute><Favorites /></StudentRoute>} />
             <Route path="/placement" element={<ErrorBoundary><ProtectedRoute><PlacementTest /></ProtectedRoute></ErrorBoundary>} />
@@ -418,15 +448,8 @@ function AppRoutes() {
             <Route path="/reading" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/reading/:bookId" element={<StudentRoute><ReadingLibrary /></StudentRoute>} />
             <Route path="/daily-lesson" element={<StudentRoute><DailyLesson /></StudentRoute>} />
-            <Route path="/social/friends" element={<StudentRoute><FriendsPage /></StudentRoute>} />
-            <Route path="/achievements" element={<StudentRoute><Achievements /></StudentRoute>} />
-            <Route path="/leaderboard" element={<StudentRoute><LeaderboardPage /></StudentRoute>} />
-            <Route path="/mascots" element={<StudentRoute><MascotSelector /></StudentRoute>} />
-            <Route path="/avatar" element={<StudentRoute><AvatarCustomizer /></StudentRoute>} />
             <Route path="/phonetics/traps" element={<StudentRoute><PhoneticsTrapTrainer /></StudentRoute>} />
             <Route path="/tracing" element={<StudentRoute><LetterTracingPage /></StudentRoute>} />
-            <Route path="/settings" element={<StudentRoute><SettingsPage /></StudentRoute>} />
-            <Route path="/pricing" element={<Pricing />} />
 
             {/* ── Parent routes (protected, parent role only) ───── */}
             <Route
@@ -453,7 +476,7 @@ function AppRoutes() {
             />
 
             {/* ── Catch-all ──────────────────────────────────────── */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
           </Routes>
         </div>
       </Suspense>
@@ -537,6 +560,7 @@ function AppContent() {
   const isSetupRoute = location.pathname === "/setup";
 
   const { user, userProfile, hasSkippedSetup, loading, profileLoading, isAdmin } = useAuth();
+  const childMode = isChildMode(userProfile?.settings);
 
   // Show notification prompt after 3+ lessons if not yet shown
   useEffect(() => {
@@ -545,7 +569,8 @@ function AppContent() {
     if (getLessonCount() >= 3) {
       setShowNotifPrompt(true);
     }
-  }, [user?.uid, isAdminRoute, isSetupRoute]); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: check runs when uid/routes change; hasSeenNotificationPrompt/getLessonCount are pure reads from localStorage
+  }, [user?.uid, isAdminRoute, isSetupRoute]);
 
   const handleNotifAccept = useCallback(async () => {
     setShowNotifPrompt(false);
@@ -564,9 +589,10 @@ function AppContent() {
   // Admin: redirect to admin panel immediately
   useEffect(() => {
     if (user && isAdmin && !isAdminRoute) {
-      navigate("/admin");
+      navigate("/admin", { replace: true });
     }
-  }, [user?.uid, isAdmin, isAdminRoute, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.uid used instead of user object to avoid re-runs on non-uid changes
+  }, [user?.uid, isAdmin, isAdminRoute, navigate]);
 
   // Redirect to setup if not completed (non-admin only, after profile loads)
   const isSetupCompleted = userProfile?.settings?.setup_completed === true;
@@ -576,16 +602,21 @@ function AppContent() {
     if (profileLoading) return;
 
     if (user && !isSetupCompleted && !hasSkippedSetup && !isSetupRoute && !isAdminRoute) {
-      navigate("/setup");
+      navigate("/setup", { replace: true });
     }
 
     if (user && isSetupCompleted && isSetupRoute) {
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     }
-  }, [user?.uid, isSetupCompleted, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileLoading, navigate, isAdmin]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.uid, isSetupCompleted, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileLoading, navigate, isAdmin]);
 
   return (
     <>
+      {/* Skip to main content — keyboard/screen reader navigation */}
+      <a href="#main-content" className="skip-to-content">
+        Ana içeriğe atla
+      </a>
+
       {/* Screen reader live region — must be in the DOM at all times */}
       <div
         id="sr-announcer"
@@ -595,11 +626,12 @@ function AppContent() {
       />
       <OfflineBanner />
       <InstallBanner />
+      <CookieBanner />
       <AppRoutes />
 
       {/* Gamification overlays for authenticated users */}
       {user && !isAdminRoute && !isSetupRoute && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<span aria-hidden="true" />}>
           <DailyReward />
           <LevelUpModal />
         </Suspense>
@@ -613,8 +645,8 @@ function AppContent() {
         />
       )}
 
-      {/* Floating chat button */}
-      {user && !isAdminRoute && !isSetupRoute && (
+      {/* Floating chat button — hidden in child mode (chat stays in ChildHome only) */}
+      {user && !isAdminRoute && !isSetupRoute && !childMode && (
         <button
           className="floating-chat-btn"
           onClick={() => setShowChat(true)}
@@ -624,8 +656,8 @@ function AppContent() {
         </button>
       )}
 
-      {/* What's Next? floating button (students only) */}
-      {user && !isAdmin && !isAdminRoute && !isSetupRoute && (
+      {/* What's Next? floating button (students only, not in child mode) */}
+      {user && !isAdmin && !isAdminRoute && !isSetupRoute && !childMode && (
         <WhatsNextButton />
       )}
 
@@ -636,7 +668,7 @@ function AppContent() {
 
       {/* Chat modal */}
       {showChat && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<span aria-hidden="true" />}>
           <ChatHome
             onClose={() => setShowChat(false)}
             onSendMessage={async (history) => {

@@ -64,7 +64,7 @@
 .level-up-modal {
   position: relative;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
@@ -224,7 +224,8 @@
 
 /* ---- Continue Button ---- */
 .continue-btn {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
@@ -285,6 +286,51 @@
 .continue-btn:focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
+}
+
+/* ---- Close Button ---- */
+.level-up-close-btn {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.level-up-close-btn:hover {
+  background: var(--error-soft);
+  color: var(--error);
+  transform: scale(1.1);
+}
+
+.level-up-close-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .level-up-close-btn {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .level-up-close-btn:hover {
+  background: var(--error-bg);
+  color: var(--error);
 }
 
 /* ---- Responsive ---- */

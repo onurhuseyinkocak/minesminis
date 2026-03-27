@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw } from 'lucide-react';
+import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
 import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
@@ -37,19 +37,46 @@ const EXAMPLE_SENTENCES: Record<string, string> = {
   apple: 'I eat an apple.',
 };
 
+// Confusable letter pairs — pedagogically harder distractors that look/sound similar.
+// Prioritised over random alphabet picks so children learn discrimination.
+const CONFUSABLE_PAIRS: Record<string, string[]> = {
+  B: ['D', 'P'], D: ['B', 'T'], P: ['B', 'D'], Q: ['G', 'O'],
+  M: ['N', 'W'], N: ['M', 'H'], W: ['M', 'V'], V: ['W', 'U'],
+  U: ['V', 'O'], O: ['Q', 'C'], C: ['G', 'O'], G: ['C', 'Q'],
+  I: ['L', 'J'], L: ['I', 'F'], F: ['E', 'P'], E: ['F', 'B'],
+  S: ['C', 'Z'], Z: ['S', 'X'], T: ['F', 'D'], H: ['N', 'M'],
+  R: ['P', 'N'], K: ['X', 'R'], X: ['K', 'Z'], Y: ['V', 'W'],
+  A: ['E', 'O'],
+};
+
 function generateLetterPool(word: string): string[] {
   const letters = word.toUpperCase().split('');
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const uniqueLetters = new Set(letters);
   const decoys: string[] = [];
 
-  while (decoys.length < 3) {
-    const l = alphabet[Math.floor(Math.random() * alphabet.length)];
-    if (!letters.includes(l) && !decoys.includes(l)) {
+  // 1. Prefer confusable letters that are NOT already in the word
+  for (const letter of uniqueLetters) {
+    if (decoys.length >= 3) break;
+    const candidates = (CONFUSABLE_PAIRS[letter] || []).filter(
+      c => !uniqueLetters.has(c) && !decoys.includes(c)
+    );
+    if (candidates.length > 0) {
+      decoys.push(candidates[Math.floor(Math.random() * candidates.length)]);
+    }
+  }
+
+  // 2. Fill remaining slots with common English letters (not obscure like Q/X/Z)
+  const commonLetters = 'RSTLNEASIDMOBCFGHKPUWY';
+  let idx = 0;
+  while (decoys.length < 3 && idx < commonLetters.length) {
+    const l = commonLetters[idx++];
+    if (!uniqueLetters.has(l) && !decoys.includes(l)) {
       decoys.push(l);
     }
   }
 
   const pool = [...letters, ...decoys];
+  // Fisher-Yates shuffle
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -70,6 +97,9 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [score, setScore] = useState(0);
+  // scoreRef mirrors score state so async callbacks always read the latest value
+  // without depending on stale closures — fixes the onComplete(score + 1, ...) stale read
+  const scoreRef = useRef(0);
   const [completed, setCompleted] = useState(false);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -110,12 +140,14 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
 
   const handleSubmit = useCallback(() => {
     if (feedback) return;
-    const attempt = typed.join('').toLowerCase();
-    const correct = currentWord.english.toLowerCase();
+    // Trim and normalize both sides — guards against accidental whitespace in word data
+    const attempt = typed.join('').trim().toLowerCase();
+    const correct = currentWord.english.trim().toLowerCase();
 
     if (attempt === correct) {
       setFeedback('correct');
-      setScore((prev) => prev + 1);
+      scoreRef.current += 1;
+      setScore(scoreRef.current);
       onXpEarned?.(15);
       SFX.correct();
       speakWord(currentWord.english);
@@ -126,7 +158,9 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           initWord(currentIndex + 1);
         } else {
           setCompleted(true);
-          autoCompleteTimeoutRef.current = setTimeout(() => onComplete(score + 1, gameWords.length), 4000);
+          // Use scoreRef to avoid stale closure — score state may not have updated yet
+          const finalScore = scoreRef.current;
+          autoCompleteTimeoutRef.current = setTimeout(() => onComplete(finalScore, gameWords.length), 4000);
         }
       }, 2000);
     } else {
@@ -147,7 +181,8 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         setUsedIndices([]);
       }, 800);
     }
-  }, [feedback, typed, currentWord, onXpEarned, speakWord, currentIndex, gameWords.length, initWord, score, onComplete, loseHeart, onWrongAnswer, hearts, wrongAttempts]);
+  // scoreRef is a ref — not a reactive dep. score state removed to avoid stale read.
+  }, [feedback, typed, currentWord, onXpEarned, speakWord, currentIndex, gameWords.length, initWord, onComplete, loseHeart, onWrongAnswer, hearts, wrongAttempts]);
 
   submitRef.current = handleSubmit;
 
@@ -184,7 +219,9 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [completed, feedback, typed, letterPool, usedIndices, currentWord, handleBackspace, handleLetterTap]);
 
-  const progress = gameWords.length > 0 ? ((currentIndex) / gameWords.length) * 100 : 0;
+  // Progress: show how many questions have been completed, not the current index raw
+  // At question 1 (index 0) → 0%, at question 2 → 20%, at finish → 100%
+  const progress = gameWords.length > 0 ? (currentIndex / gameWords.length) * 100 : 0;
 
   const handlePlayAgain = () => {
     if (autoCompleteTimeoutRef.current) {
@@ -192,16 +229,17 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
       autoCompleteTimeoutRef.current = null;
     }
     setCurrentIndex(0);
+    scoreRef.current = 0;
     setScore(0);
     setCompleted(false);
     initWord(0);
   };
 
-  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
+  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
 
   if (completed) {
     const pct = gameWords.length > 0 ? Math.round((score / gameWords.length) * 100) : 0;
-    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
+    const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="spelling-bee">
         {pct >= 90 && <ConfettiRain duration={3000} />}
@@ -218,7 +256,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
             >
-              {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
+              {pct >= 90 ? <Trophy size={48} color="var(--warning)" /> : pct >= 60 ? <Star size={48} fill="var(--warning)" color="var(--warning)" /> : <Check size={48} color="var(--success)" />}
             </motion.span>
             <h2 className="spelling-bee__results-title">{t('games.spellingStar')}</h2>
             <p className="spelling-bee__results-score">
@@ -243,7 +281,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
               <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, gameWords.length); }}>
                 <ArrowRight size={16} /> {t('games.backToGames')}
               </button>
-              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain}>
+              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain} autoFocus>
                 <RotateCcw size={16} /> {t('games.playAgain')}
               </button>
             </div>
@@ -328,25 +366,31 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
 
       <div aria-live="polite" aria-atomic="true">
         {feedback === 'correct' && (
-          <motion.p
-            className="spelling-bee__sentence"
+          <motion.div
+            className="spelling-bee__feedback-banner spelling-bee__feedback-banner--correct"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            "{sentence}"
-          </motion.p>
+            {/* Icon + color: not color alone — for protanopia/deuteranopia users */}
+            <CheckCircle2 size={18} aria-hidden="true" />
+            <p className="spelling-bee__sentence">"{sentence}"</p>
+          </motion.div>
         )}
 
         {feedback === 'wrong' && (
-          <motion.p
-            className="spelling-bee__try-again"
+          <motion.div
+            className="spelling-bee__feedback-banner spelling-bee__feedback-banner--wrong"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
           >
-            {wrongAttempts >= 2
-              ? `${t('games.theAnswerWas') || 'The answer was'}: ${currentWord.english.toUpperCase()}`
-              : t('games.almostTryAgain')}
-          </motion.p>
+            {/* Icon + color: not color alone — for protanopia/deuteranopia users */}
+            <XCircle size={18} aria-hidden="true" />
+            <p className="spelling-bee__try-again" style={{ margin: 0 }}>
+              {wrongAttempts >= 2
+                ? `${t('games.theAnswerWas') || 'The answer was'}: ${currentWord.english.toUpperCase()}`
+                : t('games.almostTryAgain')}
+            </p>
+          </motion.div>
         )}
       </div>
 

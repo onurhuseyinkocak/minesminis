@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { supabase } from '../config/supabase';
 import { Heart, Lock, HeartCrack } from 'lucide-react';
 import toast from 'react-hot-toast';
 import LottieCharacter from '../components/LottieCharacter';
 import { KidIcon } from '../components/ui';
+import { getCardThumbnailUrl } from '../utils/imageTransform';
 import './Favorites.css';
 
 interface Favorite {
@@ -21,6 +23,7 @@ interface Favorite {
 const Favorites: React.FC = () => {
   const { user } = useAuth();
   const { lang } = useLanguage();
+  usePageTitle('Favorilerim', 'Favorites');
   const isTr = lang === 'tr';
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
@@ -41,9 +44,10 @@ const Favorites: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('favorites')
-        .select('*')
+        .select('id, item_type, item_id, item_name, item_image, created_at')
         .eq('user_id', user.uid)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(200);
 
       if (error) throw error;
 
@@ -76,13 +80,10 @@ const Favorites: React.FC = () => {
   if (!user) {
     return (
       <div className="favorites-empty">
-        <div className="empty-state-icon"><Lock size={48} /></div>
-        <h2>{isTr ? 'Giriş Yapmalısınız' : 'Please Sign In'}</h2>
-        <p>{isTr ? 'Favorilerinizi görüntülemek için giriş yapın.' : 'Sign in to view and manage your favorite items'}</p>
-        <Link
-          to="/login"
-          className="favorites-signin-link"
-        >
+        <div className="empty-state-icon"><Lock size={40} /></div>
+        <h1>{isTr ? 'Giriş Yapmalısınız' : 'Please Sign In'}</h1>
+        <p>{isTr ? 'Favorilerinizi görüntülemek için giriş yapın.' : 'Sign in to view and manage your favorite items.'}</p>
+        <Link to="/login" className="favorites-signin-link">
           {isTr ? 'Giriş Yap' : 'Sign In'}
         </Link>
       </div>
@@ -169,10 +170,15 @@ const Favorites: React.FC = () => {
           </div>
         ) : filteredFavorites.length === 0 ? (
           <div className="favorites-empty">
-            <div className="empty-state-icon"><LottieCharacter state="idle" size={64} /></div>
+            <div className="empty-state-icon">
+              <LottieCharacter state="idle" size={56} />
+            </div>
             <h2>{isTr ? 'Henüz Hazine Yok!' : 'No Treasures Yet!'}</h2>
             <p>{isTr ? 'Favori oyunlarını, kelimelerini, çalışmalarını ve videolarını topla!' : 'Collect your favorite games, words, worksheets, and videos!'}</p>
-            <p className="hint">{isTr ? 'Herhangi bir öğenin kalp simgesine dokun ve buraya ekle' : 'Tap the heart icon on any item to add it here'}</p>
+            <p className="hint">{isTr ? 'Herhangi bir öğenin kalp simgesine dokun ve buraya ekle.' : 'Tap the heart icon on any item to add it here.'}</p>
+            <Link to="/games" className="favorites-empty-cta">
+              {isTr ? 'Keşfetmeye Başla' : 'Start Exploring'}
+            </Link>
           </div>
         ) : (
           <div className="favorites-grid">
@@ -183,7 +189,7 @@ const Favorites: React.FC = () => {
                 </div>
                 {favorite.item_image && (
                   <div className="favorite-image">
-                    <img src={favorite.item_image} alt={favorite.item_name} />
+                    <img src={getCardThumbnailUrl(favorite.item_image) ?? favorite.item_image ?? ''} alt={favorite.item_name} loading="lazy" width={200} height={200} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                   </div>
                 )}
                 <div className="favorite-content">

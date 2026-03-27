@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { AlertCircle, RotateCw, Home } from 'lucide-react';
 import { errorLogger } from '../services/errorLogger';
+import './ErrorBoundary.css';
 
 interface Props {
   children: ReactNode;
@@ -75,110 +76,43 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       const msg = MESSAGES[getErrorLang()];
       return (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          flexDirection: 'column',
-          padding: '2rem',
-          textAlign: 'center',
-          backgroundColor: 'var(--bg-page)',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}>
-          <div style={{
-            maxWidth: '500px',
-            padding: '2rem',
-            backgroundColor: 'var(--bg-card)',
-            borderRadius: '8px',
-            boxShadow: 'var(--shadow-md)',
-          }}>
-            <h1 style={{
-              fontSize: '2rem',
-              color: 'var(--error)',
-              marginBottom: '1rem',
-            }}>
-              <AlertCircle size={32} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.5rem' }} />
-              {msg.title}
-            </h1>
-            <p style={{
-              fontSize: '1rem',
-              color: 'var(--text-secondary)',
-              marginBottom: '1.5rem',
-              lineHeight: '1.6',
-            }}>
-              {msg.description}
-            </p>
+        <div className="eb-page">
+          <div className="eb-card">
+            <div className="eb-icon-wrap">
+              <AlertCircle size={36} className="eb-icon" aria-hidden="true" />
+            </div>
+
+            <h1 className="eb-title">{msg.title}</h1>
+
+            <p className="eb-description">{msg.description}</p>
+
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details style={{
-                marginBottom: '1.5rem',
-                padding: '1rem',
-                backgroundColor: 'var(--bg-muted)',
-                borderRadius: '4px',
-                textAlign: 'left',
-              }}>
-                <summary style={{ cursor: 'pointer', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  {msg.details}
-                </summary>
-                <pre style={{
-                  overflow: 'auto',
-                  fontSize: '0.85rem',
-                  color: 'var(--error)',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
-                }}>
+              <details className="eb-details">
+                <summary className="eb-details-summary">{msg.details}</summary>
+                <pre className="eb-details-pre">
                   {this.state.error.toString()}
                 </pre>
               </details>
             )}
-            <div style={{
-              display: 'flex',
-              gap: '1rem',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-            }}>
+
+            <div className="eb-actions">
               <button
+                type="button"
+                className="eb-btn eb-btn--primary"
                 onClick={() => {
                   this.setState({ hasError: false, error: null });
                   this.props.onReset?.();
                   if (!this.props.onReset) window.location.reload();
                 }}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  backgroundColor: 'var(--accent-indigo)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.3s',
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-purple)')}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-indigo)')}
               >
-                <RotateCw size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} />
+                <RotateCw size={16} aria-hidden="true" />
                 {msg.refresh}
               </button>
               <a
                 href="/"
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  backgroundColor: 'var(--slate)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  display: 'inline-block',
-                  transition: 'background-color 0.3s',
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--charcoal)')}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--slate)')}
+                className="eb-btn eb-btn--secondary"
               >
-                <Home size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} />
+                <Home size={16} aria-hidden="true" />
                 {msg.home}
               </a>
             </div>

@@ -98,7 +98,7 @@
 }
 
 .adm-world-item-count {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
@@ -173,7 +173,7 @@
 }
 
 .adm-lesson-details {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   display: flex;
   gap: var(--space-md);
@@ -208,7 +208,7 @@
   background: var(--bg-muted);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
-  font-size: 0.725rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-secondary);
   transition: border-color var(--transition-fast);
@@ -235,7 +235,7 @@
   background: var(--primary-pale);
   border: 1px solid var(--primary-light);
   border-radius: var(--radius-sm);
-  font-size: 0.725rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--primary);
 }
@@ -279,11 +279,11 @@
 /* ---- Draft badge inline ---- */
 .adm-lesson-draft-badge {
   margin-left: 6px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   padding: 1px 6px;
   border-radius: var(--radius-full);
   background: var(--warning-pale);
-  color: #d97706;
+  color: var(--warning);
   font-weight: 600;
 }
 

@@ -13,6 +13,7 @@ import { curriculumWords, type CurriculumWord } from '../data/curriculumWords';
 import { getProgress } from './learningPathService';
 import { PHASES } from '../data/curriculumPhases';
 import { getCurrentUnit } from './lessonProgressService';
+import { getMixedLessonWords, incrementSessionCount } from './spiralReviewService';
 
 function localDateStr(d: Date = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -388,6 +389,9 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
     // ignore parse errors — build fresh
   }
 
+  // Track sessions for spiral review timing
+  incrementSessionCount();
+
   // Determine word count based on recent performance
   const wordCount = getAdaptiveWordCount(userId);
 
@@ -406,7 +410,10 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
   );
 
   const combinedPool = [...priorityPool, ...fallbackPool];
-  const newWords = combinedPool.slice(0, wordCount);
+
+  // Apply spiral review mixing (every 3rd session)
+  const currentUnitWordsResult = combinedPool;
+  const newWords = getMixedLessonWords(currentUnitWordsResult, wordCount);
 
   // Fill with first words if everything is learned (demo users)
   const safeNewWords = newWords.length >= wordCount
@@ -416,19 +423,25 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
   // Pick up to 5 review words due today
   const reviewWords = getDueReviewWords(5);
 
+  // Deterministic seed from userId + date so the same plan is always produced
+  // for a given user on a given day, even if storage was cleared.
+  const seedStr = `${userId}-${today}`;
+  const seed = seedStr.split('').reduce((acc, ch) => (acc * 31 + ch.charCodeAt(0)) >>> 0, 0);
+  const seededIdx = (arr: unknown[]) => seed % arr.length;
+
   // Pick today's theme — filter words to the user's current phonics group
   const userPhonicsGroup = getProgress().group;
-  const rawThemeGroup = THEMED_WORD_GROUPS[Math.floor(Math.random() * THEMED_WORD_GROUPS.length)];
+  const rawThemeGroup = THEMED_WORD_GROUPS[seededIdx(THEMED_WORD_GROUPS)];
   const themeGroup: ThemedWordGroup = {
     ...rawThemeGroup,
     words: getWordsForGroup(rawThemeGroup.words, userPhonicsGroup),
   };
 
-  // Pick a random phrase pair for Phase 4
-  const phrasePair = PHRASE_PAIRS[Math.floor(Math.random() * PHRASE_PAIRS.length)];
+  // Pick a phrase pair for Phase 4 (different index via offset)
+  const phrasePair = PHRASE_PAIRS[(seed + 1) % PHRASE_PAIRS.length];
 
-  // Pick a grammar pattern for Phase 7
-  const grammarPattern = GRAMMAR_PATTERNS[Math.floor(Math.random() * GRAMMAR_PATTERNS.length)];
+  // Pick a grammar pattern for Phase 7 (different index via offset)
+  const grammarPattern = GRAMMAR_PATTERNS[(seed + 2) % GRAMMAR_PATTERNS.length];
 
   const plan: DailyLessonPlan = {
     date: today,

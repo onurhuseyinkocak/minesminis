@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Trophy, Check, Volume2, ArrowLeft, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
@@ -79,6 +79,14 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
 
   const blendTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (blendTimeoutRef.current) clearTimeout(blendTimeoutRef.current);
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+    };
+  }, []);
 
   const currentQuestion = questions[currentIndex];
 

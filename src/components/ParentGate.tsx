@@ -18,10 +18,32 @@ import './ParentGate.css';
 
 // ─── Session key ────────────────────────────────────────────────────────────
 const SESSION_KEY = 'mm_parent_gate_passed';
+const SESSION_TIMEOUT_KEY = 'mm_parent_gate_ts';
 
-/** Returns true if the gate was already passed in this browser session. */
+/** How long (ms) the parent gate pass is valid before auto-expiring back to child mode. */
+const PARENT_SESSION_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
+/** Returns true if the gate was already passed and the 5-minute window has not expired. */
 export function hasParentGatePassed(): boolean {
-  return sessionStorage.getItem(SESSION_KEY) === '1';
+  if (sessionStorage.getItem(SESSION_KEY) !== '1') return false;
+  try {
+    const ts = parseInt(sessionStorage.getItem(SESSION_TIMEOUT_KEY) ?? '0', 10);
+    if (!ts || Date.now() - ts > PARENT_SESSION_TIMEOUT_MS) {
+      // Timeout expired — clear and force re-verification
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_TIMEOUT_KEY);
+      return false;
+    }
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+/** Clears the parent gate pass, forcing re-verification on next access. */
+export function clearParentGatePass(): void {
+  sessionStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(SESSION_TIMEOUT_KEY);
 }
 
 // ─── Math problem helpers ────────────────────────────────────────────────────
@@ -117,8 +139,9 @@ export default function ParentGate({
       }
 
       if (entered === problem.answer) {
-        // Correct — store in session and fire callback
+        // Correct — store in session with timestamp and fire callback
         sessionStorage.setItem(SESSION_KEY, '1');
+        sessionStorage.setItem(SESSION_TIMEOUT_KEY, String(Date.now()));
         onSuccess();
         return;
       }

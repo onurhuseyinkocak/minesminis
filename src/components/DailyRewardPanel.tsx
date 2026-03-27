@@ -1,6 +1,7 @@
 /**
  * DailyRewardPanel — Inline daily reward UI for the navbar slide-up panel.
  * Compact version: rewards grid + claim button, max 120px celebration animation.
+ * Uses design-system tokens exclusively — zero hardcoded Tailwind color classes.
  */
 
 import React, { useState, useRef } from 'react';
@@ -24,7 +25,7 @@ const DailyRewardPanel: React.FC<DailyRewardPanelProps> = ({ onClose }) => {
     getDailyRewardForDay,
     getNextClaimTime,
   } = useGamification();
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
 
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
@@ -65,7 +66,7 @@ const DailyRewardPanel: React.FC<DailyRewardPanelProps> = ({ onClose }) => {
     const nextClaim = getNextClaimTime();
     if (!nextClaim) return '';
     const diff = nextClaim.getTime() - Date.now();
-    if (diff <= 0) return lang === 'tr' ? 'Şimdi mevcut!' : 'Available now!';
+    if (diff <= 0) return t('dailyReward.claimReward');
     const h = Math.floor(diff / 3_600_000);
     const m = Math.floor((diff % 3_600_000) / 60_000);
     return `${h}h ${m}m`;
@@ -80,15 +81,15 @@ const DailyRewardPanel: React.FC<DailyRewardPanelProps> = ({ onClose }) => {
       )}
 
       {/* Streak display */}
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <Flame size={18} className="text-primary-500" />
-        <span className="font-display font-bold text-sm text-ink-900">
-          {stats.streakDays} {lang === 'tr' ? 'Gün Seri' : 'Day Streak'}
+      <div className="daily-reward-panel__streak">
+        <Flame size={18} className="daily-reward-panel__streak-icon" />
+        <span className="daily-reward-panel__streak-text">
+          {stats.streakDays} {t('dailyReward.dayStreak')}
         </span>
       </div>
 
       {/* 7-day reward grid */}
-      <div className="grid grid-cols-7 gap-1.5 mb-4">
+      <div className="daily-reward-panel__grid">
         {[1, 2, 3, 4, 5, 6, 7].map((day) => {
           const reward = getDailyRewardForDay(day);
           const isPast = day < currentDay;
@@ -97,18 +98,12 @@ const DailyRewardPanel: React.FC<DailyRewardPanelProps> = ({ onClose }) => {
           return (
             <div
               key={day}
-              className={`flex flex-col items-center gap-0.5 py-2 px-1 rounded-xl text-center transition-all duration-200 ${
-                isPast
-                  ? 'bg-success-50 border border-success-200 opacity-70'
-                  : isCurrent
-                    ? 'bg-primary-50 border-2 border-primary-400 shadow-sm scale-105'
-                    : 'bg-ink-50 border border-ink-100 opacity-50 border-dashed'
-              }`}
+              className={`daily-reward-panel__day${isPast ? ' is-past' : ''}${isCurrent ? ' is-current' : ''}${!isPast && !isCurrent ? ' is-future' : ''}`}
             >
-              <span className="text-[9px] font-display font-bold text-ink-500 uppercase">
-                {lang === 'tr' ? `${day}.` : `D${day}`}
+              <span className="daily-reward-panel__day-label">
+                {lang === 'tr' ? `${day}.` : `D${day}`}{/* Day label stays locale-conditional: tr uses ordinals */}
               </span>
-              <span className="text-xs">
+              <span className="daily-reward-panel__day-icon">
                 {isPast
                   ? <KidIcon name="check" size={16} />
                   : reward.special
@@ -116,7 +111,7 @@ const DailyRewardPanel: React.FC<DailyRewardPanelProps> = ({ onClose }) => {
                     : <KidIcon name="trophy" size={16} />
                 }
               </span>
-              <span className="text-[10px] font-display font-bold text-primary-500">
+              <span className="daily-reward-panel__day-xp">
                 {reward.xp}
               </span>
             </div>
@@ -126,22 +121,22 @@ const DailyRewardPanel: React.FC<DailyRewardPanelProps> = ({ onClose }) => {
 
       {/* Claim / Claimed / Countdown */}
       {claimed && claimedReward ? (
-        <div className="text-center py-3">
-          <div className="inline-flex items-center gap-2 mb-2 daily-reward-panel__claimed-anim">
-            <Sparkles size={24} className="text-gold-500" />
-            <span className="font-display font-black text-2xl text-primary-500">
+        <div className="daily-reward-panel__claimed">
+          <div className="daily-reward-panel__claimed-anim">
+            <Sparkles size={24} className="daily-reward-panel__sparkle-icon" />
+            <span className="daily-reward-panel__xp-value">
               +{claimedReward.xp} XP
             </span>
           </div>
-          <p className="font-display font-bold text-sm text-success-600 mb-2">
-            {lang === 'tr' ? 'Ödül alındı!' : 'Reward claimed!'}
+          <p className="daily-reward-panel__claimed-label">
+            {t('dailyReward.rewardClaimed')}
           </p>
           <button
             type="button"
             onClick={onClose}
-            className="text-xs font-display font-semibold text-ink-400 hover:text-ink-600 transition-colors"
+            className="daily-reward-panel__close-link"
           >
-            {lang === 'tr' ? 'Kapat' : 'Close'}
+            {t('common.close')}
           </button>
         </div>
       ) : canClaimDaily ? (
@@ -149,18 +144,18 @@ const DailyRewardPanel: React.FC<DailyRewardPanelProps> = ({ onClose }) => {
           type="button"
           onClick={handleClaim}
           disabled={claiming}
-          className="w-full py-3 px-4 rounded-2xl font-display font-bold text-base text-white shadow-md transition-all duration-200 hover:shadow-lg active:scale-95 disabled:opacity-50 daily-reward-panel__claim-btn"
+          className="daily-reward-panel__claim-btn"
         >
           {claiming
-            ? (lang === 'tr' ? 'Alınıyor...' : 'Claiming...')
-            : (lang === 'tr' ? 'Ödülünü Al!' : 'Claim Reward!')}
+            ? t('common.processing')
+            : t('dailyReward.claimReward')}
         </button>
       ) : (
-        <div className="text-center py-2">
-          <p className="text-xs text-ink-400 font-body mb-1">
-            {lang === 'tr' ? 'Sonraki ödül:' : 'Next reward in:'}
+        <div className="daily-reward-panel__countdown">
+          <p className="daily-reward-panel__countdown-label">
+            {t('dailyReward.nextRewardIn')}
           </p>
-          <span className="font-display font-bold text-sm text-ink-700 bg-ink-50 px-3 py-1.5 rounded-lg inline-block">
+          <span className="daily-reward-panel__countdown-value">
             {formatCountdown()}
           </span>
         </div>

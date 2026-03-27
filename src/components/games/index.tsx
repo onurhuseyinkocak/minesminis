@@ -35,7 +35,6 @@ export { SpellingBee } from './SpellingBee';
 export { QuickQuiz } from './QuickQuiz';
 export { SentenceScramble } from './SentenceScramble';
 export { ListeningChallenge } from './ListeningChallenge';
-export { PronunciationGame } from './PronunciationGame';
 export { DialogueGame } from './DialogueGame';
 export type { DialogueLine, DialogueOption, DialogueGameProps } from './DialogueGame';
 export { ImageLabelGame } from './ImageLabelGame';
@@ -56,7 +55,6 @@ export { WordFamilyGame } from './WordFamilyGame';
 export type { WordFamily, WordFamilyGameProps } from './WordFamilyGame';
 export { RhymeGame } from './RhymeGame';
 export type { RhymeTaskType, RhymeQuestion, RhymeGameProps } from './RhymeGame';
-export { StoryChoicesGame } from './StoryChoicesGame';
 export { default as PhoneticTrapGame } from './PhoneticTrapGame';
 export type { PhoneticTrapGameProps } from './PhoneticTrapGame';
 
@@ -73,9 +71,10 @@ export interface GameProps {
   onWrongAnswer?: () => void;
 }
 
-type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing' | 'phonics-builder' | 'story-choices' | 'dialogue' | 'image-label' | 'say-it' | 'phonics-blend' | 'phoneme-manipulation' | 'syllable' | 'word-family' | 'rhyme' | 'phonetic-trap';
+type GameType = 'word-match' | 'spelling-bee' | 'quick-quiz' | 'sentence-scramble' | 'listening-challenge' | 'pronunciation' | 'blending' | 'segmenting' | 'tpr' | 'sound-intro' | 'reading' | 'letter-tracing' | 'word-writing' | 'phonics-builder' | 'story-choices' | 'dialogue' | 'image-label' | 'say-it' | 'phonics-blend' | 'phoneme-manipulation' | 'syllable' | 'word-family' | 'rhyme' | 'phonetic-trap' | 'sentence-builder';
 
-// Games that accept standard GameProps (words: WordItem[])
+// Games that accept standard GameProps (words: WordItem[]) or phonics-specific props.
+// React.lazy requires a unified component type; GameProps is the common denominator.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyGameComponent = React.FC<any>;
 
@@ -105,6 +104,7 @@ const gameComponents: Record<GameType, React.LazyExoticComponent<AnyGameComponen
   'word-family': React.lazy(() => import('./WordFamilyGame').then((m) => ({ default: m.WordFamilyGame }))),
   'rhyme': React.lazy(() => import('./RhymeGame').then((m) => ({ default: m.RhymeGame }))),
   'phonetic-trap': React.lazy(() => import('./PhoneticTrapGame').then((m) => ({ default: m.default }))),
+  'sentence-builder': React.lazy(() => import('./SentenceBuilder')),
 };
 
 // Games that require specialized props (not standard GameProps with words[]).
@@ -210,6 +210,10 @@ const GAME_TYPE_MAP: Record<string, GameType> = {
   'PhoneticTrap': 'phonetic-trap',
   'PhoneticTrapGame': 'phonetic-trap',
   'phonetic-trap-game': 'phonetic-trap',
+  'sentence-builder': 'sentence-builder',
+  'sentencebuilder': 'sentence-builder',
+  'SentenceBuilder': 'sentence-builder',
+  'sentence-builder-game': 'sentence-builder',
 };
 
 export interface GameSelectorProps extends GameProps {
@@ -245,6 +249,14 @@ export function GameSelector({ type, extra, ...props }: GameSelectorProps) {
 
   const GameComponent = gameComponents[resolvedType];
 
+  if (!GameComponent) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem' }}>
+        <p style={{ color: 'var(--text-secondary)' }}>Oyun bulunamadı: {resolvedType}</p>
+      </div>
+    );
+  }
+
   // For specialized games, pass extra props; for standard games, pass words-based props
   const gameProps = SPECIALIZED_GAME_TYPES.has(resolvedType)
     ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, ...extra }
@@ -259,7 +271,8 @@ export function GameSelector({ type, extra, ...props }: GameSelectorProps) {
           </div>
         }
       >
-        <GameComponent {...gameProps} />
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <GameComponent {...(gameProps as any)} />
       </React.Suspense>
     </GameErrorBoundary>
   );

@@ -6,6 +6,7 @@
 /* ── Layout ─────────────────────────────────────────────────── */
 
 .child-home {
+  min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -45,7 +46,7 @@
   gap: 6px;
   font-family: var(--font-display);
   transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-  min-height: 40px;
+  min-height: 44px;
   z-index: 10;
 }
 
@@ -69,7 +70,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 56px; /* clear the absolute-positioned parent button (~44px) + breathing room */
   margin-bottom: 4px;
   cursor: pointer;
   user-select: none;
@@ -88,7 +89,7 @@
 }
 
 .child-home__mascot-inner--pop {
-  animation: child-mascot-pop 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: child-mascot-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 @keyframes child-mascot-pop {
@@ -103,7 +104,8 @@
 
 .child-home__bubble {
   position: absolute;
-  top: -56px;
+  /* Position above the mascot: mascot is 160px, so offset well above it */
+  bottom: calc(100% + 12px);
   left: 50%;
   transform: translateX(-50%) scale(1);
   background: var(--bg-elevated);
@@ -113,7 +115,11 @@
   font-size: 18px;
   font-weight: 800;
   color: var(--primary);
-  white-space: nowrap;
+  /* Wrap on narrow screens — prevents overflow on 320px viewports */
+  white-space: normal;
+  word-break: break-word;
+  max-width: min(90vw, 280px);
+  text-align: center;
   box-shadow: 0 4px 16px var(--primary-glow);
   font-family: var(--font-display);
   z-index: 20;
@@ -121,20 +127,33 @@
   animation: bubble-appear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.child-home__bubble::after {
+/* Outer triangle (border color) */
+.child-home__bubble::before {
   content: '';
   position: absolute;
-  bottom: -10px;
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border: 8px solid transparent;
+  border: 9px solid transparent;
   border-top-color: var(--primary);
   border-bottom: 0;
 }
 
+/* Inner triangle (fill color — matches background) */
+.child-home__bubble::after {
+  content: '';
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: var(--bg-elevated);
+  border-bottom: 0;
+}
+
 @keyframes bubble-appear {
-  0% { opacity: 0; transform: translateX(-50%) scale(0.7); }
-  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+  0% { opacity: 0; transform: translateX(-50%) scale(0.75) translateY(6px); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
 }
 
 .child-home__bubble--fading {
@@ -142,8 +161,8 @@
 }
 
 @keyframes bubble-fade {
-  0% { opacity: 1; transform: translateX(-50%) scale(1); }
-  100% { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(-8px); }
+  0% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.85) translateY(-6px); }
 }
 
 /* ── Greeting ────────────────────────────────────────────────── */
@@ -170,7 +189,9 @@
   min-height: 110px;
   border-radius: var(--radius-2xl);
   border: none;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  border-bottom: 5px solid #993218; /* color-mix fallback: primary 60% + black */
+  border-bottom: 5px solid color-mix(in srgb, var(--primary) 60%, black);
+  background: var(--gradient-primary);
   color: var(--text-on-primary);
   font-family: var(--font-display);
   font-size: 22px;
@@ -182,7 +203,7 @@
   justify-content: center;
   gap: 8px;
   box-shadow: 0 8px 28px var(--primary-glow), var(--shadow-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
   padding: 20px 28px;
@@ -204,6 +225,7 @@
 
 .child-home__lesson-btn--done {
   background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
+  border-bottom-color: color-mix(in srgb, var(--success) 60%, black);
   box-shadow: 0 8px 28px var(--success-soft);
 }
 
@@ -262,6 +284,7 @@
   min-height: 88px;
   border-radius: var(--radius-xl);
   border: none;
+  border-bottom: 5px solid color-mix(in srgb, var(--border) 80%, black);
   cursor: pointer;
   font-family: var(--font-display);
   font-size: 18px;
@@ -274,7 +297,7 @@
   gap: 6px;
   padding: 16px 12px;
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   letter-spacing: 0.3px;
   text-transform: uppercase;
 }
@@ -293,11 +316,13 @@
 
 .child-home__secondary-btn--game {
   background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-indigo) 100%);
+  border-bottom-color: color-mix(in srgb, var(--accent-purple) 60%, black);
   box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-purple) 35%, transparent);
 }
 
 .child-home__secondary-btn--story {
   background: linear-gradient(135deg, var(--accent-teal) 0%, var(--secondary-light) 100%);
+  border-bottom-color: color-mix(in srgb, var(--accent-teal) 60%, black);
   box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-teal) 35%, transparent);
 }
 
@@ -346,20 +371,23 @@
   gap: 8px;
   align-items: center;
   justify-content: center;
+  /* Ensure bottom content is never clipped by OS bars */
+  margin-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  padding-bottom: 8px;
 }
 
 .child-home__heart {
-  font-size: 28px;
-  line-height: 1;
+  /* width/height set directly on the SVG element */
+  display: block;
   transition: transform 0.2s;
 }
 
 .child-home__heart--full {
-  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--error, #ef4444) 40%, transparent));
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--error) 40%, transparent));
 }
 
 .child-home__heart--empty {
-  opacity: 0.2;
+  opacity: 0.3;
   filter: grayscale(1);
 }
 
@@ -402,7 +430,7 @@
   font-family: var(--font-display);
   font-size: 24px;
   font-weight: 900;
-  color: var(--accent-purple, #a855f7);
+  color: var(--accent-purple);
   letter-spacing: -0.3px;
 }
 
@@ -572,8 +600,26 @@
 
 @media (min-height: 700px) {
   .child-home__mascot-wrap {
-    margin-top: 16px;
+    margin-top: 64px;
     margin-bottom: 8px;
+  }
+}
+
+/* On very short screens, reduce mascot top margin but keep it above parent button */
+@media (max-height: 600px) {
+  .child-home__mascot-wrap {
+    margin-top: 48px;
+    margin-bottom: 0;
+  }
+  .child-home__greeting {
+    margin-bottom: 12px;
+  }
+  .child-home__lesson-btn {
+    min-height: 90px;
+    margin-bottom: 10px;
+  }
+  .child-home__secondary-row {
+    margin-bottom: 14px;
   }
 }
 

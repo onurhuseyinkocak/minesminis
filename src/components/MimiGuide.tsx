@@ -42,6 +42,13 @@ export default function MimiGuide({
 }: MimiGuideProps) {
   const [visible, setVisible] = useState(false);
 
+  const dismiss = useCallback(() => {
+    setVisible(false);
+    if (showOnce) {
+      markAsShown(showOnce);
+    }
+  }, [showOnce]);
+
   useEffect(() => {
     // If showOnce is set and was already shown, don't display
     if (showOnce && wasAlreadyShown(showOnce)) return;
@@ -60,15 +67,7 @@ export default function MimiGuide({
     }, autoHide);
 
     return () => clearTimeout(hideTimer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible, autoHide]);
-
-  const dismiss = useCallback(() => {
-    setVisible(false);
-    if (showOnce) {
-      markAsShown(showOnce);
-    }
-  }, [showOnce]);
+  }, [visible, autoHide, dismiss]);
 
   const isLeft = position === 'bottom-left';
 
@@ -175,8 +174,22 @@ export default function MimiGuide({
               Got it!
             </button>
 
-            {/* Bubble tail */}
+            {/* Bubble tail — border triangle behind fill triangle */}
             <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                bottom: -10,
+                [isLeft ? 'left' : 'right']: 16,
+                width: 0,
+                height: 0,
+                borderLeft: '10px solid transparent',
+                borderRight: '10px solid transparent',
+                borderTop: '10px solid var(--accent-purple-pale)',
+              }}
+            />
+            <div
+              aria-hidden="true"
               style={{
                 position: 'absolute',
                 bottom: -8,
@@ -185,7 +198,7 @@ export default function MimiGuide({
                 height: 0,
                 borderLeft: '8px solid transparent',
                 borderRight: '8px solid transparent',
-                borderTop: '8px solid var(--bg-card, #1C2236)',
+                borderTop: '8px solid var(--bg-card)',
               }}
             />
           </div>

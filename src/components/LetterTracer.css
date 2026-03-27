@@ -35,8 +35,10 @@
   background: none;
   border: 2px solid var(--primary);
   border-radius: var(--radius-full);
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,6 +77,8 @@
   max-width: 450px;
   display: flex;
   justify-content: center;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 .lt-canvas {
@@ -110,6 +114,18 @@
 
 .lt-dot--hit {
   background: var(--success);
+}
+
+/* ---- Canvas success/fail state ---- */
+
+.lt-canvas--pass {
+  border-color: var(--success);
+  box-shadow: 0 0 0 4px var(--success-pale), 0 0 20px var(--success-glow, rgba(16,185,129,0.25));
+}
+
+.lt-canvas--fail {
+  border-color: var(--error);
+  box-shadow: 0 0 0 4px var(--error-pale);
 }
 
 /* ---- Result feedback ---- */

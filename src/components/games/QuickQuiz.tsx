@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, Zap, Trophy, Sparkles, Star, Lightbulb, Check, ArrowRight, RotateCcw } from 'lucide-react';
+import { Timer, Zap, Trophy, Sparkles, Star, Lightbulb, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { Card, Badge, ProgressBar, StreakFlame } from '../ui';
 import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
@@ -10,6 +10,7 @@ import { useHearts } from '../../contexts/HeartsContext';
 import LessonCompleteScreen, { useLessonComplete } from '../LessonCompleteScreen';
 import NoHeartsModal from '../NoHeartsModal';
 import { announceToScreenReader } from '../../utils/accessibility';
+import { shuffleArray } from '../../utils/arrayUtils';
 import './QuickQuiz.css';
 
 interface WordItem {
@@ -31,25 +32,21 @@ interface Question {
   word: WordItem;
   options: string[];
   correctIndex: number;
-  mode: 'en-to-tr' | 'emoji-to-en';
+  mode: 'en-to-tr' | 'tr-to-en' | 'emoji-to-en';
 }
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 function generateQuestions(words: WordItem[]): Question[] {
   const questions: Question[] = [];
   const pool = shuffleArray(words).slice(0, 5);
 
   for (const word of pool) {
-    const mode: Question['mode'] = Math.random() > 0.5 ? 'en-to-tr' : 'emoji-to-en';
-    const correctAnswer = mode === 'en-to-tr' ? word.turkish : word.english;
+    const roll = Math.random();
+    const mode: Question['mode'] = roll < 0.4 ? 'en-to-tr' : roll < 0.7 ? 'tr-to-en' : 'emoji-to-en';
+    const correctAnswer =
+      mode === 'en-to-tr' ? word.turkish :
+      mode === 'tr-to-en' ? word.english :
+      word.english;
 
     const distractors = words
       .filter((w) => w.english !== word.english)
@@ -70,7 +67,7 @@ function generateQuestions(words: WordItem[]): Question[] {
   return questions;
 }
 
-const TIMER_DURATION = 10;
+const TIMER_DURATION = 15;
 
 export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, mascotId, streakDays }) => {
   const { t } = useLanguage();
@@ -86,7 +83,15 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   const [completed, setCompleted] = useState(false);
   const [showNoHearts, setShowNoHearts] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { show: showComplete, trigger: triggerComplete, dismiss: dismissComplete } = useLessonComplete();
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (advanceTimeoutRef.current) clearTimeout(advanceTimeoutRef.current);
+    };
+  }, []);
 
   const question = questions[currentQ];
 
@@ -129,7 +134,9 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           clearTimer();
           setFeedback('timeout');
           setStreak(0);
-          setTimeout(advanceQuestion, 1500);
+          loseHeart();
+          onWrongAnswer?.();
+          advanceTimeoutRef.current = setTimeout(advanceQuestion, 1500);
           return 0;
         }
         return prev - 1;
@@ -139,7 +146,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     return clearTimer;
   }, [currentQ, completed, feedback, clearTimer, advanceQuestion]);
 
-  const handleSelect = (index: number) => {
+  const handleSelect = useCallback((index: number) => {
     if (feedback !== null || selected !== null) return;
     clearTimer();
     setSelected(index);
@@ -158,7 +165,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       SFX.correct();
       announceToScreenReader('Correct!', 'polite');
       onXpEarned?.(10 + streakBonus);
-      setTimeout(() => advanceQuestion(newScore), 1500);
+      advanceTimeoutRef.current = setTimeout(() => advanceQuestion(newScore), 1500);
     } else {
       setStreak(0);
       setFeedback('wrong');
@@ -169,14 +176,31 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       if (hearts - 1 <= 0) {
         setShowNoHearts(true);
       }
-      setTimeout(() => advanceQuestion(score), 1500);
+      advanceTimeoutRef.current = setTimeout(() => advanceQuestion(score), 1500);
     }
-  };
+  }, [feedback, selected, question, score, streak, bestStreak, clearTimer, advanceQuestion, onXpEarned, loseHeart, onWrongAnswer, hearts]);
+
+  // Keyboard shortcut: 1–4 selects answer option
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (completed || feedback !== null) return;
+      const num = parseInt(e.key, 10);
+      if (num >= 1 && num <= 4) {
+        const idx = num - 1;
+        if (idx < (questions[currentQ]?.options.length ?? 0)) {
+          handleSelect(idx);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [completed, feedback, currentQ, questions, handleSelect]);
 
   const progress = (currentQ / questions.length) * 100;
 
   const handlePlayAgain = () => {
     clearTimer();
+    if (advanceTimeoutRef.current) { clearTimeout(advanceTimeoutRef.current); advanceTimeoutRef.current = null; }
     setCurrentQ(0);
     setScore(0);
     setStreak(0);
@@ -191,7 +215,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
+    const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <>
         {/* LessonCompleteScreen overlay (shown via useLessonComplete trigger) */}
@@ -224,7 +248,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
                 >
-                  {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
+                  {pct >= 90 ? <Trophy size={48} color="var(--warning)" /> : pct >= 60 ? <Star size={48} fill="var(--warning)" color="var(--warning)" /> : <Check size={48} color="var(--success)" />}
                 </motion.span>
                 <h2 className="quick-quiz__results-title">{t('games.quizComplete')}</h2>
                 <p className="quick-quiz__results-score">
@@ -254,7 +278,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
                     <ArrowRight size={16} /> {t('games.backToGames')}
                   </button>
-                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain}>
+                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain} autoFocus>
                     <RotateCcw size={16} /> {t('games.playAgain')}
                   </button>
                 </div>
@@ -313,12 +337,13 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           className="quick-quiz__question-content"
         >
           <div className={`quick-quiz__emoji${question.word.emoji ? '' : ' quick-quiz__emoji--fallback'}`}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
-          {question.mode === 'en-to-tr' && (
-            <SpeakButton text={question.word.english} autoPlay size="md" />
-          )}
+          {/* Always show speak button — hearing the word is part of every question type */}
+          <SpeakButton text={question.word.english} autoPlay={question.mode === 'en-to-tr'} size="md" />
           <p id="qq-question-text" className="quick-quiz__prompt-text">
             {question.mode === 'en-to-tr'
               ? t('games.whatIsInTurkish').replace('{word}', question.word.english)
+              : question.mode === 'tr-to-en'
+              ? t('games.whatIsInEnglishWord').replace('{word}', question.word.turkish)
               : t('games.whatIsInEnglish')}
           </p>
         </motion.div>
@@ -341,6 +366,10 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
               optionClass += ' quick-quiz__option--selected';
             }
 
+            // Show icons for color-blind users — not color alone
+            const isCorrectOption = feedback && index === question.correctIndex;
+            const isWrongOption = feedback === 'wrong' && index === selected;
+
             return (
               <motion.button
                 type="button"
@@ -357,7 +386,11 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                 whileTap={{ scale: 0.97 }}
               >
                 <span className="quick-quiz__option-label">
-                  {String.fromCharCode(65 + index)}
+                  {isCorrectOption
+                    ? <CheckCircle2 size={20} aria-hidden="true" />
+                    : isWrongOption
+                    ? <XCircle size={20} aria-hidden="true" />
+                    : String.fromCharCode(65 + index)}
                 </span>
                 <span className="quick-quiz__option-text">{option}</span>
               </motion.button>
@@ -373,6 +406,8 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
+            {/* Icon + color for color-blind users (not color alone) */}
+            <CheckCircle2 size={18} aria-hidden="true" />
             {t('games.correct')} {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
           </motion.div>
         )}
@@ -383,7 +418,9 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            {t('games.theAnswerWas')} {question.options[question.correctIndex]} <Lightbulb size={14} color="#E8A317" />
+            {/* Icon + color for color-blind users (not color alone) */}
+            <XCircle size={18} aria-hidden="true" />
+            {t('games.theAnswerWas')} {question.options[question.correctIndex]} <Lightbulb size={14} color="var(--warning)" aria-hidden="true" />
           </motion.div>
         )}
 
@@ -393,6 +430,8 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
+            {/* Icon + color for color-blind users (not color alone) */}
+            <Clock size={18} aria-hidden="true" />
             {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]}
           </motion.div>
         )}

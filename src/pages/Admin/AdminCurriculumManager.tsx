@@ -134,7 +134,12 @@ function AdminCurriculumManager() {
     const loadCurriculum = async () => {
         setLoading(true);
         try {
-            const { data: worldsData } = await supabase.from('curriculum_worlds').select('*').order('order');
+            // Parallel fetch — worlds and lessons are independent
+            const [{ data: worldsData }, { data: lessonsData }] = await Promise.all([
+                supabase.from('curriculum_worlds').select('id, order, name, name_en, emoji, color, description, age_range, lesson_count').order('order'),
+                supabase.from('curriculum_lessons').select('id, world_id, order, title, title_tr, objective, vocabulary_words, activities, duration, status').order('order'),
+            ]);
+
             if (worldsData && worldsData.length > 0) {
                 setWorlds(worldsData.map((w: Record<string, unknown>) => ({
                     id: String(w.id), order: Number(w.order), name: String(w.name),
@@ -144,7 +149,6 @@ function AdminCurriculumManager() {
                 })));
             }
 
-            const { data: lessonsData } = await supabase.from('curriculum_lessons').select('*').order('order');
             if (lessonsData && lessonsData.length > 0) {
                 setLessons(lessonsData.map((l: Record<string, unknown>) => ({
                     id: String(l.id), worldId: String(l.world_id), order: Number(l.order),

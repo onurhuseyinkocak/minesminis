@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { speak, isTTSAvailable, stopSpeech } from '../services/ttsService';
+import { speak, isTTSAvailable, stopSpeech, _isIOS } from '../services/ttsService';
 import './SpeakButton.css';
 
 // ── Speaker SVG icon ──────────────────────────────────────────────────────────
@@ -73,10 +73,10 @@ export function SpeakButton({
   }, [available, text, lang, isPlaying]);
 
   // autoPlay: speak on mount — only works in browsers that allow it without a
-  // prior gesture (desktop). On iOS Safari this will silently be blocked; the
-  // child can always tap the button manually.
+  // prior gesture (desktop). On iOS Safari this MUST be skipped; Web Audio
+  // and speechSynthesis are both blocked until a user gesture occurs on iOS.
   useEffect(() => {
-    if (!autoPlay || !available || !text.trim()) return;
+    if (!autoPlay || !available || !text.trim() || _isIOS()) return;
 
     // Small delay so the component renders before speaking
     const id = setTimeout(() => {

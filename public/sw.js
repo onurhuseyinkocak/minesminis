@@ -1,23 +1,27 @@
-// MinesMinis Service Worker v2
-// Enhanced PWA with offline support
+// MinesMinis Service Worker v3
+// Enhanced PWA with offline support + iOS splash + skipWaiting race-condition fix
 
-const CACHE_NAME = 'minesminis-v2';
-const STATIC_CACHE = 'minesminis-static-v2';
-const API_CACHE = 'minesminis-api-v2';
+const CACHE_NAME = 'minesminis-v3';
+const STATIC_CACHE = 'minesminis-static-v3';
+const API_CACHE = 'minesminis-api-v3';
 
 // App shell files to precache on install
 const APP_SHELL = [
     '/',
     '/index.html',
     '/manifest.json',
+    '/icons/icon-192.png',
+    '/icons/icon-512.png',
+    '/icons/icon-maskable-512.png',
     '/images/mine-logo.jpg',
-    '/lottie/mimi_happy.json',
-    '/lottie/mimi_idle.json',
-    '/lottie/mimi_sad.json',
-    '/lottie/mimi_talk.json',
-    '/lottie/mimi_wave.json',
-    '/lottie/mimi_walk.json',
-    '/lottie/mimi_sit.json',
+    '/mascot/mimi_happy.json',
+    '/mascot/mimi_idle.json',
+    '/mascot/mimi_sad.json',
+    '/mascot/mimi_talk.json',
+    '/mascot/mimi_wave.json',
+    '/mascot/mimi_walk.json',
+    '/mascot/mimi_sit.json',
+    '/lottie/cat-loader.json',
 ];
 
 // Static asset extensions — cache-first strategy
@@ -59,38 +63,26 @@ function getCacheableApiConfig(url) {
 
 // Install event — precache app shell
 self.addEventListener('install', (event) => {
-    console.log('Service Worker v2: Installing...');
-
     event.waitUntil(
         caches.open(STATIC_CACHE).then((cache) => {
-            console.log('Service Worker: Precaching app shell');
             return cache.addAll(APP_SHELL);
-        })
+        }).then(() => self.skipWaiting())
     );
-
-    self.skipWaiting();
 });
 
-// Activate event — clean up old caches
+// Activate event — clean up old caches + claim clients atomically
 self.addEventListener('activate', (event) => {
-    console.log('Service Worker v2: Activated');
-
     const validCaches = [CACHE_NAME, STATIC_CACHE, API_CACHE];
 
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map((name) => {
-                    if (!validCaches.includes(name)) {
-                        console.log('Service Worker: Deleting old cache:', name);
-                        return caches.delete(name);
-                    }
-                })
+                cacheNames
+                    .filter((name) => !validCaches.includes(name))
+                    .map((name) => caches.delete(name))
             );
-        })
+        }).then(() => self.clients.claim())
     );
-
-    self.clients.claim();
 });
 
 // Fetch event — strategy varies by request type

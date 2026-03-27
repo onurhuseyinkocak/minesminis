@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { useGamification } from '../contexts/GamificationContext';
 import { ArrowLeft, MapPin, Volume2, BookOpen, RotateCcw } from 'lucide-react';
 import { speak } from '../services/ttsService';
@@ -71,6 +72,10 @@ function useTypewriter(
   const indexRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const textRef = useRef(text);
+  // Keep onComplete in a ref so skip() always calls the latest version
+  // without needing it as a useEffect dependency (avoids restarting the animation).
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
   useEffect(() => {
     textRef.current = text;
@@ -85,21 +90,20 @@ function useTypewriter(
         timerRef.current = setTimeout(tick, speed);
       } else {
         setDone(true);
-        onComplete?.();
+        onCompleteRef.current?.();
       }
     };
 
     timerRef.current = setTimeout(tick, speed);
     return () => clearTimeout(timerRef.current);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text, speed]);
+  }, [text, speed]); // onComplete intentionally excluded — stored in ref above
 
   const skip = useCallback(() => {
     clearTimeout(timerRef.current);
     setDisplayed(textRef.current);
     setDone(true);
-    onComplete?.();
-  }, [onComplete]);
+    onCompleteRef.current?.();
+  }, []);
 
   return { displayed, done, skip };
 }
@@ -148,7 +152,8 @@ export default function StoryReader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { lang } = useLanguage();
-  const { addXP } = useGamification();
+  usePageTitle('Hikaye', 'Story');
+  const { addXP, trackActivity } = useGamification();
 
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
@@ -161,7 +166,23 @@ export default function StoryReader() {
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
-  // Fetch story
+  // ── Progress persistence helpers ──
+  const progressKey = id ? `mm_story_progress_${id}` : null;
+  const completedKey = id ? `mm_story_completed_${id}` : null;
+
+  // Persist current scene index whenever it changes
+  useEffect(() => {
+    if (!progressKey) return;
+    localStorage.setItem(progressKey, String(sceneIndex));
+  }, [progressKey, sceneIndex]);
+
+  // Mark story as completed in localStorage
+  const markStoryCompleted = useCallback(() => {
+    if (!completedKey) return;
+    localStorage.setItem(completedKey, '1');
+  }, [completedKey]);
+
+  // Fetch story — then restore saved progress
   useEffect(() => {
     if (!id) return;
     setLoading(true);
@@ -172,14 +193,29 @@ export default function StoryReader() {
         return r.json();
       })
       .then(d => {
-        setStory(d.story || d);
+        const loaded: Story = d.story || d;
+        setStory(loaded);
+
+        // Restore last saved scene index (skip if already completed)
+        const savedCompleted = localStorage.getItem(`mm_story_completed_${id}`);
+        if (!savedCompleted && progressKey) {
+          const saved = localStorage.getItem(progressKey);
+          if (saved !== null) {
+            const savedIdx = parseInt(saved, 10);
+            const maxIdx = (loaded.scenes?.length ?? 1) - 1;
+            if (!isNaN(savedIdx) && savedIdx > 0 && savedIdx <= maxIdx) {
+              setSceneIndex(savedIdx);
+            }
+          }
+        }
+
         setLoading(false);
       })
       .catch(() => {
         setError(true);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, progressKey]);
 
   const currentScene: StoryScene | undefined = story?.scenes?.[sceneIndex];
   const totalScenes = story?.scenes?.length ?? 0;
@@ -210,11 +246,15 @@ export default function StoryReader() {
     setTransitioning(true);
     setShowChoices(false);
 
-    // Find next scene by id or leadsTo number
+    // Find next scene by id or leadsTo number.
+    // Compare both as strings and as numbers to handle mixed id types.
     setTimeout(() => {
       const targetId = choice.next_scene_id ?? (choice.leadsTo != null ? String(choice.leadsTo) : null);
       const nextIdx = targetId != null
-        ? (story?.scenes?.findIndex(s => String(s.id) === targetId) ?? -1)
+        ? (story?.scenes?.findIndex(s =>
+            String(s.id) === String(targetId) ||
+            s.id === Number(targetId)
+          ) ?? -1)
         : -1;
       if (nextIdx !== -1) {
         setSceneIndex(nextIdx);
@@ -265,9 +305,11 @@ export default function StoryReader() {
       } else if (sceneIndex + 1 >= totalScenes) {
         // Last scene → show completion
         setShowCompletion(true);
+        markStoryCompleted();
         if (!completionXPAwarded) {
           const xpAmount = Math.max(10, totalScenes * 5);
           addXP(xpAmount, 'Story completion').catch(() => { /* gamification unavailable */ });
+          trackActivity('story_read').catch(() => {});
           setCompletionXPAwarded(true);
         }
       }
@@ -280,7 +322,7 @@ export default function StoryReader() {
         setTransitioning(false);
       }, 300);
     }
-  }, [done, transitioning, showCompletion, sceneIndex, totalScenes, completionXPAwarded, addXP]);
+  }, [done, transitioning, showCompletion, sceneIndex, totalScenes, completionXPAwarded, addXP, trackActivity, markStoryCompleted]);
 
   // ── Render ──
 
@@ -511,6 +553,9 @@ export default function StoryReader() {
                 setSceneIndex(0);
                 setShowChoices(false);
                 setCompletionXPAwarded(false);
+                // Reset saved progress so next read starts fresh
+                if (progressKey) localStorage.removeItem(progressKey);
+                if (completedKey) localStorage.removeItem(completedKey);
               }}
             >
               <RotateCcw size={16} />
@@ -556,9 +601,11 @@ export default function StoryReader() {
               className="story-reader__choice-btn"
               onClick={() => {
                 setShowCompletion(true);
+                markStoryCompleted();
                 if (!completionXPAwarded) {
                   const xpAmount = Math.max(10, totalScenes * 5);
                   addXP(xpAmount, 'Story completion').catch(() => { /* gamification unavailable */ });
+                  trackActivity('story_read').catch(() => {});
                   setCompletionXPAwarded(true);
                 }
               }}

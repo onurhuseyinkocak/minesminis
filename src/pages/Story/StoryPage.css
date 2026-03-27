@@ -430,15 +430,18 @@
 }
 
 .story-page__vocab-continue {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
+  min-height: 52px;
   margin-top: var(--space-lg);
-  padding: var(--space-md) var(--space-md);
+  padding: 0 var(--space-md);
   font-family: var(--font-display);
   font-size: 15px;
   font-weight: 800;
   color: var(--white);
-  background: var(--primary);
+  background: var(--gradient-primary);
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -447,9 +450,15 @@
 }
 
 .story-page__vocab-continue:hover {
-  background: var(--primary-hover);
+  filter: brightness(1.08);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.35);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.story-page__vocab-continue:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* ---- MAIN SCENE ---- */
@@ -458,10 +467,12 @@
   display: flex;
   flex-direction: column;
   transition: opacity var(--transition-slow);
+  will-change: opacity;
 }
 
 .story-page__scene--transitioning {
-  opacity: 0.15;
+  opacity: 0.12;
+  pointer-events: none;
   transition: opacity 0.35s var(--ease-in-out);
 }
 

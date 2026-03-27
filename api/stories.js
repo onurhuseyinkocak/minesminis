@@ -76,7 +76,12 @@ export default async function handler(req, res) {
       if (error) throw error;
       return res.status(200).json({ stories: stories || [] });
     }
-  } catch (_e) {
+  } catch (e) {
+    // If the stories table doesn't exist yet, return empty list instead of 500
+    const msg = e instanceof Error ? e.message : String(e);
+    if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('42P01')) {
+      return res.status(200).json({ stories: [] });
+    }
     return res.status(500).json({ error: 'Server error' });
   }
 }

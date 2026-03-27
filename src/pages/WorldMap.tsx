@@ -7,17 +7,20 @@
  * Each stop = a curriculum phase unit.
  * Completed = green check, Current = golden pulse, Locked = gray lock.
  */
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Star, Check } from 'lucide-react';
+import { Lock, Star, Check, Music, BookMarked, BookOpen, Rocket } from 'lucide-react';
 import { ProgressBar, KidIcon } from '../components/ui';
 import LottieCharacter from '../components/LottieCharacter';
 import { PHASES, type LearningUnit } from '../data/curriculumPhases';
 import MimiGuide from '../components/MimiGuide';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import { saveCurrentUnit } from '../services/lessonProgressService';
+import { useAuth } from '../contexts/AuthContext';
+import { getAgeGroupFromSettings } from '../services/ageGroupService';
 import toast from 'react-hot-toast';
 import './WorldMap.css';
 
@@ -46,87 +49,136 @@ interface UnitProgressInfo {
   totalActivities: number;
 }
 
-function getUnitProgress(unit: LearningUnit, phaseIndex: number, unitIndex: number): UnitProgressInfo {
-  const totalActivities = unit.activities.length;
-
-  // Check localStorage for placement result
-  let startPhase = 0;
+// ── Storage key helpers (must match lessonProgressService prefix logic) ──────
+// lessonProgressService uses `mm_` or `mm_child_{id}_` prefix.
+// WorldMap reads directly from localStorage — must use the SAME keys.
+function getActiveChildPrefix(): string {
   try {
-    // Try new structured format first (mimi_placement_detail)
+    const childId = localStorage.getItem('mimi_active_child');
+    return childId ? `mm_child_${childId}_` : 'mm_';
+  } catch {
+    return 'mm_';
+  }
+}
+
+/** Read activitiesCompleted for a unit via the canonical storage key. */
+function readActivitiesCompleted(unitId: string): number {
+  try {
+    const pfx = getActiveChildPrefix();
+    // Primary: lessonProgressService writes activity index to this key (0-based next index).
+    const actRaw = localStorage.getItem(`${pfx}unit_${unitId}_activity`);
+    if (actRaw !== null) {
+      const val = parseInt(actRaw, 10);
+      if (!isNaN(val)) return val;
+    }
+    // Secondary: old WorldMap written JSON { activitiesCompleted: N }
+    const legacyRaw = localStorage.getItem(`mimi_unit_progress_${unitId}`);
+    if (legacyRaw) {
+      const parsed = JSON.parse(legacyRaw);
+      if (typeof parsed === 'object' && parsed !== null && typeof parsed.activitiesCompleted === 'number') {
+        return parsed.activitiesCompleted;
+      }
+    }
+  } catch { /* ignore */ }
+  return 0;
+}
+
+/** Read placement start phase (0-based index) from localStorage. Cached per call site. */
+function readStartPhase(): number {
+  try {
     const detailRaw = localStorage.getItem('mimi_placement_detail');
     if (detailRaw) {
       const detail = JSON.parse(detailRaw);
-      // detail.phase is 1-based, phaseIndex is 0-based
-      if (detail.phase !== undefined) startPhase = Math.max(0, detail.phase - 1);
+      if (detail.phase !== undefined) return Math.max(0, detail.phase - 1);
     }
   } catch { /* ignore */ }
-  // Fallback: legacy format (plain group number string)
-  if (startPhase === 0) {
-    try {
-      const legacyRaw = localStorage.getItem(LS_PLACEMENT_RESULT);
-      if (legacyRaw) {
-        const group = parseInt(legacyRaw, 10);
-        if (!isNaN(group)) {
-          // Map phonics group (1-7) to phase index (0-3)
-          if (group <= 2) startPhase = 0;
-          else if (group === 3) startPhase = 1;
-          else if (group <= 5) startPhase = 2;
-          else startPhase = 3;
-        }
-      }
-    } catch { /* ignore */ }
-  }
-
-  // Check localStorage for unit completion
-  let activitiesCompleted = 0;
   try {
-    const key = `mimi_unit_progress_${unit.id}`;
-    const raw = localStorage.getItem(key);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      activitiesCompleted = parsed.activitiesCompleted || 0;
+    const legacyRaw = localStorage.getItem(LS_PLACEMENT_RESULT);
+    if (legacyRaw) {
+      const group = parseInt(legacyRaw, 10);
+      if (!isNaN(group)) {
+        if (group <= 2) return 0;
+        if (group === 3) return 1;
+        if (group <= 5) return 2;
+        return 3;
+      }
     }
   } catch { /* ignore */ }
+  return 0;
+}
+
+/** Check if a unit is marked completed via lessonProgressService's dedicated completed key. */
+function readUnitCompleted(unitId: string): boolean {
+  try {
+    const pfx = getActiveChildPrefix();
+    return localStorage.getItem(`${pfx}unit_${unitId}_completed`) === '1';
+  } catch {
+    return false;
+  }
+}
+
+// ── Flat progress builder (non-recursive) ────────────────────────────────────
+// Builds progress for ALL units in a phase in one pass to avoid recursive
+// O(n²) localStorage reads on each render.
+
+interface RawUnitData {
+  activitiesCompleted: number;
+  isCompleted: boolean;
+  totalActivities: number;
+}
+
+function buildPhaseProgressMap(units: LearningUnit[]): Map<string, RawUnitData> {
+  const map = new Map<string, RawUnitData>();
+  for (const unit of units) {
+    const isCompleted = readUnitCompleted(unit.id);
+    const activitiesCompleted = isCompleted ? unit.activities.length : readActivitiesCompleted(unit.id);
+    map.set(unit.id, {
+      activitiesCompleted,
+      isCompleted,
+      totalActivities: unit.activities.length,
+    });
+  }
+  return map;
+}
+
+function getUnitProgress(unit: LearningUnit, phaseIndex: number, unitIndex: number): UnitProgressInfo {
+  const totalActivities = unit.activities.length;
+  const startPhase = readStartPhase();
+
+  const isCompleted = readUnitCompleted(unit.id);
+  let activitiesCompleted = isCompleted ? totalActivities : readActivitiesCompleted(unit.id);
 
   const pct = totalActivities > 0 ? activitiesCompleted / totalActivities : 0;
   const starsEarned = pct >= 1 ? 3 : pct >= 0.6 ? 2 : pct >= 0.3 ? 1 : 0;
 
-  // Determine status
+  // 1. Already fully completed (real progress or placement skip)
   if (pct >= 1) return { status: 'completed', starsEarned, activitiesCompleted, totalActivities };
 
-  // Check if previous unit is completed (or this is the first unit in starting phase)
+  // 2. Phase is before placement start → auto-complete (skip for advanced users)
   if (phaseIndex < startPhase) {
     return { status: 'completed', starsEarned: 3, activitiesCompleted: totalActivities, totalActivities };
   }
 
+  // 3. First unit in the placement-start phase with no progress → current
   if (phaseIndex === startPhase && unitIndex === 0 && activitiesCompleted === 0) {
     return { status: 'current', starsEarned, activitiesCompleted, totalActivities };
   }
 
+  // 4. First unit in a later-than-startPhase phase → check if prev phase unlocks it
+  //    Uses flat scan (no recursion) to count prev phase completion.
   if (phaseIndex > startPhase && unitIndex === 0) {
-    // First unit in a later phase — unlock if previous phase has enough completion.
-    // Condition: ALL units in prev phase completed OR >= 70% of prev phase units have 1+ star.
     const prevPhase = PHASES[phaseIndex - 1];
     if (prevPhase) {
-      const prevUnits = prevPhase.units;
+      const prevMap = buildPhaseProgressMap(prevPhase.units);
       let prevCompletedCount = 0;
       let prevWithStarsCount = 0;
-      for (let pi = 0; pi < prevUnits.length; pi++) {
-        const pu = prevUnits[pi];
-        let puActivitiesCompleted = 0;
-        try {
-          const raw = localStorage.getItem(`mimi_unit_progress_${pu.id}`);
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            puActivitiesCompleted = parsed.activitiesCompleted || 0;
-          }
-        } catch { /* ignore */ }
-        const puPct = pu.activities.length > 0 ? puActivitiesCompleted / pu.activities.length : 0;
-        if (puPct >= 1) prevCompletedCount++;
-        if (puPct >= 0.3) prevWithStarsCount++; // 0.3+ means at least 1 star
+      for (const data of prevMap.values()) {
+        const puPct = data.totalActivities > 0 ? data.activitiesCompleted / data.totalActivities : 0;
+        if (puPct >= 1 || data.isCompleted) prevCompletedCount++;
+        if (puPct >= 0.3) prevWithStarsCount++;
       }
-      const allCompleted = prevCompletedCount === prevUnits.length;
-      const seventyPctWithStars = prevUnits.length > 0 && prevWithStarsCount / prevUnits.length >= 0.7;
+      const allCompleted = prevCompletedCount === prevPhase.units.length;
+      const seventyPctWithStars = prevPhase.units.length > 0 && prevWithStarsCount / prevPhase.units.length >= 0.7;
       if (allCompleted || seventyPctWithStars) {
         return { status: activitiesCompleted > 0 ? 'current' : 'unlocked', starsEarned, activitiesCompleted, totalActivities };
       }
@@ -134,22 +186,29 @@ function getUnitProgress(unit: LearningUnit, phaseIndex: number, unitIndex: numb
     return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
   }
 
-  // Check if this is the first incomplete unit after completed ones
-  if (activitiesCompleted > 0 && pct < 1) {
+  // 5. Unit has in-progress activities → current (only valid after prev unit check)
+  //    We defer this check until after prev unit gate to avoid false positives.
+  if (unitIndex === 0 && activitiesCompleted > 0) {
+    // First unit in startPhase with partial progress
     return { status: 'current', starsEarned, activitiesCompleted, totalActivities };
   }
 
-  // Check previous unit
-  const phase = PHASES[phaseIndex];
+  // 6. Check previous unit in same phase (flat, no recursion — read direct from storage)
   if (unitIndex > 0) {
+    const phase = PHASES[phaseIndex];
     const prevUnit = phase.units[unitIndex - 1];
-    const prevProgress = getUnitProgress(prevUnit, phaseIndex, unitIndex - 1);
-    if (prevProgress.status === 'completed') {
-      return { status: activitiesCompleted > 0 ? 'current' : 'unlocked', starsEarned, activitiesCompleted, totalActivities };
+    const prevCompleted = readUnitCompleted(prevUnit.id);
+    const prevActivitiesDone = prevCompleted ? prevUnit.activities.length : readActivitiesCompleted(prevUnit.id);
+    const prevPct = prevUnit.activities.length > 0 ? prevActivitiesDone / prevUnit.activities.length : 0;
+
+    if (prevPct >= 1 || prevCompleted) {
+      // Previous unit fully done: this unit is unlocked
+      if (activitiesCompleted > 0) return { status: 'current', starsEarned, activitiesCompleted, totalActivities };
+      return { status: 'unlocked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
     }
-    if (prevProgress.status === 'current' || prevProgress.status === 'unlocked') {
-      return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
-    }
+
+    // Previous unit is in progress or locked → this unit stays locked
+    return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
   }
 
   return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
@@ -187,11 +246,63 @@ const tooltipVariants = {
 // COMPONENT
 // ============================================================
 
+// ============================================================
+// TRACK CONFIG — age-based journey label
+// ============================================================
+
+interface TrackConfig {
+  icon: string;
+  label: string;
+  color: string;
+  desc: string;
+}
+
+type TrackKey = '3-5' | '5-7' | '7-9' | '9-10';
+
+function getTrackConfig(isTr: boolean): Record<TrackKey, TrackConfig> {
+  return {
+    '3-5':  { icon: 'primary',       label: isTr ? 'Ses Gezgini'       : 'Sound Explorer',   color: 'var(--primary)',        desc: isTr ? 'Sesler ve hareketlerle öğren'        : 'Learn with sounds & movement' },
+    '5-7':  { icon: 'accent-purple', label: isTr ? 'Kelime Kâşifi'     : 'Word Explorer',    color: 'var(--accent-purple)',  desc: isTr ? 'Harfleri birleştir, kelimeler oluştur' : 'Blend letters, build words' },
+    '7-9':  { icon: 'info',          label: isTr ? 'Okuma Yıldızı'     : 'Reading Star',     color: 'var(--info)',           desc: isTr ? 'Akıcı oku, cümle kur'                 : 'Read fluently, build sentences' },
+    '9-10': { icon: 'success',       label: isTr ? 'İngilizce Ustası'  : 'English Master',   color: 'var(--success)',        desc: isTr ? 'Gramer ve ileri kelime bilgisi'        : 'Grammar & advanced vocabulary' },
+  };
+}
+
+/** Render a track icon via lucide-react (no emoji) */
+function TrackIconEl({ icon, color }: { icon: string; color: string }) {
+  const style = { color };
+  const size = 22;
+  if (icon === 'primary')       return <Music size={size} style={style} aria-hidden="true" />;
+  if (icon === 'accent-purple') return <Star size={size} style={style} aria-hidden="true" />;
+  if (icon === 'info')          return <BookOpen size={size} style={style} aria-hidden="true" />;
+  if (icon === 'success')       return <Rocket size={size} style={style} aria-hidden="true" />;
+  return <BookMarked size={size} style={style} aria-hidden="true" />;
+}
+
+/** Returns true if a phase (1-based number) is appropriate for the given age group */
+function isPhaseAgeAppropriate(phaseNumber: number, ageGroup: string): boolean {
+  if (ageGroup === '3-5') return phaseNumber <= 2;
+  if (ageGroup === '5-7') return phaseNumber <= 3;
+  return true; // 7-9 and 9-10 have full access
+}
+
 const WorldMap = () => {
   const navigate = useNavigate();
   const { t, lang } = useLanguage();
-  const [activePhaseIndex, setActivePhaseIndex] = useState(0);
+  usePageTitle('Dünya Haritası', 'World Map');
+  const { userProfile } = useAuth();
+  // Initialise the active tab to the user's placement start phase so advanced
+  // users land on their correct phase instead of always seeing Phase 1.
+  const [activePhaseIndex, setActivePhaseIndex] = useState(() => readStartPhase());
   const [lockedTooltip, setLockedTooltip] = useState<string | null>(null);
+  // useTransition: phase switching recalculates useMemo(stops) via localStorage reads
+  // across all units — mark as non-urgent so the UI stays responsive
+  const [isPhaseTransitioning, startPhaseTransition] = useTransition();
+
+  const isTr = lang === 'tr';
+  const ageGroup = getAgeGroupFromSettings(userProfile?.settings as Record<string, unknown> | null | undefined);
+  const trackConfigs = getTrackConfig(isTr);
+  const track: TrackConfig = trackConfigs[(ageGroup as TrackKey)] ?? trackConfigs['7-9'];
 
   // Show placement done banner once after placement test / onboarding
   useEffect(() => {
@@ -243,10 +354,12 @@ const WorldMap = () => {
         setTimeout(() => setLockedTooltip(null), 2000);
         return;
       }
-      // Navigate to unit detail — unit.id is used as the worldId param
+      // Save selected unit immediately before navigating so dailyLessonService
+      // reads the correct phase/unit on the very next render (not after the effect fires)
+      saveCurrentUnit(activePhaseIndex, stop.index ?? stops.indexOf(stop));
       navigate(`/worlds/${stop.unit.id}`);
     },
-    [navigate],
+    [navigate, activePhaseIndex, stops],
   );
 
   return (
@@ -263,45 +376,61 @@ const WorldMap = () => {
 
       {/* ---- HEADER ---- */}
       <header className="journey-header">
-        <div className="journey-header__top">
-          <h1 className="journey-header__title">
-            <span className="journey-header__phase-emoji">
-              {PHASE_ICONS[phase.id] || <KidIcon name="learn" size={20} />}
-            </span>
-            {lang === 'tr' ? phase.nameTr : phase.name}
-          </h1>
-          <span className="journey-header__age">{phase.ageRange} {t('worlds.years')}</span>
-        </div>
+        <div className="journey-header__inner">
+          <div className="journey-header__top">
+            <h1 className="journey-header__title">
+              <span className="journey-header__phase-emoji">
+                {PHASE_ICONS[phase.id] || <KidIcon name="learn" size={20} />}
+              </span>
+              {lang === 'tr' ? phase.nameTr : phase.name}
+            </h1>
+            <span className="journey-header__age">{phase.ageRange} {t('worlds.years')}</span>
+          </div>
 
-        <div className="journey-header__progress">
-          <ProgressBar
-            value={overallPct}
-            size="sm"
-            variant={overallPct === 100 ? 'success' : 'default'}
-            animated
-          />
-          <span className="journey-header__pct">{overallPct}{t('worlds.percentComplete')}</span>
-        </div>
+          <div className="journey-header__progress">
+            <ProgressBar
+              value={overallPct}
+              size="sm"
+              variant={overallPct === 100 ? 'success' : 'default'}
+              animated
+            />
+            <span className="journey-header__pct">{overallPct}{t('worlds.percentComplete')}</span>
+          </div>
 
-        {/* Phase tabs */}
-        <div className="journey-phase-tabs">
-          {PHASES.map((p, i) => (
-            <button
-              type="button"
-              key={p.id}
-              className={`journey-phase-tab ${i === activePhaseIndex ? 'journey-phase-tab--active' : ''}`}
-              onClick={() => setActivePhaseIndex(i)}
-              aria-label={p.name}
-              style={
-                i === activePhaseIndex
-                  ? { borderColor: p.color, color: p.color }
-                  : undefined
-              }
-            >
-              <span className="journey-phase-tab__icon">{PHASE_ICONS[p.id] || <KidIcon name="learn" size={16} />}</span>
-              <span className="journey-phase-tab__label">{lang === 'tr' ? p.nameTr : p.name}</span>
-            </button>
-          ))}
+          {/* Age-based journey track banner */}
+          {ageGroup && (
+            <div className="journey-track-banner" style={{ borderLeftColor: track.color }}>
+              <span className="journey-track-icon">
+                <TrackIconEl icon={track.icon} color={track.color} />
+              </span>
+              <div>
+                <div className="journey-track-label" style={{ color: track.color }}>{track.label}</div>
+                <div className="journey-track-desc">{track.desc}</div>
+              </div>
+            </div>
+          )}
+
+          {/* Phase tabs */}
+          <div className="journey-phase-tabs">
+            {PHASES.map((p, i) => (
+              <button
+                type="button"
+                key={p.id}
+                className={`journey-phase-tab ${i === activePhaseIndex ? 'journey-phase-tab--active' : ''}`}
+                onClick={() => startPhaseTransition(() => setActivePhaseIndex(i))}
+                aria-label={p.name}
+                disabled={isPhaseTransitioning}
+                style={
+                  i === activePhaseIndex
+                    ? { borderColor: p.color, color: p.color }
+                    : undefined
+                }
+              >
+                <span className="journey-phase-tab__icon">{PHASE_ICONS[p.id] || <KidIcon name="learn" size={16} />}</span>
+                <span className="journey-phase-tab__label">{lang === 'tr' ? p.nameTr : p.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -313,21 +442,56 @@ const WorldMap = () => {
         animate="visible"
         key={phase.id}
       >
-        {/* SVG path connector line */}
+        {/* Empty phase guard */}
+        {stops.length === 0 && (
+          <div className="journey-empty">
+            <KidIcon name="learn" size={48} />
+            <p>
+              {isTr
+                ? 'Bu bölümde henüz ders yok. Yakında ekleniyor!'
+                : 'No lessons in this section yet. Coming soon!'}
+            </p>
+          </div>
+        )}
+
+        {/* New user motivational banner — shown when all stops are locked (0 progress) */}
+        {stops.length > 0 && stops.every(s => s.progress.status === 'locked') && (
+          <motion.div
+            className="journey-new-user-banner"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <LottieCharacter state="wave" size={56} />
+            <div className="journey-new-user-banner__text">
+              <strong>
+                {isTr ? 'Macera buradan başlıyor!' : 'Your adventure starts here!'}
+              </strong>
+              <span>
+                {isTr
+                  ? 'İlk dersi açmak için Günlük Derse git!'
+                  : 'Go to Daily Lesson to unlock your first unit!'}
+              </span>
+            </div>
+          </motion.div>
+        )}
+
+        {/* SVG path connector line — viewBox height matches stepY * stops */}
         <svg
           className="journey-path-svg"
-          viewBox={`0 0 400 ${stops.length * 160 + 40}`}
+          viewBox={`0 0 400 ${stops.length * 160 + 80}`}
           preserveAspectRatio="xMidYMid meet"
           aria-hidden="true"
         >
+          {/* Wider stroke for dotted trail visibility */}
           <path
             d={buildPathD(stops.length)}
             fill="none"
-            stroke="var(--journey-path-color, #E8C547)"
-            strokeWidth="4"
-            strokeDasharray="12 8"
+            stroke="var(--journey-path-color, #FF6B35)"
+            strokeWidth="5"
+            strokeDasharray="14 9"
             strokeLinecap="round"
-            opacity="0.6"
+            opacity="0.45"
           />
         </svg>
 
@@ -338,34 +502,57 @@ const WorldMap = () => {
           const isLocked = stop.progress.status === 'locked';
           const isUnlocked = stop.progress.status === 'unlocked';
 
+          // Age-lock: phase is not appropriate for this age group
+          const isAgeLocked = ageGroup
+            ? !isPhaseAgeAppropriate(phase.number, ageGroup)
+            : false;
+
+          // Show advanced badge for 9-10 on phases 3 & 4
+          const showAdvancedBadge = ageGroup === '9-10' && (phase.number === 3 || phase.number === 4);
+
+          const showMimi = !isAgeLocked && isCurrent && currentStopIndex === i;
+
           return (
             <motion.div
               key={stop.unit.id}
               className={[
                 'journey-stop',
                 isLeft ? 'journey-stop--left' : 'journey-stop--right',
-                isCurrent && 'journey-stop--current',
-                isCompleted && 'journey-stop--completed',
-                isLocked && 'journey-stop--locked',
-                isUnlocked && 'journey-stop--unlocked',
+                !isAgeLocked && isCurrent && 'journey-stop--current',
+                !isAgeLocked && isCompleted && 'journey-stop--completed',
+                (isLocked || isAgeLocked) && 'journey-stop--locked',
+                !isAgeLocked && isUnlocked && 'journey-stop--unlocked',
+                showMimi && 'journey-stop--has-mimi',
               ]
                 .filter(Boolean)
                 .join(' ')}
               style={{ '--stop-index': i } as React.CSSProperties}
               variants={stopVariants}
-              onClick={() => handleStopClick(stop)}
+              onClick={() => {
+                if (isAgeLocked) {
+                  setLockedTooltip(stop.unit.id);
+                  setTimeout(() => setLockedTooltip(null), 2000);
+                  return;
+                }
+                handleStopClick(stop);
+              }}
               role="button"
               tabIndex={0}
-              aria-label={`${lang === 'tr' ? stop.unit.titleTr : stop.unit.title} - ${stop.progress.status}`}
+              aria-label={`${lang === 'tr' ? stop.unit.titleTr : stop.unit.title} - ${isAgeLocked ? 'age-locked' : stop.progress.status}`}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
+                  if (isAgeLocked) {
+                    setLockedTooltip(stop.unit.id);
+                    setTimeout(() => setLockedTooltip(null), 2000);
+                    return;
+                  }
                   handleStopClick(stop);
                 }
               }}
             >
               {/* Mimi at current position */}
-              {isCurrent && currentStopIndex === i && (
+              {showMimi && (
                 <div className="journey-mimi-marker">
                   <LottieCharacter state="happy" size={48} />
                 </div>
@@ -373,22 +560,22 @@ const WorldMap = () => {
 
               {/* Stop circle */}
               <div className="journey-stop__circle">
-                {isCompleted && (
+                {!isAgeLocked && isCompleted && (
                   <span className="journey-stop__badge journey-stop__badge--done">
                     <Check size={18} strokeWidth={3} />
                   </span>
                 )}
-                {isCurrent && (
+                {!isAgeLocked && isCurrent && (
                   <span className="journey-stop__badge journey-stop__badge--current">
                     <KidIcon name="star" size={14} />
                   </span>
                 )}
-                {isLocked && (
+                {(isLocked || isAgeLocked) && (
                   <span className="journey-stop__badge journey-stop__badge--locked">
                     <Lock size={16} />
                   </span>
                 )}
-                {isUnlocked && (
+                {!isAgeLocked && isUnlocked && (
                   <span className="journey-stop__badge journey-stop__badge--unlocked">
                     <KidIcon name="star" size={14} />
                   </span>
@@ -399,20 +586,26 @@ const WorldMap = () => {
               {/* Label */}
               <div className="journey-stop__info">
                 <span className="journey-stop__title">{lang === 'tr' ? stop.unit.titleTr : stop.unit.title}</span>
+                {/* Advanced badge for 9-10 age group */}
+                {showAdvancedBadge && !isAgeLocked && (
+                  <span className="journey-stop__advanced">Advanced</span>
+                )}
                 {/* Stars */}
-                <span className="journey-stop__stars">
-                  {[1, 2, 3].map((s) => (
-                    <Star
-                      key={s}
-                      size={14}
-                      className={
-                        s <= stop.progress.starsEarned
-                          ? 'journey-star-icon journey-star-icon--filled'
-                          : 'journey-star-icon'
-                      }
-                    />
-                  ))}
-                </span>
+                {!isAgeLocked && (
+                  <span className="journey-stop__stars">
+                    {[1, 2, 3].map((s) => (
+                      <Star
+                        key={s}
+                        size={14}
+                        className={
+                          s <= stop.progress.starsEarned
+                            ? 'journey-star-icon journey-star-icon--filled'
+                            : 'journey-star-icon'
+                        }
+                      />
+                    ))}
+                  </span>
+                )}
               </div>
 
               {/* Locked tooltip */}
@@ -425,7 +618,11 @@ const WorldMap = () => {
                     animate="visible"
                     exit="exit"
                   >
-                    {t('worlds.completePreviousUnit')}
+                    {isAgeLocked
+                      ? (isTr ? 'Büyüyünce açılır' : 'Unlocks when you grow up')
+                      : i === 0
+                        ? (isTr ? 'Önceki bölümü tamamla' : 'Complete the previous section first')
+                        : (isTr ? 'Önceki dersi tamamla' : 'Complete the previous lesson first')}
                   </motion.div>
                 )}
               </AnimatePresence>

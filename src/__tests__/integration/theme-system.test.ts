@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import React from 'react';
 import { ThemeProvider, useTheme } from '../../contexts/ThemeContext';
 
@@ -21,47 +21,66 @@ beforeEach(() => {
   }
 });
 
-describe('Theme System — Dark Mode Only', () => {
-  it('always returns dark theme', () => {
+describe('Theme System — light/dark/system', () => {
+  it('defaults to system theme when no localStorage entry', () => {
+    const { result } = renderHook(() => useTheme(), { wrapper });
+    expect(result.current.theme).toBe('system');
+  });
+
+  it('reads stored theme from localStorage', () => {
+    localStorage.setItem('mm_theme', 'dark');
     const { result } = renderHook(() => useTheme(), { wrapper });
     expect(result.current.theme).toBe('dark');
     expect(result.current.effectiveTheme).toBe('dark');
   });
 
-  it('applies data-theme="dark" to document', () => {
+  it('applies data-theme="dark" when stored as dark', () => {
+    localStorage.setItem('mm_theme', 'dark');
     renderHook(() => useTheme(), { wrapper });
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
   });
 
-  it('applies dark-theme body class', () => {
+  it('removes data-theme attribute when stored as light', () => {
+    localStorage.setItem('mm_theme', 'light');
     renderHook(() => useTheme(), { wrapper });
-    expect(document.body.classList.contains('dark-theme')).toBe(true);
-    expect(document.body.classList.contains('light-theme')).toBe(false);
+    expect(document.documentElement.getAttribute('data-theme')).toBeNull();
   });
 
-  it('persists dark to localStorage', () => {
-    renderHook(() => useTheme(), { wrapper });
+  it('setTheme changes theme and persists to localStorage', () => {
+    const { result } = renderHook(() => useTheme(), { wrapper });
+    act(() => {
+      result.current.setTheme('dark');
+    });
+    expect(result.current.theme).toBe('dark');
+    expect(result.current.effectiveTheme).toBe('dark');
     expect(localStorage.getItem('mm_theme')).toBe('dark');
   });
 
-  it('setTheme is a no-op (always dark)', () => {
+  it('toggleTheme switches between light and dark', () => {
+    localStorage.setItem('mm_theme', 'light');
     const { result } = renderHook(() => useTheme(), { wrapper });
-    result.current.setTheme('light');
-    expect(result.current.theme).toBe('dark');
+    act(() => {
+      result.current.toggleTheme();
+    });
     expect(result.current.effectiveTheme).toBe('dark');
+    act(() => {
+      result.current.toggleTheme();
+    });
+    expect(result.current.effectiveTheme).toBe('light');
   });
 
-  it('toggleTheme is a no-op (always dark)', () => {
-    const { result } = renderHook(() => useTheme(), { wrapper });
-    result.current.toggleTheme();
-    expect(result.current.theme).toBe('dark');
-    expect(result.current.effectiveTheme).toBe('dark');
-  });
-
-  it('updates meta theme-color to dark value', () => {
+  it('updates meta theme-color to dark value when dark', () => {
+    localStorage.setItem('mm_theme', 'dark');
     renderHook(() => useTheme(), { wrapper });
     const meta = document.querySelector('meta[name="theme-color"]');
     expect(meta?.getAttribute('content')).toBe('#0C0F1A');
+  });
+
+  it('updates meta theme-color to light value when light', () => {
+    localStorage.setItem('mm_theme', 'light');
+    renderHook(() => useTheme(), { wrapper });
+    const meta = document.querySelector('meta[name="theme-color"]');
+    expect(meta?.getAttribute('content')).toBe('#FFF8F2');
   });
 
   it('useTheme throws outside provider', () => {

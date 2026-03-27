@@ -103,10 +103,12 @@ const DailyChallenge: React.FC = () => {
 
     if (correct) {
       // Save completion
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ date: getTodayKey(), challenge })
-      );
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ date: getTodayKey(), challenge })
+        );
+      } catch { /* QuotaExceededError — ignore */ }
       setAlreadyCompleted(true);
 
       // Activate 2x XP boost for 30 minutes
@@ -153,6 +155,15 @@ const DailyChallenge: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Reward preview — always visible before completion */}
+      {!alreadyCompleted && (
+        <div className="challenge-reward-preview">
+          <Zap size={14} className="reward-zap" aria-hidden="true" />
+          <span className="reward-amount">+25 XP</span>
+          <span className="reward-boost">{t('dailyChallenge.boostLabel') || '+ 2× XP boost'}</span>
+        </div>
+      )}
 
       <div className="challenge-card">
         <p className="challenge-hint">{challenge.hint}</p>
@@ -287,6 +298,33 @@ const dailyChallengeStyles = `
     line-height: 1.5;
   }
 
+  .challenge-reward-preview {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    background: rgba(232, 163, 23, 0.08);
+    border-radius: 20px;
+    width: fit-content;
+  }
+
+  .reward-zap {
+    color: #E8A317;
+  }
+
+  .reward-amount {
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #E8A317;
+  }
+
+  .reward-boost {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted, #888);
+  }
+
   .challenge-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -294,7 +332,9 @@ const dailyChallengeStyles = `
   }
 
   .option-btn {
-    padding: 12px 16px;
+    /* 52px minimum height for primary CTA buttons */
+    min-height: 52px;
+    padding: 14px 16px;
     border-radius: 14px;
     border: 2px solid var(--glass-border, rgba(0,0,0,0.08));
     background: var(--bg-soft, #f5f5f5);

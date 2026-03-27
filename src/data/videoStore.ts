@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabase';
+import { auth } from '../config/firebase';
 import { fallbackVideos } from './fallbackData';
 import { getCachedData, setCachedData } from '../utils/offlineManager';
 import { errorLogger } from '../services/errorLogger';
@@ -27,8 +28,9 @@ export const videoStore = {
         try {
             const { data, error } = await supabase
                 .from('videos')
-                .select('*')
-                .order('created_at', { ascending: false });
+                .select('id, youtube_id, title, description, thumbnail, grade, category, duration, plays, created_at')
+                .order('created_at', { ascending: false })
+                .limit(200);
 
             if (error) throw error;
 
@@ -75,7 +77,8 @@ export const videoStore = {
     // Add a new video (only columns that exist in DB: youtube_id, title, description, thumbnail, duration, category, grade, is_popular, added_by)
     async addVideo(video: Omit<Video, 'id'>): Promise<void> {
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            // Use Firebase UID — there is no Supabase Auth session in this app
+            const firebaseUser = auth.currentUser;
             const row: Record<string, unknown> = {
                 youtube_id: video.youtube_id,
                 title: video.title,
@@ -86,7 +89,7 @@ export const videoStore = {
                 grade: (video as { grade?: string }).grade ?? null,
                 is_popular: (video as { isPopular?: boolean }).isPopular ?? false,
             };
-            if (user?.id) row.added_by = user.id;
+            if (firebaseUser?.uid) row.added_by = firebaseUser.uid;
             const { error } = await supabase.from('videos').insert([row]);
             if (error) throw error;
             await this.fetchVideos();

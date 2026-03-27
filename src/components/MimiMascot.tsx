@@ -95,7 +95,7 @@ const MimiMascot: React.FC<MimiMascotProps> = ({
       {/* Tail heart tip */}
       <path
         d="M25 150 Q22 144 18 147 Q14 150 18 155 Q22 160 25 155 Q28 160 32 155 Q36 150 32 147 Q28 144 25 150Z"
-        fill="#E8A317"
+        fill="var(--warning)"
         stroke="#C68A11"
         strokeWidth="1"
       />
@@ -170,8 +170,8 @@ const MimiMascot: React.FC<MimiMascotProps> = ({
           <ellipse cx="117" cy="65" rx="12" ry="13" fill="#F0F4FF" stroke="#2E7D32" strokeWidth="1.5" />
 
           {/* Irises — golden amber */}
-          <circle cx="85" cy="66" r="7" fill="#E8A317" />
-          <circle cx="115" cy="66" r="7" fill="#E8A317" />
+          <circle cx="85" cy="66" r="7" fill="var(--warning)" />
+          <circle cx="115" cy="66" r="7" fill="var(--warning)" />
 
           {/* Pupils */}
           <circle cx="86" cy="66" r="3.5" fill="#1a1a1a" />

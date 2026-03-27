@@ -429,16 +429,19 @@
   left: 0;
   right: 0;
   z-index: var(--z-raised);
-  height: 68px;
+  /* Fixed tab area height + safe area */
+  height: calc(68px + env(safe-area-inset-bottom, 0px));
   background: var(--bg-elevated);
   backdrop-filter: blur(24px) saturate(1.9);
   -webkit-backdrop-filter: blur(24px) saturate(1.9);
   border-top: 1px solid var(--border-light);
   box-shadow: 0 -2px 20px var(--shadow-color);
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-around;
-  padding: 0 var(--space-sm);
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-top: 0;
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 [data-theme="dark"] .nav-tabbar {
@@ -452,7 +455,8 @@
   justify-content: center;
   gap: 3px;
   flex: 1;
-  height: 100%;
+  /* Fill only the fixed 68px area, not the safe area below */
+  height: 68px;
   text-decoration: none;
   color: var(--text-muted);
   min-width: var(--touch-target);
@@ -461,8 +465,21 @@
 }
 
 .nav-tab-icon {
+  /* Enforce consistent 24px icon size across all tab icons */
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   transition: transform var(--transition-fast),
               filter var(--transition-fast);
+}
+
+.nav-tab-icon svg,
+.nav-tab-icon img {
+  width: 24px;
+  height: 24px;
 }
 
 .nav-tab:focus-visible {
@@ -482,14 +499,30 @@
 
 .nav-tab-label {
   font-family: var(--font-display);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+}
+
+.nav-tab.active .nav-tab-label {
   font-weight: 800;
-  letter-spacing: 0.02em;
 }
 
 /* ---- Spacer ---- */
 .nav-spacer {
   height: 72px;
+}
+
+/* Mobile spacer accounts for safe area */
+@media (max-width: 768px) {
+  .nav-spacer {
+    height: calc(60px + env(safe-area-inset-top, 0px));
+  }
 }
 
 /* ---- Responsive ---- */
@@ -515,9 +548,5 @@
 
   .nav-tabbar {
     display: flex;
-  }
-
-  .nav-spacer {
-    height: 60px;
   }
 }

@@ -53,6 +53,26 @@ function speak(text: string) {
   }
 }
 
+/**
+ * Speak the phoneme (isolated sound) rather than the letter name.
+ * Repeating a single letter 3x helps TTS engines produce the phoneme sound
+ * rather than the letter name (e.g. "sss" vs "ess").
+ */
+function speakPhoneme(letter: string) {
+  const lower = letter.toLowerCase();
+  // Vowels need careful handling — single vowel produces letter name from TTS
+  // Use phonetic hint words for vowels so TTS captures the short vowel sound
+  const VOWEL_PHONETIC: Record<string, string> = {
+    a: 'a as in apple',
+    e: 'e as in egg',
+    i: 'i as in igloo',
+    o: 'o as in orange',
+    u: 'u as in umbrella',
+  };
+  const text = VOWEL_PHONETIC[lower] ?? `${lower}${lower}${lower}`;
+  speak(text);
+}
+
 function drawArrowhead(
   ctx: CanvasRenderingContext2D,
   from: Point,
@@ -107,10 +127,9 @@ export function LetterTracer({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number | null>(null);
-  const animTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const animTimerRef = useRef<number | null>(null);
 
-  const { lang } = useLanguage();
-  const isTr = lang === 'tr';
+  const { t } = useLanguage();
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawnPoints, setDrawnPoints] = useState<Point[]>([]);
@@ -147,9 +166,9 @@ export function LetterTracer({
     return () => window.removeEventListener('resize', measure);
   }, [size]);
 
-  // ── Speak letter on mount ──
+  // ── Speak phoneme on mount ──
   useEffect(() => {
-    speak(letter);
+    speakPhoneme(letter);
   }, [letter]);
 
   // ── Draw canvas ──
@@ -205,9 +224,17 @@ export function LetterTracer({
           const isHit = hitSet.has(globalDotIdx);
           const pt = pts[i];
           if (i > 0) {
+            const dotR = size * 0.018; // ~5.4px on 300px canvas — visible
+            // Outer ring for unlit dots
+            if (!isHit) {
+              ctx.beginPath();
+              ctx.arc(pt.x, pt.y, dotR + 1.5, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(0,0,0,0.06)';
+              ctx.fill();
+            }
             ctx.beginPath();
-            ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = isHit ? 'var(--success, #10B981)' : 'rgba(0,0,0,0.18)';
+            ctx.arc(pt.x, pt.y, dotR, 0, Math.PI * 2);
+            ctx.fillStyle = isHit ? 'var(--success, #10B981)' : 'rgba(0,0,0,0.22)';
             ctx.fill();
           }
           globalDotIdx++;
@@ -320,6 +347,8 @@ export function LetterTracer({
 
   function handleStart(e: React.MouseEvent | React.TouchEvent) {
     if (result || isAnimating) return;
+    // Multi-touch guard: ignore pinch/zoom gestures
+    if ('touches' in e && e.touches.length > 1) return;
     e.preventDefault();
     const pt = getPoint(e);
     if (!pt) return;
@@ -330,6 +359,8 @@ export function LetterTracer({
 
   function handleMove(e: React.MouseEvent | React.TouchEvent) {
     if (!isDrawing || result || isAnimating) return;
+    // Multi-touch guard: if a second finger appears mid-stroke, stop drawing
+    if ('touches' in e && e.touches.length > 1) return;
     e.preventDefault();
     const pt = getPoint(e);
     if (!pt) return;
@@ -354,7 +385,7 @@ export function LetterTracer({
     setResult({ accuracy, pass });
     if (pass) {
       SFX.correct();
-      speak(letter);
+      speakPhoneme(letter);
     } else {
       SFX.wrong();
     }
@@ -403,34 +434,41 @@ export function LetterTracer({
 
     let idx = 0;
     const drawn: Point[] = [];
+    let lastTime = 0;
 
-    const timer = setInterval(() => {
+    // Use requestAnimationFrame for smooth GPU-synced animation instead of setInterval
+    function tick(timestamp: number) {
       if (idx >= expanded.length) {
-        clearInterval(timer);
         animTimerRef.current = null;
         setIsAnimating(false);
         setAnimPoints([]);
         return;
       }
-      const pt = expanded[idx];
-      if (pt === null) {
-        // Stroke gap — clear and restart
-        drawn.length = 0;
-      } else {
-        drawn.push(pt);
-        setAnimPoints([...drawn]);
-      }
-      idx++;
-    }, ANIMATION_STEP_MS);
 
-    animTimerRef.current = timer;
+      if (timestamp - lastTime >= ANIMATION_STEP_MS) {
+        const pt = expanded[idx];
+        if (pt === null) {
+          // Stroke gap — clear and restart
+          drawn.length = 0;
+        } else {
+          drawn.push(pt);
+          setAnimPoints([...drawn]);
+        }
+        idx++;
+        lastTime = timestamp;
+      }
+
+      animTimerRef.current = requestAnimationFrame(tick);
+    }
+
+    animTimerRef.current = requestAnimationFrame(tick);
   }
 
   // ── Reset ──
 
   function reset(clearResult = true) {
     if (animTimerRef.current) {
-      clearInterval(animTimerRef.current);
+      cancelAnimationFrame(animTimerRef.current);
       animTimerRef.current = null;
     }
     setIsDrawing(false);
@@ -444,7 +482,7 @@ export function LetterTracer({
   // ── Cleanup on unmount ──
   useEffect(() => {
     return () => {
-      if (animTimerRef.current) clearInterval(animTimerRef.current);
+      if (animTimerRef.current) cancelAnimationFrame(animTimerRef.current);
     };
   }, []);
 
@@ -457,12 +495,15 @@ export function LetterTracer({
         <button
           type="button"
           className="lt-speak-btn"
-          onClick={() => speak(letter)}
-          aria-label={`Hear sound for letter ${letter}`}
+          onClick={() => speakPhoneme(letter)}
+          aria-label={`Hear phoneme sound for ${letter}`}
         >
           <Volume2 size={18} />
         </button>
-        <span className="lt-letter-display">{letter}</span>
+        {/* Show uppercase AND lowercase — children must learn both forms */}
+        <span className="lt-letter-display">
+          {letter.toUpperCase()} / {letter.toLowerCase()}
+        </span>
         {result && (
           <span
             className={`lt-accuracy-badge ${result.pass ? 'lt-accuracy-badge--pass' : 'lt-accuracy-badge--fail'}`}
@@ -478,7 +519,7 @@ export function LetterTracer({
           ref={canvasRef}
           width={size}
           height={size}
-          className="lt-canvas"
+          className={`lt-canvas${result ? (result.pass ? ' lt-canvas--pass' : ' lt-canvas--fail') : ''}`}
           style={{
             width: size * canvasScale,
             height: size * canvasScale,
@@ -508,7 +549,7 @@ export function LetterTracer({
       {/* Result feedback */}
       {result && (
         <div className={`lt-result ${result.pass ? 'lt-result--pass' : 'lt-result--fail'}`}>
-          {result.pass ? (isTr ? 'Aferin!' : 'Great job!') : (isTr ? 'Tekrar dene!' : 'Try again!')}
+          {result.pass ? t('games.letterTracerGreat') : t('games.letterTracerTryAgain')}
         </div>
       )}
 

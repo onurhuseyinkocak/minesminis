@@ -12,41 +12,52 @@
  */
 
 import { supabase } from '../config/supabase';
+import { withRetry } from '../utils/retryUtils';
 
 // ========== HELPERS ==========
 
 /**
  * Deep-merge updates into the users.settings JSONB column, then touch profiles.updated_at.
+ * Parallelized: users-settings fetch + profiles-id check run concurrently.
  */
 async function updateUserSettings(
   userId: string,
   updates: Record<string, unknown>,
 ): Promise<void> {
-  const { data } = await supabase
-    .from('users')
-    .select('settings')
-    .eq('id', userId)
-    .maybeSingle();
+  // Run the initial reads in parallel to avoid waterfall
+  const [{ data }, { data: p }] = await Promise.all([
+    withRetry(() =>
+      supabase.from('users').select('settings').eq('id', userId).maybeSingle()
+    ),
+    withRetry(() =>
+      supabase.from('profiles').select('id').eq('id', userId).maybeSingle()
+    ),
+  ]);
 
   const current = (data?.settings as Record<string, unknown>) ?? {};
-  await supabase
-    .from('users')
-    .update({ settings: { ...current, ...updates } })
-    .eq('id', userId);
 
-  // Also touch profiles.updated_at so cross-device sync picks it up
-  const { data: p } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('id', userId)
-    .maybeSingle();
+  // Write updates in parallel too
+  const writes: Promise<unknown>[] = [
+    withRetry(() =>
+      supabase
+        .from('users')
+        .update({ settings: { ...current, ...updates } })
+        .eq('id', userId)
+    ),
+  ];
 
   if (p) {
-    await supabase
-      .from('profiles')
-      .update({ updated_at: new Date().toISOString() })
-      .eq('id', userId);
+    writes.push(
+      withRetry(() =>
+        supabase
+          .from('profiles')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', userId)
+      ),
+    );
   }
+
+  await Promise.all(writes);
 }
 
 // ========== ACTIVITY LOGS ==========

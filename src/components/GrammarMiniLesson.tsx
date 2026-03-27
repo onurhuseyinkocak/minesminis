@@ -2,10 +2,11 @@
  * GrammarMiniLesson — bite-size grammar explanation + exercises
  * Embedded into DailyLesson Phase 2 (See) or as standalone mini-lesson
  */
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, ChevronRight } from 'lucide-react';
 import { speak } from '../services/ttsService';
+import { useLanguage } from '../contexts/LanguageContext';
 import type { GrammarLesson } from '../data/grammarLessons';
 import './GrammarMiniLesson.css';
 
@@ -16,12 +17,16 @@ interface GrammarMiniLessonProps {
 }
 
 export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: GrammarMiniLessonProps) {
+  const { t } = useLanguage();
   const [phase, setPhase] = useState<'intro' | 'examples' | 'exercises' | 'done'>('intro');
   const [exIdx, setExIdx] = useState(0);
   const [exerciseIdx, setExerciseIdx] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [score, setScore] = useState(0);
+  // scoreRef keeps a sync copy of score so handleNext can read the final value
+  // without depending on stale state from async setState
+  const scoreRef = useRef(0);
   const isTr = lang === 'tr';
 
   const currentExercise = lesson.exercises[exerciseIdx];
@@ -32,7 +37,10 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
     setSelected(option);
     setRevealed(true);
     const correct = option === currentExercise.answer;
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      scoreRef.current += 1;
+      setScore(scoreRef.current);
+    }
     speak(correct ? 'Great job!' : currentExercise.answer);
   };
 
@@ -43,7 +51,7 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
       setRevealed(false);
     } else {
       setPhase('done');
-      onComplete?.(score + (selected === currentExercise.answer ? 1 : 0));
+      onComplete?.(scoreRef.current);
     }
   };
 
@@ -55,17 +63,19 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
           <motion.div key="intro" className="gml-intro"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="gml-topic-badge">
-              {isTr ? 'Gramer' : 'Grammar'}
+              {t('games.grammarLabel')}
             </div>
             <h2 className="gml-title">{isTr ? lesson.topicTr : lesson.topic}</h2>
-            <div className="gml-pattern-box">
-              <code>{lesson.pattern}</code>
-            </div>
+            {/* Turkish note first — context before the rule */}
             <p className="gml-turkish-note">
               {lesson.turkishNote}
             </p>
+            {/* Pattern shown after the context note, before examples */}
+            <div className="gml-pattern-box">
+              <code>{isTr ? lesson.patternTr : lesson.pattern}</code>
+            </div>
             <button className="gml-btn gml-btn--primary" onClick={() => setPhase('examples')}>
-              {isTr ? 'Örneklere Bak' : 'See Examples'} <ChevronRight size={16} />
+              {t('games.grammarSeeExamples')} <ChevronRight size={16} />
             </button>
           </motion.div>
         )}
@@ -90,11 +100,11 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
             <div className="gml-nav">
               {exIdx < lesson.examples.length - 1 ? (
                 <button className="gml-btn gml-btn--primary" onClick={() => setExIdx(i => i + 1)}>
-                  {isTr ? 'Sonraki' : 'Next'} <ChevronRight size={16} />
+                  {t('games.grammarNext')} <ChevronRight size={16} />
                 </button>
               ) : (
                 <button className="gml-btn gml-btn--primary" onClick={() => setPhase('exercises')}>
-                  {isTr ? 'Alıştırmalara Geç' : 'Try Exercises'} <ChevronRight size={16} />
+                  {t('games.grammarTryExercises')} <ChevronRight size={16} />
                 </button>
               )}
             </div>
@@ -105,6 +115,14 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
           <motion.div key={`q-${exerciseIdx}`} className="gml-exercise"
             initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
             <p className="gml-ex-counter">{exerciseIdx + 1}/{totalExercises}</p>
+            <div className="gml-step-dots" aria-hidden="true">
+              {lesson.exercises.map((_, i) => (
+                <span
+                  key={i}
+                  className={`gml-step-dot${i === exerciseIdx ? ' gml-step-dot--active' : i < exerciseIdx ? ' gml-step-dot--done' : ''}`}
+                />
+              ))}
+            </div>
             <h3 className="gml-question">{isTr ? currentExercise.questionTr : currentExercise.question}</h3>
             <div className="gml-options">
               {currentExercise.options?.map(opt => {
@@ -129,7 +147,7 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="gml-explanation">
                 <p>{isTr ? currentExercise.explanationTr : currentExercise.explanation}</p>
                 <button className="gml-btn gml-btn--primary" onClick={handleNext}>
-                  {exerciseIdx < totalExercises - 1 ? (isTr ? 'Sonraki' : 'Next') : (isTr ? 'Bitti!' : 'Done!')} <ChevronRight size={16} />
+                  {exerciseIdx < totalExercises - 1 ? t('games.grammarNext') : t('games.grammarDone')} <ChevronRight size={16} />
                 </button>
               </motion.div>
             )}
@@ -140,14 +158,20 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
           <motion.div key="done" className="gml-done"
             initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
             <div className="gml-done-stars">
-              {[1, 2, 3].map(s => (
-                <motion.span key={s} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: s * 0.1 }}>
-                  {score >= s ? '★' : '☆'}
-                </motion.span>
-              ))}
+              {(() => {
+                // 3 stars = perfect, 2 stars = >50%, 1 star = any correct, 0 stars = all wrong
+                const earnedStars = score === totalExercises ? 3 : score >= Math.ceil(totalExercises / 2) ? 2 : score > 0 ? 1 : 0;
+                return [1, 2, 3].map(s => (
+                  <motion.span key={s} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: s * 0.15 }}>
+                    {s <= earnedStars ? '★' : '☆'}
+                  </motion.span>
+                ));
+              })()}
             </div>
-            <h2>{score === totalExercises ? (isTr ? 'Mükemmel!' : 'Perfect!') : score > 0 ? (isTr ? 'Aferin!' : 'Well done!') : (isTr ? 'Tekrar dene!' : 'Try again!')}</h2>
-            <p>{score}/{totalExercises} {isTr ? 'doğru' : 'correct'}</p>
+            <h2>{score === totalExercises ? t('games.grammarPerfect') : score > 0 ? t('games.grammarWellDone') : t('games.grammarTryAgain')}</h2>
+            <div className="gml-score-pill">
+              {score}/{totalExercises} {t('games.grammarCorrect')}
+            </div>
           </motion.div>
         )}
 

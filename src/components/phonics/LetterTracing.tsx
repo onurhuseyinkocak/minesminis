@@ -35,6 +35,23 @@ function speak(text: string, rate = 0.75) {
   }
 }
 
+/**
+ * Speak the phoneme sound, not the letter name.
+ * Vowels get a phonetic hint word so TTS produces the short vowel sound.
+ */
+function speakPhoneme(letter: string) {
+  const lower = letter.toLowerCase();
+  const VOWEL_PHONETIC: Record<string, string> = {
+    a: 'a as in apple',
+    e: 'e as in egg',
+    i: 'i as in igloo',
+    o: 'o as in orange',
+    u: 'u as in umbrella',
+  };
+  const text = VOWEL_PHONETIC[lower] ?? `${lower}${lower}${lower}`;
+  speak(text, 0.5);
+}
+
 function dist(a: Point, b: Point): number {
   return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 }
@@ -63,9 +80,9 @@ export function LetterTracing({
   const pathData = LETTER_PATHS[letterKey];
   const guideDots = useMemo(() => pathData?.guideDots ?? [], [pathData]);
 
-  // Speak the letter sound on mount
+  // Speak the phoneme sound on mount
   useEffect(() => {
-    speak(letter, 0.5);
+    speakPhoneme(letter);
   }, [letter]);
 
   // Measure container for responsive scaling
@@ -92,13 +109,15 @@ export function LetterTracing({
 
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // Draw the letter as a large gray guide
+    // Draw the letter as a large ghost guide (very light so child traces on top)
     ctx.save();
     ctx.font = 'bold 220px Nunito, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+    ctx.globalAlpha = 0.08;
     ctx.fillStyle = '#334155';
     ctx.fillText(letterKey, CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 10);
+    ctx.globalAlpha = 1;
     ctx.restore();
 
     // Draw guide dots based on difficulty
@@ -228,6 +247,8 @@ export function LetterTracing({
 
   function handleStart(e: React.MouseEvent | React.TouchEvent) {
     if (result) return;
+    // Multi-touch guard: ignore pinch/zoom gestures
+    if ('touches' in e && e.touches.length > 1) return;
     e.preventDefault();
     const pt = getCanvasPoint(e);
     if (!pt) return;
@@ -238,6 +259,8 @@ export function LetterTracing({
 
   function handleMove(e: React.MouseEvent | React.TouchEvent) {
     if (!isDrawing || result) return;
+    // Multi-touch guard: if a second finger appears mid-stroke, stop drawing
+    if ('touches' in e && e.touches.length > 1) return;
     e.preventDefault();
     const pt = getCanvasPoint(e);
     if (!pt) return;
@@ -266,7 +289,7 @@ export function LetterTracing({
     if (accuracy >= 70) {
       setResult({ accuracy, message: 'Great job!', color: '#22c55e' });
       SFX.correct();
-      speak(letter, 0.5);
+      speakPhoneme(letter);
     } else if (accuracy >= 40) {
       setResult({ accuracy, message: 'Good try! Let\'s practice more!', color: '#E8A317' });
     } else {
@@ -287,10 +310,13 @@ export function LetterTracing({
   return (
     <div style={styles.wrapper}>
       <div style={styles.letterLabel}>
-        <button type="button" onClick={() => speak(letter, 0.5)} style={styles.soundBtn}>
+        <button type="button" onClick={() => speakPhoneme(letter)} style={styles.soundBtn} aria-label={`Hear phoneme sound for ${letter}`}>
           <Volume2 size={18} />
         </button>
-        <span style={styles.letterText}>{letter}</span>
+        {/* Show both uppercase and lowercase so children learn both letter forms */}
+        <span style={styles.letterText}>
+          {letter.toUpperCase()} / {letter.toLowerCase()}
+        </span>
       </div>
 
       <div ref={containerRef} style={styles.canvasContainer}>

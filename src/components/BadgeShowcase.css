@@ -43,7 +43,7 @@
 
 .badge-mini.more {
   font-family: var(--font-display);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--text-secondary);
   background: var(--bg-muted);
@@ -208,20 +208,21 @@
 }
 
 .badge-card.locked {
-  opacity: 0.38;
-  filter: grayscale(0.85) brightness(0.95);
+  /* Raised from 0.38 (unreadable) — 0.58 keeps lock state clear while names stay legible */
+  opacity: 0.58;
+  filter: grayscale(0.7) brightness(0.95);
   background: var(--bg-muted);
   border-color: var(--border);
 }
 
 .badge-card.locked:hover {
-  opacity: 0.55;
-  filter: grayscale(0.5) brightness(1);
+  opacity: 0.72;
+  filter: grayscale(0.4) brightness(1);
   border-color: var(--border-hover);
 }
 
 .badge-card.locked .badge-icon-large {
-  opacity: 0.45;
+  opacity: 0.55;
 }
 
 /* ---- Badge Icon Large ---- */
@@ -246,15 +247,21 @@
 
 .badge-name {
   font-family: var(--font-display);
-  font-size: 0.8125rem;
+  font-size: 0.8125rem; /* 13px — above 12px minimum */
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.2;
+  /* Allow 2 lines max before truncating — prevents layout explosion */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: center;
 }
 
 .badge-category {
   font-family: var(--font-body);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   text-transform: capitalize;
   font-weight: 500;
@@ -270,7 +277,7 @@
   border-radius: var(--radius-full);
   background: var(--success);
   color: var(--white);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -355,8 +362,11 @@
   position: absolute;
   top: var(--space-md);
   right: var(--space-md);
-  width: 34px;
-  height: 34px;
+  /* Touch-safe: explicit 44px square */
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: var(--radius-sm);
   border: none;
   background: var(--bg-muted);
@@ -366,8 +376,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: var(--touch-target);
-  min-width: var(--touch-target);
   transition: background var(--transition-fast),
               color var(--transition-fast);
 }

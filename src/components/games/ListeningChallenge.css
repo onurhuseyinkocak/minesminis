@@ -8,7 +8,8 @@
   flex-direction: column;
   gap: var(--space-lg);
   padding: var(--space-lg);
-  max-width: 750px;
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  max-width: 480px;
   margin: 0 auto;
   animation: fadeInUp 400ms ease-out;
 }
@@ -43,11 +44,12 @@
 
 .listening-challenge__instruction {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
-  color: var(--text-body);
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
 .listening-challenge__play-btn {
@@ -55,18 +57,18 @@
   min-height: 80px;
   font-size: 1.3rem !important;
   border-radius: var(--radius-xl) !important;
-  box-shadow: var(--shadow-button), 0 0 0 6px rgba(255, 107, 53, 0.12) !important;
+  box-shadow: var(--shadow-button), 0 0 0 6px color-mix(in srgb, var(--primary-glow) 35%, transparent) !important;
   position: relative;
   animation: lc-pulse-ring 2.5s ease-in-out infinite;
 }
 
 @keyframes lc-pulse-ring {
-  0%, 100% { box-shadow: var(--shadow-button), 0 0 0 6px rgba(255, 107, 53, 0.12); }
-  50% { box-shadow: var(--shadow-button-hover), 0 0 0 12px rgba(255, 107, 53, 0.08); }
+  0%, 100% { box-shadow: var(--shadow-button), 0 0 0 6px color-mix(in srgb, var(--primary-glow) 35%, transparent); }
+  50% { box-shadow: var(--shadow-button-hover), 0 0 0 12px color-mix(in srgb, var(--primary-glow) 25%, transparent); }
 }
 
 .listening-challenge__play-btn:hover {
-  box-shadow: var(--shadow-button-hover), 0 0 0 8px rgba(255, 107, 53, 0.15) !important;
+  box-shadow: var(--shadow-button-hover), 0 0 0 8px color-mix(in srgb, var(--primary-glow) 45%, transparent) !important;
   animation: none;
 }
 
@@ -99,7 +101,7 @@
 .listening-challenge__feedback--correct {
   background: var(--success-pale);
   color: var(--mimi-green-dark);
-  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.12);
+  box-shadow: 0 2px 12px var(--success-soft);
 }
 
 .listening-challenge__feedback--wrong {
@@ -123,6 +125,7 @@
   padding: var(--space-lg) var(--space-md);
   min-height: 120px;
   border: 2.5px solid var(--border-light);
+  border-bottom: 5px solid color-mix(in srgb, var(--border-light) 80%, black);
   border-radius: var(--radius-xl);
   background: var(--bg-card);
   cursor: pointer;
@@ -130,7 +133,8 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-base),
     transform var(--transition-base),
-    background var(--transition-fast);
+    background var(--transition-fast),
+    border-bottom-width 0.1s ease;
   font-family: var(--font-display);
   box-shadow: var(--shadow-card), 0 3px 0 0 rgba(0, 0, 0, 0.05);
 }
@@ -142,7 +146,8 @@
 }
 
 .listening-challenge__option:active:not(:disabled) {
-  transform: translateY(-1px) scale(0.97);
+  transform: translateY(1px) scale(0.97);
+  border-bottom-width: 2.5px;
 }
 
 .listening-challenge__option:focus-visible {
@@ -150,12 +155,16 @@
   box-shadow: var(--focus-ring);
 }
 
-.listening-challenge__option:disabled { cursor: default; }
+.listening-challenge__option:disabled:not(.listening-challenge__option--correct):not(.listening-challenge__option--wrong) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .listening-challenge__option--correct {
   border-color: var(--success);
+  border-bottom-color: color-mix(in srgb, var(--success) 80%, black);
   background: var(--success-pale);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 4px 16px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 20%, transparent), 0 4px 16px color-mix(in srgb, var(--success) 15%, transparent);
   animation: lc-correct-pop 0.4s var(--ease-spring);
 }
 
@@ -167,8 +176,9 @@
 
 .listening-challenge__option--wrong {
   border-color: var(--error);
+  border-bottom-color: color-mix(in srgb, var(--error) 80%, black);
   background: var(--error-pale);
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--error) 15%, transparent);
   animation: lc-shake 0.45s ease;
 }
 
@@ -192,7 +202,7 @@
 
 .listening-challenge__option-emoji--fallback {
   background: var(--primary);
-  color: #fff;
+  color: var(--white);
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -211,7 +221,7 @@
 .listening-challenge__option-label {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--text-body);
+  color: var(--text-primary);
 }
 
 /* -- Prompt ----------------------------------------------------------- */
@@ -276,12 +286,13 @@
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  border: none;
+  border: 2px solid transparent;
+  border-bottom-width: 5px;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   min-height: 52px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-bottom-width 0.08s ease;
 }
 
 .listening-challenge__results-btn:hover {
@@ -289,12 +300,21 @@
 }
 
 .listening-challenge__results-btn:active {
-  transform: scale(0.97);
+  transform: translateY(2px) scale(0.97);
+  border-bottom-width: 2px;
+  box-shadow: none !important;
+}
+
+.listening-challenge__results-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .listening-challenge__results-btn--primary {
   background: var(--gradient-primary);
-  color: #fff;
+  color: var(--white);
+  border-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
   box-shadow: var(--shadow-button);
 }
 
@@ -303,9 +323,10 @@
 }
 
 .listening-challenge__results-btn--secondary {
-  background: var(--bg-soft, #f5f5f5);
+  background: var(--bg-soft);
   color: var(--text-secondary);
-  border: 2px solid var(--border-light);
+  border-color: var(--border-light);
+  border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
 /* -- Responsive ------------------------------------------------------- */
@@ -348,7 +369,7 @@
 }
 
 @media (min-width: 1600px) {
-  .listening-challenge { max-width: 850px; }
+  .listening-challenge { max-width: 480px; }
   .listening-challenge__option {
     min-height: 180px;
     border-radius: var(--radius-xl);
@@ -389,4 +410,5 @@
 [data-theme="dark"] .listening-challenge__results-btn--secondary {
   background: var(--bg-elevated);
   color: var(--text-secondary);
+  border-color: var(--border-light);
 }

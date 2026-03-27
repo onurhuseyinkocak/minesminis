@@ -53,14 +53,23 @@
 
 .dgw__progress--done {
   stroke: var(--success);
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.40)); /* color-mix fallback */
   filter: drop-shadow(0 0 6px color-mix(in srgb, var(--success) 40%, transparent));
-  animation: ring-complete 0.6s var(--ease-spring);
+  /* Stop the pulsing animation and play a one-shot complete animation */
+  animation: ring-complete 0.6s var(--ease-spring) forwards;
 }
 
 @keyframes ring-complete {
   0% { opacity: 0.5; }
-  50% { opacity: 1; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--success) 60%, transparent)); }
-  100% { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--success) 40%, transparent)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.60)); }
+  100% { filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.40)); }
+}
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  @keyframes ring-complete {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--success) 60%, transparent)); }
+    100% { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--success) 40%, transparent)); }
+  }
 }
 
 /* ---- Center ---- */
@@ -86,7 +95,7 @@
 .dgw__goal {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   line-height: 1;
   align-self: flex-end;
@@ -110,7 +119,7 @@
 .dgw__label-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -118,7 +127,7 @@
 
 .dgw__label-sub {
   font-family: var(--font-body);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
@@ -186,6 +195,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  /* 44px minimum touch target */
+  min-height: 44px;
   padding: var(--space-md);
   border-radius: var(--radius-lg);
   border: 2px solid var(--border-light);
@@ -255,5 +266,11 @@
   .dgw__ring-btn {
     width: 72px;
     height: 72px;
+  }
+  .dgw__xp {
+    font-size: 1rem;
+  }
+  .dgw__goal {
+    font-size: 0.75rem;
   }
 }

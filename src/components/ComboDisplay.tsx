@@ -38,7 +38,7 @@ export function ComboDisplay({ combo, lang = 'tr' }: ComboDisplayProps) {
         exit={{ scale: 0.8, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 18 }}
       >
-        <Zap size={14} className="combo__icon" />
+        <Zap size={18} className="combo__icon" />
         <span className="combo__count">{combo}×</span>
         {tier && (
           <span className="combo__label">

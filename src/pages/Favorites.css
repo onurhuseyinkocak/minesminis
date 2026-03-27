@@ -1,6 +1,6 @@
 /* ==========================================================================
-   FAVORITES PAGE — MinesMinis Design System v4.0
-   Filter tabs, cards. ZERO hex colors. All var() tokens.
+   FAVORITES PAGE — MinesMinis Design System v5.1
+   Filter tabs, cards, empty states. ZERO raw hex. All var() tokens.
    ========================================================================== */
 
 /* ---- PAGE ---- */
@@ -16,8 +16,9 @@
 .favorites-header {
   margin-bottom: var(--space-xl);
   padding: var(--space-xl);
-  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale, var(--primary-pale)) 100%);
   border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
 }
 
 .favorites-header h1 {
@@ -25,19 +26,21 @@
   align-items: center;
   gap: var(--space-sm);
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: var(--text-2xl);
   font-weight: 900;
   color: var(--text-primary);
-  margin: 0 0 var(--space-sm);
+  margin: 0 0 var(--space-xs);
+  line-height: 1.2;
 }
 
 .favorites-header-icon {
   color: var(--error);
+  flex-shrink: 0;
 }
 
 .favorites-header p {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--text-base);
   color: var(--text-secondary);
   margin: 0;
 }
@@ -45,7 +48,7 @@
 /* ---- FILTER TABS ---- */
 .filter-tabs {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   flex-wrap: wrap;
   margin-bottom: var(--space-xl);
 }
@@ -54,13 +57,13 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--border-light);
+  padding: var(--space-xs) var(--space-md);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-full);
   background: var(--bg-card);
   color: var(--text-secondary);
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-base);
@@ -68,8 +71,9 @@
 }
 
 .filter-tab:hover {
-  border-color: var(--primary-light);
+  border-color: var(--primary);
   color: var(--primary);
+  background: var(--primary-pale);
   box-shadow: var(--shadow-sm);
 }
 
@@ -92,9 +96,9 @@
 }
 
 .favorites-loading .spinner-large {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border-light);
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--border);
   border-top-color: var(--primary);
   border-radius: var(--radius-full);
   animation: favSpin 0.7s linear infinite;
@@ -104,66 +108,103 @@
   to { transform: rotate(360deg); }
 }
 
-/* ---- EMPTY STATE ---- */
+/* ---- EMPTY STATE (shared: no favorites + unauthenticated) ---- */
 .favorites-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: var(--space-3xl);
+  padding: var(--space-3xl) var(--space-xl);
+  gap: var(--space-md);
 }
 
 .empty-state-icon {
-  font-size: 56px;
-  margin-bottom: var(--space-md);
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius-full);
+  background: var(--primary-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-xs);
+  box-shadow: var(--shadow-md);
+  color: var(--primary);
 }
 
 .favorites-empty h2 {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 var(--space-sm);
+  margin: 0;
 }
 
 .favorites-empty p {
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-muted);
   margin: 0;
-  max-width: 400px;
+  max-width: 360px;
+  line-height: 1.6;
 }
 
 .favorites-empty .hint {
-  margin-top: var(--space-md);
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   font-style: italic;
+  opacity: 0.8;
+}
+
+/* CTA button in empty state */
+.favorites-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-base);
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: var(--shadow-button);
+  transition: all var(--transition-fast);
+  margin-top: var(--space-sm);
+}
+
+.favorites-empty-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .favorites-signin-link {
-  display: inline-block;
-  margin-top: var(--space-md);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   padding: var(--space-sm) var(--space-xl);
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: var(--text-on-primary);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-full);
   text-decoration: none;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1rem;
-  transition: background var(--transition-base), transform var(--transition-fast);
+  font-size: var(--text-base);
+  box-shadow: var(--shadow-button);
+  transition: all var(--transition-fast);
 }
 
 .favorites-signin-link:hover {
-  background: var(--primary-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-button-hover);
 }
 
 /* ---- GRID ---- */
 .favorites-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-lg);
 }
 
@@ -174,10 +215,11 @@
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  min-height: 120px;
 }
 
 .favorite-card--clickable {
@@ -187,27 +229,31 @@
 .favorite-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
 }
 
+/* Type badge — top-left */
 .favorite-type-badge {
   position: absolute;
   top: var(--space-sm);
   left: var(--space-sm);
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
   background: var(--bg-card);
   box-shadow: var(--shadow-sm);
-  font-size: 16px;
-  z-index: var(--z-base);
+  border: 1px solid var(--border);
+  z-index: var(--z-base, 1);
 }
 
+/* Image banner */
 .favorite-image {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .favorite-image img {
@@ -221,44 +267,69 @@
   transform: scale(1.05);
 }
 
+/* Content area */
 .favorite-content {
   padding: var(--space-md);
+  /* Reserve space on the right so title doesn't collide with remove btn */
+  padding-right: var(--space-2xl);
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* When there's an image, add left padding to clear the type badge */
+.favorite-image ~ .favorite-content {
+  padding-left: var(--space-md);
+}
+
+/* When no image, add extra top padding to clear the top-left badge */
+.favorite-card:not(:has(.favorite-image)) .favorite-content {
+  padding-top: calc(var(--space-3xl) + var(--space-xs));
 }
 
 .favorite-content h3 {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 var(--space-xs);
+  margin: 0;
   line-height: 1.3;
+  /* Clamp long titles to 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .favorite-type-label {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--text-muted);
   text-transform: capitalize;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
+/* Remove button — top-right, always visible on mobile, hover-reveal on desktop */
 .remove-favorite-btn {
   position: absolute;
   top: var(--space-sm);
   right: var(--space-sm);
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-full);
   background: var(--bg-card);
+  color: var(--error);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  font-size: 14px;
   opacity: 0;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background var(--transition-fast);
+  z-index: var(--z-base, 1);
 }
 
 .favorite-card:hover .remove-favorite-btn {
@@ -268,6 +339,7 @@
 .remove-favorite-btn:hover {
   transform: scale(1.15);
   background: var(--error-pale);
+  border-color: var(--error);
 }
 
 /* ---- RESPONSIVE ---- */
@@ -280,13 +352,19 @@
     overflow-x: auto;
     flex-wrap: nowrap;
     padding-bottom: var(--space-xs);
+    scrollbar-width: none;
+  }
+
+  .filter-tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .favorites-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: var(--space-md);
   }
 
+  /* Always show remove button on touch devices */
   .remove-favorite-btn {
     opacity: 1;
   }
@@ -294,7 +372,7 @@
 
 @media (max-width: 480px) {
   .favorites-header h1 {
-    font-size: 22px;
+    font-size: var(--text-xl);
   }
 
   .favorites-grid {
@@ -303,6 +381,6 @@
   }
 
   .favorite-content h3 {
-    font-size: 14px;
+    font-size: var(--text-sm);
   }
 }

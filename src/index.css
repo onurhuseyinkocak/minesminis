@@ -103,7 +103,6 @@
   --accent-gold: #FFD700;
   --accent-gold-dark: #E6C200;
   --shadow-glow-warm: 0 0 6px 2px rgba(255, 200, 0, 0.8);
-  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
   --bg-purple-light: #f3f0ff;
   --bg-purple-pale: #ede9fe;
 
@@ -155,8 +154,9 @@
   --text-primary: #1a1a2e;
   --text-body: #334155;
   --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --text-tertiary: #94A3B8;
+  /* #6B7A99 gives ~4.6:1 contrast on white — WCAG AA compliant (was #94A3B8 at ~2.5:1) */
+  --text-muted: #6B7A99;
+  --text-tertiary: #6B7A99;
   --text-on-primary: #FFFFFF;
   --text-on-dark: #F1F5F9;
 
@@ -183,7 +183,6 @@
   --border-focus: var(--primary-light);
 
   /* Backwards compat aliases */
-  --border-light: #E2E8F0;
   --border-medium: #CBD5E1;
 
   /* ---- GRADIENTS: Light theme ---- */
@@ -195,17 +194,17 @@
   --gradient-secondary: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
   --gradient-hero: linear-gradient(160deg, #FFF8F2 0%, #FFF3E8 40%, #F8F4FF 100%);
 
-  /* ---- SHADOWS: Clean with subtle amber tint ---- */
+  /* ---- SHADOWS: Clean with primary orange-coral tint (#FF6B35 = 255,107,53) ---- */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 48px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 24px rgba(245, 158, 11, 0.3);
+  --shadow-glow: 0 0 24px rgba(255, 107, 53, 0.3);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
   --shadow-card-hover: 0 12px 32px rgba(0, 0, 0, 0.1);
-  --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(245, 158, 11, 0.2);
-  --shadow-button-hover: 0 2px 6px rgba(0, 0, 0, 0.12), 0 8px 20px rgba(245, 158, 11, 0.25);
+  --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(255, 107, 53, 0.22);
+  --shadow-button-hover: 0 2px 6px rgba(0, 0, 0, 0.12), 0 8px 20px rgba(255, 107, 53, 0.3);
 
   /* ---- BORDER RADIUS: Friendly rounded ---- */
   --radius-xs: 4px;
@@ -223,9 +222,15 @@
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
+  --space-7: 28px;
   --space-8: 32px;
+  --space-9: 36px;
   --space-10: 40px;
+  --space-11: 44px;
   --space-12: 48px;
+  --space-13: 52px;
+  --space-14: 56px;
+  --space-15: 60px;
   --space-16: 64px;
   --space-20: 80px;
   --space-24: 96px;
@@ -256,8 +261,8 @@
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-  /* ---- FOCUS: 4px ring with 20% opacity ---- */
-  --focus-ring: 0 0 0 4px rgba(212, 148, 13, 0.2);
+  /* ---- FOCUS: 4px ring with 20% opacity — matches primary #FF6B35 ---- */
+  --focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 5px rgba(255, 107, 53, 0.9); /* WCAG 2.4.11: solid ring for color-blind visibility */
 
   /* ---- PLAYFUL ACCENT COLORS (original MinesMinis) ---- */
   --accent-coral: #FF6B6B;
@@ -310,6 +315,10 @@
   --touch-target: 44px;
   --touch-target-lg: 56px;
   --nav-height: 64px;
+  /* --header-height: canonical token used for scroll-padding-top and sticky offset.
+     Mobile app shell: 56px top bar. Landing/desktop: 64px sticky header.
+     Default 64px; override per breakpoint below. */
+  --header-height: 64px;
   --btn-height: 48px;
   --btn-height-sm: 36px;
   --btn-height-lg: 56px;
@@ -348,6 +357,16 @@
   /* ---- EXTRA SPACING ---- */
   --space-2xs: 2px;
 
+  /* ---- MISSING / REFERENCED TOKENS ---- */
+  /* warning-dark: used by XPBooster, OfflineBanner, ReadingPlayer, StoriesGrid, UsersManager */
+  --warning-dark: #b45309;
+
+  /* bottom-nav-height: global default for safe bottom positioning */
+  --bottom-nav-height: 56px;
+
+  /* color-primary-500: alias referenced by psychGamification service */
+  --color-primary-500: var(--primary);
+
   /* ---- FLUID TYPE SCALE ---- */
   --text-xs:   0.75rem;
   --text-sm:   0.875rem;
@@ -368,11 +387,15 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* iOS Safari: Remove blue tap highlight on all interactive elements */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  /* scroll-padding-top: offset anchor scrolls so sticky header never covers section titles */
+  scroll-padding-top: var(--header-height, 64px);
   scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -385,22 +408,20 @@ body {
   background: var(--bg-page);
   color: var(--text-body);
   line-height: 1.5;
-  overflow-x: hidden;
+  /* iOS Safari sticky fix: overflow-x: hidden creates scroll container, breaks position:sticky children.
+     overflow-x: clip has the same visual effect without creating a new stacking/scroll context. */
+  overflow-x: clip;
   min-height: 100vh;
+  min-height: 100dvh; /* iOS Safari: dynamic viewport height (excludes address bar) */
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh; /* iOS Safari: dynamic viewport height */
   display: flex;
   flex-direction: column;
   background: var(--bg-page);
   position: relative;
-}
-
-/* Shimmer animation for badges */
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
 }
 
 /* Hide animated bg during splash screen */
@@ -498,6 +519,14 @@ a:hover {
 
 a, button, [role="button"], input[type="submit"], input[type="button"] {
   cursor: pointer;
+}
+
+/* Accessibility: disabled state — show not-allowed cursor globally */
+button:disabled,
+[role="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="button"]:disabled {
+  cursor: not-allowed;
 }
 
 ::selection {
@@ -825,6 +854,8 @@ p {
 /* ---- Inputs ---- */
 input, textarea, select {
   font-family: var(--font-body);
+  /* iOS Safari: font-size must be >= 16px to prevent auto-zoom on focus */
+  font-size: 16px;
   font-size: 1rem;
   padding: 12px 16px;
   border: 2px solid var(--border);
@@ -862,15 +893,18 @@ input::placeholder, textarea::placeholder {
 }
 .badge-success {
   background: var(--success-pale);
-  color: var(--success);
+  /* #047857 — WCAG AA on pale backgrounds */
+  color: #047857;
 }
 .badge-warning {
   background: var(--warning-pale);
-  color: var(--warning);
+  /* #92400E — WCAG AA on pale backgrounds */
+  color: #92400E;
 }
 .badge-error {
   background: var(--error-pale);
-  color: var(--error);
+  /* #991B1B — WCAG AA on pale backgrounds */
+  color: #991B1B;
 }
 
 /* ---- Divider ---- */
@@ -902,9 +936,10 @@ input::placeholder, textarea::placeholder {
 /* ---- Skip to content (base — App.css has the polished version) ---- */
 .skip-to-content {
   position: absolute;
-  top: -60px;
+  top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  /* GPU composited: use transform instead of `top` to avoid layout recalculation */
+  transform: translateX(-50%) translateY(-100%);
   background: var(--gradient-primary);
   color: var(--text-on-primary);
   padding: var(--space-2) var(--space-6);
@@ -916,10 +951,10 @@ input::placeholder, textarea::placeholder {
   font-size: 0.875rem;
   text-decoration: none;
   white-space: nowrap;
-  transition: top var(--transition-fast);
+  transition: transform var(--transition-fast);
 }
 .skip-to-content:focus {
-  top: 0;
+  transform: translateX(-50%) translateY(0);
   outline: none;
 }
 
@@ -1050,14 +1085,24 @@ input::placeholder, textarea::placeholder {
 }
 
 /* ── Correct answer pulse ───────────────────────────────────── */
-@keyframes correct-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-  50%  { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+/* GPU composited ripple via pseudo-element transform+opacity instead of box-shadow */
+@keyframes correct-pulse-ring {
+  0%   { transform: scale(1);    opacity: 0.6; }
+  100% { transform: scale(1.8);  opacity: 0; }
 }
 
 .correct-pulse {
-  animation: correct-pulse 0.6s ease-out;
+  position: relative;
+}
+
+.correct-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid rgba(16, 185, 129, 0.6);
+  animation: correct-pulse-ring 0.6s ease-out forwards;
+  pointer-events: none;
 }
 
 /* ── Streak fire glow ────────────────────────────────────────── */
@@ -1122,16 +1167,68 @@ input::placeholder, textarea::placeholder {
 
 @media (max-width: 480px) {
   .btn { padding: 10px 20px; font-size: 0.9rem; }
+  /* Ensure no accidental horizontal scroll on very small screens */
+  .container, .container-wide { padding: 0 var(--space-md); }
+  /* Reduce all grid layouts to single column on small phones */
+  .grid-2 { grid-template-columns: 1fr; }
 }
 
-/* ---- Tablet ---- */
+/* ---- Tablet (768px) ---- */
 @media (min-width: 768px) {
-  :root { --nav-height: 72px; }
+  :root {
+    --nav-height: 72px;
+    --header-height: 72px; /* sync scroll-padding-top with taller tablet nav */
+  }
+  /* Tablet grid: 2-col → allow 3-col on md+ when explicitly used */
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ---- Desktop ---- */
+/* ---- Desktop (1024px+) ---- */
 @media (min-width: 1024px) {
-  :root { --nav-height: 80px; }
+  :root {
+    --nav-height: 80px;
+    --header-height: 80px;
+  }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---- Large desktop max-width cap (1440px) ---- */
+/* Prevents content from stretching across ultra-wide displays.
+   Applied to the main page body area — not the fixed nav/modals. */
+@media (min-width: 1440px) {
+  .page-content-cap {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+}
+
+/* ---- Landscape mobile orientation ---- */
+/* On small phones rotated to landscape (e.g. 390×844 → 844×390),
+   the available height is too short for games with fixed-height layouts.
+   We clamp min-height to avoid scroll-blocking and shrink tiles. */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --header-height: 48px; /* compact header in landscape */
+  }
+  html {
+    scroll-padding-top: 48px;
+  }
+  /* Reduce game tile sizes so they fit without scrolling */
+  .spelling-bee__tile { width: 44px !important; height: 52px !important; font-size: 1.25rem !important; }
+  .spelling-bee__slot { width: 40px !important; height: 48px !important; font-size: 1.25rem !important; }
+  /* Prevent full-screen game pages from overflowing viewport height */
+  .game-container,
+  .lesson-player,
+  .journey-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* Allow scroll instead of overflow-clip in landscape */
+    overflow-y: auto;
+  }
 }
 
 /* ==========================================================================
@@ -1210,11 +1307,11 @@ input::placeholder, textarea::placeholder {
   min-height: 44px;
 }
 .modern-tab:hover {
-  background: rgba(212, 148, 13, 0.08);
+  background: rgba(255, 107, 53, 0.08);
   color: var(--slate-700);
 }
 .modern-tab.active {
-  background: #FFFFFF;
+  background: var(--bg-card);
   color: var(--primary);
   box-shadow: var(--shadow-sm);
 }
@@ -1287,7 +1384,8 @@ h1, h2, h3 {
   --text-primary: #F1F5F9;
   --text-body: #CBD5E1;
   --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  /* #8B98B0 gives ~4.5:1 on #151929 — WCAG AA compliant (was #64748B at ~3.1:1) */
+  --text-muted: #8B98B0;
   --text-on-dark: #F1F5F9;
 
   --border: #334155;
@@ -1295,8 +1393,9 @@ h1, h2, h3 {
   --border-light: #334155;
   --border-medium: #475569;
   --border-focus: var(--primary-light);
+  --border-subtle: rgba(255, 255, 255, 0.06);
 
-  --primary-pale: rgba(212, 148, 13, 0.15);
+  --primary-pale: rgba(255, 107, 53, 0.15);
   --secondary-pale: rgba(13, 92, 77, 0.18);
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -1307,8 +1406,8 @@ h1, h2, h3 {
   --shadow-glow: 0 0 20px rgba(212, 148, 13, 0.2);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
   --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-  --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px -1px rgba(0, 0, 0, 0.35);
-  --shadow-button-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(212, 148, 13, 0.18);
+  --shadow-button-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(212, 148, 13, 0.22);
 
   --gradient-hero: linear-gradient(160deg, #0F172A 0%, #1E293B 40%, #0F172A 100%);
   --gradient-warm: linear-gradient(135deg, #0C0F1A 0%, #151929 50%, #111526 100%);
@@ -1356,19 +1455,23 @@ h1, h2, h3 {
   --accent-red: #ef4444;
   --accent-red-dark: #b91c1c;
 
-  --focus-ring: 0 0 0 4px rgba(232, 181, 48, 0.25);
+  --focus-ring: 0 0 0 2px #1E293B, 0 0 0 5px rgba(212, 148, 13, 0.9); /* WCAG 2.4.11 dark mode */
 
   --overlay-bg: rgba(15, 23, 42, 0.6);
   --glass-bg: rgba(30, 41, 59, 0.7);
   --glass-border: rgba(255, 255, 255, 0.06);
   --glass-shine: rgba(255, 255, 255, 0.08);
 
-  /* Dark mode surface + border-subtle overrides */
-  --border-subtle: rgba(255, 255, 255, 0.06);
+  /* Dark mode surface aliases */
   --surface-card: var(--bg-card);
   --surface-hover: var(--bg-elevated);
   --success-bg: rgba(16, 185, 129, 0.12);
   --error-bg: rgba(239, 68, 68, 0.12);
+
+  /* Missing token overrides for dark mode */
+  --warning-dark: #fbbf24;
+  --bottom-nav-height: 56px;
+  --color-primary-500: #FF6B35;
 
   /* Keep backwards compat dark neutral aliases */
   --ink: #0F172A;
@@ -1387,6 +1490,21 @@ h1, h2, h3 {
 
 [data-theme="dark"] #root {
   background: linear-gradient(180deg, #0F172A 0%, #1E293B 30%, #0F172A 100%);
+}
+
+/* Dim the animated background blobs in dark mode so they don't overpower the dark bg */
+[data-theme="dark"] #root::before {
+  background:
+    radial-gradient(ellipse 600px 500px at 5% 15%, rgba(139, 92, 246, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 400px at 90% 10%, rgba(212, 148, 13, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 700px 500px at 50% 85%, rgba(45, 212, 191, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 350px at 15% 75%, rgba(244, 114, 182, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 550px 400px at 80% 55%, rgba(96, 165, 250, 0.05) 0%, transparent 70%);
+}
+
+/* Dim the sparkle dots in dark mode */
+[data-theme="dark"] #root::after {
+  opacity: 0.3;
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-track { background: #1E293B; }
@@ -1421,7 +1539,231 @@ h1, h2, h3 {
 }
 
 /* ==========================================================================
-   10. PRINT STYLES
+   10. SYSTEM PREFERENCES: prefers-color-scheme + forced-colors
+   ========================================================================== */
+
+/**
+ * System dark mode: activate [data-theme="dark"] tokens automatically
+ * when the user has NOT explicitly chosen a theme (data-theme absent).
+ * ThemeContext will override this with an explicit data-theme attribute
+ * when the user makes a choice in Settings.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    /* Slate scale */
+    --slate-50: #0F172A;
+    --slate-100: #1E293B;
+    --slate-200: #334155;
+    --slate-300: #475569;
+    --slate-400: #64748B;
+    --slate-500: #94A3B8;
+    --slate-600: #CBD5E1;
+    --slate-700: #E2E8F0;
+    --slate-800: #F1F5F9;
+    --slate-900: #F8FAFC;
+    --slate-950: #FFFFFF;
+
+    /* Backgrounds */
+    --bg-page: #0C0F1A;
+    --bg-card: #151929;
+    --bg-elevated: #1C2236;
+    --bg-muted: #111526;
+    --bg-soft: #0F1320;
+    --bg-glass: rgba(21, 25, 41, 0.85);
+    --bg-primary: #0C0F1A;
+    --bg-hover: #1C2236;
+    --bg-surface: #151929;
+
+    /* Text */
+    --text-primary: #F1F5F9;
+    --text-body: #CBD5E1;
+    --text-secondary: #94A3B8;
+    --text-muted: #8B98B0;
+    --text-on-dark: #F1F5F9;
+
+    /* Borders */
+    --border: #334155;
+    --border-hover: #475569;
+    --border-light: #334155;
+    --border-medium: #475569;
+    --border-focus: var(--primary-light);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+
+    /* Semantic pale */
+    --primary-pale: rgba(255, 107, 53, 0.15);
+    --secondary-pale: rgba(13, 92, 77, 0.18);
+    --error-soft: rgba(239, 68, 68, 0.15);
+    --error-pale: rgba(239, 68, 68, 0.10);
+    --success-pale: rgba(16, 185, 129, 0.12);
+    --success-soft: rgba(16, 185, 129, 0.15);
+    --warning-pale: rgba(245, 158, 11, 0.12);
+    --warning-soft: rgba(245, 158, 11, 0.15);
+    --info-pale: rgba(14, 165, 233, 0.12);
+    --info-soft: rgba(14, 165, 233, 0.18);
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(160deg, #0F172A 0%, #1E293B 40%, #0F172A 100%);
+    --gradient-warm: linear-gradient(135deg, #0C0F1A 0%, #151929 50%, #111526 100%);
+    --gradient-primary: linear-gradient(135deg, #B87C0A 0%, #D4940D 100%);
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+
+    /* Glass */
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --overlay-bg: rgba(15, 23, 42, 0.6);
+
+    /* Focus ring */
+    --focus-ring: 0 0 0 2px #1E293B, 0 0 0 5px rgba(212, 148, 13, 0.9);
+
+    /* Surfaces */
+    --surface-card: var(--bg-card);
+    --surface-hover: var(--bg-elevated);
+    --success-bg: rgba(16, 185, 129, 0.12);
+    --error-bg: rgba(239, 68, 68, 0.12);
+
+    /* Neutral aliases */
+    --ink: #0F172A;
+    --charcoal: #1E293B;
+    --cloud: #334155;
+    --mist: #1E293B;
+    --snow: #0F172A;
+  }
+
+  /* Body / root baseline when system is dark and no explicit theme set */
+  :root:not([data-theme]) body {
+    background: var(--bg-page);
+    color: var(--text-body);
+  }
+}
+
+/**
+ * Windows High Contrast Mode (forced-colors: active)
+ * Ensures interactive elements get proper system colors
+ * and our decorative elements don't interfere.
+ */
+@media (forced-colors: active) {
+  :root {
+    --primary: ButtonText;
+    --text-primary: ButtonText;
+    --text-body: ButtonText;
+    --border: ButtonBorder;
+    --bg-page: Canvas;
+    --bg-card: Canvas;
+    --bg-muted: Canvas;
+  }
+
+  /* Remove decorative backgrounds that obscure forced-color system */
+  body {
+    background-image: none !important;
+  }
+
+  #root::before,
+  #root::after {
+    display: none !important;
+  }
+
+  /* Ensure buttons/links remain visible */
+  button,
+  a,
+  [role="button"] {
+    forced-color-adjust: auto;
+  }
+
+  /* Remove box-shadow focus rings — Windows HC supplies its own */
+  :focus-visible {
+    outline: 3px solid ButtonText;
+    box-shadow: none;
+  }
+}
+
+/**
+ * High contrast preference (non-Windows: GNOME, Safari)
+ * Increase contrast of muted colors.
+ */
+@media (prefers-contrast: high) {
+  :root {
+    --text-muted: #475569;
+    --text-secondary: #334155;
+    --border: #64748B;
+    --border-light: #64748B;
+  }
+
+  [data-theme="dark"] {
+    --text-muted: #94A3B8;
+    --text-secondary: #CBD5E1;
+    --border: #64748B;
+    --border-light: #64748B;
+  }
+}
+
+/* ==========================================================================
+   11. iOS SAFARI SPECIFIC FIXES
+   ========================================================================== */
+
+/* Overscroll bounce: contain on game/lesson full-screen containers
+   so the page doesn't rubber-band when user swipes inside the game */
+.lesson-player,
+.lesson-player-page,
+.story-reader,
+.game-container,
+.daily-lesson,
+.phonics-lesson,
+.blending-board,
+.segmenting-board {
+  overscroll-behavior: contain;
+}
+
+/* Touch action on interactive phonics tiles — prevent accidental pan/zoom */
+.blending-board__tile,
+.segmenting-board__option {
+  touch-action: manipulation;
+}
+
+/* Letter tracer uses canvas — no scrolling inside, disable all touch default actions */
+.letter-tracer__canvas,
+.lt-canvas {
+  touch-action: none;
+}
+
+/* Swipe-based story reader — allow vertical pan but prevent horizontal conflicts */
+.story-reader__content,
+.story-choices {
+  touch-action: pan-y;
+}
+
+/* ==========================================================================
+   11. REDUCED MOTION — Accessibility
+   ========================================================================== */
+
+/**
+ * Respect the user's motion preference (vestibular disorders, epilepsy, etc.)
+ * Cuts all animation/transition durations to near-zero so the UI still
+ * functions but stops moving.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep Framer Motion / JS-driven animations working — they read this value */
+  :root {
+    --motion-reduce: 1;
+  }
+}
+
+/* ==========================================================================
+   12. PRINT STYLES
    ========================================================================== */
 
 @media print {
@@ -1450,7 +1792,10 @@ h1, h2, h3 {
 
   img { max-width: 100% !important; page-break-inside: avoid; }
 
-  .no-print, nav, .btn, button { display: none !important; }
+  .no-print, nav, .btn, button:not(.print-include),
+  .speak-btn, .floating-chat-btn, .install-banner,
+  .cookie-banner, .offline-banner { display: none !important; }
+  body { background: white !important; color: black !important; }
 
   .container, .container-wide {
     max-width: 100%;

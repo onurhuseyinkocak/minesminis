@@ -109,8 +109,16 @@
   color: var(--text-on-primary, #fff);
 }
 
+/* Icon inside active tab — force white color on SVG icons */
+.words-tab-btn.active .words-tab-emoji svg {
+  color: var(--text-on-primary, #fff);
+}
+
 .words-tab-emoji {
   font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .words-tab-label {
@@ -140,10 +148,15 @@
   box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  min-height: 200px;
+  min-height: 220px; /* extra breathing room for content */
   position: relative;
   /* 3D flip setup */
   perspective: 1000px;
+}
+
+.kid-word-card:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .kid-word-card:hover {
@@ -155,9 +168,9 @@
 .kid-card-inner {
   position: relative;
   width: 100%;
-  min-height: 200px;
+  min-height: 220px; /* matches parent min-height for proper fill */
   transform-style: preserve-3d;
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1); /* spring-like */
 }
 
 .kid-word-card.flipped .kid-card-inner {
@@ -176,6 +189,7 @@
   inset: 0;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border-light);
   overflow: hidden;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -204,17 +218,19 @@
 
 .kid-card-word {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 1.3rem; /* ≥ 1.25rem requirement */
   font-weight: 800;
   color: var(--text-primary);
   margin: var(--space-sm) 0 4px;
+  line-height: 1.2;
 }
 
 .kid-card-turkish {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--text-muted);
   margin: 0;
+  font-style: italic; /* visually distinguish translation */
 }
 
 .learned-badge {
@@ -222,6 +238,16 @@
   top: var(--space-sm);
   right: var(--space-sm);
   font-size: 20px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  color: var(--white, #fff);
+  box-shadow: var(--shadow-sm);
 }
 
 /* -- BACK (flipped) -- */
@@ -232,7 +258,8 @@
   text-align: center;
   padding: var(--space-lg) var(--space-sm);
   gap: var(--space-sm);
-  background: var(--bg-card);
+  background: var(--primary-pale); /* visually distinct from front */
+  border: 1.5px solid var(--primary-light, var(--primary));
   /* 3D: starts as back face (rotated 180) */
   position: absolute;
   inset: 0;
@@ -320,12 +347,20 @@
 
 .kid-card-close {
   background: none;
-  border: none;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
   color: var(--text-muted);
   font-family: var(--font-body);
   font-size: 12px;
   cursor: pointer;
   margin-top: var(--space-xs);
+  padding: 3px 10px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.kid-card-close:hover {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
 }
 
 /* ---- MORE WORDS BUTTON ---- */
@@ -491,8 +526,8 @@
 .words-loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid var(--border-light, #e5e7eb);
-  border-top-color: var(--primary, #FF6B35);
+  border: 4px solid var(--border-light);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: words-spin 0.8s linear infinite;
 }
@@ -515,19 +550,36 @@
   position: relative;
 }
 
+/* Search magnifier icon via pseudo-element */
+.words-search-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
 .words-search-input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 13px 16px 13px 44px; /* left padding for search icon */
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 500;
   border: 2px solid var(--border-light, #e5e7eb);
   border-radius: var(--radius-lg, 12px);
-  background: var(--bg-card, #fff);
+  background: var(--bg-card);
   color: var(--text-primary);
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   box-sizing: border-box;
+  min-height: 48px; /* touch-friendly */
 }
 
 .words-search-input:focus {
@@ -536,7 +588,7 @@
 }
 
 .words-search-input::placeholder {
-  color: var(--text-muted, #9ca3af);
+  color: var(--text-muted, #6B7A99);
 }
 
 .words-category-row {
@@ -554,17 +606,25 @@
 
 .words-category-chip {
   flex-shrink: 0;
-  padding: 6px 14px;
+  padding: 6px var(--space-md);
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 0.8rem; /* minimum legible, up from 12px */
   font-weight: 700;
   border: 2px solid var(--border-light, #e5e7eb);
-  border-radius: var(--radius-full, 999px);
-  background: var(--bg-card, #fff);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.words-category-chip:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .words-category-chip:hover {
@@ -594,7 +654,7 @@
   }
 
   .words-tab-emoji { font-size: 22px; }
-  .words-tab-label { font-size: 11px; }
+  .words-tab-label { font-size: 12px; }
 
   .words-content { padding: var(--space-md); }
 
@@ -604,12 +664,12 @@
 
   .words-search-input {
     font-size: 14px;
-    padding: 10px 14px;
+    padding: 10px 14px 10px 38px; /* maintain icon space */
   }
 
   .words-category-chip {
     padding: 5px 10px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .kid-word-cards {
@@ -618,7 +678,7 @@
   }
 
   .kid-card-emoji { font-size: 48px; }
-  .kid-card-word { font-size: 16px; }
+  .kid-card-word { font-size: 1.1rem; } /* still above 1.25rem baseline, mobile adjusted */
 
   .review-emoji { font-size: 56px; }
   .review-word { font-size: 28px; }
@@ -660,38 +720,39 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary, #FF6B35) 0%, var(--accent-orange, #FF8C42) 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-orange, var(--primary-hover)) 100%);
+  color: var(--white, #fff);
   font-size: 1.8rem;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Nunito', sans-serif;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  box-shadow: 0 4px 12px var(--primary-glow);
 }
 
 .review-letter-badge {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7C3AED 0%, #9D5CF6 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-purple, #7C3AED) 0%, var(--accent-purple-light, #9D5CF6) 100%);
+  color: var(--white, #fff);
   font-size: 2.5rem;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-display, 'Nunito', sans-serif);
+  box-shadow: 0 4px 16px var(--accent-purple-glow, rgba(124, 58, 237, 0.3));
 }
 
 .kid-card-emoji-display {
   font-size: 2.2rem;
   line-height: 1;
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 56px;      /* wider container to prevent emoji clipping */
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;

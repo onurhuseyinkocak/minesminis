@@ -81,7 +81,7 @@
 
 /* ---- Feedback ---- */
 .segmenting-board__feedback--wrong {
-  color: #d32f2f;
+  color: var(--error);
   font-weight: 600;
 }
 
@@ -115,11 +115,38 @@
 }
 
 .segmenting-board__option--used {
-  background-color: #e0e0e0;
-  color: #999;
+  background-color: var(--border);
+  color: var(--text-muted);
   cursor: default;
   box-shadow: none;
   opacity: 0.3;
+}
+
+.segmenting-board__option:hover:not(:disabled):not(.segmenting-board__option--used) {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 8px 20px rgba(232, 163, 23, 0.45);
+}
+
+.segmenting-board__option:active:not(:disabled):not(.segmenting-board__option--used) {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 2px 8px rgba(232, 163, 23, 0.3);
+}
+
+.segmenting-board__option:focus-visible {
+  outline: 3px solid var(--primary, #E8A317);
+  outline-offset: 3px;
+}
+
+/* Hint slots highlight the expected next position */
+.segmenting-board__hint-slot--active {
+  border-bottom: 2px dashed var(--primary, #E8A317);
+  color: var(--primary, #E8A317);
+  animation: hint-pulse 1s ease-in-out infinite;
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
 }
 
 /* ---- Completed screen ---- */

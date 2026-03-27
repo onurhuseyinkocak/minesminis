@@ -19,8 +19,7 @@ const PawPrint: React.FC<{ size?: number; className?: string }> = ({ size = 32, 
 const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   const [show, setShow]       = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [catData, setCatData] = useState<any>(null);
+  const [catData, setCatData] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     fetch('/lottie/cat-loader.json')

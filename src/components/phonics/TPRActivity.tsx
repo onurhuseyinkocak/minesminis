@@ -83,7 +83,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
             transition={{ type: 'spring', stiffness: 200 }}
             style={{ textAlign: 'center' }}
           >
-            <Sparkles size={64} color="#E8A317" />
+            <Sparkles size={64} color="var(--warning)" />
             <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>Great Moves!</h2>
             <p style={{ fontSize: '1.1rem', color: '#555' }}>
               You completed all {gameCommands.length} actions!

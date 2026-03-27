@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Star, Check, BookOpen, Play, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { PHONICS_CURRICULUM_PHASES } from '../data/phoneticsCurriculum';
 import './LearningPath.css';
@@ -76,11 +77,20 @@ const LearningPath: React.FC = () => {
   usePageTitle('Öğrenme Yolum', 'Learning Path');
   const navigate = useNavigate();
   const { userProfile } = useAuth();
-  const isTr = navigator.language.startsWith('tr');
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
 
   const [currentUnitId, setCurrentUnitId] = useState<string>(getCurrentUnitId);
 
   useEffect(() => {
+    // Only seed from profile if the user has never saved progress.
+    // This prevents overwriting the unit the learner has already advanced to
+    // every time the userProfile object is refreshed.
+    const hasExistingProgress = (() => {
+      try { return localStorage.getItem('mm_current_unit') !== null; } catch { return false; }
+    })();
+    if (hasExistingProgress) return;
+
     const settings = (userProfile?.settings as Record<string, unknown>) ?? {};
     const startGroup = Number(settings.startingPhonicsGroup ?? 1);
     // Map Jolly Phonics group to new curriculum unit IDs
@@ -94,7 +104,8 @@ const LearningPath: React.FC = () => {
     } catch {
       // ignore
     }
-  }, [userProfile]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on first profile load
+  }, [userProfile?.id]);
 
   const allUnitIds = PHASES.flatMap((p) => p.units.map((u) => u.id));
   const currentIdx = allUnitIds.indexOf(currentUnitId);
@@ -253,7 +264,9 @@ const LearningPath: React.FC = () => {
                         <div className="lp-unit-meta">
                           <span className="lp-unit-lessons-count">
                             <BookOpen size={11} />
-                            {unit.lessons}
+                            {unlocked && progress > 0
+                              ? `${Math.round((progress / 100) * unit.lessons)}/${unit.lessons}`
+                              : unit.lessons}
                           </span>
                           {isCurrent && (
                             <span

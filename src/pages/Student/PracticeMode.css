@@ -191,7 +191,7 @@
   padding: 3px var(--space-sm);
   border-radius: var(--radius-full);
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -267,8 +267,8 @@
   position: absolute;
   top: var(--space-md);
   right: var(--space-md);
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target);
+  height: var(--touch-target);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -438,6 +438,7 @@
 @media (max-width: 768px) {
   .pm {
     padding: var(--space-md);
+    padding-bottom: calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + var(--space-md));
   }
 
   .pm-header {
@@ -454,7 +455,7 @@
   }
 
   .pm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .pm-summary__stats {
@@ -469,6 +470,85 @@
   .pm-filters {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  /* Horizontal scroll for filter tabs on mobile */
+  .pm-filter-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .pm-filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---- SAFE AREA — desktop fallback ---- */
+.pm {
+  padding-bottom: calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + var(--space-xl));
+}
+
+/* ---- DARK MODE ---- */
+@media (prefers-color-scheme: dark) {
+  .pm {
+    background: var(--bg-page);
+  }
+
+  .pm-word-card {
+    background: var(--bg-elevated);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .pm-word-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .pm-word-card__english {
+    color: var(--text-primary);
+  }
+
+  .pm-word-card__turkish {
+    color: var(--text-muted);
+  }
+
+  .pm-word-card__confidence-bar {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .pm-modal {
+    background: var(--bg-elevated);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  }
+
+  .pm-modal__close {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+  }
+
+  .pm-modal__close:hover {
+    background: var(--error-pale);
+    color: var(--error);
+  }
+
+  .pm-modal__example {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .pm-world-select {
+    background-color: var(--bg-elevated);
+    color: var(--text-body);
+    border-color: var(--border);
+  }
+
+  .pm-modal__pronounce {
+    background: var(--bg-elevated);
+    border-color: var(--border);
+    color: var(--secondary);
+  }
+
+  .pm-modal__pronounce:hover {
+    background: var(--secondary-pale);
   }
 }
 

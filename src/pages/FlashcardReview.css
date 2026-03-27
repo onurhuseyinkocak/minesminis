@@ -24,24 +24,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   background: var(--bg-card);
   border: 1.5px solid var(--border);
+  border-bottom: 5px solid color-mix(in srgb, var(--border) 80%, black);
   border-radius: var(--radius-lg);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), border-bottom-width 0.08s ease;
   flex-shrink: 0;
-  font-size: var(--text-lg);
-  font-weight: 700;
-  line-height: 1;
   touch-action: manipulation;
 }
 
 .flashcard-review__back-btn:hover {
   background: var(--bg-muted);
   border-color: var(--border-hover);
+  transform: scale(1.05);
+}
+
+.flashcard-review__back-btn:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
+
+.flashcard-review__back-btn:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .flashcard-review__title {
@@ -51,6 +60,39 @@
   color: var(--text-primary);
   line-height: 1.2;
   flex: 1;
+}
+
+/* ── Direction toggle button (EN→TR / TR→EN) ────────────────────────────────── */
+
+.flashcard-review__dir-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  background: var(--bg-muted, #f1f5f9);
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  font-family: var(--font-display, Nunito, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 36px;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  touch-action: manipulation;
+}
+
+.flashcard-review__dir-btn:hover {
+  background: var(--primary-pale, #fff4ee);
+  border-color: var(--primary, #ff6b35);
+  color: var(--primary, #ff6b35);
+}
+
+.flashcard-review__dir-btn:active {
+  transform: scale(0.96);
 }
 
 /* ── Body ───────────────────────────────────────────────────────────────────── */
@@ -73,14 +115,16 @@
 }
 
 .flashcard-review__empty-icon {
-  width: 88px;
-  height: 88px;
+  width: 96px;
+  height: 96px;
   background: var(--success-pale);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-emerald);
+  color: var(--accent-emerald, var(--success));
+  /* subtle ring for visual polish */
+  box-shadow: 0 0 0 6px var(--success-pale), 0 0 0 7px var(--success-light, var(--success));
 }
 
 .flashcard-review__empty-title {
@@ -102,21 +146,36 @@
 
 .flashcard-review__empty-btn {
   padding: var(--space-md) var(--space-xl);
-  background: var(--primary);
+  background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%);
   color: var(--text-on-primary);
   border: none;
+  /* 3D bottom edge per design system */
+  border-bottom: 5px solid color-mix(in srgb, var(--primary) 80%, black);
   border-radius: var(--radius-xl);
   font-family: var(--font-display);
   font-size: var(--text-base);
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 14px var(--primary-glow);
-  transition: transform 0.15s ease;
+  box-shadow: 0 4px 18px var(--primary-glow);
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease, border-bottom-width 0.08s ease;
   touch-action: manipulation;
+  min-height: 48px;
+}
+
+.flashcard-review__empty-btn:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
 }
 
 .flashcard-review__empty-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px var(--primary-glow);
+}
+
+.flashcard-review__empty-btn:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
 /* ── Stats strip ────────────────────────────────────────────────────────────── */
@@ -134,6 +193,9 @@
   border-radius: var(--radius-xl);
   padding: var(--space-md) var(--space-sm);
   text-align: center;
+  /* Elevated shadow so cards feel lifted off page */
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .flashcard-review__stat-value {
@@ -156,20 +218,49 @@
   letter-spacing: 0.04em;
 }
 
+/* ── Reset progress button (destructive, secondary) ────────────────────────── */
+
+.flashcard-review__reset-btn {
+  padding: var(--space-sm) var(--space-lg);
+  background: transparent;
+  color: var(--text-muted, #6B7A99);
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  touch-action: manipulation;
+}
+
+.flashcard-review__reset-btn:hover {
+  color: var(--error, #ef4444);
+  border-color: var(--error, #ef4444);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.flashcard-review__reset-btn:active {
+  transform: scale(0.97);
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────────── */
 
 @media (max-width: 480px) {
   .flashcard-review__header {
     padding: var(--space-md) var(--space-md) var(--space-xs);
+    max-width: 100%;
   }
 
   .flashcard-review__body {
     padding: var(--space-md) var(--space-md) 0;
+    max-width: 100%;
   }
 
+  /* DO NOT shrink below 44px — preserve touch target */
   .flashcard-review__back-btn {
-    width: 36px;
-    height: 36px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .flashcard-review__title {
@@ -178,5 +269,12 @@
 
   .flashcard-review__stat-value {
     font-size: var(--text-xl);
+  }
+}
+
+/* iOS safe area — ensure no content clips under home indicator */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .flashcard-review {
+    padding-bottom: max(var(--space-4xl, 80px), env(safe-area-inset-bottom));
   }
 }

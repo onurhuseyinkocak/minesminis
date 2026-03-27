@@ -5,7 +5,7 @@
 
 .mm-card {
   background: var(--bg-card);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   position: relative;
   overflow: hidden;
   transition:
@@ -30,8 +30,8 @@
 }
 
 .mm-card--default:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
   border-color: var(--border-hover);
 }
 
@@ -41,7 +41,7 @@
 }
 
 .mm-card--elevated:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -52,7 +52,7 @@
 
 .mm-card--outlined:hover {
   border-color: var(--primary-light);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
 
@@ -63,7 +63,7 @@
 }
 
 .mm-card--interactive:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary-pale);
 }
@@ -78,6 +78,21 @@
   box-shadow:
     var(--focus-ring),
     var(--shadow-sm);
+}
+
+/* -- Selected / Active state ------------------------------------------ */
+
+.mm-card--selected {
+  border-color: var(--primary) !important;
+  box-shadow:
+    var(--shadow-card),
+    0 0 0 3px var(--primary-glow);
+}
+
+.mm-card--selected.mm-card--interactive:hover {
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 3px var(--primary-glow);
 }
 
 /* -- Responsive padding ----------------------------------------------- */
@@ -101,7 +116,7 @@
 
 [data-theme="dark"] .mm-card--default,
 [data-theme="dark"] .mm-card--interactive {
-  border-color: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-subtle);
 }
 
 [data-theme="dark"] .mm-card--outlined {
@@ -113,5 +128,5 @@
 }
 
 [data-theme="dark"] .mm-card--interactive:hover {
-  border-color: rgba(255, 107, 53, 0.2);
+  border-color: rgba(var(--primary-rgb), 0.2);
 }

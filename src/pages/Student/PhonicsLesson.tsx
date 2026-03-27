@@ -55,8 +55,18 @@ function speak(text: string, rate = 0.75) {
   }
 }
 
+/**
+ * Returns the cleanest string to pass to TTS for a given PhonicsSound.
+ * Strips parenthetical qualifiers like "(short)" or "(long)" from the sound field,
+ * and falls back to the raw grapheme only for true single-letter sounds.
+ */
+function getTTSText(sound: PhonicsSound): string {
+  // Remove parenthetical suffixes: "oo(short)" → "oo", "oo(long)" → "oo"
+  return sound.sound.replace(/\(.*\)$/, '').replace(/\//g, '').trim();
+}
+
 function splitToSounds(word: string): string[] {
-  const digraphs = ['sh', 'ch', 'th', 'ng', 'ck', 'qu', 'ai', 'ee', 'oo', 'or', 'ar', 'er', 'ou', 'oi', 'ue', 'ie', 'oa'];
+  const digraphs = ['sh', 'ch', 'th', 'ng', 'ck', 'ph', 'wh', 'qu', 'ai', 'ee', 'oo', 'or', 'ar', 'er', 'ou', 'oi', 'ue', 'ie', 'oa'];
   const sounds: string[] = [];
   let i = 0;
   const lower = word.toLowerCase();
@@ -93,7 +103,7 @@ function getBlendingWords(sound: PhonicsSound, group: PhonicsGroup): { english: 
   return group.blendableWords
     .filter((w) => graphemes.some((g) => w.toLowerCase().includes(g.toLowerCase())))
     .slice(0, 3)
-    .map(w => ({ english: w, turkish: w, emoji: '' }));
+    .map(w => ({ english: w, turkish: '', emoji: '' }));
 }
 
 /** Build segmenting words (same logic, different slice) */
@@ -279,9 +289,10 @@ function PhonicsLesson() {
         size="xl"
         icon={<Volume2 size={24} />}
         onClick={() => {
-          speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.5);
-          setTimeout(() => speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.5), 1000);
-          setTimeout(() => speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.5), 2000);
+          const ttsText = getTTSText(sound);
+          speak(ttsText, 0.5);
+          setTimeout(() => speak(ttsText, 0.5), 1000);
+          setTimeout(() => speak(ttsText, 0.5), 2000);
         }}
         style={{ backgroundColor: 'var(--gold-500)', borderColor: 'var(--gold-500)' }}
       >
@@ -333,7 +344,7 @@ function PhonicsLesson() {
           variant="primary"
           size="lg"
           icon={<Volume2 size={20} />}
-          onClick={() => speak(sound.grapheme.length === 1 ? sound.grapheme : sound.sound, 0.6)}
+          onClick={() => speak(getTTSText(sound), 0.6)}
           style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
         >
           {isTr ? 'Beraber söyle!' : 'Say it together!'}
@@ -344,14 +355,12 @@ function PhonicsLesson() {
           size="lg"
           icon={<Mic size={20} />}
           onClick={() => {
-            const SpeechRecognitionAPI =
-              (window as unknown as Record<string, unknown>).SpeechRecognition ||
-              (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
+            const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognitionAPI) {
               toast.error(isTr ? 'Tarayıcın ses tanıma desteklemiyor. Chrome dene!' : 'Your browser does not support speech recognition. Try Chrome!');
               return;
             }
-            const recognition = new (SpeechRecognitionAPI as new () => SpeechRecognition)();
+            const recognition = new SpeechRecognitionAPI();
             recognition.lang = 'en-US';
             recognition.interimResults = false;
             setIsListening(true);

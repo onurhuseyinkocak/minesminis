@@ -441,28 +441,28 @@ function UsersManager() {
 
             {/* Stats Cards */}
             <div className="stats-grid um-stats-row">
-                <div className="stat-card" style={{ '--stat-color': '#8b5cf6', '--stat-bg': '#f5f3ff' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--accent-purple)', '--stat-bg': 'var(--accent-purple-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Users size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{users.length}</span>
                         <span className="stat-label">Toplam Kullanici</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#f59e0b', '--stat-bg': '#fffbeb' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--warning)', '--stat-bg': 'var(--warning-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Crown size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{premiumCount}</span>
                         <span className="stat-label">Premium Uye</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#ec4899', '--stat-bg': '#fdf2f8' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--accent-pink)', '--stat-bg': 'var(--accent-pink-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Shield size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{adminCount}</span>
                         <span className="stat-label">Admin</span>
                     </div>
                 </div>
-                <div className="stat-card" style={{ '--stat-color': '#10b981', '--stat-bg': '#ecfdf5' } as React.CSSProperties}>
+                <div className="stat-card" style={{ '--stat-color': 'var(--success)', '--stat-bg': 'var(--success-pale)' } as React.CSSProperties}>
                     <div className="stat-icon"><Star size={24} /></div>
                     <div className="stat-info">
                         <span className="stat-value">{teacherCount}</span>
@@ -470,7 +470,7 @@ function UsersManager() {
                     </div>
                 </div>
                 {bannedCount > 0 && (
-                    <div className="stat-card" style={{ '--stat-color': '#ef4444', '--stat-bg': '#fef2f2' } as React.CSSProperties}>
+                    <div className="stat-card" style={{ '--stat-color': 'var(--error)', '--stat-bg': 'var(--error-pale)' } as React.CSSProperties}>
                         <div className="stat-icon"><Ban size={24} /></div>
                         <div className="stat-info">
                             <span className="stat-value">{bannedCount}</span>

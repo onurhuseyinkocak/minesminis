@@ -1,5 +1,10 @@
 import { supabase } from '../config/supabase';
 import { errorLogger } from './errorLogger';
+import { withRetry } from '../utils/retryUtils';
+
+// Columns needed for a full UserProfile — avoids select('*') bandwidth waste
+const USER_PROFILE_COLUMNS =
+  'id, email, role, display_name, avatar_url, bio, grade, subjects, points, badges, streak_days, level, xp, weekly_xp, last_login, is_online, settings, created_at';
 
 export interface UserProfile {
   id: string;
@@ -40,11 +45,13 @@ export const userService = {
     if (!userId) throw new Error('User id is required');
     const userEmail = user.email ?? '';
 
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
+    const { data: existingUser } = await withRetry(() =>
+      supabase
+        .from('users')
+        .select('id')
+        .eq('id', userId)
+        .maybeSingle()
+    );
 
     const userProfile = {
       id: userId,
@@ -115,11 +122,13 @@ export const userService = {
   },
 
   async getUserProfile(uid: string): Promise<UserProfile | null> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', uid)
-      .maybeSingle();
+    const { data, error } = await withRetry(() =>
+      supabase
+        .from('users')
+        .select(USER_PROFILE_COLUMNS)
+        .eq('id', uid)
+        .maybeSingle()
+    );
 
     if (error) {
       errorLogger.log({
@@ -295,7 +304,7 @@ export const userService = {
 
     const { data: achievements, error: fetchError } = await supabase
       .from('achievements')
-      .select('*');
+      .select('id, name');
 
     if (fetchError) {
       errorLogger.log({

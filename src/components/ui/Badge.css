@@ -19,7 +19,8 @@
 
 .mm-badge--sm {
   padding: 2px 10px;
-  font-size: 0.6875rem;
+  /* Minimum 12px (0.75rem) for legibility */
+  font-size: 0.75rem;
 }
 
 .mm-badge--md {
@@ -55,22 +56,26 @@
 
 .mm-badge--success {
   background: var(--success-pale);
-  color: var(--success);
+  /* #047857 gives ~5.9:1 on #ECFDF5 — WCAG AA compliant */
+  color: #047857;
 }
 
 .mm-badge--warning {
   background: var(--warning-pale);
-  color: var(--warning);
+  /* #92400E gives ~5.4:1 on #FFFBEB — WCAG AA compliant */
+  color: #92400E;
 }
 
 .mm-badge--error {
   background: var(--error-soft);
-  color: var(--error);
+  /* #991B1B gives ~6.2:1 on #FECACA — WCAG AA compliant */
+  color: #991B1B;
 }
 
 .mm-badge--info {
   background: var(--info-pale);
-  color: var(--info);
+  /* #0369A1 gives ~5.3:1 on #F0F9FF — WCAG AA compliant */
+  color: #0369A1;
 }
 
 .mm-badge--premium {

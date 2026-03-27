@@ -61,7 +61,7 @@ export function activateBoost(
     expiresAt: new Date(Date.now() + durationMs).toISOString(),
     source,
   };
-  localStorage.setItem(BOOST_KEY, JSON.stringify(boost));
+  try { localStorage.setItem(BOOST_KEY, JSON.stringify(boost)); } catch { /* ignore */ }
 }
 
 /**

@@ -1,4 +1,5 @@
 import { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
+import { logger } from '../utils/logger';
 import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -249,7 +250,8 @@ function Games() {
 
   const filteredGames = useMemo<GameMeta[]>(() => {
     const byTab = activeTab === 'all' ? MINI_GAMES : MINI_GAMES.filter((g) => g.category === activeTab);
-    return ageGroup
+    // Use explicit non-empty check — empty string '' is falsy but means "no age set", not "all ages allowed"
+    return ageGroup !== ''
       ? byTab.filter((g) => isGameAllowedForAge(g.type, ageGroup))
       : byTab;
   }, [activeTab, ageGroup]);
@@ -286,7 +288,7 @@ function Games() {
             totalQuestions: total,
             correctAnswers: score,
           });
-        } catch { /* adaptive engine is non-critical */ }
+        } catch (e) { logger.warn('[Games] Adaptive engine recording failed:', e); }
       };
 
       if (playingGame) {
@@ -525,7 +527,6 @@ function Games() {
                   userLevel={userLevel}
                   bestScore={best}
                   isNew={isNewGame(game)}
-                  isTr={isTr}
                   activeTopic={activeTopic}
                   isRecommended={!!recommendedType && game.type === recommendedType}
                   onPlay={() => handlePlaySingle(game)}

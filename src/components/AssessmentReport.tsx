@@ -81,9 +81,9 @@ function groupAverageMastery(
   );
 }
 
-function formatActivityDate(isoDate: string): string {
+function formatActivityDate(isoDate: string, lang?: string): string {
   const d = new Date(isoDate);
-  return d.toLocaleDateString('en-GB', {
+  return d.toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', {
     day: 'numeric',
     month: 'short',
   });
@@ -285,7 +285,7 @@ function ActivityTimeline({ userId, lang }: { userId: string; lang: 'en' | 'tr' 
               </span>
             )}
             <span className="ar-activity-date">
-              {formatActivityDate(act.timestamp)}
+              {formatActivityDate(act.timestamp, lang)}
             </span>
           </div>
         ))}

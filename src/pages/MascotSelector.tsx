@@ -4,6 +4,7 @@ import { ArrowLeft, Lock, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import {
   ALL_MASCOTS,
   isMascotUnlocked,
@@ -17,6 +18,7 @@ const MascotSelector: React.FC = () => {
   const navigate = useNavigate();
   const { stats } = useGamification();
   const { lang } = useLanguage();
+  usePageTitle('Maskot Seç', 'Choose Mascot');
   const isTr = lang === 'tr';
 
   const userStats = {

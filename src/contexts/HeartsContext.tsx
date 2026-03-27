@@ -189,7 +189,7 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
     if (isChildMode()) return; // no heart loss for young children (age ≤ 7)
 
     setHearts((prev) => {
-      const next = Math.max(1, prev - 1);
+      const next = Math.max(0, prev - 1); // allow reaching 0 — regen handles recovery
       const now = new Date().toISOString();
 
       setLastHeartLostAt((prevTs) => {

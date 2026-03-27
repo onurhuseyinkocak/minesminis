@@ -99,7 +99,7 @@ const w1Lessons: Lesson[] = [
   L('w1', 1, 1, 'Say Hello!', 'Merhaba De!', 'Learn basic greetings', 'vocabulary', 5, [['word-match', 'Match Greetings', 'Match English greetings with Turkish', 3, 10], ['listening-challenge', 'Listen & Tap', 'Listen and tap the correct greeting', 2, 15]], ['hello', 'hi', 'goodbye', 'bye'], 30),
   L('w1', 1, 2, 'What\'s Your Name?', 'Adın Ne?', 'Introduce yourself', 'vocabulary', 5, [['phonics-builder', 'Build Names', 'Drag letters to spell names', 3, 10], ['sentence-scramble', 'My Name Is...', 'Put the words in order', 2, 15]], ['name', 'meet', 'nice', 'friend'], 30),
   L('w1', 1, 3, 'Please & Thank You', 'Lütfen ve Teşekkürler', 'Learn polite words', 'vocabulary', 5, [['word-match', 'Polite Match', 'Match polite words', 3, 10], ['quick-quiz', 'Polite Quiz', 'Choose the polite response', 2, 15]], ['please', 'thank you', 'sorry', 'welcome'], 30),
-  L('w1', 1, 4, 'Morning & Night', 'Sabah ve Gece', 'Time-of-day greetings', 'vocabulary', 5, [['listening-challenge', 'When Do We Say?', 'Match greeting to time of day', 3, 15], ['word-match', 'Day & Night Match', 'Match morning/night words', 2, 10]], ['good morning', 'good night'], 25),
+  L('w1', 1, 4, 'Morning & Night', 'Sabah ve Gece', 'Time-of-day greetings', 'vocabulary', 5, [['listening-challenge', 'When Do We Say?', 'Match greeting to time of day', 3, 15], ['word-match', 'Day & Night Match', 'Match morning/night words', 2, 10]], ['good morning', 'good night', 'hello', 'hi', 'bye'], 30),
   L('w1', 1, 5, 'How Are You?', 'Nasılsın?', 'Ask and answer about feelings', 'grammar', 6, [['sentence-scramble', 'Build a Question', 'Arrange words to ask how are you', 3, 15], ['quick-quiz', 'Feelings Quiz', 'Pick the right feeling', 3, 15]], ['how are you', 'fine', 'happy', 'sad'], 35),
   L('w1', 1, 6, 'Yes or No?', 'Evet mi Hayır mı?', 'Learn yes/no answers', 'grammar', 5, [['quick-quiz', 'Yes/No Quiz', 'Answer yes or no questions', 3, 15], ['listening-challenge', 'Listen & Answer', 'Listen and answer yes or no', 2, 10]], ['yes', 'no', 'fine', 'happy'], 30),
   L('w1', 1, 7, 'Greeting Sounds', 'Selam Sesleri', 'Phonics of greeting words', 'phonics', 5, [['phonics-builder', 'Sound It Out', 'Build greeting words from sounds', 3, 15], ['spelling-bee', 'Spell Hello', 'Spell greeting words', 2, 15]], ['hello', 'please', 'name'], 35),
@@ -202,7 +202,7 @@ const w4Vocab: VocabularyWord[] = [
   { english: 'rainbow', turkish: 'gökkuşağı', emoji: '🌈', category: 'colors', phonetic: '/ˈreɪnboʊ/', exampleSentence: 'Look at the rainbow!' },
   { english: 'color', turkish: 'renk', emoji: '🎨', category: 'colors', phonetic: '/ˈkʌlər/', exampleSentence: 'What color do you like?' },
   { english: 'paint', turkish: 'boya', emoji: '🖌️', category: 'colors', phonetic: '/peɪnt/', exampleSentence: 'Let\'s paint a picture.' },
-  { english: 'diamond', turkish: 'eşkenar dörtgen', emoji: '💎', category: 'shapes', phonetic: '/ˈdaɪmənd/', exampleSentence: 'A diamond has four sides.' },
+  { english: 'diamond', turkish: 'eşkenar dörtgen', emoji: '🔷', category: 'shapes', phonetic: '/ˈdaɪmənd/', exampleSentence: 'A diamond shape has four equal sides.' },
   { english: 'rectangle', turkish: 'dikdörtgen', emoji: '▬', category: 'shapes', phonetic: '/ˈrɛktæŋɡəl/', exampleSentence: 'The door is a rectangle.' },
 ];
 
@@ -245,7 +245,7 @@ const w5Vocab: VocabularyWord[] = [
 
 const w5Lessons: Lesson[] = [
   L('w5', 5, 1, 'Fruits', 'Meyveler', 'Learn fruit words', 'vocabulary', 5, [['word-match', 'Fruit Match', 'Match fruits', 3, 10], ['listening-challenge', 'Fruit Listen', 'Listen and pick the fruit', 2, 15]], ['apple', 'banana', 'strawberry', 'grape'], 30),
-  L('w5', 5, 2, 'Vegetables', 'Sebzeler', 'Learn vegetable words', 'vocabulary', 5, [['word-match', 'Veggie Match', 'Match vegetables', 3, 10], ['phonics-builder', 'Veggie Builder', 'Build veggie words', 2, 15]], ['carrot', 'tomato'], 25),
+  L('w5', 5, 2, 'Vegetables', 'Sebzeler', 'Learn vegetable words', 'vocabulary', 5, [['word-match', 'Veggie Match', 'Match vegetables', 3, 10], ['phonics-builder', 'Veggie Builder', 'Build veggie words', 2, 15]], ['carrot', 'tomato', 'soup', 'rice', 'egg'], 30),
   L('w5', 5, 3, 'Breakfast Time', 'Kahvaltı Zamanı', 'Breakfast food words', 'vocabulary', 5, [['word-match', 'Breakfast Match', 'Match breakfast foods', 3, 10], ['quick-quiz', 'Breakfast Quiz', 'What do you eat?', 2, 15]], ['bread', 'milk', 'egg', 'cheese'], 30),
   L('w5', 5, 4, 'Lunch & Dinner', 'Öğle ve Akşam', 'Meal words', 'vocabulary', 5, [['word-match', 'Meal Match', 'Match meal foods', 3, 10], ['listening-challenge', 'Food Listen', 'Listen and pick the food', 2, 15]], ['chicken', 'rice', 'soup', 'pizza'], 30),
   L('w5', 5, 5, 'Drinks & Treats', 'İçecekler ve Tatlılar', 'Learn drink and dessert words', 'vocabulary', 6, [['word-match', 'Drink Match', 'Match drinks and treats', 3, 15], ['quick-quiz', 'Treat Quiz', 'Pick the yummy treat', 3, 15]], ['water', 'juice', 'cake', 'ice cream'], 35),
@@ -388,7 +388,7 @@ const w9Vocab: VocabularyWord[] = [
   { english: 'letter', turkish: 'harf', emoji: '🔤', category: 'school', phonetic: '/ˈlɛtər/', exampleSentence: 'A is the first letter.' },
   { english: 'paper', turkish: 'kağıt', emoji: '📄', category: 'school', phonetic: '/ˈpeɪpər/', exampleSentence: 'Write on the paper.' },
   { english: 'bag', turkish: 'çanta', emoji: '🎒', category: 'school', phonetic: '/bæɡ/', exampleSentence: 'Put your books in your bag.' },
-  { english: 'color pencil', turkish: 'boya kalemi', emoji: '🖍️', category: 'school', phonetic: '/ˈkʌlər ˈpɛnsəl/', exampleSentence: 'I draw with color pencils.' },
+  { english: 'coloring pencil', turkish: 'boya kalemi', emoji: '🖍️', category: 'school', phonetic: '/ˈkʌlərɪŋ ˈpɛnsəl/', exampleSentence: 'I draw with coloring pencils.' },
 ];
 
 const w9Lessons: Lesson[] = [
@@ -430,7 +430,7 @@ const w10Vocab: VocabularyWord[] = [
 
 const w10Lessons: Lesson[] = [
   L('w10', 10, 1, 'Getting Around', 'Ulaşım', 'Learn transport words', 'vocabulary', 5, [['word-match', 'Transport Match', 'Match transport words', 3, 10], ['listening-challenge', 'Transport Listen', 'Listen and pick transport', 2, 15]], ['car', 'bus', 'train', 'airplane'], 30),
-  L('w10', 10, 2, 'On the Water', 'Suda', 'Water transport', 'vocabulary', 5, [['word-match', 'Water Match', 'Match water transport', 3, 10], ['phonics-builder', 'Boat Builder', 'Build transport words', 2, 15]], ['boat', 'bridge', 'road'], 25),
+  L('w10', 10, 2, 'On the Water', 'Suda', 'Water transport', 'vocabulary', 5, [['word-match', 'Water Match', 'Match water transport', 3, 10], ['phonics-builder', 'Boat Builder', 'Build transport words', 2, 15]], ['boat', 'bridge', 'road', 'walk', 'stop'], 30),
   L('w10', 10, 3, 'Places in Town', 'Şehirdeki Yerler', 'Learn place words', 'vocabulary', 5, [['word-match', 'Place Match', 'Match place words', 3, 10], ['quick-quiz', 'Place Quiz', 'Identify places', 2, 15]], ['park', 'hospital', 'library', 'shop'], 30),
   L('w10', 10, 4, 'More Places', 'Daha Fazla Yer', 'Learn more place words', 'vocabulary', 5, [['word-match', 'More Place Match', 'Match more places', 3, 10], ['listening-challenge', 'Place Listen', 'Listen and identify', 2, 15]], ['market', 'fire station', 'street', 'police'], 30),
   L('w10', 10, 5, 'Go & Stop', 'Git ve Dur', 'Direction and traffic words', 'grammar', 6, [['sentence-scramble', 'Direction Sentences', 'Build direction sentences', 3, 15], ['quick-quiz', 'Traffic Quiz', 'Answer traffic questions', 3, 15]], ['go', 'stop', 'walk', 'left', 'right'], 35),
@@ -506,7 +506,7 @@ const w12Lessons: Lesson[] = [
   L('w12', 12, 1, 'Countries & Flags', 'Ülkeler ve Bayraklar', 'Learn country words', 'vocabulary', 5, [['word-match', 'Country Match', 'Match country words', 3, 10], ['listening-challenge', 'Flag Listen', 'Listen and identify', 2, 15]], ['country', 'flag', 'map', 'world'], 30),
   L('w12', 12, 2, 'Packing Up!', 'Bavul Hazırlığı!', 'Learn travel words', 'vocabulary', 5, [['word-match', 'Travel Match', 'Match travel items', 3, 10], ['phonics-builder', 'Travel Builder', 'Build travel words', 2, 15]], ['passport', 'suitcase', 'airport', 'travel'], 30),
   L('w12', 12, 3, 'Amazing Places', 'Harika Yerler', 'Learn place types', 'vocabulary', 5, [['word-match', 'Place Match', 'Match place types', 3, 10], ['quick-quiz', 'Place Quiz', 'Identify places', 2, 15]], ['beach', 'desert', 'island', 'ocean'], 30),
-  L('w12', 12, 4, 'City & Village', 'Şehir ve Köy', 'Urban and rural words', 'vocabulary', 5, [['word-match', 'Urban Match', 'Match city/village words', 3, 10], ['listening-challenge', 'City Listen', 'Listen and identify', 2, 15]], ['city', 'village', 'language'], 25),
+  L('w12', 12, 4, 'City & Village', 'Şehir ve Köy', 'Urban and rural words', 'vocabulary', 5, [['word-match', 'Urban Match', 'Match city/village words', 3, 10], ['listening-challenge', 'City Listen', 'Listen and identify', 2, 15]], ['city', 'village', 'language', 'music', 'food'], 30),
   L('w12', 12, 5, 'Culture & Fun', 'Kültür ve Eğlence', 'Cultural activity words', 'grammar', 6, [['sentence-scramble', 'Culture Sentences', 'Build culture sentences', 3, 15], ['quick-quiz', 'Culture Quiz', 'Answer culture questions', 3, 15]], ['music', 'dance', 'food', 'friend'], 35),
   L('w12', 12, 6, 'Where Do You Live?', 'Nerede Yaşıyorsun?', 'Describe where you live', 'grammar', 5, [['sentence-scramble', 'Home Sentences', 'Describe your home', 3, 15], ['word-match', 'Home Match', 'Match home descriptions', 2, 10]], ['city', 'village', 'country', 'world'], 30),
   L('w12', 12, 7, 'Travel Phonics', 'Seyahat Sesleri', 'Phonics of travel words', 'phonics', 5, [['phonics-builder', 'Travel Sounds', 'Build travel words', 3, 15], ['spelling-bee', 'Travel Bee', 'Spell travel words', 2, 15]], ['map', 'flag', 'beach'], 35),
@@ -665,7 +665,7 @@ const w16Lessons: Lesson[] = [
     ['sentence-scramble', 'Day Sentences', 'Build sentences about the week', 3, 15],
     ['quick-quiz', 'Day Quiz', 'Answer questions about days', 2, 15],
     ['word-match', 'Time Match', 'Match time expressions', 2, 10],
-  ], ['morning', 'afternoon', 'evening', 'night', 'watch'], 45),
+  ], ['morning', 'afternoon', 'evening', 'night', 'rest'], 45),
   L('w16', 16, 5, 'Months of Year', 'Yılın Ayları', 'Learn monthly routines', 'story', 7, [
     ['story-choices', 'A Year in My Life', 'Read about yearly routines', 4, 20],
     ['word-match', 'Routine Review', 'Match routine words', 2, 10],
@@ -737,7 +737,7 @@ const w18Vocab: VocabularyWord[] = [
   { english: 'excited', turkish: 'heyecanlı', emoji: '🤩', category: 'emotions', phonetic: '/ɪkˈsaɪtɪd/', exampleSentence: 'I am excited about the trip.' },
   { english: 'bored', turkish: 'sıkılmış', emoji: '😑', category: 'emotions', phonetic: '/bɔːrd/', exampleSentence: 'He is bored with nothing to do.' },
   { english: 'tired', turkish: 'yorgun', emoji: '😪', category: 'emotions', phonetic: '/ˈtaɪərd/', exampleSentence: 'I am tired after playing all day.' },
-  { english: 'proud', turkish: 'gururlu', emoji: '😤', category: 'emotions', phonetic: '/praʊd/', exampleSentence: 'I am proud of my drawing.' },
+  { english: 'proud', turkish: 'gururlu', emoji: '🥹', category: 'emotions', phonetic: '/praʊd/', exampleSentence: 'I am proud of my drawing.' },
   { english: 'confused', turkish: 'kafası karışmış', emoji: '😕', category: 'emotions', phonetic: '/kənˈfjuːzd/', exampleSentence: 'He is confused by the question.' },
   { english: 'lonely', turkish: 'yalnız', emoji: '🥺', category: 'emotions', phonetic: '/ˈloʊnli/', exampleSentence: 'She feels lonely without friends.' },
   { english: 'nervous', turkish: 'gergin', emoji: '😰', category: 'emotions', phonetic: '/ˈnɜːrvəs/', exampleSentence: 'I am nervous before the test.' },
@@ -748,7 +748,7 @@ const w18Vocab: VocabularyWord[] = [
   { english: 'thankful', turkish: 'minnettar', emoji: '🙏', category: 'emotions', phonetic: '/ˈθæŋkfəl/', exampleSentence: 'I am thankful for my friends.' },
   { english: 'loved', turkish: 'sevilmiş', emoji: '🥰', category: 'emotions', phonetic: '/lʌvd/', exampleSentence: 'I feel loved by my family.' },
   { english: 'hurt', turkish: 'incinmiş', emoji: '😣', category: 'emotions', phonetic: '/hɜːrt/', exampleSentence: 'I feel hurt when someone is mean.' },
-  { english: 'silly', turkish: 'aptalca', emoji: '🤪', category: 'emotions', phonetic: '/ˈsɪli/', exampleSentence: 'We made silly faces together.' },
+  { english: 'silly', turkish: 'şakacı / saçma', emoji: '🤪', category: 'emotions', phonetic: '/ˈsɪli/', exampleSentence: 'We made silly faces together.' },
 ];
 
 const w18Lessons: Lesson[] = [
@@ -975,43 +975,43 @@ export const WORLDS: World[] = [
     '✈️', '#009688', '#009688', '#80CBC4', 'I want to + verb',
     w12Lessons, w12Vocab),
 
-  buildWorld(14, 'w14', 'Weather World', 'Hava Dünyası', 'Weather & Seasons',
+  buildWorld(13, 'w14', 'Weather World', 'Hava Dünyası', 'Weather & Seasons',
     'Discover weather, seasons, and the world around you!',
     'Hava durumunu, mevsimleri ve çevreni keşfet!',
     '🌦️', '#2196F3', '#2196F3', '#90CAF9', 'It is + weather adjective',
     w14Lessons, w14Vocab),
 
-  buildWorld(15, 'w15', 'My Town', 'Şehrim', 'Community & Places',
+  buildWorld(14, 'w15', 'My Town', 'Şehrim', 'Community & Places',
     'Explore your town and meet community helpers!',
     'Şehrini keşfet ve toplum kahramanlarıyla tanış!',
     '🏙️', '#795548', '#795548', '#BCAAA4', 'Where is the + place?',
     w15Lessons, w15Vocab),
 
-  buildWorld(16, 'w16', 'Time & Routines', 'Zaman ve Rutinler', 'Daily Routines',
+  buildWorld(15, 'w16', 'Time & Routines', 'Zaman ve Rutinler', 'Daily Routines',
     'Learn daily routines and how to talk about time!',
     'Günlük rutinleri ve zamanı konuşmayı öğren!',
     '⏰', '#FF9800', '#FF9800', '#FFCC80', 'I + verb + every + time',
     w16Lessons, w16Vocab),
 
-  buildWorld(17, 'w17', 'The Ocean', 'Okyanus', 'Ocean & Sea Life',
+  buildWorld(16, 'w17', 'The Ocean', 'Okyanus', 'Ocean & Sea Life',
     'Dive into the ocean and meet amazing sea creatures!',
     'Okyanuslara dal ve muhteşem deniz canlılarıyla tanış!',
     '🌊', '#1565C0', '#1565C0', '#64B5F6', 'There is / there are in the ocean',
     w17Lessons, w17Vocab),
 
-  buildWorld(18, 'w18', 'My Feelings', 'Duygularım', 'Emotions & Empathy',
+  buildWorld(17, 'w18', 'My Feelings', 'Duygularım', 'Emotions & Empathy',
     'Understand your feelings and be kind to others!',
     'Duygularını anla ve başkalarına nazik ol!',
     '💛', '#E91E63', '#E91E63', '#F48FB1', 'I feel + emotion',
     w18Lessons, w18Vocab),
 
-  buildWorld(19, 'w19', 'Science & Nature', 'Bilim ve Doğa', 'Science & Nature',
+  buildWorld(18, 'w19', 'Science & Nature', 'Bilim ve Doğa', 'Science & Nature',
     'Explore plants, insects, rocks, and the wonders of nature!',
     'Bitkileri, böcekleri, kayaları ve doğanın harikalarını keşfet!',
     '🔬', '#558B2F', '#558B2F', '#AED581', 'Questions with How/Why in nature',
     w19Lessons, w19Vocab),
 
-  buildWorld(20, 'w20', 'Let\'s Celebrate!', 'Kutlayalım!', 'Celebrations & Holidays',
+  buildWorld(19, 'w20', 'Let\'s Celebrate!', 'Kutlayalım!', 'Celebrations & Holidays',
     'Party, sing, dance, and celebrate every achievement!',
     'Parti yap, şarkı söyle, dans et ve her başarını kutla!',
     '🎉', '#F9A825', '#F9A825', '#FFD54F', 'Let\'s + verb to celebrate',

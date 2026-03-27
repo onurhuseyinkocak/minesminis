@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
@@ -74,6 +74,13 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
   const [slideDir] = useState<1 | -1>(1);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+    };
+  }, []);
+
   const currentQuestion = questions[currentIndex];
 
   const resetForNext = useCallback(() => {
@@ -106,10 +113,28 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
     if (phase !== 'showing') return;
     setPhase('animating');
 
-    // Highlight which tile gets removed / changed
+    // Highlight which phoneme tile gets removed during 'delete' manipulations.
+    // Strategy: find the first phoneme in targetWordPhonemes that does NOT appear
+    // in the correctAnswer string — that is the deleted sound.
     if (currentQuestion.type === 'delete') {
-      // Find first phoneme index that matches the instruction (simple heuristic: always index 0 for now)
-      setDeletedIndex(0);
+      const phonemes = currentQuestion.targetWordPhonemes;
+      const answer = currentQuestion.correctAnswer.toLowerCase();
+      // Build a "remaining" copy of the answer so we can account for duplicates
+      let remaining = answer;
+      let foundIdx = 0; // fallback to first if detection fails
+      for (let i = 0; i < phonemes.length; i++) {
+        const p = phonemes[i].toLowerCase();
+        const pos = remaining.indexOf(p);
+        if (pos === -1) {
+          // This phoneme is absent from the answer → it was deleted
+          foundIdx = i;
+          break;
+        } else {
+          // Consume it so duplicates don't re-match
+          remaining = remaining.slice(0, pos) + remaining.slice(pos + p.length);
+        }
+      }
+      setDeletedIndex(foundIdx);
     }
 
     SFX.click();
@@ -281,7 +306,9 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              {showFeedback === 'correct' ? t('games.amazing') : t('games.tryAgainYouGotThis')}
+              {showFeedback === 'correct'
+                ? t('games.amazing')
+                : `${t('games.correctAnswerWas') || 'The answer was'}: "${currentQuestion.correctAnswer}"`}
             </motion.div>
           )}
         </AnimatePresence>

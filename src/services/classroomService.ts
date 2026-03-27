@@ -51,7 +51,11 @@ function loadClassrooms(teacherId: string): Classroom[] {
 }
 
 function saveClassrooms(teacherId: string, classrooms: Classroom[]): void {
-  localStorage.setItem(getStorageKey(teacherId), JSON.stringify(classrooms));
+  try {
+    localStorage.setItem(getStorageKey(teacherId), JSON.stringify(classrooms));
+  } catch {
+    // QuotaExceededError or storage unavailable — ignore
+  }
 }
 
 /** Load ALL classrooms across all teachers (for join-code lookup) */
@@ -175,17 +179,19 @@ export function joinClassroom(
   }
 
   // Store membership on the student side
-  localStorage.setItem(
-    STUDENT_CLASSROOM_KEY,
-    JSON.stringify({
-      classroomId: classroom.id,
-      classroomName: classroom.name,
-      joinCode: classroom.joinCode,
-      teacherId: classroom.teacherId,
-      studentId: student.id,
-      joinedAt: new Date().toISOString(),
-    }),
-  );
+  try {
+    localStorage.setItem(
+      STUDENT_CLASSROOM_KEY,
+      JSON.stringify({
+        classroomId: classroom.id,
+        classroomName: classroom.name,
+        joinCode: classroom.joinCode,
+        teacherId: classroom.teacherId,
+        studentId: student.id,
+        joinedAt: new Date().toISOString(),
+      }),
+    );
+  } catch { /* QuotaExceededError — ignore */ }
 
   // Sync to Supabase (fire-and-forget)
   syncJoinClassroom(classroom.joinCode, student.id);

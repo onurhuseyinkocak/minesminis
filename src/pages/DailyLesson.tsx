@@ -18,6 +18,7 @@ import { X, ChevronRight, ChevronLeft, Mic, MicOff, Volume2, Check, RotateCcw, L
 
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { useGamification } from '../contexts/GamificationContext';
 import { speak } from '../services/ttsService';
 import { SFX } from '../data/soundLibrary';
@@ -351,7 +352,7 @@ function PhaseSeeStep({
   // Auto-play sentence TTS when card loads
   useEffect(() => {
     speak(sentence.en);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: trigger on word change only; sentence.en changes in sync with word.word and would double-fire
   }, [word.word]);
 
   return (
@@ -516,7 +517,7 @@ function PhasePlay({
   if (allDone) {
     return (
       <div className="dl-phase-complete">
-        <div className="dl-phase-complete__icon"><Check size={40} strokeWidth={3} color="#22C55E" /></div>
+        <div className="dl-phase-complete__icon"><Check size={40} strokeWidth={3} color="var(--success)" /></div>
         <p className="dl-phase-complete__msg">
           {lang === 'tr' ? 'Tüm eşleşmeleri buldun!' : 'All matched!'}
         </p>
@@ -610,7 +611,7 @@ function PhaseSpeak({
 
   useEffect(() => {
     speakCurrent();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: trigger on index change only; speakCurrent references currentWord.word which also changes with index
   }, [index]);
 
   const startListening = useCallback(() => {
@@ -870,10 +871,16 @@ function PhaseReview({
     setFinalScore(0);
   }, [allWords, lang]);
 
+  // Speak the prompt word in Review — phonics: hear the word, not just read it
+  // Must be declared before any conditional return (Rules of Hooks)
+  const handleHearPrompt = useCallback(() => {
+    speak(q?.promptWord ?? '');
+  }, [q?.promptWord]);
+
   if (allReviewDone) {
     return (
       <div className="dl-phase-complete">
-        <div className="dl-phase-complete__icon"><Check size={40} strokeWidth={3} color="#7C3AED" /></div>
+        <div className="dl-phase-complete__icon"><Check size={40} strokeWidth={3} color="var(--accent-purple)" /></div>
         <p className="dl-phase-complete__msg">
           {lang === 'tr' ? `${finalScore}% doğru!` : `${finalScore}% correct!`}
         </p>
@@ -892,11 +899,6 @@ function PhaseReview({
   }
 
   const progress = Math.round((qIndex / questions.length) * 100);
-
-  // Speak the prompt word in Review — phonics: hear the word, not just read it
-  const handleHearPrompt = useCallback(() => {
-    speak(q.promptWord);
-  }, [q.promptWord]);
 
   return (
     <>
@@ -1165,7 +1167,8 @@ function levenshtein(a: string, b: string): number {
 export default function DailyLesson() {
   const { user } = useAuth();
   const { lang } = useLanguage();
-  const { addXP, trackActivity, stats } = useGamification();
+  usePageTitle('Günlük Ders', 'Daily Lesson');
+  const { addXP, trackActivity, stats, checkStreak } = useGamification();
   const navigate = useNavigate();
 
   const userId = user?.uid || 'guest';
@@ -1258,18 +1261,29 @@ export default function DailyLesson() {
   }, []);
 
   // ── Phase 3/4/5 complete callbacks ────────────────────────────────────────
+  // Each phase gets its own stable callback so inline JSX does not create a new
+  // function reference on every render, which would remount child components.
 
-  const handlePhaseComplete = useCallback(
-    (phaseNum: number) => (score: number) => {
-      scoresRef.current[phaseNum] = score;
-      markPhaseComplete(phaseNum);
-      // Store score as progress (phases 3=100 done, 4=100 done, 5=score%)
-      setPhaseProgress((prev) => ({ ...prev, [phaseNum]: score }));
-      // Natural progression
-      setPhase(phaseNum + 1);
-    },
-    [markPhaseComplete]
-  );
+  const handlePhase3Complete = useCallback((score: number) => {
+    scoresRef.current[3] = score;
+    markPhaseComplete(3);
+    setPhaseProgress((prev) => ({ ...prev, 3: score }));
+    setPhase(4);
+  }, [markPhaseComplete]);
+
+  const handlePhase4Complete = useCallback((score: number) => {
+    scoresRef.current[4] = score;
+    markPhaseComplete(4);
+    setPhaseProgress((prev) => ({ ...prev, 4: score }));
+    setPhase(5);
+  }, [markPhaseComplete]);
+
+  const handlePhase5Complete = useCallback((score: number) => {
+    scoresRef.current[5] = score;
+    markPhaseComplete(5);
+    setPhaseProgress((prev) => ({ ...prev, 5: score }));
+    setPhase(6);
+  }, [markPhaseComplete]);
 
   // ── Phase 6 (Story) complete ──────────────────────────────────────────────
 
@@ -1293,8 +1307,10 @@ export default function DailyLesson() {
       const xpEarned = 50 + Math.round((avgScore / 100) * 50);
       addXP(xpEarned, 'daily_lesson_complete').catch(() => {});
       trackActivity('daily_lesson', { score: avgScore, words: plan.newWords.length }).catch(() => {});
+      // Streak: lesson completion counts as today's activity (idempotent — safe to call even if already updated)
+      checkStreak().catch(() => {});
     }
-  }, [completedPhases, celebrated, userId, plan, addXP, trackActivity]);
+  }, [completedPhases, celebrated, userId, plan, addXP, trackActivity, checkStreak]);
 
   const currentPhaseInfo = PHASES[Math.min(phase, TOTAL_PHASES) - 1];
 
@@ -1449,7 +1465,7 @@ export default function DailyLesson() {
           <PhasePlay
             words={plan.newWords}
             lang={lang}
-            onComplete={handlePhaseComplete(3)}
+            onComplete={handlePhase3Complete}
           />
         )}
 
@@ -1458,7 +1474,7 @@ export default function DailyLesson() {
           <PhaseSpeak
             words={plan.newWords.slice(0, 3)}
             lang={lang}
-            onComplete={handlePhaseComplete(4)}
+            onComplete={handlePhase4Complete}
           />
         )}
 
@@ -1476,7 +1492,7 @@ export default function DailyLesson() {
               ),
             ]}
             lang={lang}
-            onComplete={handlePhaseComplete(5)}
+            onComplete={handlePhase5Complete}
           />
         )}
 

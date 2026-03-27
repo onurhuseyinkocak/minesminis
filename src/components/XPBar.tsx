@@ -5,7 +5,7 @@
 
 import React from 'react';
 import './XPBar.css';
-import { useGamification } from '../contexts/GamificationContext';
+import { useGamification, getTotalXPForLevel } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Flame, Star } from 'lucide-react';
 
@@ -18,7 +18,9 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     const { lang } = useLanguage();
 
     const progress = getXPProgress();
-    const xpNeeded = getXPForNextLevel();
+    const xpNeeded = getXPForNextLevel(); // XP span of the current level
+    const levelStartXP = getTotalXPForLevel(stats.level); // cumulative XP at start of current level
+    const xpIntoLevel = Math.max(0, stats.xp - levelStartXP); // XP earned within this level
     const streakBonus = getStreakBonus();
     const remaining = Math.max(0, 100 - progress);
 
@@ -50,7 +52,7 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                     <span className="level-number">{stats.level}</span>
                 </div>
                 <div className="xp-info">
-                    <span className="xp-current">{stats.xp} XP</span>
+                    <span className="xp-current">{xpIntoLevel} XP</span>
                     <span className="xp-divider">/</span>
                     <span className="xp-needed">{xpNeeded} XP</span>
                 </div>

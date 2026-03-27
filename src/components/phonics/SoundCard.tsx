@@ -29,12 +29,10 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
   };
 
   const handleSayIt = () => {
-    const SpeechRecognitionAPI =
-      (window as unknown as Record<string, unknown>).SpeechRecognition ||
-      (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (SpeechRecognitionAPI) {
-      const recognition = new (SpeechRecognitionAPI as new () => SpeechRecognition)();
+      const recognition = new SpeechRecognitionAPI();
       recognition.lang = 'en-US';
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;

@@ -325,7 +325,7 @@ function SummaryCards({
         <div className="pd-stat-icon pd-stat-icon--xp">
           <IconZap size={18} />
         </div>
-        <div className="pd-stat-value">{weeklyXp.toLocaleString()}</div>
+        <div className="pd-stat-value">{weeklyXp.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US')}</div>
         <div className="pd-stat-label">
           {lang === 'tr' ? 'Toplam XP kazanıldı' : 'Total XP earned'}
         </div>
@@ -362,7 +362,7 @@ function StreakCalendar({
           <IconCalendar size={16} />
           {lang === 'tr' ? 'Aktivite — son 30 gün' : 'Activity — last 30 days'}
         </h2>
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)' }}>
+        <span className="pd-card-meta">
           {lang === 'tr'
             ? `${activeDays} / 30 gün aktif`
             : `${activeDays} / 30 days active`}
@@ -481,7 +481,7 @@ function WordMasteryChart({
                   style={{ width: `${total > 0 ? (row.count / total) * 100 : 0}%` }}
                 />
               </div>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'var(--text-muted)' }}>
+              <span className="pd-mastery-desc">
                 {row.desc}
               </span>
             </div>
@@ -600,7 +600,7 @@ function PhonicsProgress({
           <IconGrid size={16} />
           {lang === 'tr' ? 'Fonik İlerleme' : 'Phonics Progress'}
         </h2>
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)' }}>
+        <span className="pd-card-meta">
           {lang === 'tr'
             ? `${mastered} öğrenildi · ${learning} devam ediyor · toplam ${ALL_SOUNDS.length} ses`
             : `${mastered} mastered · ${learning} in progress · ${ALL_SOUNDS.length} total sounds`}
@@ -725,7 +725,7 @@ function WeeklyInsight({ data, lang }: { data: DashboardData; lang: string }) {
         <div className="pd-insight">
           <p className="pd-insight-recommendation">{weeklyReport.recommendation}</p>
           {firstInsight && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 12px', lineHeight: 1.6 }}>
+            <p className="pd-insight-body">
               {lang === 'tr' ? firstInsight.descriptionTr : firstInsight.description}
             </p>
           )}
@@ -787,7 +787,7 @@ function RecentSupabaseActivity({
           {lang === 'tr' ? 'Cihazlar Arası İlerleme' : 'Cross-Device Progress'}
         </h2>
         {cloudStats && (
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)' }}>
+          <span className="pd-card-meta">
             {lang === 'tr' ? `Seviye ${cloudStats.level} · ${cloudStats.xp} XP` : `Level ${cloudStats.level} · ${cloudStats.xp} XP`}
           </span>
         )}
@@ -795,19 +795,19 @@ function RecentSupabaseActivity({
       <div className="pd-card-body">
         {/* Quick stats row */}
         {weekLogs.length > 0 && (
-          <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-secondary)', borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-primary)' }}>{activeDaysThisWeek}</div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{lang === 'tr' ? 'Aktif gün' : 'Active days'}</div>
+          <div className="pd-cloud-stats-row">
+            <div className="pd-cloud-stat">
+              <div className="pd-cloud-stat-value">{activeDaysThisWeek}</div>
+              <div className="pd-cloud-stat-label">{lang === 'tr' ? 'Aktif gün' : 'Active days'}</div>
             </div>
-            <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-secondary)', borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--primary)' }}>{totalWeekXP}</div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{lang === 'tr' ? 'XP bu hafta' : 'XP this week'}</div>
+            <div className="pd-cloud-stat">
+              <div className="pd-cloud-stat-value pd-cloud-stat-value--primary">{totalWeekXP}</div>
+              <div className="pd-cloud-stat-label">{lang === 'tr' ? 'XP bu hafta' : 'XP this week'}</div>
             </div>
             {cloudStats && (
-              <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-secondary)', borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--success, #10b981)' }}>{cloudStats.wordsLearned}</div>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{lang === 'tr' ? 'Kelime' : 'Words'}</div>
+              <div className="pd-cloud-stat">
+                <div className="pd-cloud-stat-value pd-cloud-stat-value--success">{cloudStats.wordsLearned}</div>
+                <div className="pd-cloud-stat-label">{lang === 'tr' ? 'Kelime' : 'Words'}</div>
               </div>
             )}
           </div>
@@ -815,35 +815,24 @@ function RecentSupabaseActivity({
 
         {/* Recent activity list */}
         {logs.length === 0 ? (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
+          <p className="pd-cloud-empty">
             {lang === 'tr' ? 'Henüz bulut aktivitesi yok.' : 'No cloud activity recorded yet.'}
           </p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          <div className="pd-cloud-activity-list">
             {logs.slice(0, 8).map((a) => (
-              <div
-                key={a.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '8px 0',
-                  borderBottom: '1px solid var(--border-light, #f3f4f6)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: getActivityColor(a.type), flexShrink: 0 }} />
+              <div key={a.id} className="pd-cloud-activity-item">
+                <div className="pd-cloud-activity-left">
+                  <div className="pd-cloud-activity-dot" style={{ background: getActivityColor(a.type) }} />
                   <div>
-                    <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>{a.title}</div>
-                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    <div className="pd-cloud-activity-title">{a.title}</div>
+                    <div className="pd-cloud-activity-meta">
                       {new Date(a.created_at).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                       {a.accuracy != null && ` · ${Math.round(a.accuracy)}% ${lang === 'tr' ? 'doğru' : 'correct'}`}
                     </div>
                   </div>
                 </div>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.82rem', color: 'var(--primary)', whiteSpace: 'nowrap', paddingLeft: 8 }}>
-                  +{a.xp_earned} XP
-                </span>
+                <span className="pd-cloud-activity-xp">+{a.xp_earned} XP</span>
               </div>
             ))}
           </div>
@@ -957,7 +946,7 @@ function WeeklyActivityChart({
             );
           })}
         </div>
-        <p className="pd-mastery-total" style={{ marginTop: 12 }}>
+        <p className="pd-mastery-total">
           {lang === 'tr'
             ? `Toplam bu hafta: ${bars.reduce((s, b) => s + b.minutes, 0)} dk`
             : `Total this week: ${bars.reduce((s, b) => s + b.minutes, 0)} min`}
@@ -1037,7 +1026,7 @@ function WordsLearnedThisWeek({
             : `This week: ${thisWeekWords.length} new words`}
         </p>
         {thisWeekWords.length === 0 ? (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
+          <p className="pd-cloud-empty">
             {lang === 'tr' ? 'Bu hafta henüz yeni kelime yok.' : 'No new words this week yet.'}
           </p>
         ) : (
@@ -1112,10 +1101,10 @@ function PronunciationAccuracy({ lang }: { lang: string }) {
             <div className="pd-bar-track" style={{ marginTop: 10 }}>
               <div
                 className="pd-bar-fill"
-                style={{ width: `${score}%`, background: color, transition: 'width 600ms ease' }}
+                style={{ width: `${score}%`, background: color }}
               />
             </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
+            <p className="pd-mastery-total">
               {score < 40
                 ? lang === 'tr' ? 'Daha fazla pratik gerekiyor' : 'Needs more practice'
                 : score < 70

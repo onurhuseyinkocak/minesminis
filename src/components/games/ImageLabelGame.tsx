@@ -1,7 +1,7 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -51,6 +51,13 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+    };
+  }, []);
+
   const currentQuestion = questions[currentIndex];
 
   const advanceQuestion = useCallback(
@@ -87,17 +94,17 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
         advanceQuestion(score + 1);
         setScore((prev) => prev + 1);
       } else {
-        setOptionStates({ [option]: 'wrong' });
+        setOptionStates({ [option]: 'wrong', [currentQuestion.correctLabel]: 'correct' });
         setShowFeedback('wrong');
         SFX.wrong();
         loseHeart();
         onWrongAnswer?.();
-        // Allow retry after shake
+        // Allow retry after shake — keep correct highlighted briefly for learning
         setTimeout(() => {
           setAnswered(false);
           setOptionStates({});
           setShowFeedback(null);
-        }, 900);
+        }, 1200);
       }
     },
     [answered, currentQuestion, score, advanceQuestion, loseHeart, onWrongAnswer],
@@ -125,6 +132,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
 
     return (
       <div className="ilg">
+        {pct >= 90 && <ConfettiRain />}
         <Card variant="elevated" padding="xl" className="ilg__completion">
           <motion.div
             className="ilg__completion-content"

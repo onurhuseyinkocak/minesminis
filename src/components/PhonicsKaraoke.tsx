@@ -103,10 +103,17 @@ export default function PhonicsKaraoke({ lyrics, onComplete }: PhonicsKaraokePro
   // Total duration = last line's endMs
   const totalMs = lyrics.lines[lyrics.lines.length - 1]?.endMs ?? 60000;
 
-  // Current line index
-  const currentLineIdx = lyrics.lines.findIndex(
+  // Current line index — when between lines (gap), show the most recently passed line
+  const exactLineIdx = lyrics.lines.findIndex(
     (line) => elapsedMs >= line.startMs && elapsedMs < line.endMs,
   );
+  const currentLineIdx = exactLineIdx !== -1
+    ? exactLineIdx
+    : // Find the last line whose endMs has passed (gap between lines — stay on last)
+      lyrics.lines.reduce((best, line, idx) => {
+        if (elapsedMs >= line.startMs && elapsedMs >= line.endMs) return idx;
+        return best;
+      }, -1);
 
   // ── Playback engine ──
   const stopInterval = useCallback(() => {
@@ -139,7 +146,7 @@ export default function PhonicsKaraoke({ lyrics, onComplete }: PhonicsKaraokePro
     }
     return stopInterval;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [speed]);
+  }, [speed, startInterval, stopInterval]);
 
   // Cleanup on unmount
   useEffect(() => () => stopInterval(), [stopInterval]);
@@ -263,7 +270,7 @@ export default function PhonicsKaraoke({ lyrics, onComplete }: PhonicsKaraokePro
             );
           })}
 
-          {currentLineIdx === -1 && elapsedMs === 0 && (
+          {currentLineIdx === -1 && elapsedMs === 0 && !isPlaying && (
             <p style={{ textAlign: 'center', color: 'var(--text-muted, #9ca3af)', margin: 0 }}>
               Press play to start singing!
             </p>
@@ -282,23 +289,24 @@ export default function PhonicsKaraoke({ lyrics, onComplete }: PhonicsKaraokePro
         {/* Replay */}
         <button
           type="button"
-          className="karaoke-btn secondary"
+          className={`karaoke-btn ${isComplete ? 'primary' : 'secondary'}`}
           onClick={handleReplay}
           aria-label="Replay song"
         >
-          <RotateCcw size={18} />
+          <RotateCcw size={isComplete ? 22 : 18} />
         </button>
 
-        {/* Play / Pause */}
-        <button
-          type="button"
-          className="karaoke-btn primary"
-          onClick={handlePlayPause}
-          disabled={isComplete}
-          aria-label={isPlaying ? 'Pause' : 'Play'}
-        >
-          {isPlaying ? <Pause size={22} /> : <Play size={22} />}
-        </button>
+        {/* Play / Pause — hidden when complete, replay takes over */}
+        {!isComplete && (
+          <button
+            type="button"
+            className="karaoke-btn primary"
+            onClick={handlePlayPause}
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+          >
+            {isPlaying ? <Pause size={22} /> : <Play size={22} />}
+          </button>
+        )}
 
         {/* Speed control */}
         <div className="karaoke-speed-group" role="group" aria-label="Playback speed">

@@ -69,7 +69,7 @@ export function getChildren(parentId: string): ChildProfile[] {
   return loadChildren(parentId);
 }
 
-/** Add a new child profile. Throws if max (4) reached. */
+/** Add a new child profile. Throws if max (4) reached or validation fails. */
 export function addChild(
   parentId: string,
   child: Partial<ChildProfile>,
@@ -79,9 +79,24 @@ export function addChild(
     throw new Error(`Maximum of ${MAX_CHILDREN} child profiles allowed.`);
   }
 
+  // Validate child name
+  const name = (child.name ?? '').trim();
+  if (!name || name.length < 1) {
+    throw new Error('Child name is required.');
+  }
+  if (name.length > 30) {
+    throw new Error('Child name must be 30 characters or fewer.');
+  }
+
+  // Validate age_group is one of the allowed values
+  const validAgeGroups = AGE_GROUPS;
+  if (child.age_group && !validAgeGroups.includes(child.age_group)) {
+    throw new Error(`Age group must be one of: ${validAgeGroups.join(', ')}.`);
+  }
+
   const newChild: ChildProfile = {
     id: generateId(),
-    name: child.name || 'Learner',
+    name: name || 'Learner',
     age_group: child.age_group || '6-8',
     avatar: child.avatar || '🦊',
     parent_id: parentId,

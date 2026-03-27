@@ -89,6 +89,7 @@
 
 .mm-tabs--pill .mm-tab:hover:not(.mm-tab--active) {
   color: var(--primary);
+  background-color: rgba(255, 107, 53, 0.08); /* color-mix fallback */
   background-color: color-mix(in srgb, var(--primary) 8%, transparent);
 }
 

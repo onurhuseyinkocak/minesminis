@@ -16,7 +16,7 @@
 .gml-topic-badge {
   background: var(--accent-purple);
   color: white;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -59,7 +59,7 @@
   border-radius: 0 8px 8px 0;
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
-  color: #7c3c21;
+  color: var(--primary-dark);
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 600;
@@ -81,6 +81,7 @@
   align-items: center;
   gap: 6px;
   transition: all 0.15s ease;
+  min-height: 44px;
 }
 
 .gml-btn--primary {
@@ -95,7 +96,7 @@
 
 .gml-ex-counter {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-muted);
   font-family: var(--font-display);
   font-weight: 700;
   margin: 0;
@@ -140,11 +141,11 @@
 
 .gml-example-tr {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-family: var(--font-display);
   margin: 0;
   padding-top: 4px;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid var(--border);
 }
 
 .gml-nav {
@@ -191,15 +192,15 @@
 }
 
 .gml-option--correct {
-  border-color: #10b981;
-  background: #d1fae5;
-  color: #065f46;
+  border-color: var(--success);
+  background: var(--success-pale);
+  color: var(--mimi-dark);
 }
 
 .gml-option--wrong {
-  border-color: #ef4444;
-  background: #fee2e2;
-  color: #991b1b;
+  border-color: var(--error);
+  background: var(--error-pale);
+  color: var(--accent-red-dark);
 }
 
 .gml-option-icon {
@@ -208,7 +209,7 @@
 }
 
 .gml-explanation {
-  background: #f9fafb;
+  background: var(--bg-muted);
   border-radius: var(--radius-md);
   padding: 14px;
   width: 100%;
@@ -220,7 +221,7 @@
 
 .gml-explanation p {
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--text-body);
   font-family: var(--font-display);
   margin: 0;
 }
@@ -245,7 +246,85 @@
 
 .gml-done p {
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-family: var(--font-display);
   margin: 0;
+}
+
+/* ── Exercise step indicator dots ────────────────────────────────────────────── */
+.gml-step-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0 8px;
+}
+
+.gml-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--border-light);
+  transition: background 0.25s ease, transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.gml-step-dot--active {
+  background: var(--accent-purple);
+  transform: scale(1.35);
+}
+
+.gml-step-dot--done {
+  background: var(--success);
+}
+
+/* ── Improve example card text contrast ──────────────────────────────────────── */
+.gml-example-card:focus-visible {
+  outline: 3px solid var(--accent-purple);
+  outline-offset: 2px;
+}
+
+.gml-option:focus-visible {
+  outline: 3px solid var(--accent-purple);
+  outline-offset: 2px;
+}
+
+/* ── Score display on done screen ────────────────────────────────────────────── */
+.gml-score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-purple-pale);
+  color: var(--accent-purple-dark);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 6px 18px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--accent-purple-light);
+}
+
+/* -- Dark mode -------------------------------------------------------- */
+[data-theme="dark"] .gml-example-card {
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .gml-option {
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .gml-option--correct {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--success);
+  color: var(--success-light);
+}
+
+[data-theme="dark"] .gml-option--wrong {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: var(--error);
+  color: var(--error-light);
+}
+
+[data-theme="dark"] .gml-turkish-note {
+  color: var(--primary-light);
 }

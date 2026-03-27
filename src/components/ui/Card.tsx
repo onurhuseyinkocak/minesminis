@@ -1,4 +1,4 @@
-import React, { forwardRef, HTMLAttributes, ReactNode } from 'react';
+import { forwardRef, HTMLAttributes, ReactNode } from 'react';
 import './Card.css';
 
 export type CardVariant = 'default' | 'elevated' | 'outlined' | 'interactive';
@@ -7,6 +7,7 @@ export type CardPadding = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant;
   padding?: CardPadding;
+  selected?: boolean;
   children?: ReactNode;
   className?: string;
 }
@@ -16,6 +17,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     {
       variant = 'default',
       padding = 'md',
+      selected = false,
       children,
       className = '',
       onClick,
@@ -30,6 +32,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       'mm-card',
       `mm-card--${resolvedVariant}`,
       `mm-card--padding-${padding}`,
+      selected && 'mm-card--selected',
       className,
     ]
       .filter(Boolean)
@@ -47,7 +50,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
             ? (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
+                  e.currentTarget.click();
                 }
               }
             : undefined

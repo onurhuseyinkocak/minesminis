@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Trophy, Star, Check, CheckCircle2, ArrowRight, RotateCcw } from 'lucide-react';
+import { Sparkles, Trophy, Star, Check, CheckCircle2, XCircle, ArrowRight, RotateCcw } from 'lucide-react';
 import { Badge, ProgressBar, FloatingEmoji } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
@@ -9,6 +9,7 @@ import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
 import { announceToScreenReader } from '../../utils/accessibility';
 import AnswerFeedbackPanel from '../AnswerFeedbackPanel';
+import { shuffleArray } from '../../utils/arrayUtils';
 import './WordMatch.css';
 
 interface WordItem {
@@ -33,14 +34,6 @@ interface MatchPair {
   matched: boolean;
 }
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const s = [...arr];
-  for (let i = s.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [s[i], s[j]] = [s[j], s[i]];
-  }
-  return s;
-}
 
 export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
@@ -65,7 +58,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   const [wrongPairIds, setWrongPairIds] = useState<{ l: number; r: number } | null>(null);
 
   const [score, setScore] = useState(0);
-  const [totalAttempted, setTotalAttempted] = useState(0);
+  const [_totalAttempted, setTotalAttempted] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [floatingEmoji, setFloatingEmoji] = useState<string | null>(null);
 
@@ -160,7 +153,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       onWrongAnswer?.();
       if (hearts - 1 <= 0) setShowNoHearts(true);
     }
-  }, [score, leftItems, round, totalRounds, totalWords, onComplete, onXpEarned, onWrongAnswer, initRound, loseHeart, hearts, t]);
+  }, [score, leftItems, round, totalRounds, onXpEarned, onWrongAnswer, initRound, loseHeart, hearts, t]);
 
   // ── Click handlers ───────────────────────────────────────────────────────
   const handleLeftClick = (id: number) => {
@@ -196,15 +189,19 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   };
 
   // ── Guard ────────────────────────────────────────────────────────────────
-  if (words.length < 2) {
+  // Need at least roundSize words for a meaningful matching round
+  if (words.length < roundSize) {
     return <div className="word-match__empty">{t('games.noWordsToReview')}</div>;
   }
 
   // ── Results screen ───────────────────────────────────────────────────────
   if (completed) {
-    const pct = totalAttempted > 0 ? Math.round((score / totalWords) * 100) : 0;
-    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
-    const isPerfect = pct >= 90;
+    // pct is based on correct matches out of total possible — not attempts
+    // Stars: 3 = all correct (100%), 2 = ≥60%, 1 = anything else
+    // Using totalWords as denominator (not totalAttempted) — score measures correct pairs
+    const pct = totalWords > 0 ? Math.round((score / totalWords) * 100) : 0;
+    const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
+    const isPerfect = pct === 100;
 
     return (
       <div className="word-match word-match--results">
@@ -252,10 +249,10 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             transition={{ type: 'spring', stiffness: 400, damping: 12, delay: 0.2 }}
           >
             {isPerfect
-              ? <Trophy size={64} color="#E8A317" />
+              ? <Trophy size={64} color="var(--warning)" />
               : pct >= 60
-              ? <Star size={64} fill="#E8A317" color="#E8A317" />
-              : <Check size={64} color="#22C55E" />}
+              ? <Star size={64} fill="var(--warning)" color="var(--warning)" />
+              : <Check size={64} color="var(--success)" />}
           </motion.div>
 
           {/* Title */}
@@ -327,6 +324,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
               type="button"
               className="word-match__results-btn word-match__results-btn--primary"
               onClick={handlePlayAgain}
+              autoFocus
             >
               <RotateCcw size={16} /> {t('games.playAgain')}
             </button>
@@ -373,15 +371,18 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   ].filter(Boolean).join(' ')}
                   onClick={() => handleLeftClick(item.id)}
                   disabled={item.matched || !!matchState}
-                  aria-label={`English: ${item.english}${item.matched ? ' (matched)' : ''}`}
+                  aria-label={`English: ${item.english}${item.matched ? ' (matched)' : ''}${isWrong ? ' (wrong match)' : ''}`}
                   aria-pressed={isSelected}
                   layout
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
+                  {/* Icon indicates state — not color alone (color-blind accessibility) */}
                   {item.matched
                     ? <div className="word-match__card-check"><CheckCircle2 size={22} /></div>
+                    : isWrong
+                    ? <div className="word-match__card-check"><XCircle size={22} /></div>
                     : <div className="word-match__card-avatar">{item.english.charAt(0).toUpperCase()}</div>
                   }
                   <span className="word-match__card-text">{item.english}</span>
@@ -411,15 +412,18 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                   ].filter(Boolean).join(' ')}
                   onClick={() => handleRightClick(item.id)}
                   disabled={item.matched || !!matchState}
-                  aria-label={`Turkish: ${item.turkish}${item.matched ? ' (matched)' : ''}`}
+                  aria-label={`Turkish: ${item.turkish}${item.matched ? ' (matched)' : ''}${isWrong ? ' (wrong match)' : ''}`}
                   aria-pressed={isSelected}
                   layout
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
+                  {/* Icon indicates state — not color alone (color-blind accessibility) */}
                   {item.matched
                     ? <div className="word-match__card-check"><CheckCircle2 size={22} /></div>
+                    : isWrong
+                    ? <div className="word-match__card-check"><XCircle size={22} /></div>
                     : <div className="word-match__card-emoji">{item.displayEmoji || item.turkish.charAt(0)}</div>
                   }
                   <span className="word-match__card-text">{item.turkish}</span>

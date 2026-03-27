@@ -13,6 +13,13 @@ import {
 } from '../data/phonicsVideos';
 import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
+import { useAuth } from '../contexts/AuthContext';
+
+function isChildModeActive(settings: Record<string, unknown> | undefined): boolean {
+  if (typeof settings?.ageGroup === 'string' && settings.ageGroup === '3-5') return true;
+  try { return localStorage.getItem('mm_child_mode') === 'true'; } catch { return false; }
+}
 
 
 const categoryIcons: Record<string, { icon: React.ReactNode; label: string }> = {
@@ -30,24 +37,39 @@ const phonicsTypeInfo: Record<PhonicsVideo['type'], { icon: React.ReactNode; lab
 
 function Videos() {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [videosLoading, setVideosLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [iframeError, setIframeError] = useState(false);
   const [selectedGrade, setSelectedGrade] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [watchedIds, setWatchedIds] = useState<string[]>([]);
+  const [watchedRegularIds, setWatchedRegularIds] = useState<Set<string>>(new Set());
   const [expandedGroup, setExpandedGroup] = useState<number | null>(1);
-  const { addXP } = useGamification();
+  const { addXP, trackActivity } = useGamification();
   const { t, lang } = useLanguage();
+  const { userProfile } = useAuth();
+  const childMode = isChildModeActive(userProfile?.settings);
+  usePageTitle('Videolar', 'Videos');
 
   useEffect(() => {
     videoStore.fetchVideos().then((list) => {
       setVideos(list);
+      setVideosLoading(false);
+    }).catch(() => {
+      setVideosLoading(false);
     });
     const unsubscribe = videoStore.subscribe((updatedVideos) => {
       setVideos(updatedVideos);
+      setVideosLoading(false);
     });
     setWatchedIds(getWatchedVideoIds());
     return () => unsubscribe?.();
   }, []);
+
+  // Reset iframe error state when a new video is selected
+  useEffect(() => {
+    setIframeError(false);
+  }, [selectedVideo]);
 
   const grades = ['All', '2nd Grade', '3rd Grade', '4th Grade'] as const;
   const gradeLabels: Record<string, string> = {
@@ -73,11 +95,25 @@ function Videos() {
       setWatchedIds(getWatchedVideoIds());
       try {
         await addXP(10, 'Watched phonics video', { videoId: video.id, group: video.group });
+        await trackActivity('video_watched', { videoId: video.id });
       } catch {
         // XP award failed silently
       }
     }
-  }, [addXP]);
+  }, [addXP, trackActivity]);
+
+  const handleRegularVideoClick = useCallback(async (video: Video) => {
+    setSelectedVideo(video.youtube_id);
+    const isFirstWatch = !watchedRegularIds.has(video.id);
+    if (isFirstWatch) {
+      setWatchedRegularIds((prev) => new Set([...prev, video.id]));
+      try {
+        await addXP(5, 'Watched educational video', { videoId: video.id });
+      } catch {
+        // XP award failed silently
+      }
+    }
+  }, [addXP, watchedRegularIds]);
 
   // Phonics groups 1-7
   const phonicsGroups = [1, 2, 3, 4, 5, 6, 7];
@@ -110,16 +146,28 @@ function Videos() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="library-search-input"
+            aria-label={lang === 'tr' ? 'Video ara' : 'Search videos'}
           />
           <Search className="library-search-icon" size={20} />
         </div>
       </ContentPageHeader>
 
       {/* ================================================================
+          LOADING SKELETON — shown while initial video data fetches
+          ================================================================ */}
+      {videosLoading && (
+        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="skeleton" style={{ height: 64, borderRadius: 12 }} />
+          ))}
+        </div>
+      )}
+
+      {/* ================================================================
           PHONICS VIDEOS SECTION — Grouped by phonics group
           Only shown when no grade filter is active
           ================================================================ */}
-      {selectedGrade === 'All' && <motion.div
+      {!videosLoading && selectedGrade === 'All' && <motion.div
         className="phonics-videos-section"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -201,9 +249,12 @@ function Videos() {
                                   src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
                                   alt={video.title}
                                   loading="lazy"
+                                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/default.jpg`; }}
                                 />
                                 <div className="phonics-video-overlay">
-                                  <Play size={28} fill="white" />
+                                  <div className="phonics-play-circle">
+                                    <Play size={22} fill="white" />
+                                  </div>
                                 </div>
                                 {watched && (
                                   <span className="phonics-watched-badge">
@@ -245,7 +296,7 @@ function Videos() {
       {/* ================================================================
           MORE VIDEOS — Grade-based (existing content)
           ================================================================ */}
-      {selectedGrade === 'All' && popularVideos.length > 0 && (
+      {!videosLoading && selectedGrade === 'All' && popularVideos.length > 0 && (
         <motion.div
           className="popular-section"
           initial={{ opacity: 0 }}
@@ -268,11 +319,11 @@ function Videos() {
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 * index }}
-                onClick={() => setSelectedVideo(video.youtube_id)}
+                onClick={() => handleRegularVideoClick(video)}
                 whileHover={{ y: -8 }}
               >
                 <div className="popular-thumbnail">
-                  <img src={video.thumbnail} alt={video.title} loading="lazy" />
+                  <img src={video.thumbnail} alt={video.title} loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }} />
                   <div className="popular-overlay">
                     <Play size={40} fill="white" />
                   </div>
@@ -292,7 +343,7 @@ function Videos() {
         </motion.div>
       )}
 
-      <motion.div
+      {!videosLoading && <motion.div
         className="videos-section"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -331,11 +382,11 @@ function Videos() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                onClick={() => setSelectedVideo(video.youtube_id)}
+                onClick={() => handleRegularVideoClick(video)}
                 whileHover={{ y: -8, scale: 1.02 }}
               >
                 <div className="video-thumbnail">
-                  <img src={video.thumbnail} alt={video.title} loading="lazy" />
+                  <img src={video.thumbnail} alt={video.title} loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }} />
                   <div className="video-overlay">
                     <motion.div
                       className="play-button"
@@ -373,7 +424,7 @@ function Videos() {
             ))}
           </motion.div>
         </AnimatePresence>
-      </motion.div>
+      </motion.div>}
 
       <AnimatePresence>
         {selectedVideo && (
@@ -399,13 +450,60 @@ function Videos() {
               >
                 <X size={24} />
               </motion.button>
-              <iframe
-                src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
-                title="YouTube video player"
-                style={{ border: 0 }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              {iframeError ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
+                    padding: '2rem',
+                    minHeight: 200,
+                    color: 'var(--text-muted, #6b7280)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <Play size={48} style={{ opacity: 0.3 }} />
+                  <p style={{ fontWeight: 700, margin: 0 }}>
+                    {lang === 'tr' ? 'Video yüklenemedi.' : 'Video could not be loaded.'}
+                  </p>
+                  <p style={{ fontSize: '0.85rem', margin: 0 }}>
+                    {lang === 'tr'
+                      ? 'Lütfen internet bağlantınızı kontrol edin.'
+                      : 'Please check your internet connection.'}
+                  </p>
+                  {!childMode && (
+                    <a
+                      href={`https://www.youtube.com/watch?v=${selectedVideo}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        padding: '0.5rem 1.25rem',
+                        background: 'var(--primary, #FF6B35)',
+                        color: '#fff',
+                        borderRadius: '0.5rem',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {lang === 'tr' ? 'YouTube\'da Aç' : 'Open on YouTube'}
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <iframe
+                  key={selectedVideo}
+                  src={`https://www.youtube-nocookie.com/embed/${selectedVideo}?autoplay=1&rel=0&modestbranding=1`}
+                  title="YouTube video player"
+                  style={{ border: 0 }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+                  onError={() => setIframeError(true)}
+                />
+              )}
             </motion.div>
           </motion.div>
         )}

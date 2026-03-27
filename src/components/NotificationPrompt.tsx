@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import './NotificationPrompt.css';
@@ -49,6 +50,16 @@ export default function NotificationPrompt({ onAccept, onDecline }: Notification
       >
         {/* Drag handle (cosmetic) */}
         <div className="notif-prompt-handle" aria-hidden="true" />
+
+        {/* Close button — 44px touch target, always dismissible */}
+        <button
+          type="button"
+          className="notif-prompt-close"
+          onClick={onDecline}
+          aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
+        >
+          <X size={18} aria-hidden="true" />
+        </button>
 
         {/* Content */}
         <div className="notif-prompt-body">

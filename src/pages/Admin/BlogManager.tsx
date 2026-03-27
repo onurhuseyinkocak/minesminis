@@ -16,6 +16,7 @@ import {
 import { adminFetch } from '../../utils/adminApi';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './BlogManager.css';
 
 interface BlogPost {
@@ -87,14 +88,16 @@ export default function BlogManager() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [dbAvailable, setDbAvailable] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
 
   const loadPosts = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('id, title, slug, excerpt, meta_title, meta_description, content, published_at, created_at, cover_image_url, category, read_time_minutes, author')
+        .order('created_at', { ascending: false })
+        .limit(200);
 
       if (error) {
         if (error.code === '42P01' || error.message?.includes('does not exist')) {
@@ -106,7 +109,7 @@ export default function BlogManager() {
         return;
       }
       setDbAvailable(true);
-      setPosts((data as BlogPost[]) || []);
+      setPosts((data as unknown as BlogPost[]) || []);
     } catch {
       toast.error('Blog yazilari yuklenirken hata olustu');
     } finally {
@@ -231,9 +234,14 @@ export default function BlogManager() {
     }
   };
 
-  const handleDelete = async (post: BlogPost) => {
-    if (!window.confirm(`"${post.title}" yazisini silmek istediginize emin misiniz?`)) return;
+  const handleDelete = (post: BlogPost) => {
+    setDeleteTarget(post);
+  };
 
+  const doDelete = async () => {
+    if (!deleteTarget) return;
+    const post = deleteTarget;
+    setDeleteTarget(null);
     setDeleting(post.id);
     try {
       const { error } = await supabase
@@ -580,6 +588,17 @@ export default function BlogManager() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={doDelete}
+        title="Blog Yazisini Sil"
+        message={deleteTarget ? `"${deleteTarget.title}" yazisini silmek istediginize emin misiniz? Bu islem geri alinamaz.` : ''}
+        confirmLabel="Evet, Sil"
+        variant="danger"
+        loading={deleting !== null}
+      />
     </div>
   );
 }

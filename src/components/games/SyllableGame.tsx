@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
@@ -61,6 +61,13 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
   const [completed, setCompleted] = useState(false);
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+    };
+  }, []);
 
   const currentQuestion = questions[currentIndex];
 
@@ -319,7 +326,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                 aria-label={`Tap drum (${tapCount} taps so far)`}
                 whileTap={{ scale: 0.93 }}
               >
-                <svg width="36" height="36" viewBox="0 0 48 48" fill="none" aria-hidden="true"><ellipse cx="24" cy="28" rx="18" ry="10" fill="#CC4A1A"/><ellipse cx="24" cy="24" rx="18" ry="10" fill="#E8A317"/><rect x="6" y="24" width="36" height="4" fill="#CC4A1A" opacity="0.4"/><line x1="12" y1="14" x2="12" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/><line x1="36" y1="14" x2="36" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/></svg>
+                <svg width="36" height="36" viewBox="0 0 48 48" fill="none" aria-hidden="true"><ellipse cx="24" cy="28" rx="18" ry="10" fill="#CC4A1A"/><ellipse cx="24" cy="24" rx="18" ry="10" fill="var(--warning)"/><rect x="6" y="24" width="36" height="4" fill="#CC4A1A" opacity="0.4"/><line x1="12" y1="14" x2="12" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/><line x1="36" y1="14" x2="36" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/></svg>
               </motion.button>
 
               <p className="syg__drum-label">{t('games.tapHereOneTapPerSyllable')}</p>

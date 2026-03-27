@@ -24,7 +24,10 @@
   color: var(--white);
   display: flex;
   flex-direction: column;
-  z-index: var(--z-dropdown);
+  /* Use --z-sticky (200) so sidebar is at same level as the sticky header,
+     preventing the header from visually overlapping the sidebar in edge cases.
+     Mobile override bumps this to --z-max (900). */
+  z-index: var(--z-sticky);
   transition: width var(--transition-base);
   overflow: hidden;
   border-right: 1px solid rgba(255, 255, 255, 0.06);
@@ -69,7 +72,7 @@
 }
 
 .admin-shell__sidebar-subtitle {
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1.4px;
   color: rgba(255, 255, 255, 0.4);
@@ -96,7 +99,7 @@
 }
 
 .admin-shell__sidebar-section-label {
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1.4px;
   color: rgba(255, 255, 255, 0.3);
@@ -359,9 +362,17 @@
   display: none;
 }
 
+/* Mobile hamburger — hidden on desktop, shown on mobile via CSS */
+.admin-shell__header-menu-btn {
+  display: none;
+}
+
 /* -- Responsive ------------------------------------------------------- */
 
 @media (max-width: 1023px) {
+  .admin-shell__header-menu-btn {
+    display: flex;
+  }
   .admin-shell__sidebar {
     transform: translateX(-100%);
     z-index: var(--z-max);

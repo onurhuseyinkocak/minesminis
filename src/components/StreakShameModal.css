@@ -6,6 +6,8 @@
   inset: 0;
   z-index: var(--z-modal);
   background: var(--overlay-md);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,21 +36,24 @@
   position: absolute;
   top: var(--space-sm);
   right: var(--space-sm);
-  background: none;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-muted);
   border: none;
   cursor: pointer;
   color: var(--text-muted);
-  padding: var(--space-xs);
-  border-radius: var(--radius-sm);
+  padding: 0;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .ssm__close:hover {
-  background: var(--bg-muted);
-  color: var(--text-secondary);
+  background: var(--border);
+  color: var(--text-primary);
 }
 
 .ssm__close:focus-visible {

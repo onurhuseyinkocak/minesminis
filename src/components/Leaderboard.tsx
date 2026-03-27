@@ -93,6 +93,7 @@ const Leaderboard: React.FC = () => {
 
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false);
     const [timeLeft, setTimeLeft] = useState(() => formatReset(lang));
 
     const currentUserId = user?.uid;
@@ -105,6 +106,7 @@ const Leaderboard: React.FC = () => {
     const fetchLeaderboard = useCallback(async () => {
         try {
             setLoading(true);
+            setFetchError(false);
             const data = await getGlobalLeaderboard(currentUserId);
             setEntries(data);
         } catch (err) {
@@ -114,6 +116,7 @@ const Leaderboard: React.FC = () => {
                 component: 'Leaderboard',
             });
             setEntries([]);
+            setFetchError(true);
         } finally {
             setLoading(false);
         }
@@ -186,7 +189,34 @@ const Leaderboard: React.FC = () => {
 
             {/* ---- Content ---- */}
             {loading ? (
-                <div className="loading-state">{lang === 'tr' ? 'Yıldızlar aranıyor...' : 'Finding the stars...'}</div>
+                <div className="loading-state">
+                    <div className="leader-skeleton">
+                        <div className="leader-skeleton__podium">
+                            {[2, 1, 3].map((pos) => (
+                                <div key={pos} className={`leader-skeleton__podium-spot leader-skeleton__podium-spot--${pos}`}>
+                                    <div className="skeleton" style={{ width: 44, height: 44, borderRadius: '50%', margin: '0 auto 6px' }} />
+                                    <div className="skeleton" style={{ height: 12, width: 60, borderRadius: 6, margin: '0 auto 4px' }} />
+                                    <div className="skeleton" style={{ height: pos === 1 ? 60 : 40, borderRadius: '6px 6px 0 0' }} />
+                                </div>
+                            ))}
+                        </div>
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="skeleton" style={{ height: 52, borderRadius: 12, marginBottom: 8 }} />
+                        ))}
+                    </div>
+                </div>
+            ) : fetchError ? (
+                <div className="empty-state">
+                    <Trophy size={32} style={{ color: 'var(--text-muted)' }} />
+                    <p>{lang === 'tr' ? 'Liderlik tablosu yüklenemedi.' : 'Could not load leaderboard.'}</p>
+                    <button
+                        type="button"
+                        onClick={fetchLeaderboard}
+                        className="leader-retry-btn"
+                    >
+                        {lang === 'tr' ? 'Tekrar Dene' : 'Try Again'}
+                    </button>
+                </div>
             ) : entries.length === 0 ? (
                 <div className="empty-state">
                     <Star className="star-bounce" size={32} />

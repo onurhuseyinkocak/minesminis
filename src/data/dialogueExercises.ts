@@ -34,14 +34,14 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
           },
           {
             id: 'b',
-            text: 'I am a cat.',
-            textTr: 'Ben bir kediyim.',
+            text: 'I am happy!',
+            textTr: 'Mutluyum!',
             correct: false,
           },
           {
             id: 'c',
-            text: 'Yes, apple.',
-            textTr: 'Evet, elma.',
+            text: 'Good morning!',
+            textTr: 'Günaydın!',
             correct: false,
           },
         ],
@@ -64,14 +64,14 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
           },
           {
             id: 'e',
-            text: 'I like pizza.',
-            textTr: 'Pizzayı severim.',
+            text: 'I am five years old.',
+            textTr: 'Ben beş yaşındayım.',
             correct: false,
           },
           {
             id: 'f',
-            text: 'It is raining.',
-            textTr: 'Yağmur yağıyor.',
+            text: 'I live in the city.',
+            textTr: 'Şehirde yaşıyorum.',
             correct: false,
           },
         ],
@@ -94,14 +94,14 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
           },
           {
             id: 'h',
-            text: 'I want ice cream.',
-            textTr: 'Dondurma istiyorum.',
+            text: 'Hello! Nice to meet you!',
+            textTr: 'Merhaba! Tanıştığıma memnun oldum!',
             correct: false,
           },
           {
             id: 'i',
-            text: 'My dog is big.',
-            textTr: 'Köpeğim büyük.',
+            text: 'Good morning, Mimi!',
+            textTr: 'Günaydın, Mimi!',
             correct: false,
           },
         ],
@@ -117,7 +117,7 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
   // ── Exercise 2: Colors ─────────────────────────────────────────────────────
   {
     id: 'colors-1',
-    title: 'Let\'s Talk Colors!',
+    title: "Let's Talk Colors!",
     titleTr: 'Renkleri Konuşalım!',
     topic: 'colors',
     lines: [
@@ -153,7 +153,7 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
       },
       {
         speaker: 'mimi',
-        text: 'That\'s right! And what color is the sky?',
+        text: "That's right! And what color is the sky?",
         textTr: 'Doğru! Peki gökyüzü ne renk?',
       },
       {
@@ -199,14 +199,14 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
           },
           {
             id: 'h',
-            text: 'I eat green.',
-            textTr: 'Yeşil yerim.',
+            text: 'My favorite color is yellow!',
+            textTr: 'En sevdiğim renk sarı!',
             correct: false,
           },
           {
             id: 'i',
-            text: 'Blue is a dog.',
-            textTr: 'Mavi bir köpek.',
+            text: 'My favorite color is blue!',
+            textTr: 'En sevdiğim renk mavi!',
             correct: false,
           },
         ],
@@ -244,14 +244,14 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
           },
           {
             id: 'b',
-            text: 'I drink a cat.',
-            textTr: 'Bir kedi içiyorum.',
+            text: 'No, I do not have a pet.',
+            textTr: 'Hayır, evcil hayvanım yok.',
             correct: false,
           },
           {
             id: 'c',
-            text: 'The fish is tall.',
-            textTr: 'Balık uzun.',
+            text: 'Yes! I have a cat!',
+            textTr: 'Evet! Bir kedim var!',
             correct: false,
           },
         ],
@@ -304,8 +304,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
           },
           {
             id: 'h',
-            text: 'A fish has a long neck!',
-            textTr: 'Balığın uzun boynu var!',
+            text: 'An elephant has a long neck!',
+            textTr: 'Filin uzun boynu var!',
             correct: false,
           },
           {
@@ -341,8 +341,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'a', text: 'I like pizza and apples!', textTr: 'Pizza ve elma severim!', correct: true, feedback: 'Yummy choices!' },
-          { id: 'b', text: 'I eat the table.', textTr: 'Masayı yerim.', correct: false },
-          { id: 'c', text: 'I drink a bird.', textTr: 'Bir kuş içiyorum.', correct: false },
+          { id: 'b', text: 'I like bananas and milk!', textTr: 'Muz ve süt severim!', correct: false },
+          { id: 'c', text: 'I like bread and cheese!', textTr: 'Ekmek ve peynir severim!', correct: false },
         ],
       },
       {
@@ -355,8 +355,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'd', text: 'Yes, I love bananas!', textTr: 'Evet, muzları çok severim!', correct: true, feedback: 'Bananas give you energy!' },
-          { id: 'e', text: 'Bananas are blue.', textTr: 'Muzlar mavidir.', correct: false },
-          { id: 'f', text: 'I sit on a banana.', textTr: 'Muzun üstüne oturuyorum.', correct: false },
+          { id: 'e', text: 'No, I prefer apples.', textTr: 'Hayır, elmayı tercih ederim.', correct: false },
+          { id: 'f', text: 'I do not like fruit.', textTr: 'Meyve sevmem.', correct: false },
         ],
       },
       {
@@ -369,8 +369,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'g', text: 'I drink milk in the morning!', textTr: 'Sabahları süt içerim!', correct: true, feedback: 'Milk makes you strong!' },
-          { id: 'h', text: 'I drink a shoe.', textTr: 'Bir ayakkabı içiyorum.', correct: false },
-          { id: 'i', text: 'Morning is green.', textTr: 'Sabah yeşildir.', correct: false },
+          { id: 'h', text: 'I drink orange juice.', textTr: 'Portakal suyu içerim.', correct: false },
+          { id: 'i', text: 'I drink water only.', textTr: 'Sadece su içerim.', correct: false },
         ],
       },
       {
@@ -398,8 +398,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'a', text: 'I have a little sister!', textTr: 'Küçük bir kız kardeşim var!', correct: true, feedback: 'How sweet!' },
-          { id: 'b', text: 'My sister is a car.', textTr: 'Kız kardeşim bir araba.', correct: false },
-          { id: 'c', text: 'I eat my brother.', textTr: 'Erkek kardeşimi yiyorum.', correct: false },
+          { id: 'b', text: 'I have a big brother!', textTr: 'Büyük bir erkek kardeşim var!', correct: false },
+          { id: 'c', text: 'I do not have a brother or sister.', textTr: 'Erkek ya da kız kardeşim yok.', correct: false },
         ],
       },
       {
@@ -412,8 +412,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'd', text: 'My mom cooks delicious food!', textTr: 'Annem nefis yemekler pişiriyor!', correct: true, feedback: 'She sounds amazing!' },
-          { id: 'e', text: 'My mom is a rainbow.', textTr: 'Annem bir gökkuşağı.', correct: false },
-          { id: 'f', text: 'Mom swims in the sky.', textTr: 'Anne gökyüzünde yüzüyor.', correct: false },
+          { id: 'e', text: 'My mom reads books all day!', textTr: 'Annem bütün gün kitap okuyor!', correct: false },
+          { id: 'f', text: 'My mom works in an office.', textTr: 'Annem bir ofiste çalışıyor.', correct: false },
         ],
       },
       {
@@ -426,8 +426,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'g', text: 'I play football with my dad!', textTr: 'Babamla futbol oynarım!', correct: true, feedback: 'That is so fun!' },
-          { id: 'h', text: 'I eat my dad.', textTr: 'Babamı yerim.', correct: false },
-          { id: 'i', text: 'Dad is a blue fish.', textTr: 'Baba mavi bir balık.', correct: false },
+          { id: 'h', text: 'I watch TV with my dad.', textTr: 'Babamla televizyon izlerim.', correct: false },
+          { id: 'i', text: 'I read books with my dad.', textTr: 'Babamla kitap okurum.', correct: false },
         ],
       },
       {
@@ -455,8 +455,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'a', text: 'Yes! I have my bag and book!', textTr: 'Evet! Çantam ve kitabım hazır!', correct: true, feedback: 'Great student!' },
-          { id: 'b', text: 'School is a banana.', textTr: 'Okul bir muz.', correct: false },
-          { id: 'c', text: 'I sleep at school.', textTr: 'Okulda uyuyorum.', correct: false },
+          { id: 'b', text: 'Yes! My pencil and eraser are ready!', textTr: 'Evet! Kalemim ve silgim hazır!', correct: false },
+          { id: 'c', text: 'Not yet, I am still eating!', textTr: 'Henüz değil, hâlâ yiyorum!', correct: false },
         ],
       },
       {
@@ -469,8 +469,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'd', text: 'I love art and English!', textTr: 'Resim ve İngilizceyi seviyorum!', correct: true, feedback: 'Excellent choices!' },
-          { id: 'e', text: 'I love eating pencils.', textTr: 'Kalem yemeyi seviyorum.', correct: false },
-          { id: 'f', text: 'My subject is a cloud.', textTr: 'Dersim bir bulut.', correct: false },
+          { id: 'e', text: 'I love maths and science!', textTr: 'Matematik ve fen bilgisini seviyorum!', correct: false },
+          { id: 'f', text: 'I love music class!', textTr: 'Müzik dersini seviyorum!', correct: false },
         ],
       },
       {
@@ -483,8 +483,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'g', text: 'My best friend is Sam!', textTr: 'En iyi arkadaşım Sam!', correct: true, feedback: 'Sam is lucky to have you!' },
-          { id: 'h', text: 'My friend is a desk.', textTr: 'Arkadaşım bir sıra.', correct: false },
-          { id: 'i', text: 'I have zero friends.', textTr: 'Hiç arkadaşım yok.', correct: false },
+          { id: 'h', text: 'My best friend is Lily!', textTr: 'En iyi arkadaşım Lily!', correct: false },
+          { id: 'i', text: 'I play with everyone!', textTr: 'Herkesin ile oynarım!', correct: false },
         ],
       },
       {
@@ -504,7 +504,7 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
     lines: [
       {
         speaker: 'mimi',
-        text: 'Let\'s learn body parts! Touch your head!',
+        text: "Let's learn body parts! Touch your head!",
         textTr: 'Vücut bölümlerini öğrenelim! Başına dokun!',
       },
       {
@@ -512,8 +512,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'a', text: 'I am touching my head!', textTr: 'Başıma dokunuyorum!', correct: true, feedback: 'Good! Head!' },
-          { id: 'b', text: 'My head is in the sea.', textTr: 'Başım denizde.', correct: false },
-          { id: 'c', text: 'I eat my head.', textTr: 'Başımı yiyorum.', correct: false },
+          { id: 'b', text: 'I am touching my nose!', textTr: 'Burnuma dokunuyorum!', correct: false },
+          { id: 'c', text: 'I am clapping my hands!', textTr: 'El çırpıyorum!', correct: false },
         ],
       },
       {
@@ -526,8 +526,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'd', text: 'I have two eyes!', textTr: 'İki gözüm var!', correct: true, feedback: 'Two beautiful eyes!' },
-          { id: 'e', text: 'I have zero eyes.', textTr: 'Hiç gözüm yok.', correct: false },
-          { id: 'f', text: 'I have ten eyes.', textTr: 'On gözüm var.', correct: false },
+          { id: 'e', text: 'I have one eye.', textTr: 'Bir gözüm var.', correct: false },
+          { id: 'f', text: 'I have four eyes.', textTr: 'Dört gözüm var.', correct: false },
         ],
       },
       {
@@ -540,8 +540,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'g', text: 'I am wiggling my fingers!', textTr: 'Parmaklarımı oynatıyorum!', correct: true, feedback: 'Amazing! Ten fingers!' },
-          { id: 'h', text: 'My fingers are fish.', textTr: 'Parmaklarım balık.', correct: false },
-          { id: 'i', text: 'Fingers eat apples.', textTr: 'Parmaklar elma yer.', correct: false },
+          { id: 'h', text: 'I am stomping my feet!', textTr: 'Ayaklarımı yere vuruyorum!', correct: false },
+          { id: 'i', text: 'I am blinking my eyes!', textTr: 'Gözlerimi kırpıştırıyorum!', correct: false },
         ],
       },
       {
@@ -555,9 +555,9 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
   // ── Exercise 8: Weather ────────────────────────────────────────────────────
   {
     id: 'weather-1',
-    title: 'What\'s the Weather?',
+    title: "What's the Weather?",
     titleTr: 'Hava Nasıl?',
-    topic: 'nature',
+    topic: 'weather',
     lines: [
       {
         speaker: 'mimi',
@@ -569,8 +569,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'a', text: 'It is sunny today!', textTr: 'Bugün güneşli!', correct: true, feedback: 'Lovely sunny day!' },
-          { id: 'b', text: 'The weather is a banana.', textTr: 'Hava bir muz.', correct: false },
-          { id: 'c', text: 'Today is yellow.', textTr: 'Bugün sarı.', correct: false },
+          { id: 'b', text: 'It is rainy today!', textTr: 'Bugün yağmurlu!', correct: false },
+          { id: 'c', text: 'It is cloudy today!', textTr: 'Bugün bulutlu!', correct: false },
         ],
       },
       {
@@ -583,8 +583,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'd', text: 'I wear a raincoat and boots!', textTr: 'Yağmurluk ve çizme giyerim!', correct: true, feedback: 'Smart choice!' },
-          { id: 'e', text: 'I wear the rain.', textTr: 'Yağmuru giyerim.', correct: false },
-          { id: 'f', text: 'I eat my coat.', textTr: 'Montumu yerim.', correct: false },
+          { id: 'e', text: 'I wear a hat and sunglasses!', textTr: 'Şapka ve güneş gözlüğü giyerim!', correct: false },
+          { id: 'f', text: 'I wear my pyjamas!', textTr: 'Pijamamı giyerim!', correct: false },
         ],
       },
       {
@@ -597,8 +597,8 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         text: '',
         options: [
           { id: 'g', text: 'Yes! I love playing in the snow!', textTr: 'Evet! Karda oynamayı çok seviyorum!', correct: true, feedback: 'Snow is so magical!' },
-          { id: 'h', text: 'Snow is my teacher.', textTr: 'Kar benim öğretmenim.', correct: false },
-          { id: 'i', text: 'I eat snow for breakfast.', textTr: 'Kahvaltıda kar yerim.', correct: false },
+          { id: 'h', text: 'No, snow is too cold for me!', textTr: 'Hayır, kar benim için çok soğuk!', correct: false },
+          { id: 'i', text: 'I have never seen snow!', textTr: 'Hiç kar görmedim!', correct: false },
         ],
       },
       {

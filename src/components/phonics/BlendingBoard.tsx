@@ -4,6 +4,7 @@ import { Sparkles, Trophy } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { shuffleArray } from '../../utils/arrayUtils';
 import './BlendingBoard.css';
 
 interface WordItem {
@@ -19,7 +20,7 @@ interface BlendingBoardProps {
 }
 
 function splitToSounds(word: string): string[] {
-  const digraphs = ['sh', 'ch', 'th', 'ng', 'ck', 'qu', 'ai', 'ee', 'oo', 'or', 'ar', 'er', 'ou', 'oi', 'ue', 'ie', 'oa'];
+  const digraphs = ['sh', 'ch', 'th', 'ng', 'ck', 'ph', 'wh', 'qu', 'ai', 'ee', 'oo', 'or', 'ar', 'er', 'ou', 'oi', 'ue', 'ie', 'oa'];
   const sounds: string[] = [];
   let i = 0;
   while (i < word.length) {
@@ -35,14 +36,6 @@ function splitToSounds(word: string): string[] {
   return sounds;
 }
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 interface SoundTile {
   id: number;
@@ -150,7 +143,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
             transition={{ type: 'spring', stiffness: 200 }}
             className="blending-board__complete-content"
           >
-            <Trophy size={32} color="#E8A317" />
+            <Trophy size={32} color="var(--warning)" />
             <h2 className="blending-board__complete-title">{t('games.blendingStar')}</h2>
             <p className="blending-board__complete-score">
               {t('games.wordsBlended').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
@@ -180,19 +173,25 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
       {/* Blending strip */}
       <Card variant="elevated" padding="lg">
         <div className={`blending-board__strip${feedback === 'merged' ? ' blending-board__strip--merged' : ''}`}>
-          {strip.map((tile, i) => (
-            <motion.div
-              key={i}
-              layout
-              className={[
-                'blending-board__slot',
-                tile && feedback !== 'merged' && 'blending-board__slot--filled',
-                tile && feedback === 'merged' && 'blending-board__slot--merged',
-              ].filter(Boolean).join(' ')}
-            >
-              {tile?.sound || ''}
-            </motion.div>
-          ))}
+          {strip.map((tile, i) => {
+            const nextSlot = strip.findIndex((s) => s === null);
+            const isNext = !tile && i === nextSlot && !feedback;
+            return (
+              <motion.div
+                key={i}
+                layout
+                className={[
+                  'blending-board__slot',
+                  tile && feedback !== 'merged' && 'blending-board__slot--filled',
+                  tile && feedback === 'merged' && 'blending-board__slot--merged',
+                  isNext && 'blending-board__slot--next',
+                ].filter(Boolean).join(' ')}
+                aria-label={tile ? `Slot ${i + 1}: ${tile.sound}` : `Slot ${i + 1}: empty`}
+              >
+                {tile?.sound || ''}
+              </motion.div>
+            );
+          })}
         </div>
         {feedback === 'merged' && (
           <motion.p
@@ -247,7 +246,8 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
               scale: tile.placed ? 0.8 : 1,
             }}
             className={`blending-board__tile${tile.placed ? ' blending-board__tile--placed' : ''}`}
-            aria-label={`Sound: ${tile.sound}`}
+            aria-label={tile.placed ? `${tile.sound}, already placed` : `Sound: ${tile.sound}, press to place`}
+            aria-disabled={tile.placed || !!feedback}
           >
             {tile.sound}
           </motion.button>

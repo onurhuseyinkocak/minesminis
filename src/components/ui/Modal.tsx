@@ -57,7 +57,7 @@ export const Modal: React.FC<ModalProps> = ({
   size = 'md',
   className = '',
 }) => {
-  const { lang } = useLanguage();
+  const { t } = useLanguage();
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
   const handleFocusTrap = useFocusTrap(modalRef, isOpen);
@@ -113,17 +113,17 @@ export const Modal: React.FC<ModalProps> = ({
         tabIndex={-1}
         onKeyDown={handleFocusTrap}
       >
-                <div className="mm-modal__header">
-            {title && <h2 className="mm-modal__title">{title}</h2>}
-            <button
-              className="mm-modal__close"
-              onClick={onClose}
-              aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
-              type="button"
-            >
-              <X size={16} />
-            </button>
-          </div>
+        <div className="mm-modal__header">
+          {title && <h2 className="mm-modal__title">{title}</h2>}
+          <button
+            className="mm-modal__close"
+            onClick={onClose}
+            aria-label={t('common.close')}
+            type="button"
+          >
+            <X size={18} />
+          </button>
+        </div>
         <div className="mm-modal__body">{children}</div>
       </div>
     </div>

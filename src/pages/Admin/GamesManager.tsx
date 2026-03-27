@@ -92,7 +92,7 @@ function GamesManager() {
         (async () => {
             setGamesLoading(true);
             try {
-                const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
+                const { data, error } = await supabase.from('games').select('id, title, url, thumbnail_url, category, target_audience, plays, created_at').order('created_at', { ascending: false }).limit(200);
                 if (error) throw error;
                 if (data && data.length > 0) {
                     setGames(data.map((r) => mapSupabaseRow(r as SupabaseGameRow)));
@@ -197,7 +197,7 @@ function GamesManager() {
                 toast.success('Yeni oyun eklendi!');
                 // Refresh from DB to get accurate data
                 try {
-                    const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
+                    const { data, error } = await supabase.from('games').select('id, title, url, thumbnail_url, category, target_audience, plays, created_at').order('created_at', { ascending: false }).limit(200);
                     if (!error && data?.length) {
                         setGames(data.map((r) => mapSupabaseRow(r as SupabaseGameRow)));
                     }

@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Check, LogIn, UserPlus, Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react';
+import { Check, LogIn, UserPlus, Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle } from 'lucide-react';
 import { Button, Input, Tabs } from '../components/ui';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import toast from 'react-hot-toast';
+import { analytics } from '../services/analytics';
 import './Login.css';
 
 type Lang = 'en' | 'tr';
@@ -22,7 +23,7 @@ const content = {
     email: 'Email',
     password: 'Password',
     confirmPassword: 'Confirm Password',
-    passwordHint: 'At least 6 characters',
+    passwordHint: 'At least 8 characters',
     submitLogin: 'Sign In',
     submitJoin: 'Create Account',
     or: 'or',
@@ -44,6 +45,8 @@ const content = {
     featurePhonics: '42 phonics sounds',
     featureMethod: 'Research-backed method',
     featureFree: 'Free to start',
+    coppaConsent: 'I am a parent or guardian aged 13 or over, and I agree to create this account on behalf of my child.',
+    errorCoppaConsent: 'You must confirm you are a parent or guardian aged 13 or over to create an account.',
   },
   tr: {
     title: 'Tekrar Hoşgeldin',
@@ -55,7 +58,7 @@ const content = {
     email: 'E-posta',
     password: 'Şifre',
     confirmPassword: 'Şifre Tekrar',
-    passwordHint: 'En az 6 karakter',
+    passwordHint: 'En az 8 karakter',
     submitLogin: 'Giriş Yap',
     submitJoin: 'Hesap Oluştur',
     or: 'veya',
@@ -77,6 +80,8 @@ const content = {
     featurePhonics: '42 fonetik ses',
     featureMethod: 'Araştırmaya dayalı yöntem',
     featureFree: 'Ücretsiz başlangıç',
+    coppaConsent: '13 yaşından büyük bir ebeveyn veya vasisiyim ve bu hesabı çocuğum adına oluşturmayı kabul ediyorum.',
+    errorCoppaConsent: 'Hesap oluşturmak için 13 yaşından büyük bir ebeveyn veya vasi olduğunuzu onaylamanız gerekir.',
   },
 };
 
@@ -84,6 +89,10 @@ const Login: React.FC = () => {
   const [lang, setLang] = useState<Lang>('tr');
   const t = content[lang];
   const [searchParams] = useSearchParams();
+  React.useEffect(() => {
+    document.title = lang === 'tr' ? 'Giriş Yap — MinesMinis' : 'Login — MinesMinis';
+    return () => { document.title = 'MinesMinis'; };
+  }, [lang]);
 
   const [isLogin, setIsLogin] = useState(() => searchParams.get('tab') !== 'signup');
   const [email, setEmail] = useState('');
@@ -93,11 +102,21 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [resetMode, setResetMode] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [coppaConsent, setCoppaConsent] = useState(false);
   const { signIn, signUp, signInWithGoogle } = useAuth();
 
   const handlePasswordReset = async () => {
+    if (loading) return; // double submit protection
     if (!resetEmail.trim()) {
       toast.error(lang === 'tr' ? 'Email adresi giriniz' : 'Please enter your email');
+      return;
+    }
+    // Validate reset email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(resetEmail.trim())) {
+      toast.error(lang === 'tr' ? 'Geçersiz e-posta adresi' : 'Invalid email address');
       return;
     }
     setLoading(true);
@@ -114,6 +133,7 @@ const Login: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
+    if (loading) return; // double submit protection
     setError('');
     setLoading(true);
     try {
@@ -129,6 +149,10 @@ const Login: React.FC = () => {
         } else {
           setError(t.errorGeneric);
         }
+      } else {
+        // Successful Google auth — distinguish new vs returning users is not reliable here,
+        // so we fire login. signup is tracked in handleSubmit for email signups.
+        analytics.login('google');
       }
     } catch {
       setError(t.errorGeneric);
@@ -139,10 +163,30 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return; // double submit protection
     setError('');
 
     if (!isLogin && password !== confirmPassword) {
       setError(t.errorPasswordMatch);
+      return;
+    }
+
+    // Client-side email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setError(lang === 'en' ? 'Invalid email address.' : 'Geçersiz e-posta adresi.');
+      return;
+    }
+
+    // Client-side password length validation (signup only)
+    if (!isLogin && password.length < 8) {
+      setError(lang === 'en' ? 'Password must be at least 8 characters.' : 'Şifre en az 8 karakter olmalıdır.');
+      return;
+    }
+
+    // COPPA: signup requires parental consent confirmation
+    if (!isLogin && !coppaConsent) {
+      setError(t.errorCoppaConsent);
       return;
     }
 
@@ -152,7 +196,14 @@ const Login: React.FC = () => {
         ? await signIn(email, password)
         : await signUp(email, password);
 
-      if (error) {
+      if (!error) {
+        // Success — track the event
+        if (isLogin) {
+          analytics.login('email');
+        } else {
+          analytics.signup('email');
+        }
+      } else {
         const code = (error as { code?: string }).code ?? '';
         const msg = error.message ?? '';
         if (
@@ -172,7 +223,7 @@ const Login: React.FC = () => {
         } else if (code === 'auth/too-many-requests') {
           setError(lang === 'en' ? 'Too many attempts. Please try again later.' : 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.');
         } else if (code === 'auth/weak-password') {
-          setError(lang === 'en' ? 'Password is too weak. Use at least 6 characters.' : 'Şifre çok zayıf. En az 6 karakter kullanın.');
+          setError(lang === 'en' ? 'Password is too weak. Use at least 8 characters.' : 'Şifre çok zayıf. En az 8 karakter kullanın.');
         } else if (code === 'auth/invalid-email') {
           setError(lang === 'en' ? 'Invalid email address.' : 'Geçersiz e-posta adresi.');
         } else if (code === 'auth/network-request-failed') {
@@ -217,10 +268,22 @@ const Login: React.FC = () => {
       </Link>
 
       {/* Language toggle */}
-      <div className="login-lang-toggle">
-        <button type="button" className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
-        <span className="login-lang-divider" />
-        <button type="button" className={lang === 'tr' ? 'active' : ''} onClick={() => setLang('tr')}>TR</button>
+      <div className="login-lang-toggle" role="group" aria-label={lang === 'tr' ? 'Dil seçimi' : 'Language selection'}>
+        <button
+          type="button"
+          className={lang === 'en' ? 'active' : ''}
+          onClick={() => setLang('en')}
+          aria-label="Switch to English"
+          aria-pressed={lang === 'en'}
+        >EN</button>
+        <span className="login-lang-divider" aria-hidden="true" />
+        <button
+          type="button"
+          className={lang === 'tr' ? 'active' : ''}
+          onClick={() => setLang('tr')}
+          aria-label="Türkçe'ye geç"
+          aria-pressed={lang === 'tr'}
+        >TR</button>
       </div>
 
       <motion.div
@@ -292,14 +355,19 @@ const Login: React.FC = () => {
 
             <Input
               label={t.password}
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
               disabled={loading}
-              minLength={6}
+              minLength={8}
               icon={<Lock size={18} />}
+              rightIcon={showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              onRightIconClick={() => setShowPassword((v) => !v)}
+              rightIconAriaLabel={showPassword
+                ? (lang === 'tr' ? 'Şifreyi gizle' : 'Hide password')
+                : (lang === 'tr' ? 'Şifreyi göster' : 'Show password')}
               size="lg"
               autoComplete={isLogin ? 'current-password' : 'new-password'}
             />
@@ -351,18 +419,48 @@ const Login: React.FC = () => {
               <>
                 <Input
                   label={t.confirmPassword}
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
                   required
                   disabled={loading}
-                  minLength={6}
+                  minLength={8}
                   icon={<Lock size={18} />}
+                  rightIcon={showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  onRightIconClick={() => setShowConfirmPassword((v) => !v)}
+                  rightIconAriaLabel={showConfirmPassword
+                    ? (lang === 'tr' ? 'Şifreyi gizle' : 'Hide password')
+                    : (lang === 'tr' ? 'Şifreyi göster' : 'Show password')}
                   size="lg"
                   autoComplete="new-password"
                 />
                 <span className="login-password-hint">{t.passwordHint}</span>
+
+                {/* COPPA parental consent — required for signup */}
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.625rem',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: 'var(--text-secondary, #64748b)',
+                    lineHeight: 1.5,
+                    marginTop: '0.25rem',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={coppaConsent}
+                    onChange={(e) => setCoppaConsent(e.target.checked)}
+                    disabled={loading}
+                    required
+                    style={{ marginTop: '2px', flexShrink: 0, accentColor: 'var(--primary, #f97316)', width: '16px', height: '16px', cursor: 'pointer' }}
+                    aria-label={t.coppaConsent}
+                  />
+                  <span>{t.coppaConsent}</span>
+                </label>
               </>
             )}
 

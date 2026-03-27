@@ -60,7 +60,7 @@
   margin-top: 2px;
   padding: 2px 8px;
   border-radius: var(--radius-full, 9999px);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -121,13 +121,13 @@
   align-items: center;
   gap: var(--space-xs, 6px);
   font-size: 14px;
-  color: var(--text-muted, #9ca3af);
+  color: var(--text-muted, #6B7A99);
   font-family: var(--font-body, system-ui);
 }
 
 .rp-wordCount {
   font-size: 13px;
-  color: var(--text-muted, #9ca3af);
+  color: var(--text-muted, #6B7A99);
   font-family: var(--font-body, system-ui);
   margin: 0;
 }
@@ -262,9 +262,9 @@
 }
 
 .rp-statChip__label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text-muted, #9ca3af);
+  color: var(--text-muted, #6B7A99);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -316,7 +316,7 @@
 .rp-quizCounter {
   font-size: 13px;
   font-weight: 700;
-  color: var(--text-muted, #9ca3af);
+  color: var(--text-muted, #6B7A99);
   font-family: var(--font-body, system-ui);
 }
 
@@ -353,7 +353,7 @@
 
 .rp-questionTextTr {
   font-size: 13px;
-  color: var(--text-muted, #9ca3af);
+  color: var(--text-muted, #6B7A99);
   font-family: var(--font-body, system-ui);
   margin: var(--space-xs, 6px) 0 0;
 }

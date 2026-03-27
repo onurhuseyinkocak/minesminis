@@ -18,6 +18,7 @@ import ParentGate from '../components/ParentGate';
 import { useGamification } from '../contexts/GamificationContext';
 import { useHearts } from '../contexts/HeartsContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { useAuth } from '../contexts/AuthContext';
 import { SFX } from '../data/soundLibrary';
 import { getSelectedMascotId } from '../services/mascotService';
@@ -51,7 +52,7 @@ function StarIcon({ filled }: { filled: boolean }) {
     >
       <polygon
         points="18,3 22.9,13.1 34,14.6 26,22.4 27.8,33.5 18,28.2 8.2,33.5 10,22.4 2,14.6 13.1,13.1"
-        fill={filled ? 'var(--warning)' : 'var(--text-muted, #94a3b8)'}
+        fill={filled ? 'var(--warning)' : 'var(--text-muted)'}
         stroke={filled ? 'var(--warning-light)' : 'transparent'}
         strokeWidth="1"
       />
@@ -72,7 +73,7 @@ function HeartIcon({ filled }: { filled: boolean }) {
     >
       <path
         d="M14 24.5s-11-7-11-14a6 6 0 0 1 11-3.35A6 6 0 0 1 25 10.5c0 7-11 14-11 14z"
-        fill={filled ? 'var(--error, #ef4444)' : 'var(--text-muted, #94a3b8)'}
+        fill={filled ? 'var(--error)' : 'var(--text-muted)'}
       />
     </svg>
   );
@@ -136,6 +137,7 @@ const ChildHome: React.FC = () => {
   useGamification(); // keep context subscription alive for child mode
   const { hearts } = useHearts();
   const { lang } = useLanguage();
+  usePageTitle('Öğrenmeye Başla', 'Start Learning');
   const { user, userProfile } = useAuth();
 
   const [mascotState, setMascotState] = useState<MascotState>('idle');

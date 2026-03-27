@@ -30,9 +30,10 @@
   flex-shrink: 0;
 }
 
-/* Push fixed navbars below the banner when it is visible */
+/* Push fixed navbars below the banner when it is visible.
+   Use translateY instead of `top` to avoid layout recalculation. */
 body.offline-banner-visible header.fixed.top-0,
 body.offline-banner-visible .topnav {
-  top: 40px;
-  transition: top var(--transition-base);
+  transform: translateY(40px);
+  transition: transform var(--transition-base);
 }

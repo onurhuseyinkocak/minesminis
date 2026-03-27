@@ -136,7 +136,7 @@
 .ar-header-period {
   display: inline-block;
   margin-top: 6px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -194,6 +194,14 @@
   margin: 0 0 var(--space-3) 0;
 }
 
+/* ─── Summary strip responsive ───────────────────────────── */
+
+@media (max-width: 540px) {
+  .ar-summary-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* ─── Group progress bars ─────────────────────────────────── */
 
 .ar-groups {
@@ -226,8 +234,15 @@
 .ar-group-fill {
   height: 100%;
   border-radius: var(--radius-full);
+  /* Animate width from 0 on mount, then maintain via inline style */
+  animation: ar-bar-grow 0.6s var(--ease-out, ease-out) both;
   transition: width 0.4s ease;
   background: var(--primary);
+}
+
+@keyframes ar-bar-grow {
+  from { width: 0 !important; }
+  to   { /* final width set by inline style */ }
 }
 
 .ar-group-fill--mastered {
@@ -268,7 +283,7 @@
 }
 
 .ar-sound-pct {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   display: block;
   margin-top: 2px;
@@ -348,7 +363,7 @@
 }
 
 .ar-activity-type {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -367,7 +382,8 @@
 
 .ar-activity-acc {
   font-weight: 700;
-  color: var(--success);
+  /* accent-green-dark gives ~5.9:1 on white — WCAG AA */
+  color: var(--accent-green-dark, var(--success));
   white-space: nowrap;
 }
 
@@ -376,7 +392,7 @@
 }
 
 .ar-activity-date {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -421,7 +437,7 @@
 
 .ar-footer {
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border);

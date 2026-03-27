@@ -65,7 +65,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             <button
               className="lg:hidden p-2 rounded-xl text-ink-600 hover:bg-ink-50 transition-colors"
               onClick={() => setMenuOpen(o => !o)}
-              aria-label="Menu"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="public-mobile-menu"
             >
               {menuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -81,6 +83,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.22, ease: 'easeInOut' }}
               className="overflow-hidden border-t border-ink-100 lg:hidden"
+            id="public-mobile-menu"
             >
               <div className="px-4 py-4 flex flex-col gap-2 bg-white">
                 <Link

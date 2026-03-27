@@ -14,6 +14,7 @@
   margin: 0 auto;
 }
 
+/* ── Back button — 44px minimum touch target ── */
 .legal-back {
   display: inline-flex;
   align-items: center;
@@ -22,10 +23,12 @@
   text-decoration: none;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
   margin-bottom: var(--space-6);
-  transition: opacity var(--transition-base);
-  padding: var(--space-2) var(--space-3);
+  transition: opacity var(--transition-base), background var(--transition-fast);
+  /* 44px minimum touch target */
+  min-height: 44px;
+  padding: 0 var(--space-3);
   border-radius: var(--radius-full);
 }
 
@@ -34,6 +37,7 @@
   background: var(--primary-pale);
 }
 
+/* ── Headings ── */
 .legal-container h1 {
   display: flex;
   align-items: center;
@@ -45,13 +49,31 @@
   margin-bottom: var(--space-2);
 }
 
+.legal-container h2 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.legal-container h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+/* ── Meta / updated date ── */
 .legal-updated {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   margin-bottom: var(--space-8);
 }
 
+/* ── Sections ── */
 .legal-container section {
   margin-bottom: var(--space-6);
   padding: var(--space-lg);
@@ -61,18 +83,11 @@
   box-shadow: var(--shadow-card);
 }
 
-.legal-container h2 {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: var(--space-3);
-}
-
+/* ── Body text — 16px minimum, line-height 1.7 ── */
 .legal-container p,
 .legal-container li {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 1rem;          /* 16px — minimum readable prose */
   line-height: 1.7;
   color: var(--text-body);
   margin-bottom: var(--space-2);
@@ -83,10 +98,11 @@
   padding-left: var(--space-6);
 }
 
+/* ── Links — primary color, underlined ── */
 .legal-container a {
   color: var(--primary);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
   transition: color var(--transition-fast);
 }
 

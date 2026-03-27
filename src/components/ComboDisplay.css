@@ -7,13 +7,13 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  background: var(--text-primary);
+  background: var(--primary);
   color: var(--text-on-primary);
   border-radius: var(--radius-full);
-  padding: var(--space-xs) var(--space-sm) var(--space-xs) var(--space-2);
+  padding: var(--space-xs) var(--space-sm);
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   transition: background var(--transition-base),
               transform var(--transition-fast),
               box-shadow var(--transition-fast);
@@ -45,7 +45,7 @@
 }
 
 .combo__count {
-  font-size: 0.9375rem;
+  font-size: 1.125rem;
   letter-spacing: -0.02em;
   font-weight: 900;
   animation: count-bump 0.25s var(--ease-spring);
@@ -64,7 +64,7 @@
 }
 
 .combo__mult {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   background: var(--glass-shine);
   border-radius: var(--radius-full);

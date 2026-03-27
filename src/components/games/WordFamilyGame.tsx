@@ -1,7 +1,8 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
 import { Card, Badge, ProgressBar } from '../ui';
+import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
 import { useHearts } from '../../contexts/HeartsContext';
@@ -52,6 +53,15 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
   const [completed, setCompleted] = useState(false);
   const [familyDone, setFamilyDone] = useState(false);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const feedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup all timers on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+      if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+    };
+  }, []);
 
   const currentFamily = families[familyIndex];
 
@@ -96,7 +106,8 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
 
         const allFound = nextFound.length >= currentFamily.validWords.length;
 
-        setTimeout(() => {
+        if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+        feedbackTimeoutRef.current = setTimeout(() => {
           setRimeFeedback('none');
           setShowFeedback(null);
           setLastFormedWord(null);
@@ -113,7 +124,8 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
         loseHeart();
         onWrongAnswer?.();
 
-        setTimeout(() => {
+        if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+        feedbackTimeoutRef.current = setTimeout(() => {
           setRimeFeedback('none');
           setInvalidOnset(null);
           setShowFeedback(null);
@@ -128,6 +140,10 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
     if (autoCompleteTimeoutRef.current) {
       clearTimeout(autoCompleteTimeoutRef.current);
       autoCompleteTimeoutRef.current = null;
+    }
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+      feedbackTimeoutRef.current = null;
     }
     setFamilyIndex(0);
     setTotalScore(0);
@@ -148,6 +164,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
 
     return (
       <div className="wfg">
+        {pct >= 90 && <ConfettiRain duration={3000} />}
         <Card variant="elevated" padding="xl" className="wfg__completion">
           <motion.div
             className="wfg__completion-content"

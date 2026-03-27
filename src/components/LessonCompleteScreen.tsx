@@ -14,16 +14,18 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Flame } from 'lucide-react';
+import { Star, Flame, Share2 } from 'lucide-react';
 import UnifiedMascot from './UnifiedMascot';
 import { ConfettiRain } from './ui/Celebrations';
 import { useLanguage } from '../contexts/LanguageContext';
+import toast from 'react-hot-toast';
 import './LessonCompleteScreen.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface LessonCompleteScreenProps {
   xpEarned: number;
+  accuracyPct?: number;
   wordsLearned?: string[];
   streakDays?: number;
   onContinue: () => void;
@@ -66,8 +68,33 @@ const BUTTON_SHOW_MS = 1200;
 const CONFETTI_START_MS = 1600;
 const CONFETTI_MIN_XP = 20;
 
+// Streak milestones that trigger a share prompt
+const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100];
+
+async function handleStreakShare(streakDays: number, lang: string): Promise<void> {
+  const text = lang === 'tr'
+    ? `MinesMinis'te ${streakDays} günlük öğrenme serim var! Sen de katıl: https://minesminis.com`
+    : `I have a ${streakDays}-day learning streak on MinesMinis! Join me: https://minesminis.com`;
+
+  if (typeof navigator !== 'undefined' && navigator.share) {
+    try {
+      await navigator.share({ title: 'MinesMinis', text, url: 'https://minesminis.com' });
+      return;
+    } catch {
+      // User cancelled or share failed — fall through to clipboard
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success(lang === 'tr' ? 'Kopyalandı!' : 'Copied!');
+  } catch {
+    toast.error(lang === 'tr' ? 'Paylaşılamadı' : 'Could not share');
+  }
+}
+
 export function LessonCompleteScreen({
   xpEarned,
+  accuracyPct,
   wordsLearned = [],
   streakDays,
   onContinue,
@@ -75,6 +102,7 @@ export function LessonCompleteScreen({
   newBadge,
 }: LessonCompleteScreenProps) {
   const { lang, t } = useLanguage();
+  const isStreakMilestone = typeof streakDays === 'number' && STREAK_MILESTONES.includes(streakDays);
   const [mascotVisible, setMascotVisible] = useState(false);
   const [starsVisible, setStarsVisible] = useState<boolean[]>([false, false, false]);
   const [xpDisplayed, setXpDisplayed] = useState(0);
@@ -199,11 +227,30 @@ export function LessonCompleteScreen({
           <span className="lcs-xp-value">+{xpDisplayed}</span>
         </div>
 
+        {/* Accuracy */}
+        {accuracyPct !== undefined && (
+          <div className="lcs-accuracy-row">
+            <span className="lcs-accuracy-label">{lang === 'tr' ? 'Doğruluk' : 'Accuracy'}</span>
+            <span className="lcs-accuracy-value">{Math.round(accuracyPct)}%</span>
+          </div>
+        )}
+
         {/* Streak */}
         {streakDays !== undefined && streakDays > 0 && (
           <div className="lcs-streak">
             <span className="lcs-streak-fire"><Flame size={20} /></span>
             <span className="lcs-streak-text">{streakDays} {t('common.dayStreak')}!</span>
+            {isStreakMilestone && (
+              <button
+                type="button"
+                className="lcs-share-btn"
+                onClick={() => void handleStreakShare(streakDays, lang)}
+                aria-label={lang === 'tr' ? 'Serini paylaş' : 'Share your streak'}
+              >
+                <Share2 size={14} />
+                <span>{lang === 'tr' ? 'Paylaş' : 'Share'}</span>
+              </button>
+            )}
           </div>
         )}
 

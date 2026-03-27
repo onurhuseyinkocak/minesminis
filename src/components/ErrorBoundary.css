@@ -1,0 +1,181 @@
+/* ==========================================================================
+   ErrorBoundary.css — Full-page error fallback UI
+   MinesMinis Premium Design System V2
+   ZERO hex colors. Token-only.
+   ========================================================================== */
+
+.eb-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-xl);
+  background: var(--bg-page);
+  font-family: var(--font-body);
+}
+
+.eb-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-3xl) var(--space-2xl);
+  text-align: center;
+  animation: ebCardIn 0.4s var(--ease-spring);
+}
+
+@keyframes ebCardIn {
+  from { opacity: 0; transform: scale(0.94) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+[data-theme="dark"] .eb-card {
+  border-color: var(--border-medium);
+}
+
+/* ── Icon ── */
+
+.eb-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  background: var(--error-pale);
+  margin: 0 auto var(--space-lg);
+}
+
+.eb-icon {
+  color: var(--error);
+}
+
+/* ── Title ── */
+
+.eb-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md);
+  line-height: 1.2;
+}
+
+/* ── Description ── */
+
+.eb-description {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0 0 var(--space-xl);
+}
+
+/* ── Dev details block ── */
+
+.eb-details {
+  margin-bottom: var(--space-xl);
+  padding: var(--space-md);
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.eb-details-summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+  user-select: none;
+}
+
+.eb-details-pre {
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--error);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: var(--space-sm) 0 0;
+  max-height: 200px;
+}
+
+/* ── Actions ── */
+
+.eb-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.eb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 0 var(--space-xl);
+  min-height: var(--btn-height);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.eb-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.eb-btn:active {
+  transform: scale(0.97);
+}
+
+.eb-btn--primary {
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  box-shadow: var(--shadow-button);
+}
+
+.eb-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-button-hover);
+}
+
+.eb-btn--secondary {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border);
+}
+
+.eb-btn--secondary:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 480px) {
+  .eb-card {
+    padding: var(--space-2xl) var(--space-lg);
+  }
+
+  .eb-actions {
+    flex-direction: column;
+  }
+
+  .eb-btn {
+    width: 100%;
+  }
+}

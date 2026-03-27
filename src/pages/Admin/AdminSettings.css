@@ -91,7 +91,7 @@
 .adm-settings-label small {
   display: block;
   font-weight: 400;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
   margin-top: var(--space-xs);
   line-height: 1.4;
@@ -184,7 +184,7 @@
 }
 
 .adm-toggle-desc {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
   line-height: 1.4;
 }

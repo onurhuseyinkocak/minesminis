@@ -26,23 +26,31 @@
     "db:migrate:dry": "node scripts/run-migration.mjs --dry"
   },
   "dependencies": {
+    "@sentry/react": "^10.46.0",
     "@supabase/supabase-js": "^2.76.1",
     "firebase": "^12.9.0",
     "framer-motion": "11.15.0",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.548.0",
-    "openai": "^6.32.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^6.23.1",
     "recharts": "^3.3.0"
   },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "iOS >= 14"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/dom-speech-recognition": "^0.0.8",
     "@types/node": "^25.5.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

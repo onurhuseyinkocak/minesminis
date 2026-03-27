@@ -75,7 +75,7 @@ export default function FloatingMascot() {
         position: 'fixed',
         bottom: 'var(--floating-mascot-bottom, 80px)',
         right: 'var(--floating-mascot-right, 16px)',
-        zIndex: 40,
+        zIndex: 200,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-end',

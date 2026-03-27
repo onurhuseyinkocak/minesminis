@@ -1,6 +1,7 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { WordIllustration } from '../components/WordIllustration';
 import { SFX } from '../data/soundLibrary';
+import { speak } from '../services/ttsService';
 import { useLanguage } from '../contexts/LanguageContext';
 import './FlashcardDeck.css';
 
@@ -20,10 +21,15 @@ export interface FlashcardResult {
   knew: boolean;
 }
 
+/** Direction of study: EN→TR (show English, reveal Turkish) or TR→EN (show Turkish, reveal English). */
+export type StudyDirection = 'en-tr' | 'tr-en';
+
 export interface FlashcardDeckProps {
   cards: Flashcard[];
   onComplete: (results: FlashcardResult[]) => void;
   onCardResult?: (cardId: string, knew: boolean) => void;
+  /** Default: 'en-tr' */
+  direction?: StudyDirection;
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -47,7 +53,7 @@ function buildInitialDeck(cards: Flashcard[]): DeckCard[] {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeckProps) {
+export function FlashcardDeck({ cards, onComplete, onCardResult, direction = 'en-tr' }: FlashcardDeckProps) {
   const { lang } = useLanguage();
 
   // Working queue — mutated via state setter
@@ -55,6 +61,9 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
   const [flipped, setFlipped] = useState(false);
   const [results, setResults] = useState<FlashcardResult[]>([]);
   const [done, setDone] = useState(false);
+
+  // Track which card we last auto-played TTS for (avoid replaying on re-render)
+  const lastSpokenIdRef = useRef<string | null>(null);
 
   const total = cards.length;
   const current = deck[0] ?? null;
@@ -71,6 +80,22 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
   }, [results]);
 
   const progressPct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
+
+  // ── Auto-play TTS when a new card appears on the front ──
+  // For EN→TR mode: speak the English word.
+  // For TR→EN mode: speak the Turkish word (browser TTS with tr-TR lang).
+  useEffect(() => {
+    if (!current || flipped || done) return;
+    // Key on id + direction so a direction switch re-triggers speech
+    const key = `${current.card.id}:${direction}`;
+    if (lastSpokenIdRef.current === key) return;
+    lastSpokenIdRef.current = key;
+    if (direction === 'en-tr') {
+      speak(current.card.front, { lang: 'en-US', rate: 0.8 });
+    } else {
+      speak(current.card.back, { lang: 'tr-TR', rate: 0.85 });
+    }
+  }, [current, flipped, done, direction]);
 
   // ── Flip ──
 
@@ -205,7 +230,9 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
         <span className="flashcard-progress__label">{knownCount} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{display:'inline',verticalAlign:'middle'}}><path d="M20 6L9 17l-5-5"/></svg></span>
       </div>
 
-      {/* 3-D card */}
+      {/* 3-D card — direction-aware:
+            EN→TR: front = English word, back = Turkish translation
+            TR→EN: front = Turkish translation, back = English word */}
       <div className="flashcard-scene">
         <div
           className={`flashcard${flipped ? ' flipped' : ''}`}
@@ -213,31 +240,50 @@ export function FlashcardDeck({ cards, onComplete, onCardResult }: FlashcardDeck
           role="button"
           tabIndex={0}
           aria-label={
-            flipped
-              ? `Back: ${current.card.back}`
-              : `Front: ${current.card.front}. Tap to flip.`
+            direction === 'en-tr'
+              ? (flipped ? `Turkish: ${current.card.back}` : `English: ${current.card.front}. Tap to flip.`)
+              : (flipped ? `English: ${current.card.front}` : `Turkish: ${current.card.back}. Tap to flip.`)
           }
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') handleFlip();
           }}
         >
-          {/* Front */}
+          {/* Front face */}
           <div className="flashcard__face flashcard__front">
-            <WordIllustration word={current.card.front} size={100} />
-            <span className="flashcard__word">{current.card.front}</span>
+            {direction === 'en-tr' ? (
+              <>
+                <WordIllustration word={current.card.front} size={100} />
+                <span className="flashcard__word">{current.card.front}</span>
+              </>
+            ) : (
+              <>
+                <WordIllustration word={current.card.front} size={80} />
+                <span className="flashcard__word flashcard__word--tr">{current.card.back}</span>
+                <span className="flashcard__front-dir-badge">TR</span>
+              </>
+            )}
             <span className="flashcard__front-hint">
               {lang === 'tr' ? 'Çevirmek için dokun' : 'Tap to flip'}
             </span>
           </div>
 
-          {/* Back */}
+          {/* Back face */}
           <div className="flashcard__face flashcard__back">
             <WordIllustration word={current.card.front} size={72} />
-            <span className="flashcard__word" style={{ fontSize: 28 }}>
-              {current.card.front}
-            </span>
-            <span className="flashcard__translation">{current.card.back}</span>
-            {current.card.phonetic && (
+            {direction === 'en-tr' ? (
+              <>
+                <span className="flashcard__word flashcard__word--back">{current.card.front}</span>
+                <span className="flashcard__translation">{current.card.back}</span>
+              </>
+            ) : (
+              <>
+                <span className="flashcard__translation">{current.card.front}</span>
+                <span className="flashcard__word flashcard__word--back flashcard__word--en-reveal">
+                  {current.card.back}
+                </span>
+              </>
+            )}
+            {current.card.phonetic && direction === 'en-tr' && (
               <span className="flashcard__phonetic">/{current.card.phonetic}/</span>
             )}
             {current.card.example && (

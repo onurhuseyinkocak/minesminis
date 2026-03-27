@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Volume2, Highlighter, CheckCircle, XCircle } from 'lucide-react';
 import type { DecodableStory, HighlightedWord } from '../services/decodableStoryService';
 import { findWord } from '../data/decodableWordbank';
@@ -233,6 +233,15 @@ export default function DecodableStoryReader({
   const progressPct = showQuiz
     ? 100
     : Math.round(((sceneIndex + 1) / (totalScenes + 1)) * 100);
+
+  // Cancel TTS on unmount to prevent audio leaking after navigation
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const speak = useCallback((text: string) => {
     if (!window.speechSynthesis) return;

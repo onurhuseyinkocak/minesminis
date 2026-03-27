@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked, Flame, Star } from 'lucide-react';
 import './TopNav.css';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { getAvatarThumbnailUrl } from '../../utils/imageTransform';
 
 interface TopNavProps {
   /** User display name or initials for avatar fallback */
@@ -43,7 +45,8 @@ export default function TopNav({
 }: TopNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
+  const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -99,7 +102,7 @@ export default function TopNav({
         {/* Logo */}
         <Link to="/" className="topnav__logo" aria-label="MinesMinis Home">
           <div className="topnav__logo-icon" role="img" aria-hidden="true">
-            <Star size={22} fill="#E8A317" color="#E8A317" />
+            <Star size={22} fill="var(--warning)" color="var(--warning)" />
           </div>
           <div className="topnav__logo-text">
             <span>Mines</span><span>Minis</span>
@@ -126,6 +129,35 @@ export default function TopNav({
 
         {/* User Section */}
         <div className="topnav__user">
+          {/* Language toggle pill — always visible */}
+          <div className="topnav__lang-toggle" role="group" aria-label="Language selection">
+            <button
+              type="button"
+              className={`topnav__lang-btn${lang === 'tr' ? ' topnav__lang-btn--active' : ''}`}
+              onClick={() => setLang('tr')}
+              aria-pressed={lang === 'tr'}
+              aria-label="Türkçe"
+            >
+              TR
+            </button>
+            <button
+              type="button"
+              className={`topnav__lang-btn${lang === 'en' ? ' topnav__lang-btn--active' : ''}`}
+              onClick={() => setLang('en')}
+              aria-pressed={lang === 'en'}
+              aria-label="English"
+            >
+              EN
+            </button>
+          </div>
+
+          {/* CTA button — shown when user is not logged in */}
+          {!user && (
+            <Link to="/login" className="topnav__cta">
+              {lang === 'tr' ? 'Başla' : 'Get Started'}
+            </Link>
+          )}
+
           {streak > 0 && (
             <div className="topnav__streak" title={`${streak} day streak`}>
               <span className="topnav__streak-icon"><Flame size={16} color="#FF6B35" /></span>
@@ -154,7 +186,7 @@ export default function TopNav({
               {isEmoji ? (
                 <span className="topnav__avatar-emoji">{avatarUrl}</span>
               ) : avatarUrl ? (
-                <img src={avatarUrl} alt={userName || 'User avatar'} />
+                <img src={getAvatarThumbnailUrl(avatarUrl) ?? avatarUrl ?? ''} alt={userName || 'User avatar'} loading="lazy" width={40} height={40} />
               ) : (
                 initials
               )}
@@ -216,12 +248,12 @@ export default function TopNav({
         className={`topnav__mobile-menu ${mobileOpen ? 'open' : ''}`}
         role="dialog"
         aria-label="Navigation menu"
-        aria-modal={mobileOpen}
+        aria-modal={mobileOpen ? 'true' : 'false'}
       >
         <div className="topnav__mobile-header">
           <Link to="/" className="topnav__logo" aria-label="MinesMinis Home">
             <div className="topnav__logo-icon" role="img" aria-hidden="true">
-              <Star size={22} fill="#E8A317" color="#E8A317" />
+              <Star size={22} fill="var(--warning)" color="var(--warning)" />
             </div>
             <div className="topnav__logo-text">
               <span>Mines</span><span>Minis</span>
@@ -271,7 +303,7 @@ export default function TopNav({
             {isEmoji ? (
               <span className="topnav__avatar-emoji">{avatarUrl}</span>
             ) : avatarUrl ? (
-              <img src={avatarUrl} alt={userName || 'User avatar'} />
+              <img src={getAvatarThumbnailUrl(avatarUrl) ?? avatarUrl ?? ''} alt={userName || 'User avatar'} loading="lazy" width={40} height={40} />
             ) : (
               initials
             )}

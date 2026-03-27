@@ -92,7 +92,7 @@ const group1Sounds: PhonicsSound[] = [
     storyTr: 'Minik bir fare peynir kemirirken i-i-i diye cıyaklıyor.',
     keywords: ['in', 'it', 'is', 'if', 'ill', 'ink', 'inn', 'itch'],
     mnemonicEmoji: '\u{1F42D}',
-    turkishNote: "Bu kısa 'i', Türkçe 'i'sinden farklı. Türkçe 'ı'ya daha yakın. Kısa tut.",
+    turkishNote: "Bu kısa 'i', Türkçe 'i'siyle benzerdir ama daha gevşek ve kısa söylenir. Kaslarını fazla germe — sadece kısa bir 'i' de. 'bit', 'sit', 'it' kelimelerini dinle.",
     order: 4,
   },
   {
@@ -244,7 +244,7 @@ const group3Sounds: PhonicsSound[] = [
     id: 'g3_o',
     sound: 'o',
     grapheme: 'o',
-    ipa: '/\u0252/',
+    ipa: '/ɑ/',
     group: 3,
     action: 'Make an O with your mouth as if surprised: o, o, o',
     actionTr: 'Şaşırmış gibi ağzınla O yap: o, o, o',
@@ -267,7 +267,7 @@ const group3Sounds: PhonicsSound[] = [
     storyTr: 'Yağmur yağıyor! Çabuk, şemsiyeyi aç: u, u, u!',
     keywords: ['up', 'us', 'cup', 'cut', 'but', 'bus', 'bug', 'fun'],
     mnemonicEmoji: '\u{2602}\u{FE0F}',
-    turkishNote: "Bu, Türkçe 'a' ile 'ı' arasındadır. Ağzını 'a' için açtığından biraz daha az aç. Dikkatle dinle — bu İngilizce'ye özgü bir ses!",
+    turkishNote: "Bu ses Türkçe'de yok! En yakın ses kısa bir 'a'dır. Ağzını 'a' der gibi aç ama dil ortada kalsın, geriye gitmesın. 'cup', 'bug', 'fun' kelimelerini dinle — bu 'u' Türkçe 'u'dan çok farklı!",
     order: 3,
   },
   {
@@ -342,9 +342,9 @@ const group4Sounds: PhonicsSound[] = [
     ipa: '/d\u0292/',
     group: 4,
     action: 'Pretend to wobble like a jelly: j, j, j',
-    actionTr: 'Bir jöle gibi titreyerek sallan: c, c, c',
+    actionTr: "Bir jöle gibi titreyerek sallan: 'cam'daki gibi c, c, c",
     story: 'The jelly wobbles on the plate: j, j, j!',
-    storyTr: 'Jöle tabakta titriyor: c, c, c!',
+    storyTr: "Jöle tabakta titriyor — 'cam'daki 'c' gibi söyle: c, c, c!",
     keywords: ['jam', 'jet', 'jig', 'jog', 'jug', 'job', 'jot', 'jab'],
     mnemonicEmoji: '\u{1F36E}',
     turkishNote: "Türkçe 'c' gibi ('cam' kelimesindeki gibi). Yumuşak, vızıltılı bir sestir. Türkçe 'j' değil!",
@@ -426,7 +426,7 @@ const group5Sounds: PhonicsSound[] = [
     story: 'The busy bee buzzes around the flowers: zzzzz!',
     storyTr: 'Meşgul arı çiçeklerin etrafında vızıldanıyor: zzzzz!',
     keywords: ['zip', 'zoo', 'zap', 'zig', 'zag', 'buzz', 'fizz', 'jazz'],
-    mnemonicEmoji: '\u{1F41D}',
+    mnemonicEmoji: '\u{26A1}',
     turkishNote: "Türkçe 'z' ile aynı. 'ssss' derken boğazını titret. Vızıltıyı hisset!",
     order: 1,
   },
@@ -437,9 +437,9 @@ const group5Sounds: PhonicsSound[] = [
     ipa: '/w/',
     group: 5,
     action: 'Blow out a candle slowly and say wuh, wuh, wuh',
-    actionTr: 'Yavaşça mum üfle ve vuh, vuh, vuh de',
+    actionTr: "Yavaşça mum üfle ve 'wuh, wuh, wuh' de — dudakların önce yuvarlansın!",
     story: 'Whoosh! The wind blows: wuh, wuh, wuh!',
-    storyTr: 'Vuuuus! Rüzgar esiyor: vuh, vuh, vuh!',
+    storyTr: "Wuuush! Rüzgar esiyor: wuh, wuh, wuh! (Türkçe 'v' değil, W sesi!)",
     keywords: ['win', 'wet', 'wig', 'wag', 'web', 'will', 'wax', 'wish'],
     mnemonicEmoji: '\u{1F32C}\u{FE0F}',
     turkishNote: "Türkçe'de bu ses yok! Dudaklarını küçük bir daire yap ('u' der gibi) sonra aç. Türkçe 'v' değil!",
@@ -801,12 +801,14 @@ export function getBlendableWords(masteredSounds: string[]): string[] {
     ALL_SOUNDS
       .filter((s) => masteredSounds.includes(s.id))
       .flatMap((s) => {
-        // For digraphs, include the digraph itself plus component letters
-        const result = [s.grapheme.toLowerCase()];
-        if (s.grapheme.length === 1) {
-          result.push(s.grapheme.toLowerCase());
+        const graphemeLower = s.grapheme.toLowerCase();
+        // For compound graphemes like "c/k", expand to all individual variants
+        if (graphemeLower.includes('/')) {
+          return graphemeLower.split('/').map((g) => g.trim());
         }
-        return result;
+        // For graphemes with parenthetical qualifiers like "oo (book)", use only the base
+        const base = graphemeLower.split(' ')[0];
+        return [base];
       })
   );
 

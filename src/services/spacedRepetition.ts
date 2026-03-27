@@ -70,7 +70,7 @@ export function saveSRSState(userId: string, state: SRSState): void {
 
     // Fire-and-forget: sync to Supabase for cross-device restore
     import('../services/supabaseSync').then(({ syncSpacedRepetition }) => {
-      void syncSpacedRepetition(userId, updated.words as unknown as Record<string, unknown>);
+      void syncSpacedRepetition(userId, updated.words);
     }).catch(() => {
       // Silent fail — localStorage is primary
     });

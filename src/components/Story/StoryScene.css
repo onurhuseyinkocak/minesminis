@@ -223,7 +223,7 @@
 .story-scene__particles--sand .story-scene__particle {
   width: 3px;
   height: 3px;
-  background: #D4AC0D;
+  background: var(--accent-gold-dark);
   opacity: 0.4;
   animation: particle-sand 4s linear infinite;
 }

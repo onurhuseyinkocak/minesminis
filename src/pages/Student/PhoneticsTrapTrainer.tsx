@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -143,6 +145,7 @@ function MasterProgress({ mastery, isTr }: { mastery: Record<string, number>; is
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function PhoneticsTrapTrainer() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { loseHeart } = useHearts();
   const { lang } = useLanguage();
@@ -197,6 +200,14 @@ export default function PhoneticsTrapTrainer() {
       {/* Page header */}
       <div className="ptt__page-header">
         <div className="ptt__title-row">
+          <button
+            type="button"
+            className="ptt__back-btn"
+            onClick={() => navigate(-1)}
+            aria-label={isTr ? 'Geri dön' : 'Go back'}
+          >
+            <ArrowLeft size={20} />
+          </button>
           <h1 className="ptt__page-title">
             {isTr ? 'Türkçe Telaffuz Tuzakları' : 'Turkish Pronunciation Traps'}
           </h1>

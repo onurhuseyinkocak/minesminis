@@ -8,7 +8,8 @@
   flex-direction: column;
   gap: var(--space-lg);
   padding: var(--space-lg);
-  max-width: 800px;
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  max-width: 480px;
   margin: 0 auto;
   animation: fadeInUp 400ms ease-out;
 }
@@ -87,8 +88,8 @@
 }
 
 .word-match__card:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
-  border-bottom-width: 2.5px;
+  transform: translateY(2px) scale(0.98);
+  border-bottom-width: 2px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -103,15 +104,18 @@
     0 0 0 3px var(--primary-glow),
     var(--shadow-md);
   background: var(--primary-pale);
+  /* Accessibility: outline for color-blind users — not border color change alone */
+  outline: 3px solid var(--primary);
+  outline-offset: -1px;
 }
 
 .word-match__card--matched {
   border-color: var(--success);
-  background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
-  color: var(--success, #10B981);
+  background: linear-gradient(135deg, var(--success-pale) 0%, var(--success-soft) 100%);
+  color: var(--success);
   opacity: 1;
   pointer-events: none;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px var(--success-soft), 0 4px 12px color-mix(in srgb, var(--success) 20%, transparent);
   animation: wm-match-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -124,14 +128,15 @@
 }
 
 .word-match__card--flash {
-  animation: wm-flash 0.65s ease;
+  animation: wm-flash 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes wm-flash {
-  0%   { background: var(--bg-card); box-shadow: var(--shadow-card); transform: scale(1); }
-  20%  { background: #10B981; box-shadow: 0 0 0 6px rgba(16,185,129,0.35), 0 0 32px rgba(16,185,129,0.5); transform: scale(1.07); }
-  50%  { background: #BBF7D0; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); transform: scale(1.03); }
-  100% { background: var(--bg-card); box-shadow: var(--shadow-card); transform: scale(1); }
+  0%   { transform: scale(1); background: var(--bg-card); box-shadow: var(--shadow-card); border-color: var(--border-light); }
+  25%  { transform: scale(1.04); background: var(--success); color: var(--white); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 40%, transparent); border-color: var(--success); }
+  55%  { transform: scale(0.98); }
+  75%  { transform: scale(1.02); }
+  100% { transform: scale(1); background: var(--bg-card); box-shadow: var(--shadow-card); border-color: var(--border-light); }
 }
 
 /* Connection line animation for matched pairs */
@@ -151,10 +156,12 @@
 
 /* Wrong answer — red shake */
 .word-match__card--wrong {
-  border-color: var(--error, #EF4444) !important;
-  background: var(--error-pale, #FEF2F2) !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
-  animation: wm-shake 0.4s ease;
+  border-color: var(--error) !important;
+  border-bottom-color: var(--accent-red-dark) !important;
+  background: var(--error-pale) !important;
+  color: var(--error) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 25%, transparent) !important;
+  animation: wm-shake 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes wm-shake {
@@ -175,7 +182,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--success, #10B981);
+  color: var(--success);
 }
 
 /* Letter avatar — shown on LEFT (English) cards instead of emoji */
@@ -183,8 +190,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--primary, #FF6B35);
-  color: #fff;
+  background: var(--primary);
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,8 +266,8 @@
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #FFF8E1 0%, #FFF3CD 100%);
-  box-shadow: 0 8px 24px rgba(232, 163, 23, 0.25);
+  background: linear-gradient(135deg, var(--warning-pale) 0%, var(--bg-orange-soft) 100%);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--warning) 25%, transparent);
 }
 
 .word-match__results-title {
@@ -307,22 +314,28 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  border: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 2px solid transparent;
+  border-bottom-width: 5px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-bottom-width 0.08s ease;
   min-height: 52px;
+  touch-action: manipulation;
 }
 
 .word-match__results-btn:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .word-match__results-btn:active {
-  transform: scale(0.96);
+  transform: translateY(2px) scale(0.98);
+  border-bottom-width: 2px;
+  box-shadow: none !important;
 }
 
 .word-match__results-btn--primary {
   background: var(--gradient-primary);
-  color: #fff;
+  color: var(--white);
+  border-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
   box-shadow: var(--shadow-button);
   font-size: 1.05rem;
 }
@@ -332,17 +345,32 @@
 }
 
 .word-match__results-btn--secondary {
-  background: var(--bg-soft, #f5f5f5);
+  background: var(--bg-soft);
   color: var(--text-secondary);
-  border: 2px solid var(--border-light);
+  border-color: var(--border-light);
+  border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
   min-height: 52px;
   padding: 0.85rem 2rem;
   font-size: 1.1rem;
 }
 
+.word-match__results-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 [data-theme="dark"] .word-match__results-btn--secondary {
   background: var(--bg-elevated);
   color: var(--text-secondary);
+}
+
+[data-theme="dark"] .word-match__results-icon {
+  background: linear-gradient(135deg, var(--warning-pale) 0%, color-mix(in srgb, var(--warning) 10%, transparent) 100%);
+}
+
+[data-theme="dark"] .word-match__results-content {
+  background: var(--bg-card);
+  border-color: color-mix(in srgb, var(--white) 6%, transparent);
 }
 
 /* -- Responsive ------------------------------------------------------- */
@@ -355,6 +383,17 @@
   }
   .word-match__card-emoji { font-size: 2.5rem; }
   .word-match__card-text { font-size: 1.4rem; }
+}
+
+@media (max-width: 480px) {
+  .word-match__results-actions {
+    flex-direction: column;
+  }
+
+  .word-match__results-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -390,8 +429,39 @@
   .word-match__card-text { font-size: 0.95rem; }
 }
 
+/* -- 320px (iPhone SE) overflow protection ----------------------------- */
+@media (max-width: 360px) {
+  .word-match {
+    padding: var(--space-1) var(--space-2);
+    gap: var(--space-2);
+  }
+  .word-match__board {
+    gap: var(--space-1);
+    /* Ensure board never overflows the viewport */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .word-match__column {
+    min-width: 0;
+    flex: 1 1 0;
+  }
+  .word-match__card {
+    padding: var(--space-1) var(--space-2);
+    min-height: 48px;
+    font-size: 0.875rem;
+  }
+  .word-match__card-avatar,
+  .word-match__card-emoji {
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+  }
+  .word-match__card-text { font-size: 0.8rem; }
+  .word-match__title { font-size: 1.1rem; }
+}
+
 @media (min-width: 1600px) {
-  .word-match { max-width: 900px; }
+  .word-match { max-width: 480px; }
   .word-match__card {
     min-height: 96px;
     font-size: 1.5rem;
@@ -426,4 +496,9 @@
 
 [data-theme="dark"] .word-match__feedback--wrong {
   background: var(--error-pale);
+}
+
+[data-theme="dark"] .word-match__card--wrong {
+  background: var(--error-pale) !important;
+  border-color: var(--error) !important;
 }

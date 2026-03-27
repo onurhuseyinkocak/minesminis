@@ -18,6 +18,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   useRef,
 } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -135,7 +136,7 @@ export function MascotProvider({ children }: { children: React.ReactNode }) {
 
   const setMascotId = useCallback((id: MascotId) => {
     if ((VALID_MASCOT_IDS as readonly string[]).includes(id)) {
-      localStorage.setItem(MASCOT_KEY, id);
+      try { localStorage.setItem(MASCOT_KEY, id); } catch { /* ignore */ }
       setMascotIdState(id);
     }
   }, []);
@@ -196,8 +197,13 @@ export function MascotProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => () => clearTimer(), [clearTimer]);
 
+  const value = useMemo<MascotContextValue>(
+    () => ({ mascotId, setMascotId, state, message, feedback, triggerMascot }),
+    [mascotId, setMascotId, state, message, feedback, triggerMascot],
+  );
+
   return (
-    <MascotContext.Provider value={{ mascotId, setMascotId, state, message, feedback, triggerMascot }}>
+    <MascotContext.Provider value={value}>
       {children}
     </MascotContext.Provider>
   );

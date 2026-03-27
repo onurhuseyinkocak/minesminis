@@ -1,78 +1,35 @@
 /* ==========================================================================
    APP SHELL — LibreUIUX / MinesMinis Design System
    Desktop top nav, mobile top bar, mobile bottom nav
-   Uses Tailwind classes in TSX — this file provides base overrides
-   and ensures design-system compliance for nav elements.
+   All BEM-style class names to avoid Tailwind selector conflicts.
    ========================================================================== */
 
 /* -- Page background ---------------------------------------------------- */
+
 .min-h-screen {
   background: var(--bg-page);
 }
 
-/* -- Desktop top nav ---------------------------------------------------- */
+/* -- Desktop top nav — Tailwind inline, just reinforce tokens ------------ */
 
-/* Scrolled state shadow consistency */
-.shadow-sm {
-  box-shadow: var(--shadow-sm);
-}
-
-/* -- Mobile bottom nav -------------------------------------------------- */
-
-/* Ensure bottom nav has proper card background and shadow */
-nav.fixed.bottom-0 {
-  background: var(--bg-card);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.04);
-}
-
-/* Bottom nav items — enforce 44px minimum touch targets */
-nav.fixed.bottom-0 a {
-  min-height: var(--touch-target);
-  min-width: var(--touch-target);
+/* Scrolled state shadow uses design token */
+header.hidden.lg\\:flex {
   transition:
-    color var(--duration-normal) var(--ease-out),
-    background var(--duration-normal) var(--ease-out);
+    background var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out);
 }
 
-/* Active bottom nav item — icon background pill */
-nav.fixed.bottom-0 a .bg-primary-50 {
-  background: var(--primary-pale);
-}
-
-/* Active bottom nav text color uses Tailwind's text-primary-500 which maps
-   to var(--primary) via tailwind config — no override needed */
-
-/* Bottom nav item press feedback */
-nav.fixed.bottom-0 a:active {
-  transform: scale(0.92);
-  transition: transform 100ms var(--ease-out);
-}
-
-/* Bottom nav active indicator dot */
-nav.fixed.bottom-0 a .bg-primary-50 {
-  transition: background var(--duration-normal) var(--ease-out),
-              transform var(--duration-normal) var(--ease-spring);
-}
-
-/* -- Desktop nav active state reinforcement ----------------------------- */
-
-/* Active nav link pill */
+/* Active nav link pill uses design token */
 header nav a.bg-primary-50 {
-  background: var(--primary-pale);
+  background: var(--primary-pale) !important;
 }
 
 header nav a.text-primary-600 {
-  color: var(--primary);
+  color: var(--primary) !important;
 }
 
-/* Hover state for non-active links */
-header nav a:hover:not(.bg-primary-50) {
-  background: var(--bg-muted);
-}
-
-/* -- Desktop dropdown --------------------------------------------------- */
-
+/* Desktop dropdown card */
 header .absolute.bg-white {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -85,71 +42,315 @@ header .absolute.bg-white button:hover {
   background: var(--bg-muted);
 }
 
-/* -- Focus visible for all nav interactive elements --------------------- */
-
+/* Focus visible for desktop nav elements */
 header a:focus-visible,
-header button:focus-visible,
-nav.fixed.bottom-0 a:focus-visible {
+header button:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
   border-radius: var(--radius-sm);
 }
 
-/* -- Smooth transitions ------------------------------------------------- */
+/* -- Desktop avatar button — 44px touch target enforced ----------------- */
 
-header {
+.appshell-desktop-avatar {
+  /* Exact 44x44 touch target */
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    opacity var(--transition-fast),
+    box-shadow var(--transition-base);
+  flex-shrink: 0;
+}
+
+.appshell-desktop-avatar:hover {
+  opacity: 0.9;
+  box-shadow: var(--shadow-md);
+}
+
+.appshell-desktop-avatar:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Desktop dropdown — z-index must be above header (--z-sticky: 200) */
+.appshell-desktop-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 200px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2) 0;
+  /* Must be above --z-sticky (200). Use --z-dropdown (100) which is
+     promoted via the parent header's stacking context to sit on top. */
+  z-index: var(--z-dropdown);
+  animation: dropdownFadeIn 150ms var(--ease-out);
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+[data-theme="dark"] .appshell-desktop-dropdown {
+  background: var(--charcoal);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* -- Mobile top bar ----------------------------------------------------- */
+
+.appshell-mobile-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky);
+  /* Account for iOS status bar / notch */
+  padding-top: env(safe-area-inset-top, 0px);
+  height: calc(56px + env(safe-area-inset-top, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 16px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
   transition:
     background var(--duration-normal) var(--ease-out),
-    box-shadow var(--duration-normal) var(--ease-out),
-    border-color var(--duration-normal) var(--ease-out);
+    box-shadow var(--duration-normal) var(--ease-out);
 }
 
-/* -- Safe area bottom padding for iOS ----------------------------------- */
+/* Mobile top bar avatar — enforced 44x44px touch target */
+.appshell-mobile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Visual size 32px, touch target 44px via padding */
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity var(--transition-fast);
+}
 
-nav.fixed.bottom-0 {
+.appshell-mobile-avatar:active {
+  opacity: 0.8;
+}
+
+.appshell-mobile-avatar:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* -- Main content area -------------------------------------------------- */
+
+.appshell-main {
+  /* Mobile top bar height + safe area top */
+  padding-top: calc(56px + env(safe-area-inset-top, 0px));
+  /* Large-screen cap: prevents content from stretching past 1440px on 4K monitors */
+  width: 100%;
+}
+
+.appshell-main--with-bottom-nav {
+  /* Bottom tab bar height (56px) + safe area bottom */
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+}
+
+/* -- Mobile bottom tab bar ---------------------------------------------- */
+
+.appshell-tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky);
+  /* Fixed bar height + safe area */
+  height: calc(56px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
 }
 
-/* -- Responsive --------------------------------------------------------- */
-
-@media (max-width: 1023px) {
-  /* Ensure mobile top bar has proper height and borders */
-  header.fixed.top-0 {
-    height: 56px;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border);
-    box-shadow: var(--shadow-xs);
-  }
+/* Individual tab item */
+.appshell-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  /* Enforce minimum touch target height */
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: 6px 4px;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition:
+    color var(--duration-normal) var(--ease-out),
+    background var(--duration-normal) var(--ease-out);
 }
 
-/* -- Smart Board -------------------------------------------------------- */
+.appshell-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
 
-@media (min-width: 1920px) {
-  header.fixed.top-0 {
-    height: 80px;
-  }
+.appshell-tab:active {
+  transform: scale(0.93);
+  transition: transform 100ms var(--ease-out);
+}
 
-  nav.fixed.bottom-0 a {
-    min-height: var(--touch-target-lg);
-  }
+.appshell-tab--active {
+  color: var(--primary);
+}
+
+/* Icon wrapper — pill highlight on active */
+.appshell-tab__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  transition:
+    background var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-spring);
+}
+
+.appshell-tab__icon-wrap svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.appshell-tab__icon-wrap--active {
+  background: var(--primary-pale);
+  transform: translateY(-1px) scale(1.08);
+}
+
+/* Tab label */
+.appshell-tab__label {
+  font-family: var(--font-display);
+  /* 0.75rem (= 12px at 16px base) minimum for legibility */
+  font-size: 0.75rem; /* was 12px — rem scales with browser text size */
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+}
+
+.appshell-tab--active .appshell-tab__label {
+  font-weight: 800;
+}
+
+/* -- Focus visible for tab bar ------------------------------------------ */
+
+.appshell-tabbar a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
 }
 
 /* -- Dark mode ---------------------------------------------------------- */
 
-[data-theme="dark"] header.fixed.top-0 {
-  background: rgba(15, 15, 30, 0.90);
+[data-theme="dark"] .appshell-mobile-topbar {
+  background: rgba(15, 15, 30, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
-[data-theme="dark"] nav.fixed.bottom-0 {
-  background: var(--ink);
+[data-theme="dark"] .appshell-tabbar {
+  background: rgba(26, 26, 46, 0.96);
   border-top-color: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .appshell-tab {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .appshell-tab--active {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .appshell-tab__icon-wrap--active {
+  background: rgba(255, 107, 53, 0.15);
 }
 
 [data-theme="dark"] header .absolute.bg-white {
-  background: var(--ink);
+  background: var(--charcoal);
   border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] header .absolute.bg-white a:hover,
+[data-theme="dark"] header .absolute.bg-white button:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* -- Desktop overrides (lg = 1024px+) ----------------------------------- */
+
+@media (min-width: 1024px) {
+  /* On desktop, top nav is 64px (h-16 in Tailwind), no safe area needed */
+  .appshell-main {
+    padding-top: 64px;
+  }
+
+  /* Desktop has no bottom nav, reset bottom padding */
+  .appshell-main--with-bottom-nav {
+    padding-bottom: 32px;
+  }
+}
+
+/* -- Large screen cap (1440px+) ----------------------------------------- */
+/* Prevent unbounded content stretching on 4K / ultrawide monitors.
+   The outer shell spans 100% width (for background colors), but the
+   inner nav and main content are visually capped at 1440px. */
+@media (min-width: 1440px) {
+  .appshell-main > * {
+    /* Each direct child (page component) gets a max-width cap */
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* -- Smart Board (1920px+) ---------------------------------------------- */
+
+@media (min-width: 1920px) {
+  .appshell-tab__icon-wrap svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .appshell-tab__label {
+    font-size: 0.75rem; /* rem scales with browser text size preference */
+  }
 }

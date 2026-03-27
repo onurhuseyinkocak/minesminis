@@ -288,7 +288,7 @@ function AdminAnalytics() {
 
                     const dayKey = row.created_at.slice(0, 10);
                     if (!userDays.has(row.user_id)) userDays.set(row.user_id, new Set());
-                    userDays.get(row.user_id)!.add(dayKey);
+                    userDays.get(row.user_id)?.add(dayKey);
                 }
 
                 // Retention: users with activity on 2+ distinct days

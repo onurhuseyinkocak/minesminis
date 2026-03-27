@@ -8,6 +8,10 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   error?: string;
   helperText?: string;
   icon?: ReactNode;
+  rightIcon?: ReactNode;
+  onRightIconClick?: () => void;
+  /** Accessible label for the right-icon button (required when onRightIconClick is provided) */
+  rightIconAriaLabel?: string;
   size?: InputSize;
   className?: string;
 }
@@ -19,6 +23,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       error,
       helperText,
       icon,
+      rightIcon,
+      onRightIconClick,
+      rightIconAriaLabel,
       size = 'lg',
       disabled = false,
       className = '',
@@ -36,6 +43,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       'mm-input',
       `mm-input--${size}`,
       icon && 'mm-input--has-icon',
+      rightIcon && 'mm-input--has-right-icon',
       error && 'mm-input--error',
     ]
       .filter(Boolean)
@@ -61,6 +69,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...rest}
           />
           {icon && <span className="mm-input-icon" aria-hidden="true">{icon}</span>}
+          {rightIcon && onRightIconClick ? (
+            <button
+              type="button"
+              className="mm-input-icon mm-input-icon--right mm-input-icon--btn"
+              onClick={onRightIconClick}
+              aria-label={rightIconAriaLabel ?? 'Toggle input'}
+            >
+              {rightIcon}
+            </button>
+          ) : rightIcon ? (
+            <span className="mm-input-icon mm-input-icon--right" aria-hidden="true">{rightIcon}</span>
+          ) : null}
         </div>
         {error && (
           <span className="mm-input-error-text" id={errorId} role="alert">

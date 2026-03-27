@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star, Trophy, Check, ArrowRight } from 'lucide-react';
 import { Button, Card, Badge, ProgressBar } from '../ui';
@@ -28,21 +28,38 @@ interface SentenceData {
 }
 
 function shuffleArray<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
+  if (arr.length <= 1) return [...arr];
+  let shuffled: T[];
+  let attempts = 0;
+  // Guard against returning original order (anti-pattern for scramble games)
+  do {
+    shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    attempts++;
+  } while (
+    attempts < 10 &&
+    arr.length > 1 &&
+    shuffled.every((v, i) => v === arr[i])
+  );
   return shuffled;
 }
 
+/** Returns "a" or "an" based on the first letter of the word (English article rule). */
+function articleFor(word: string): string {
+  return /^[aeiou]/i.test(word) ? 'an' : 'a';
+}
+
 function generateSentences(wordItems: WordItem[]): SentenceData[] {
+  // Templates that use correct "a/an" articles and avoid single-word sentences
   const templates = [
     (w: string) => `I like the ${w}`,
-    (w: string) => `This is a ${w}`,
-    (w: string) => `I see a ${w}`,
+    (w: string) => `This is ${articleFor(w)} ${w}`,
+    (w: string) => `I see ${articleFor(w)} ${w}`,
     (w: string) => `Look at the ${w}`,
-    (w: string) => `I have a ${w}`,
+    (w: string) => `I have ${articleFor(w)} ${w}`,
     (w: string) => `We can see the ${w}`,
   ];
 
@@ -75,6 +92,16 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   const currentSentence = sentences[currentIndex];
 
+  // Cleanup timers and TTS on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   const initSentence = useCallback((index: number) => {
     const s = sentences[index];
     if (!s) return;
@@ -97,33 +124,68 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     setPlaced((prev) => prev.filter((_, i) => i !== fromIndex));
   };
 
+  // Keyboard reorder: ArrowLeft/ArrowRight moves a placed chip, Backspace removes it
+  const handlePlacedKeyDown = (e: React.KeyboardEvent, word: string, index: number) => {
+    if (feedback) return;
+    if (e.key === 'ArrowLeft' && index > 0) {
+      e.preventDefault();
+      setPlaced((prev) => {
+        const next = [...prev];
+        [next[index - 1], next[index]] = [next[index], next[index - 1]];
+        return next;
+      });
+    } else if (e.key === 'ArrowRight' && index < placed.length - 1) {
+      e.preventDefault();
+      setPlaced((prev) => {
+        const next = [...prev];
+        [next[index], next[index + 1]] = [next[index + 1], next[index]];
+        return next;
+      });
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+      e.preventDefault();
+      handleRemoveWord(word, index);
+    }
+  };
+
+  const normalizeForCheck = (s: string) =>
+    s.trim().toLowerCase().replace(/[.,!?;:'"]+$/g, '');
+
   const handleCheck = () => {
     if (feedback) return;
-    const attempt = placed.join(' ');
-    const correct = currentSentence.sentence;
+    // Case-insensitive, punctuation-tolerant comparison
+    const attempt = normalizeForCheck(placed.join(' '));
+    const correct = normalizeForCheck(currentSentence.sentence);
 
     if (attempt === correct) {
       setFeedback('correct');
-      setScore((prev) => prev + 1);
+      setScore((prev) => {
+        const newScore = prev + 1;
+
+        if (window.speechSynthesis) {
+          const utter = new SpeechSynthesisUtterance(currentSentence.sentence);
+          utter.lang = 'en-US';
+          utter.rate = 0.8;
+          window.speechSynthesis.speak(utter);
+        }
+
+        setTimeout(() => {
+          if (currentIndex + 1 < sentences.length) {
+            setCurrentIndex((ci) => ci + 1);
+            initSentence(currentIndex + 1);
+          } else {
+            setCompleted(true);
+            // Use newScore here to avoid stale closure bug
+            autoCompleteTimeoutRef.current = setTimeout(
+              () => onComplete(newScore, sentences.length),
+              4000
+            );
+          }
+        }, 2000);
+
+        return newScore;
+      });
       onXpEarned?.(15);
       SFX.correct();
-
-      if (window.speechSynthesis) {
-        const utter = new SpeechSynthesisUtterance(correct);
-        utter.lang = 'en-US';
-        utter.rate = 0.8;
-        window.speechSynthesis.speak(utter);
-      }
-
-      setTimeout(() => {
-        if (currentIndex + 1 < sentences.length) {
-          setCurrentIndex((prev) => prev + 1);
-          initSentence(currentIndex + 1);
-        } else {
-          setCompleted(true);
-          autoCompleteTimeoutRef.current = setTimeout(() => onComplete(score + 1, sentences.length), 4000);
-        }
-      }, 2000);
     } else {
       setFeedback('wrong');
       SFX.wrong();
@@ -150,11 +212,27 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   const progress = sentences.length > 0 ? (currentIndex / sentences.length) * 100 : 0;
 
-  if (words.length < 1) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
+  // Guard: no words provided
+  if (words.length < 1) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+        {t('games.noWordsToReview')}
+      </div>
+    );
+  }
+
+  // Guard: no sentences could be generated (e.g., all words filtered out)
+  if (sentences.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+        {t('games.noWordsToReview')}
+      </div>
+    );
+  }
 
   if (completed) {
     const pct = sentences.length > 0 ? Math.round((score / sentences.length) * 100) : 0;
-    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
+    const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <div className="sentence-scramble">
         {pct >= 90 && <ConfettiRain duration={3000} />}
@@ -171,7 +249,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
             >
-              {pct >= 90 ? <Trophy size={48} color="#E8A317" /> : pct >= 60 ? <Star size={48} fill="#E8A317" color="#E8A317" /> : <Check size={48} color="#22C55E" />}
+              {pct >= 90 ? <Trophy size={48} color="var(--warning)" /> : pct >= 60 ? <Star size={48} fill="var(--warning)" color="var(--warning)" /> : <Check size={48} color="var(--success)" />}
             </motion.span>
             <h2 className="sentence-scramble__results-title">{t('games.sentenceMaster')}</h2>
             <p className="sentence-scramble__results-score">
@@ -213,7 +291,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     {showNoHearts && (
       <NoHeartsModal onClose={() => setShowNoHearts(false)} />
     )}
-    <div className="sentence-scramble" role="application" aria-label="Sentence scramble game">
+    <div className="sentence-scramble" role="application" aria-label="Sentence scramble game" aria-description="Tap words below to build a sentence. In the sentence area, use Arrow keys to reorder words and Backspace to remove them.">
       <div className="sentence-scramble__header">
         <h2 className="sentence-scramble__title">{t('games.buildTheSentence')}</h2>
         <Badge variant="info">{currentIndex + 1}/{sentences.length}</Badge>
@@ -251,7 +329,8 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
                 role="listitem"
                 className="sentence-scramble__chip sentence-scramble__chip--placed"
                 onClick={() => handleRemoveWord(word, index)}
-                aria-label={`Remove ${word}`}
+                onKeyDown={(e) => handlePlacedKeyDown(e, word, index)}
+                aria-label={`${word}, position ${index + 1} of ${placed.length}. Press Backspace to remove, Arrow keys to reorder.`}
                 aria-pressed={true}
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}

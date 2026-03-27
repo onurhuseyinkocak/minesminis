@@ -4,6 +4,31 @@
  */
 
 // ============================================================
+// GLOBAL MUTE STATE — reads from localStorage, listens for toggle events
+// ============================================================
+
+const LS_SOUND_KEY = 'mm_sound_enabled';
+
+function _isSoundEnabled(): boolean {
+  try {
+    const val = localStorage.getItem(LS_SOUND_KEY);
+    return val !== 'false'; // default on
+  } catch {
+    return true;
+  }
+}
+
+// Keep an in-memory flag so we don't hit localStorage on every SFX call
+let _soundEnabled: boolean = _isSoundEnabled();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('mm-sound-toggle', (e: Event) => {
+    const detail = (e as CustomEvent<{ enabled: boolean }>).detail;
+    _soundEnabled = detail.enabled;
+  });
+}
+
+// ============================================================
 // AUDIO CONTEXT (lazy singleton)
 // ============================================================
 
@@ -11,7 +36,7 @@ let _ctx: AudioContext | null = null;
 
 function getAudioContext(): AudioContext {
   if (!_ctx || _ctx.state === 'closed') {
-    _ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    _ctx = new (window.AudioContext || window.webkitAudioContext)();
   }
   if (_ctx.state === 'suspended') {
     _ctx.resume();
@@ -125,6 +150,7 @@ function playNoiseBurst(ctx: AudioContext, duration: number, freq: number): void
 
 /** Two-tone chime: C5 + E5 simultaneously + quick C6 tail, 350ms total */
 function playCorrect(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -138,6 +164,7 @@ function playCorrect(): void {
 
 /** Gentle descending wobble — not punishing */
 function playWrong(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -149,6 +176,7 @@ function playWrong(): void {
 
 /** Full arpeggio C5→E5→G5→C6 with harmonic overtones, 600ms */
 function playLevelUp(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -164,6 +192,7 @@ function playLevelUp(): void {
 
 /** Soft synthetic tap — wood-block-esque */
 function playClick(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     playNoiseBurst(ctx, 0.04, 1200);
@@ -172,6 +201,7 @@ function playClick(): void {
 
 /** Triple ascending chime — streak reward */
 function playStreak(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -185,6 +215,7 @@ function playStreak(): void {
 
 /** Full chord stab + shimmer — big moment */
 function playCelebration(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -204,6 +235,7 @@ function playCelebration(): void {
 
 /** Soft metronome tick */
 function playCountdown(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     playNoiseBurst(ctx, 0.035, 900);
@@ -212,6 +244,7 @@ function playCountdown(): void {
 
 /** XP coin collect — bright sparkle */
 function playXPGain(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -222,6 +255,7 @@ function playXPGain(): void {
 
 /** Badge earned — metallic shimmer */
 function playBadgeEarned(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -234,6 +268,7 @@ function playBadgeEarned(): void {
 
 /** Page whoosh — subtle */
 function playNavigation(): void {
+  if (!_soundEnabled) return;
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;

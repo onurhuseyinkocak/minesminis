@@ -24,14 +24,8 @@
 
 .lg-container {
   min-height: 100vh;
-  background: linear-gradient(
-    180deg,
-    #F0FFF4 0%,
-    #E8F5E9 35%,
-    #F0FFF4 70%,
-    #FEFCE8 100%
-  );
-  padding-bottom: 2rem;
+  background: var(--gradient-mimi, linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 100%));
+  padding-bottom: calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 2rem);
 }
 
 .lg-header {
@@ -39,9 +33,9 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--bg-glass);
   backdrop-filter: blur(12px);
-  border-bottom: 2px solid rgba(76, 175, 80, 0.15);
+  border-bottom: 2px solid var(--success-soft);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -88,7 +82,7 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+  background: var(--info-pale);
   border-radius: var(--radius-full);
   padding: 0.45rem 0.85rem;
   border: 1.5px solid var(--info-light);
@@ -112,8 +106,8 @@
   justify-content: center;
   gap: 1.75rem;
   padding: 0.85rem 1rem;
-  background: rgba(255, 255, 255, 0.85);
-  border-bottom: 1px solid rgba(76, 175, 80, 0.08);
+  background: var(--bg-glass);
+  border-bottom: 1px solid var(--success-soft);
 }
 
 .lg-statItem {
@@ -149,13 +143,13 @@
 .lg-groupRow {
   border-radius: var(--radius-lg);
   padding: 0.6rem;
-  border: 1.5px solid rgba(76, 175, 80, 0.12);
-  background: rgba(255, 255, 255, 0.6);
+  border: 1.5px solid var(--success-soft);
+  background: var(--bg-glass);
   transition: background var(--transition-base);
 }
 
 .lg-groupRow:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .lg-groupLabel {
@@ -165,7 +159,7 @@
 
 .lg-groupLabelText {
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--mimi-dark);
   text-transform: uppercase;
@@ -188,20 +182,20 @@
   gap: 0.2rem;
   padding: 0.5rem 0.25rem;
   border-radius: var(--radius-md);
-  border: 2px solid rgba(76, 175, 80, 0.15);
-  background: linear-gradient(180deg, #FFFFFF 0%, #F0FFF4 100%);
+  border: 2px solid var(--success-soft);
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--success-pale) 100%);
   cursor: pointer;
   aspect-ratio: 1;
   min-height: 64px;
   transition: all 0.2s var(--ease-spring);
-  box-shadow: 0 1px 3px rgba(46, 125, 50, 0.06);
+  box-shadow: var(--shadow-xs);
 }
 
 .lg-plantCell:hover {
   transform: translateY(-3px) scale(1.04);
   border-color: var(--mimi);
-  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.15);
-  background: linear-gradient(180deg, #FFFFFF 0%, #E8F5E9 100%);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--success-soft) 100%);
 }
 
 .lg-plantCell:active {
@@ -210,7 +204,7 @@
 
 .lg-soundLabel {
   font-family: var(--font-display);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--mimi-dark);
   text-transform: lowercase;
@@ -220,7 +214,7 @@
   position: absolute;
   top: 2px;
   right: 2px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   animation: gardenSparkle 2s ease-in-out infinite;
 }
 
@@ -240,17 +234,17 @@
 .lg-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--overlay-sm);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: var(--z-modal);
   padding: 1rem;
 }
 
 .lg-plantModal {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F0FFF4 100%);
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--success-pale) 100%);
   border-radius: var(--radius-xl);
   padding: 1.75rem;
   max-width: 380px;
@@ -259,8 +253,8 @@
   flex-direction: column;
   gap: 0.85rem;
   box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(76, 175, 80, 0.1);
+    var(--shadow-xl),
+    0 0 0 1px var(--success-soft);
   animation: leafGrow 0.3s ease-out;
 }
 
@@ -286,10 +280,10 @@
 .lg-masteryBarBg {
   width: 100%;
   height: 12px;
-  background: rgba(76, 175, 80, 0.1);
+  background: var(--success-soft);
   border-radius: var(--radius-full);
   overflow: hidden;
-  border: 1px solid rgba(76, 175, 80, 0.15);
+  border: 1px solid var(--success-soft);
 }
 
 .lg-masteryBarFill {
@@ -312,10 +306,9 @@
 .lg-stagesTimeline {
   display: flex;
   justify-content: space-between;
-  padding: 0.6rem 0;
+  padding: 0.6rem 0.5rem;
   background: rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-md);
-  padding-inline: 0.5rem;
 }
 
 .lg-timelineItem {
@@ -332,7 +325,7 @@
 
 .lg-timelineLabel {
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -345,7 +338,7 @@
   padding: 0.7rem 1.4rem;
   border-radius: var(--radius-md);
   border: 2px solid var(--accent-blue);
-  background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+  background: var(--info-pale);
   color: var(--accent-blue);
   font-family: var(--font-display);
   font-weight: 800;
@@ -405,12 +398,99 @@
   max-width: 280px;
 }
 
-.lg-plantCell[data-stage="seed"] { background: var(--bg-soft, #f8f9fa); }
-.lg-plantCell[data-stage="sprout"] { background: linear-gradient(135deg, #F0FFF4, #DCFCE7); border-color: #86EFAC; }
-.lg-plantCell[data-stage="growing"] { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); border-color: #4ADE80; }
-.lg-plantCell[data-stage="blooming"] { background: linear-gradient(135deg, #BBF7D0, #86EFAC); border-color: #22C55E; }
+.lg-plantCell[data-stage="seed"] { background: var(--bg-soft); }
+.lg-plantCell[data-stage="sprout"] { background: linear-gradient(135deg, var(--success-pale), var(--success-soft)); border-color: var(--success-light); }
+.lg-plantCell[data-stage="growing"] { background: linear-gradient(135deg, var(--success-soft), var(--success-light)); border-color: var(--accent-green); }
+.lg-plantCell[data-stage="blooming"] { background: linear-gradient(135deg, var(--success-light), var(--mimi-light)); border-color: var(--success); }
 .lg-plantCell[data-stage="flowering"] {
-  background: linear-gradient(135deg, #86EFAC, #4ADE80);
-  border-color: #16A34A;
-  box-shadow: 0 0 0 2px rgba(34,197,94,0.3), var(--shadow-sm);
+  background: linear-gradient(135deg, var(--mimi-light), var(--accent-green));
+  border-color: var(--accent-green-dark);
+  box-shadow: 0 0 0 2px var(--success-soft), var(--shadow-sm);
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 480px) {
+  .lg-plantsRow {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.35rem;
+  }
+
+  .lg-plantCell {
+    min-height: 52px;
+  }
+
+  .lg-gardenArea {
+    padding: 0.75rem;
+  }
+
+  .lg-statsBar {
+    gap: 1.25rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .lg-header {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+/* ---- DARK MODE ---- */
+@media (prefers-color-scheme: dark) {
+  .lg-container {
+    background: linear-gradient(180deg, #0F2010 0%, #0A1A0D 100%);
+  }
+
+  .lg-header {
+    background: rgba(15, 32, 16, 0.92);
+    border-bottom-color: rgba(76, 175, 80, 0.2);
+  }
+
+  .lg-backBtn {
+    border-color: var(--mimi-light);
+    color: var(--mimi-dark);
+  }
+
+  .lg-statsBar {
+    background: rgba(15, 32, 16, 0.8);
+    border-bottom-color: rgba(76, 175, 80, 0.1);
+  }
+
+  .lg-statValue {
+    color: var(--text-primary);
+  }
+
+  .lg-groupRow {
+    background: rgba(15, 32, 16, 0.5);
+    border-color: rgba(76, 175, 80, 0.15);
+  }
+
+  .lg-groupRow:hover {
+    background: rgba(15, 32, 16, 0.75);
+  }
+
+  .lg-plantCell {
+    background: linear-gradient(180deg, rgba(15, 32, 16, 0.6) 0%, rgba(10, 26, 13, 0.8) 100%);
+    border-color: rgba(76, 175, 80, 0.2);
+  }
+
+  .lg-plantCell:hover {
+    background: linear-gradient(180deg, rgba(15, 32, 16, 0.8) 0%, rgba(10, 26, 13, 0.9) 100%);
+  }
+
+  .lg-plantModal {
+    background: linear-gradient(180deg, var(--bg-elevated) 0%, rgba(10, 26, 13, 0.95) 100%);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(76, 175, 80, 0.15);
+  }
+
+  .lg-masteryBarBg {
+    background: rgba(76, 175, 80, 0.15);
+  }
+
+  .lg-stagesTimeline {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .lg-emptyHint {
+    background: rgba(15, 32, 16, 0.6);
+    border-color: rgba(76, 175, 80, 0.25);
+  }
 }

@@ -31,7 +31,7 @@
 
 .no-hearts-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
@@ -43,6 +43,7 @@
   align-items: center;
   gap: var(--space-lg);
   animation: nhCardIn 300ms var(--ease-spring) both;
+  position: relative;
 }
 
 @keyframes nhCardIn {
@@ -52,6 +53,53 @@
 
 [data-theme="dark"] .no-hearts-card {
   border-color: var(--border-medium);
+}
+
+/* ── Close button ─────────────────────────────────────────── */
+
+.no-hearts-close-btn {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+.no-hearts-close-btn:hover {
+  background: var(--error-soft);
+  color: var(--error);
+  transform: scale(1.1);
+}
+
+.no-hearts-close-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .no-hearts-close-btn {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .no-hearts-close-btn:hover {
+  background: var(--error-bg);
+  color: var(--error);
 }
 
 /* ── Heart icon ───────────────────────────────────────────── */

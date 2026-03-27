@@ -1,10 +1,11 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Star, Check, X, RotateCcw, ArrowRight, CheckCircle2, Trophy } from 'lucide-react';
 import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
+import { shuffleArray } from '../../utils/arrayUtils';
 import './StoryChoicesGame.css';
 
 interface WordItem {
@@ -20,14 +21,6 @@ interface GameProps {
   onWrongAnswer?: () => void;
 }
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 interface Question {
   word: WordItem;
@@ -49,10 +42,12 @@ function buildQuestions(words: WordItem[]): Question[] {
   });
 }
 
-export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWrongAnswer }) => {
+export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
-  const questions = useMemo(() => buildQuestions(words), [words]);
+  // Use a counter to force re-generation of questions on Play Again
+  const [playKey, setPlayKey] = useState(0);
+  const questions = useMemo(() => buildQuestions(words), [words, playKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -60,6 +55,31 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
   const [completed, setCompleted] = useState(false);
   const scoreRef = useRef(0);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+    };
+  }, []);
+
+  // advance must be defined before any early returns to satisfy React hooks ordering rules.
+  const advance = useCallback((wasCorrect: boolean) => {
+    const newScore = scoreRef.current + (wasCorrect ? 1 : 0);
+    scoreRef.current = newScore;
+    setScore(newScore);
+
+    setCurrentIndex((prev) => {
+      if (prev + 1 < questions.length) {
+        setFeedback(null);
+        setSelectedIdx(null);
+        return prev + 1;
+      }
+      setCompleted(true);
+      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(newScore, questions.length), 4000);
+      return prev;
+    });
+  }, [questions.length, onComplete]);
 
   if (words.length < 3) {
     return (
@@ -72,21 +92,6 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
   const question = questions[currentIndex];
   const progress = (currentIndex / questions.length) * 100;
 
-  const advance = useCallback((wasCorrect: boolean) => {
-    const newScore = scoreRef.current + (wasCorrect ? 1 : 0);
-    scoreRef.current = newScore;
-    setScore(newScore);
-
-    if (currentIndex + 1 < questions.length) {
-      setCurrentIndex((prev) => prev + 1);
-      setFeedback(null);
-      setSelectedIdx(null);
-    } else {
-      setCompleted(true);
-      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(newScore, questions.length), 4000);
-    }
-  }, [currentIndex, questions.length, onComplete]);
-
   const handleChoice = (idx: number, correct: boolean) => {
     if (feedback !== null) return;
     setSelectedIdx(idx);
@@ -94,6 +99,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
     if (correct) {
       setFeedback('correct');
       SFX.correct();
+      onXpEarned?.(10);
       setTimeout(() => advance(true), 1200);
     } else {
       setFeedback('wrong');
@@ -115,12 +121,14 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
     setFeedback(null);
     setSelectedIdx(null);
     setCompleted(false);
+    // Increment playKey to trigger question re-shuffle via useMemo
+    setPlayKey(k => k + 1);
   };
 
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-    const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
-    const isPerfect = pct >= 90;
+    const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
+    const isPerfect = pct === 100;
     return (
       <div className="story-choices-game__complete">
         {isPerfect && <ConfettiRain duration={3000} />}
@@ -138,10 +146,10 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
               transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 }}
             >
               {pct >= 90
-                ? <Trophy size={48} color="#E8A317" />
+                ? <Trophy size={48} color="var(--warning)" />
                 : pct >= 60
-                  ? <Star size={48} fill="#E8A317" color="#E8A317" />
-                  : <Check size={48} color="#22C55E" />}
+                  ? <Star size={48} fill="var(--warning)" color="var(--warning)" />
+                  : <Check size={48} color="var(--success)" />}
             </motion.span>
             <h2 className="story-choices-game__complete-title">{t('games.storyComplete')}</h2>
             <p className="story-choices-game__complete-score">
@@ -285,7 +293,10 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onWro
             exit={{ opacity: 0 }}
             className="story-choices-game__feedback--wrong"
           >
-            {t('games.notQuiteKeepGoing')}
+            {t('games.notQuiteKeepGoing')}{' '}
+            <strong className="story-choices-game__feedback-correct-answer">
+              ✓ {question.choices.find(c => c.correct)?.text}
+            </strong>
           </motion.p>
         )}
       </AnimatePresence>

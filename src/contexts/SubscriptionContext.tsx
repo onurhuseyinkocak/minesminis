@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { usePremium, PLAN_LIMITS } from './PremiumContext';
 import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
+import { withRetry } from '../utils/retryUtils';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,15 +52,27 @@ interface SupabaseSub {
 
 async function fetchSubFromSupabase(userId: string): Promise<SupabaseSub | null> {
   try {
-    // 1) Check user_subscriptions table (primary source)
-    const { data: subRows } = await supabase
-      .from('user_subscriptions')
-      .select('*, premium_plans(*)')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(1);
+    // Run both queries in parallel — avoids waterfall when subscription table is empty
+    const [{ data: subRows }, { data: profile }] = await Promise.all([
+      withRetry(() =>
+        supabase
+          .from('user_subscriptions')
+          .select('plan_id, payment_method, end_date')
+          .eq('user_id', userId)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(1)
+      ),
+      withRetry(() =>
+        supabase
+          .from('profiles')
+          .select('is_premium, premium_until')
+          .eq('id', userId)
+          .maybeSingle()
+      ),
+    ]);
 
+    // Prefer user_subscriptions (primary source)
     if (subRows && subRows.length > 0) {
       const sub = subRows[0] as Record<string, unknown>;
       return {
@@ -70,13 +83,7 @@ async function fetchSubFromSupabase(userId: string): Promise<SupabaseSub | null>
       };
     }
 
-    // 2) Fallback: check profiles.is_premium + profiles.premium_until
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_premium, premium_until')
-      .eq('id', userId)
-      .maybeSingle();
-
+    // Fallback: profiles table
     if (profile) {
       const p = profile as Record<string, unknown>;
       const isPrem = p.is_premium === true;

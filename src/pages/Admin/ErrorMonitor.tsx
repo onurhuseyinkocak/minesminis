@@ -27,12 +27,12 @@ const SEVERITY_DOT_COLORS: Record<ErrorSeverity, string> = {
 function timeAgo(ts: number): string {
   const diff = Date.now() - ts;
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Az once';
-  if (mins < 60) return `${mins}dk once`;
+  if (mins < 1) return 'Az önce';
+  if (mins < 60) return `${mins}dk önce`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}sa once`;
+  if (hours < 24) return `${hours}sa önce`;
   const days = Math.floor(hours / 24);
-  return `${days}g once`;
+  return `${days}g önce`;
 }
 
 function ErrorMonitor() {

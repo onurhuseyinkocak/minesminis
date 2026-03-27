@@ -6,12 +6,14 @@ import { usePremium } from '../contexts/PremiumContext';
 import {
   Crown, Check, Star, Sparkles, GraduationCap,
   ChevronDown, ChevronUp, Loader2, ExternalLink,
-  ShieldCheck, XCircle, CreditCard,
+  ShieldCheck, XCircle, CreditCard, X as XIcon,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import PublicLayout from '../components/layout/PublicLayout';
 import { getApiBase } from '../utils/apiBase';
 import { supabase } from '../config/supabase';
+import { analytics } from '../services/analytics';
 import './Pricing.css';
 
 // ── Stripe Price IDs (from env) ─────────────────────────────────────────────
@@ -67,6 +69,8 @@ interface PlanDef {
   iyzicoMonthly: number;
   iyzicoYearly: number;
   features: string[];
+  /** Feature keys listed here are shown with a "Coming Soon" badge */
+  comingSoonFeatures?: string[];
   highlight?: boolean;
   badge?: string;
 }
@@ -85,7 +89,7 @@ function buildPlans(dbPrices: typeof DEFAULT_DB_PRICES): PlanDef[] {
       id: 'free',
       planKey: 'free',
       nameKey: 'pricing.planFree',
-      icon: <Star size={28} />,
+      icon: <Star size={32} />,
       priceTRY: { monthly: 0, quarterly: 0, yearly: 0, lifetime: 0 },
       priceUSD: { monthly: 0, quarterly: 0, yearly: 0, lifetime: 0 },
       stripePriceMonthly: '',
@@ -106,7 +110,7 @@ function buildPlans(dbPrices: typeof DEFAULT_DB_PRICES): PlanDef[] {
       id: 'premium',
       planKey: 'premium',
       nameKey: 'pricing.planFamily',
-      icon: <Crown size={28} />,
+      icon: <Crown size={32} />,
       priceTRY: {
         monthly: dbPrices.monthly,
         quarterly: dbPrices.quarterly,
@@ -136,7 +140,7 @@ function buildPlans(dbPrices: typeof DEFAULT_DB_PRICES): PlanDef[] {
       id: 'classroom',
       planKey: 'classroom',
       nameKey: 'pricing.planClassroom',
-      icon: <GraduationCap size={28} />,
+      icon: <GraduationCap size={32} />,
       priceTRY: {
         monthly: dbPrices.monthly * 2,
         quarterly: dbPrices.quarterly * 2,
@@ -159,6 +163,9 @@ function buildPlans(dbPrices: typeof DEFAULT_DB_PRICES): PlanDef[] {
         'pricing.featureClassroom6',
         'pricing.featureClassroom7',
       ],
+      // featureClassroom4 (smartboard mode) and featureClassroom6 (assignment tracking visible to students)
+      // are not yet implemented — mark them with a "Coming Soon" badge
+      comingSoonFeatures: ['pricing.featureClassroom4', 'pricing.featureClassroom6'],
     },
   ];
 }
@@ -208,6 +215,7 @@ export default function Pricing() {
     isLoading: subLoading,
   } = usePremium();
   const { t, lang } = useLanguage();
+  usePageTitle('Fiyatlandırma', 'Pricing');
   const isTR = useIsTurkishUser();
   const API = getApiBase();
 
@@ -258,7 +266,7 @@ export default function Pricing() {
       toast(t('pricing.checkoutCancelled'));
       setSearchParams({}, { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run only on mount to read URL params from checkout redirect; re-running on dep changes would duplicate toasts
   }, []);
 
   const isCurrentPlan = (planId: string) =>
@@ -287,12 +295,13 @@ export default function Pricing() {
       if (!res.ok) throw new Error('Stripe checkout failed');
       const data = await res.json();
       if (data.url) {
+        analytics.subscriptionStarted(plan, isYearly ? 'yearly' : 'monthly', 'stripe');
         window.location.href = data.url;
       }
     } catch {
       toast.error(lang === 'tr' ? 'Ödeme başlatılamadı. Tekrar deneyin.' : 'Could not start checkout. Please try again.');
     }
-  }, [user, API, lang]);
+  }, [user, API, lang, isYearly]);
 
   // ── Iyzico checkout ─────────────────────────────────────────────────────
 
@@ -318,6 +327,7 @@ export default function Pricing() {
       if (!res.ok) throw new Error('Iyzico init failed');
       const data = await res.json();
       if (data.checkoutFormContent) {
+        analytics.subscriptionStarted(plan, isYearly ? 'yearly' : 'monthly', 'iyzico');
         // Open iyzico form in a new window or inject into page
         const win = window.open('', '_blank', 'width=500,height=600');
         if (win) {
@@ -327,7 +337,7 @@ export default function Pricing() {
     } catch {
       toast.error(lang === 'tr' ? 'Ödeme başlatılamadı. Tekrar deneyin.' : 'Could not start checkout. Please try again.');
     }
-  }, [user, API, lang]);
+  }, [user, API, lang, isYearly]);
 
   // ── Subscribe handler ─────────────────────────────────────────────────────
 
@@ -378,7 +388,6 @@ export default function Pricing() {
     }
 
     setLoadingPlan(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isYearly, isTR, checkoutUrl, customerPortalUrl, navigate, currentPlan, subscriptionStatus, t, handleStripeCheckout, handleIyzicoCheckout]);
 
   const formatPrice = useCallback((plan: PlanDef) => {
@@ -431,6 +440,11 @@ export default function Pricing() {
             </div>
             <h1>{t('pricing.title')}</h1>
             <p>{t('pricing.subtitle')}</p>
+            <div className="hero-sparkles" aria-hidden="true">
+              <Sparkles className="sparkle-1" size={26} />
+              <Sparkles className="sparkle-2" size={20} />
+              <Sparkles className="sparkle-3" size={16} />
+            </div>
           </section>
 
           {/* ── Billing toggle ──────────────────────────────────────── */}
@@ -494,12 +508,20 @@ export default function Pricing() {
                   )}
 
                   <ul className="plan-features">
-                    {plan.features.map((f, i) => (
-                      <li key={i}>
-                        <Check size={16} className="feature-check" />
-                        <span>{t(f)}</span>
-                      </li>
-                    ))}
+                    {plan.features.map((f, i) => {
+                      const isComingSoon = plan.comingSoonFeatures?.includes(f);
+                      return (
+                        <li key={i} className={isComingSoon ? 'feature-coming-soon' : ''}>
+                          <Check size={16} className="feature-check" />
+                          <span>{t(f)}</span>
+                          {isComingSoon && (
+                            <span className="coming-soon-badge">
+                              {lang === 'tr' ? 'Yakında' : 'Coming Soon'}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
 
                   <button
@@ -550,6 +572,16 @@ export default function Pricing() {
             </div>
           </div>
 
+          {/* ── Money-back guarantee ─────────────────────────────── */}
+          <div className="pricing-guarantee">
+            <ShieldCheck size={18} />
+            <span>
+              {lang === 'tr'
+                ? '7 gün içinde memnun kalmazsanız tam iade — risksiz deneyin'
+                : '7-day money-back guarantee — try it risk-free'}
+            </span>
+          </div>
+
           {/* ── Feature Comparison Toggle ─────────────────────────── */}
           <section className="pricing-comparison-section">
             <button
@@ -581,7 +613,7 @@ export default function Pricing() {
                             {val === true ? (
                               <Check size={18} className="feature-check" />
                             ) : val === false ? (
-                              <span className="comp-dash">-</span>
+                              <XIcon size={16} className="feature-cross" />
                             ) : (
                               <span>{val}</span>
                             )}

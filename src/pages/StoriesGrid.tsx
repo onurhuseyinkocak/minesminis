@@ -3,7 +3,7 @@
  * Browse AI-generated stories — children see a grid of story cards.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -13,7 +13,17 @@ import { generateStoryCover } from '../utils/storyCoverGenerator';
 import { getStoriesForUser, type DecodableStory, type ScoredStory } from '../services/decodableStoryService';
 import DecodableStoryReader from '../components/DecodableStoryReader';
 import { useAuth } from '../contexts/AuthContext';
+import { usePremium } from '../contexts/PremiumContext';
+import Paywall from '../components/Paywall';
 import './StoriesGrid.css';
+
+function isChildModeActive(settings: Record<string, unknown> | undefined): boolean {
+  if (typeof settings?.ageGroup === 'string' && settings.ageGroup === '3-5') return true;
+  try { return localStorage.getItem('mm_child_mode') === 'true'; } catch { return false; }
+}
+
+/** Max age for child-mode content filter. Stories targeting only older kids are hidden. */
+const CHILD_MODE_MAX_AGE = 8;
 
 interface StoryCard {
   id: string;
@@ -32,6 +42,15 @@ interface StoryCard {
 const SKELETON_COUNT = 6;
 type Tab = 'all' | 'decodable';
 
+/** Returns true if a story has been marked completed in localStorage. */
+function isStoryCompleted(storyId: string): boolean {
+  try {
+    return localStorage.getItem(`mm_story_completed_${storyId}`) === '1';
+  } catch {
+    return false;
+  }
+}
+
 export default function StoriesGrid() {
   usePageTitle('Hikayeler', 'Stories');
   const [stories, setStories] = useState<StoryCard[]>([]);
@@ -40,11 +59,15 @@ export default function StoriesGrid() {
   const [isStale, setIsStale] = useState(false);
   const [coverUrls, setCoverUrls] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<Tab>('all');
+  // useTransition: tab switch re-filters the full story list (potentially 100+ items)
+  const [isTabTransitioning, startTabTransition] = useTransition();
   const [activeDecodableStory, setActiveDecodableStory] = useState<DecodableStory | null>(null);
   const { lang } = useLanguage();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
+  const { isPremium } = usePremium();
   const userId = user?.uid ?? 'guest';
+  const childMode = isChildModeActive(userProfile?.settings);
   const scoredStories = useMemo(() => getStoriesForUser(userId), [userId]);
 
   const fetchStories = useCallback(() => {
@@ -138,7 +161,9 @@ export default function StoriesGrid() {
       {/* ── Offline stale cache banner ── */}
       {isStale && (
         <div className="stories-stale-banner">
-          Çevrimdışı — son kaydedilen içerik gösteriliyor
+          {lang === 'tr'
+            ? 'Çevrimdışı — son kaydedilen içerik gösteriliyor'
+            : 'Offline — showing cached content'}
         </div>
       )}
 
@@ -146,14 +171,16 @@ export default function StoriesGrid() {
       <div className="stories-tabs">
         <button
           className={`stories-tab${activeTab === 'all' ? ' stories-tab--active' : ''}`}
-          onClick={() => setActiveTab('all')}
+          onClick={() => startTabTransition(() => setActiveTab('all'))}
+          disabled={isTabTransitioning}
         >
           <Sparkles size={15} />
           {lang === 'tr' ? 'Tüm Hikayeler' : 'All Stories'}
         </button>
         <button
           className={`stories-tab${activeTab === 'decodable' ? ' stories-tab--active' : ''}`}
-          onClick={() => setActiveTab('decodable')}
+          onClick={() => startTabTransition(() => setActiveTab('decodable'))}
+          disabled={isTabTransitioning}
         >
           <BookOpen size={15} />
           {lang === 'tr' ? 'Fonik Hikayeler' : 'Decodable'}
@@ -169,6 +196,19 @@ export default function StoriesGrid() {
               ? 'Bu hikayeler yalnızca öğrendiğin sesler kullanılarak yazılmıştır. Her kelimeyi okuyabilirsin!'
               : 'These stories only use sounds you have already learned. You can decode every word!'}
           </p>
+          {scoredStories.length === 0 && (
+            <div className="stories-empty">
+              <BookOpen size={48} />
+              <h3 className="stories-empty__title">
+                {lang === 'tr' ? 'Henüz fonik hikaye yok' : 'No phonics stories yet'}
+              </h3>
+              <p className="stories-empty__hint">
+                {lang === 'tr'
+                  ? 'Birkaç ders tamamlayınca sana özel hikayeler burada belirecek!'
+                  : 'Complete a few lessons and personalised stories will appear here!'}
+              </p>
+            </div>
+          )}
           <div className="stories-grid">
             {scoredStories.map(({ story: ds, knownWords, totalWords, level }: ScoredStory) => (
               <button
@@ -217,7 +257,11 @@ export default function StoriesGrid() {
         </div>
       )}
 
-      {activeTab === 'all' && (error ? (
+      {activeTab === 'all' && !isPremium && (
+        <Paywall feature={lang === 'tr' ? 'AI Hikayeler' : 'AI Stories'} />
+      )}
+
+      {activeTab === 'all' && isPremium && (error ? (
         <div className="stories-empty stories-error">
           <AlertTriangle size={48} />
           <p>{error}</p>
@@ -262,13 +306,29 @@ export default function StoriesGrid() {
         </div>
       ) : (
         <div className="stories-grid">
-          {stories.map(story => {
+          {stories
+            // In child mode, only show stories whose minimum target age is within range
+            .filter(story =>
+              !childMode ||
+              !story.target_age?.length ||
+              story.target_age[0] <= CHILD_MODE_MAX_AGE
+            )
+            .map(story => {
             const resolvedCoverUrl = story.coverUrl ?? coverUrls[story.id];
+            // "New" = published within the last 7 days
+            const isNew = (Date.now() - new Date(story.created_at).getTime()) < 7 * 24 * 3600 * 1000;
+            // "Popular" = story targets a wide age range (4+ year span) AND is not brand new.
+            // This is a heuristic until a real view-count API exists.
+            const ageSpan = (story.target_age ?? []).length >= 2
+              ? story.target_age[1] - story.target_age[0]
+              : 0;
+            const isPopular = !isNew && ageSpan >= 4;
+            const completed = isStoryCompleted(story.id);
             return (
             <button
               key={story.id}
               type="button"
-              className="story-card"
+              className={`story-card${completed ? ' story-card--completed' : ''}`}
               onClick={() => navigate(`/stories/${story.id}`)}
               aria-label={lang === 'tr' ? story.title_tr : story.title}
             >
@@ -281,6 +341,23 @@ export default function StoriesGrid() {
                   />
                 ) : (
                   <StoryCover scene={story.cover_scene} storyId={story.id} />
+                )}
+                {completed && (
+                  <span className="story-card__badge story-card__badge--completed">
+                    <CheckCircle2 size={9} />
+                    {lang === 'tr' ? 'Tamamlandı' : 'Done'}
+                  </span>
+                )}
+                {!completed && isNew && !isPopular && (
+                  <span className="story-card__badge story-card__badge--new">
+                    {lang === 'tr' ? 'Yeni' : 'New'}
+                  </span>
+                )}
+                {!completed && isPopular && (
+                  <span className="story-card__badge story-card__badge--popular">
+                    <Star size={9} fill="currentColor" />
+                    {lang === 'tr' ? 'Popüler' : 'Popular'}
+                  </span>
                 )}
               </div>
               <div className="story-card__info">

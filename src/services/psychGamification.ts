@@ -16,11 +16,11 @@ const KEYS = {
 
 export type DailyGoalLevel = 10 | 20 | 30 | 50;
 
-export const DAILY_GOAL_OPTIONS: { xp: DailyGoalLevel; label: string; labelTr: string; emoji: string }[] = [
-  { xp: 10, label: 'Casual',   labelTr: 'Hafif',   emoji: '🌱' },
-  { xp: 20, label: 'Normal',   labelTr: 'Normal',  emoji: '⚡' },
-  { xp: 30, label: 'Serious',  labelTr: 'Ciddi',   emoji: '🔥' },
-  { xp: 50, label: 'Intense',  labelTr: 'Yoğun',   emoji: '💎' },
+export const DAILY_GOAL_OPTIONS: { xp: DailyGoalLevel; label: string; labelTr: string; icon: string }[] = [
+  { xp: 10, label: 'Casual',   labelTr: 'Hafif',   icon: 'leaf'    },
+  { xp: 20, label: 'Normal',   labelTr: 'Normal',  icon: 'zap'     },
+  { xp: 30, label: 'Serious',  labelTr: 'Ciddi',   icon: 'flame'   },
+  { xp: 50, label: 'Intense',  labelTr: 'Yoğun',   icon: 'diamond' },
 ];
 
 export function getDailyGoal(): DailyGoalLevel {
@@ -96,19 +96,27 @@ export function updateComboRecord(uid: string, combo: number): void {
  * Fires once per day, after 6pm, if the user hasn't practiced today
  * and has a streak >= 2 days.
  */
+/** Local YYYY-MM-DD string (avoids toDateString locale drift) */
+function localYMD(d: Date = new Date()): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export function shouldShowStreakShame(streakDays: number, lastActivityDate: string | null): boolean {
   if (streakDays < 2) return false;
 
-  const today = new Date().toDateString();
+  const todayYMD = localYMD();
+  // lastPromptDate is stored as toDateString() — convert for comparison
   const lastPrompt = localStorage.getItem(KEYS.lastPromptDate);
-  if (lastPrompt === today) return false; // already shown today
+  if (lastPrompt === new Date().toDateString()) return false; // already shown today
 
   const now = new Date();
   if (now.getHours() < 16) return false; // only after 4pm
 
   if (!lastActivityDate) return true;
-  const lastActivity = new Date(lastActivityDate).toDateString();
-  return lastActivity !== today; // hasn't practiced today
+
+  // Compare using locale-independent YYYY-MM-DD slicing of the ISO string
+  const activityYMD = lastActivityDate.length >= 10 ? lastActivityDate.slice(0, 10) : localYMD(new Date(lastActivityDate));
+  return activityYMD !== todayYMD; // hasn't practiced today
 }
 
 export function markStreakShameShown(): void {

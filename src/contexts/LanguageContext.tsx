@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect, type ReactNode } from 'react';
 import { translations, type Lang } from '../i18n';
 import type { TranslationKeys } from '../i18n/en';
 
@@ -15,6 +15,13 @@ function detectDefaultLang(): Lang {
 
   // 3. Fallback
   return 'en';
+}
+
+/** Sync <html lang="..." dir="ltr"> with the active language. */
+function applyLangToDocument(lang: Lang): void {
+  document.documentElement.lang = lang;
+  // MinesMinis supports only LTR languages (tr, en). RTL not planned.
+  document.documentElement.dir = 'ltr';
 }
 
 /**
@@ -44,9 +51,15 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(detectDefaultLang);
 
+  // Apply initial lang to <html> on mount
+  useEffect(() => {
+    applyLangToDocument(lang);
+  }, [lang]);
+
   const setLang = useCallback((newLang: Lang) => {
     setLangState(newLang);
-    localStorage.setItem(STORAGE_KEY, newLang);
+    try { localStorage.setItem(STORAGE_KEY, newLang); } catch { /* ignore */ }
+    applyLangToDocument(newLang);
   }, []);
 
   const t = useCallback(

@@ -25,6 +25,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGamification } from '../contexts/GamificationContext';
 import ContentPageHeader from '../components/ContentPageHeader';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './Worksheets.css';
 
 type Worksheet = {
@@ -49,6 +50,7 @@ function Worksheets() {
   const { user } = useAuth();
   const { trackActivity, addXP } = useGamification();
   const { t, lang } = useLanguage();
+  usePageTitle('Çalışma Kağıtları', 'Worksheets');
 
   useEffect(() => {
     fetchWorksheets();
@@ -66,7 +68,7 @@ function Worksheets() {
     try {
       const { data, error } = await supabase
         .from('worksheets')
-        .select('*');
+        .select('id, title, description, subject, grade, thumbnail_url, file_url, source');
 
       if (error) throw error;
 
@@ -259,18 +261,20 @@ function Worksheets() {
           {/* Grade filter removed as it's now in ContentPageHeader */}
 
           <div className="filter-item">
-            <label htmlFor="category-filter">{t('worksheets.subject')}:</label>
-            <select
-              id="category-filter"
-              className="filter-select"
-              value={activeCategory}
-              onChange={(e) => setActiveCategory(e.target.value)}
-            >
-              <option value="All">{t('worksheets.allSubjects')}</option>
-              {categories.slice(1).map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+            <label>{t('worksheets.subject')}:</label>
+            <div className="category-pills" role="group" aria-label={t('worksheets.subject')}>
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  className={`category-pill ${activeCategory === cat ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(cat)}
+                  aria-pressed={activeCategory === cat}
+                >
+                  {getCategoryIcon(cat === 'All' ? 'All' : cat)}
+                  <span>{cat === 'All' ? t('worksheets.allSubjects') : cat}</span>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
         </div>
       </div>

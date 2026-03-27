@@ -10,6 +10,7 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   loading?: boolean;
   disabled?: boolean;
   icon?: ReactNode;
+  iconOnly?: boolean;
   children?: ReactNode;
   fullWidth?: boolean;
   className?: string;
@@ -23,6 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       loading = false,
       disabled = false,
       icon,
+      iconOnly = false,
       children,
       fullWidth = false,
       className = '',
@@ -36,6 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       `mm-button--${size}`,
       loading && 'mm-button--loading',
       fullWidth && 'mm-button--full-width',
+      iconOnly && 'mm-button--icon-only',
       className,
     ]
       .filter(Boolean)

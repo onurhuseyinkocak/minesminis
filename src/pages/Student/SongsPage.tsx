@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, Music, Star } from 'lucide-react';
+import { ArrowLeft, Lock, Music, Play, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Badge } from '../../components/ui';
 import { SongPlayer } from '../../components/phonics/SongPlayer';
@@ -10,18 +10,19 @@ import { PHONICS_GROUPS } from '../../data/phonics';
 import { getLyricsByGroup } from '../../data/phonicsSongLyrics';
 import type { PhonicsSong } from '../../data/phonicsSongs';
 import { LS_MASTERED_SOUNDS, LS_SONG_PLAYS } from '../../config/storageKeys';
+import { useGamification } from '../../contexts/GamificationContext';
+import './SongsPage.css';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-// Returns a Tailwind background color class for each group (1-based)
 const SONG_GROUP_COLORS = [
-  '#FF6B35', // orange-500-ish
-  '#7C3AED', // violet-600
-  '#22C55E', // green-500
-  '#3B82F6', // blue-500
-  '#F59E0B', // amber-500
-  '#EC4899', // pink-500
-  '#14B8A6', // teal-500
+  '#FF6B35',
+  '#7C3AED',
+  '#22C55E',
+  '#3B82F6',
+  '#F59E0B',
+  '#EC4899',
+  '#14B8A6',
 ];
 
 function getSongColor(g: number): string {
@@ -38,18 +39,15 @@ function getMasteredSounds(): string[] {
 
 function getUnlockedGroups(mastered: string[]): Set<number> {
   const unlocked = new Set<number>();
-  // Group 1 is always unlocked
   unlocked.add(1);
 
   for (const group of PHONICS_GROUPS) {
     const groupSoundIds = group.sounds.map((s) => s.id);
     const allMastered = groupSoundIds.every((id) => mastered.includes(id));
     if (allMastered) {
-      // Unlock this group's song and the next group
       unlocked.add(group.group);
       if (group.group + 1 <= 7) unlocked.add(group.group + 1);
     } else if (groupSoundIds.some((id) => mastered.includes(id))) {
-      // Partially mastered — unlock this group
       unlocked.add(group.group);
     }
   }
@@ -72,7 +70,6 @@ function recordSongPlay(songId: string) {
       data[songId] = { playCount: 0, stars: 0 };
     }
     data[songId].playCount += 1;
-    // Award stars based on play count
     if (data[songId].playCount >= 5) data[songId].stars = 3;
     else if (data[songId].playCount >= 3) data[songId].stars = 2;
     else if (data[songId].playCount >= 1) data[songId].stars = 1;
@@ -102,26 +99,41 @@ export default function SongsPage() {
   const [activeSong, setActiveSong] = useState<PhonicsSong | null>(null);
   const [mode, setMode] = useState<'singalong' | 'karaoke'>('karaoke');
   const [playDataVersion, setPlayDataVersion] = useState(0);
+  const { addXP } = useGamification();
 
   const mastered = useMemo(() => getMasteredSounds(), []);
   const unlockedGroups = useMemo(() => getUnlockedGroups(mastered), [mastered]);
+  // playDataVersion is a manual refresh token — intentionally used as a dependency
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const playData = useMemo(() => getSongPlayData(), [playDataVersion]);
 
-  const handleSongComplete = useCallback(() => {
+  const handleSongComplete = useCallback(async () => {
     if (activeSong) {
+      const data = getSongPlayData();
+      const isFirstPlay = !data[activeSong.id] || data[activeSong.id].playCount === 0;
       recordSongPlay(activeSong.id);
       setPlayDataVersion((v) => v + 1);
+      // Grant XP: 25 XP first completion, 10 XP for repeat plays
+      try {
+        const xpAmount = isFirstPlay ? 25 : 10;
+        await addXP(xpAmount, isFirstPlay ? 'Completed phonics song' : 'Replayed phonics song', {
+          songId: activeSong.id,
+          group: activeSong.groupNumber,
+        });
+      } catch {
+        // XP award failed silently — progress already saved to localStorage
+      }
     }
     setActiveSong(null);
-  }, [activeSong]);
+  }, [activeSong, addXP]);
 
   // ── Playing a song ──
   if (activeSong) {
     const karaokeData = getLyricsByGroup(activeSong.groupNumber);
 
     return (
-      <div style={styles.playerWrapper}>
-        <div style={styles.playerHeader}>
+      <div className="songs-player-wrapper">
+        <div className="songs-player-header">
           <Button
             variant="secondary"
             size="sm"
@@ -130,24 +142,17 @@ export default function SongsPage() {
           >
             Back
           </Button>
-          {/* Mode toggle */}
-          <div style={styles.modeToggle}>
+          <div className="songs-mode-toggle">
             <button
               type="button"
-              style={{
-                ...styles.modeBtn,
-                ...(mode === 'karaoke' ? styles.modeBtnActive : {}),
-              }}
+              className={`songs-mode-btn${mode === 'karaoke' ? ' songs-mode-btn--active' : ''}`}
               onClick={() => setMode('karaoke')}
             >
               Karaoke
             </button>
             <button
               type="button"
-              style={{
-                ...styles.modeBtn,
-                ...(mode === 'singalong' ? styles.modeBtnActive : {}),
-              }}
+              className={`songs-mode-btn${mode === 'singalong' ? ' songs-mode-btn--active' : ''}`}
               onClick={() => setMode('singalong')}
             >
               Classic
@@ -174,32 +179,51 @@ export default function SongsPage() {
   // ── Song library ──
   return (
     <motion.div
-      style={styles.page}
+      className="songs-page"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
       {/* Header */}
-      <motion.div style={styles.header} variants={itemVariants}>
+      <motion.div className="songs-header" variants={itemVariants}>
         <button
           type="button"
           onClick={() => navigate('/dashboard')}
-          style={styles.backBtn}
+          className="songs-back-btn"
           aria-label="Back to dashboard"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h1 style={styles.title}>
-            <Music size={24} style={{ verticalAlign: 'middle', marginRight: 8 }} />
+          <h1 className="songs-title">
+            <Music size={24} />
             Phonics Songs
           </h1>
-          <p style={styles.subtitle}>Sing and learn your sounds!</p>
+          <p className="songs-subtitle">Sing and learn your sounds!</p>
         </div>
       </motion.div>
 
       {/* Song Grid */}
-      <motion.div style={styles.grid} variants={containerVariants}>
+      <motion.div className="songs-grid" variants={containerVariants}>
+        {PHONICS_SONGS.length === 0 && (
+          <motion.div
+            variants={itemVariants}
+            style={{
+              gridColumn: '1 / -1',
+              textAlign: 'center',
+              padding: '3rem 1rem',
+              color: 'var(--text-muted, #9ca3af)',
+            }}
+          >
+            <Music size={48} style={{ marginBottom: '1rem', opacity: 0.4 }} />
+            <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.5rem' }}>
+              No songs available yet
+            </p>
+            <p style={{ fontSize: '0.9rem', margin: 0 }}>
+              Keep learning sounds — songs unlock as you progress!
+            </p>
+          </motion.div>
+        )}
         {PHONICS_SONGS.map((song) => {
           const isUnlocked = unlockedGroups.has(song.groupNumber);
           const data = playData[song.id];
@@ -212,48 +236,54 @@ export default function SongsPage() {
               type="button"
               key={song.id}
               variants={itemVariants}
-              whileTap={isUnlocked ? { scale: 0.95 } : {}}
+              whileTap={isUnlocked ? { scale: 0.97 } : {}}
               onClick={() => {
                 if (isUnlocked) setActiveSong(song);
               }}
-              style={{
-                ...styles.songCard,
-                opacity: isUnlocked ? 1 : 0.5,
-                cursor: isUnlocked ? 'pointer' : 'not-allowed',
-              }}
+              className={`songs-card${isUnlocked ? '' : ' songs-card--locked'}`}
+              aria-label={`${song.title}${isUnlocked ? '' : ' (locked)'}`}
             >
               {!isUnlocked && (
-                <div style={styles.lockOverlay}>
+                <div className="songs-lock-overlay">
                   <Lock size={24} color="var(--text-muted, #999)" />
                 </div>
               )}
 
-              <div style={{ ...styles.songGroupBadge, background: getSongColor(song.groupNumber) }}>
-                {song.groupNumber}
+              {/* Album cover badge with always-visible play icon */}
+              <div
+                className="songs-group-badge"
+                style={{ background: getSongColor(song.groupNumber) }}
+              >
+                <span>{song.groupNumber}</span>
+                {isUnlocked && (
+                  <div className="songs-play-btn" aria-hidden="true">
+                    <Play size={22} color="#fff" fill="#fff" />
+                  </div>
+                )}
               </div>
 
-              <div style={styles.songInfo}>
-                <p style={styles.songTitle}>{song.title}</p>
-                <p style={styles.songTitleTr}>{song.titleTr}</p>
+              <div className="songs-info">
+                <p className="songs-song-title">{song.title}</p>
+                <p className="songs-song-title-tr">{song.titleTr}</p>
 
-                <div style={styles.songMeta}>
+                <div className="songs-meta">
                   <Badge variant="info" size="sm">
                     Group {song.groupNumber}
                   </Badge>
-                  <span style={styles.songStyle}>
+                  <span className="songs-style-pill">
                     {song.style}
                   </span>
                 </div>
 
                 {groupData && (
-                  <p style={styles.soundsList}>
+                  <p className="songs-sounds-list">
                     {groupData.sounds.map((s) => s.grapheme).join(', ')}
                   </p>
                 )}
 
                 {isUnlocked && (
-                  <div style={styles.songStats}>
-                    <div style={styles.stars}>
+                  <div className="songs-stats">
+                    <div className="songs-stars">
                       {[1, 2, 3].map((n) => (
                         <Star
                           key={n}
@@ -264,7 +294,7 @@ export default function SongsPage() {
                       ))}
                     </div>
                     {plays > 0 && (
-                      <span style={styles.playCount}>
+                      <span className="songs-play-count">
                         &#9654; {plays}
                       </span>
                     )}
@@ -277,8 +307,8 @@ export default function SongsPage() {
       </motion.div>
 
       {/* Info */}
-      <motion.div style={styles.infoBox} variants={itemVariants}>
-        <p style={styles.infoText}>
+      <motion.div className="songs-info-box" variants={itemVariants}>
+        <p className="songs-info-text">
           Songs unlock as you learn sounds in each group.
           Sing songs 5 times to earn 3 stars!
         </p>
@@ -286,211 +316,3 @@ export default function SongsPage() {
     </motion.div>
   );
 }
-
-// ─── Styles ────────────────────────────────────────────────────────────────
-
-const styles: Record<string, React.CSSProperties> = {
-  page: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-    padding: '1rem 1.5rem 2.5rem',
-    maxWidth: 640,
-    margin: '0 auto',
-    background: 'var(--bg-page, #FFF8F2)',
-    minHeight: '100vh',
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-  },
-  backBtn: {
-    width: 44,
-    height: 44,
-    background: 'var(--accent-purple-pale, #EDE9FE)',
-    border: '2px solid var(--accent-purple-light, #a78bfa)',
-    borderRadius: '50%',
-    cursor: 'pointer',
-    color: 'var(--accent-purple, #8b5cf6)',
-    padding: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.2s',
-    flexShrink: 0,
-  },
-  title: {
-    fontFamily: 'var(--font-display, Nunito, sans-serif)',
-    fontSize: '1.6rem',
-    fontWeight: 900,
-    color: 'var(--text-primary, #1a1a2e)',
-    margin: 0,
-    lineHeight: 1.2,
-  },
-  subtitle: {
-    fontFamily: 'var(--font-body, Inter, sans-serif)',
-    fontSize: '0.85rem',
-    color: 'var(--text-muted, #94A3B8)',
-    margin: 0,
-    fontWeight: 600,
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
-    gap: '1rem',
-  },
-  /* Album-cover style song cards */
-  songCard: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '1rem',
-    padding: '1.1rem',
-    borderRadius: 'var(--radius-lg, 16px)',
-    border: '2px solid var(--border, #E2E8F0)',
-    backgroundColor: 'var(--bg-card, #ffffff)',
-    textAlign: 'left' as const,
-    transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-    fontFamily: 'var(--font-body, Inter, sans-serif)',
-  },
-  lockOverlay: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    background: 'rgba(255,255,255,0.8)',
-    borderRadius: 8,
-    padding: 4,
-  },
-  /* Album-cover badge — large, rounded square */
-  songGroupBadge: {
-    width: 58,
-    height: 58,
-    borderRadius: 'var(--radius-lg, 16px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '1.5rem',
-    fontWeight: 900,
-    fontFamily: 'var(--font-display, Nunito, sans-serif)',
-    color: 'white',
-    flexShrink: 0,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-  },
-  songInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.3rem',
-    flex: 1,
-    minWidth: 0,
-  },
-  songTitle: {
-    fontFamily: 'var(--font-display, Nunito, sans-serif)',
-    fontSize: '1.05rem',
-    fontWeight: 800,
-    color: 'var(--text-primary, #1a1a2e)',
-    margin: 0,
-    lineHeight: 1.25,
-  },
-  songTitleTr: {
-    fontSize: '0.78rem',
-    color: 'var(--text-muted, #94A3B8)',
-    fontStyle: 'italic',
-    margin: 0,
-  },
-  songMeta: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    marginTop: '0.3rem',
-  },
-  songStyle: {
-    fontSize: '0.72rem',
-    fontWeight: 600,
-    color: 'var(--text-muted, #94A3B8)',
-    textTransform: 'capitalize' as const,
-    background: 'var(--bg-muted, #F1F5F9)',
-    padding: '2px 8px',
-    borderRadius: 'var(--radius-full, 9999px)',
-  },
-  soundsList: {
-    fontSize: '0.72rem',
-    color: 'var(--accent-purple, #8b5cf6)',
-    margin: 0,
-    fontFamily: 'var(--font-mono, monospace)',
-    fontWeight: 600,
-  },
-  songStats: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    marginTop: '0.35rem',
-  },
-  stars: {
-    display: 'flex',
-    gap: '2px',
-  },
-  playCount: {
-    fontSize: '0.72rem',
-    fontWeight: 700,
-    color: 'var(--text-muted, #94A3B8)',
-    fontFamily: 'var(--font-display, Nunito, sans-serif)',
-  },
-  playerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    padding: '1rem 1.5rem 2.5rem',
-    maxWidth: 540,
-    margin: '0 auto',
-    minHeight: '100vh',
-    background: 'var(--bg-page, #FFF8F2)',
-  },
-  playerHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-  },
-  modeToggle: {
-    display: 'flex',
-    background: 'var(--bg-muted, #F1F5F9)',
-    borderRadius: 'var(--radius-full, 9999px)',
-    padding: '3px',
-    gap: '2px',
-    marginLeft: 'auto',
-    border: '1px solid var(--border, #E2E8F0)',
-  },
-  modeBtn: {
-    padding: '6px 14px',
-    border: 'none',
-    background: 'transparent',
-    borderRadius: 'var(--radius-full, 9999px)',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-    fontFamily: 'var(--font-display, Nunito, sans-serif)',
-    color: 'var(--text-muted, #94A3B8)',
-    cursor: 'pointer',
-    transition: 'all 0.15s',
-    minHeight: 36,
-  } as React.CSSProperties,
-  modeBtnActive: {
-    background: 'var(--bg-card, #fff)',
-    color: 'var(--accent-purple, #8b5cf6)',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-  } as React.CSSProperties,
-  infoBox: {
-    padding: '0.85rem 1.1rem',
-    background: 'var(--accent-purple-pale, #EDE9FE)',
-    borderRadius: 'var(--radius-md, 12px)',
-    border: '1.5px solid rgba(139, 92, 246, 0.15)',
-  },
-  infoText: {
-    fontFamily: 'var(--font-body, Inter, sans-serif)',
-    fontSize: '0.82rem',
-    color: 'var(--accent-purple, #8b5cf6)',
-    margin: 0,
-    lineHeight: 1.55,
-    fontWeight: 600,
-  },
-};

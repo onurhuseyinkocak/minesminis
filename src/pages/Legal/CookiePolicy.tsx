@@ -1,15 +1,23 @@
-import { Cookie } from 'lucide-react';
+import React from 'react';
+import { Cookie, ChevronLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import PublicLayout from '../../components/layout/PublicLayout';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { usePageTitle } from '../../hooks/usePageTitle';
 import './LegalPages.css';
 
 const CookiePolicy: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  usePageTitle('Çerez Politikası', 'Cookie Policy');
 
   return (
     <PublicLayout>
       <div className="legal-page">
         <div className="legal-container">
+          <Link to="/" className="legal-back" aria-label={lang === 'tr' ? 'Geri dön' : 'Go back'}>
+            <ChevronLeft size={20} aria-hidden="true" />
+            {lang === 'tr' ? 'Geri' : 'Back'}
+          </Link>
           <h1><Cookie size={28} /> {t('legal.cookiePolicy')}</h1>
           <p className="legal-updated">{t('legal.lastUpdated')}</p>
 

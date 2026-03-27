@@ -52,7 +52,7 @@ function getDayState(
   return 'none';
 }
 
-const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const WEEKDAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -97,6 +97,14 @@ function CompactCalendar({ activityDates, streakDays, freezeUsedDates }: Compact
 
   return (
     <div className="streak-calendar streak-calendar--compact">
+      {/* Weekday orientation row */}
+      <div className="sc-weekdays sc-weekdays--compact">
+        {WEEKDAY_LABELS.map((label, i) => (
+          <div key={`wl-${i}`} className="sc-weekday-label">
+            {label}
+          </div>
+        ))}
+      </div>
       <div className="sc-grid">
         {days.map((iso) => {
           const state = getDayState(iso, activitySet, freezeSet, today, streakDates);

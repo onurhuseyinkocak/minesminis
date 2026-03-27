@@ -84,9 +84,9 @@
 .adm-metric-card {
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
-  border-left: 3px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
-  padding: var(--space-lg);
+  padding: var(--space-lg) var(--space-lg) var(--space-lg) calc(var(--space-lg) - 2px);
+  border-left-width: 3px;
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
@@ -129,7 +129,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   padding: 2px var(--space-sm);
   border-radius: var(--radius-full);
@@ -208,7 +208,8 @@
 
 .adm-chart-container {
   height: 280px;
-  padding: var(--space-md) var(--space-lg) var(--space-md);
+  min-height: 200px;
+  padding: var(--space-md) var(--space-lg);
 }
 
 /* ---- Activity Feed ---- */
@@ -246,7 +247,7 @@
 }
 
 .adm-activity-time {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--admin-text-muted);
   margin-top: 2px;
 }
@@ -291,7 +292,7 @@
 .adm-inventory-icon.purple  { background: var(--accent-purple-pale); color: var(--accent-purple); }
 
 .adm-icon-muted { color: var(--admin-text-muted); }
-.adm-card-header-sub { font-size: 0.7rem; color: var(--admin-text-muted); }
+.adm-card-header-sub { font-size: 0.75rem; color: var(--admin-text-muted); }
 .adm-crown-inline { color: var(--warning); margin-left: 4px; vertical-align: middle; }
 .adm-panel-center { text-align: center; margin-bottom: 1.5rem; }
 .adm-panel-avatar { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -306,7 +307,7 @@
 }
 
 .adm-inventory-label {
-  font-size: 0.725rem;
+  font-size: 0.75rem;
   color: var(--admin-text-secondary);
 }
 
@@ -417,4 +418,5 @@
   .adm-quick-grid { grid-template-columns: 1fr; }
   .adm-inventory-grid { grid-template-columns: 1fr; }
   .adm-inventory-item { border-right: none; }
+  .adm-chart-container { height: 220px; }
 }

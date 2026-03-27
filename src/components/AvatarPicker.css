@@ -1,0 +1,161 @@
+/* ==========================================================================
+   AvatarPicker — MinesMinis Design System
+   Modal overlay for letter-based avatar selection.
+   ZERO hex colors. All var() tokens.
+   ========================================================================== */
+
+/* ---- Overlay ---- */
+.avatar-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-dark);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal, 1000);
+  padding: var(--space-md);
+  /* Safe area awareness */
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
+}
+
+/* ---- Modal ---- */
+.avatar-picker-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  width: 100%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  animation: avatar-picker-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes avatar-picker-in {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ---- Header ---- */
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.picker-header h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* ---- Close button (44px touch target) ---- */
+.picker-close {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-light);
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.picker-close:hover {
+  background: var(--error-pale);
+  color: var(--error);
+  border-color: var(--error-light);
+}
+
+/* ---- Grid: 3 columns on mobile, auto-fill on larger ---- */
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+
+@media (min-width: 360px) {
+  .picker-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 480px) {
+  .picker-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* ---- Item button ---- */
+.picker-item {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  border: 2.5px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: border-color 0.15s, transform 0.15s var(--ease-spring), box-shadow 0.15s;
+  min-height: 56px;
+}
+
+.picker-item:hover:not(:disabled) {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-sm);
+}
+
+.picker-item:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.picker-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Selected = orange ring (--primary) */
+.picker-item.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-pale), 0 0 8px var(--primary-glow, rgba(255,107,53,0.3));
+}
+
+/* ---- Letter avatar inner circle ---- */
+.picker-letter-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  user-select: none;
+  /* bg and color set inline per avatar */
+}
+
+/* ---- Saving state ---- */
+.picker-saving {
+  text-align: center;
+  margin-top: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}

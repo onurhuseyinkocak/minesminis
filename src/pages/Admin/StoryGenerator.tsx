@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { BookOpen, RefreshCw, CheckCircle, Trash2, ExternalLink, Loader2, AlertCircle } from 'lucide-react';
 import { adminFetch } from '../../utils/adminApi';
 import { errorLogger } from '../../services/errorLogger';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './StoryGenerator.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -105,6 +106,7 @@ export default function StoryGenerator() {
 
   // Publish error state (replaces alert)
   const [publishError, setPublishError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
 
   const fetchStoriesList = useCallback(async () => {
     setLoadingList(true);
@@ -229,8 +231,14 @@ export default function StoryGenerator() {
     }
   };
 
-  const handleDelete = async (storyId: string, title: string) => {
-    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  const handleDelete = (storyId: string, title: string) => {
+    setDeleteTarget({ id: storyId, title });
+  };
+
+  const doDelete = async () => {
+    if (!deleteTarget) return;
+    const { id: storyId } = deleteTarget;
+    setDeleteTarget(null);
     try {
       const res = await adminFetch(`/api/admin/stories/${storyId}`, { method: 'DELETE' });
       if (!res.ok) {
@@ -555,6 +563,16 @@ export default function StoryGenerator() {
           ))
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={doDelete}
+        title="Delete Story"
+        message={deleteTarget ? `Delete "${deleteTarget.title}"? This cannot be undone.` : ''}
+        confirmLabel="Yes, Delete"
+        variant="danger"
+      />
     </div>
   );
 }

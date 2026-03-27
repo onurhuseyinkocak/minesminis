@@ -38,7 +38,7 @@ interface AnsweredOption {
 }
 
 export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameProps) {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const { loseHeart } = useHearts();
 
   const [visibleCount, setVisibleCount] = useState(0);
@@ -51,6 +51,13 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
   const chatEndRef = useRef<HTMLDivElement>(null);
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+    };
+  }, []);
 
   const questionLines = lines.filter((l) => l.speaker === 'child' && l.options && l.options.length > 0);
   const totalQuestions = questionLines.length;
@@ -112,7 +119,14 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
           setMascotState('talk');
         }, 900);
       } else {
-        setOptionState((prev) => ({ ...prev, [option.id]: 'wrong' }));
+        // Find correct option in the current line to highlight it for learning
+        const currentLine = lines[lineIndex];
+        const correctOption = currentLine?.options?.find((o) => o.correct);
+        setOptionState((prev) => ({
+          ...prev,
+          [option.id]: 'wrong',
+          ...(correctOption ? { [correctOption.id]: 'correct' } : {}),
+        }));
         SFX.wrong();
         setMascotState('idle');
         onWrongAnswer?.();
@@ -120,10 +134,10 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
 
         advanceTimerRef.current = setTimeout(() => {
           setOptionState({});
-        }, 700);
+        }, 1200);
       }
     },
-    [isAdvancing, onWrongAnswer, loseHeart],
+    [isAdvancing, lines, onWrongAnswer, loseHeart],
   );
 
   const correctCount = answered.filter((a) => a.correct).length;
@@ -177,13 +191,13 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
             </motion.span>
 
             <h2 className="dialogue-game__summary-title">
-              {lang === 'tr' ? 'Harika!' : 'Awesome!'}
+              {t('games.dialogueAwesome')}
             </h2>
             <p className="dialogue-game__summary-score">
               {correctCount} / {totalQuestions}
             </p>
             <p className="dialogue-game__summary-label">
-              {lang === 'tr' ? 'Doğru cevap' : 'Correct answers'}
+              {t('games.dialogueCorrectAnswers')}
             </p>
 
             <span className="game-stars">
@@ -223,7 +237,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
                 }}
               >
                 <ArrowRight size={16} />
-                {lang === 'tr' ? 'Geri Don' : 'Back'}
+                {t('games.dialogueBack')}
               </button>
               <button
                 type="button"
@@ -231,7 +245,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
                 onClick={handlePlayAgain}
               >
                 <RotateCcw size={16} />
-                {lang === 'tr' ? 'Tekrar Oyna' : 'Play Again'}
+                {t('games.dialoguePlayAgain')}
               </button>
             </div>
           </motion.div>
@@ -339,7 +353,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
             transition={{ duration: 0.3 }}
           >
             <p className="dialogue-game__options-label">
-              {lang === 'tr' ? 'Sen ne dersin?' : 'What do you say?'}
+              {t('games.dialogueWhatDoYouSay')}
             </p>
             {currentLine.options.map((option, idx) => {
               const state = optionState[option.id] ?? 'idle';

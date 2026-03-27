@@ -45,6 +45,14 @@
   text-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
+.phonics-intro__grapheme-case-pair {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+}
+
 .phonics-intro__grapheme-ipa {
   font-size: 0.9rem;
   color: rgba(255,255,255,0.75);
@@ -56,6 +64,36 @@
   bottom: 10px;
   right: 14px;
   color: rgba(255,255,255,0.6);
+}
+
+/* Vowel / Consonant badge */
+.phonics-intro__sound-type-badge {
+  display: flex;
+  justify-content: center;
+}
+
+.phonics-intro__vowel-badge,
+.phonics-intro__consonant-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: var(--radius-full, 999px);
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.phonics-intro__vowel-badge {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+}
+
+.phonics-intro__consonant-badge {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1.5px solid rgba(16, 185, 129, 0.3);
 }
 
 /* Mnemonic action */

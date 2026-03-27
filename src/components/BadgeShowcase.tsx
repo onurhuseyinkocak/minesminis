@@ -143,7 +143,7 @@ const BadgeShowcase: React.FC<BadgeShowcaseProps> = ({ compact = false, maxDispl
             {selectedBadge && (
                 <div className="badge-modal-overlay" onClick={() => setSelectedBadge(null)}>
                     <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
-                        <button type="button" className="close-modal" onClick={() => setSelectedBadge(null)}><X size={14} /></button>
+                        <button type="button" className="close-modal" onClick={() => setSelectedBadge(null)} aria-label={lang === 'tr' ? 'Kapat' : 'Close'}><X size={14} /></button>
 
                         <div className={`modal-badge-icon ${hasBadge(selectedBadge.id) ? 'earned' : 'locked'}`}>
                             {hasBadge(selectedBadge.id) ? <KidIcon name={selectedBadge.icon as import('./ui/KidIcon').KidIconName} size={24} /> : <Lock size={16} />}

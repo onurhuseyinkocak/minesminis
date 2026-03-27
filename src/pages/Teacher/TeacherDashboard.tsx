@@ -8,9 +8,10 @@
  * — Homework Assignment Panel
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useId } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePremium } from '../../contexts/PremiumContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import {
   getClassrooms,
@@ -143,11 +144,16 @@ function ClassCard({ classroom, isActive, onSelect, onCopy, lang }: ClassCardPro
 
 export default function TeacherDashboard() {
   const { user, userProfile } = useAuth();
+  const { plan } = usePremium();
 
   // ── Auth guard ──
   if (!user) return <Navigate to="/login" replace />;
   if (userProfile && userProfile.role !== 'teacher') {
     return <Navigate to="/dashboard" replace />;
+  }
+  // Classroom plan is required — redirect to pricing if not subscribed
+  if (plan !== 'classroom') {
+    return <Navigate to="/pricing?upgrade=classroom" replace />;
   }
 
   return <TeacherDashboardInner userId={user.uid} displayName={userProfile?.display_name ?? ''} />;
@@ -162,6 +168,12 @@ function TeacherDashboardInner({
   displayName: string;
 }) {
   const { lang } = useLanguage();
+
+  // ── Form ids via useId (avoids hardcoded id collision risk) ──
+  const classNameInputId = useId();
+  const gradeSelectId = useId();
+  const hwAssignmentId = useId();
+  const hwDueDateId = useId();
 
   // ── Classrooms state ──
   const [classrooms, setClassrooms] = useState<Classroom[]>(() =>
@@ -254,6 +266,38 @@ function TeacherDashboardInner({
     return { avgStreak: Math.round(avgStreak), atRisk, topThree };
   }, [selectedClassroom]);
 
+  // ── Bulk CSV export ──
+  const handleExportCSV = useCallback(() => {
+    if (!selectedClassroom) return;
+    const header = 'Name,LastActive,Streak,XP,Level,PhonicsProgress%\n';
+    const rows = selectedClassroom.students.map((s) => {
+      const avgMastery =
+        Object.keys(s.phonicsProgress).length > 0
+          ? Math.round(
+              Object.values(s.phonicsProgress).reduce((a, b) => a + b, 0) /
+                Object.values(s.phonicsProgress).length,
+            )
+          : 0;
+      const cols = [
+        `"${s.name.replace(/"/g, '""')}"`,
+        s.lastActive.slice(0, 10),
+        String(estimateStreak(s)),
+        String(s.xp),
+        String(xpToLevel(s.xp)),
+        String(avgMastery),
+      ];
+      return cols.join(',');
+    });
+    const csv = header + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${selectedClassroom.name.replace(/\s+/g, '_')}_progress.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [selectedClassroom]);
+
   // ── Handlers ──
   const handleCopy = useCallback((code: string) => {
     navigator.clipboard.writeText(code).catch(() => {});
@@ -337,6 +381,20 @@ function TeacherDashboardInner({
         </div>
       </div>
 
+      {/* ── Cross-device notice ── */}
+      <div className="td-notice-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <span>
+          {lang === 'tr'
+            ? 'Sınıf verileri bu cihazda yerel olarak saklanır. Öğrencilerin aynı tarayıcıda katılım kodu girerek katılması gerekir.'
+            : 'Classroom data is stored locally on this device. Students must join via the join code on the same browser to appear in your roster.'}
+        </span>
+      </div>
+
       {/* ── Body: 2-col grid ── */}
       <div className="td-body">
 
@@ -375,11 +433,11 @@ function TeacherDashboardInner({
 
                   <div className="td-form-row" style={{ marginBottom: 'var(--space-3)' }}>
                     <div className="td-form-field" style={{ flex: 2 }}>
-                      <label className="td-label" htmlFor="td-class-name-input">
+                      <label className="td-label" htmlFor={classNameInputId}>
                         {lang === 'tr' ? 'Sınıf Adı' : 'Class Name'}
                       </label>
                       <input
-                        id="td-class-name-input"
+                        id={classNameInputId}
                         className="td-input"
                         type="text"
                         placeholder={lang === 'tr' ? 'örn. Ayçiçeği Sınıfı' : 'e.g. Sunflower Class'}
@@ -389,11 +447,11 @@ function TeacherDashboardInner({
                       />
                     </div>
                     <div className="td-form-field">
-                      <label className="td-label" htmlFor="td-grade-select">
+                      <label className="td-label" htmlFor={gradeSelectId}>
                         {lang === 'tr' ? 'Sınıf Seviyesi' : 'Grade'}
                       </label>
                       <select
-                        id="td-grade-select"
+                        id={gradeSelectId}
                         className="td-input td-sort-select"
                         value={newGrade}
                         onChange={(e) => setNewGrade(e.target.value)}
@@ -411,7 +469,7 @@ function TeacherDashboardInner({
                   </div>
 
                   {createError && (
-                    <p style={{ margin: '0 0 var(--space-3)', fontSize: 13, color: 'var(--error)', fontFamily: 'Inter, sans-serif' }}>
+                    <p className="td-form-error">
                       {createError}
                     </p>
                   )}
@@ -433,6 +491,7 @@ function TeacherDashboardInner({
                         onKeyDown={(e) => e.key === 'Enter' && handleCopy(createdCode)}
                         style={{ cursor: 'pointer' }}
                         title={lang === 'tr' ? 'Kopyalamak için tıkla' : 'Click to copy'}
+                        aria-label={lang === 'tr' ? `Katılım kodunu kopyala: ${createdCode}` : `Copy join code: ${createdCode}`}
                       >
                         {createdCode}
                       </div>
@@ -517,14 +576,14 @@ function TeacherDashboardInner({
                         <div className="td-stat-label">{lang === 'tr' ? 'Ort. Seri' : 'Avg Streak'}</div>
                       </div>
                       <div className="td-stat-card">
-                        <div className="td-stat-value" style={{ color: progressStats.atRisk.length > 0 ? 'var(--warning)' : 'var(--success)' }}>
+                        <div className={`td-stat-value ${progressStats.atRisk.length > 0 ? 'td-stat-value--warning' : 'td-stat-value--success'}`}>
                           {progressStats.atRisk.length}
                         </div>
                         <div className="td-stat-label">{lang === 'tr' ? 'Risk Altında' : 'At Risk'}</div>
                       </div>
                       <div className="td-stat-card">
-                        <div className="td-stat-value" style={{ color: 'var(--accent-amber)', fontSize: 22 }}>
-                          {selectedClassroom?.students.reduce((sum, s) => sum + s.xp, 0).toLocaleString() ?? 0}
+                        <div className="td-stat-value td-stat-value--amber">
+                          {selectedClassroom?.students.reduce((sum, s) => sum + s.xp, 0).toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US') ?? 0}
                         </div>
                         <div className="td-stat-label">{lang === 'tr' ? 'Toplam XP' : 'Total XP'}</div>
                       </div>
@@ -533,16 +592,14 @@ function TeacherDashboardInner({
                     {/* At-risk students */}
                     {progressStats.atRisk.length > 0 && (
                       <>
-                        <div style={{ padding: '0 var(--space-5)', paddingTop: 'var(--space-2)' }}>
-                          <div className="td-section-title" style={{ fontSize: 12, color: 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                            {lang === 'tr' ? '3+ Gündür Aktif Değil' : 'Inactive 3+ days'}
-                          </div>
+                        <div className="td-sub-label td-sub-label--warning">
+                          {lang === 'tr' ? '3+ Gündür Aktif Değil' : 'Inactive 3+ days'}
                         </div>
                         <div className="td-atrisk-list">
                           {progressStats.atRisk.map((s) => (
                             <div key={s.id} className="td-atrisk-item">
                               <div className="td-avatar-circle">{s.name.charAt(0).toUpperCase()}</div>
-                              <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{s.name}</span>
+                              <span className="td-student-name" style={{ fontWeight: 600 }}>{s.name}</span>
                               <span className="td-at-risk-badge">{lang === 'tr' ? 'pasif' : 'inactive'}</span>
                               <span className="td-atrisk-days">
                                 {lang === 'tr' ? `${daysSince(s.lastActive)}g önce` : `${daysSince(s.lastActive)}d ago`}
@@ -556,10 +613,8 @@ function TeacherDashboardInner({
                     {/* Top performers */}
                     {progressStats.topThree.length > 0 && (
                       <>
-                        <div style={{ padding: '0 var(--space-5)', paddingTop: 'var(--space-3)' }}>
-                          <div className="td-section-title" style={{ fontSize: 12, color: 'var(--accent-amber)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                            {lang === 'tr' ? 'En İyi Öğrenciler' : 'Top Performers'}
-                          </div>
+                        <div className="td-sub-label td-sub-label--amber">
+                          {lang === 'tr' ? 'En İyi Öğrenciler' : 'Top Performers'}
                         </div>
                         <div className="td-performers-list" style={{ paddingBottom: 'var(--space-4)' }}>
                           {progressStats.topThree.map((s, idx) => (
@@ -569,7 +624,7 @@ function TeacherDashboardInner({
                                 {s.name.charAt(0).toUpperCase()}
                               </div>
                               <span className="td-performer-name">{s.name}</span>
-                              <span className="td-performer-xp">{s.xp.toLocaleString()} XP</span>
+                              <span className="td-performer-xp">{s.xp.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US')} XP</span>
                             </div>
                           ))}
                         </div>
@@ -598,23 +653,31 @@ function TeacherDashboardInner({
                     </svg>
                     {lang === 'tr' ? 'Öğrenci Listesi' : 'Student Roster'}
                     {selectedClassroom && (
-                      <span style={{ fontWeight: 400, fontSize: 12, color: 'var(--text-muted)', marginLeft: 4 }}>
+                      <span className="td-student-count">
                         ({selectedClassroom.students.length})
                       </span>
                     )}
                   </h2>
+                  {selectedClassroom && selectedClassroom.students.length > 0 && (
+                    <button
+                      className="td-btn td-btn-sm"
+                      title={lang === 'tr' ? 'CSV olarak dışa aktar' : 'Export as CSV'}
+                      onClick={handleExportCSV}
+                    >
+                      {lang === 'tr' ? 'CSV İndir' : 'Export CSV'}
+                    </button>
+                  )}
                 </div>
 
                 {/* Controls */}
                 <div className="td-roster-controls">
                   <div className="td-search">
                     <input
-                      className="td-input"
+                      className="td-input td-search-input"
                       type="text"
                       placeholder={lang === 'tr' ? 'Öğrenci ara…' : 'Search students…'}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      style={{ width: '100%', boxSizing: 'border-box' }}
                     />
                   </div>
                   <select
@@ -682,17 +745,17 @@ function TeacherDashboardInner({
                                     )}
                                   </div>
                                 </td>
-                                <td style={{ color: isAtRisk ? 'var(--warning)' : 'var(--text-muted)' }}>
+                                <td className={isAtRisk ? 'td-cell-at-risk' : 'td-cell-muted'}>
                                   {formatLastActive(student.lastActive, lang)}
                                 </td>
                                 <td>
-                                  <span style={{ fontFamily: 'Nunito, sans-serif', fontWeight: 700, color: streak > 0 ? 'var(--primary)' : 'var(--text-muted)' }}>
+                                  <span className={streak > 0 ? 'td-streak-value' : 'td-streak-value--none'}>
                                     {streak > 0 ? `${streak}` : '—'}
                                   </span>
                                 </td>
                                 <td>
-                                  <span style={{ fontFamily: 'Nunito, sans-serif', fontWeight: 700, color: 'var(--accent-amber)' }}>
-                                    {student.xp.toLocaleString()}
+                                  <span className="td-xp-value">
+                                    {student.xp.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US')}
                                   </span>
                                 </td>
                                 <td>
@@ -731,7 +794,7 @@ function TeacherDashboardInner({
                                     <div className="td-phonics-expand-inner">
                                       <div className="td-phonics-title">{lang === 'tr' ? 'Fonik Ustalığı' : 'Phonics Mastery'}</div>
                                       {Object.keys(student.phonicsProgress).length === 0 ? (
-                                        <p style={{ fontSize: 13, color: 'var(--text-muted)', fontFamily: 'Inter, sans-serif', margin: 0 }}>
+                                        <p className="td-phonics-empty">
                                           {lang === 'tr' ? 'Henüz fonik ilerleme kaydedilmedi.' : 'No phonics progress recorded yet.'}
                                         </p>
                                       ) : (
@@ -766,11 +829,8 @@ function TeacherDashboardInner({
                                           { cls: 'mastery-high', label: '60–89%' },
                                           { cls: 'mastery-full', label: '90–100%' },
                                         ].map((item) => (
-                                          <div
-                                            key={item.cls}
-                                            style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--text-muted)', fontFamily: 'Inter, sans-serif' }}
-                                          >
-                                            <div className={`td-phonics-dot ${item.cls}`} style={{ width: 12, height: 12 }} />
+                                          <div key={item.cls} className="td-phonics-legend-item">
+                                            <div className={`td-phonics-dot td-phonics-dot--sm ${item.cls}`} />
                                             {item.label}
                                           </div>
                                         ))}
@@ -806,11 +866,11 @@ function TeacherDashboardInner({
                 <div className="td-hw-form">
                   <div className="td-hw-row">
                     <div className="td-form-field">
-                      <label className="td-label" htmlFor="td-hw-assignment">
+                      <label className="td-label" htmlFor={hwAssignmentId}>
                         {lang === 'tr' ? 'Etkinlik' : 'Activity'}
                       </label>
                       <select
-                        id="td-hw-assignment"
+                        id={hwAssignmentId}
                         className="td-input td-sort-select"
                         value={hwAssignment}
                         onChange={(e) => setHwAssignment(e.target.value)}
@@ -835,11 +895,11 @@ function TeacherDashboardInner({
                     </div>
 
                     <div className="td-form-field">
-                      <label className="td-label" htmlFor="td-hw-due">
+                      <label className="td-label" htmlFor={hwDueDateId}>
                         {lang === 'tr' ? 'Son Tarih' : 'Due Date'}
                       </label>
                       <input
-                        id="td-hw-due"
+                        id={hwDueDateId}
                         className="td-input"
                         type="date"
                         value={hwDueDate}

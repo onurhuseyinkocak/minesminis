@@ -6,6 +6,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2, Check, ChevronRight } from 'lucide-react';
 import { PHONICS_GROUPS } from '../../data/phonics';
+import { useLanguage } from '../../contexts/LanguageContext';
 import type { Activity } from '../../data/curriculum';
 
 interface PhonicsIntroActivityProps {
@@ -52,12 +53,31 @@ function speakText(text: string, rate = 0.75) {
   window.speechSynthesis.speak(utterance);
 }
 
+/**
+ * Speak the phoneme sound, not the letter name.
+ * Single-char graphemes are repeated 3x slowly to produce the isolated phoneme sound
+ * (e.g. "sss" sounds like /s/, not "ess"). Multi-char digraphs speak as-is.
+ */
+function speakPhonemeSound(grapheme: string, rate = 0.55) {
+  const soundText = grapheme.length === 1
+    ? `${grapheme}${grapheme}${grapheme}` // repeat to isolate phoneme
+    : grapheme; // digraphs like "sh", "ch" — speak as word
+  speakText(soundText, rate);
+}
+
+const VOWEL_GRAPHEMES = new Set(['a', 'e', 'i', 'o', 'u', 'ai', 'ee', 'oo', 'ie', 'oa', 'ou', 'ue']);
+
+function isVowelSound(grapheme: string): boolean {
+  return VOWEL_GRAPHEMES.has(grapheme.toLowerCase());
+}
+
 export function PhonicsIntroActivity({
   activity,
   phonicsFocus,
   onComplete,
   lang,
 }: PhonicsIntroActivityProps) {
+  const { t } = useLanguage();
   const isTr = lang === 'tr';
   const sounds = getSoundsFromFocus(phonicsFocus);
   const [currentSoundIdx, setCurrentSoundIdx] = useState(0);
@@ -66,11 +86,11 @@ export function PhonicsIntroActivity({
 
   const currentSound = sounds[currentSoundIdx];
 
-  // Auto-play the sound on mount and when sound changes
+  // Auto-play the phoneme sound on mount and when sound changes
   useEffect(() => {
     if (currentSound) {
       const timer = setTimeout(() => {
-        speakText(currentSound.grapheme, 0.6);
+        speakPhonemeSound(currentSound.grapheme);
         setPlayed(true);
       }, 600);
       return () => clearTimeout(timer);
@@ -79,7 +99,7 @@ export function PhonicsIntroActivity({
 
   const handlePlaySound = useCallback(() => {
     if (!currentSound) return;
-    speakText(currentSound.grapheme, 0.6);
+    speakPhonemeSound(currentSound.grapheme);
     setPlayed(true);
   }, [currentSound]);
 
@@ -108,7 +128,7 @@ export function PhonicsIntroActivity({
           onClick={() => onComplete(1, 1)}
         >
           <Check size={18} />
-          {isTr ? 'Anladım!' : 'Got it!'}
+          {t('games.phonicsGotIt')}
         </button>
       </div>
     );
@@ -125,7 +145,7 @@ export function PhonicsIntroActivity({
           <Check size={48} strokeWidth={3} />
         </div>
         <p className="phonics-intro__done-text">
-          {isTr ? 'Harika!' : 'Amazing!'}
+          {t('games.phonicsAmazing')}
         </p>
       </motion.div>
     );
@@ -140,18 +160,35 @@ export function PhonicsIntroActivity({
         </p>
       )}
 
-      {/* Big grapheme display */}
+      {/* Big grapheme display — tapping plays the SOUND (phoneme), not the letter name */}
       <motion.button
         type="button"
         className="phonics-intro__grapheme-btn"
         onClick={handlePlaySound}
         whileTap={{ scale: 0.92 }}
-        aria-label={`Play sound: ${currentSound.grapheme}`}
+        aria-label={`Play phoneme sound for: ${currentSound.grapheme}`}
       >
         <span className="phonics-intro__grapheme">{currentSound.grapheme}</span>
+        {/* Show both uppercase and lowercase so children learn the pair together */}
+        <span className="phonics-intro__grapheme-case-pair">
+          {currentSound.grapheme.toUpperCase()} / {currentSound.grapheme.toLowerCase()}
+        </span>
         <span className="phonics-intro__grapheme-ipa">{currentSound.ipa}</span>
         <Volume2 size={20} className="phonics-intro__play-icon" />
       </motion.button>
+
+      {/* Vowel / Consonant badge — explicit pedagogy */}
+      <div className="phonics-intro__sound-type-badge" aria-label={isVowelSound(currentSound.grapheme) ? 'Vowel sound' : 'Consonant sound'}>
+        {isVowelSound(currentSound.grapheme) ? (
+          <span className="phonics-intro__vowel-badge">
+            {t('games.phonicsVowel')}
+          </span>
+        ) : (
+          <span className="phonics-intro__consonant-badge">
+            {t('games.phonicsConsonant')}
+          </span>
+        )}
+      </div>
 
       {/* Action / mnemonic */}
       <div className="phonics-intro__action">
@@ -204,17 +241,17 @@ export function PhonicsIntroActivity({
         {!played ? (
           <>
             <Volume2 size={18} />
-            {isTr ? 'Önce dinle!' : 'Listen first!'}
+            {t('games.phonicsListenFirst')}
           </>
         ) : currentSoundIdx < sounds.length - 1 ? (
           <>
-            {isTr ? 'Sonraki ses' : 'Next sound'}
+            {t('games.phonicsNextSound')}
             <ChevronRight size={18} />
           </>
         ) : (
           <>
             <Check size={18} />
-            {isTr ? 'Anladım!' : 'Got it!'}
+            {t('games.phonicsGotIt')}
           </>
         )}
       </button>

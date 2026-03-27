@@ -86,7 +86,7 @@
 /* Skip hint */
 .story-narrator__hint {
   text-align: right;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.35);
   font-weight: 600;
   margin-top: 8px;

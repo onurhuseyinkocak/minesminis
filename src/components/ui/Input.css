@@ -41,7 +41,7 @@
   color: var(--text-primary);
   background: var(--bg-muted);
   border: 2px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   outline: none;
   transition:
     border-color var(--transition-base),
@@ -87,20 +87,24 @@
   height: var(--btn-height);
   padding: 0 var(--space-md);
   font-size: 0.9375rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 }
 
 .mm-input--lg {
   height: var(--input-height);
   padding: 0 var(--space-lg);
   font-size: 1rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 }
 
 /* -- Icon ------------------------------------------------------------- */
 
 .mm-input--has-icon {
-  padding-left: var(--space-2xl);
+  padding-left: var(--space-10);
+}
+
+.mm-input--has-right-icon {
+  padding-right: var(--space-10);
 }
 
 .mm-input-icon {
@@ -115,8 +119,48 @@
   transition: color var(--transition-base);
 }
 
-.mm-input:focus ~ .mm-input-icon,
-.mm-input:focus + .mm-input-icon {
+/* Right-side icon (e.g. password toggle) */
+.mm-input-icon--right {
+  left: auto;
+  right: var(--space-md);
+  pointer-events: auto;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-base);
+  border-radius: var(--radius-xs);
+}
+
+.mm-input-icon--right:hover {
+  color: var(--text-secondary);
+}
+
+.mm-input-icon--right:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* When right icon is an interactive button, ensure 44px touch target */
+.mm-input-icon--btn {
+  /* Minimum touch target 44×44px per WCAG 2.5.5 */
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  justify-content: center;
+  /* Pull the button flush to the right edge */
+  right: 0;
+}
+
+/* Wider right padding when the right icon is a 44px button */
+.mm-input--has-right-icon.mm-input-icon--btn-sibling,
+.mm-input-container:has(.mm-input-icon--btn) .mm-input--has-right-icon {
+  padding-right: var(--touch-target);
+}
+
+.mm-input-container:focus-within .mm-input-icon {
   color: var(--primary);
 }
 
@@ -128,7 +172,7 @@
 
 .mm-input--error:focus {
   border-color: var(--error);
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 0 4px var(--error-soft);
 }
 
 .mm-input-error-text {
@@ -207,6 +251,6 @@
 
 [data-theme="dark"] .mm-input:focus {
   border-color: var(--primary-light);
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.15);
+  box-shadow: 0 0 0 4px var(--primary-glow);
   background: var(--bg-card);
 }

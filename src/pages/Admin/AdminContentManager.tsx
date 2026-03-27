@@ -78,18 +78,16 @@ function AdminContentManager() {
     const [uploading, setUploading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    // ========== Load Data ==========
+    // ========== Load Data — all four fetches run in parallel ==========
     useEffect(() => {
-        loadWords();
-        loadGames();
-        loadVideos();
-        loadWorksheets();
+        Promise.all([loadWords(), loadGames(), loadVideos(), loadWorksheets()]).catch(() => {});
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run on mount only
     }, []);
 
     const loadWords = async () => {
         setWordsLoading(true);
         try {
-            const { data, error } = await supabase.from('words').select('*').order('word');
+            const { data, error } = await supabase.from('words').select('id, word, turkish, level, category, emoji, example, word_audio_url, image_url').order('word').limit(1000);
             if (!error && data && data.length > 0) {
                 setWords(data.map((r: Record<string, unknown>) => ({
                     word: String(r.word), turkish: String(r.turkish),
@@ -108,7 +106,7 @@ function AdminContentManager() {
     const loadGames = async () => {
         setGamesLoading(true);
         try {
-            const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
+            const { data, error } = await supabase.from('games').select('id, title, url, thumbnail_url, category, target_audience').order('created_at', { ascending: false }).limit(200);
             if (!error && data && data.length > 0) {
                 setGames(data.map((r: Record<string, unknown>) => ({
                     id: String(r.id), title: String(r.title), embedUrl: String(r.url),
@@ -689,7 +687,7 @@ function AdminContentManager() {
                         <tbody>
                             {paginate(filteredWorksheets, worksheetsPage).map(ws => (
                                 <tr key={ws.id}>
-                                    <td><img src={ws.thumbnailUrl} alt={ws.title} className="adm-thumb" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} /></td>
+                                    <td><img src={ws.thumbnailUrl} alt={ws.title} className="adm-thumb" loading="lazy" width={48} height={48} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} /></td>
                                     <td>
                                         <strong>{ws.title}</strong>
                                         <div className="adm-td-subtitle">{ws.description}</div>

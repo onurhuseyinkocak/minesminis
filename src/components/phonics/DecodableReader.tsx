@@ -77,12 +77,10 @@ export const DecodableReader: React.FC<DecodableReaderProps> = ({ text, highligh
   };
 
   const handleReadAloud = () => {
-    const SpeechRecognitionAPI =
-      (window as unknown as Record<string, unknown>).SpeechRecognition ||
-      (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (SpeechRecognitionAPI) {
-      const recognition = new (SpeechRecognitionAPI as new () => SpeechRecognition)();
+      const recognition = new SpeechRecognitionAPI();
       recognition.lang = 'en-US';
       recognition.interimResults = false;
       recognition.continuous = true;

@@ -32,7 +32,7 @@ const icons: Record<KidIconName, React.ReactElement> = {
   learn: (
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Globe shape */}
-      <circle cx="12" cy="12" r="9.5" fill="#22C55E" />
+      <circle cx="12" cy="12" r="9.5" fill="var(--success)" />
       <circle cx="12" cy="12" r="9.5" stroke="#16A34A" strokeWidth="1" />
       {/* Horizontal lines */}
       <path d="M2.8 9H21.2" stroke="white" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" />
@@ -250,10 +250,10 @@ const icons: Record<KidIconName, React.ReactElement> = {
   check: (
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Circle */}
-      <circle cx="12" cy="12" r="10" fill="#22C55E" />
+      <circle cx="12" cy="12" r="10" fill="var(--success)" />
       {/* Shadow circle */}
       <circle cx="12" cy="12.5" r="10" fill="#15803D" opacity="0.3" />
-      <circle cx="12" cy="12" r="10" fill="#22C55E" />
+      <circle cx="12" cy="12" r="10" fill="var(--success)" />
       {/* Check mark */}
       <path d="M7 12L10.5 15.5L17 9" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -276,10 +276,10 @@ const icons: Record<KidIconName, React.ReactElement> = {
   play: (
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Circle background */}
-      <circle cx="12" cy="12" r="10" fill="#22C55E" />
+      <circle cx="12" cy="12" r="10" fill="var(--success)" />
       {/* Shadow */}
       <circle cx="12" cy="12.8" r="10" fill="#15803D" opacity="0.25" />
-      <circle cx="12" cy="12" r="10" fill="#22C55E" />
+      <circle cx="12" cy="12" r="10" fill="var(--success)" />
       {/* Shine */}
       <circle cx="9" cy="7.5" r="3" fill="white" opacity="0.15" />
       {/* Play triangle */}

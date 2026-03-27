@@ -238,14 +238,40 @@
   justify-content: center;
 }
 
+/* ---- Message Bubble Wrapper (bubble + timestamp) ---- */
+.message-bubble-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.message-row.user .message-bubble-wrapper {
+  align-items: flex-end;
+}
+
+.message-row.assistant .message-bubble-wrapper {
+  align-items: flex-start;
+}
+
+.message-time {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1;
+  padding: 0 var(--space-xs);
+  flex-shrink: 0;
+}
+
 /* ---- Message Bubbles ---- */
 .message-bubble {
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-lg);
   font-family: var(--font-body);
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.65;
   word-wrap: break-word;
+  max-width: 100%;
 }
 
 .message-bubble.assistant {
@@ -464,6 +490,7 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md) var(--space-md);
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
 }
 
 .input-row input {
@@ -507,7 +534,8 @@
   font-size: 0.8125rem;
   font-weight: 800;
   cursor: pointer;
-  min-height: var(--touch-target);
+  min-height: 44px;
+  min-width: 44px;
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-fast),
               box-shadow var(--transition-fast);
@@ -532,6 +560,7 @@
 
   .chat-home-container {
     height: 100vh;
+    height: 100dvh; /* iOS Safari: dynamic viewport height */
     max-height: none;
     border-radius: 0;
     margin-right: 0;
