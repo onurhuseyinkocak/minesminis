@@ -235,8 +235,10 @@ const Profile: React.FC = () => {
             <div className="name-row">
               <h1>{userProfile?.display_name || (lang === 'tr' ? 'Benim Alanım' : 'My Space')}</h1>
               <button
+                type="button"
                 className="edit-profile-btn"
                 onClick={() => setShowEditModal(true)}
+                aria-label={lang === 'tr' ? 'Profili düzenle' : 'Edit profile'}
               >
                 <Settings size={20} />
                 <span>{t('profile.editProfile')}</span>
@@ -245,7 +247,7 @@ const Profile: React.FC = () => {
 
             <div className="level-badge">
               <Trophy size={20} />
-              <span>Level {stats.level}</span>
+              <span>{lang === 'tr' ? 'Seviye' : 'Level'} {stats.level}</span>
             </div>
           </div>
         </header>
