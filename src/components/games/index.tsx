@@ -18,7 +18,7 @@ class GameErrorBoundary extends React.Component<{ children: React.ReactNode }, E
           <p style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>Something went wrong in this game.</p>
           <button
             type="button"
-            style={{ padding: '0.6rem 1.5rem', borderRadius: '999px', background: 'var(--primary)', color: '#fff', border: 'none', fontFamily: 'var(--font-display)', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem' }}
+            style={{ padding: '0.6rem 1.5rem', borderRadius: '999px', background: 'var(--primary)', color: 'var(--text-on-primary, #fff)', border: 'none', fontFamily: 'var(--font-display)', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem' }}
             onClick={() => this.setState({ hasError: false })}
           >
             Try Again
@@ -241,7 +241,7 @@ export function GameSelector({ type, extra, ...props }: GameSelectorProps) {
       <div style={{ textAlign: 'center', padding: '2rem' }}>
         <p>{t('games.loadingGame')}: {type}</p>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-          This game requires specific data that is not available.
+          Bu oyun için gerekli veri bulunamadı.
         </p>
       </div>
     );

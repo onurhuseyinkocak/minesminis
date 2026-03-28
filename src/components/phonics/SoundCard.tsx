@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2, Mic } from 'lucide-react';
 import { Button, Card, Badge } from '../ui';
+import { useLanguage } from '../../contexts/LanguageContext';
 import type { PhonicsSound } from './types';
 
 interface SoundCardProps {
@@ -10,6 +11,8 @@ interface SoundCardProps {
 }
 
 export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
   const [step, setStep] = useState<'listen' | 'action' | 'practice' | 'done'>('listen');
   const [isListening, setIsListening] = useState(false);
   const [recognized, setRecognized] = useState('');
@@ -48,7 +51,7 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
 
       recognition.onerror = () => {
         setIsListening(false);
-        setRecognized("Couldn't hear you. Try again!");
+        setRecognized(isTr ? 'Duyamadım. Tekrar dene!' : "Couldn't hear you. Try again!");
         setStep('practice');
       };
 
@@ -103,9 +106,9 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
               speakSound();
               if (step === 'listen') setStep('action');
             }}
-            style={{ backgroundColor: '#E8A317', borderColor: '#E8A317' }}
+            style={{ backgroundColor: 'var(--warning, #E8A317)', borderColor: 'var(--warning, #E8A317)' }}
           >
-            Listen
+            {isTr ? 'Dinle' : 'Listen'}
           </Button>
 
           {/* TPR action */}
@@ -128,29 +131,31 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
               >
                 <span style={{ fontSize: '1rem', fontWeight: 900, color: 'inherit' }}>{sound.grapheme?.toUpperCase() ?? '?'}</span>
               </motion.span>
-              <p style={{ fontSize: '1.1rem', fontWeight: 600, color: '#333', margin: '0.5rem 0' }}>
+              <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary, #333)', margin: '0.5rem 0' }}>
                 {sound.action}
               </p>
               {step === 'action' && (
                 <Button variant="secondary" size="md" onClick={() => setStep('practice')}>
-                  Got it!
+                  {isTr ? 'Anladım!' : 'Got it!'}
                 </Button>
               )}
             </motion.div>
           )}
 
-          {/* Turkish note */}
-          <p
-            style={{
-              fontSize: '0.85rem',
-              color: '#888',
-              fontStyle: 'italic',
-              textAlign: 'center',
-              margin: 0,
-            }}
-          >
-            {sound.turkishNote}
-          </p>
+          {/* Turkish note — only shown for TR users */}
+          {isTr && sound.turkishNote && (
+            <p
+              style={{
+                fontSize: '0.85rem',
+                color: '#888',
+                fontStyle: 'italic',
+                textAlign: 'center',
+                margin: 0,
+              }}
+            >
+              <strong>Dikkat:</strong> {sound.turkishNote}
+            </p>
+          )}
 
           {/* Keywords grid */}
           <div
@@ -168,6 +173,10 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
                   key={kw.word}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => speak(kw.word, 0.8)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); speak(kw.word, 0.8); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Say word: ${kw.word}`}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -177,14 +186,16 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
                     backgroundColor: '#f5f5f5',
                     borderRadius: '0.75rem',
                     cursor: 'pointer',
+                    minHeight: 44,
+                    minWidth: 44,
                   }}
                 >
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900 }}>{kw.word.charAt(0).toUpperCase()}</div>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: 'var(--text-on-primary, #fff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900 }}>{kw.word.charAt(0).toUpperCase()}</div>
                   <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
                     {idx >= 0 ? (
                       <>
                         {kw.word.slice(0, idx)}
-                        <span style={{ color: '#E8A317', fontWeight: 800 }}>
+                        <span style={{ color: 'var(--warning, #E8A317)', fontWeight: 800 }}>
                           {kw.word.slice(idx, idx + sound.grapheme.length)}
                         </span>
                         {kw.word.slice(idx + sound.grapheme.length)}
@@ -211,9 +222,9 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
                 icon={<Mic size={24} />}
                 onClick={handleSayIt}
                 disabled={isListening}
-                style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
+                style={{ backgroundColor: 'var(--secondary, #1A6B5A)', borderColor: 'var(--secondary, #1A6B5A)' }}
               >
-                {isListening ? 'Listening...' : 'Say it!'}
+                {isListening ? (isTr ? 'Dinleniyor...' : 'Listening...') : (isTr ? 'Söyle!' : 'Say it!')}
               </Button>
             </motion.div>
           )}
@@ -225,7 +236,9 @@ export const SoundCard: React.FC<SoundCardProps> = ({ sound, onComplete }) => {
               style={{ textAlign: 'center' }}
             >
               <Badge variant="success">
-                {recognized ? `You said: "${recognized}"` : 'Great job!'}
+                {recognized
+                  ? (isTr ? `Söyledin: "${recognized}"` : `You said: "${recognized}"`)
+                  : (isTr ? 'Harika!' : 'Great job!')}
               </Badge>
             </motion.div>
           )}
