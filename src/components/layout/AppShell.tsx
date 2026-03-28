@@ -281,6 +281,18 @@ export default function AppShell({
           ══════════════════════════════════════════════════ */}
       <main id="main-content" className={`appshell-main${showBottomNav ? ' appshell-main--with-bottom-nav' : ''}`}>
         {children}
+        {/* Legal footer — KVKK/GDPR compliance */}
+        <div style={{ textAlign: 'center', padding: '1.5rem 1rem 2rem', display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <Link to="/privacy" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
+            {lang === 'tr' ? 'Gizlilik Politikası' : 'Privacy Policy'}
+          </Link>
+          <Link to="/terms" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
+            {lang === 'tr' ? 'Kullanım Şartları' : 'Terms of Service'}
+          </Link>
+          <Link to="/cookies" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
+            {lang === 'tr' ? 'Çerez Politikası' : 'Cookie Policy'}
+          </Link>
+        </div>
       </main>
 
       {/* ══════════════════════════════════════════════════
