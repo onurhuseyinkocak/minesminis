@@ -8,12 +8,20 @@
 .lesson-player-page {
   max-width: 800px;
   margin: 0 auto;
-  height: 100vh;
-  height: 100dvh; /* dynamic viewport height for mobile browsers */
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px); /* dynamic viewport height for mobile browsers */
   display: flex;
   flex-direction: column;
   padding: 0 var(--space-lg);
   overflow: hidden;
+}
+
+/* On mobile: AppShell has a top bar (~56px) + bottom nav (~56px) */
+@media (max-width: 1023px) {
+  .lesson-player-page {
+    height: calc(100vh - 56px - 56px);
+    height: calc(100dvh - 56px - 56px);
+  }
 }
 
 .lesson-player-page--not-found {
@@ -723,42 +731,6 @@
 /* ==========================================================================
    DARK MODE
    ========================================================================== */
-[data-theme="dark"] .lesson-player-topbar {
-  background: color-mix(in srgb, var(--bg-page) 95%, transparent);
-  border-bottom-color: var(--border-light);
-}
-
-[data-theme="dark"] .lesson-player-bottombar {
-  background: color-mix(in srgb, var(--bg-page) 90%, transparent);
-}
-
-[data-theme="dark"] .lesson-player-mimi {
-  background: var(--bg-soft, var(--bg-elevated));
-}
-
-[data-theme="dark"] .lesson-complete__mimi {
-  background: var(--bg-soft, var(--bg-elevated));
-}
-
-[data-theme="dark"] .lesson-complete__trophy {
-  background: var(--bg-soft, var(--bg-elevated));
-}
-
-[data-theme="dark"] .lesson-complete__xp {
-  background: var(--bg-soft, var(--bg-elevated));
-  border-color: color-mix(in srgb, var(--warning) 40%, transparent);
-  border-bottom-color: color-mix(in srgb, var(--warning) 60%, transparent);
-  color: var(--warning-light);
-}
-
-[data-theme="dark"] .lesson-complete__xp-value {
-  color: var(--warning);
-}
-
-[data-theme="dark"] .lesson-accuracy__text {
-  background: var(--bg-elevated);
-}
-
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */

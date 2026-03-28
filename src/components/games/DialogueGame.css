@@ -395,36 +395,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .dialogue-game__summary-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
-[data-theme="dark"] .dialogue-game__feed {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .dialogue-game__bubble--mimi {
-  background: var(--bg-card);
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .dialogue-game__thinking {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .dialogue-game__options {
-  background: var(--bg-elevated);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .dialogue-game__option {
-  background: var(--bg-card);
-  border-color: var(--border-medium);
-}
-
 /* ---- Responsive: 480px — action buttons stack ---- */
 @media (max-width: 480px) {
   .dialogue-game__summary-actions {

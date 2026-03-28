@@ -712,37 +712,3 @@
    DARK MODE
    ────────────────────────────────────────────────────────────────────────── */
 
-[data-theme="dark"] .rg__detect-card {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .rg__option-card {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .rg__option-card--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .rg__option-card--wrong {
-  background: var(--error-pale);
-}
-
-[data-theme="dark"] .rg__chips-pool {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .rg__chip {
-  background: var(--bg-card);
-}
-
-[data-theme="dark"] .rg__bucket {
-  background: var(--bg-card);
-}
-
-[data-theme="dark"] .rg__completion-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}

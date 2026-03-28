@@ -4,11 +4,25 @@
    ZERO raw hex. All var() tokens.
    ========================================================================== */
 
+/* Avatar customizer — fixed viewport, no full-page scroll; grid scrolls internally */
 .avatar-customizer {
   max-width: 640px;
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-md);
+  padding: 0 var(--space-md);
   font-family: var(--font-display);
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* On mobile: top bar (~56px) + bottom nav (~56px) */
+@media (max-width: 1023px) {
+  .avatar-customizer {
+    height: calc(100vh - 56px - 56px);
+    height: calc(100dvh - 56px - 56px);
+  }
 }
 
 /* ---- Header ---- */
@@ -152,11 +166,16 @@
   background: var(--glass-bg);
 }
 
-/* ---- Item grid — fixed 3 columns ---- */
+/* ---- Item grid — fixed 3 columns, scrolls within its remaining space ---- */
 .avatar-customizer__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-sm);
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0; /* required for flex children to shrink correctly */
+  padding-bottom: var(--space-md);
+  align-content: start;
 }
 
 /* ---- Item card ---- */

@@ -70,17 +70,3 @@
 .mm-skeleton--avatar-md { width: 40px; height: 40px; border-radius: var(--radius-full); }
 .mm-skeleton--avatar-lg { width: 56px; height: 56px; border-radius: var(--radius-full); }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .mm-skeleton {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-[data-theme="dark"] .mm-skeleton::after {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    transparent 100%
-  );
-}

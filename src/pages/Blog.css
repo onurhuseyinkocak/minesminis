@@ -5,12 +5,8 @@
 
 /* ---- Local tokens (supplement global design system) ---- */
 :root {
-  --bg-code: #1e293b;
-  --text-on-code: #e2e8f0;
-}
-[data-theme="dark"] {
-  --bg-code: #0f172a;
-  --text-on-code: #f1f5f9;
+  --bg-code: #f1f5f9;
+  --text-on-code: #1e293b;
 }
 
 /* ---- PAGE ---- */
@@ -28,7 +24,7 @@
   margin-bottom: var(--space-2xl);
   background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
   border-radius: var(--radius-xl);
-  padding: var(--space-2xl) var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
   position: relative;
   overflow: hidden;
 }

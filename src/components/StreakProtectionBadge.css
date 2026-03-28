@@ -77,7 +77,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background-color: var(--ink-900, #0F172A);
+  background-color: var(--ink-900, #1e293b);
   color: var(--cream-50, #FFFDF7);
   font-size: 0.75rem;
   font-family: var(--font-body, 'Inter', sans-serif);

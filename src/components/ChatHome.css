@@ -41,10 +41,6 @@
   margin-right: var(--space-sm);
 }
 
-[data-theme="dark"] .chat-home-container {
-  border-color: var(--border-medium);
-}
-
 @keyframes chatSlideIn {
   from { opacity: 0; transform: translateX(30px) scale(0.97); }
   to { opacity: 1; transform: translateX(0) scale(1); }
@@ -280,11 +276,6 @@
   border-bottom-left-radius: var(--radius-xs);
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-light);
-}
-
-[data-theme="dark"] .message-bubble.assistant {
-  background: var(--bg-muted);
-  border-color: var(--border-medium);
 }
 
 .message-bubble.user {

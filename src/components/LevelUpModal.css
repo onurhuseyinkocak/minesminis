@@ -75,10 +75,6 @@
   text-align: center;
 }
 
-[data-theme="dark"] .level-up-modal {
-  border-color: var(--border-medium);
-}
-
 @keyframes luModalIn {
   0% { opacity: 0; transform: scale(0.6) translateY(40px); }
   60% { transform: scale(1.04) translateY(-4px); }
@@ -321,16 +317,6 @@
 .level-up-close-btn:focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
-}
-
-[data-theme="dark"] .level-up-close-btn {
-  background: var(--bg-elevated);
-  color: var(--text-muted);
-}
-
-[data-theme="dark"] .level-up-close-btn:hover {
-  background: var(--error-bg);
-  color: var(--error);
 }
 
 /* ---- Responsive ---- */

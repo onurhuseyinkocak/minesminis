@@ -158,19 +158,3 @@
   justify-content: center;
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-[data-theme="dark"] .sotd-card {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.12));
-  border-color: rgba(52, 211, 153, 0.25);
-}
-
-[data-theme="dark"] .sotd-word-chip {
-  background: var(--bg-elevated);
-  border-color: rgba(52, 211, 153, 0.2);
-  color: var(--accent-emerald);
-}
-
-[data-theme="dark"] .sotd-word-chip:hover {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: var(--success-light);
-}

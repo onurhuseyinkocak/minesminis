@@ -45,8 +45,8 @@ const content = {
     featurePhonics: '42 phonics sounds',
     featureMethod: 'Research-backed method',
     featureFree: 'Free to start',
-    coppaConsent: 'I am a parent or guardian aged 13 or over, and I agree to create this account on behalf of my child.',
-    errorCoppaConsent: 'You must confirm you are a parent or guardian aged 13 or over to create an account.',
+    coppaConsent: 'I am a parent or guardian aged 18 or over, and I agree to create this account on behalf of my child.',
+    errorCoppaConsent: 'You must confirm you are a parent or guardian aged 18 or over to create an account.',
   },
   tr: {
     title: 'Tekrar Hoşgeldin',
@@ -80,8 +80,8 @@ const content = {
     featurePhonics: '42 fonetik ses',
     featureMethod: 'Araştırmaya dayalı yöntem',
     featureFree: 'Ücretsiz başlangıç',
-    coppaConsent: '13 yaşından büyük bir ebeveyn veya vasisiyim ve bu hesabı çocuğum adına oluşturmayı kabul ediyorum.',
-    errorCoppaConsent: 'Hesap oluşturmak için 13 yaşından büyük bir ebeveyn veya vasi olduğunuzu onaylamanız gerekir.',
+    coppaConsent: '18 yaşından büyük bir ebeveyn veya vasisiyim ve bu hesabı çocuğum adına oluşturmayı kabul ediyorum.',
+    errorCoppaConsent: 'Hesap oluşturmak için 18 yaşından büyük bir ebeveyn veya vasi olduğunuzu onaylamanız gerekir.',
   },
 };
 

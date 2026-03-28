@@ -176,6 +176,10 @@
   --bg-primary: #FFF8F2;
   --bg-hover: #F1F5F9;
   --bg-surface: #FFFFFF;
+  --bg-main: #FFFFFF;
+
+  /* ---- MISSING TOKENS (prevent dark fallbacks in light mode) ---- */
+  --ink-900: #1e293b;
 
   /* ---- BORDERS: Light theme ---- */
   --border: #E2E8F0;
@@ -361,6 +365,10 @@
   /* warning-dark: used by XPBooster, OfflineBanner, ReadingPlayer, StoriesGrid, UsersManager */
   --warning-dark: #b45309;
 
+  /* success-dark / error-dark: used by badge text for WCAG AA contrast on pale backgrounds */
+  --success-dark: #047857;
+  --error-dark: #991B1B;
+
   /* bottom-nav-height: global default for safe bottom positioning */
   --bottom-nav-height: 56px;
 
@@ -478,7 +486,7 @@ input[type="button"]:disabled {
 
 ::selection {
   background: var(--primary);
-  color: #FFFFFF;
+  color: var(--white);
 }
 
 /* ---- Focus visible (accessibility) — 4px ring, 20% opacity ---- */
@@ -751,7 +759,7 @@ p {
 
 .btn-primary {
   background: var(--gradient-primary);
-  color: #FFFFFF;
+  color: var(--text-on-primary);
   box-shadow: var(--shadow-button);
 }
 .btn-primary:hover {
@@ -840,18 +848,15 @@ input::placeholder, textarea::placeholder {
 }
 .badge-success {
   background: var(--success-pale);
-  /* #047857 — WCAG AA on pale backgrounds */
-  color: #047857;
+  color: var(--success-dark);
 }
 .badge-warning {
   background: var(--warning-pale);
-  /* #92400E — WCAG AA on pale backgrounds */
-  color: #92400E;
+  color: var(--warning-dark);
 }
 .badge-error {
   background: var(--error-pale);
-  /* #991B1B — WCAG AA on pale backgrounds */
-  color: #991B1B;
+  color: var(--error-dark);
 }
 
 /* ---- Divider ---- */
@@ -882,26 +887,38 @@ input::placeholder, textarea::placeholder {
 
 /* ---- Skip to content (base — App.css has the polished version) ---- */
 .skip-to-content {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  /* GPU composited: use transform instead of `top` to avoid layout recalculation */
-  transform: translateX(-50%) translateY(-100%);
+  /* SR-only visually-hidden — guaranteed zero layout impact */
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  text-decoration: none;
+}
+.skip-to-content:focus {
+  position: fixed !important;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  height: auto !important;
+  padding: var(--space-2) var(--space-6) !important;
+  margin: 0 !important;
+  clip: auto !important;
+  overflow: visible !important;
   background: var(--gradient-primary);
   color: var(--text-on-primary);
-  padding: var(--space-2) var(--space-6);
   z-index: var(--z-max);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   box-shadow: var(--shadow-md);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.875rem;
-  text-decoration: none;
   white-space: nowrap;
-  transition: transform var(--transition-fast);
-}
-.skip-to-content:focus {
-  transform: translateX(-50%) translateY(0);
   outline: none;
 }
 
@@ -1301,238 +1318,8 @@ h1, h2, h3 {
 }
 
 /* ==========================================================================
-   9. DARK MODE [data-theme="dark"]
-   ========================================================================== */
-
-[data-theme="dark"] {
-  /* Slate scale dark overrides */
-  --slate-50: #0F172A;
-  --slate-100: #1E293B;
-  --slate-200: #334155;
-  --slate-300: #475569;
-  --slate-400: #64748B;
-  --slate-500: #94A3B8;
-  --slate-600: #CBD5E1;
-  --slate-700: #E2E8F0;
-  --slate-800: #F1F5F9;
-  --slate-900: #F8FAFC;
-  --slate-950: #FFFFFF;
-
-  --bg-page: #0C0F1A;
-  --bg-card: #151929;
-  --bg-elevated: #1C2236;
-  --bg-muted: #111526;
-  --bg-soft: #0F1320;
-  --bg-glass: rgba(21, 25, 41, 0.85);
-  --bg-primary: #0C0F1A;
-  --bg-hover: #1C2236;
-  --bg-surface: #151929;
-
-  --text-primary: #F1F5F9;
-  --text-body: #CBD5E1;
-  --text-secondary: #94A3B8;
-  /* #8B98B0 gives ~4.5:1 on #151929 — WCAG AA compliant (was #64748B at ~3.1:1) */
-  --text-muted: #8B98B0;
-  --text-on-dark: #F1F5F9;
-
-  --border: #334155;
-  --border-hover: #475569;
-  --border-light: #334155;
-  --border-medium: #475569;
-  --border-focus: var(--primary-light);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-
-  --primary-pale: rgba(255, 107, 53, 0.15);
-  --secondary-pale: rgba(13, 92, 77, 0.18);
-
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 20px rgba(212, 148, 13, 0.2);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
-  --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-  --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(212, 148, 13, 0.18);
-  --shadow-button-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(212, 148, 13, 0.22);
-
-  --gradient-hero: linear-gradient(160deg, #0F172A 0%, #1E293B 40%, #0F172A 100%);
-  --gradient-warm: linear-gradient(135deg, #0C0F1A 0%, #151929 50%, #111526 100%);
-  --gradient-mimi: linear-gradient(180deg, #0D2818 0%, #0F2D1E 100%);
-  --gradient-sky: linear-gradient(180deg, #0C1929 0%, #0F1E30 30%, #0B1622 100%);
-  --gradient-primary: linear-gradient(135deg, #B87C0A 0%, #D4940D 100%);
-  --gradient-secondary: linear-gradient(135deg, #0A4A3E 0%, #0D5C4D 100%);
-  --gradient-premium: linear-gradient(135deg, #050810 0%, #0F172A 100%);
-
-  --primary-glow: rgba(212, 148, 13, 0.25);
-  --mimi-light: rgba(76, 175, 80, 0.18);
-  --mimi-green-light: rgba(76, 175, 80, 0.18);
-  --error-soft: rgba(239, 68, 68, 0.15);
-  --error-pale: rgba(239, 68, 68, 0.10);
-  --success-pale: rgba(16, 185, 129, 0.12);
-  --success-light: #34D399;
-  --warning-pale: rgba(245, 158, 11, 0.12);
-  --warning-light: #FBBF24;
-  --info-pale: rgba(14, 165, 233, 0.12);
-  --info-soft: rgba(14, 165, 233, 0.18);
-  --info-light: #38BDF8;
-  --success-soft: rgba(16, 185, 129, 0.15);
-  --warning-soft: rgba(245, 158, 11, 0.15);
-  --secondary-glow: rgba(26, 138, 120, 0.2);
-  --shadow-color: rgba(0, 0, 0, 0.3);
-
-  --accent-purple: #a78bfa;
-  --accent-purple-light: #c4b5fd;
-  --accent-purple-pale: rgba(139, 92, 246, 0.12);
-  --accent-indigo: #818cf8;
-  --accent-indigo-pale: rgba(99, 102, 241, 0.12);
-  --accent-pink: #f472b6;
-  --accent-pink-pale: rgba(236, 72, 153, 0.12);
-  --accent-teal: #2dd4bf;
-  --accent-blue: #60a5fa;
-  --accent-blue-dark: #3b82f6;
-  --accent-emerald: #34d399;
-  --accent-green: #4ade80;
-  --accent-green-dark: #22c55e;
-  --accent-orange: #fb923c;
-  --accent-violet: #c084fc;
-  --accent-fuchsia: #e879f9;
-  --accent-amber: #fcd34d;
-  --accent-rose: #fb7185;
-  --accent-red: #ef4444;
-  --accent-red-dark: #b91c1c;
-
-  --focus-ring: 0 0 0 2px #1E293B, 0 0 0 5px rgba(212, 148, 13, 0.9); /* WCAG 2.4.11 dark mode */
-
-  --overlay-bg: rgba(15, 23, 42, 0.6);
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-shine: rgba(255, 255, 255, 0.08);
-
-  /* Dark mode surface aliases */
-  --surface-card: var(--bg-card);
-  --surface-hover: var(--bg-elevated);
-  --success-bg: rgba(16, 185, 129, 0.12);
-  --error-bg: rgba(239, 68, 68, 0.12);
-
-  /* Missing token overrides for dark mode */
-  --warning-dark: #fbbf24;
-  --bottom-nav-height: 56px;
-  --color-primary-500: #FF6B35;
-
-  /* Keep backwards compat dark neutral aliases */
-  --ink: #0F172A;
-  --charcoal: #1E293B;
-  --slate: #94A3B8;
-  --stone: #64748B;
-  --cloud: #334155;
-  --mist: #1E293B;
-  --snow: #0F172A;
-}
-
-[data-theme="dark"] body {
-  background: var(--bg-page);
-  color: var(--text-body);
-}
-
-[data-theme="dark"] #root {
-  background: linear-gradient(180deg, #0F172A 0%, #1E293B 30%, #0F172A 100%);
-}
-
-/* Dim the animated background blobs in dark mode so they don't overpower the dark bg */
-[data-theme="dark"] #root::before {
-  background:
-    radial-gradient(ellipse 600px 500px at 5% 15%, rgba(139, 92, 246, 0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 400px at 90% 10%, rgba(212, 148, 13, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 700px 500px at 50% 85%, rgba(45, 212, 191, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 400px 350px at 15% 75%, rgba(244, 114, 182, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 550px 400px at 80% 55%, rgba(96, 165, 250, 0.05) 0%, transparent 70%);
-}
-
-/* Dim the sparkle dots in dark mode */
-[data-theme="dark"] #root::after {
-  opacity: 0.3;
-}
-
-[data-theme="dark"] ::-webkit-scrollbar-track { background: #1E293B; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #475569; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #64748B; }
-[data-theme="dark"] ::selection { background: var(--primary-hover); color: #FFFFFF; }
-
-/* Dark overrides for shared utilities */
-[data-theme="dark"] .mm-card {
-  background: var(--bg-card);
-}
-[data-theme="dark"] .modern-tabs {
-  background: var(--bg-soft);
-}
-[data-theme="dark"] .modern-tab:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-primary);
-}
-[data-theme="dark"] .modern-tab.active {
-  background: var(--bg-card);
-  color: var(--primary-light);
-}
-[data-theme="dark"] .badge-success {
-  background: var(--success-pale);
-}
-[data-theme="dark"] .badge-warning {
-  background: var(--warning-pale);
-}
-[data-theme="dark"] .skeleton {
-  background: linear-gradient(90deg, var(--bg-soft) 25%, var(--bg-muted) 50%, var(--bg-soft) 75%);
-  background-size: 200% 100%;
-}
-
-/* ==========================================================================
    10. SYSTEM PREFERENCES: prefers-color-scheme + forced-colors
    ========================================================================== */
-
-/* System dark mode auto-activation intentionally removed.
- * Dark mode only activates via explicit [data-theme="dark"] in Settings.
- * Auto-applying dark tokens causes mixed light/dark rendering since
- * not all components use CSS variables. */
-
-/**
- * Windows High Contrast Mode (forced-colors: active)
- * Ensures interactive elements get proper system colors
- * and our decorative elements don't interfere.
- */
-@media (forced-colors: active) {
-  :root {
-    --primary: ButtonText;
-    --text-primary: ButtonText;
-    --text-body: ButtonText;
-    --border: ButtonBorder;
-    --bg-page: Canvas;
-    --bg-card: Canvas;
-    --bg-muted: Canvas;
-  }
-
-  /* Remove decorative backgrounds that obscure forced-color system */
-  body {
-    background-image: none !important;
-  }
-
-  #root::before,
-  #root::after {
-    display: none !important;
-  }
-
-  /* Ensure buttons/links remain visible */
-  button,
-  a,
-  [role="button"] {
-    forced-color-adjust: auto;
-  }
-
-  /* Remove box-shadow focus rings — Windows HC supplies its own */
-  :focus-visible {
-    outline: 3px solid ButtonText;
-    box-shadow: none;
-  }
-}
 
 /**
  * High contrast preference (non-Windows: GNOME, Safari)
@@ -1542,13 +1329,6 @@ h1, h2, h3 {
   :root {
     --text-muted: #475569;
     --text-secondary: #334155;
-    --border: #64748B;
-    --border-light: #64748B;
-  }
-
-  [data-theme="dark"] {
-    --text-muted: #94A3B8;
-    --text-secondary: #CBD5E1;
     --border: #64748B;
     --border-light: #64748B;
   }

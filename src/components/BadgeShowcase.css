@@ -68,10 +68,6 @@
   transition: box-shadow var(--transition-base);
 }
 
-[data-theme="dark"] .badge-showcase {
-  border-color: var(--border-medium);
-}
-
 /* ---- Showcase Header ---- */
 .showcase-header {
   display: flex;
@@ -347,10 +343,6 @@
   box-shadow: var(--shadow-xl);
   text-align: center;
   animation: badgeModalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-[data-theme="dark"] .badge-modal {
-  border-color: var(--border-medium);
 }
 
 @keyframes badgeModalIn {

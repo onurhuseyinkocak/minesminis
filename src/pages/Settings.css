@@ -12,7 +12,7 @@
 .settings-content {
   max-width: 640px;
   margin: 0 auto;
-  padding: var(--space-xl) var(--space-lg);
+  padding: 0 var(--space-lg) var(--space-xl);
 }
 
 /* ---- HEADER ---- */
@@ -677,13 +677,13 @@
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
   .settings-content {
-    padding: var(--space-lg) var(--space-md);
+    padding: 0 var(--space-md) var(--space-lg);
   }
 }
 
 @media (max-width: 480px) {
   .settings-content {
-    padding: var(--space-md) var(--space-sm);
+    padding: 0 var(--space-sm) var(--space-md);
   }
 
   .settings-page-title {

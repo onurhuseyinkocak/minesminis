@@ -1071,7 +1071,7 @@ function PronunciationAccuracy({ lang }: { lang: string }) {
     score === null
       ? 'var(--text-muted)'
       : score < 40
-        ? 'var(--error, #ef4444)'
+        ? 'var(--error)'
         : score < 70
           ? 'var(--warning)'
           : 'var(--success)';

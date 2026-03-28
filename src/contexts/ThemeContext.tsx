@@ -24,7 +24,12 @@ const LS_KEY = 'mm_theme';
 function getStoredTheme(): ThemeChoice {
     try {
         const val = localStorage.getItem(LS_KEY);
-        if (val === 'light' || val === 'dark' || val === 'system') return val;
+        // MinesMinis is light-mode only — force light, clear any stale dark value
+        if (val === 'dark') {
+            localStorage.setItem(LS_KEY, 'light');
+            return 'light';
+        }
+        if (val === 'light' || val === 'system') return val;
     } catch {
         // storage unavailable
     }

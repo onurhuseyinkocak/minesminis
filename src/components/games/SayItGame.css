@@ -422,37 +422,3 @@
   }
 }
 
-/* -- Dark mode ----------------------------------------------------------- */
-
-[data-theme="dark"] .sig__card {
-  background: var(--bg-elevated);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .sig__card--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .sig__card--wrong {
-  background: var(--error-pale);
-  border-color: var(--error);
-}
-
-[data-theme="dark"] .sig__phonetic {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .sig__unsupported {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .sig__completion-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
-[data-theme="dark"] .sig__btn--skip {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}

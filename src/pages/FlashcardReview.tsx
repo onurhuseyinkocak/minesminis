@@ -237,12 +237,15 @@ export default function FlashcardReview() {
 
         <div className="flashcard-review__body">
           <div className="flashcard-review__empty">
-            <div className="flashcard-review__empty-icon" aria-hidden="true">
+            <div className="flashcard-review__empty-icon flashcard-review__empty-icon--celebration" aria-hidden="true">
               <CompleteIcon />
             </div>
             <h2 className="flashcard-review__empty-title">
               {lang === 'tr' ? 'Oturum tamamlandı!' : 'Session complete!'}
             </h2>
+            <p className="flashcard-review__empty-score">
+              {totalCount > 0 ? Math.round((knownCount / totalCount) * 100) : 0}%
+            </p>
             <p className="flashcard-review__empty-sub">
               {lang === 'tr'
                 ? `${knownCount} / ${totalCount} kelimeyi bildin`
@@ -322,6 +325,15 @@ export default function FlashcardReview() {
           <BackArrow />
         </button>
         <h1 className="flashcard-review__title">{title}</h1>
+        {/* Progress pill: X / Y */}
+        <span className="flashcard-review__progress-badge" aria-label={lang === 'tr' ? `${flashcards.length} kart` : `${flashcards.length} cards`}>
+          {reviewCount + newCount > 0 ? `${reviewCount + newCount}` : flashcards.length}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: 'inline', flexShrink: 0 }}>
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+        </span>
         {/* Direction toggle: EN→TR / TR→EN */}
         <button
           type="button"

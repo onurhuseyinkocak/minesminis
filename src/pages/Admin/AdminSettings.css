@@ -190,7 +190,7 @@
 }
 
 .adm-toggle-desc--danger {
-  color: var(--error, #ef4444);
+  color: var(--error);
 }
 
 .adm-toggle-wrap--mb {

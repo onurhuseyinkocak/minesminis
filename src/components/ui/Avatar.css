@@ -88,15 +88,3 @@
   .mm-avatar--xl .mm-avatar__fallback { font-size: 2rem; }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .mm-avatar {
-  box-shadow:
-    0 0 0 2px rgba(255, 107, 53, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.25);
-}
-
-[data-theme="dark"] .mm-avatar__fallback {
-  background: var(--gradient-warm);
-  color: var(--primary-light);
-}

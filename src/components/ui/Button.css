@@ -1,4 +1,4 @@
-/* Button component styles — uses design system tokens */
+/* Button component styles — MinesMinis Design System v5 */
 
 /* ── Base ─────────────────────────────────────────── */
 .mm-button {
@@ -7,7 +7,7 @@
   justify-content: center;
   gap: var(--space-2);
   border: none;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-family: var(--font-display);
   font-weight: 700;
   line-height: 1;
@@ -15,13 +15,15 @@
   text-decoration: none;
   white-space: nowrap;
   outline: none;
+  min-height: 44px;
   transition:
     background var(--transition-base),
     background-color var(--transition-base),
     box-shadow var(--transition-base),
     transform var(--transition-fast),
     border-color var(--transition-base),
-    opacity var(--transition-base);
+    opacity var(--transition-base),
+    color var(--transition-base);
   position: relative;
   user-select: none;
   -webkit-user-select: none;
@@ -43,33 +45,45 @@
 }
 
 /* ── Sizes ────────────────────────────────────────── */
+.mm-button--xs {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 var(--space-2);
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  gap: var(--space-1);
+}
+
 .mm-button--sm {
   height: var(--btn-height-sm);
+  min-height: var(--btn-height-sm);
   padding: 0 var(--space-3);
   font-size: 13px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
 }
 
 .mm-button--md {
   height: 40px;
-  min-height: var(--touch-target);
+  min-height: 44px;
   padding: 0 var(--space-5);
   font-size: 14px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
 }
 
 .mm-button--lg {
   height: var(--btn-height);
+  min-height: 44px;
   padding: var(--space-3) var(--space-6);
   font-size: 16px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
 }
 
 .mm-button--xl {
   height: var(--btn-height-lg);
+  min-height: 44px;
   padding: 0 var(--space-8);
   font-size: 18px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
 }
 
 /* ── Variants ─────────────────────────────────────── */
@@ -79,6 +93,7 @@
   background: var(--gradient-primary);
   color: var(--text-on-primary);
   box-shadow: var(--shadow-button);
+  border: none;
 }
 
 .mm-button--primary:hover:not(:disabled) {
@@ -93,18 +108,19 @@
   transform: scale(0.97);
 }
 
-/* Secondary — soft fill, muted text, subtle border */
+/* Secondary — soft card bg, border, ink text */
 .mm-button--secondary {
-  background-color: var(--bg-soft);
+  background-color: var(--bg-card);
   color: var(--text-secondary);
   border: 1.5px solid var(--border-light);
-  box-shadow: none;
+  box-shadow: var(--shadow-xs);
 }
 
 .mm-button--secondary:hover:not(:disabled) {
   background-color: var(--primary-pale);
   border-color: var(--primary);
   color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .mm-button--secondary:active:not(:disabled) {
@@ -113,7 +129,7 @@
   color: var(--primary-hover);
 }
 
-/* Ghost — text only, no background */
+/* Ghost — transparent, hover shows bg-muted */
 .mm-button--ghost {
   background-color: transparent;
   color: var(--primary);
@@ -122,7 +138,7 @@
 }
 
 .mm-button--ghost:hover:not(:disabled) {
-  background-color: var(--primary-pale);
+  background-color: var(--bg-muted);
   color: var(--primary-hover);
 }
 
@@ -130,20 +146,62 @@
   background-color: var(--bg-soft);
 }
 
-/* Danger */
+/* Danger — red gradient */
 .mm-button--danger {
-  background-color: var(--error);
+  background: linear-gradient(135deg, var(--error-light) 0%, var(--error) 100%);
   color: var(--text-on-primary);
+  border: none;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
 }
 
 .mm-button--danger:hover:not(:disabled) {
-  background-color: var(--accent-red);
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.32);
+  background: linear-gradient(135deg, var(--error) 0%, var(--accent-red) 100%);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+  transform: translateY(-1px);
 }
 
 .mm-button--danger:active:not(:disabled) {
-  background-color: var(--accent-red-dark);
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red-dark) 100%);
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+  transform: scale(0.97);
+}
+
+/* Success — green gradient */
+.mm-button--success {
+  background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
+  color: var(--text-on-primary);
+  border: none;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.mm-button--success:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--success) 0%, var(--mimi-dark) 100%);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
+}
+
+.mm-button--success:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Outline — transparent bg with primary border */
+.mm-button--outline {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  box-shadow: none;
+}
+
+.mm-button--outline:hover:not(:disabled) {
+  background-color: var(--primary-pale);
+  border-color: var(--primary-hover);
+  color: var(--primary-hover);
+  box-shadow: var(--shadow-xs);
+}
+
+.mm-button--outline:active:not(:disabled) {
+  background-color: var(--bg-soft);
+  transform: scale(0.97);
 }
 
 /* ── Full width ───────────────────────────────────── */
@@ -151,12 +209,13 @@
   width: 100%;
 }
 
-/* ── Icon-only button (equal padding, square) ──────── */
+/* ── Icon-only button ──────── */
 .mm-button--icon-only {
   padding: 0;
   aspect-ratio: 1;
 }
 
+.mm-button--icon-only.mm-button--xs  { width: 32px; min-height: 32px; }
 .mm-button--icon-only.mm-button--sm  { width: var(--btn-height-sm); }
 .mm-button--icon-only.mm-button--md  { width: 40px; }
 .mm-button--icon-only.mm-button--lg  { width: var(--btn-height); }
@@ -174,6 +233,12 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+/* ── Label slot ───────────────────────────────────── */
+.mm-button__label {
+  display: inline-flex;
+  align-items: center;
 }
 
 /* ── Loading state ────────────────────────────────── */
@@ -202,6 +267,11 @@
 .mm-button--sm .mm-button__spinner {
   width: 13px;
   height: 13px;
+}
+
+.mm-button--xs .mm-button__spinner {
+  width: 12px;
+  height: 12px;
 }
 
 @keyframes mm-btn-spin {

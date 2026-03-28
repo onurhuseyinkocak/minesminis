@@ -696,43 +696,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .ptg__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
-[data-theme="dark"] .ptg__tabs {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .ptg__tab--active {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .ptg__error-card {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .ptg__mouth-diagram {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .ptg__pair {
-  background: var(--bg-elevated);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .ptg__prompt-card {
-  background: var(--bg-elevated);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .ptg__progress-bar-track {
-  background: var(--bg-elevated);
-}
-
 /* -- Complete state (legacy/mascot) -- */
 
 .ptg__complete {

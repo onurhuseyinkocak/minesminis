@@ -24,12 +24,6 @@
               border-color var(--transition-base);
 }
 
-[data-theme="dark"] .nav-top {
-  background: var(--bg-elevated);
-  border-bottom-color: var(--border-medium);
-  box-shadow: 0 1px 12px var(--shadow-color);
-}
-
 /* ---- Logo ---- */
 .nav-logo {
   display: flex;
@@ -314,11 +308,6 @@
   flex-direction: column;
 }
 
-[data-theme="dark"] .nav-mobile-menu {
-  background: var(--bg-card);
-  border-left-color: var(--border-medium);
-}
-
 @keyframes navSlideIn {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
@@ -444,10 +433,6 @@
   padding-left: var(--space-sm);
   padding-right: var(--space-sm);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-[data-theme="dark"] .nav-tabbar {
-  border-top-color: var(--border-medium);
 }
 
 .nav-tab {

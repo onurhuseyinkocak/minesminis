@@ -5,7 +5,9 @@ import { useGamification } from '../../contexts/GamificationContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { LottieIcon, KidIcon } from '../ui';
 import type { KidIconName } from '../ui';
-import { Users2, LayoutDashboard, Trophy } from 'lucide-react';
+import { Users2, LayoutDashboard, Trophy, Gift } from 'lucide-react';
+import Footer from './Footer';
+import DailyRewardPopover from '../DailyReward';
 import './AppShell.css';
 
 interface AppShellProps {
@@ -39,14 +41,15 @@ export default function AppShell({
   const location = useLocation();
   const navigate = useNavigate();
   const { userProfile, signOut } = useAuth();
-  const { stats } = useGamification();
+  const { stats, canClaimDaily } = useGamification();
   const { lang } = useLanguage();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dailyRewardOpen, setDailyRewardOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownMenuRef = useRef<HTMLDivElement>(null);
 
-  // Set --bottom-nav-height CSS variable so floating elements (FAB, DailyReward) can position above the nav
+  // Set --bottom-nav-height CSS variable so floating elements (FAB) can position above the nav
   useEffect(() => {
     if (showBottomNav) {
       document.body.style.setProperty('--bottom-nav-height', '60px');
@@ -57,6 +60,19 @@ export default function AppShell({
       document.body.style.removeProperty('--bottom-nav-height');
     };
   }, [showBottomNav]);
+
+  // Auto-open daily reward popover once per day when claimable
+  useEffect(() => {
+    if (!canClaimDaily) return;
+    const today = new Date().toDateString();
+    const shownKey = `minesminis_daily_shown_${today}`;
+    if (sessionStorage.getItem(shownKey)) return;
+    const timer = setTimeout(() => {
+      sessionStorage.setItem(shownKey, '1');
+      setDailyRewardOpen(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [canClaimDaily]);
 
   const isActive = (path: string) => {
     if (path === '/dashboard') return location.pathname === '/' || location.pathname === '/dashboard';
@@ -191,7 +207,7 @@ export default function AppShell({
           )}
         </nav>
 
-        {/* Right: streak + XP + avatar */}
+        {/* Right: streak + XP + gift + avatar */}
         <div className="flex items-center gap-3 flex-shrink-0">
           <div className="flex items-center gap-1.5 bg-orange-50 text-primary-500 font-bold px-3 py-1.5 rounded-full text-sm font-display">
             <KidIcon name="fire" size={15} />
@@ -201,6 +217,19 @@ export default function AppShell({
             <KidIcon name="star" size={15} />
             <span>{stats?.xp?.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US') || 0} XP</span>
           </div>
+
+          {/* Daily reward gift button */}
+          <button
+            type="button"
+            onClick={() => setDailyRewardOpen(o => !o)}
+            aria-label={lang === 'tr' ? 'Günlük ödül' : 'Daily reward'}
+            aria-expanded={dailyRewardOpen}
+            className="appshell-gift-btn"
+            data-available={canClaimDaily ? 'true' : undefined}
+          >
+            <Gift size={18} />
+            {canClaimDaily && <span className="appshell-gift-dot" aria-hidden="true" />}
+          </button>
 
           {/* Avatar + dropdown */}
           <div className="relative" ref={dropdownRef} onKeyDown={handleDropdownKeyDown}>
@@ -278,6 +307,20 @@ export default function AppShell({
             <KidIcon name="star" size={14} />
             <span>{stats?.xp?.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US') || 0} XP</span>
           </div>
+
+          {/* Daily reward gift button — mobile */}
+          <button
+            type="button"
+            onClick={() => setDailyRewardOpen(o => !o)}
+            aria-label={lang === 'tr' ? 'Günlük ödül' : 'Daily reward'}
+            aria-expanded={dailyRewardOpen}
+            className="appshell-gift-btn appshell-gift-btn--sm"
+            data-available={canClaimDaily ? 'true' : undefined}
+          >
+            <Gift size={16} />
+            {canClaimDaily && <span className="appshell-gift-dot" aria-hidden="true" />}
+          </button>
+
           <Link
             to="/profile"
             className="appshell-mobile-avatar"
@@ -289,22 +332,19 @@ export default function AppShell({
       </header>
 
       {/* ══════════════════════════════════════════════════
+          DAILY REWARD POPOVER (shared desktop + mobile)
+          ══════════════════════════════════════════════════ */}
+      <DailyRewardPopover
+        isOpen={dailyRewardOpen}
+        onClose={() => setDailyRewardOpen(false)}
+      />
+
+      {/* ══════════════════════════════════════════════════
           MAIN CONTENT
           ══════════════════════════════════════════════════ */}
       <main id="main-content" className={`appshell-main${showBottomNav ? ' appshell-main--with-bottom-nav' : ''}`}>
         {children}
-        {/* Legal footer — KVKK/GDPR compliance */}
-        <div style={{ textAlign: 'center', padding: '1.5rem 1rem 2rem', display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
-          <Link to="/privacy" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
-            {lang === 'tr' ? 'Gizlilik Politikası' : 'Privacy Policy'}
-          </Link>
-          <Link to="/terms" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
-            {lang === 'tr' ? 'Kullanım Şartları' : 'Terms of Service'}
-          </Link>
-          <Link to="/cookies" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
-            {lang === 'tr' ? 'Çerez Politikası' : 'Cookie Policy'}
-          </Link>
-        </div>
+        <Footer variant="minimal" />
       </main>
 
       {/* ══════════════════════════════════════════════════

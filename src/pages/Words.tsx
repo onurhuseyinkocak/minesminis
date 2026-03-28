@@ -331,8 +331,15 @@ const Words: React.FC = () => {
     <div className="words-page">
       {/* Hero */}
       <div className="words-hero">
-        <span className="words-hero-emoji"><KidIcon name="book" size={48} /></span>
-        <h1 className="words-hero-title">{isTr ? 'Kelimelerim' : 'My Words'}</h1>
+        <span className="words-hero-emoji"><KidIcon name="book" size={20} /></span>
+        <div>
+          <h1 className="words-hero-title">{isTr ? 'Kelimelerim' : 'My Words'}</h1>
+          {!isLoading && deduplicatedWords.length > 0 && (
+            <p className="words-hero-sub">
+              {deduplicatedWords.length} {isTr ? 'kelime' : 'words'} · {learnedWords.size} {isTr ? 'öğrenildi' : 'learned'}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Flashcard Review entry point */}
@@ -344,23 +351,54 @@ const Words: React.FC = () => {
         >
           <KidIcon name="star" size={22} />
           <span>{isTr ? 'Kelime Kartları' : 'Flashcards'}</span>
+          {learnedWords.size > 0 && (
+            <span style={{
+              background: 'rgba(255,255,255,0.3)',
+              borderRadius: '999px',
+              padding: '2px 10px',
+              fontSize: '12px',
+              fontWeight: 700,
+              marginLeft: '4px',
+            }}>
+              {learnedWords.size} {isTr ? 'kelime hazır' : 'words ready'}
+            </span>
+          )}
           <span className="words-flashcard-cta-arrow">→</span>
         </button>
       </div>
 
       {/* Big tab buttons */}
       <div className="words-tab-row">
-        {TABS.map(tab => (
-          <button
-            key={tab.id}
-            type="button"
-            className={`words-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => handleTabSwitch(tab.id)}
-          >
-            <span className="words-tab-emoji">{tab.icon}</span>
-            <span className="words-tab-label">{tab.label}</span>
-          </button>
-        ))}
+        {TABS.map(tab => {
+          const isActive = activeTab === tab.id;
+          const badgeStyle: React.CSSProperties = {
+            borderRadius: '999px',
+            padding: '1px 7px',
+            fontSize: '11px',
+            marginLeft: '2px',
+            background: isActive ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.08)',
+            color: isActive ? 'inherit' : 'var(--text-secondary)',
+          };
+          let badge: React.ReactNode = null;
+          if (tab.id === 'words') {
+            badge = <span style={badgeStyle}>({filteredWords.length})</span>;
+          } else if (tab.id === 'review' && learnedWords.size > 0) {
+            badge = <span style={badgeStyle}>({learnedWords.size})</span>;
+          } else if (tab.id === 'mywords' && myWords.length > 0) {
+            badge = <span style={badgeStyle}>({myWords.length})</span>;
+          }
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              className={`words-tab-btn ${isActive ? 'active' : ''}`}
+              onClick={() => handleTabSwitch(tab.id)}
+            >
+              <span className="words-tab-emoji">{tab.icon}</span>
+              <span className="words-tab-label">{tab.label}{badge}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Search & Category Filter — only on words tab */}

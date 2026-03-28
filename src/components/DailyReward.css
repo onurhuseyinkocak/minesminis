@@ -1,450 +1,278 @@
 /* ============================================================
-   DailyReward.css — Floating trigger + 7-day reward modal
+   DailyReward.css — Navbar-embedded popover
    MinesMinis Premium Design System V2
    ZERO hex colors. Token-only.
    ============================================================ */
 
-/* ---- Floating Trigger Button ---- */
-.daily-reward-trigger {
-  position: fixed;
-  bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px);
-  right: var(--space-md);
-  z-index: var(--z-raised);
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-full);
-  border: 2px solid var(--border-light);
-  background: var(--bg-elevated);
-  backdrop-filter: blur(16px) saturate(1.6);
-  -webkit-backdrop-filter: blur(16px) saturate(1.6);
-  box-shadow: var(--shadow-md);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--touch-target);
-  transition: transform var(--transition-fast),
-              box-shadow var(--transition-fast),
-              border-color var(--transition-fast);
-}
-
-[data-theme="dark"] .daily-reward-trigger {
-  border-color: var(--border-medium);
-}
-
-.daily-reward-trigger:hover {
-  transform: scale(1.1) translateY(-2px);
-  border-color: var(--primary);
-  box-shadow: var(--shadow-lg);
-}
-
-.daily-reward-trigger:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
-}
-
-.daily-reward-trigger.available {
-  border-color: var(--primary);
-  animation: triggerPulse 2s ease-in-out infinite;
-}
-
-@keyframes triggerPulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow), var(--shadow-md); }
-  50% { box-shadow: 0 0 0 14px transparent, var(--shadow-md); }
-}
-
-.trigger-icon {
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-.trigger-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-full);
-  background: var(--error);
-  color: var(--white);
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px var(--error-soft);
-  border: 2px solid var(--bg-card);
-}
-
-/* ---- Overlay ---- */
-.daily-reward-overlay {
+/* ---- Backdrop ---- */
+.dr-popover-backdrop {
   position: fixed;
   inset: 0;
-  z-index: var(--z-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--overlay-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  animation: drOverlayIn 0.25s ease;
-  padding: var(--space-md);
+  z-index: 1040;
+  /* transparent — just captures outside clicks */
 }
 
-@keyframes drOverlayIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ---- Modal ---- */
-.daily-reward-modal {
-  position: relative;
-  width: 100%;
-  max-width: 440px;
+/* ---- Popover container ---- */
+.dr-popover {
+  position: fixed;
+  /* Desktop: positioned by the navbar button via CSS anchor fallback */
+  top: calc(64px + 8px);
+  right: 12px;
+  z-index: 1050;
+  width: 280px;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
-  padding: var(--space-xl) var(--space-lg);
   box-shadow: var(--shadow-xl);
-  animation: drModalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: var(--space-md);
+  animation: drPopoverIn 0.2s cubic-bezier(0.34, 1.42, 0.64, 1);
   overflow: hidden;
 }
 
-[data-theme="dark"] .daily-reward-modal {
-  border-color: var(--border-medium);
+/* Mobile: full-width, below mobile topbar */
+@media (max-width: 1023px) {
+  .dr-popover {
+    top: calc(56px + env(safe-area-inset-top, 0px) + 8px);
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
 }
 
-@keyframes drModalIn {
-  from { opacity: 0; transform: scale(0.9) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes drPopoverIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.daily-reward-modal .close-btn {
-  position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
+/* ---- Header row ---- */
+.dr-popover__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.dr-popover__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.dr-popover__streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--warning-pale, #fff7ed);
+  color: var(--warning, #f97316);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  margin-left: var(--space-xs);
+}
+
+.dr-popover__close {
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-full);
   border: none;
   background: var(--bg-muted);
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-fast),
-              color var(--transition-fast),
-              transform var(--transition-fast);
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
-.daily-reward-modal .close-btn:hover {
+.dr-popover__close:hover {
   background: var(--error-soft);
   color: var(--error);
-  transform: scale(1.08);
 }
 
-.daily-reward-modal .close-btn:focus-visible {
+.dr-popover__close:focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
 }
 
-/* ---- Modal Header ---- */
-.modal-header {
-  text-align: center;
-  margin-bottom: var(--space-lg);
-}
-
-.modal-header h2 {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--text-primary);
-  margin: 0 0 var(--space-xs);
-}
-
-.modal-header p {
-  font-family: var(--font-body);
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  margin: 0;
-  font-weight: 500;
-}
-
-/* ---- Rewards Grid (7 days) ---- */
-.rewards-grid {
+/* ---- 7-day mini strip ---- */
+.dr-popover__days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: var(--space-xs);
-  margin-bottom: var(--space-lg);
+  gap: 3px;
+  margin-bottom: var(--space-sm);
 }
 
-.reward-day {
+.dr-day {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-xs);
-  border-radius: var(--radius-md);
+  gap: 2px;
+  padding: 5px 2px;
+  border-radius: var(--radius-sm);
   background: var(--bg-muted);
   border: 1.5px solid var(--border-light);
-  transition: transform var(--transition-fast),
-              border-color var(--transition-fast),
-              box-shadow var(--transition-fast),
-              background var(--transition-fast);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  overflow: hidden;
 }
 
-.reward-day.past {
+.dr-day--past {
   opacity: 0.65;
   background: var(--success-pale);
   border-color: var(--success-light);
-  position: relative;
 }
 
-.reward-day.past::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-full);
-  background: var(--success);
-  border: 1.5px solid var(--bg-card);
-  box-shadow: var(--shadow-xs);
-}
-
-.reward-day.current {
+.dr-day--current {
   border-color: var(--primary);
   background: var(--primary-pale);
-  box-shadow: 0 0 0 2px var(--primary-glow), var(--shadow-md);
-  transform: scale(1.1);
-  animation: current-day-pulse 2s ease-in-out infinite;
-  z-index: 1;
+  box-shadow: 0 0 0 1.5px var(--primary-glow);
 }
 
-@keyframes current-day-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px var(--primary-glow), var(--shadow-md); }
-  50% { box-shadow: 0 0 0 5px var(--primary-glow), 0 0 20px var(--primary-glow), var(--shadow-md); }
-}
-
-.reward-day.current .day-label {
-  color: var(--primary);
-  font-weight: 900;
-}
-
-.reward-day.future {
-  opacity: 0.5;
+.dr-day--future {
+  opacity: 0.45;
   border-style: dashed;
 }
 
-.reward-day.special {
+.dr-day--special {
   border-color: var(--primary-light);
-  background: linear-gradient(135deg, var(--primary-pale), var(--secondary-pale));
 }
 
-.day-label {
+.dr-day__label {
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.5625rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-}
-
-.reward-icon {
-  font-size: 1.25rem;
+  color: var(--text-muted);
   line-height: 1;
 }
 
-.reward-xp {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 800;
+.dr-day--current .dr-day__label {
   color: var(--primary);
 }
 
-.reward-badge {
-  font-size: 0.75rem;
-}
-
-/* ---- Claim Button ---- */
-.claim-btn {
+.dr-day__icon {
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+}
+
+.dr-day__xp {
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ---- Action area ---- */
+.dr-popover__action {
+  margin-top: var(--space-xs);
+}
+
+/* Claim button */
+.dr-claim-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: var(--gradient-primary);
   color: var(--text-on-primary);
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.8125rem;
   font-weight: 800;
   cursor: pointer;
-  min-height: 52px;
+  min-height: 36px;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+}
+
+.dr-claim-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-  transition: transform var(--transition-fast),
-              box-shadow var(--transition-fast);
 }
 
-.claim-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-xl);
-}
-
-.claim-btn:focus-visible {
+.dr-claim-btn:focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
 }
 
-.claim-btn:disabled {
+.dr-claim-btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
 
-.claim-emoji {
-  font-size: 1.25rem;
+/* Claimed state */
+.dr-claimed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--space-sm) 0;
+  animation: drClaimedIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.claiming {
-  opacity: 0.8;
+@keyframes drClaimedIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }
 
-/* ---- Claimed Section ---- */
-.claimed-section {
-  text-align: center;
-}
-
-.claimed-animation {
-  animation: claimedBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes claimedBounce {
-  0% { transform: scale(0.5); opacity: 0; }
-  60% { transform: scale(1.08); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.claimed-icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: var(--space-sm);
-}
-
-.claimed-section h3 {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 900;
+.dr-claimed__icon {
   color: var(--success);
-  margin: 0 0 var(--space-xs);
-}
-
-.claimed-xp {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--primary);
-  margin: 0;
-}
-
-.claimed-badge {
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  color: var(--mimi-green);
-  margin: var(--space-xs) 0 0;
-  font-weight: 600;
-}
-
-/* ---- Next Reward Countdown ---- */
-.next-reward,
-.next-reward-fade-in {
-  text-align: center;
-}
-
-.next-reward-fade-in {
-  animation: fadeIn 0.8s ease-out forwards;
-  margin-top: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--border-light);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.next-reward p,
-.next-reward-fade-in p {
-  font-family: var(--font-body);
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-sm);
-  font-weight: 500;
-}
-
-.countdown {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  background: var(--bg-muted);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  display: inline-block;
-  letter-spacing: 0.04em;
-  border: 1px solid var(--border-light);
-}
-
-/* ---- Streak Display ---- */
-.streak-display {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
-  margin-top: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--border-light);
 }
 
-.streak-fire {
-  font-size: 1.25rem;
-}
-
-.streak-text {
+.dr-claimed__xp {
   font-family: var(--font-display);
-  font-size: 0.9375rem;
-  font-weight: 800;
-  color: var(--warning);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1.1;
 }
 
-/* ---- Responsive ---- */
-@media (max-width: 480px) {
-  .daily-reward-modal {
-    padding: var(--space-lg) var(--space-md);
-    max-width: 100%;
-    border-radius: var(--radius-xl);
-  }
+.dr-claimed__label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--success);
+}
 
-  .rewards-grid {
-    gap: 3px;
-  }
+/* Waiting / countdown */
+.dr-waiting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+}
 
-  .reward-day {
-    padding: var(--space-xs) 2px;
-  }
+.dr-waiting__label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
 
-  .reward-icon {
-    font-size: 1rem;
-  }
-
-  .day-label {
-    font-size: 0.75rem;
-  }
+.dr-countdown {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  background: var(--bg-muted);
+  padding: 3px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }

@@ -1,4 +1,22 @@
-.grammar-page { max-width: 600px; margin: 0 auto; padding: var(--space-md); min-height: 100vh; }
+/* Grammar lesson page — fixed viewport height, no full-page scroll */
+.grammar-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* On mobile: top bar (~56px) + bottom nav (~56px) */
+@media (max-width: 1023px) {
+  .grammar-page {
+    height: calc(100vh - 56px - 56px);
+    height: calc(100dvh - 56px - 56px);
+  }
+}
 
 /* ── Header ─────────────────────────────────────────────────────────────────── */
 .grammar-page__header {
@@ -79,11 +97,14 @@
 
 /* ── Lesson content card ─────────────────────────────────────────────────────── */
 .grammar-page__content {
+  flex: 1;
+  overflow-y: auto;
   background: var(--bg-card);
   border: 2px solid var(--border-light);
   border-radius: var(--radius-xl);
   padding: var(--space-lg);
   box-shadow: var(--shadow-md);
+  min-height: 0; /* required for flex children to shrink correctly */
 }
 
 /* ── Prev/Next navigation ────────────────────────────────────────────────────── */
@@ -194,7 +215,15 @@
 }
 
 /* ── Lesson list ───────────────────────────────────────────────────────── */
-.grammar-page__list { display: flex; flex-direction: column; gap: var(--space-md); }
+.grammar-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0; /* required for flex children to shrink correctly */
+  padding-bottom: var(--space-md);
+}
 
 .grammar-page__item {
   display: flex;

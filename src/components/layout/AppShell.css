@@ -50,6 +50,72 @@ header button:focus-visible {
   border-radius: var(--radius-sm);
 }
 
+/* -- Daily reward gift button ------------------------------------------- */
+
+.appshell-gift-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.appshell-gift-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-pale);
+  transform: scale(1.05);
+}
+
+.appshell-gift-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Pulsing ring when daily reward is available */
+.appshell-gift-btn[data-available] {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-pale);
+  animation: giftPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes giftPulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
+  50%       { box-shadow: 0 0 0 5px transparent; }
+}
+
+/* Red dot indicator */
+.appshell-gift-dot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--error);
+  border: 1.5px solid var(--bg-card);
+}
+
+/* Smaller variant for mobile topbar */
+.appshell-gift-btn--sm {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+}
+
 /* -- Desktop avatar button — 44px touch target enforced ----------------- */
 
 .appshell-desktop-avatar {
@@ -103,11 +169,6 @@ header button:focus-visible {
 @keyframes dropdownFadeIn {
   from { opacity: 0; transform: translateY(-6px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-[data-theme="dark"] .appshell-desktop-dropdown {
-  background: var(--charcoal);
-  border-color: rgba(255, 255, 255, 0.08);
 }
 
 /* -- Mobile top bar ----------------------------------------------------- */
@@ -276,43 +337,6 @@ header button:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
   border-radius: var(--radius-sm);
-}
-
-/* -- Dark mode ---------------------------------------------------------- */
-
-[data-theme="dark"] .appshell-mobile-topbar {
-  background: rgba(15, 15, 30, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom-color: rgba(255, 255, 255, 0.06);
-}
-
-[data-theme="dark"] .appshell-tabbar {
-  background: rgba(26, 26, 46, 0.96);
-  border-top-color: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .appshell-tab {
-  color: var(--text-muted);
-}
-
-[data-theme="dark"] .appshell-tab--active {
-  color: var(--primary-light);
-}
-
-[data-theme="dark"] .appshell-tab__icon-wrap--active {
-  background: rgba(255, 107, 53, 0.15);
-}
-
-[data-theme="dark"] header .absolute.bg-white {
-  background: var(--charcoal);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="dark"] header .absolute.bg-white a:hover,
-[data-theme="dark"] header .absolute.bg-white button:hover {
-  background: rgba(255, 255, 255, 0.06);
 }
 
 /* -- Desktop overrides (lg = 1024px+) ----------------------------------- */

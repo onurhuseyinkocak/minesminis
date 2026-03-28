@@ -54,12 +54,12 @@
   white-space: nowrap;
 }
 
-.adm-badge--vocab    { background: var(--accent-indigo-pale); color: #4f46e5; }
+.adm-badge--vocab    { background: var(--accent-indigo-pale); color: var(--accent-indigo); }
 .adm-badge--grammar  { background: var(--success-pale); color: var(--success); }
-.adm-badge--reading  { background: var(--warning-pale); color: #d97706; }
-.adm-badge--writing  { background: var(--accent-pink-pale); color: #db2777; }
+.adm-badge--reading  { background: var(--warning-pale); color: var(--warning); }
+.adm-badge--writing  { background: var(--accent-pink-pale); color: var(--accent-pink); }
 .adm-badge--phonics  { background: var(--accent-purple-pale); color: var(--accent-purple); }
-.adm-badge--default  { background: var(--accent-indigo-pale); color: #4f46e5; }
+.adm-badge--default  { background: var(--accent-indigo-pale); color: var(--accent-indigo); }
 
 /* ── File upload row ── */
 .adm-upload-row {

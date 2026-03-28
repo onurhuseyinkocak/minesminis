@@ -343,36 +343,3 @@
   .sentence-scramble__chip { min-height: 72px; font-size: 1.5rem; }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .sentence-scramble__chip--available {
-  background: var(--bg-card);
-  border-color: var(--secondary);
-}
-
-[data-theme="dark"] .sentence-scramble__chip--placed {
-  background: var(--secondary-pale);
-}
-
-[data-theme="dark"] .sentence-scramble__dropzone {
-  border-color: color-mix(in srgb, var(--secondary) 15%, transparent);
-  background: color-mix(in srgb, var(--secondary) 4%, transparent);
-}
-
-[data-theme="dark"] .sentence-scramble__hint {
-  background: var(--primary-pale);
-  border-color: color-mix(in srgb, var(--warning) 10%, transparent);
-}
-
-[data-theme="dark"] .sentence-scramble__feedback--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .sentence-scramble__feedback--wrong {
-  background: var(--error-pale);
-}
-
-[data-theme="dark"] .sentence-scramble__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}

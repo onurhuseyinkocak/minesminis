@@ -12,7 +12,7 @@
 .mascot-selector-content {
   max-width: 700px;
   margin: 0 auto;
-  padding: var(--space-xl);
+  padding: 0 var(--space-xl) var(--space-xl);
 }
 
 /* ---- HEADER ---- */
@@ -265,7 +265,7 @@
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
   .mascot-selector-content {
-    padding: var(--space-md);
+    padding: 0 var(--space-md) var(--space-md);
   }
 
   .mascot-selector-title {

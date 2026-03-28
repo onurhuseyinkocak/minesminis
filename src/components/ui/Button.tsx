@@ -1,8 +1,8 @@
 import { forwardRef, ButtonHTMLAttributes, ReactNode } from 'react';
 import './Button.css';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'outline';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   variant?: ButtonVariant;
@@ -55,7 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading && <span className="mm-button__spinner" aria-hidden="true" />}
         {!loading && icon && <span className="mm-button__icon" aria-hidden="true">{icon}</span>}
-        {children && <span>{children}</span>}
+        {!iconOnly && children && <span className="mm-button__label">{children}</span>}
       </button>
     );
   }

@@ -104,7 +104,7 @@ const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Gamification overlays
-const DailyReward = lazy(() => import("./components/DailyReward"));
+// DailyReward is now embedded in AppShell navbar — no longer lazy-loaded here
 const LevelUpModal = lazy(() => import("./components/LevelUpModal"));
 
 // Chat
@@ -629,14 +629,14 @@ function AppContent() {
         style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
       />
       <OfflineBanner />
-      <InstallBanner />
-      <CookieBanner />
+      {/* InstallBanner disabled — no app yet */}
+      {/* CookieBanner disabled — positioning fix needed */}
       <AppRoutes />
 
       {/* Gamification overlays for authenticated users */}
       {user && !isAdminRoute && !isSetupRoute && (
         <Suspense fallback={<span aria-hidden="true" />}>
-          <DailyReward />
+          {/* DailyReward is now embedded in AppShell navbar — not rendered here */}
           <LevelUpModal />
         </Suspense>
       )}

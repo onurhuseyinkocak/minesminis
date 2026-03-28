@@ -395,10 +395,12 @@ function Games() {
       {/* Hero */}
       <div className="games-hero">
         <span className="games-hero-icon">
-          <Gamepad2 size={48} />
+          <Gamepad2 size={20} />
         </span>
-        <h1 className="games-hero-title">{t('games.letsPlay')}</h1>
-        <p className="games-hero-sub">{isTr ? 'Bir oyun seç ve öğrenmeye başla!' : 'Pick a game and start learning!'}</p>
+        <div>
+          <h1 className="games-hero-title">{t('games.letsPlay')}</h1>
+          <p className="games-hero-sub">{isTr ? 'Bir oyun seç ve öğrenmeye başla!' : 'Pick a game and start learning!'}</p>
+        </div>
       </div>
 
       {/* Daily Practice pinned banner */}

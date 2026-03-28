@@ -473,34 +473,3 @@
   }
 }
 
-/* -- Dark mode ------------------------------------------------------------- */
-
-[data-theme="dark"] .wfg__onset-tile {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .wfg__onset-tile--used {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .wfg__onset-tile--invalid {
-  background: var(--error-pale);
-  border-color: var(--error);
-}
-
-[data-theme="dark"] .wfg__feedback--correct {
-  background: var(--success-pale);
-  color: var(--mimi-green-dark);
-}
-
-[data-theme="dark"] .wfg__feedback--wrong {
-  background: var(--error-pale);
-  color: var(--error);
-}
-
-[data-theme="dark"] .wfg__completion-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-  border-color: var(--border-light);
-}

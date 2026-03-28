@@ -37,10 +37,6 @@
   transform: translateY(0);
 }
 
-[data-theme="dark"] .tournament-banner {
-  border-color: var(--border-medium);
-}
-
 /* ---- Tier badge ---- */
 .tournament-tier {
   display: inline-flex;

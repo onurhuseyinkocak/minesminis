@@ -148,7 +148,7 @@ export default function StoriesGrid() {
         <Sparkles size={20} className="stories-grid-hero__sparkle stories-grid-hero__sparkle--1" />
         <Sparkles size={16} className="stories-grid-hero__sparkle stories-grid-hero__sparkle--2" />
         <Sparkles size={14} className="stories-grid-hero__sparkle stories-grid-hero__sparkle--3" />
-        <span className="stories-grid-hero__icon"><KidIcon name="stories" size={40} /></span>
+        <span className="stories-grid-hero__icon"><KidIcon name="stories" size={28} /></span>
         <h1>{lang === 'tr' ? 'Hikayeler' : 'Stories'}</h1>
         <p>{lang === 'tr' ? "Mimi'nin büyülü hikayeleri" : "Mimi's Magical Stories"}</p>
         <p className="stories-grid-hero__subtitle">

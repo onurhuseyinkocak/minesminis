@@ -4,8 +4,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding: 1rem 1.5rem calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 1.5rem);
-  min-height: 100vh;
+  padding: 1rem 1.5rem 1rem;
+  height: calc(100dvh - 64px);
+  overflow: hidden;
   font-family: var(--font-display);
   max-width: 540px;
   margin: 0 auto;
@@ -61,8 +62,8 @@
   line-height: 1;
   text-align: center;
   text-shadow:
-    0 4px 0 rgba(139, 92, 246, 0.25),
-    0 8px 24px rgba(139, 92, 246, 0.2);
+    0 4px 0 var(--accent-purple-pale),
+    0 8px 24px var(--accent-purple-pale);
   user-select: none;
 }
 
@@ -82,9 +83,9 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1.1rem;
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(129, 199, 132, 0.12));
+  background: linear-gradient(135deg, var(--success-pale), var(--success-soft));
   border-radius: var(--radius-lg);
-  border: 1.5px solid rgba(76, 175, 80, 0.2);
+  border: 1.5px solid var(--success-soft);
   width: 100%;
 }
 
@@ -99,7 +100,7 @@
 
 .pl-actionBox {
   padding: 1.25rem;
-  background: linear-gradient(135deg, var(--accent-purple-pale), rgba(139, 92, 246, 0.08));
+  background: linear-gradient(135deg, var(--accent-purple-pale), var(--accent-purple-pale));
   border-radius: var(--radius-lg);
   border: 1.5px solid var(--accent-purple-light);
   width: 100%;
@@ -168,18 +169,18 @@
   font-size: 2.25rem;
   font-weight: 900;
   color: var(--accent-purple);
-  background: linear-gradient(135deg, var(--accent-purple-pale), rgba(139, 92, 246, 0.06));
+  background: var(--accent-purple-pale);
   border-radius: var(--radius-lg);
   border: 3px solid var(--accent-purple);
   cursor: pointer;
   min-height: 72px;
   transition: all 0.2s var(--ease-spring);
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 4px 16px var(--accent-purple-pale);
 }
 
 .pl-wordDisplay:hover {
   transform: scale(1.03);
-  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.25);
+  box-shadow: 0 6px 24px var(--accent-purple-pale);
 }
 
 .pl-wordDisplay:active {
@@ -257,7 +258,7 @@
   align-items: center;
   justify-content: center;
   box-shadow:
-    0 12px 32px rgba(139, 92, 246, 0.3),
+    0 12px 32px var(--accent-purple-pale),
     0 4px 0 rgba(0, 0, 0, 0.15),
     inset 0 2px 4px rgba(255, 255, 255, 0.3);
   transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-spring);
@@ -268,7 +269,7 @@
 .pl-letter-circle:hover {
   transform: scale(1.07) translateY(-3px);
   box-shadow:
-    0 20px 48px rgba(139, 92, 246, 0.35),
+    0 20px 48px var(--accent-purple-pale),
     0 6px 0 rgba(0, 0, 0, 0.12),
     inset 0 2px 4px rgba(255, 255, 255, 0.3);
 }
@@ -276,7 +277,7 @@
 .pl-letter-circle:active {
   transform: scale(0.96) translateY(1px);
   box-shadow:
-    0 4px 12px rgba(139, 92, 246, 0.2),
+    0 4px 12px var(--accent-purple-pale),
     0 2px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -433,8 +434,8 @@
 /* ---- RESPONSIVE ---- */
 @media (max-width: 480px) {
   .pl-container {
-    padding: 0.75rem 1rem calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 1rem);
-    gap: 1rem;
+    padding: 0.75rem 1rem 1rem;
+    gap: 0.75rem;
   }
 
   .pl-bigLetter {
@@ -451,47 +452,3 @@
   }
 }
 
-/* ---- DARK MODE ---- */
-@media (prefers-color-scheme: dark) {
-  .pl-container {
-    background: var(--bg-page);
-  }
-
-  .pl-mimiBox {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.08));
-    border-color: rgba(16, 185, 129, 0.2);
-  }
-
-  .pl-mimiText {
-    color: var(--text-body);
-  }
-
-  .pl-actionBox {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.08));
-    border-color: rgba(139, 92, 246, 0.2);
-  }
-
-  .pl-keywordCard {
-    background: var(--bg-elevated);
-    border-color: var(--border);
-  }
-
-  .pl-keywordCard:hover {
-    background: var(--accent-purple-pale);
-    border-color: var(--accent-purple-light);
-  }
-
-  .pl-revealedTile {
-    background: var(--warning-pale);
-    border-color: var(--warning);
-  }
-
-  .pl-wordDisplay {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.06));
-    border-color: var(--accent-purple);
-  }
-
-  .pl-completion-title {
-    color: var(--mimi-dark);
-  }
-}

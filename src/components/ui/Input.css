@@ -1,6 +1,7 @@
 /* ==========================================================================
-   INPUT — LibreUIUX / MinesMinis Design System
-   Muted bg, 8px radius, focus ring, 48px height
+   INPUT — MinesMinis Design System v5
+   Muted bg, 8px radius, focus ring, 44px min-height
+   Light mode only
    ========================================================================== */
 
 .mm-input-wrapper {
@@ -35,13 +36,14 @@
 
 .mm-input {
   width: 100%;
+  min-height: 44px;
   font-family: var(--font-body);
   font-size: 0.9375rem;
   font-weight: 400;
   color: var(--text-primary);
   background: var(--bg-muted);
   border: 2px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   outline: none;
   transition:
     border-color var(--transition-base),
@@ -78,6 +80,7 @@
 
 .mm-input--sm {
   height: var(--btn-height-sm);
+  min-height: 36px;
   padding: 0 var(--space-md);
   font-size: 0.875rem;
   border-radius: var(--radius-sm);
@@ -85,16 +88,18 @@
 
 .mm-input--md {
   height: var(--btn-height);
+  min-height: 44px;
   padding: 0 var(--space-md);
   font-size: 0.9375rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 .mm-input--lg {
   height: var(--input-height);
+  min-height: 44px;
   padding: 0 var(--space-lg);
   font-size: 1rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 /* -- Icon ------------------------------------------------------------- */
@@ -146,11 +151,9 @@
 
 /* When right icon is an interactive button, ensure 44px touch target */
 .mm-input-icon--btn {
-  /* Minimum touch target 44×44px per WCAG 2.5.5 */
   min-width: var(--touch-target);
   min-height: var(--touch-target);
   justify-content: center;
-  /* Pull the button flush to the right edge */
   right: 0;
 }
 
@@ -226,31 +229,4 @@
   .mm-input-label {
     font-size: 0.9375rem;
   }
-}
-
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .mm-input-label {
-  color: var(--cloud);
-}
-
-[data-theme="dark"] .mm-input {
-  background: var(--bg-soft);
-  border-color: transparent;
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .mm-input::placeholder {
-  color: var(--text-muted);
-}
-
-[data-theme="dark"] .mm-input:hover:not(:disabled):not(:focus):not(.mm-input--error) {
-  border-color: var(--border);
-  background: var(--bg-muted);
-}
-
-[data-theme="dark"] .mm-input:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 4px var(--primary-glow);
-  background: var(--bg-card);
 }

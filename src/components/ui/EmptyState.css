@@ -119,14 +119,3 @@
   }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .mm-empty-state__icon {
-  background: rgba(255, 107, 53, 0.12);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-}
-
-[data-theme="dark"] .mm-empty-state__mimi {
-  background: var(--bg-soft);
-  border-color: rgba(255, 255, 255, 0.06);
-}

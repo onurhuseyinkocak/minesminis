@@ -1,0 +1,131 @@
+/* ==========================================================================
+   FILTERBAR — MinesMinis Design System v5
+   Horizontally scrollable pill chips, active = primary bg
+   Light mode only
+   ========================================================================== */
+
+.mm-filterbar {
+  width: 100%;
+  overflow: hidden;
+}
+
+.mm-filterbar__track {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-1); /* prevent clip on scroll bar area */
+  /* Hide scrollbar visually but keep functionality */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.mm-filterbar__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Chip ─────────────────────────────────────────── */
+
+.mm-filterbar__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1.5px solid transparent;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  transition:
+    background var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
+}
+
+/* Hover — inactive chip */
+.mm-filterbar__chip:hover:not(.mm-filterbar__chip--active) {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+/* Active chip */
+.mm-filterbar__chip--active {
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.28);
+}
+
+.mm-filterbar__chip--active:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 3px 10px rgba(255, 107, 53, 0.36);
+}
+
+.mm-filterbar__chip:active {
+  transform: scale(0.95);
+}
+
+.mm-filterbar__chip:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Chip label ──────────────────────────────────── */
+
+.mm-filterbar__chip-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Count badge ──────────────────────────────────── */
+
+.mm-filterbar__chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  line-height: 1;
+  /* Inactive state */
+  background: rgba(0, 0, 0, 0.07);
+  color: inherit;
+  transition:
+    background var(--transition-base),
+    color var(--transition-base);
+}
+
+.mm-filterbar__chip--active .mm-filterbar__chip-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--text-on-primary);
+}
+
+/* ── Mobile / touch device adjustments ───────────── */
+
+@media (max-width: 640px) {
+  .mm-filterbar__chip {
+    height: 40px;
+    min-height: 40px;
+    padding: 0 var(--space-4);
+    font-size: 0.875rem;
+  }
+}

@@ -51,10 +51,6 @@
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-[data-theme="dark"] .no-hearts-card {
-  border-color: var(--border-medium);
-}
-
 /* ── Close button ─────────────────────────────────────────── */
 
 .no-hearts-close-btn {
@@ -90,16 +86,6 @@
 .no-hearts-close-btn:focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
-}
-
-[data-theme="dark"] .no-hearts-close-btn {
-  background: var(--bg-elevated);
-  color: var(--text-muted);
-}
-
-[data-theme="dark"] .no-hearts-close-btn:hover {
-  background: var(--error-bg);
-  color: var(--error);
 }
 
 /* ── Heart icon ───────────────────────────────────────────── */

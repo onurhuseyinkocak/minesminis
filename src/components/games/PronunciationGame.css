@@ -381,24 +381,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .pronunciation-game__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
-[data-theme="dark"] .pronunciation-game__card {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .pronunciation-game__feedback--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .pronunciation-game__feedback--wrong {
-  background: var(--error-pale);
-}
-
 /* ---- Unsupported Browser ---- */
 
 .pronunciation-game__unsupported {

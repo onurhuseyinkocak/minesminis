@@ -305,30 +305,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .story-choices-game__complete-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
-/* ---- Dark mode ---- */
-[data-theme="dark"] .story-choices-game__choice {
-  background-color: var(--bg-card);
-  border-color: var(--border);
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .story-choices-game__choice--correct {
-  background-color: var(--success-pale) !important;
-  border-color: var(--success) !important;
-  color: var(--success) !important;
-}
-
-[data-theme="dark"] .story-choices-game__choice--wrong {
-  background-color: var(--error-pale) !important;
-  border-color: var(--error) !important;
-  color: var(--error) !important;
-}
-
 /* ---- Responsive ---- */
 @media (max-width: 480px) {
   .story-choices-game {

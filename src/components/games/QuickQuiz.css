@@ -379,11 +379,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .quick-quiz__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
 /* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1024px) {
@@ -449,31 +444,3 @@
   }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .quick-quiz__option {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .quick-quiz__option:hover:not(:disabled) {
-  border-color: var(--secondary);
-  background: var(--secondary-pale);
-}
-
-[data-theme="dark"] .quick-quiz__option-label {
-  background: var(--secondary-pale);
-}
-
-[data-theme="dark"] .quick-quiz__timer-bar {
-  background: color-mix(in srgb, var(--white) 8%, transparent);
-}
-
-[data-theme="dark"] .quick-quiz__feedback--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .quick-quiz__feedback--wrong,
-[data-theme="dark"] .quick-quiz__feedback--timeout {
-  background: var(--error-pale);
-}

@@ -405,31 +405,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .sb-results__btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
-[data-theme="dark"] .sb-slots {
-  background: var(--bg-elevated);
-  border-color: var(--border-medium);
-}
-
-[data-theme="dark"] .sb-slot {
-  background: var(--bg-card);
-  border-color: var(--border-medium);
-}
-
-[data-theme="dark"] .sb-bank {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .sb-bank__word {
-  background: var(--bg-elevated);
-  border-color: var(--border-medium);
-}
-
 /* -- Responsive ------------------------------------------------------------ */
 
 @media (max-width: 480px) {

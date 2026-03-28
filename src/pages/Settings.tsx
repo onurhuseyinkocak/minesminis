@@ -576,21 +576,21 @@ export default function Settings() {
         <div className="settings-section" style={{ marginBottom: 'var(--space-lg)' }}>
           {classroomMembership ? (
             <div style={{ padding: 'var(--space-md) var(--space-lg)' }}>
-              <p style={{ margin: 0, fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>
+              <p style={{ margin: 0, fontWeight: 600, fontSize: '14px', color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
                 {isTr ? 'Aktif Sınıf' : 'Active Classroom'}
               </p>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-secondary)' }}>
+              <p style={{ margin: 'var(--space-1) 0 0', fontSize: '13px', color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>
                 {classroomMembership}
               </p>
             </div>
           ) : (
-            <div style={{ padding: 'var(--space-md) var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)' }}>
+            <div style={{ padding: 'var(--space-md) var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.5 }}>
                 {isTr
                   ? 'Öğretmeninizin verdiği 6 haneli katılım kodunu girerek sınıfa katılın.'
                   : 'Enter the 6-character join code from your teacher to join a classroom.'}
               </p>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                 <input
                   type="text"
                   value={classroomCode}
@@ -599,15 +599,16 @@ export default function Settings() {
                   maxLength={6}
                   style={{
                     flex: 1,
-                    padding: '8px 12px',
-                    fontSize: 14,
-                    fontFamily: 'monospace',
+                    padding: 'var(--space-2) var(--space-3)',
+                    fontSize: '14px',
+                    fontFamily: 'var(--font-mono)',
                     letterSpacing: '0.1em',
                     border: '1px solid var(--border)',
-                    borderRadius: 8,
-                    background: 'var(--bg-input, var(--bg-card))',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'var(--bg-card)',
                     color: 'var(--text-primary)',
                     outline: 'none',
+                    minHeight: 'var(--touch-target)',
                   }}
                 />
                 <button
@@ -615,15 +616,18 @@ export default function Settings() {
                   onClick={handleJoinClassroom}
                   disabled={classroomJoining || classroomCode.length < 6}
                   style={{
-                    padding: '8px 16px',
-                    fontSize: 13,
+                    padding: 'var(--space-2) var(--space-4)',
+                    fontSize: '13px',
                     fontWeight: 700,
-                    background: 'var(--primary)',
-                    color: 'var(--color-white, #fff)',
+                    fontFamily: 'var(--font-display)',
+                    background: 'var(--gradient-primary)',
+                    color: 'var(--text-on-primary)',
                     border: 'none',
-                    borderRadius: 8,
+                    borderRadius: 'var(--radius-sm)',
                     cursor: classroomJoining || classroomCode.length < 6 ? 'not-allowed' : 'pointer',
                     opacity: classroomJoining || classroomCode.length < 6 ? 0.6 : 1,
+                    minHeight: 'var(--touch-target)',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {classroomJoining
@@ -832,7 +836,7 @@ export default function Settings() {
             onClick={() => setDeleteStep('confirm')}
             className="settings-delete-trigger"
           >
-            <Trash2 size={14} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
+            <Trash2 size={14} style={{ display: 'inline', marginRight: 'var(--space-1)', verticalAlign: 'middle' }} />
             {isTr ? 'Hesabımı Sil' : 'Delete My Account'}
           </button>
         )}

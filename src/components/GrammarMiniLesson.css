@@ -304,27 +304,3 @@
   border: 2px solid var(--accent-purple-light);
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-[data-theme="dark"] .gml-example-card {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .gml-option {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .gml-option--correct {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: var(--success);
-  color: var(--success-light);
-}
-
-[data-theme="dark"] .gml-option--wrong {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: var(--error);
-  color: var(--error-light);
-}
-
-[data-theme="dark"] .gml-turkish-note {
-  color: var(--primary-light);
-}

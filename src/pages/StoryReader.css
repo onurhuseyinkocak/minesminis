@@ -3,15 +3,24 @@
    Immersive full-screen reader with smooth transitions
    ========================================================================== */
 
+/* Story reader — fixed viewport, no full-page scroll; story body scrolls internally */
 .story-reader {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
   background: var(--slate-950);
   transition: background 1s var(--ease-in-out);
+}
+
+/* On mobile: top bar (~56px) + bottom nav (~56px) */
+@media (max-width: 1023px) {
+  .story-reader {
+    height: calc(100vh - 56px - 56px);
+    height: calc(100dvh - 56px - 56px);
+  }
 }
 
 /* -- Scene wrapper (StoryScene component) -- */
@@ -216,6 +225,8 @@
 
 .story-reader__body {
   flex: 1;
+  overflow-y: auto;
+  min-height: 0; /* required for flex children to shrink correctly */
   position: relative;
   z-index: 2;
   display: flex;

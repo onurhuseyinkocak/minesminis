@@ -19,7 +19,7 @@
 /* ---- HERO ---- */
 .premium-hero {
   text-align: center;
-  padding: var(--space-3xl) var(--space-xl);
+  padding: var(--space-xl) var(--space-xl);
   position: relative;
   background: var(--gradient-primary);
   border-radius: var(--radius-2xl);
@@ -410,7 +410,7 @@
   }
 
   .premium-hero {
-    padding: var(--space-2xl) var(--space-md);
+    padding: var(--space-md) var(--space-md);
     border-radius: var(--radius-xl);
   }
 
@@ -459,19 +459,3 @@
   }
 }
 
-/* ---- DARK MODE OVERRIDES ---- */
-[data-theme="dark"] .premium-upgrade-cta:hover {
-  box-shadow: 0 8px 28px rgba(212, 148, 13, 0.45);
-}
-
-[data-theme="dark"] .premium-col {
-  color: var(--primary);
-}
-
-[data-theme="dark"] .login-prompt button:hover {
-  background: var(--text-on-primary);
-}
-
-[data-theme="dark"] .feature-card:hover {
-  border-color: var(--primary-light);
-}

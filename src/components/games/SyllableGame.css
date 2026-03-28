@@ -521,22 +521,3 @@
   }
 }
 
-/* -- Dark mode ------------------------------------------------------------- */
-
-[data-theme="dark"] .syg__choice-btn {
-  background: var(--bg-card);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .syg__choice-btn--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .syg__choice-btn--wrong {
-  background: var(--error-pale);
-}
-
-[data-theme="dark"] .syg__completion-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}

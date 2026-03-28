@@ -80,14 +80,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: row;
-  gap: 1px;
+  flex-direction: column;
+  gap: 0;
 }
 
 .dgw__xp {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: var(--text-primary);
   line-height: 1;
 }
@@ -95,11 +95,10 @@
 .dgw__goal {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.6rem;
   color: var(--text-muted);
-  line-height: 1;
-  align-self: flex-end;
-  margin-bottom: 2px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
 }
 
 .dgw__check {

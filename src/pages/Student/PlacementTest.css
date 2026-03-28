@@ -10,8 +10,11 @@
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  padding: 1.5rem 1.5rem calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 1.5rem);
-  min-height: 100vh;
+  padding: 1.5rem 1.5rem 1.5rem;
+  /* No scroll — placement test fits on one screen */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   font-family: var(--font-display);
   max-width: var(--container-xs);
   margin: 0 auto;
@@ -403,7 +406,7 @@
 /* ---- RESPONSIVE ---- */
 @media (max-width: 480px) {
   .pt-container {
-    padding: 1rem 1rem calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 1rem);
+    padding: 1rem;
     gap: 1rem;
   }
 
@@ -441,101 +444,3 @@
   }
 }
 
-/* ---- DARK MODE ---- */
-@media (prefers-color-scheme: dark) {
-  .pt-container {
-    background: var(--bg-page);
-  }
-
-  .pt-question-card,
-  .pt-feedback-card {
-    background: var(--bg-elevated);
-    border-color: var(--border);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .pt-option-card {
-    background: var(--bg-elevated);
-    border-color: var(--border);
-    color: var(--text-primary);
-  }
-
-  .pt-option-card:hover:not(:disabled) {
-    background: var(--primary-pale);
-    border-color: var(--primary-light);
-  }
-
-  .pt-option-card--correct {
-    border-color: var(--success);
-    background: rgba(16, 185, 129, 0.15);
-  }
-
-  .pt-option-card--wrong {
-    border-color: var(--warning);
-    background: rgba(245, 158, 11, 0.15);
-  }
-
-  .pt-speaker-btn {
-    background: var(--bg-elevated);
-    border-color: var(--primary);
-  }
-
-  .pt-speaker-btn:hover {
-    background: var(--primary-pale);
-  }
-
-  .pt-sound-tile {
-    background: var(--bg-elevated);
-  }
-
-  .pt-sound-tile:hover {
-    background: var(--primary-pale);
-  }
-
-  .pt-sentence-box {
-    background: var(--bg-elevated);
-    border-color: var(--border);
-  }
-
-  .pt-sentence-text {
-    color: var(--text-primary);
-  }
-
-  .pt-hero-subtitle {
-    color: var(--text-secondary);
-  }
-
-  .pt-phase-badge {
-    background: var(--primary-pale);
-    border-color: var(--primary);
-  }
-
-  .pt-answer-reveal {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: var(--success);
-  }
-
-  .pt-feedback-wrong-icon {
-    background: rgba(245, 158, 11, 0.15);
-  }
-
-  .pt-sound-circle {
-    background: var(--bg-elevated);
-  }
-
-  .pt-dot {
-    background: var(--border);
-  }
-
-  .pt-dot--current {
-    background: var(--primary);
-  }
-
-  .pt-dot--correct {
-    background: var(--success);
-  }
-
-  .pt-dot--wrong {
-    background: var(--warning);
-  }
-}

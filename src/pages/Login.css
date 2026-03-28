@@ -44,14 +44,13 @@
 
 /* ---- PAGE ---- */
 .login-page {
-  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-8);
-  /* Top padding accounts for fixed back/lang buttons (44px height + 16px top + 8px gap) */
-  padding-top: calc(var(--touch-target) + var(--space-4) + var(--space-8));
-  padding-bottom: var(--space-8);
+  padding: var(--space-16) var(--space-8) var(--space-8); /* enough top for fixed back btn */
   background: var(--bg-page);
   position: relative;
 }
@@ -121,7 +120,8 @@
   box-shadow: var(--shadow-xl);
   border: 1px solid var(--border);
   overflow: hidden;
-  min-height: 560px;
+  min-height: 480px;
+  max-height: calc(100dvh - 120px);
   /* Ensure card doesn't get clipped behind fixed header buttons */
   position: relative;
 }
@@ -135,7 +135,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-12) var(--space-8);
+  padding: var(--space-8) var(--space-6);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -235,11 +235,12 @@
    FORM PANEL
    ========================================================================== */
 .login-form-panel {
-  padding: var(--space-10) var(--space-8);
+  padding: var(--space-6) var(--space-6);
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: var(--bg-card);
+  overflow-y: auto;
 }
 
 .login-header {
@@ -566,17 +567,20 @@
 @media (max-width: 768px) {
   .login-page {
     padding: var(--space-4);
-    /* Fixed header buttons: touch-target(44) + top(16) + gap(12) = 72px */
     padding-top: calc(var(--touch-target) + var(--space-4) + var(--space-3));
-    padding-bottom: var(--space-6);
-    align-items: flex-start;
+    padding-bottom: var(--space-4);
+    align-items: center;
     justify-content: center;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100dvh;
   }
 
   .login-container {
     grid-template-columns: 1fr;
     max-width: 440px;
     min-height: unset;
+    max-height: none;
   }
 
   .login-side {
@@ -584,15 +588,15 @@
   }
 
   .login-form-panel {
-    padding: var(--space-8) var(--space-6);
+    padding: var(--space-6) var(--space-5);
     justify-content: flex-start;
+    overflow-y: visible;
   }
 }
 
 @media (max-width: 480px) {
   .login-page {
     padding: var(--space-3);
-    /* Fixed header buttons: touch-target(44) + top(12) + gap(10) = 66px → use space-16(64) */
     padding-top: var(--space-16);
     padding-bottom: var(--space-4);
   }
@@ -608,7 +612,7 @@
   }
 
   .login-form-panel {
-    padding: var(--space-6) var(--space-5);
+    padding: var(--space-5) var(--space-4);
   }
 
   .login-header h2 {

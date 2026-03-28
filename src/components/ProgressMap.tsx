@@ -152,7 +152,7 @@ const ProgressMap: React.FC = () => {
           width: 44px;
           height: 44px;
           border-radius: 50%;
-          background: var(--bg-main, #1C2236);
+          background: var(--bg-main, #FFFFFF);
           display: flex;
           align-items: center;
           justify-content: center;

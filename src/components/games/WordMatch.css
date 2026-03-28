@@ -359,20 +359,6 @@
   box-shadow: var(--focus-ring);
 }
 
-[data-theme="dark"] .word-match__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
-[data-theme="dark"] .word-match__results-icon {
-  background: linear-gradient(135deg, var(--warning-pale) 0%, color-mix(in srgb, var(--warning) 10%, transparent) 100%);
-}
-
-[data-theme="dark"] .word-match__results-content {
-  background: var(--bg-card);
-  border-color: color-mix(in srgb, var(--white) 6%, transparent);
-}
-
 /* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1024px) {
@@ -469,36 +455,3 @@
   .word-match__card-emoji { font-size: 3rem; }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .word-match__card {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .word-match__card:hover:not(:disabled) {
-  border-color: var(--border-medium);
-}
-
-[data-theme="dark"] .word-match__card--selected {
-  border-color: var(--primary-light);
-  background: var(--primary-pale);
-}
-
-[data-theme="dark"] .word-match__card--matched {
-  border-color: var(--mimi-green);
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .word-match__feedback--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .word-match__feedback--wrong {
-  background: var(--error-pale);
-}
-
-[data-theme="dark"] .word-match__card--wrong {
-  background: var(--error-pale) !important;
-  border-color: var(--error) !important;
-}

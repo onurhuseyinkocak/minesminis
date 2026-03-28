@@ -92,34 +92,3 @@
   }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .mm-badge--default {
-  background: rgba(255, 107, 53, 0.15);
-  color: var(--primary-light);
-}
-
-[data-theme="dark"] .mm-badge--success {
-  background: var(--success-soft);
-  color: var(--success-light);
-}
-
-[data-theme="dark"] .mm-badge--warning {
-  background: var(--warning-soft);
-  color: var(--warning-light);
-}
-
-[data-theme="dark"] .mm-badge--error {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--error-light);
-}
-
-[data-theme="dark"] .mm-badge--info {
-  background: rgba(14, 165, 233, 0.15);
-  color: var(--info-light);
-}
-
-[data-theme="dark"] .mm-badge--premium {
-  background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-card) 100%);
-  color: var(--mimi-gold);
-}

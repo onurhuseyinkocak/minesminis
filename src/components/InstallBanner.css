@@ -17,9 +17,9 @@
   /* Taller to ensure 44px+ vertical touch target on all interactive elements */
   height: 72px;
 
-  background: var(--bg-elevated);
-  border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+  background: var(--bg-card, #fff);
+  border-top: 1px solid var(--border-light, #e5e7eb);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
 
   /* Slide up from bottom */
   animation: install-banner-slide-up 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
@@ -141,8 +141,8 @@
   border: none;
   padding: 0;
 
-  background: var(--bg-surface, rgba(255, 255, 255, 0.06));
-  color: var(--text-muted);
+  background: var(--bg-soft, #f1f5f9);
+  color: var(--text-secondary, #64748b);
   cursor: pointer;
 
   display: flex;
@@ -153,8 +153,8 @@
 }
 
 .install-banner__dismiss-btn:hover {
-  background: var(--bg-hover, rgba(255, 255, 255, 0.1));
-  color: var(--text-primary);
+  background: var(--border-light, #e5e7eb);
+  color: var(--text-primary, #1e293b);
 }
 
 .install-banner__dismiss-btn svg {

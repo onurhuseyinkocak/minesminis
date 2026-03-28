@@ -1,6 +1,7 @@
 /**
- * DAILY REWARD COMPONENT
- * Daily login rewards with streak tracking
+ * DAILY REWARD COMPONENT — Navbar-embedded popover version
+ * Renders a compact popover panel (not a full-screen modal).
+ * Controlled externally: parent passes isOpen + onClose.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -9,10 +10,17 @@ import { useGamification } from '../contexts/GamificationContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ConfettiRain } from './ui/Celebrations';
 import { SFX } from '../data/soundLibrary';
-import { Gift, Sparkles, Flame, X } from 'lucide-react';
+import { Flame, X, Gift, Sparkles } from 'lucide-react';
 import { KidIcon } from './ui';
 
-const DailyReward: React.FC = () => {
+interface DailyRewardPopoverProps {
+    isOpen: boolean;
+    onClose: () => void;
+    /** Anchor ref so the popover can position itself correctly */
+    anchorRef?: React.RefObject<HTMLElement | null>;
+}
+
+const DailyRewardPopover: React.FC<DailyRewardPopoverProps> = ({ isOpen, onClose }) => {
     const {
         stats,
         canClaimDaily,
@@ -22,13 +30,22 @@ const DailyReward: React.FC = () => {
     } = useGamification();
     const { t, lang } = useLanguage();
 
-    const [isOpen, setIsOpen] = useState(false);
     const [claiming, setClaiming] = useState(false);
     const [claimed, setClaimed] = useState(false);
     const [claimedReward, setClaimedReward] = useState<{ xp: number; badge?: string } | null>(null);
     const [countdown, setCountdown] = useState('');
     const [showCountdown, setShowCountdown] = useState(false);
     const [showClaimCelebration, setShowClaimCelebration] = useState(false);
+
+    // Reset state when popover closes
+    useEffect(() => {
+        if (!isOpen) {
+            setClaimed(false);
+            setClaimedReward(null);
+            setShowCountdown(false);
+            setShowClaimCelebration(false);
+        }
+    }, [isOpen]);
 
     // Initial countdown visibility
     useEffect(() => {
@@ -44,19 +61,6 @@ const DailyReward: React.FC = () => {
             return () => clearTimeout(timer);
         }
     }, [claimed]);
-
-    // Auto-open only once per day when daily reward is available
-    useEffect(() => {
-        if (!canClaimDaily || claimed) return;
-        const today = new Date().toDateString();
-        const shownKey = `minesminis_daily_shown_${today}`;
-        if (sessionStorage.getItem(shownKey)) return;
-        const timer = setTimeout(() => {
-            sessionStorage.setItem(shownKey, '1');
-            setIsOpen(true);
-        }, 1500);
-        return () => clearTimeout(timer);
-    }, [canClaimDaily, claimed]);
 
     // Countdown timer
     useEffect(() => {
@@ -88,7 +92,6 @@ const DailyReward: React.FC = () => {
 
     const celebrationTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Cleanup celebration timer on unmount
     React.useEffect(() => {
         return () => {
             if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
@@ -117,34 +120,47 @@ const DailyReward: React.FC = () => {
         }
     };
 
-    if (!isOpen) {
-        return (
-            <button
-                type="button"
-                className={`daily-reward-trigger ${canClaimDaily ? 'available' : ''}`}
-                onClick={() => setIsOpen(true)}
-                aria-label={lang === 'tr' ? 'Günlük ödül' : 'Daily reward'}
-            >
-                <span className="trigger-icon"><Gift size={20} /></span>
-                {canClaimDaily && <span className="trigger-badge">!</span>}
-            </button>
-        );
-    }
+    if (!isOpen) return null;
 
     const currentDay = stats.streakDays === 0 ? 1 : (((stats.streakDays - 1) % 7) + 7) % 7 + 1;
 
     return (
-        <div className="daily-reward-overlay" onClick={() => setIsOpen(false)}>
+        <>
             {showClaimCelebration && <ConfettiRain />}
-            <div className="daily-reward-modal" onClick={(e) => e.stopPropagation()}>
-                <button type="button" className="close-btn" onClick={() => setIsOpen(false)} aria-label={lang === 'tr' ? 'Kapat' : 'Close'}><X size={18} /></button>
-
-                <div className="modal-header">
-                    <h2><Gift size={20} style={{ display: 'inline', verticalAlign: 'middle' }} /> {t('dailyReward.title')}</h2>
-                    <p>{t('dailyReward.subtitle')}</p>
+            {/* Backdrop — click outside closes */}
+            <div
+                className="dr-popover-backdrop"
+                onClick={onClose}
+                aria-hidden="true"
+            />
+            <div
+                className="dr-popover"
+                role="dialog"
+                aria-modal="true"
+                aria-label={lang === 'tr' ? 'Günlük Ödül' : 'Daily Reward'}
+            >
+                {/* Header row */}
+                <div className="dr-popover__header">
+                    <div className="dr-popover__title">
+                        <Gift size={15} />
+                        <span>{lang === 'tr' ? 'Günlük Ödül' : 'Daily Reward'}</span>
+                        <span className="dr-popover__streak">
+                            <Flame size={13} />
+                            {stats.streakDays} {lang === 'tr' ? 'gün' : 'day'}
+                        </span>
+                    </div>
+                    <button
+                        type="button"
+                        className="dr-popover__close"
+                        onClick={onClose}
+                        aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
+                    >
+                        <X size={14} />
+                    </button>
                 </div>
 
-                <div className="rewards-grid">
+                {/* 7-day mini strip */}
+                <div className="dr-popover__days">
                     {[1, 2, 3, 4, 5, 6, 7].map((day) => {
                         const reward = getDailyRewardForDay(day);
                         const isPast = day < currentDay;
@@ -154,71 +170,56 @@ const DailyReward: React.FC = () => {
                         return (
                             <div
                                 key={day}
-                                className={`reward-day ${isPast ? 'past' : ''} ${isCurrent ? 'current' : ''} ${isFuture ? 'future' : ''} ${reward.special ? 'special' : ''}`}
+                                className={`dr-day ${isPast ? 'dr-day--past' : ''} ${isCurrent ? 'dr-day--current' : ''} ${isFuture ? 'dr-day--future' : ''} ${reward.special ? 'dr-day--special' : ''}`}
                             >
-                                <div className="day-label">{lang === 'tr' ? `${day}. Gün` : `Day ${day}`}</div>
-                                <div className="reward-icon">
-                                    {isPast ? <KidIcon name="check" size={20} /> : reward.special ? <KidIcon name="star" size={20} /> : <KidIcon name="trophy" size={20} />}
-                                </div>
-                                <div className="reward-xp">{reward.xp} XP</div>
-                                {reward.badge && (
-                                    <div className="reward-badge"><KidIcon name="star" size={12} /></div>
-                                )}
+                                <span className="dr-day__label">{day}</span>
+                                <span className="dr-day__icon">
+                                    {isPast
+                                        ? <KidIcon name="check" size={14} />
+                                        : reward.special
+                                            ? <KidIcon name="star" size={14} />
+                                            : <KidIcon name="trophy" size={14} />
+                                    }
+                                </span>
+                                <span className="dr-day__xp">{reward.xp}</span>
                             </div>
                         );
                     })}
                 </div>
 
-                {claimed && claimedReward ? (
-                    <div className="claimed-section">
-                        <div className="claimed-animation">
-                            <span className="claimed-icon"><Sparkles size={20} /></span>
-                            <h3>{t('dailyReward.rewardClaimed')}</h3>
-                            <p className="claimed-xp">+{claimedReward.xp} XP</p>
-                            {claimedReward.badge && (
-                                <p className="claimed-badge">{t('dailyReward.newBadge')}</p>
+                {/* Action area */}
+                <div className="dr-popover__action">
+                    {claimed && claimedReward ? (
+                        <div className="dr-claimed">
+                            <span className="dr-claimed__icon"><Sparkles size={16} /></span>
+                            <span className="dr-claimed__xp">+{claimedReward.xp} XP</span>
+                            <span className="dr-claimed__label">{t('dailyReward.rewardClaimed')}</span>
+                            {showCountdown && (
+                                <span className="dr-countdown">{countdown}</span>
                             )}
                         </div>
-
-                        {showCountdown && (
-                            <div className="next-reward-fade-in">
-                                <p>{t('dailyReward.nextRewardIn')}</p>
-                                <div className="countdown">{countdown}</div>
-                            </div>
-                        )}
-                    </div>
-                ) : canClaimDaily ? (
-                    <button
-                        type="button"
-                        className="claim-btn"
-                        onClick={handleClaim}
-                        disabled={claiming}
-                    >
-                        {claiming ? (
-                            <span className="claiming">{lang === 'tr' ? 'Alınıyor...' : 'Claiming...'}</span>
-                        ) : (
-                            <>
-                                <span>{t('dailyReward.claimReward')}</span>
-                                <span className="claim-emoji"><Gift size={20} /></span>
-                            </>
-                        )}
-                    </button>
-                ) : (
-                    <div className="next-reward">
-                        <p>{t('dailyReward.nextRewardIn')}</p>
-                        <div className="countdown">{countdown}</div>
-                    </div>
-                )}
-
-                <div className="streak-display">
-                    <span className="streak-fire"><Flame size={20} /></span>
-                    <span className="streak-text">{stats.streakDays} {t('dailyReward.dayStreak')}</span>
+                    ) : canClaimDaily ? (
+                        <button
+                            type="button"
+                            className="dr-claim-btn"
+                            onClick={handleClaim}
+                            disabled={claiming}
+                        >
+                            {claiming
+                                ? (lang === 'tr' ? 'Alınıyor...' : 'Claiming...')
+                                : (lang === 'tr' ? 'Ödülü Al' : 'Claim Reward')
+                            }
+                        </button>
+                    ) : (
+                        <div className="dr-waiting">
+                            <span className="dr-waiting__label">{t('dailyReward.nextRewardIn')}</span>
+                            <span className="dr-countdown">{countdown}</span>
+                        </div>
+                    )}
                 </div>
             </div>
-
-            {/* Fade-in animation styles moved to DailyReward.css */}
-        </div>
+        </>
     );
 };
 
-export default DailyReward;
+export default DailyRewardPopover;

@@ -104,7 +104,7 @@
 .ss-color-preview {
   padding: 1rem;
   border-radius: var(--radius-md);
-  color: var(--white, #fff);
+  color: var(--white);
   text-align: center;
   font-weight: 600;
 }

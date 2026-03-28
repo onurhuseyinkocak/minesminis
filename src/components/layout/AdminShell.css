@@ -418,29 +418,3 @@
   }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .admin-shell {
-  background: var(--ink);
-  color: var(--cloud);
-}
-
-[data-theme="dark"] .admin-shell__header {
-  background: rgba(45, 45, 68, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom-color: rgba(255, 255, 255, 0.06);
-}
-
-[data-theme="dark"] .admin-shell__header-title { color: var(--text-primary); }
-
-[data-theme="dark"] .admin-shell__header-btn { color: var(--text-muted); }
-
-[data-theme="dark"] .admin-shell__header-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .admin-shell__notification-dot {
-  border-color: var(--charcoal);
-}

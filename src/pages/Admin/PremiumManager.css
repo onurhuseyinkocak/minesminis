@@ -100,7 +100,7 @@
 }
 
 .adm-plan-card--popular {
-  background: linear-gradient(135deg, var(--warning-pale) 0%, var(--mimi-gold) 100%);
+  background: var(--warning-pale);
   border: 2px solid var(--warning);
 }
 

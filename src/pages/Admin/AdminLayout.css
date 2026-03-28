@@ -16,7 +16,7 @@
   --admin-primary: var(--primary-dark);
   --admin-primary-hover: var(--primary-hover);
   --admin-primary-light: var(--primary-pale);
-  --admin-nav-bg: #1E293B;
+  --admin-nav-bg: #1e293b;
   --admin-nav-text: rgba(255, 255, 255, 0.6);
   --admin-nav-active: #FFFFFF;
   --admin-nav-hover: rgba(255, 255, 255, 0.08);
@@ -42,7 +42,7 @@
 
 .adm-login-visual {
   flex: 0 0 440px;
-  background: linear-gradient(180deg, #1E293B, #0F172A);
+  background: var(--gradient-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -365,7 +365,7 @@
 
 .adm-sidebar-footer-link.danger:hover {
   color: var(--error-light);
-  background: rgba(239, 68, 68, 0.12);
+  background: var(--error-soft);
 }
 
 /* ---- Main Content ---- */

@@ -198,7 +198,7 @@
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 800;
-  color: var(--white, #ffffff);
+  color: var(--white);
   text-align: center;
   line-height: 1.25;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
@@ -218,7 +218,7 @@
   /* 12px minimum (was 9px) */
   font-size: 12px;
   font-weight: 800;
-  color: var(--white, #fff);
+  color: var(--white);
   background: rgba(0, 0, 0, 0.4);
   border-radius: var(--radius-full);
   padding: 2px 7px;
@@ -256,44 +256,3 @@
   }
 }
 
-/* ---- DARK MODE ---- */
-@media (prefers-color-scheme: dark) {
-  .rl-page {
-    background: var(--bg-page);
-  }
-
-  .rl-header {
-    background: rgba(30, 30, 50, 0.92);
-    border-bottom-color: rgba(255, 107, 53, 0.12);
-  }
-
-  .rl-title {
-    color: var(--text-primary);
-  }
-
-  .rl-subtitle {
-    color: var(--text-muted);
-  }
-
-  .rl-backBtn {
-    background: var(--bg-elevated);
-    border-color: var(--border);
-  }
-
-  .rl-counter {
-    background: rgba(16, 185, 129, 0.15);
-  }
-
-  .rl-shelfGroupName {
-    color: var(--text-primary);
-  }
-
-  .rl-shelfSounds {
-    color: var(--text-muted);
-  }
-
-  .rl-shelf {
-    background: linear-gradient(180deg, var(--bg-elevated) 0%, rgba(30, 30, 50, 0.8) 100%);
-    border-color: rgba(255, 255, 255, 0.06);
-  }
-}

@@ -86,21 +86,3 @@
   .mm-progress__label { font-size: 0.875rem; }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .mm-progress__track {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="dark"] .mm-progress__label {
-  color: var(--text-muted);
-}
-
-[data-theme="dark"] .mm-progress--animated .mm-progress__fill::after {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.18) 50%,
-    transparent 100%
-  );
-}

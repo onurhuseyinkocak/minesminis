@@ -426,11 +426,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .karaoke-complete-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
 /* ── Responsive ── */
 @media (max-width: 480px) {
   .karaoke-wrapper {

@@ -378,37 +378,3 @@
   .listening-challenge__option-label { font-size: 1.4rem; }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .listening-challenge__option {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .listening-challenge__option:hover:not(:disabled) {
-  border-color: var(--secondary);
-}
-
-[data-theme="dark"] .listening-challenge__option--correct {
-  background: var(--success-pale);
-  border-color: var(--mimi-green);
-}
-
-[data-theme="dark"] .listening-challenge__option--wrong {
-  background: var(--error-pale);
-  border-color: var(--error);
-}
-
-[data-theme="dark"] .listening-challenge__feedback--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .listening-challenge__feedback--wrong {
-  background: var(--error-pale);
-}
-
-[data-theme="dark"] .listening-challenge__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-  border-color: var(--border-light);
-}

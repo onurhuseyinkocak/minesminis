@@ -120,7 +120,7 @@
 
 /* Header */
 .admin-mimi-header {
-    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    background: var(--gradient-primary);
     padding: 16px 20px;
     display: flex;
     align-items: center;
@@ -455,12 +455,12 @@
 }
 
 .admin-mimi-messages::-webkit-scrollbar-thumb {
-    background: var(--slate-300);
+    background: var(--border);
     border-radius: var(--radius-xs);
 }
 
 .admin-mimi-messages::-webkit-scrollbar-thumb:hover {
-    background: var(--slate-400);
+    background: var(--border-hover);
 }
 
 /* Mobile Responsive */

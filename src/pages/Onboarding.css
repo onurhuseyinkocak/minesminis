@@ -5,7 +5,9 @@
 
 /* ---- PAGE ---- */
 .onboarding-page {
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,13 +19,16 @@
 .onboarding-card {
   width: 100%;
   max-width: 480px;
+  max-height: calc(100dvh - 48px);
   background: var(--bg-card);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
-  padding: var(--space-2xl) var(--space-xl) var(--space-lg);
+  padding: var(--space-lg) var(--space-xl) var(--space-lg);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ---- SKIP BUTTON ---- */
@@ -62,7 +67,8 @@
   align-items: center;
   justify-content: center;
   gap: 0;
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  flex-shrink: 0;
 }
 
 .onboarding-progress-step {
@@ -120,7 +126,8 @@
   align-items: center;
   text-align: center;
   gap: var(--space-sm);
-  min-height: 340px;
+  min-height: 0;
+  flex: 1;
 }
 
 .onboarding-step-icon-large {
@@ -986,8 +993,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-md);
-  margin-top: var(--space-lg);
+  margin-top: var(--space-md);
   width: 100%;
+  flex-shrink: 0;
 }
 
 /* Enforce 52px min-height on every button inside onboarding actions */
@@ -1017,55 +1025,22 @@
 }
 
 /* ==========================================================================
-   DARK MODE
-   ========================================================================== */
-[data-theme="dark"] .onboarding-page {
-  background: var(--bg-page);
-}
-
-[data-theme="dark"] .onboarding-card {
-  background: var(--bg-card);
-}
-
-[data-theme="dark"] .onboarding-age-card,
-[data-theme="dark"] .onboarding-role-card {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .onboarding-input,
-[data-theme="dark"] .onboarding-select {
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .onboarding-placement-option {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .onboarding-child-avatar-btn {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .onboarding-step-icon-large {
-  background: var(--bg-elevated);
-}
-
-/* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 @media (max-width: 768px) {
   .onboarding-page {
     padding: var(--space-md);
-    align-items: flex-start;
-    padding-top: var(--space-2xl);
+    align-items: center;
+    padding-top: var(--space-md);
   }
 
   .onboarding-card {
-    padding: var(--space-lg) var(--space-md);
+    padding: var(--space-md) var(--space-md);
+    max-height: calc(100dvh - 32px);
   }
 
   .onboarding-step {
-    min-height: auto;
+    min-height: 0;
   }
 
   .onboarding-role-grid {
@@ -1117,12 +1092,13 @@
 @media (max-width: 480px) {
   .onboarding-page {
     padding: var(--space-sm);
-    padding-top: var(--space-xl);
+    padding-top: var(--space-sm);
   }
 
   .onboarding-card {
     padding: var(--space-md) var(--space-sm);
     border-radius: var(--radius-lg);
+    max-height: calc(100dvh - 16px);
   }
 
   .onboarding-progress-dot {
@@ -1433,11 +1409,13 @@
   cursor: pointer;
   user-select: none;
   margin-bottom: var(--space-md);
+  max-height: 40vh;
+  flex-shrink: 0;
 }
 
 .onboarding-ftue-ring {
-  width: 160px;
-  height: 160px;
+  width: clamp(100px, 22vh, 160px);
+  height: clamp(100px, 22vh, 160px);
   border-radius: 50%;
   background: var(--primary-pale);
   border: 3px solid var(--primary-light);

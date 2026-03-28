@@ -94,10 +94,6 @@
   border-color: var(--primary-light);
 }
 
-[data-theme="dark"] .xp-bar-container {
-  border-color: var(--border-medium);
-}
-
 .xp-bar-header {
   display: flex;
   align-items: center;

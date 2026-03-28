@@ -545,37 +545,3 @@
   }
 }
 
-/* -- Dark mode ------------------------------------------------------------- */
-
-[data-theme="dark"] .pbg__tile {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .pbg__tile--tapped,
-[data-theme="dark"] .pbg__tile--active {
-  background: var(--bg-elevated);
-}
-
-[data-theme="dark"] .pbg__option {
-  background: var(--bg-card);
-  border-color: var(--border-light);
-}
-
-[data-theme="dark"] .pbg__option--correct {
-  background: var(--success-pale);
-}
-
-[data-theme="dark"] .pbg__option--wrong {
-  background: var(--error-pale);
-}
-
-[data-theme="dark"] .pbg__blended-word {
-  background: var(--bg-elevated);
-  border-color: var(--primary);
-}
-
-[data-theme="dark"] .pbg__completion-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}

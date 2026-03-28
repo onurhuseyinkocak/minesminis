@@ -36,3 +36,9 @@ export type { LottieIconProps, LottieIconName } from './LottieIcon';
 
 export { KidIcon } from './KidIcon';
 export type { KidIconProps, KidIconName } from './KidIcon';
+
+export { SearchBar } from './SearchBar';
+export type { SearchBarProps, SearchBarSize } from './SearchBar';
+
+export { FilterBar } from './FilterBar';
+export type { FilterBarProps, FilterOption } from './FilterBar';

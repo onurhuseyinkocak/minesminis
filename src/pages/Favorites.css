@@ -7,7 +7,7 @@
 .favorites-page {
   min-height: 100vh;
   background: var(--bg-page);
-  padding: var(--space-xl);
+  padding: 0 var(--space-xl) var(--space-xl);
   max-width: var(--container-max);
   margin: 0 auto;
 }
@@ -15,9 +15,9 @@
 /* ---- HEADER ---- */
 .favorites-header {
   margin-bottom: var(--space-xl);
-  padding: var(--space-xl);
-  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale, var(--primary-pale)) 100%);
-  border-radius: var(--radius-2xl);
+  padding: var(--space-md) var(--space-lg);
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
 }
 
@@ -26,7 +26,7 @@
   align-items: center;
   gap: var(--space-sm);
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
+  font-size: var(--text-xl);
   font-weight: 900;
   color: var(--text-primary);
   margin: 0 0 var(--space-xs);
@@ -345,7 +345,7 @@
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
   .favorites-page {
-    padding: var(--space-md);
+    padding: 0 var(--space-md) var(--space-md);
   }
 
   .filter-tabs {

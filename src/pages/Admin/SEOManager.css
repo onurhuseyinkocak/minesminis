@@ -143,8 +143,8 @@
 }
 
 .seo-result-error {
-    background: rgba(239, 68, 68, 0.05);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: var(--error-pale);
+    border: 1px solid var(--error-soft);
     border-radius: var(--radius-sm);
     padding: 1rem;
 }

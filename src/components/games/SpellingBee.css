@@ -390,11 +390,6 @@
   border-bottom-color: color-mix(in srgb, var(--border-light) 60%, black);
 }
 
-[data-theme="dark"] .spelling-bee__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}
-
 /* -- Responsive ------------------------------------------------------- */
 
 @media (min-width: 1024px) {
@@ -454,29 +449,3 @@
   .spelling-bee__slot { width: 76px; height: 84px; font-size: 2.5rem; }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .spelling-bee__slot {
-  background: var(--bg-card);
-  border-color: color-mix(in srgb, var(--secondary) 20%, transparent);
-}
-
-[data-theme="dark"] .spelling-bee__slot--filled {
-  background: var(--secondary-pale);
-  border-color: var(--secondary);
-}
-
-[data-theme="dark"] .spelling-bee__tile {
-  background: var(--bg-card);
-  border-color: var(--secondary);
-}
-
-[data-theme="dark"] .spelling-bee__hint {
-  background: var(--primary-pale);
-  border-color: color-mix(in srgb, var(--warning) 10%, transparent);
-}
-
-[data-theme="dark"] .spelling-bee__results-btn--secondary {
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-}

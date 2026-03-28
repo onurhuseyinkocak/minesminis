@@ -245,7 +245,7 @@ const DEFAULT_STATS: UserStats = {
 };
 
 export function GamificationProvider({ children }: { children: ReactNode }) {
-    const { user } = useAuth();
+    const { user, userProfile } = useAuth();
     const { isPremium } = usePremium();
     const [stats, setStats] = useState<UserStats>(DEFAULT_STATS);
     const [loading, setLoading] = useState(true);
@@ -263,6 +263,11 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     // Keep a ref to user so async functions always have latest without causing re-runs
     const userRef = useRef(user);
     userRef.current = user;
+
+    // Keep a ref to userProfile so settings writes always preserve existing DB settings
+    // (e.g. setup_completed) and never accidentally wipe them.
+    const userProfileRef = useRef(userProfile);
+    userProfileRef.current = userProfile;
 
     // Debounced XP sync — prevents a flood of sequential Supabase writes when XP
     // is earned rapidly (e.g. rapid-fire flashcard answers). Fires at most once per 1.5 s.
@@ -527,7 +532,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         // Debounced XP sync — avoids a separate settings fetch + update on every XP event.
         // The latest XP value wins because the debounce captures the closure at fire time.
         if (userRef.current?.uid) {
-            const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+            const currentSettings = userProfileRef.current?.settings ?? {};
             debouncedSyncXP(userRef.current.uid, newXP, newWeeklyXP, currentSettings);
         }
     };
@@ -579,7 +584,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             // 3. Sync weekly reset via settings JSONB — merge without extra fetch
             if (userRef.current?.uid) {
                 const weeklyResetUserId = userRef.current.uid;
-                const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+                const currentSettings = userProfileRef.current?.settings ?? {};
                 const settings = { ...currentSettings, weekly_xp: 0, last_weekly_reset: now.toISOString() };
                 withRetry(() =>
                     supabase.from('users').update({ settings }).eq('id', weeklyResetUserId)
@@ -730,7 +735,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         // Sync with server — merge without extra fetch (fire-and-forget with retry)
         if (userRef.current?.uid) {
             const dailyClaimUserId = userRef.current.uid;
-            const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+            const currentSettings = userProfileRef.current?.settings ?? {};
             const settings = { ...currentSettings, last_daily_claim: now.toISOString() };
             withRetry(() =>
                 supabase.from('users').update({ settings }).eq('id', dailyClaimUserId)
@@ -950,7 +955,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
         // Debounced activity-counter sync — batches rapid writes into a single Supabase call
         if (userRef.current?.uid) {
-            const currentSettings = (statsRef.current as unknown as { settings?: Record<string, unknown> }).settings ?? {};
+            const currentSettings = userProfileRef.current?.settings ?? {};
             debouncedSyncActivity(userRef.current.uid, newStats, currentSettings);
         }
 

@@ -14,10 +14,6 @@
   transition: box-shadow var(--transition-base);
 }
 
-[data-theme="dark"] .leaderboard-premium {
-  border-color: var(--border-medium);
-}
-
 /* ---- Header ---- */
 .leader-header {
   display: flex;

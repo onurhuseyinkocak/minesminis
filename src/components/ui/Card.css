@@ -108,25 +108,3 @@
   .mm-card--padding-xl { padding: var(--space-3xl); }
 }
 
-/* -- Dark mode -------------------------------------------------------- */
-
-[data-theme="dark"] .mm-card {
-  background: var(--bg-card);
-}
-
-[data-theme="dark"] .mm-card--default,
-[data-theme="dark"] .mm-card--interactive {
-  border-color: var(--border-subtle);
-}
-
-[data-theme="dark"] .mm-card--outlined {
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .mm-card--outlined:hover {
-  border-color: var(--primary);
-}
-
-[data-theme="dark"] .mm-card--interactive:hover {
-  border-color: rgba(var(--primary-rgb), 0.2);
-}

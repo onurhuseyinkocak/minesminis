@@ -7,7 +7,7 @@
 .world-detail-page {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-lg) var(--space-2xl);
+  padding: 0 var(--space-lg) var(--space-2xl);
 }
 
 .world-detail-page--not-found {
@@ -346,32 +346,14 @@
   color: var(--text-muted);
 }
 
-/* ==========================================================================
-   DARK MODE
-   ========================================================================== */
-[data-theme="dark"] .lesson-card {
-  background: var(--bg-card);
-}
-
-[data-theme="dark"] .lesson-card--completed {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.35);
-}
-
-[data-theme="dark"] .vocab-preview-card {
-  background: var(--bg-card);
-}
-
-[data-theme="dark"] .world-detail-back:hover {
-  background: var(--bg-muted);
-}
+/* MinesMinis is light mode only — dark theme overrides removed */
 
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 @media (max-width: 480px) {
   .world-detail-page {
-    padding: var(--space-sm) var(--space-sm) var(--space-lg);
+    padding: 0 var(--space-sm) var(--space-lg);
   }
 
   .world-detail-header {
@@ -402,7 +384,7 @@
 
 @media (max-width: 768px) {
   .world-detail-page {
-    padding: var(--space-md) var(--space-md) var(--space-xl);
+    padding: 0 var(--space-md) var(--space-xl);
   }
 
   .world-detail-header {
@@ -445,14 +427,4 @@
   border-color: var(--warning-light);
 }
 
-[data-theme="dark"] .wd-checkpoint-badge {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--success-light);
-  border-color: rgba(52, 211, 153, 0.3);
-}
-
-[data-theme="dark"] .wd-checkpoint-badge--failed {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--warning-light);
-  border-color: rgba(251, 191, 36, 0.3);
-}
+/* light mode only — no dark checkpoint badge override */

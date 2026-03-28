@@ -21,7 +21,7 @@
 .pricing-hero {
   text-align: center;
   margin-bottom: var(--space-2xl);
-  padding: var(--space-3xl) var(--space-xl);
+  padding: var(--space-xl) var(--space-xl);
   background: var(--gradient-primary);
   border-radius: var(--radius-2xl);
   position: relative;
@@ -729,7 +729,7 @@
   }
 
   .pricing-hero {
-    padding: var(--space-2xl) var(--space-md);
+    padding: var(--space-md) var(--space-md);
   }
 
   .pricing-hero h1 {
@@ -760,7 +760,7 @@
 
 @media (max-width: 480px) {
   .pricing-hero {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius-xl);
   }
 
@@ -781,42 +781,6 @@
   .pricing-faq h2 {
     font-size: var(--text-lg);
   }
-}
-
-/* ---- DARK MODE OVERRIDES ---- */
-[data-theme="dark"] .plan-card--highlight {
-  background: linear-gradient(175deg, var(--primary-pale) 0%, var(--bg-card) 28%);
-  box-shadow:
-    0 0 0 5px var(--primary-glow),
-    0 20px 48px rgba(212, 148, 13, 0.18),
-    var(--shadow-lg);
-}
-
-[data-theme="dark"] .plan-card--highlight:hover {
-  box-shadow:
-    0 0 0 5px var(--primary-glow),
-    0 28px 56px rgba(212, 148, 13, 0.22),
-    var(--shadow-xl);
-}
-
-[data-theme="dark"] .plan-badge {
-  box-shadow: 0 2px 12px rgba(212, 148, 13, 0.4);
-}
-
-[data-theme="dark"] .plan-card--highlight .plan-icon {
-  box-shadow: 0 4px 12px rgba(212, 148, 13, 0.35);
-}
-
-[data-theme="dark"] .plan-cta--primary:hover:not(:disabled) {
-  box-shadow: 0 6px 24px rgba(212, 148, 13, 0.45);
-}
-
-[data-theme="dark"] .pricing-guarantee {
-  border-color: rgba(16, 185, 129, 0.18);
-}
-
-[data-theme="dark"] .pricing-cta-btn:hover {
-  background: var(--text-on-primary);
 }
 
 /* ── Coming soon badge on plan features ── */

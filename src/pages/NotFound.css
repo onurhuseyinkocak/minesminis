@@ -4,13 +4,13 @@
 
 .not-found-page {
     position: relative;
-    min-height: calc(100vh - 64px); /* subtract nav height */
+    min-height: calc(100vh - var(--nav-height));
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 48px 24px 64px;
+    padding: var(--space-12) var(--space-6) var(--space-16);
     overflow: hidden;
 
     /* Space gradient: warm cream at bottom, barely-there violet at top */
@@ -55,7 +55,7 @@
     width: 240px;
     height: 240px;
     border-radius: 50%;
-    border: 1.5px dashed rgba(255, 107, 53, 0.2);
+    border: 1.5px dashed var(--primary-glow);
     pointer-events: none;
 }
 
@@ -64,7 +64,7 @@
 .not-found-rocket {
     position: relative;
     z-index: 1;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
     /* override global animate-float for slightly bigger arc */
     animation: not-found-float 3.2s ease-in-out infinite;
 }
@@ -77,13 +77,13 @@
 /* ── 404 code ─────────────────────────────────────────────── */
 
 .not-found-code {
-    font-family: 'Nunito', system-ui, sans-serif;
+    font-family: var(--font-display);
     font-weight: 900;
     font-size: clamp(5rem, 18vw, 9rem);
     line-height: 1;
     letter-spacing: -0.04em;
     color: var(--text-primary);
-    margin: 0 0 16px;
+    margin: 0 0 var(--space-4);
     position: relative;
     z-index: 1;
 }
@@ -91,29 +91,29 @@
 .not-found-code-accent {
     color: var(--primary);
     /* subtle drop shadow to make the zero pop */
-    text-shadow: 0 4px 24px rgba(255, 107, 53, 0.35);
+    text-shadow: 0 4px 24px var(--primary-glow);
 }
 
 /* ── Messages ─────────────────────────────────────────────── */
 
 .not-found-message {
-    font-family: 'Nunito', system-ui, sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(1rem, 3vw, 1.2rem);
     color: var(--text-secondary);
     max-width: 380px;
     line-height: 1.55;
-    margin: 0 0 10px;
+    margin: 0 0 var(--space-2);
 }
 
 .not-found-sub {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     font-size: clamp(0.875rem, 2.5vw, 1rem);
     color: var(--text-muted);
     max-width: 340px;
     line-height: 1.6;
-    margin: 0 0 28px;
+    margin: 0 0 var(--space-7);
 }
 
 /* ── Lost path pill ───────────────────────────────────────── */
@@ -121,18 +121,18 @@
 .not-found-path-pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(15, 23, 42, 0.05);
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 999px;
-    padding: 6px 16px;
-    margin-bottom: 28px;
+    gap: var(--space-2);
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    padding: var(--space-1) var(--space-4);
+    margin-bottom: var(--space-7);
     max-width: 100%;
     overflow: hidden;
 }
 
 .not-found-path-label {
-    font-family: 'Nunito', system-ui, sans-serif;
+    font-family: var(--font-display);
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--text-muted);
@@ -141,7 +141,7 @@
 }
 
 .not-found-path-code {
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-family: var(--font-mono);
     font-size: 0.8rem;
     color: var(--primary);
     overflow: hidden;
@@ -155,18 +155,18 @@
 .not-found-cta {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: var(--primary);
-    color: var(--white);
-    font-family: 'Nunito', system-ui, sans-serif;
+    gap: var(--space-2);
+    background: var(--gradient-primary);
+    color: var(--text-on-primary);
+    font-family: var(--font-display);
     font-weight: 800;
     font-size: 1rem;
-    padding: 14px 32px;
+    padding: var(--space-3) var(--space-8);
     min-height: var(--touch-target);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4), 0 1px 3px rgba(255, 107, 53, 0.2);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-button);
     text-decoration: none;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.15s ease;
+    transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-fast);
     position: relative;
     z-index: 1;
 }
@@ -174,12 +174,12 @@
 .not-found-cta:hover {
     background: var(--primary-hover);
     transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 8px 32px rgba(255, 107, 53, 0.45), 0 2px 6px rgba(255, 107, 53, 0.25);
+    box-shadow: var(--shadow-button-hover);
 }
 
 .not-found-cta:active {
     transform: translateY(0) scale(0.97);
-    box-shadow: 0 2px 12px rgba(255, 107, 53, 0.3);
+    box-shadow: var(--shadow-sm);
 }
 
 /* ── Responsive tweaks ────────────────────────────────────── */
