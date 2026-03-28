@@ -170,7 +170,8 @@ CREATE TABLE IF NOT EXISTS curriculum_progress (
   PRIMARY KEY (user_id, child_id, unit_id)
 );
 ALTER TABLE curriculum_progress ENABLE ROW LEVEL SECURITY;
-CREATE POLICY IF NOT EXISTS "curriculum_progress_owner" ON curriculum_progress
+DROP POLICY IF EXISTS "curriculum_progress_owner" ON curriculum_progress;
+CREATE POLICY "curriculum_progress_owner" ON curriculum_progress
   USING (auth.uid()::text = user_id)
   WITH CHECK (auth.uid()::text = user_id);
 
@@ -183,6 +184,7 @@ CREATE TABLE IF NOT EXISTS curriculum_current_unit (
   PRIMARY KEY (user_id, child_id)
 );
 ALTER TABLE curriculum_current_unit ENABLE ROW LEVEL SECURITY;
-CREATE POLICY IF NOT EXISTS "curriculum_current_unit_owner" ON curriculum_current_unit
+DROP POLICY IF EXISTS "curriculum_current_unit_owner" ON curriculum_current_unit;
+CREATE POLICY "curriculum_current_unit_owner" ON curriculum_current_unit
   USING (auth.uid()::text = user_id)
   WITH CHECK (auth.uid()::text = user_id);
