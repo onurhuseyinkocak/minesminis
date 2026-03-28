@@ -32,6 +32,7 @@ import AssessmentReport from '../../components/AssessmentReport';
 import { getNextAction } from '../../services/unifiedProgress';
 import { MINI_GAMES, LS_GAME_BEST_SCORE_PREFIX } from '../../data/miniGamesData';
 import { kidsWords } from '../../data/wordsData';
+import { getWeeklyReport, type WeeklySnapshot } from '../../services/parentReportService';
 import './ParentDashboard.css';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -1277,6 +1278,8 @@ export default function ParentDashboard() {
   // Supabase activity logs for cross-device real data
   const [supabaseLogs, setSupabaseLogs] = useState<Awaited<ReturnType<typeof fetchActivityLogs>>>([]);
   const [supabaseChildStats, setSupabaseChildStats] = useState<Awaited<ReturnType<typeof loadUserStats>>>(null);
+  // Weekly snapshot cached in Supabase (parent_report_snapshots)
+  const [weeklySnapshot, setWeeklySnapshot] = useState<WeeklySnapshot | null>(null);
 
   const handleGenerateReport = useCallback(() => {
     if (!activeChildId) return;
@@ -1364,7 +1367,16 @@ export default function ParentDashboard() {
     }).catch(() => {
       setSupabaseChildStats(null);
     });
-  }, [activeChildId]);
+
+    // Load (or build + cache) this week's parent report snapshot from Supabase
+    if (user?.uid) {
+      getWeeklyReport(user.uid, activeChildId).then(snapshot => {
+        setWeeklySnapshot(snapshot);
+      }).catch(() => {
+        setWeeklySnapshot(null);
+      });
+    }
+  }, [activeChildId, user?.uid]);
 
   const activeChild = useMemo(
     () => children.find((c) => c.id === activeChildId) ?? null,

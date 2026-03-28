@@ -221,9 +221,11 @@ export interface GameSelectorProps extends GameProps {
   /** Extra props for specialized games (e.g. lines, questions, trap, etc.) */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: Record<string, any>;
+  /** Real-time difficulty multiplier from adaptive engine (0.5–2.0, default 1.0) */
+  difficultyMultiplier?: number;
 }
 
-export function GameSelector({ type, extra, ...props }: GameSelectorProps) {
+export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ...props }: GameSelectorProps) {
   const { t } = useLanguage();
   const resolvedType = GAME_TYPE_MAP[type];
 
@@ -259,8 +261,8 @@ export function GameSelector({ type, extra, ...props }: GameSelectorProps) {
 
   // For specialized games, pass extra props; for standard games, pass words-based props
   const gameProps = SPECIALIZED_GAME_TYPES.has(resolvedType)
-    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, ...extra }
-    : props;
+    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, difficultyMultiplier, ...extra }
+    : { ...props, difficultyMultiplier };
 
   return (
     <GameErrorBoundary>

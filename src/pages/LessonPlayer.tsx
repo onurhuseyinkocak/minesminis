@@ -45,7 +45,7 @@ import { getAgeGroupFromSettings, isActivityAllowedForAge, getAgeGroupConfig } f
 import { SFX } from '../data/soundLibrary';
 import { logActivity } from '../services/activityLogger';
 import { syncStudentProgress } from '../services/classroomService';
-import { setActiveUser, startSession, recordActivity } from '../services/adaptiveEngine';
+import { setActiveUser, startSession, recordActivity, getDifficultyMultiplier } from '../services/adaptiveEngine';
 import type { LearningUnit, UnitActivity } from '../data/curriculumPhases';
 import { getAllPhases } from '../services/curriculumService';
 import { useSubscription } from '../contexts/SubscriptionContext';
@@ -416,6 +416,7 @@ const LessonPlayer = () => {
 
   // ---- Adaptive Engine ----
   const activityStartTimeRef = useRef<number>(Date.now());
+  const [difficultyMultiplier, setDifficultyMultiplier] = useState<number>(1.0);
 
   useEffect(() => {
     if (user?.uid) {
@@ -604,6 +605,7 @@ const LessonPlayer = () => {
         totalQuestions: total,
         correctAnswers: score,
       });
+      setDifficultyMultiplier(getDifficultyMultiplier());
     } catch { /* adaptive engine is non-critical */ }
     // Reset timer for next activity
     activityStartTimeRef.current = Date.now();
@@ -1052,6 +1054,7 @@ const LessonPlayer = () => {
                   onXpEarned={handleXpEarned}
                   onWrongAnswer={handleWrongAnswer}
                   extra={buildExtraProps(currentActivity.type, currentUnit)}
+                  difficultyMultiplier={difficultyMultiplier}
                 />
               ) : (
                 <FallbackActivity

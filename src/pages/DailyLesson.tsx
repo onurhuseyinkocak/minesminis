@@ -32,6 +32,7 @@ import { getHomeworkWords } from '../services/homeworkService';
 import { getCurrentUnit } from '../services/lessonProgressService';
 import { PHASES as CURRICULUM_PHASES } from '../data/curriculumPhases';
 import type { KidsWord } from '../data/wordsData';
+import type { AgeGroup } from '../types/progress';
 import './DailyLesson.css';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -1178,7 +1179,8 @@ export default function DailyLesson() {
   const currentPhaseData = CURRICULUM_PHASES[currentUnitInfo.phaseIndex];
   const currentUnitData  = currentPhaseData?.units?.[currentUnitInfo.unitIndex];
 
-  const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId));
+  const ageGroup = (localStorage.getItem('mimi_age_group') || 'word-builders') as AgeGroup;
+  const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId, ageGroup));
 
   // Homework words assigned by parent — injected into review phase
   const [homeworkWords] = useState<KidsWord[]>(() => getHomeworkWords(userId));

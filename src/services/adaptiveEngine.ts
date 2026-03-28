@@ -557,6 +557,15 @@ export function getLearnerProfile(): LearnerProfile {
   return loadProfile(_activeUserId);
 }
 
+/**
+ * Returns the current session's difficulty multiplier (0.5–2.0).
+ * Updated by recordActivity() after each activity completes.
+ */
+export function getDifficultyMultiplier(): number {
+  const profile = getLearnerProfile();
+  return profile?.difficultyMultiplier ?? 1.0;
+}
+
 // ============================================================
 // MASTERY CALCULATION
 // ============================================================
