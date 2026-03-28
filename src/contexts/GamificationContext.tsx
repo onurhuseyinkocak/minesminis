@@ -10,6 +10,7 @@ import { useAuth } from './AuthContext';
 import { supabase } from '../config/supabase';
 import { errorLogger } from '../services/errorLogger';
 import { withRetry, debounceAsync } from '../utils/retryUtils';
+import { logger } from '../utils/logger';
 import { LS_GAMIFICATION_PREFIX } from '../config/storageKeys';
 import {
     checkAndAwardStreakFreeze,
@@ -342,19 +343,41 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             }
 
             // 2. Fetch from Supabase for source of truth
-            // Only select columns that exist in the DB schema
-            const { data, error } = await supabase
-                .from('users')
-                .select('xp, points, streak_days, badges, last_login, settings')
-                .eq('id', user.uid)
-                .maybeSingle();
+            // Run both tables in parallel — users (Firebase auth) + profiles (Supabase auth fallback)
+            const [{ data, error }, { data: profileData }] = await Promise.all([
+                supabase
+                    .from('users')
+                    .select('xp, points, streak_days, badges, last_login, settings')
+                    .eq('id', user.uid)
+                    .maybeSingle(),
+                supabase
+                    .from('profiles')
+                    .select('xp, level, streak_days, badges, last_login, words_learned, games_played, videos_watched, worksheets_completed')
+                    .eq('id', user.uid)
+                    .maybeSingle(),
+            ]);
 
             if (cancelled) return;
 
-            if (data && !error) {
-                const settingsObj = (data.settings || {}) as Record<string, unknown>;
+            // Use profiles as fallback when users row doesn't exist (Supabase-auth users)
+            const effectiveData = data ?? (profileData ? {
+                xp: profileData.xp ?? 0,
+                points: profileData.xp ?? 0,
+                streak_days: profileData.streak_days ?? 0,
+                badges: profileData.badges ?? [],
+                last_login: profileData.last_login ?? null,
+                settings: {
+                    wordsLearned: profileData.words_learned ?? 0,
+                    gamesPlayed: profileData.games_played ?? 0,
+                    videosWatched: profileData.videos_watched ?? 0,
+                    worksheetsCompleted: profileData.worksheets_completed ?? 0,
+                },
+            } : null);
+
+            if (effectiveData && !error) {
+                const settingsObj = (effectiveData.settings || {}) as Record<string, unknown>;
                 setStats(prev => {
-                    const serverXp = data.xp || data.points || 0;
+                    const serverXp = effectiveData.xp || effectiveData.points || 0;
                     // Take the higher XP value — prevents overwriting XP earned during the async fetch
                     const mergedXp = Math.max(prev.xp ?? 0, serverXp);
                     const serverStats: UserStats = {
@@ -365,10 +388,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                             (settingsObj.weekly_xp as number) || 0,
                         ),
                         level: calculateLevel(mergedXp),
-                        streakDays: Math.max(prev.streakDays ?? 0, data.streak_days || 0),
+                        streakDays: Math.max(prev.streakDays ?? 0, effectiveData.streak_days || 0),
                         // Merge badges: union of local + server to prevent badge loss on either side
-                        badges: [...new Set([...(prev.badges || []), ...(data.badges || [])])],
-                        lastLoginDate: data.last_login,
+                        badges: [...new Set([...(prev.badges || []), ...(effectiveData.badges || [])])],
+                        lastLoginDate: effectiveData.last_login,
                         lastDailyClaim: (settingsObj.last_daily_claim as string) || prev.lastDailyClaim,
                         lastWeeklyReset: (settingsObj.last_weekly_reset as string) || prev.lastWeeklyReset,
                         mascotId: getSelectedMascotId(),
@@ -863,7 +886,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
     const trackActivity = async (type: string, metadata?: Record<string, unknown>) => {
         // Activity tracked: type + metadata logged in dev only
-        if (import.meta.env.DEV) console.debug(`Tracking activity: ${type}`, metadata);
+        logger.debug(`Tracking activity: ${type}`, metadata);
         const currentStats = statsRef.current;
         const newStats = { ...currentStats };
         switch (type) {
