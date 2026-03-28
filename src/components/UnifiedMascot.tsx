@@ -873,7 +873,7 @@ const UnifiedMascot: React.FC<UnifiedMascotProps> = ({
     }
 
     return (
-        <div ref={containerRef} className={`mascot-container type-${displayType} pattern-${config.behaviorPattern} state-${state} ${isHovered ? 'hovered' : ''}`} onClick={onClick} style={{ width: size, height: size }}>
+        <div ref={containerRef} className={`mascot-container type-${displayType} pattern-${config.behaviorPattern} state-${state} ${isHovered ? 'hovered' : ''}`} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined} onKeyDown={onClick ? (e) => (e.key === 'Enter' || e.key === ' ') && onClick() : undefined} style={{ width: size, height: size }}>
             <div className="mascot-wrapper"><svg viewBox="0 0 200 220" className="mascot-svg">{renderCharacter()}</svg></div>
             {/* emoji bubble removed */}
             <div className="mascot-shadow"></div>

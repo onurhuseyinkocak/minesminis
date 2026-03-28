@@ -103,7 +103,7 @@ function NotFound() {
                 {/* Lost path pill */}
                 {location.pathname && location.pathname !== '/' && (
                     <div className="not-found-path-pill">
-                        <span className="not-found-path-label">Kayıp yol:</span>
+                        <span className="not-found-path-label">{t('notFoundPage.lostPath')}</span>
                         <code className="not-found-path-code">{location.pathname}</code>
                     </div>
                 )}

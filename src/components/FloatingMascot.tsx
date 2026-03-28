@@ -73,7 +73,7 @@ export default function FloatingMascot() {
     <div
       style={{
         position: 'fixed',
-        bottom: 'var(--floating-mascot-bottom, 80px)',
+        bottom: 'var(--floating-mascot-bottom, calc(var(--bottom-nav-height, 60px) + 16px))',
         right: 'var(--floating-mascot-right, 16px)',
         zIndex: 200,
         display: 'flex',
@@ -147,7 +147,7 @@ export default function FloatingMascot() {
 
       {/* Responsive CSS overrides */}
       <style>{`
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
           :root {
             --floating-mascot-bottom: 24px;
             --floating-mascot-right: 24px;

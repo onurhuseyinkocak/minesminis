@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Volume2, RefreshCw, Play, CheckCircle, XCircle, AlertCircle, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface TtsItem {
   id: string;
@@ -110,7 +111,7 @@ function AudioManager() {
       });
       const data = await resp.json();
       if (!resp.ok) {
-        alert(data.error ?? 'Failed to start bulk generation');
+        toast.error(data.error ?? 'Failed to start bulk generation');
         return;
       }
       // Start polling for progress
@@ -118,7 +119,7 @@ function AudioManager() {
       pollRef.current = setInterval(fetchStatus, 2000);
       await fetchStatus();
     } catch (err) {
-      alert('Error starting bulk generation: ' + String(err));
+      toast.error('Error starting bulk generation: ' + String(err));
     } finally {
       setBulkStarting(false);
     }
@@ -139,11 +140,11 @@ function AudioManager() {
         fetchStatus();
       } else {
         setItemResults((prev) => ({ ...prev, [item.id]: 'error' }));
-        alert('Error: ' + (data.error ?? 'Unknown error'));
+        toast.error('Error: ' + (data.error ?? 'Unknown error'));
       }
     } catch (err) {
       setItemResults((prev) => ({ ...prev, [item.id]: 'error' }));
-      alert('Error: ' + String(err));
+      toast.error('Error: ' + String(err));
     } finally {
       setGeneratingId(null);
     }
@@ -178,7 +179,7 @@ function AudioManager() {
             {ttsServerReachable === null ? 'Checking...' : ttsServerReachable ? 'Online' : 'Offline'}
           </span>
           {!ttsServerReachable && ttsServerReachable !== null && (
-            <span style={{ color: '#6b7280', fontSize: 13 }}>
+            <span style={{ color: 'var(--text-secondary, #6b7280)', fontSize: 13 }}>
               Run: ~/qwen-tts-env/bin/python tts-server.py
             </span>
           )}
@@ -238,7 +239,7 @@ function AudioManager() {
             Refresh
           </button>
           {bulkRunning && (
-            <span style={{ color: '#6b7280', fontSize: 13 }}>
+            <span style={{ color: 'var(--text-secondary, #6b7280)', fontSize: 13 }}>
               {bulkDone} / {bulkTotal} done · {bulkErrors} errors
             </span>
           )}
@@ -316,7 +317,7 @@ function AudioManager() {
                             Error
                           </span>
                         ) : (
-                          <span style={{ color: '#6b7280', fontSize: 13 }}>Unknown</span>
+                          <span style={{ color: 'var(--text-secondary, #6b7280)', fontSize: 13 }}>Unknown</span>
                         )}
                       </td>
                       <td>

@@ -237,6 +237,7 @@ export function PhonicsIntroActivity({
         className={`phonics-intro__next-btn${!played ? ' phonics-intro__next-btn--disabled' : ''}`}
         onClick={played ? handleNext : handlePlaySound}
         aria-label={played ? (currentSoundIdx < sounds.length - 1 ? 'Next sound' : 'Complete') : 'Play sound first'}
+        aria-disabled={!played}
       >
         {!played ? (
           <>

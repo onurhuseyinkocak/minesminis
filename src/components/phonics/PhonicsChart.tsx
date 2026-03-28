@@ -41,7 +41,7 @@ export const PhonicsChart: React.FC<PhonicsChartProps> = ({ progress, onSoundCli
         fontFamily: 'Nunito, sans-serif',
       }}
     >
-      <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem', textAlign: 'center' }}>
+      <h2 style={{ color: 'var(--secondary, #1A6B5A)', margin: 0, fontSize: '1.4rem', textAlign: 'center' }}>
         My Phonics Journey
       </h2>
 
@@ -63,7 +63,7 @@ export const PhonicsChart: React.FC<PhonicsChartProps> = ({ progress, onSoundCli
                 border: `2px solid ${item.border}`,
               }}
             />
-            <span style={{ fontSize: '0.8rem', color: '#666' }}>{item.label}</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #666)' }}>{item.label}</span>
           </div>
         ))}
       </div>
@@ -95,10 +95,13 @@ export const PhonicsChart: React.FC<PhonicsChartProps> = ({ progress, onSoundCli
                 return (
                   <motion.button
                     key={soundId}
+                    type="button"
                     onClick={() => onSoundClick?.(sound)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={onSoundClick ? { scale: 1.1 } : {}}
+                    whileTap={onSoundClick ? { scale: 0.95 } : {}}
                     title={`${sound}: ${label} (${level}%)`}
+                    tabIndex={onSoundClick ? 0 : -1}
+                    aria-disabled={!onSoundClick}
                     style={{
                       width: '3.5rem',
                       height: '3.5rem',

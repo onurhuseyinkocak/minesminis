@@ -3,6 +3,7 @@ import { Volume2 } from 'lucide-react';
 import { speak } from '../services/ttsService';
 import { SFX } from '../data/soundLibrary';
 import { PHONICS_GROUPS } from '../data/phonics';
+import { useLanguage } from '../contexts/LanguageContext';
 import './SoundOfTheDay.css';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -46,7 +47,9 @@ function segmentWord(word: string, grapheme: string): { text: string; isTarget: 
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export default function SoundOfTheDay({ label = 'Sound of the Day' }: SoundOfTheDayProps) {
+export default function SoundOfTheDay({ label }: SoundOfTheDayProps) {
+  const { lang } = useLanguage();
+  const resolvedLabel = label ?? (lang === 'tr' ? 'Günün Sesi' : 'Sound of the Day');
   const todaySound = getTodaySound();
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -72,7 +75,7 @@ export default function SoundOfTheDay({ label = 'Sound of the Day' }: SoundOfThe
 
   return (
     <div className="sotd-card">
-      <span className="sotd-label">{label}</span>
+      <span className="sotd-label">{resolvedLabel}</span>
 
       <div className="sotd-main">
         {/* Sound badge — tap to hear */}

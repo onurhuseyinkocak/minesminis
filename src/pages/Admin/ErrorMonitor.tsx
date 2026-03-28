@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { errorLogger, SEVERITY_COLORS, SEVERITY_BG } from '../../services/errorLogger';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './ErrorMonitor.css';
 import type { ErrorSeverity, ErrorLog } from '../../services/errorLogger';
 
@@ -43,6 +44,8 @@ function ErrorMonitor() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [confirmResolveAll, setConfirmResolveAll] = useState(false);
+  const [confirmClearAll, setConfirmClearAll] = useState(false);
 
   const refresh = useCallback(() => {
     const filters: Parameters<typeof errorLogger.getLogs>[0] = {};
@@ -77,15 +80,23 @@ function ErrorMonitor() {
   };
 
   const handleResolveAll = () => {
-    if (!confirm('Tum hatalari cozulmus olarak isaretlemek istiyor musunuz?')) return;
+    setConfirmResolveAll(true);
+  };
+
+  const executeResolveAll = () => {
     errorLogger.resolveAll();
     refresh();
+    setConfirmResolveAll(false);
   };
 
   const handleClearAll = () => {
-    if (!confirm('Tum hata loglarini silmek istiyor musunuz? Bu islem geri alinamaz.')) return;
+    setConfirmClearAll(true);
+  };
+
+  const executeClearAll = () => {
     errorLogger.clearAll();
     refresh();
+    setConfirmClearAll(false);
   };
 
   const handleExport = () => {
@@ -353,6 +364,25 @@ function ErrorMonitor() {
         </div>
       </div>
 
+    <ConfirmModal
+      isOpen={confirmResolveAll}
+      onClose={() => setConfirmResolveAll(false)}
+      onConfirm={executeResolveAll}
+      title="Tümünü Çözüldü İşaretle"
+      message="Tüm hataları çözüldü olarak işaretlemek istiyor musunuz?"
+      confirmLabel="İşaretle"
+      variant="warning"
+    />
+
+    <ConfirmModal
+      isOpen={confirmClearAll}
+      onClose={() => setConfirmClearAll(false)}
+      onConfirm={executeClearAll}
+      title="Tüm Logları Sil"
+      message="Tüm hata loglarını silmek istiyor musunuz? Bu işlem geri alınamaz."
+      confirmLabel="Sil"
+      variant="danger"
+    />
     </div>
   );
 }

@@ -86,13 +86,13 @@
 
 .phonics-intro__vowel-badge {
   background: rgba(59, 130, 246, 0.12);
-  color: #2563eb;
+  color: var(--accent-blue-dark);
   border: 1.5px solid rgba(59, 130, 246, 0.35);
 }
 
 .phonics-intro__consonant-badge {
   background: rgba(16, 185, 129, 0.1);
-  color: #059669;
+  color: var(--success);
   border: 1.5px solid rgba(16, 185, 129, 0.3);
 }
 

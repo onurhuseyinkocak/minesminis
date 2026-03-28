@@ -368,6 +368,7 @@ export default function StoryReader() {
       {/* Topbar */}
       <div className="story-reader__topbar">
         <button
+          type="button"
           className="story-reader__back-btn"
           onClick={e => { e.stopPropagation(); navigate('/stories'); }}
           aria-label={lang === 'tr' ? 'Geri' : 'Back'}
@@ -453,6 +454,7 @@ export default function StoryReader() {
                       <span className="story-reader__vocab-tr">— {v.word_tr || v.turkish}</span>
                     )}
                     <button
+                      type="button"
                       className="story-reader__vocab-speak"
                       onClick={e => { e.stopPropagation(); speakWord(v.word); }}
                       aria-label={`Listen: ${v.word}`}
@@ -470,6 +472,7 @@ export default function StoryReader() {
       {/* Skip typewriter hint */}
       {!showCompletion && !done && (
         <button
+          type="button"
           className="story-reader__skip"
           onClick={e => { e.stopPropagation(); skip(); }}
           aria-label={lang === 'tr' ? 'Atla' : 'Skip'}
@@ -540,6 +543,7 @@ export default function StoryReader() {
           {/* Action buttons */}
           <div className="story-reader__completion-actions">
             <button
+              type="button"
               className="story-reader__completion-btn-primary"
               onClick={() => navigate('/stories')}
             >
@@ -547,6 +551,7 @@ export default function StoryReader() {
               {lang === 'tr' ? 'Başka Hikaye Oku' : 'Read Another Story'}
             </button>
             <button
+              type="button"
               className="story-reader__completion-btn-secondary"
               onClick={() => {
                 setShowCompletion(false);
@@ -572,6 +577,7 @@ export default function StoryReader() {
             currentScene.choices.map((choice, i) => (
               <button
                 key={i}
+                type="button"
                 className="story-reader__choice-btn"
                 onClick={() => handleChoiceClick(choice)}
               >
@@ -582,6 +588,7 @@ export default function StoryReader() {
           ) : sceneIndex + 1 < totalScenes ? (
             // No choices — simple "continue" button
             <button
+              type="button"
               className="story-reader__choice-btn"
               onClick={() => {
                 setTransitioning(true);
@@ -598,6 +605,7 @@ export default function StoryReader() {
           ) : (
             // Last scene — show completion screen
             <button
+              type="button"
               className="story-reader__choice-btn"
               onClick={() => {
                 setShowCompletion(true);

@@ -189,7 +189,7 @@
   min-height: 110px;
   border-radius: var(--radius-2xl);
   border: none;
-  border-bottom: 5px solid #993218; /* color-mix fallback: primary 60% + black */
+  border-bottom: 5px solid var(--primary-dark, #993218);
   border-bottom: 5px solid color-mix(in srgb, var(--primary) 60%, black);
   background: var(--gradient-primary);
   color: var(--text-on-primary);

@@ -494,7 +494,7 @@ function WhatsNextButton() {
   const isTr = navigator.language?.startsWith('tr') ?? false;
 
   return (
-    <div style={{ position: "fixed", bottom: 90, right: 20, zIndex: 900 }}>
+    <div style={{ position: "fixed", bottom: "calc(56px + env(safe-area-inset-bottom, 0px) + 20px)", right: 20, zIndex: 900 }}>
       {showTooltip && (
         <button
           onClick={() => {
@@ -505,11 +505,11 @@ function WhatsNextButton() {
             position: "absolute",
             bottom: 52,
             right: 0,
-            background: "var(--bg-elevated)",
-            border: "1px solid var(--glass-border, #334155)",
+            background: "var(--bg-card)",
+            border: "1.5px solid var(--border)",
             borderRadius: 14,
             padding: "10px 16px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
+            boxShadow: "var(--shadow-lg)",
             whiteSpace: "nowrap",
             cursor: "pointer",
             fontSize: 14,
@@ -531,8 +531,8 @@ function WhatsNextButton() {
           width: 44,
           height: 44,
           borderRadius: "50%",
-          border: "1px solid var(--glass-border, #334155)",
-          background: "var(--bg-elevated)",
+          border: "1.5px solid var(--border)",
+          background: "var(--bg-card)",
           color: "var(--primary)",
           fontSize: 20,
           fontWeight: 800,
@@ -540,7 +540,7 @@ function WhatsNextButton() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+          boxShadow: "var(--shadow-md)",
           fontFamily: "Nunito, sans-serif",
         }}
       >
@@ -596,10 +596,13 @@ function AppContent() {
 
   // Redirect to setup if not completed (non-admin only, after profile loads)
   const isSetupCompleted = userProfile?.settings?.setup_completed === true;
+  // profileFetched: true once we have actually loaded a profile (or confirmed none exists)
+  // Guards against a brief window where profileLoading=false but userProfile=null during page reload
+  const profileFetched = !profileLoading && (userProfile !== null || !user);
   useEffect(() => {
     if (loading) return;
     if (user && isAdmin) return;
-    if (profileLoading) return;
+    if (!profileFetched) return; // Wait until profile is actually fetched before redirecting
 
     if (user && !isSetupCompleted && !hasSkippedSetup && !isSetupRoute && !isAdminRoute) {
       navigate("/setup", { replace: true });
@@ -608,7 +611,7 @@ function AppContent() {
     if (user && isSetupCompleted && isSetupRoute) {
       navigate("/dashboard", { replace: true });
     }
-  }, [user?.uid, isSetupCompleted, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileLoading, navigate, isAdmin]);
+  }, [user?.uid, isSetupCompleted, hasSkippedSetup, isSetupRoute, isAdminRoute, loading, profileFetched, navigate, isAdmin]);
 
   return (
     <>

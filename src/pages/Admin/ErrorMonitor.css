@@ -121,8 +121,8 @@
 }
 
 .em-live-btn--active {
-    background: #ecfdf5;
-    color: #059669;
+    background: var(--success-pale);
+    color: var(--success);
 }
 
 .em-live-btn--paused {
@@ -145,7 +145,7 @@
 }
 
 .em-empty-text {
-    color: #64748b;
+    color: var(--text-secondary);
     margin-top: 1rem;
 }
 
@@ -163,7 +163,7 @@
 
 .em-log-card--resolved {
     opacity: 0.6;
-    background: #f8fafc;
+    background: var(--bg-elevated);
 }
 
 .em-log-card--active {
@@ -202,7 +202,7 @@
     flex: 1;
     font-size: 0.82rem;
     font-weight: 500;
-    color: #1e293b;
+    color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -228,8 +228,8 @@
 /* ---- Expanded detail panel ---- */
 .em-detail-panel {
     padding: 0.75rem 1rem 1rem;
-    border-top: 1px solid #f1f5f9;
-    background: #f8fafc;
+    border-top: 1px solid var(--border);
+    background: var(--bg-elevated);
     font-size: 0.8rem;
 }
 
@@ -244,7 +244,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #64748b;
+    color: var(--text-secondary);
 }
 
 .em-detail-meta-val {
@@ -272,7 +272,7 @@
     max-height: 200px;
     white-space: pre-wrap;
     word-break: break-all;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
 }
 
 .em-pre-meta {
@@ -285,10 +285,10 @@
 }
 
 .em-message-box {
-    background: #fef2f2;
+    background: var(--error-pale);
     padding: 0.75rem;
     border-radius: var(--radius-sm);
-    color: #991b1b;
+    color: var(--accent-red-dark);
     font-size: 0.78rem;
     margin-bottom: 0.75rem;
     word-break: break-word;
@@ -307,8 +307,8 @@
     padding: 0.4rem 0.8rem;
     border-radius: var(--radius-sm);
     border: none;
-    background: #22c55e;
-    color: white;
+    background: var(--accent-green);
+    color: var(--white);
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;

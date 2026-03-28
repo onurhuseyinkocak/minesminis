@@ -97,7 +97,7 @@
 
 .notif-prompt-btn--primary {
   background: var(--primary, #e8a317);
-  color: #fff;
+  color: var(--white);
 }
 
 .notif-prompt-btn--primary:hover {

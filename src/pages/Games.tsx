@@ -510,31 +510,70 @@ function Games() {
             <LottieCharacter state="idle" size={100} />
             <p>{isTr ? 'Bu kategoride henüz oyun yok.' : 'No games in this category yet.'}</p>
           </div>
-        ) : (
-          <div
-            className="mini-games-grid"
-            role="tabpanel"
-            aria-label={`${activeTab} games`}
-          >
-            {filteredGames.map((game) => {
-              const locked = isGameLocked(game);
-              const best = scoreVersion >= 0 ? getBestScore(game.type) : undefined;
-              return (
-                <GameCard
-                  key={game.type}
-                  game={game}
-                  isLocked={locked}
-                  userLevel={userLevel}
-                  bestScore={best}
-                  isNew={isNewGame(game)}
-                  activeTopic={activeTopic}
-                  isRecommended={!!recommendedType && game.type === recommendedType}
-                  onPlay={() => handlePlaySingle(game)}
-                />
-              );
-            })}
-          </div>
-        )}
+        ) : (() => {
+          const unlockedGames = filteredGames.filter((g) => !isGameLocked(g));
+          const lockedGames = filteredGames.filter((g) => isGameLocked(g));
+          const visibleLockedGames = lockedGames.slice(0, 4);
+          const hasHiddenLocked = lockedGames.length > 4;
+          return (
+            <>
+              <div
+                className="mini-games-grid"
+                role="tabpanel"
+                aria-label={`${activeTab} games`}
+              >
+                {unlockedGames.map((game) => {
+                  const best = scoreVersion >= 0 ? getBestScore(game.type) : undefined;
+                  return (
+                    <GameCard
+                      key={game.type}
+                      game={game}
+                      isLocked={false}
+                      userLevel={userLevel}
+                      bestScore={best}
+                      isNew={isNewGame(game)}
+                      activeTopic={activeTopic}
+                      isRecommended={!!recommendedType && game.type === recommendedType}
+                      onPlay={() => handlePlaySingle(game)}
+                    />
+                  );
+                })}
+              </div>
+              {visibleLockedGames.length > 0 && (
+                <div className="games-locked-section">
+                  <div className="games-locked-grid-wrap">
+                    <div className="mini-games-grid" aria-label="locked games">
+                      {visibleLockedGames.map((game) => {
+                        const best = scoreVersion >= 0 ? getBestScore(game.type) : undefined;
+                        return (
+                          <GameCard
+                            key={game.type}
+                            game={game}
+                            isLocked={true}
+                            userLevel={userLevel}
+                            bestScore={best}
+                            isNew={isNewGame(game)}
+                            activeTopic={activeTopic}
+                            isRecommended={false}
+                            onPlay={() => handlePlaySingle(game)}
+                          />
+                        );
+                      })}
+                    </div>
+                    {hasHiddenLocked && <div className="games-locked-fade" aria-hidden="true" />}
+                  </div>
+                  {hasHiddenLocked && (
+                    <p className="games-locked-caption">
+                      {isTr
+                        ? `+${lockedGames.length - 4} oyun daha — seviyeleri geç ve kilitleri aç!`
+                        : `+${lockedGames.length - 4} more games — level up to unlock them!`}
+                    </p>
+                  )}
+                </div>
+              )}
+            </>
+          );
+        })()}
 
       </div>
 

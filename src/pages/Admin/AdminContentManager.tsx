@@ -12,6 +12,7 @@ import { gameStore } from '../../data/gameStore';
 import { videoStore, type Video as VideoType } from '../../data/videoStore';
 import { Worksheet, categories as wsCategories, grades as wsGrades } from '../../data/worksheetsData';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './AdminContentManager.css';
 
 type TabType = 'words' | 'games' | 'videos' | 'worksheets';
@@ -77,6 +78,14 @@ function AdminContentManager() {
     const [enriching, setEnriching] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+
+    // --- Delete Confirm State ---
+    type DeleteTarget =
+        | { type: 'word'; word: string }
+        | { type: 'game'; id: string; title: string }
+        | { type: 'video'; id: string; title: string }
+        | { type: 'worksheet'; id: string; title: string };
+    const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
 
     // ========== Load Data — all four fetches run in parallel ==========
     useEffect(() => {
@@ -353,46 +362,51 @@ function AdminContentManager() {
         }
     };
 
-    // Delete handlers
-    const handleDeleteWord = async (word: string) => {
-        if (!confirm(`Delete word "${word}"?`)) return;
-        try {
-            const res = await adminFetch(`/api/admin/words/${encodeURIComponent(word)}`, { method: 'DELETE' });
-            if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
-            wordStore.deleteWord(word);
-            setWords(prev => prev.filter(x => x.word !== word));
-            toast.success('Word deleted');
-        } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+    // Delete handlers — open confirm first
+    const handleDeleteWord = (word: string) => {
+        setDeleteTarget({ type: 'word', word });
     };
 
-    const handleDeleteGame = async (id: string) => {
-        if (!confirm('Delete this game?')) return;
-        try {
-            const res = await adminFetch(`/api/admin/games/${id}`, { method: 'DELETE' });
-            if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
-            setGames(prev => prev.filter(g => g.id !== id));
-            toast.success('Game deleted');
-        } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+    const handleDeleteGame = (id: string, title: string) => {
+        setDeleteTarget({ type: 'game', id, title });
     };
 
-    const handleDeleteVideo = async (id: string) => {
-        if (!confirm('Delete this video?')) return;
-        try {
-            const res = await adminFetch(`/api/admin/videos/${id}`, { method: 'DELETE' });
-            if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
-            await videoStore.fetchVideos();
-            setVideos(videoStore.getVideos());
-            toast.success('Video deleted');
-        } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+    const handleDeleteVideo = (id: string, title: string) => {
+        setDeleteTarget({ type: 'video', id, title });
     };
 
-    const handleDeleteWorksheet = async (id: string) => {
-        if (!confirm('Delete this worksheet?')) return;
+    const handleDeleteWorksheet = (id: string, title: string) => {
+        setDeleteTarget({ type: 'worksheet', id, title });
+    };
+
+    const executeDelete = async () => {
+        if (!deleteTarget) return;
+        const target = deleteTarget;
+        setDeleteTarget(null);
         try {
-            const res = await adminFetch(`/api/admin/worksheets/${id}`, { method: 'DELETE' });
-            if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
-            toast.success('Worksheet deleted');
-            await loadWorksheets();
+            if (target.type === 'word') {
+                const res = await adminFetch(`/api/admin/words/${encodeURIComponent(target.word)}`, { method: 'DELETE' });
+                if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
+                wordStore.deleteWord(target.word);
+                setWords(prev => prev.filter(x => x.word !== target.word));
+                toast.success('Word deleted');
+            } else if (target.type === 'game') {
+                const res = await adminFetch(`/api/admin/games/${target.id}`, { method: 'DELETE' });
+                if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
+                setGames(prev => prev.filter(g => g.id !== target.id));
+                toast.success('Game deleted');
+            } else if (target.type === 'video') {
+                const res = await adminFetch(`/api/admin/videos/${target.id}`, { method: 'DELETE' });
+                if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
+                await videoStore.fetchVideos();
+                setVideos(videoStore.getVideos());
+                toast.success('Video deleted');
+            } else if (target.type === 'worksheet') {
+                const res = await adminFetch(`/api/admin/worksheets/${target.id}`, { method: 'DELETE' });
+                if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || 'Delete failed'); }
+                toast.success('Worksheet deleted');
+                await loadWorksheets();
+            }
         } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
     };
 
@@ -608,7 +622,7 @@ function AdminContentManager() {
                                     <td>
                                         <div className="adm-table-actions">
                                             <button type="button" className="adm-icon-btn" onClick={() => openEditModal(game)}><Pencil size={14} /></button>
-                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteGame(game.id)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteGame(game.id, game.title)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -658,7 +672,7 @@ function AdminContentManager() {
                                     <td>
                                         <div className="adm-table-actions">
                                             <button type="button" className="adm-icon-btn" onClick={() => openEditModal(video)}><Pencil size={14} /></button>
-                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteVideo(video.id)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteVideo(video.id, video.title)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -702,7 +716,7 @@ function AdminContentManager() {
                                     <td>
                                         <div className="adm-table-actions">
                                             <button type="button" className="adm-icon-btn" onClick={() => openEditModal(ws)}><Pencil size={14} /></button>
-                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteWorksheet(ws.id)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteWorksheet(ws.id, ws.title)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -904,6 +918,20 @@ function AdminContentManager() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={executeDelete}
+                title="İçeriği Sil"
+                message={
+                    deleteTarget?.type === 'word'
+                        ? `"${deleteTarget.word}" kelimesini silmek istediğinizden emin misiniz?`
+                        : `"${(deleteTarget as { title?: string })?.title}" öğesini silmek istediğinizden emin misiniz?`
+                }
+                confirmLabel="Sil"
+                variant="danger"
+            />
         </div>
     );
 }

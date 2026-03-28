@@ -68,6 +68,7 @@ function TrapCard({
 
   return (
     <button
+      type="button"
       className={`ptt__card${isMastered ? ' ptt__card--mastered' : ''}`}
       style={{ ...cssVars, borderColor: isMastered ? 'var(--success, #10B981)' : `${trap.color}44` }}
       onClick={() => onSelect(trap)}

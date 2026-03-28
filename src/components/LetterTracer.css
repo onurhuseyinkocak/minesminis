@@ -209,7 +209,7 @@
 
 .lt-btn--primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--white);
   border-color: var(--primary);
 }
 

@@ -4,7 +4,7 @@ import { withRetry } from '../utils/retryUtils';
 
 // Columns needed for a full UserProfile — avoids select('*') bandwidth waste
 const USER_PROFILE_COLUMNS =
-  'id, email, role, display_name, avatar_url, bio, grade, subjects, points, badges, streak_days, level, xp, weekly_xp, last_login, is_online, settings, created_at';
+  'id, email, role, display_name, avatar_url, bio, grade, subjects, points, badges, streak_days, level, xp, last_login, is_online, settings, created_at, featured_badge';
 
 export interface UserProfile {
   id: string;
@@ -20,7 +20,7 @@ export interface UserProfile {
   streak_days: number;
   level: number;
   xp: number;
-  weekly_xp?: number;
+  featured_badge?: string | null;
   last_login: string;
   is_online: boolean;
   settings: Record<string, unknown>;
@@ -284,9 +284,10 @@ export const userService = {
 
     if (!user) return;
 
+    const newTotal = (user.points || 0) + points;
     const { error: updateError } = await supabase
       .from('users')
-      .update({ points: (user.points || 0) + points })
+      .update({ points: newTotal, xp: newTotal })
       .eq('id', userId);
 
     if (updateError) {

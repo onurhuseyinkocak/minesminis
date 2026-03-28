@@ -280,7 +280,7 @@ export default function Dashboard() {
           </Link>
           <div className="min-w-0">
             <p className="font-body text-sm leading-tight" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.hello')}</p>
-            <h1 className="font-display font-extrabold text-2xl truncate" style={{ color: 'var(--text-primary)' }}>{displayName}</h1>
+            <h1 className="font-display font-extrabold text-xl truncate" style={{ color: 'var(--text-primary)', maxWidth: '160px' }}>{displayName}</h1>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -313,11 +313,11 @@ export default function Dashboard() {
             {getXPProgress()}% · {getXPForNextLevel()} XP {lang === 'tr' ? 'sonraki seviye' : 'to next level'}
           </span>
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--bg-soft, #E8E8E8)' }}>
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'color-mix(in srgb, var(--ink-900, #1e293b) 12%, transparent)' }}>
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{
-              width: `${Math.max(getXPProgress(), 2)}%`,
+              width: `${getXPProgress()}%`,
               background: 'linear-gradient(90deg, var(--warning), var(--warning-light, #FFD700))',
             }}
           />
@@ -467,10 +467,10 @@ export default function Dashboard() {
           <span className="font-display font-bold" style={{ color: 'var(--text-primary)' }}>{t('dashboard.wordsIKnow')}</span>
           <span className="font-display font-bold" style={{ color: 'var(--primary)' }}>{learnedCount}/200</span>
         </div>
-        <div className="h-3 rounded-full overflow-hidden" style={{ background: 'var(--bg-soft, #F1F5F9)' }}>
+        <div className="h-3 rounded-full overflow-hidden" style={{ background: 'color-mix(in srgb, var(--ink-900, #1e293b) 12%, transparent)' }}>
           <div
             className="h-full rounded-full transition-all duration-500"
-            style={{ width: `${Math.max((learnedCount / 200) * 100, 2)}%`, background: 'linear-gradient(90deg, var(--success), var(--success-light))' }}
+            style={{ width: `${(learnedCount / 200) * 100}%`, background: 'linear-gradient(90deg, var(--success), var(--success-light))' }}
           />
         </div>
       </motion.section>
@@ -548,11 +548,11 @@ export default function Dashboard() {
               {todayXP} / {dailyGoal} XP {lang === 'tr' ? 'bugün' : 'today'}
             </p>
             {/* XP progress bar — gradient-primary token */}
-            <div className="h-2.5 w-full rounded-full overflow-hidden" style={{ background: 'var(--bg-soft, #F1F5F9)' }} aria-hidden="true">
+            <div className="h-2.5 w-full rounded-full overflow-hidden" style={{ background: 'color-mix(in srgb, var(--ink-900, #1e293b) 12%, transparent)' }} aria-hidden="true">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
-                  width: `${Math.max(Math.min((todayXP / dailyGoal) * 100, 100), 2)}%`,
+                  width: `${Math.min((todayXP / dailyGoal) * 100, 100)}%`,
                   background: 'var(--gradient-primary)',
                 }}
               />

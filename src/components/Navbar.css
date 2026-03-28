@@ -348,6 +348,8 @@
   justify-content: center;
   width: 36px;
   height: 36px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--bg-muted);

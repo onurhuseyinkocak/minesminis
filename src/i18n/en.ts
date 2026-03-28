@@ -555,6 +555,7 @@ const en = {
     message: 'Oops! The page you\'re looking for has drifted off into space like a lost rocket.',
     subMessage: 'Don\'t worry — your learning adventure is still waiting for you back home.',
     backHome: 'Back to Home',
+    lostPath: 'Lost path:',
   },
   legal: {
     lastUpdated: 'Last updated: 01/03/2025',

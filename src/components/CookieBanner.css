@@ -11,6 +11,7 @@
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.25);
 }
 
+
 .cookie-banner__inner {
   max-width: 960px;
   margin: 0 auto;
@@ -30,14 +31,14 @@
 }
 
 .cookie-banner__link {
-  color: var(--primary, #6366f1);
+  color: var(--primary, #f97316);
   text-decoration: underline;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .cookie-banner__link:hover {
-  color: var(--primary-light, #818cf8);
+  color: var(--primary-light, #fb923c);
 }
 
 .cookie-banner__actions {
@@ -54,7 +55,7 @@
   cursor: pointer;
   border: none;
   transition: opacity 0.15s, transform 0.1s;
-  min-height: 36px;
+  min-height: var(--touch-target);
 }
 
 .cookie-banner__btn:hover {
@@ -72,8 +73,8 @@
 }
 
 .cookie-banner__btn--accept {
-  background: var(--primary, #6366f1);
-  color: #fff;
+  background: var(--primary, #f97316);
+  color: var(--white, #fff);
 }
 
 @media (max-width: 480px) {

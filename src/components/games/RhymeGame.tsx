@@ -452,6 +452,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const scoreRef = useRef(0);
   const [answered, setAnswered] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -493,6 +494,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
         SFX.correct();
         setShowFeedback('correct');
         const nextScore = score + 1;
+        scoreRef.current = nextScore;
         setScore(nextScore);
         advanceQuestion(nextScore);
       } else {
@@ -503,7 +505,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
         setTimeout(() => {
           setAnswered(false);
           setShowFeedback(null);
-          advanceQuestion(score);
+          advanceQuestion(scoreRef.current);
         }, 1400);
       }
     },
@@ -515,7 +517,8 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
     (correct: boolean) => {
       if (correct) {
         SFX.correct();
-        setScore((prev) => prev + 1);
+        scoreRef.current += 1;
+        setScore(scoreRef.current);
       } else {
         SFX.wrong();
         loseHeart();
@@ -530,7 +533,9 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
     if (nextIndex >= questions.length) {
       setCompleted(true);
       SFX.celebration();
-      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(score, questions.length), 4000);
+      // Use scoreRef to avoid stale closure — score state may not have updated yet
+      const finalScore = scoreRef.current;
+      autoCompleteTimeoutRef.current = setTimeout(() => onComplete(finalScore, questions.length), 4000);
     } else {
       setTimeout(() => {
         setCurrentIndex(nextIndex);
@@ -538,7 +543,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
         setShowFeedback(null);
       }, 600);
     }
-  }, [currentIndex, questions.length, onComplete, score]);
+  }, [currentIndex, questions.length, onComplete]);
 
   const handlePlayAgain = useCallback(() => {
     if (autoCompleteTimeoutRef.current) {
@@ -546,6 +551,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
       autoCompleteTimeoutRef.current = null;
     }
     setCurrentIndex(0);
+    scoreRef.current = 0;
     setScore(0);
     setAnswered(false);
     setCompleted(false);

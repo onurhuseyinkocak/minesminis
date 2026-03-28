@@ -152,10 +152,13 @@ export const DecodableReader: React.FC<DecodableReaderProps> = ({ text, highligh
             <motion.span
               key={i}
               onClick={() => handleWordClick(i)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleWordClick(i); } }}
+              role="button"
+              tabIndex={0}
               whileTap={{ scale: 0.95 }}
               style={{
                 display: 'inline-block',
-                padding: '0.15rem 0.35rem',
+                padding: '0.25rem 0.5rem',
                 margin: '0.1rem',
                 borderRadius: '0.5rem',
                 cursor: 'pointer',
@@ -170,6 +173,8 @@ export const DecodableReader: React.FC<DecodableReaderProps> = ({ text, highligh
                 fontWeight: 600,
                 color: '#333',
                 transition: 'all 0.2s ease',
+                minHeight: 44,
+                lineHeight: '44px',
               }}
               aria-label={`Word: ${word}`}
             >

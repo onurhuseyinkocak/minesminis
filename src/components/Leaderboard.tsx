@@ -134,7 +134,9 @@ const Leaderboard: React.FC = () => {
     }, [lang]);
 
     const podiumEntries = entries.slice(0, 3);
-    const listEntries = entries.slice(3);
+    // Show rank 4+ in the list; if there are fewer than 4 entries total, show all entries
+    // so users always see the ranked list below the podium
+    const listEntries = entries.length > 3 ? entries.slice(3) : entries;
     const currentUserEntry = entries.find((e) => e.isCurrentUser);
     const currentUserInList = listEntries.some((e) => e.isCurrentUser);
 

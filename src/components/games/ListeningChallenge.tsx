@@ -203,7 +203,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
                 >
-                  <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                  <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
                 </motion.span>
               ))}
             </span>
@@ -309,7 +309,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
                 whileTap={{ scale: 0.95 }}
               >
                 <span className={`listening-challenge__option-emoji${option.emoji ? '' : ' listening-challenge__option-emoji--fallback'}`}
-                >{option.emoji || option.english[0].toUpperCase()}</span>
+                >{option.emoji || (option.english.charAt(0) || '?').toUpperCase()}</span>
                 <span className="listening-challenge__option-label">{option.english}</span>
               </motion.button>
             );

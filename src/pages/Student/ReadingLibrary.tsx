@@ -319,6 +319,7 @@ const ReadingLibrary: React.FC = () => {
 
                     return (
                       <motion.button
+                        type="button"
                         key={book.id}
                         whileHover={!isLocked ? { y: -8, scale: 1.05 } : {}}
                         whileTap={!isLocked ? { scale: 0.95 } : {}}
@@ -367,7 +368,7 @@ const ReadingLibrary: React.FC = () => {
                         {isCompleted && (
                           <CheckCircle
                             size={12}
-                            style={{ color: '#10B981', marginTop: 2 }}
+                            style={{ color: 'var(--success, #10B981)', marginTop: 2 }}
                           />
                         )}
                         {bestWpm !== null && (
@@ -377,7 +378,7 @@ const ReadingLibrary: React.FC = () => {
                           </div>
                         )}
                         {isLocked && (
-                          <Lock size={16} style={{ color: '#F1F5F9', marginTop: 4 }} />
+                          <Lock size={16} style={{ color: 'var(--text-on-primary, #fff)', marginTop: 4 }} />
                         )}
                       </motion.button>
                     );

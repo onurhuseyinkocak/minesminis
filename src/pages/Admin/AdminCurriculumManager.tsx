@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './AdminCurriculumManager.css';
 
 // The 12 worlds from the curriculum
@@ -125,6 +126,8 @@ function AdminCurriculumManager() {
     const [isWorldModal, setIsWorldModal] = useState(false);
     const [editingWorld, setEditingWorld] = useState<World | null>(null);
     const [worldForm, setWorldForm] = useState({ name: '', nameEn: '', emoji: '', color: 'var(--warning)', description: '', ageRange: '3-5' });
+    const [deleteWorldTarget, setDeleteWorldTarget] = useState<{ world: World; lessonCount: number } | null>(null);
+    const [deleteLessonTarget, setDeleteLessonTarget] = useState<Lesson | null>(null);
 
     // Load from Supabase (if available)
     useEffect(() => {
@@ -222,12 +225,17 @@ function AdminCurriculumManager() {
         }
     };
 
-    const handleDeleteWorld = async (worldId: string) => {
-        const worldLessonCount = lessons.filter(l => l.worldId === worldId).length;
-        const msg = worldLessonCount > 0
-            ? `Delete this world and its ${worldLessonCount} lesson(s)?`
-            : 'Delete this world?';
-        if (!confirm(msg)) return;
+    const handleDeleteWorld = (worldId: string) => {
+        const world = worlds.find(w => w.id === worldId);
+        if (!world) return;
+        const lessonCount = lessons.filter(l => l.worldId === worldId).length;
+        setDeleteWorldTarget({ world, lessonCount });
+    };
+
+    const executeDeleteWorld = async () => {
+        if (!deleteWorldTarget) return;
+        const worldId = deleteWorldTarget.world.id;
+        setDeleteWorldTarget(null);
         try {
             await supabase.from('curriculum_lessons').delete().eq('world_id', worldId);
             await supabase.from('curriculum_worlds').delete().eq('id', worldId);
@@ -303,8 +311,16 @@ function AdminCurriculumManager() {
         }
     };
 
-    const handleDeleteLesson = async (lessonId: string) => {
-        if (!confirm('Delete this lesson?')) return;
+    const handleDeleteLesson = (lessonId: string) => {
+        const lesson = lessons.find(l => l.id === lessonId);
+        if (!lesson) return;
+        setDeleteLessonTarget(lesson);
+    };
+
+    const executeDeleteLesson = async () => {
+        if (!deleteLessonTarget) return;
+        const lessonId = deleteLessonTarget.id;
+        setDeleteLessonTarget(null);
         try {
             await supabase.from('curriculum_lessons').delete().eq('id', lessonId);
         } catch {
@@ -444,7 +460,7 @@ function AdminCurriculumManager() {
                                     <div key={lesson.id}>
                                         <div className="adm-lesson-row">
                                             <div className="adm-lesson-order">{idx + 1}</div>
-                                            <div className="adm-lesson-info adm-lesson-info-clickable" onClick={() => setExpandedLessonId(expandedLessonId === lesson.id ? null : lesson.id)}>
+                                            <div className="adm-lesson-info adm-lesson-info-clickable" role="button" tabIndex={0} onClick={() => setExpandedLessonId(expandedLessonId === lesson.id ? null : lesson.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setExpandedLessonId(expandedLessonId === lesson.id ? null : lesson.id)}>
                                                 <div className="adm-lesson-name">
                                                     {lesson.title}
                                                     {lesson.status === 'draft' && (
@@ -628,6 +644,30 @@ function AdminCurriculumManager() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={deleteWorldTarget !== null}
+                onClose={() => setDeleteWorldTarget(null)}
+                onConfirm={executeDeleteWorld}
+                title="Dünyayı Sil"
+                message={
+                    deleteWorldTarget?.lessonCount
+                        ? `Bu dünyayı ve içindeki ${deleteWorldTarget.lessonCount} dersi silmek istediğinizden emin misiniz?`
+                        : 'Bu dünyayı silmek istediğinizden emin misiniz?'
+                }
+                confirmLabel="Sil"
+                variant="danger"
+            />
+
+            <ConfirmModal
+                isOpen={deleteLessonTarget !== null}
+                onClose={() => setDeleteLessonTarget(null)}
+                onConfirm={executeDeleteLesson}
+                title="Dersi Sil"
+                message={`"${deleteLessonTarget?.title}" dersini silmek istediğinizden emin misiniz?`}
+                confirmLabel="Sil"
+                variant="danger"
+            />
         </div>
     );
 }

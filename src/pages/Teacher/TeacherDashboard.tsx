@@ -474,7 +474,7 @@ function TeacherDashboardInner({
                     </p>
                   )}
 
-                  <button className="td-btn td-btn-primary" onClick={handleCreateSubmit}>
+                  <button type="button" className="td-btn td-btn-primary" onClick={handleCreateSubmit}>
                     {lang === 'tr' ? 'Sınıf Oluştur' : 'Create Classroom'}
                   </button>
 

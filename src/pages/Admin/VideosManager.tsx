@@ -4,6 +4,7 @@ import { gradeInfo } from '../../data/videosData';
 import { videoStore, type Video } from '../../data/videoStore';
 import { adminFetch, getAdminApiBase } from '../../utils/adminApi';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './VideosManager.css';
 
 type VideoType = 'song' | 'lesson' | 'story';
@@ -181,9 +182,16 @@ function VideosManager() {
     };
 
     const [deleting, setDeleting] = useState<string | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<Video | null>(null);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Bu videoyu silmek istediğinizden emin misiniz?')) return;
+    const handleDelete = (video: Video) => {
+        setDeleteTarget(video);
+    };
+
+    const executeDelete = async () => {
+        if (!deleteTarget) return;
+        const id = deleteTarget.id;
+        setDeleteTarget(null);
         setDeleting(id);
         try {
             const res = await adminFetch(`/api/admin/videos/${id}`, { method: 'DELETE' });
@@ -314,7 +322,7 @@ function VideosManager() {
                                         <button type="button" className="edit-btn" onClick={() => openEditModal(video)} disabled={deleting === video.id}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(video.id)} disabled={deleting === video.id}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(video)} disabled={deleting === video.id}>
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
@@ -473,6 +481,16 @@ function VideosManager() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={executeDelete}
+                title="Videoyu Sil"
+                message={`"${deleteTarget?.title}" videosunu silmek istediğinizden emin misiniz?`}
+                confirmLabel="Sil"
+                variant="danger"
+            />
         </div>
     );
 }

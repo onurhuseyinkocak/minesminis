@@ -87,7 +87,7 @@ export const BlendingBoard: React.FC<BlendingBoardProps> = ({ words, onComplete,
     if (nextSlot === -1) return;
 
     // Check if this is the correct sound for this slot
-    if (tile.sound.toLowerCase() !== sounds[nextSlot].toLowerCase()) {
+    if (!sounds[nextSlot] || tile.sound.toLowerCase() !== sounds[nextSlot].toLowerCase()) {
       setFeedback('wrong');
       onWrongAnswer?.();
       setTimeout(() => setFeedback(null), 600);

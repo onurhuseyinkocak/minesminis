@@ -557,6 +557,7 @@ const tr: TranslationKeys = {
     message: 'Hay aksi! Aradığın sayfa kayıp bir roket gibi uzayda kayboldu.',
     subMessage: 'Merak etme — öğrenme maceran seni ana sayfada bekliyor.',
     backHome: 'Ana Sayfaya Dön',
+    lostPath: 'Kayıp yol:',
   },
   legal: {
     lastUpdated: 'Son güncelleme: 01/03/2025',

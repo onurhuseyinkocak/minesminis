@@ -230,7 +230,7 @@
   justify-content: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
-  min-height: var(--btn-height-sm, 36px);
+  min-height: var(--touch-target, 44px);
   background: var(--gc-color, var(--primary));
   color: var(--text-on-primary);
   border: none;
@@ -298,7 +298,7 @@
 }
 
 .game-card__lock-icon {
-  color: #fff;
+  color: var(--white);
   opacity: 0.85;
   display: flex;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
@@ -323,7 +323,7 @@
   top: -8px;
   right: 12px;
   background: var(--warning, #F59E0B);
-  color: #fff;
+  color: var(--white);
   font-size: 12px;
   font-weight: 800;
   padding: 3px 10px;

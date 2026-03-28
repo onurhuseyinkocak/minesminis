@@ -708,7 +708,7 @@
   height: 84px;
   border-radius: 50%;
   border: 3px solid var(--primary, #f59e0b);
-  border-bottom: 4px solid #b97708; /* color-mix fallback: #f59e0b 75% + black */
+  border-bottom: 4px solid var(--warning-dark, #b97708);
   border-bottom: 4px solid color-mix(in srgb, var(--primary, #f59e0b) 75%, #000);
   background: rgba(245, 158, 11, 0.1);
   color: var(--primary, #f59e0b);

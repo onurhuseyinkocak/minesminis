@@ -155,7 +155,7 @@
 @media (max-width: 480px) {
   .cat-house-widget {
     width: 90px;
-    bottom: 72px;   /* above bottom nav */
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 12px);   /* above bottom nav */
     right: 12px;
   }
   .cat-house__svg { width: 90px; height: 82px; }

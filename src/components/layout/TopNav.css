@@ -258,6 +258,8 @@
 
 .topnav__streak-icon { font-size: 1rem; line-height: 1; }
 
+.topnav__streak-flame { color: var(--warning, #FF6B35); }
+
 /* XP bar */
 .topnav__xp {
   display: flex;

@@ -179,11 +179,11 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
 
             <span>
               {pct >= 90 ? (
-                <Trophy size={48} color="var(--primary, #E8A317)" />
+                <Trophy size={48} color="var(--primary)" />
               ) : pct >= 60 ? (
-                <Star size={48} fill="var(--primary, #E8A317)" color="var(--primary, #E8A317)" />
+                <Star size={48} fill="var(--primary)" color="var(--primary)" />
               ) : (
-                <Check size={48} color="var(--mimi-green, #4caf50)" />
+                <Check size={48} color="var(--success)" />
               )}
             </span>
 
@@ -202,8 +202,8 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                 >
                   <Star
                     size={32}
-                    fill={i < stars ? '#E8A317' : 'none'}
-                    color={i < stars ? '#E8A317' : '#ccc'}
+                    fill={i < stars ? 'var(--primary)' : 'none'}
+                    color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'}
                   />
                 </motion.span>
               ))}

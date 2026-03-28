@@ -442,7 +442,7 @@
 
 .modal-close:hover {
   background: rgba(220, 38, 38, 0.8);
-  color: #fff;
+  color: var(--white);
   transform: scale(1.08) rotate(90deg);
 }
 

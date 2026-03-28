@@ -6,6 +6,8 @@ import { Volume2, Mic, Check } from "lucide-react";
 import './Words.css';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { kidsWords as fallbackWords } from '../data/wordsData';
 import { getCardThumbnailUrl } from '../utils/imageTransform';
 import { getDueWords, updateWordProgress, type WordProgress } from '../data/spacedRepetition';
@@ -50,11 +52,10 @@ function saveLearnedToLS(words: Set<string>) {
 
 const Words: React.FC = () => {
   const { user } = useAuth();
+  const { lang } = useLanguage();
+  const isTr = lang === 'tr';
   const navigate = useNavigate();
-  useEffect(() => {
-    document.title = 'Kelimeler — MinesMinis';
-    return () => { document.title = 'MinesMinis'; };
-  }, []);
+  usePageTitle('Kelimeler', 'Words');
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>(
     (searchParams.get('tab') as TabType) || 'words'
@@ -194,7 +195,7 @@ const Words: React.FC = () => {
   const startPronunciation = (wordText: string) => {
     const SRConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SRConstructor) {
-      toast.error("Your browser doesn't support speech recognition. Try Chrome!");
+      toast.error(isTr ? 'Tarayıcın ses tanıma desteklemiyor. Chrome dene!' : "Your browser doesn't support speech recognition. Try Chrome!");
       return;
     }
     if (pronunciationWord === wordText) return;
@@ -214,11 +215,11 @@ const Words: React.FC = () => {
       if (transcript === target) {
         setPronunciationResult((prev) => ({ ...prev, [wordText]: 'correct' }));
         SFX.correct();
-        toast.success(`Perfect! "${wordText}"`);
+        toast.success(isTr ? `Mükemmel! "${wordText}"` : `Perfect! "${wordText}"`);
       } else {
         setPronunciationResult((prev) => ({ ...prev, [wordText]: 'wrong' }));
         SFX.wrong();
-        toast.error(`You said "${transcript}" - Try "${wordText}"`);
+        toast.error(isTr ? `"${transcript}" dedin — "${wordText}" dene` : `You said "${transcript}" - Try "${wordText}"`);
       }
       setPronunciationWord(null);
       setTimeout(() => {
@@ -229,7 +230,7 @@ const Words: React.FC = () => {
     recognition.onerror = () => {
       setPronunciationWord(null);
       setPronunciationResult((prev) => { const n = { ...prev }; delete n[wordText]; return n; });
-      toast.error('Could not hear you. Try again!');
+      toast.error(isTr ? 'Seni duyamadım. Tekrar dene!' : 'Could not hear you. Try again!');
     };
 
     recognition.onend = () => setPronunciationWord(null);
@@ -244,7 +245,7 @@ const Words: React.FC = () => {
       newLearned.add(word);
       updateWordProgress(word, true);
       SFX.correct();
-      toast.success('Word learned!');
+      toast.success(isTr ? 'Kelime öğrenildi!' : 'Word learned!');
     }
     setLearnedWords(newLearned);
     saveLearnedToLS(newLearned);
@@ -266,7 +267,7 @@ const Words: React.FC = () => {
       setDueWords(getDueWords());
       setReviewIndex(0);
       setReviewRevealed(false);
-      toast.success('Review done!');
+      toast.success(isTr ? 'Tekrar tamamlandı!' : 'Review done!');
     }
   };
 
@@ -321,9 +322,9 @@ const Words: React.FC = () => {
   const myWords = deduplicatedWords.filter(w => learnedWords.has(w.word) || favoriteWords.has(w.word));
 
   const TABS: { id: TabType; icon: React.ReactNode; label: string }[] = [
-    { id: 'words', icon: <KidIcon name="book" size={20} />, label: 'All Words' },
-    { id: 'review', icon: <KidIcon name="star" size={20} />, label: 'Review' },
-    { id: 'mywords', icon: <KidIcon name="heart" size={20} />, label: 'My Words' },
+    { id: 'words', icon: <KidIcon name="book" size={20} />, label: isTr ? 'Tüm Kelimeler' : 'All Words' },
+    { id: 'review', icon: <KidIcon name="star" size={20} />, label: isTr ? 'Tekrar' : 'Review' },
+    { id: 'mywords', icon: <KidIcon name="heart" size={20} />, label: isTr ? 'Kelimelerim' : 'My Words' },
   ];
 
   return (
@@ -331,17 +332,18 @@ const Words: React.FC = () => {
       {/* Hero */}
       <div className="words-hero">
         <span className="words-hero-emoji"><KidIcon name="book" size={48} /></span>
-        <h1 className="words-hero-title">My Words</h1>
+        <h1 className="words-hero-title">{isTr ? 'Kelimelerim' : 'My Words'}</h1>
       </div>
 
       {/* Flashcard Review entry point */}
       <div className="words-flashcard-cta">
         <button
+          type="button"
           className="words-flashcard-cta-btn"
           onClick={() => navigate('/review/flashcards')}
         >
           <KidIcon name="star" size={22} />
-          <span>Kelime Kartları</span>
+          <span>{isTr ? 'Kelime Kartları' : 'Flashcards'}</span>
           <span className="words-flashcard-cta-arrow">→</span>
         </button>
       </div>
@@ -351,6 +353,7 @@ const Words: React.FC = () => {
         {TABS.map(tab => (
           <button
             key={tab.id}
+            type="button"
             className={`words-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => handleTabSwitch(tab.id)}
           >
@@ -367,28 +370,48 @@ const Words: React.FC = () => {
             <input
               type="text"
               className="words-search-input"
-              placeholder="Search words..."
+              placeholder={isTr ? 'Kelime ara...' : 'Search words...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search words"
+              aria-label={isTr ? 'Kelime ara' : 'Search words'}
             />
           </div>
           <div className="words-category-row">
             <button
+              type="button"
               className={`words-category-chip ${selectedCategory === 'all' ? 'active' : ''}`}
               onClick={() => setSelectedCategory('all')}
             >
-              All
+              {isTr ? 'Tümü' : 'All'}
             </button>
-            {categories.map(cat => (
-              <button
-                key={cat}
-                className={`words-category-chip ${selectedCategory === cat ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map(cat => {
+              const CATEGORY_TR: Record<string, string> = {
+                Phonics: 'Fonetik',
+                Animals: 'Hayvanlar',
+                Colors: 'Renkler',
+                Food: 'Yiyecekler',
+                Family: 'Aile',
+                Body: 'Vücut',
+                Numbers: 'Sayılar',
+                Nature: 'Doğa',
+                Sports: 'Spor',
+                School: 'Okul',
+                Home: 'Ev',
+                Clothes: 'Kıyafet',
+                Weather: 'Hava',
+              };
+              const label = isTr ? (CATEGORY_TR[cat] ?? cat) : cat;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`words-category-chip ${selectedCategory === cat ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -428,8 +451,6 @@ const Words: React.FC = () => {
                                 <div className="kid-card-visual">
                                   {word.image_url ? (
                                     <img src={getCardThumbnailUrl(word.image_url) ?? word.image_url ?? ''} alt={word.turkish} className="kid-card-image" loading="lazy" width={200} height={200} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
-                                  ) : word.emoji ? (
-                                    <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                                   ) : (
                                     <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                                   )}
@@ -449,17 +470,17 @@ const Words: React.FC = () => {
                                     onClick={() => startPronunciation(word.word)}
                                     disabled={pronunciationWord === word.word}
                                   >
-                                    <Mic size={22} /> Speak
+                                    <Mic size={22} /> {isTr ? 'Söyle' : 'Speak'}
                                   </button>
                                   <button
                                     type="button"
                                     className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                                     onClick={() => toggleLearned(word.word)}
                                   >
-                                    {learnedWords.has(word.word) ? <><Check size={14} /> Learned!</> : <><Check size={14} /> I know this!</>}
+                                    {learnedWords.has(word.word) ? <><Check size={14} /> {isTr ? 'Öğrendim!' : 'Learned!'}</> : <><Check size={14} /> {isTr ? 'Biliyorum!' : 'I know this!'}</>}
                                   </button>
                                 </div>
-                                <button type="button" className="kid-card-close" onClick={(e) => { e.stopPropagation(); setFlippedCard(null); }}>Tap to close</button>
+                                <button type="button" className="kid-card-close" onClick={(e) => { e.stopPropagation(); setFlippedCard(null); }}>{isTr ? 'Kapat' : 'Tap to close'}</button>
                               </div>
                             </div>
                           </motion.div>
@@ -485,8 +506,6 @@ const Words: React.FC = () => {
                           <div className="kid-card-visual">
                             {word.image_url ? (
                               <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
-                            ) : word.emoji ? (
-                              <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                             ) : (
                               <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                             )}
@@ -503,7 +522,7 @@ const Words: React.FC = () => {
                               onClick={() => playWordAudio(word)}
                               disabled={isLoadingAudio}
                             >
-                              <Volume2 size={22} /> Listen
+                              <Volume2 size={22} /> {isTr ? 'Dinle' : 'Listen'}
                             </button>
                             <button
                               type="button"
@@ -511,14 +530,14 @@ const Words: React.FC = () => {
                               onClick={() => startPronunciation(word.word)}
                               disabled={pronunciationWord === word.word}
                             >
-                              <Mic size={22} /> Speak
+                              <Mic size={22} /> {isTr ? 'Söyle' : 'Speak'}
                             </button>
                             <button
                               type="button"
                               className={`kid-action-btn know ${learnedWords.has(word.word) ? 'known' : ''}`}
                               onClick={() => toggleLearned(word.word)}
                             >
-                              {learnedWords.has(word.word) ? <><Check size={14} /> Learned!</> : <><Check size={14} /> I know this!</>}
+                              {learnedWords.has(word.word) ? <><Check size={14} /> {isTr ? 'Öğrendim!' : 'Learned!'}</> : <><Check size={14} /> {isTr ? 'Biliyorum!' : 'I know this!'}</>}
                             </button>
                           </div>
                           <button
@@ -526,7 +545,7 @@ const Words: React.FC = () => {
                             className="kid-card-close"
                             onClick={(e) => { e.stopPropagation(); setFlippedCard(null); }}
                           >
-                            Tap to close
+                            {isTr ? 'Kapat' : 'Tap to close'}
                           </button>
                         </div>
                       </div>
@@ -539,28 +558,30 @@ const Words: React.FC = () => {
               {!isLoading && filteredWords.length === 0 && (
                 <div className="words-empty">
                   <span className="words-empty-emoji"><KidIcon name="book" size={48} /></span>
-                  <h3>No words found</h3>
-                  <p>Try a different search or category.</p>
+                  <h3>{isTr ? 'Kelime bulunamadı' : 'No words found'}</h3>
+                  <p>{isTr ? 'Farklı bir arama veya kategori dene.' : 'Try a different search or category.'}</p>
                 </div>
               )}
 
               {!showMoreWords && filteredWords.length > INITIAL_DISPLAY_COUNT && (
                 <div className="more-words-row">
                   <button
+                    type="button"
                     className="more-words-btn"
                     onClick={() => setShowMoreWords(true)}
                   >
-                    More Words ({filteredWords.length - INITIAL_DISPLAY_COUNT} more)
+                    {isTr ? `Daha Fazla (${filteredWords.length - INITIAL_DISPLAY_COUNT} tane daha)` : `More Words (${filteredWords.length - INITIAL_DISPLAY_COUNT} more)`}
                   </button>
                 </div>
               )}
               {showMoreWords && filteredWords.length > INITIAL_DISPLAY_COUNT && (
                 <div className="more-words-row">
                   <button
+                    type="button"
                     className="more-words-btn"
                     onClick={() => setShowMoreWords(false)}
                   >
-                    Show Less
+                    {isTr ? 'Daha Az Göster' : 'Show Less'}
                   </button>
                 </div>
               )}
@@ -578,8 +599,8 @@ const Words: React.FC = () => {
               {dueWords.length === 0 ? (
                 <div className="words-empty">
                   <span className="words-empty-emoji"><KidIcon name="star" size={48} /></span>
-                  <h3>All caught up!</h3>
-                  <p>No words to review right now. Keep learning!</p>
+                  <h3>{isTr ? 'Hepsi tamam!' : 'All caught up!'}</h3>
+                  <p>{isTr ? 'Şu an tekrarlanacak kelime yok. Öğrenmeye devam et!' : 'No words to review right now. Keep learning!'}</p>
                 </div>
               ) : (() => {
                 const currentDue = dueWords[reviewIndex];
@@ -587,12 +608,16 @@ const Words: React.FC = () => {
                 return (
                   <div className="review-container">
                     <p className="review-progress">
-                      {reviewIndex + 1} of {dueWords.length} words
+                      {reviewIndex + 1} {isTr ? '/' : 'of'} {dueWords.length} {isTr ? 'kelime' : 'words'}
                     </p>
 
                     <div
                       className="review-flashcard"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={isTr ? 'Kelimeyi görmek için dokun' : 'Tap to see the word'}
                       onClick={() => setReviewRevealed(true)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setReviewRevealed(true); }}
                     >
                       <div className="review-letter-badge">{(dueWords[reviewIndex]?.wordId || '?').charAt(0).toUpperCase()}</div>
 
@@ -604,7 +629,7 @@ const Words: React.FC = () => {
                       ) : (
                         <>
                           <span className="review-question">?</span>
-                          <span className="review-hint">Tap to see the word!</span>
+                          <span className="review-hint">{isTr ? 'Kelimeyi görmek için dokun!' : 'Tap to see the word!'}</span>
                         </>
                       )}
                     </div>
@@ -612,16 +637,18 @@ const Words: React.FC = () => {
                     {reviewRevealed && (
                       <div className="review-buttons">
                         <button
+                          type="button"
                           className="review-btn again"
                           onClick={() => handleReviewAnswer(false)}
                         >
-                          Show me again
+                          {isTr ? 'Tekrar göster' : 'Show me again'}
                         </button>
                         <button
+                          type="button"
                           className="review-btn know"
                           onClick={() => handleReviewAnswer(true)}
                         >
-                          I know it!
+                          {isTr ? 'Biliyorum!' : 'I know it!'}
                         </button>
                       </div>
                     )}
@@ -642,8 +669,8 @@ const Words: React.FC = () => {
               {myWords.length === 0 ? (
                 <div className="words-empty">
                   <span className="words-empty-emoji"><KidIcon name="star" size={48} /></span>
-                  <h3>No words yet!</h3>
-                  <p>Tap "I know this!" on word cards to add them here.</p>
+                  <h3>{isTr ? 'Henüz kelime yok!' : 'No words yet!'}</h3>
+                  <p>{isTr ? 'Kelime kartlarında "Biliyorum!" butonuna dokun.' : 'Tap "I know this!" on word cards to add them here.'}</p>
                 </div>
               ) : (
                 <div className="kid-word-cards">
@@ -660,8 +687,6 @@ const Words: React.FC = () => {
                         <div className="kid-card-visual">
                           {word.image_url ? (
                             <img src={word.image_url} alt={word.turkish} className="kid-card-image" loading="lazy" />
-                          ) : word.emoji ? (
-                            <span className="kid-card-emoji-display" style={{fontSize:'2.2rem',lineHeight:1}}>{word.emoji}</span>
                           ) : (
                             <div className="kid-card-letter-badge">{word.word.charAt(0).toUpperCase()}</div>
                           )}

@@ -130,6 +130,7 @@ function Videos() {
             {grades.map((grade) => (
               <button
                 key={grade}
+                type="button"
                 onClick={() => setSelectedGrade(grade)}
                 className={`modern-tab ${selectedGrade === grade ? 'active' : ''}`}
               >
@@ -242,6 +243,10 @@ function Videos() {
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: idx * 0.06 }}
                               onClick={() => handlePhonicsVideoClick(video)}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePhonicsVideoClick(video); } }}
+                              role="button"
+                              tabIndex={0}
+                              aria-label={video.title}
                               whileHover={{ y: -4, scale: 1.02 }}
                             >
                               <div className="phonics-video-thumbnail">
@@ -320,6 +325,10 @@ function Videos() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 * index }}
                 onClick={() => handleRegularVideoClick(video)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleRegularVideoClick(video); } }}
+                role="button"
+                tabIndex={0}
+                aria-label={video.title}
                 whileHover={{ y: -8 }}
               >
                 <div className="popular-thumbnail">
@@ -383,6 +392,10 @@ function Videos() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => handleRegularVideoClick(video)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleRegularVideoClick(video); } }}
+                role="button"
+                tabIndex={0}
+                aria-label={video.title}
                 whileHover={{ y: -8, scale: 1.02 }}
               >
                 <div className="video-thumbnail">
@@ -434,6 +447,10 @@ function Videos() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedVideo(null)}
+            onKeyDown={(e) => { if (e.key === 'Escape') setSelectedVideo(null); }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={lang === 'tr' ? 'Video oynatıcı' : 'Video player'}
           >
             <motion.div
               className="video-modal"
@@ -443,8 +460,10 @@ function Videos() {
               onClick={(e) => e.stopPropagation()}
             >
               <motion.button
+                type="button"
                 className="modal-close"
                 onClick={() => setSelectedVideo(null)}
+                aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -481,7 +500,7 @@ function Videos() {
                       style={{
                         padding: '0.5rem 1.25rem',
                         background: 'var(--primary, #FF6B35)',
-                        color: '#fff',
+                        color: 'var(--color-white, #fff)',
                         borderRadius: '0.5rem',
                         fontWeight: 700,
                         textDecoration: 'none',

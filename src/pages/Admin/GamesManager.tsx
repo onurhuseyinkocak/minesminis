@@ -5,6 +5,7 @@ import { gameStore } from '../../data/gameStore';
 import { adminFetch } from '../../utils/adminApi';
 import type { Database } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './GamesManager.css';
 
 type SupabaseGameRow = Database['public']['Tables']['games']['Row'];
@@ -82,6 +83,7 @@ function GamesManager() {
     const [deletingGameId, setDeletingGameId] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [formData, setFormData] = useState<GameFormData>(INITIAL_FORM);
+    const [deleteTarget, setDeleteTarget] = useState<GameRow | null>(null);
 
     const loadLocalGames = useCallback((): GameRow[] => {
         const local = gameStore.getGames();
@@ -213,8 +215,14 @@ function GamesManager() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Bu oyunu silmek istediğinizden emin misiniz?')) return;
+    const handleDelete = (game: GameRow) => {
+        setDeleteTarget(game);
+    };
+
+    const executeDelete = async () => {
+        if (!deleteTarget) return;
+        const id = deleteTarget.id;
+        setDeleteTarget(null);
         setDeletingGameId(id);
         try {
             const res = await adminFetch(`/api/admin/games/${id}`, { method: 'DELETE' });
@@ -330,7 +338,7 @@ function GamesManager() {
                                         <button type="button" className="edit-btn" onClick={() => openEditModal(game)} disabled={deletingGameId === game.id}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(String(game.id))} disabled={deletingGameId === game.id}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(game)} disabled={deletingGameId === game.id}>
                                             {deletingGameId === game.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                         </button>
                                     </div>
@@ -476,6 +484,16 @@ function GamesManager() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={executeDelete}
+                title="Oyunu Sil"
+                message={`"${deleteTarget?.title}" oyununu silmek istediğinizden emin misiniz?`}
+                confirmLabel="Sil"
+                variant="danger"
+            />
         </div>
     );
 }

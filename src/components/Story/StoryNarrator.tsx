@@ -57,7 +57,7 @@ const StoryNarrator: React.FC<StoryNarratorProps> = ({
   };
 
   return (
-    <div className="story-narrator" onClick={!isComplete ? handleSkip : undefined}>
+    <div className="story-narrator" onClick={!isComplete ? handleSkip : undefined} role={!isComplete ? 'button' : undefined} tabIndex={!isComplete ? 0 : undefined} onKeyDown={!isComplete ? (e) => (e.key === 'Enter' || e.key === ' ') && handleSkip() : undefined}>
       {/* Location badge */}
       <div className="story-narrator__location">
         <span className="story-narrator__location-dot" />
@@ -67,7 +67,7 @@ const StoryNarrator: React.FC<StoryNarratorProps> = ({
       {/* NPC indicator */}
       {npcName && (
         <div className="story-narrator__npc">
-          <div className="story-narrator__npc-emoji" style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{npcName.charAt(0).toUpperCase()}</div>
+          <div className="story-narrator__npc-emoji" style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: 'var(--text-on-primary, #fff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{npcName.charAt(0).toUpperCase()}</div>
           <span className="story-narrator__npc-name">{npcName}</span>
         </div>
       )}

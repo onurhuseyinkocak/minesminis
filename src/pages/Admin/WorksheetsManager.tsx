@@ -4,6 +4,7 @@ import { Worksheet, categories, grades } from '../../data/worksheetsData';
 import { adminFetch } from '../../utils/adminApi';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './WorksheetsManager.css';
 
 interface SupabaseWorksheetRow {
@@ -51,6 +52,7 @@ function WorksheetsManager() {
     const [uploading, setUploading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<Worksheet | null>(null);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -199,8 +201,14 @@ function WorksheetsManager() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Bu çalışma kağıdını silmek istediğinizden emin misiniz?')) return;
+    const handleDelete = (worksheet: Worksheet) => {
+        setDeleteTarget(worksheet);
+    };
+
+    const executeDelete = async () => {
+        if (!deleteTarget) return;
+        const id = deleteTarget.id;
+        setDeleteTarget(null);
         setDeletingId(id);
         try {
             const res = await adminFetch(`/api/admin/worksheets/${id}`, { method: 'DELETE' });
@@ -209,7 +217,7 @@ function WorksheetsManager() {
             toast.success('Çalışma kağıdı silindi!');
             await fetchWorksheets();
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Silme basarisiz');
+            toast.error(err instanceof Error ? err.message : 'Silme başarısız');
         } finally {
             setDeletingId(null);
         }
@@ -335,7 +343,7 @@ function WorksheetsManager() {
                                         <button type="button" className="edit-btn" onClick={() => openEditModal(ws)} disabled={deletingId === ws.id}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(ws.id)} disabled={deletingId === ws.id}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(ws)} disabled={deletingId === ws.id}>
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
@@ -467,6 +475,16 @@ function WorksheetsManager() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={executeDelete}
+                title="Çalışma Kağıdını Sil"
+                message={`"${deleteTarget?.title}" çalışma kağıdını silmek istediğinizden emin misiniz?`}
+                confirmLabel="Sil"
+                variant="danger"
+            />
         </div>
     );
 }

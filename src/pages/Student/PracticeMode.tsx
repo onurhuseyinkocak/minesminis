@@ -317,6 +317,10 @@ const PracticeMode = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedWord(null)}
+              role="button"
+              tabIndex={0}
+              aria-label="Close word details"
+              onKeyDown={(e) => { if (e.key === 'Escape' || e.key === 'Enter') setSelectedWord(null); }}
             />
             <motion.div
               className="pm-modal"
@@ -326,6 +330,7 @@ const PracticeMode = () => {
               transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             >
               <button
+                type="button"
                 className="pm-modal__close"
                 onClick={() => setSelectedWord(null)}
                 aria-label="Close"
@@ -338,6 +343,7 @@ const PracticeMode = () => {
               <p className="pm-modal__turkish">{selectedWord.turkish}</p>
 
               <button
+                type="button"
                 className="pm-modal__pronounce"
                 onClick={() => handlePronounce(selectedWord.english)}
               >

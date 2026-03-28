@@ -345,6 +345,39 @@
   }
 }
 
+/* ---- LOCKED GAMES SECTION ---- */
+.games-locked-section {
+  margin-top: var(--space-md);
+}
+
+.games-locked-grid-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.games-locked-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--bg-page, #fff));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.games-locked-caption {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: var(--space-sm) 0 0;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--bg-soft, #f8fafc);
+  border-radius: var(--radius-md);
+}
+
 /* ---- DAILY PRACTICE: progress dots in topbar ---- */
 .daily-progress-dots {
   display: flex;

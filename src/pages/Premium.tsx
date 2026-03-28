@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePremium } from '../contexts/PremiumContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
-import PublicLayout from '../components/layout/PublicLayout';
 import { Crown, Check, Star, Sparkles, Zap, MessageCircle, Gamepad2, BookOpen, Trophy } from 'lucide-react';
 import './Premium.css';
 
@@ -33,7 +32,6 @@ export default function Premium() {
   const tr = lang === 'tr';
 
   return (
-    <PublicLayout>
     <div className="premium-page">
       <div className="premium-container">
         <div className="premium-hero">
@@ -145,6 +143,5 @@ export default function Premium() {
         )}
       </div>
     </div>
-    </PublicLayout>
   );
 }

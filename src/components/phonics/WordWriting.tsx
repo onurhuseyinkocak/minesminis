@@ -36,7 +36,7 @@ const WORD_EMOJIS: Record<string, string> = {
 // ─── Component ─────────────────────────────────────────────────────────────
 
 export function WordWriting({ word, onComplete }: WordWritingProps) {
-  const letters = word.toLowerCase().split('');
+  const letters = (word || '').toLowerCase().split('').filter(Boolean);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [letterScores, setLetterScores] = useState<number[]>([]);
   const [isDone, setIsDone] = useState(false);
@@ -65,10 +65,16 @@ export function WordWriting({ word, onComplete }: WordWritingProps) {
     [currentIndex, letters.length, letterScores, word, onComplete],
   );
 
+  // ─── Empty guard ──
+
+  if (letters.length === 0) {
+    return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>No word to trace.</div>;
+  }
+
   // ─── Done state ──
 
   if (isDone) {
-    const avgAccuracy = Math.round(letterScores.reduce((a, b) => a + b, 0) / letterScores.length);
+    const avgAccuracy = letterScores.length > 0 ? Math.round(letterScores.reduce((a, b) => a + b, 0) / letterScores.length) : 0;
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}

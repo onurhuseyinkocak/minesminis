@@ -24,6 +24,7 @@
     opacity var(--transition-base);
   position: relative;
   user-select: none;
+  -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -51,6 +52,7 @@
 
 .mm-button--md {
   height: 40px;
+  min-height: var(--touch-target);
   padding: 0 var(--space-5);
   font-size: 14px;
   border-radius: var(--radius-full);
@@ -80,13 +82,13 @@
 }
 
 .mm-button--primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #FF7B3A 0%, #F04B10 100%);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-hover) 100%);
   box-shadow: var(--shadow-button-hover);
   transform: translateY(-2px);
 }
 
 .mm-button--primary:active:not(:disabled) {
-  background: linear-gradient(135deg, #F04B10 0%, #C73A0A 100%);
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%);
   box-shadow: 0 1px 3px rgba(255, 107, 53, 0.2);
   transform: scale(0.97);
 }

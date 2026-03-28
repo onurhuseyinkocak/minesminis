@@ -209,6 +209,7 @@ const Achievements: React.FC = () => {
           {categories.map(cat => (
             <button
               key={cat}
+              type="button"
               role="tab"
               aria-selected={activeCategory === cat}
               className={`achievements-tab ${activeCategory === cat ? 'achievements-tab--active' : ''}`}

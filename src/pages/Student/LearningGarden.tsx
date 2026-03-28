@@ -247,9 +247,11 @@ function LearningGarden() {
 
                   return (
                     <motion.button
+                      type="button"
                       key={plant.soundId}
                       onClick={() => handlePlantTap(plant)}
                       className="lg-plantCell"
+                      aria-label={`${sound?.grapheme ?? plant.soundId} plant, ${getStage(mastery)} stage`}
                       data-stage={getStage(mastery)}
                       style={{
                         borderColor: isBlooming ? plant.color : isStarted ? '#D1D5DB' : 'var(--border-light, #E5E7EB)',
@@ -351,6 +353,10 @@ function LearningGarden() {
             exit={{ opacity: 0 }}
             className="lg-overlay"
             onClick={() => setSelectedPlant(null)}
+            role="button"
+            tabIndex={0}
+            aria-label="Close plant details"
+            onKeyDown={(e) => { if (e.key === 'Escape' || e.key === 'Enter') setSelectedPlant(null); }}
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -455,6 +461,7 @@ function LearningGarden() {
               {/* Water button */}
               {selectedPlant.mastery > 0 && selectedPlant.mastery < 95 && (
                 <button
+                  type="button"
                   className="lg-waterBtn"
                   style={{
                     opacity: waterDrops > 0 ? 1 : 0.5,
@@ -462,6 +469,7 @@ function LearningGarden() {
                   }}
                   onClick={() => handleWater(selectedPlant.plant.soundId)}
                   disabled={waterDrops <= 0}
+                  aria-label={`Water this plant (${waterDrops} drops remaining)`}
                 >
                   <Droplets size={18} />
                   Water ({waterDrops} drops)

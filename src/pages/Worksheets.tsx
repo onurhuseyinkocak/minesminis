@@ -92,7 +92,7 @@ function Worksheets() {
       setCachedData('worksheets', result, 6 * 60 * 60 * 1000);
     } catch (error) {
       errorLogger.log({ severity: 'high', message: 'Error fetching worksheets', component: 'Worksheets', metadata: { error: String(error) } });
-      toast.error(navigator.language.startsWith('tr') ? 'Calisma kagitlari yuklenirken sorun olustu.' : 'Failed to load worksheets.');
+      toast.error(lang === 'tr' ? 'Çalışma kağıtları yüklenirken sorun oluştu.' : 'Failed to load worksheets.');
       if (cached && cached.length > 0) {
         setWorksheets(cached);
       } else {
@@ -229,24 +229,28 @@ function Worksheets() {
         filterSlot={
           <div className="modern-tabs">
             <button
+              type="button"
               onClick={() => setActiveGrade('All')}
               className={`modern-tab ${activeGrade === 'All' ? 'active' : ''}`}
             >
               {t('worksheets.allGrades')}
             </button>
             <button
+              type="button"
               onClick={() => setActiveGrade('2')}
               className={`modern-tab ${activeGrade === '2' ? 'active' : ''}`}
             >
               {t('worksheets.grade2')}
             </button>
             <button
+              type="button"
               onClick={() => setActiveGrade('3')}
               className={`modern-tab ${activeGrade === '3' ? 'active' : ''}`}
             >
               {t('worksheets.grade3')}
             </button>
             <button
+              type="button"
               onClick={() => setActiveGrade('4')}
               className={`modern-tab ${activeGrade === '4' ? 'active' : ''}`}
             >
@@ -266,6 +270,7 @@ function Worksheets() {
               {categories.map(cat => (
                 <button
                   key={cat}
+                  type="button"
                   className={`category-pill ${activeCategory === cat ? 'active' : ''}`}
                   onClick={() => setActiveCategory(cat)}
                   aria-pressed={activeCategory === cat}
@@ -321,8 +326,10 @@ function Worksheets() {
 
                 {user && (
                   <button
+                    type="button"
                     className={`favorite-btn ${favorites.has(worksheet.id) ? 'favorited' : ''}`}
                     onClick={() => handleToggleFavorite(worksheet)}
+                    aria-label={favorites.has(worksheet.id) ? (lang === 'tr' ? 'Favorilerden kaldır' : 'Remove from favorites') : (lang === 'tr' ? 'Favorilere ekle' : 'Add to favorites')}
                     title={favorites.has(worksheet.id) ? (lang === 'tr' ? 'Favorilerden kaldır' : 'Remove from favorites') : (lang === 'tr' ? 'Favorilere ekle' : 'Add to favorites')}
                   >
                     <Heart size={20} fill={favorites.has(worksheet.id) ? "currentColor" : "none"} />
@@ -355,6 +362,7 @@ function Worksheets() {
                   <span>{t('worksheets.open')}</span>
                 </a>
                 <button
+                  type="button"
                   className="action-btn print-btn"
                   onClick={() => {
                     handleWorksheetAction(worksheet);

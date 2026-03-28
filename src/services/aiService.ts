@@ -82,7 +82,7 @@ export const sendMessageToAI = async (messages: ChatMessage[]): Promise<string> 
         return data.message;
 
     } catch (error) {
-        if (import.meta.env.DEV) console.warn('AI Service:', error);
+        errorLogger.log({ severity: 'medium', message: `AI Service: ${error instanceof Error ? error.message : String(error)}`, component: 'aiService' });
         return getFallbackResponse(messages);
     }
 };

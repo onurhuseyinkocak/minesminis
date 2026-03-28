@@ -7,7 +7,7 @@ import React, { useState, useEffect, useCallback, useMemo, useTransition } from 
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
-import { Sparkles, Clock, Star, BookOpen, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Clock, Star, BookOpen, AlertTriangle, CheckCircle2, Crown } from 'lucide-react';
 import { KidIcon } from '../components/ui';
 import { generateStoryCover } from '../utils/storyCoverGenerator';
 import { getStoriesForUser, type DecodableStory, type ScoredStory } from '../services/decodableStoryService';
@@ -258,7 +258,33 @@ export default function StoriesGrid() {
       )}
 
       {activeTab === 'all' && !isPremium && (
-        <Paywall feature={lang === 'tr' ? 'AI Hikayeler' : 'AI Stories'} />
+        <>
+          {/* Show blurred preview cards so users see what they're missing */}
+          <div className="stories-grid stories-grid--preview">
+            {[
+              { id: 'preview-1', title: 'The Dragon\'s Secret', title_tr: 'Ejderhanın Sırrı', cover_scene: 'forest' },
+              { id: 'preview-2', title: 'Ocean Adventure', title_tr: 'Okyanus Macerası', cover_scene: 'ocean' },
+              { id: 'preview-3', title: 'Star Kingdom', title_tr: 'Yıldız Krallığı', cover_scene: 'space' },
+            ].map(preview => (
+              <div key={preview.id} className="story-card story-card--locked" aria-hidden="true">
+                <div className="story-card__cover story-card__cover--blur">
+                  <StoryCover scene={preview.cover_scene} storyId={preview.id} />
+                  <div className="story-card__lock-overlay">
+                    <span className="story-card__premium-badge">
+                      <Crown size={14} />
+                      Premium
+                    </span>
+                    <Crown size={24} style={{ opacity: 0.9 }} />
+                  </div>
+                </div>
+                <div className="story-card__info">
+                  <h3>{lang === 'tr' ? preview.title_tr : preview.title}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Paywall feature={lang === 'tr' ? 'AI Hikayeler' : 'AI Stories'} />
+        </>
       )}
 
       {activeTab === 'all' && isPremium && (error ? (

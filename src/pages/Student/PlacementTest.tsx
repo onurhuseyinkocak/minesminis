@@ -460,6 +460,7 @@ function PlacementTest() {
           </p>
 
           <motion.button
+            type="button"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setScreen('question')}
@@ -648,15 +649,18 @@ function Q1Phoneme({ q, selectedIndex, onAnswer, isTr }: QProps) {
     <>
       <h2 className="pt-q-title">{isTr ? 'Dinle!' : 'Listen!'}</h2>
       <motion.button
+        type="button"
         whileTap={{ scale: 0.9 }}
         onClick={() => speak(q.ttsPrompt!, 0.7)}
         className="pt-speaker-btn"
+        aria-label="Play sound"
       >
         <Volume2 size={48} color="var(--text-primary)" />
       </motion.button>
       <div className="pt-options-row">
         {q.options.map((letter, i) => (
           <motion.button
+            type="button"
             key={i}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.93 }}
@@ -696,6 +700,7 @@ function Q2LetterSound({ q, selectedIndex, onAnswer, isTr }: QProps) {
           const showResult = selectedIndex !== null;
           return (
             <motion.button
+              type="button"
               key={i}
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
@@ -705,6 +710,7 @@ function Q2LetterSound({ q, selectedIndex, onAnswer, isTr }: QProps) {
               }}
               disabled={selectedIndex !== null}
               className="pt-sound-circle"
+              aria-label={q.soundOptions ? `Play sound option ${i + 1}` : `Option ${i + 1}`}
               style={{
                 border: `4px solid ${
                   showResult
@@ -737,12 +743,14 @@ function Q3Blending({ q, selectedIndex, onAnswer, isTr }: QProps) {
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
         {(q.soundTiles ?? []).map((tile, i) => (
           <motion.button
+            type="button"
             key={i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.2 }}
             onClick={() => speak(tile, 0.5)}
             className="pt-sound-tile"
+            aria-label={`Say sound: ${tile}`}
           >
             {tile}
           </motion.button>
@@ -751,12 +759,14 @@ function Q3Blending({ q, selectedIndex, onAnswer, isTr }: QProps) {
       <div className="pt-options-row">
         {q.options.map((key, i) => (
           <motion.button
+            type="button"
             key={i}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.93 }}
             onClick={() => onAnswer(i)}
             disabled={selectedIndex !== null}
             className={`${optionCardClass(i, selectedIndex, q.correctIndex)} pt-picture-card`}
+            aria-label={key}
           >
             {renderPicture(key)}
           </motion.button>
@@ -784,12 +794,14 @@ function Q4Decoding({ q, selectedIndex, onAnswer, isTr }: QProps) {
       <div className="pt-options-row">
         {q.options.map((key, i) => (
           <motion.button
+            type="button"
             key={i}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.93 }}
             onClick={() => onAnswer(i)}
             disabled={selectedIndex !== null}
             className={`${optionCardClass(i, selectedIndex, q.correctIndex)} pt-picture-card`}
+            aria-label={key}
           >
             {renderPicture(key)}
           </motion.button>
@@ -812,6 +824,7 @@ function Q5Comprehension({ q, selectedIndex, onAnswer, isTr }: QProps) {
       <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
         {q.options.map((key, i) => (
           <motion.button
+            type="button"
             key={i}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.93 }}
@@ -819,6 +832,7 @@ function Q5Comprehension({ q, selectedIndex, onAnswer, isTr }: QProps) {
             disabled={selectedIndex !== null}
             className={`${optionCardClass(i, selectedIndex, q.correctIndex)} pt-picture-card`}
             style={{ flex: 1, minHeight: 140 }}
+            aria-label={key}
           >
             {renderPicture(key)}
           </motion.button>

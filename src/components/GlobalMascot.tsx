@@ -201,7 +201,7 @@ export default function GlobalMascot() {
           }
           @media (max-width: 767px) {
             :root {
-              --gm-bottom: 72px;
+              --gm-bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px);
               --gm-right: 12px;
               --gm-size: 72px;
             }

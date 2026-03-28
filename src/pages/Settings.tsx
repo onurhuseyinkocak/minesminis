@@ -619,7 +619,7 @@ export default function Settings() {
                     fontSize: 13,
                     fontWeight: 700,
                     background: 'var(--primary)',
-                    color: '#fff',
+                    color: 'var(--color-white, #fff)',
                     border: 'none',
                     borderRadius: 8,
                     cursor: classroomJoining || classroomCode.length < 6 ? 'not-allowed' : 'pointer',

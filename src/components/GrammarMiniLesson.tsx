@@ -74,7 +74,7 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
             <div className="gml-pattern-box">
               <code>{isTr ? lesson.patternTr : lesson.pattern}</code>
             </div>
-            <button className="gml-btn gml-btn--primary" onClick={() => setPhase('examples')}>
+            <button type="button" className="gml-btn gml-btn--primary" onClick={() => setPhase('examples')}>
               {t('games.grammarSeeExamples')} <ChevronRight size={16} />
             </button>
           </motion.div>
@@ -84,7 +84,7 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
           <motion.div key={`ex-${exIdx}`} className="gml-examples"
             initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
             <p className="gml-ex-counter">{exIdx + 1}/{lesson.examples.length}</p>
-            <div className="gml-example-card" onClick={() => speak(lesson.examples[exIdx].en)}>
+            <div className="gml-example-card" role="button" tabIndex={0} aria-label="Listen to example" onClick={() => speak(lesson.examples[exIdx].en)} onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && speak(lesson.examples[exIdx].en)}>
               <p className="gml-example-en">
                 {lesson.examples[exIdx].en.split(lesson.examples[exIdx].highlight).map((part, i, arr) => (
                   <span key={i}>
@@ -99,11 +99,11 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
             </div>
             <div className="gml-nav">
               {exIdx < lesson.examples.length - 1 ? (
-                <button className="gml-btn gml-btn--primary" onClick={() => setExIdx(i => i + 1)}>
+                <button type="button" className="gml-btn gml-btn--primary" onClick={() => setExIdx(i => i + 1)}>
                   {t('games.grammarNext')} <ChevronRight size={16} />
                 </button>
               ) : (
-                <button className="gml-btn gml-btn--primary" onClick={() => setPhase('exercises')}>
+                <button type="button" className="gml-btn gml-btn--primary" onClick={() => setPhase('exercises')}>
                   {t('games.grammarTryExercises')} <ChevronRight size={16} />
                 </button>
               )}
@@ -134,7 +134,7 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
                   else if (isSelected && !isCorrect) cls += ' gml-option--wrong';
                 }
                 return (
-                  <button key={opt} className={cls} onClick={() => handleAnswer(opt)} disabled={revealed}>
+                  <button type="button" key={opt} className={cls} onClick={() => handleAnswer(opt)} disabled={revealed}>
                     <span className="gml-option-icon">
                       {revealed && isCorrect ? <Check size={16} /> : revealed && isSelected && !isCorrect ? <X size={16} /> : null}
                     </span>
@@ -146,7 +146,7 @@ export default function GrammarMiniLesson({ lesson, lang = 'tr', onComplete }: G
             {revealed && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="gml-explanation">
                 <p>{isTr ? currentExercise.explanationTr : currentExercise.explanation}</p>
-                <button className="gml-btn gml-btn--primary" onClick={handleNext}>
+                <button type="button" className="gml-btn gml-btn--primary" onClick={handleNext}>
                   {exerciseIdx < totalExercises - 1 ? t('games.grammarNext') : t('games.grammarDone')} <ChevronRight size={16} />
                 </button>
               </motion.div>

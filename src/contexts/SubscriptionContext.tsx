@@ -50,51 +50,79 @@ interface SupabaseSub {
   isActive: boolean;
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function fetchSubFromSupabase(userId: string): Promise<SupabaseSub | null> {
   try {
-    // Run both queries in parallel — avoids waterfall when subscription table is empty
-    const [{ data: subRows }, { data: profile }] = await Promise.all([
-      withRetry(() =>
-        supabase
-          .from('user_subscriptions')
-          .select('plan_id, payment_method, end_date')
-          .eq('user_id', userId)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false })
-          .limit(1)
-      ),
-      withRetry(() =>
-        supabase
-          .from('profiles')
-          .select('is_premium, premium_until')
-          .eq('id', userId)
-          .maybeSingle()
-      ),
-    ]);
+    const isUuid = UUID_RE.test(userId);
 
-    // Prefer user_subscriptions (primary source)
-    if (subRows && subRows.length > 0) {
-      const sub = subRows[0] as Record<string, unknown>;
-      return {
-        planId: (sub.plan_id as string) ?? null,
-        provider: (sub.payment_method as 'stripe' | 'iyzico') ?? null,
-        expiresAt: (sub.end_date as string) ?? null,
-        isActive: true,
-      };
-    }
+    // UUID users: check user_subscriptions + profiles in parallel
+    if (isUuid) {
+      const [{ data: subRows }, { data: profile }] = await Promise.all([
+        withRetry(() =>
+          supabase
+            .from('user_subscriptions')
+            .select('plan_id, payment_method, end_date')
+            .eq('user_id', userId)
+            .eq('status', 'active')
+            .order('created_at', { ascending: false })
+            .limit(1)
+        ),
+        withRetry(() =>
+          supabase
+            .from('profiles')
+            .select('is_premium, premium_until')
+            .eq('id', userId)
+            .maybeSingle()
+        ),
+      ]);
 
-    // Fallback: profiles table
-    if (profile) {
-      const p = profile as Record<string, unknown>;
-      const isPrem = p.is_premium === true;
-      const premUntil = p.premium_until as string | null;
-      if (isPrem && premUntil && new Date(premUntil) > new Date()) {
+      if (subRows && subRows.length > 0) {
+        const sub = subRows[0] as Record<string, unknown>;
         return {
-          planId: 'premium',
-          provider: null,
-          expiresAt: premUntil,
+          planId: (sub.plan_id as string) ?? null,
+          provider: (sub.payment_method as 'stripe' | 'iyzico') ?? null,
+          expiresAt: (sub.end_date as string) ?? null,
           isActive: true,
         };
+      }
+
+      if (profile) {
+        const p = profile as Record<string, unknown>;
+        const isPrem = p.is_premium === true;
+        const premUntil = p.premium_until as string | null;
+        if (isPrem && premUntil && new Date(premUntil) > new Date()) {
+          return {
+            planId: 'premium',
+            provider: null,
+            expiresAt: premUntil,
+            isActive: true,
+          };
+        }
+      }
+    }
+
+    // Firebase UID users: check users.settings.is_premium
+    const { data: userRow } = await withRetry(() =>
+      supabase
+        .from('users')
+        .select('settings')
+        .eq('id', userId)
+        .maybeSingle()
+    );
+
+    if (userRow) {
+      const s = (userRow.settings || {}) as Record<string, unknown>;
+      if (s.is_premium === true) {
+        const until = s.premium_until as string | null;
+        if (!until || new Date(until) > new Date()) {
+          return {
+            planId: (s.premium_plan as string) ?? 'premium',
+            provider: (s.premium_provider as 'stripe' | 'iyzico') ?? null,
+            expiresAt: until,
+            isActive: true,
+          };
+        }
       }
     }
 

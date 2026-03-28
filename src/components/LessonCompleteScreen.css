@@ -306,7 +306,7 @@
 
 .lcs-share-btn:hover {
   background: var(--warning);
-  color: #fff;
+  color: var(--white, #fff);
 }
 
 /* ─── Words learned ───────────────────────────────────────── */

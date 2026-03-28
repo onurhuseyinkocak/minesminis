@@ -373,13 +373,13 @@ export default function FlashcardReview() {
         isOpen={showResetConfirm}
         onClose={() => setShowResetConfirm(false)}
         onConfirm={doResetProgress}
-        title={lang === 'tr' ? 'Ilerlemeyi Sifirla' : 'Reset Progress'}
+        title={lang === 'tr' ? 'İlerlemeyi Sıfırla' : 'Reset Progress'}
         message={
           lang === 'tr'
-            ? 'Tum flashcard ilerlemenizi sifirlamak istediginizden emin misiniz? Bu islem geri alinamaz.'
+            ? 'Tüm flashcard ilerlemenizi sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.'
             : 'Are you sure you want to reset all flashcard progress? This cannot be undone.'
         }
-        confirmLabel={lang === 'tr' ? 'Evet, Sifirla' : 'Yes, Reset'}
+        confirmLabel={lang === 'tr' ? 'Evet, Sıfırla' : 'Yes, Reset'}
         variant="danger"
       />
     </div>

@@ -2,7 +2,7 @@
  * PublicLayout — tutarlı nav + footer için tüm public sayfaların wrapper'ı.
  * Landing.tsx'deki nav ve footer tasarımıyla birebir aynı.
  */
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -11,7 +11,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 const tl = (lang: string, tr: string, en: string) => (lang === 'tr' ? tr : en);
 
 interface PublicLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {

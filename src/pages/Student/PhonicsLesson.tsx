@@ -345,7 +345,7 @@ function PhonicsLesson() {
           size="lg"
           icon={<Volume2 size={20} />}
           onClick={() => speak(getTTSText(sound), 0.6)}
-          style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
+          style={{ backgroundColor: 'var(--secondary, #1A6B5A)', borderColor: 'var(--secondary, #1A6B5A)' }}
         >
           {isTr ? 'Beraber söyle!' : 'Say it together!'}
         </Button>
@@ -406,6 +406,7 @@ function PhonicsLesson() {
             const clicked = clickedKeywords.has(kw.word);
             return (
               <motion.button
+                type="button"
                 key={kw.word}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
@@ -414,8 +415,8 @@ function PhonicsLesson() {
                 }}
                 className="pl-keywordCard"
                 style={{
-                  borderColor: clicked ? '#1A6B5A' : '#E5E7EB',
-                  backgroundColor: clicked ? 'rgba(34,197,94,0.1)' : '#F8F9FA',
+                  borderColor: clicked ? 'var(--secondary, #1A6B5A)' : 'var(--border-light, #E5E7EB)',
+                  backgroundColor: clicked ? 'var(--success-pale, rgba(34,197,94,0.1))' : 'var(--bg-soft, #F8F9FA)',
                 }}
               >
                 <div className="pl-keyword-avatar" style={{ background: kw.color }}>
@@ -530,6 +531,7 @@ function PhonicsLesson() {
         </div>
 
         <motion.button
+          type="button"
           onClick={() => speak(currentWord, 0.8)}
           className="pl-wordDisplay"
           whileTap={{ scale: 0.95 }}
@@ -563,6 +565,10 @@ function PhonicsLesson() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.2 }}
                   onClick={() => speak(s, 0.5)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); speak(s, 0.5); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Say sound: ${s}`}
                   className="pl-revealedTile"
                 >
                   {s}
@@ -642,6 +648,7 @@ function PhonicsLesson() {
           <div className="pl-words-flex">
             {words.map((word, i) => (
               <motion.button
+                type="button"
                 key={i}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => {
@@ -817,7 +824,7 @@ function PhonicsLesson() {
               size="lg"
               icon={<ArrowRight size={18} />}
               onClick={handleNextSound}
-              style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
+              style={{ backgroundColor: 'var(--secondary, #1A6B5A)', borderColor: 'var(--secondary, #1A6B5A)' }}
               fullWidth
             >
               {isTr ? `Sonraki Ses: ${nextSoundInGroup.grapheme.toUpperCase()}` : `Next Sound: ${nextSoundInGroup.grapheme.toUpperCase()}`}
@@ -873,7 +880,7 @@ function PhonicsLesson() {
               width: 10,
               height: 10,
               borderRadius: '50%',
-              backgroundColor: i < stepIndex ? '#10b981' : i === stepIndex ? '#1A6B5A' : '#334155',
+              backgroundColor: i < stepIndex ? 'var(--success, #10b981)' : i === stepIndex ? 'var(--secondary, #1A6B5A)' : 'var(--text-muted, #334155)',
               transition: 'background-color 0.3s',
             }}
           />

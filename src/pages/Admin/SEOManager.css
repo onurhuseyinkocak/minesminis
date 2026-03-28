@@ -25,7 +25,7 @@
 
 .seo-desc-sm {
     font-size: 0.8rem;
-    color: #64748b;
+    color: var(--text-secondary);
     margin-top: 1rem;
 }
 
@@ -69,7 +69,7 @@
     overflow: auto;
     font-size: 0.85rem;
     color: var(--text-body);
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
 }
 
 .seo-pre-sm {
@@ -79,7 +79,7 @@
     font-size: 0.75rem;
     color: var(--text-body);
     overflow: auto;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
 }
 
 .seo-schema-note {
@@ -136,8 +136,8 @@
 
 /* ---- Inspection result panel ---- */
 .seo-result-ok {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 1rem;
 }
@@ -150,7 +150,7 @@
 }
 
 .seo-result-error-text {
-    color: #dc2626;
+    color: var(--error);
 }
 
 .seo-result-rows {
@@ -160,7 +160,7 @@
 }
 
 .seo-result-key {
-    color: #6B7A99;
+    color: var(--text-muted);
     font-size: 0.8rem;
 }
 
@@ -169,11 +169,11 @@
 }
 
 .seo-result-val-ok {
-    color: #059669;
+    color: var(--success);
 }
 
 .seo-result-val-missing {
-    color: #dc2626;
+    color: var(--error);
 }
 
 /* ---- Google Tools grid ---- */

@@ -87,7 +87,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
     const nextSlotIndex = selected.length;
     const expectedSound = sounds[nextSlotIndex];
 
-    if (opt.sound.toLowerCase() !== expectedSound.toLowerCase()) {
+    if (!expectedSound || opt.sound.toLowerCase() !== expectedSound.toLowerCase()) {
       setFeedback('wrong');
       onWrongAnswer?.();
       setTimeout(() => setFeedback(null), 600);
@@ -174,7 +174,7 @@ export const SegmentingBoard: React.FC<SegmentingBoardProps> = ({ words, onCompl
             animate={feedback === 'explode' ? { scale: [1, 1.3, 0], opacity: [1, 1, 0] } : { scale: 1 }}
             transition={feedback === 'explode' ? { duration: 0.6 } : { type: 'spring', stiffness: 300 }}
             className="segmenting-board__emoji"
-            style={{ background: 'var(--primary)', color: '#fff', borderRadius: '50%', width: 64, height: 64, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.75rem' }}
+            style={{ background: 'var(--primary)', color: 'var(--text-on-primary, #fff)', borderRadius: '50%', width: 64, height: 64, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.75rem' }}
           >
             {currentWord[0]?.toUpperCase() || '?'}
           </motion.div>

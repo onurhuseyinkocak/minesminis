@@ -16,9 +16,9 @@
     /* Space gradient: warm cream at bottom, barely-there violet at top */
     background: radial-gradient(
         ellipse 80% 60% at 50% 0%,
-        #F5F0FF 0%,
-        #FFF8F0 45%,
-        #FFF8F0 100%
+        var(--accent-purple-pale) 0%,
+        var(--bg-page) 45%,
+        var(--bg-page) 100%
     );
 }
 
@@ -27,17 +27,17 @@
 .not-found-star {
     position: absolute;
     border-radius: 50%;
-    background: #FF6B35;
+    background: var(--primary);
     opacity: 0;
     animation: star-twinkle 2.5s ease-in-out infinite;
 }
 
 /* Alternate stars use purple */
 .not-found-star:nth-child(3n) {
-    background: #8B5CF6;
+    background: var(--accent-purple);
 }
 .not-found-star:nth-child(5n) {
-    background: #F59E0B;
+    background: var(--warning);
 }
 
 @keyframes star-twinkle {
@@ -82,14 +82,14 @@
     font-size: clamp(5rem, 18vw, 9rem);
     line-height: 1;
     letter-spacing: -0.04em;
-    color: #0F172A;
+    color: var(--text-primary);
     margin: 0 0 16px;
     position: relative;
     z-index: 1;
 }
 
 .not-found-code-accent {
-    color: #FF6B35;
+    color: var(--primary);
     /* subtle drop shadow to make the zero pop */
     text-shadow: 0 4px 24px rgba(255, 107, 53, 0.35);
 }
@@ -100,7 +100,7 @@
     font-family: 'Nunito', system-ui, sans-serif;
     font-weight: 700;
     font-size: clamp(1rem, 3vw, 1.2rem);
-    color: #475569;
+    color: var(--text-secondary);
     max-width: 380px;
     line-height: 1.55;
     margin: 0 0 10px;
@@ -110,7 +110,7 @@
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 400;
     font-size: clamp(0.875rem, 2.5vw, 1rem);
-    color: #6B7A99;
+    color: var(--text-muted);
     max-width: 340px;
     line-height: 1.6;
     margin: 0 0 28px;
@@ -135,7 +135,7 @@
     font-family: 'Nunito', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #6B7A99;
+    color: var(--text-muted);
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -143,7 +143,7 @@
 .not-found-path-code {
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 0.8rem;
-    color: #FF6B35;
+    color: var(--primary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -156,12 +156,13 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #FF6B35;
-    color: #ffffff;
+    background: var(--primary);
+    color: var(--white);
     font-family: 'Nunito', system-ui, sans-serif;
     font-weight: 800;
     font-size: 1rem;
     padding: 14px 32px;
+    min-height: var(--touch-target);
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4), 0 1px 3px rgba(255, 107, 53, 0.2);
     text-decoration: none;
@@ -171,7 +172,7 @@
 }
 
 .not-found-cta:hover {
-    background: #F04B10;
+    background: var(--primary-hover);
     transform: translateY(-2px) scale(1.03);
     box-shadow: 0 8px 32px rgba(255, 107, 53, 0.45), 0 2px 6px rgba(255, 107, 53, 0.25);
 }

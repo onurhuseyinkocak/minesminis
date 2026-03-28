@@ -7,8 +7,8 @@
 /* ---- Floating Trigger Button ---- */
 .daily-reward-trigger {
   position: fixed;
-  bottom: calc(68px + var(--space-md));
-  left: var(--space-md);
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px);
+  right: var(--space-md);
   z-index: var(--z-raised);
   width: 56px;
   height: 56px;

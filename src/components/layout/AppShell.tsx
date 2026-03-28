@@ -46,6 +46,18 @@ export default function AppShell({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownMenuRef = useRef<HTMLDivElement>(null);
 
+  // Set --bottom-nav-height CSS variable so floating elements (FAB, DailyReward) can position above the nav
+  useEffect(() => {
+    if (showBottomNav) {
+      document.body.style.setProperty('--bottom-nav-height', '60px');
+    } else {
+      document.body.style.setProperty('--bottom-nav-height', '0px');
+    }
+    return () => {
+      document.body.style.removeProperty('--bottom-nav-height');
+    };
+  }, [showBottomNav]);
+
   const isActive = (path: string) => {
     if (path === '/dashboard') return location.pathname === '/' || location.pathname === '/dashboard';
     return location.pathname.startsWith(path);

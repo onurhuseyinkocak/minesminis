@@ -35,7 +35,7 @@
 
 .pl-backBtn:hover {
   background: var(--accent-purple);
-  color: #fff;
+  color: var(--white);
 }
 
 .pl-stepsRow {
@@ -284,7 +284,7 @@
   font-family: var(--font-display);
   font-size: 3.25rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--white);
   line-height: 1;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -309,7 +309,7 @@
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--white);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 

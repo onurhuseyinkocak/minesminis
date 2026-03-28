@@ -116,6 +116,8 @@
   justify-content: center;
   width: 36px;
   height: 36px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   border: none;
   background: var(--bg-muted);
   border-radius: var(--radius-full);
@@ -307,7 +309,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: opacity var(--transition-base), transform var(--transition-base);
-  color: #fff;
+  color: var(--white);
 }
 
 .confirm-modal__confirm-btn:hover:not(:disabled) {

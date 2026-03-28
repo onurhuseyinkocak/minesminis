@@ -4,6 +4,7 @@ import { KidsWord } from '../../data/wordsData';
 import { wordStore } from '../../data/wordStore';
 import { adminFetch } from '../../utils/adminApi';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './WordsManager.css';
 
 type WordLevel = 'beginner' | 'intermediate' | 'advanced';
@@ -38,6 +39,7 @@ function WordsManager() {
     const [saving, setSaving] = useState(false);
     const [deletingWordKey, setDeletingWordKey] = useState<string | null>(null);
     const [formData, setFormData] = useState<WordFormData>(INITIAL_FORM);
+    const [deleteTarget, setDeleteTarget] = useState<KidsWord | null>(null);
 
     // Load words from in-memory wordStore (words table doesn't exist in Supabase yet)
     useEffect(() => {
@@ -180,8 +182,14 @@ function WordsManager() {
         }
     };
 
-    const handleDelete = async (word: string) => {
-        if (!confirm('Bu kelimeyi silmek istediğinizden emin misiniz?')) return;
+    const handleDelete = (kw: KidsWord) => {
+        setDeleteTarget(kw);
+    };
+
+    const executeDelete = async () => {
+        if (!deleteTarget) return;
+        const word = deleteTarget.word;
+        setDeleteTarget(null);
         setDeletingWordKey(word);
         try {
             const res = await adminFetch(`/api/admin/words/${encodeURIComponent(word)}`, { method: 'DELETE' });
@@ -331,7 +339,7 @@ function WordsManager() {
                                         <button type="button" className="edit-btn" onClick={() => openEditModal(word)} disabled={deletingWordKey === word.word}>
                                             <Pencil size={16} />
                                         </button>
-                                        <button type="button" className="delete-btn" onClick={() => handleDelete(word.word)} disabled={deletingWordKey === word.word}>
+                                        <button type="button" className="delete-btn" onClick={() => handleDelete(word)} disabled={deletingWordKey === word.word}>
                                             {deletingWordKey === word.word ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                         </button>
                                     </div>
@@ -488,6 +496,16 @@ function WordsManager() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={executeDelete}
+                title="Kelimeyi Sil"
+                message={`"${deleteTarget?.word}" kelimesini silmek istediğinizden emin misiniz?`}
+                confirmLabel="Sil"
+                variant="danger"
+            />
         </div>
     );
 }

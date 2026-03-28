@@ -54,8 +54,8 @@
 
 .floating-chat-btn {
   position: fixed;
-  bottom: 156px; /* above daily reward trigger */
-  left: 20px;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px);
+  left: var(--space-md);
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full);

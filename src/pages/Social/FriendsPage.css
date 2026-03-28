@@ -19,9 +19,10 @@
 .friends-header {
   text-align: center;
   padding: var(--space-lg) var(--space-xl);
-  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--secondary-pale) 100%);
+  background: var(--gradient-warm, linear-gradient(135deg, var(--primary-pale) 0%, #fff8f4 100%));
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .friends-title {
@@ -196,9 +197,13 @@
 }
 
 .friends-btn:disabled {
-  opacity: 0.5;
+  opacity: 1;
   cursor: not-allowed;
   transform: none;
+  background: var(--bg-muted, #e2e8f0) !important;
+  color: var(--text-secondary, #64748b) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .friends-btn--primary {

@@ -297,14 +297,14 @@
 }
 
 .admin-toast-success {
-  background: #166534;
-  color: #dcfce7;
+  background: var(--mimi-dark);
+  color: var(--success-pale);
   border: 1px solid var(--success);
 }
 
 .admin-toast-error {
-  background: #7f1d1d;
-  color: #fee2e2;
+  background: var(--accent-red-dark);
+  color: var(--error-pale);
   border: 1px solid var(--error);
 }
 

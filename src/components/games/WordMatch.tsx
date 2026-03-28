@@ -288,8 +288,8 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
               >
                 <Star
                   size={32}
-                  fill={i < stars ? '#E8A317' : 'none'}
-                  color={i < stars ? '#E8A317' : '#ddd'}
+                  fill={i < stars ? 'var(--primary)' : 'none'}
+                  color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'}
                 />
               </motion.span>
             ))}

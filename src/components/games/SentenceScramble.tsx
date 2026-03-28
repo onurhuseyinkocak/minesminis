@@ -263,7 +263,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
                 >
-                  <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                  <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
                 </motion.span>
               ))}
             </span>
@@ -291,7 +291,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     {showNoHearts && (
       <NoHeartsModal onClose={() => setShowNoHearts(false)} />
     )}
-    <div className="sentence-scramble" role="application" aria-label="Sentence scramble game" aria-description="Tap words below to build a sentence. In the sentence area, use Arrow keys to reorder words and Backspace to remove them.">
+    <div className="sentence-scramble" role="application" aria-label="Sentence scramble game">
       <div className="sentence-scramble__header">
         <h2 className="sentence-scramble__title">{t('games.buildTheSentence')}</h2>
         <Badge variant="info">{currentIndex + 1}/{sentences.length}</Badge>

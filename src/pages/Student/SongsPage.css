@@ -40,7 +40,7 @@
 
 .songs-back-btn:hover {
   background: var(--accent-purple, #8b5cf6);
-  color: #fff;
+  color: var(--white);
   transform: translateX(-1px);
 }
 

@@ -343,6 +343,7 @@ const Login: React.FC = () => {
             <Input
               label={t.email}
               type="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
@@ -356,6 +357,7 @@ const Login: React.FC = () => {
             <Input
               label={t.password}
               type={showPassword ? 'text' : 'password'}
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -420,6 +422,7 @@ const Login: React.FC = () => {
                 <Input
                   label={t.confirmPassword}
                   type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirm-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"

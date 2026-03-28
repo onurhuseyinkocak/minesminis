@@ -2,7 +2,7 @@
  * Onboarding — MinesMinis
  * Student-only flow: Welcome → Age group → Placement test → Learning path
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -301,7 +301,26 @@ const Onboarding: React.FC = () => {
   const [welcomeStage, setWelcomeStage] = useState<'greeting' | 'tap' | 'name'>('greeting');
   const [mimiTapped, setMimiTapped] = useState(false);
 
+  // Questions filtered by age group — 3-5 gets no test, 5-7 gets only levels 1-2
+  const activeQuestions = useMemo(() => {
+    if (ageGroup === '5-7') return PLACEMENT_QUESTIONS.filter(q => q.level <= 2);
+    if (ageGroup === '7-9') return PLACEMENT_QUESTIONS.filter(q => q.level <= 4);
+    return PLACEMENT_QUESTIONS;
+  }, [ageGroup]);
+
   const goNext = useCallback(() => { setDir(1); setStep(s => Math.min(s + 1, TOTAL_STEPS)); }, []);
+
+  // When leaving age step: 3-5 year olds skip placement entirely
+  const handleAgeNext = useCallback(() => {
+    if (ageGroup === '3-5') {
+      setStartingGroup(1);
+      setPlacementDone(true);
+      setDir(1);
+      setStep(4);
+    } else {
+      goNext();
+    }
+  }, [ageGroup, goNext]);
   const goPrev = useCallback(() => {
     setDir(-1);
     setStep(s => {
@@ -330,16 +349,16 @@ const Onboarding: React.FC = () => {
     const updated = { ...answers, [questionId]: value };
     setAnswers(updated);
 
-    const isCorrect = PLACEMENT_QUESTIONS[questionIdx].correct === value;
+    const isCorrect = activeQuestions[questionIdx].correct === value;
     const newConsecutiveWrong = isCorrect ? 0 : consecutiveWrong + 1;
     setConsecutiveWrong(newConsecutiveWrong);
 
-    const isLastQuestion = questionIdx >= PLACEMENT_QUESTIONS.length - 1;
+    const isLastQuestion = questionIdx >= activeQuestions.length - 1;
     // Stop early if 3 consecutive wrong answers
     const shouldStop = newConsecutiveWrong >= 3 || isLastQuestion;
 
     if (shouldStop) {
-      const score = PLACEMENT_QUESTIONS.filter(q => updated[q.id] === q.correct).length;
+      const score = activeQuestions.filter(q => updated[q.id] === q.correct).length;
       // FIX: `questionsAnswered` must reflect answers actually recorded in `updated`,
       // not `questionIdx + 1` which can be off-by-one when stopping early.
       const questionsAnswered = Object.keys(updated).length;
@@ -359,7 +378,7 @@ const Onboarding: React.FC = () => {
         '3-5': 'primary', '5-7': 'primary', '7-9': 'grade2', '9-10': 'grade4',
       };
       const uid = user.uid;
-      const placementScore = PLACEMENT_QUESTIONS.filter(q => answers[q.id] === q.correct).length;
+      const placementScore = activeQuestions.filter(q => answers[q.id] === q.correct).length;
 
       await userService.createOrUpdateUserProfile(user, {
         role: 'student',
@@ -407,7 +426,7 @@ const Onboarding: React.FC = () => {
       await createPet(user.uid, 'mimi_cat', nickname.trim() || user.displayName || 'Explorer');
 
       // Track funnel events
-      analytics.placementTestComplete(placementScore, PLACEMENT_QUESTIONS.length, startingGroup);
+      analytics.placementTestComplete(placementScore, activeQuestions.length, startingGroup);
       analytics.onboardingComplete(ageGroup, placementScore, startingGroup);
 
       await refreshUserProfile();
@@ -445,7 +464,14 @@ const Onboarding: React.FC = () => {
       className="onboarding-step"
     >
       {/* Mimi mascot — interactive */}
-      <div className="onboarding-ftue-mascot" onClick={handleMimiTap} role="button" aria-label="Tap Mimi">
+      <div
+        className="onboarding-ftue-mascot"
+        onClick={handleMimiTap}
+        role="button"
+        tabIndex={0}
+        aria-label="Tap Mimi"
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleMimiTap(); } }}
+      >
         <motion.div
           className={`onboarding-ftue-ring${welcomeStage === 'tap' ? ' onboarding-ftue-ring--pulse' : ''}`}
           animate={welcomeStage === 'tap' ? { scale: [1, 1.05, 1] } : {}}
@@ -538,6 +564,13 @@ const Onboarding: React.FC = () => {
             <p className="onboarding-tap-hint">
               {isTr ? 'Mimi\'ye dokun!' : 'Tap Mimi!'}
             </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setWelcomeStage('name')}
+            >
+              {isTr ? 'Atla' : 'Skip'}
+            </Button>
           </motion.div>
         )}
 
@@ -646,7 +679,7 @@ const Onboarding: React.FC = () => {
         <Button variant="ghost" size="lg" onClick={goPrev} icon={<ArrowLeft size={18} />}>
           {isTr ? 'Geri' : 'Back'}
         </Button>
-        <Button variant="primary" size="lg" onClick={goNext} disabled={!canProceed()} icon={<ArrowRight size={18} />}>
+        <Button variant="primary" size="lg" onClick={handleAgeNext} disabled={!canProceed()} icon={<ArrowRight size={18} />}>
           {isTr ? 'Devam Et' : 'Continue'}
         </Button>
       </div>
@@ -707,7 +740,7 @@ const Onboarding: React.FC = () => {
       );
     }
 
-    const q = PLACEMENT_QUESTIONS[questionIdx];
+    const q = activeQuestions[questionIdx];
     return (
       <motion.div
         key={`q-${questionIdx}`}
@@ -720,14 +753,14 @@ const Onboarding: React.FC = () => {
         className="onboarding-step"
       >
         <p className="onboarding-placement-label">
-          {isTr ? 'Seviye Testi' : 'Placement Test'} · {questionIdx + 1}/{PLACEMENT_QUESTIONS.length}
+          {isTr ? 'Seviye Testi' : 'Placement Test'} · {questionIdx + 1}/{activeQuestions.length}
         </p>
         <h2 className="onboarding-placement-question">
           {isTr ? q.titleTr : q.title}
         </h2>
 
         <div className="onboarding-placement-dots">
-          {PLACEMENT_QUESTIONS.map((_, i) => (
+          {activeQuestions.map((_, i) => (
             <div key={i} className={`onboarding-pdot ${i < questionIdx ? 'done' : ''} ${i === questionIdx ? 'active' : ''}`} />
           ))}
         </div>

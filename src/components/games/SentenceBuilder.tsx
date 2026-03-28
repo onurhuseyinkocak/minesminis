@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { KidsWord } from '../../data/wordsData';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHearts } from '../../contexts/HeartsContext';
 import './SentenceBuilder.css';
 
 interface SentenceEntry {
@@ -26,12 +27,12 @@ interface SentenceBuilderProps {
 
 export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
   const { t } = useLanguage();
+  const { hearts, loseHeart } = useHearts();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
   // Ordered array of bank indices so undo removes the last-added word correctly
   const [usedIndices, setUsedIndices] = useState<number[]>([]);
   const [score, setScore] = useState(0);
-  const [hearts, setHearts] = useState(3);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [completed, setCompleted] = useState(false);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -92,32 +93,30 @@ export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
         return newScore;
       });
     } else {
-      setHearts((prevHearts) => {
-        const newHearts = Math.max(0, prevHearts - 1);
-        setFeedback('wrong');
-        if (newHearts === 0) {
-          // Game over — no more hearts; capture score via functional update to avoid stale closure
-          setScore((currentScore) => {
-            feedbackTimerRef.current = setTimeout(() => {
-              setCompleted(true);
-              autoCompleteTimeoutRef.current = setTimeout(
-                () => onComplete(currentScore, total),
-                4000
-              );
-            }, 1200);
-            return currentScore;
-          });
-        } else {
+      const gameOver = hearts <= 1;
+      loseHeart();
+      setFeedback('wrong');
+      if (gameOver) {
+        // Game over — no more hearts; capture score via functional update to avoid stale closure
+        setScore((currentScore) => {
           feedbackTimerRef.current = setTimeout(() => {
-            setFeedback(null);
-            setSelected([]);
-            setUsedIndices([]);
-          }, 800);
-        }
-        return newHearts;
-      });
+            setCompleted(true);
+            autoCompleteTimeoutRef.current = setTimeout(
+              () => onComplete(currentScore, total),
+              4000
+            );
+          }, 1200);
+          return currentScore;
+        });
+      } else {
+        feedbackTimerRef.current = setTimeout(() => {
+          setFeedback(null);
+          setSelected([]);
+          setUsedIndices([]);
+        }, 800);
+      }
     }
-  }, [selected, sentence.words, total, onComplete]);
+  }, [selected, sentence.words, total, onComplete, hearts, loseHeart]);
 
   if (completed) {
     const pct = Math.round((score / total) * 100);
@@ -155,7 +154,6 @@ export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
                 setCompleted(false);
                 setCurrentIndex(0);
                 setScore(0);
-                setHearts(3);
                 setSelected([]);
                 setUsedIndices([]);
               }}
@@ -178,11 +176,11 @@ export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
             style={{ width: `${(currentIndex / total) * 100}%` }}
           />
         </div>
-        <div className="sb-hearts" aria-label={`Hearts: ${hearts} of 3`}>
+        <div className="sb-hearts" aria-label={`Hearts: ${Math.min(hearts, 3)} of 3`}>
           {Array.from({ length: 3 }, (_, i) => (
             <span
               key={i}
-              className={i < hearts ? 'sb-heart sb-heart--active' : 'sb-heart sb-heart--lost'}
+              className={i < Math.min(hearts, 3) ? 'sb-heart sb-heart--active' : 'sb-heart sb-heart--lost'}
               aria-hidden="true"
             />
           ))}

@@ -28,7 +28,7 @@ function getStoredTheme(): ThemeChoice {
     } catch {
         // storage unavailable
     }
-    return 'system';
+    return 'light';
 }
 
 function getSystemPreference(): EffectiveTheme {

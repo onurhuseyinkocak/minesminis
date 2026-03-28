@@ -24,7 +24,7 @@ export default function GrammarLessonPage() {
     return (
       <div className="grammar-page">
         <div className="grammar-page__header">
-          <button onClick={() => navigate('/dashboard')} className="grammar-page__back">
+          <button type="button" onClick={() => navigate('/dashboard')} className="grammar-page__back">
             <ArrowLeft size={20} /> {isTr ? 'Dashboard' : 'Dashboard'}
           </button>
         </div>
@@ -101,7 +101,7 @@ export default function GrammarLessonPage() {
     return (
       <div className="grammar-page">
         <p>{isTr ? 'Ders bulunamadı.' : 'Lesson not found.'}</p>
-        <button onClick={() => navigate('/grammar')}>
+        <button type="button" onClick={() => navigate('/grammar')}>
           {isTr ? 'Gramer Listesi' : 'Grammar List'}
         </button>
       </div>
@@ -117,7 +117,7 @@ export default function GrammarLessonPage() {
   return (
     <div className="grammar-page">
       <div className="grammar-page__header">
-        <button onClick={() => navigate('/grammar')} className="grammar-page__back">
+        <button type="button" onClick={() => navigate('/grammar')} className="grammar-page__back">
           <ArrowLeft size={20} /> {isTr ? 'Gramer' : 'Grammar'}
         </button>
         <h1 className="grammar-page__header-title">

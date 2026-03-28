@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Volume2, Check } from 'lucide-react';
 import { Card, Badge, Button, ProgressBar } from '../ui';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface TPRActivityProps {
   commands: string[];
@@ -20,6 +21,7 @@ function parseCommand(cmd: string): ParsedCommand {
 }
 
 export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }) => {
+  const { t } = useLanguage();
   const gameCommands = useMemo(() => commands.slice(0, 5).map(parseCommand), [commands]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAction, setShowAction] = useState(false);
@@ -84,12 +86,12 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
             style={{ textAlign: 'center' }}
           >
             <Sparkles size={64} color="var(--warning)" />
-            <h2 style={{ color: '#1A6B5A', margin: '0.5rem 0' }}>Great Moves!</h2>
-            <p style={{ fontSize: '1.1rem', color: '#555' }}>
+            <h2 style={{ color: 'var(--secondary, #1A6B5A)', margin: '0.5rem 0' }}>Great Moves!</h2>
+            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary, #555)' }}>
               You completed all {gameCommands.length} actions!
             </p>
             <Badge variant="success" icon={<Sparkles size={14} />}>
-              Well done!
+              {t('games.amazing')}
             </Badge>
           </motion.div>
         </Card>
@@ -113,7 +115,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
       aria-label="Total Physical Response activity"
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        <h2 style={{ color: '#1A6B5A', margin: 0, fontSize: '1.4rem' }}>Do the Action!</h2>
+        <h2 style={{ color: 'var(--secondary, #1A6B5A)', margin: 0, fontSize: '1.4rem' }}>Do the Action!</h2>
         <Badge variant="info">{currentIndex + 1}/{gameCommands.length}</Badge>
       </div>
 
@@ -133,7 +135,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
               width: '5rem',
               height: '5rem',
               borderRadius: '50%',
-              backgroundColor: '#1A6B5A',
+              backgroundColor: 'var(--secondary, #1A6B5A)',
               color: '#fff',
               fontSize: '2.5rem',
               fontWeight: 800,
@@ -154,7 +156,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
             style={{
               fontSize: '1.8rem',
               fontWeight: 800,
-              color: '#333',
+              color: 'var(--text-primary, #333)',
               margin: '1rem 0',
             }}
           >
@@ -180,7 +182,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
               style={{
                 fontSize: '2rem',
                 fontWeight: 800,
-                color: timer <= 2 ? '#E8A317' : '#1A6B5A',
+                color: timer <= 2 ? 'var(--primary, #E8A317)' : 'var(--secondary, #1A6B5A)',
                 marginBottom: '1rem',
               }}
             >
@@ -193,7 +195,7 @@ export const TPRActivity: React.FC<TPRActivityProps> = ({ commands, onComplete }
             variant="primary"
             size="xl"
             onClick={handleDidIt}
-            style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
+            style={{ backgroundColor: 'var(--secondary, #1A6B5A)', borderColor: 'var(--secondary, #1A6B5A)' }}
           >
             I did it! <Check size={14} strokeWidth={3} />
           </Button>

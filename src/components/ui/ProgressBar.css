@@ -15,12 +15,12 @@
 .mm-progress__track {
   flex: 1;
   border-radius: var(--radius-full);
-  background: var(--bg-muted);
+  background: color-mix(in srgb, var(--ink-900, #1e293b) 12%, transparent);
   overflow: hidden;
   position: relative;
 }
 
-.mm-progress--sm .mm-progress__track { height: 4px; }
+.mm-progress--sm .mm-progress__track { height: 6px; }
 .mm-progress--md .mm-progress__track { height: 8px; }
 .mm-progress--lg .mm-progress__track { height: 14px; }
 
@@ -31,7 +31,6 @@
   border-radius: var(--radius-full);
   transition: width 600ms var(--ease-out);
   position: relative;
-  min-width: 4px;
 }
 
 .mm-progress--default .mm-progress__fill {

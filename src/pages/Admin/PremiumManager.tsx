@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Crown, Users, CreditCard, TrendingUp, Calendar, Gift, Trash2, Plus, X, Search } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import './PremiumManager.css';
 
 interface PremiumUser {
@@ -71,6 +72,8 @@ function PremiumManager() {
     const [activeTab, setActiveTab] = useState<'users' | 'plans' | 'stats'>('users');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPlan, setEditingPlan] = useState<PremiumPlan | null>(null);
+    const [revokeTarget, setRevokeTarget] = useState<PremiumUser | null>(null);
+    const [deletePlanTarget, setDeletePlanTarget] = useState<PremiumPlan | null>(null);
     const [planFormData, setPlanFormData] = useState({
         name: '',
         price: 0,
@@ -143,8 +146,14 @@ function PremiumManager() {
         }
     };
 
-    const handleRevokePremium = async (userId: string) => {
-        if (!confirm('Bu kullanıcının premium üyeliğini iptal etmek istediğinize emin misiniz?')) return;
+    const handleRevokePremium = (user: PremiumUser) => {
+        setRevokeTarget(user);
+    };
+
+    const executeRevokePremium = async () => {
+        if (!revokeTarget) return;
+        const userId = revokeTarget.id;
+        setRevokeTarget(null);
 
         try {
             const revokedUser = premiumUsers.find(u => u.id === userId);
@@ -203,10 +212,15 @@ function PremiumManager() {
         setIsModalOpen(true);
     };
 
-    const handleDeletePlan = (planId: string) => {
-        if (!confirm('Bu planı silmek istediğinize emin misiniz?')) return;
-        setPlans(prev => prev.filter(p => p.id !== planId));
+    const handleDeletePlan = (plan: PremiumPlan) => {
+        setDeletePlanTarget(plan);
+    };
+
+    const executeDeletePlan = () => {
+        if (!deletePlanTarget) return;
+        setPlans(prev => prev.filter(p => p.id !== deletePlanTarget.id));
         toast.success('Plan silindi!');
+        setDeletePlanTarget(null);
     };
 
     // Stats calculations — per-user plan-based revenue estimation
@@ -380,7 +394,7 @@ function PremiumManager() {
                                                 </select>
                                                 <button
                                                     className="delete-btn"
-                                                    onClick={() => handleRevokePremium(user.id)}
+                                                    onClick={() => handleRevokePremium(user)}
                                                     title="Premium İptal"
                                                 >
                                                     <Trash2 size={16} />
@@ -449,7 +463,7 @@ function PremiumManager() {
                                     </button>
                                     <button
                                         className="delete-btn"
-                                        onClick={() => handleDeletePlan(plan.id)}
+                                        onClick={() => handleDeletePlan(plan)}
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -544,6 +558,26 @@ function PremiumManager() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={revokeTarget !== null}
+                onClose={() => setRevokeTarget(null)}
+                onConfirm={executeRevokePremium}
+                title="Premium İptal"
+                message={`"${revokeTarget?.display_name}" kullanıcısının premium üyeliğini iptal etmek istediğinize emin misiniz?`}
+                confirmLabel="İptal Et"
+                variant="danger"
+            />
+
+            <ConfirmModal
+                isOpen={deletePlanTarget !== null}
+                onClose={() => setDeletePlanTarget(null)}
+                onConfirm={executeDeletePlan}
+                title="Planı Sil"
+                message={`"${deletePlanTarget?.name}" planını silmek istediğinize emin misiniz?`}
+                confirmLabel="Sil"
+                variant="danger"
+            />
         </div>
     );
 }

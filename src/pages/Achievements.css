@@ -94,7 +94,7 @@
 
 .achievements-share-btn:hover {
   background: var(--warning);
-  color: #fff;
+  color: var(--white);
 }
 
 /* ---- Summary strip ---- */

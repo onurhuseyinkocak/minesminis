@@ -279,7 +279,7 @@
 /* "I Know It" — green gradient + dark bottom edge for 3D depth */
 .flashcard-action-btn--know {
   background: linear-gradient(180deg, #1ecc9a 0%, var(--success, #10b981) 100%);
-  color: #ffffff;
+  color: var(--white);
   border-color: transparent;
   border-bottom-color: var(--mimi-green-dark);
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.38);
@@ -293,7 +293,7 @@
 /* "Try Again" — amber gradient + dark bottom edge */
 .flashcard-action-btn--retry {
   background: linear-gradient(180deg, #fbbf24 0%, var(--warning, #f59e0b) 100%);
-  color: #ffffff;
+  color: var(--white);
   border-color: transparent;
   border-bottom-color: var(--accent-amber);
   box-shadow: 0 4px 16px rgba(245, 158, 11, 0.38);
@@ -413,7 +413,7 @@
 .flashcard-complete__btn {
   padding: 14px 36px;
   background: var(--primary, #ff6b35);
-  color: #ffffff;
+  color: var(--white);
   border: 2px solid transparent;
   border-bottom: 5px solid var(--primary-dark);
   border-radius: var(--radius-xl, 16px);

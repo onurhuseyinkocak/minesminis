@@ -270,7 +270,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
                 >
-                  <Star size={32} fill={i < stars ? '#E8A317' : 'none'} color={i < stars ? '#E8A317' : '#ccc'} />
+                  <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
                 </motion.span>
               ))}
             </span>
@@ -334,7 +334,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           animate={{ opacity: 1, y: 0 }}
         >
           <Lightbulb size={18} />
-          {t('games.hintStartsWith').replace('{letter}', currentWord.english[0].toUpperCase())}
+          {t('games.hintStartsWith').replace('{letter}', (currentWord.english.charAt(0) || '?').toUpperCase())}
         </motion.div>
       )}
 

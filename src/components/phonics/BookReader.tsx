@@ -222,6 +222,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
         {/* Actions */}
         <div style={styles.actionsRow}>
           <button
+            type="button"
             onClick={handleReadPage}
             style={styles.actionBtn}
             aria-label="Read to me"
@@ -230,6 +231,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
             <span>Read to me</span>
           </button>
           <button
+            type="button"
             onClick={handleReadAloud}
             style={{
               ...styles.actionBtn,
@@ -247,6 +249,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
         {/* Navigation */}
         <div style={styles.navRow}>
           <button
+            type="button"
             onClick={goPrevPage}
             style={{
               ...styles.navBtn,
@@ -259,6 +262,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onComplete, onClos
           </button>
 
           <button
+            type="button"
             onClick={goNextPage}
             style={styles.navBtnPrimary}
             aria-label={currentPage === totalPages - 1 ? 'Finish reading' : 'Next page'}

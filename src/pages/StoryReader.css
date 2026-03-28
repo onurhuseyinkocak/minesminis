@@ -10,7 +10,7 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  background: #0d1117;
+  background: var(--slate-950);
   transition: background 1s var(--ease-in-out);
 }
 
@@ -396,7 +396,7 @@
   height: 2rem;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  color: #fff;
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;

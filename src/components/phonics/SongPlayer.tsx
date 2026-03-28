@@ -101,6 +101,11 @@ function highlightSoundsInText(text: string, sounds: string[]): React.ReactNode[
 
 // ─── Floating Notes Animation ──────────────────────────────────────────────
 
+// Deterministic offsets so renders are stable (no Math.random() at render time)
+const NOTE_OFFSETS = [-120, 80, -60, 140, -100, 50, -30, 110];
+const NOTE_DURATIONS = [4, 6, 5, 4.5, 7, 5.5, 4, 6.5];
+const NOTE_COLORS = ['#E8A317', '#1A6B5A', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#E8A317', '#1A6B5A'];
+
 function FloatingNotes() {
   const notes = ['\u{266A}', '\u{266B}', '\u{266C}', '\u{2669}'];
   return (
@@ -109,7 +114,7 @@ function FloatingNotes() {
         <motion.span
           key={i}
           initial={{
-            x: Math.random() * 300 - 150,
+            x: NOTE_OFFSETS[i],
             y: 60,
             opacity: 0,
             scale: 0.5,
@@ -121,7 +126,7 @@ function FloatingNotes() {
             rotate: [0, 15, -15, 0],
           }}
           transition={{
-            duration: 4 + Math.random() * 3,
+            duration: NOTE_DURATIONS[i],
             repeat: Infinity,
             delay: i * 0.8,
             ease: 'easeOut',
@@ -129,7 +134,7 @@ function FloatingNotes() {
           style={{
             ...floatingStyles.note,
             left: `${10 + i * 12}%`,
-            color: ['#E8A317', '#1A6B5A', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#E8A317', '#1A6B5A'][i],
+            color: NOTE_COLORS[i],
           }}
         >
           {notes[i % notes.length]}
@@ -370,7 +375,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
               size="lg"
               onClick={onComplete}
               fullWidth
-              style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
+              style={{ backgroundColor: 'var(--secondary, #1A6B5A)', borderColor: 'var(--secondary, #1A6B5A)' }}
             >
               Continue
             </Button>
@@ -388,7 +393,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
       <div style={{ ...styles.content, position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <div style={styles.header}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900 }}>{song.title.charAt(0).toUpperCase()}</div>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--primary, #FF6B35)', color: 'var(--text-on-primary, #fff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900 }}>{song.title.charAt(0).toUpperCase()}</div>
           <div>
             <h2 style={styles.title}>{song.title}</h2>
             <p style={styles.subtitle}>{song.titleTr}</p>
@@ -444,7 +449,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
                 animate={{ opacity: 1 }}
                 style={styles.lyricLine}
               >
-                <p style={{ ...styles.lyricText, color: '#999' }}>
+                <p style={{ ...styles.lyricText, color: 'var(--text-muted, #999)' }}>
                   {isPlaying ? 'Get ready...' : 'Press play to start!'}
                 </p>
               </motion.div>
@@ -470,6 +475,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
         {/* Controls */}
         <div style={styles.controls}>
           <button
+            type="button"
             onClick={handlePrevLine}
             disabled={currentLineIdx <= 0}
             style={styles.controlBtn}
@@ -480,6 +486,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
 
           {isPlaying ? (
             <button
+              type="button"
               onClick={handlePause}
               style={styles.playBtn}
               aria-label="Pause"
@@ -488,6 +495,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
             </button>
           ) : (
             <button
+              type="button"
               onClick={handlePlay}
               style={styles.playBtn}
               aria-label="Play"
@@ -497,6 +505,7 @@ export function SongPlayer({ song, mode = 'singalong', onComplete }: SongPlayerP
           )}
 
           <button
+            type="button"
             onClick={handleNextLine}
             disabled={currentLineIdx >= song.lyrics.length - 1}
             style={styles.controlBtn}

@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LottieCharacter from './LottieCharacter';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface MimiGuideProps {
   message: string;
@@ -40,6 +41,7 @@ export default function MimiGuide({
   autoHide = 8000,
   showOnce,
 }: MimiGuideProps) {
+  const { lang } = useLanguage();
   const [visible, setVisible] = useState(false);
 
   const dismiss = useCallback(() => {
@@ -138,21 +140,8 @@ export default function MimiGuide({
                 fontFamily: 'Nunito, sans-serif',
               }}
             >
-              {message}
+              {lang === 'tr' && messageTr ? messageTr : message}
             </p>
-            {messageTr && (
-              <p
-                style={{
-                  margin: '4px 0 0',
-                  fontSize: 12,
-                  color: 'var(--text-secondary, #94A3B8)',
-                  lineHeight: 1.4,
-                  fontFamily: 'Nunito, sans-serif',
-                }}
-              >
-                {messageTr}
-              </p>
-            )}
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -171,7 +160,7 @@ export default function MimiGuide({
                 fontFamily: 'Nunito, sans-serif',
               }}
             >
-              Got it!
+              {lang === 'tr' ? 'Anladım!' : 'Got it!'}
             </button>
 
             {/* Bubble tail — border triangle behind fill triangle */}

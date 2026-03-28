@@ -160,7 +160,7 @@ export default function TopNav({
 
           {streak > 0 && (
             <div className="topnav__streak" title={`${streak} day streak`}>
-              <span className="topnav__streak-icon"><Flame size={16} color="#FF6B35" /></span>
+              <span className="topnav__streak-icon"><Flame size={16} className="topnav__streak-flame" /></span>
               <span>{streak}</span>
             </div>
           )}
@@ -310,7 +310,7 @@ export default function TopNav({
           </div>
           {streak > 0 && (
             <div className="topnav__streak">
-              <span className="topnav__streak-icon"><Flame size={16} color="#FF6B35" /></span>
+              <span className="topnav__streak-icon"><Flame size={16} className="topnav__streak-flame" /></span>
               <span>{streak} {t('common.dayStreak')}</span>
             </div>
           )}

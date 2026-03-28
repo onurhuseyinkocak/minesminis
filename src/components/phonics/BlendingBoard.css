@@ -67,7 +67,7 @@
   border-radius: var(--radius-xs);
   background-color: var(--secondary, #1A6B5A);
   border-color: var(--secondary, #1A6B5A);
-  color: #fff;
+  color: var(--white);
 }
 
 /* ---- Merged word display ---- */
@@ -106,7 +106,7 @@
   border-radius: var(--radius-lg);
   border: none;
   background-color: var(--primary, #E8A317);
-  color: #fff;
+  color: var(--white);
   font-size: 1.5rem;
   font-weight: 800;
   font-family: var(--font-display, 'Nunito', sans-serif);
@@ -174,5 +174,5 @@
 
 .blending-board__complete-score {
   font-size: 1.1rem;
-  color: #555;
+  color: var(--text-secondary, #555);
 }

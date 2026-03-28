@@ -1408,6 +1408,7 @@ export default function ParentDashboard() {
             {children.map((child) => (
               <button
                 key={child.id}
+                type="button"
                 role="tab"
                 aria-selected={child.id === activeChildId}
                 className={`pd-child-tab${child.id === activeChildId ? ' pd-child-tab--active' : ''}`}
@@ -1423,8 +1424,10 @@ export default function ParentDashboard() {
         {/* Generate report button */}
         {activeChildId && !loading && (
           <button
+            type="button"
             className="pd-report-btn"
             onClick={handleGenerateReport}
+            aria-label={lang === 'tr' ? 'Fonik Değerlendirme Raporu Oluştur' : 'Generate Phonics Assessment Report'}
             title={lang === 'tr' ? 'Fonik Değerlendirme Raporu Oluştur' : 'Generate Phonics Assessment Report'}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

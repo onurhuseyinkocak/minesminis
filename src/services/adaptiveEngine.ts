@@ -12,6 +12,7 @@
  */
 
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../data/phonics';
+import { logger } from '../utils/logger';
 
 // ============================================================
 // TYPES
@@ -404,9 +405,7 @@ function saveProfile(profile: LearnerProfile): void {
   try {
     localStorage.setItem(getStorageKey(profile.id), JSON.stringify(profile));
   } catch (e) {
-    if (typeof console !== 'undefined' && import.meta.env.DEV) {
-      console.warn('adaptiveEngine: failed to save profile — storage may be full', e);
-    }
+    logger.warn('adaptiveEngine: failed to save profile — storage may be full', e);
   }
 }
 

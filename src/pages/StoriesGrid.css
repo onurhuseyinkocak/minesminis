@@ -427,7 +427,7 @@
 
 .story-card__badge--new {
   background: var(--primary);
-  color: #fff;
+  color: var(--white);
   box-shadow: 0 2px 8px rgba(255, 107, 53, 0.35);
 }
 
@@ -560,10 +560,22 @@
   height: 1.3rem;
   padding: 0 0.35rem;
   border-radius: var(--radius-full);
-  background: var(--primary-pale);
-  color: var(--primary);
-  font-size: 0.75rem;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 0.7rem;
   font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.stories-tab--active .stories-tab__badge {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.stories-tab:not(.stories-tab--active) .stories-tab__badge {
+  background: var(--border);
+  color: var(--text-secondary);
 }
 
 /* ---- Decodable section ---- */
@@ -744,6 +756,50 @@
   justify-content: center;
   z-index: 3;
   box-shadow: 0 2px 6px rgba(13, 92, 77, 0.4);
+}
+
+/* ── Locked/preview story cards (shown to non-premium users) ─────────────────── */
+.story-card--locked {
+  cursor: default;
+  pointer-events: none;
+}
+
+.story-card__cover--blur {
+  position: relative;
+}
+
+.story-card__cover--blur .story-cover-svg {
+  filter: blur(6px);
+  opacity: 0.7;
+}
+
+.story-card__lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--white);
+  z-index: 4;
+}
+
+.story-card__premium-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  text-transform: uppercase;
 }
 
 /* ── Stale banner: add icon via pseudo-element ───────────────────────────────── */

@@ -386,7 +386,7 @@ export function LetterTracing({
             size="lg"
             icon={<ArrowRight size={18} />}
             onClick={() => onComplete(result.accuracy)}
-            style={{ backgroundColor: '#1A6B5A', borderColor: '#1A6B5A' }}
+            style={{ backgroundColor: 'var(--secondary, #1A6B5A)', borderColor: 'var(--secondary, #1A6B5A)' }}
           >
             Next Letter
           </Button>
@@ -424,8 +424,8 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'none',
     border: '2px solid #1A6B5A',
     borderRadius: '50%',
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

@@ -22,7 +22,6 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     const levelStartXP = getTotalXPForLevel(stats.level); // cumulative XP at start of current level
     const xpIntoLevel = Math.max(0, stats.xp - levelStartXP); // XP earned within this level
     const streakBonus = getStreakBonus();
-    const remaining = Math.max(0, 100 - progress);
 
     if (compact) {
         return (
@@ -83,8 +82,8 @@ const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                 )}
                 <div className="next-level-info">
                     {lang === 'tr'
-                        ? `Seviye ${stats.level + 1} için %${remaining}`
-                        : `${remaining}% to Level ${stats.level + 1}`}
+                        ? `Seviye ${stats.level + 1} için ${xpIntoLevel}/${xpNeeded} XP`
+                        : `${xpIntoLevel}/${xpNeeded} XP to Level ${stats.level + 1}`}
                 </div>
             </div>
         </div>

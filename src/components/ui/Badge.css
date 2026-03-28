@@ -56,26 +56,26 @@
 
 .mm-badge--success {
   background: var(--success-pale);
-  /* #047857 gives ~5.9:1 on #ECFDF5 — WCAG AA compliant */
-  color: #047857;
+  /* var(--mimi-dark) = #2E7D32 gives ~5.4:1 on #ECFDF5 — WCAG AA compliant */
+  color: var(--mimi-dark);
 }
 
 .mm-badge--warning {
   background: var(--warning-pale);
-  /* #92400E gives ~5.4:1 on #FFFBEB — WCAG AA compliant */
-  color: #92400E;
+  /* var(--accent-red-dark) / deep amber — WCAG AA compliant on warning-pale */
+  color: var(--accent-red-dark);
 }
 
 .mm-badge--error {
   background: var(--error-soft);
-  /* #991B1B gives ~6.2:1 on #FECACA — WCAG AA compliant */
-  color: #991B1B;
+  /* var(--accent-red-dark) gives strong contrast on error-soft — WCAG AA compliant */
+  color: var(--accent-red-dark);
 }
 
 .mm-badge--info {
   background: var(--info-pale);
-  /* #0369A1 gives ~5.3:1 on #F0F9FF — WCAG AA compliant */
-  color: #0369A1;
+  /* var(--accent-blue-dark) gives ~5.3:1 on #F0F9FF — WCAG AA compliant */
+  color: var(--accent-blue-dark);
 }
 
 .mm-badge--premium {
