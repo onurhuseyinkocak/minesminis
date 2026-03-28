@@ -13,12 +13,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Star, Check, Music, BookMarked, BookOpen, Rocket } from 'lucide-react';
 import { ProgressBar, KidIcon } from '../components/ui';
 import LottieCharacter from '../components/LottieCharacter';
-import { PHASES, type LearningUnit } from '../data/curriculumPhases';
+import type { LearningUnit } from '../data/curriculumPhases';
+import { getAllPhases } from '../services/curriculumService';
+
+// Module-level reference: evaluated once, always up-to-date (ALL_PHASES is a stable array)
+const PHASES = getAllPhases();
 import MimiGuide from '../components/MimiGuide';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
 import { saveCurrentUnit } from '../services/lessonProgressService';
+import { useProgress } from '../contexts/ProgressContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getAgeGroupFromSettings } from '../services/ageGroupService';
 import toast from 'react-hot-toast';
@@ -289,6 +294,7 @@ function isPhaseAgeAppropriate(phaseNumber: number, ageGroup: string): boolean {
 const WorldMap = () => {
   const navigate = useNavigate();
   const { t, lang } = useLanguage();
+  const { setCurrentUnit } = useProgress();
   usePageTitle('Dünya Haritası', 'World Map');
   const { userProfile } = useAuth();
   // Initialise the active tab to the user's placement start phase so advanced
@@ -345,7 +351,10 @@ const WorldMap = () => {
   React.useEffect(() => {
     const effectiveIdx = currentStopIndex >= 0 ? currentStopIndex : 0;
     saveCurrentUnit(activePhaseIndex, effectiveIdx);
-  }, [activePhaseIndex, currentStopIndex]);
+    // Also sync to unified ProgressContext
+    const currentUnitId = stops[effectiveIdx]?.unit?.id;
+    if (currentUnitId) setCurrentUnit(currentUnitId);
+  }, [activePhaseIndex, currentStopIndex, stops, setCurrentUnit]);
 
   const handleStopClick = useCallback(
     (stop: (typeof stops)[number]) => {
@@ -357,9 +366,10 @@ const WorldMap = () => {
       // Save selected unit immediately before navigating so dailyLessonService
       // reads the correct phase/unit on the very next render (not after the effect fires)
       saveCurrentUnit(activePhaseIndex, stop.index ?? stops.indexOf(stop));
+      setCurrentUnit(stop.unit.id);
       navigate(`/worlds/${stop.unit.id}`);
     },
-    [navigate, activePhaseIndex, stops],
+    [navigate, activePhaseIndex, stops, setCurrentUnit],
   );
 
   return (

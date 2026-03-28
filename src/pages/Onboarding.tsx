@@ -12,6 +12,9 @@ import { userService } from '../services/userService';
 import { speak } from '../services/ttsService';
 import toast from 'react-hot-toast';
 import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
+import { savePlacementResult } from '../services/placementService';
+import type { AgeGroup } from '../types/progress';
+import type { PlacementLevel } from '../services/placementService';
 import { useABTest } from '../hooks/useABTest';
 import { analytics } from '../services/analytics';
 import {
@@ -421,6 +424,26 @@ const Onboarding: React.FC = () => {
         phaseLabel: `Phase ${phaseFromGroup}`,
         ageGroup,
       }));
+
+      // Sync to unified placementService so progressService.getCurrentUnitId() stays in sync
+      const ageGroupMap: Record<string, AgeGroup> = {
+        '3-5': 'little-ears',
+        '5-7': 'word-builders',
+        '7-9': 'story-makers',
+        '9-10': 'young-explorers',
+      };
+      const mappedAgeGroup: AgeGroup = ageGroupMap[ageGroup] ?? 'word-builders';
+      savePlacementResult({
+        phonicsGroup: startingGroup as PlacementLevel,
+        ageGroup: mappedAgeGroup,
+        startUnitId: `s${startingGroup}-u1`,
+        phaseId: '',
+        accuracy: activeQuestions.length > 0
+          ? Math.round((placementScore / activeQuestions.length) * 100)
+          : 0,
+        questionsAnswered: Object.keys(answers).length,
+        determinedAt: new Date().toISOString(),
+      });
 
       const { createPet } = await import('../services/petService');
       await createPet(user.uid, 'mimi_cat', nickname.trim() || user.displayName || 'Explorer');

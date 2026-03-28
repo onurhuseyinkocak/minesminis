@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ProgressProvider } from "./contexts/ProgressContext";
 import { PremiumProvider, usePremium } from "./contexts/PremiumContext";
 import { GamificationProvider } from "./contexts/GamificationContext";
 import { HeartsProvider } from "./contexts/HeartsContext";
@@ -739,6 +740,7 @@ function App() {
           <LanguageProvider>
             <AuthProvider>
               <PremiumProvider>
+                <ProgressProvider>
                 <HeartsProvider>
                 <GamificationProvider>
                   <ToastProvider>
@@ -748,6 +750,7 @@ function App() {
                   </ToastProvider>
                 </GamificationProvider>
                 </HeartsProvider>
+                </ProgressProvider>
               </PremiumProvider>
             </AuthProvider>
           </LanguageProvider>

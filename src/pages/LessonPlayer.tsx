@@ -46,9 +46,10 @@ import { SFX } from '../data/soundLibrary';
 import { logActivity } from '../services/activityLogger';
 import { syncStudentProgress } from '../services/classroomService';
 import { setActiveUser, startSession, recordActivity } from '../services/adaptiveEngine';
-import { PHASES } from '../data/curriculumPhases';
 import type { LearningUnit, UnitActivity } from '../data/curriculumPhases';
+import { getAllPhases } from '../services/curriculumService';
 import { useSubscription } from '../contexts/SubscriptionContext';
+import { useProgress } from '../contexts/ProgressContext';
 import Paywall from '../components/Paywall';
 import { analytics } from '../services/analytics';
 import './LessonPlayer.css';
@@ -125,7 +126,7 @@ const ACTIVITY_COLORS: Record<string, string> = {
 };
 
 function getUnitById(unitId: string): LearningUnit | null {
-  for (const phase of PHASES) {
+  for (const phase of getAllPhases()) {
     const unit = phase.units.find((u) => u.id === unitId);
     if (unit) return unit;
   }
@@ -409,6 +410,7 @@ const LessonPlayer = () => {
   const { user, userProfile } = useAuth();
   const { t, lang } = useLanguage();
   const { maxLessonsPerDay, isPremium } = useSubscription();
+  const { completeUnit } = useProgress();
   usePageTitle('Ders', 'Lesson');
   const userId = user?.uid || 'guest';
 
@@ -634,6 +636,8 @@ const LessonPlayer = () => {
           const totalPossible = [...activityScores, { score, total }].reduce((a, s) => a + s.total, 0);
           const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
           completeLesson(userId, lessonId, worldId, totalXP, accuracy);
+          // New unified progress tracking (backward compat: keep completeLesson above)
+          if (currentUnit) completeUnit(currentUnit.id);
 
           // Increment daily lesson counter for free-tier limit tracking
           incrementTodayCompletedLessonCount();
@@ -702,6 +706,8 @@ const LessonPlayer = () => {
         const totalPossible = activityScores.reduce((a, s) => a + s.total, 0);
         const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
         completeLesson(userId, lessonId, worldId, totalXP, accuracy);
+        // New unified progress tracking (backward compat: keep completeLesson above)
+        if (currentUnit) completeUnit(currentUnit.id);
 
         // Increment daily lesson counter for free-tier limit tracking
         incrementTodayCompletedLessonCount();

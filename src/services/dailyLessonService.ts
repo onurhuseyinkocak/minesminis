@@ -14,6 +14,7 @@ import { getProgress } from './learningPathService';
 import { PHASES } from '../data/curriculumPhases';
 import { getCurrentUnit } from './lessonProgressService';
 import { getMixedLessonWords, incrementSessionCount } from './spiralReviewService';
+import type { AgeGroup } from '../types/progress';
 
 function localDateStr(d: Date = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -378,7 +379,7 @@ export function getAdaptiveWordCount(userId: string): number {
 
 // ─── Core plan builder ────────────────────────────────────────────────────────
 
-export function getTodayLesson(userId: string): DailyLessonPlan {
+export function getTodayLesson(userId: string, ageGroup?: AgeGroup): DailyLessonPlan {
   const today = localDateStr();
 
   // Return saved plan if already built today
@@ -392,8 +393,17 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
   // Track sessions for spiral review timing
   incrementSessionCount();
 
-  // Determine word count based on recent performance
+  // Determine word count based on recent performance + age group cap
   const wordCount = getAdaptiveWordCount(userId);
+  const ageMaxWords: Partial<Record<AgeGroup, number>> = {
+    'little-seeds': 5,
+    'little-ears': 5,
+    'word-builders': 8,
+    'story-makers': 12,
+    'young-explorers': 12,
+  };
+  const maxWords = ageGroup ? (ageMaxWords[ageGroup] ?? wordCount) : wordCount;
+  const effectiveWordCount = Math.min(wordCount, maxWords);
 
   // Pick new words not yet learned — prioritise current unit's vocabulary
   const learned = getLearnedWords(userId);
@@ -413,12 +423,12 @@ export function getTodayLesson(userId: string): DailyLessonPlan {
 
   // Apply spiral review mixing (every 3rd session)
   const currentUnitWordsResult = combinedPool;
-  const newWords = getMixedLessonWords(currentUnitWordsResult, wordCount);
+  const newWords = getMixedLessonWords(currentUnitWordsResult, effectiveWordCount);
 
   // Fill with first words if everything is learned (demo users)
-  const safeNewWords = newWords.length >= wordCount
+  const safeNewWords = newWords.length >= effectiveWordCount
     ? newWords
-    : kidsWords.slice(0, wordCount);
+    : kidsWords.slice(0, effectiveWordCount);
 
   // Pick up to 5 review words due today
   const reviewWords = getDueReviewWords(5);

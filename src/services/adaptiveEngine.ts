@@ -13,6 +13,7 @@
 
 import { ALL_SOUNDS, PHONICS_GROUPS } from '../data/phonics';
 import { logger } from '../utils/logger';
+import { supabase } from '../config/supabase';
 
 // ============================================================
 // TYPES
@@ -406,6 +407,22 @@ function saveProfile(profile: LearnerProfile): void {
     localStorage.setItem(getStorageKey(profile.id), JSON.stringify(profile));
   } catch (e) {
     logger.warn('adaptiveEngine: failed to save profile — storage may be full', e);
+  }
+  // Async Supabase sync (fire-and-forget)
+  if (supabase && profile.id && typeof navigator !== 'undefined' && navigator.onLine) {
+    supabase.from('adaptive_state').upsert({
+      user_id: profile.id,
+      child_id: '',
+      difficulty_multiplier: profile.difficultyMultiplier,
+      learning_speed: profile.learningSpeed,
+      preferred_activity: profile.preferredActivityType,
+      weak_areas: profile.weakAreas,
+      strong_areas: profile.strongAreas,
+      total_sessions: profile.totalSessions,
+      total_minutes: profile.totalTimeMinutes,
+      last_session_at: profile.lastSessionDate,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,child_id' }).then(() => {}).catch(() => {});
   }
 }
 
