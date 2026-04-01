@@ -1,536 +1,767 @@
-/**
- * WORLD DETAIL — Individual World Page
- * MinesMinis v4.0
- *
- * Route: /worlds/:worldId
- * Shows the world header, lesson list, and vocabulary preview.
- * Uses real curriculum data and progress tracking.
- */
+// ============================================================
+// MinesMinis — WorldDetail Page
+// Unit detail page with activity timeline
+// Supports both phase units (p1-u1) and legacy worlds (w1)
+// ============================================================
+
+import { useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   Lock,
   Check,
-  Play,
-  Clock,
   Star,
-  Music,
-  Gamepad2,
+  ChevronRight,
+  Play,
+  Volume2,
   BookOpen,
-  Layers,
+  Music,
   Mic,
-  HelpCircle,
-  Globe,
-  Home,
-  PawPrint,
-  Palette,
-  Apple,
-  Activity,
-  TreePine,
-  Gem,
-  GraduationCap,
-  MapPin,
-  BookMarked,
-  Plane,
-  Ear,
-  Building2,
+  Headphones,
+  PenTool,
+  Sparkles,
+  Scissors,
+  Grid3X3,
+  PersonStanding,
+  BookOpenCheck,
+  Zap,
+  Clock,
   type LucideIcon,
 } from 'lucide-react';
-
-// World ID → Lucide icon mapping (replaces emoji world.icon)
-const WORLD_ICON_MAP: Record<string, LucideIcon> = {
-  w1: Globe,
-  w2: Home,
-  w3: PawPrint,
-  w4: Palette,
-  w5: Apple,
-  w6: Activity,
-  w7: TreePine,
-  w8: Gem,
-  w9: GraduationCap,
-  w10: MapPin,
-  w11: BookMarked,
-  w12: Plane,
-};
-
-// Phase ID → Lucide icon mapping (replaces emoji phase.icon)
-const PHASE_ICON_MAP: Record<string, LucideIcon> = {
-  'little-ears': Ear,
-  'word-builders': Building2,
-  'story-makers': BookMarked,
-  'young-explorers': Globe,
-};
-
-function WorldIcon({ worldId, size = 40 }: { worldId: string; size?: number }) {
-  const Icon = WORLD_ICON_MAP[worldId] || Globe;
-  return <Icon size={size} color="currentColor" />;
-}
-
-function PhaseIcon({ phaseId, size = 40 }: { phaseId: string; size?: number }) {
-  const Icon = PHASE_ICON_MAP[phaseId] || BookOpen;
-  return <Icon size={size} color="currentColor" />;
-}
-import { Card, ProgressBar, Button, Badge } from '../components/ui';
-import { useAuth } from '../contexts/AuthContext';
+import { useProgress } from '../contexts/ProgressContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
-import { getWorldById } from '../data/curriculum';
-import type { Lesson } from '../data/curriculum';
-import { hasPassedCheckpoint, getCheckpointResult } from '../services/phaseCheckpointService';
 import {
-  isLessonAvailable,
-  getWorldCompletionCount,
-} from '../data/progressTracker';
-import { getProgress } from '../data/progressTracker';
-import { PHASES, type LearningUnit, type LearningPhase } from '../data/curriculumPhases';
-import './WorldDetail.css';
+  getUnitById,
+  getPhaseForUnit,
+  getNextUnit,
+  getWorldById,
+} from '../services/curriculumService';
+import type { UnitActivity } from '../data/curriculumPhases';
+import type { World, Lesson } from '../data/curriculum';
 
-// ============================================================
-// CURRICULUM PHASE UNIT LOOKUP HELPERS
-// ============================================================
+// ── Activity type icon mapping ──────────────────────────────
 
-/** Find a LearningUnit and its parent LearningPhase by unit ID (e.g. 'p1-u1') */
-function getUnitAndPhaseById(unitId: string): { unit: LearningUnit; phase: LearningPhase } | undefined {
-  for (const phase of PHASES) {
-    const unit = phase.units.find((u) => u.id === unitId);
-    if (unit) return { unit, phase };
-  }
-  return undefined;
-}
-
-// ============================================================
-// TYPE BADGE CONFIG
-// ============================================================
-
-const TYPE_CONFIG: Record<string, { icon: typeof Play; label: string; variant: string }> = {
-  vocabulary: { icon: Layers,     label: 'Vocabulary', variant: 'warning' },
-  phonics:    { icon: Music,      label: 'Phonics',    variant: 'info' },
-  grammar:    { icon: BookOpen,   label: 'Grammar',    variant: 'success' },
-  story:      { icon: BookOpen,   label: 'Story',      variant: 'premium' },
-  review:     { icon: HelpCircle, label: 'Review',     variant: 'error' },
-  // Activity-level types (if used as lesson types)
-  song:       { icon: Music,      label: 'Song',       variant: 'info' },
-  game:       { icon: Gamepad2,   label: 'Game',       variant: 'success' },
-  flashcard:  { icon: Layers,     label: 'Flashcard',  variant: 'warning' },
-  practice:   { icon: Mic,        label: 'Practice',   variant: 'default' },
-  quiz:       { icon: HelpCircle, label: 'Quiz',       variant: 'error' },
+const ACTIVITY_ICON_MAP: Record<UnitActivity['type'], LucideIcon> = {
+  'sound-intro': Volume2,
+  'blending': Sparkles,
+  'segmenting': Scissors,
+  'word-match': Grid3X3,
+  'listening': Headphones,
+  'pronunciation': Mic,
+  'tpr': PersonStanding,
+  'reading': BookOpen,
+  'spelling': PenTool,
+  'story': BookOpenCheck,
+  'song': Music,
 };
 
-function getTypeConfig(type: string) {
-  return TYPE_CONFIG[type] || TYPE_CONFIG.vocabulary;
-}
+// ── Lesson type badge colors (legacy) ───────────────────────
 
-// ============================================================
-// ANIMATION
-// ============================================================
-
-const listVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.05, delayChildren: 0.15 },
-  },
+const LESSON_TYPE_COLORS: Record<string, string> = {
+  vocabulary: '#4ECDC4',
+  phonics: '#FF6B6B',
+  grammar: '#45B7D1',
+  story: '#96CEB4',
+  review: '#DDA0DD',
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, x: -16 },
-  visible: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } },
+// ── Spring animation config ─────────────────────────────────
+
+const springTransition = { type: 'spring' as const, stiffness: 300, damping: 24 };
+const staggerContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } },
+};
+const staggerItem = {
+  hidden: { opacity: 0, x: -24 },
+  show: { opacity: 1, x: 0, transition: springTransition },
 };
 
-// ============================================================
-// COMPONENT
-// ============================================================
+// ── Main component ──────────────────────────────────────────
 
-const WorldDetail = () => {
+export default function WorldDetail() {
   const { worldId } = useParams<{ worldId: string }>();
-  const { user } = useAuth();
-  const { t, lang } = useLanguage();
-  usePageTitle('Dünya Detayı', 'World Detail');
-  const userId = user?.uid || 'guest';
-
-  const world = getWorldById(worldId || '');
-
-  // If not found in the old World curriculum, try the new curriculumPhases system
-  const phaseUnitMatch = !world ? getUnitAndPhaseById(worldId || '') : undefined;
-
-  if (!world && phaseUnitMatch) {
-    // Render a unit detail view for the new curriculum phases system
-    return <UnitDetailView unit={phaseUnitMatch.unit} phase={phaseUnitMatch.phase} lang={lang} />;
-  }
-
-  if (!world) {
-    return (
-      <div className="world-detail-page world-detail-page--not-found">
-        <h2>{t('worlds.notFound')}</h2>
-        <Link to="/worlds">
-          <Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('worlds.backToWorlds')}</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const progress = getProgress(userId);
-  const completedCount = getWorldCompletionCount(userId, world.id);
-  const progressPct = world.lessons.length > 0
-    ? Math.round((completedCount / world.lessons.length) * 100)
-    : 0;
-
-  // Build vocab preview from real curriculum data (first 8 words)
-  const vocabPreview = world.vocabulary.slice(0, 8);
-
-  return (
-    <div className="world-detail-page">
-      {/* Back */}
-      <Link to="/worlds" className="world-detail-back">
-        <ArrowLeft size={18} />
-        {t('worlds.allWorlds')}
-      </Link>
-
-      {/* World Header */}
-      <motion.div
-        className="world-detail-header"
-        style={{
-          background: `linear-gradient(135deg, ${world.color}, ${world.gradientTo})`,
-        }}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <span className="world-detail-header__icon"><WorldIcon worldId={world.id} size={40} /></span>
-        <div className="world-detail-header__info">
-          <h1 className="world-detail-header__name">{lang === 'tr' ? world.nameTr : world.name}</h1>
-          <p className="world-detail-header__theme">{lang === 'tr' ? world.descriptionTr : world.theme}</p>
-          <div className="world-detail-header__progress">
-            <ProgressBar value={progressPct} size="sm" variant="default" showLabel />
-            <span className="world-detail-header__count">
-              {completedCount}/{world.lessons.length} {t('lesson.lessonsCompleted')}
-            </span>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Vocabulary Preview */}
-      <section className="world-detail-vocab">
-        <h2 className="world-detail-section-title">{t('worlds.vocabularyPreview')}</h2>
-        <div className="world-detail-vocab__scroll">
-          {vocabPreview.map((v) => (
-            <div key={v.english} className="vocab-preview-card">
-              <div className="vocab-preview-card__letter">{v.english.charAt(0).toUpperCase()}</div>
-              <span className="vocab-preview-card__word">{v.english}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Lesson List */}
-      <section className="world-detail-lessons">
-        <h2 className="world-detail-section-title">{t('worlds.lessons')}</h2>
-        <motion.div
-          className="world-detail-lessons__list"
-          variants={listVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {world.lessons.map((lesson) => {
-            const isCompleted = !!progress.completedLessons[lesson.id];
-            const isAvail = isLessonAvailable(userId, world.id, lesson.id);
-            const isLocked = !isCompleted && !isAvail;
-            const cfg = getTypeConfig(lesson.type);
-            const TypeIcon = cfg.icon;
-
-            return (
-              <motion.div key={lesson.id} variants={itemVariants}>
-                {isAvail ? (
-                  <Link
-                    to={`/worlds/${world.id}/lessons/${lesson.id}`}
-                    className="lesson-card-link"
-                  >
-                    <LessonCard
-                      lesson={lesson}
-                      cfg={cfg}
-                      TypeIcon={TypeIcon}
-                      isAvailable={isAvail}
-                      isCompleted={isCompleted}
-                      isLocked={isLocked}
-                      t={t}
-                      lang={lang}
-                    />
-                  </Link>
-                ) : (
-                  <div className={`lesson-card-link ${isLocked ? 'lesson-card-link--locked' : ''}`}>
-                    <LessonCard
-                      lesson={lesson}
-                      cfg={cfg}
-                      TypeIcon={TypeIcon}
-                      isAvailable={isAvail}
-                      isCompleted={isCompleted}
-                      isLocked={isLocked}
-                      t={t}
-                      lang={lang}
-                    />
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      </section>
-    </div>
-  );
-};
-
-// ============================================================
-// LESSON CARD
-// ============================================================
-
-interface LessonCardProps {
-  lesson: Lesson;
-  cfg: { icon: typeof Play; label: string; variant: string };
-  TypeIcon: typeof Play;
-  isAvailable: boolean;
-  isCompleted: boolean;
-  isLocked: boolean;
-  t: (key: string) => string;
-  lang: string;
-}
-
-function LessonCard({ lesson, cfg, TypeIcon, isAvailable, isCompleted, isLocked, t, lang }: LessonCardProps) {
-  return (
-    <Card
-      variant={isAvailable ? 'interactive' : 'default'}
-      padding="md"
-      className={[
-        'lesson-card',
-        isCompleted && 'lesson-card--completed',
-        isLocked && 'lesson-card--locked',
-        isAvailable && 'lesson-card--available',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
-      {/* Number */}
-      <div className={`lesson-card__number ${isCompleted ? 'lesson-card__number--done' : ''}`}>
-        {isCompleted ? <Check size={18} /> : isLocked ? <Lock size={16} /> : lesson.number}
-      </div>
-
-      {/* Info */}
-      <div className="lesson-card__info">
-        <h3 className="lesson-card__title">{lang === 'tr' ? lesson.titleTr : lesson.title}</h3>
-        <div className="lesson-card__meta">
-          <Badge
-            variant={cfg.variant as 'default' | 'success' | 'warning' | 'error' | 'info' | 'premium'}
-            size="sm"
-            icon={<TypeIcon size={12} />}
-          >
-            {cfg.label}
-          </Badge>
-          <span className="lesson-card__duration">
-            <Clock size={12} /> {lesson.duration} min
-          </span>
-          <span className="lesson-card__xp">
-            <Star size={12} /> {lesson.xpReward} XP
-          </span>
-        </div>
-      </div>
-
-      {/* Status */}
-      <div className="lesson-card__status">
-        {isAvailable && !isCompleted && (
-          <Button variant="primary" size="sm" icon={<Play size={14} />}>
-            {t('worlds.start')}
-          </Button>
-        )}
-        {isCompleted && (
-          <span className="lesson-card__done-badge">
-            <Check size={14} /> {t('worlds.complete')}
-          </span>
-        )}
-        {isLocked && (
-          <Lock size={18} className="lesson-card__lock-icon" />
-        )}
-      </div>
-    </Card>
-  );
-}
-
-// ============================================================
-// UNIT DETAIL VIEW — for new curriculumPhases units (p1-u1, p2-u3, etc.)
-// ============================================================
-
-interface UnitDetailViewProps {
-  unit: LearningUnit;
-  phase: LearningPhase;
-  lang: string;
-}
-
-function UnitDetailView({ unit, phase, lang }: UnitDetailViewProps) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
-  // Read progress from localStorage
-  let activitiesCompleted = 0;
-  try {
-    const raw = localStorage.getItem(`mimi_unit_progress_${unit.id}`);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      activitiesCompleted = parsed.activitiesCompleted || 0;
-    }
-  } catch { /* ignore */ }
+  const { lang } = useLanguage();
+  const { getUnitProgress, isUnitCompleted, getCurrentActivityIndex } = useProgress();
 
-  const totalActivities = unit.activities.length;
-  const progressPct = totalActivities > 0 ? Math.round((activitiesCompleted / totalActivities) * 100) : 0;
+  // Determine if this is a phase unit or legacy world
+  const isLegacy = worldId?.startsWith('w') ?? false;
 
-  // Phase checkpoint state
-  const phaseIndex = PHASES.findIndex(p => p.id === phase.id);
-  const checkpointPassed = phaseIndex >= 0 ? hasPassedCheckpoint(phaseIndex) : false;
-  const checkpointResult = phaseIndex >= 0 ? getCheckpointResult(phaseIndex) : null;
+  const unit = useMemo(() => (worldId && !isLegacy ? getUnitById(worldId) : null), [worldId, isLegacy]);
+  const phase = useMemo(() => (worldId && !isLegacy ? getPhaseForUnit(worldId) : null), [worldId, isLegacy]);
+  const nextUnit = useMemo(() => (worldId && !isLegacy ? getNextUnit(worldId) : null), [worldId, isLegacy]);
+  const legacyWorld = useMemo(() => (worldId && isLegacy ? getWorldById(worldId) : null), [worldId, isLegacy]);
 
-  const activityTypeConfig: Record<string, { label: string; icon: typeof Play }> = {
-    'sound-intro':    { label: 'Sound Intro', icon: Music },
-    'blending':       { label: 'Blending', icon: Layers },
-    'segmenting':     { label: 'Segmenting', icon: Layers },
-    'word-match':     { label: 'Word Match', icon: BookOpen },
-    'listening':      { label: 'Listening', icon: Mic },
-    'pronunciation':  { label: 'Pronunciation', icon: Mic },
-    'tpr':            { label: 'TPR Actions', icon: Play },
-    'reading':        { label: 'Reading', icon: BookOpen },
-    'spelling':       { label: 'Spelling', icon: BookOpen },
-    'story':          { label: 'Story', icon: BookOpen },
-    'song':           { label: 'Song', icon: Music },
-  };
+  // Page title
+  const titleTr = unit?.titleTr ?? legacyWorld?.nameTr ?? '';
+  const titleEn = unit?.title ?? legacyWorld?.name ?? '';
+  usePageTitle(titleTr, titleEn);
+
+  // Progress
+  const progress = worldId ? getUnitProgress(worldId) : 0;
+  const completed = worldId ? isUnitCompleted(worldId) : false;
+  const currentActivityIdx = worldId ? getCurrentActivityIndex(worldId) : 0;
+
+  // 404
+  if (!unit && !legacyWorld) {
+    return <NotFoundState />;
+  }
+
+  // Legacy world → card grid
+  if (isLegacy && legacyWorld) {
+    return <LegacyWorldView world={legacyWorld} lang={lang} />;
+  }
+
+  // Phase unit → timeline
+  if (!unit || !phase) return <NotFoundState />;
+
+  const phaseColor = phase.color;
+  const unitTitle = lang === 'tr' ? unit.titleTr : unit.title;
+  const phaseName = lang === 'tr' ? phase.nameTr : phase.name;
 
   return (
-    <div className="world-detail-page">
-      {/* Back */}
-      <Link to="/worlds" className="world-detail-back">
-        <ArrowLeft size={18} />
-        {t('worlds.backToWorldMap')}
-      </Link>
-
-      {/* Unit Header */}
+    <div
+      style={{
+        minHeight: 'calc(100dvh - 64px)',
+        background: '#FAFBFC',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* ── Header ──────────────────────────────── */}
       <motion.div
-        className="world-detail-header"
-        style={{ background: `linear-gradient(135deg, ${phase.color}, ${phase.color}99)` }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={springTransition}
+        style={{
+          background: `linear-gradient(135deg, ${phaseColor}22 0%, ${phaseColor}08 100%)`,
+          borderBottom: `2px solid ${phaseColor}33`,
+          padding: '20px 24px 24px',
+        }}
       >
-        <span className="world-detail-header__icon"><PhaseIcon phaseId={phase.id} size={40} /></span>
-        <div className="world-detail-header__info">
-          <h1 className="world-detail-header__name">
-            {lang === 'tr' ? unit.titleTr : unit.title}
-          </h1>
-          <p className="world-detail-header__theme">{phase.name} · Unit {unit.number}</p>
-          <div className="world-detail-header__progress">
-            <ProgressBar value={progressPct} size="sm" variant="default" showLabel />
-            <span className="world-detail-header__count">
-              {activitiesCompleted}/{totalActivities} {t('worlds.activitiesCompleted')}
+        {/* Back button */}
+        <Link
+          to="/worlds"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            color: '#555',
+            textDecoration: 'none',
+            fontSize: 14,
+            fontWeight: 500,
+            marginBottom: 16,
+            padding: '8px 0',
+            minHeight: 48,
+          }}
+        >
+          <ArrowLeft size={18} />
+          <span>{lang === 'tr' ? 'Haritaya Don' : 'Back to Map'}</span>
+        </Link>
+
+        {/* Unit number badge + title */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ ...springTransition, delay: 0.1 }}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              background: phaseColor,
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              fontSize: 18,
+              flexShrink: 0,
+            }}
+          >
+            {unit.number}
+          </motion.div>
+          <div>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 22,
+                fontWeight: 700,
+                color: '#1a1a2e',
+                lineHeight: 1.25,
+              }}
+            >
+              {unitTitle}
+            </h1>
+            <span
+              style={{
+                display: 'inline-block',
+                marginTop: 4,
+                padding: '3px 10px',
+                borderRadius: 999,
+                background: `${phaseColor}20`,
+                color: phaseColor,
+                fontSize: 12,
+                fontWeight: 600,
+              }}
+            >
+              {phaseName}
             </span>
           </div>
-          {checkpointPassed && (
-            <span className="wd-checkpoint-badge">Seviye Testi Gecildi</span>
-          )}
-          {checkpointResult && !checkpointPassed && (
-            <span className="wd-checkpoint-badge wd-checkpoint-badge--failed">
-              Test: {checkpointResult.score}/{checkpointResult.total} — Tekrar dene
-            </span>
-          )}
         </div>
-      </motion.div>
 
-      {/* Phonics Focus */}
-      {unit.phonicsFocus.length > 0 && (
-        <section className="world-detail-vocab">
-          <h2 className="world-detail-section-title">{t('worlds.phonicsFocus')}</h2>
-          <div className="world-detail-vocab__scroll">
-            {unit.phonicsFocus.map((sound) => (
-              <div key={sound} className="vocab-preview-card">
-                <div className="vocab-preview-card__letter">{sound.replace(/^g\d+_/, '').charAt(0).toUpperCase()}</div>
-                <span className="vocab-preview-card__word">{sound.replace(/^g\d+_/, '')}</span>
-              </div>
+        {/* Phonics focus chips */}
+        {unit.phonicsFocus.length > 0 && (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+            {unit.phonicsFocus.map((p) => (
+              <span
+                key={p}
+                style={{
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  background: '#fff',
+                  border: `1px solid ${phaseColor}44`,
+                  fontSize: 11,
+                  color: '#555',
+                  fontWeight: 500,
+                }}
+              >
+                {p.replace(/^g\d+_/, '/')}
+              </span>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </motion.div>
 
-      {/* Activities List */}
-      <section className="world-detail-lessons">
-        <h2 className="world-detail-section-title">{t('worlds.activities')}</h2>
+      {/* ── Activity Timeline ───────────────────── */}
+      <div style={{ flex: 1, padding: '24px 16px', maxWidth: 520, margin: '0 auto', width: '100%' }}>
         <motion.div
-          className="world-detail-lessons__list"
-          variants={listVariants}
+          variants={staggerContainer}
           initial="hidden"
-          animate="visible"
+          animate="show"
+          style={{ position: 'relative' }}
         >
+          {/* Vertical connecting line */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 19,
+              top: 24,
+              bottom: 24,
+              width: 3,
+              background: `linear-gradient(180deg, ${phaseColor}44, ${phaseColor}11)`,
+              borderRadius: 2,
+            }}
+          />
+
           {unit.activities.map((activity, idx) => {
-            const cfg = activityTypeConfig[activity.type] || activityTypeConfig['tpr'];
-            const ActivityIcon = cfg.icon;
-            const isDone = idx < activitiesCompleted;
-            const isCurrent = idx === activitiesCompleted;
+            const isActivityCompleted = idx < currentActivityIdx || completed;
+            const isCurrent = idx === currentActivityIdx && !completed;
+            const isLocked = idx > currentActivityIdx && !completed;
+            const IconComponent = ACTIVITY_ICON_MAP[activity.type] ?? Zap;
+            const activityTitle = lang === 'tr' ? activity.titleTr : activity.title;
 
             return (
-              <motion.div key={`${activity.type}-${idx}`} variants={itemVariants}>
-                <Card
-                  variant={isCurrent ? 'interactive' : 'default'}
-                  padding="md"
-                  className={[
-                    'lesson-card',
-                    isDone && 'lesson-card--completed',
-                    !isDone && !isCurrent && 'lesson-card--locked',
-                    isCurrent && 'lesson-card--available',
-                  ].filter(Boolean).join(' ')}
+              <motion.div
+                key={idx}
+                variants={staggerItem}
+                style={{
+                  display: 'flex',
+                  gap: 14,
+                  marginBottom: idx < unit.activities.length - 1 ? 12 : 0,
+                  position: 'relative',
+                }}
+              >
+                {/* Timeline dot */}
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: isActivityCompleted
+                      ? '#22C55E'
+                      : isCurrent
+                        ? phaseColor
+                        : '#E5E7EB',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    zIndex: 1,
+                    boxShadow: isCurrent ? `0 0 0 4px ${phaseColor}33` : 'none',
+                  }}
                 >
-                  {/* Number */}
-                  <div className={`lesson-card__number ${isDone ? 'lesson-card__number--done' : ''}`}>
-                    {isDone ? <Check size={18} /> : !isCurrent ? <Lock size={16} /> : idx + 1}
-                  </div>
+                  {isActivityCompleted ? (
+                    <Check size={18} color="#fff" strokeWidth={3} />
+                  ) : isLocked ? (
+                    <Lock size={16} color="#9CA3AF" />
+                  ) : (
+                    <IconComponent size={18} color="#fff" />
+                  )}
+                </div>
 
-                  {/* Info */}
-                  <div className="lesson-card__info">
-                    <h3 className="lesson-card__title">
-                      {lang === 'tr' ? activity.titleTr : activity.title}
-                    </h3>
-                    <div className="lesson-card__meta">
-                      <Badge
-                        variant="info"
-                        size="sm"
-                        icon={<ActivityIcon size={12} />}
-                      >
-                        {cfg.label}
-                      </Badge>
-                      <span className="lesson-card__duration">
-                        <Clock size={12} /> {activity.duration} min
+                {/* Activity card */}
+                <motion.button
+                  onClick={() => {
+                    if (!isLocked) {
+                      navigate(`/worlds/${worldId}/lessons/${idx}`);
+                    }
+                  }}
+                  disabled={isLocked}
+                  whileHover={!isLocked ? { scale: 1.02 } : undefined}
+                  whileTap={!isLocked ? { scale: 0.98 } : undefined}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '12px 14px',
+                    borderRadius: 14,
+                    border: isActivityCompleted
+                      ? '2px solid #22C55E44'
+                      : isCurrent
+                        ? `2px solid ${phaseColor}`
+                        : '2px solid #E5E7EB',
+                    background: isLocked ? '#F9FAFB' : '#fff',
+                    opacity: isLocked ? 0.55 : 1,
+                    cursor: isLocked ? 'not-allowed' : 'pointer',
+                    textAlign: 'left',
+                    outline: 'none',
+                    minHeight: 48,
+                    boxShadow: isCurrent ? `0 4px 16px ${phaseColor}22` : '0 1px 3px rgba(0,0,0,0.04)',
+                    width: '100%',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: isLocked ? '#9CA3AF' : '#1a1a2e',
+                        lineHeight: 1.3,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {activityTitle}
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        marginTop: 4,
+                        fontSize: 12,
+                        color: '#9CA3AF',
+                      }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <Star size={12} />
+                        {activity.xp} XP
                       </span>
-                      <span className="lesson-card__xp">
-                        <Star size={12} /> {activity.xp} XP
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <Clock size={12} />
+                        {activity.duration} min
                       </span>
                     </div>
                   </div>
 
-                  {/* Status */}
-                  <div className="lesson-card__status">
-                    {isCurrent && (
-                      <Button variant="primary" size="sm" icon={<Play size={14} />} onClick={() => navigate(`/worlds/${unit.id}/lessons/${idx}`)}>
-                        {t('worlds.start')}
-                      </Button>
-                    )}
-                    {isDone && (
-                      <span className="lesson-card__done-badge">
-                        <Check size={14} /> {t('worlds.complete')}
-                      </span>
-                    )}
-                    {!isDone && !isCurrent && (
-                      <Lock size={18} className="lesson-card__lock-icon" />
-                    )}
-                  </div>
-                </Card>
+                  {/* Right side: CTA or status */}
+                  {isCurrent && (
+                    <motion.div
+                      animate={{ scale: [1, 1.08, 1] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 40,
+                        height: 40,
+                        borderRadius: 12,
+                        background: phaseColor,
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Play size={18} color="#fff" fill="#fff" />
+                    </motion.div>
+                  )}
+                  {isActivityCompleted && (
+                    <Check size={20} color="#22C55E" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                  )}
+                  {isLocked && (
+                    <ChevronRight size={18} color="#D1D5DB" style={{ flexShrink: 0 }} />
+                  )}
+                </motion.button>
               </motion.div>
             );
           })}
         </motion.div>
-      </section>
+      </div>
+
+      {/* ── Bottom Section ──────────────────────── */}
+      <div
+        style={{
+          padding: '16px 16px 24px',
+          maxWidth: 520,
+          margin: '0 auto',
+          width: '100%',
+        }}
+      >
+        {/* Progress bar */}
+        <div style={{ marginBottom: nextUnit ? 16 : 0 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#555',
+            }}
+          >
+            <span>{lang === 'tr' ? 'Ilerleme' : 'Progress'}</span>
+            <span>{Math.round(progress * 100)}%</span>
+          </div>
+          <div
+            style={{
+              height: 10,
+              borderRadius: 5,
+              background: '#E5E7EB',
+              overflow: 'hidden',
+            }}
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.round(progress * 100)}%` }}
+              transition={{ ...springTransition, delay: 0.3 }}
+              style={{
+                height: '100%',
+                borderRadius: 5,
+                background: completed
+                  ? '#22C55E'
+                  : `linear-gradient(90deg, ${phaseColor}, ${phaseColor}CC)`,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Next unit card */}
+        {nextUnit && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...springTransition, delay: 0.4 }}
+          >
+            <Link
+              to={`/worlds/${nextUnit.id}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '12px 14px',
+                borderRadius: 14,
+                background: '#fff',
+                border: '1px solid #E5E7EB',
+                textDecoration: 'none',
+                minHeight: 48,
+              }}
+            >
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 10,
+                  background: '#F3F4F6',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 14,
+                  color: '#9CA3AF',
+                  flexShrink: 0,
+                }}
+              >
+                {nextUnit.number}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 11, color: '#9CA3AF', fontWeight: 500 }}>
+                  {lang === 'tr' ? 'Siradaki Unite' : 'Next Unit'}
+                </div>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: '#1a1a2e',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {lang === 'tr' ? nextUnit.titleTr : nextUnit.title}
+                </div>
+              </div>
+              <ChevronRight size={18} color="#9CA3AF" style={{ flexShrink: 0 }} />
+            </Link>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
 
-export default WorldDetail;
+// ── Legacy World View ───────────────────────────────────────
+
+function LegacyWorldView({
+  world,
+  lang,
+}: {
+  world: World;
+  lang: string;
+}) {
+  const worldName = lang === 'tr' ? world.nameTr : world.name;
+  const worldDesc = lang === 'tr' ? world.descriptionTr : world.description;
+
+  return (
+    <div
+      style={{
+        minHeight: 'calc(100dvh - 64px)',
+        background: '#FAFBFC',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={springTransition}
+        style={{
+          background: `linear-gradient(135deg, ${world.gradientFrom}22 0%, ${world.gradientTo}08 100%)`,
+          borderBottom: `2px solid ${world.color}33`,
+          padding: '20px 24px 24px',
+        }}
+      >
+        <Link
+          to="/worlds"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            color: '#555',
+            textDecoration: 'none',
+            fontSize: 14,
+            fontWeight: 500,
+            marginBottom: 16,
+            padding: '8px 0',
+            minHeight: 48,
+          }}
+        >
+          <ArrowLeft size={18} />
+          <span>{lang === 'tr' ? 'Haritaya Don' : 'Back to Map'}</span>
+        </Link>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              background: world.color,
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              fontSize: 18,
+              flexShrink: 0,
+            }}
+          >
+            {world.number}
+          </div>
+          <div>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 22,
+                fontWeight: 700,
+                color: '#1a1a2e',
+                lineHeight: 1.25,
+              }}
+            >
+              {worldName}
+            </h1>
+            <p style={{ margin: '4px 0 0', fontSize: 13, color: '#777', lineHeight: 1.4 }}>
+              {worldDesc}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Lesson cards grid */}
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        style={{
+          flex: 1,
+          padding: '24px 16px',
+          maxWidth: 520,
+          margin: '0 auto',
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gap: 12,
+          alignContent: 'start',
+        }}
+      >
+        {world.lessons.map((lesson, idx) => (
+          <LegacyLessonCard
+            key={lesson.id}
+            lesson={lesson}
+            index={idx}
+            worldId={world.id}
+            lang={lang}
+          />
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+function LegacyLessonCard({
+  lesson,
+  index,
+  worldId,
+  lang,
+}: {
+  lesson: Lesson;
+  index: number;
+  worldId: string;
+  lang: string;
+}) {
+  const badgeColor = LESSON_TYPE_COLORS[lesson.type] ?? '#888';
+  const lessonTitle = lang === 'tr' ? lesson.titleTr : lesson.title;
+
+  return (
+    <motion.div variants={staggerItem}>
+      <Link
+        to={`/worlds/${worldId}/lessons/${index}`}
+        style={{
+          display: 'block',
+          padding: '14px 16px',
+          borderRadius: 14,
+          background: '#fff',
+          border: '1px solid #E5E7EB',
+          textDecoration: 'none',
+          minHeight: 48,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <span
+            style={{
+              padding: '2px 8px',
+              borderRadius: 6,
+              background: `${badgeColor}18`,
+              color: badgeColor,
+              fontSize: 11,
+              fontWeight: 600,
+              textTransform: 'capitalize',
+            }}
+          >
+            {lesson.type}
+          </span>
+        </div>
+        <div
+          style={{
+            fontSize: 14,
+            fontWeight: 600,
+            color: '#1a1a2e',
+            lineHeight: 1.35,
+            marginBottom: 8,
+          }}
+        >
+          {lessonTitle}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: '#9CA3AF' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <Star size={12} />
+            {lesson.xpReward} XP
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <Clock size={12} />
+            {lesson.duration} min
+          </span>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+// ── Not Found State ─────────────────────────────────────────
+
+function NotFoundState() {
+  return (
+    <div
+      style={{
+        minHeight: 'calc(100dvh - 64px)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 32,
+        textAlign: 'center',
+        background: '#FAFBFC',
+      }}
+    >
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={springTransition}
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: '50%',
+          background: '#FEE2E2',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 16,
+        }}
+      >
+        <BookOpen size={32} color="#EF4444" />
+      </motion.div>
+      <h2 style={{ margin: '0 0 8px', fontSize: 20, fontWeight: 700, color: '#1a1a2e' }}>
+        Unit Not Found
+      </h2>
+      <p style={{ margin: '0 0 24px', fontSize: 14, color: '#777' }}>
+        This unit doesn&apos;t exist or hasn&apos;t been unlocked yet.
+      </p>
+      <Link
+        to="/worlds"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          padding: '12px 24px',
+          borderRadius: 12,
+          background: '#4ECDC4',
+          color: '#fff',
+          textDecoration: 'none',
+          fontWeight: 600,
+          fontSize: 14,
+          minHeight: 48,
+        }}
+      >
+        <ArrowLeft size={16} />
+        Back to Map
+      </Link>
+    </div>
+  );
+}

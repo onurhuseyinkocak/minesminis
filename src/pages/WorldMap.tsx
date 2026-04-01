@@ -1,692 +1,608 @@
-/**
- * WORLD MAP — Visual Learning Journey Path
- * MinesMinis v4.0
- *
- * Route: /worlds
- * A child-friendly board-game-style winding path.
- * Each stop = a curriculum phase unit.
- * Completed = green check, Current = golden pulse, Locked = gray lock.
- */
-import React, { useState, useCallback, useMemo, useEffect, useTransition } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Star, Check, Music, BookMarked, BookOpen, Rocket } from 'lucide-react';
-import { ProgressBar, KidIcon } from '../components/ui';
-import LottieCharacter from '../components/LottieCharacter';
-import type { LearningUnit } from '../data/curriculumPhases';
-import { getAllPhases } from '../services/curriculumService';
+// ============================================================
+// MinesMinis — WorldMap (Learn Page)
+// Main learning journey page with phase tabs + unit cards grid
+// ============================================================
 
-// Module-level reference: evaluated once, always up-to-date (ALL_PHASES is a stable array)
-const PHASES = getAllPhases();
-import MimiGuide from '../components/MimiGuide';
+import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Lock, Check, Star, ChevronRight, BookOpen, Volume2, Sparkles } from 'lucide-react';
+import { useProgress } from '../contexts/ProgressContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
-import { LS_PLACEMENT_RESULT } from '../config/storageKeys';
-import { saveCurrentUnit } from '../services/lessonProgressService';
-import { useProgress } from '../contexts/ProgressContext';
-import { useAuth } from '../contexts/AuthContext';
-import { getAgeGroupFromSettings } from '../services/ageGroupService';
-import toast from 'react-hot-toast';
-import './WorldMap.css';
+import { getAllPhases } from '../services/curriculumService';
+import LottieCharacter from '../components/LottieCharacter';
+import type { LearningPhase, LearningUnit } from '../data/curriculumPhases';
 
-// ============================================================
-// HELPERS
-// ============================================================
+// ── Constants ────────────────────────────────────────────────
 
-/** Phase icons */
-const PHASE_ICONS: Record<string, React.ReactNode> = {
-  'little-ears': <KidIcon name="mic" size={20} />,
-  'word-builders': <KidIcon name="learn" size={20} />,
-  'story-makers': <KidIcon name="stories" size={20} />,
-  'young-explorers': <KidIcon name="games" size={20} />,
-};
-
-/** Per-unit icon based on unit index */
-function getUnitIcon(_unit: LearningUnit, index: number): React.ReactNode {
-  return <span style={{ fontSize: '0.8rem', fontWeight: 900, color: 'inherit' }}>{index + 1}</span>;
-}
-
-/** Get unit progress from localStorage */
-interface UnitProgressInfo {
-  status: 'completed' | 'current' | 'unlocked' | 'locked';
-  starsEarned: number; // 0-3
-  activitiesCompleted: number;
-  totalActivities: number;
-}
-
-// ── Storage key helpers (must match lessonProgressService prefix logic) ──────
-// lessonProgressService uses `mm_` or `mm_child_{id}_` prefix.
-// WorldMap reads directly from localStorage — must use the SAME keys.
-function getActiveChildPrefix(): string {
-  try {
-    const childId = localStorage.getItem('mimi_active_child');
-    return childId ? `mm_child_${childId}_` : 'mm_';
-  } catch {
-    return 'mm_';
-  }
-}
-
-/** Read activitiesCompleted for a unit via the canonical storage key. */
-function readActivitiesCompleted(unitId: string): number {
-  try {
-    const pfx = getActiveChildPrefix();
-    // Primary: lessonProgressService writes activity index to this key (0-based next index).
-    const actRaw = localStorage.getItem(`${pfx}unit_${unitId}_activity`);
-    if (actRaw !== null) {
-      const val = parseInt(actRaw, 10);
-      if (!isNaN(val)) return val;
-    }
-    // Secondary: old WorldMap written JSON { activitiesCompleted: N }
-    const legacyRaw = localStorage.getItem(`mimi_unit_progress_${unitId}`);
-    if (legacyRaw) {
-      const parsed = JSON.parse(legacyRaw);
-      if (typeof parsed === 'object' && parsed !== null && typeof parsed.activitiesCompleted === 'number') {
-        return parsed.activitiesCompleted;
-      }
-    }
-  } catch { /* ignore */ }
-  return 0;
-}
-
-/** Read placement start phase (0-based index) from localStorage. Cached per call site. */
-function readStartPhase(): number {
-  try {
-    const detailRaw = localStorage.getItem('mimi_placement_detail');
-    if (detailRaw) {
-      const detail = JSON.parse(detailRaw);
-      if (detail.phase !== undefined) return Math.max(0, detail.phase - 1);
-    }
-  } catch { /* ignore */ }
-  try {
-    const legacyRaw = localStorage.getItem(LS_PLACEMENT_RESULT);
-    if (legacyRaw) {
-      const group = parseInt(legacyRaw, 10);
-      if (!isNaN(group)) {
-        if (group <= 2) return 0;
-        if (group === 3) return 1;
-        if (group <= 5) return 2;
-        return 3;
-      }
-    }
-  } catch { /* ignore */ }
-  return 0;
-}
-
-/** Check if a unit is marked completed via lessonProgressService's dedicated completed key. */
-function readUnitCompleted(unitId: string): boolean {
-  try {
-    const pfx = getActiveChildPrefix();
-    return localStorage.getItem(`${pfx}unit_${unitId}_completed`) === '1';
-  } catch {
-    return false;
-  }
-}
-
-// ── Flat progress builder (non-recursive) ────────────────────────────────────
-// Builds progress for ALL units in a phase in one pass to avoid recursive
-// O(n²) localStorage reads on each render.
-
-interface RawUnitData {
-  activitiesCompleted: number;
-  isCompleted: boolean;
-  totalActivities: number;
-}
-
-function buildPhaseProgressMap(units: LearningUnit[]): Map<string, RawUnitData> {
-  const map = new Map<string, RawUnitData>();
-  for (const unit of units) {
-    const isCompleted = readUnitCompleted(unit.id);
-    const activitiesCompleted = isCompleted ? unit.activities.length : readActivitiesCompleted(unit.id);
-    map.set(unit.id, {
-      activitiesCompleted,
-      isCompleted,
-      totalActivities: unit.activities.length,
-    });
-  }
-  return map;
-}
-
-function getUnitProgress(unit: LearningUnit, phaseIndex: number, unitIndex: number): UnitProgressInfo {
-  const totalActivities = unit.activities.length;
-  const startPhase = readStartPhase();
-
-  const isCompleted = readUnitCompleted(unit.id);
-  let activitiesCompleted = isCompleted ? totalActivities : readActivitiesCompleted(unit.id);
-
-  const pct = totalActivities > 0 ? activitiesCompleted / totalActivities : 0;
-  const starsEarned = pct >= 1 ? 3 : pct >= 0.6 ? 2 : pct >= 0.3 ? 1 : 0;
-
-  // 1. Already fully completed (real progress or placement skip)
-  if (pct >= 1) return { status: 'completed', starsEarned, activitiesCompleted, totalActivities };
-
-  // 2. Phase is before placement start → auto-complete (skip for advanced users)
-  if (phaseIndex < startPhase) {
-    return { status: 'completed', starsEarned: 3, activitiesCompleted: totalActivities, totalActivities };
-  }
-
-  // 3. First unit in the placement-start phase with no progress → current
-  if (phaseIndex === startPhase && unitIndex === 0 && activitiesCompleted === 0) {
-    return { status: 'current', starsEarned, activitiesCompleted, totalActivities };
-  }
-
-  // 4. First unit in a later-than-startPhase phase → check if prev phase unlocks it
-  //    Uses flat scan (no recursion) to count prev phase completion.
-  if (phaseIndex > startPhase && unitIndex === 0) {
-    const prevPhase = PHASES[phaseIndex - 1];
-    if (prevPhase) {
-      const prevMap = buildPhaseProgressMap(prevPhase.units);
-      let prevCompletedCount = 0;
-      let prevWithStarsCount = 0;
-      for (const data of prevMap.values()) {
-        const puPct = data.totalActivities > 0 ? data.activitiesCompleted / data.totalActivities : 0;
-        if (puPct >= 1 || data.isCompleted) prevCompletedCount++;
-        if (puPct >= 0.3) prevWithStarsCount++;
-      }
-      const allCompleted = prevCompletedCount === prevPhase.units.length;
-      const seventyPctWithStars = prevPhase.units.length > 0 && prevWithStarsCount / prevPhase.units.length >= 0.7;
-      if (allCompleted || seventyPctWithStars) {
-        return { status: activitiesCompleted > 0 ? 'current' : 'unlocked', starsEarned, activitiesCompleted, totalActivities };
-      }
-    }
-    return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
-  }
-
-  // 5. Unit has in-progress activities → current (only valid after prev unit check)
-  //    We defer this check until after prev unit gate to avoid false positives.
-  if (unitIndex === 0 && activitiesCompleted > 0) {
-    // First unit in startPhase with partial progress
-    return { status: 'current', starsEarned, activitiesCompleted, totalActivities };
-  }
-
-  // 6. Check previous unit in same phase (flat, no recursion — read direct from storage)
-  if (unitIndex > 0) {
-    const phase = PHASES[phaseIndex];
-    const prevUnit = phase.units[unitIndex - 1];
-    const prevCompleted = readUnitCompleted(prevUnit.id);
-    const prevActivitiesDone = prevCompleted ? prevUnit.activities.length : readActivitiesCompleted(prevUnit.id);
-    const prevPct = prevUnit.activities.length > 0 ? prevActivitiesDone / prevUnit.activities.length : 0;
-
-    if (prevPct >= 1 || prevCompleted) {
-      // Previous unit fully done: this unit is unlocked
-      if (activitiesCompleted > 0) return { status: 'current', starsEarned, activitiesCompleted, totalActivities };
-      return { status: 'unlocked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
-    }
-
-    // Previous unit is in progress or locked → this unit stays locked
-    return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
-  }
-
-  return { status: 'locked', starsEarned: 0, activitiesCompleted: 0, totalActivities };
-}
-
-// ============================================================
-// ANIMATION VARIANTS
-// ============================================================
-
-const pathVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+const PHASE_COLORS: Record<string, { bg: string; gradient: string; border: string; text: string; pill: string; pillActive: string; cardFrom: string; cardTo: string }> = {
+  'little-ears': {
+    bg: '#FFF7ED',
+    gradient: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+    border: '#FDBA74',
+    text: '#C2410C',
+    pill: '#FFF7ED',
+    pillActive: '#FB923C',
+    cardFrom: '#FFF7ED',
+    cardTo: '#FFEDD5',
+  },
+  'word-builders': {
+    bg: '#EFF6FF',
+    gradient: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
+    border: '#93C5FD',
+    text: '#1D4ED8',
+    pill: '#EFF6FF',
+    pillActive: '#60A5FA',
+    cardFrom: '#EFF6FF',
+    cardTo: '#DBEAFE',
+  },
+  'story-makers': {
+    bg: '#F0FDF4',
+    gradient: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
+    border: '#86EFAC',
+    text: '#15803D',
+    pill: '#F0FDF4',
+    pillActive: '#4ADE80',
+    cardFrom: '#F0FDF4',
+    cardTo: '#DCFCE7',
+  },
+  'young-explorers': {
+    bg: '#FAF5FF',
+    gradient: 'linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%)',
+    border: '#C084FC',
+    text: '#7E22CE',
+    pill: '#FAF5FF',
+    pillActive: '#A855F7',
+    cardFrom: '#FAF5FF',
+    cardTo: '#F3E8FF',
   },
 };
 
-const stopVariants = {
-  hidden: { opacity: 0, scale: 0.6, y: 30 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 22 },
-  },
+const PHASE_ICONS: Record<string, string> = {
+  'little-ears': 'idle',
+  'word-builders': 'happy',
+  'story-makers': 'talk',
+  'young-explorers': 'star',
 };
 
-const tooltipVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 8 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 400, damping: 25 } },
-  exit: { opacity: 0, scale: 0.8, y: 8, transition: { duration: 0.15 } },
-};
+const springTransition = { type: 'spring' as const, stiffness: 300, damping: 24 };
+const gentleSpring = { type: 'spring' as const, stiffness: 200, damping: 20 };
 
-// ============================================================
-// COMPONENT
-// ============================================================
+// ── Progress Ring Component ──────────────────────────────────
 
-// ============================================================
-// TRACK CONFIG — age-based journey label
-// ============================================================
-
-interface TrackConfig {
-  icon: string;
-  label: string;
-  color: string;
-  desc: string;
-}
-
-type TrackKey = '3-5' | '5-7' | '7-9' | '9-10';
-
-function getTrackConfig(isTr: boolean): Record<TrackKey, TrackConfig> {
-  return {
-    '3-5':  { icon: 'primary',       label: isTr ? 'Ses Gezgini'       : 'Sound Explorer',   color: 'var(--primary)',        desc: isTr ? 'Sesler ve hareketlerle öğren'        : 'Learn with sounds & movement' },
-    '5-7':  { icon: 'accent-purple', label: isTr ? 'Kelime Kâşifi'     : 'Word Explorer',    color: 'var(--accent-purple)',  desc: isTr ? 'Harfleri birleştir, kelimeler oluştur' : 'Blend letters, build words' },
-    '7-9':  { icon: 'info',          label: isTr ? 'Okuma Yıldızı'     : 'Reading Star',     color: 'var(--info)',           desc: isTr ? 'Akıcı oku, cümle kur'                 : 'Read fluently, build sentences' },
-    '9-10': { icon: 'success',       label: isTr ? 'İngilizce Ustası'  : 'English Master',   color: 'var(--success)',        desc: isTr ? 'Gramer ve ileri kelime bilgisi'        : 'Grammar & advanced vocabulary' },
-  };
-}
-
-/** Render a track icon via lucide-react (no emoji) */
-function TrackIconEl({ icon, color }: { icon: string; color: string }) {
-  const style = { color };
-  const size = 22;
-  if (icon === 'primary')       return <Music size={size} style={style} aria-hidden="true" />;
-  if (icon === 'accent-purple') return <Star size={size} style={style} aria-hidden="true" />;
-  if (icon === 'info')          return <BookOpen size={size} style={style} aria-hidden="true" />;
-  if (icon === 'success')       return <Rocket size={size} style={style} aria-hidden="true" />;
-  return <BookMarked size={size} style={style} aria-hidden="true" />;
-}
-
-/** Returns true if a phase (1-based number) is appropriate for the given age group */
-function isPhaseAgeAppropriate(phaseNumber: number, ageGroup: string): boolean {
-  if (ageGroup === '3-5') return phaseNumber <= 2;
-  if (ageGroup === '5-7') return phaseNumber <= 3;
-  return true; // 7-9 and 9-10 have full access
-}
-
-const WorldMap = () => {
-  const navigate = useNavigate();
-  const { t, lang } = useLanguage();
-  const { setCurrentUnit } = useProgress();
-  usePageTitle('Dünya Haritası', 'World Map');
-  const { userProfile } = useAuth();
-  // Initialise the active tab to the user's placement start phase so advanced
-  // users land on their correct phase instead of always seeing Phase 1.
-  const [activePhaseIndex, setActivePhaseIndex] = useState(() => readStartPhase());
-  const [lockedTooltip, setLockedTooltip] = useState<string | null>(null);
-  // useTransition: phase switching recalculates useMemo(stops) via localStorage reads
-  // across all units — mark as non-urgent so the UI stays responsive
-  const [isPhaseTransitioning, startPhaseTransition] = useTransition();
-
-  const isTr = lang === 'tr';
-  const ageGroup = getAgeGroupFromSettings(userProfile?.settings as Record<string, unknown> | null | undefined);
-  const trackConfigs = getTrackConfig(isTr);
-  const track: TrackConfig = trackConfigs[(ageGroup as TrackKey)] ?? trackConfigs['7-9'];
-
-  // Show placement done banner once after placement test / onboarding
-  useEffect(() => {
-    const placementShown = localStorage.getItem('mimi_placement_shown');
-    const placementDetail = localStorage.getItem('mimi_placement_detail');
-    if (placementDetail && !placementShown) {
-      localStorage.setItem('mimi_placement_shown', '1');
-      try {
-        const detail = JSON.parse(placementDetail) as { phaseLabel?: string };
-        const label = detail.phaseLabel ?? 'your level';
-        toast.success(
-          lang === 'tr'
-            ? `Seviyene uygun başlangıç noktasına yerleştirildin! (${label})`
-            : `You've been placed at the right starting point! (${label})`,
-          { duration: 4000 },
-        );
-      } catch { /* ignore */ }
-    }
-  }, [lang]);
-
-  const phase = PHASES[activePhaseIndex];
-  const allUnits = phase.units;
-
-  // Build flat stop list with progress (memoized to avoid repeated localStorage reads)
-  const stops = useMemo(() => allUnits.map((unit, i) => ({
-    unit,
-    icon: getUnitIcon(unit, i),
-    progress: getUnitProgress(unit, activePhaseIndex, i),
-    index: i,
-  })), [allUnits, activePhaseIndex]);
-
-  // Overall phase progress
-  const completedCount = stops.filter((s) => s.progress.status === 'completed').length;
-  const overallPct = allUnits.length > 0 ? Math.round((completedCount / allUnits.length) * 100) : 0;
-
-  // Find current stop index for Mimi placement
-  const currentStopIndex = stops.findIndex((s) => s.progress.status === 'current');
-
-  // Persist the active unit so dailyLessonService can pick curriculum-relevant words
-  React.useEffect(() => {
-    const effectiveIdx = currentStopIndex >= 0 ? currentStopIndex : 0;
-    saveCurrentUnit(activePhaseIndex, effectiveIdx);
-    // Also sync to unified ProgressContext
-    const currentUnitId = stops[effectiveIdx]?.unit?.id;
-    if (currentUnitId) setCurrentUnit(currentUnitId);
-  }, [activePhaseIndex, currentStopIndex, stops, setCurrentUnit]);
-
-  const handleStopClick = useCallback(
-    (stop: (typeof stops)[number]) => {
-      if (stop.progress.status === 'locked') {
-        setLockedTooltip(stop.unit.id);
-        setTimeout(() => setLockedTooltip(null), 2000);
-        return;
-      }
-      // Save selected unit immediately before navigating so dailyLessonService
-      // reads the correct phase/unit on the very next render (not after the effect fires)
-      saveCurrentUnit(activePhaseIndex, stop.index ?? stops.indexOf(stop));
-      setCurrentUnit(stop.unit.id);
-      navigate(`/worlds/${stop.unit.id}`);
-    },
-    [navigate, activePhaseIndex, stops, setCurrentUnit],
-  );
+function ProgressRing({ progress, size = 56, strokeWidth = 5, color = '#FB923C' }: {
+  progress: number;
+  size?: number;
+  strokeWidth?: number;
+  color?: string;
+}) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="journey-page">
-      {/* ---- SKY BACKGROUND DECORATIONS ---- */}
-      <div className="journey-bg">
-        <div className="journey-cloud journey-cloud--1" />
-        <div className="journey-cloud journey-cloud--2" />
-        <div className="journey-cloud journey-cloud--3" />
-        <div className="journey-star journey-star--1"><KidIcon name="star" size={16} /></div>
-        <div className="journey-star journey-star--2"><KidIcon name="star" size={12} /></div>
-        <div className="journey-star journey-star--3"><KidIcon name="star" size={10} /></div>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="#E5E7EB"
+        strokeWidth={strokeWidth}
+      />
+      <motion.circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeDasharray={circumference}
+        initial={{ strokeDashoffset: circumference }}
+        animate={{ strokeDashoffset: offset }}
+        transition={{ ...gentleSpring, delay: 0.3 }}
+        style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+      />
+      <text
+        x="50%"
+        y="50%"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={size * 0.24}
+        fontWeight={700}
+        fill={color}
+      >
+        {Math.round(progress)}%
+      </text>
+    </svg>
+  );
+}
+
+// ── Phase Tab Pill ───────────────────────────────────────────
+
+function PhaseTab({ phase, isActive, onClick, lang }: {
+  phase: LearningPhase;
+  isActive: boolean;
+  onClick: () => void;
+  lang: string;
+}) {
+  const colors = PHASE_COLORS[phase.id];
+  const label = lang === 'tr' ? phase.nameTr : phase.name;
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileTap={{ scale: 0.95 }}
+      transition={springTransition}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '10px 20px',
+        borderRadius: 9999,
+        border: `2px solid ${isActive ? colors.pillActive : '#E5E7EB'}`,
+        background: isActive ? colors.pillActive : '#FFFFFF',
+        color: isActive ? '#FFFFFF' : '#6B7280',
+        fontWeight: 600,
+        fontSize: 14,
+        cursor: 'pointer',
+        whiteSpace: 'nowrap',
+        minHeight: 48,
+        position: 'relative',
+        outline: 'none',
+      }}
+    >
+      <span style={{ fontSize: 12, opacity: 0.8 }}>P{phase.number}</span>
+      <span>{label}</span>
+      {isActive && (
+        <motion.div
+          layoutId="phase-indicator"
+          style={{
+            position: 'absolute',
+            bottom: -2,
+            left: '50%',
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            background: colors.pillActive,
+            transform: 'translateX(-50%)',
+          }}
+          transition={springTransition}
+        />
+      )}
+    </motion.button>
+  );
+}
+
+// ── Unit Card ────────────────────────────────────────────────
+
+function UnitCard({ unit, phase, index, lang, progress, isCompleted, isUnlocked, isCurrent }: {
+  unit: LearningUnit;
+  phase: LearningPhase;
+  index: number;
+  lang: string;
+  progress: number;
+  isCompleted: boolean;
+  isUnlocked: boolean;
+  isCurrent: boolean;
+}) {
+  const colors = PHASE_COLORS[phase.id];
+  const title = lang === 'tr' ? unit.titleTr : unit.title;
+  const progressPercent = Math.round(progress * 100);
+
+  const cardContent = (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ ...gentleSpring, delay: index * 0.06 }}
+      whileTap={isUnlocked ? { scale: 0.97 } : undefined}
+      style={{
+        position: 'relative',
+        borderRadius: 16,
+        padding: 20,
+        background: isUnlocked
+          ? `linear-gradient(145deg, ${colors.cardFrom} 0%, ${colors.cardTo} 100%)`
+          : '#F9FAFB',
+        border: `2px solid ${isCurrent ? colors.pillActive : isUnlocked ? colors.border : '#E5E7EB'}`,
+        opacity: isUnlocked ? 1 : 0.6,
+        cursor: isUnlocked ? 'pointer' : 'default',
+        overflow: 'hidden',
+        minHeight: 140,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        gap: 12,
+        boxShadow: isCurrent
+          ? `0 0 0 3px ${colors.pillActive}33, 0 4px 12px ${colors.pillActive}22`
+          : isCompleted
+            ? `0 2px 8px ${colors.border}33`
+            : '0 1px 4px rgba(0,0,0,0.05)',
+      }}
+    >
+      {/* Current unit pulse ring */}
+      {isCurrent && (
+        <motion.div
+          animate={{ scale: [1, 1.04, 1], opacity: [0.4, 0.15, 0.4] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            inset: -4,
+            borderRadius: 20,
+            border: `3px solid ${colors.pillActive}`,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 12,
+            background: isUnlocked ? colors.pillActive : '#D1D5DB',
+            color: '#FFFFFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 700,
+            fontSize: 14,
+          }}
+        >
+          {unit.number}
+        </div>
+
+        {/* Status icon */}
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: isCompleted ? '#22C55E' : !isUnlocked ? '#E5E7EB' : 'transparent',
+          }}
+        >
+          {isCompleted ? (
+            <Star size={16} color="#FFFFFF" fill="#FFFFFF" />
+          ) : !isUnlocked ? (
+            <Lock size={14} color="#9CA3AF" />
+          ) : isCurrent ? (
+            <Sparkles size={16} color={colors.pillActive} />
+          ) : null}
+        </div>
       </div>
 
-      {/* ---- HEADER ---- */}
-      <header className="journey-header">
-        <div className="journey-header__inner">
-          <div className="journey-header__top">
-            <h1 className="journey-header__title">
-              <span className="journey-header__phase-emoji">
-                {PHASE_ICONS[phase.id] || <KidIcon name="learn" size={20} />}
-              </span>
-              {lang === 'tr' ? phase.nameTr : phase.name}
-            </h1>
-            <span className="journey-header__age">{phase.ageRange} {t('worlds.years')}</span>
-          </div>
+      {/* Title */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
+        <h3
+          style={{
+            margin: 0,
+            fontSize: 15,
+            fontWeight: 700,
+            color: isUnlocked ? colors.text : '#9CA3AF',
+            lineHeight: 1.3,
+          }}
+        >
+          {title}
+        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <BookOpen size={12} color={isUnlocked ? colors.text + 'AA' : '#D1D5DB'} />
+          <span
+            style={{
+              fontSize: 12,
+              color: isUnlocked ? colors.text + 'AA' : '#D1D5DB',
+              fontWeight: 500,
+            }}
+          >
+            {unit.vocabularyTheme}
+          </span>
+        </div>
+      </div>
 
-          <div className="journey-header__progress">
-            <ProgressBar
-              value={overallPct}
-              size="sm"
-              variant={overallPct === 100 ? 'success' : 'default'}
-              animated
+      {/* Progress bar */}
+      {isUnlocked && (
+        <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: colors.text + 'CC' }}>
+              {progressPercent}%
+            </span>
+            {isUnlocked && !isCompleted && (
+              <ChevronRight size={14} color={colors.pillActive} />
+            )}
+            {isCompleted && (
+              <Check size={14} color="#22C55E" />
+            )}
+          </div>
+          <div
+            style={{
+              height: 6,
+              borderRadius: 3,
+              background: '#FFFFFF',
+              overflow: 'hidden',
+            }}
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ ...gentleSpring, delay: index * 0.06 + 0.2 }}
+              style={{
+                height: '100%',
+                borderRadius: 3,
+                background: isCompleted
+                  ? '#22C55E'
+                  : `linear-gradient(90deg, ${colors.pillActive}, ${colors.border})`,
+              }}
             />
-            <span className="journey-header__pct">{overallPct}{t('worlds.percentComplete')}</span>
-          </div>
-
-          {/* Age-based journey track banner */}
-          {ageGroup && (
-            <div className="journey-track-banner" style={{ borderLeftColor: track.color }}>
-              <span className="journey-track-icon">
-                <TrackIconEl icon={track.icon} color={track.color} />
-              </span>
-              <div>
-                <div className="journey-track-label" style={{ color: track.color }}>{track.label}</div>
-                <div className="journey-track-desc">{track.desc}</div>
-              </div>
-            </div>
-          )}
-
-          {/* Phase tabs */}
-          <div className="journey-phase-tabs">
-            {PHASES.map((p, i) => (
-              <button
-                type="button"
-                key={p.id}
-                className={`journey-phase-tab ${i === activePhaseIndex ? 'journey-phase-tab--active' : ''}`}
-                onClick={() => startPhaseTransition(() => setActivePhaseIndex(i))}
-                aria-label={p.name}
-                disabled={isPhaseTransitioning}
-                style={
-                  i === activePhaseIndex
-                    ? { borderColor: p.color, color: p.color }
-                    : undefined
-                }
-              >
-                <span className="journey-phase-tab__icon">{PHASE_ICONS[p.id] || <KidIcon name="learn" size={16} />}</span>
-                <span className="journey-phase-tab__label">{lang === 'tr' ? p.nameTr : p.name}</span>
-              </button>
-            ))}
           </div>
         </div>
-      </header>
+      )}
+    </motion.div>
+  );
 
-      {/* ---- WINDING PATH ---- */}
+  if (!isUnlocked) {
+    return cardContent;
+  }
+
+  return (
+    <Link to={`/worlds/${unit.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      {cardContent}
+    </Link>
+  );
+}
+
+// ── Motivational Message ─────────────────────────────────────
+
+function getMotivationalMessage(progress: number, lang: string): string {
+  if (progress >= 100) return lang === 'tr' ? 'Harika! Hepsini tamamladin!' : 'Amazing! You completed everything!';
+  if (progress >= 75) return lang === 'tr' ? 'Neredeyse bitti! Devam et!' : 'Almost there! Keep going!';
+  if (progress >= 50) return lang === 'tr' ? 'Yarisini gectin, harika gidiyorsun!' : 'Halfway there, great job!';
+  if (progress >= 25) return lang === 'tr' ? 'Guzel ilerliyorsun!' : 'Great progress!';
+  if (progress > 0) return lang === 'tr' ? 'Harika bir baslangic!' : 'Great start!';
+  return lang === 'tr' ? 'Maceraya basla!' : 'Start your adventure!';
+}
+
+// ── Main Component ───────────────────────────────────────────
+
+export default function WorldMap() {
+  const { lang } = useLanguage();
+  const { getUnitProgress, isUnitCompleted, isUnitUnlocked, currentUnitId } = useProgress();
+  usePageTitle('Ogren', 'Learn');
+
+  const phases = useMemo(() => getAllPhases(), []);
+
+  // Find which phase contains the current unit
+  const defaultPhaseId = useMemo(() => {
+    for (const phase of phases) {
+      if (phase.units.some((u) => u.id === currentUnitId)) {
+        return phase.id;
+      }
+    }
+    return phases[0]?.id ?? 'little-ears';
+  }, [phases, currentUnitId]);
+
+  const [activePhaseId, setActivePhaseId] = useState<string>(defaultPhaseId);
+
+  const activePhase = useMemo(
+    () => phases.find((p) => p.id === activePhaseId) ?? phases[0],
+    [phases, activePhaseId],
+  );
+
+  // Overall progress across all phases
+  const overallProgress = useMemo(() => {
+    const allUnits = phases.flatMap((p) => p.units);
+    if (allUnits.length === 0) return 0;
+    const total = allUnits.reduce((sum, u) => sum + getUnitProgress(u.id), 0);
+    return (total / allUnits.length) * 100;
+  }, [phases, getUnitProgress]);
+
+  // Phase progress
+  const phaseProgress = useMemo(() => {
+    if (!activePhase || activePhase.units.length === 0) return 0;
+    const total = activePhase.units.reduce((sum, u) => sum + getUnitProgress(u.id), 0);
+    return (total / activePhase.units.length) * 100;
+  }, [activePhase, getUnitProgress]);
+
+  const colors = PHASE_COLORS[activePhaseId] ?? PHASE_COLORS['little-ears'];
+  const motivationalMsg = getMotivationalMessage(overallProgress, lang);
+
+  return (
+    <div
+      style={{
+        minHeight: 'calc(100dvh - 64px)',
+        background: '#FAFAFA',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* ── Header ─────────────────────────────────────────── */}
       <motion.div
-        className="journey-path"
-        variants={pathVariants}
-        initial="hidden"
-        animate="visible"
-        key={phase.id}
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={gentleSpring}
+        style={{
+          padding: '24px 20px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+        }}
       >
-        {/* Empty phase guard */}
-        {stops.length === 0 && (
-          <div className="journey-empty">
-            <KidIcon name="learn" size={48} />
-            <p>
-              {isTr
-                ? 'Bu bölümde henüz ders yok. Yakında ekleniyor!'
-                : 'No lessons in this section yet. Coming soon!'}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 28,
+              fontWeight: 800,
+              color: '#1F2937',
+              letterSpacing: -0.5,
+            }}
+          >
+            {lang === 'tr' ? 'Ogren' : 'Learn'}
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Sparkles size={14} color={colors.pillActive} />
+            <span style={{ fontSize: 13, color: '#6B7280', fontWeight: 500 }}>
+              {motivationalMsg}
+            </span>
+          </div>
+        </div>
+
+        <ProgressRing
+          progress={overallProgress}
+          size={56}
+          strokeWidth={5}
+          color={colors.pillActive}
+        />
+      </motion.div>
+
+      {/* ── Phase Tabs ─────────────────────────────────────── */}
+      <div
+        style={{
+          padding: '0 20px',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            paddingBottom: 12,
+            minWidth: 'max-content',
+          }}
+        >
+          {phases.map((phase) => (
+            <PhaseTab
+              key={phase.id}
+              phase={phase}
+              isActive={activePhaseId === phase.id}
+              onClick={() => setActivePhaseId(phase.id)}
+              lang={lang}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Phase Info Banner ──────────────────────────────── */}
+      <motion.div
+        key={activePhaseId}
+        initial={{ opacity: 0, x: 12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={gentleSpring}
+        style={{
+          margin: '0 20px 16px',
+          padding: 16,
+          borderRadius: 16,
+          background: colors.gradient,
+          border: `1.5px solid ${colors.border}`,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+        }}
+      >
+        <div style={{ flexShrink: 0 }}>
+          <LottieCharacter
+            state={PHASE_ICONS[activePhaseId] ?? 'idle'}
+            size={56}
+          />
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 16,
+                fontWeight: 700,
+                color: colors.text,
+              }}
+            >
+              {lang === 'tr' ? activePhase.nameTr : activePhase.name}
+            </h2>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: colors.pillActive,
+                background: '#FFFFFF',
+                padding: '2px 8px',
+                borderRadius: 8,
+              }}
+            >
+              {activePhase.ageRange}
+            </span>
+          </div>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 13,
+              color: colors.text + 'BB',
+              lineHeight: 1.4,
+            }}
+          >
+            {lang === 'tr' ? activePhase.descriptionTr : activePhase.description}
+          </p>
+        </div>
+        <div style={{ flexShrink: 0 }}>
+          <ProgressRing
+            progress={phaseProgress}
+            size={44}
+            strokeWidth={4}
+            color={colors.pillActive}
+          />
+        </div>
+      </motion.div>
+
+      {/* ── Unit Cards Grid ────────────────────────────────── */}
+      <div
+        style={{
+          flex: 1,
+          padding: '0 20px 32px',
+          overflowY: 'auto',
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 12,
+          }}
+        >
+          {activePhase.units.map((unit, idx) => (
+            <UnitCard
+              key={unit.id}
+              unit={unit}
+              phase={activePhase}
+              index={idx}
+              lang={lang}
+              progress={getUnitProgress(unit.id)}
+              isCompleted={isUnitCompleted(unit.id)}
+              isUnlocked={isUnitUnlocked(unit.id)}
+              isCurrent={unit.id === currentUnitId}
+            />
+          ))}
+        </div>
+
+        {/* Empty state if no units */}
+        {activePhase.units.length === 0 && (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: 48,
+              color: '#9CA3AF',
+            }}
+          >
+            <Volume2 size={32} color="#D1D5DB" />
+            <p style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }}>
+              {lang === 'tr' ? 'Bu asamada henuz ders yok.' : 'No lessons in this phase yet.'}
             </p>
           </div>
         )}
-
-        {/* New user motivational banner — shown when all stops are locked (0 progress) */}
-        {stops.length > 0 && stops.every(s => s.progress.status === 'locked') && (
-          <motion.div
-            className="journey-new-user-banner"
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <LottieCharacter state="wave" size={56} />
-            <div className="journey-new-user-banner__text">
-              <strong>
-                {isTr ? 'Macera buradan başlıyor!' : 'Your adventure starts here!'}
-              </strong>
-              <span>
-                {isTr
-                  ? 'İlk dersi açmak için Günlük Derse git!'
-                  : 'Go to Daily Lesson to unlock your first unit!'}
-              </span>
-            </div>
-          </motion.div>
-        )}
-
-        {/* SVG path connector line — viewBox height matches stepY * stops */}
-        <svg
-          className="journey-path-svg"
-          viewBox={`0 0 400 ${stops.length * 160 + 80}`}
-          preserveAspectRatio="xMidYMid meet"
-          aria-hidden="true"
-        >
-          {/* Wider stroke for dotted trail visibility */}
-          <path
-            d={buildPathD(stops.length)}
-            fill="none"
-            stroke="var(--journey-path-color, #FF6B35)"
-            strokeWidth="5"
-            strokeDasharray="14 9"
-            strokeLinecap="round"
-            opacity="0.45"
-          />
-        </svg>
-
-        {stops.map((stop, i) => {
-          const isLeft = i % 2 === 0;
-          const isCurrent = stop.progress.status === 'current';
-          const isCompleted = stop.progress.status === 'completed';
-          const isLocked = stop.progress.status === 'locked';
-          const isUnlocked = stop.progress.status === 'unlocked';
-
-          // Age-lock: phase is not appropriate for this age group
-          const isAgeLocked = ageGroup
-            ? !isPhaseAgeAppropriate(phase.number, ageGroup)
-            : false;
-
-          // Show advanced badge for 9-10 on phases 3 & 4
-          const showAdvancedBadge = ageGroup === '9-10' && (phase.number === 3 || phase.number === 4);
-
-          const showMimi = !isAgeLocked && isCurrent && currentStopIndex === i;
-
-          return (
-            <motion.div
-              key={stop.unit.id}
-              className={[
-                'journey-stop',
-                isLeft ? 'journey-stop--left' : 'journey-stop--right',
-                !isAgeLocked && isCurrent && 'journey-stop--current',
-                !isAgeLocked && isCompleted && 'journey-stop--completed',
-                (isLocked || isAgeLocked) && 'journey-stop--locked',
-                !isAgeLocked && isUnlocked && 'journey-stop--unlocked',
-                showMimi && 'journey-stop--has-mimi',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              style={{ '--stop-index': i } as React.CSSProperties}
-              variants={stopVariants}
-              onClick={() => {
-                if (isAgeLocked) {
-                  setLockedTooltip(stop.unit.id);
-                  setTimeout(() => setLockedTooltip(null), 2000);
-                  return;
-                }
-                handleStopClick(stop);
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label={`${lang === 'tr' ? stop.unit.titleTr : stop.unit.title} - ${isAgeLocked ? 'age-locked' : stop.progress.status}`}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  if (isAgeLocked) {
-                    setLockedTooltip(stop.unit.id);
-                    setTimeout(() => setLockedTooltip(null), 2000);
-                    return;
-                  }
-                  handleStopClick(stop);
-                }
-              }}
-            >
-              {/* Mimi at current position */}
-              {showMimi && (
-                <div className="journey-mimi-marker">
-                  <LottieCharacter state="happy" size={48} />
-                </div>
-              )}
-
-              {/* Stop circle */}
-              <div className="journey-stop__circle">
-                {!isAgeLocked && isCompleted && (
-                  <span className="journey-stop__badge journey-stop__badge--done">
-                    <Check size={18} strokeWidth={3} />
-                  </span>
-                )}
-                {!isAgeLocked && isCurrent && (
-                  <span className="journey-stop__badge journey-stop__badge--current">
-                    <KidIcon name="star" size={14} />
-                  </span>
-                )}
-                {(isLocked || isAgeLocked) && (
-                  <span className="journey-stop__badge journey-stop__badge--locked">
-                    <Lock size={16} />
-                  </span>
-                )}
-                {!isAgeLocked && isUnlocked && (
-                  <span className="journey-stop__badge journey-stop__badge--unlocked">
-                    <KidIcon name="star" size={14} />
-                  </span>
-                )}
-                <span className="journey-stop__icon">{stop.icon}</span>
-              </div>
-
-              {/* Label */}
-              <div className="journey-stop__info">
-                <span className="journey-stop__title">{lang === 'tr' ? stop.unit.titleTr : stop.unit.title}</span>
-                {/* Advanced badge for 9-10 age group */}
-                {showAdvancedBadge && !isAgeLocked && (
-                  <span className="journey-stop__advanced">Advanced</span>
-                )}
-                {/* Stars */}
-                {!isAgeLocked && (
-                  <span className="journey-stop__stars">
-                    {[1, 2, 3].map((s) => (
-                      <Star
-                        key={s}
-                        size={14}
-                        className={
-                          s <= stop.progress.starsEarned
-                            ? 'journey-star-icon journey-star-icon--filled'
-                            : 'journey-star-icon'
-                        }
-                      />
-                    ))}
-                  </span>
-                )}
-              </div>
-
-              {/* Locked tooltip */}
-              <AnimatePresence>
-                {lockedTooltip === stop.unit.id && (
-                  <motion.div
-                    className="journey-tooltip"
-                    variants={tooltipVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                  >
-                    {isAgeLocked
-                      ? (isTr ? 'Büyüyünce açılır' : 'Unlocks when you grow up')
-                      : i === 0
-                        ? (isTr ? 'Önceki bölümü tamamla' : 'Complete the previous section first')
-                        : (isTr ? 'Önceki dersi tamamla' : 'Complete the previous lesson first')}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          );
-        })}
-
-        {/* Decorative elements along the path */}
-        <div className="journey-deco journey-deco--tree1"><KidIcon name="garden" size={24} /></div>
-        <div className="journey-deco journey-deco--tree2"><KidIcon name="garden" size={20} /></div>
-        <div className="journey-deco journey-deco--flower1"><KidIcon name="star" size={16} /></div>
-        <div className="journey-deco journey-deco--flower2"><KidIcon name="star" size={14} /></div>
-        <div className="journey-deco journey-deco--flower3"><KidIcon name="star" size={12} /></div>
-      </motion.div>
-
-      <MimiGuide
-        message="Tap a game to play! The highlighted one is next!"
-        messageTr="Oynamak için bir oyuna dokun! Yıldızlı olan sıradasın!"
-        showOnce="mimi_guide_worldmap"
-        position="bottom-left"
-      />
+      </div>
     </div>
   );
-};
-
-// ============================================================
-// SVG PATH BUILDER — zigzag dotted trail
-// ============================================================
-
-function buildPathD(stopCount: number): string {
-  if (stopCount < 1) return '';
-  const segments: string[] = [];
-  const cx = 200; // center x
-  const offsetX = 100; // zigzag amplitude
-  const startY = 60;
-  const stepY = 160;
-
-  for (let i = 0; i < stopCount; i++) {
-    const isLeft = i % 2 === 0;
-    const x = isLeft ? cx - offsetX : cx + offsetX;
-    const y = startY + i * stepY;
-
-    if (i === 0) {
-      segments.push(`M ${x} ${y}`);
-    } else {
-      const prevLeft = (i - 1) % 2 === 0;
-      const prevX = prevLeft ? cx - offsetX : cx + offsetX;
-      const prevY = startY + (i - 1) * stepY;
-      // Smooth S-curve between stops
-      const cpY = prevY + stepY * 0.5;
-      segments.push(`C ${prevX} ${cpY}, ${x} ${cpY}, ${x} ${y}`);
-    }
-  }
-  return segments.join(' ');
 }
-
-export default WorldMap;
