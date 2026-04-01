@@ -8,6 +8,7 @@ import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -25,6 +26,7 @@ export interface WordFamilyGameProps {
   families: WordFamily[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 // ── Feedback type ──────────────────────────────────────────────────────────
@@ -43,12 +45,20 @@ const shakeAnimation = {
 // ── Component ──────────────────────────────────────────────────────────────
 
 export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
-  families,
+  families: rawFamilies,
   onComplete,
   onWrongAnswer,
+  ageGroup,
 }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  // For age 3-5: show only 3 onset tiles at a time
+  const maxOnsetsPerFamily = age === '3-5' ? 3 : undefined;
+  const families = rawFamilies.slice(0, questionsCount).map(f =>
+    maxOnsetsPerFamily ? { ...f, onsets: f.onsets.slice(0, maxOnsetsPerFamily) } : f
+  );
 
   const [familyIndex, setFamilyIndex] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
@@ -268,7 +278,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
     : null;
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4 w-full max-w-xl mx-auto" role="application" aria-label="Word family builder game">
+    <div className="flex flex-col items-center gap-3 h-full max-h-full overflow-y-auto p-4 w-full max-w-xl mx-auto" role="application" aria-label="Word family builder game">
       {/* Header */}
       <div className="flex items-center justify-between w-full">
         <h2 className="text-xl font-extrabold text-slate-800">{t('games.wordFamilies')}</h2>

@@ -8,6 +8,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
 import { SpeakButton } from '../SpeakButton';
+import { getOptionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -25,6 +26,7 @@ export interface ImageLabelGameProps {
   questions: LabelQuestion[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 type OptionState = 'idle' | 'correct' | 'wrong';
@@ -35,10 +37,18 @@ const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
-  questions,
+  questions: rawQuestions,
   onComplete,
   onWrongAnswer,
+  ageGroup,
 }) => {
+  const age = ageGroup || '7-9';
+  const optionsCount = getOptionsCountForAge(age);
+  // Trim options per question to age-appropriate count
+  const questions = rawQuestions.map(q => ({
+    ...q,
+    options: q.options.slice(0, Math.max(optionsCount, 2)),
+  }));
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
 
@@ -175,7 +185,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
   const progress = questions.length > 0 ? (currentIndex / questions.length) * 100 : 0;
 
   return (
-    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Image label game">
+    <div className="flex flex-col gap-3 h-full max-h-full overflow-hidden px-4 py-3 max-w-lg mx-auto" role="application" aria-label="Image label game">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-800">{t('games.labelThePicture')}</h2>
@@ -185,7 +195,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden flex-shrink-0">
         <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${progress}%` }} transition={springGentle} />
       </div>
 
@@ -242,7 +252,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
           </div>
 
           {/* Options grid */}
-          <div className="grid grid-cols-2 gap-3" role="group" aria-label={t('games.labelThePicture')}>
+          <div className={`grid ${optionsCount >= 4 ? 'grid-cols-2' : 'grid-cols-1'} gap-3`} role="group" aria-label={t('games.labelThePicture')}>
             {currentQuestion.options.map((option, idx) => {
               const state: OptionState = optionStates[option] ?? 'idle';
               return (

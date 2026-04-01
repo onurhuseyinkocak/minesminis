@@ -12,6 +12,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
 import { shuffleArray } from '../../utils/arrayUtils';
+import { getOptionsCountForAge, getQuestionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -26,6 +27,7 @@ interface GameProps {
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 interface Round {
@@ -46,15 +48,15 @@ function phoneticSimilarity(a: string, b: string): number {
   return score;
 }
 
-function generateRounds(words: WordItem[]): Round[] {
-  const selected = shuffleArray(words).slice(0, 5);
+function generateRounds(words: WordItem[], questionsCount: number, optionsCount: number): Round[] {
+  const selected = shuffleArray(words).slice(0, questionsCount);
   return selected.map((word) => {
     const others = words.filter((w) => w.english !== word.english);
     const sorted = [...others].sort((a, b) => {
       const diff = phoneticSimilarity(word.english, b.english) - phoneticSimilarity(word.english, a.english);
       return diff !== 0 ? diff : Math.random() - 0.5;
     });
-    const distractors = sorted.slice(0, Math.min(3, sorted.length));
+    const distractors = sorted.slice(0, Math.min(optionsCount - 1, sorted.length));
     const options = shuffleArray([word, ...distractors]);
     return { correctWord: word, options };
   });
@@ -100,11 +102,14 @@ function WaveformBars({ playing }: { playing: boolean }) {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, ageGroup }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
-  const rounds = useMemo(() => generateRounds(words), [words]);
+  const age = ageGroup || '7-9';
+  const optionsCount = getOptionsCountForAge(age);
+  const questionsCount = getQuestionsCountForAge(age);
+  const rounds = useMemo(() => generateRounds(words, questionsCount, optionsCount), [words, questionsCount, optionsCount]);
   const [currentRound, setCurrentRound] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -306,7 +311,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
       {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
       <div
-        className="flex flex-col gap-4 sm:gap-5 p-4 sm:p-5 bg-gradient-to-b from-indigo-50 to-white rounded-3xl min-h-[480px]"
+        className="flex flex-col gap-3 p-4 bg-gradient-to-b from-indigo-50 to-white rounded-3xl h-full max-h-full overflow-hidden"
         role="application"
         aria-label="Listening challenge game"
       >
@@ -324,7 +329,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
         <ProgressBar value={progress} variant="success" size="md" animated />
 
         {/* Speaker area */}
-        <div className="flex flex-col items-center gap-4 p-4 sm:p-6 bg-white rounded-3xl border-2 border-gray-100 shadow-sm">
+        <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-2xl border-2 border-gray-100 shadow-sm flex-shrink-0">
           <p className="text-base font-medium text-gray-600 text-center">
             {t('games.listenAndPickInstruction') || 'Listen to the word, then pick the right spelling!'}
           </p>
@@ -333,7 +338,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
           <motion.button
             type="button"
             onClick={handlePlay}
-            className="relative flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 text-white shadow-lg shadow-indigo-200 cursor-pointer"
+            className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 text-white shadow-lg shadow-indigo-200 cursor-pointer"
             whileTap={{ scale: 0.92 }}
             animate={
               isPlaying
@@ -409,7 +414,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
         </div>
 
         {/* Option cards in a column */}
-        <div className="flex flex-col gap-3" role="radiogroup" aria-label="Choose the word you heard">
+        <div className="flex flex-col gap-2 flex-1 overflow-y-auto" role="radiogroup" aria-label="Choose the word you heard">
           <AnimatePresence>
             {round.options.map((option, index) => {
               const isCorrectOption = feedback && option.english === round.correctWord.english;
@@ -422,7 +427,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
                   onClick={() => handleSelect(index)}
                   disabled={feedback !== null || !hasPlayed}
                   aria-label={`Option: ${option.english}`}
-                  className={`flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 min-h-[56px] rounded-2xl border-2 text-left transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-2.5 min-h-[44px] rounded-xl border-2 text-left transition-colors ${
                     isCorrectOption
                       ? 'bg-emerald-100 border-emerald-400'
                       : isWrongSelected

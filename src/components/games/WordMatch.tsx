@@ -10,6 +10,7 @@ import NoHeartsModal from '../NoHeartsModal';
 import { announceToScreenReader } from '../../utils/accessibility';
 import AnswerFeedbackPanel from '../AnswerFeedbackPanel';
 import { shuffleArray } from '../../utils/arrayUtils';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 interface WordItem {
   english: string;
@@ -22,6 +23,7 @@ interface GameProps {
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 interface MatchPair {
@@ -34,13 +36,16 @@ interface MatchPair {
 }
 
 
-export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, ageGroup }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
 
-  const roundSize = 3;
-  const totalWords = Math.min(words.length, 6);
+  const age = ageGroup || '7-9';
+  // For age 3-5: 2 pairs per round, 5-7: 3, 7+: 4
+  const roundSize = age === '3-5' ? 2 : age === '5-7' ? 3 : 4;
+  const totalQuestionsForAge = getQuestionsCountForAge(age);
+  const totalWords = Math.min(words.length, totalQuestionsForAge);
   const totalRounds = Math.ceil(totalWords / roundSize);
 
   const [round, setRound] = useState(0);
@@ -186,7 +191,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     const isPerfect = pct === 100;
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-64px)] bg-gradient-to-b from-blue-50 to-orange-50 p-6">
+      <div className="flex flex-col items-center justify-center h-full max-h-full overflow-hidden bg-gradient-to-b from-blue-50 to-orange-50 p-4">
         {isPerfect && <ConfettiRain duration={3000} />}
 
         <motion.div
@@ -292,20 +297,12 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
       <div
-        className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full"
+        className="flex flex-col h-full max-h-full overflow-hidden p-4 max-w-lg mx-auto w-full"
         role="application"
         aria-label="Word matching game"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-800">{t('games.matchTheWords')}</h2>
-          <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-sm font-semibold px-3 py-1 rounded-full">
-            {t('games.round')} {round + 1}/{totalRounds}
-          </span>
-        </div>
-
         {/* Progress bar */}
-        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-slate-100 rounded-full mx-0 mt-1 mb-2 flex-shrink-0">
           <motion.div
             className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full"
             initial={{ width: 0 }}
@@ -314,14 +311,16 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           />
         </div>
 
-        {/* Score */}
-        <div className="flex items-center justify-center gap-1.5 text-sm font-semibold text-slate-500">
-          <CheckCircle2 size={16} className="text-emerald-500" />
-          {score} / {totalWords}
+        {/* Header */}
+        <div className="flex items-center justify-between flex-shrink-0 mb-2">
+          <h2 className="text-base font-bold text-slate-800">{t('games.matchTheWords')}</h2>
+          <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            {t('games.round')} {round + 1}/{totalRounds} &middot; {score}/{totalWords}
+          </span>
         </div>
 
         {/* Two-column board */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2 flex-1 overflow-hidden">
           {/* LEFT: English words (blue cards) */}
           <div className="flex flex-col gap-2.5" role="list" aria-label="English words">
             <span className="text-xs font-bold text-blue-400 uppercase tracking-wider text-center mb-1">English</span>

@@ -416,9 +416,11 @@ export interface GameSelectorProps extends GameProps {
   extra?: Record<string, unknown>;
   /** Real-time difficulty multiplier from adaptive engine (0.5-2.0, default 1.0) */
   difficultyMultiplier?: number;
+  /** Age group string for age-based difficulty adjustments */
+  ageGroup?: string;
 }
 
-export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ...props }: GameSelectorProps) {
+export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ageGroup, ...props }: GameSelectorProps) {
   useLanguage(); // context subscription for re-renders on language change
   const normalizedType = GAME_TYPE_MAP[type];
 
@@ -440,8 +442,8 @@ export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ...props
 
   // For specialized games, pass extra props; for standard games, pass words-based props
   const gameProps: GameComponentProps = SPECIALIZED_GAME_TYPES.has(normalizedType)
-    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, difficultyMultiplier, ...extra }
-    : { ...props, difficultyMultiplier };
+    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, difficultyMultiplier, ageGroup, ...extra }
+    : { ...props, difficultyMultiplier, ageGroup };
 
   return (
     <GameErrorBoundary>
@@ -449,6 +451,7 @@ export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ...props
         <AnimatePresence mode="wait">
           <motion.div
             key={normalizedType}
+            className="h-full max-h-full overflow-hidden"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}

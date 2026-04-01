@@ -7,6 +7,7 @@ import { speak } from '../../services/ttsService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import { shuffleArray } from '../../utils/arrayUtils';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 interface WordItem {
   english: string;
@@ -19,6 +20,7 @@ interface GameProps {
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 interface Question {
@@ -26,13 +28,13 @@ interface Question {
   choices: { text: string; correct: boolean }[];
 }
 
-function buildQuestions(words: WordItem[]): Question[] {
-  const pool = shuffleArray(words).slice(0, 6);
+function buildQuestions(words: WordItem[], choicesCount: number, questionsCount: number): Question[] {
+  const pool = shuffleArray(words).slice(0, questionsCount);
   return pool.map((word) => {
     const distractors = words
       .filter((w) => w.english !== word.english)
       .map((w) => w.turkish);
-    const picked = shuffleArray(distractors).slice(0, 2);
+    const picked = shuffleArray(distractors).slice(0, choicesCount - 1);
     const choices = shuffleArray([
       { text: word.turkish, correct: true },
       ...picked.map((t) => ({ text: t, correct: false })),
@@ -44,11 +46,15 @@ function buildQuestions(words: WordItem[]): Question[] {
 const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
 const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
-export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, ageGroup }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
   const [playKey, setPlayKey] = useState(0);
-  const questions = useMemo(() => buildQuestions(words), [words, playKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const age = ageGroup || '7-9';
+  // For age 3-5: only 2 choices instead of 3
+  const choicesCount = age === '3-5' ? 2 : 3;
+  const questionsCount = getQuestionsCountForAge(age);
+  const questions = useMemo(() => buildQuestions(words, choicesCount, questionsCount), [words, choicesCount, questionsCount, playKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -174,7 +180,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
   if (!question) return null;
 
   return (
-    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Story choices game">
+    <div className="flex flex-col gap-3 h-full max-h-full overflow-hidden px-4 py-3 max-w-lg mx-auto" role="application" aria-label="Story choices game">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-800">{t('games.chooseTranslation')}</h2>
@@ -184,7 +190,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden flex-shrink-0">
         <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${progress}%` }} transition={springGentle} />
       </div>
 
@@ -196,7 +202,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
         transition={springGentle}
         className="bg-white border-2 border-gray-100 rounded-2xl p-6 flex flex-col items-center gap-3 shadow-sm"
       >
-        <p className="text-3xl sm:text-4xl font-black text-gray-800 tracking-tight break-all">
+        <p className="text-xl sm:text-2xl font-black text-gray-800 tracking-tight break-all">
           {question.word.english}
         </p>
         <button

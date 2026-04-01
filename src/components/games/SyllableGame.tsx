@@ -8,6 +8,7 @@ import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,7 @@ export interface SyllableGameProps {
   questions: SyllableQuestion[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 // ── Phase type ──────────────────────────────────────────────────────────────
@@ -36,8 +38,8 @@ type ChoiceState = 'idle' | 'correct' | 'wrong';
 
 // ── Build multiple-choice options 1-4 ─────────────────────────────────────
 
-function buildChoices(_correct: number): number[] {
-  return [1, 2, 3, 4];
+function buildChoices(_correct: number, maxChoices: number = 4): number[] {
+  return Array.from({ length: maxChoices }, (_, i) => i + 1);
 }
 
 // ── Spring configs ──────────────────────────────────────────────────────────
@@ -48,12 +50,21 @@ const springGentle = { type: 'spring' as const, stiffness: 260, damping: 24 };
 // ── Component ──────────────────────────────────────────────────────────────
 
 export const SyllableGame: React.FC<SyllableGameProps> = ({
-  questions,
+  questions: rawQuestions,
   onComplete,
   onWrongAnswer,
+  ageGroup,
 }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  // For age 3-5: only use words with 1-2 syllables, max choice count 3
+  const maxChoices = age === '3-5' ? 3 : 4;
+  const filteredQuestions = age === '3-5'
+    ? rawQuestions.filter(q => q.syllableCount <= 2)
+    : rawQuestions;
+  const questions = filteredQuestions.slice(0, questionsCount);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -75,7 +86,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
   }, []);
 
   const currentQuestion = questions[currentIndex];
-  const choices = buildChoices(currentQuestion?.syllableCount ?? 1);
+  const choices = buildChoices(currentQuestion?.syllableCount ?? 1, maxChoices);
 
   const advanceQuestion = useCallback(
     (nextScore: number) => {
@@ -273,7 +284,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
   const showSyllables = phase === 'result-correct';
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4 w-full max-w-xl mx-auto" role="application" aria-label="Syllable segmentation game">
+    <div className="flex flex-col items-center gap-3 h-full max-h-full overflow-hidden p-4 w-full max-w-xl mx-auto" role="application" aria-label="Syllable segmentation game">
       {/* Header */}
       <div className="flex items-center justify-between w-full">
         <h2 className="text-xl font-extrabold text-slate-800">{t('games.syllableGame')}</h2>
@@ -338,7 +349,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
             transition={springBouncy}
           >
             <WordIllustration word={currentQuestion.imageWord ?? currentQuestion.word} size={96} />
-            <p className="text-3xl font-extrabold text-purple-800">{currentQuestion.word}</p>
+            <p className="text-xl font-extrabold text-purple-800">{currentQuestion.word}</p>
             <p className="text-sm font-medium text-purple-500">{currentQuestion.wordTr}</p>
             <button
               type="button"
@@ -378,7 +389,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
               <div className="relative">
                 <motion.button
                   type="button"
-                  className={`relative w-32 h-32 rounded-full flex flex-col items-center justify-center gap-1
+                  className={`relative w-24 h-24 rounded-full flex flex-col items-center justify-center gap-1
                     bg-gradient-to-b from-orange-300 to-orange-500 shadow-xl shadow-orange-200
                     border-4 border-orange-200 overflow-hidden
                     ${isPulsing ? 'scale-95' : ''} transition-transform`}

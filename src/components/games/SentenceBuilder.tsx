@@ -5,6 +5,7 @@ import type { KidsWord } from '../../data/wordsData';
 import { ConfettiRain } from '../ui/Celebrations';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 interface SentenceEntry {
   words: string[];
@@ -25,12 +26,13 @@ const SENTENCES: SentenceEntry[] = [
 interface SentenceBuilderProps {
   words?: KidsWord[];
   onComplete: (score: number, total: number) => void;
+  ageGroup?: string;
 }
 
 const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
 const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
-export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
+export default function SentenceBuilder({ onComplete, ageGroup }: SentenceBuilderProps) {
   const { t } = useLanguage();
   const { hearts, loseHeart } = useHearts();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -51,8 +53,13 @@ export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
   }, []);
 
   currentIndexRef.current = currentIndex;
-  const sentence = SENTENCES[currentIndex];
-  const total = SENTENCES.length;
+  const age = ageGroup || '7-9';
+  const maxWords = age === '3-5' ? 3 : age === '5-7' ? 5 : 10;
+  const questionsCount = getQuestionsCountForAge(age);
+  const ageSentences = SENTENCES.filter(s => s.words.length <= maxWords).slice(0, questionsCount);
+  const activeSentences = ageSentences.length > 0 ? ageSentences : SENTENCES.slice(0, questionsCount);
+  const sentence = activeSentences[currentIndex];
+  const total = activeSentences.length;
 
   const handleBankTap = (word: string, idx: number) => {
     if (usedIndices.includes(idx)) return;
@@ -204,7 +211,7 @@ export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
   const progress = (currentIndex / total) * 100;
 
   return (
-    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto">
+    <div className="flex flex-col gap-3 h-full max-h-full overflow-hidden px-4 py-3 max-w-lg mx-auto">
       {/* Header: progress bar + hearts */}
       <div className="flex items-center gap-3">
         <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">

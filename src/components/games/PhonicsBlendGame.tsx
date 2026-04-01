@@ -8,6 +8,7 @@ import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
+import { getQuestionsCountForAge, getOptionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -23,6 +24,7 @@ export interface PhonicsBlendGameProps {
   questions: BlendQuestion[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -47,10 +49,10 @@ const WORD_POOL: string[] = [
   'bat', 'fan', 'hop', 'rug', 'tip', 'wax', 'zip', 'fog', 'hug', 'jet',
 ];
 
-function buildOptions(correct: string): string[] {
+function buildOptions(correct: string, count: number = 4): string[] {
   const distractors = WORD_POOL.filter((w) => w !== correct);
   const shuffled = [...distractors].sort(() => Math.random() - 0.5);
-  const options = [correct, ...shuffled.slice(0, 3)];
+  const options = [correct, ...shuffled.slice(0, count - 1)];
   return options.sort(() => Math.random() - 0.5);
 }
 
@@ -68,12 +70,17 @@ const springPop = { type: 'spring' as const, stiffness: 300, damping: 20 };
 // ── Component ────────────────────────────────────────────────────────────────
 
 export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
-  questions,
+  questions: rawQuestions,
   onComplete,
   onWrongAnswer,
+  ageGroup,
 }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  const optionsCount = getOptionsCountForAge(age);
+  const questions = rawQuestions.slice(0, questionsCount);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -150,7 +157,7 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
       try { speak(currentQuestion.word); } catch { /* silent */ }
 
       blendTimeoutRef.current = setTimeout(() => {
-        const opts = buildOptions(currentQuestion.word);
+        const opts = buildOptions(currentQuestion.word, optionsCount);
         setOptions(opts);
         setPhase('choices');
       }, 700);
@@ -299,7 +306,7 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
 
   return (
     <div
-      className="flex flex-col gap-4 sm:gap-5 p-4 sm:p-5 bg-gradient-to-b from-sky-50 to-white rounded-3xl min-h-[480px]"
+      className="flex flex-col gap-3 p-4 bg-gradient-to-b from-sky-50 to-white rounded-3xl h-full max-h-full overflow-hidden"
       role="application"
       aria-label="Phonics blend game"
     >

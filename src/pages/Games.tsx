@@ -18,7 +18,7 @@ import {
   saveBestScore,
 } from '../data/miniGamesData';
 import type { GameMeta } from '../data/miniGamesData';
-import { getAgeGroupFromSettings, isGameAllowedForAge } from '../services/ageGroupService';
+import { getAgeGroupFromSettings, isGameAllowedForAge, getMaxWordsForAge, filterWordsForAge } from '../services/ageGroupService';
 import { kidsWords } from '../data/wordsData';
 import { getCurrentPhonicsSound } from '../services/learningPathService';
 import { PHONICS_GROUPS } from '../data/phonics';
@@ -150,19 +150,29 @@ function getExtraPropsForGame(gameType: string): Record<string, unknown> | undef
   }
 }
 
-function getGameWords() {
+function getGameWords(currentAgeGroup?: string) {
   const currentSound = getCurrentPhonicsSound();
   if (currentSound) {
     const group = PHONICS_GROUPS.find((g) => g.group === currentSound.group);
     if (group && group.blendableWords.length >= 4) {
-      return group.blendableWords.slice(0, 8).map((w) => {
+      const rawWords = group.blendableWords.map((w) => {
         const found = kidsWords.find((kw) => kw.word === w);
-        return { english: w, turkish: found?.turkish ?? w, emoji: found?.emoji ?? '' };
+        return { english: w, turkish: found?.turkish ?? w, emoji: found?.emoji ?? '', word: w, group: currentSound.group };
       });
+      const filtered = currentAgeGroup
+        ? filterWordsForAge(rawWords, currentAgeGroup)
+        : rawWords;
+      const maxWords = currentAgeGroup ? getMaxWordsForAge(currentAgeGroup) : 8;
+      return filtered.slice(0, maxWords).map((w) => ({ english: w.english, turkish: w.turkish, emoji: w.emoji }));
     }
   }
   const shuffled = [...kidsWords].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 8).map((w) => ({ english: w.word, turkish: w.turkish, emoji: w.emoji }));
+  const rawWords = shuffled.map((w) => ({ english: w.word, turkish: w.turkish, emoji: w.emoji, word: w.word }));
+  const filtered = currentAgeGroup
+    ? filterWordsForAge(rawWords, currentAgeGroup)
+    : rawWords;
+  const maxWords = currentAgeGroup ? getMaxWordsForAge(currentAgeGroup) : 8;
+  return filtered.slice(0, maxWords).map((w) => ({ english: w.english, turkish: w.turkish, emoji: w.emoji }));
 }
 
 // ── Skeleton ─────────────────────────────────────────────────────────────────
@@ -193,7 +203,7 @@ function Games() {
   const [isLoading, setIsLoading] = useState(true);
   const [playingGame, setPlayingGame] = useState<GameMeta | null>(null);
   const [dailySession, setDailySession] = useState<DailyPracticeSession | null>(null);
-  const [gameWords, setGameWords] = useState(() => getGameWords());
+  const [gameWords, setGameWords] = useState(() => getGameWords(undefined));
   const [gameExtra, setGameExtra] = useState<Record<string, unknown> | undefined>(undefined);
   const [dailyStreak, setDailyStreak] = useState(() => getDailyPracticeStreak());
   const [scoreVersion, setScoreVersion] = useState(0);
@@ -257,19 +267,19 @@ function Games() {
 
   const handlePlaySingle = useCallback((game: GameMeta) => {
     if (!game) return;
-    setGameWords(getGameWords());
+    setGameWords(getGameWords(ageGroup));
     setGameExtra(getExtraPropsForGame(game.type));
     setPlayingGame(game);
     setDailySession(null);
-  }, []);
+  }, [ageGroup]);
 
   const handleStartDailyPractice = useCallback(() => {
     const set = getDailyPracticeSet();
-    setGameWords(getGameWords());
+    setGameWords(getGameWords(ageGroup));
     setGameExtra(getExtraPropsForGame(set[0]?.type ?? ''));
     setDailySession({ games: set, currentIndex: 0, scores: [] });
     setPlayingGame(null);
-  }, []);
+  }, [ageGroup]);
 
   const handleGameComplete = useCallback(
     (score: number, total: number) => {
@@ -316,7 +326,7 @@ function Games() {
         } else {
           saveBestScore(currentGame.type, score);
           setScoreVersion((v) => v + 1);
-          setGameWords(getGameWords());
+          setGameWords(getGameWords(ageGroup));
           setGameExtra(getExtraPropsForGame(dailySession.games[nextIndex].type));
           setDailySession({
             ...dailySession,
@@ -362,7 +372,7 @@ function Games() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={springPop}
-          className="fixed inset-0 z-50 bg-white flex flex-col"
+          className="fixed inset-0 top-[64px] z-50 bg-white flex flex-col"
         >
           {/* Top bar */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white/95 backdrop-blur-sm shrink-0">
@@ -397,9 +407,9 @@ function Games() {
             {!dailySession && <div className="w-12" />}
           </div>
 
-          {/* Game canvas */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-[720px] mx-auto w-full h-full px-4 py-4">
+          {/* Game canvas: fills remaining space, no scroll */}
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full max-w-[720px] mx-auto w-full flex items-center justify-center p-4">
               <Suspense
                 fallback={
                   <div className="flex items-center justify-center h-64">
@@ -410,6 +420,7 @@ function Games() {
                 <GameSelector
                   type={activeGameMeta.type}
                   words={gameWords}
+                  ageGroup={ageGroup}
                   onComplete={handleGameComplete}
                   onXpEarned={handleXpEarned}
                   onWrongAnswer={handleWrongAnswer}

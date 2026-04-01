@@ -112,3 +112,60 @@ export function isActivityAllowedForAge(activityType: string, ageGroup: string |
 export function getMaxWordsForAge(ageGroup: string | null | undefined): number {
   return getAgeGroupConfig(ageGroup).maxWordsPerGame;
 }
+
+// ── Age-based word filtering ─────────────────────────────────────────────────
+
+// Word difficulty levels mapped to age groups
+const WORD_DIFFICULTY_BY_AGE: Record<string, { maxLetters: number; maxSyllables: number; groups: number[] }> = {
+  '3-5':  { maxLetters: 4, maxSyllables: 1, groups: [1, 2] },
+  '5-7':  { maxLetters: 6, maxSyllables: 2, groups: [1, 2, 3, 4] },
+  '7-9':  { maxLetters: 8, maxSyllables: 3, groups: [1, 2, 3, 4, 5, 6] },
+  '9-10': { maxLetters: 12, maxSyllables: 4, groups: [1, 2, 3, 4, 5, 6, 7] },
+};
+
+export function filterWordsForAge<T extends {word: string; group?: number}>(words: T[], ageGroup: string): T[] {
+  const config = WORD_DIFFICULTY_BY_AGE[ageGroup] || WORD_DIFFICULTY_BY_AGE['7-9'];
+  return words.filter(w => {
+    if (w.word.length > config.maxLetters) return false;
+    if (w.group && !config.groups.includes(w.group)) return false;
+    return true;
+  });
+}
+
+export function getGameDifficultyForAge(ageGroup: string): number {
+  const config = getAgeGroupConfig(ageGroup);
+  return config.maxDifficulty ?? 3;
+}
+
+export function getTimerDurationForAge(ageGroup: string): number {
+  // Younger = more time
+  switch(ageGroup) {
+    case '3-5': return 30; // 30 seconds
+    case '5-7': return 20;
+    case '7-9': return 15;
+    case '9-10': return 12;
+    default: return 15;
+  }
+}
+
+export function getOptionsCountForAge(ageGroup: string): number {
+  // Younger = fewer options
+  switch(ageGroup) {
+    case '3-5': return 2; // Only 2 choices
+    case '5-7': return 3;
+    case '7-9': return 4;
+    case '9-10': return 4;
+    default: return 4;
+  }
+}
+
+export function getQuestionsCountForAge(ageGroup: string): number {
+  // Younger = fewer questions per round
+  switch(ageGroup) {
+    case '3-5': return 4;
+    case '5-7': return 6;
+    case '7-9': return 8;
+    case '9-10': return 10;
+    default: return 8;
+  }
+}

@@ -11,6 +11,7 @@ import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -34,6 +35,7 @@ export interface PhonemeManipulationGameProps {
   questions: PhonemeManipulationQuestion[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -76,12 +78,20 @@ const springPop = { type: 'spring' as const, stiffness: 300, damping: 20 };
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = ({
-  questions,
+  questions: rawQuestions,
   onComplete,
   onWrongAnswer,
+  ageGroup,
 }) => {
   const { t, lang } = useLanguage();
   const { loseHeart } = useHearts();
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  // For age 3-5: only deletion tasks (simplest), skip substitute/add/reverse
+  const filteredQuestions = age === '3-5'
+    ? rawQuestions.filter(q => q.type === 'delete')
+    : rawQuestions;
+  const questions = filteredQuestions.slice(0, questionsCount);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -308,7 +318,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
 
   return (
     <div
-      className="flex flex-col gap-4 sm:gap-5 p-4 sm:p-5 bg-gradient-to-b from-violet-50 to-white rounded-3xl min-h-[480px]"
+      className="flex flex-col gap-3 p-4 bg-gradient-to-b from-violet-50 to-white rounded-3xl h-full max-h-full overflow-hidden"
       role="application"
       aria-label="Phoneme manipulation game"
     >

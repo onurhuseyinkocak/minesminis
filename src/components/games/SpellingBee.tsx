@@ -8,6 +8,7 @@ import { SpeakButton } from '../SpeakButton';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 interface WordItem {
   english: string;
@@ -20,6 +21,7 @@ interface GameProps {
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 const EXAMPLE_SENTENCES: Record<string, string> = {
@@ -46,13 +48,13 @@ const CONFUSABLE_PAIRS: Record<string, string[]> = {
   A: ['E', 'O'],
 };
 
-function generateLetterPool(word: string): string[] {
+function generateLetterPool(word: string, maxDistractors: number = 3): string[] {
   const letters = word.toUpperCase().split('');
   const uniqueLetters = new Set(letters);
   const decoys: string[] = [];
 
   for (const letter of uniqueLetters) {
-    if (decoys.length >= 3) break;
+    if (decoys.length >= maxDistractors) break;
     const candidates = (CONFUSABLE_PAIRS[letter] || []).filter(
       c => !uniqueLetters.has(c) && !decoys.includes(c)
     );
@@ -63,7 +65,7 @@ function generateLetterPool(word: string): string[] {
 
   const commonLetters = 'RSTLNEASIDMOBCFGHKPUWY';
   let idx = 0;
-  while (decoys.length < 3 && idx < commonLetters.length) {
+  while (decoys.length < maxDistractors && idx < commonLetters.length) {
     const l = commonLetters[idx++];
     if (!uniqueLetters.has(l) && !decoys.includes(l)) {
       decoys.push(l);
@@ -78,11 +80,15 @@ function generateLetterPool(word: string): string[] {
   return pool;
 }
 
-export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, ageGroup }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
-  const gameWords = useMemo(() => words.slice(0, 5), [words]);
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  // For age 3-5: only 2-3 extra distractor letters; older: more
+  const maxDistractors = age === '3-5' ? 2 : age === '5-7' ? 3 : 3;
+  const gameWords = useMemo(() => words.slice(0, questionsCount), [words, questionsCount]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typed, setTyped] = useState<string[]>([]);
   const [letterPool, setLetterPool] = useState<string[]>([]);
@@ -100,7 +106,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   const initWord = useCallback((index: number) => {
     const word = gameWords[index];
     if (!word) return;
-    setLetterPool(generateLetterPool(word.english));
+    setLetterPool(generateLetterPool(word.english, maxDistractors));
     setTyped([]);
     setUsedIndices([]);
     setWrongAttempts(0);
@@ -232,7 +238,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     const pct = gameWords.length > 0 ? Math.round((score / gameWords.length) * 100) : 0;
     const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-64px)] bg-gradient-to-b from-teal-50 to-emerald-50 p-6">
+      <div className="flex flex-col items-center justify-center h-full max-h-full overflow-hidden bg-gradient-to-b from-teal-50 to-emerald-50 p-4">
         {pct >= 90 && <ConfettiRain duration={3000} />}
         <motion.div
           className="flex flex-col items-center gap-5 bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full"
@@ -303,7 +309,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     <>
       {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
-      <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full" role="application" aria-label="Spelling game">
+      <div className="flex flex-col gap-3 h-full max-h-full overflow-hidden p-4 max-w-lg mx-auto w-full" role="application" aria-label="Spelling game">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-800">{t('games.spellIt')}</h2>
@@ -313,7 +319,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden flex-shrink-0">
           <motion.div
             className="h-full bg-gradient-to-r from-teal-400 to-emerald-500 rounded-full"
             animate={{ width: `${progress}%` }}
@@ -321,28 +327,22 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           />
         </div>
 
-        {/* Score */}
-        <div className="flex items-center justify-center gap-1.5 text-sm font-semibold text-slate-500">
-          <CheckCircle2 size={16} className="text-emerald-500" />
-          {score} / {gameWords.length}
-        </div>
-
         {/* Audio prompt card */}
         <motion.div
-          className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 flex flex-col items-center gap-4"
+          className="bg-white rounded-2xl shadow-lg border border-slate-100 p-3 flex flex-col items-center gap-2 flex-shrink-0"
           key={currentWord.english}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         >
-          {/* Large speaker button */}
+          {/* Speaker button */}
           <motion.div
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/30 cursor-pointer"
+            className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/30 cursor-pointer"
             whileTap={{ scale: 0.92 }}
             whileHover={{ scale: 1.05 }}
             onClick={() => speakWord(currentWord.english)}
           >
-            <Volume2 size={36} className="text-white" />
+            <Volume2 size={24} className="text-white" />
           </motion.div>
 
           <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Tap to listen</p>

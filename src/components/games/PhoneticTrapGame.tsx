@@ -7,6 +7,7 @@ import { SFX } from '../../data/soundLibrary';
 import { ConfettiRain } from '../ui/Celebrations';
 import UnifiedMascot from '../UnifiedMascot';
 import type { PhoneticTrap } from '../../data/turkishPhoneticTraps';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 // ---- Types ----
 
@@ -15,6 +16,7 @@ export interface PhoneticTrapGameProps {
   onComplete: (score: number) => void;
   onWrongAnswer?: () => void;
   onBack: () => void;
+  ageGroup?: string;
 }
 
 type TabId = 'learn' | 'practice' | 'challenge';
@@ -119,13 +121,13 @@ function MouthDiagram({ trapId, color }: { trapId: string; color: string }) {
 
 // ---- Build challenge questions from minimal pairs ----
 
-function buildChallengeQuestions(trap: PhoneticTrap): ChallengeQuestion[] {
+function buildChallengeQuestions(trap: PhoneticTrap, maxQuestions: number = 5): ChallengeQuestion[] {
   const pairs = [...trap.minimalPairs];
   for (let i = pairs.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
   }
-  const selected = pairs.slice(0, Math.min(5, pairs.length));
+  const selected = pairs.slice(0, Math.min(maxQuestions, pairs.length));
 
   return selected.map((pair) => {
     const correctOpt = { word: pair.english, meaning: pair.meaning, meaningTr: pair.meaningTr, isCorrect: true };
@@ -438,15 +440,17 @@ function ChallengeTab({
   onWrongAnswer,
   loseHeart,
   onBack,
+  maxQuestions = 5,
 }: {
   trap: PhoneticTrap;
   onComplete: (score: number) => void;
   onWrongAnswer?: () => void;
   loseHeart: () => void;
   onBack: () => void;
+  maxQuestions?: number;
 }) {
   const { t } = useLanguage();
-  const [questions] = useState<ChallengeQuestion[]>(() => buildChallengeQuestions(trap));
+  const [questions] = useState<ChallengeQuestion[]>(() => buildChallengeQuestions(trap, maxQuestions));
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [lastWasWrong, setLastWasWrong] = useState(false);
@@ -603,7 +607,10 @@ export default function PhoneticTrapGame({
   onComplete,
   onWrongAnswer,
   onBack,
+  ageGroup,
 }: PhoneticTrapGameProps) {
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
   const { loseHeart } = useHearts();
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabId>('learn');
@@ -638,7 +645,7 @@ export default function PhoneticTrapGame({
   ];
 
   return (
-    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto">
+    <div className="flex flex-col gap-3 h-full max-h-full overflow-y-auto px-4 py-3 max-w-lg mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3">
         <button
@@ -697,6 +704,7 @@ export default function PhoneticTrapGame({
           onWrongAnswer={onWrongAnswer}
           loseHeart={loseHeart}
           onBack={onBack}
+          maxQuestions={questionsCount}
         />
       )}
     </div>

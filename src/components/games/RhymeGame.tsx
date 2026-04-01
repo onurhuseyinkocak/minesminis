@@ -8,6 +8,7 @@ import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -40,6 +41,7 @@ export interface RhymeGameProps {
   questions: RhymeQuestion[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 // ── Internal types ──────────────────────────────────────────────────────────
@@ -502,12 +504,20 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
 // ── Main RhymeGame Component ─────────────────────────────────────────────────
 
 export const RhymeGame: React.FC<RhymeGameProps> = ({
-  questions,
+  questions: rawQuestions,
   onComplete,
   onWrongAnswer,
+  ageGroup,
 }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  // For age 3-5: only detect tasks (yes/no), skip produce and sort tasks (too complex)
+  const filteredQuestions = age === '3-5'
+    ? rawQuestions.filter(q => q.type === 'detect')
+    : rawQuestions;
+  const questions = filteredQuestions.slice(0, questionsCount);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -715,7 +725,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
   const progress = questions.length > 0 ? (currentIndex / questions.length) * 100 : 0;
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4 w-full max-w-xl mx-auto" role="application" aria-label="Rhyme awareness game">
+    <div className="flex flex-col items-center gap-3 h-full max-h-full overflow-hidden p-4 w-full max-w-xl mx-auto" role="application" aria-label="Rhyme awareness game">
       {/* Header */}
       <div className="flex items-center justify-between w-full">
         <h2 className="text-xl font-extrabold text-slate-800">

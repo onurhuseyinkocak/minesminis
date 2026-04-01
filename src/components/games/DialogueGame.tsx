@@ -26,6 +26,7 @@ export interface DialogueGameProps {
   lines: DialogueLine[];
   onComplete: (score: number, totalQuestions: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 type OptionState = 'idle' | 'correct' | 'wrong';
@@ -39,7 +40,15 @@ interface AnsweredOption {
 const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
 const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
-export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameProps) {
+export function DialogueGame({ lines: rawLines, onComplete, onWrongAnswer, ageGroup }: DialogueGameProps) {
+  const age = ageGroup || '7-9';
+  // For age 3-5: only 2 dialogue options instead of 3
+  const lines = age === '3-5'
+    ? rawLines.map(line => ({
+        ...line,
+        options: line.options ? line.options.slice(0, 2) : line.options,
+      }))
+    : rawLines;
   const { lang, t } = useLanguage();
   const { loseHeart } = useHearts();
 
@@ -201,7 +210,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
   const dialogueProgress = totalQuestions > 0 ? (answered.filter((a) => a.correct).length / totalQuestions) * 100 : 0;
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-4 max-w-lg mx-auto h-full overflow-x-hidden">
+    <div className="flex flex-col gap-2 px-4 py-3 max-w-lg mx-auto h-full max-h-full overflow-hidden">
       {/* Progress bar */}
       <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
         <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${dialogueProgress}%` }} transition={springGentle} />

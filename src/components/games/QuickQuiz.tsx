@@ -10,6 +10,7 @@ import LessonCompleteScreen, { useLessonComplete } from '../LessonCompleteScreen
 import NoHeartsModal from '../NoHeartsModal';
 import { announceToScreenReader } from '../../utils/accessibility';
 import { shuffleArray } from '../../utils/arrayUtils';
+import { getTimerDurationForAge, getOptionsCountForAge, getQuestionsCountForAge } from '../../services/ageGroupService';
 
 interface WordItem {
   english: string;
@@ -24,6 +25,7 @@ interface GameProps {
   onWrongAnswer?: () => void;
   mascotId?: string;
   streakDays?: number;
+  ageGroup?: string;
 }
 
 interface Question {
@@ -34,9 +36,9 @@ interface Question {
 }
 
 
-function generateQuestions(words: WordItem[]): Question[] {
+function generateQuestions(words: WordItem[], optionsCount: number, questionsCount: number): Question[] {
   const questions: Question[] = [];
-  const pool = shuffleArray(words).slice(0, 5);
+  const pool = shuffleArray(words).slice(0, questionsCount);
 
   for (const word of pool) {
     const roll = Math.random();
@@ -50,7 +52,7 @@ function generateQuestions(words: WordItem[]): Question[] {
       .filter((w) => w.english !== word.english)
       .map((w) => (mode === 'en-to-tr' ? w.turkish : w.english));
 
-    const shuffledDistractors = shuffleArray(distractors).slice(0, 3);
+    const shuffledDistractors = shuffleArray(distractors).slice(0, optionsCount - 1);
     const allOptions = [...shuffledDistractors, correctAnswer];
     const shuffledOptions = shuffleArray(allOptions);
 
@@ -65,7 +67,7 @@ function generateQuestions(words: WordItem[]): Question[] {
   return questions;
 }
 
-const TIMER_DURATION = 15;
+// TIMER_DURATION is now computed per-game from ageGroup
 
 // Circular timer component
 function CircularTimer({ timeLeft, total }: { timeLeft: number; total: number }) {
@@ -96,10 +98,14 @@ function CircularTimer({ timeLeft, total }: { timeLeft: number; total: number })
   );
 }
 
-export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, mascotId, streakDays }) => {
+export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, mascotId, streakDays, ageGroup }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
-  const questions = useMemo(() => words.length >= 4 ? generateQuestions(words) : [], [words]);
+  const age = ageGroup || '7-9';
+  const TIMER_DURATION = getTimerDurationForAge(age);
+  const optionsCount = getOptionsCountForAge(age);
+  const questionsCount = getQuestionsCountForAge(age);
+  const questions = useMemo(() => words.length >= Math.min(optionsCount, 4) ? generateQuestions(words, optionsCount, questionsCount) : [], [words, optionsCount, questionsCount]);
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -214,7 +220,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (completed || feedback !== null) return;
       const num = parseInt(e.key, 10);
-      if (num >= 1 && num <= 4) {
+      if (num >= 1 && num <= optionsCount) {
         const idx = num - 1;
         if (idx < (questions[currentQ]?.options.length ?? 0)) {
           handleSelect(idx);
@@ -241,7 +247,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     setFloatingXp(false);
   };
 
-  if (words.length < 4) {
+  if (words.length < Math.min(optionsCount, 4)) {
     return (
       <div className="flex items-center justify-center p-8 text-slate-400 text-lg font-medium">
         {t('games.noWordsToReview')}
@@ -267,7 +273,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           />
         )}
         {!showComplete && (
-          <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-64px)] bg-gradient-to-b from-violet-50 to-blue-50 p-6">
+          <div className="flex flex-col items-center justify-center h-full max-h-full overflow-hidden bg-gradient-to-b from-violet-50 to-blue-50 p-4">
             {pct >= 90 && <ConfettiRain duration={3000} />}
             <motion.div
               className="flex flex-col items-center gap-5 bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full"
@@ -346,29 +352,9 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     <>
       {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
-      <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full" role="application" aria-label="Quick quiz game">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-800">{t('games.quickQuiz')}</h2>
-          <div className="flex items-center gap-2">
-            {streak >= 2 && (
-              <motion.span
-                className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 text-sm font-bold px-2.5 py-1 rounded-full"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Flame size={14} className="text-orange-500" /> {streak}x
-              </motion.span>
-            )}
-            <span className="bg-blue-50 text-blue-600 text-sm font-semibold px-3 py-1 rounded-full">
-              {currentQ + 1}/{questions.length}
-            </span>
-          </div>
-        </div>
-
+      <div className="flex flex-col h-full max-h-full overflow-hidden p-4 max-w-lg mx-auto w-full" role="application" aria-label="Quick quiz game">
         {/* Progress bar */}
-        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-slate-100 rounded-full mx-0 mt-1 mb-2 flex-shrink-0">
           <motion.div
             className="h-full bg-gradient-to-r from-violet-400 to-blue-500 rounded-full"
             animate={{ width: `${progress}%` }}
@@ -376,10 +362,30 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           />
         </div>
 
+        {/* Header */}
+        <div className="flex items-center justify-between flex-shrink-0 mb-2">
+          <h2 className="text-base font-bold text-slate-800">{t('games.quickQuiz')}</h2>
+          <div className="flex items-center gap-2">
+            {streak >= 2 && (
+              <motion.span
+                className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 text-xs font-bold px-2 py-0.5 rounded-full"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
+                <Flame size={12} className="text-orange-500" /> {streak}x
+              </motion.span>
+            )}
+            <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+              {currentQ + 1}/{questions.length}
+            </span>
+          </div>
+        </div>
+
         {/* Question card with timer */}
         <motion.div
           key={currentQ}
-          className="relative bg-white rounded-3xl shadow-lg border border-slate-100 p-4 sm:p-6 flex flex-col items-center gap-4"
+          className="relative bg-white rounded-2xl shadow-lg border border-slate-100 p-3 sm:p-4 flex flex-col items-center gap-2 flex-shrink-0"
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
@@ -390,7 +396,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           </div>
 
           {/* Word display */}
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-100 to-blue-100 flex items-center justify-center text-2xl font-bold text-violet-600">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-blue-100 flex items-center justify-center text-xl font-bold text-violet-600">
             {question.word.english.charAt(0).toUpperCase()}
           </div>
 
@@ -405,9 +411,9 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
           </p>
         </motion.div>
 
-        {/* 2x2 answer grid */}
+        {/* Answer grid — 2x2 for 4 options, single column for 2-3 */}
         <div
-          className="grid grid-cols-2 gap-3"
+          className={`grid ${optionsCount >= 4 ? 'grid-cols-2' : 'grid-cols-1'} gap-2 flex-shrink-0`}
           role="radiogroup"
           aria-label="Answer choices"
           aria-describedby="qq-question-text"
@@ -430,7 +436,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
                 <motion.button
                   type="button"
                   key={`${currentQ}-${index}`}
-                  className={`relative flex items-center gap-2.5 px-4 py-3.5 rounded-2xl font-semibold text-sm border-2 transition-colors min-h-[52px] ${bgClass}`}
+                  className={`relative flex items-center gap-2 px-3 py-2.5 rounded-xl font-semibold text-sm border-2 transition-colors min-h-[44px] ${bgClass}`}
                   onClick={() => handleSelect(index)}
                   disabled={feedback !== null}
                   role="radio"

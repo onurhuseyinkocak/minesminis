@@ -7,6 +7,7 @@ import { speak } from '../../services/ttsService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 interface WordItem {
   english: string;
@@ -19,9 +20,8 @@ interface GameProps {
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
-
-const WORDS_PER_ROUND = 5;
 
 function levenshtein(a: string, b: string): number {
   const m = a.length;
@@ -62,7 +62,7 @@ function similarityScore(heard: string, target: string): number {
   return Math.max(bestWordScore, fullScore);
 }
 
-const SIMILARITY_THRESHOLD = 0.65;
+const DEFAULT_SIMILARITY_THRESHOLD = 0.65;
 
 type SpeechError = 'no-speech' | 'not-allowed' | 'network' | 'other';
 
@@ -81,10 +81,14 @@ function getSpeechRecognitionConstructor(): (new () => SpeechRecognition) | null
 const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
 const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
-export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, ageGroup }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
+  const age = ageGroup || '7-9';
+  const WORDS_PER_ROUND = getQuestionsCountForAge(age);
+  // For age 3-5: more lenient matching threshold
+  const SIMILARITY_THRESHOLD = age === '3-5' ? 0.5 : DEFAULT_SIMILARITY_THRESHOLD;
   const roundWords = words.slice(0, WORDS_PER_ROUND);
   const total = roundWords.length;
 
@@ -327,7 +331,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
   return (
     <>
       {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
-      <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Pronunciation practice game">
+      <div className="flex flex-col gap-3 h-full max-h-full overflow-hidden px-4 py-3 max-w-lg mx-auto" role="application" aria-label="Pronunciation practice game">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-800">{t('games.sayTheWord')}</h2>
@@ -337,11 +341,9 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden flex-shrink-0">
           <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${progress}%` }} transition={springGentle} />
         </div>
-
-        <p className="text-sm text-gray-400 text-center">{t('games.score')}: {score}/{total}</p>
 
         {/* Error banner */}
         {showErrorBanner && (
@@ -374,7 +376,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
           `}
         >
           {/* Word display */}
-          <div className="text-4xl sm:text-5xl font-black text-gray-800 tracking-tight break-all">
+          <div className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight break-all">
             {currentWord.english}
           </div>
           <div className="text-base text-gray-400">{currentWord.turkish}</div>

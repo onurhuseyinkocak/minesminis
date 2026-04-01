@@ -6,6 +6,7 @@ import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 interface WordItem {
   english: string;
@@ -18,6 +19,7 @@ interface GameProps {
   onComplete: (score: number, totalPossible: number) => void;
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 interface SentenceData {
@@ -48,8 +50,20 @@ function articleFor(word: string): string {
   return /^[aeiou]/i.test(word) ? 'an' : 'a';
 }
 
-function generateSentences(wordItems: WordItem[]): SentenceData[] {
-  const templates = [
+function generateSentences(wordItems: WordItem[], maxWords: number, count: number): SentenceData[] {
+  // Templates sorted roughly by word count
+  const shortTemplates = [
+    (w: string) => `I like ${w}`,
+    (w: string) => `I see ${w}`,
+  ];
+  const mediumTemplates = [
+    (w: string) => `I like the ${w}`,
+    (w: string) => `This is ${articleFor(w)} ${w}`,
+    (w: string) => `I see ${articleFor(w)} ${w}`,
+    (w: string) => `Look at the ${w}`,
+    (w: string) => `I have ${articleFor(w)} ${w}`,
+  ];
+  const longTemplates = [
     (w: string) => `I like the ${w}`,
     (w: string) => `This is ${articleFor(w)} ${w}`,
     (w: string) => `I see ${articleFor(w)} ${w}`,
@@ -58,9 +72,16 @@ function generateSentences(wordItems: WordItem[]): SentenceData[] {
     (w: string) => `We can see the ${w}`,
   ];
 
-  return wordItems.slice(0, 5).map((item, i) => {
+  const templates = maxWords <= 3 ? shortTemplates : maxWords <= 5 ? mediumTemplates : longTemplates;
+
+  return wordItems.slice(0, count).map((item, i) => {
     const template = templates[i % templates.length];
-    const sentence = template(item.english.toLowerCase());
+    let sentence = template(item.english.toLowerCase());
+    // Enforce max words limit
+    const sentenceWords = sentence.split(' ');
+    if (sentenceWords.length > maxWords) {
+      sentence = sentenceWords.slice(0, maxWords).join(' ');
+    }
     return {
       sentence,
       words: sentence.split(' '),
@@ -86,11 +107,15 @@ function getWordColor(word: string, _index: number, _total: number): string {
 const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
 const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
-export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
+export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, ageGroup }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
   const [showNoHearts, setShowNoHearts] = useState(false);
-  const sentences = useMemo(() => generateSentences(words), [words]);
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  // For age 3-5: max 3 words per sentence, 5-7: max 5
+  const maxWords = age === '3-5' ? 3 : age === '5-7' ? 5 : 10;
+  const sentences = useMemo(() => generateSentences(words, maxWords, questionsCount), [words, maxWords, questionsCount]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [placed, setPlaced] = useState<string[]>([]);
   const [available, setAvailable] = useState<string[]>(() =>
@@ -300,7 +325,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
       {showNoHearts && (
         <NoHeartsModal onClose={() => setShowNoHearts(false)} />
       )}
-      <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Sentence scramble game">
+      <div className="flex flex-col gap-3 h-full max-h-full overflow-hidden px-4 py-3 max-w-lg mx-auto" role="application" aria-label="Sentence scramble game">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-800">{t('games.buildTheSentence')}</h2>
@@ -310,7 +335,7 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden flex-shrink-0">
           <motion.div
             className="h-full bg-emerald-400 rounded-full"
             initial={{ width: 0 }}

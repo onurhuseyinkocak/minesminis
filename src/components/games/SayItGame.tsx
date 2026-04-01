@@ -9,6 +9,7 @@ import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
+import { getQuestionsCountForAge } from '../../services/ageGroupService';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -25,6 +26,7 @@ export interface SayItGameProps {
   questions: SayItQuestion[];
   onComplete: (score: number, total: number) => void;
   onWrongAnswer?: () => void;
+  ageGroup?: string;
 }
 
 // ── Speech Recognition helpers ────────────────────────────────────────────────
@@ -79,7 +81,7 @@ function similarityScore(heard: string, target: string): number {
   return Math.max(bestWordScore, fullScore);
 }
 
-const SIMILARITY_THRESHOLD = 0.65;
+const DEFAULT_SIMILARITY_THRESHOLD = 0.65;
 
 // ── Error type classification ─────────────────────────────────────────────────
 
@@ -100,12 +102,18 @@ const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 // ── Main component ────────────────────────────────────────────────────────────
 
 export const SayItGame: React.FC<SayItGameProps> = ({
-  questions,
+  questions: rawQuestions,
   onComplete,
   onWrongAnswer,
+  ageGroup,
 }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
+  const age = ageGroup || '7-9';
+  const questionsCount = getQuestionsCountForAge(age);
+  // For age 3-5: more lenient matching threshold
+  const SIMILARITY_THRESHOLD = age === '3-5' ? 0.5 : DEFAULT_SIMILARITY_THRESHOLD;
+  const questions = rawQuestions.slice(0, questionsCount);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -384,7 +392,7 @@ export const SayItGame: React.FC<SayItGameProps> = ({
     : t('games.speak') || 'Say it';
 
   return (
-    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Say It pronunciation practice game">
+    <div className="flex flex-col gap-3 h-full max-h-full overflow-hidden px-4 py-3 max-w-lg mx-auto" role="application" aria-label="Say It pronunciation practice game">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-800">{t('games.sayIt') || 'Say It!'}</h2>
@@ -394,11 +402,9 @@ export const SayItGame: React.FC<SayItGameProps> = ({
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden flex-shrink-0">
         <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${progress}%` }} transition={springGentle} />
       </div>
-
-      <p className="text-sm text-gray-400 text-center">{t('games.score')}: {score}/{questions.length}</p>
 
       {/* Permission error banner */}
       {showPermissionError && (
