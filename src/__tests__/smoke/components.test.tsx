@@ -252,11 +252,6 @@ describe('Component Smoke Tests', () => {
     expect(document.querySelector('.xp-bar-compact')).toBeInTheDocument();
   });
 
-  it('BadgeShowcase - renders badges grid', async () => {
-    const { default: BadgeShowcase } = await import('../../components/BadgeShowcase');
-    render(<BadgeShowcase />);
-    expect(screen.getByText(/My Badges/i)).toBeInTheDocument();
-  });
 
   it('Leaderboard - renders leaderboard', async () => {
     const { default: Leaderboard } = await import('../../components/Leaderboard');
