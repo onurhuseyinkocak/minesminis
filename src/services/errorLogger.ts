@@ -31,6 +31,9 @@ const MAX_LOGS = 500;
 let errorLogs: ErrorLog[] = [];
 let listeners: Array<() => void> = [];
 let initialized = false;
+let errorHandler: ((event: ErrorEvent) => void) | null = null;
+let rejectionHandler: ((event: PromiseRejectionEvent) => void) | null = null;
+let origConsoleError: ((...args: unknown[]) => void) | null = null;
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -98,8 +101,13 @@ export const errorLogger = {
     initialized = true;
     loadLogs();
 
+    // Remove previous listeners if they exist (defensive against HMR re-init)
+    if (errorHandler) window.removeEventListener('error', errorHandler);
+    if (rejectionHandler) window.removeEventListener('unhandledrejection', rejectionHandler);
+    if (origConsoleError) console.error = origConsoleError;
+
     // Capture unhandled errors
-    window.addEventListener('error', (event) => {
+    errorHandler = (event: ErrorEvent) => {
       this.log({
         severity: 'critical',
         message: event.message || 'Unhandled error',
@@ -111,10 +119,11 @@ export const errorLogger = {
           colno: event.colno,
         },
       });
-    });
+    };
+    window.addEventListener('error', errorHandler);
 
     // Capture unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
+    rejectionHandler = (event: PromiseRejectionEvent) => {
       const error = event.reason;
       this.log({
         severity: 'critical',
@@ -122,10 +131,12 @@ export const errorLogger = {
         stack: error?.stack,
         page: window.location.pathname,
       });
-    });
+    };
+    window.addEventListener('unhandledrejection', rejectionHandler);
 
     // Capture console.error
-    const origError = console.error;
+    origConsoleError = console.error;
+    const origError = origConsoleError;
     console.error = (...args: unknown[]) => {
       origError.apply(console, args);
       const msg = args.map(a => {

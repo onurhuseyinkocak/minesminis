@@ -108,12 +108,15 @@ export async function saveUserFCMToken(userId: string, token: string): Promise<v
       fcm_token: token,
       fcm_updated_at: new Date().toISOString(),
     };
-    await supabase
+    const { error: updateError } = await supabase
       .from('users')
       .update({ settings: updatedSettings })
       .eq('id', userId);
-  } catch {
-    // Non-fatal — token save failure does not block the UI
+    if (updateError) {
+      console.warn('[notificationService] saveUserFCMToken update failed:', updateError.message);
+    }
+  } catch (e) {
+    console.warn('[notificationService] saveUserFCMToken failed:', e);
   }
 }
 

@@ -579,8 +579,8 @@ function AdminContentManager() {
                                     </td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(word)}><Pencil size={14} /></button>
-                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteWord(word.word)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" aria-label="Edit" onClick={() => openEditModal(word)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" aria-label="Delete" onClick={() => handleDeleteWord(word.word)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -621,8 +621,8 @@ function AdminContentManager() {
                                     <td>{game.grade === 'primary' ? 'Primary' : `${game.grade}. Grade`}</td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(game)}><Pencil size={14} /></button>
-                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteGame(game.id, game.title)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" aria-label="Edit" onClick={() => openEditModal(game)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" aria-label="Delete" onClick={() => handleDeleteGame(game.id, game.title)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -671,8 +671,8 @@ function AdminContentManager() {
                                     <td className="adm-td--muted">{video.duration}</td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(video)}><Pencil size={14} /></button>
-                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteVideo(video.id, video.title)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" aria-label="Edit" onClick={() => openEditModal(video)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" aria-label="Delete" onClick={() => handleDeleteVideo(video.id, video.title)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -715,8 +715,8 @@ function AdminContentManager() {
                                     </td>
                                     <td>
                                         <div className="adm-table-actions">
-                                            <button type="button" className="adm-icon-btn" onClick={() => openEditModal(ws)}><Pencil size={14} /></button>
-                                            <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteWorksheet(ws.id, ws.title)}><Trash2 size={14} /></button>
+                                            <button type="button" className="adm-icon-btn" aria-label="Edit" onClick={() => openEditModal(ws)}><Pencil size={14} /></button>
+                                            <button type="button" className="adm-icon-btn danger" aria-label="Delete" onClick={() => handleDeleteWorksheet(ws.id, ws.title)}><Trash2 size={14} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -734,7 +734,7 @@ function AdminContentManager() {
                     <div className="adm-modal adm-modal--md" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>{editingItem ? 'Edit' : 'Add'} {activeTab === 'words' ? 'Word' : activeTab === 'games' ? 'Game' : activeTab === 'videos' ? 'Video' : 'Worksheet'}</h3>
-                            <button type="button" className="adm-icon-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+                            <button type="button" className="adm-icon-btn" aria-label="Close" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="adm-modal-body">

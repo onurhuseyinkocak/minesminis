@@ -83,6 +83,7 @@ async function flushSyncQueue(userId: string, childId: string | null): Promise<v
 class ProgressService {
   private userId: string | null = null;
   private childId: string | null = null;
+  private onlineListener: (() => void) | null = null;
 
   setUser(userId: string, childId: string | null = null): void {
     this.userId = userId;
@@ -92,8 +93,12 @@ class ProgressService {
       this.flushQueue();
       this.loadFromSupabase();
     }
-    // Listen for reconnection
-    window.addEventListener('online', () => this.flushQueue(), { once: false });
+    // Remove previous listener before adding a new one to prevent leaks
+    if (this.onlineListener) {
+      window.removeEventListener('online', this.onlineListener);
+    }
+    this.onlineListener = () => this.flushQueue();
+    window.addEventListener('online', this.onlineListener);
   }
 
   private get prefix(): string {

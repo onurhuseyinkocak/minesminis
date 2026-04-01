@@ -273,8 +273,7 @@ export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ...props
           </div>
         }
       >
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <GameComponent {...(gameProps as any)} />
+        <GameComponent {...(gameProps as Record<string, unknown>)} />
       </React.Suspense>
     </GameErrorBoundary>
   );

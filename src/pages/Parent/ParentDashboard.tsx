@@ -1279,7 +1279,7 @@ export default function ParentDashboard() {
   const [supabaseLogs, setSupabaseLogs] = useState<Awaited<ReturnType<typeof fetchActivityLogs>>>([]);
   const [supabaseChildStats, setSupabaseChildStats] = useState<Awaited<ReturnType<typeof loadUserStats>>>(null);
   // Weekly snapshot cached in Supabase (parent_report_snapshots)
-  const [weeklySnapshot, setWeeklySnapshot] = useState<WeeklySnapshot | null>(null);
+  const [, setWeeklySnapshot] = useState<WeeklySnapshot | null>(null);
 
   const handleGenerateReport = useCallback(() => {
     if (!activeChildId) return;

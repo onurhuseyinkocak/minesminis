@@ -422,7 +422,7 @@ function saveProfile(profile: LearnerProfile): void {
       total_minutes: profile.totalTimeMinutes,
       last_session_at: profile.lastSessionDate,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id,child_id' }).then(() => {}).catch(() => {});
+    }, { onConflict: 'user_id,child_id' }).then(() => {}, () => {});
   }
 }
 

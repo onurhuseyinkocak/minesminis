@@ -3,7 +3,7 @@
 // React layer over ProgressService
 // ============================================================
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { progressService } from '../services/progressService';
 import type { ActivityResult } from '../types/progress';
 
@@ -72,22 +72,28 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  const value: ProgressContextValue = {
+  const getUnitProgress = useCallback((id: string) => progressService.getUnitProgress(id), []);
+  const isUnitCompleted = useCallback((id: string) => progressService.isUnitCompleted(id), []);
+  const isUnitUnlocked = useCallback((id: string) => progressService.isUnitUnlocked(id), []);
+  const getCurrentActivityIndex = useCallback((id: string) => progressService.getCurrentActivityIndex(id), []);
+  const resetAllProgress = useCallback(() => {
+    progressService.resetAllProgress();
+    setCurrentUnitId('s1-u1');
+  }, []);
+
+  const value: ProgressContextValue = useMemo(() => ({
     currentUnitId,
     activeChildId,
-    getUnitProgress: (id) => progressService.getUnitProgress(id),
-    isUnitCompleted: (id) => progressService.isUnitCompleted(id),
-    isUnitUnlocked: (id) => progressService.isUnitUnlocked(id),
-    getCurrentActivityIndex: (id) => progressService.getCurrentActivityIndex(id),
+    getUnitProgress,
+    isUnitCompleted,
+    isUnitUnlocked,
+    getCurrentActivityIndex,
     saveActivityComplete,
     completeUnit,
     setCurrentUnit,
     setUser,
-    resetAllProgress: () => {
-      progressService.resetAllProgress();
-      setCurrentUnitId('s1-u1');
-    },
-  };
+    resetAllProgress,
+  }), [currentUnitId, activeChildId, getUnitProgress, isUnitCompleted, isUnitUnlocked, getCurrentActivityIndex, saveActivityComplete, completeUnit, setCurrentUnit, setUser, resetAllProgress]);
 
   return (
     <ProgressContext.Provider value={value}>

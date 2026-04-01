@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProgressProvider } from "./contexts/ProgressContext";
 import { PremiumProvider, usePremium } from "./contexts/PremiumContext";
+import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import { GamificationProvider } from "./contexts/GamificationContext";
 import { HeartsProvider } from "./contexts/HeartsContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -14,8 +15,6 @@ import { AppShell } from "./components/layout";
 import { sendMessageToAI } from "./services/aiService";
 import { errorLogger } from "./services/errorLogger";
 import OfflineBanner from "./components/OfflineBanner";
-import InstallBanner from "./components/InstallBanner";
-import CookieBanner from "./components/CookieBanner";
 import { getNextAction } from "./services/learningPathService";
 import { getTodayMinutes } from "./services/activityLogger";
 import NotificationPrompt from "./components/NotificationPrompt";
@@ -740,6 +739,7 @@ function App() {
           <LanguageProvider>
             <AuthProvider>
               <PremiumProvider>
+                <SubscriptionProvider>
                 <ProgressProvider>
                 <HeartsProvider>
                 <GamificationProvider>
@@ -751,6 +751,7 @@ function App() {
                 </GamificationProvider>
                 </HeartsProvider>
                 </ProgressProvider>
+                </SubscriptionProvider>
               </PremiumProvider>
             </AuthProvider>
           </LanguageProvider>

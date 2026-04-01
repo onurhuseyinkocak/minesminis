@@ -81,7 +81,7 @@ export interface TTSOptions {
 
 // ─── Supabase Storage base URL ────────────────────────────────────────────────
 
-const STORAGE_BASE = 'https://sblwqplagirgiroekotp.supabase.co/storage/v1/object/public/audio';
+const STORAGE_BASE = `${import.meta.env.VITE_SUPABASE_URL || 'https://sblwqplagirgiroekotp.supabase.co'}/storage/v1/object/public/audio`;
 
 // ─── In-memory cache (text → audio URL | null) ───────────────────────────────
 

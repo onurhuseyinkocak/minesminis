@@ -187,6 +187,7 @@ class MascotRoamingService {
     private mouseFollowInterval: ReturnType<typeof setTimeout> | null = null;
     private isManualMoving: boolean = false;
     private listeners: ((pos: Position, state: AnimationState, view: ViewDirection, bubble: SpeechBubble | null) => void)[] = [];
+    private timers: ReturnType<typeof setTimeout>[] = [];
 
     private energy: number = 100;
     private mood: number = 90;
@@ -200,6 +201,18 @@ class MascotRoamingService {
     private isFollowingMouse: boolean = false;
     private mousePosition: Position = { x: 50, y: 50 };
     private followTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    /** Track a setTimeout so it can be cleaned up later. */
+    private track(id: ReturnType<typeof setTimeout>): ReturnType<typeof setTimeout> {
+        this.timers.push(id);
+        return id;
+    }
+
+    /** Clear all tracked timers. */
+    cleanup(): void {
+        this.timers.forEach(id => clearTimeout(id));
+        this.timers = [];
+    }
 
     startRoaming(): void {
         if (this.isRoaming) return;
@@ -230,6 +243,7 @@ class MascotRoamingService {
         }
         this.isFollowingMouse = false;
         this.currentBubble = null;
+        this.cleanup();
     }
 
     private scheduleNextAction(): void {
@@ -290,10 +304,10 @@ class MascotRoamingService {
         this.currentBubble = { message, duration };
         this.notifyListeners();
 
-        setTimeout(() => {
+        this.track(setTimeout(() => {
             this.currentBubble = null;
             this.notifyListeners();
-        }, duration);
+        }, duration));
     }
 
     private showStateBubble(): void {
@@ -423,11 +437,11 @@ class MascotRoamingService {
         this.showStateBubble();
 
         if (duration > 0) {
-            setTimeout(() => {
+            this.track(setTimeout(() => {
                 if (this.state === action) {
                     this.setState('idle');
                 }
-            }, duration);
+            }, duration));
         }
     }
 
@@ -460,12 +474,12 @@ class MascotRoamingService {
         this.notifyListeners();
 
         const duration = Math.min(5000, Math.max(2200, distance * 55));
-        setTimeout(() => {
+        this.track(setTimeout(() => {
             if (this.state === 'walking') {
                 this.viewDirection = 'front';
                 this.setState('idle');
             }
-        }, duration);
+        }, duration));
     }
 
     private getRandomSafePosition(): Position {
@@ -541,7 +555,7 @@ class MascotRoamingService {
     jumpToChat(): void {
         this.position = { x: 85, y: 75 };
         this.setState('celebrating');
-        setTimeout(() => this.setState('idle'), 3000);
+        this.track(setTimeout(() => this.setState('idle'), 3000));
     }
 
     startManualMove(): void {
@@ -571,40 +585,40 @@ class MascotRoamingService {
         const action = celebrationActions[Math.floor(Math.random() * celebrationActions.length)];
         this.setState(action);
         this.showStateBubble();
-        setTimeout(() => this.setState('idle'), 4000);
+        this.track(setTimeout(() => this.setState('idle'), 4000));
     }
 
     triggerSurprise(): void {
         this.setState('surprised');
         this.showStateBubble();
-        setTimeout(() => this.setState('idle'), 2500);
+        this.track(setTimeout(() => this.setState('idle'), 2500));
     }
 
     triggerLaugh(): void {
         this.happiness += 4;
         this.setState('laughing');
         this.showStateBubble();
-        setTimeout(() => this.setState('idle'), 4000);
+        this.track(setTimeout(() => this.setState('idle'), 4000));
     }
 
     triggerSing(): void {
         this.setState('singing');
         this.showStateBubble();
-        setTimeout(() => this.setState('idle'), 6000);
+        this.track(setTimeout(() => this.setState('idle'), 6000));
     }
 
     triggerThink(): void {
         this.setState('thinking');
         this.showStateBubble();
-        setTimeout(() => this.setState('idle'), 5000);
+        this.track(setTimeout(() => this.setState('idle'), 5000));
     }
 
     goHome(): void {
         this.position = { x: 88, y: 85 };
         this.setState('walking');
-        setTimeout(() => {
+        this.track(setTimeout(() => {
             this.setState('sleeping');
-        }, 3000);
+        }, 3000));
     }
 
     onHover(): void {

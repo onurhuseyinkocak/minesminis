@@ -81,13 +81,22 @@ export const createPet = async (userId: string, mascotOrType: string, customName
 };
 
 export const getUserPet = async (userId: string): Promise<VirtualPet | null> => {
-    const { data, error } = await supabase
-        .from('pets')
-        .select('id, name, type, emoji, level, experience, happiness, hunger, energy, last_fed, last_played, created_at')
-        .eq('id', userId)
-        .maybeSingle();
+    let data: Record<string, unknown> | null = null;
+    try {
+        const result = await supabase
+            .from('pets')
+            .select('id, name, type, emoji, level, experience, happiness, hunger, energy, last_fed, last_played, created_at')
+            .eq('id', userId)
+            .maybeSingle();
+        data = result.data;
+        if (result.error) {
+            console.warn('[petService] getUserPet query failed:', result.error.message);
+        }
+    } catch (e) {
+        console.warn('[petService] getUserPet failed:', e);
+    }
 
-    if (error || !data) {
+    if (!data) {
         // Fallback to localStorage
         const local = localStorage.getItem(`${LS_PET_PREFIX}${userId}`);
         if (local) {
@@ -133,8 +142,8 @@ export const savePet = async (pet: VirtualPet): Promise<void> => {
             last_fed: pet.lastFed,
             last_played: pet.lastPlayed
         }).eq('id', pet.id);
-    } catch {
-        // Fallback to localStorage
+    } catch (e) {
+        console.warn('[petService] savePet failed:', e);
     }
     localStorage.setItem(`${LS_PET_PREFIX}${pet.id}`, JSON.stringify(pet));
 };
@@ -142,7 +151,7 @@ export const savePet = async (pet: VirtualPet): Promise<void> => {
 export const renamePet = async (userId: string, newName: string): Promise<void> => {
     try {
         await supabase.from('pets').update({ name: newName }).eq('id', userId);
-    } catch { /* table may not exist */ }
+    } catch (e) { console.warn('[petService] renamePet failed:', e); }
     const local = localStorage.getItem(`${LS_PET_PREFIX}${userId}`);
     if (local) {
         try {

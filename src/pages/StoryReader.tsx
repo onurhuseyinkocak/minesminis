@@ -355,7 +355,7 @@ export default function StoryReader() {
   const storyTitle = lang === 'tr' ? story.title_tr : story.title;
 
   return (
-    <div className="story-reader" onClick={!done ? handleSkipTypewriter : undefined} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div className="story-reader" role="button" tabIndex={0} onClick={!done ? handleSkipTypewriter : undefined} onKeyDown={(e) => { if (!done && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleSkipTypewriter(); } }} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {/* Cinematic background with camera angles */}
       <div className="story-reader__scene-wrapper">
         <SceneBackground

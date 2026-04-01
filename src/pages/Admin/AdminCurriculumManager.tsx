@@ -499,8 +499,8 @@ function AdminCurriculumManager() {
                                                 >
                                                     {lesson.status === 'published' ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
                                                 </button>
-                                                <button type="button" className="adm-icon-btn" onClick={() => openEditLesson(lesson)}><Pencil size={13} /></button>
-                                                <button type="button" className="adm-icon-btn danger" onClick={() => handleDeleteLesson(lesson.id)}><Trash2 size={13} /></button>
+                                                <button type="button" className="adm-icon-btn" aria-label="Edit" onClick={() => openEditLesson(lesson)}><Pencil size={13} /></button>
+                                                <button type="button" className="adm-icon-btn danger" aria-label="Delete" onClick={() => handleDeleteLesson(lesson.id)}><Trash2 size={13} /></button>
                                             </div>
                                         </div>
 
@@ -553,7 +553,7 @@ function AdminCurriculumManager() {
                     <div className="adm-modal" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>{editingWorld ? 'Edit World' : 'Add World'}</h3>
-                            <button type="button" className="adm-icon-btn" onClick={() => setIsWorldModal(false)}><X size={16} /></button>
+                            <button type="button" className="adm-icon-btn" aria-label="Close" onClick={() => setIsWorldModal(false)}><X size={16} /></button>
                         </div>
                         <form onSubmit={handleWorldSubmit}>
                             <div className="adm-modal-body">
@@ -601,7 +601,7 @@ function AdminCurriculumManager() {
                     <div className="adm-modal adm-modal-lesson" onClick={e => e.stopPropagation()}>
                         <div className="adm-modal-header">
                             <h3>{editingLesson ? 'Edit Lesson' : 'Add Lesson'}</h3>
-                            <button type="button" className="adm-icon-btn" onClick={() => setIsLessonModal(false)}><X size={16} /></button>
+                            <button type="button" className="adm-icon-btn" aria-label="Close" onClick={() => setIsLessonModal(false)}><X size={16} /></button>
                         </div>
                         <form onSubmit={handleLessonSubmit}>
                             <div className="adm-modal-body">

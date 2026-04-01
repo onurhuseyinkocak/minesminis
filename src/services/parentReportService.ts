@@ -57,7 +57,7 @@ async function buildCurrentSnapshot(userId: string, childId: string): Promise<We
         .eq('user_id', userId)
         .gte('completed_at', weekStart + 'T00:00:00Z');
       lessonsCompleted = completions?.length ?? 0;
-    } catch { /* use local fallback */ }
+    } catch (e) { console.warn('[parentReportService] buildCurrentSnapshot DB query failed:', e); }
   }
 
   // Phoneme data from adaptiveEngine localStorage
@@ -120,7 +120,7 @@ async function saveSnapshot(snapshot: WeeklySnapshot): Promise<void> {
       top_weak_phonemes: snapshot.topWeakPhonemes,
       top_strong_phonemes: snapshot.topStrongPhonemes,
     }, { onConflict: 'user_id,child_id,week_start' });
-  } catch { /* silent */ }
+  } catch (e) { console.warn('[parentReportService] saveSnapshot failed:', e); }
 }
 
 /** Get latest snapshot (Supabase first, build if missing) */

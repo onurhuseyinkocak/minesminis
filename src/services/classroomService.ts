@@ -120,7 +120,9 @@ export function createClassroom(
     gradeLevel,
     newClassroom.joinCode,
     newClassroom.phonicsGroupAssigned,
-  );
+  ).catch((e: unknown) => {
+    console.warn('[classroomService] syncCreateClassroom failed:', e);
+  });
 
   return newClassroom;
 }
@@ -194,7 +196,9 @@ export function joinClassroom(
   } catch { /* QuotaExceededError — ignore */ }
 
   // Sync to Supabase (fire-and-forget)
-  syncJoinClassroom(classroom.joinCode, student.id);
+  syncJoinClassroom(classroom.joinCode, student.id).catch((e: unknown) => {
+    console.warn('[classroomService] syncJoinClassroom failed:', e);
+  });
 
   return { success: true, classroomName: classroom.name };
 }

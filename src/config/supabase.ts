@@ -6,6 +6,9 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   errorLogger.log({ severity: 'critical', message: 'Supabase credentials missing! Check your .env file.', component: 'supabase' });
+  if (import.meta.env.DEV) {
+    console.warn('[MinesMinis] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY — Supabase calls will fail silently.');
+  }
 }
 
 export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '', {

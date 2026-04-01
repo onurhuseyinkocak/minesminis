@@ -183,7 +183,7 @@ const Favorites: React.FC = () => {
         ) : (
           <div className="favorites-grid">
             {filteredFavorites.map((favorite) => (
-              <div key={favorite.id} className="favorite-card favorite-card--clickable" onClick={() => handleNavigate(favorite.item_type, favorite.item_id)}>
+              <div key={favorite.id} className="favorite-card favorite-card--clickable" role="button" tabIndex={0} onClick={() => handleNavigate(favorite.item_type, favorite.item_id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleNavigate(favorite.item_type, favorite.item_id); } }}>
                 <div className="favorite-type-badge">
                   {getTypeIcon(favorite.item_type)}
                 </div>
