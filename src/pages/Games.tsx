@@ -1,7 +1,7 @@
 /**
  * Games Hub — MinesMinis
- * Ultra-simplified for young children (3+).
- * Big colorful cards, no tabs/pills/badges — just games!
+ * Kid-themed design inspired by Khan Academy Kids / PBS Kids.
+ * Big colorful cards, Mimi mascot with speech bubble, chunky buttons.
  */
 import { useState, useMemo, useCallback, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -70,34 +70,34 @@ interface DailyPracticeSession {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const GAME_ICONS: Record<string, React.ReactNode> = {
-  'word-match': <Link size={32} />,
-  'quick-quiz': <Zap size={32} />,
-  'sentence-scramble': <Puzzle size={32} />,
-  'spelling-bee': <Bug size={32} />,
-  'listening-challenge': <Headphones size={32} />,
-  'pronunciation': <Mic size={32} />,
-  'story-choices': <BookOpen size={32} />,
-  'dialogue': <MessageSquare size={32} />,
-  'image-label': <Tag size={32} />,
-  'say-it': <Volume2 size={32} />,
-  'phonics-blend': <Layers size={32} />,
-  'phoneme-manipulation': <Music2 size={32} />,
-  'syllable': <Grid2x2 size={32} />,
-  'word-family': <Users size={32} />,
-  'rhyme': <Triangle size={32} />,
-  'phonetic-trap': <AlertTriangle size={32} />,
-  'sentence-builder': <Puzzle size={32} />,
+  'word-match': <Link size={36} />,
+  'quick-quiz': <Zap size={36} />,
+  'sentence-scramble': <Puzzle size={36} />,
+  'spelling-bee': <Bug size={36} />,
+  'listening-challenge': <Headphones size={36} />,
+  'pronunciation': <Mic size={36} />,
+  'story-choices': <BookOpen size={36} />,
+  'dialogue': <MessageSquare size={36} />,
+  'image-label': <Tag size={36} />,
+  'say-it': <Volume2 size={36} />,
+  'phonics-blend': <Layers size={36} />,
+  'phoneme-manipulation': <Music2 size={36} />,
+  'syllable': <Grid2x2 size={36} />,
+  'word-family': <Users size={36} />,
+  'rhyme': <Triangle size={36} />,
+  'phonetic-trap': <AlertTriangle size={36} />,
+  'sentence-builder': <Puzzle size={36} />,
 };
 
-const CARD_GRADIENTS: string[] = [
-  'linear-gradient(145deg, #FF6B35 0%, #F04B10 100%)',
-  'linear-gradient(145deg, #3B82F6 0%, #2563EB 100%)',
-  'linear-gradient(145deg, #8B5CF6 0%, #7C3AED 100%)',
-  'linear-gradient(145deg, #10B981 0%, #059669 100%)',
-  'linear-gradient(145deg, #F59E0B 0%, #D97706 100%)',
-  'linear-gradient(145deg, #EC4899 0%, #DB2777 100%)',
-  'linear-gradient(145deg, #06B6D4 0%, #0891B2 100%)',
-  'linear-gradient(145deg, #EF4444 0%, #DC2626 100%)',
+const CARD_GRADIENTS = [
+  'from-red-500 to-orange-500',
+  'from-blue-500 to-cyan-500',
+  'from-purple-500 to-pink-500',
+  'from-emerald-500 to-teal-500',
+  'from-amber-500 to-yellow-500',
+  'from-indigo-500 to-violet-500',
+  'from-rose-500 to-red-500',
+  'from-cyan-500 to-blue-500',
 ];
 
 // ── Spring presets ───────────────────────────────────────────────────────────
@@ -179,9 +179,9 @@ function getGameWords(currentAgeGroup?: string) {
 
 function GamesSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-4 px-4">
+    <div className="grid grid-cols-2 gap-4 px-5">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="rounded-3xl bg-gray-100 animate-pulse" style={{ minHeight: 120 }} />
+        <div key={i} className="rounded-[28px] bg-orange-100/60 animate-pulse" style={{ minHeight: 140 }} />
       ))}
     </div>
   );
@@ -372,27 +372,26 @@ function Games() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={springPop}
-          className="fixed inset-0 top-[64px] z-50 bg-white flex flex-col"
+          className="fixed inset-0 top-[64px] z-50 kid-bg flex flex-col"
         >
           {/* Top bar */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white/95 backdrop-blur-sm shrink-0">
+          <div className="flex items-center justify-between px-4 py-3 border-b-2 border-orange-100 bg-white/90 backdrop-blur-sm shrink-0">
             <button
               type="button"
               onClick={handleExitGame}
-              className="flex items-center gap-2 text-gray-600 font-semibold text-sm min-h-[48px] min-w-[48px] px-2 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors"
+              className="flex items-center gap-2 text-orange-600 font-bold text-sm w-12 h-12 rounded-2xl hover:bg-orange-50 active:bg-orange-100 transition-colors justify-center"
             >
-              <ArrowLeft size={20} />
-              {isTr ? 'Geri' : 'Back'}
+              <ArrowLeft size={24} />
             </button>
 
-            <span className="font-bold text-sm text-gray-800 truncate max-w-[50%]">{progressLabel}</span>
+            <span className="font-extrabold text-base text-gray-800 truncate max-w-[50%]">{progressLabel}</span>
 
             {dailySession && (
               <div className="flex gap-1.5">
                 {dailySession.games.map((_, i) => (
                   <span
                     key={i}
-                    className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    className={`w-3 h-3 rounded-full transition-colors ${
                       i < dailySession.currentIndex
                         ? 'bg-emerald-400'
                         : i === dailySession.currentIndex
@@ -413,7 +412,7 @@ function Games() {
               <Suspense
                 fallback={
                   <div className="flex items-center justify-center h-64">
-                    <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+                    <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
                   </div>
                 }
               >
@@ -438,102 +437,94 @@ function Games() {
     );
   }
 
-  // ── Render: Hub (ultra-simple for toddlers) ───────────────────────────────
+  // ── Render: Hub (kid-themed, PBS Kids style) ──────────────────────────────
 
   // Suppress unused variable warning — scoreVersion is used to force re-render on score changes
   void scoreVersion;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50/60 via-white to-rose-50/40 pb-24">
+    <div className="kid-bg kid-bubbles pb-24" style={{ minHeight: 'calc(100dvh - 64px)' }}>
+      {/* Content sits above the bubble overlay */}
+      <div className="relative z-10">
 
-      {/* Header — simple icon + title */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={springPop}
-        className="px-4 pt-6 pb-2 flex items-center gap-3"
-      >
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white shadow-sm">
-          <Gamepad2 size={20} />
-        </div>
-        <h1 className="text-xl font-extrabold text-gray-800">
-          {isTr ? 'Oyunlar' : 'Games'}
-        </h1>
-      </motion.div>
-
-      {/* Daily Practice — Big colorful Mimi + Play button */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...springBounce, delay: 0.05 }}
-        className="mx-4 mt-3"
-      >
-        <button
-          type="button"
-          onClick={handleStartDailyPractice}
-          className="w-full rounded-3xl p-5 bg-gradient-to-r from-orange-400 via-orange-500 to-rose-500 text-white shadow-lg shadow-orange-200/50 flex items-center gap-4 min-h-[100px] active:scale-[0.97] transition-transform"
+        {/* Mimi mascot + speech bubble */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={springPop}
+          className="px-5 pt-6 pb-2 flex items-end gap-3"
         >
           <div className="shrink-0">
-            <LottieCharacter state="wave" size={64} />
+            <LottieCharacter state="wave" size={80} />
           </div>
-          <div className="flex-1 text-left">
-            <p className="font-extrabold text-lg leading-tight">
-              {isTr ? 'Oyna!' : 'Play!'}
-            </p>
-            {dailyStreak > 0 && (
-              <p className="text-white/80 text-xs font-medium mt-1 flex items-center gap-1">
-                <Flame size={14} />
-                {isTr ? `${dailyStreak} gun!` : `${dailyStreak} days!`}
-              </p>
-            )}
+          <div className="kid-speech-bubble flex-1 mb-2">
+            {isTr ? 'Oynamaya hazir misin?' : 'Ready to play?'}
           </div>
-          <Play size={32} fill="white" className="text-white shrink-0 opacity-90" />
-        </button>
-      </motion.div>
+        </motion.div>
 
-      {/* Games Grid — 2 columns, big colorful cards */}
-      <div className="mt-5 px-4">
-        {isLoading ? (
-          <GamesSkeleton />
-        ) : availableGames.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-12 text-center"
+        {/* BIG daily play button */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ ...springBounce, delay: 0.1 }}
+          className="px-5 mt-4"
+        >
+          <button
+            type="button"
+            onClick={handleStartDailyPractice}
+            className="kid-pulse w-full rounded-[28px] py-5 px-6 bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white font-black text-2xl tracking-wide flex items-center justify-center gap-4 active:scale-[0.96] transition-transform border-4 border-white/30"
           >
-            <LottieCharacter state="idle" size={100} />
-            <p className="text-gray-400 text-sm mt-4 font-medium">
-              {isTr ? 'Henuz oyun yok.' : 'No games yet.'}
-            </p>
-          </motion.div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4">
-            {availableGames.map((game, i) => (
-              <motion.button
-                key={game.type}
-                type="button"
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ ...springBounce, delay: i * 0.04 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handlePlaySingle(game)}
-                className="rounded-3xl flex flex-col items-center justify-center text-white shadow-md active:shadow-sm cursor-pointer"
-                style={{
-                  minHeight: 120,
-                  background: CARD_GRADIENTS[i % CARD_GRADIENTS.length],
-                  padding: 16,
-                }}
-              >
-                <div className="mb-2 opacity-95">
-                  {GAME_ICONS[game.type] ?? <Gamepad2 size={32} />}
-                </div>
-                <span className="font-bold text-sm text-center leading-tight">
-                  {isTr ? game.nameTr : game.name}
-                </span>
-              </motion.button>
-            ))}
-          </div>
-        )}
+            <Play size={36} fill="white" className="text-white shrink-0" />
+            <span>{isTr ? 'OYNA!' : 'PLAY!'}</span>
+            {dailyStreak > 0 && (
+              <span className="flex items-center gap-1 text-base font-bold bg-white/20 rounded-full px-3 py-1 ml-1">
+                <Flame size={18} />
+                {dailyStreak}
+              </span>
+            )}
+          </button>
+        </motion.div>
+
+        {/* Games Grid — 2 columns, big chunky colorful cards */}
+        <div className="mt-6 px-5">
+          {isLoading ? (
+            <GamesSkeleton />
+          ) : availableGames.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-12 text-center"
+            >
+              <LottieCharacter state="idle" size={100} />
+              <p className="text-gray-400 text-sm mt-4 font-medium">
+                {isTr ? 'Henuz oyun yok.' : 'No games yet.'}
+              </p>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {availableGames.map((game, i) => (
+                <motion.button
+                  key={game.type}
+                  type="button"
+                  initial={{ opacity: 0, y: 24, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ ...springBounce, delay: 0.15 + i * 0.04 }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={() => handlePlaySingle(game)}
+                  className={`rounded-[28px] flex flex-col items-center justify-center text-white shadow-lg cursor-pointer bg-gradient-to-br ${CARD_GRADIENTS[i % CARD_GRADIENTS.length]} border-4 border-white/20`}
+                  style={{ minHeight: 140, padding: 16 }}
+                >
+                  <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-2">
+                    {GAME_ICONS[game.type] ?? <Gamepad2 size={36} />}
+                  </div>
+                  <span className="font-extrabold text-base text-center leading-tight drop-shadow-sm">
+                    {isTr ? game.nameTr : game.name}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

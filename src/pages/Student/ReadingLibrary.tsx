@@ -10,6 +10,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { LS_READ_BOOKS, LS_PHONICS_MASTERY } from '../../config/storageKeys';
 import ReadingPlayer from '../../components/ReadingPlayer';
+import LottieCharacter from '../../components/LottieCharacter';
 import type { ReadingStats, ComprehensionQuestion } from '../../components/ReadingPlayer';
 import {
   saveReadingRecord,
@@ -93,34 +94,44 @@ function compQuestionsToPlayerFormat(questions: CompQuestion[]): ComprehensionQu
 
 // ── Shelf config ────────────────────────────────────────────────────────────
 
-const GROUP_COLORS = [
-  'from-red-300 to-rose-400',
-  'from-orange-300 to-amber-400',
-  'from-yellow-300 to-lime-400',
-  'from-green-300 to-emerald-400',
-  'from-cyan-300 to-blue-400',
-  'from-blue-300 to-indigo-400',
-  'from-purple-300 to-violet-400',
+const GROUP_GRADIENTS = [
+  'from-rose-400 to-pink-500',
+  'from-orange-400 to-amber-500',
+  'from-yellow-400 to-lime-500',
+  'from-emerald-400 to-green-500',
+  'from-cyan-400 to-blue-500',
+  'from-blue-400 to-indigo-500',
+  'from-purple-400 to-violet-500',
 ];
 
-const GROUP_BORDER_COLORS = [
-  'border-rose-400',
-  'border-amber-400',
-  'border-lime-400',
-  'border-emerald-400',
-  'border-blue-400',
-  'border-indigo-400',
-  'border-violet-400',
+const GROUP_SHELF_BG = [
+  'bg-rose-100/80',
+  'bg-amber-100/80',
+  'bg-lime-100/80',
+  'bg-emerald-100/80',
+  'bg-blue-100/80',
+  'bg-indigo-100/80',
+  'bg-violet-100/80',
 ];
 
-const GROUP_BG_COLORS = [
-  'bg-rose-50',
-  'bg-amber-50',
-  'bg-lime-50',
-  'bg-emerald-50',
-  'bg-blue-50',
-  'bg-indigo-50',
-  'bg-violet-50',
+const GROUP_SHELF_BORDER = [
+  'border-rose-300',
+  'border-amber-300',
+  'border-lime-300',
+  'border-emerald-300',
+  'border-blue-300',
+  'border-indigo-300',
+  'border-violet-300',
+];
+
+const GROUP_LABEL_COLOR = [
+  'text-rose-600',
+  'text-amber-600',
+  'text-lime-600',
+  'text-emerald-600',
+  'text-blue-600',
+  'text-indigo-600',
+  'text-violet-600',
 ];
 
 const GROUP_NAMES: Record<number, { en: string; tr: string; sounds: string }> = {
@@ -248,50 +259,74 @@ const ReadingLibrary: React.FC = () => {
   // ── Library view ──────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-[calc(100dvh-64px)] bg-gradient-to-b from-sky-50 via-amber-50/30 to-orange-50/20 px-4 py-6 overflow-y-auto">
-      {/* Header */}
+    <div className="min-h-[calc(100dvh-64px)] kid-bg px-4 py-6 overflow-y-auto">
+      {/* Mimi Header with Speech Bubble */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={springGentle}
-        className="flex items-center justify-between max-w-4xl mx-auto mb-8"
+        className="max-w-4xl mx-auto mb-6"
       >
-        <div className="flex items-center gap-3">
+        {/* Back button */}
+        <div className="flex items-center justify-between mb-4">
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            className="flex items-center justify-center w-14 h-14 rounded-3xl bg-white/80 shadow-sm hover:shadow-md transition-shadow"
+            className="flex items-center justify-center w-14 h-14 rounded-[20px] bg-white/90 shadow-md border-2 border-orange-200 hover:shadow-lg hover:border-orange-300 transition-all active:scale-95"
           >
-            <ArrowLeft size={22} className="text-slate-500" />
+            <ArrowLeft size={24} className="text-orange-500" />
           </button>
-          <div className="flex items-center gap-2">
-            <BookOpen size={28} className="text-amber-500" />
-            <h1 className="text-2xl font-bold text-slate-700 tracking-tight">
-              {lang === 'tr' ? 'Kutuphanem' : 'Library'}
-            </h1>
-          </div>
+
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ ...springBounce, delay: 0.2 }}
+            className="flex items-center gap-2 bg-white/90 rounded-full px-5 py-2.5 shadow-md border-2 border-amber-200"
+          >
+            <BookOpen size={20} className="text-amber-500" />
+            <span className="text-base font-extrabold text-amber-600">
+              {totalBooksRead} {lang === 'tr' ? 'okundu' : 'read'}
+            </span>
+          </motion.div>
         </div>
 
+        {/* Mimi + Speech Bubble */}
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ ...springBounce, delay: 0.2 }}
-          className="flex items-center gap-2 bg-white/80 rounded-3xl px-4 py-2 shadow-sm"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ ...springBounce, delay: 0.15 }}
+          className="flex items-end gap-3 mb-2"
         >
-          <BookOpen size={16} className="text-emerald-500" />
-          <span className="text-sm font-semibold text-slate-600">
-            {totalBooksRead} {lang === 'tr' ? 'okundu' : 'read'}
-          </span>
+          {/* Mimi mascot */}
+          <motion.div
+            animate={{ y: [0, -6, 0] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+            className="flex-shrink-0"
+          >
+            <LottieCharacter state="waving" size={72} />
+          </motion.div>
+
+          {/* Speech bubble */}
+          <div className="relative bg-white rounded-[20px] px-5 py-3 shadow-lg border-2 border-purple-200 flex-1 max-w-sm">
+            <p className="text-base font-extrabold text-purple-700 leading-snug">
+              {lang === 'tr' ? 'Bir kitap secelim!' : "Let's pick a book!"}
+            </p>
+            {/* Bubble tail */}
+            <div
+              className="absolute -left-2 bottom-3 w-4 h-4 bg-white border-l-2 border-b-2 border-purple-200"
+              style={{ transform: 'rotate(45deg)' }}
+            />
+          </div>
         </motion.div>
       </motion.div>
 
       {/* Shelves */}
-      <div className="max-w-4xl mx-auto flex flex-col gap-6">
+      <div className="max-w-4xl mx-auto flex flex-col gap-6 pb-8">
         {[1, 2, 3, 4, 5, 6, 7].map((group) => {
           const books = booksByGroup[group] || [];
           const isLocked = group > masteredGroup;
           const groupInfo = GROUP_NAMES[group];
-          const colorIdx = group - 1;
+          const idx = group - 1;
 
           return (
             <motion.div
@@ -299,29 +334,46 @@ const ReadingLibrary: React.FC = () => {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ ...springGentle, delay: group * 0.08 }}
-              className={`rounded-3xl ${GROUP_BG_COLORS[colorIdx]} border-l-4 ${GROUP_BORDER_COLORS[colorIdx]} p-4 ${isLocked ? 'opacity-60' : ''}`}
+              className={`rounded-[24px] ${GROUP_SHELF_BG[idx]} border-2 ${GROUP_SHELF_BORDER[idx]} p-5 ${isLocked ? 'opacity-50' : ''}`}
             >
               {/* Shelf label */}
-              <div className="flex items-center gap-2 mb-3 px-1">
-                <span className="text-sm font-bold text-slate-600">
+              <div className="flex items-center gap-2 mb-4 px-1">
+                <span className={`text-base font-extrabold ${GROUP_LABEL_COLOR[idx]}`}>
                   {lang === 'tr' ? `Raf ${group}` : `Shelf ${group}`}
                 </span>
-                <span className="text-xs font-medium text-slate-400">
+                <span className="text-sm font-bold text-slate-400">
                   {lang === 'tr' ? groupInfo.tr : groupInfo.en}
                 </span>
-                <span className="text-[10px] text-slate-300 ml-auto font-mono">
+                <span className="text-xs text-slate-300 ml-auto font-mono">
                   {groupInfo.sounds}
                 </span>
-                {isLocked && <Lock size={14} className="text-slate-400" />}
+                {isLocked && <Lock size={18} className="text-slate-400" />}
               </div>
 
               {/* Horizontal scrollable books row */}
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
                 {books.map((book, i) => {
                   const record = readBooks[book.id];
                   const bookStars = record?.stars || 0;
                   const bestWpm = getBestWPMForContent(userId, book.id);
                   const isCompleted = hasCompletedContent(userId, book.id);
+
+                  if (isLocked) {
+                    // Locked cards: gray, big lock icon, no blur
+                    return (
+                      <div
+                        key={book.id}
+                        className="relative flex-shrink-0 flex flex-col items-center justify-center w-44 min-h-[160px] rounded-[28px] bg-gray-200 border-2 border-gray-300 p-4 gap-3"
+                      >
+                        <div className="w-14 h-14 rounded-full bg-gray-300 flex items-center justify-center">
+                          <Lock size={28} className="text-gray-400" />
+                        </div>
+                        <span className="text-sm font-bold text-gray-400 text-center leading-tight line-clamp-2">
+                          {book.title}
+                        </span>
+                      </div>
+                    );
+                  }
 
                   return (
                     <motion.button
@@ -330,54 +382,55 @@ const ReadingLibrary: React.FC = () => {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ ...springBounce, delay: group * 0.08 + i * 0.05 }}
-                      whileHover={
-                        !isLocked
-                          ? { scale: 1.06, rotate: [-1, 1, -1, 0], y: -4 }
-                          : {}
-                      }
-                      whileTap={!isLocked ? { scale: 0.95 } : {}}
+                      whileHover={{ scale: 1.06, y: -6 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={() => {
-                        if (!isLocked) {
-                          setSelectedBook(book);
-                          setUseReadingPlayerMode(true);
-                        }
+                        setSelectedBook(book);
+                        setUseReadingPlayerMode(true);
                       }}
-                      disabled={isLocked}
-                      aria-label={
-                        isLocked
-                          ? `${book.title} (${lang === 'tr' ? 'kilitli' : 'locked'})`
-                          : book.title
-                      }
+                      aria-label={book.title}
                       className={`
                         relative flex-shrink-0 flex flex-col items-center justify-center
-                        w-40 min-h-[160px] rounded-3xl shadow-md
-                        bg-gradient-to-br ${GROUP_COLORS[colorIdx]}
-                        ${isLocked ? 'cursor-not-allowed grayscale' : 'cursor-pointer hover:shadow-lg'}
-                        transition-shadow p-4 gap-2
+                        w-44 min-h-[160px] rounded-[28px] shadow-lg
+                        bg-gradient-to-br ${GROUP_GRADIENTS[idx]}
+                        cursor-pointer hover:shadow-xl
+                        transition-shadow p-4 gap-3 border-2 border-white/30
                       `}
                     >
-                      {/* Book initial circle */}
-                      <div className="w-14 h-14 rounded-full bg-white/30 flex items-center justify-center">
-                        <span className="text-2xl font-black text-white leading-none">
+                      {/* Completed star badge overlay */}
+                      {(isCompleted || bookStars > 0) && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={springBounce}
+                          className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-yellow-400 border-3 border-white shadow-lg flex items-center justify-center z-10"
+                        >
+                          <Star size={20} fill="#fff" stroke="#fff" />
+                        </motion.div>
+                      )}
+
+                      {/* Book initial circle — big, white, 56px */}
+                      <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-md">
+                        <span className="text-2xl font-black leading-none" style={{ color: 'inherit', filter: 'brightness(0.7) saturate(1.5)' }}>
                           {book.title.charAt(0).toUpperCase()}
                         </span>
                       </div>
 
-                      {/* Title */}
-                      <span className="text-sm font-bold text-white text-center leading-tight line-clamp-2">
+                      {/* Title — bold */}
+                      <span className="text-sm font-extrabold text-white text-center leading-tight line-clamp-2 drop-shadow-sm">
                         {book.title}
                       </span>
 
-                      {/* Completion stars */}
+                      {/* Completion stars row */}
                       {bookStars > 0 && (
-                        <div className="flex gap-0.5">
+                        <div className="flex gap-1">
                           {[1, 2, 3].map((s) => (
                             <Star
                               key={s}
-                              size={14}
+                              size={16}
                               fill={s <= bookStars ? '#FDE047' : 'transparent'}
-                              stroke={s <= bookStars ? '#FACC15' : 'rgba(255,255,255,0.4)'}
-                              strokeWidth={2}
+                              stroke={s <= bookStars ? '#FACC15' : 'rgba(255,255,255,0.5)'}
+                              strokeWidth={2.5}
                             />
                           ))}
                         </div>
@@ -385,23 +438,9 @@ const ReadingLibrary: React.FC = () => {
 
                       {/* Best WPM badge */}
                       {bestWpm !== null && (
-                        <div className="absolute top-2 right-2 flex items-center gap-0.5 bg-white/30 rounded-full px-2 py-0.5">
-                          <Zap size={10} className="text-yellow-100" />
-                          <span className="text-[10px] font-bold text-white">{bestWpm}</span>
-                        </div>
-                      )}
-
-                      {/* Completed check */}
-                      {isCompleted && !bestWpm && (
-                        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/30 flex items-center justify-center">
-                          <Star size={12} fill="#FDE047" stroke="#FACC15" />
-                        </div>
-                      )}
-
-                      {/* Lock overlay */}
-                      {isLocked && (
-                        <div className="absolute inset-0 rounded-3xl bg-white/40 backdrop-blur-[2px] flex items-center justify-center">
-                          <Lock size={28} className="text-slate-400" />
+                        <div className="absolute top-2 left-2 flex items-center gap-1 bg-white/40 rounded-full px-2.5 py-1">
+                          <Zap size={12} className="text-yellow-100" />
+                          <span className="text-xs font-extrabold text-white">{bestWpm}</span>
                         </div>
                       )}
                     </motion.button>

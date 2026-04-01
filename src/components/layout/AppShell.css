@@ -1,5 +1,5 @@
 /* ==========================================================================
-   APP SHELL — LibreUIUX / MinesMinis Design System
+   APP SHELL — LibreUIUX / MinesMinis Design System (Kid-Themed)
    Desktop top nav, mobile top bar, mobile bottom nav
    All BEM-style class names to avoid Tailwind selector conflicts.
    ========================================================================== */
@@ -13,7 +13,7 @@
 /* -- Desktop top nav — Tailwind inline, just reinforce tokens ------------ */
 
 /* Scrolled state shadow uses design token */
-header.hidden.lg\\:flex {
+header.hidden.lg\:flex {
   transition:
     background var(--duration-normal) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out),
@@ -54,10 +54,10 @@ header button:focus-visible {
 
 .appshell-gift-btn {
   position: relative;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-lg);
-  border: 1.5px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
   background: var(--bg-muted);
   color: var(--text-secondary);
   cursor: pointer;
@@ -76,7 +76,7 @@ header button:focus-visible {
   border-color: var(--primary);
   color: var(--primary);
   background: var(--primary-pale);
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .appshell-gift-btn:focus-visible {
@@ -94,7 +94,7 @@ header button:focus-visible {
 
 @keyframes giftPulse {
   0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
-  50%       { box-shadow: 0 0 0 5px transparent; }
+  50%       { box-shadow: 0 0 0 6px transparent; }
 }
 
 /* Red dot indicator */
@@ -102,46 +102,47 @@ header button:focus-visible {
   position: absolute;
   top: -3px;
   right: -3px;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: var(--radius-full);
   background: var(--error);
-  border: 1.5px solid var(--bg-card);
+  border: 2px solid var(--bg-card);
 }
 
 /* Smaller variant for mobile topbar */
 .appshell-gift-btn--sm {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
 }
 
 /* -- Desktop avatar button — 44px touch target enforced ----------------- */
 
 .appshell-desktop-avatar {
-  /* Exact 44x44 touch target */
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: var(--white);
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.875rem;
-  border: none;
+  font-weight: 800;
+  font-size: 1rem;
+  border: 3px solid rgba(255,255,255,0.5);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition:
     opacity var(--transition-fast),
-    box-shadow var(--transition-base);
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
   flex-shrink: 0;
 }
 
 .appshell-desktop-avatar:hover {
   opacity: 0.9;
   box-shadow: var(--shadow-md);
+  transform: scale(1.05);
 }
 
 .appshell-desktop-avatar:focus-visible {
@@ -149,19 +150,17 @@ header button:focus-visible {
   box-shadow: var(--focus-ring);
 }
 
-/* Desktop dropdown — z-index must be above header (--z-sticky: 200) */
+/* Desktop dropdown */
 .appshell-desktop-dropdown {
   position: absolute;
   right: 0;
   top: calc(100% + 8px);
-  width: 200px;
+  width: 220px;
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border: 2px solid var(--border);
+  border-radius: 20px;
   box-shadow: var(--shadow-lg);
   padding: var(--space-2) 0;
-  /* Must be above --z-sticky (200). Use --z-dropdown (100) which is
-     promoted via the parent header's stacking context to sit on top. */
   z-index: var(--z-dropdown);
   animation: dropdownFadeIn 150ms var(--ease-out);
 }
@@ -179,17 +178,16 @@ header button:focus-visible {
   left: 0;
   right: 0;
   z-index: var(--z-sticky);
-  /* Account for iOS status bar / notch */
   padding-top: env(safe-area-inset-top, 0px);
-  height: calc(56px + env(safe-area-inset-top, 0px));
+  height: calc(60px + env(safe-area-inset-top, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-left: 16px;
   padding-right: 16px;
   background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow-xs);
+  border-bottom: 2px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   transition:
     background var(--duration-normal) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out);
@@ -200,22 +198,23 @@ header button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Visual size 32px, touch target 44px via padding */
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: var(--text-on-primary);
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.875rem;
+  font-weight: 800;
+  font-size: 1rem;
   text-decoration: none;
   flex-shrink: 0;
-  transition: opacity var(--transition-fast);
+  border: 3px solid rgba(255,255,255,0.5);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
 .appshell-mobile-avatar:active {
   opacity: 0.8;
+  transform: scale(0.93);
 }
 
 .appshell-mobile-avatar:focus-visible {
@@ -226,18 +225,15 @@ header button:focus-visible {
 /* -- Main content area -------------------------------------------------- */
 
 .appshell-main {
-  /* Mobile top bar height + safe area top */
-  padding-top: calc(56px + env(safe-area-inset-top, 0px));
-  /* Large-screen cap: prevents content from stretching past 1440px on 4K monitors */
+  padding-top: calc(60px + env(safe-area-inset-top, 0px));
   width: 100%;
 }
 
 .appshell-main--with-bottom-nav {
-  /* Bottom tab bar height (56px) + safe area bottom */
-  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
 }
 
-/* -- Mobile bottom tab bar ---------------------------------------------- */
+/* -- Mobile bottom tab bar — KID THEMED --------------------------------- */
 
 .appshell-tabbar {
   position: fixed;
@@ -245,28 +241,29 @@ header button:focus-visible {
   left: 0;
   right: 0;
   z-index: var(--z-sticky);
-  /* Fixed bar height + safe area */
-  height: calc(56px + env(safe-area-inset-bottom, 0px));
+  /* Chunky kid-friendly height: 68px + safe area */
+  height: calc(68px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex;
   align-items: stretch;
   background: var(--bg-card);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+  /* Rounded top corners for playful look */
+  border-radius: 24px 24px 0 0;
+  border-top: 2px solid var(--border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Individual tab item */
+/* Individual tab item — bigger touch targets for kids */
 .appshell-tab {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  /* Enforce minimum touch target height */
-  min-height: var(--touch-target);
+  gap: 3px;
+  min-height: 64px;
   min-width: var(--touch-target);
-  padding: 6px 4px;
+  padding: 8px 4px;
   text-decoration: none;
   color: var(--text-muted);
   transition:
@@ -281,7 +278,7 @@ header button:focus-visible {
 }
 
 .appshell-tab:active {
-  transform: scale(0.93);
+  transform: scale(0.9);
   transition: transform 100ms var(--ease-out);
 }
 
@@ -289,36 +286,36 @@ header button:focus-visible {
   color: var(--primary);
 }
 
-/* Icon wrapper — pill highlight on active */
+/* Icon wrapper — colored bg pill on active state */
 .appshell-tab__icon-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 28px;
+  width: 48px;
+  height: 34px;
   border-radius: var(--radius-full);
   transition:
     background var(--duration-normal) var(--ease-out),
     transform var(--duration-normal) var(--ease-spring);
 }
 
+/* Bigger icons for kids — 28px */
 .appshell-tab__icon-wrap svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
 }
 
 .appshell-tab__icon-wrap--active {
   background: var(--primary-pale);
-  transform: translateY(-1px) scale(1.08);
+  transform: translateY(-2px) scale(1.12);
 }
 
-/* Tab label */
+/* Tab label — bold for kids */
 .appshell-tab__label {
   font-family: var(--font-display);
-  /* 0.75rem (= 12px at 16px base) minimum for legibility */
-  font-size: 0.75rem; /* was 12px — rem scales with browser text size */
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 700;
   letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
@@ -328,7 +325,7 @@ header button:focus-visible {
 }
 
 .appshell-tab--active .appshell-tab__label {
-  font-weight: 800;
+  font-weight: 900;
 }
 
 /* -- Focus visible for tab bar ------------------------------------------ */
@@ -342,24 +339,18 @@ header button:focus-visible {
 /* -- Desktop overrides (lg = 1024px+) ----------------------------------- */
 
 @media (min-width: 1024px) {
-  /* On desktop, top nav is 64px (h-16 in Tailwind), no safe area needed */
   .appshell-main {
     padding-top: 64px;
   }
 
-  /* Desktop has no bottom nav, reset bottom padding */
   .appshell-main--with-bottom-nav {
     padding-bottom: 32px;
   }
 }
 
 /* -- Large screen cap (1440px+) ----------------------------------------- */
-/* Prevent unbounded content stretching on 4K / ultrawide monitors.
-   The outer shell spans 100% width (for background colors), but the
-   inner nav and main content are visually capped at 1440px. */
 @media (min-width: 1440px) {
   .appshell-main > * {
-    /* Each direct child (page component) gets a max-width cap */
     max-width: 1440px;
     margin-left: auto;
     margin-right: auto;
@@ -370,11 +361,11 @@ header button:focus-visible {
 
 @media (min-width: 1920px) {
   .appshell-tab__icon-wrap svg {
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
   }
 
   .appshell-tab__label {
-    font-size: 0.75rem; /* rem scales with browser text size preference */
+    font-size: 0.875rem;
   }
 }

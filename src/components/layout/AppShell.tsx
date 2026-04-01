@@ -52,7 +52,7 @@ export default function AppShell({
   // Set --bottom-nav-height CSS variable so floating elements (FAB) can position above the nav
   useEffect(() => {
     if (showBottomNav) {
-      document.body.style.setProperty('--bottom-nav-height', '60px');
+      document.body.style.setProperty('--bottom-nav-height', '68px');
     } else {
       document.body.style.setProperty('--bottom-nav-height', '0px');
     }

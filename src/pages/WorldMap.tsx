@@ -1,13 +1,13 @@
 // ============================================================
 // MinesMinis — WorldMap (Learn Page)
-// Simplified for young children (3+): big colorful phase buttons,
-// simple unit cards with number + title + lock/star status
+// Kid-themed design: Mimi mascot, speech bubble, big colorful
+// phase buttons and chunky unit cards (Khan Academy Kids style)
 // ============================================================
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, Star, Sparkles } from 'lucide-react';
+import { Lock, Star } from 'lucide-react';
 import { useProgress } from '../contexts/ProgressContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -17,53 +17,49 @@ import type { LearningPhase, LearningUnit } from '../data/curriculumPhases';
 
 // ── Constants ────────────────────────────────────────────────
 
-const PHASE_COLORS: Record<string, { bg: string; gradient: string; border: string; text: string; active: string; cardFrom: string; cardTo: string }> = {
+const PHASE_STYLES: Record<string, {
+  gradient: string;
+  cardGradient: string;
+  completedGradient: string;
+  lockedGradient: string;
+  activeRing: string;
+}> = {
   'little-ears': {
-    bg: '#FFF7ED',
-    gradient: 'linear-gradient(135deg, #FB923C 0%, #F97316 100%)',
-    border: '#FDBA74',
-    text: '#C2410C',
-    active: '#FB923C',
-    cardFrom: '#FFF7ED',
-    cardTo: '#FFEDD5',
+    gradient: 'from-orange-500 to-amber-500',
+    cardGradient: 'from-orange-500 to-rose-500',
+    completedGradient: 'from-emerald-500 to-green-500',
+    lockedGradient: 'from-gray-300 to-gray-400',
+    activeRing: 'ring-orange-400',
   },
   'word-builders': {
-    bg: '#EFF6FF',
-    gradient: 'linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%)',
-    border: '#93C5FD',
-    text: '#1D4ED8',
-    active: '#60A5FA',
-    cardFrom: '#EFF6FF',
-    cardTo: '#DBEAFE',
+    gradient: 'from-blue-500 to-cyan-500',
+    cardGradient: 'from-blue-500 to-indigo-500',
+    completedGradient: 'from-emerald-500 to-green-500',
+    lockedGradient: 'from-gray-300 to-gray-400',
+    activeRing: 'ring-blue-400',
   },
   'story-makers': {
-    bg: '#F0FDF4',
-    gradient: 'linear-gradient(135deg, #4ADE80 0%, #22C55E 100%)',
-    border: '#86EFAC',
-    text: '#15803D',
-    active: '#4ADE80',
-    cardFrom: '#F0FDF4',
-    cardTo: '#DCFCE7',
+    gradient: 'from-emerald-500 to-teal-500',
+    cardGradient: 'from-emerald-500 to-cyan-500',
+    completedGradient: 'from-emerald-500 to-green-500',
+    lockedGradient: 'from-gray-300 to-gray-400',
+    activeRing: 'ring-emerald-400',
   },
   'young-explorers': {
-    bg: '#FAF5FF',
-    gradient: 'linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%)',
-    border: '#C084FC',
-    text: '#7E22CE',
-    active: '#A855F7',
-    cardFrom: '#FAF5FF',
-    cardTo: '#F3E8FF',
+    gradient: 'from-purple-500 to-violet-500',
+    cardGradient: 'from-purple-500 to-pink-500',
+    completedGradient: 'from-emerald-500 to-green-500',
+    lockedGradient: 'from-gray-300 to-gray-400',
+    activeRing: 'ring-purple-400',
   },
 };
 
-const DEFAULT_PHASE_COLOR = {
-  bg: '#F9FAFB',
-  gradient: 'linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)',
-  border: '#D1D5DB',
-  text: '#374151',
-  active: '#9CA3AF',
-  cardFrom: '#F9FAFB',
-  cardTo: '#F3F4F6',
+const DEFAULT_STYLE = {
+  gradient: 'from-gray-500 to-gray-600',
+  cardGradient: 'from-gray-500 to-gray-600',
+  completedGradient: 'from-emerald-500 to-green-500',
+  lockedGradient: 'from-gray-300 to-gray-400',
+  activeRing: 'ring-gray-400',
 };
 
 const PHASE_LOTTIE: Record<string, string> = {
@@ -76,7 +72,7 @@ const PHASE_LOTTIE: Record<string, string> = {
 const springTransition = { type: 'spring' as const, stiffness: 300, damping: 24 };
 const gentleSpring = { type: 'spring' as const, stiffness: 200, damping: 20 };
 
-// ── Phase Button (BIG colorful) ──────────────────────────────
+// ── Phase Button (BIG chunky gradient) ───────────────────────
 
 function PhaseButton({ phase, isActive, onClick, lang }: {
   phase: LearningPhase;
@@ -84,7 +80,7 @@ function PhaseButton({ phase, isActive, onClick, lang }: {
   onClick: () => void;
   lang: string;
 }) {
-  const colors = PHASE_COLORS[phase.id] ?? DEFAULT_PHASE_COLOR;
+  const style = PHASE_STYLES[phase.id] ?? DEFAULT_STYLE;
   const label = lang === 'tr' ? phase.nameTr : phase.name;
 
   return (
@@ -92,33 +88,25 @@ function PhaseButton({ phase, isActive, onClick, lang }: {
       onClick={onClick}
       whileTap={{ scale: 0.93 }}
       transition={springTransition}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        padding: '14px 24px',
-        borderRadius: 20,
-        border: `3px solid ${isActive ? colors.active : '#E5E7EB'}`,
-        background: isActive ? colors.gradient : '#FFFFFF',
-        color: isActive ? '#FFFFFF' : '#6B7280',
-        fontWeight: 700,
-        fontSize: 15,
-        cursor: 'pointer',
-        whiteSpace: 'nowrap',
-        minHeight: 56,
-        outline: 'none',
-        boxShadow: isActive ? `0 4px 12px ${colors.active}44` : 'none',
-      }}
+      className={`
+        flex items-center justify-center gap-2
+        rounded-[24px] border-4 font-extrabold text-base
+        cursor-pointer whitespace-nowrap min-h-[56px] px-6 py-3
+        transition-all duration-200 outline-none
+        ${isActive
+          ? `bg-gradient-to-r ${style.gradient} text-white border-white/30 shadow-lg`
+          : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+        }
+      `}
     >
-      <span>{label}</span>
+      {label}
     </motion.button>
   );
 }
 
-// ── Simple Unit Card ─────────────────────────────────────────
+// ── Unit Card (big, chunky, kid-friendly) ─────────────────────
 
-function SimpleUnitCard({ unit, phase, index, lang, isCompleted, isUnlocked, isCurrent }: {
+function KidUnitCard({ unit, phase, index, lang, isCompleted, isUnlocked, isCurrent }: {
   unit: LearningUnit;
   phase: LearningPhase;
   index: number;
@@ -127,95 +115,48 @@ function SimpleUnitCard({ unit, phase, index, lang, isCompleted, isUnlocked, isC
   isUnlocked: boolean;
   isCurrent: boolean;
 }) {
-  const colors = PHASE_COLORS[phase.id] ?? DEFAULT_PHASE_COLOR;
+  const style = PHASE_STYLES[phase.id] ?? DEFAULT_STYLE;
   const title = lang === 'tr' ? unit.titleTr : unit.title;
+
+  const gradientClass = isCompleted
+    ? style.completedGradient
+    : !isUnlocked
+      ? style.lockedGradient
+      : style.cardGradient;
 
   const cardContent = (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 24, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ ...gentleSpring, delay: index * 0.05 }}
-      whileTap={isUnlocked ? { scale: 0.95 } : undefined}
-      style={{
-        borderRadius: 20,
-        padding: 16,
-        background: isUnlocked
-          ? `linear-gradient(145deg, ${colors.cardFrom} 0%, ${colors.cardTo} 100%)`
-          : '#F3F4F6',
-        border: `3px solid ${isCurrent ? colors.active : isUnlocked ? colors.border : '#E5E7EB'}`,
-        opacity: isUnlocked ? 1 : 0.5,
-        cursor: isUnlocked ? 'pointer' : 'default',
-        minHeight: 100,
-        display: 'flex',
-        flexDirection: 'column' as const,
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        position: 'relative' as const,
-        boxShadow: isCurrent
-          ? `0 0 0 3px ${colors.active}33, 0 4px 12px ${colors.active}22`
-          : isCompleted
-            ? `0 2px 8px ${colors.border}33`
-            : 'none',
-      }}
+      whileTap={isUnlocked ? { scale: 0.93 } : undefined}
+      className={`
+        rounded-[28px] flex flex-col items-center justify-center
+        text-white bg-gradient-to-br ${gradientClass}
+        border-4 border-white/20 shadow-lg
+        relative overflow-hidden
+        ${!isUnlocked ? 'opacity-50' : 'cursor-pointer'}
+        ${isCurrent ? `kid-pulse ring-4 ${style.activeRing}` : ''}
+      `}
+      style={{ minHeight: 130, padding: 16 }}
     >
-      {/* Current unit pulse */}
-      {isCurrent && (
-        <motion.div
-          animate={{ scale: [1, 1.04, 1], opacity: [0.4, 0.15, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          style={{
-            position: 'absolute',
-            inset: -4,
-            borderRadius: 24,
-            border: `3px solid ${colors.active}`,
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-
-      {/* Number badge */}
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 14,
-          background: isCompleted ? '#22C55E' : isUnlocked ? colors.active : '#D1D5DB',
-          color: '#FFFFFF',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 800,
-          fontSize: 16,
-        }}
-      >
+      {/* Status icon */}
+      <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-2">
         {isCompleted ? (
-          <Star size={20} fill="#FFFFFF" />
+          <Star size={28} fill="white" className="text-white" />
         ) : !isUnlocked ? (
-          <Lock size={18} />
+          <Lock size={24} className="text-white/80" />
         ) : (
-          unit.number
+          <span className="text-3xl font-black text-white drop-shadow-sm">
+            {unit.number}
+          </span>
         )}
       </div>
 
       {/* Title */}
-      <h3
-        style={{
-          margin: 0,
-          fontSize: 13,
-          fontWeight: 700,
-          color: isUnlocked ? colors.text : '#9CA3AF',
-          textAlign: 'center',
-          lineHeight: 1.3,
-        }}
-      >
+      <h3 className="text-sm font-extrabold text-center leading-tight text-white drop-shadow-sm m-0">
         {title}
       </h3>
-
-      {/* Sparkle for current */}
-      {isCurrent && isUnlocked && !isCompleted && (
-        <Sparkles size={14} color={colors.active} />
-      )}
     </motion.div>
   );
 
@@ -256,125 +197,82 @@ export default function WorldMap() {
     [phases, activePhaseId],
   );
 
+  const isTr = lang === 'tr';
+
   // Suppress unused — getUnitProgress is used to check completion status indirectly
   void getUnitProgress;
 
   return (
-    <div
-      style={{
-        minHeight: 'calc(100dvh - 64px)',
-        background: '#FAFAFA',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* ── Header ─────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={gentleSpring}
-        style={{
-          padding: '24px 20px 12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-        }}
-      >
-        <div style={{ flexShrink: 0 }}>
-          <LottieCharacter
-            state={PHASE_LOTTIE[activePhaseId] ?? 'idle'}
-            size={48}
-          />
-        </div>
-        <h1
-          style={{
-            margin: 0,
-            fontSize: 24,
-            fontWeight: 800,
-            color: '#1F2937',
-            letterSpacing: -0.5,
-          }}
-        >
-          {lang === 'tr' ? 'Ogren' : 'Learn'}
-        </h1>
-      </motion.div>
+    <div className="kid-bg kid-bubbles pb-24" style={{ minHeight: 'calc(100dvh - 64px)' }}>
+      {/* Content sits above the bubble overlay */}
+      <div className="relative z-10">
 
-      {/* ── Phase Buttons (big colorful) ─────────────────── */}
-      <div
-        style={{
-          padding: '0 20px 12px',
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'none',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            gap: 10,
-            minWidth: 'max-content',
-          }}
-        >
-          {phases.map((phase) => (
-            <PhaseButton
-              key={phase.id}
-              phase={phase}
-              isActive={activePhaseId === phase.id}
-              onClick={() => setActivePhaseId(phase.id)}
-              lang={lang}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ── Unit Cards Grid ────────────────────────────────── */}
-      <div
-        style={{
-          flex: 1,
-          padding: '8px 20px 32px',
-          overflowY: 'auto',
-        }}
-      >
+        {/* Mimi mascot + speech bubble */}
         <motion.div
-          key={activePhaseId}
-          initial={{ opacity: 0, x: 12 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={gentleSpring}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 12,
-          }}
+          className="px-5 pt-6 pb-2 flex items-end gap-3"
         >
-          {activePhase.units.map((unit, idx) => (
-            <SimpleUnitCard
-              key={unit.id}
-              unit={unit}
-              phase={activePhase}
-              index={idx}
-              lang={lang}
-              isCompleted={isUnitCompleted(unit.id)}
-              isUnlocked={isUnitUnlocked(unit.id)}
-              isCurrent={unit.id === currentUnitId}
+          <div className="shrink-0">
+            <LottieCharacter
+              state={PHASE_LOTTIE[activePhaseId] ?? 'idle'}
+              size={80}
             />
-          ))}
+          </div>
+          <div className="kid-speech-bubble flex-1 mb-2">
+            {isTr ? 'Hadi ogrenelim!' : "Let's learn!"}
+          </div>
         </motion.div>
 
-        {/* Empty state if no units */}
-        {activePhase.units.length === 0 && (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: 48,
-              color: '#9CA3AF',
-            }}
-          >
-            <LottieCharacter state="idle" size={80} />
-            <p style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }}>
-              {lang === 'tr' ? 'Henuz ders yok.' : 'No lessons yet.'}
-            </p>
+        {/* Phase Buttons — big colorful horizontal scroll */}
+        <div className="px-5 pt-3 pb-2 overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+          <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+            {phases.map((phase) => (
+              <PhaseButton
+                key={phase.id}
+                phase={phase}
+                isActive={activePhaseId === phase.id}
+                onClick={() => setActivePhaseId(phase.id)}
+                lang={lang}
+              />
+            ))}
           </div>
-        )}
+        </div>
+
+        {/* Unit Cards Grid — 2 columns, big chunky cards */}
+        <div className="px-5 pt-4 pb-8">
+          <motion.div
+            key={activePhaseId}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={gentleSpring}
+            className="grid grid-cols-2 gap-4"
+          >
+            {activePhase.units.map((unit, idx) => (
+              <KidUnitCard
+                key={unit.id}
+                unit={unit}
+                phase={activePhase}
+                index={idx}
+                lang={lang}
+                isCompleted={isUnitCompleted(unit.id)}
+                isUnlocked={isUnitUnlocked(unit.id)}
+                isCurrent={unit.id === currentUnitId}
+              />
+            ))}
+          </motion.div>
+
+          {/* Empty state if no units */}
+          {activePhase.units.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <LottieCharacter state="idle" size={80} />
+              <p className="text-gray-400 text-sm mt-4 font-medium">
+                {isTr ? 'Henuz ders yok.' : 'No lessons yet.'}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
