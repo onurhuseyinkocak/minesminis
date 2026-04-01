@@ -1,7 +1,7 @@
 /**
  * Games Hub — MinesMinis
- * Kid-friendly, colorful, playful game selection page.
- * Fully Tailwind inline — no CSS file dependency.
+ * Ultra-simplified for young children (3+).
+ * Big colorful cards, no tabs/pills/badges — just games!
  */
 import { useState, useMemo, useCallback, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,17 +12,14 @@ import { useHearts } from '../contexts/HeartsContext';
 import { usePageTitle } from '../hooks/usePageTitle';
 import {
   MINI_GAMES,
-  getDailyFeaturedGame,
   getDailyPracticeSet,
   getDailyPracticeStreak,
   recordDailyPractice,
-  getBestScore,
   saveBestScore,
-  isNewGame,
 } from '../data/miniGamesData';
-import type { GameMeta, GameCategory } from '../data/miniGamesData';
+import type { GameMeta } from '../data/miniGamesData';
 import { getAgeGroupFromSettings, isGameAllowedForAge } from '../services/ageGroupService';
-import { kidsWords, getWordsByCategory } from '../data/wordsData';
+import { kidsWords } from '../data/wordsData';
 import { getCurrentPhonicsSound } from '../services/learningPathService';
 import { PHONICS_GROUPS } from '../data/phonics';
 import { setActiveUser, recordActivity, getOptimalActivity } from '../services/adaptiveEngine';
@@ -43,42 +40,26 @@ import {
   ArrowLeft,
   Play,
   Gamepad2,
-  Star,
   Flame,
-  ChevronRight,
-  BookOpen,
-  Mic,
-  BookMarked,
   Layers,
-  Trophy,
-  Palette,
-  Hash,
-  Leaf,
-  Users,
-  Apple,
-  Bird,
-  Shuffle,
-  Lock,
-  Sparkles,
-  Link,
-  Zap,
-  Bug,
-  Puzzle,
-  Headphones,
+  Mic,
+  BookOpen,
   MessageSquare,
   Tag,
   Volume2,
   Music2,
   Grid2x2,
+  Users,
   Triangle,
   AlertTriangle,
+  Link,
+  Zap,
+  Bug,
+  Puzzle,
+  Headphones,
 } from 'lucide-react';
 
 // ── Types ────────────────────────────────────────────────────────────────────
-
-type TabCategory = 'all' | GameCategory;
-
-type WordTopic = 'all' | 'Animals' | 'Colors' | 'Food' | 'Family' | 'Body' | 'Numbers' | 'Nature' | 'phonics';
 
 interface DailyPracticeSession {
   games: GameMeta[];
@@ -88,59 +69,36 @@ interface DailyPracticeSession {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const TAB_DEFS: { id: TabCategory; icon: React.ReactNode; label: string; labelTr: string }[] = [
-  { id: 'all', icon: <Gamepad2 size={16} />, label: 'All', labelTr: 'Tümü' },
-  { id: 'vocabulary', icon: <BookMarked size={16} />, label: 'Vocabulary', labelTr: 'Kelime' },
-  { id: 'phonics', icon: <Layers size={16} />, label: 'Phonics', labelTr: 'Fonetik' },
-  { id: 'reading', icon: <BookOpen size={16} />, label: 'Reading', labelTr: 'Okuma' },
-  { id: 'speaking', icon: <Mic size={16} />, label: 'Speaking', labelTr: 'Konuşma' },
-];
-
-const TOPIC_DEFS: { id: WordTopic; icon: React.ReactNode; labelTr: string; label: string }[] = [
-  { id: 'all', icon: <Shuffle size={14} />, label: 'Mix', labelTr: 'Karışık' },
-  { id: 'phonics', icon: <BookOpen size={14} />, label: 'Phonics', labelTr: 'Fonetik' },
-  { id: 'Animals', icon: <Bird size={14} />, label: 'Animals', labelTr: 'Hayvanlar' },
-  { id: 'Colors', icon: <Palette size={14} />, label: 'Colors', labelTr: 'Renkler' },
-  { id: 'Food', icon: <Apple size={14} />, label: 'Food', labelTr: 'Yiyecekler' },
-  { id: 'Family', icon: <Users size={14} />, label: 'Family', labelTr: 'Aile' },
-  { id: 'Body', icon: <Hash size={14} />, label: 'Body', labelTr: 'Vücut' },
-  { id: 'Numbers', icon: <Hash size={14} />, label: 'Numbers', labelTr: 'Sayılar' },
-  { id: 'Nature', icon: <Leaf size={14} />, label: 'Nature', labelTr: 'Doğa' },
-];
-
 const GAME_ICONS: Record<string, React.ReactNode> = {
-  'word-match': <Link size={28} />,
-  'quick-quiz': <Zap size={28} />,
-  'sentence-scramble': <Puzzle size={28} />,
-  'spelling-bee': <Bug size={28} />,
-  'listening-challenge': <Headphones size={28} />,
-  'pronunciation': <Mic size={28} />,
-  'story-choices': <BookOpen size={28} />,
-  'dialogue': <MessageSquare size={28} />,
-  'image-label': <Tag size={28} />,
-  'say-it': <Volume2 size={28} />,
-  'phonics-blend': <Layers size={28} />,
-  'phoneme-manipulation': <Music2 size={28} />,
-  'syllable': <Grid2x2 size={28} />,
-  'word-family': <Users size={28} />,
-  'rhyme': <Triangle size={28} />,
-  'phonetic-trap': <AlertTriangle size={28} />,
-  'sentence-builder': <Puzzle size={28} />,
+  'word-match': <Link size={32} />,
+  'quick-quiz': <Zap size={32} />,
+  'sentence-scramble': <Puzzle size={32} />,
+  'spelling-bee': <Bug size={32} />,
+  'listening-challenge': <Headphones size={32} />,
+  'pronunciation': <Mic size={32} />,
+  'story-choices': <BookOpen size={32} />,
+  'dialogue': <MessageSquare size={32} />,
+  'image-label': <Tag size={32} />,
+  'say-it': <Volume2 size={32} />,
+  'phonics-blend': <Layers size={32} />,
+  'phoneme-manipulation': <Music2 size={32} />,
+  'syllable': <Grid2x2 size={32} />,
+  'word-family': <Users size={32} />,
+  'rhyme': <Triangle size={32} />,
+  'phonetic-trap': <AlertTriangle size={32} />,
+  'sentence-builder': <Puzzle size={32} />,
 };
 
-const CATEGORY_COLORS: Record<GameCategory, { bg: string; text: string; border: string }> = {
-  vocabulary: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' },
-  phonics: { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' },
-  reading: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200' },
-  speaking: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-200' },
-};
-
-const CATEGORY_LABELS: Record<GameCategory, { en: string; tr: string }> = {
-  vocabulary: { en: 'Vocabulary', tr: 'Kelime' },
-  phonics: { en: 'Phonics', tr: 'Fonetik' },
-  reading: { en: 'Reading', tr: 'Okuma' },
-  speaking: { en: 'Speaking', tr: 'Konuşma' },
-};
+const CARD_GRADIENTS: string[] = [
+  'linear-gradient(145deg, #FF6B35 0%, #F04B10 100%)',
+  'linear-gradient(145deg, #3B82F6 0%, #2563EB 100%)',
+  'linear-gradient(145deg, #8B5CF6 0%, #7C3AED 100%)',
+  'linear-gradient(145deg, #10B981 0%, #059669 100%)',
+  'linear-gradient(145deg, #F59E0B 0%, #D97706 100%)',
+  'linear-gradient(145deg, #EC4899 0%, #DB2777 100%)',
+  'linear-gradient(145deg, #06B6D4 0%, #0891B2 100%)',
+  'linear-gradient(145deg, #EF4444 0%, #DC2626 100%)',
+];
 
 // ── Spring presets ───────────────────────────────────────────────────────────
 
@@ -192,29 +150,18 @@ function getExtraPropsForGame(gameType: string): Record<string, unknown> | undef
   }
 }
 
-function getGameWords(topic: WordTopic = 'all') {
-  if (topic === 'phonics' || topic === 'all') {
-    const currentSound = getCurrentPhonicsSound();
-    if (topic === 'phonics' && currentSound) {
-      const group = PHONICS_GROUPS.find((g) => g.group === currentSound.group);
-      if (group && group.blendableWords.length >= 4) {
-        return group.blendableWords.slice(0, 8).map((w) => {
-          const found = kidsWords.find((kw) => kw.word === w);
-          return { english: w, turkish: found?.turkish ?? w, emoji: found?.emoji ?? '' };
-        });
-      }
-    }
-    if (topic === 'all') {
-      const shuffled = [...kidsWords].sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, 8).map((w) => ({ english: w.word, turkish: w.turkish, emoji: w.emoji }));
+function getGameWords() {
+  const currentSound = getCurrentPhonicsSound();
+  if (currentSound) {
+    const group = PHONICS_GROUPS.find((g) => g.group === currentSound.group);
+    if (group && group.blendableWords.length >= 4) {
+      return group.blendableWords.slice(0, 8).map((w) => {
+        const found = kidsWords.find((kw) => kw.word === w);
+        return { english: w, turkish: found?.turkish ?? w, emoji: found?.emoji ?? '' };
+      });
     }
   }
-
-  const rawPool = getWordsByCategory(topic);
-  const seen = new Set<string>();
-  const pool = rawPool.filter((w) => { if (seen.has(w.word)) return false; seen.add(w.word); return true; });
-  const sufficient = pool.length >= 4 ? pool : kidsWords;
-  const shuffled = [...sufficient].sort(() => Math.random() - 0.5);
+  const shuffled = [...kidsWords].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 8).map((w) => ({ english: w.word, turkish: w.turkish, emoji: w.emoji }));
 }
 
@@ -222,118 +169,11 @@ function getGameWords(topic: WordTopic = 'all') {
 
 function GamesSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="rounded-2xl bg-white p-4 space-y-3">
-          <div className="h-12 w-12 rounded-xl bg-gray-100 animate-pulse" />
-          <div className="h-4 w-3/4 rounded bg-gray-100 animate-pulse" />
-          <div className="h-3 w-1/2 rounded bg-gray-100 animate-pulse" />
-        </div>
+    <div className="grid grid-cols-2 gap-4 px-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="rounded-3xl bg-gray-100 animate-pulse" style={{ minHeight: 120 }} />
       ))}
     </div>
-  );
-}
-
-// ── Difficulty Stars ─────────────────────────────────────────────────────────
-
-function DifficultyStars({ level }: { level: 1 | 2 | 3 }) {
-  return (
-    <div className="flex gap-0.5" aria-label={`Difficulty: ${level} of 3`}>
-      {[1, 2, 3].map((n) => (
-        <Star
-          key={n}
-          size={12}
-          className={n <= level ? 'text-amber-400' : 'text-gray-200'}
-          fill={n <= level ? 'currentColor' : 'none'}
-        />
-      ))}
-    </div>
-  );
-}
-
-// ── Game Card (inline, no CSS file) ──────────────────────────────────────────
-
-function GameCardInline({
-  game,
-  isLocked,
-  bestScore,
-  isNew,
-  onPlay,
-  index,
-  isTr,
-}: {
-  game: GameMeta;
-  isLocked: boolean;
-  bestScore?: number;
-  isNew: boolean;
-  onPlay: () => void;
-  index: number;
-  isTr: boolean;
-}) {
-  const cat = CATEGORY_COLORS[game.category];
-  const catLabel = CATEGORY_LABELS[game.category];
-
-  return (
-    <motion.button
-      type="button"
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ ...springBounce, delay: index * 0.05 }}
-      whileTap={isLocked ? {} : { scale: 0.97 }}
-      onClick={isLocked ? undefined : onPlay}
-      disabled={isLocked}
-      className={`relative w-full text-left rounded-2xl p-4 border transition-shadow
-        ${isLocked
-          ? 'bg-gray-50 border-gray-200 opacity-60 cursor-not-allowed'
-          : 'bg-white border-gray-100 shadow-sm hover:shadow-md cursor-pointer active:shadow-none'
-        }`}
-      style={{ minHeight: 130 }}
-    >
-      {/* New badge */}
-      {isNew && !isLocked && (
-        <span className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-400 to-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
-          <Sparkles size={10} />
-          {isTr ? 'Yeni' : 'New'}
-        </span>
-      )}
-
-      {/* Icon */}
-      <div
-        className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
-          isLocked ? 'bg-gray-100 text-gray-300' : 'text-white'
-        }`}
-        style={!isLocked ? { background: 'linear-gradient(135deg, #FF6B35, #f43f5e)' } : undefined}
-      >
-        {isLocked ? <Lock size={22} /> : (GAME_ICONS[game.type] ?? <Gamepad2 size={28} />)}
-      </div>
-
-      {/* Title */}
-      <h3 className={`font-bold text-sm leading-tight mb-1 ${isLocked ? 'text-gray-400' : 'text-gray-800'}`}>
-        {isTr ? game.nameTr : game.name}
-      </h3>
-
-      {/* Category badge */}
-      <span className={`inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full border ${cat.bg} ${cat.text} ${cat.border}`}>
-        {isTr ? catLabel.tr : catLabel.en}
-      </span>
-
-      {/* Stars + Best Score row */}
-      <div className="flex items-center justify-between mt-2">
-        <DifficultyStars level={game.difficulty} />
-        {bestScore !== undefined && !isLocked && (
-          <span className="text-[10px] text-amber-600 font-semibold flex items-center gap-0.5">
-            <Trophy size={10} /> {bestScore}
-          </span>
-        )}
-      </div>
-
-      {/* Locked overlay text */}
-      {isLocked && (
-        <span className="text-[10px] text-gray-400 font-medium mt-1 flex items-center gap-1">
-          <Lock size={10} /> {isTr ? `Seviye ${game.minLevel}` : `Level ${game.minLevel}`}
-        </span>
-      )}
-    </motion.button>
   );
 }
 
@@ -350,8 +190,6 @@ function Games() {
 
   // ── State ────────────────────────────────────────────────────────────────
 
-  const [activeTab, setActiveTab] = useState<TabCategory>('all');
-  const [activeTopic, setActiveTopic] = useState<WordTopic>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [playingGame, setPlayingGame] = useState<GameMeta | null>(null);
   const [dailySession, setDailySession] = useState<DailyPracticeSession | null>(null);
@@ -364,20 +202,16 @@ function Games() {
 
   const ageGroup = getAgeGroupFromSettings(userProfile?.settings as Record<string, unknown> | null | undefined);
   const userLevel = stats?.level ?? 1;
-  const featuredGame = getDailyFeaturedGame();
 
   const isPlayingAny = !!(playingGame ?? (dailySession ? dailySession.games[dailySession.currentIndex] : null));
 
   // ── Adaptive Engine ──────────────────────────────────────────────────────
 
-  const [_recommendedType, setRecommendedType] = useState<string | null>(null);
-
   useEffect(() => {
     if (!user?.uid) return;
     setActiveUser(user.uid);
     try {
-      const optimal = getOptimalActivity();
-      setRecommendedType(optimal.activityType);
+      getOptimalActivity();
     } catch { /* no profile yet */ }
   }, [user?.uid]);
 
@@ -405,40 +239,37 @@ function Games() {
     return () => cancelAnimationFrame(id);
   }, []);
 
-  // ── Filtering ────────────────────────────────────────────────────────────
+  // ── Filtering — show only unlocked games ─────────────────────────────────
 
   const isGameLocked = useCallback(
     (game: GameMeta): boolean => userLevel < game.minLevel,
     [userLevel],
   );
 
-  const filteredGames = useMemo<GameMeta[]>(() => {
-    const byTab = activeTab === 'all' ? MINI_GAMES : MINI_GAMES.filter((g) => g.category === activeTab);
-    return ageGroup !== ''
-      ? byTab.filter((g) => isGameAllowedForAge(g.type, ageGroup))
-      : byTab;
-  }, [activeTab, ageGroup]);
-
-  const unlockedGames = useMemo(() => filteredGames.filter((g) => !isGameLocked(g)), [filteredGames, isGameLocked]);
-  const lockedGames = useMemo(() => filteredGames.filter((g) => isGameLocked(g)), [filteredGames, isGameLocked]);
+  const availableGames = useMemo<GameMeta[]>(() => {
+    const ageFiltered = ageGroup !== ''
+      ? MINI_GAMES.filter((g) => isGameAllowedForAge(g.type, ageGroup))
+      : MINI_GAMES;
+    return ageFiltered.filter((g) => !isGameLocked(g));
+  }, [ageGroup, isGameLocked]);
 
   // ── Play Handlers ────────────────────────────────────────────────────────
 
   const handlePlaySingle = useCallback((game: GameMeta) => {
     if (!game) return;
-    setGameWords(getGameWords(activeTopic));
+    setGameWords(getGameWords());
     setGameExtra(getExtraPropsForGame(game.type));
     setPlayingGame(game);
     setDailySession(null);
-  }, [activeTopic]);
+  }, []);
 
   const handleStartDailyPractice = useCallback(() => {
     const set = getDailyPracticeSet();
-    setGameWords(getGameWords(activeTopic));
+    setGameWords(getGameWords());
     setGameExtra(getExtraPropsForGame(set[0]?.type ?? ''));
     setDailySession({ games: set, currentIndex: 0, scores: [] });
     setPlayingGame(null);
-  }, [activeTopic]);
+  }, []);
 
   const handleGameComplete = useCallback(
     (score: number, total: number) => {
@@ -485,7 +316,7 @@ function Games() {
         } else {
           saveBestScore(currentGame.type, score);
           setScoreVersion((v) => v + 1);
-          setGameWords(getGameWords(activeTopic));
+          setGameWords(getGameWords());
           setGameExtra(getExtraPropsForGame(dailySession.games[nextIndex].type));
           setDailySession({
             ...dailySession,
@@ -495,7 +326,7 @@ function Games() {
         }
       }
     },
-    [playingGame, dailySession, isTr, activeTopic],
+    [playingGame, dailySession, isTr],
   );
 
   const handleExitGame = useCallback(() => {
@@ -596,14 +427,15 @@ function Games() {
     );
   }
 
-  // ── Render: Hub ──────────────────────────────────────────────────────────
+  // ── Render: Hub (ultra-simple for toddlers) ───────────────────────────────
 
-  const featuredLocked = isGameLocked(featuredGame);
+  // Suppress unused variable warning — scoreVersion is used to force re-render on score changes
+  void scoreVersion;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50/60 via-white to-rose-50/40 pb-24">
 
-      {/* Header */}
+      {/* Header — simple icon + title */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -613,17 +445,12 @@ function Games() {
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white shadow-sm">
           <Gamepad2 size={20} />
         </div>
-        <div>
-          <h1 className="text-xl font-extrabold text-gray-800">
-            {isTr ? 'Oyunlar' : 'Games'}
-          </h1>
-          <p className="text-xs text-gray-400 font-medium">
-            {MINI_GAMES.length} {isTr ? 'oyun mevcut' : 'games available'}
-          </p>
-        </div>
+        <h1 className="text-xl font-extrabold text-gray-800">
+          {isTr ? 'Oyunlar' : 'Games'}
+        </h1>
       </motion.div>
 
-      {/* Daily Practice Card */}
+      {/* Daily Practice — Big colorful Mimi + Play button */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -633,175 +460,31 @@ function Games() {
         <button
           type="button"
           onClick={handleStartDailyPractice}
-          className="w-full rounded-2xl p-4 bg-gradient-to-r from-orange-400 via-orange-500 to-rose-500 text-white shadow-lg shadow-orange-200/50 flex items-center gap-4 min-h-[80px] active:scale-[0.98] transition-transform"
+          className="w-full rounded-3xl p-5 bg-gradient-to-r from-orange-400 via-orange-500 to-rose-500 text-white shadow-lg shadow-orange-200/50 flex items-center gap-4 min-h-[100px] active:scale-[0.97] transition-transform"
         >
-          <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm shrink-0">
-            <Flame size={28} className="text-white drop-shadow-sm" />
+          <div className="shrink-0">
+            <LottieCharacter state="wave" size={64} />
           </div>
           <div className="flex-1 text-left">
-            <p className="font-extrabold text-base leading-tight">
-              {isTr ? 'Gunluk Pratik' : 'Daily Practice'}
+            <p className="font-extrabold text-lg leading-tight">
+              {isTr ? 'Oyna!' : 'Play!'}
             </p>
-            <p className="text-white/80 text-xs font-medium mt-0.5">
-              {dailyStreak > 0 ? (
-                <span className="flex items-center gap-1">
-                  <Trophy size={12} /> {isTr ? `${dailyStreak} gunluk seri!` : `${dailyStreak} day streak!`}
-                </span>
-              ) : (
-                isTr ? 'Bugun serine basla!' : 'Start your streak today!'
-              )}
-            </p>
-            {/* 5 progress dots */}
-            <div className="flex gap-1.5 mt-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span
-                  key={i}
-                  className={`w-2 h-2 rounded-full ${
-                    i < dailyStreak % 5 ? 'bg-white' : 'bg-white/30'
-                  }`}
-                />
-              ))}
-            </div>
+            {dailyStreak > 0 && (
+              <p className="text-white/80 text-xs font-medium mt-1 flex items-center gap-1">
+                <Flame size={14} />
+                {isTr ? `${dailyStreak} gun!` : `${dailyStreak} days!`}
+              </p>
+            )}
           </div>
-          <ChevronRight size={20} className="text-white/70 shrink-0" />
+          <Play size={32} fill="white" className="text-white shrink-0 opacity-90" />
         </button>
       </motion.div>
 
-      {/* Featured Game */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...springBounce, delay: 0.1 }}
-        className="mx-4 mt-4"
-      >
-        <div
-          className="rounded-2xl p-4 border border-gray-100 bg-white shadow-sm overflow-hidden relative"
-        >
-          {/* Accent stripe */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-orange-500" />
-
-          <div className="flex items-center gap-1 text-amber-500 text-xs font-bold mb-2 mt-1">
-            <Star size={12} fill="currentColor" />
-            {isTr ? 'Gunun Secimi' : "Today's Pick"}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <h3 className="font-extrabold text-gray-800 text-base leading-tight">
-                {isTr ? featuredGame.nameTr : featuredGame.name}
-              </h3>
-              <p className="text-gray-400 text-xs mt-1 leading-relaxed line-clamp-2">
-                {isTr ? featuredGame.descriptionTr : featuredGame.description}
-              </p>
-
-              {!featuredLocked ? (
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handlePlaySingle(featuredGame)}
-                  className="mt-3 flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-sm min-h-[48px] active:shadow-none transition-shadow"
-                >
-                  <Play size={16} fill="white" />
-                  {isTr ? 'Oyna' : 'Play Now'}
-                </motion.button>
-              ) : (
-                <span className="mt-3 inline-flex items-center gap-1 text-gray-400 text-xs font-semibold">
-                  <Lock size={12} />
-                  {isTr ? `Seviye ${featuredGame.minLevel}'de acilir` : `Unlock at Level ${featuredGame.minLevel}`}
-                </span>
-              )}
-            </div>
-
-            {/* Feature icon area */}
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center text-orange-400 shrink-0">
-              {GAME_ICONS[featuredGame.type] ?? <Gamepad2 size={28} />}
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Category Tabs */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-        className="mt-5 px-4"
-      >
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4" role="tablist">
-          {TAB_DEFS.filter((tab) => {
-            if (tab.id === 'all') return true;
-            return MINI_GAMES.some((g) => g.category === tab.id);
-          }).map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <motion.button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap min-h-[44px] transition-colors shrink-0 ${
-                  isActive
-                    ? 'bg-gray-800 text-white shadow-sm'
-                    : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
-                }`}
-                whileTap={{ scale: 0.95 }}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gray-800 rounded-full"
-                    transition={springPop}
-                    style={{ zIndex: -1 }}
-                  />
-                )}
-                {tab.icon}
-                <span>{isTr ? tab.labelTr : tab.label}</span>
-              </motion.button>
-            );
-          })}
-        </div>
-      </motion.div>
-
-      {/* Topic Pills */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="mt-3 px-4"
-      >
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4">
-          {TOPIC_DEFS.map((topic) => {
-            const isActive = activeTopic === topic.id;
-            return (
-              <button
-                key={topic.id}
-                type="button"
-                onClick={() => setActiveTopic(topic.id)}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap min-h-[36px] transition-colors shrink-0 ${
-                  isActive
-                    ? 'bg-orange-100 text-orange-700 border border-orange-200'
-                    : 'bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-100'
-                }`}
-              >
-                {topic.icon}
-                <span>{isTr ? topic.labelTr : topic.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </motion.div>
-
-      {/* Games Grid */}
-      <div className="mt-4 px-4">
-        <h2 className="flex items-center gap-2 text-base font-extrabold text-gray-800 mb-3">
-          <Star size={16} className="text-amber-400" />
-          {isTr ? 'Oyunlarimiz' : 'Our Games'}
-        </h2>
-
+      {/* Games Grid — 2 columns, big colorful cards */}
+      <div className="mt-5 px-4">
         {isLoading ? (
           <GamesSkeleton />
-        ) : filteredGames.length === 0 ? (
+        ) : availableGames.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -809,76 +492,36 @@ function Games() {
           >
             <LottieCharacter state="idle" size={100} />
             <p className="text-gray-400 text-sm mt-4 font-medium">
-              {isTr ? 'Bu kategoride henuz oyun yok.' : 'No games in this category yet.'}
+              {isTr ? 'Henuz oyun yok.' : 'No games yet.'}
             </p>
           </motion.div>
         ) : (
-          <>
-            {/* Unlocked games */}
-            <div className="grid grid-cols-2 gap-3">
-              {unlockedGames.map((game, i) => {
-                const best = scoreVersion >= 0 ? getBestScore(game.type) : undefined;
-                return (
-                  <GameCardInline
-                    key={game.type}
-                    game={game}
-                    isLocked={false}
-                    bestScore={best}
-                    isNew={isNewGame(game)}
-                    onPlay={() => handlePlaySingle(game)}
-                    index={i}
-                    isTr={isTr}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Locked games section */}
-            {lockedGames.length > 0 && (
-              <div className="mt-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Lock size={14} className="text-gray-300" />
-                  <p className="text-xs text-gray-400 font-semibold">
-                    {isTr
-                      ? 'Seviyeleri gec ve daha fazla oyun ac!'
-                      : 'More games unlock as you level up!'}
-                  </p>
+          <div className="grid grid-cols-2 gap-4">
+            {availableGames.map((game, i) => (
+              <motion.button
+                key={game.type}
+                type="button"
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ ...springBounce, delay: i * 0.04 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handlePlaySingle(game)}
+                className="rounded-3xl flex flex-col items-center justify-center text-white shadow-md active:shadow-sm cursor-pointer"
+                style={{
+                  minHeight: 120,
+                  background: CARD_GRADIENTS[i % CARD_GRADIENTS.length],
+                  padding: 16,
+                }}
+              >
+                <div className="mb-2 opacity-95">
+                  {GAME_ICONS[game.type] ?? <Gamepad2 size={32} />}
                 </div>
-
-                <div className="relative">
-                  <div className="grid grid-cols-2 gap-3">
-                    {lockedGames.slice(0, 4).map((game, i) => {
-                      const best = scoreVersion >= 0 ? getBestScore(game.type) : undefined;
-                      return (
-                        <GameCardInline
-                          key={game.type}
-                          game={game}
-                          isLocked={true}
-                          bestScore={best}
-                          isNew={isNewGame(game)}
-                          onPlay={() => handlePlaySingle(game)}
-                          index={i + unlockedGames.length}
-                          isTr={isTr}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  {/* Fade overlay if there are more locked */}
-                  {lockedGames.length > 4 && (
-                    <>
-                      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                      <p className="text-center text-xs text-gray-400 font-medium mt-2">
-                        {isTr
-                          ? `+${lockedGames.length - 4} oyun daha`
-                          : `+${lockedGames.length - 4} more games`}
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </>
+                <span className="font-bold text-sm text-center leading-tight">
+                  {isTr ? game.nameTr : game.name}
+                </span>
+              </motion.button>
+            ))}
+          </div>
         )}
       </div>
     </div>
