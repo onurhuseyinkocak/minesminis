@@ -217,7 +217,7 @@ export const ImageLabelGame: React.FC<ImageLabelGameProps> = ({
         >
           {/* Picture box */}
           <div
-            className="flex flex-col items-center gap-3 bg-white border-2 border-gray-100 rounded-2xl p-6 mb-4"
+            className="flex flex-col items-center gap-3 bg-white border-2 border-gray-100 rounded-2xl p-4 sm:p-6 mb-4"
             role="img"
             aria-label={currentQuestion.imageAlt}
           >

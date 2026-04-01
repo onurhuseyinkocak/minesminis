@@ -338,7 +338,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
               {displayOnset ? (
                 <motion.span
                   key={displayOnset}
-                  className="text-4xl font-black text-blue-600"
+                  className="text-3xl sm:text-4xl font-black text-blue-600"
                   initial={{ scale: 0.4, y: -20, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
                   transition={springBouncy}
@@ -346,12 +346,12 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
                   {displayOnset}
                 </motion.span>
               ) : (
-                <span className="text-4xl font-black text-slate-300">_</span>
+                <span className="text-3xl sm:text-4xl font-black text-slate-300">_</span>
               )}
 
               {/* Rime card */}
               <motion.div
-                className={`px-6 py-4 rounded-2xl text-4xl font-black shadow-lg border-2 transition-all
+                className={`px-4 sm:px-6 py-3 sm:py-4 rounded-2xl text-3xl sm:text-4xl font-black shadow-lg border-2 transition-all
                   ${rimeFeedback === 'valid'
                     ? 'bg-gradient-to-b from-emerald-400 to-emerald-600 text-white border-emerald-300 shadow-emerald-200'
                     : rimeFeedback === 'invalid'
@@ -417,8 +417,8 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
                   <motion.button
                     key={onset}
                     type="button"
-                    className={`w-14 h-14 rounded-2xl border-2 shadow-sm flex items-center justify-center
-                      text-xl font-extrabold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${bgClass}`}
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl border-2 shadow-sm flex items-center justify-center
+                      text-lg sm:text-xl font-extrabold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${bgClass}`}
                     onClick={() => handleOnsetTap(onset)}
                     disabled={isFound || familyDone}
                     aria-label={`Letter ${onset}`}

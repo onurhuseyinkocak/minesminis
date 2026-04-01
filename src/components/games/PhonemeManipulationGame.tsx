@@ -308,7 +308,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
 
   return (
     <div
-      className="flex flex-col gap-5 p-5 bg-gradient-to-b from-violet-50 to-white rounded-3xl min-h-[480px]"
+      className="flex flex-col gap-4 sm:gap-5 p-4 sm:p-5 bg-gradient-to-b from-violet-50 to-white rounded-3xl min-h-[480px]"
       role="application"
       aria-label="Phoneme manipulation game"
     >
@@ -443,7 +443,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
                   return (
                     <motion.div
                       key={`${currentQuestion.id}-tile-${index}`}
-                      className="flex flex-col items-center justify-center min-w-[56px] min-h-[64px] px-3 py-2 rounded-xl border-2"
+                      className="flex flex-col items-center justify-center min-w-[48px] sm:min-w-[56px] min-h-[56px] sm:min-h-[64px] px-2 sm:px-3 py-2 rounded-xl border-2"
                       style={{
                         backgroundColor: isBeingDeleted ? '#FEE2E2' : style.bg,
                         borderColor: isBeingDeleted ? '#EF4444' : style.border,

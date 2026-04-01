@@ -1,34 +1,11 @@
 /**
  * LESSON PLAYER — Lesson Play Page
- * MinesMinis v4.0
- *
- * Route: /worlds/:worldId/lessons/:lessonId
- * Plays through lesson activities sequentially with progress tracking.
- * Renders REAL interactive game components from curriculum data.
- * Smart-board friendly with large text and large buttons.
+ * Mobile-first, light mode only, all Tailwind inline. All business logic preserved.
  */
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowLeft,
-  ChevronRight,
-  SkipForward,
-  Trophy,
-  Star,
-  Music,
-  Gamepad2,
-  BookOpen,
-  Layers,
-  Mic,
-  HelpCircle,
-  Home,
-  RotateCcw,
-  Volume2,
-  Eye,
-  EyeOff,
-  Heart,
-} from 'lucide-react';
+import { ArrowLeft, ChevronRight, SkipForward, Trophy, Star, Music, Gamepad2, BookOpen, Layers, Mic, HelpCircle, Home, RotateCcw, Volume2, Eye, EyeOff, Heart } from 'lucide-react';
 import { Button, ProgressBar, Card, StarBurst, ConfettiRain, PerfectBadge, XPPop } from '../components/ui';
 import LottieCharacter from '../components/LottieCharacter';
 import { useGamification } from '../contexts/GamificationContext';
@@ -52,7 +29,6 @@ import { useSubscription } from '../contexts/SubscriptionContext';
 import { useProgress } from '../contexts/ProgressContext';
 import Paywall from '../components/Paywall';
 import { analytics } from '../services/analytics';
-import './LessonPlayer.css';
 
 // ── Daily lesson counter helpers ──────────────────────────────────────────────
 
@@ -62,346 +38,109 @@ function getDailyLessonDateKey(): string {
 }
 
 export function getTodayCompletedLessonCount(): number {
-  try {
-    const val = localStorage.getItem(getDailyLessonDateKey());
-    return val ? parseInt(val, 10) : 0;
-  } catch {
-    return 0;
-  }
+  try { return parseInt(localStorage.getItem(getDailyLessonDateKey()) || '0', 10); } catch { return 0; }
 }
 
 export function incrementTodayCompletedLessonCount(): void {
-  try {
-    const key = getDailyLessonDateKey();
-    const current = getTodayCompletedLessonCount();
-    localStorage.setItem(key, String(current + 1));
-  } catch {
-    // storage unavailable
-  }
+  try { localStorage.setItem(getDailyLessonDateKey(), String(getTodayCompletedLessonCount() + 1)); } catch { /* */ }
 }
-
-// ============================================================
-// CONSTANTS
-// ============================================================
 
 const INITIAL_HEARTS = 3;
 const HEART_BONUS_XP = 10;
 
-// ============================================================
-// ACTIVITY TYPE CONFIG
-// ============================================================
-
 const ACTIVITY_ICONS: Record<string, typeof Music> = {
-  'word-match': Gamepad2,
-  'phonics-builder': Music,
-  'sentence-scramble': Layers,
-  'listening-challenge': Mic,
-  'spelling-bee': BookOpen,
-  'quick-quiz': HelpCircle,
-  'story-choices': BookOpen,
-  // Legacy types (fallback)
-  song: Music,
-  game: Gamepad2,
-  flashcard: Layers,
-  story: BookOpen,
-  practice: Mic,
-  quiz: HelpCircle,
+  'word-match': Gamepad2, 'phonics-builder': Music, 'sentence-scramble': Layers, 'listening-challenge': Mic,
+  'spelling-bee': BookOpen, 'quick-quiz': HelpCircle, 'story-choices': BookOpen,
+  song: Music, game: Gamepad2, flashcard: Layers, story: BookOpen, practice: Mic, quiz: HelpCircle,
 };
 
 const ACTIVITY_COLORS: Record<string, string> = {
-  'word-match': 'var(--accent-emerald)',
-  'phonics-builder': 'var(--accent-blue)',
-  'sentence-scramble': 'var(--warning)',
-  'listening-challenge': 'var(--accent-pink)',
-  'spelling-bee': 'var(--accent-purple)',
-  'quick-quiz': 'var(--error)',
-  'story-choices': 'var(--accent-blue)',
-  // Legacy types (fallback)
-  song: 'var(--accent-blue)',
-  game: 'var(--accent-emerald)',
-  flashcard: 'var(--warning)',
-  story: 'var(--accent-purple)',
-  practice: 'var(--accent-pink)',
-  quiz: 'var(--error)',
+  'word-match': '#10B981', 'phonics-builder': '#3B82F6', 'sentence-scramble': '#F59E0B', 'listening-challenge': '#EC4899',
+  'spelling-bee': '#7C3AED', 'quick-quiz': '#EF4444', 'story-choices': '#3B82F6',
+  song: '#3B82F6', game: '#10B981', flashcard: '#F59E0B', story: '#7C3AED', practice: '#EC4899', quiz: '#EF4444',
 };
 
 function getUnitById(unitId: string): LearningUnit | null {
-  for (const phase of getAllPhases()) {
-    const unit = phase.units.find((u) => u.id === unitId);
-    if (unit) return unit;
-  }
+  for (const phase of getAllPhases()) { const unit = phase.units.find((u) => u.id === unitId); if (unit) return unit; }
   return null;
 }
 
 function unitActivityToActivity(ua: UnitActivity, index: number): Activity & { titleTr?: string } {
-  return {
-    id: `activity-${index}`,
-    title: ua.title,
-    titleTr: ua.titleTr,
-    type: ua.type as Activity['type'],
-    instructions: ua.description,
-    xpReward: ua.xp,
-    duration: ua.duration,
-  };
+  return { id: `activity-${index}`, title: ua.title, titleTr: ua.titleTr, type: ua.type as Activity['type'], instructions: ua.description, xpReward: ua.xp, duration: ua.duration };
 }
 
-/** Build extra props for specialized games from curriculum data */
-function buildExtraProps(
-  activityType: string,
-  unit: LearningUnit | null,
-): Record<string, unknown> | undefined {
+function buildExtraProps(activityType: string, unit: LearningUnit | null): Record<string, unknown> | undefined {
   if (!unit) return undefined;
-
   switch (activityType) {
     case 'sound-intro': {
-      // SoundCard needs { sound: PhonicsSound }
-      const soundId = unit.phonicsFocus[0];
-      if (!soundId) return undefined;
-      for (const group of PHONICS_GROUPS) {
-        const found = group.sounds.find((s) => s.id === soundId);
-        if (found) {
-          return {
-            sound: {
-              id: found.id,
-              grapheme: found.grapheme,
-              example: found.keywords[0] || found.sound,
-              emoji: found.mnemonicEmoji,
-              action: found.action,
-              turkishNote: found.turkishNote,
-              keywords: found.keywords.slice(0, 3).map((w) => ({ word: w, emoji: '' })),
-              group: found.group,
-            },
-          };
-        }
-      }
+      const soundId = unit.phonicsFocus[0]; if (!soundId) return undefined;
+      for (const group of PHONICS_GROUPS) { const found = group.sounds.find((s) => s.id === soundId); if (found) return { sound: { id: found.id, grapheme: found.grapheme, example: found.keywords[0] || found.sound, emoji: found.mnemonicEmoji, action: found.action, turkishNote: found.turkishNote, keywords: found.keywords.slice(0, 3).map((w) => ({ word: w, emoji: '' })), group: found.group } }; }
       return undefined;
     }
-    case 'tpr': {
-      // TPRActivity needs { commands: string[] }
-      return { commands: unit.tprCommands.length > 0 ? unit.tprCommands : ['Stand up!', 'Sit down!', 'Clap!'] };
-    }
-    case 'reading': {
-      // DecodableReader needs { text: string, highlightSounds: string[] }
-      return {
-        text: unit.decodableText || 'No text available.',
-        highlightSounds: unit.phonicsFocus.map((id) => id.replace(/^g\d+_/, '')),
-      };
-    }
-    default:
-      return undefined;
+    case 'tpr': return { commands: unit.tprCommands.length > 0 ? unit.tprCommands : ['Stand up!', 'Sit down!', 'Clap!'] };
+    case 'reading': return { text: unit.decodableText || 'No text available.', highlightSounds: unit.phonicsFocus.map((id) => id.replace(/^g\d+_/, '')) };
+    default: return undefined;
   }
 }
 
-/** Save unit progress to localStorage for WorldMap/WorldDetail */
 function saveUnitProgress(unitId: string, activitiesCompleted: number): void {
-  try {
-    const key = `mimi_unit_progress_${unitId}`;
-    localStorage.setItem(key, JSON.stringify({ activitiesCompleted, updatedAt: new Date().toISOString() }));
-  } catch { /* localStorage might be unavailable */ }
+  try { localStorage.setItem(`mimi_unit_progress_${unitId}`, JSON.stringify({ activitiesCompleted, updatedAt: new Date().toISOString() })); } catch { /* */ }
 }
 
-// Game types that GameSelector can handle (word-based games only)
-// Phonics-specific types (sound-intro, tpr, reading) need PhonicsSound data, not words
-const SUPPORTED_GAME_TYPES = new Set([
-  'word-match',
-  'spelling-bee',
-  'quick-quiz',
-  'sentence-scramble',
-  'listening-challenge',
-  'listening',
-  'phonics-builder',
-  'story-choices',
-  'blending',
-  'segmenting',
-  'pronunciation',
-  'sound-intro',
-  'tpr',
-  'reading',
-]);
+const SUPPORTED_GAME_TYPES = new Set(['word-match', 'spelling-bee', 'quick-quiz', 'sentence-scramble', 'listening-challenge', 'listening', 'phonics-builder', 'story-choices', 'blending', 'segmenting', 'pronunciation', 'sound-intro', 'tpr', 'reading']);
 
-// ============================================================
-// MIMI ENCOURAGEMENTS
-// ============================================================
+const ENCOURAGEMENT_KEYS = ['lesson.encouragement1', 'lesson.encouragement2', 'lesson.encouragement3', 'lesson.encouragement4', 'lesson.encouragement5', 'lesson.encouragement6'];
 
-const ENCOURAGEMENT_KEYS = [
-  'lesson.encouragement1',
-  'lesson.encouragement2',
-  'lesson.encouragement3',
-  'lesson.encouragement4',
-  'lesson.encouragement5',
-  'lesson.encouragement6',
-];
+// ── Fallback Activity ─────────────────────────────────────────────────────────
 
-function getEncouragementKey(index: number) {
-  return ENCOURAGEMENT_KEYS[index % ENCOURAGEMENT_KEYS.length];
-}
-
-// ============================================================
-// ANIMATION VARIANTS
-// ============================================================
-
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 300 : -300,
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    transition: { type: 'spring', stiffness: 260, damping: 26 },
-  },
-  exit: (direction: number) => ({
-    x: direction > 0 ? -300 : 300,
-    opacity: 0,
-    transition: { duration: 0.25 },
-  }),
-};
-
-const celebrationVariants = {
-  hidden: { scale: 0.5, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: { type: 'spring', stiffness: 200, damping: 15, delay: 0.2 },
-  },
-};
-
-// ============================================================
-// FALLBACK ACTIVITY (Flashcard review for unsupported types)
-// ============================================================
-
-interface FallbackActivityProps {
-  activity: Activity;
-  words: { english: string; turkish: string; emoji: string; phonetic?: string; exampleSentence?: string }[];
-  onComplete: (score: number, total: number) => void;
-  t: (key: string) => string;
-}
-
-function FallbackActivity({ activity, words, onComplete, t }: FallbackActivityProps) {
+function FallbackActivity({ activity, words, onComplete, t }: { activity: Activity; words: { english: string; turkish: string; emoji: string; phonetic?: string; exampleSentence?: string }[]; onComplete: (score: number, total: number) => void; t: (key: string) => string }) {
   const [currentCard, setCurrentCard] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [reviewedCount, setReviewedCount] = useState(0);
-
   const word = words[currentCard];
 
-  const handleFlip = () => setFlipped((f) => !f);
-
-  const handleNextCard = () => {
-    setFlipped(false);
-    const newReviewed = reviewedCount + 1;
-    setReviewedCount(newReviewed);
-
-    if (currentCard < words.length - 1) {
-      setCurrentCard((c) => c + 1);
-    } else {
-      // All cards reviewed
-      onComplete(words.length, words.length);
-    }
-  };
-
-  const speakWord = () => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(word.english);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.8;
-      speechSynthesis.speak(utterance);
-    }
-  };
+  const speakWord = () => { if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(word.english); u.lang = 'en-US'; u.rate = 0.8; speechSynthesis.speak(u); } };
 
   if (!word) {
-    // For phonics activities without words, show description and auto-complete
     return (
-      <div className="fallback-activity fallback-activity--empty">
-        <p className="fallback-activity__instructions">
-          {activity.instructions || t('lesson.noWordsToReview')}
-        </p>
-        <button
-          type="button"
-          onClick={() => onComplete(1, 1)}
-          className="fallback-activity__btn fallback-activity__btn--primary"
-        >
-          {t('lesson.doneNext')}
-        </button>
+      <div className="flex flex-col items-center gap-4 py-8">
+        <p className="text-sm text-gray-600">{activity.instructions || t('lesson.noWordsToReview')}</p>
+        <button type="button" onClick={() => onComplete(1, 1)} className="min-h-[48px] px-6 rounded-3xl bg-orange-500 text-white font-bold">{t('lesson.doneNext')}</button>
       </div>
     );
   }
 
   return (
-    <div className="fallback-activity">
-      <p className="fallback-activity__sub">
-        {activity.instructions}
-      </p>
-      <p className="fallback-activity__counter">
-        {t('lesson.card')} {currentCard + 1} {t('lesson.of')} {words.length}
-      </p>
-
-      <div
-        onClick={handleFlip}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleFlip(); } }}
-        role="button"
-        tabIndex={0}
-        aria-label={flipped ? `${word.english} - ${word.turkish}. ${t('lesson.tapToReveal')}` : `${word.english}. ${t('lesson.tapToReveal')}`}
-        className="fallback-activity__card"
-      >
-        <div className="fallback-activity__letter">{word.english.charAt(0).toUpperCase()}</div>
-        <span className="fallback-activity__word">{word.english}</span>
-
+    <div className="flex flex-col items-center gap-4">
+      <p className="text-xs text-gray-500">{activity.instructions}</p>
+      <p className="text-xs text-gray-400">{t('lesson.card')} {currentCard + 1} {t('lesson.of')} {words.length}</p>
+      <div onClick={() => setFlipped((f) => !f)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFlipped((f) => !f); } }} role="button" tabIndex={0}
+        className="w-full rounded-3xl bg-white shadow-lg p-8 flex flex-col items-center gap-2 cursor-pointer min-h-[180px]">
+        <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">{word.english.charAt(0).toUpperCase()}</div>
+        <span className="text-2xl font-extrabold text-gray-900">{word.english}</span>
         {flipped ? (
           <>
-            <span className="fallback-activity__translation">
-              {word.turkish}
-            </span>
-            {word.phonetic && (
-              <span className="fallback-activity__phonetic">
-                {word.phonetic}
-              </span>
-            )}
-            {word.exampleSentence && (
-              <span className="fallback-activity__example">
-                &ldquo;{word.exampleSentence}&rdquo;
-              </span>
-            )}
+            <span className="text-base text-emerald-600 font-bold">{word.turkish}</span>
+            {word.phonetic && <span className="text-xs text-gray-400">{word.phonetic}</span>}
+            {word.exampleSentence && <span className="text-xs text-gray-500 italic">&ldquo;{word.exampleSentence}&rdquo;</span>}
           </>
-        ) : (
-          <span className="fallback-activity__hint">
-            {t('lesson.tapToReveal')}
-          </span>
-        )}
+        ) : (<span className="text-xs text-gray-400">{t('lesson.tapToReveal')}</span>)}
       </div>
-
-      <div className="fallback-activity__actions">
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); handleFlip(); }}
-          className="fallback-activity__btn"
-        >
-          {flipped ? <EyeOff size={18} /> : <Eye size={18} />}
-          {flipped ? t('lesson.hide') : t('lesson.reveal')}
+      <div className="flex gap-2">
+        <button type="button" onClick={(e) => { e.stopPropagation(); setFlipped((f) => !f); }} className="min-h-[48px] px-4 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-1">
+          {flipped ? <EyeOff size={16} /> : <Eye size={16} />}{flipped ? t('lesson.hide') : t('lesson.reveal')}
         </button>
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); speakWord(); }}
-          className="fallback-activity__btn"
-        >
-          <Volume2 size={18} />
-          {t('lesson.listen')}
-        </button>
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); handleNextCard(); }}
-          className="fallback-activity__btn fallback-activity__btn--primary"
-        >
-          {currentCard < words.length - 1 ? t('lesson.next') : t('lesson.done')}
-          <ChevronRight size={18} />
+        <button type="button" onClick={(e) => { e.stopPropagation(); speakWord(); }} className="min-h-[48px] px-4 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-1"><Volume2 size={16} />{t('lesson.listen')}</button>
+        <button type="button" onClick={(e) => { e.stopPropagation(); setFlipped(false); const nr = reviewedCount + 1; setReviewedCount(nr); if (currentCard < words.length - 1) setCurrentCard((c) => c + 1); else onComplete(words.length, words.length); }}
+          className="min-h-[48px] px-4 rounded-3xl bg-orange-500 text-white font-bold text-sm flex items-center gap-1">
+          {currentCard < words.length - 1 ? t('lesson.next') : t('lesson.done')}<ChevronRight size={16} />
         </button>
       </div>
     </div>
   );
 }
 
-// ============================================================
-// COMPONENT
-// ============================================================
+// ── Main Component ────────────────────────────────────────────────────────────
 
 const LessonPlayer = () => {
   const { worldId = '', lessonId = '' } = useParams<{ worldId: string; lessonId: string }>();
@@ -414,113 +153,37 @@ const LessonPlayer = () => {
   usePageTitle('Ders', 'Lesson');
   const userId = user?.uid || 'guest';
 
-  // ---- Adaptive Engine ----
   const activityStartTimeRef = useRef<number>(Date.now());
   const [difficultyMultiplier, setDifficultyMultiplier] = useState<number>(1.0);
 
-  useEffect(() => {
-    if (user?.uid) {
-      setActiveUser(user.uid);
-      startSession();
-    }
-  }, [user?.uid]);
+  useEffect(() => { if (user?.uid) { setActiveUser(user.uid); startSession(); } }, [user?.uid]);
+  useEffect(() => { if (lessonId && worldId) analytics.lessonStarted(lessonId, worldId); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { return () => { if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel(); }; }, []);
 
-  // Track lesson_started once when the player mounts with a valid lesson
-  useEffect(() => {
-    if (lessonId && worldId) {
-      analytics.lessonStarted(lessonId, worldId);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- fire once on mount
-  }, []);
-
-  // Cancel any in-progress TTS when the lesson player unmounts
-  useEffect(() => {
-    return () => {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
-
-  // Load real lesson data from curriculum
   const oldLesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
   const lesson = useMemo(() => {
     if (oldLesson) return oldLesson;
-    // Fallback: try new curriculum phases system
     const unit = getUnitById(worldId);
-    if (unit) {
-      return {
-        id: unit.id,
-        title: unit.title,
-        titleTr: unit.titleTr,
-        number: unit.number,
-        type: 'vocabulary' as const,
-        xpReward: unit.activities.reduce((sum, a) => sum + a.xp, 0),
-        duration: unit.activities.reduce((sum, a) => sum + a.duration, 0),
-        targetWords: [] as string[],
-        activities: unit.activities.map((ua, i) => unitActivityToActivity(ua, i)),
-      };
-    }
+    if (unit) return { id: unit.id, title: unit.title, titleTr: unit.titleTr, number: unit.number, type: 'vocabulary' as const, xpReward: unit.activities.reduce((sum, a) => sum + a.xp, 0), duration: unit.activities.reduce((sum, a) => sum + a.duration, 0), targetWords: [] as string[], activities: unit.activities.map((ua, i) => unitActivityToActivity(ua, i)) };
     return null;
   }, [worldId, lessonId, oldLesson]);
   const world = useMemo(() => getWorldById(worldId), [worldId]);
   const vocabulary = useMemo(() => getWorldVocabulary(worldId), [worldId]);
   const currentUnit = useMemo(() => getUnitById(worldId), [worldId]);
 
-  // Build word items for game components from lesson's targetWords + world vocabulary
   const activityWords = useMemo(() => {
     if (!lesson) return [];
-    // Try old curriculum vocabulary first
-    const fromVocab = lesson.targetWords
-      .map((tw) => vocabulary.find((v) => v.english === tw))
-      .filter((w): w is VocabularyWord => Boolean(w))
-      .map((w) => ({
-        english: w.english,
-        turkish: w.turkish,
-        emoji: w.emoji,
-        phonetic: w.phonetic,
-        exampleSentence: w.exampleSentence,
-      }));
+    const fromVocab = lesson.targetWords.map((tw) => vocabulary.find((v) => v.english === tw)).filter((w): w is VocabularyWord => Boolean(w)).map((w) => ({ english: w.english, turkish: w.turkish, emoji: w.emoji, phonetic: w.phonetic, exampleSentence: w.exampleSentence }));
     if (fromVocab.length > 0) return fromVocab;
-    // Fallback for new curriculum: get blendable words from phonics groups
     const unit = getUnitById(worldId);
-    if (unit) {
-      const words: { english: string; turkish: string; emoji: string }[] = [];
-      for (const soundId of unit.phonicsFocus) {
-        const group = PHONICS_GROUPS.find((pg) => pg.sounds.some((ps) => ps.id === soundId));
-        if (group?.blendableWords) {
-          for (const w of group.blendableWords.slice(0, 4)) {
-            if (!words.some(existing => existing.english === w)) {
-              words.push({ english: w, turkish: w, emoji: '' });
-            }
-          }
-        }
-      }
-      return words;
-    }
+    if (unit) { const words: { english: string; turkish: string; emoji: string }[] = []; for (const soundId of unit.phonicsFocus) { const group = PHONICS_GROUPS.find((pg) => pg.sounds.some((ps) => ps.id === soundId)); if (group?.blendableWords) for (const w of group.blendableWords.slice(0, 4)) if (!words.some(e => e.english === w)) words.push({ english: w, turkish: w, emoji: '' }); } return words; }
     return [];
   }, [lesson, vocabulary, worldId]);
 
-  // Age group filtering
   const ageGroup = getAgeGroupFromSettings(userProfile?.settings as Record<string, unknown> | null | undefined);
   const ageConfig = getAgeGroupConfig(ageGroup);
-
-  // Filter lesson activities by age group and cap words per game
-  const ageFilteredLesson = useMemo(() => {
-    if (!lesson) return null;
-    if (!ageGroup) return lesson;
-    const filteredActivities = lesson.activities.filter((a) => isActivityAllowedForAge(a.type, ageGroup));
-    // Keep at least one activity to avoid an empty lesson
-    return {
-      ...lesson,
-      activities: filteredActivities.length > 0 ? filteredActivities : lesson.activities,
-    };
-  }, [lesson, ageGroup]);
-
-  const ageFilteredWords = useMemo(
-    () => activityWords.slice(0, ageConfig.maxWordsPerGame),
-    [activityWords, ageConfig.maxWordsPerGame],
-  );
+  const ageFilteredLesson = useMemo(() => { if (!lesson) return null; if (!ageGroup) return lesson; const fa = lesson.activities.filter((a) => isActivityAllowedForAge(a.type, ageGroup)); return { ...lesson, activities: fa.length > 0 ? fa : lesson.activities }; }, [lesson, ageGroup]);
+  const ageFilteredWords = useMemo(() => activityWords.slice(0, ageConfig.maxWordsPerGame), [activityWords, ageConfig.maxWordsPerGame]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -535,569 +198,186 @@ const LessonPlayer = () => {
   const [xpPopAmount, setXpPopAmount] = useState<number | null>(null);
 
   const totalActivities = ageFilteredLesson?.activities.length || 0;
-  // Progress: show current index as 1-based completed count; completed state = 100%
-  const progressPct = completed
-    ? 100
-    : totalActivities > 0
-      ? Math.round((currentIndex / totalActivities) * 100)
-      : 0;
+  const progressPct = completed ? 100 : totalActivities > 0 ? Math.round((currentIndex / totalActivities) * 100) : 0;
   const currentActivity = ageFilteredLesson?.activities[currentIndex];
 
-  // Lock body scroll while lesson is active
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, []);
+  useEffect(() => { const prev = document.body.style.overflow; document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = prev; }; }, []);
 
   const handleActivityComplete = useCallback((score: number, total: number) => {
     setActivityScores((prev) => [...prev, { score, total }]);
-
-    // Award XP for this activity (including last activity — lesson-complete XP is additive)
     const activityXp = currentActivity?.xpReward || 10;
     const scoreRatio = total > 0 ? score / total : 1;
     const earnedXp = Math.round(activityXp * scoreRatio);
-    if (earnedXp > 0) {
-      addXP(earnedXp, 'activity_completed', { lessonId, worldId, activityId: currentActivity?.id }).catch(() => {
-        // XP sync failed silently
-      });
-    }
-
-    // Trigger celebration animations based on score
+    if (earnedXp > 0) addXP(earnedXp, 'activity_completed', { lessonId, worldId, activityId: currentActivity?.id }).catch(() => {});
     const pct = total > 0 ? Math.round((score / total) * 100) : 100;
-    if (pct >= 80) {
-      setShowStarBurst(true);
-      SFX.correct();
-      setTimeout(() => setShowStarBurst(false), 1500);
-    }
-    if (pct === 100) {
-      setShowConfetti(true);
-      setShowPerfect(true);
-      SFX.celebration();
-      setTimeout(() => { setShowConfetti(false); setShowPerfect(false); }, 3200);
-      // Perfect score bonus: +20% of activity XP
-      const perfectBonus = Math.round(earnedXp * 0.2);
-      if (perfectBonus > 0) {
-        addXP(perfectBonus, 'perfect_score', { lessonId, worldId, activityId: currentActivity?.id }).catch(() => {});
-      }
-    }
-    if (earnedXp > 0) {
-      setXpPopAmount(earnedXp);
-      setTimeout(() => setXpPopAmount(null), 1800);
-    }
-
-    // Update spaced repetition for each word used in this activity
+    if (pct >= 80) { setShowStarBurst(true); SFX.correct(); setTimeout(() => setShowStarBurst(false), 1500); }
+    if (pct === 100) { setShowConfetti(true); setShowPerfect(true); SFX.celebration(); setTimeout(() => { setShowConfetti(false); setShowPerfect(false); }, 3200); const pb = Math.round(earnedXp * 0.2); if (pb > 0) addXP(pb, 'perfect_score', { lessonId, worldId, activityId: currentActivity?.id }).catch(() => {}); }
+    if (earnedXp > 0) { setXpPopAmount(earnedXp); setTimeout(() => setXpPopAmount(null), 1800); }
     const wasCorrect = total > 0 ? score / total >= 0.5 : true;
-    for (const w of ageFilteredWords) {
-      updateWordProgress(w.english, wasCorrect);
-    }
-
-    // Record activity in adaptive engine
-    try {
-      const soundId = currentUnit?.phonicsFocus[0] ?? lessonId;
-      recordActivity({
-        soundId,
-        activityType: currentActivity?.type ?? 'unknown',
-        correct: wasCorrect,
-        responseTimeMs: Date.now() - activityStartTimeRef.current,
-        totalQuestions: total,
-        correctAnswers: score,
-      });
-      setDifficultyMultiplier(getDifficultyMultiplier());
-    } catch { /* adaptive engine is non-critical */ }
-    // Reset timer for next activity
+    for (const w of ageFilteredWords) updateWordProgress(w.english, wasCorrect);
+    try { recordActivity({ soundId: currentUnit?.phonicsFocus[0] ?? lessonId, activityType: currentActivity?.type ?? 'unknown', correct: wasCorrect, responseTimeMs: Date.now() - activityStartTimeRef.current, totalQuestions: total, correctAnswers: score }); setDifficultyMultiplier(getDifficultyMultiplier()); } catch { /* */ }
     activityStartTimeRef.current = Date.now();
-
-    // Auto-advance to next activity after a short delay
     setTimeout(() => {
-      if (!lesson) return;
-      setDirection(1);
-      if (currentIndex < totalActivities - 1) {
-        setCurrentIndex((prev) => prev + 1);
-        // Save incremental unit progress for WorldMap/WorldDetail
-        if (currentUnit) {
-          saveUnitProgress(currentUnit.id, currentIndex + 1);
-        }
-      } else {
-        // Lesson complete
+      if (!lesson) return; setDirection(1);
+      if (currentIndex < totalActivities - 1) { setCurrentIndex((prev) => prev + 1); if (currentUnit) saveUnitProgress(currentUnit.id, currentIndex + 1); }
+      else {
         setCompleted(true);
-        const totalXP = lesson.xpReward || 30;
-        // Heart bonus: +10 XP per remaining heart
-        const heartBonus = hearts * HEART_BONUS_XP;
-        addXP(totalXP + heartBonus, 'lesson_completed', { lessonId, worldId }).catch(() => {
-          // XP sync failed silently
-        });
-        trackActivity('lesson_completed_timed').catch(() => {});
-        analytics.lessonComplete(lessonId, 0, totalXP);
-
-        // Save progress via progressTracker (unlocks next lesson/world)
-        try {
-          const totalScore = [...activityScores, { score, total }].reduce((a, s) => a + s.score, 0);
-          const totalPossible = [...activityScores, { score, total }].reduce((a, s) => a + s.total, 0);
-          const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
-          completeLesson(userId, lessonId, worldId, totalXP, accuracy);
-          // New unified progress tracking (backward compat: keep completeLesson above)
-          if (currentUnit) completeUnit(currentUnit.id);
-
-          // Increment daily lesson counter for free-tier limit tracking
-          incrementTodayCompletedLessonCount();
-
-          // Save unit completion for WorldMap/WorldDetail
-          if (currentUnit) {
-            saveUnitProgress(currentUnit.id, totalActivities);
-          }
-
-          // Log activity for parent dashboard analytics
-          logActivity({
-            type: 'game',
-            title: lesson.title || `Lesson: ${lessonId}`,
-            duration: Math.round(totalActivities * 60), // ~60s per activity estimate
-            accuracy,
-            xpEarned: totalXP,
-          }, user?.uid);
-
-          // Sync progress to classroom (for teacher dashboard)
-          syncStudentProgress(totalXP);
-        } catch {
-          // localStorage might be unavailable
-        }
+        const totalXP = lesson.xpReward || 30; const hb = hearts * HEART_BONUS_XP;
+        addXP(totalXP + hb, 'lesson_completed', { lessonId, worldId }).catch(() => {}); trackActivity('lesson_completed_timed').catch(() => {}); analytics.lessonComplete(lessonId, 0, totalXP);
+        try { const ts = [...activityScores, { score, total }].reduce((a, s) => a + s.score, 0); const tp = [...activityScores, { score, total }].reduce((a, s) => a + s.total, 0); const acc = tp > 0 ? Math.round((ts / tp) * 100) : 100; completeLesson(userId, lessonId, worldId, totalXP, acc); if (currentUnit) completeUnit(currentUnit.id); incrementTodayCompletedLessonCount(); if (currentUnit) saveUnitProgress(currentUnit.id, totalActivities); logActivity({ type: 'game', title: lesson.title || `Lesson: ${lessonId}`, duration: Math.round(totalActivities * 60), accuracy: acc, xpEarned: totalXP }, user?.uid); syncStudentProgress(totalXP); } catch { /* */ }
       }
     }, 1500);
   }, [currentIndex, totalActivities, ageFilteredLesson, addXP, trackActivity, lessonId, worldId, currentActivity, activityScores, userId, ageFilteredWords, user?.uid, hearts, currentUnit]);
 
-  const handleXpEarned = useCallback((xp: number) => {
-    addXP(xp, 'activity_completed', { lessonId, worldId }).catch(() => { /* XP sync failed silently */ });
-  }, [addXP, lessonId, worldId]);
-
-  const handleWrongAnswer = useCallback(() => {
-    SFX.wrong();
-    setHearts((prev) => {
-      const next = prev - 1;
-      if (next <= 0) {
-        setGameOver(true);
-      }
-      return Math.max(0, next);
-    });
-    // Trigger heart-lost animation
-    setHeartLostIndex(Date.now());
-    setTimeout(() => setHeartLostIndex(null), 600);
-  }, []);
+  const handleXpEarned = useCallback((xp: number) => { addXP(xp, 'activity_completed', { lessonId, worldId }).catch(() => {}); }, [addXP, lessonId, worldId]);
+  const handleWrongAnswer = useCallback(() => { SFX.wrong(); setHearts((prev) => { const next = prev - 1; if (next <= 0) setGameOver(true); return Math.max(0, next); }); setHeartLostIndex(Date.now()); setTimeout(() => setHeartLostIndex(null), 600); }, []);
 
   const handleSkip = useCallback(() => {
-    if (!lesson) return;
-    setDirection(1);
-    if (currentIndex < totalActivities - 1) {
-      setCurrentIndex((prev) => prev + 1);
-      // Save incremental unit progress
-      if (currentUnit) {
-        saveUnitProgress(currentUnit.id, currentIndex + 1);
-      }
-    } else {
+    if (!lesson) return; setDirection(1);
+    if (currentIndex < totalActivities - 1) { setCurrentIndex((prev) => prev + 1); if (currentUnit) saveUnitProgress(currentUnit.id, currentIndex + 1); }
+    else {
       setCompleted(true);
-      const totalXP = lesson.xpReward || 30;
-      // Apply heart bonus consistently (same as handleActivityComplete path)
-      const skipHeartBonus = hearts * HEART_BONUS_XP;
-      addXP(totalXP + skipHeartBonus, 'lesson_completed', { lessonId, worldId }).catch(() => { /* XP sync failed silently */ });
-      trackActivity('lesson_completed_timed').catch(() => {});
-
-      // Save progress so next lesson unlocks (same as handleActivityComplete for last activity)
-      try {
-        const totalScore = activityScores.reduce((a, s) => a + s.score, 0);
-        const totalPossible = activityScores.reduce((a, s) => a + s.total, 0);
-        const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
-        completeLesson(userId, lessonId, worldId, totalXP, accuracy);
-        // New unified progress tracking (backward compat: keep completeLesson above)
-        if (currentUnit) completeUnit(currentUnit.id);
-
-        // Increment daily lesson counter for free-tier limit tracking
-        incrementTodayCompletedLessonCount();
-
-        // Save unit completion for WorldMap/WorldDetail
-        if (currentUnit) {
-          saveUnitProgress(currentUnit.id, totalActivities);
-        }
-
-        logActivity({
-          type: 'game',
-          title: lesson.title || `Lesson: ${lessonId}`,
-          duration: Math.round(totalActivities * 60),
-          accuracy,
-          xpEarned: totalXP + skipHeartBonus,
-        }, user?.uid);
-
-        void syncStudentProgress(totalXP);
-      } catch {
-        // localStorage might be unavailable
-      }
+      const totalXP = lesson.xpReward || 30; const hb = hearts * HEART_BONUS_XP;
+      addXP(totalXP + hb, 'lesson_completed', { lessonId, worldId }).catch(() => {}); trackActivity('lesson_completed_timed').catch(() => {});
+      try { const ts = activityScores.reduce((a, s) => a + s.score, 0); const tp = activityScores.reduce((a, s) => a + s.total, 0); const acc = tp > 0 ? Math.round((ts / tp) * 100) : 100; completeLesson(userId, lessonId, worldId, totalXP, acc); if (currentUnit) completeUnit(currentUnit.id); incrementTodayCompletedLessonCount(); if (currentUnit) saveUnitProgress(currentUnit.id, totalActivities); logActivity({ type: 'game', title: lesson.title || `Lesson: ${lessonId}`, duration: Math.round(totalActivities * 60), accuracy: acc, xpEarned: totalXP + hb }, user?.uid); void syncStudentProgress(totalXP); } catch { /* */ }
     }
   }, [currentIndex, totalActivities, lesson, addXP, trackActivity, lessonId, worldId, activityScores, userId, user?.uid, currentUnit]);
 
-  const handleBack = useCallback(() => {
-    if (currentIndex > 0) {
-      setDirection(-1);
-      // Remove the score recorded for the current activity so it won't double-count
-      // when the user re-completes it after navigating back
-      setActivityScores((prev) => prev.slice(0, currentIndex - 1));
-      setCurrentIndex((prev) => prev - 1);
-    }
-  }, [currentIndex]);
+  const handleBack = useCallback(() => { if (currentIndex > 0) { setDirection(-1); setActivityScores((prev) => prev.slice(0, currentIndex - 1)); setCurrentIndex((prev) => prev - 1); } }, [currentIndex]);
+  const handleRestart = useCallback(() => { setCurrentIndex(0); setDirection(-1); setCompleted(false); setActivityScores([]); setHearts(INITIAL_HEARTS); setGameOver(false); setHeartLostIndex(null); }, []);
 
-  const handleRestart = useCallback(() => {
-    setCurrentIndex(0);
-    setDirection(-1);
-    setCompleted(false);
-    setActivityScores([]);
-    setHearts(INITIAL_HEARTS);
-    setGameOver(false);
-    setHeartLostIndex(null);
-  }, []);
-
-  // ── Free tier daily lesson limit gate ────────────────────────────────────
-  // Free users can complete up to PLAN_LIMITS.free.lessons (5) per day.
-  // Premium/family/classroom have Infinity limit — no gate shown.
+  // Free tier gate
   if (!isPremium() && maxLessonsPerDay !== Infinity && getTodayCompletedLessonCount() >= maxLessonsPerDay) {
     return (
-      <div className="lesson-player-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <Paywall feature={lang === 'tr' ? 'Sınırsız Ders' : 'Unlimited Lessons'} />
-        <button
-          type="button"
-          style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer', borderRadius: '9999px', border: '1.5px solid var(--border,#e5e7eb)', background: 'transparent', color: 'var(--text-secondary)', fontSize: '14px' }}
-          onClick={() => navigate(-1)}
-        >
-          {lang === 'tr' ? 'Geri Dön' : 'Go Back'}
-        </button>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4">
+        <Paywall feature={lang === 'tr' ? 'Sinirsiz Ders' : 'Unlimited Lessons'} />
+        <button type="button" onClick={() => navigate(-1)} className="mt-4 min-h-[48px] px-6 rounded-3xl border border-gray-200 text-gray-500 text-sm font-bold">{lang === 'tr' ? 'Geri Don' : 'Go Back'}</button>
       </div>
     );
   }
 
-  // Not found
   if (!lesson) {
     return (
-      <div className="lesson-player-page lesson-player-page--not-found">
-        <h2>{t('lesson.notFound')}</h2>
-        <p className="lesson-not-found__desc">
-          {t('lesson.notFoundDesc')} &quot;{lessonId}&quot; {t('lesson.inWorld')} &quot;{worldId}&quot;.
-        </p>
-        <Link to={`/worlds/${worldId}`}>
-          <Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('lesson.backToWorld')}</Button>
-        </Link>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-4">
+        <h2 className="text-xl font-bold text-gray-900">{t('lesson.notFound')}</h2>
+        <p className="text-sm text-gray-500">{t('lesson.notFoundDesc')} &quot;{lessonId}&quot; {t('lesson.inWorld')} &quot;{worldId}&quot;.</p>
+        <Link to={`/worlds/${worldId}`}><Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('lesson.backToWorld')}</Button></Link>
       </div>
     );
   }
 
-  // ========== GAME OVER (out of hearts) ==========
+  // Game Over
   if (gameOver) {
     return (
-      <div className="lesson-player-page">
-        <motion.div
-          className="lesson-complete"
-          variants={celebrationVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <div className="lesson-gameover__hearts" aria-hidden="true">
-            <span className="lesson-gameover__heart lesson-gameover__heart--empty">
-              <Heart size={48} />
-            </span>
-          </div>
-          <h1 className="lesson-complete__title">{t('lesson.outOfHearts')}</h1>
-          <p className="lesson-complete__subtitle">
-            {t('lesson.dontWorry')}
-          </p>
-
-          <div className="lesson-complete__mimi">
-            <span className="lesson-complete__mimi-avatar"><LottieCharacter state="thinking" size={48} /></span>
-            <p>{t('lesson.youCanDoIt')}</p>
-          </div>
-
-          <div className="lesson-complete__actions">
-            <Button
-              variant="primary"
-              size="lg"
-              icon={<RotateCcw size={18} />}
-              onClick={handleRestart}
-            >
-              {t('lesson.tryAgain')}
-            </Button>
-            <Button
-              variant="ghost"
-              size="lg"
-              icon={<ArrowLeft size={18} />}
-              onClick={() => navigate(`/worlds/${worldId}`)}
-            >
-              {t('lesson.goBack')}
-            </Button>
-          </div>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-4 max-w-xs">
+          <Heart size={48} className="text-gray-300" />
+          <h1 className="text-2xl font-extrabold text-gray-900">{t('lesson.outOfHearts')}</h1>
+          <p className="text-sm text-gray-500 text-center">{t('lesson.dontWorry')}</p>
+          <LottieCharacter state="thinking" size={48} />
+          <button type="button" onClick={handleRestart} className="min-h-[56px] px-8 rounded-3xl bg-orange-500 text-white font-bold flex items-center gap-2 shadow-md active:scale-95"><RotateCcw size={18} />{t('lesson.tryAgain')}</button>
+          <button type="button" onClick={() => navigate(`/worlds/${worldId}`)} className="min-h-[48px] px-6 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-2"><ArrowLeft size={16} />{t('lesson.goBack')}</button>
         </motion.div>
       </div>
     );
   }
 
-  // ========== COMPLETION SCREEN ==========
+  // Completed
   if (completed) {
     const totalScore = activityScores.reduce((a, s) => a + s.score, 0);
     const totalPossible = activityScores.reduce((a, s) => a + s.total, 0);
     const accuracy = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 100;
-    const heartBonusXp = hearts * HEART_BONUS_XP;
+    const hb = hearts * HEART_BONUS_XP;
+    const starCount = accuracy >= 90 ? 3 : accuracy >= 60 ? 2 : 1;
 
     return (
-      <div className="lesson-player-page">
-        <motion.div
-          className="lesson-complete"
-          variants={celebrationVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <div className="lesson-complete__confetti" aria-hidden="true">
-            <Trophy size={48} color="var(--warning)" />
-          </div>
-          <div className="lesson-complete__trophy">
-            <Trophy size={64} />
-          </div>
-          <h1 className="lesson-complete__title">{t('lesson.complete')}</h1>
-          <p className="lesson-complete__subtitle">
-            {t('lesson.greatJob')} &quot;{lang === 'tr' ? lesson.titleTr : lesson.title}&quot; - {totalActivities} {t('lesson.allActivities')}
-          </p>
-
-          {/* Hearts remaining */}
-          <div className="lesson-complete__hearts">
-            {Array.from({ length: INITIAL_HEARTS }).map((_, i) => (
-              <span
-                key={i}
-                className={`lesson-complete__heart ${i < hearts ? 'lesson-complete__heart--full' : 'lesson-complete__heart--empty'}`}
-              >
-                <Heart size={28} fill={i < hearts ? 'var(--error)' : 'none'} color={i < hearts ? 'var(--error)' : 'var(--text-muted)'} />
-              </span>
-            ))}
-            {hearts > 0 && (
-              <span className="lesson-complete__heart-bonus">+{heartBonusXp} {t('lesson.bonusXp')}</span>
-            )}
-          </div>
-
-          {/* Star rating based on accuracy */}
-          <div className="lesson-complete__star-rating" aria-label={`${accuracy >= 90 ? 3 : accuracy >= 60 ? 2 : 1} out of 3 stars`}>
-            {[1, 2, 3].map((s) => {
-              const earned = accuracy >= 90 ? 3 : accuracy >= 60 ? 2 : 1;
-              return (
-                <Star
-                  key={s}
-                  size={32}
-                  fill={s <= earned ? 'var(--warning)' : 'none'}
-                  color={s <= earned ? 'var(--warning)' : 'var(--border-medium, var(--border))'}
-                  style={s <= earned ? { filter: 'drop-shadow(0 2px 6px color-mix(in srgb, var(--warning) 45%, transparent))' } : { opacity: 0.35 }}
-                />
-              );
-            })}
-          </div>
-
-          {totalPossible > 0 && (
-            <p className="lesson-accuracy__text">
-              {t('lesson.accuracy')}: {accuracy}% ({totalScore}/{totalPossible})
-            </p>
-          )}
-
-          <div className="lesson-complete__xp">
-            <Star size={24} />
-            <span className="lesson-complete__xp-value">+{(lesson.xpReward || 0) + heartBonusXp} XP</span>
-          </div>
-
-          <div className="lesson-complete__mimi">
-            <span className="lesson-complete__mimi-avatar"><Star size={32} color="var(--warning)" fill="var(--warning)" /></span>
-            <p>{t('lesson.iKnewYouCouldDoIt')}</p>
-          </div>
-
-          <div className="lesson-complete__actions">
-            <Button
-              variant="primary"
-              size="lg"
-              icon={<Home size={18} />}
-              onClick={() => navigate(`/worlds/${worldId}`)}
-            >
-              {t('lesson.backTo')} {lang === 'tr' ? (world?.nameTr || 'Dunya') : (world?.name || 'World')}
-            </Button>
-            <Button
-              variant="ghost"
-              size="lg"
-              icon={<RotateCcw size={18} />}
-              onClick={handleRestart}
-            >
-              {t('lesson.playAgain')}
-            </Button>
-          </div>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 200 }} className="flex flex-col items-center gap-4 max-w-xs">
+          <Trophy size={64} className="text-amber-500" />
+          <h1 className="text-2xl font-extrabold text-gray-900">{t('lesson.complete')}</h1>
+          <p className="text-sm text-gray-500 text-center">{t('lesson.greatJob')} &quot;{lang === 'tr' ? lesson.titleTr : lesson.title}&quot;</p>
+          <div className="flex gap-1">{Array.from({ length: INITIAL_HEARTS }, (_, i) => <Heart key={i} size={24} fill={i < hearts ? '#EF4444' : 'none'} color={i < hearts ? '#EF4444' : '#D1D5DB'} />)}{hearts > 0 && <span className="text-xs text-emerald-600 font-bold ml-1">+{hb} XP</span>}</div>
+          <div className="flex gap-1">{[1, 2, 3].map((s) => <Star key={s} size={28} fill={s <= starCount ? '#F59E0B' : 'none'} color={s <= starCount ? '#F59E0B' : '#D1D5DB'} />)}</div>
+          {totalPossible > 0 && <p className="text-sm text-gray-500">{t('lesson.accuracy')}: {accuracy}%</p>}
+          <span className="text-lg font-extrabold text-amber-600 flex items-center gap-1"><Star size={20} />+{(lesson.xpReward || 0) + hb} XP</span>
+          <button type="button" onClick={() => navigate(`/worlds/${worldId}`)} className="min-h-[56px] px-8 rounded-3xl bg-orange-500 text-white font-bold flex items-center gap-2 shadow-md active:scale-95 w-full justify-center"><Home size={18} />{t('lesson.backTo')} {lang === 'tr' ? (world?.nameTr || 'Dunya') : (world?.name || 'World')}</button>
+          <button type="button" onClick={handleRestart} className="min-h-[48px] px-6 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-2"><RotateCcw size={16} />{t('lesson.playAgain')}</button>
         </motion.div>
       </div>
     );
   }
 
-  // ========== NO ACTIVITIES GUARD ==========
   if (totalActivities === 0 || !currentActivity) {
     return (
-      <div className="lesson-player-page lesson-player-page--not-found">
-        <h2>{t('lesson.noActivities') || 'No activities in this lesson'}</h2>
-        <p className="lesson-not-found__desc">
-          {t('lesson.noActivitiesDesc') || 'This lesson has no activities to play.'}
-        </p>
-        <Link to={`/worlds/${worldId}`}>
-          <Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('lesson.backToWorld')}</Button>
-        </Link>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-4">
+        <h2 className="text-xl font-bold text-gray-900">{t('lesson.noActivities') || 'No activities'}</h2>
+        <Link to={`/worlds/${worldId}`}><Button variant="secondary" icon={<ArrowLeft size={16} />}>{t('lesson.backToWorld')}</Button></Link>
       </div>
     );
   }
 
-  // ========== ACTIVE LESSON ==========
   const ActivityIcon = ACTIVITY_ICONS[currentActivity.type] || Gamepad2;
-  const activityColor = ACTIVITY_COLORS[currentActivity.type] || 'var(--accent-emerald)';
-  const encouragementKey = getEncouragementKey(currentIndex);
+  const activityColor = ACTIVITY_COLORS[currentActivity.type] || '#10B981';
   const isSupported = SUPPORTED_GAME_TYPES.has(currentActivity.type);
 
   return (
-    <div className="lesson-player-page" role="main" aria-label="Lesson player">
-      {/* Celebration overlays */}
+    <div className="min-h-screen bg-white flex flex-col" role="main">
       {showStarBurst && <StarBurst />}
       {showConfetti && <ConfettiRain />}
       {showPerfect && <PerfectBadge />}
       {xpPopAmount !== null && <XPPop amount={xpPopAmount} />}
 
       {/* Top Bar */}
-      <div className="lesson-player-topbar">
-        <button
-          type="button"
-          className="lesson-player-topbar__back"
-          onClick={() => navigate(`/worlds/${worldId}`)}
-          aria-label="Exit lesson"
-        >
-          <ArrowLeft size={20} />
-        </button>
-
-        <div className="lesson-player-topbar__center">
-          <span className="lesson-player-topbar__title">{lang === 'tr' ? lesson.titleTr : lesson.title}</span>
+      <div className="flex items-center gap-3 px-4 pt-4 pb-2">
+        <button type="button" onClick={() => navigate(`/worlds/${worldId}`)} aria-label="Exit" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><ArrowLeft size={18} className="text-gray-500" /></button>
+        <div className="flex-1">
+          <span className="text-xs font-bold text-gray-600 block truncate">{lang === 'tr' ? lesson.titleTr : lesson.title}</span>
           <ProgressBar value={progressPct} size="sm" animated />
-          <span className="lesson-player-topbar__count">
-            {currentIndex + 1} / {totalActivities}
-          </span>
+          <span className="text-[10px] text-gray-400">{currentIndex + 1}/{totalActivities}</span>
         </div>
-
-        {/* Hearts Display */}
-        <div className={`lesson-player-topbar__hearts${heartLostIndex !== null ? ' lesson-player-topbar__hearts--shake' : ''}`} aria-label={`${hearts} hearts remaining`}>
-          {Array.from({ length: INITIAL_HEARTS }).map((_, i) => (
-            <span
-              key={i}
-              className={`lesson-player-topbar__heart ${i < hearts ? 'lesson-player-topbar__heart--full' : 'lesson-player-topbar__heart--empty'}`}
-            >
-              <Heart size={20} fill={i < hearts ? 'var(--error)' : 'none'} color={i < hearts ? 'var(--error)' : 'var(--text-muted)'} />
-            </span>
-          ))}
+        <div className={`flex gap-0.5 ${heartLostIndex !== null ? 'animate-[shake_0.3s]' : ''}`}>
+          {Array.from({ length: INITIAL_HEARTS }, (_, i) => <Heart key={i} size={18} fill={i < hearts ? '#EF4444' : 'none'} color={i < hearts ? '#EF4444' : '#D1D5DB'} />)}
         </div>
-
-        <button
-          type="button"
-          className="lesson-player-topbar__skip"
-          onClick={handleSkip}
-          aria-label="Skip activity"
-        >
-          <SkipForward size={18} />
-        </button>
+        <button type="button" onClick={handleSkip} aria-label="Skip" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><SkipForward size={14} className="text-gray-400" /></button>
       </div>
 
-      {/* Lesson Info */}
-      {currentIndex === 0 && (
-        <div className="lesson-breadcrumb">
-          {world && <span>{lang === 'tr' ? world.nameTr : world.name} &bull; </span>}
-          {'objective' in lesson ? (lesson as { objective: string }).objective : (lang === 'tr' ? lesson.titleTr : lesson.title)}
-        </div>
-      )}
-
-      {/* Main Activity Area */}
-      <div className="lesson-player-main">
+      {/* Main Activity */}
+      <div className="flex-1 px-4 pb-4 overflow-y-auto">
         <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={currentActivity.id}
-            className="lesson-activity"
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-          >
+          <motion.div key={currentActivity.id} custom={direction} initial={{ x: direction > 0 ? 200 : -200, opacity: 0 }} animate={{ x: 0, opacity: 1, transition: { type: 'spring', stiffness: 260, damping: 26 } }} exit={{ x: direction > 0 ? -200 : 200, opacity: 0, transition: { duration: 0.2 } }}>
             {/* Activity Header */}
-            <div className="lesson-activity__header" style={{ borderColor: activityColor, '--activity-color': activityColor } as React.CSSProperties}>
-              <div className="lesson-activity__icon" style={{ background: activityColor }}>
-                <ActivityIcon size={28} color="var(--text-on-primary, #fff)" />
-              </div>
+            <div className="flex items-center gap-3 mb-4 p-3 rounded-3xl" style={{ backgroundColor: `${activityColor}10`, borderLeft: `4px solid ${activityColor}` }}>
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: activityColor }}><ActivityIcon size={22} color="#fff" /></div>
               <div>
-                <h2 className="lesson-activity__title">{lang === 'tr' && 'titleTr' in currentActivity && (currentActivity as Activity & { titleTr?: string }).titleTr ? (currentActivity as Activity & { titleTr: string }).titleTr : currentActivity.title}</h2>
-                <span className="lesson-activity__type">{lang === 'tr' ? ({
-                  'word-match': 'Kelime Eşleştir', 'spelling-bee': 'Heceleme', 'quick-quiz': 'Hızlı Test',
-                  'sentence-scramble': 'Cümle Kur', 'listening-challenge': 'Dinleme', 'phonics-builder': 'Ses Birleştir',
-                  'story-choices': 'Hikaye', 'sound-intro': 'Ses Tanıtımı', 'blending': 'Birleştirme',
-                  'segmenting': 'Parçalama', 'tpr': 'Hareket', 'listening': 'Dinleme', 'pronunciation': 'Telaffuz',
-                  'reading': 'Okuma', 'song': 'Şarkı',
-                } as Record<string, string>)[currentActivity.type] || currentActivity.type : ({
-                  'word-match': 'Word Match', 'spelling-bee': 'Spelling', 'quick-quiz': 'Quick Quiz',
-                  'sentence-scramble': 'Sentence Scramble', 'listening-challenge': 'Listening', 'phonics-builder': 'Phonics Builder',
-                  'story-choices': 'Story', 'sound-intro': 'Sound Intro', 'blending': 'Blending',
-                  'segmenting': 'Segmenting', 'tpr': 'Action', 'listening': 'Listening', 'pronunciation': 'Pronunciation',
-                  'reading': 'Reading', 'song': 'Song',
-                } as Record<string, string>)[currentActivity.type] || currentActivity.type}</span>
+                <h2 className="text-sm font-extrabold text-gray-900">{lang === 'tr' && 'titleTr' in currentActivity && (currentActivity as Activity & { titleTr?: string }).titleTr ? (currentActivity as Activity & { titleTr: string }).titleTr : currentActivity.title}</h2>
               </div>
             </div>
 
-            {/* Activity Content - Real Games */}
+            {/* Game Content */}
             <Card variant="outlined" padding="xl" className="lesson-activity__content">
               {isSupported ? (
-                <GameSelector
-                  type={currentActivity.type}
-                  words={ageFilteredWords}
-                  onComplete={handleActivityComplete}
-                  onXpEarned={handleXpEarned}
-                  onWrongAnswer={handleWrongAnswer}
-                  extra={buildExtraProps(currentActivity.type, currentUnit)}
-                  difficultyMultiplier={difficultyMultiplier}
-                />
+                <GameSelector type={currentActivity.type} words={ageFilteredWords} onComplete={handleActivityComplete} onXpEarned={handleXpEarned} onWrongAnswer={handleWrongAnswer} extra={buildExtraProps(currentActivity.type, currentUnit)} difficultyMultiplier={difficultyMultiplier} />
               ) : (
-                <FallbackActivity
-                  activity={currentActivity}
-                  words={ageFilteredWords}
-                  onComplete={handleActivityComplete}
-                  t={t}
-                />
+                <FallbackActivity activity={currentActivity} words={ageFilteredWords} onComplete={handleActivityComplete} t={t} />
               )}
             </Card>
           </motion.div>
         </AnimatePresence>
 
-        {/* Mimi Encouragement */}
-        <div className="lesson-player-mimi" aria-live="polite">
-          <span className="lesson-player-mimi__avatar"><Star size={20} color="var(--warning)" fill="var(--warning)" /></span>
-          <div className="lesson-player-mimi__bubble">
-            <Star size={16} color="var(--warning)" fill="var(--warning)" /> {t(encouragementKey)}
-          </div>
+        {/* Encouragement */}
+        <div className="flex items-center gap-2 mt-4 justify-center">
+          <Star size={16} className="text-amber-500" fill="#F59E0B" />
+          <span className="text-xs text-gray-500">{t(ENCOURAGEMENT_KEYS[currentIndex % ENCOURAGEMENT_KEYS.length])}</span>
         </div>
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="lesson-player-bottombar">
-        {currentIndex > 0 && (
-          <Button
-            variant="ghost"
-            size="lg"
-            icon={<ArrowLeft size={16} />}
-            onClick={handleBack}
-          >
-            {t('lesson.back')}
-          </Button>
-        )}
-        <div className="lesson-player-bottombar__spacer" />
-        <Button
-          variant="primary"
-          size="lg"
-          icon={<ChevronRight size={18} />}
-          onClick={handleSkip}
-        >
-          {currentIndex < totalActivities - 1 ? t('lesson.next') : t('lesson.finish')}
-        </Button>
+      {/* Bottom Nav */}
+      <div className="flex items-center gap-3 px-4 py-3 border-t border-gray-100">
+        {currentIndex > 0 && <button type="button" onClick={handleBack} className="min-h-[48px] px-4 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-1"><ArrowLeft size={16} />{t('lesson.back')}</button>}
+        <div className="flex-1" />
+        <button type="button" onClick={handleSkip} className="min-h-[48px] px-6 rounded-3xl bg-orange-500 text-white font-bold text-sm flex items-center gap-1 shadow-md active:scale-95">
+          {currentIndex < totalActivities - 1 ? t('lesson.next') : t('lesson.finish')}<ChevronRight size={16} />
+        </button>
       </div>
     </div>
   );

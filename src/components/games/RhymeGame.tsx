@@ -116,9 +116,9 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
       </p>
 
       {/* Word pair cards */}
-      <div className="flex items-center gap-4 justify-center flex-wrap">
+      <div className="flex items-center gap-3 sm:gap-4 justify-center flex-wrap">
         <motion.div
-          className={`flex flex-col items-center gap-2 p-5 rounded-2xl border-2 shadow-md min-w-[120px] ${borderColor}`}
+          className={`flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl border-2 shadow-md min-w-[110px] ${borderColor}`}
           initial={{ x: -40, opacity: 0 }}
           animate={cardState === 'wrong' ? shakeAnimation : { x: 0, opacity: 1 }}
           transition={springGentle}
@@ -138,7 +138,7 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
         <span className="text-3xl font-black text-slate-300">&amp;</span>
 
         <motion.div
-          className={`flex flex-col items-center gap-2 p-5 rounded-2xl border-2 shadow-md min-w-[120px] ${borderColor}`}
+          className={`flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl border-2 shadow-md min-w-[110px] ${borderColor}`}
           initial={{ x: 40, opacity: 0 }}
           animate={cardState === 'wrong' ? shakeAnimation : { x: 0, opacity: 1 }}
           transition={{ ...springGentle, delay: 0.1 }}
@@ -173,13 +173,13 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
       </AnimatePresence>
 
       {/* Yes / No buttons */}
-      <div className="flex gap-4">
+      <div className="flex gap-3 sm:gap-4 w-full max-w-xs mx-auto">
         <motion.button
           type="button"
           onClick={() => handleAnswer(true)}
           disabled={answered}
           whileTap={{ scale: 0.92 }}
-          className="min-w-[120px] min-h-[56px] px-8 py-4 rounded-2xl text-lg font-bold text-white
+          className="flex-1 min-h-[56px] px-6 sm:px-8 py-4 rounded-2xl text-lg font-bold text-white
             bg-gradient-to-b from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-200
             hover:from-emerald-500 hover:to-emerald-700
             disabled:opacity-50 disabled:cursor-not-allowed
@@ -195,7 +195,7 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
           onClick={() => handleAnswer(false)}
           disabled={answered}
           whileTap={{ scale: 0.92 }}
-          className="min-w-[120px] min-h-[56px] px-8 py-4 rounded-2xl text-lg font-bold text-white
+          className="flex-1 min-h-[56px] px-6 sm:px-8 py-4 rounded-2xl text-lg font-bold text-white
             bg-gradient-to-b from-red-400 to-red-600 shadow-lg shadow-red-200
             hover:from-red-500 hover:to-red-700
             disabled:opacity-50 disabled:cursor-not-allowed
@@ -280,8 +280,8 @@ function ProduceTask({ question, onAnswer, answered }: ProduceTaskProps) {
             <motion.button
               key={option}
               type="button"
-              className={`flex flex-col items-center gap-2 px-5 py-4 rounded-2xl border-2 shadow-sm
-                min-w-[100px] min-h-[100px] font-bold text-lg text-slate-700
+              className={`flex flex-col items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 rounded-2xl border-2 shadow-sm
+                min-w-[80px] sm:min-w-[100px] min-h-[80px] sm:min-h-[100px] font-bold text-base sm:text-lg text-slate-700
                 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${bgClass}`}
               onClick={() => handleOption(option)}
               disabled={answered && state === 'idle'}
@@ -436,7 +436,7 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
       </div>
 
       {/* Buckets */}
-      <div className="flex flex-wrap gap-3 justify-center w-full" aria-label="Rhyme family buckets">
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 justify-center w-full" aria-label="Rhyme family buckets">
         {families.map((family, idx) => {
           const bucketState = bucketStates[idx] ?? 'idle';
           const wordsInBucket = allWords.filter((w) => placedWords[w] === idx);
@@ -456,8 +456,8 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
           return (
             <motion.div
               key={idx}
-              className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 bg-gradient-to-b shadow-md
-                min-w-[130px] min-h-[120px] transition-all ${colors.bg} ${stateClasses}`}
+              className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl border-2 bg-gradient-to-b shadow-md
+                min-h-[100px] sm:min-w-[130px] sm:min-h-[120px] transition-all ${colors.bg} ${stateClasses}`}
               onClick={() => handleBucketTap(idx)}
               role="button"
               tabIndex={0}

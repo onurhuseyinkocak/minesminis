@@ -196,7 +196,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
         transition={springGentle}
         className="bg-white border-2 border-gray-100 rounded-2xl p-6 flex flex-col items-center gap-3 shadow-sm"
       >
-        <p className="text-4xl font-black text-gray-800 tracking-tight">
+        <p className="text-3xl sm:text-4xl font-black text-gray-800 tracking-tight break-all">
           {question.word.english}
         </p>
         <button

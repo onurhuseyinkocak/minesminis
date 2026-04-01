@@ -6,7 +6,7 @@ import { usePremium } from '../contexts/PremiumContext';
 import {
   Crown, Check, Star, Sparkles, GraduationCap,
   ChevronDown, ChevronUp, Loader2, ExternalLink,
-  ShieldCheck, XCircle, CreditCard, X as XIcon,
+  ShieldCheck, XCircle, CreditCard,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -14,9 +14,9 @@ import PublicLayout from '../components/layout/PublicLayout';
 import { getApiBase } from '../utils/apiBase';
 import { supabase } from '../config/supabase';
 import { analytics } from '../services/analytics';
-import './Pricing.css';
+import { motion } from 'framer-motion';
 
-// ── Stripe Price IDs (from env) ─────────────────────────────────────────────
+// ── Stripe / LS Price IDs ───────────────────────────────────────────────────
 
 const STRIPE_PRICES = {
   premium_monthly: import.meta.env.VITE_STRIPE_PREMIUM_MONTHLY || '',
@@ -25,180 +25,62 @@ const STRIPE_PRICES = {
   classroom_yearly: import.meta.env.VITE_STRIPE_CLASSROOM_YEARLY || '',
 };
 
-// ── Lemon Squeezy variant IDs (legacy) ──────────────────────────────────────
-
 const LS_VARIANT_IDS = {
   premium_monthly: import.meta.env.VITE_LS_PREMIUM_MONTHLY || '',
   premium_yearly: import.meta.env.VITE_LS_PREMIUM_YEARLY || '',
 };
 
-// ── Detect if user is in Turkey ─────────────────────────────────────────────
-
 function useIsTurkishUser(): boolean {
   const { lang } = useLanguage();
   const [isTR, setIsTR] = useState(() => {
     if (lang === 'tr') return true;
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      return tz === 'Europe/Istanbul';
-    } catch {
-      return false;
-    }
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone === 'Europe/Istanbul'; } catch { return false; }
   });
-
-  useEffect(() => {
-    if (lang === 'tr') setIsTR(true);
-  }, [lang]);
-
+  useEffect(() => { if (lang === 'tr') setIsTR(true); }, [lang]);
   return isTR;
 }
 
-// ── Plan definitions ────────────────────────────────────────────────────────
+// ── Plans ───────────────────────────────────────────────────────────────────
 
 interface PlanDef {
-  id: string;
-  planKey: 'free' | 'premium' | 'classroom';
-  nameKey: string;
-  icon: ReactNode;
+  id: string; planKey: 'free' | 'premium' | 'classroom'; nameKey: string; icon: ReactNode;
   priceTRY: { monthly: number; quarterly: number; yearly: number; lifetime: number };
   priceUSD: { monthly: number; quarterly: number; yearly: number; lifetime: number };
-  stripePriceMonthly: string;
-  stripePriceYearly: string;
-  lsVariantMonthly: string;
-  lsVariantYearly: string;
-  iyzicoMonthly: number;
-  iyzicoYearly: number;
-  features: string[];
-  /** Feature keys listed here are shown with a "Coming Soon" badge */
-  comingSoonFeatures?: string[];
-  highlight?: boolean;
-  badge?: string;
+  stripePriceMonthly: string; stripePriceYearly: string;
+  lsVariantMonthly: string; lsVariantYearly: string;
+  iyzicoMonthly: number; iyzicoYearly: number;
+  features: string[]; comingSoonFeatures?: string[]; highlight?: boolean; badge?: string;
 }
 
-/** DB prices (defaults overridden by premium_plans fetch) */
-const DEFAULT_DB_PRICES = {
-  monthly: 49.99,
-  quarterly: 129.99,
-  yearly: 399.99,
-  lifetime: 999.99,
-};
+const DEFAULT_DB_PRICES = { monthly: 49.99, quarterly: 129.99, yearly: 399.99, lifetime: 999.99 };
 
 function buildPlans(dbPrices: typeof DEFAULT_DB_PRICES): PlanDef[] {
   return [
-    {
-      id: 'free',
-      planKey: 'free',
-      nameKey: 'pricing.planFree',
-      icon: <Star size={32} />,
-      priceTRY: { monthly: 0, quarterly: 0, yearly: 0, lifetime: 0 },
-      priceUSD: { monthly: 0, quarterly: 0, yearly: 0, lifetime: 0 },
-      stripePriceMonthly: '',
-      stripePriceYearly: '',
-      lsVariantMonthly: '',
-      lsVariantYearly: '',
-      iyzicoMonthly: 0,
-      iyzicoYearly: 0,
-      features: [
-        'pricing.featureFree1',
-        'pricing.featureFree2',
-        'pricing.featureFree3',
-        'pricing.featureFree4',
-        'pricing.featureFree5',
-      ],
-    },
-    {
-      id: 'premium',
-      planKey: 'premium',
-      nameKey: 'pricing.planFamily',
-      icon: <Crown size={32} />,
-      priceTRY: {
-        monthly: dbPrices.monthly,
-        quarterly: dbPrices.quarterly,
-        yearly: dbPrices.yearly,
-        lifetime: dbPrices.lifetime,
-      },
+    { id: 'free', planKey: 'free', nameKey: 'pricing.planFree', icon: <Star size={28} />,
+      priceTRY: { monthly: 0, quarterly: 0, yearly: 0, lifetime: 0 }, priceUSD: { monthly: 0, quarterly: 0, yearly: 0, lifetime: 0 },
+      stripePriceMonthly: '', stripePriceYearly: '', lsVariantMonthly: '', lsVariantYearly: '', iyzicoMonthly: 0, iyzicoYearly: 0,
+      features: ['pricing.featureFree1', 'pricing.featureFree2', 'pricing.featureFree3', 'pricing.featureFree4', 'pricing.featureFree5'] },
+    { id: 'premium', planKey: 'premium', nameKey: 'pricing.planFamily', icon: <Crown size={28} />,
+      priceTRY: { monthly: dbPrices.monthly, quarterly: dbPrices.quarterly, yearly: dbPrices.yearly, lifetime: dbPrices.lifetime },
       priceUSD: { monthly: 4.99, quarterly: 12.99, yearly: 39.99, lifetime: 99.99 },
-      stripePriceMonthly: STRIPE_PRICES.premium_monthly,
-      stripePriceYearly: STRIPE_PRICES.premium_yearly,
-      lsVariantMonthly: LS_VARIANT_IDS.premium_monthly,
-      lsVariantYearly: LS_VARIANT_IDS.premium_yearly,
-      iyzicoMonthly: dbPrices.monthly,
-      iyzicoYearly: dbPrices.yearly,
-      highlight: true,
-      badge: 'pricing.mostPopular',
-      features: [
-        'pricing.featurePremium1',
-        'pricing.featurePremium2',
-        'pricing.featurePremium3',
-        'pricing.featurePremium4',
-        'pricing.featureFamily2',
-        'pricing.featureFamily3',
-        'pricing.featurePremium7',
-      ],
-    },
-    {
-      id: 'classroom',
-      planKey: 'classroom',
-      nameKey: 'pricing.planClassroom',
-      icon: <GraduationCap size={32} />,
-      priceTRY: {
-        monthly: dbPrices.monthly * 2,
-        quarterly: dbPrices.quarterly * 2,
-        yearly: dbPrices.yearly * 2,
-        lifetime: dbPrices.lifetime * 2,
-      },
+      stripePriceMonthly: STRIPE_PRICES.premium_monthly, stripePriceYearly: STRIPE_PRICES.premium_yearly,
+      lsVariantMonthly: LS_VARIANT_IDS.premium_monthly, lsVariantYearly: LS_VARIANT_IDS.premium_yearly,
+      iyzicoMonthly: dbPrices.monthly, iyzicoYearly: dbPrices.yearly, highlight: true, badge: 'pricing.mostPopular',
+      features: ['pricing.featurePremium1', 'pricing.featurePremium2', 'pricing.featurePremium3', 'pricing.featurePremium4', 'pricing.featureFamily2', 'pricing.featureFamily3', 'pricing.featurePremium7'] },
+    { id: 'classroom', planKey: 'classroom', nameKey: 'pricing.planClassroom', icon: <GraduationCap size={28} />,
+      priceTRY: { monthly: dbPrices.monthly * 2, quarterly: dbPrices.quarterly * 2, yearly: dbPrices.yearly * 2, lifetime: dbPrices.lifetime * 2 },
       priceUSD: { monthly: 9.99, quarterly: 24.99, yearly: 79.99, lifetime: 199.99 },
-      stripePriceMonthly: STRIPE_PRICES.classroom_monthly,
-      stripePriceYearly: STRIPE_PRICES.classroom_yearly,
-      lsVariantMonthly: '',
-      lsVariantYearly: '',
-      iyzicoMonthly: dbPrices.monthly * 2,
-      iyzicoYearly: dbPrices.yearly * 2,
-      features: [
-        'pricing.featureClassroom1',
-        'pricing.featureClassroom2',
-        'pricing.featureClassroom3',
-        'pricing.featureClassroom4',
-        'pricing.featureClassroom5',
-        'pricing.featureClassroom6',
-        'pricing.featureClassroom7',
-      ],
-      // featureClassroom4 (smartboard mode) and featureClassroom6 (assignment tracking visible to students)
-      // are not yet implemented — mark them with a "Coming Soon" badge
-      comingSoonFeatures: ['pricing.featureClassroom4', 'pricing.featureClassroom6'],
-    },
+      stripePriceMonthly: STRIPE_PRICES.classroom_monthly, stripePriceYearly: STRIPE_PRICES.classroom_yearly,
+      lsVariantMonthly: '', lsVariantYearly: '', iyzicoMonthly: dbPrices.monthly * 2, iyzicoYearly: dbPrices.yearly * 2,
+      features: ['pricing.featureClassroom1', 'pricing.featureClassroom2', 'pricing.featureClassroom3', 'pricing.featureClassroom4', 'pricing.featureClassroom5', 'pricing.featureClassroom6', 'pricing.featureClassroom7'],
+      comingSoonFeatures: ['pricing.featureClassroom4', 'pricing.featureClassroom6'] },
   ];
 }
 
-// ── Feature comparison table ────────────────────────────────────────────────
-
-interface ComparisonRow {
-  labelKey: string;
-  free: string | boolean;
-  premium: string | boolean;
-  classroom: string | boolean;
-}
-
-const COMPARISON_ROWS: ComparisonRow[] = [
-  { labelKey: 'pricing.compLessons', free: '3/day', premium: true, classroom: true },
-  { labelKey: 'pricing.compGames', free: 'basic', premium: true, classroom: true },
-  { labelKey: 'pricing.compStories', free: false, premium: true, classroom: true },
-  { labelKey: 'pricing.compChildren', free: '1', premium: '4', classroom: '-' },
-  { labelKey: 'pricing.compStudents', free: '-', premium: '-', classroom: '30' },
-  { labelKey: 'pricing.compProgress', free: false, premium: true, classroom: true },
-  { labelKey: 'pricing.compOffline', free: false, premium: true, classroom: true },
-  { labelKey: 'pricing.compClassroom', free: false, premium: false, classroom: true },
-];
-
-// ── FAQ data ────────────────────────────────────────────────────────────────
-
 const FAQ_KEYS = [
-  { q: 'pricing.faqQ1', a: 'pricing.faqA1' },
-  { q: 'pricing.faqQ2', a: 'pricing.faqA2' },
-  { q: 'pricing.faqQ3', a: 'pricing.faqA3' },
-  { q: 'pricing.faqQ4', a: 'pricing.faqA4' },
-  { q: 'pricing.faqQ5', a: 'pricing.faqA5' },
-  { q: 'pricing.faqQ6', a: 'pricing.faqA6' },
+  { q: 'pricing.faqQ1', a: 'pricing.faqA1' }, { q: 'pricing.faqQ2', a: 'pricing.faqA2' },
+  { q: 'pricing.faqQ3', a: 'pricing.faqA3' }, { q: 'pricing.faqQ4', a: 'pricing.faqA4' },
+  { q: 'pricing.faqQ5', a: 'pricing.faqA5' }, { q: 'pricing.faqQ6', a: 'pricing.faqA6' },
 ];
 
 // ── Component ───────────────────────────────────────────────────────────────
@@ -206,16 +88,9 @@ const FAQ_KEYS = [
 export default function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const {
-    plan: currentPlan,
-    subscriptionStatus,
-    checkoutUrl,
-    customerPortalUrl,
-    refreshSubscription,
-    isLoading: subLoading,
-  } = usePremium();
+  const { plan: currentPlan, subscriptionStatus, checkoutUrl, customerPortalUrl, refreshSubscription, isLoading: subLoading } = usePremium();
   const { t, lang } = useLanguage();
-  usePageTitle('Fiyatlandırma', 'Pricing');
+  usePageTitle('Fiyatlandirma', 'Pricing');
   const isTR = useIsTurkishUser();
   const API = getApiBase();
 
@@ -223,21 +98,14 @@ export default function Pricing() {
   const [isYearly, setIsYearly] = useState(true);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [showComparison, setShowComparison] = useState(false);
   const [dbPrices, setDbPrices] = useState(DEFAULT_DB_PRICES);
 
-  // Fetch actual prices from premium_plans table
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const { data } = await supabase
-          .from('premium_plans')
-          .select('id, price')
-          .eq('is_active', true);
-
+        const { data } = await supabase.from('premium_plans').select('id, price').eq('is_active', true);
         if (cancelled || !data) return;
-
         const prices = { ...DEFAULT_DB_PRICES };
         for (const row of data as { id: string; price: number }[]) {
           if (row.id === 'monthly') prices.monthly = row.price;
@@ -246,33 +114,21 @@ export default function Pricing() {
           else if (row.id === 'lifetime') prices.lifetime = row.price;
         }
         setDbPrices(prices);
-      } catch {
-        // Use defaults
-      }
+      } catch {}
     })();
     return () => { cancelled = true; };
   }, []);
 
   const PLANS = useMemo(() => buildPlans(dbPrices), [dbPrices]);
 
-  // Handle checkout return status
   useEffect(() => {
     const status = searchParams.get('status');
-    if (status === 'success') {
-      toast.success(t('pricing.paymentSuccess'));
-      refreshSubscription();
-      setSearchParams({}, { replace: true });
-    } else if (status === 'cancelled') {
-      toast(t('pricing.checkoutCancelled'));
-      setSearchParams({}, { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run only on mount to read URL params from checkout redirect; re-running on dep changes would duplicate toasts
+    if (status === 'success') { toast.success(t('pricing.paymentSuccess')); refreshSubscription(); setSearchParams({}, { replace: true }); }
+    else if (status === 'cancelled') { toast(t('pricing.checkoutCancelled')); setSearchParams({}, { replace: true }); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isCurrentPlan = (planId: string) =>
-    currentPlan === planId && subscriptionStatus === 'active';
-
-  // ── Stripe checkout ─────────────────────────────────────────────────────
+  const isCurrentPlan = (planId: string) => currentPlan === planId && subscriptionStatus === 'active';
 
   const handleStripeCheckout = useCallback(async (priceId: string, plan: string) => {
     if (!user) return;
@@ -280,30 +136,14 @@ export default function Pricing() {
       const token = await user.getIdToken();
       const csrfToken = document.cookie.match(/csrf_token=([^;]+)/)?.[1] || '';
       const res = await fetch(`${API}/api/payment/stripe/create-checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-        },
-        body: JSON.stringify({
-          priceId,
-          email: user.email,
-          plan,
-        }),
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}) },
+        body: JSON.stringify({ priceId, email: user.email, plan }),
       });
       if (!res.ok) throw new Error('Stripe checkout failed');
       const data = await res.json();
-      if (data.url) {
-        analytics.subscriptionStarted(plan, isYearly ? 'yearly' : 'monthly', 'stripe');
-        window.location.href = data.url;
-      }
-    } catch {
-      toast.error(lang === 'tr' ? 'Ödeme başlatılamadı. Tekrar deneyin.' : 'Could not start checkout. Please try again.');
-    }
+      if (data.url) { analytics.subscriptionStarted(plan, isYearly ? 'yearly' : 'monthly', 'stripe'); window.location.href = data.url; }
+    } catch { toast.error(lang === 'tr' ? 'Odeme baslatilamadi.' : 'Could not start checkout.'); }
   }, [user, API, lang, isYearly]);
-
-  // ── Iyzico checkout ─────────────────────────────────────────────────────
 
   const handleIyzicoCheckout = useCallback(async (price: number, plan: string) => {
     if (!user) return;
@@ -311,82 +151,40 @@ export default function Pricing() {
       const token = await user.getIdToken();
       const csrfToken = document.cookie.match(/csrf_token=([^;]+)/)?.[1] || '';
       const res = await fetch(`${API}/api/payment/iyzico/initialize`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-        },
-        body: JSON.stringify({
-          price,
-          userId: user.uid,
-          email: user.email,
-          plan,
-        }),
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}) },
+        body: JSON.stringify({ price, userId: user.uid, email: user.email, plan }),
       });
       if (!res.ok) throw new Error('Iyzico init failed');
       const data = await res.json();
       if (data.checkoutFormContent) {
         analytics.subscriptionStarted(plan, isYearly ? 'yearly' : 'monthly', 'iyzico');
-        // Open iyzico form in a new window or inject into page
         const win = window.open('', '_blank', 'width=500,height=600');
-        if (win) {
-          win.document.write(data.checkoutFormContent);
-        }
+        if (win) win.document.write(data.checkoutFormContent);
       }
-    } catch {
-      toast.error(lang === 'tr' ? 'Ödeme başlatılamadı. Tekrar deneyin.' : 'Could not start checkout. Please try again.');
-    }
+    } catch { toast.error(lang === 'tr' ? 'Odeme baslatilamadi.' : 'Could not start checkout.'); }
   }, [user, API, lang, isYearly]);
 
-  // ── Subscribe handler ─────────────────────────────────────────────────────
-
   const handleSubscribe = useCallback(async (plan: PlanDef) => {
-    if (!user) {
-      navigate('/login', { state: { from: '/pricing' } });
-      return;
-    }
-
+    if (!user) { navigate('/login', { state: { from: '/pricing' } }); return; }
     if (isCurrentPlan(plan.id)) {
-      // Already on this plan — open portal
       setLoadingPlan(plan.id);
       const url = await customerPortalUrl();
       setLoadingPlan(null);
-      if (url) {
-        window.open(url, '_blank');
-      } else {
-        toast.error(t('pricing.portalError'));
-      }
+      if (url) window.open(url, '_blank');
+      else toast.error(t('pricing.portalError'));
       return;
     }
-
     setLoadingPlan(plan.id);
-
-    if (isTR) {
-      // Turkish users: Iyzico
-      const price = isYearly ? plan.iyzicoYearly : plan.iyzicoMonthly;
-      await handleIyzicoCheckout(price, plan.planKey);
-    } else {
-      // International users: Stripe
+    if (isTR) { await handleIyzicoCheckout(isYearly ? plan.iyzicoYearly : plan.iyzicoMonthly, plan.planKey); }
+    else {
       const priceId = isYearly ? plan.stripePriceYearly : plan.stripePriceMonthly;
-      if (priceId) {
-        await handleStripeCheckout(priceId, plan.planKey);
-      } else {
-        // Fallback to Lemon Squeezy
+      if (priceId) { await handleStripeCheckout(priceId, plan.planKey); }
+      else {
         const variantId = isYearly ? plan.lsVariantYearly : plan.lsVariantMonthly;
-        if (variantId) {
-          const url = await checkoutUrl(variantId);
-          if (url) {
-            window.open(url, '_blank');
-          } else {
-            toast(t('pricing.paymentConfiguring'));
-          }
-        } else {
-          toast(t('pricing.paymentConfiguring'));
-        }
+        if (variantId) { const url = await checkoutUrl(variantId); if (url) window.open(url, '_blank'); else toast(t('pricing.paymentConfiguring')); }
+        else toast(t('pricing.paymentConfiguring'));
       }
     }
-
     setLoadingPlan(null);
   }, [user, isYearly, isTR, checkoutUrl, customerPortalUrl, navigate, currentPlan, subscriptionStatus, t, handleStripeCheckout, handleIyzicoCheckout]);
 
@@ -412,63 +210,42 @@ export default function Pricing() {
     return Math.round(((prices.monthly * 12 - prices.yearly) / (prices.monthly * 12)) * 100);
   };
 
-  const planNameMap = useMemo<Record<string, string>>(() => ({
-    free: t('pricing.planFree'),
-    premium: t('pricing.planFamily'),
-    classroom: t('pricing.planClassroom'),
-  }), [t]);
-
-  // Check if a plan has a payment method configured
   const hasPaymentMethod = (plan: PlanDef): boolean => {
     if (plan.id === 'free') return true;
     if (isTR) return plan.iyzicoMonthly > 0;
-    const priceId = isYearly ? plan.stripePriceYearly : plan.stripePriceMonthly;
-    const lsId = isYearly ? plan.lsVariantYearly : plan.lsVariantMonthly;
-    return !!(priceId || lsId);
+    return !!(isYearly ? plan.stripePriceYearly : plan.stripePriceMonthly) || !!(isYearly ? plan.lsVariantYearly : plan.lsVariantMonthly);
   };
+
+  const planNameMap = useMemo<Record<string, string>>(() => ({ free: t('pricing.planFree'), premium: t('pricing.planFamily'), classroom: t('pricing.planClassroom') }), [t]);
 
   return (
     <PublicLayout>
-      <div className="pricing-page">
-        <div className="pricing-container">
+      <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 px-4 py-6 pb-24">
+        <div className="max-w-lg mx-auto">
 
-          {/* ── Hero ─────────────────────────────────────────────────── */}
-          <section className="pricing-hero">
-            <div className="pricing-hero-badge">
-              <Sparkles size={18} />
-              <span>{t('pricing.badge')}</span>
+          {/* Hero */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-600 text-xs font-bold px-3 py-1.5 rounded-full mb-3">
+              <Sparkles size={14} /> {t('pricing.badge')}
             </div>
-            <h1>{t('pricing.title')}</h1>
-            <p>{t('pricing.subtitle')}</p>
-            <div className="hero-sparkles" aria-hidden="true">
-              <Sparkles className="sparkle-1" size={26} />
-              <Sparkles className="sparkle-2" size={20} />
-              <Sparkles className="sparkle-3" size={16} />
-            </div>
-          </section>
+            <h1 className="text-2xl font-bold text-gray-800">{t('pricing.title')}</h1>
+            <p className="text-sm text-gray-500 mt-1">{t('pricing.subtitle')}</p>
+          </div>
 
-          {/* ── Billing toggle ──────────────────────────────────────── */}
-          <div className="billing-toggle">
-            <button
-              type="button"
-              className={`toggle-btn ${!isYearly ? 'active' : ''}`}
-              onClick={() => setIsYearly(false)}
-            >
+          {/* Billing toggle */}
+          <div className="flex bg-white rounded-3xl p-1 max-w-xs mx-auto mb-6 shadow-sm">
+            <button type="button" className={`flex-1 min-h-[48px] rounded-3xl text-sm font-bold transition-all ${!isYearly ? 'bg-orange-500 text-white shadow' : 'text-gray-500'}`} onClick={() => setIsYearly(false)}>
               {t('pricing.monthly')}
             </button>
-            <button
-              type="button"
-              className={`toggle-btn ${isYearly ? 'active' : ''}`}
-              onClick={() => setIsYearly(true)}
-            >
+            <button type="button" className={`flex-1 min-h-[48px] rounded-3xl text-sm font-bold transition-all flex items-center justify-center gap-1 ${isYearly ? 'bg-orange-500 text-white shadow' : 'text-gray-500'}`} onClick={() => setIsYearly(true)}>
               {t('pricing.yearly')}
-              <span className="save-badge">{t('pricing.saveUpTo')}</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isYearly ? 'bg-white/20' : 'bg-emerald-100 text-emerald-600'}`}>{t('pricing.saveUpTo')}</span>
             </button>
           </div>
 
-          {/* ── Plan cards ──────────────────────────────────────────── */}
-          <div className="pricing-grid pricing-grid--3col">
-            {PLANS.map((plan) => {
+          {/* Plan cards */}
+          <div className="flex flex-col gap-4 mb-6">
+            {PLANS.map((plan, i) => {
               const isCurrent = isCurrentPlan(plan.id);
               const isLoadingThis = loadingPlan === plan.id;
               const isFree = plan.id === 'free';
@@ -476,49 +253,46 @@ export default function Pricing() {
               const paymentReady = hasPaymentMethod(plan);
 
               return (
-                <div
+                <motion.div
                   key={plan.id}
-                  className={`plan-card ${plan.highlight ? 'plan-card--highlight' : ''} ${isCurrent ? 'plan-card--current' : ''}`}
+                  initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ type: 'spring', damping: 20, stiffness: 300, delay: i * 0.08 }}
+                  className={`bg-white rounded-3xl p-5 shadow-sm relative ${plan.highlight ? 'ring-2 ring-amber-400' : ''} ${isCurrent ? 'ring-2 ring-emerald-400' : ''}`}
                 >
                   {plan.badge && (
-                    <div className="plan-badge">{t(plan.badge)}</div>
+                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-amber-400 text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                      {t(plan.badge)}
+                    </span>
                   )}
 
-                  <div className="plan-icon">{plan.icon}</div>
-                  <h3 className="plan-name">{planNameMap[plan.id] || plan.id}</h3>
-
-                  <div className="plan-price">
-                    {isFree ? (
-                      <span className="price-amount">{t('pricing.free')}</span>
-                    ) : (
-                      <>
-                        <span className="price-amount">{formatPrice(plan)}</span>
-                        <span className="price-period">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
-                      </>
-                    )}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${plan.highlight ? 'bg-amber-100 text-amber-500' : 'bg-gray-100 text-gray-500'}`}>
+                      {plan.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-gray-800">{planNameMap[plan.id] || plan.id}</h3>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-bold text-gray-800">{isFree ? t('pricing.free') : formatPrice(plan)}</span>
+                        {!isFree && <span className="text-xs text-gray-400">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>}
+                      </div>
+                    </div>
                   </div>
 
                   {!isFree && isYearly && (
-                    <div className="plan-per-month">
+                    <p className="text-xs text-gray-500 mb-3">
                       {formatPerMonth(plan)}{t('pricing.perMonth')}
-                      {savings > 0 && (
-                        <span className="plan-savings">{savings}% {t('pricing.off')}</span>
-                      )}
-                    </div>
+                      {savings > 0 && <span className="ml-1.5 text-emerald-600 font-bold">{savings}% {t('pricing.off')}</span>}
+                    </p>
                   )}
 
-                  <ul className="plan-features">
-                    {plan.features.map((f, i) => {
+                  <ul className="flex flex-col gap-1.5 mb-4">
+                    {plan.features.map((f, fi) => {
                       const isComingSoon = plan.comingSoonFeatures?.includes(f);
                       return (
-                        <li key={i} className={isComingSoon ? 'feature-coming-soon' : ''}>
-                          <Check size={16} className="feature-check" />
+                        <li key={fi} className="flex items-start gap-2 text-xs text-gray-600">
+                          <Check size={14} className="text-emerald-500 flex-shrink-0 mt-0.5" />
                           <span>{t(f)}</span>
-                          {isComingSoon && (
-                            <span className="coming-soon-badge">
-                              {lang === 'tr' ? 'Yakında' : 'Coming Soon'}
-                            </span>
-                          )}
+                          {isComingSoon && <span className="text-[9px] bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full ml-auto">{lang === 'tr' ? 'Yakinda' : 'Soon'}</span>}
                         </li>
                       );
                     })}
@@ -526,146 +300,71 @@ export default function Pricing() {
 
                   <button
                     type="button"
-                    className={`plan-cta ${plan.highlight ? 'plan-cta--primary' : ''} ${isCurrent ? 'plan-cta--current' : ''}`}
+                    className={`w-full min-h-[48px] rounded-3xl text-sm font-bold transition-all ${
+                      plan.highlight ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-200' :
+                      isCurrent ? 'bg-emerald-100 text-emerald-700' :
+                      'bg-gray-100 text-gray-700'
+                    } disabled:opacity-40`}
                     disabled={subLoading || isLoadingThis || (!isFree && !isCurrent && !paymentReady)}
                     onClick={() => {
-                      if (isFree) {
-                        if (!user) navigate('/login');
-                        else navigate('/dashboard');
-                      } else {
-                        handleSubscribe(plan);
-                      }
+                      if (isFree) { if (!user) navigate('/login'); else navigate('/dashboard'); }
+                      else handleSubscribe(plan);
                     }}
                   >
-                    {isLoadingThis ? (
-                      <Loader2 size={18} className="spin" />
-                    ) : isCurrent ? (
-                      <>{t('pricing.managePlan')} <ExternalLink size={14} /></>
-                    ) : isFree ? (
-                      user ? t('pricing.currentPlan') : t('pricing.getStarted')
-                    ) : !paymentReady ? (
-                      t('pricing.comingSoon')
-                    ) : (
-                      <>
-                        {lang === 'tr' ? 'Şimdi Başla' : 'Start Now'}
-                      </>
-                    )}
+                    {isLoadingThis ? <Loader2 size={18} className="animate-spin mx-auto" /> :
+                     isCurrent ? <>{t('pricing.managePlan')} <ExternalLink size={14} className="inline ml-1" /></> :
+                     isFree ? (user ? t('pricing.currentPlan') : t('pricing.getStarted')) :
+                     !paymentReady ? t('pricing.comingSoon') :
+                     (lang === 'tr' ? 'Simdi Basla' : 'Start Now')}
                   </button>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
-          {/* ── Trust badges ──────────────────────────────────────── */}
-          <div className="pricing-trust-badges">
-            <div className="trust-badge">
-              <ShieldCheck size={18} />
-              <span>SSL {lang === 'tr' ? 'Güvenli' : 'Secure'}</span>
-            </div>
-            <div className="trust-badge">
-              <XCircle size={18} />
-              <span>{lang === 'tr' ? 'İptal Kolayca' : 'Cancel Anytime'}</span>
-            </div>
-            <div className="trust-badge">
-              <CreditCard size={18} />
-              <span>{isTR ? 'Iyzico' : 'Stripe'}</span>
-            </div>
+          {/* Trust badges */}
+          <div className="flex justify-center gap-4 mb-4">
+            {[
+              { icon: <ShieldCheck size={16} />, label: `SSL ${lang === 'tr' ? 'Guvenli' : 'Secure'}` },
+              { icon: <XCircle size={16} />, label: lang === 'tr' ? 'Iptal Kolayca' : 'Cancel Anytime' },
+              { icon: <CreditCard size={16} />, label: isTR ? 'Iyzico' : 'Stripe' },
+            ].map((b, i) => (
+              <span key={i} className="flex items-center gap-1 text-[11px] text-gray-400">{b.icon} {b.label}</span>
+            ))}
           </div>
 
-          {/* ── Money-back guarantee ─────────────────────────────── */}
-          <div className="pricing-guarantee">
-            <ShieldCheck size={18} />
-            <span>
-              {lang === 'tr'
-                ? '7 gün içinde memnun kalmazsanız tam iade — risksiz deneyin'
-                : '7-day money-back guarantee — try it risk-free'}
-            </span>
+          {/* Guarantee */}
+          <div className="flex items-center justify-center gap-2 text-xs text-gray-500 bg-emerald-50 rounded-2xl py-3 px-4 mb-6">
+            <ShieldCheck size={16} className="text-emerald-500 flex-shrink-0" />
+            {lang === 'tr' ? '7 gun icinde tam iade -- risksiz deneyin' : '7-day money-back guarantee -- try it risk-free'}
           </div>
 
-          {/* ── Feature Comparison Toggle ─────────────────────────── */}
-          <section className="pricing-comparison-section">
-            <button
-              type="button"
-              className="comparison-toggle"
-              onClick={() => setShowComparison(!showComparison)}
-            >
-              <span>{lang === 'tr' ? 'Özellik Karşılaştırması' : 'Feature Comparison'}</span>
-              {showComparison ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
-
-            {showComparison && (
-              <div className="comparison-table-wrap">
-                <table className="comparison-table">
-                  <thead>
-                    <tr>
-                      <th>{lang === 'tr' ? 'Özellik' : 'Feature'}</th>
-                      <th>{t('pricing.planFree')}</th>
-                      <th className="comparison-highlight">{t('pricing.planFamily')}</th>
-                      <th>{t('pricing.planClassroom')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {COMPARISON_ROWS.map((row, i) => (
-                      <tr key={i}>
-                        <td>{t(row.labelKey)}</td>
-                        {([row.free, row.premium, row.classroom] as Array<string | boolean>).map((val, ci) => (
-                          <td key={ci} className={ci === 1 ? 'comparison-highlight' : ''}>
-                            {val === true ? (
-                              <Check size={18} className="feature-check" />
-                            ) : val === false ? (
-                              <XIcon size={16} className="feature-cross" />
-                            ) : (
-                              <span>{val}</span>
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {/* FAQ */}
+          <p className="text-sm font-bold text-gray-700 mb-3">{t('pricing.faq')}</p>
+          <div className="flex flex-col gap-2 mb-6">
+            {FAQ_KEYS.map((item, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <button type="button" className="w-full min-h-[48px] flex items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-700" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                  <span>{t(item.q)}</span>
+                  {openFaq === i ? <ChevronUp size={18} className="text-gray-400" /> : <ChevronDown size={18} className="text-gray-400" />}
+                </button>
+                {openFaq === i && (
+                  <div className="px-4 pb-3">
+                    <p className="text-xs text-gray-500 leading-relaxed">{t(item.a)}</p>
+                  </div>
+                )}
               </div>
-            )}
-          </section>
+            ))}
+          </div>
 
-          {/* ── FAQ ─────────────────────────────────────────────────── */}
-          <section className="pricing-faq">
-            <h2>{t('pricing.faq')}</h2>
-            <div className="faq-list">
-              {FAQ_KEYS.map((item, i) => (
-                <div
-                  key={i}
-                  className={`faq-item ${openFaq === i ? 'faq-item--open' : ''}`}
-                >
-                  <button
-                    type="button"
-                    className="faq-question"
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  >
-                    <span>{t(item.q)}</span>
-                    {openFaq === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                  </button>
-                  {openFaq === i && (
-                    <div className="faq-answer">
-                      <p>{t(item.a)}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ── CTA ─────────────────────────────────────────────────── */}
+          {/* CTA */}
           {!user && (
-            <section className="pricing-cta-section">
-              <p>{t('pricing.signUpCta')}</p>
-              <button
-                type="button"
-                className="pricing-cta-btn"
-                onClick={() => navigate('/login', { state: { from: '/pricing' } })}
-              >
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-3">{t('pricing.signUpCta')}</p>
+              <button type="button" className="min-h-[48px] px-6 bg-orange-500 text-white text-sm font-bold rounded-3xl" onClick={() => navigate('/login', { state: { from: '/pricing' } })}>
                 {t('pricing.createFreeAccount')}
               </button>
-            </section>
+            </div>
           )}
         </div>
       </div>

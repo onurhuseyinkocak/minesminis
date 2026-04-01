@@ -241,7 +241,7 @@ export default function SentenceBuilder({ onComplete }: SentenceBuilderProps) {
             <motion.div
               key={i}
               className={`
-                px-4 py-2.5 min-h-[48px] min-w-[56px] rounded-xl border-2 flex items-center justify-center font-semibold text-base
+                px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] sm:min-h-[48px] min-w-[48px] sm:min-w-[56px] rounded-xl border-2 flex items-center justify-center font-semibold text-sm sm:text-base
                 ${isFilled ? 'bg-white border-indigo-300 text-gray-800' : 'bg-gray-50 border-dashed border-gray-300 text-transparent'}
                 ${isCorrectFb && isFilled ? 'bg-emerald-50 border-emerald-400 text-emerald-700' : ''}
                 ${isWrongFb && isFilled ? 'bg-red-50 border-red-300 text-red-600' : ''}

@@ -299,7 +299,7 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
 
   return (
     <div
-      className="flex flex-col gap-5 p-5 bg-gradient-to-b from-sky-50 to-white rounded-3xl min-h-[480px]"
+      className="flex flex-col gap-4 sm:gap-5 p-4 sm:p-5 bg-gradient-to-b from-sky-50 to-white rounded-3xl min-h-[480px]"
       role="application"
       aria-label="Phonics blend game"
     >
@@ -383,7 +383,7 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
                     onClick={() => handleTileTap(index)}
                     disabled={phase === 'blending'}
                     aria-label={`Sound: ${sound}`}
-                    className="flex flex-col items-center justify-center min-w-[72px] min-h-[80px] px-4 py-3 rounded-2xl border-2 font-bold text-2xl cursor-pointer select-none transition-shadow"
+                    className="flex flex-col items-center justify-center min-w-[60px] sm:min-w-[72px] min-h-[68px] sm:min-h-[80px] px-3 sm:px-4 py-2 sm:py-3 rounded-2xl border-2 font-bold text-xl sm:text-2xl cursor-pointer select-none transition-shadow"
                     style={{
                       backgroundColor: isTapped ? color.bg : '#F9FAFB',
                       borderColor: isTapped ? color.border : '#E5E7EB',

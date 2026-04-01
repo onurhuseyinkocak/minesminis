@@ -306,7 +306,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
       {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
       <div
-        className="flex flex-col gap-5 p-5 bg-gradient-to-b from-indigo-50 to-white rounded-3xl min-h-[480px]"
+        className="flex flex-col gap-4 sm:gap-5 p-4 sm:p-5 bg-gradient-to-b from-indigo-50 to-white rounded-3xl min-h-[480px]"
         role="application"
         aria-label="Listening challenge game"
       >
@@ -324,7 +324,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
         <ProgressBar value={progress} variant="success" size="md" animated />
 
         {/* Speaker area */}
-        <div className="flex flex-col items-center gap-4 p-6 bg-white rounded-3xl border-2 border-gray-100 shadow-sm">
+        <div className="flex flex-col items-center gap-4 p-4 sm:p-6 bg-white rounded-3xl border-2 border-gray-100 shadow-sm">
           <p className="text-base font-medium text-gray-600 text-center">
             {t('games.listenAndPickInstruction') || 'Listen to the word, then pick the right spelling!'}
           </p>
@@ -422,7 +422,7 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
                   onClick={() => handleSelect(index)}
                   disabled={feedback !== null || !hasPlayed}
                   aria-label={`Option: ${option.english}`}
-                  className={`flex items-center gap-4 px-5 py-4 min-h-[56px] rounded-2xl border-2 text-left transition-colors ${
+                  className={`flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 min-h-[56px] rounded-2xl border-2 text-left transition-colors ${
                     isCorrectOption
                       ? 'bg-emerald-100 border-emerald-400'
                       : isWrongSelected

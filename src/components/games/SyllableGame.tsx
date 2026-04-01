@@ -462,8 +462,8 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
                   <motion.button
                     key={num}
                     type="button"
-                    className={`flex flex-col items-center gap-1 w-[72px] h-[80px] rounded-2xl border-2 shadow-sm
-                      font-extrabold text-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${bgClass}`}
+                    className={`flex flex-col items-center gap-1 w-[64px] h-[72px] sm:w-[72px] sm:h-[80px] rounded-2xl border-2 shadow-sm
+                      font-extrabold text-xl sm:text-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${bgClass}`}
                     onClick={() => handleChoice(num)}
                     disabled={answered && state === 'idle'}
                     aria-pressed={state !== 'idle'}

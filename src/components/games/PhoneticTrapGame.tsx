@@ -223,7 +223,7 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
       {/* Mouth position diagram */}
       <div className="flex flex-col gap-3">
         <p className="text-sm font-bold text-gray-700">{t('games.phoneticHowToMake')}</p>
-        <div className="flex gap-4 items-start bg-white rounded-2xl border border-gray-100 p-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start bg-white rounded-2xl border border-gray-100 p-4">
           <div className="shrink-0">
             <MouthDiagram trapId={trap.id} color={trap.color} />
           </div>
@@ -239,14 +239,15 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
         <p className="text-sm font-bold text-gray-700 mb-3">{t('games.phoneticCorrectVsError')}</p>
         <div className="flex flex-col gap-2">
           {trap.minimalPairs.map((pair) => (
-            <div key={pair.english} className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3">
+            <div key={pair.english} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 bg-white rounded-xl border border-gray-100 p-3">
               <div className="flex-1">
                 <span className="font-bold text-sm" style={{ color: trap.color }}>{pair.english}</span>
                 <span className="text-xs text-gray-400 ml-2">{pair.meaning}</span>
                 {isTr && <span className="text-xs text-gray-300 ml-1">({pair.meaningTr})</span>}
               </div>
-              <span className="text-xs text-gray-300 font-medium">vs</span>
-              <div className="flex-1 text-right">
+              <span className="text-xs text-gray-300 font-medium hidden sm:inline">vs</span>
+              <div className="flex-1 sm:text-right">
+                <span className="text-xs text-gray-300 font-medium sm:hidden mr-1">vs</span>
                 <span className="font-medium text-sm text-red-400 line-through">{pair.errorVersion}</span>
                 <span className="text-xs text-red-300 ml-2">{t('games.phoneticCommonError')}</span>
               </div>

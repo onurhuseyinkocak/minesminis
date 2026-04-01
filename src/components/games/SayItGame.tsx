@@ -433,7 +433,7 @@ export const SayItGame: React.FC<SayItGameProps> = ({
           <WordIllustration word={currentQuestion.word} size={110} />
 
           <div className="flex items-center gap-2">
-            <span className="text-3xl font-black text-gray-800">{currentQuestion.word}</span>
+            <span className="text-2xl sm:text-3xl font-black text-gray-800 break-all">{currentQuestion.word}</span>
             <SpeakButton text={currentQuestion.word} size="md" />
           </div>
           <div className="text-sm text-gray-400">{currentQuestion.wordTr}</div>

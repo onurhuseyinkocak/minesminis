@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Star, Clock, Users, Music, BookOpen, Heart, Search, X, Check, Eye } from 'lucide-react';
-import ContentPageHeader from '../components/ContentPageHeader';
-import './Videos.css';
+import { Play, Clock, X, Check, Music } from 'lucide-react';
 import { videoStore, type Video } from '../data/videoStore';
 import {
   PHONICS_GROUP_LABELS,
@@ -21,72 +19,34 @@ function isChildModeActive(settings: Record<string, unknown> | undefined): boole
   try { return localStorage.getItem('mm_child_mode') === 'true'; } catch { return false; }
 }
 
+const spring = { type: 'spring' as const, stiffness: 300, damping: 24 };
 
-const categoryIcons: Record<string, { icon: React.ReactNode; label: string }> = {
-  song: { icon: <Music size={14} />, label: 'Song' },
-  lesson: { icon: <BookOpen size={14} />, label: 'Lesson' },
-  story: { icon: <Heart size={14} />, label: 'Story' }
-};
-
-const phonicsTypeInfo: Record<PhonicsVideo['type'], { icon: React.ReactNode; label: string; color: string }> = {
-  song: { icon: <Music size={12} />, label: 'Song', color: 'var(--accent-orange)' },
-  lesson: { icon: <BookOpen size={12} />, label: 'Lesson', color: 'var(--accent-blue)' },
-  story: { icon: <Heart size={12} />, label: 'Story', color: 'var(--accent-purple)' },
-  review: { icon: <Eye size={12} />, label: 'Review', color: 'var(--mimi-green)' },
-};
+function VideoCardSkeleton() {
+  return <div className="w-full rounded-3xl bg-gray-100 animate-pulse aspect-video" />;
+}
 
 function Videos() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [videosLoading, setVideosLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [iframeError, setIframeError] = useState(false);
-  const [selectedGrade, setSelectedGrade] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState('');
   const [watchedIds, setWatchedIds] = useState<string[]>([]);
   const [watchedRegularIds, setWatchedRegularIds] = useState<Set<string>>(new Set());
-  const [expandedGroup, setExpandedGroup] = useState<number | null>(1);
   const { addXP, trackActivity } = useGamification();
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
   const { userProfile } = useAuth();
   const childMode = isChildModeActive(userProfile?.settings);
   usePageTitle('Videolar', 'Videos');
+  const isTr = lang === 'tr';
 
   useEffect(() => {
-    videoStore.fetchVideos().then((list) => {
-      setVideos(list);
-      setVideosLoading(false);
-    }).catch(() => {
-      setVideosLoading(false);
-    });
-    const unsubscribe = videoStore.subscribe((updatedVideos) => {
-      setVideos(updatedVideos);
-      setVideosLoading(false);
-    });
+    videoStore.fetchVideos().then((list) => { setVideos(list); setVideosLoading(false); }).catch(() => setVideosLoading(false));
+    const unsubscribe = videoStore.subscribe((v) => { setVideos(v); setVideosLoading(false); });
     setWatchedIds(getWatchedVideoIds());
     return () => unsubscribe?.();
   }, []);
 
-  // Reset iframe error state when a new video is selected
-  useEffect(() => {
-    setIframeError(false);
-  }, [selectedVideo]);
-
-  const grades = ['All', '2nd Grade', '3rd Grade', '4th Grade'] as const;
-  const gradeLabels: Record<string, string> = {
-    'All': t('videos.all'),
-    '2nd Grade': t('videos.grade2'),
-    '3rd Grade': t('videos.grade3'),
-    '4th Grade': t('videos.grade4'),
-  };
-
-  const filteredVideos = videos.filter(video => {
-    const matchesGrade = selectedGrade === 'All' || video.grade === selectedGrade;
-    const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      video.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesGrade && matchesSearch;
-  });
-
-  const popularVideos = videos.filter(v => v.isPopular);
+  useEffect(() => { setIframeError(false); }, [selectedVideo]);
 
   const handlePhonicsVideoClick = useCallback(async (video: PhonicsVideo) => {
     setSelectedVideo(video.youtubeId);
@@ -96,432 +56,204 @@ function Videos() {
       try {
         await addXP(10, 'Watched phonics video', { videoId: video.id, group: video.group });
         await trackActivity('video_watched', { videoId: video.id });
-      } catch {
-        // XP award failed silently
-      }
+      } catch { /* silent */ }
     }
   }, [addXP, trackActivity]);
 
   const handleRegularVideoClick = useCallback(async (video: Video) => {
     setSelectedVideo(video.youtube_id);
-    const isFirstWatch = !watchedRegularIds.has(video.id);
-    if (isFirstWatch) {
+    if (!watchedRegularIds.has(video.id)) {
       setWatchedRegularIds((prev) => new Set([...prev, video.id]));
-      try {
-        await addXP(5, 'Watched educational video', { videoId: video.id });
-      } catch {
-        // XP award failed silently
-      }
+      try { await addXP(5, 'Watched educational video', { videoId: video.id }); } catch { /* silent */ }
     }
   }, [addXP, watchedRegularIds]);
 
-  // Phonics groups 1-7
   const phonicsGroups = [1, 2, 3, 4, 5, 6, 7];
 
   return (
-    <div className="videos-page">
-      <ContentPageHeader
-        icon={Play}
-        title={t('videos.title')}
-        description={t('videos.description')}
-        iconColor="var(--error)"
-        filterSlot={
-          <div className="modern-tabs">
-            {grades.map((grade) => (
-              <button
-                key={grade}
-                type="button"
-                onClick={() => setSelectedGrade(grade)}
-                className={`modern-tab ${selectedGrade === grade ? 'active' : ''}`}
-              >
-                {gradeLabels[grade]}
-              </button>
-            ))}
+    <div className="min-h-screen bg-gradient-to-b from-red-50 to-white pb-24">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-red-100 px-4 py-3">
+        <div className="flex items-center gap-3 max-w-lg mx-auto">
+          <div className="w-10 h-10 rounded-2xl bg-red-100 flex items-center justify-center">
+            <Play size={20} className="text-red-500" />
           </div>
-        }
-      >
-        <div className="library-search-wrapper">
-          <input
-            type="text"
-            placeholder={t('videos.search')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="library-search-input"
-            aria-label={lang === 'tr' ? 'Video ara' : 'Search videos'}
-          />
-          <Search className="library-search-icon" size={20} />
+          <h1 className="text-lg font-bold text-gray-800 flex-1">{isTr ? 'Videolar' : 'Videos'}</h1>
         </div>
-      </ContentPageHeader>
+      </div>
 
-      {/* ================================================================
-          LOADING SKELETON — shown while initial video data fetches
-          ================================================================ */}
-      {videosLoading && (
-        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="skeleton" style={{ height: 64, borderRadius: 12 }} />
-          ))}
-        </div>
-      )}
-
-      {/* ================================================================
-          PHONICS VIDEOS SECTION — Grouped by phonics group
-          Only shown when no grade filter is active
-          ================================================================ */}
-      {!videosLoading && selectedGrade === 'All' && <motion.div
-        className="phonics-videos-section"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-      >
-        <div className="section-header">
-          <div className="section-title">
-            <Music size={24} color="var(--accent-orange)" />
-            <h2>{t('videos.phonicsTitle')}</h2>
+      <div className="max-w-lg mx-auto px-4 pt-4 space-y-6">
+        {/* Loading skeleton */}
+        {videosLoading && (
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => <VideoCardSkeleton key={i} />)}
           </div>
-          <p className="section-subtitle">{t('videos.phonicsSubtitle')}</p>
-        </div>
+        )}
 
-        <div className="phonics-groups-list">
-          {phonicsGroups.map((groupNum) => {
-            const groupVideos = getVideosForGroup(groupNum);
-            const isExpanded = expandedGroup === groupNum;
-            const watchedCount = groupVideos.filter((v) => watchedIds.includes(v.id)).length;
-            const allWatched = watchedCount === groupVideos.length;
-
-            return (
-              <motion.div
-                key={groupNum}
-                className={`phonics-group-block ${isExpanded ? 'expanded' : ''}`}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 * groupNum }}
-              >
-                {/* Group Header — Clickable to expand/collapse */}
-                <button
-                  className="phonics-group-header"
-                  onClick={() => setExpandedGroup(isExpanded ? null : groupNum)}
-                  type="button"
-                >
-                  <div className="phonics-group-header-left">
-                    <span className="phonics-group-number">G{groupNum}</span>
-                    <div className="phonics-group-info">
-                      <h3>{lang === 'tr' ? `Grup ${groupNum}` : `Group ${groupNum}`}: {PHONICS_GROUP_LABELS[groupNum]}</h3>
-                      <span className="phonics-group-watched">
-                        {allWatched ? (
-                          <><Check size={14} /> {t('videos.allWatched')}</>
-                        ) : (
-                          <>{watchedCount}/{groupVideos.length} {t('videos.watched')}</>
-                        )}
+        {/* Phonics section */}
+        {!videosLoading && (
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <Music size={20} className="text-orange-500" />
+              <h2 className="text-base font-bold text-gray-800">{isTr ? 'Fonetik Videolar' : 'Phonics Videos'}</h2>
+            </div>
+            <div className="space-y-3">
+              {phonicsGroups.map((groupNum) => {
+                const groupVideos = getVideosForGroup(groupNum);
+                const watchedCount = groupVideos.filter(v => watchedIds.includes(v.id)).length;
+                return (
+                  <div key={groupNum}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-7 h-7 rounded-xl bg-orange-100 flex items-center justify-center text-xs font-bold text-orange-600">
+                        {groupNum}
+                      </div>
+                      <span className="text-sm font-semibold text-gray-700 flex-1">
+                        {PHONICS_GROUP_LABELS[groupNum]}
                       </span>
+                      <span className="text-xs text-gray-400">{watchedCount}/{groupVideos.length}</span>
+                    </div>
+                    <div className="space-y-2">
+                      {groupVideos.map((video, idx) => {
+                        const watched = watchedIds.includes(video.id);
+                        return (
+                          <motion.button
+                            key={video.id}
+                            type="button"
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ ...spring, delay: idx * 0.05 }}
+                            onClick={() => handlePhonicsVideoClick(video)}
+                            className="w-full rounded-3xl overflow-hidden bg-white border-2 border-gray-100 shadow-sm active:scale-[0.97] transition-transform"
+                          >
+                            <div className="relative aspect-video">
+                              <img
+                                src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+                                alt={video.title}
+                                loading="lazy"
+                                className="w-full h-full object-cover"
+                                onError={(e) => { (e.currentTarget as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/default.jpg`; }}
+                              />
+                              <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                                  <Play size={24} className="text-red-500 ml-1" fill="currentColor" />
+                                </div>
+                              </div>
+                              {watched && (
+                                <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-green-400 flex items-center justify-center">
+                                  <Check size={14} className="text-white" />
+                                </div>
+                              )}
+                              <div className="absolute bottom-3 right-3 h-6 px-2 rounded-lg bg-black/60 text-white text-xs font-medium flex items-center gap-1">
+                                <Clock size={10} /> {video.duration}
+                              </div>
+                            </div>
+                            <div className="p-3 text-left">
+                              <h3 className="text-sm font-bold text-gray-800 leading-tight">{video.title}</h3>
+                            </div>
+                          </motion.button>
+                        );
+                      })}
                     </div>
                   </div>
-                  <span className={`phonics-group-chevron ${isExpanded ? 'open' : ''}`}>
-                    {'\u25BC'}
-                  </span>
-                </button>
-
-                {/* Group Videos — shown when expanded */}
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      className="phonics-group-videos"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                    >
-                      <div className="phonics-videos-grid">
-                        {groupVideos.map((video, idx) => {
-                          const watched = watchedIds.includes(video.id);
-                          const typeInfo = phonicsTypeInfo[video.type];
-                          return (
-                            <motion.div
-                              key={video.id}
-                              className={`phonics-video-card ${watched ? 'watched' : ''}`}
-                              initial={{ opacity: 0, scale: 0.95 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: idx * 0.06 }}
-                              onClick={() => handlePhonicsVideoClick(video)}
-                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePhonicsVideoClick(video); } }}
-                              role="button"
-                              tabIndex={0}
-                              aria-label={video.title}
-                              whileHover={{ y: -4, scale: 1.02 }}
-                            >
-                              <div className="phonics-video-thumbnail">
-                                <img
-                                  src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
-                                  alt={video.title}
-                                  loading="lazy"
-                                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/default.jpg`; }}
-                                />
-                                <div className="phonics-video-overlay">
-                                  <div className="phonics-play-circle">
-                                    <Play size={22} fill="white" />
-                                  </div>
-                                </div>
-                                {watched && (
-                                  <span className="phonics-watched-badge">
-                                    <Check size={14} />
-                                  </span>
-                                )}
-                                <span className="phonics-duration-badge">
-                                  <Clock size={11} /> {video.duration}
-                                </span>
-                              </div>
-                              <div className="phonics-video-info">
-                                <div className="phonics-video-meta">
-                                  <span
-                                    className="phonics-type-badge"
-                                    style={{ background: typeInfo.color }}
-                                  >
-                                    {typeInfo.icon} {typeInfo.label}
-                                  </span>
-                                  <span className="phonics-age-badge">{video.ageRange}</span>
-                                </div>
-                                <h4 className="phonics-video-title">{video.title}</h4>
-                                {watched && (
-                                  <span className="phonics-xp-earned">{t('videos.xpEarned')}</span>
-                                )}
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>}
-
-      {/* ================================================================
-          MORE VIDEOS — Grade-based (existing content)
-          ================================================================ */}
-      {!videosLoading && selectedGrade === 'All' && popularVideos.length > 0 && (
-        <motion.div
-          className="popular-section"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="section-header">
-            <div className="section-title">
-              <Star size={24} className="star-icon" color="var(--primary-light)" fill="var(--primary-light)" />
-              <h2>{t('videos.mostPopular')}</h2>
+                );
+              })}
             </div>
-            <p className="section-subtitle">{t('videos.kidsLoveThese')}</p>
-          </div>
+          </section>
+        )}
 
-          <div className="popular-scroll">
-            {popularVideos.map((video, index) => (
-              <motion.div
-                key={video.id}
-                className="popular-card"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * index }}
-                onClick={() => handleRegularVideoClick(video)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleRegularVideoClick(video); } }}
-                role="button"
-                tabIndex={0}
-                aria-label={video.title}
-                whileHover={{ y: -8 }}
-              >
-                <div className="popular-thumbnail">
-                  <img src={video.thumbnail} alt={video.title} loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }} />
-                  <div className="popular-overlay">
-                    <Play size={40} fill="white" />
+        {/* Regular videos */}
+        {!videosLoading && videos.length > 0 && (
+          <section>
+            <h2 className="text-base font-bold text-gray-800 mb-3">{isTr ? 'Daha Fazla Video' : 'More Videos'}</h2>
+            <div className="space-y-3">
+              {videos.map((video, idx) => (
+                <motion.button
+                  key={video.id}
+                  type="button"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...spring, delay: idx * 0.05 }}
+                  onClick={() => handleRegularVideoClick(video)}
+                  className="w-full rounded-3xl overflow-hidden bg-white border-2 border-gray-100 shadow-sm active:scale-[0.97] transition-transform"
+                >
+                  <div className="relative aspect-video">
+                    <img src={video.thumbnail} alt={video.title} loading="lazy" className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }} />
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                        <Play size={24} className="text-red-500 ml-1" fill="currentColor" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-3 right-3 h-6 px-2 rounded-lg bg-black/60 text-white text-xs font-medium flex items-center gap-1">
+                      <Clock size={10} /> {video.duration}
+                    </div>
                   </div>
-                  <span className="popular-badge">
-                    <Star size={12} fill="currentColor" /> {t('videos.popular')}
-                  </span>
-                  <span className="duration-badge">
-                    <Clock size={12} /> {video.duration}
-                  </span>
-                </div>
-                <div className="popular-info">
-                  <h3>{video.title}</h3>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
-
-      {!videosLoading && <motion.div
-        className="videos-section"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <div className="section-header">
-          <div className="section-title">
-            <Users size={24} color="var(--accent-orange)" />
-            <h2>
-              {selectedGrade === 'All' ? t('videos.moreVideos') : `${gradeLabels[selectedGrade]}`}
-            </h2>
-          </div>
-          <p className="video-count">{filteredVideos.length} {t('videos.videosAvailable')}</p>
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedGrade + searchQuery}
-            className="videos-grid"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            {filteredVideos.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
-                <p style={{ fontSize: '1.1rem', fontWeight: 600 }}>
-                  {lang === 'tr' ? 'Bu filtreyle eşleşen video bulunamadı.' : 'No videos match this filter.'}
-                </p>
-              </div>
-            )}
-            {filteredVideos.map((video, index) => (
-              <motion.div
-                key={video.id}
-                className="video-card"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => handleRegularVideoClick(video)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleRegularVideoClick(video); } }}
-                role="button"
-                tabIndex={0}
-                aria-label={video.title}
-                whileHover={{ y: -8, scale: 1.02 }}
-              >
-                <div className="video-thumbnail">
-                  <img src={video.thumbnail} alt={video.title} loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }} />
-                  <div className="video-overlay">
-                    <motion.div
-                      className="play-button"
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Play size={32} fill="white" />
-                    </motion.div>
+                  <div className="p-3 text-left">
+                    <h3 className="text-sm font-bold text-gray-800 leading-tight">{video.title}</h3>
+                    <p className="text-xs text-gray-400 mt-1 line-clamp-1">{video.description}</p>
                   </div>
-                  <div className="video-badges">
-                    <span className="type-badge">
-                      {categoryIcons[video.category.toLowerCase()]?.icon}
-                      {categoryIcons[video.category.toLowerCase()]?.label}
-                    </span>
-                    <span className="time-badge">
-                      <Clock size={12} />
-                      {video.duration}
-                    </span>
-                  </div>
-                  {video.isPopular && (
-                    <span className="star-badge">
-                      <Star size={14} fill="currentColor" />
-                    </span>
-                  )}
-                </div>
+                </motion.button>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
 
-                <div className="video-content">
-                  <span className="video-grade" style={{ background: 'var(--primary-pale)', color: 'var(--primary-dark)' }}>
-                    {video.grade}
-                  </span>
-                  <h3 className="video-title">{video.title}</h3>
-                  <p className="video-desc">{video.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-      </motion.div>}
-
+      {/* Video player modal */}
       <AnimatePresence>
         {selectedVideo && (
           <motion.div
-            className="video-modal-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
             onClick={() => setSelectedVideo(null)}
-            onKeyDown={(e) => { if (e.key === 'Escape') setSelectedVideo(null); }}
             role="dialog"
             aria-modal="true"
-            aria-label={lang === 'tr' ? 'Video oynatıcı' : 'Video player'}
           >
             <motion.div
-              className="video-modal"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.85 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.85 }}
+              transition={spring}
+              className="w-full max-w-xl bg-black rounded-3xl overflow-hidden relative"
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.button
+              <button
                 type="button"
-                className="modal-close"
                 onClick={() => setSelectedVideo(null)}
-                aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
+                className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white active:scale-90 transition-transform"
+                aria-label={isTr ? 'Kapat' : 'Close'}
               >
-                <X size={24} />
-              </motion.button>
+                <X size={20} />
+              </button>
               {iframeError ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '1rem',
-                    padding: '2rem',
-                    minHeight: 200,
-                    color: 'var(--text-muted, #6b7280)',
-                    textAlign: 'center',
-                  }}
-                >
+                <div className="flex flex-col items-center justify-center gap-4 p-8 min-h-[200px] text-gray-400 text-center">
                   <Play size={48} style={{ opacity: 0.3 }} />
-                  <p style={{ fontWeight: 700, margin: 0 }}>
-                    {lang === 'tr' ? 'Video yüklenemedi.' : 'Video could not be loaded.'}
-                  </p>
-                  <p style={{ fontSize: '0.85rem', margin: 0 }}>
-                    {lang === 'tr'
-                      ? 'Lütfen internet bağlantınızı kontrol edin.'
-                      : 'Please check your internet connection.'}
-                  </p>
+                  <p className="font-bold text-white">{isTr ? 'Video yuklenemedi.' : 'Video could not be loaded.'}</p>
                   {!childMode && (
                     <a
                       href={`https://www.youtube.com/watch?v=${selectedVideo}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{
-                        padding: '0.5rem 1.25rem',
-                        background: 'var(--primary, #FF6B35)',
-                        color: 'var(--color-white, #fff)',
-                        borderRadius: '0.5rem',
-                        fontWeight: 700,
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                      }}
+                      className="h-10 px-4 rounded-2xl bg-red-500 text-white font-bold text-sm flex items-center"
                     >
-                      {lang === 'tr' ? 'YouTube\'da Aç' : 'Open on YouTube'}
+                      {isTr ? "YouTube'da Ac" : 'Open on YouTube'}
                     </a>
                   )}
                 </div>
               ) : (
-                <iframe
-                  key={selectedVideo}
-                  src={`https://www.youtube-nocookie.com/embed/${selectedVideo}?autoplay=1&rel=0&modestbranding=1`}
-                  title="YouTube video player"
-                  style={{ border: 0 }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-                  onError={() => setIframeError(true)}
-                />
+                <div className="aspect-video">
+                  <iframe
+                    key={selectedVideo}
+                    src={`https://www.youtube-nocookie.com/embed/${selectedVideo}?autoplay=1&rel=0&modestbranding=1`}
+                    title="YouTube video player"
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+                    onError={() => setIframeError(true)}
+                  />
+                </div>
               )}
             </motion.div>
           </motion.div>

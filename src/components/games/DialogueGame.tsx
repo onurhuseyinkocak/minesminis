@@ -201,7 +201,7 @@ export function DialogueGame({ lines, onComplete, onWrongAnswer }: DialogueGameP
   const dialogueProgress = totalQuestions > 0 ? (answered.filter((a) => a.correct).length / totalQuestions) * 100 : 0;
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-4 max-w-lg mx-auto h-full">
+    <div className="flex flex-col gap-3 px-4 py-4 max-w-lg mx-auto h-full overflow-x-hidden">
       {/* Progress bar */}
       <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
         <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${dialogueProgress}%` }} transition={springGentle} />

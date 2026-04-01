@@ -1,37 +1,11 @@
 /**
  * PRACTICE MODE — Free Review & Spaced Repetition
- * Students review words outside of lessons.
- * Warm, clean, large touch targets.
+ * Mobile-first, light mode only, all Tailwind inline.
  */
-
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import LottieCharacter from '../../components/LottieCharacter';
-import {
-  Sparkles,
-  Filter,
-  Volume2,
-  X,
-  Zap,
-  CheckCircle2,
-  Clock,
-  BookOpen,
-  Star,
-  Globe,
-  RotateCcw,
-} from 'lucide-react';
+import { Volume2, X, Zap, BookOpen, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
-import { Tabs } from '../../components/ui/Tabs';
-import { ProgressBar } from '../../components/ui/ProgressBar';
-import './PracticeMode.css';
-
-// ============================================================
-// TYPES
-// ============================================================
 
 type MasteryLevel = 'mastered' | 'reviewing' | 'learning' | 'new';
 
@@ -41,15 +15,11 @@ interface WordCard {
   turkish: string;
   mastery: MasteryLevel;
   world: string;
-  confidence: number; // 0-100
+  confidence: number;
   exampleSentence: string;
   lastPracticed?: string;
   dueForReview?: boolean;
 }
-
-// ============================================================
-// SAMPLE DATA — shown until real progress is synced
-// ============================================================
 
 const MOCK_WORDS: WordCard[] = [
   { id: '1', english: 'Cat', turkish: 'Kedi', mastery: 'mastered', world: 'Animals', confidence: 95, exampleSentence: 'The cat is sleeping on the sofa.' },
@@ -72,41 +42,19 @@ const MOCK_WORDS: WordCard[] = [
 
 const WORLDS = ['All', 'Animals', 'Colors', 'Food', 'Family', 'Numbers'];
 
-const FILTER_TABS = [
-  { id: 'all', label: 'Tüm Kelimeler', icon: <BookOpen size={16} /> },
-  { id: 'mimi', label: 'Seçtiklerim', icon: <Sparkles size={16} /> },
-  { id: 'mastered', label: 'Öğrenildi', icon: <CheckCircle2 size={16} /> },
-  { id: 'reviewing', label: 'Tekrarda', icon: <Clock size={16} /> },
-  { id: 'learning', label: 'Öğreniyor', icon: <Star size={16} /> },
-  { id: 'new', label: 'Yeni', icon: <Zap size={16} /> },
+const FILTERS: { id: string; label: string }[] = [
+  { id: 'all', label: 'Hepsi' },
+  { id: 'mastered', label: 'Biliyorum' },
+  { id: 'reviewing', label: 'Tekrar' },
+  { id: 'learning', label: 'Ogreniyorum' },
+  { id: 'new', label: 'Yeni' },
 ];
 
-const MASTERY_CONFIG: Record<MasteryLevel, { label: string; color: string; bg: string }> = {
-  mastered: { label: 'Öğrenildi', color: 'var(--success)', bg: 'var(--success-pale)' },
-  reviewing: { label: 'Tekrarda', color: 'var(--primary)', bg: 'var(--primary-pale)' },
-  learning: { label: 'Öğreniyor', color: 'var(--info)', bg: 'var(--info-pale)' },
-  new: { label: 'Yeni', color: 'var(--stone)', bg: 'var(--bg-muted)' },
-};
-
-const ENCOURAGEMENTS = [
-  "Harika gidiyorsun! Devam et!",
-  "Pratik mükemmelleştirir!",
-  "Yapabilirsin!",
-  "Her kelime önemli!",
-  "Sen bir kelime şampiyonusun!",
-];
-
-// ============================================================
-// COMPONENT
-// ============================================================
-
-const fadeIn = {
-  hidden: { opacity: 0, y: 12 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.03, duration: 0.3 },
-  }),
+const MASTERY_COLORS: Record<MasteryLevel, string> = {
+  mastered: '#22C55E',
+  reviewing: '#3B82F6',
+  learning: '#F59E0B',
+  new: '#94A3B8',
 };
 
 const PracticeMode = () => {
@@ -115,51 +63,17 @@ const PracticeMode = () => {
   const [selectedWorld, setSelectedWorld] = useState('All');
   const [selectedWord, setSelectedWord] = useState<WordCard | null>(null);
 
-  const encouragement = useMemo(
-    () => ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)],
-    []
-  );
-
-  // Filter words
   const filteredWords = useMemo(() => {
     let words = [...MOCK_WORDS];
-
-    // World filter
-    if (selectedWorld !== 'All') {
-      words = words.filter(w => w.world === selectedWorld);
-    }
-
-    // Mastery filter
-    switch (activeFilter) {
-      case 'mimi':
-        words = words.filter(w => w.dueForReview || w.mastery === 'learning');
-        break;
-      case 'mastered':
-        words = words.filter(w => w.mastery === 'mastered');
-        break;
-      case 'reviewing':
-        words = words.filter(w => w.mastery === 'reviewing');
-        break;
-      case 'learning':
-        words = words.filter(w => w.mastery === 'learning');
-        break;
-      case 'new':
-        words = words.filter(w => w.mastery === 'new');
-        break;
-    }
-
+    if (selectedWorld !== 'All') words = words.filter(w => w.world === selectedWorld);
+    if (activeFilter !== 'all') words = words.filter(w => w.mastery === activeFilter);
     return words;
   }, [activeFilter, selectedWorld]);
 
-  // Summary stats
   const stats = useMemo(() => {
     const total = MOCK_WORDS.length;
     const mastered = MOCK_WORDS.filter(w => w.mastery === 'mastered').length;
-    const reviewing = MOCK_WORDS.filter(w => w.mastery === 'reviewing').length;
-    const learning = MOCK_WORDS.filter(w => w.mastery === 'learning').length;
-    const newWords = MOCK_WORDS.filter(w => w.mastery === 'new').length;
-    const dueForReview = MOCK_WORDS.filter(w => w.dueForReview).length;
-    return { total, mastered, reviewing, learning, new: newWords, dueForReview };
+    return { total, mastered, pct: total > 0 ? Math.round((mastered / total) * 100) : 0 };
   }, []);
 
   const handlePronounce = (word: string) => {
@@ -172,253 +86,148 @@ const PracticeMode = () => {
   };
 
   return (
-    <div className="pm">
-      {/* ---- DEMO DATA BANNER ---- */}
-      <div style={{
-        background: 'var(--gold-50, #fef9ec)',
-        border: '1.5px solid var(--gold-300, #f6cc60)',
-        borderRadius: '12px',
-        padding: '10px 16px',
-        marginBottom: '16px',
-        fontSize: '13px',
-        color: 'var(--gold-700, #92600a)',
-        fontFamily: 'Inter, sans-serif',
-        fontWeight: 500,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-      }}>
-        <BookOpen size={15} style={{ flexShrink: 0 }} />
-        <span>
-          Pratik Modu — yakında. Aşağıdaki kelime verileri önizlemedir, gerçek ilerlemenizi yansıtmaz.
-        </span>
-      </div>
-
-      {/* ---- HEADER ---- */}
-      <div className="pm-header">
-        <div className="pm-header__left">
-          <motion.div
-            className="pm-header__mimi"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', damping: 12, stiffness: 200 }}
-          >
-            <LottieCharacter state="happy" size={40} />
-          </motion.div>
-          <div>
-            <h1 className="pm-header__title">Pratik Zamanı!</h1>
-            <p className="pm-header__subtitle">{encouragement}</p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white px-4 py-6">
+      <div className="max-w-md mx-auto">
+        {/* Demo banner */}
+        <div className="bg-amber-50 border-2 border-amber-200 rounded-3xl px-4 py-3 mb-4 flex items-center gap-2">
+          <BookOpen size={16} className="text-amber-600 shrink-0" />
+          <span className="text-xs font-medium text-amber-700">
+            Pratik Modu -- yakinda. Asagidaki veriler onizlemedir.
+          </span>
         </div>
-        <div className="pm-header__right">
-          {stats.dueForReview > 0 && (
-            <Badge variant="warning" icon={<RotateCcw size={14} />}>
-              {stats.dueForReview} tekrar bekliyor
-            </Badge>
-          )}
-          <Button
-            variant="primary"
-            icon={<Zap size={18} />}
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-extrabold text-gray-900">Pratik Zamani!</h1>
+          <button
+            type="button"
             onClick={() => navigate('/games')}
+            className="min-h-[48px] px-4 rounded-3xl bg-orange-500 text-white font-bold text-sm flex items-center gap-2 shadow-md active:scale-95 transition-transform"
           >
-            Hızlı Test
-          </Button>
+            <Zap size={16} /> Hizli Test
+          </button>
         </div>
-      </div>
 
-      {/* ---- FILTERS ---- */}
-      <div className="pm-filters">
-        <Tabs
-          tabs={FILTER_TABS}
-          activeTab={activeFilter}
-          onChange={setActiveFilter}
-          variant="pill"
-          className="pm-filter-tabs"
-        />
-
-        <div className="pm-world-filter">
-          <Filter size={16} className="pm-world-filter__icon" />
-          <select
-            className="pm-world-select"
-            value={selectedWorld}
-            onChange={(e) => setSelectedWorld(e.target.value)}
-            aria-label="Konuya göre filtrele"
-          >
-            {WORLDS.map(w => (
-              <option key={w} value={w}>{w === 'All' ? 'Tüm Konular' : w}</option>
-            ))}
-          </select>
+        {/* Filters */}
+        <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
+          {FILTERS.map(f => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => setActiveFilter(f.id)}
+              className={`min-h-[48px] px-4 rounded-3xl text-sm font-bold whitespace-nowrap transition-all ${
+                activeFilter === f.id ? 'bg-orange-500 text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
-      </div>
 
-      {/* ---- WORD GRID ---- */}
-      {filteredWords.length === 0 ? (
-        <div className="pm-empty">
-          <span className="pm-empty__emoji"><LottieCharacter state="thinking" size={48} /></span>
-          <p className="pm-empty__text">Burada kelime bulunamadı. Farklı bir filtre dene!</p>
-        </div>
-      ) : (
-        <div className="pm-grid">
-          {filteredWords.map((word, i) => {
-            const cfg = MASTERY_CONFIG[word.mastery];
-            return (
-              <motion.div
+        {/* World filter */}
+        <select
+          value={selectedWorld}
+          onChange={(e) => setSelectedWorld(e.target.value)}
+          aria-label="Konuya gore filtrele"
+          className="w-full min-h-[48px] rounded-3xl border-2 border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 mb-4"
+        >
+          {WORLDS.map(w => <option key={w} value={w}>{w === 'All' ? 'Tum Konular' : w}</option>)}
+        </select>
+
+        {/* Word Grid */}
+        {filteredWords.length === 0 ? (
+          <div className="text-center py-12">
+            <RotateCcw size={40} className="text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500 font-medium">Burada kelime bulunamadi.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            {filteredWords.map((word, i) => (
+              <motion.button
                 key={word.id}
-                custom={i}
-                initial="hidden"
-                animate="visible"
-                variants={fadeIn}
+                type="button"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                onClick={() => setSelectedWord(word)}
+                className="rounded-3xl bg-white border-2 border-gray-100 p-4 flex flex-col items-start gap-1 shadow-sm active:scale-95 transition-transform text-left"
               >
-                <Card
-                  variant="interactive"
-                  padding="md"
-                  className={`pm-word-card pm-word-card--${word.mastery}`}
-                  onClick={() => setSelectedWord(word)}
-                >
-                  <div className="pm-word-card__top">
-                    <div className="pm-word-card__letter-badge" style={{ background: cfg.color }}>{word.english.charAt(0).toUpperCase()}</div>
-                    <span
-                      className="pm-word-card__mastery"
-                      style={{ color: cfg.color, background: cfg.bg }}
-                    >
-                      {cfg.label}
-                    </span>
-                  </div>
-                  <h3 className="pm-word-card__english">{word.english}</h3>
-                  <p className="pm-word-card__turkish">{word.turkish}</p>
-                  <div className="pm-word-card__confidence">
-                    <div className="pm-word-card__confidence-bar">
-                      <div
-                        className="pm-word-card__confidence-fill"
-                        style={{
-                          width: `${word.confidence}%`,
-                          background: cfg.color,
-                        }}
-                      />
-                    </div>
-                    <span className="pm-word-card__confidence-label" style={{ color: cfg.color }}>
-                      {word.confidence}%
-                    </span>
-                  </div>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-      )}
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: MASTERY_COLORS[word.mastery] }}>
+                  {word.english.charAt(0)}
+                </div>
+                <span className="text-base font-extrabold text-gray-900">{word.english}</span>
+                <span className="text-xs text-gray-500">{word.turkish}</span>
+                <div className="w-full h-1.5 rounded-full bg-gray-100 mt-1">
+                  <div className="h-full rounded-full transition-all" style={{ width: `${word.confidence}%`, background: MASTERY_COLORS[word.mastery] }} />
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        )}
 
-      {/* ---- WORD DETAIL MODAL ---- */}
+        {/* Progress summary */}
+        <div className="rounded-3xl bg-white border-2 border-gray-100 p-4 shadow-sm">
+          <h3 className="text-sm font-extrabold text-gray-800 mb-2">Ilerlemen</h3>
+          <div className="w-full h-2 rounded-full bg-gray-100 mb-2">
+            <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${stats.pct}%` }} />
+          </div>
+          <p className="text-xs text-gray-500">{stats.total} kelimeden {stats.mastered} tanesi ogrenildi (%{stats.pct})</p>
+        </div>
+      </div>
+
+      {/* Word Detail Modal */}
       <AnimatePresence>
         {selectedWord && (
           <>
             <motion.div
-              className="pm-modal-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 z-40"
               onClick={() => setSelectedWord(null)}
-              role="button"
-              tabIndex={0}
-              aria-label="Close word details"
-              onKeyDown={(e) => { if (e.key === 'Escape' || e.key === 'Enter') setSelectedWord(null); }}
+              role="button" tabIndex={0} aria-label="Close"
+              onKeyDown={(e) => { if (e.key === 'Escape') setSelectedWord(null); }}
             />
             <motion.div
-              className="pm-modal"
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              className="fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-sm mx-auto bg-white rounded-3xl p-6 shadow-xl z-50"
             >
-              <button
-                type="button"
-                className="pm-modal__close"
-                onClick={() => setSelectedWord(null)}
-                aria-label="Close"
-              >
-                <X size={20} />
+              <button type="button" onClick={() => setSelectedWord(null)} aria-label="Close" className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                <X size={16} className="text-gray-500" />
               </button>
 
-              <div className="pm-modal__letter-badge" style={{ background: MASTERY_CONFIG[selectedWord.mastery].color }}>{selectedWord.english.charAt(0).toUpperCase()}</div>
-              <h2 className="pm-modal__english">{selectedWord.english}</h2>
-              <p className="pm-modal__turkish">{selectedWord.turkish}</p>
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold" style={{ background: MASTERY_COLORS[selectedWord.mastery] }}>
+                  {selectedWord.english.charAt(0)}
+                </div>
+                <h2 className="text-2xl font-extrabold text-gray-900">{selectedWord.english}</h2>
+                <p className="text-base text-gray-500">{selectedWord.turkish}</p>
 
-              <button
-                type="button"
-                className="pm-modal__pronounce"
-                onClick={() => handlePronounce(selectedWord.english)}
-              >
-                <Volume2 size={22} />
-                <span>Telaffuzu dinle</span>
-              </button>
-
-              <div className="pm-modal__example">
-                <span className="pm-modal__example-label">Örnek:</span>
-                <p className="pm-modal__example-text">{selectedWord.exampleSentence}</p>
-              </div>
-
-              <div className="pm-modal__mastery">
-                <span className="pm-modal__mastery-label">Ustalık</span>
-                <ProgressBar
-                  value={selectedWord.confidence}
-                  variant={selectedWord.confidence >= 80 ? 'success' : selectedWord.confidence >= 50 ? 'warning' : 'default'}
-                  size="lg"
-                  showLabel
-                />
-              </div>
-
-              <div className="pm-modal__meta">
-                <Badge
-                  variant={
-                    selectedWord.mastery === 'mastered' ? 'success' :
-                    selectedWord.mastery === 'reviewing' ? 'warning' :
-                    selectedWord.mastery === 'learning' ? 'info' : 'default'
-                  }
+                <button
+                  type="button"
+                  onClick={() => handlePronounce(selectedWord.english)}
+                  className="min-h-[48px] px-6 rounded-3xl bg-sky-100 text-sky-700 font-bold text-sm flex items-center gap-2 active:scale-95 transition-transform"
                 >
-                  {MASTERY_CONFIG[selectedWord.mastery].label}
-                </Badge>
-                <Badge variant="default" icon={<Globe size={12} />}>
-                  {selectedWord.world}
-                </Badge>
+                  <Volume2 size={18} /> Telaffuzu dinle
+                </button>
+
+                <div className="w-full rounded-2xl bg-gray-50 p-3">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase">Ornek:</span>
+                  <p className="text-sm text-gray-700 mt-1">{selectedWord.exampleSentence}</p>
+                </div>
+
+                <div className="w-full">
+                  <div className="w-full h-2 rounded-full bg-gray-100">
+                    <div className="h-full rounded-full transition-all" style={{ width: `${selectedWord.confidence}%`, background: MASTERY_COLORS[selectedWord.mastery] }} />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1 text-center">{selectedWord.confidence}% ustalik</p>
+                </div>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
-
-      {/* ---- PROGRESS SUMMARY ---- */}
-      <div className="pm-summary">
-        <Card variant="elevated" padding="lg" className="pm-summary-card">
-          <h3 className="pm-summary__title">İlerlemen</h3>
-          <div className="pm-summary__stats">
-            <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: 'var(--success)' }}>{stats.mastered}</span>
-              <span className="pm-summary__stat-label">Öğrenildi</span>
-            </div>
-            <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: 'var(--primary)' }}>{stats.reviewing}</span>
-              <span className="pm-summary__stat-label">Tekrarda</span>
-            </div>
-            <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: 'var(--info)' }}>{stats.learning}</span>
-              <span className="pm-summary__stat-label">Öğreniyor</span>
-            </div>
-            <div className="pm-summary__stat">
-              <span className="pm-summary__stat-value" style={{ color: 'var(--stone)' }}>{stats.new}</span>
-              <span className="pm-summary__stat-label">Yeni</span>
-            </div>
-          </div>
-          <ProgressBar
-            value={stats.total > 0 ? (stats.mastered / stats.total) * 100 : 0}
-            variant="success"
-            size="md"
-            showLabel
-            animated
-          />
-          <p className="pm-summary__note">
-            {stats.total} kelimeden {stats.mastered} tanesi öğrenildi (%{stats.total > 0 ? Math.round((stats.mastered / stats.total) * 100) : 0})
-          </p>
-        </Card>
-      </div>
     </div>
   );
 };

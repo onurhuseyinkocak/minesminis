@@ -379,7 +379,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
         {/* Question card with timer */}
         <motion.div
           key={currentQ}
-          className="relative bg-white rounded-3xl shadow-lg border border-slate-100 p-6 flex flex-col items-center gap-4"
+          className="relative bg-white rounded-3xl shadow-lg border border-slate-100 p-4 sm:p-6 flex flex-col items-center gap-4"
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}

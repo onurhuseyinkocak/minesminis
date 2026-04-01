@@ -374,7 +374,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
           `}
         >
           {/* Word display */}
-          <div className="text-5xl font-black text-gray-800 tracking-tight">
+          <div className="text-4xl sm:text-5xl font-black text-gray-800 tracking-tight break-all">
             {currentWord.english}
           </div>
           <div className="text-base text-gray-400">{currentWord.turkish}</div>

@@ -392,7 +392,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
               <motion.div
                 key={i}
                 className={[
-                  'w-12 h-14 rounded-2xl flex items-center justify-center text-xl font-bold border-2 transition-colors',
+                  'w-10 h-12 sm:w-12 sm:h-14 rounded-2xl flex items-center justify-center text-lg sm:text-xl font-bold border-2 transition-colors',
                   isCorrect
                     ? 'bg-emerald-50 border-emerald-400 text-emerald-700'
                     : isReveal
@@ -466,7 +466,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
                 type="button"
                 key={`${letter}-${i}`}
                 className={[
-                  'w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold transition-all',
+                  'w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-base sm:text-lg font-bold transition-all',
                   usedIndices.includes(i)
                     ? 'bg-slate-100 text-slate-300 border-2 border-slate-100 cursor-default'
                     : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-teal-400 hover:bg-teal-50 hover:text-teal-700 shadow-sm cursor-pointer active:scale-90',
