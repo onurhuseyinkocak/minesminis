@@ -1,13 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
-import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
+import { Volume2, Check, X, Star, Trophy, Sparkles, ArrowLeft, RotateCcw } from 'lucide-react';
+import { ConfettiRain } from '../ui/Celebrations';
+import { speak } from '../../services/ttsService';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
-import './RhymeGame.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -47,10 +47,18 @@ export interface RhymeGameProps {
 type OptionState = 'idle' | 'correct' | 'wrong';
 type BucketState = 'idle' | 'active' | 'correct' | 'wrong';
 
+// ── Spring configs ──────────────────────────────────────────────────────────
+
+const springBouncy = { type: 'spring' as const, stiffness: 300, damping: 18 };
+const springGentle = { type: 'spring' as const, stiffness: 260, damping: 24 };
+const shakeAnimation = {
+  x: [0, -8, 8, -6, 6, -3, 3, 0],
+  transition: { duration: 0.5 },
+};
+
 // ── Helpers: derive rime (last vowel+consonants) ────────────────────────────
 
 function extractRime(word: string): string {
-  // Find the first vowel and take from there to the end
   const match = word.match(/[aeiou].*/i);
   return match ? match[0].toLowerCase() : word.toLowerCase();
 }
@@ -58,7 +66,6 @@ function extractRime(word: string): string {
 function deriveFamilyRime(family: string[]): string {
   if (family.length === 0) return '';
   const rimes = family.map(extractRime);
-  // Return the longest common suffix
   const first = rimes[0];
   let rime = '';
   for (let i = 1; i <= first.length; i++) {
@@ -80,22 +87,13 @@ interface DetectTaskProps {
 
 function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
   const { t } = useLanguage();
-  const [showArc, setShowArc] = useState(false);
   const [cardState, setCardState] = useState<'idle' | 'correct' | 'wrong'>('idle');
-
 
   const handleAnswer = useCallback(
     (userSaysYes: boolean) => {
       if (answered) return;
       const correct = userSaysYes === question.doesRhyme;
-      if (correct && userSaysYes) {
-        setShowArc(true);
-        setCardState('correct');
-      } else if (!correct) {
-        setCardState('wrong');
-      } else {
-        setCardState('correct');
-      }
+      setCardState(correct ? 'correct' : 'wrong');
       onAnswer(correct);
     },
     [answered, question.doesRhyme, onAnswer],
@@ -104,82 +102,107 @@ function DetectTask({ question, onAnswer, answered }: DetectTaskProps) {
   const word1 = question.targetWord ?? '';
   const word2 = question.candidateWord ?? '';
 
+  const borderColor =
+    cardState === 'correct'
+      ? 'border-emerald-400 bg-emerald-50'
+      : cardState === 'wrong'
+        ? 'border-red-400 bg-red-50'
+        : 'border-slate-200 bg-white';
+
   return (
-    <div className="rg__detect">
-      <p className="rg__detect-prompt">
+    <div className="flex flex-col items-center gap-6 w-full">
+      <p className="text-lg font-bold text-slate-700 text-center">
         {t('games.doTheseRhyme') || 'Do these words rhyme?'}
       </p>
 
-      <div className="rg__detect-cards">
-        {/* Word 1 */}
+      {/* Word pair cards */}
+      <div className="flex items-center gap-4 justify-center flex-wrap">
         <motion.div
-          className={[
-            'rg__detect-card',
-            cardState === 'correct' && 'rg__detect-card--correct',
-            cardState === 'wrong' && 'rg__detect-card--wrong',
-          ]
-            .filter(Boolean)
-            .join(' ')}
+          className={`flex flex-col items-center gap-2 p-5 rounded-2xl border-2 shadow-md min-w-[120px] ${borderColor}`}
           initial={{ x: -40, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+          animate={cardState === 'wrong' ? shakeAnimation : { x: 0, opacity: 1 }}
+          transition={springGentle}
         >
           <WordIllustration word={word1} size={80} />
-          <span className="rg__detect-word">{word1}</span>
+          <span className="text-2xl font-extrabold text-slate-800">{word1}</span>
+          <button
+            type="button"
+            onClick={() => speak(word1, { lang: 'en-US', rate: 0.85 })}
+            className="w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center transition-colors"
+            aria-label={`Listen to ${word1}`}
+          >
+            <Volume2 size={20} className="text-blue-600" />
+          </button>
         </motion.div>
 
-        {/* SVG arc connecting the two cards (shown on correct rhyme answer) */}
-        <svg
-          className="rg__arc-svg"
-          viewBox="0 0 300 120"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            className={['rg__arc-path', showArc && 'rg__arc-path--animate']
-              .filter(Boolean)
-              .join(' ')}
-            d="M 75,60 Q 150,10 225,60"
-          />
-        </svg>
+        <span className="text-3xl font-black text-slate-300">&amp;</span>
 
-        {/* Word 2 */}
         <motion.div
-          className={[
-            'rg__detect-card',
-            cardState === 'correct' && 'rg__detect-card--correct',
-            cardState === 'wrong' && 'rg__detect-card--wrong',
-          ]
-            .filter(Boolean)
-            .join(' ')}
+          className={`flex flex-col items-center gap-2 p-5 rounded-2xl border-2 shadow-md min-w-[120px] ${borderColor}`}
           initial={{ x: 40, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 24, delay: 0.1 }}
+          animate={cardState === 'wrong' ? shakeAnimation : { x: 0, opacity: 1 }}
+          transition={{ ...springGentle, delay: 0.1 }}
         >
           <WordIllustration word={word2} size={80} />
-          <span className="rg__detect-word">{word2}</span>
+          <span className="text-2xl font-extrabold text-slate-800">{word2}</span>
+          <button
+            type="button"
+            onClick={() => speak(word2, { lang: 'en-US', rate: 0.85 })}
+            className="w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center transition-colors"
+            aria-label={`Listen to ${word2}`}
+          >
+            <Volume2 size={20} className="text-blue-600" />
+          </button>
         </motion.div>
       </div>
 
-      <div className="rg__detect-btns">
+      {/* Correct indicator */}
+      <AnimatePresence>
+        {cardState === 'correct' && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={springBouncy}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full"
+          >
+            <Check size={20} className="text-emerald-600" />
+            <span className="font-bold text-emerald-700">{t('games.amazing')}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Yes / No buttons */}
+      <div className="flex gap-4">
         <motion.button
           type="button"
-          className="rg__detect-btn rg__detect-btn--yes kbtn kbtn--blue"
           onClick={() => handleAnswer(true)}
           disabled={answered}
-          whileTap={{ scale: 0.94 }}
+          whileTap={{ scale: 0.92 }}
+          className="min-w-[120px] min-h-[56px] px-8 py-4 rounded-2xl text-lg font-bold text-white
+            bg-gradient-to-b from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-200
+            hover:from-emerald-500 hover:to-emerald-700
+            disabled:opacity-50 disabled:cursor-not-allowed
+            flex items-center justify-center gap-2 transition-all"
           aria-label="Yes, they rhyme"
         >
+          <Check size={22} />
           {t('games.yes') || 'Yes!'}
         </motion.button>
+
         <motion.button
           type="button"
-          className="rg__detect-btn rg__detect-btn--no kbtn kbtn--blue"
           onClick={() => handleAnswer(false)}
           disabled={answered}
-          whileTap={{ scale: 0.94 }}
+          whileTap={{ scale: 0.92 }}
+          className="min-w-[120px] min-h-[56px] px-8 py-4 rounded-2xl text-lg font-bold text-white
+            bg-gradient-to-b from-red-400 to-red-600 shadow-lg shadow-red-200
+            hover:from-red-500 hover:to-red-700
+            disabled:opacity-50 disabled:cursor-not-allowed
+            flex items-center justify-center gap-2 transition-all"
           aria-label="No, they do not rhyme"
         >
+          <X size={22} />
           {t('games.no') || 'No'}
         </motion.button>
       </div>
@@ -218,45 +241,67 @@ function ProduceTask({ question, onAnswer, answered }: ProduceTaskProps) {
   );
 
   return (
-    <div className="rg__produce">
-      <p className="rg__produce-prompt">
+    <div className="flex flex-col items-center gap-6 w-full">
+      <p className="text-lg font-bold text-slate-700 text-center">
         {t('games.whichRhymesWith') || 'Which word rhymes with...'}
       </p>
 
+      {/* Target word card */}
       <motion.div
-        className="rg__produce-target"
+        className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-gradient-to-b from-indigo-50 to-purple-50 border-2 border-indigo-200 shadow-lg"
         initial={{ scale: 0.85, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+        transition={springGentle}
       >
         <WordIllustration word={targetWord} size={80} />
-        <span className="rg__produce-target-word">{targetWord}</span>
+        <span className="text-3xl font-extrabold text-indigo-700">{targetWord}</span>
+        <button
+          type="button"
+          onClick={() => speak(targetWord, { lang: 'en-US', rate: 0.85 })}
+          className="w-10 h-10 rounded-full bg-indigo-100 hover:bg-indigo-200 flex items-center justify-center transition-colors"
+          aria-label={`Listen to ${targetWord}`}
+        >
+          <Volume2 size={20} className="text-indigo-600" />
+        </button>
       </motion.div>
 
-      <div className="rg__options" role="group" aria-label="Rhyme options">
+      {/* Option cards */}
+      <div className="flex flex-wrap gap-3 justify-center" role="group" aria-label="Rhyme options">
         {options.map((option, idx) => {
           const state: OptionState = optionStates[option] ?? 'idle';
+          const bgClass =
+            state === 'correct'
+              ? 'bg-emerald-100 border-emerald-400 ring-2 ring-emerald-300'
+              : state === 'wrong'
+                ? 'bg-red-100 border-red-400 ring-2 ring-red-300'
+                : 'bg-white border-slate-200 hover:border-blue-300 hover:bg-blue-50';
+
           return (
             <motion.button
               key={option}
               type="button"
-              className={[
-                'rg__option-card kbtn kbtn--option',
-                state === 'correct' && 'rg__option-card--correct correct',
-                state === 'wrong' && 'rg__option-card--wrong wrong',
-              ]
-                .filter(Boolean)
-                .join(' ')}
+              className={`flex flex-col items-center gap-2 px-5 py-4 rounded-2xl border-2 shadow-sm
+                min-w-[100px] min-h-[100px] font-bold text-lg text-slate-700
+                disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${bgClass}`}
               onClick={() => handleOption(option)}
               disabled={answered && state === 'idle'}
               aria-pressed={state !== 'idle'}
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.07, type: 'spring', stiffness: 260, damping: 22 }}
+              animate={state === 'wrong' ? shakeAnimation : { opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.07, ...springGentle }}
             >
               <WordIllustration word={option} size={52} />
-              {option}
+              <span>{option}</span>
+              {state === 'correct' && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={springBouncy}
+                >
+                  <Check size={20} className="text-emerald-600" />
+                </motion.div>
+              )}
             </motion.button>
           );
         })}
@@ -278,14 +323,12 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
   const allWords = question.words ?? [];
   const families = question.families ?? [];
 
-  // Track which words have been placed into which bucket index
   const [placedWords, setPlacedWords] = useState<Record<string, number>>({});
   const [selectedChip, setSelectedChip] = useState<string | null>(null);
   const [bucketStates, setBucketStates] = useState<Record<number, BucketState>>({});
   const [wrongChip, setWrongChip] = useState<string | null>(null);
 
   const rimes = families.map(deriveFamilyRime);
-
   const unplacedWords = allWords.filter((w) => !(w in placedWords));
 
   const handleChipTap = useCallback(
@@ -314,7 +357,6 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
           setBucketStates((prev) => ({ ...prev, [bucketIdx]: 'idle' }));
         }, 600);
 
-        // Check if all words placed — signal complete after short delay
         const totalPlaced = Object.keys(placedWords).length + 1;
         if (totalPlaced >= allWords.length) {
           setTimeout(() => {
@@ -338,14 +380,21 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
     [selectedChip, families, placedWords, allWords.length, onAnswer, onSortComplete],
   );
 
+  const bucketColors = [
+    { bg: 'from-sky-50 to-sky-100', border: 'border-sky-300', label: 'text-sky-700', rime: 'bg-sky-200 text-sky-800' },
+    { bg: 'from-amber-50 to-amber-100', border: 'border-amber-300', label: 'text-amber-700', rime: 'bg-amber-200 text-amber-800' },
+    { bg: 'from-rose-50 to-rose-100', border: 'border-rose-300', label: 'text-rose-700', rime: 'bg-rose-200 text-rose-800' },
+    { bg: 'from-emerald-50 to-emerald-100', border: 'border-emerald-300', label: 'text-emerald-700', rime: 'bg-emerald-200 text-emerald-800' },
+  ];
+
   return (
-    <div className="rg__sort">
-      <p className="rg__sort-prompt">
+    <div className="flex flex-col items-center gap-5 w-full">
+      <p className="text-lg font-bold text-slate-700 text-center">
         {t('games.sortIntoFamilies') || 'Sort the words into rhyming families!'}
       </p>
 
       {/* Word chips to place */}
-      <div className="rg__chips-pool" aria-label="Words to sort">
+      <div className="flex flex-wrap gap-2 justify-center min-h-[48px]" aria-label="Words to sort">
         <AnimatePresence>
           {unplacedWords.map((word) => {
             const isSelected = selectedChip === word;
@@ -354,19 +403,19 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
               <motion.button
                 key={word}
                 type="button"
-                className={[
-                  'rg__chip',
-                  isSelected && 'rg__chip--selected',
-                  isWrong && 'rg__chip--wrong',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
+                className={`px-4 py-2 rounded-xl text-base font-bold shadow-sm border-2 transition-colors min-h-[44px]
+                  ${isSelected
+                    ? 'bg-blue-100 border-blue-400 text-blue-800 ring-2 ring-blue-300 scale-105'
+                    : isWrong
+                      ? 'bg-red-100 border-red-400 text-red-700'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50'
+                  }`}
                 onClick={() => handleChipTap(word)}
                 whileTap={{ scale: 0.88 }}
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                animate={isWrong ? shakeAnimation : { scale: 1, opacity: 1 }}
                 exit={{ scale: 0.5, opacity: 0 }}
-                transition={{ type: 'spring', stiffness: 300 }}
+                transition={springBouncy}
                 aria-pressed={isSelected}
                 aria-label={`Word: ${word}`}
               >
@@ -376,31 +425,39 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
           })}
         </AnimatePresence>
         {unplacedWords.length === 0 && (
-          <span style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)', fontSize: '0.9rem', fontWeight: 700 }}>
-            All sorted!
-          </span>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-emerald-600 font-bold text-sm flex items-center gap-1"
+          >
+            <Check size={16} /> All sorted!
+          </motion.span>
         )}
       </div>
 
       {/* Buckets */}
-      <div className="rg__buckets" aria-label="Rhyme family buckets">
+      <div className="flex flex-wrap gap-3 justify-center w-full" aria-label="Rhyme family buckets">
         {families.map((family, idx) => {
           const bucketState = bucketStates[idx] ?? 'idle';
           const wordsInBucket = allWords.filter((w) => placedWords[w] === idx);
           const rime = rimes[idx];
           const isActive = selectedChip !== null;
+          const colors = bucketColors[idx % bucketColors.length];
+
+          const stateClasses =
+            bucketState === 'correct'
+              ? 'ring-4 ring-emerald-300 border-emerald-400'
+              : bucketState === 'wrong'
+                ? 'ring-4 ring-red-300 border-red-400'
+                : isActive
+                  ? `${colors.border} ring-2 ring-blue-200 cursor-pointer`
+                  : colors.border;
 
           return (
             <motion.div
               key={idx}
-              className={[
-                'rg__bucket',
-                isActive && bucketState === 'idle' && 'rg__bucket--active',
-                bucketState === 'correct' && 'rg__bucket--correct',
-                bucketState === 'wrong' && 'rg__bucket--wrong',
-              ]
-                .filter(Boolean)
-                .join(' ')}
+              className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 bg-gradient-to-b shadow-md
+                min-w-[130px] min-h-[120px] transition-all ${colors.bg} ${stateClasses}`}
               onClick={() => handleBucketTap(idx)}
               role="button"
               tabIndex={0}
@@ -410,24 +467,26 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
               aria-label={`Rhyme family: -${rime}`}
               whileTap={isActive ? { scale: 0.97 } : undefined}
             >
-              <p className="rg__bucket-label">Family</p>
-              <span className="rg__bucket-rime">-{rime}</span>
-              <div className="rg__bucket-words">
+              <p className={`text-xs font-semibold uppercase tracking-wider ${colors.label}`}>Family</p>
+              <span className={`text-xl font-extrabold px-3 py-1 rounded-lg ${colors.rime}`}>
+                -{rime}
+              </span>
+              <div className="flex flex-wrap gap-1 justify-center mt-1">
                 <AnimatePresence>
                   {wordsInBucket.map((w) => (
                     <motion.span
                       key={w}
-                      className="rg__bucket-word"
+                      className="px-2 py-0.5 bg-white rounded-lg text-sm font-bold text-slate-700 shadow-sm border border-slate-100"
                       initial={{ scale: 0, rotate: -8 }}
                       animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: 'spring', stiffness: 300 }}
+                      transition={springBouncy}
                     >
                       {w}
                     </motion.span>
                   ))}
                 </AnimatePresence>
                 {wordsInBucket.length === 0 && family.length > 0 && (
-                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontFamily: 'var(--font-display)', fontWeight: 600 }}>
+                  <span className="text-xs text-slate-400 font-semibold">
                     {family.length} words
                   </span>
                 )}
@@ -458,7 +517,6 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
@@ -512,7 +570,6 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
     [answered, score, advanceQuestion, loseHeart, onWrongAnswer],
   );
 
-  // Sort task has multiple sub-answers; each chip placement is an answer event
   const handleSortAnswer = useCallback(
     (correct: boolean) => {
       if (correct) {
@@ -533,7 +590,6 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
     if (nextIndex >= questions.length) {
       setCompleted(true);
       SFX.celebration();
-      // Use scoreRef to avoid stale closure — score state may not have updated yet
       const finalScore = scoreRef.current;
       autoCompleteTimeoutRef.current = setTimeout(() => onComplete(finalScore, questions.length), 4000);
     } else {
@@ -565,82 +621,91 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
 
     return (
-      <div className="rg">
-        {pct >= 90 && <ConfettiRain />}
-        <Card variant="elevated" padding="xl" className="rg__completion">
-          <motion.div
-            className="rg__completion-content"
+      <div className="flex flex-col items-center justify-center gap-6 p-6 w-full max-w-lg mx-auto relative">
+        <ConfettiRain duration={3500} />
+
+        <motion.div
+          className="flex flex-col items-center gap-5 p-8 rounded-3xl bg-white border-2 border-slate-100 shadow-xl w-full"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+        >
+          <UnifiedMascot state="celebrating" size={120} />
+
+          <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
           >
-            <UnifiedMascot state="celebrating" size={120} />
+            {pct >= 90 ? (
+              <Trophy size={48} className="text-amber-500" />
+            ) : pct >= 60 ? (
+              <Star size={48} fill="#f59e0b" className="text-amber-500" />
+            ) : (
+              <Check size={48} className="text-emerald-500" />
+            )}
+          </motion.span>
 
-            <span>
-              {pct >= 90 ? (
-                <Trophy size={48} color="var(--primary, #E8A317)" />
-              ) : pct >= 60 ? (
-                <Star size={48} fill="var(--primary, #E8A317)" color="var(--primary, #E8A317)" />
-              ) : (
-                <Check size={48} color="var(--mimi-green, #4caf50)" />
-              )}
-            </span>
+          <h2 className="text-2xl font-extrabold text-slate-800">{t('games.greatJob')}</h2>
+          <p className="text-4xl font-black text-indigo-600">
+            {score} / {questions.length}
+          </p>
 
-            <h2 className="rg__completion-title">{t('games.greatJob')}</h2>
-            <p className="rg__completion-score">
-              {score} / {questions.length}
-            </p>
-
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
-                >
-                  <Star
-                    size={32}
-                    fill={i < stars ? '#E8A317' : 'none'}
-                    color={i < stars ? '#E8A317' : '#ccc'}
-                  />
-                </motion.span>
-              ))}
-            </span>
-
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
-            >
-              <Badge variant="success" icon={<Sparkles size={14} />}>
-                +{score * 10} XP
-              </Badge>
-            </motion.div>
-
-            <div className="rg__completion-actions">
-              <button
-                type="button"
-                className="rg__completion-btn rg__completion-btn--secondary"
-                onClick={() => {
-                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
-                  onComplete(score, questions.length);
-                }}
+          {/* Stars */}
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
               >
-                <ArrowLeft size={16} />
-                {t('games.backToGames')}
-              </button>
-              <button
-                type="button"
-                className="rg__completion-btn rg__completion-btn--primary"
-                onClick={handlePlayAgain}
-              >
-                <RotateCcw size={16} />
-                {t('games.playAgain')}
-              </button>
-            </div>
+                <Star
+                  size={36}
+                  fill={i < stars ? '#f59e0b' : 'none'}
+                  className={i < stars ? 'text-amber-500' : 'text-slate-300'}
+                />
+              </motion.span>
+            ))}
+          </div>
+
+          {/* XP Badge */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
+            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-100 rounded-full"
+          >
+            <Sparkles size={16} className="text-emerald-600" />
+            <span className="font-bold text-emerald-700 text-sm">+{score * 10} XP</span>
           </motion.div>
-        </Card>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 mt-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                onComplete(score, questions.length);
+              }}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200
+                text-slate-700 font-bold text-sm transition-colors min-h-[48px]"
+            >
+              <ArrowLeft size={16} />
+              {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              onClick={handlePlayAgain}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl
+                bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700
+                text-white font-bold text-sm shadow-lg shadow-blue-200 transition-all min-h-[48px]"
+            >
+              <RotateCcw size={16} />
+              {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -650,31 +715,47 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
   const progress = questions.length > 0 ? (currentIndex / questions.length) * 100 : 0;
 
   return (
-    <div className="rg" role="application" aria-label="Rhyme awareness game">
+    <div className="flex flex-col items-center gap-4 p-4 w-full max-w-xl mx-auto" role="application" aria-label="Rhyme awareness game">
       {/* Header */}
-      <div className="rg__header">
-        <h2 className="rg__title">{t('games.rhymeTime') || 'Rhyme Time!'}</h2>
-        <Badge variant="info">
+      <div className="flex items-center justify-between w-full">
+        <h2 className="text-xl font-extrabold text-slate-800">
+          {t('games.rhymeTime') || 'Rhyme Time!'}
+        </h2>
+        <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">
           {currentIndex + 1} / {questions.length}
-        </Badge>
+        </span>
       </div>
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      {/* Progress bar */}
+      <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={springGentle}
+        />
+      </div>
 
       {/* Feedback banner */}
-      <div aria-live="assertive" aria-atomic="true" style={{ minHeight: '2.5rem', width: '100%' }}>
+      <div aria-live="assertive" aria-atomic="true" className="min-h-[40px] w-full">
         <AnimatePresence>
           {showFeedback && (
             <motion.div
               key={showFeedback}
-              className={`rg__feedback rg__feedback--${showFeedback}`}
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold
+                ${showFeedback === 'correct'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-red-100 text-red-700'
+                }`}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              {showFeedback === 'correct'
-                ? t('games.amazing')
-                : t('games.tryAgainYouGotThis')}
+              {showFeedback === 'correct' ? (
+                <><Check size={16} /> {t('games.amazing')}</>
+              ) : (
+                <><X size={16} /> {t('games.tryAgainYouGotThis')}</>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -684,11 +765,11 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
       <AnimatePresence mode="wait">
         <motion.div
           key={`q-${currentIndex}`}
-          style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-lg)' }}
+          className="w-full flex flex-col items-center gap-5"
           initial={{ x: 60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -60, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+          transition={springGentle}
         >
           {currentQuestion.type === 'detect' && (
             <DetectTask
@@ -716,7 +797,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
           <UnifiedMascot
             state={showFeedback === 'correct' ? 'celebrating' : 'idle'}
-            size={52}
+            size={56}
           />
         </motion.div>
       </AnimatePresence>

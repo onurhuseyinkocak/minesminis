@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, Zap, Trophy, Sparkles, Star, Lightbulb, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle, Clock } from 'lucide-react';
-import { Card, Badge, ProgressBar, StreakFlame } from '../ui';
+import { Zap, Trophy, Sparkles, Star, Lightbulb, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle, Clock, Flame } from 'lucide-react';
 import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { SpeakButton } from '../SpeakButton';
@@ -11,7 +10,6 @@ import LessonCompleteScreen, { useLessonComplete } from '../LessonCompleteScreen
 import NoHeartsModal from '../NoHeartsModal';
 import { announceToScreenReader } from '../../utils/accessibility';
 import { shuffleArray } from '../../utils/arrayUtils';
-import './QuickQuiz.css';
 
 interface WordItem {
   english: string;
@@ -69,6 +67,35 @@ function generateQuestions(words: WordItem[]): Question[] {
 
 const TIMER_DURATION = 15;
 
+// Circular timer component
+function CircularTimer({ timeLeft, total }: { timeLeft: number; total: number }) {
+  const radius = 22;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (timeLeft / total) * circumference;
+  const isUrgent = timeLeft <= 3;
+
+  return (
+    <div className="relative w-14 h-14 flex items-center justify-center">
+      <svg className="absolute inset-0 -rotate-90" width="56" height="56" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r={radius} fill="none" stroke="#e2e8f0" strokeWidth="4" />
+        <motion.circle
+          cx="28" cy="28" r={radius}
+          fill="none"
+          stroke={isUrgent ? '#ef4444' : '#3b82f6'}
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          animate={{ strokeDashoffset: circumference - progress }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        />
+      </svg>
+      <span className={`text-sm font-bold ${isUrgent ? 'text-red-500' : 'text-slate-700'}`}>
+        {timeLeft}
+      </span>
+    </div>
+  );
+}
+
 export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer, mascotId, streakDays }) => {
   const { t } = useLanguage();
   const { loseHeart, hearts } = useHearts();
@@ -82,11 +109,11 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
   const [completed, setCompleted] = useState(false);
   const [showNoHearts, setShowNoHearts] = useState(false);
+  const [floatingXp, setFloatingXp] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { show: showComplete, trigger: triggerComplete, dismiss: dismissComplete } = useLessonComplete();
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (advanceTimeoutRef.current) clearTimeout(advanceTimeoutRef.current);
@@ -108,6 +135,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setSelected(null);
       setFeedback(null);
       setTimeLeft(TIMER_DURATION);
+      setFloatingXp(false);
     } else {
       const finalScore = latestScore ?? score;
       setCompleted(true);
@@ -162,6 +190,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
         return newStreak;
       });
       setFeedback('correct');
+      setFloatingXp(true);
       SFX.correct();
       announceToScreenReader('Correct!', 'polite');
       onXpEarned?.(10 + streakBonus);
@@ -180,7 +209,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     }
   }, [feedback, selected, question, score, streak, bestStreak, clearTimer, advanceQuestion, onXpEarned, loseHeart, onWrongAnswer, hearts]);
 
-  // Keyboard shortcut: 1–4 selects answer option
+  // Keyboard shortcut: 1-4 selects answer option
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (completed || feedback !== null) return;
@@ -209,16 +238,22 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     setFeedback(null);
     setTimeLeft(TIMER_DURATION);
     setCompleted(false);
+    setFloatingXp(false);
   };
 
-  if (words.length < 4) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
+  if (words.length < 4) {
+    return (
+      <div className="flex items-center justify-center p-8 text-slate-400 text-lg font-medium">
+        {t('games.noWordsToReview')}
+      </div>
+    );
+  }
 
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     return (
       <>
-        {/* LessonCompleteScreen overlay (shown via useLessonComplete trigger) */}
         {showComplete && (
           <LessonCompleteScreen
             xpEarned={score * 10}
@@ -231,59 +266,74 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
             }}
           />
         )}
-        {/* Fallback inline results (visible if overlay was dismissed) */}
         {!showComplete && (
-          <div className="quick-quiz">
+          <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-64px)] bg-gradient-to-b from-violet-50 to-blue-50 p-6">
             {pct >= 90 && <ConfettiRain duration={3000} />}
-            <Card variant="elevated" padding="xl" className="quick-quiz__results">
+            <motion.div
+              className="flex flex-col items-center gap-5 bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+            >
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                className="quick-quiz__results-content"
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
               >
-                <motion.span
-                  className="quick-quiz__results-emoji"
-                  initial={{ scale: 0, rotate: -20 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
-                >
-                  {pct >= 90 ? <Trophy size={48} color="var(--warning)" /> : pct >= 60 ? <Star size={48} fill="var(--warning)" color="var(--warning)" /> : <Check size={48} color="var(--success)" />}
-                </motion.span>
-                <h2 className="quick-quiz__results-title">{t('games.quizComplete')}</h2>
-                <p className="quick-quiz__results-score">
-                  {score} / {questions.length} {t('games.xCorrect')}
-                </p>
-                <span className="game-stars">
-                  {Array.from({ length: 3 }, (_, i) => (
-                    <motion.span
-                      key={i}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
-                    >
-                      <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
-                    </motion.span>
-                  ))}
-                </span>
-                {bestStreak >= 2 && (
-                  <Badge variant="warning" icon={<Zap size={14} />}>
-                    {t('games.bestStreak')} {bestStreak}x
-                  </Badge>
-                )}
-                <Badge variant="success" icon={<Sparkles size={14} />}>
-                  +{score * 10} XP
-                </Badge>
-                <div className="quick-quiz__results-actions">
-                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--secondary" onClick={() => onComplete(score, questions.length)}>
-                    <ArrowRight size={16} /> {t('games.backToGames')}
-                  </button>
-                  <button type="button" className="quick-quiz__results-btn quick-quiz__results-btn--primary" onClick={handlePlayAgain} autoFocus>
-                    <RotateCcw size={16} /> {t('games.playAgain')}
-                  </button>
-                </div>
+                {pct >= 90 ? <Trophy size={56} className="text-amber-400" /> : pct >= 60 ? <Star size={56} className="text-amber-400 fill-amber-400" /> : <Check size={56} className="text-emerald-500" />}
               </motion.div>
-            </Card>
+
+              <h2 className="text-2xl font-bold text-slate-800">{t('games.quizComplete')}</h2>
+
+              <p className="text-lg text-slate-500 font-medium">
+                {score} / {questions.length} {t('games.xCorrect')}
+              </p>
+
+              {/* Stars */}
+              <div className="flex gap-2">
+                {Array.from({ length: 3 }, (_, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
+                  >
+                    <Star size={36} className={i < stars ? 'text-amber-400 fill-amber-400' : 'text-slate-200'} />
+                  </motion.span>
+                ))}
+              </div>
+
+              {/* Badges */}
+              <div className="flex flex-wrap gap-2 justify-center">
+                {bestStreak >= 2 && (
+                  <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 text-sm font-semibold px-3 py-1.5 rounded-full">
+                    <Zap size={14} /> {t('games.bestStreak')} {bestStreak}x
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-full">
+                  <Sparkles size={14} /> +{score * 10} XP
+                </span>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-3 w-full mt-2">
+                <button
+                  type="button"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors min-h-[48px]"
+                  onClick={() => onComplete(score, questions.length)}
+                >
+                  <ArrowRight size={16} /> {t('games.backToGames')}
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-violet-500 text-white font-semibold text-sm hover:bg-violet-600 transition-colors shadow-lg shadow-violet-500/25 min-h-[48px]"
+                  onClick={handlePlayAgain}
+                  autoFocus
+                >
+                  <RotateCcw size={16} /> {t('games.playAgain')}
+                </button>
+              </div>
+            </motion.div>
           </div>
         )}
       </>
@@ -294,52 +344,59 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
   return (
     <>
-    {showNoHearts && (
-      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
-    )}
-    <div className="quick-quiz" role="application" aria-label="Quick quiz game">
-      <div className="quick-quiz__header">
-        <h2 className="quick-quiz__title">{t('games.quickQuiz')}</h2>
-        <div className="quick-quiz__meta">
-          {streak >= 2 && (
-            <Badge variant="warning" icon={<Zap size={14} />}>
-              {streak}x {t('games.streak')}
-            </Badge>
-          )}
-          {streak >= 3 && <StreakFlame days={streak} />}
-          <Badge variant="info">{currentQ + 1}/{questions.length}</Badge>
+      {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
+
+      <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full" role="application" aria-label="Quick quiz game">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-800">{t('games.quickQuiz')}</h2>
+          <div className="flex items-center gap-2">
+            {streak >= 2 && (
+              <motion.span
+                className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 text-sm font-bold px-2.5 py-1 rounded-full"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
+                <Flame size={14} className="text-orange-500" /> {streak}x
+              </motion.span>
+            )}
+            <span className="bg-blue-50 text-blue-600 text-sm font-semibold px-3 py-1 rounded-full">
+              {currentQ + 1}/{questions.length}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
-
-      <div className="quick-quiz__timer">
-        <Timer size={18} />
-        <div className="quick-quiz__timer-bar">
+        {/* Progress bar */}
+        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
           <motion.div
-            className="quick-quiz__timer-fill"
-            initial={{ width: '100%' }}
-            animate={{ width: `${(timeLeft / TIMER_DURATION) * 100}%` }}
-            transition={{ duration: 0.3 }}
-            style={{
-              backgroundColor: timeLeft <= 3 ? 'var(--error)' : 'var(--qq-primary)',
-            }}
+            className="h-full bg-gradient-to-r from-violet-400 to-blue-500 rounded-full"
+            animate={{ width: `${progress}%` }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           />
         </div>
-        <span className="quick-quiz__timer-text">{timeLeft}s</span>
-      </div>
 
-      <Card variant="elevated" padding="lg" className="quick-quiz__question">
+        {/* Question card with timer */}
         <motion.div
           key={currentQ}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="quick-quiz__question-content"
+          className="relative bg-white rounded-3xl shadow-lg border border-slate-100 p-6 flex flex-col items-center gap-4"
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         >
-          <div className={`quick-quiz__emoji${question.word.emoji ? '' : ' quick-quiz__emoji--fallback'}`}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
-          {/* Always show speak button — hearing the word is part of every question type */}
+          {/* Timer - top right */}
+          <div className="absolute top-3 right-3">
+            <CircularTimer timeLeft={timeLeft} total={TIMER_DURATION} />
+          </div>
+
+          {/* Word display */}
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-100 to-blue-100 flex items-center justify-center text-2xl font-bold text-violet-600">
+            {question.word.english.charAt(0).toUpperCase()}
+          </div>
+
           <SpeakButton text={question.word.english} autoPlay={question.mode === 'en-to-tr'} size="md" />
-          <p id="qq-question-text" className="quick-quiz__prompt-text">
+
+          <p id="qq-question-text" className="text-base font-semibold text-slate-700 text-center">
             {question.mode === 'en-to-tr'
               ? t('games.whatIsInTurkish').replace('{word}', question.word.english)
               : question.mode === 'tr-to-en'
@@ -347,96 +404,122 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
               : t('games.whatIsInEnglish')}
           </p>
         </motion.div>
-      </Card>
 
-      <div
-        className="quick-quiz__options"
-        role="radiogroup"
-        aria-label="Answer choices"
-        aria-describedby="qq-question-text"
-      >
-        <AnimatePresence mode="wait">
-          {question.options.map((option, index) => {
-            let optionClass = 'quick-quiz__option kbtn kbtn--option';
-            if (feedback && index === question.correctIndex) {
-              optionClass += ' quick-quiz__option--correct correct';
-            } else if (feedback === 'wrong' && index === selected) {
-              optionClass += ' quick-quiz__option--wrong wrong';
-            } else if (selected === index) {
-              optionClass += ' quick-quiz__option--selected';
-            }
+        {/* 2x2 answer grid */}
+        <div
+          className="grid grid-cols-2 gap-3"
+          role="radiogroup"
+          aria-label="Answer choices"
+          aria-describedby="qq-question-text"
+        >
+          <AnimatePresence mode="wait">
+            {question.options.map((option, index) => {
+              const isCorrectOption = feedback && index === question.correctIndex;
+              const isWrongOption = feedback === 'wrong' && index === selected;
+              const isSelectedNeutral = selected === index && !feedback;
 
-            // Show icons for color-blind users — not color alone
-            const isCorrectOption = feedback && index === question.correctIndex;
-            const isWrongOption = feedback === 'wrong' && index === selected;
+              const bgClass = isCorrectOption
+                ? 'bg-emerald-50 border-emerald-400 text-emerald-700'
+                : isWrongOption
+                ? 'bg-red-50 border-red-400 text-red-700'
+                : isSelectedNeutral
+                ? 'bg-blue-50 border-blue-400 text-blue-700'
+                : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:shadow-md';
 
-            return (
-              <motion.button
-                type="button"
-                key={`${currentQ}-${index}`}
-                className={optionClass}
-                onClick={() => handleSelect(index)}
-                disabled={feedback !== null}
-                role="radio"
-                aria-checked={selected === index}
-                aria-label={option}
-                initial={{ opacity: 0, x: -30, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20, delay: index * 0.08 }}
-                whileTap={{ scale: 0.97 }}
+              return (
+                <motion.button
+                  type="button"
+                  key={`${currentQ}-${index}`}
+                  className={`relative flex items-center gap-2.5 px-4 py-3.5 rounded-2xl font-semibold text-sm border-2 transition-colors min-h-[52px] ${bgClass}`}
+                  onClick={() => handleSelect(index)}
+                  disabled={feedback !== null}
+                  role="radio"
+                  aria-checked={selected === index}
+                  aria-label={option}
+                  initial={{ opacity: 0, y: 15, scale: 0.9 }}
+                  animate={
+                    isCorrectOption
+                      ? { opacity: 1, y: 0, scale: [1, 1.06, 1] }
+                      : isWrongOption
+                      ? { opacity: 1, y: 0, x: [0, -5, 5, -5, 0] }
+                      : { opacity: 1, y: 0, scale: 1 }
+                  }
+                  transition={{ type: 'spring', stiffness: 300, damping: 20, delay: index * 0.06 }}
+                  whileTap={feedback === null ? { scale: 0.96 } : undefined}
+                >
+                  <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                    isCorrectOption ? 'bg-emerald-100 text-emerald-600' :
+                    isWrongOption ? 'bg-red-100 text-red-600' :
+                    'bg-slate-100 text-slate-500'
+                  }`}>
+                    {isCorrectOption
+                      ? <CheckCircle2 size={18} aria-hidden="true" />
+                      : isWrongOption
+                      ? <XCircle size={18} aria-hidden="true" />
+                      : String.fromCharCode(65 + index)}
+                  </span>
+                  <span className="truncate">{option}</span>
+
+                  {/* Floating +10 XP */}
+                  {isCorrectOption && floatingXp && (
+                    <motion.span
+                      className="absolute -top-3 right-2 text-emerald-500 font-bold text-xs bg-emerald-50 px-2 py-0.5 rounded-full"
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: [0, 1, 1, 0], y: -20 }}
+                      transition={{ duration: 1.2 }}
+                    >
+                      +10 XP
+                    </motion.span>
+                  )}
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+
+        {/* Feedback banner */}
+        <div aria-live="polite" aria-atomic="true">
+          <AnimatePresence>
+            {feedback === 'correct' && (
+              <motion.div
+                className="flex items-center gap-2 bg-emerald-50 text-emerald-700 font-semibold text-sm px-4 py-3 rounded-2xl border border-emerald-200"
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300 }}
               >
-                <span className="quick-quiz__option-label">
-                  {isCorrectOption
-                    ? <CheckCircle2 size={20} aria-hidden="true" />
-                    : isWrongOption
-                    ? <XCircle size={20} aria-hidden="true" />
-                    : String.fromCharCode(65 + index)}
-                </span>
-                <span className="quick-quiz__option-text">{option}</span>
-              </motion.button>
-            );
-          })}
-        </AnimatePresence>
+                <CheckCircle2 size={18} aria-hidden="true" />
+                {t('games.correct')} {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
+              </motion.div>
+            )}
+
+            {feedback === 'wrong' && (
+              <motion.div
+                className="flex items-center gap-2 bg-red-50 text-red-700 font-semibold text-sm px-4 py-3 rounded-2xl border border-red-200"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <XCircle size={18} aria-hidden="true" />
+                {t('games.theAnswerWas')} {question.options[question.correctIndex]}
+                <Lightbulb size={14} className="text-amber-400 ml-auto" aria-hidden="true" />
+              </motion.div>
+            )}
+
+            {feedback === 'timeout' && (
+              <motion.div
+                className="flex items-center gap-2 bg-amber-50 text-amber-700 font-semibold text-sm px-4 py-3 rounded-2xl border border-amber-200"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <Clock size={18} aria-hidden="true" />
+                {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-
-      <div aria-live="polite" aria-atomic="true">
-        {feedback === 'correct' && (
-          <motion.div
-            className="quick-quiz__feedback quick-quiz__feedback--correct"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            {/* Icon + color for color-blind users (not color alone) */}
-            <CheckCircle2 size={18} aria-hidden="true" />
-            {t('games.correct')} {streak >= 2 && `${streak}x ${t('games.streak').toLowerCase()}`}
-          </motion.div>
-        )}
-
-        {feedback === 'wrong' && (
-          <motion.div
-            className="quick-quiz__feedback quick-quiz__feedback--wrong"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {/* Icon + color for color-blind users (not color alone) */}
-            <XCircle size={18} aria-hidden="true" />
-            {t('games.theAnswerWas')} {question.options[question.correctIndex]} <Lightbulb size={14} color="var(--warning)" aria-hidden="true" />
-          </motion.div>
-        )}
-
-        {feedback === 'timeout' && (
-          <motion.div
-            className="quick-quiz__feedback quick-quiz__feedback--timeout"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {/* Icon + color for color-blind users (not color alone) */}
-            <Clock size={18} aria-hidden="true" />
-            {t('games.timesUp')} {t('games.theAnswerWas')} {question.options[question.correctIndex]}
-          </motion.div>
-        )}
-      </div>
-    </div>
     </>
   );
 };

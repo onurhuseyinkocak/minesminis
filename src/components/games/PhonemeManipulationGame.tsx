@@ -1,12 +1,16 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
-import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
+import {
+  Sparkles, Star, Trophy, Check, X, ArrowLeft, RotateCcw,
+  Trash2, RefreshCw, Plus, ArrowRightLeft,
+} from 'lucide-react';
+import { ConfettiRain } from '../ui/Celebrations';
+import { speak } from '../../services/ttsService';
+import { Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
-import './PhonemeManipulationGame.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -47,11 +51,27 @@ function classifyPhoneme(phoneme: string): PhonemeCategory {
   return 'consonant';
 }
 
+const PHONEME_CATEGORY_STYLES: Record<PhonemeCategory, { bg: string; border: string; text: string }> = {
+  consonant: { bg: '#DBEAFE', border: '#3B82F6', text: '#1E40AF' },
+  vowel: { bg: '#FCE7F3', border: '#EC4899', text: '#9D174D' },
+  blend: { bg: '#EDE9FE', border: '#8B5CF6', text: '#5B21B6' },
+};
+
+const TYPE_CONFIG: Record<ManipulationType, { icon: typeof Trash2; label: string; color: string; bg: string }> = {
+  delete: { icon: Trash2, label: 'Delete a Sound', color: '#DC2626', bg: '#FEE2E2' },
+  substitute: { icon: RefreshCw, label: 'Swap a Sound', color: '#7C3AED', bg: '#EDE9FE' },
+  add: { icon: Plus, label: 'Add a Sound', color: '#059669', bg: '#D1FAE5' },
+  reverse: { icon: ArrowRightLeft, label: 'Reverse', color: '#2563EB', bg: '#DBEAFE' },
+};
+
 type OptionState = 'idle' | 'correct' | 'wrong';
-
-// ── Phases ─────────────────────────────────────────────────────────────────────
-
 type Phase = 'showing' | 'animating' | 'result' | 'choices';
+
+// ── Spring configs ───────────────────────────────────────────────────────────
+
+const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
+const springSmooth = { type: 'spring' as const, stiffness: 260, damping: 28 };
+const springPop = { type: 'spring' as const, stiffness: 300, damping: 20 };
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
@@ -71,10 +91,9 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
   const [completed, setCompleted] = useState(false);
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [deletedIndex, setDeletedIndex] = useState<number | null>(null);
-  const [slideDir] = useState<1 | -1>(1);
+
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
@@ -108,29 +127,22 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
     [currentIndex, questions.length, onComplete, resetForNext],
   );
 
-  // Start the manipulation animation, then show choices
   const handleStartManipulation = useCallback(() => {
     if (phase !== 'showing') return;
     setPhase('animating');
 
-    // Highlight which phoneme tile gets removed during 'delete' manipulations.
-    // Strategy: find the first phoneme in targetWordPhonemes that does NOT appear
-    // in the correctAnswer string — that is the deleted sound.
     if (currentQuestion.type === 'delete') {
       const phonemes = currentQuestion.targetWordPhonemes;
       const answer = currentQuestion.correctAnswer.toLowerCase();
-      // Build a "remaining" copy of the answer so we can account for duplicates
       let remaining = answer;
-      let foundIdx = 0; // fallback to first if detection fails
+      let foundIdx = 0;
       for (let i = 0; i < phonemes.length; i++) {
         const p = phonemes[i].toLowerCase();
         const pos = remaining.indexOf(p);
         if (pos === -1) {
-          // This phoneme is absent from the answer → it was deleted
           foundIdx = i;
           break;
         } else {
-          // Consume it so duplicates don't re-match
           remaining = remaining.slice(0, pos) + remaining.slice(pos + p.length);
         }
       }
@@ -138,6 +150,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
     }
 
     SFX.click();
+    try { speak(currentQuestion.targetWord); } catch { /* silent */ }
 
     setTimeout(() => {
       setPhase('choices');
@@ -190,90 +203,89 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
     resetForNext();
   }, [resetForNext]);
 
-  // ── Completion screen ────────────────────────────────────────────────────
+  // ── Completion screen ──────────────────────────────────────────────────
 
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
 
     return (
-      <div className="pmg">
+      <div className="flex flex-col items-center justify-center min-h-[480px] p-6 bg-gradient-to-b from-purple-50 to-white rounded-3xl relative overflow-hidden">
         {pct >= 90 && <ConfettiRain />}
-        <Card variant="elevated" padding="xl" className="pmg__completion">
+
+        <motion.div
+          className="flex flex-col items-center gap-4"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={springBounce}
+        >
+          <UnifiedMascot state="celebrating" size={120} />
+
+          <span className="flex items-center justify-center w-16 h-16 rounded-full bg-purple-100">
+            {pct >= 90 ? (
+              <Trophy size={40} className="text-amber-500" />
+            ) : pct >= 60 ? (
+              <Star size={40} className="text-amber-500 fill-amber-500" />
+            ) : (
+              <Check size={40} className="text-emerald-500" />
+            )}
+          </span>
+
+          <h2 className="text-2xl font-bold text-gray-800">{t('games.greatJob')}</h2>
+
+          <p className="text-4xl font-extrabold text-purple-600">
+            {score} / {questions.length}
+          </p>
+
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ ...springBounce, delay: 0.3 + i * 0.15 }}
+              >
+                <Star
+                  size={32}
+                  fill={i < stars ? '#F59E0B' : 'none'}
+                  color={i < stars ? '#F59E0B' : '#D1D5DB'}
+                />
+              </motion.span>
+            ))}
+          </div>
+
           <motion.div
-            className="pmg__completion-content"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+            transition={{ ...springPop, delay: 0.75 }}
           >
-            <UnifiedMascot state="celebrating" size={120} />
-
-            <span>
-              {pct >= 90 ? (
-                <Trophy size={48} color="var(--primary)" />
-              ) : pct >= 60 ? (
-                <Star size={48} fill="var(--primary)" color="var(--primary)" />
-              ) : (
-                <Check size={48} color="var(--success)" />
-              )}
-            </span>
-
-            <h2 className="pmg__completion-title">{t('games.greatJob')}</h2>
-
-            <p className="pmg__completion-score">
-              {score} / {questions.length}
-            </p>
-
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
-                >
-                  <Star
-                    size={32}
-                    fill={i < stars ? 'var(--primary)' : 'none'}
-                    color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'}
-                  />
-                </motion.span>
-              ))}
-            </span>
-
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
-            >
-              <Badge variant="success" icon={<Sparkles size={14} />}>
-                +{score * 10} XP
-              </Badge>
-            </motion.div>
-
-            <div className="pmg__completion-actions">
-              <button
-                type="button"
-                className="pmg__completion-btn pmg__completion-btn--secondary"
-                onClick={() => {
-                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
-                  onComplete(score, questions.length);
-                }}
-              >
-                <ArrowLeft size={16} />
-                {t('games.backToGames')}
-              </button>
-              <button
-                type="button"
-                className="pmg__completion-btn pmg__completion-btn--primary"
-                onClick={handlePlayAgain}
-              >
-                <RotateCcw size={16} />
-                {t('games.playAgain')}
-              </button>
-            </div>
+            <Badge variant="success" icon={<Sparkles size={14} />}>
+              +{score * 10} XP
+            </Badge>
           </motion.div>
-        </Card>
+
+          <div className="flex gap-3 mt-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                onComplete(score, questions.length);
+              }}
+              className="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-2xl bg-gray-100 text-gray-700 font-semibold text-base hover:bg-gray-200 transition-colors"
+            >
+              <ArrowLeft size={18} />
+              {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              onClick={handlePlayAgain}
+              className="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-2xl bg-purple-500 text-white font-semibold text-base hover:bg-purple-600 transition-colors"
+            >
+              <RotateCcw size={18} />
+              {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -282,33 +294,79 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
 
   const progress = questions.length > 0 ? (currentIndex / questions.length) * 100 : 0;
   const prompt = lang === 'tr' ? currentQuestion.promptTr : currentQuestion.prompt;
+  const typeConfig = TYPE_CONFIG[currentQuestion.type];
+  const TypeIcon = typeConfig.icon;
+
+  // Difficulty bar segments
+  const difficultyLabel = currentQuestion.difficulty === 1
+    ? (t('games.easy') || 'Easy')
+    : currentQuestion.difficulty === 2
+      ? (t('games.medium') || 'Medium')
+      : (t('games.hard') || 'Hard');
+
+  const difficultyColors = ['bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-red-100 text-red-700'];
 
   return (
-    <div className="pmg" role="application" aria-label="Phoneme manipulation game">
+    <div
+      className="flex flex-col gap-5 p-5 bg-gradient-to-b from-violet-50 to-white rounded-3xl min-h-[480px]"
+      role="application"
+      aria-label="Phoneme manipulation game"
+    >
       {/* Header */}
-      <div className="pmg__header">
-        <h2 className="pmg__title">{t('games.soundPlay') || 'Sound Play'}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-gray-800">
+          {t('games.soundPlay') || 'Sound Play'}
+        </h2>
         <Badge variant="info">
           {currentIndex + 1} / {questions.length}
         </Badge>
       </div>
 
+      {/* Progress bar */}
       <ProgressBar value={progress} variant="success" size="md" animated />
 
+      {/* Difficulty indicator */}
+      <div className="flex items-center gap-2">
+        <div className="flex gap-1">
+          {[1, 2, 3].map((level) => (
+            <div
+              key={level}
+              className={`h-2 w-8 rounded-full ${
+                level <= currentQuestion.difficulty ? 'bg-purple-400' : 'bg-gray-200'
+              }`}
+            />
+          ))}
+        </div>
+        <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${difficultyColors[currentQuestion.difficulty - 1]}`}>
+          {difficultyLabel}
+        </span>
+      </div>
+
       {/* Feedback banner */}
-      <div aria-live="assertive" aria-atomic="true" style={{ minHeight: '2.75rem' }}>
+      <div aria-live="assertive" aria-atomic="true" className="min-h-[40px]">
         <AnimatePresence>
-          {showFeedback && (
+          {showFeedback === 'correct' && (
             <motion.div
-              key={showFeedback}
-              className={`pmg__feedback pmg__feedback--${showFeedback}`}
-              initial={{ opacity: 0, y: -8 }}
+              key="correct"
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-100 text-emerald-700 font-semibold justify-center"
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
+              transition={springSmooth}
             >
-              {showFeedback === 'correct'
-                ? t('games.amazing')
-                : `${t('games.correctAnswerWas') || 'The answer was'}: "${currentQuestion.correctAnswer}"`}
+              <Check size={20} /> {t('games.amazing')}
+            </motion.div>
+          )}
+          {showFeedback === 'wrong' && (
+            <motion.div
+              key="wrong"
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-red-100 text-red-700 font-semibold justify-center"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: [0, -6, 6, -4, 4, 0] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <X size={20} /> {`${t('games.correctAnswerWas') || 'The answer was'}: "${currentQuestion.correctAnswer}"`}
             </motion.div>
           )}
         </AnimatePresence>
@@ -318,95 +376,98 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
       <AnimatePresence mode="wait">
         <motion.div
           key={`q-${currentIndex}`}
-          initial={{ x: slideDir * 80, opacity: 0 }}
+          className="flex flex-col items-center gap-4"
+          initial={{ x: 80, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: slideDir * -80, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-          style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}
+          exit={{ x: -80, opacity: 0 }}
+          transition={springSmooth}
         >
           {/* Type badge */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <span className={`pmg__type-badge pmg__type-badge--${currentQuestion.type}`}>
-              {currentQuestion.type === 'delete'
-                ? (t('games.deleteASound') || 'Delete a Sound')
-                : currentQuestion.type === 'substitute'
-                  ? (t('games.swapASound') || 'Swap a Sound')
-                  : currentQuestion.type === 'add'
-                    ? (t('games.addASound') || 'Add a Sound')
-                    : (t('games.reverse') || 'Reverse')}
-            </span>
+          <div
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-sm"
+            style={{ backgroundColor: typeConfig.bg, color: typeConfig.color }}
+          >
+            <TypeIcon size={16} />
+            {currentQuestion.type === 'delete'
+              ? (t('games.deleteASound') || typeConfig.label)
+              : currentQuestion.type === 'substitute'
+                ? (t('games.swapASound') || typeConfig.label)
+                : currentQuestion.type === 'add'
+                  ? (t('games.addASound') || typeConfig.label)
+                  : (t('games.reverse') || typeConfig.label)}
           </div>
 
-          {/* Target word */}
-          <div className="pmg__target-word">
-            <span className="pmg__target-label">{t('games.theWord') || 'The word'}</span>
-            <motion.div
+          {/* Target word card */}
+          <div className="flex flex-col items-center gap-1 p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-sm w-full max-w-xs">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+              {t('games.theWord') || 'The word'}
+            </span>
+            <motion.span
               key={`word-${currentIndex}`}
-              className="pmg__target-text"
+              className="text-3xl font-extrabold text-gray-800"
               initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.08 }}
+              transition={springPop}
             >
               {currentQuestion.targetWord}
-            </motion.div>
+            </motion.span>
           </div>
 
-          {/* Prompt card */}
-          <div className="pmg__prompt-card" aria-live="polite">
-            <p className="pmg__prompt-text">{prompt}</p>
+          {/* Instruction card */}
+          <div className="p-4 bg-amber-50 border-2 border-amber-200 rounded-2xl w-full max-w-sm text-center" aria-live="polite">
+            <p className="text-base font-semibold text-amber-800">{prompt}</p>
             {lang !== 'tr' && currentQuestion.promptTr && (
-              <p className="pmg__prompt-tr">{currentQuestion.promptTr}</p>
+              <p className="text-sm text-amber-600 mt-1">{currentQuestion.promptTr}</p>
             )}
           </div>
 
           {/* Phoneme tiles */}
-          <div className="pmg__tiles-area">
-            <span className="pmg__tiles-label">{t('games.soundsInTheWord') || 'Sounds in the word'}</span>
-            <div className="pmg__tiles-row" role="group" aria-label="Phoneme tiles">
+          <div className="flex flex-col items-center gap-2 w-full">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+              {t('games.soundsInTheWord') || 'Sounds in the word'}
+            </span>
+            <div className="flex items-center justify-center gap-2 flex-wrap" role="group" aria-label="Phoneme tiles">
               <AnimatePresence>
                 {currentQuestion.targetWordPhonemes.map((phoneme, index) => {
                   const category = classifyPhoneme(phoneme);
+                  const style = PHONEME_CATEGORY_STYLES[category];
                   const isBeingDeleted =
                     phase === 'animating' &&
                     currentQuestion.type === 'delete' &&
                     deletedIndex === index;
+                  const isSubstituting =
+                    phase === 'animating' &&
+                    currentQuestion.type === 'substitute' &&
+                    index === 0;
 
                   return (
                     <motion.div
                       key={`${currentQuestion.id}-tile-${index}`}
-                      className={[
-                        'pmg__tile',
-                        `pmg__tile--${category}`,
-                        isBeingDeleted && 'pmg__tile--deleting',
-                        phase === 'animating' &&
-                          currentQuestion.type === 'substitute' &&
-                          index === 0 &&
-                          'pmg__tile--substituting',
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
+                      className="flex flex-col items-center justify-center min-w-[56px] min-h-[64px] px-3 py-2 rounded-xl border-2"
+                      style={{
+                        backgroundColor: isBeingDeleted ? '#FEE2E2' : style.bg,
+                        borderColor: isBeingDeleted ? '#EF4444' : style.border,
+                        color: isBeingDeleted ? '#DC2626' : style.text,
+                      }}
                       layout
                       initial={{ scale: 0, opacity: 0 }}
                       animate={
                         isBeingDeleted
-                          ? { scale: 0, opacity: 0, x: -20 }
-                          : { scale: 1, opacity: 1, x: 0 }
+                          ? { scale: 0, opacity: 0, y: -30, rotate: -15 }
+                          : isSubstituting
+                            ? { scale: [1, 1.2, 1], opacity: 1 }
+                            : { scale: 1, opacity: 1 }
                       }
                       exit={{ scale: 0, opacity: 0 }}
                       transition={
                         isBeingDeleted
                           ? { duration: 0.45, ease: 'easeIn' }
-                          : {
-                              type: 'spring',
-                              stiffness: 260,
-                              damping: 22,
-                              delay: index * 0.06,
-                            }
+                          : { ...springSmooth, delay: index * 0.06 }
                       }
                       aria-label={`Sound: /${phoneme}/`}
                     >
-                      <span className="pmg__tile-phoneme">{phoneme}</span>
-                      <span className="pmg__tile-slash">/{phoneme}/</span>
+                      <span className="text-lg font-bold leading-none">{phoneme}</span>
+                      <span className="text-[10px] opacity-60 mt-0.5">/{phoneme}/</span>
                     </motion.div>
                   );
                 })}
@@ -414,92 +475,87 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
             </div>
 
             {/* Change instruction pill */}
-            <div className="pmg__change-instruction">
-              <span className="pmg__change-label">{t('games.change') || 'Change:'}</span>
-              <span className="pmg__change-text">{currentQuestion.changeInstruction}</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full mt-1">
+              <span className="text-xs font-medium text-gray-500">
+                {t('games.change') || 'Change:'}
+              </span>
+              <span className="text-xs font-bold text-gray-700">
+                {currentQuestion.changeInstruction}
+              </span>
             </div>
           </div>
 
-          {/* Tap to manipulate button — shown before animation starts */}
+          {/* Action button */}
           {phase === 'showing' && (
-            <motion.div
-              style={{ display: 'flex', justifyContent: 'center' }}
+            <motion.button
+              type="button"
+              onClick={handleStartManipulation}
+              className="flex items-center gap-2 px-8 py-3 min-h-[48px] rounded-2xl bg-purple-500 text-white font-bold text-lg shadow-lg shadow-purple-200 hover:bg-purple-600 transition-colors"
+              whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
+              aria-label="See what happens to the word"
             >
-              <motion.button
-                type="button"
-                className="pmg__completion-btn pmg__completion-btn--primary"
-                style={{ fontSize: '1.2rem', padding: '0.9rem 2.5rem', marginTop: '0.25rem' }}
-                onClick={handleStartManipulation}
-                whileTap={{ scale: 0.95 }}
-                aria-label="See what happens to the word"
-              >
-                {t('games.seeWhatHappens') || 'See What Happens!'}
-              </motion.button>
-            </motion.div>
+              {t('games.seeWhatHappens') || 'See What Happens!'}
+            </motion.button>
           )}
 
-          {/* Animating phase — visual cue */}
+          {/* Animating text */}
           {phase === 'animating' && (
             <motion.p
-              style={{
-                textAlign: 'center',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-                color: 'var(--text-secondary)',
-                margin: 0,
-              }}
+              className="text-center font-bold text-gray-500"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ opacity: [0, 1, 0.6, 1] }}
+              transition={{ duration: 0.8 }}
             >
               {t('games.watchSoundsChange') || 'Watch the sounds change...'}
             </motion.p>
           )}
 
-          {/* Result word display — shown briefly after animating */}
-          <AnimatePresence>
-            {phase === 'result' && (
-              <motion.div
-                className="pmg__answer-area"
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-              >
-                <span className="pmg__answer-label">{t('games.newWord') || 'New word'}</span>
-                <span className="pmg__answer-word">{currentQuestion.correctAnswer}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Multiple choice options */}
           {phase === 'choices' && (
-            <div className="pmg__options-section">
-              <p className="pmg__options-label">{t('games.whichWordDoYouGet') || 'Which word do you get?'}</p>
-              <div className="pmg__options-grid" role="group" aria-label="Choose the new word">
+            <div className="flex flex-col items-center gap-3 w-full max-w-sm">
+              <p className="text-base font-semibold text-gray-600">
+                {t('games.whichWordDoYouGet') || 'Which word do you get?'}
+              </p>
+              <div className="grid grid-cols-2 gap-3 w-full" role="group" aria-label="Choose the new word">
                 {currentQuestion.options.map((option, idx) => {
                   const state: OptionState = optionStates[option] ?? 'idle';
+                  const isCorrect = state === 'correct';
+                  const isWrong = state === 'wrong';
+
                   return (
                     <motion.button
                       key={option}
                       type="button"
-                      className={[
-                        'pmg__option',
-                        state === 'correct' && 'pmg__option--correct',
-                        state === 'wrong' && 'pmg__option--wrong',
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
                       onClick={() => handleOptionPress(option)}
                       disabled={answered && state === 'idle'}
                       aria-pressed={state !== 'idle'}
+                      className={`flex items-center justify-center gap-2 px-4 py-4 min-h-[56px] rounded-2xl border-2 font-bold text-lg transition-colors ${
+                        isCorrect
+                          ? 'bg-emerald-100 border-emerald-400 text-emerald-700'
+                          : isWrong
+                            ? 'bg-red-100 border-red-400 text-red-700'
+                            : 'bg-white border-gray-200 text-gray-800 hover:border-purple-300 hover:bg-purple-50'
+                      }`}
                       initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.08 }}
+                      animate={
+                        isCorrect
+                          ? { opacity: 1, y: 0, scale: [1, 1.1, 1] }
+                          : isWrong
+                            ? { opacity: 1, y: 0, scale: 1, x: [0, -6, 6, -4, 4, 0] }
+                            : { opacity: 1, y: 0, scale: 1 }
+                      }
+                      transition={
+                        isCorrect || isWrong
+                          ? { duration: 0.5 }
+                          : { ...springPop, delay: idx * 0.08 }
+                      }
                       whileTap={{ scale: 0.95 }}
                     >
+                      {isCorrect && <Check size={20} />}
+                      {isWrong && <X size={20} />}
                       {option}
                     </motion.button>
                   );
@@ -509,7 +565,7 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
               {/* Hint */}
               {currentQuestion.hint && !answered && (
                 <motion.p
-                  className="pmg__hint"
+                  className="text-sm text-gray-400 italic text-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
@@ -520,17 +576,8 @@ export const PhonemeManipulationGame: React.FC<PhonemeManipulationGameProps> = (
             </div>
           )}
 
-          {/* Bottom row */}
-          <div className="pmg__bottom-row">
-            <span
-              className={`pmg__difficulty-badge pmg__difficulty-badge--${currentQuestion.difficulty}`}
-            >
-              {currentQuestion.difficulty === 1
-                ? (t('games.easy') || 'Easy')
-                : currentQuestion.difficulty === 2
-                  ? (t('games.medium') || 'Medium')
-                  : (t('games.hard') || 'Hard')}
-            </span>
+          {/* Mascot */}
+          <div className="flex justify-end w-full mt-1">
             <UnifiedMascot
               state={showFeedback === 'correct' ? 'celebrating' : 'idle'}
               size={48}

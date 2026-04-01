@@ -1,12 +1,12 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Check, X, RotateCcw, ArrowRight, CheckCircle2, Trophy } from 'lucide-react';
-import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
+import { Sparkles, Star, Check, X, RotateCcw, ArrowRight, CheckCircle2, Trophy, Volume2 } from 'lucide-react';
+import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
+import { speak } from '../../services/ttsService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import { shuffleArray } from '../../utils/arrayUtils';
-import './StoryChoicesGame.css';
 
 interface WordItem {
   english: string;
@@ -20,7 +20,6 @@ interface GameProps {
   onXpEarned?: (xp: number) => void;
   onWrongAnswer?: () => void;
 }
-
 
 interface Question {
   word: WordItem;
@@ -42,10 +41,12 @@ function buildQuestions(words: WordItem[]): Question[] {
   });
 }
 
+const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
+const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
+
 export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
   const { loseHeart } = useHearts();
-  // Use a counter to force re-generation of questions on Play Again
   const [playKey, setPlayKey] = useState(0);
   const questions = useMemo(() => buildQuestions(words), [words, playKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -56,14 +57,12 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
   const scoreRef = useRef(0);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
     };
   }, []);
 
-  // advance must be defined before any early returns to satisfy React hooks ordering rules.
   const advance = useCallback((wasCorrect: boolean) => {
     const newScore = scoreRef.current + (wasCorrect ? 1 : 0);
     scoreRef.current = newScore;
@@ -83,7 +82,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   if (words.length < 3) {
     return (
-      <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+      <div className="flex items-center justify-center p-8 text-gray-400 text-center">
         {t('games.notQuiteKeepGoing')}
       </div>
     );
@@ -121,82 +120,53 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
     setFeedback(null);
     setSelectedIdx(null);
     setCompleted(false);
-    // Increment playKey to trigger question re-shuffle via useMemo
     setPlayKey(k => k + 1);
   };
 
+  // Completion screen
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     const isPerfect = pct === 100;
     return (
-      <div className="story-choices-game__complete">
+      <div className="relative flex flex-col items-center px-4 py-6">
         {isPerfect && <ConfettiRain duration={3000} />}
-        <Card variant="elevated" padding="xl">
-          <motion.div
-            initial={{ scale: 0.7, opacity: 0, y: 40 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="story-choices-game__complete-content"
-          >
-            <motion.span
-              className="story-choices-game__complete-emoji"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 }}
-            >
-              {pct >= 90
-                ? <Trophy size={48} color="var(--warning)" />
-                : pct >= 60
-                  ? <Star size={48} fill="var(--warning)" color="var(--warning)" />
-                  : <Check size={48} color="var(--success)" />}
-            </motion.span>
-            <h2 className="story-choices-game__complete-title">{t('games.storyComplete')}</h2>
-            <p className="story-choices-game__complete-score">
-              {t('games.xOutOfYCorrect').replace('{score}', String(score)).replace('{total}', String(questions.length))}
-            </p>
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.55 + i * 0.12 }}
-                >
-                  <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
-                </motion.span>
-              ))}
-            </span>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.9 }}
-            >
-              <Badge variant="success" icon={<Sparkles size={14} />}>
-                +{score * 10} XP
-              </Badge>
-            </motion.div>
-            <div className="story-choices-game__complete-actions">
-              <button
-                type="button"
-                className="story-choices-game__complete-btn story-choices-game__complete-btn--secondary"
-                onClick={() => {
-                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
-                  onComplete(score, questions.length);
-                }}
-              >
-                <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
-              </button>
-              <button
-                type="button"
-                className="story-choices-game__complete-btn story-choices-game__complete-btn--primary"
-                onClick={handlePlayAgain}
-              >
-                <RotateCcw size={16} /> {t('games.playAgain') || 'Play Again'}
-              </button>
-            </div>
-          </motion.div>
-        </Card>
+        <motion.div
+          initial={{ scale: 0.7, opacity: 0, y: 40 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={springBounce}
+          className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col items-center gap-5"
+        >
+          <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...springBounce, delay: 0.3 }}>
+            {pct >= 90 ? <Trophy size={48} className="text-amber-500" /> : pct >= 60 ? <Star size={48} className="text-amber-500 fill-amber-500" /> : <Check size={48} className="text-emerald-500" />}
+          </motion.span>
+
+          <h2 className="text-2xl font-bold text-gray-800">{t('games.storyComplete')}</h2>
+          <p className="text-lg text-gray-500">
+            {t('games.xOutOfYCorrect').replace('{score}', String(score)).replace('{total}', String(questions.length))}
+          </p>
+
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span key={i} initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...springBounce, delay: 0.55 + i * 0.12 }}>
+                <Star size={32} className={i < stars ? 'text-indigo-500 fill-indigo-500' : 'text-gray-200'} />
+              </motion.span>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-sm font-semibold px-3 py-1.5 rounded-full">
+            <Sparkles size={14} /> +{score * 10} XP
+          </div>
+
+          <div className="flex gap-3 w-full mt-2">
+            <button type="button" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, questions.length); }} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors">
+              <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
+            </button>
+            <button type="button" onClick={handlePlayAgain} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors">
+              <RotateCcw size={16} /> {t('games.playAgain') || 'Play Again'}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -204,52 +174,47 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
   if (!question) return null;
 
   return (
-    <div
-      className="story-choices-game"
-      role="application"
-      aria-label="Story choices game"
-    >
-      <div className="story-choices-game__header">
-        <h2 className="story-choices-game__title">{t('games.chooseTranslation')}</h2>
-        <Badge variant="info">{currentIndex + 1}/{questions.length}</Badge>
+    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Story choices game">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-gray-800">{t('games.chooseTranslation')}</h2>
+        <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">
+          {currentIndex + 1}/{questions.length}
+        </span>
       </div>
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      {/* Progress bar */}
+      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+        <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${progress}%` }} transition={springGentle} />
+      </div>
 
-      {/* Prompt card */}
-      <Card variant="elevated" padding="lg">
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          className="story-choices-game__prompt"
+      {/* Hero word card */}
+      <motion.div
+        key={currentIndex}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={springGentle}
+        className="bg-white border-2 border-gray-100 rounded-2xl p-6 flex flex-col items-center gap-3 shadow-sm"
+      >
+        <p className="text-4xl font-black text-gray-800 tracking-tight">
+          {question.word.english}
+        </p>
+        <button
+          type="button"
+          onClick={() => speak(question.word.english)}
+          className="flex items-center gap-1.5 px-3 py-2 min-h-[40px] rounded-lg bg-blue-50 text-blue-600 font-medium text-sm hover:bg-blue-100 transition-colors"
         >
-          <div className={`story-choices-game__prompt-emoji${question.word.emoji ? '' : ' story-choices-game__prompt-emoji--fallback'}`}>{question.word.emoji || question.word.english.charAt(0).toUpperCase()}</div>
-          <p className="story-choices-game__prompt-word">
-            {question.word.english}
-          </p>
-        </motion.div>
-      </Card>
+          <Volume2 size={16} /> Listen
+        </button>
+      </motion.div>
 
       {/* Choices */}
-      <div
-        className="story-choices-game__choices"
-        role="group"
-        aria-label="Translation choices"
-      >
+      <div className="flex flex-col gap-3" role="group" aria-label="Translation choices">
         <AnimatePresence mode="wait">
           {question.choices.map((choice, idx) => {
             const isSelected = selectedIdx === idx;
             const showCorrect = feedback !== null && choice.correct;
             const showWrong = feedback === 'wrong' && isSelected && !choice.correct;
-
-            const choiceClass = [
-              'story-choices-game__choice',
-              isSelected && !feedback && 'story-choices-game__choice--selected',
-              showCorrect && 'story-choices-game__choice--correct',
-              showWrong && 'story-choices-game__choice--wrong',
-            ].filter(Boolean).join(' ');
 
             return (
               <motion.button
@@ -257,17 +222,28 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
                 type="button"
                 onClick={() => handleChoice(idx, choice.correct)}
                 disabled={feedback !== null}
-                initial={{ opacity: 0, x: -20, y: 10 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.08 }}
-                whileHover={{ y: -3 }}
-                whileTap={{ scale: 0.97, y: 1 }}
-                className={choiceClass}
+                className={`
+                  flex items-center justify-between px-5 py-4 min-h-[56px] rounded-xl font-semibold text-base transition-all
+                  ${showCorrect ? 'bg-emerald-50 border-2 border-emerald-400 text-emerald-700' : ''}
+                  ${showWrong ? 'bg-red-50 border-2 border-red-300 text-red-600' : ''}
+                  ${!showCorrect && !showWrong ? 'bg-white border-2 border-gray-200 text-gray-700 hover:border-indigo-300 hover:bg-indigo-50 shadow-sm' : ''}
+                  disabled:cursor-not-allowed
+                `}
                 aria-label={`Choice: ${choice.text}`}
+                initial={{ opacity: 0, x: -20, y: 10 }}
+                animate={
+                  showCorrect
+                    ? { opacity: 1, x: 0, y: 0, scale: [1, 1.05, 1] }
+                    : showWrong
+                      ? { opacity: 1, x: [0, -4, 4, -4, 0], y: 0 }
+                      : { opacity: 1, x: 0, y: 0 }
+                }
+                transition={{ ...springGentle, delay: idx * 0.08 }}
+                whileTap={{ scale: 0.97 }}
               >
-                <span className="story-choices-game__choice-text">{choice.text}</span>
-                {showCorrect && <CheckCircle2 size={18} strokeWidth={2.5} />}
-                {showWrong && <X size={18} strokeWidth={2.5} />}
+                <span>{choice.text}</span>
+                {showCorrect && <CheckCircle2 size={18} strokeWidth={2.5} className="text-emerald-500" />}
+                {showWrong && <X size={18} strokeWidth={2.5} className="text-red-500" />}
               </motion.button>
             );
           })}
@@ -281,7 +257,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="story-choices-game__feedback--correct"
+            className="text-center font-semibold text-emerald-700 bg-emerald-50 rounded-xl py-2 px-4"
           >
             {t('games.correctWellDone')}
           </motion.p>
@@ -291,11 +267,11 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="story-choices-game__feedback--wrong"
+            className="text-center font-semibold text-red-600 bg-red-50 rounded-xl py-2 px-4"
           >
             {t('games.notQuiteKeepGoing')}{' '}
-            <strong className="story-choices-game__feedback-correct-answer">
-              ✓ {question.choices.find(c => c.correct)?.text}
+            <strong className="text-emerald-600">
+              {question.choices.find(c => c.correct)?.text}
             </strong>
           </motion.p>
         )}

@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
-import { Button, Card, Badge, ProgressBar } from '../ui';
+import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle, Volume2 } from 'lucide-react';
 import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { speakElevenLabs } from '../../services/ttsService';
@@ -9,7 +8,6 @@ import { SpeakButton } from '../SpeakButton';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
-import './SpellingBee.css';
 
 interface WordItem {
   english: string;
@@ -37,8 +35,7 @@ const EXAMPLE_SENTENCES: Record<string, string> = {
   apple: 'I eat an apple.',
 };
 
-// Confusable letter pairs — pedagogically harder distractors that look/sound similar.
-// Prioritised over random alphabet picks so children learn discrimination.
+// Confusable letter pairs for pedagogically harder distractors
 const CONFUSABLE_PAIRS: Record<string, string[]> = {
   B: ['D', 'P'], D: ['B', 'T'], P: ['B', 'D'], Q: ['G', 'O'],
   M: ['N', 'W'], N: ['M', 'H'], W: ['M', 'V'], V: ['W', 'U'],
@@ -54,7 +51,6 @@ function generateLetterPool(word: string): string[] {
   const uniqueLetters = new Set(letters);
   const decoys: string[] = [];
 
-  // 1. Prefer confusable letters that are NOT already in the word
   for (const letter of uniqueLetters) {
     if (decoys.length >= 3) break;
     const candidates = (CONFUSABLE_PAIRS[letter] || []).filter(
@@ -65,7 +61,6 @@ function generateLetterPool(word: string): string[] {
     }
   }
 
-  // 2. Fill remaining slots with common English letters (not obscure like Q/X/Z)
   const commonLetters = 'RSTLNEASIDMOBCFGHKPUWY';
   let idx = 0;
   while (decoys.length < 3 && idx < commonLetters.length) {
@@ -76,7 +71,6 @@ function generateLetterPool(word: string): string[] {
   }
 
   const pool = [...letters, ...decoys];
-  // Fisher-Yates shuffle
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -97,8 +91,6 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [score, setScore] = useState(0);
-  // scoreRef mirrors score state so async callbacks always read the latest value
-  // without depending on stale closures — fixes the onComplete(score + 1, ...) stale read
   const scoreRef = useRef(0);
   const [completed, setCompleted] = useState(false);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -121,7 +113,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   }, [initWord]);
 
   const speakWord = useCallback((text: string) => {
-    speakElevenLabs(text, 0.9).catch(() => {/* fallback handled inside speakElevenLabs() */});
+    speakElevenLabs(text, 0.9).catch(() => {/* fallback handled inside */});
   }, []);
 
   const handleLetterTap = useCallback((letter: string, poolIndex: number) => {
@@ -135,12 +127,10 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     setUsedIndices((prev) => prev.slice(0, -1));
   }, []);
 
-  // Use a ref for submit so the keyboard handler always gets the latest version
   const submitRef = useRef<() => void>(() => {});
 
   const handleSubmit = useCallback(() => {
     if (feedback) return;
-    // Trim and normalize both sides — guards against accidental whitespace in word data
     const attempt = typed.join('').trim().toLowerCase();
     const correct = currentWord.english.trim().toLowerCase();
 
@@ -158,7 +148,6 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
           initWord(currentIndex + 1);
         } else {
           setCompleted(true);
-          // Use scoreRef to avoid stale closure — score state may not have updated yet
           const finalScore = scoreRef.current;
           autoCompleteTimeoutRef.current = setTimeout(() => onComplete(finalScore, gameWords.length), 4000);
         }
@@ -181,12 +170,11 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
         setUsedIndices([]);
       }, 800);
     }
-  // scoreRef is a ref — not a reactive dep. score state removed to avoid stale read.
   }, [feedback, typed, currentWord, onXpEarned, speakWord, currentIndex, gameWords.length, initWord, onComplete, loseHeart, onWrongAnswer, hearts, wrongAttempts]);
 
   submitRef.current = handleSubmit;
 
-  // Physical keyboard support — uses stable ref to avoid stale closures
+  // Physical keyboard support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (completed || feedback) return;
@@ -205,7 +193,6 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
 
       const key = e.key.toUpperCase();
       if (key.length === 1 && /[A-Z]/.test(key)) {
-        // Find first unused pool letter matching this key
         const poolIndex = letterPool.findIndex(
           (letter, i) => letter === key && !usedIndices.includes(i)
         );
@@ -219,8 +206,6 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [completed, feedback, typed, letterPool, usedIndices, currentWord, handleBackspace, handleLetterTap]);
 
-  // Progress: show how many questions have been completed, not the current index raw
-  // At question 1 (index 0) → 0%, at question 2 → 20%, at finish → 100%
   const progress = gameWords.length > 0 ? (currentIndex / gameWords.length) * 100 : 0;
 
   const handlePlayAgain = () => {
@@ -235,58 +220,76 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
     initWord(0);
   };
 
-  if (words.length < 2) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview')}</div>; }
+  if (words.length < 2) {
+    return (
+      <div className="flex items-center justify-center p-8 text-slate-400 text-lg font-medium">
+        {t('games.noWordsToReview')}
+      </div>
+    );
+  }
 
   if (completed) {
     const pct = gameWords.length > 0 ? Math.round((score / gameWords.length) * 100) : 0;
     const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     return (
-      <div className="spelling-bee">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-64px)] bg-gradient-to-b from-teal-50 to-emerald-50 p-6">
         {pct >= 90 && <ConfettiRain duration={3000} />}
-        <Card variant="elevated" padding="xl" className="spelling-bee__results">
+        <motion.div
+          className="flex flex-col items-center gap-5 bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+        >
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            className="spelling-bee__results-content"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
           >
-            <motion.span
-              className="spelling-bee__big-emoji"
-              initial={{ scale: 0, rotate: -20 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
-            >
-              {pct >= 90 ? <Trophy size={48} color="var(--warning)" /> : pct >= 60 ? <Star size={48} fill="var(--warning)" color="var(--warning)" /> : <Check size={48} color="var(--success)" />}
-            </motion.span>
-            <h2 className="spelling-bee__results-title">{t('games.spellingStar')}</h2>
-            <p className="spelling-bee__results-score">
-              {t('games.outOfCorrect').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
-            </p>
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
-                >
-                  <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
-                </motion.span>
-              ))}
-            </span>
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 15} XP
-            </Badge>
-            <div className="spelling-bee__results-actions">
-              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--secondary" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, gameWords.length); }}>
-                <ArrowRight size={16} /> {t('games.backToGames')}
-              </button>
-              <button type="button" className="spelling-bee__results-btn spelling-bee__results-btn--primary" onClick={handlePlayAgain} autoFocus>
-                <RotateCcw size={16} /> {t('games.playAgain')}
-              </button>
-            </div>
+            {pct >= 90 ? <Trophy size={56} className="text-amber-400" /> : pct >= 60 ? <Star size={56} className="text-amber-400 fill-amber-400" /> : <Check size={56} className="text-emerald-500" />}
           </motion.div>
-        </Card>
+
+          <h2 className="text-2xl font-bold text-slate-800">{t('games.spellingStar')}</h2>
+
+          <p className="text-lg text-slate-500 font-medium">
+            {t('games.outOfCorrect').replace('{score}', String(score)).replace('{total}', String(gameWords.length))}
+          </p>
+
+          {/* Stars */}
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
+              >
+                <Star size={36} className={i < stars ? 'text-amber-400 fill-amber-400' : 'text-slate-200'} />
+              </motion.span>
+            ))}
+          </div>
+
+          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-full">
+            <Sparkles size={14} /> +{score * 15} XP
+          </span>
+
+          <div className="flex gap-3 w-full mt-2">
+            <button
+              type="button"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors min-h-[48px]"
+              onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, gameWords.length); }}
+            >
+              <ArrowRight size={16} /> {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-teal-500 text-white font-semibold text-sm hover:bg-teal-600 transition-colors shadow-lg shadow-teal-500/25 min-h-[48px]"
+              onClick={handlePlayAgain}
+              autoFocus
+            >
+              <RotateCcw size={16} /> {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -294,151 +297,220 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
   if (!currentWord) return null;
 
   const sentence = EXAMPLE_SENTENCES[currentWord.english.toLowerCase()] || `I like ${currentWord.english}.`;
+  const isComplete = typed.length === currentWord.english.length;
 
   return (
     <>
-    {showNoHearts && (
-      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
-    )}
-    <div className="spelling-bee" role="application" aria-label="Spelling game">
-      <div className="spelling-bee__header">
-        <h2 className="spelling-bee__title">{t('games.spellIt')}</h2>
-        <Badge variant="info">{currentIndex + 1}/{gameWords.length}</Badge>
-      </div>
+      {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full" role="application" aria-label="Spelling game">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-800">{t('games.spellIt')}</h2>
+          <span className="bg-teal-50 text-teal-600 text-sm font-semibold px-3 py-1 rounded-full">
+            {currentIndex + 1}/{gameWords.length}
+          </span>
+        </div>
 
-      <Card variant="elevated" padding="lg" className="spelling-bee__prompt">
+        {/* Progress bar */}
+        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-teal-400 to-emerald-500 rounded-full"
+            animate={{ width: `${progress}%` }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+          />
+        </div>
+
+        {/* Score */}
+        <div className="flex items-center justify-center gap-1.5 text-sm font-semibold text-slate-500">
+          <CheckCircle2 size={16} className="text-emerald-500" />
+          {score} / {gameWords.length}
+        </div>
+
+        {/* Audio prompt card */}
         <motion.div
-          className={`spelling-bee__big-emoji${currentWord.emoji ? '' : ' spelling-bee__big-emoji--fallback'}`}
+          className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 flex flex-col items-center gap-4"
           key={currentWord.english}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 300 }}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         >
-          {currentWord.emoji || currentWord.english.charAt(0).toUpperCase()}
-        </motion.div>
-        <p id="sb-word-prompt" className="spelling-bee__turkish">{currentWord.turkish}</p>
-        <SpeakButton
-          text={currentWord.english}
-          size="lg"
-          variant="labeled"
-          aria-label="Listen to pronunciation"
-        />
-      </Card>
-
-      {showHint && (
-        <motion.div
-          className="spelling-bee__hint"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <Lightbulb size={18} />
-          {t('games.hintStartsWith').replace('{letter}', (currentWord.english.charAt(0) || '?').toUpperCase())}
-        </motion.div>
-      )}
-
-      <div
-        className="spelling-bee__answer"
-        aria-label="Spelling input"
-        aria-describedby="sb-word-prompt"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {currentWord.english.split('').map((letter, i) => {
-          const isReveal = feedback === 'wrong' && wrongAttempts >= 2;
-          return (
-            <div
-              key={i}
-              className={[
-                'spelling-bee__slot',
-                (typed[i] || isReveal) && 'spelling-bee__slot--filled',
-                feedback === 'correct' && 'spelling-bee__slot--correct',
-                feedback === 'wrong' && !isReveal && typed[i] && 'spelling-bee__slot--wrong',
-                isReveal && 'spelling-bee__slot--reveal',
-              ].filter(Boolean).join(' ')}
-            >
-              {isReveal ? letter.toUpperCase() : (typed[i] || '')}
-            </div>
-          );
-        })}
-      </div>
-
-      <div aria-live="polite" aria-atomic="true">
-        {feedback === 'correct' && (
+          {/* Large speaker button */}
           <motion.div
-            className="spelling-bee__feedback-banner spelling-bee__feedback-banner--correct"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/30 cursor-pointer"
+            whileTap={{ scale: 0.92 }}
+            whileHover={{ scale: 1.05 }}
+            onClick={() => speakWord(currentWord.english)}
           >
-            {/* Icon + color: not color alone — for protanopia/deuteranopia users */}
-            <CheckCircle2 size={18} aria-hidden="true" />
-            <p className="spelling-bee__sentence">"{sentence}"</p>
+            <Volume2 size={36} className="text-white" />
           </motion.div>
-        )}
 
-        {feedback === 'wrong' && (
-          <motion.div
-            className="spelling-bee__feedback-banner spelling-bee__feedback-banner--wrong"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
-          >
-            {/* Icon + color: not color alone — for protanopia/deuteranopia users */}
-            <XCircle size={18} aria-hidden="true" />
-            <p className="spelling-bee__try-again" style={{ margin: 0 }}>
-              {wrongAttempts >= 2
-                ? `${t('games.theAnswerWas') || 'The answer was'}: ${currentWord.english.toUpperCase()}`
-                : t('games.almostTryAgain')}
-            </p>
-          </motion.div>
-        )}
-      </div>
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Tap to listen</p>
 
-      <div className="spelling-bee__tiles" role="group" aria-label="Available letters">
+          {/* Turkish translation hint */}
+          <p id="sb-word-prompt" className="text-lg font-semibold text-slate-700">
+            {currentWord.turkish}
+          </p>
+
+          <SpeakButton
+            text={currentWord.english}
+            size="sm"
+            variant="labeled"
+            aria-label="Listen to pronunciation"
+          />
+        </motion.div>
+
+        {/* Hint */}
         <AnimatePresence>
-          {letterPool.map((letter, i) => (
-            <motion.button
-              type="button"
-              key={`${letter}-${i}`}
-              className={[
-                'spelling-bee__tile',
-                usedIndices.includes(i) && 'spelling-bee__tile--used',
-              ].filter(Boolean).join(' ')}
-              onClick={() => handleLetterTap(letter, i)}
-              disabled={usedIndices.includes(i) || !!feedback}
-              aria-label={`Letter ${letter}`}
-              whileTap={{ scale: 0.9 }}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.05 }}
+          {showHint && (
+            <motion.div
+              className="flex items-center gap-2 bg-amber-50 text-amber-700 font-semibold text-sm px-4 py-3 rounded-2xl border border-amber-200"
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
             >
-              {letter}
-            </motion.button>
-          ))}
+              <Lightbulb size={18} className="text-amber-500 shrink-0" />
+              {t('games.hintStartsWith').replace('{letter}', (currentWord.english.charAt(0) || '?').toUpperCase())}
+            </motion.div>
+          )}
         </AnimatePresence>
-      </div>
 
-      <div className="spelling-bee__actions">
-        <Button
-          variant="ghost"
-          size="lg"
-          icon={<Delete size={20} />}
-          onClick={handleBackspace}
-          disabled={typed.length === 0 || !!feedback}
-          aria-label="Remove last letter"
+        {/* Answer slots */}
+        <div
+          className="flex items-center justify-center gap-2 flex-wrap"
+          aria-label="Spelling input"
+          aria-describedby="sb-word-prompt"
+          aria-live="polite"
+          aria-atomic="true"
         >
-          {t('common.back')}
-        </Button>
-        <Button
-          variant="primary"
-          size="xl"
-          onClick={handleSubmit}
-          disabled={typed.length !== currentWord.english.length || !!feedback}
-        >
-          {t('games.check')}
-        </Button>
+          {currentWord.english.split('').map((letter, i) => {
+            const isReveal = feedback === 'wrong' && wrongAttempts >= 2;
+            const isCorrect = feedback === 'correct';
+            const isWrongChar = feedback === 'wrong' && !isReveal && typed[i];
+
+            return (
+              <motion.div
+                key={i}
+                className={[
+                  'w-12 h-14 rounded-2xl flex items-center justify-center text-xl font-bold border-2 transition-colors',
+                  isCorrect
+                    ? 'bg-emerald-50 border-emerald-400 text-emerald-700'
+                    : isReveal
+                    ? 'bg-amber-50 border-amber-300 text-amber-700'
+                    : isWrongChar
+                    ? 'bg-red-50 border-red-300 text-red-600'
+                    : typed[i]
+                    ? 'bg-white border-teal-400 text-slate-800 shadow-sm'
+                    : 'bg-slate-50 border-slate-200 text-slate-300',
+                ].join(' ')}
+                animate={
+                  isCorrect
+                    ? { scale: [1, 1.1, 1], transition: { delay: i * 0.05 } }
+                    : feedback === 'wrong' && !isReveal
+                    ? { x: [0, -4, 4, -4, 0] }
+                    : {}
+                }
+                onClick={() => {
+                  // Tap a filled slot to remove that letter
+                  if (typed[i] && !feedback) {
+                    setTyped(prev => prev.filter((_, idx) => idx !== i));
+                    setUsedIndices(prev => prev.filter((_, idx) => idx !== i));
+                  }
+                }}
+              >
+                {isReveal ? letter.toUpperCase() : (typed[i] || '')}
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Feedback banner */}
+        <div aria-live="polite" aria-atomic="true">
+          <AnimatePresence>
+            {feedback === 'correct' && (
+              <motion.div
+                className="flex items-center gap-2 bg-emerald-50 text-emerald-700 font-semibold text-sm px-4 py-3 rounded-2xl border border-emerald-200"
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <CheckCircle2 size={18} aria-hidden="true" />
+                <p className="text-sm italic text-emerald-600">&#34;{sentence}&#34;</p>
+              </motion.div>
+            )}
+
+            {feedback === 'wrong' && (
+              <motion.div
+                className="flex items-center gap-2 bg-red-50 text-red-700 font-semibold text-sm px-4 py-3 rounded-2xl border border-red-200"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0, x: [0, -6, 6, -6, 0] }}
+                exit={{ opacity: 0 }}
+              >
+                <XCircle size={18} aria-hidden="true" />
+                <p className="text-sm" style={{ margin: 0 }}>
+                  {wrongAttempts >= 2
+                    ? `${t('games.theAnswerWas') || 'The answer was'}: ${currentWord.english.toUpperCase()}`
+                    : t('games.almostTryAgain')}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Letter tiles grid */}
+        <div className="flex flex-wrap items-center justify-center gap-2" role="group" aria-label="Available letters">
+          <AnimatePresence>
+            {letterPool.map((letter, i) => (
+              <motion.button
+                type="button"
+                key={`${letter}-${i}`}
+                className={[
+                  'w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold transition-all',
+                  usedIndices.includes(i)
+                    ? 'bg-slate-100 text-slate-300 border-2 border-slate-100 cursor-default'
+                    : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-teal-400 hover:bg-teal-50 hover:text-teal-700 shadow-sm cursor-pointer active:scale-90',
+                ].join(' ')}
+                onClick={() => handleLetterTap(letter, i)}
+                disabled={usedIndices.includes(i) || !!feedback}
+                aria-label={`Letter ${letter}`}
+                whileTap={{ scale: 0.85 }}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.04, type: 'spring', stiffness: 400 }}
+              >
+                {letter}
+              </motion.button>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-3 mt-1">
+          <button
+            type="button"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 font-semibold text-sm hover:bg-slate-50 transition-colors min-h-[48px] disabled:opacity-40 disabled:cursor-not-allowed"
+            onClick={handleBackspace}
+            disabled={typed.length === 0 || !!feedback}
+            aria-label="Remove last letter"
+          >
+            <Delete size={18} /> {t('common.back')}
+          </button>
+          <button
+            type="button"
+            className={[
+              'flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-bold text-sm transition-all min-h-[52px]',
+              isComplete && !feedback
+                ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30 hover:bg-teal-600 cursor-pointer'
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed',
+            ].join(' ')}
+            onClick={handleSubmit}
+            disabled={!isComplete || !!feedback}
+          >
+            <Check size={18} /> {t('games.check')}
+          </button>
+        </div>
       </div>
-    </div>
     </>
   );
 };

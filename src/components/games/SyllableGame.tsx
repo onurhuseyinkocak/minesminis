@@ -1,13 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check, ArrowLeft, RotateCcw } from 'lucide-react';
-import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
+import { Volume2, Check, X, Star, Trophy, Sparkles, ArrowLeft, RotateCcw, Hand } from 'lucide-react';
+import { ConfettiRain } from '../ui/Celebrations';
+import { speak } from '../../services/ttsService';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
-import './SyllableGame.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -37,9 +37,13 @@ type ChoiceState = 'idle' | 'correct' | 'wrong';
 // ── Build multiple-choice options 1-4 ─────────────────────────────────────
 
 function buildChoices(_correct: number): number[] {
-  const all = [1, 2, 3, 4];
-  return all; // always 1-4 regardless
+  return [1, 2, 3, 4];
 }
+
+// ── Spring configs ──────────────────────────────────────────────────────────
+
+const springBouncy = { type: 'spring' as const, stiffness: 300, damping: 18 };
+const springGentle = { type: 'spring' as const, stiffness: 260, damping: 24 };
 
 // ── Component ──────────────────────────────────────────────────────────────
 
@@ -60,9 +64,10 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
   const [answered, setAnswered] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [ripples, setRipples] = useState<number[]>([]);
+  const rippleIdRef = useRef(0);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
@@ -70,7 +75,6 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
   }, []);
 
   const currentQuestion = questions[currentIndex];
-
   const choices = buildChoices(currentQuestion?.syllableCount ?? 1);
 
   const advanceQuestion = useCallback(
@@ -100,6 +104,13 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
     setTapCount((prev) => prev + 1);
     setIsPulsing(true);
     setTimeout(() => setIsPulsing(false), 280);
+
+    // Add ripple effect
+    const id = rippleIdRef.current++;
+    setRipples((prev) => [...prev, id]);
+    setTimeout(() => {
+      setRipples((prev) => prev.filter((r) => r !== id));
+    }, 600);
   }, [phase]);
 
   const handleDone = useCallback(() => {
@@ -166,82 +177,91 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
 
     return (
-      <div className="syg">
-        {pct >= 90 && <ConfettiRain />}
-        <Card variant="elevated" padding="xl" className="syg__completion">
-          <motion.div
-            className="syg__completion-content"
+      <div className="flex flex-col items-center justify-center gap-6 p-6 w-full max-w-lg mx-auto relative">
+        <ConfettiRain duration={3500} />
+
+        <motion.div
+          className="flex flex-col items-center gap-5 p-8 rounded-3xl bg-white border-2 border-slate-100 shadow-xl w-full"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+        >
+          <UnifiedMascot state="celebrating" size={120} />
+
+          <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
           >
-            <UnifiedMascot state="celebrating" size={120} />
+            {pct >= 90 ? (
+              <Trophy size={48} className="text-amber-500" />
+            ) : pct >= 60 ? (
+              <Star size={48} fill="#f59e0b" className="text-amber-500" />
+            ) : (
+              <Check size={48} className="text-emerald-500" />
+            )}
+          </motion.span>
 
-            <span>
-              {pct >= 90 ? (
-                <Trophy size={48} color="var(--primary)" />
-              ) : pct >= 60 ? (
-                <Star size={48} fill="var(--primary)" color="var(--primary)" />
-              ) : (
-                <Check size={48} color="var(--success)" />
-              )}
-            </span>
+          <h2 className="text-2xl font-extrabold text-slate-800">{t('games.greatJob')}</h2>
+          <p className="text-4xl font-black text-purple-600">
+            {score} / {questions.length}
+          </p>
 
-            <h2 className="syg__completion-title">{t('games.greatJob')}</h2>
-            <p className="syg__completion-score">
-              {score} / {questions.length}
-            </p>
-
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
-                >
-                  <Star
-                    size={32}
-                    fill={i < stars ? 'var(--primary)' : 'none'}
-                    color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'}
-                  />
-                </motion.span>
-              ))}
-            </span>
-
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
-            >
-              <Badge variant="success" icon={<Sparkles size={14} />}>
-                +{score * 10} XP
-              </Badge>
-            </motion.div>
-
-            <div className="syg__completion-actions">
-              <button
-                type="button"
-                className="syg__completion-btn syg__completion-btn--secondary"
-                onClick={() => {
-                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
-                  onComplete(score, questions.length);
-                }}
+          {/* Stars */}
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
               >
-                <ArrowLeft size={16} />
-                {t('games.backToGames')}
-              </button>
-              <button
-                type="button"
-                className="syg__completion-btn syg__completion-btn--primary"
-                onClick={handlePlayAgain}
-              >
-                <RotateCcw size={16} />
-                {t('games.playAgain')}
-              </button>
-            </div>
+                <Star
+                  size={36}
+                  fill={i < stars ? '#f59e0b' : 'none'}
+                  className={i < stars ? 'text-amber-500' : 'text-slate-300'}
+                />
+              </motion.span>
+            ))}
+          </div>
+
+          {/* XP Badge */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
+            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-100 rounded-full"
+          >
+            <Sparkles size={16} className="text-emerald-600" />
+            <span className="font-bold text-emerald-700 text-sm">+{score * 10} XP</span>
           </motion.div>
-        </Card>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 mt-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                onComplete(score, questions.length);
+              }}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200
+                text-slate-700 font-bold text-sm transition-colors min-h-[48px]"
+            >
+              <ArrowLeft size={16} />
+              {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              onClick={handlePlayAgain}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl
+                bg-gradient-to-b from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700
+                text-white font-bold text-sm shadow-lg shadow-purple-200 transition-all min-h-[48px]"
+            >
+              <RotateCcw size={16} />
+              {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -253,104 +273,173 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
   const showSyllables = phase === 'result-correct';
 
   return (
-    <div className="syg" role="application" aria-label="Syllable segmentation game">
+    <div className="flex flex-col items-center gap-4 p-4 w-full max-w-xl mx-auto" role="application" aria-label="Syllable segmentation game">
       {/* Header */}
-      <div className="syg__header">
-        <h2 className="syg__title">{t('games.syllableGame')}</h2>
-        <Badge variant="info">
+      <div className="flex items-center justify-between w-full">
+        <h2 className="text-xl font-extrabold text-slate-800">{t('games.syllableGame')}</h2>
+        <span className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-bold">
           {currentIndex + 1} / {questions.length}
-        </Badge>
+        </span>
       </div>
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      {/* Progress bar */}
+      <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-purple-400 to-pink-500 rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={springGentle}
+        />
+      </div>
 
       {/* Feedback banner */}
-      <div aria-live="assertive" aria-atomic="true" style={{ minHeight: '2.5rem', width: '100%' }}>
+      <div aria-live="assertive" aria-atomic="true" className="min-h-[40px] w-full">
         <AnimatePresence>
           {showFeedback && (
             <motion.div
               key={showFeedback}
-              className={`syg__feedback syg__feedback--${showFeedback}`}
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold
+                ${showFeedback === 'correct'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-red-100 text-red-700'
+                }`}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              {showFeedback === 'correct'
-                ? t('games.amazing')
-                : `${t('games.xSyllables').replace('{count}', String(currentQuestion.syllableCount)).replace('{unit}', currentQuestion.syllableCount === 1 ? t('games.syllable') : t('games.syllablesPlural'))} ${t('games.tryAgainYouGotThis')}`}
+              {showFeedback === 'correct' ? (
+                <><Check size={16} /> {t('games.amazing')}</>
+              ) : (
+                <>
+                  <X size={16} />
+                  {`${t('games.xSyllables').replace('{count}', String(currentQuestion.syllableCount)).replace('{unit}', currentQuestion.syllableCount === 1 ? t('games.syllable') : t('games.syllablesPlural'))} ${t('games.tryAgainYouGotThis')}`}
+                </>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Question */}
+      {/* Question content */}
       <AnimatePresence mode="wait">
         <motion.div
           key={`q-${currentIndex}`}
-          style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-lg)' }}
+          className="w-full flex flex-col items-center gap-5"
           initial={{ x: 60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -60, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+          transition={springGentle}
         >
-          {/* Word + illustration */}
-          <div className="syg__word-display">
+          {/* Word display card */}
+          <motion.div
+            className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-gradient-to-b from-purple-50 to-pink-50 border-2 border-purple-200 shadow-lg"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={springBouncy}
+          >
             <WordIllustration word={currentQuestion.imageWord ?? currentQuestion.word} size={96} />
-            <p className="syg__word">{currentQuestion.word}</p>
-            <p className="syg__word-tr">{currentQuestion.wordTr}</p>
-          </div>
+            <p className="text-3xl font-extrabold text-purple-800">{currentQuestion.word}</p>
+            <p className="text-sm font-medium text-purple-500">{currentQuestion.wordTr}</p>
+            <button
+              type="button"
+              onClick={() => speak(currentQuestion.word, { lang: 'en-US', rate: 0.85 })}
+              className="w-10 h-10 rounded-full bg-purple-100 hover:bg-purple-200 flex items-center justify-center transition-colors"
+              aria-label={`Listen to ${currentQuestion.word}`}
+            >
+              <Volume2 size={20} className="text-purple-600" />
+            </button>
+          </motion.div>
 
           {/* Instruction */}
-          <p className="syg__instruction" aria-live="polite">
+          <p className="text-base font-bold text-slate-600 text-center" aria-live="polite">
             {phase === 'tapping' && t('games.tapDrumPerSyllable')}
             {phase === 'choices' && t('games.howManySyllables')}
             {phase === 'result-correct' && t('games.hereAreTheSyllables')}
             {phase === 'result-wrong' && t('games.keepTrying')}
           </p>
 
-          {/* Drum area */}
-          {(phase === 'tapping') && (
-            <div className="syg__drum-wrap">
-              {/* Tap dots */}
-              <div className="syg__dots" aria-label={`${tapCount} taps`} aria-live="polite">
+          {/* Tapping area */}
+          {phase === 'tapping' && (
+            <div className="flex flex-col items-center gap-4">
+              {/* Tap count dots */}
+              <div className="flex gap-2 min-h-[24px]" aria-label={`${tapCount} taps`} aria-live="polite">
                 {Array.from({ length: tapCount }, (_, i) => (
-                  <span key={i} className="syg__dot" />
+                  <motion.div
+                    key={i}
+                    className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-400 to-pink-500"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={springBouncy}
+                  />
                 ))}
               </div>
 
-              {/* Drum */}
-              <motion.button
-                type="button"
-                className={['syg__drum', isPulsing ? 'syg__drum--pulse' : ''].filter(Boolean).join(' ')}
-                onClick={handleDrumTap}
-                aria-label={`Tap drum (${tapCount} taps so far)`}
-                whileTap={{ scale: 0.93 }}
-              >
-                <svg width="36" height="36" viewBox="0 0 48 48" fill="none" aria-hidden="true"><ellipse cx="24" cy="28" rx="18" ry="10" fill="#CC4A1A"/><ellipse cx="24" cy="24" rx="18" ry="10" fill="var(--warning)"/><rect x="6" y="24" width="36" height="4" fill="#CC4A1A" opacity="0.4"/><line x1="12" y1="14" x2="12" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/><line x1="36" y1="14" x2="36" y2="34" stroke="#8B5E34" strokeWidth="2" strokeLinecap="round"/></svg>
-              </motion.button>
+              {/* Big tap target with ripple effect */}
+              <div className="relative">
+                <motion.button
+                  type="button"
+                  className={`relative w-32 h-32 rounded-full flex flex-col items-center justify-center gap-1
+                    bg-gradient-to-b from-orange-300 to-orange-500 shadow-xl shadow-orange-200
+                    border-4 border-orange-200 overflow-hidden
+                    ${isPulsing ? 'scale-95' : ''} transition-transform`}
+                  onClick={handleDrumTap}
+                  aria-label={`Tap drum (${tapCount} taps so far)`}
+                  whileTap={{ scale: 0.88 }}
+                >
+                  <Hand size={36} className="text-white" />
+                  <span className="text-white font-bold text-lg">{tapCount}</span>
 
-              <p className="syg__drum-label">{t('games.tapHereOneTapPerSyllable')}</p>
+                  {/* Ripple effects */}
+                  <AnimatePresence>
+                    {ripples.map((id) => (
+                      <motion.div
+                        key={id}
+                        className="absolute inset-0 rounded-full border-4 border-white"
+                        initial={{ scale: 0.3, opacity: 0.7 }}
+                        animate={{ scale: 1.8, opacity: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                        style={{ pointerEvents: 'none' }}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </motion.button>
+              </div>
+
+              <p className="text-sm text-slate-500 font-medium text-center">
+                {t('games.tapHereOneTapPerSyllable')}
+              </p>
 
               {/* Action buttons */}
-              <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div className="flex gap-3 flex-wrap justify-center">
                 {tapCount > 0 && (
-                  <button
+                  <motion.button
                     type="button"
-                    className="syg__reset-btn kbtn kbtn--blue"
                     onClick={handleReset}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={springBouncy}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200
+                      text-slate-600 font-bold text-sm transition-colors min-h-[44px]"
                     aria-label="Reset taps"
                   >
+                    <RotateCcw size={14} />
                     {t('games.reset')}
-                  </button>
+                  </motion.button>
                 )}
                 <motion.button
                   type="button"
-                  className="syg__done-btn kbtn kbtn--blue"
                   onClick={handleDone}
                   disabled={tapCount === 0}
                   whileTap={{ scale: 0.96 }}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl
+                    bg-gradient-to-b from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700
+                    text-white font-bold text-sm shadow-lg shadow-purple-200
+                    disabled:opacity-40 disabled:cursor-not-allowed
+                    transition-all min-h-[44px]"
                   aria-label="Done tapping"
                 >
+                  <Check size={16} />
                   {t('games.doneExcl')}
                 </motion.button>
               </div>
@@ -359,40 +448,49 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
 
           {/* Multiple choice */}
           {showChoices && (
-            <div className="syg__choices" role="group" aria-label="Choose syllable count">
+            <div className="flex gap-3 flex-wrap justify-center" role="group" aria-label="Choose syllable count">
               {choices.map((num, idx) => {
                 const state: ChoiceState = choiceStates[num] ?? 'idle';
+                const bgClass =
+                  state === 'correct'
+                    ? 'bg-emerald-100 border-emerald-400 ring-2 ring-emerald-300 text-emerald-800'
+                    : state === 'wrong'
+                      ? 'bg-red-100 border-red-400 ring-2 ring-red-300 text-red-800'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50';
+
                 return (
                   <motion.button
                     key={num}
                     type="button"
-                    className={[
-                      'syg__choice-btn',
-                      state === 'correct' && 'syg__choice-btn--correct',
-                      state === 'wrong' && 'syg__choice-btn--wrong',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
+                    className={`flex flex-col items-center gap-1 w-[72px] h-[80px] rounded-2xl border-2 shadow-sm
+                      font-extrabold text-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${bgClass}`}
                     onClick={() => handleChoice(num)}
                     disabled={answered && state === 'idle'}
                     aria-pressed={state !== 'idle'}
                     initial={{ opacity: 0, y: 20, scale: 0.85 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.07 }}
+                    transition={{ ...springBouncy, delay: idx * 0.07 }}
                     whileTap={{ scale: 0.92 }}
                   >
-                    {num}
-                    <span>{num === 1 ? t('games.syllable') : t('games.syllablesPlural')}</span>
+                    <span>{num}</span>
+                    <span className="text-xs font-semibold opacity-70">
+                      {num === 1 ? t('games.syllable') : t('games.syllablesPlural')}
+                    </span>
+                    {state === 'correct' && (
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={springBouncy}>
+                        <Check size={16} className="text-emerald-600" />
+                      </motion.div>
+                    )}
                   </motion.button>
                 );
               })}
             </div>
           )}
 
-          {/* Syllable tiles after correct */}
+          {/* Syllable tiles after correct answer */}
           {showSyllables && (
             <motion.div
-              className="syg__syllable-tiles"
+              className="flex gap-2 flex-wrap justify-center"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
@@ -400,10 +498,11 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
               {currentQuestion.syllables.map((syl, i) => (
                 <motion.span
                   key={`${syl}-${i}`}
-                  className="syg__syllable-tile"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-b from-purple-100 to-purple-200
+                    text-purple-800 font-extrabold text-xl border-2 border-purple-300 shadow-sm"
                   initial={{ scale: 0, rotate: -8 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: i * 0.12, type: 'spring', stiffness: 300 }}
+                  transition={{ delay: i * 0.12, ...springBouncy }}
                 >
                   {syl}
                 </motion.span>
@@ -414,7 +513,7 @@ export const SyllableGame: React.FC<SyllableGameProps> = ({
           {/* Mascot */}
           <UnifiedMascot
             state={showFeedback === 'correct' ? 'celebrating' : 'idle'}
-            size={52}
+            size={56}
           />
         </motion.div>
       </AnimatePresence>

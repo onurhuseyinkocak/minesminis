@@ -1,12 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check, Volume2, ArrowLeft, RotateCcw } from 'lucide-react';
-import { Card, Badge, ProgressBar, ConfettiRain } from '../ui';
+import { Sparkles, Star, Trophy, Check, X, Volume2, ArrowLeft, RotateCcw, Merge } from 'lucide-react';
+import { ConfettiRain } from '../ui/Celebrations';
+import { speak } from '../../services/ttsService';
+import { Badge, ProgressBar } from '../ui';
 import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
-import './PhonicsBlendGame.css';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -24,14 +25,20 @@ export interface PhonicsBlendGameProps {
   onWrongAnswer?: () => void;
 }
 
-// ── Phoneme synthesis helper ───────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-function playPhoneme(_sound: string): void {
-  // Visual + tap feedback via SFX; the letter is shown on screen
-  SFX.click();
+const TILE_COLORS = [
+  { bg: '#FEF3C7', border: '#F59E0B', text: '#92400E' },
+  { bg: '#DBEAFE', border: '#3B82F6', text: '#1E40AF' },
+  { bg: '#FCE7F3', border: '#EC4899', text: '#9D174D' },
+  { bg: '#D1FAE5', border: '#10B981', text: '#065F46' },
+  { bg: '#EDE9FE', border: '#8B5CF6', text: '#5B21B6' },
+  { bg: '#FEE2E2', border: '#EF4444', text: '#991B1B' },
+];
+
+function getTileColor(index: number) {
+  return TILE_COLORS[index % TILE_COLORS.length];
 }
-
-// ── Distractors helper ────────────────────────────────────────────────────────
 
 const WORD_POOL: string[] = [
   'cat', 'dog', 'sun', 'hat', 'pig', 'cup', 'bed', 'map', 'top', 'net',
@@ -47,15 +54,18 @@ function buildOptions(correct: string): string[] {
   return options.sort(() => Math.random() - 0.5);
 }
 
-// ── Phase type ────────────────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────
 
 type Phase = 'explore' | 'blending' | 'blended' | 'choices';
-
-// ── Option state ──────────────────────────────────────────────────────────────
-
 type OptionState = 'idle' | 'correct' | 'wrong';
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// ── Spring configs ───────────────────────────────────────────────────────────
+
+const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
+const springSmooth = { type: 'spring' as const, stiffness: 260, damping: 28 };
+const springPop = { type: 'spring' as const, stiffness: 300, damping: 20 };
+
+// ── Component ────────────────────────────────────────────────────────────────
 
 export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
   questions,
@@ -75,12 +85,10 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
   const [answered, setAnswered] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
-  const [slideDir, setSlideDir] = useState<1 | -1>(1);
 
   const blendTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (blendTimeoutRef.current) clearTimeout(blendTimeoutRef.current);
@@ -101,10 +109,8 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
       if (nextIndex >= questions.length) {
         setCompleted(true);
         SFX.celebration();
-        // Delay auto-complete so the results screen has time to show
         autoCompleteTimeoutRef.current = setTimeout(() => onComplete(nextScore, questions.length), 4000);
       } else {
-        setSlideDir(1);
         setTimeout(() => {
           setCurrentIndex(nextIndex);
           setPhase('explore');
@@ -122,15 +128,14 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
   const handleTileTap = useCallback(
     (index: number) => {
       if (phase !== 'explore') return;
-
       setActiveTileIndex(index);
       setTappedTiles((prev) => {
         const next = new Set(prev);
         next.add(index);
         return next;
       });
-
-      playPhoneme(currentQuestion.sounds[index]);
+      SFX.click();
+      try { speak(currentQuestion.sounds[index]); } catch { /* silent */ }
     },
     [phase, currentQuestion],
   );
@@ -139,10 +144,10 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
     if (phase !== 'explore') return;
     setPhase('blending');
 
-    // After animation, switch to blended → choices
     blendTimeoutRef.current = setTimeout(() => {
       setPhase('blended');
       SFX.correct();
+      try { speak(currentQuestion.word); } catch { /* silent */ }
 
       blendTimeoutRef.current = setTimeout(() => {
         const opts = buildOptions(currentQuestion.word);
@@ -196,93 +201,93 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
     setAnswered(false);
     setCompleted(false);
     setShowFeedback(null);
-    setSlideDir(1);
   }, [resetTileState]);
 
-  // ── Completion screen ────────────────────────────────────────────────────
+  // ── Completion screen ──────────────────────────────────────────────────
 
   if (completed) {
     const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
 
     return (
-      <div className="pbg">
+      <div className="flex flex-col items-center justify-center min-h-[480px] p-6 bg-gradient-to-b from-amber-50 to-white rounded-3xl relative overflow-hidden">
         {pct >= 90 && <ConfettiRain />}
-        <Card variant="elevated" padding="xl" className="pbg__completion">
+
+        <motion.div
+          className="flex flex-col items-center gap-4"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={springBounce}
+        >
+          <UnifiedMascot state="celebrating" size={120} />
+
+          <span className="flex items-center justify-center w-16 h-16 rounded-full bg-amber-100">
+            {pct >= 90 ? (
+              <Trophy size={40} className="text-amber-500" />
+            ) : pct >= 60 ? (
+              <Star size={40} className="text-amber-500 fill-amber-500" />
+            ) : (
+              <Check size={40} className="text-emerald-500" />
+            )}
+          </span>
+
+          <h2 className="text-2xl font-bold text-gray-800">
+            {t('games.greatJob')}
+          </h2>
+
+          <p className="text-4xl font-extrabold text-indigo-600">
+            {score} / {questions.length}
+          </p>
+
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ ...springBounce, delay: 0.3 + i * 0.15 }}
+              >
+                <Star
+                  size={32}
+                  fill={i < stars ? '#F59E0B' : 'none'}
+                  color={i < stars ? '#F59E0B' : '#D1D5DB'}
+                />
+              </motion.span>
+            ))}
+          </div>
+
           <motion.div
-            className="pbg__completion-content"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+            transition={{ ...springPop, delay: 0.75 }}
           >
-            <UnifiedMascot state="celebrating" size={120} />
-
-            <span>
-              {pct >= 90 ? (
-                <Trophy size={48} color="var(--primary)" />
-              ) : pct >= 60 ? (
-                <Star size={48} fill="var(--primary)" color="var(--primary)" />
-              ) : (
-                <Check size={48} color="var(--success)" />
-              )}
-            </span>
-
-            <h2 className="pbg__completion-title">{t('games.greatJob')}</h2>
-
-            <p className="pbg__completion-score">
-              {score} / {questions.length}
-            </p>
-
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.15 }}
-                >
-                  <Star
-                    size={32}
-                    fill={i < stars ? 'var(--primary)' : 'none'}
-                    color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'}
-                  />
-                </motion.span>
-              ))}
-            </span>
-
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 260, delay: 0.75 }}
-            >
-              <Badge variant="success" icon={<Sparkles size={14} />}>
-                +{score * 10} XP
-              </Badge>
-            </motion.div>
-
-            <div className="pbg__completion-actions">
-              <button
-                type="button"
-                className="pbg__completion-btn pbg__completion-btn--secondary"
-                onClick={() => {
-                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
-                  onComplete(score, questions.length);
-                }}
-              >
-                <ArrowLeft size={16} />
-                {t('games.backToGames')}
-              </button>
-              <button
-                type="button"
-                className="pbg__completion-btn pbg__completion-btn--primary"
-                onClick={handlePlayAgain}
-              >
-                <RotateCcw size={16} />
-                {t('games.playAgain')}
-              </button>
-            </div>
+            <Badge variant="success" icon={<Sparkles size={14} />}>
+              +{score * 10} XP
+            </Badge>
           </motion.div>
-        </Card>
+
+          <div className="flex gap-3 mt-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                onComplete(score, questions.length);
+              }}
+              className="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-2xl bg-gray-100 text-gray-700 font-semibold text-base hover:bg-gray-200 transition-colors"
+            >
+              <ArrowLeft size={18} />
+              {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              onClick={handlePlayAgain}
+              className="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-2xl bg-indigo-500 text-white font-semibold text-base hover:bg-indigo-600 transition-colors"
+            >
+              <RotateCcw size={18} />
+              {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -293,29 +298,49 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
   const progress = questions.length > 0 ? (currentIndex / questions.length) * 100 : 0;
 
   return (
-    <div className="pbg" role="application" aria-label="Phonics blend game">
+    <div
+      className="flex flex-col gap-5 p-5 bg-gradient-to-b from-sky-50 to-white rounded-3xl min-h-[480px]"
+      role="application"
+      aria-label="Phonics blend game"
+    >
       {/* Header */}
-      <div className="pbg__header">
-        <h2 className="pbg__title">{t('games.phonicsBlending') || 'Phonics Blending'}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-gray-800">
+          {t('games.phonicsBlending') || 'Phonics Blending'}
+        </h2>
         <Badge variant="info">
           {currentIndex + 1} / {questions.length}
         </Badge>
       </div>
 
+      {/* Progress bar */}
       <ProgressBar value={progress} variant="success" size="md" animated />
 
       {/* Feedback banner */}
-      <div aria-live="assertive" aria-atomic="true" style={{ minHeight: '2.5rem' }}>
+      <div aria-live="assertive" aria-atomic="true" className="min-h-[40px]">
         <AnimatePresence>
-          {showFeedback && (
+          {showFeedback === 'correct' && (
             <motion.div
-              key={showFeedback}
-              className={`pbg__feedback pbg__feedback--${showFeedback}`}
+              key="correct"
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-100 text-emerald-700 font-semibold text-center justify-center"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
+              transition={springSmooth}
             >
-              {showFeedback === 'correct' ? t('games.amazing') : t('games.tryAgainYouGotThis')}
+              <Check size={20} /> {t('games.amazing')}
+            </motion.div>
+          )}
+          {showFeedback === 'wrong' && (
+            <motion.div
+              key="wrong"
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-red-100 text-red-700 font-semibold text-center justify-center"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: [0, -6, 6, -4, 4, 0] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <X size={20} /> {t('games.tryAgainYouGotThis')}
             </motion.div>
           )}
         </AnimatePresence>
@@ -325,56 +350,62 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
       <AnimatePresence mode="wait">
         <motion.div
           key={`question-${currentIndex}`}
-          initial={{ x: slideDir * 80, opacity: 0 }}
+          className="flex flex-col items-center gap-5"
+          initial={{ x: 80, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: slideDir * -80, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+          exit={{ x: -80, opacity: 0 }}
+          transition={springSmooth}
         >
           {/* Instruction */}
-          <p className="pbg__instruction" aria-live="polite">
-            {phase === 'explore' && (t('games.tapEachSound') || 'Tap each sound tile to hear it, then press Blend!')}
+          <p className="text-base font-medium text-gray-600 text-center" aria-live="polite">
+            {phase === 'explore' && (t('games.tapEachSound') || 'Tap each sound to hear it, then press Blend!')}
             {phase === 'blending' && (t('games.blending') || 'Blending...')}
             {phase === 'blended' && `${t('games.theWordIs') || 'The word is:'} ${currentQuestion.word}`}
             {phase === 'choices' && (t('games.whichWordBlend') || 'Which word did you blend?')}
           </p>
 
-          {/* Sound tiles area */}
+          {/* Sound tiles */}
           {(phase === 'explore' || phase === 'blending') && (
             <div
-              className={[
-                'pbg__tiles-row',
-                phase === 'blending' && 'pbg__tiles-row--blending',
-              ]
-                .filter(Boolean)
-                .join(' ')}
+              className="flex items-center justify-center gap-3 flex-wrap"
               role="group"
               aria-label="Sound tiles"
             >
               {currentQuestion.sounds.map((sound, index) => {
+                const color = getTileColor(index);
                 const isActive = activeTileIndex === index;
                 const isTapped = tappedTiles.has(index);
+
                 return (
                   <motion.button
                     key={`${currentQuestion.id}-sound-${index}`}
                     type="button"
-                    className={[
-                      'pbg__tile',
-                      isActive && 'pbg__tile--active',
-                      isTapped && 'pbg__tile--tapped',
-                      phase === 'blending' && 'pbg__tile--merging',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
                     onClick={() => handleTileTap(index)}
                     disabled={phase === 'blending'}
                     aria-label={`Sound: ${sound}`}
-                    whileTap={{ scale: 0.92 }}
+                    className="flex flex-col items-center justify-center min-w-[72px] min-h-[80px] px-4 py-3 rounded-2xl border-2 font-bold text-2xl cursor-pointer select-none transition-shadow"
+                    style={{
+                      backgroundColor: isTapped ? color.bg : '#F9FAFB',
+                      borderColor: isTapped ? color.border : '#E5E7EB',
+                      color: color.text,
+                      boxShadow: isActive ? `0 0 0 3px ${color.border}40` : 'none',
+                    }}
+                    animate={
+                      phase === 'blending'
+                        ? { x: index === 0 ? 0 : -(index * 24), scale: 0.9 }
+                        : isActive
+                          ? { scale: 1.1 }
+                          : { scale: 1 }
+                    }
+                    whileTap={{ scale: 0.9 }}
+                    transition={springBounce}
                     layout
                   >
-                    <span className="pbg__tile-letter">{sound}</span>
-                    <span className="pbg__tile-icon" aria-hidden="true">
-                      <Volume2 size={14} />
-                    </span>
+                    <span className="text-2xl leading-none">{sound}</span>
+                    <Volume2
+                      size={14}
+                      className="mt-1 opacity-50"
+                    />
                   </motion.button>
                 );
               })}
@@ -384,36 +415,41 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
           {/* Blended word display */}
           {phase === 'blended' && (
             <motion.div
-              className="pbg__blended-word"
+              className="flex flex-col items-center gap-2 p-6 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 border-2 border-indigo-200"
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              transition={springPop}
             >
-              <span className="pbg__blended-letter">{currentQuestion.word}</span>
-              <span className="pbg__blended-tr">{currentQuestion.wordTr}</span>
+              <span className="text-4xl font-extrabold text-indigo-700">
+                {currentQuestion.word}
+              </span>
+              <span className="text-sm text-indigo-500 font-medium">
+                {currentQuestion.wordTr}
+              </span>
             </motion.div>
           )}
 
           {/* Blend button */}
           {phase === 'explore' && (
-            <div className="pbg__blend-btn-wrap">
+            <div className="flex flex-col items-center gap-2">
               <motion.button
                 type="button"
-                className={[
-                  'pbg__blend-btn kbtn kbtn--blue',
-                  !allTilesTapped && 'pbg__blend-btn--disabled',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
                 onClick={handleBlend}
                 disabled={!allTilesTapped}
-                whileTap={{ scale: 0.95 }}
+                className={`flex items-center gap-2 px-8 py-3 min-h-[48px] rounded-2xl font-bold text-lg transition-all ${
+                  allTilesTapped
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-200 hover:bg-blue-600'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+                whileTap={allTilesTapped ? { scale: 0.95 } : undefined}
+                transition={springSmooth}
                 aria-label="Blend sounds together"
               >
+                <Merge size={20} />
                 {t('games.blend') || 'Blend!'}
               </motion.button>
               {!allTilesTapped && (
-                <p className="pbg__blend-hint">
+                <p className="text-sm text-gray-400 font-medium">
                   {t('games.tapAllSoundsFirst') || `Tap all ${currentQuestion.sounds.length} sounds first`}
                 </p>
               )}
@@ -422,28 +458,43 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
 
           {/* Multiple choice options */}
           {phase === 'choices' && (
-            <div className="pbg__options-grid" role="group" aria-label="Choose the blended word">
+            <div className="grid grid-cols-2 gap-3 w-full max-w-sm" role="group" aria-label="Choose the blended word">
               {options.map((option, idx) => {
                 const state: OptionState = optionStates[option] ?? 'idle';
+                const isCorrect = state === 'correct';
+                const isWrong = state === 'wrong';
+
                 return (
                   <motion.button
                     key={option}
                     type="button"
-                    className={[
-                      'pbg__option',
-                      state === 'correct' && 'pbg__option--correct',
-                      state === 'wrong' && 'pbg__option--wrong',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
                     onClick={() => handleOptionPress(option)}
                     disabled={answered && state === 'idle'}
                     aria-pressed={state !== 'idle'}
+                    className={`flex items-center justify-center gap-2 px-4 py-4 min-h-[56px] rounded-2xl border-2 font-bold text-lg transition-colors ${
+                      isCorrect
+                        ? 'bg-emerald-100 border-emerald-400 text-emerald-700'
+                        : isWrong
+                          ? 'bg-red-100 border-red-400 text-red-700'
+                          : 'bg-white border-gray-200 text-gray-800 hover:border-indigo-300 hover:bg-indigo-50'
+                    }`}
                     initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.08 }}
+                    animate={
+                      isCorrect
+                        ? { opacity: 1, y: 0, scale: [1, 1.1, 1] }
+                        : isWrong
+                          ? { opacity: 1, y: 0, scale: 1, x: [0, -6, 6, -4, 4, 0] }
+                          : { opacity: 1, y: 0, scale: 1 }
+                    }
+                    transition={
+                      isCorrect || isWrong
+                        ? { duration: 0.5 }
+                        : { ...springPop, delay: idx * 0.08 }
+                    }
                     whileTap={{ scale: 0.95 }}
                   >
+                    {isCorrect && <Check size={20} />}
+                    {isWrong && <X size={20} />}
                     {option}
                   </motion.button>
                 );
@@ -451,10 +502,16 @@ export const PhonicsBlendGame: React.FC<PhonicsBlendGameProps> = ({
             </div>
           )}
 
-          {/* Difficulty badge */}
-          <div className="pbg__difficulty-row">
+          {/* Difficulty + Mascot */}
+          <div className="flex items-center justify-between w-full mt-2">
             <span
-              className={`pbg__difficulty-badge pbg__difficulty-badge--${currentQuestion.difficulty}`}
+              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+                currentQuestion.difficulty === 'easy'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : currentQuestion.difficulty === 'medium'
+                    ? 'bg-amber-100 text-amber-700'
+                    : 'bg-red-100 text-red-700'
+              }`}
             >
               {currentQuestion.difficulty}
             </span>

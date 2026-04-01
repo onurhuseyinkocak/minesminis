@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw, AlertCircle } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw, AlertCircle, Mic, SkipForward } from 'lucide-react';
 import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
@@ -10,7 +9,6 @@ import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
-import './SayItGame.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -61,31 +59,14 @@ function levenshtein(a: string, b: string): number {
   return dp[m][n];
 }
 
-/**
- * Returns similarity ratio 0–1.
- * Threshold >= 0.65 accepted as correct (Turkish accent tolerant).
- * Word-boundary aware: "the apple" contains "apple" (pass),
- * but "captain" does NOT contain "cap" as a word-boundary match (fail).
- */
 function similarityScore(heard: string, target: string): number {
   if (!heard || !target) return 0;
-
-  const normalize = (s: string) =>
-    s
-      .toLowerCase()
-      .replace(/[^a-z\s]/g, '')
-      .trim();
-
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z\s]/g, '').trim();
   const h = normalize(heard);
   const t = normalize(target);
-
   if (h === t) return 1;
-
-  // Word-boundary match: target must be a whole word in heard transcript
   const heardWords = h.split(/\s+/);
   if (heardWords.includes(t)) return 1;
-
-  // Levenshtein per word — best match
   let bestWordScore = 0;
   for (const word of heardWords) {
     const dist = levenshtein(word, t);
@@ -93,11 +74,8 @@ function similarityScore(heard: string, target: string): number {
     const s = wordLen === 0 ? 1 : 1 - dist / wordLen;
     if (s > bestWordScore) bestWordScore = s;
   }
-
-  // Full-string comparison
   const maxLen = Math.max(h.length, t.length);
   const fullScore = maxLen === 0 ? 1 : 1 - levenshtein(h, t) / maxLen;
-
   return Math.max(bestWordScore, fullScore);
 }
 
@@ -114,25 +92,10 @@ function classifyError(error: string): SpeechErrorType {
   return 'other';
 }
 
-// ── Mic button states ─────────────────────────────────────────────────────────
-
 type MicState = 'idle' | 'listening' | 'processing' | 'success' | 'error';
 
-// ── Mic SVG icon ──────────────────────────────────────────────────────────────
-
-function MicIcon({ size = 32 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-    </svg>
-  );
-}
+const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
+const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -156,18 +119,12 @@ export const SayItGame: React.FC<SayItGameProps> = ({
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // scoreRef keeps closure-safe score for advanceQuestion
   const scoreRef = useRef(0);
 
-  // Cleanup speech recognition + timers on unmount
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {
-        try {
-          recognitionRef.current.abort();
-        } catch {
-          /* ignore */
-        }
+        try { recognitionRef.current.abort(); } catch { /* ignore */ }
         recognitionRef.current = null;
       }
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
@@ -177,10 +134,9 @@ export const SayItGame: React.FC<SayItGameProps> = ({
 
   const SRConstructor = getSpeechRecognitionConstructor();
   const isSpeechSupported = SRConstructor !== null;
-
   const currentQuestion = questions[currentIndex];
 
-  // ── Auto-speak word when question changes ────────────────────────────────
+  // Auto-speak word when question changes
   useEffect(() => {
     if (!currentQuestion) return;
     const id = setTimeout(() => {
@@ -188,8 +144,6 @@ export const SayItGame: React.FC<SayItGameProps> = ({
     }, 400);
     return () => clearTimeout(id);
   }, [currentIndex, currentQuestion]);
-
-  // ── Advance to next question ─────────────────────────────────────────────
 
   const advanceQuestion = useCallback(
     (nextScore: number) => {
@@ -216,15 +170,10 @@ export const SayItGame: React.FC<SayItGameProps> = ({
     [currentIndex, questions.length, onComplete],
   );
 
-  // ── Handle recognised speech result ─────────────────────────────────────
-
   const handleSpeechResult = useCallback(
     (spoken: string, alternatives?: string[]) => {
       if (!currentQuestion) return;
-
       const target = currentQuestion.word.trim().toLowerCase();
-
-      // Evaluate spoken + all SR alternatives — accept best match
       const candidates = [spoken, ...(alternatives ?? [])];
       let bestScore = 0;
       let bestCandidate = spoken;
@@ -235,9 +184,7 @@ export const SayItGame: React.FC<SayItGameProps> = ({
           bestCandidate = candidate;
         }
       }
-
       const isCorrect = bestScore >= SIMILARITY_THRESHOLD;
-
       setHeardText(bestCandidate);
       setSpeechError(null);
       setMicState(isCorrect ? 'success' : 'error');
@@ -253,36 +200,23 @@ export const SayItGame: React.FC<SayItGameProps> = ({
         setFeedbackType('wrong');
         SFX.wrong();
         onWrongAnswer?.();
-
         const newMisses = missCount + 1;
         setMissCount(newMisses);
-        // Lose a heart only after 2 failed attempts (not on first miss)
-        if (newMisses >= 2) {
-          loseHeart();
-        }
+        if (newMisses >= 2) loseHeart();
       }
     },
     [currentQuestion, missCount, advanceQuestion, onWrongAnswer, loseHeart],
   );
 
-  // ── Start listening ──────────────────────────────────────────────────────
-
   const startListening = useCallback(() => {
     if (!SRConstructor || micState === 'listening') return;
-
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.abort();
-      } catch {
-        /* ignore */
-      }
+      try { recognitionRef.current.abort(); } catch { /* ignore */ }
     }
-
     const recognition = new SRConstructor();
     recognition.lang = 'en-US';
     recognition.continuous = false;
     recognition.interimResults = false;
-    // 3 alternatives improves Turkish accent matching significantly
     recognition.maxAlternatives = 3;
 
     recognition.onstart = () => {
@@ -291,74 +225,47 @@ export const SayItGame: React.FC<SayItGameProps> = ({
       setHeardText('');
       setSpeechError(null);
     };
-
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       setMicState('processing');
       const result = event.results[0];
       if (result?.[0]) {
         const alternatives: string[] = [];
-        for (let i = 1; i < result.length; i++) {
-          alternatives.push(result[i].transcript);
-        }
+        for (let i = 1; i < result.length; i++) alternatives.push(result[i].transcript);
         handleSpeechResult(result[0].transcript, alternatives);
       }
     };
-
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       const errType = classifyError(event.error);
       setSpeechError(errType);
-
       if (errType === 'no-speech') {
-        // Soft reset — user just didn't speak, not an error
         setMicState('idle');
         setFeedbackType(null);
         setHeardText('');
       } else {
-        // System error (not-allowed, network) — show error state but NOT wrong feedback
         setMicState('error');
         setFeedbackType(null);
         setHeardText('');
       }
     };
-
-    recognition.onend = () => {
-      setMicState((prev) => (prev === 'listening' ? 'idle' : prev));
-    };
-
+    recognition.onend = () => setMicState((prev) => (prev === 'listening' ? 'idle' : prev));
     recognitionRef.current = recognition;
     recognition.start();
   }, [SRConstructor, micState, handleSpeechResult]);
 
-  // ── Stop listening ───────────────────────────────────────────────────────
-
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {
-        /* ignore */
-      }
+      try { recognitionRef.current.stop(); } catch { /* ignore */ }
     }
     setMicState('idle');
   }, []);
 
-  // ── Skip current question ────────────────────────────────────────────────
-
   const handleSkip = useCallback(() => {
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.abort();
-      } catch {
-        /* ignore */
-      }
+      try { recognitionRef.current.abort(); } catch { /* ignore */ }
     }
     onWrongAnswer?.();
-    // Use scoreRef to avoid stale closure
     advanceQuestion(scoreRef.current);
   }, [advanceQuestion, onWrongAnswer]);
-
-  // ── Mark as done (no speech support fallback) ────────────────────────────
-  // Correctly increments scoreRef first, then advances with that value.
 
   const handleMarkDone = useCallback(() => {
     const nextScore = scoreRef.current + 1;
@@ -366,8 +273,6 @@ export const SayItGame: React.FC<SayItGameProps> = ({
     setScore(nextScore);
     advanceQuestion(nextScore);
   }, [advanceQuestion]);
-
-  // ── Play again ───────────────────────────────────────────────────────────
 
   const handlePlayAgain = useCallback(() => {
     if (autoCompleteTimeoutRef.current) {
@@ -389,37 +294,25 @@ export const SayItGame: React.FC<SayItGameProps> = ({
 
   if (!isSpeechSupported) {
     return (
-      <div className="sig">
-        <div className="sig__unsupported">
-          <UnifiedMascot state="thinking" size={100} />
-          <h2>{t('games.speechUnavailable') || 'Speech recognition not supported'}</h2>
-          <p>
-            {t('games.speechUnavailableMsg') ||
-              'This exercise requires speech recognition. Try Chrome or tap to continue.'}
-          </p>
-          {currentQuestion && (
-            <div style={{ marginBottom: '1.5rem' }}>
-              <span className="sig__word">{currentQuestion.word}</span>
-              <br />
-              <span className="sig__translation">{currentQuestion.wordTr}</span>
-            </div>
-          )}
-          <div className="sig__actions">
-            <button
-              type="button"
-              className="sig__btn sig__btn--mark-done"
-              onClick={handleMarkDone}
-            >
-              {t('games.markAsDone') || 'Mark as done'}
-            </button>
-            <button
-              type="button"
-              className="sig__btn sig__btn--skip"
-              onClick={handleSkip}
-            >
-              {t('games.skip')}
-            </button>
+      <div className="flex flex-col items-center justify-center p-8 gap-4 text-center">
+        <UnifiedMascot state="thinking" size={100} />
+        <h2 className="text-xl font-bold text-gray-700">{t('games.speechUnavailable') || 'Speech recognition not supported'}</h2>
+        <p className="text-gray-500">
+          {t('games.speechUnavailableMsg') || 'This exercise requires speech recognition. Try Chrome or tap to continue.'}
+        </p>
+        {currentQuestion && (
+          <div className="mb-4">
+            <span className="text-3xl font-black text-gray-800 block">{currentQuestion.word}</span>
+            <span className="text-sm text-gray-400 block mt-1">{currentQuestion.wordTr}</span>
           </div>
+        )}
+        <div className="flex gap-3">
+          <button type="button" onClick={handleMarkDone} className="px-5 py-3 min-h-[48px] rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors">
+            {t('games.markAsDone') || 'Mark as done'}
+          </button>
+          <button type="button" onClick={handleSkip} className="px-5 py-3 min-h-[48px] rounded-xl border-2 border-gray-200 text-gray-500 font-semibold hover:bg-gray-50 transition-colors">
+            {t('games.skip')}
+          </button>
         </div>
       </div>
     );
@@ -432,98 +325,46 @@ export const SayItGame: React.FC<SayItGameProps> = ({
     const stars = pct >= 90 ? 3 : pct >= 60 ? 2 : 1;
 
     return (
-      <div className="sig">
+      <div className="relative flex flex-col items-center px-4 py-6">
         {pct >= 90 && <ConfettiRain duration={3000} />}
-        <Card variant="elevated" padding="xl" className="sig__completion">
-          <motion.div
-            className="sig__completion-content"
-            initial={{ scale: 0.8, opacity: 0, y: 30 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-          >
-            <UnifiedMascot state="celebrating" size={120} />
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0, y: 30 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={springBounce}
+          className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col items-center gap-5"
+        >
+          <UnifiedMascot state="celebrating" size={120} />
 
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
-            >
-              {pct >= 90 ? (
-                <Trophy size={48} color="var(--primary)" />
-              ) : pct >= 60 ? (
-                <Star size={48} fill="var(--primary)" color="var(--primary)" />
-              ) : (
-                <Check size={48} color="var(--success)" />
-              )}
-            </motion.span>
+          <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...springBounce, delay: 0.2 }}>
+            {pct >= 90 ? <Trophy size={48} className="text-indigo-500" /> : pct >= 60 ? <Star size={48} className="text-indigo-500 fill-indigo-500" /> : <Check size={48} className="text-emerald-500" />}
+          </motion.span>
 
-            <h2 className="sig__completion-title">
-              {pct >= 80
-                ? t('games.amazingPronunciation')
-                : pct >= 50
-                  ? t('games.goodEffort')
-                  : t('games.keepPracticing')}
-            </h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            {pct >= 80 ? t('games.amazingPronunciation') : pct >= 50 ? t('games.goodEffort') : t('games.keepPracticing')}
+          </h2>
+          <p className="text-3xl font-black text-gray-700">{score} / {questions.length}</p>
 
-            <p className="sig__completion-score">
-              {score} / {questions.length}
-            </p>
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span key={i} initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...springBounce, delay: 0.4 + i * 0.15 }}>
+                <Star size={32} className={i < stars ? 'text-indigo-500 fill-indigo-500' : 'text-gray-200'} />
+              </motion.span>
+            ))}
+          </div>
 
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 400,
-                    damping: 12,
-                    delay: 0.4 + i * 0.15,
-                  }}
-                >
-                  <Star
-                    size={32}
-                    fill={i < stars ? 'var(--primary)' : 'none'}
-                    color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'}
-                  />
-                </motion.span>
-              ))}
-            </span>
+          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-sm font-semibold px-3 py-1.5 rounded-full">
+            <Sparkles size={14} /> +{score * 15} XP
+          </div>
 
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.9 }}
-            >
-              <Badge variant="success" icon={<Sparkles size={14} />}>
-                +{score * 15} XP
-              </Badge>
-            </motion.div>
-
-            <div className="sig__completion-actions">
-              <button
-                type="button"
-                className="sig__completion-btn sig__completion-btn--secondary"
-                onClick={() => {
-                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
-                  onComplete(score, questions.length);
-                }}
-              >
-                <ArrowRight size={16} />
-                {t('games.backToGames')}
-              </button>
-              <button
-                type="button"
-                className="sig__completion-btn sig__completion-btn--primary"
-                onClick={handlePlayAgain}
-              >
-                <RotateCcw size={16} />
-                {t('games.playAgain')}
-              </button>
-            </div>
-          </motion.div>
-        </Card>
+          <div className="flex gap-3 w-full mt-2">
+            <button type="button" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, questions.length); }} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors">
+              <ArrowRight size={16} /> {t('games.backToGames')}
+            </button>
+            <button type="button" onClick={handlePlayAgain} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors">
+              <RotateCcw size={16} /> {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -531,87 +372,48 @@ export const SayItGame: React.FC<SayItGameProps> = ({
   if (!currentQuestion) return null;
 
   const progress = questions.length > 0 ? (currentIndex / questions.length) * 100 : 0;
-
-  const cardClass = [
-    'sig__card',
-    feedbackType === 'correct' && 'sig__card--correct',
-    feedbackType === 'wrong' && 'sig__card--wrong',
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  const micLabel =
-    micState === 'listening'
-      ? t('games.listening') || 'Listening...'
-      : micState === 'processing'
-        ? t('games.processing') || 'Processing...'
-        : micState === 'success'
-          ? t('games.great') || 'Great!'
-          : micState === 'error'
-            ? t('games.tryAgain') || 'Try again'
-            : t('games.speak') || 'Say it';
-
-  // System error states — separate from wrong feedback
   const showPermissionError = speechError === 'not-allowed';
   const showNetworkError = speechError === 'network';
   const showNoSpeechHint = speechError === 'no-speech' && !feedbackType;
 
-  // ── Render ───────────────────────────────────────────────────────────────
+  const micLabel =
+    micState === 'listening' ? t('games.listening') || 'Listening...'
+    : micState === 'processing' ? t('games.processing') || 'Processing...'
+    : micState === 'success' ? t('games.great') || 'Great!'
+    : micState === 'error' ? t('games.tryAgain') || 'Try again'
+    : t('games.speak') || 'Say it';
 
   return (
-    <div className="sig" role="application" aria-label="Say It pronunciation practice game">
+    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Say It pronunciation practice game">
       {/* Header */}
-      <div className="sig__header">
-        <h2 className="sig__title">{t('games.sayIt') || 'Say It!'}</h2>
-        <Badge variant="info">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-gray-800">{t('games.sayIt') || 'Say It!'}</h2>
+        <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">
           {currentIndex + 1} / {questions.length}
-        </Badge>
+        </span>
       </div>
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      {/* Progress bar */}
+      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+        <motion.div className="h-full bg-emerald-400 rounded-full" animate={{ width: `${progress}%` }} transition={springGentle} />
+      </div>
 
-      <p className="sig__score-row">
-        {t('games.score')}: {score}/{questions.length}
-      </p>
+      <p className="text-sm text-gray-400 text-center">{t('games.score')}: {score}/{questions.length}</p>
 
-      {/* Mic permission denied — persistent banner, not wrong feedback */}
+      {/* Permission error banner */}
       {showPermissionError && (
-        <motion.div
-          className="sig__error-banner"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          role="alert"
-          aria-live="assertive"
-        >
-          <AlertCircle size={18} />
-          <span>
-            {t('games.micPermissionDenied') ||
-              'Microphone access denied. Allow microphone access in your browser settings, then reload.'}
-          </span>
-          <button
-            type="button"
-            className="sig__btn sig__btn--skip"
-            style={{ marginLeft: '0.5rem' }}
-            onClick={handleSkip}
-          >
-            {t('games.skip')}
-          </button>
+        <motion.div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} role="alert" aria-live="assertive">
+          <AlertCircle size={18} className="shrink-0" />
+          <span className="flex-1">{t('games.micPermissionDenied') || 'Microphone access denied.'}</span>
+          <button type="button" onClick={handleSkip} className="px-3 py-1 min-h-[36px] rounded-lg bg-red-100 text-red-700 font-medium text-sm">{t('games.skip')}</button>
         </motion.div>
       )}
 
-      {/* Network error — persistent banner */}
+      {/* Network error banner */}
       {showNetworkError && (
-        <motion.div
-          className="sig__error-banner sig__error-banner--network"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          role="alert"
-          aria-live="assertive"
-        >
-          <AlertCircle size={18} />
-          <span>
-            {t('games.networkError') || 'Network error. Check your connection and try again.'}
-          </span>
+        <motion.div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} role="alert" aria-live="assertive">
+          <AlertCircle size={18} className="shrink-0" />
+          <span>{t('games.networkError') || 'Network error. Check your connection and try again.'}</span>
         </motion.div>
       )}
 
@@ -622,56 +424,59 @@ export const SayItGame: React.FC<SayItGameProps> = ({
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -24 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-          className={cardClass}
+          transition={springGentle}
+          className={`
+            flex flex-col items-center gap-4 p-6 rounded-2xl border-2 bg-white
+            ${feedbackType === 'correct' ? 'border-emerald-400 bg-emerald-50' : feedbackType === 'wrong' ? 'border-red-300 bg-red-50' : 'border-gray-100'}
+          `}
         >
-          {/* Illustration */}
           <WordIllustration word={currentQuestion.word} size={110} />
 
-          {/* Word */}
-          <div className="sig__word">
-            {currentQuestion.word}
+          <div className="flex items-center gap-2">
+            <span className="text-3xl font-black text-gray-800">{currentQuestion.word}</span>
             <SpeakButton text={currentQuestion.word} size="md" />
           </div>
-          <div className="sig__translation">{currentQuestion.wordTr}</div>
+          <div className="text-sm text-gray-400">{currentQuestion.wordTr}</div>
 
           {currentQuestion.phonetic && (
-            <div className="sig__phonetic">/{currentQuestion.phonetic}/</div>
+            <div className="text-sm text-indigo-400 font-mono">/{currentQuestion.phonetic}/</div>
           )}
 
-          {currentQuestion.hint && <div className="sig__hint">{currentQuestion.hint}</div>}
+          {currentQuestion.hint && (
+            <div className="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-1.5">{currentQuestion.hint}</div>
+          )}
 
           {/* No-speech soft hint */}
           {showNoSpeechHint && (
-            <motion.div
-              className="sig__feedback sig__feedback--hint"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              aria-live="polite"
-            >
+            <motion.div className="text-sm text-amber-600 bg-amber-50 rounded-xl px-4 py-2 w-full text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} aria-live="polite">
               {t('games.noSpeechDetected') || 'No speech detected. Speak clearly and try again.'}
             </motion.div>
           )}
 
-          {/* Mic button — hidden when permission denied (useless to show) */}
+          {/* Mic button */}
           {!showPermissionError && (
-            <div className="sig__mic-wrap">
+            <div className="flex flex-col items-center gap-2 mt-2">
               <button
                 type="button"
-                className={`sig__mic-btn sig__mic-btn--${micState}`}
                 onClick={micState === 'listening' ? stopListening : startListening}
                 disabled={micState === 'processing' || feedbackType === 'correct'}
-                aria-label={
-                  micState === 'listening'
-                    ? t('games.stopRecording') || 'Stop recording'
-                    : t('games.startSpeaking') || 'Start speaking'
-                }
+                className={`
+                  w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-lg
+                  ${micState === 'listening'
+                    ? 'bg-red-500 text-white animate-pulse scale-110'
+                    : micState === 'success'
+                      ? 'bg-emerald-500 text-white'
+                      : micState === 'error'
+                        ? 'bg-red-100 text-red-600'
+                        : 'bg-indigo-500 text-white hover:bg-indigo-600'
+                  }
+                  disabled:opacity-40
+                `}
+                aria-label={micState === 'listening' ? t('games.stopRecording') || 'Stop recording' : t('games.startSpeaking') || 'Start speaking'}
               >
-                <MicIcon size={34} />
+                <Mic size={34} />
               </button>
-              <span className="sig__mic-label" aria-live="polite">
-                {micLabel}
-              </span>
+              <span className="text-sm font-medium text-gray-500" aria-live="polite">{micLabel}</span>
             </div>
           )}
 
@@ -680,49 +485,38 @@ export const SayItGame: React.FC<SayItGameProps> = ({
             {feedbackType && (
               <motion.div
                 key={feedbackType}
-                className={`sig__feedback sig__feedback--${feedbackType}`}
+                className={`w-full text-center rounded-xl px-4 py-3 ${feedbackType === 'correct' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 aria-live="assertive"
               >
-                {feedbackType === 'correct'
-                  ? t('games.perfectWellDone')
-                  : t('games.notQuiteRight')}
+                <div className="font-semibold">
+                  {feedbackType === 'correct' ? t('games.perfectWellDone') : t('games.notQuiteRight')}
+                </div>
 
                 {feedbackType === 'wrong' && heardText && (
-                  <div className="sig__heard">
-                    {t('games.youSaid')} &ldquo;<strong>{heardText}</strong>&rdquo; —{' '}
+                  <div className="text-sm mt-1 text-gray-500">
+                    {t('games.youSaid')} &ldquo;<strong>{heardText}</strong>&rdquo; &mdash;{' '}
                     {t('games.expected')} &ldquo;<strong>{currentQuestion.word}</strong>&rdquo;
                   </div>
                 )}
 
                 {feedbackType === 'wrong' && (
-                  <div className="sig__actions" style={{ marginTop: '0.75rem' }}>
-                    <button
-                      type="button"
-                      className="sig__btn sig__btn--retry"
-                      onClick={startListening}
-                    >
-                      <MicIcon size={16} />
-                      {missCount >= 3
-                        ? t('games.tryOnceMore') || 'Try once more'
-                        : t('games.tryAgain')}
+                  <div className="flex gap-2 justify-center mt-3">
+                    <button type="button" onClick={startListening} className="flex items-center gap-1.5 px-4 py-2.5 min-h-[48px] rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors">
+                      <Mic size={16} />
+                      {missCount >= 3 ? t('games.tryOnceMore') || 'Try once more' : t('games.tryAgain')}
                     </button>
-                    <button
-                      type="button"
-                      className="sig__btn sig__btn--skip"
-                      onClick={handleSkip}
-                    >
-                      {t('games.skip')}
+                    <button type="button" onClick={handleSkip} className="flex items-center gap-1.5 px-4 py-2.5 min-h-[48px] rounded-xl border-2 border-gray-200 text-gray-500 font-semibold hover:bg-gray-50 transition-colors">
+                      <SkipForward size={16} /> {t('games.skip')}
                     </button>
                   </div>
                 )}
 
                 {feedbackType === 'wrong' && missCount >= 3 && (
-                  <div className="sig__miss-hint" aria-live="polite">
-                    {t('games.pronunciationTip') ||
-                      'Tip: Speak slowly and clearly. You can skip and come back.'}
+                  <div className="text-xs text-gray-400 mt-2" aria-live="polite">
+                    {t('games.pronunciationTip') || 'Tip: Speak slowly and clearly. You can skip and come back.'}
                   </div>
                 )}
               </motion.div>
@@ -731,11 +525,11 @@ export const SayItGame: React.FC<SayItGameProps> = ({
         </motion.div>
       </AnimatePresence>
 
-      {/* Always-visible skip (when not showing feedback skip) */}
+      {/* Always-visible skip */}
       {!feedbackType && (
-        <div className="sig__skip-row">
-          <button type="button" className="sig__btn sig__btn--skip" onClick={handleSkip}>
-            {t('games.skip')}
+        <div className="flex justify-center">
+          <button type="button" onClick={handleSkip} className="flex items-center gap-1.5 px-4 py-2 min-h-[48px] text-gray-400 font-medium hover:text-gray-600 transition-colors">
+            <SkipForward size={16} /> {t('games.skip')}
           </button>
         </div>
       )}

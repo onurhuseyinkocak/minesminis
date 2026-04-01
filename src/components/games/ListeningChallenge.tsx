@@ -1,15 +1,19 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, Sparkles, Headphones, Lightbulb, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
-import { Button, Card, Badge, ProgressBar } from '../ui';
+import {
+  Volume2, Sparkles, Star, Trophy, Check, X,
+  ArrowRight, RotateCcw, Headphones, Lightbulb,
+} from 'lucide-react';
 import { ConfettiRain } from '../ui/Celebrations';
-import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
+import { Badge, ProgressBar } from '../ui';
+import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
 import { shuffleArray } from '../../utils/arrayUtils';
-import './ListeningChallenge.css';
+
+// ── Types ──────────────────────────────────────────────────────────────────────
 
 interface WordItem {
   english: string;
@@ -29,19 +33,16 @@ interface Round {
   options: WordItem[];
 }
 
-/**
- * Score how phonetically similar two English words are.
- * Higher = more similar = better distractor for listening practice.
- * Criteria: same first letter, same length, same ending.
- */
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
 function phoneticSimilarity(a: string, b: string): number {
   const wa = a.toLowerCase();
   const wb = b.toLowerCase();
   let score = 0;
-  if (wa[0] === wb[0]) score += 2;                          // same starting sound
-  if (Math.abs(wa.length - wb.length) <= 1) score += 2;    // similar length (same syllable weight)
-  if (wa.slice(-2) === wb.slice(-2)) score += 3;            // same ending — rhyme (strongest cue)
-  if (wa.slice(-1) === wb.slice(-1)) score += 1;            // same final letter
+  if (wa[0] === wb[0]) score += 2;
+  if (Math.abs(wa.length - wb.length) <= 1) score += 2;
+  if (wa.slice(-2) === wb.slice(-2)) score += 3;
+  if (wa.slice(-1) === wb.slice(-1)) score += 1;
   return score;
 }
 
@@ -49,21 +50,55 @@ function generateRounds(words: WordItem[]): Round[] {
   const selected = shuffleArray(words).slice(0, 5);
   return selected.map((word) => {
     const others = words.filter((w) => w.english !== word.english);
-
-    // Sort candidates by phonetic similarity (descending) then shuffle ties
     const sorted = [...others].sort((a, b) => {
       const diff = phoneticSimilarity(word.english, b.english) - phoneticSimilarity(word.english, a.english);
-      // Break ties randomly so it's not always the same order
       return diff !== 0 ? diff : Math.random() - 0.5;
     });
-
-    // Take top 3 most phonetically similar distractors
-    // If pool is too small, fall back to whatever is available
     const distractors = sorted.slice(0, Math.min(3, sorted.length));
     const options = shuffleArray([word, ...distractors]);
     return { correctWord: word, options };
   });
 }
+
+// ── Spring configs ───────────────────────────────────────────────────────────
+
+const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
+const springSmooth = { type: 'spring' as const, stiffness: 260, damping: 28 };
+const springPop = { type: 'spring' as const, stiffness: 300, damping: 20 };
+
+// ── Waveform bars component ──────────────────────────────────────────────────
+
+function WaveformBars({ playing }: { playing: boolean }) {
+  const barCount = 5;
+  return (
+    <div className="flex items-end gap-1 h-8">
+      {Array.from({ length: barCount }, (_, i) => (
+        <motion.div
+          key={i}
+          className="w-1.5 rounded-full bg-indigo-400"
+          animate={
+            playing
+              ? {
+                  height: ['8px', `${16 + Math.sin(i * 1.2) * 12}px`, '8px'],
+                }
+              : { height: '8px' }
+          }
+          transition={
+            playing
+              ? {
+                  repeat: Infinity,
+                  duration: 0.6 + i * 0.08,
+                  ease: 'easeInOut',
+                }
+              : { duration: 0.3 }
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Component ──────────────────────────────────────────────────────────────────
 
 export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
@@ -76,15 +111,17 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const playingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [ttsAvailable] = useState(() => typeof window !== 'undefined' && 'speechSynthesis' in window);
 
-  // Cleanup all timers on unmount
   useEffect(() => {
     return () => {
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
       if (advanceTimeoutRef.current) clearTimeout(advanceTimeoutRef.current);
+      if (playingTimeoutRef.current) clearTimeout(playingTimeoutRef.current);
     };
   }, []);
 
@@ -93,12 +130,15 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
   const speakWord = useCallback((text: string) => {
     try {
       speak(text);
+      setIsPlaying(true);
+      if (playingTimeoutRef.current) clearTimeout(playingTimeoutRef.current);
+      playingTimeoutRef.current = setTimeout(() => setIsPlaying(false), 1200);
     } catch {
-      /* TTS not available — silent fallback */
+      /* TTS not available */
     }
   }, []);
 
-  // Auto-play the word when round changes so the child doesn't miss the cue
+  // Auto-play the word when round changes
   useEffect(() => {
     if (!rounds[currentRound] || completed) return;
     const delay = setTimeout(() => {
@@ -108,8 +148,13 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
     return () => clearTimeout(delay);
   }, [currentRound, completed, rounds, speakWord]);
 
-  // Need at least 4 words to produce 3 meaningful distractors per round
-  if (words.length < 4) { return <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>{t('games.noWordsToReview') || 'No words to review.'}</div>; }
+  if (words.length < 4) {
+    return (
+      <div className="flex items-center justify-center p-8 text-gray-400 text-center font-medium">
+        {t('games.noWordsToReview') || 'No words to review.'}
+      </div>
+    );
+  }
 
   const handlePlay = () => {
     if (!round) return;
@@ -144,9 +189,9 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
         setSelected(null);
         setFeedback(null);
         setHasPlayed(false);
+        setIsPlaying(false);
       } else {
         setCompleted(true);
-        // No auto-advance — user controls flow via "Back" or "Play Again" buttons
       }
     }, 1800);
   };
@@ -168,58 +213,88 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
     setScore(0);
     setCompleted(false);
     setHasPlayed(false);
+    setIsPlaying(false);
   };
+
+  // ── Completion screen ──────────────────────────────────────────────────
 
   if (completed) {
     const pct = rounds.length > 0 ? Math.round((score / rounds.length) * 100) : 0;
     const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
+
     return (
-      <div className="listening-challenge">
+      <div className="flex flex-col items-center justify-center min-h-[480px] p-6 bg-gradient-to-b from-sky-50 to-white rounded-3xl relative overflow-hidden">
         {pct >= 90 && <ConfettiRain duration={3000} />}
-        <Card variant="elevated" padding="xl" className="listening-challenge__results">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            className="listening-challenge__results-content"
+
+        <motion.div
+          className="flex flex-col items-center gap-4"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={springBounce}
+        >
+          <motion.span
+            className="flex items-center justify-center w-20 h-20 rounded-full bg-sky-100"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ ...springPop, delay: 0.2 }}
           >
-            <motion.span
-              className="listening-challenge__results-icon"
-              initial={{ scale: 0, rotate: -20 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            {pct >= 90 ? (
+              <Trophy size={48} className="text-amber-500" />
+            ) : pct >= 60 ? (
+              <Headphones size={48} className="text-indigo-500" />
+            ) : (
+              <Check size={48} className="text-emerald-500" />
+            )}
+          </motion.span>
+
+          <h2 className="text-2xl font-bold text-gray-800">
+            {t('games.greatListening') || 'Great Listening!'}
+          </h2>
+
+          <p className="text-4xl font-extrabold text-indigo-600">
+            {score} / {rounds.length}
+          </p>
+
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ ...springBounce, delay: 0.5 + i * 0.15 }}
+              >
+                <Star
+                  size={32}
+                  fill={i < stars ? '#F59E0B' : 'none'}
+                  color={i < stars ? '#F59E0B' : '#D1D5DB'}
+                />
+              </motion.span>
+            ))}
+          </div>
+
+          <Badge variant="success" icon={<Sparkles size={14} />}>
+            +{score * 10} XP
+          </Badge>
+
+          <div className="flex gap-3 mt-4">
+            <button
+              type="button"
+              onClick={() => onComplete(score, rounds.length)}
+              className="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-2xl bg-gray-100 text-gray-700 font-semibold text-base hover:bg-gray-200 transition-colors"
             >
-              {pct >= 90 ? <Trophy size={48} color="var(--warning)" /> : pct >= 60 ? <Headphones size={48} color="var(--primary)" /> : <Check size={48} color="var(--success)" />}
-            </motion.span>
-            <h2 className="listening-challenge__results-title">{t('games.greatListening') || 'Great Listening!'}</h2>
-            <p className="listening-challenge__results-score">
-              {score} / {rounds.length}
-            </p>
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
-                >
-                  <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
-                </motion.span>
-              ))}
-            </span>
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 10} XP
-            </Badge>
-            <div className="listening-challenge__results-actions">
-              <button type="button" className="listening-challenge__results-btn listening-challenge__results-btn--secondary" onClick={() => onComplete(score, rounds.length)}>
-                <ArrowRight size={16} /> {t('games.backToGames') || 'Back'}
-              </button>
-              <button type="button" className="listening-challenge__results-btn listening-challenge__results-btn--primary" onClick={handlePlayAgain}>
-                <RotateCcw size={16} /> {t('games.playAgain') || 'Play Again'}
-              </button>
-            </div>
-          </motion.div>
-        </Card>
+              <ArrowRight size={18} />
+              {t('games.backToGames') || 'Back'}
+            </button>
+            <button
+              type="button"
+              onClick={handlePlayAgain}
+              className="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-2xl bg-indigo-500 text-white font-semibold text-base hover:bg-indigo-600 transition-colors"
+            >
+              <RotateCcw size={18} />
+              {t('games.playAgain') || 'Play Again'}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -228,101 +303,194 @@ export const ListeningChallenge: React.FC<GameProps> = ({ words, onComplete, onX
 
   return (
     <>
-    {showNoHearts && (
-      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
-    )}
-    <div className="listening-challenge" role="application" aria-label="Listening challenge game">
-      <div className="listening-challenge__header">
-        <h2 className="listening-challenge__title">{t('games.listenAndPick') || 'Listen & Pick!'}</h2>
-        <Badge variant="info">{currentRound + 1}/{rounds.length}</Badge>
-      </div>
+      {showNoHearts && <NoHeartsModal onClose={() => setShowNoHearts(false)} />}
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      <div
+        className="flex flex-col gap-5 p-5 bg-gradient-to-b from-indigo-50 to-white rounded-3xl min-h-[480px]"
+        role="application"
+        aria-label="Listening challenge game"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-800">
+            {t('games.listenAndPick') || 'Listen & Pick!'}
+          </h2>
+          <Badge variant="info">
+            {currentRound + 1}/{rounds.length}
+          </Badge>
+        </div>
 
-      <Card variant="elevated" padding="lg" className="listening-challenge__speaker">
-        <p className="listening-challenge__instruction">
-          {t('games.listenAndPickInstruction') || 'Listen to the word, then pick the right picture!'}
-        </p>
-        <motion.div whileTap={{ scale: 0.95 }}>
-          <Button
-            variant="primary"
-            size="xl"
-            icon={<Volume2 size={28} />}
+        {/* Progress bar */}
+        <ProgressBar value={progress} variant="success" size="md" animated />
+
+        {/* Speaker area */}
+        <div className="flex flex-col items-center gap-4 p-6 bg-white rounded-3xl border-2 border-gray-100 shadow-sm">
+          <p className="text-base font-medium text-gray-600 text-center">
+            {t('games.listenAndPickInstruction') || 'Listen to the word, then pick the right spelling!'}
+          </p>
+
+          {/* Main speaker button */}
+          <motion.button
+            type="button"
             onClick={handlePlay}
-            className="listening-challenge__play-btn"
+            className="relative flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 text-white shadow-lg shadow-indigo-200 cursor-pointer"
+            whileTap={{ scale: 0.92 }}
+            animate={
+              isPlaying
+                ? { scale: [1, 1.05, 1] }
+                : {}
+            }
+            transition={
+              isPlaying
+                ? { repeat: Infinity, duration: 0.8 }
+                : springSmooth
+            }
             aria-label="Play the word"
           >
-            {hasPlayed ? (t('games.playAgainAudio') || 'Play Again') : (t('games.listen') || 'Listen')}
-          </Button>
-        </motion.div>
-        {!ttsAvailable && (
-          <p className="listening-challenge__no-audio" aria-live="polite">
-            {t('games.noAudioAvailable') || 'Audio not available on this device.'}
+            <Volume2 size={36} />
+            {/* Pulsing ring when playing */}
+            {isPlaying && (
+              <motion.div
+                className="absolute inset-0 rounded-full border-2 border-indigo-300"
+                initial={{ scale: 1, opacity: 0.6 }}
+                animate={{ scale: 1.5, opacity: 0 }}
+                transition={{ repeat: Infinity, duration: 1 }}
+              />
+            )}
+          </motion.button>
+
+          <p className="text-sm text-gray-400 font-medium">
+            {hasPlayed
+              ? (t('games.playAgainAudio') || 'Tap to listen again')
+              : (t('games.listen') || 'Tap to listen')}
           </p>
-        )}
-      </Card>
 
-      <div aria-live="assertive" aria-atomic="true">
-        {feedback === 'correct' && (
-          <motion.div
-            className="listening-challenge__feedback listening-challenge__feedback--correct"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            {t('games.yesItWas') || 'Yes! It was'} &ldquo;{round.correctWord.english}&rdquo;!
-          </motion.div>
-        )}
+          {/* Waveform bars */}
+          <WaveformBars playing={isPlaying} />
 
-        {feedback === 'wrong' && (
-          <motion.div
-            className="listening-challenge__feedback listening-challenge__feedback--wrong"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {t('games.itWas') || 'It was'} &ldquo;{round.correctWord.english}&rdquo; <Lightbulb size={14} color="var(--warning)" />
-          </motion.div>
-        )}
-      </div>
+          {!ttsAvailable && (
+            <p className="text-sm text-red-400 text-center" aria-live="polite">
+              {t('games.noAudioAvailable') || 'Audio not available on this device.'}
+            </p>
+          )}
+        </div>
 
-      <div className="listening-challenge__options" role="radiogroup" aria-label="Choose the word you heard">
-        <AnimatePresence>
-          {round.options.map((option, index) => {
-            let optionClass = 'listening-challenge__option';
-            if (feedback && option.english === round.correctWord.english) {
-              optionClass += ' listening-challenge__option--correct';
-            } else if (feedback === 'wrong' && index === selected) {
-              optionClass += ' listening-challenge__option--wrong';
-            }
-
-            return (
-              <motion.button
-                type="button"
-                key={`${currentRound}-${index}`}
-                className={optionClass}
-                onClick={() => handleSelect(index)}
-                disabled={feedback !== null || !hasPlayed}
-                aria-label={`Option: ${option.english}`}
-                initial={{ opacity: 0, scale: 0.7, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+        {/* Feedback */}
+        <div aria-live="assertive" aria-atomic="true" className="min-h-[40px]">
+          <AnimatePresence>
+            {feedback === 'correct' && (
+              <motion.div
+                key="correct"
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-100 text-emerald-700 font-semibold justify-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={springPop}
               >
-                <span className={`listening-challenge__option-emoji${option.emoji ? '' : ' listening-challenge__option-emoji--fallback'}`}
-                >{option.emoji || (option.english.charAt(0) || '?').toUpperCase()}</span>
-                <span className="listening-challenge__option-label">{option.english}</span>
-              </motion.button>
-            );
-          })}
-        </AnimatePresence>
-      </div>
+                <Check size={20} />
+                {t('games.yesItWas') || 'Yes! It was'} &ldquo;{round.correctWord.english}&rdquo;!
+              </motion.div>
+            )}
+            {feedback === 'wrong' && (
+              <motion.div
+                key="wrong"
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-red-100 text-red-700 font-semibold justify-center"
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: [0, -6, 6, -4, 4, 0] }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <X size={20} />
+                {t('games.itWas') || 'It was'} &ldquo;{round.correctWord.english}&rdquo;
+                <Lightbulb size={14} className="text-amber-500" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-      {!hasPlayed && (
-        <p className="listening-challenge__prompt-listen" aria-live="polite">
-          {t('games.pressListenFirst') || 'Press the Listen button first!'}
-        </p>
-      )}
-    </div>
+        {/* Option cards in a column */}
+        <div className="flex flex-col gap-3" role="radiogroup" aria-label="Choose the word you heard">
+          <AnimatePresence>
+            {round.options.map((option, index) => {
+              const isCorrectOption = feedback && option.english === round.correctWord.english;
+              const isWrongSelected = feedback === 'wrong' && index === selected;
+
+              return (
+                <motion.button
+                  type="button"
+                  key={`${currentRound}-${index}`}
+                  onClick={() => handleSelect(index)}
+                  disabled={feedback !== null || !hasPlayed}
+                  aria-label={`Option: ${option.english}`}
+                  className={`flex items-center gap-4 px-5 py-4 min-h-[56px] rounded-2xl border-2 text-left transition-colors ${
+                    isCorrectOption
+                      ? 'bg-emerald-100 border-emerald-400'
+                      : isWrongSelected
+                        ? 'bg-red-100 border-red-400'
+                        : 'bg-white border-gray-200 hover:border-indigo-300 hover:bg-indigo-50'
+                  } ${!hasPlayed ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={
+                    isCorrectOption
+                      ? { opacity: 1, x: 0, scale: [1, 1.03, 1] }
+                      : isWrongSelected
+                        ? { opacity: 1, x: [0, -6, 6, -4, 4, 0], scale: 1 }
+                        : { opacity: 1, x: 0, scale: 1 }
+                  }
+                  transition={
+                    isCorrectOption || isWrongSelected
+                      ? { duration: 0.5 }
+                      : { ...springPop, delay: index * 0.08 }
+                  }
+                  whileTap={hasPlayed && !feedback ? { scale: 0.97 } : undefined}
+                >
+                  {/* Speaker icon per option */}
+                  <span
+                    className={`flex items-center justify-center w-10 h-10 rounded-full shrink-0 ${
+                      isCorrectOption
+                        ? 'bg-emerald-200'
+                        : isWrongSelected
+                          ? 'bg-red-200'
+                          : 'bg-gray-100'
+                    }`}
+                  >
+                    {isCorrectOption ? (
+                      <Check size={20} className="text-emerald-700" />
+                    ) : isWrongSelected ? (
+                      <X size={20} className="text-red-700" />
+                    ) : (
+                      <Volume2 size={18} className="text-gray-400" />
+                    )}
+                  </span>
+
+                  <span className={`text-lg font-bold ${
+                    isCorrectOption
+                      ? 'text-emerald-700'
+                      : isWrongSelected
+                        ? 'text-red-700'
+                        : 'text-gray-800'
+                  }`}>
+                    {option.english}
+                  </span>
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+
+        {/* Listen prompt */}
+        {!hasPlayed && (
+          <motion.p
+            className="text-sm text-center text-indigo-400 font-medium"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            aria-live="polite"
+          >
+            {t('games.pressListenFirst') || 'Press the Listen button first!'}
+          </motion.p>
+        )}
+      </div>
     </>
   );
 };

@@ -4,10 +4,9 @@ import { ArrowLeft, BookOpen, PenTool, Zap, Star, Sparkles, Trophy, Check, Rotat
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { SFX } from '../../data/soundLibrary';
-import { Badge, ConfettiRain } from '../ui';
+import { ConfettiRain } from '../ui/Celebrations';
 import UnifiedMascot from '../UnifiedMascot';
 import type { PhoneticTrap } from '../../data/turkishPhoneticTraps';
-import './PhoneticTrapGame.css';
 
 // ---- Types ----
 
@@ -122,7 +121,6 @@ function MouthDiagram({ trapId, color }: { trapId: string; color: string }) {
 
 function buildChallengeQuestions(trap: PhoneticTrap): ChallengeQuestion[] {
   const pairs = [...trap.minimalPairs];
-  // Shuffle so question order varies on replay
   for (let i = pairs.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
@@ -130,38 +128,17 @@ function buildChallengeQuestions(trap: PhoneticTrap): ChallengeQuestion[] {
   const selected = pairs.slice(0, Math.min(5, pairs.length));
 
   return selected.map((pair) => {
-    // Correct option: the properly-spelled English word
-    const correctOpt = {
-      word: pair.english,
-      meaning: pair.meaning,
-      meaningTr: pair.meaningTr,
-      isCorrect: true,
-    };
-    // Wrong option: the Turkish-interference error version with explicit label
-    const wrongOpt = {
-      word: pair.errorVersion,
-      meaning: `"${pair.errorVersion}" — Turkish error`,
-      meaningTr: `"${pair.errorVersion}" — Türkçe hata`,
-      isCorrect: false,
-    };
-
-    // Randomise position so correct answer isn't always on the same side
-    const options = Math.random() > 0.5
-      ? [correctOpt, wrongOpt]
-      : [wrongOpt, correctOpt];
-
-    return {
-      // Show the MEANING as prompt — student must pick the correctly-spelled word
-      // This forces phonetic awareness instead of surface-level matching
-      word: pair.meaning,
-      meaning: pair.meaning,
-      meaningTr: pair.meaningTr,
-      options,
-    };
+    const correctOpt = { word: pair.english, meaning: pair.meaning, meaningTr: pair.meaningTr, isCorrect: true };
+    const wrongOpt = { word: pair.errorVersion, meaning: `"${pair.errorVersion}" — Turkish error`, meaningTr: `"${pair.errorVersion}" — Turkce hata`, isCorrect: false };
+    const options = Math.random() > 0.5 ? [correctOpt, wrongOpt] : [wrongOpt, correctOpt];
+    return { word: pair.meaning, meaning: pair.meaning, meaningTr: pair.meaningTr, options };
   });
 }
 
-// ---- Results Screen (shared between Practice and Challenge tabs) ----
+const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
+const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
+
+// ---- Results Screen ----
 
 function TabResultsScreen({
   correctCount,
@@ -184,68 +161,42 @@ function TabResultsScreen({
   const isPerfect = pct >= 90;
 
   return (
-    <div className="ptg__panel" style={{ position: 'relative' }}>
+    <div className="relative flex flex-col items-center py-6">
       {isPerfect && <ConfettiRain duration={3000} />}
       <motion.div
-        className="ptg__results"
+        className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col items-center gap-4"
         initial={{ scale: 0.7, opacity: 0, y: 40 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+        transition={springBounce}
       >
-        <motion.div
-          className="ptg__complete-mascot"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.2 }}
-        >
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...springBounce, delay: 0.2 }}>
           <UnifiedMascot state={pct >= 60 ? 'celebrating' : 'waving'} size={100} />
         </motion.div>
 
-        <motion.span
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 }}
-        >
-          {pct >= 90
-            ? <Trophy size={48} color="var(--warning)" />
-            : pct >= 60
-              ? <Star size={48} fill="var(--warning)" color="var(--warning)" />
-              : <Check size={48} color="var(--success)" />}
+        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...springBounce, delay: 0.3 }}>
+          {pct >= 90 ? <Trophy size={48} className="text-amber-500" /> : pct >= 60 ? <Star size={48} className="text-amber-500 fill-amber-500" /> : <Check size={48} className="text-emerald-500" />}
         </motion.span>
 
-        <h3 className="ptg__results-title">{title}</h3>
-        <p className="ptg__results-score">
-          {correctCount}/{totalCount} ({pct}%)
-        </p>
+        <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+        <p className="text-lg text-gray-500">{correctCount}/{totalCount} ({pct}%)</p>
 
-        <span className="game-stars">
+        <div className="flex gap-2">
           {Array.from({ length: 3 }, (_, i) => (
-            <motion.span
-              key={i}
-              initial={{ scale: 0, rotate: -30 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.55 + i * 0.12 }}
-            >
-              <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
+            <motion.span key={i} initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...springBounce, delay: 0.55 + i * 0.12 }}>
+              <Star size={32} className={i < stars ? 'text-indigo-500 fill-indigo-500' : 'text-gray-200'} />
             </motion.span>
           ))}
-        </span>
+        </div>
 
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.9 }}
-        >
-          <Badge variant="success" icon={<Sparkles size={14} />}>
-            +{correctCount * xpPerCorrect} XP
-          </Badge>
-        </motion.div>
+        <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-sm font-semibold px-3 py-1.5 rounded-full">
+          <Sparkles size={14} /> +{correctCount * xpPerCorrect} XP
+        </div>
 
-        <div className="ptg__results-actions">
-          <button type="button" className="ptg__results-btn ptg__results-btn--secondary" onClick={onBack}>
+        <div className="flex gap-3 w-full mt-2">
+          <button type="button" onClick={onBack} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors">
             <ArrowLeft size={16} /> {t('games.dialogueBack')}
           </button>
-          <button type="button" className="ptg__results-btn ptg__results-btn--primary" onClick={onPlayAgain}>
+          <button type="button" onClick={onPlayAgain} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors">
             <RotateCcw size={16} /> {t('games.dialoguePlayAgain')}
           </button>
         </div>
@@ -261,43 +212,43 @@ function LearnTab({ trap }: { trap: PhoneticTrap }) {
   const isTr = language === 'tr';
 
   return (
-    <div className="ptg__panel">
+    <div className="flex flex-col gap-5">
       {/* Error description */}
-      <div className="ptg__error-card" style={{ '--trap-color': trap.color } as React.CSSProperties}>
-        <p className="ptg__error-label">{t('games.phoneticCommonMistake')}</p>
-        <p className="ptg__error-text">{trap.commonError}</p>
-        <p className="ptg__error-text--tr">{trap.commonErrorTr}</p>
+      <div className="rounded-2xl border-2 p-5" style={{ borderColor: trap.color, backgroundColor: `${trap.color}08` }}>
+        <p className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: trap.color }}>{t('games.phoneticCommonMistake')}</p>
+        <p className="text-sm text-gray-700 font-medium">{trap.commonError}</p>
+        <p className="text-xs text-gray-400 mt-1">{trap.commonErrorTr}</p>
       </div>
 
       {/* Mouth position diagram */}
-      <div className="ptg__mouth-section">
-        <p className="ptg__mouth-title">{t('games.phoneticHowToMake')}</p>
-        <div className="ptg__mouth-diagram">
-          <div className="ptg__mouth-svg-wrap">
+      <div className="flex flex-col gap-3">
+        <p className="text-sm font-bold text-gray-700">{t('games.phoneticHowToMake')}</p>
+        <div className="flex gap-4 items-start bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="shrink-0">
             <MouthDiagram trapId={trap.id} color={trap.color} />
           </div>
-          <div className="ptg__mouth-instructions">
-            <p className="ptg__mouth-en">{trap.mouthPosition}</p>
-            {isTr && <p className="ptg__mouth-tr">{trap.mouthPositionTr}</p>}
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-gray-700">{trap.mouthPosition}</p>
+            {isTr && <p className="text-xs text-gray-400">{trap.mouthPositionTr}</p>}
           </div>
         </div>
       </div>
 
       {/* Minimal pairs */}
       <div>
-        <p className="ptg__pairs-title">{t('games.phoneticCorrectVsError')}</p>
-        <div className="ptg__pairs-list">
+        <p className="text-sm font-bold text-gray-700 mb-3">{t('games.phoneticCorrectVsError')}</p>
+        <div className="flex flex-col gap-2">
           {trap.minimalPairs.map((pair) => (
-            <div key={pair.english} className="ptg__pair">
-              <div className="ptg__pair-correct">
-                <span className="ptg__pair-word" style={{ color: trap.color }}>{pair.english}</span>
-                <span className="ptg__pair-meaning">{pair.meaning}</span>
-                {isTr && <span className="ptg__pair-meaning">{pair.meaningTr}</span>}
+            <div key={pair.english} className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3">
+              <div className="flex-1">
+                <span className="font-bold text-sm" style={{ color: trap.color }}>{pair.english}</span>
+                <span className="text-xs text-gray-400 ml-2">{pair.meaning}</span>
+                {isTr && <span className="text-xs text-gray-300 ml-1">({pair.meaningTr})</span>}
               </div>
-              <span className="ptg__pair-divider">vs</span>
-              <div className="ptg__pair-wrong">
-                <span className="ptg__pair-word--wrong">{pair.errorVersion}</span>
-                <span className="ptg__pair-label">{t('games.phoneticCommonError')}</span>
+              <span className="text-xs text-gray-300 font-medium">vs</span>
+              <div className="flex-1 text-right">
+                <span className="font-medium text-sm text-red-400 line-through">{pair.errorVersion}</span>
+                <span className="text-xs text-red-300 ml-2">{t('games.phoneticCommonError')}</span>
               </div>
             </div>
           ))}
@@ -382,63 +333,77 @@ function PracticeTab({
   const progress = ((exerciseIndex) / trap.exercises.length) * 100;
 
   return (
-    <div className="ptg__panel">
-      <div className="ptg__exercise-counter">
-        <span className="ptg__exercise-label">
+    <div className="flex flex-col gap-4">
+      {/* Counter */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold text-gray-400">
           {t('games.phoneticQuestionOf').replace('{current}', String(exerciseIndex + 1)).replace('{total}', String(trap.exercises.length))}
         </span>
       </div>
 
-      <div className="ptg__progress-bar-track">
-        <div className="ptg__progress-bar-fill" style={{ width: `${progress}%`, ['--trap-color' as string]: trap.color }} />
+      {/* Progress bar */}
+      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+        <motion.div className="h-full rounded-full" style={{ backgroundColor: trap.color }} animate={{ width: `${progress}%` }} transition={springGentle} />
       </div>
 
+      {/* Prompt card */}
       <motion.div
-        className="ptg__prompt-card"
         key={exerciseIndex}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        transition={springGentle}
+        className="bg-white rounded-2xl border border-gray-100 p-5"
       >
-        <p className="ptg__prompt-en">{exercise.prompt}</p>
-        {isTr && <p className="ptg__prompt-tr">{exercise.promptTr}</p>}
+        <p className="text-base font-medium text-gray-800">{exercise.prompt}</p>
+        {isTr && <p className="text-sm text-gray-400 mt-1">{exercise.promptTr}</p>}
       </motion.div>
 
-      <div className="ptg__options">
+      {/* Options */}
+      <div className="flex flex-col gap-2">
         {(exercise.options ?? []).map((option, idx) => {
-          let optClass = 'ptg__option';
-          if (selected !== null) {
-            if (option === exercise.correctOption) optClass += ' ptg__option--correct';
-            else if (option === selected) optClass += ' ptg__option--wrong';
-          }
+          const isCorrectOption = selected !== null && option === exercise.correctOption;
+          const isWrongSelection = selected !== null && option === selected && option !== exercise.correctOption;
+
           return (
             <motion.button
               type="button"
               key={option}
-              className={optClass}
               onClick={() => handleSelect(option)}
               disabled={selected !== null}
+              className={`
+                flex items-center justify-between px-5 py-4 min-h-[56px] rounded-xl font-semibold text-base transition-all
+                ${isCorrectOption ? 'bg-emerald-50 border-2 border-emerald-400 text-emerald-700' : ''}
+                ${isWrongSelection ? 'bg-red-50 border-2 border-red-300 text-red-600' : ''}
+                ${!isCorrectOption && !isWrongSelection ? 'bg-white border-2 border-gray-200 text-gray-700 hover:border-indigo-300 hover:bg-indigo-50' : ''}
+                disabled:cursor-not-allowed
+              `}
               initial={{ opacity: 0, x: -15 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.06 }}
-              whileHover={{ y: -3 }}
-              whileTap={{ scale: 0.97, y: 1 }}
+              animate={
+                isCorrectOption
+                  ? { opacity: 1, x: 0, scale: [1, 1.05, 1] }
+                  : isWrongSelection
+                    ? { opacity: 1, x: [0, -4, 4, -4, 0] }
+                    : { opacity: 1, x: 0 }
+              }
+              transition={{ ...springGentle, delay: idx * 0.06 }}
+              whileTap={{ scale: 0.97 }}
             >
-              <span className="ptg__option-text">{option}</span>
-              {selected !== null && option === exercise.correctOption && <CheckCircle2 size={18} strokeWidth={2.5} />}
-              {selected !== null && option === selected && option !== exercise.correctOption && <X size={18} strokeWidth={2.5} />}
+              <span>{option}</span>
+              {isCorrectOption && <CheckCircle2 size={18} strokeWidth={2.5} className="text-emerald-500" />}
+              {isWrongSelection && <X size={18} strokeWidth={2.5} className="text-red-500" />}
             </motion.button>
           );
         })}
       </div>
 
+      {/* Feedback + Next button */}
       {selected !== null && (
         <>
           <motion.div
-            className={`ptg__feedback ${selected === exercise.correctOption ? 'ptg__feedback--correct' : 'ptg__feedback--wrong'}`}
+            className={`text-center py-2 px-4 rounded-xl font-medium text-sm ${selected === exercise.correctOption ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            transition={springGentle}
           >
             {selected === exercise.correctOption
               ? t('games.phoneticCorrectRecognised').replace('{word}', exercise.correctOption ?? '')
@@ -446,13 +411,12 @@ function PracticeTab({
           </motion.div>
           <motion.button
             type="button"
-            className="ptg__next-btn"
-            style={{ '--trap-color': trap.color } as React.CSSProperties}
             onClick={handleNext}
+            className="w-full py-3 min-h-[48px] rounded-xl text-white font-bold text-base transition-colors"
+            style={{ backgroundColor: trap.color }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            whileHover={{ y: -2 }}
             whileTap={{ scale: 0.97 }}
           >
             {exerciseIndex + 1 >= trap.exercises.length
@@ -481,7 +445,6 @@ function ChallengeTab({
   onBack: () => void;
 }) {
   const { t } = useLanguage();
-  // isTr removed — replaced by t()
   const [questions] = useState<ChallengeQuestion[]>(() => buildChallengeQuestions(trap));
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -515,14 +478,12 @@ function ChallengeTab({
         setLastWasWrong(false);
         const newCount = correctCount + 1;
         setCorrectCount(newCount);
-        // Brief positive pause, then advance
         setTimeout(() => advance(newCount), 900);
       } else {
         SFX.wrong();
         setLastWasWrong(true);
         loseHeart();
         onWrongAnswer?.();
-        // Keep feedback visible longer so learner reads the explanation
         setTimeout(() => advance(correctCount), 2200);
       }
     },
@@ -551,81 +512,85 @@ function ChallengeTab({
   }
 
   const progress = (questionIndex / questions.length) * 100;
-  // Find the correct option word to show in the error explanation
   const correctWord = question.options.find((o) => o.isCorrect)?.word ?? '';
 
   return (
-    <div className="ptg__panel">
-      <div className="ptg__challenge">
-        <div className="ptg__challenge-header">
-          <h3 className="ptg__challenge-title">{t('games.phoneticChallenge')}</h3>
-          <p className="ptg__challenge-subtitle">{t('games.phoneticWhichSpelled')}</p>
-        </div>
-
-        <div className="ptg__progress-bar-track" style={{ width: '100%' }}>
-          <div className="ptg__progress-bar-fill" style={{ width: `${progress}%`, ['--trap-color' as string]: trap.color }} />
-        </div>
-
-        <span className="ptg__challenge-score">
-          {questionIndex + 1} / {questions.length}
-        </span>
-
-        {/* Prompt: meaning shown as cue — student picks the correctly-spelled word */}
-        <motion.div
-          key={`prompt-${questionIndex}`}
-          className="ptg__challenge-word"
-          style={{ color: trap.color }}
-          initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        >
-          {question.meaning}
-        </motion.div>
-
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
-          {t('games.phoneticSelectSpelling')}
-        </p>
-
-        <div className="ptg__challenge-options">
-          {question.options.map((opt, idx) => {
-            let cls = 'ptg__challenge-option';
-            if (selected !== null) {
-              if (opt.isCorrect) cls += ' ptg__challenge-option--correct';
-              else if (selected === opt.word) cls += ' ptg__challenge-option--wrong';
-            }
-            return (
-              <motion.button
-                type="button"
-                key={opt.word}
-                className={cls}
-                onClick={() => handleSelect(opt.word, opt.isCorrect)}
-                disabled={selected !== null}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 22, delay: idx * 0.06 }}
-                whileHover={{ y: -3 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                <span className="ptg__challenge-option-word">{opt.word}</span>
-              </motion.button>
-            );
-          })}
-        </div>
-
-        {/* Pedagogical feedback — shown after answer */}
-        {selected !== null && (
-          <motion.div
-            className={`ptg__feedback ${lastWasWrong ? 'ptg__feedback--wrong' : 'ptg__feedback--correct'}`}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          >
-            {lastWasWrong
-              ? t('games.phoneticCorrectSpelling').replace('{word}', correctWord)
-              : t('games.phoneticCorrectAwareness').replace('{word}', correctWord)}
-          </motion.div>
-        )}
+    <div className="flex flex-col gap-4">
+      {/* Header */}
+      <div className="text-center">
+        <h3 className="text-base font-bold text-gray-800">{t('games.phoneticChallenge')}</h3>
+        <p className="text-xs text-gray-400">{t('games.phoneticWhichSpelled')}</p>
       </div>
+
+      {/* Progress bar */}
+      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+        <motion.div className="h-full rounded-full" style={{ backgroundColor: trap.color }} animate={{ width: `${progress}%` }} transition={springGentle} />
+      </div>
+
+      <span className="text-xs text-gray-400 text-center">{questionIndex + 1} / {questions.length}</span>
+
+      {/* Prompt: meaning */}
+      <motion.div
+        key={`prompt-${questionIndex}`}
+        className="text-center py-4"
+        initial={{ opacity: 0, scale: 0.6 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={springBounce}
+      >
+        <span className="text-3xl font-black" style={{ color: trap.color }}>{question.meaning}</span>
+      </motion.div>
+
+      <p className="text-xs text-gray-400 text-center">{t('games.phoneticSelectSpelling')}</p>
+
+      {/* Options */}
+      <div className="flex flex-col gap-2">
+        {question.options.map((opt, idx) => {
+          const isCorrectOption = selected !== null && opt.isCorrect;
+          const isWrongSelection = selected !== null && selected === opt.word && !opt.isCorrect;
+
+          return (
+            <motion.button
+              type="button"
+              key={opt.word}
+              onClick={() => handleSelect(opt.word, opt.isCorrect)}
+              disabled={selected !== null}
+              className={`
+                flex items-center justify-center px-5 py-4 min-h-[56px] rounded-xl font-bold text-lg transition-all
+                ${isCorrectOption ? 'bg-emerald-50 border-2 border-emerald-400 text-emerald-700' : ''}
+                ${isWrongSelection ? 'bg-red-50 border-2 border-red-300 text-red-600' : ''}
+                ${!isCorrectOption && !isWrongSelection ? 'bg-white border-2 border-gray-200 text-gray-700 hover:border-indigo-300 hover:bg-indigo-50' : ''}
+                disabled:cursor-not-allowed
+              `}
+              initial={{ opacity: 0, y: 15 }}
+              animate={
+                isCorrectOption
+                  ? { opacity: 1, y: 0, scale: [1, 1.05, 1] }
+                  : isWrongSelection
+                    ? { opacity: 1, y: 0, x: [0, -4, 4, -4, 0] }
+                    : { opacity: 1, y: 0 }
+              }
+              transition={{ ...springGentle, delay: idx * 0.06 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              {opt.word}
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* Pedagogical feedback */}
+      {selected !== null && (
+        <motion.div
+          className={`text-center py-2 px-4 rounded-xl font-medium text-sm ${lastWasWrong ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={springGentle}
+        >
+          {lastWasWrong
+            ? t('games.phoneticCorrectSpelling').replace('{word}', correctWord)
+            : t('games.phoneticCorrectAwareness').replace('{word}', correctWord)}
+        </motion.div>
+      )}
     </div>
   );
 }
@@ -665,49 +630,52 @@ export default function PhoneticTrapGame({
     [practiceScore, onComplete],
   );
 
-  const cssVars = { '--trap-color': trap.color } as React.CSSProperties;
+  const tabs: { id: TabId; icon: React.ReactNode; label: string; score: number | null }[] = [
+    { id: 'learn', icon: <BookOpen size={16} />, label: t('games.phoneticLearn'), score: null },
+    { id: 'practice', icon: <PenTool size={16} />, label: t('games.phoneticPractice'), score: practiceScore },
+    { id: 'challenge', icon: <Zap size={16} />, label: t('games.phoneticChallenge'), score: challengeScore },
+  ];
 
   return (
-    <div className="ptg" style={cssVars}>
+    <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto">
       {/* Header */}
-      <div className="ptg__header">
-        <button type="button" className="ptg__back-btn" onClick={onBack} aria-label="Back to trap list">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors"
+          aria-label="Back to trap list"
+        >
           <ArrowLeft size={20} />
         </button>
-        <div className="ptg__sound-badge">
-          <span className="ptg__ipa" style={{ color: trap.color }}>{trap.targetSoundIPA}</span>
-          <span className="ptg__sound-name">{trap.targetSound}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-2xl font-black" style={{ color: trap.color }}>{trap.targetSoundIPA}</span>
+          <span className="text-sm font-medium text-gray-500">{trap.targetSound}</span>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="ptg__tabs">
-        <button
-          type="button"
-          className={`ptg__tab${activeTab === 'learn' ? ' ptg__tab--active' : ''}`}
-          onClick={() => setActiveTab('learn')}
-        >
-          <span className="ptg__tab-icon"><BookOpen size={16} /></span>
-          <span className="ptg__tab-label">{t('games.phoneticLearn')}</span>
-        </button>
-        <button
-          type="button"
-          className={`ptg__tab${activeTab === 'practice' ? ' ptg__tab--active' : ''}`}
-          onClick={() => setActiveTab('practice')}
-        >
-          <span className="ptg__tab-icon"><PenTool size={16} /></span>
-          <span className="ptg__tab-label">{t('games.phoneticPractice')}</span>
-          {practiceScore !== null && <span style={{ fontSize: '0.65rem', color: 'var(--success, #10B981)' }}>{practiceScore}%</span>}
-        </button>
-        <button
-          type="button"
-          className={`ptg__tab${activeTab === 'challenge' ? ' ptg__tab--active' : ''}`}
-          onClick={() => setActiveTab('challenge')}
-        >
-          <span className="ptg__tab-icon"><Zap size={16} /></span>
-          <span className="ptg__tab-label">{t('games.phoneticChallenge')}</span>
-          {challengeScore !== null && <span style={{ fontSize: '0.65rem', color: 'var(--success, #10B981)' }}>{challengeScore}%</span>}
-        </button>
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`
+              flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-[44px] rounded-lg font-semibold text-sm transition-all
+              ${activeTab === tab.id
+                ? 'bg-white text-gray-800 shadow-sm'
+                : 'text-gray-400 hover:text-gray-600'
+              }
+            `}
+          >
+            {tab.icon}
+            <span className="hidden sm:inline">{tab.label}</span>
+            {tab.score !== null && (
+              <span className="text-xs text-emerald-500 font-bold">{tab.score}%</span>
+            )}
+          </button>
+        ))}
       </div>
 
       {/* Tab content */}

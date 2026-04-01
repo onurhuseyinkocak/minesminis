@@ -1,15 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Star, Trophy, Check, ArrowRight, RotateCcw } from 'lucide-react';
-import { Card, Badge, ProgressBar } from '../ui';
+import { Volume2, Check, X, Star, Trophy, Sparkles, ArrowLeft, RotateCcw, ArrowRight } from 'lucide-react';
 import { ConfettiRain } from '../ui/Celebrations';
-import { SFX } from '../../data/soundLibrary';
 import { speak } from '../../services/ttsService';
+import { SFX } from '../../data/soundLibrary';
 import { useHearts } from '../../contexts/HeartsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import UnifiedMascot from '../UnifiedMascot';
 import { WordIllustration } from '../WordIllustration';
-import './WordFamilyGame.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -33,6 +31,15 @@ export interface WordFamilyGameProps {
 
 type TileFeedback = 'none' | 'valid' | 'invalid';
 
+// ── Spring configs ──────────────────────────────────────────────────────────
+
+const springBouncy = { type: 'spring' as const, stiffness: 300, damping: 18 };
+const springGentle = { type: 'spring' as const, stiffness: 260, damping: 24 };
+const shakeAnimation = {
+  x: [0, -8, 8, -6, 6, -3, 3, 0],
+  transition: { duration: 0.5 },
+};
+
 // ── Component ──────────────────────────────────────────────────────────────
 
 export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
@@ -55,7 +62,6 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
   const autoCompleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const feedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup all timers on unmount
   useEffect(() => {
     return () => {
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
@@ -163,86 +169,91 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
     const stars = pct >= 80 ? 3 : pct >= 50 ? 2 : 1;
 
     return (
-      <div className="wfg">
-        {pct >= 90 && <ConfettiRain duration={3000} />}
-        <Card variant="elevated" padding="xl" className="wfg__completion">
-          <motion.div
-            className="wfg__completion-content"
-            initial={{ scale: 0.8, opacity: 0, y: 30 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+      <div className="flex flex-col items-center justify-center gap-6 p-6 w-full max-w-lg mx-auto relative">
+        <ConfettiRain duration={3500} />
+
+        <motion.div
+          className="flex flex-col items-center gap-5 p-8 rounded-3xl bg-white border-2 border-slate-100 shadow-xl w-full"
+          initial={{ scale: 0.8, opacity: 0, y: 30 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        >
+          <UnifiedMascot state="celebrating" size={120} />
+
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
           >
-            <UnifiedMascot state="celebrating" size={120} />
+            {pct >= 80 ? (
+              <Trophy size={48} className="text-amber-500" />
+            ) : pct >= 50 ? (
+              <Star size={48} fill="#f59e0b" className="text-amber-500" />
+            ) : (
+              <Check size={48} className="text-emerald-500" />
+            )}
+          </motion.span>
 
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
-            >
-              {pct >= 80 ? (
-                <Trophy size={48} color="var(--primary)" />
-              ) : pct >= 50 ? (
-                <Star size={48} fill="var(--primary)" color="var(--primary)" />
-              ) : (
-                <Check size={48} color="var(--success)" />
-              )}
-            </motion.span>
+          <h2 className="text-2xl font-extrabold text-slate-800">{t('games.greatJob')}</h2>
+          <p className="text-lg font-bold text-violet-600">
+            {t('games.wordsFoundCount').replace('{count}', String(totalScore))}
+          </p>
 
-            <h2 className="wfg__completion-title">{t('games.greatJob')}</h2>
-            <p className="wfg__completion-score">
-              {t('games.wordsFoundCount').replace('{count}', String(totalScore))}
-            </p>
-
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 12, delay: 0.4 + i * 0.15 }}
-                >
-                  <Star
-                    size={32}
-                    fill={i < stars ? 'var(--primary)' : 'none'}
-                    color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'}
-                  />
-                </motion.span>
-              ))}
-            </span>
-
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.9 }}
-            >
-              <Badge variant="success" icon={<Sparkles size={14} />}>
-                +{totalScore * 10} XP
-              </Badge>
-            </motion.div>
-
-            <div className="wfg__completion-actions">
-              <button
-                type="button"
-                className="wfg__completion-btn wfg__completion-btn--secondary"
-                onClick={() => {
-                  if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
-                  onComplete(totalScore, families.length);
-                }}
+          {/* Stars */}
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 12, delay: 0.4 + i * 0.15 }}
               >
-                <ArrowRight size={16} />
-                {t('games.backToGames')}
-              </button>
-              <button
-                type="button"
-                className="wfg__completion-btn wfg__completion-btn--primary"
-                onClick={handlePlayAgain}
-              >
-                <RotateCcw size={16} />
-                {t('games.playAgain')}
-              </button>
-            </div>
+                <Star
+                  size={36}
+                  fill={i < stars ? '#f59e0b' : 'none'}
+                  className={i < stars ? 'text-amber-500' : 'text-slate-300'}
+                />
+              </motion.span>
+            ))}
+          </div>
+
+          {/* XP Badge */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.9 }}
+            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-100 rounded-full"
+          >
+            <Sparkles size={16} className="text-emerald-600" />
+            <span className="font-bold text-emerald-700 text-sm">+{totalScore * 10} XP</span>
           </motion.div>
-        </Card>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 mt-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
+                onComplete(totalScore, families.length);
+              }}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200
+                text-slate-700 font-bold text-sm transition-colors min-h-[48px]"
+            >
+              <ArrowLeft size={16} />
+              {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              onClick={handlePlayAgain}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl
+                bg-gradient-to-b from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700
+                text-white font-bold text-sm shadow-lg shadow-violet-200 transition-all min-h-[48px]"
+            >
+              <RotateCcw size={16} />
+              {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -252,42 +263,55 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
   const progress = families.length > 0 ? (familyIndex / families.length) * 100 : 0;
   const rimeText = currentFamily.rime.replace(/^-/, '');
 
-  // Determine onset to display (from last tapped, if active)
   const displayOnset = lastFormedWord
     ? lastFormedWord.slice(0, lastFormedWord.length - rimeText.length)
     : null;
 
   return (
-    <div className="wfg" role="application" aria-label="Word family builder game">
+    <div className="flex flex-col items-center gap-4 p-4 w-full max-w-xl mx-auto" role="application" aria-label="Word family builder game">
       {/* Header */}
-      <div className="wfg__header">
-        <h2 className="wfg__title">{t('games.wordFamilies')}</h2>
-        <Badge variant="info">
+      <div className="flex items-center justify-between w-full">
+        <h2 className="text-xl font-extrabold text-slate-800">{t('games.wordFamilies')}</h2>
+        <span className="px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-sm font-bold">
           {familyIndex + 1} / {families.length}
-        </Badge>
+        </span>
       </div>
 
-      <ProgressBar value={progress} variant="success" size="md" animated />
+      {/* Progress bar */}
+      <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-violet-400 to-fuchsia-500 rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={springGentle}
+        />
+      </div>
 
-      {/* Family info + rime tip */}
-      <p className="wfg__progress-text">
+      {/* Words found counter */}
+      <p className="text-sm font-bold text-slate-500 text-center">
         {t('games.xWordsFoundDash').replace('{found}', String(foundWords.length)).replace('{total}', String(currentFamily.validWords.length))} &mdash; {currentFamily.rimeTr}
       </p>
 
       {/* Feedback banner */}
-      <div aria-live="assertive" aria-atomic="true" style={{ minHeight: '2.5rem', width: '100%' }}>
+      <div aria-live="assertive" aria-atomic="true" className="min-h-[40px] w-full">
         <AnimatePresence>
           {showFeedback && (
             <motion.div
               key={showFeedback}
-              className={`wfg__feedback wfg__feedback--${showFeedback}`}
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold
+                ${showFeedback === 'correct'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-red-100 text-red-700'
+                }`}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              {showFeedback === 'correct'
-                ? `${lastFormedWord ?? ''} — ${t('games.amazing')}`
-                : `${t('games.notAWord')} ${t('games.tryAgainYouGotThis')}`}
+              {showFeedback === 'correct' ? (
+                <><Check size={16} /> {lastFormedWord ?? ''} &mdash; {t('games.amazing')}</>
+              ) : (
+                <><X size={16} /> {t('games.notAWord')} {t('games.tryAgainYouGotThis')}</>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -296,119 +320,154 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
       <AnimatePresence mode="wait">
         <motion.div
           key={`family-${familyIndex}`}
-          style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-lg)' }}
+          className="w-full flex flex-col items-center gap-5"
           initial={{ x: 60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -60, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+          transition={springGentle}
         >
-          {/* Word snap area */}
-          <div className="wfg__rime-area">
-            <p className="wfg__rime-label">{t('games.wordEndingRime')}</p>
+          {/* Rime display card */}
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+              {t('games.wordEndingRime')}
+            </p>
 
-            <div className="wfg__word-snap" aria-live="polite" aria-label="Current word being formed">
+            {/* Word formation area */}
+            <div className="flex items-center gap-1" aria-live="polite" aria-label="Current word being formed">
               {/* Onset slot */}
               {displayOnset ? (
                 <motion.span
                   key={displayOnset}
-                  className="wfg__snap-onset"
+                  className="text-4xl font-black text-blue-600"
                   initial={{ scale: 0.4, y: -20, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 350 }}
+                  transition={springBouncy}
                 >
                   {displayOnset}
                 </motion.span>
               ) : (
-                <span className="wfg__snap-onset--placeholder">_</span>
+                <span className="text-4xl font-black text-slate-300">_</span>
               )}
 
-              {/* Rime */}
-              <motion.span
-                className={[
-                  'wfg__snap-rime',
-                  rimeFeedback === 'invalid' && 'wfg__snap-rime--shake',
-                  rimeFeedback === 'valid' && 'wfg__snap-rime--valid',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
+              {/* Rime card */}
+              <motion.div
+                className={`px-6 py-4 rounded-2xl text-4xl font-black shadow-lg border-2 transition-all
+                  ${rimeFeedback === 'valid'
+                    ? 'bg-gradient-to-b from-emerald-400 to-emerald-600 text-white border-emerald-300 shadow-emerald-200'
+                    : rimeFeedback === 'invalid'
+                      ? 'bg-gradient-to-b from-red-400 to-red-600 text-white border-red-300 shadow-red-200'
+                      : 'bg-gradient-to-b from-violet-500 to-purple-700 text-white border-violet-300 shadow-violet-200'
+                  }`}
+                animate={rimeFeedback === 'invalid' ? shakeAnimation : {}}
               >
                 {rimeText}
-              </motion.span>
+              </motion.div>
             </div>
 
             {/* Illustration for valid word */}
-            <div className="wfg__illustration">
+            <div className="min-h-[80px] flex items-center justify-center">
               <AnimatePresence>
                 {rimeFeedback === 'valid' && lastFormedWord && (
                   <motion.div
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
+                    transition={springBouncy}
+                    className="flex flex-col items-center gap-1"
                   >
                     <WordIllustration word={lastFormedWord} size={72} />
-                    <span className="wfg__word-formed">{lastFormedWord}</span>
+                    <span className="text-sm font-bold text-emerald-600">{lastFormedWord}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Speaker button */}
+            {lastFormedWord && rimeFeedback === 'valid' && (
+              <button
+                type="button"
+                onClick={() => speak(lastFormedWord, { lang: 'en-US', rate: 0.85 })}
+                className="w-10 h-10 rounded-full bg-violet-100 hover:bg-violet-200 flex items-center justify-center transition-colors"
+                aria-label={`Listen to ${lastFormedWord}`}
+              >
+                <Volume2 size={20} className="text-violet-600" />
+              </button>
+            )}
           </div>
 
           {/* Onset tiles */}
-          <p className="wfg__onsets-label">{t('games.tapLetterToMakeWord')}</p>
-          <div className="wfg__onsets" role="group" aria-label="Letter tiles">
-            {currentFamily.onsets.map((onset, idx) => {
-              const candidate = onset + rimeText;
-              const isFound = foundWords.includes(candidate);
-              const isInvalid = invalidOnset === onset;
-              const isActive = lastFormedWord?.startsWith(onset) && rimeFeedback === 'valid';
+          <div className="flex flex-col items-center gap-2 w-full">
+            <p className="text-sm font-bold text-slate-500">{t('games.tapLetterToMakeWord')}</p>
+            <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Letter tiles">
+              {currentFamily.onsets.map((onset, idx) => {
+                const candidate = onset + rimeText;
+                const isFound = foundWords.includes(candidate);
+                const isInvalid = invalidOnset === onset;
+                const isActive = lastFormedWord?.startsWith(onset) && rimeFeedback === 'valid';
 
-              return (
-                <motion.button
-                  key={onset}
-                  type="button"
-                  className={[
-                    'wfg__onset-tile',
-                    isFound && 'wfg__onset-tile--used',
-                    isInvalid && 'wfg__onset-tile--invalid',
-                    isActive && 'wfg__onset-tile--active',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  onClick={() => handleOnsetTap(onset)}
-                  disabled={isFound || familyDone}
-                  aria-label={`Letter ${onset}`}
-                  aria-pressed={isFound}
-                  initial={{ opacity: 0, y: 20, scale: 0.7 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 18, delay: idx * 0.06 }}
-                  whileTap={{ scale: 0.88 }}
-                >
-                  {onset}
-                </motion.button>
-              );
-            })}
+                const bgClass = isFound
+                  ? 'bg-emerald-100 border-emerald-300 text-emerald-600'
+                  : isInvalid
+                    ? 'bg-red-100 border-red-400 text-red-600'
+                    : isActive
+                      ? 'bg-blue-100 border-blue-400 text-blue-700 ring-2 ring-blue-300'
+                      : 'bg-white border-slate-200 text-slate-800 hover:border-violet-300 hover:bg-violet-50';
+
+                return (
+                  <motion.button
+                    key={onset}
+                    type="button"
+                    className={`w-14 h-14 rounded-2xl border-2 shadow-sm flex items-center justify-center
+                      text-xl font-extrabold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${bgClass}`}
+                    onClick={() => handleOnsetTap(onset)}
+                    disabled={isFound || familyDone}
+                    aria-label={`Letter ${onset}`}
+                    aria-pressed={isFound}
+                    initial={{ opacity: 0, y: 20, scale: 0.7 }}
+                    animate={isInvalid ? shakeAnimation : { opacity: 1, y: 0, scale: 1 }}
+                    transition={{ ...springBouncy, delay: idx * 0.06 }}
+                    whileTap={{ scale: 0.88 }}
+                  >
+                    {onset}
+                    {isFound && (
+                      <motion.div
+                        className="absolute"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={springBouncy}
+                      >
+                        <Check size={14} className="text-emerald-500" />
+                      </motion.div>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Found words */}
           {foundWords.length > 0 && (
-            <>
-              <p className="wfg__found-label">{t('games.wordsFoundLabel')}</p>
-              <div className="wfg__found-words" aria-label="Found words">
+            <div className="flex flex-col items-center gap-2 w-full">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {t('games.wordsFoundLabel')}
+              </p>
+              <div className="flex flex-wrap gap-2 justify-center" aria-label="Found words">
                 {foundWords.map((w) => (
                   <motion.span
                     key={w}
-                    className="wfg__found-word"
+                    className="px-3 py-1.5 rounded-xl bg-gradient-to-b from-emerald-50 to-emerald-100
+                      border border-emerald-200 text-emerald-700 font-bold text-sm shadow-sm
+                      flex items-center gap-1.5"
                     initial={{ scale: 0.5, rotate: -6 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
+                    transition={springBouncy}
                   >
+                    <Check size={12} className="text-emerald-500" />
                     {w}
                   </motion.span>
                 ))}
               </div>
-            </>
+            </div>
           )}
 
           {/* Family complete — next button */}
@@ -416,15 +475,18 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-md)' }}
+              className="flex flex-col items-center gap-3"
             >
               <UnifiedMascot state="celebrating" size={64} />
               <button
                 type="button"
-                className="wfg__next-btn kbtn kbtn--blue"
                 onClick={handleNextFamily}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl
+                  bg-gradient-to-b from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700
+                  text-white font-bold text-sm shadow-lg shadow-violet-200 transition-all min-h-[48px]"
               >
                 {familyIndex + 1 < families.length ? t('games.nextFamily') : t('games.finishExcl')}
+                <ArrowRight size={16} />
               </button>
             </motion.div>
           )}
@@ -432,7 +494,7 @@ export const WordFamilyGame: React.FC<WordFamilyGameProps> = ({
           {!familyDone && (
             <UnifiedMascot
               state={showFeedback === 'correct' ? 'celebrating' : 'idle'}
-              size={52}
+              size={56}
             />
           )}
         </motion.div>

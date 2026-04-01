@@ -1,13 +1,11 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, RotateCcw, Lightbulb, Sparkles, Star, Trophy, Check, ArrowRight } from 'lucide-react';
-import { Button, Card, Badge, ProgressBar } from '../ui';
 import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useHearts } from '../../contexts/HeartsContext';
 import NoHeartsModal from '../NoHeartsModal';
-import './SentenceScramble.css';
 
 interface WordItem {
   english: string;
@@ -31,7 +29,6 @@ function shuffleArray<T>(arr: T[]): T[] {
   if (arr.length <= 1) return [...arr];
   let shuffled: T[];
   let attempts = 0;
-  // Guard against returning original order (anti-pattern for scramble games)
   do {
     shuffled = [...arr];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -47,13 +44,11 @@ function shuffleArray<T>(arr: T[]): T[] {
   return shuffled;
 }
 
-/** Returns "a" or "an" based on the first letter of the word (English article rule). */
 function articleFor(word: string): string {
   return /^[aeiou]/i.test(word) ? 'an' : 'a';
 }
 
 function generateSentences(wordItems: WordItem[]): SentenceData[] {
-  // Templates that use correct "a/an" articles and avoid single-word sentences
   const templates = [
     (w: string) => `I like the ${w}`,
     (w: string) => `This is ${articleFor(w)} ${w}`,
@@ -72,6 +67,24 @@ function generateSentences(wordItems: WordItem[]): SentenceData[] {
     };
   });
 }
+
+// Grammar color hints for word types
+function getWordColor(word: string, _index: number, _total: number): string {
+  const lower = word.toLowerCase();
+  const pronouns = ['i', 'we', 'you', 'he', 'she', 'it', 'they'];
+  const articles = ['a', 'an', 'the'];
+  const verbs = ['like', 'is', 'see', 'look', 'have', 'can'];
+  const prepositions = ['at'];
+
+  if (pronouns.includes(lower)) return '#6366f1'; // indigo for pronouns
+  if (articles.includes(lower)) return '#f59e0b'; // amber for articles
+  if (verbs.includes(lower)) return '#10b981'; // green for verbs
+  if (prepositions.includes(lower)) return '#8b5cf6'; // purple for prepositions
+  return '#3b82f6'; // blue for nouns (default)
+}
+
+const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
+const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
 export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpEarned, onWrongAnswer }) => {
   const { t } = useLanguage();
@@ -92,7 +105,6 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   const currentSentence = sentences[currentIndex];
 
-  // Cleanup timers and TTS on unmount
   useEffect(() => {
     return () => {
       if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current);
@@ -124,7 +136,6 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     setPlaced((prev) => prev.filter((_, i) => i !== fromIndex));
   };
 
-  // Keyboard reorder: ArrowLeft/ArrowRight moves a placed chip, Backspace removes it
   const handlePlacedKeyDown = (e: React.KeyboardEvent, word: string, index: number) => {
     if (feedback) return;
     if (e.key === 'ArrowLeft' && index > 0) {
@@ -152,7 +163,6 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   const handleCheck = () => {
     if (feedback) return;
-    // Case-insensitive, punctuation-tolerant comparison
     const attempt = normalizeForCheck(placed.join(' '));
     const correct = normalizeForCheck(currentSentence.sentence);
 
@@ -174,7 +184,6 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
             initSentence(currentIndex + 1);
           } else {
             setCompleted(true);
-            // Use newScore here to avoid stale closure bug
             autoCompleteTimeoutRef.current = setTimeout(
               () => onComplete(newScore, sentences.length),
               4000
@@ -212,19 +221,9 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   const progress = sentences.length > 0 ? (currentIndex / sentences.length) * 100 : 0;
 
-  // Guard: no words provided
-  if (words.length < 1) {
+  if (words.length < 1 || sentences.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
-        {t('games.noWordsToReview')}
-      </div>
-    );
-  }
-
-  // Guard: no sentences could be generated (e.g., all words filtered out)
-  if (sentences.length === 0) {
-    return (
-      <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+      <div className="flex items-center justify-center p-8 text-gray-400 text-center">
         {t('games.noWordsToReview')}
       </div>
     );
@@ -234,52 +233,62 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
     const pct = sentences.length > 0 ? Math.round((score / sentences.length) * 100) : 0;
     const stars = pct === 100 ? 3 : pct >= 60 ? 2 : 1;
     return (
-      <div className="sentence-scramble">
+      <div className="relative flex flex-col items-center px-4 py-6">
         {pct >= 90 && <ConfettiRain duration={3000} />}
-        <Card variant="elevated" padding="xl" className="sentence-scramble__results">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            className="sentence-scramble__results-content"
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={springBounce}
+          className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col items-center gap-5"
+        >
+          <motion.span
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ ...springBounce, delay: 0.2 }}
           >
-            <motion.span
-              className="sentence-scramble__big-emoji"
-              initial={{ scale: 0, rotate: -20 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            {pct >= 90 ? <Trophy size={48} className="text-amber-500" /> : pct >= 60 ? <Star size={48} className="text-amber-500 fill-amber-500" /> : <Check size={48} className="text-emerald-500" />}
+          </motion.span>
+
+          <h2 className="text-2xl font-bold text-gray-800">{t('games.sentenceMaster')}</h2>
+          <p className="text-lg text-gray-500">
+            {t('games.outOfSentences').replace('{score}', String(score)).replace('{total}', String(sentences.length))}
+          </p>
+
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }, (_, i) => (
+              <motion.span
+                key={i}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ ...springBounce, delay: 0.5 + i * 0.15 }}
+              >
+                <Star size={32} className={i < stars ? 'text-indigo-500 fill-indigo-500' : 'text-gray-200'} />
+              </motion.span>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-sm font-semibold px-3 py-1.5 rounded-full">
+            <Sparkles size={14} />
+            +{score * 15} XP
+          </div>
+
+          <div className="flex gap-3 w-full mt-2">
+            <button
+              type="button"
+              onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, sentences.length); }}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors"
             >
-              {pct >= 90 ? <Trophy size={48} color="var(--warning)" /> : pct >= 60 ? <Star size={48} fill="var(--warning)" color="var(--warning)" /> : <Check size={48} color="var(--success)" />}
-            </motion.span>
-            <h2 className="sentence-scramble__results-title">{t('games.sentenceMaster')}</h2>
-            <p className="sentence-scramble__results-score">
-              {t('games.outOfSentences').replace('{score}', String(score)).replace('{total}', String(sentences.length))}
-            </p>
-            <span className="game-stars">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 10, delay: 0.5 + i * 0.15 }}
-                >
-                  <Star size={32} fill={i < stars ? 'var(--primary)' : 'none'} color={i < stars ? 'var(--primary)' : 'var(--border-strong, #ccc)'} />
-                </motion.span>
-              ))}
-            </span>
-            <Badge variant="success" icon={<Sparkles size={14} />}>
-              +{score * 15} XP
-            </Badge>
-            <div className="sentence-scramble__results-actions">
-              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--secondary" onClick={() => { if (autoCompleteTimeoutRef.current) clearTimeout(autoCompleteTimeoutRef.current); onComplete(score, sentences.length); }}>
-                <ArrowRight size={16} /> {t('games.backToGames')}
-              </button>
-              <button type="button" className="sentence-scramble__results-btn sentence-scramble__results-btn--primary" onClick={() => { if (autoCompleteTimeoutRef.current) { clearTimeout(autoCompleteTimeoutRef.current); autoCompleteTimeoutRef.current = null; } setCurrentIndex(0); setScore(0); setCompleted(false); initSentence(0); }}>
-                <RotateCcw size={16} /> {t('games.playAgain')}
-              </button>
-            </div>
-          </motion.div>
-        </Card>
+              <ArrowRight size={16} /> {t('games.backToGames')}
+            </button>
+            <button
+              type="button"
+              onClick={() => { if (autoCompleteTimeoutRef.current) { clearTimeout(autoCompleteTimeoutRef.current); autoCompleteTimeoutRef.current = null; } setCurrentIndex(0); setScore(0); setCompleted(false); initSentence(0); }}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors"
+            >
+              <RotateCcw size={16} /> {t('games.playAgain')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -288,53 +297,120 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
 
   return (
     <>
-    {showNoHearts && (
-      <NoHeartsModal onClose={() => setShowNoHearts(false)} />
-    )}
-    <div className="sentence-scramble" role="application" aria-label="Sentence scramble game">
-      <div className="sentence-scramble__header">
-        <h2 className="sentence-scramble__title">{t('games.buildTheSentence')}</h2>
-        <Badge variant="info">{currentIndex + 1}/{sentences.length}</Badge>
-      </div>
-
-      <ProgressBar value={progress} variant="success" size="md" animated />
-
-      {showHint && (
-        <motion.div
-          className="sentence-scramble__hint"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <Lightbulb size={18} />
-          {t('games.hintSentenceStartsWith').replace('{word}', currentSentence.words[0])}
-        </motion.div>
+      {showNoHearts && (
+        <NoHeartsModal onClose={() => setShowNoHearts(false)} />
       )}
+      <div className="flex flex-col gap-4 px-4 py-4 max-w-lg mx-auto" role="application" aria-label="Sentence scramble game">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-800">{t('games.buildTheSentence')}</h2>
+          <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">
+            {currentIndex + 1}/{sentences.length}
+          </span>
+        </div>
 
-      <Card variant="outlined" padding="lg" className="sentence-scramble__dropzone">
-        <p id="ss-dropzone-label" className="sentence-scramble__dropzone-label">
-          {placed.length === 0 ? t('games.tapWordsBelow') : t('games.yourSentence')}
-        </p>
-        <div
-          className="sentence-scramble__placed"
-          role="list"
-          aria-label="Build your sentence"
-          aria-live="polite"
-          aria-atomic="true"
-        >
+        {/* Progress bar */}
+        <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-emerald-400 rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={springGentle}
+          />
+        </div>
+
+        {/* Hint */}
+        {showHint && (
+          <motion.div
+            className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={springGentle}
+          >
+            <Lightbulb size={18} className="text-amber-500 shrink-0" />
+            {t('games.hintSentenceStartsWith').replace('{word}', currentSentence.words[0])}
+          </motion.div>
+        )}
+
+        {/* Sentence drop zone */}
+        <div className="bg-white border-2 border-dashed border-indigo-200 rounded-2xl p-4 min-h-[80px]">
+          <p className="text-xs font-medium text-gray-400 mb-2">
+            {placed.length === 0 ? t('games.tapWordsBelow') : t('games.yourSentence')}
+          </p>
+          <div
+            className="flex flex-wrap gap-2"
+            role="list"
+            aria-label="Build your sentence"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <AnimatePresence>
+              {placed.map((word, index) => (
+                <motion.button
+                  type="button"
+                  key={`placed-${index}-${word}`}
+                  role="listitem"
+                  className="px-4 py-2.5 min-h-[48px] rounded-xl font-semibold text-white shadow-sm cursor-pointer select-none"
+                  style={{ backgroundColor: getWordColor(word, index, placed.length) }}
+                  onClick={() => handleRemoveWord(word, index)}
+                  onKeyDown={(e) => handlePlacedKeyDown(e, word, index)}
+                  aria-label={`${word}, position ${index + 1} of ${placed.length}. Press Backspace to remove, Arrow keys to reorder.`}
+                  aria-pressed={true}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={springBounce}
+                >
+                  {word}
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Feedback */}
+        <div aria-live="polite" aria-atomic="true" className="min-h-[40px]">
+          {feedback === 'correct' && (
+            <motion.div
+              className="flex items-center gap-2 justify-center py-2 px-4 bg-emerald-50 text-emerald-700 rounded-xl font-semibold"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={springBounce}
+            >
+              <CheckCircle size={22} /> {t('games.perfectSentence')}
+            </motion.div>
+          )}
+
+          {feedback === 'wrong' && (
+            <motion.div
+              className="flex items-center justify-center py-2 px-4 bg-red-50 text-red-600 rounded-xl font-semibold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
+              transition={{ duration: 0.4 }}
+            >
+              {t('games.notQuiteKeepTrying')}
+            </motion.div>
+          )}
+        </div>
+
+        {/* Available words bank */}
+        <div className="flex flex-wrap gap-2 justify-center" role="list" aria-label="Available words">
           <AnimatePresence>
-            {placed.map((word, index) => (
+            {available.map((word, index) => (
               <motion.button
                 type="button"
-                key={`placed-${index}-${word}`}
+                key={`avail-${index}-${word}`}
                 role="listitem"
-                className="sentence-scramble__chip sentence-scramble__chip--placed"
-                onClick={() => handleRemoveWord(word, index)}
-                onKeyDown={(e) => handlePlacedKeyDown(e, word, index)}
-                aria-label={`${word}, position ${index + 1} of ${placed.length}. Press Backspace to remove, Arrow keys to reorder.`}
-                aria-pressed={true}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
+                className="px-4 py-2.5 min-h-[48px] rounded-xl bg-gray-100 text-gray-700 font-semibold border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors cursor-pointer select-none disabled:opacity-40"
+                onClick={() => handleWordTap(word, index)}
+                disabled={!!feedback}
+                aria-label={`Add word: ${word}`}
+                aria-pressed={false}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ ...springGentle, delay: index * 0.05 }}
                 whileTap={{ scale: 0.9 }}
               >
                 {word}
@@ -342,74 +418,28 @@ export const SentenceScramble: React.FC<GameProps> = ({ words, onComplete, onXpE
             ))}
           </AnimatePresence>
         </div>
-      </Card>
 
-      <div aria-live="polite" aria-atomic="true">
-        {feedback === 'correct' && (
-          <motion.div
-            className="sentence-scramble__feedback sentence-scramble__feedback--correct"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+        {/* Actions */}
+        <div className="flex gap-3 mt-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={placed.length === 0 || !!feedback}
+            className="flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-xl border-2 border-gray-200 text-gray-500 font-semibold hover:bg-gray-50 transition-colors disabled:opacity-30"
           >
-            <CheckCircle size={22} /> {t('games.perfectSentence')}
-          </motion.div>
-        )}
-
-        {feedback === 'wrong' && (
-          <motion.div
-            className="sentence-scramble__feedback sentence-scramble__feedback--wrong"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, x: [0, -6, 6, -6, 0] }}
+            <RotateCcw size={20} />
+            {t('games.reset')}
+          </button>
+          <button
+            type="button"
+            onClick={handleCheck}
+            disabled={placed.length !== currentSentence.words.length || !!feedback}
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl bg-indigo-500 text-white font-bold text-lg hover:bg-indigo-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed shadow-md"
           >
-            {t('games.notQuiteKeepTrying')}
-          </motion.div>
-        )}
+            {t('games.checkExcl')}
+          </button>
+        </div>
       </div>
-
-      <div className="sentence-scramble__available" role="list" aria-label="Available words">
-        <AnimatePresence>
-          {available.map((word, index) => (
-            <motion.button
-              type="button"
-              key={`avail-${index}-${word}`}
-              role="listitem"
-              className="sentence-scramble__chip sentence-scramble__chip--available"
-              onClick={() => handleWordTap(word, index)}
-              disabled={!!feedback}
-              aria-label={`Add word: ${word}`}
-              aria-pressed={false}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ delay: index * 0.05 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              {word}
-            </motion.button>
-          ))}
-        </AnimatePresence>
-      </div>
-
-      <div className="sentence-scramble__actions">
-        <Button
-          variant="ghost"
-          size="lg"
-          icon={<RotateCcw size={20} />}
-          onClick={handleReset}
-          disabled={placed.length === 0 || !!feedback}
-        >
-          {t('games.reset')}
-        </Button>
-        <Button
-          variant="primary"
-          size="xl"
-          onClick={handleCheck}
-          disabled={placed.length !== currentSentence.words.length || !!feedback}
-        >
-          {t('games.checkExcl')}
-        </Button>
-      </div>
-    </div>
     </>
   );
 };
