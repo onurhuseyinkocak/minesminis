@@ -12,7 +12,7 @@ export interface DecodableWord {
   isSightWord: boolean;   // sight words bypass phonics constraint
   syllableCount: number;
   frequency: number;      // 1-10 (how common in children's text)
-  partOfSpeech: 'noun' | 'verb' | 'adjective' | 'adverb' | 'preposition';
+  partOfSpeech: 'noun' | 'verb' | 'adjective' | 'adverb' | 'preposition' | 'conjunction' | 'pronoun' | 'interjection';
 }
 
 // ─── GROUP 1 WORDS: s, a, t, i, p, n ─────────────────────────────────────────
