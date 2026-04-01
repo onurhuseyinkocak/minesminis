@@ -113,19 +113,18 @@ const ONLY_US = [
 interface CompRow {
   feature: { tr: string; en: string };
   us: boolean;
-  duolingo: boolean;
-  lingokids: boolean;
+  other: boolean;
 }
 
 const COMP_ROWS: CompRow[] = [
-  { feature: { tr: 'Fonetik yöntem (42 ses)', en: 'Phonics method (42 sounds)' }, us: true, duolingo: false, lingokids: false },
-  { feature: { tr: 'Fonem manipülasyon oyunu', en: 'Phoneme manipulation game' }, us: true, duolingo: false, lingokids: false },
-  { feature: { tr: 'Türk fonetik tuzak antrenörü', en: 'Turkish phonetic trap trainer' }, us: true, duolingo: false, lingokids: false },
-  { feature: { tr: 'Hareketli alfabe (sürükle-bırak)', en: 'Moveable alphabet (drag-and-drop)' }, us: true, duolingo: false, lingokids: false },
-  { feature: { tr: 'Fonetik kısıtlamalı hikayeler', en: 'Phonics-constrained stories' }, us: true, duolingo: false, lingokids: false },
-  { feature: { tr: 'Hece sayma oyunu', en: 'Syllable counting game' }, us: true, duolingo: false, lingokids: false },
-  { feature: { tr: 'Konuşma tanıma (SayIt)', en: 'Speech recognition (SayIt)' }, us: true, duolingo: true, lingokids: false },
-  { feature: { tr: 'Kelime & oyun içeriği', en: 'Vocabulary & game content' }, us: true, duolingo: true, lingokids: true },
+  { feature: { tr: 'Fonetik yöntem (42 ses)', en: 'Phonics method (42 sounds)' }, us: true, other: false },
+  { feature: { tr: 'Fonem manipülasyon oyunu', en: 'Phoneme manipulation game' }, us: true, other: false },
+  { feature: { tr: 'Türk fonetik tuzak antrenörü', en: 'Turkish phonetic trap trainer' }, us: true, other: false },
+  { feature: { tr: 'Hareketli alfabe (sürükle-bırak)', en: 'Moveable alphabet (drag-and-drop)' }, us: true, other: false },
+  { feature: { tr: 'Fonetik kısıtlamalı hikayeler', en: 'Phonics-constrained stories' }, us: true, other: false },
+  { feature: { tr: 'Hece sayma oyunu', en: 'Syllable counting game' }, us: true, other: false },
+  { feature: { tr: 'Konuşma tanıma (SayIt)', en: 'Speech recognition (SayIt)' }, us: true, other: true },
+  { feature: { tr: 'Kelime & oyun içeriği', en: 'Vocabulary & game content' }, us: true, other: true },
 ];
 
 // ─── Features ─────────────────────────────────────────────────────────────────
@@ -723,7 +722,7 @@ export default function Landing() {
               {t(lang, 'Okuma biliminin temeli', 'Foundation of reading science')}
             </p>
             <h2 className="font-display font-black text-ink-900 mb-4" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
-              {t(lang, 'Rakiplerde Olmayan Özellikler', 'Features No Competitor Has')}
+              {t(lang, 'Sadece MinesMinis\'te', 'Only in MinesMinis')}
             </h2>
             <p className="font-body text-ink-500 max-w-2xl mx-auto">
               {t(lang,
@@ -785,15 +784,14 @@ export default function Landing() {
 
           <div className="bg-white border-2 border-ink-100 rounded-3xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
+              <table className="w-full min-w-[400px]" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
                 <thead>
                   <tr className="bg-ink-50 border-b border-ink-100 text-center">
-                    <th scope="col" className="font-display font-bold text-sm text-ink-500 text-left pl-4 pr-2 py-4 w-2/5">
+                    <th scope="col" className="font-display font-bold text-sm text-ink-500 text-left pl-4 pr-2 py-4 w-1/2">
                       {t(lang, 'Özellik', 'Feature')}
                     </th>
-                    <th scope="col" className="font-display font-black text-sm text-primary-500 py-4 w-1/5 text-center">MinesMinis</th>
-                    <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4 w-1/5 text-center">Duolingo</th>
-                    <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4 w-1/5 pr-4 text-center">Lingokids</th>
+                    <th scope="col" className="font-display font-black text-sm text-primary-500 py-4 w-1/4 text-center">MinesMinis</th>
+                    <th scope="col" className="font-display font-semibold text-sm text-ink-400 py-4 w-1/4 pr-4 text-center">{t(lang, 'Rakip Firmalar', 'Other Apps')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -806,21 +804,16 @@ export default function Landing() {
                       transition={{ delay: i * 0.04 }}
                       className={`${i % 2 === 0 ? 'bg-cream-50' : 'bg-white'} border-b border-ink-50 last:border-0`}
                     >
-                      <td className="font-body text-sm text-ink-700 pl-4 pr-2 py-3.5 w-2/5">
+                      <td className="font-body text-sm text-ink-700 pl-4 pr-2 py-3.5 w-1/2">
                         {t(lang, row.feature.tr, row.feature.en)}
                       </td>
-                      <td className="w-1/5 text-center py-3.5">
+                      <td className="w-1/4 text-center py-3.5">
                         {row.us
                           ? <><Check size={18} className="text-success-500 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
                           : <><X size={18} className="text-error-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
                       </td>
-                      <td className="w-1/5 text-center py-3.5">
-                        {row.duolingo
-                          ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
-                          : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
-                      </td>
-                      <td className="w-1/5 pr-4 text-center py-3.5">
-                        {row.lingokids
+                      <td className="w-1/4 pr-4 text-center py-3.5">
+                        {row.other
                           ? <><Check size={18} className="text-success-400 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Var', 'Yes')}</span></>
                           : <><X size={18} className="text-ink-300 mx-auto" aria-hidden="true" /><span className="sr-only">{t(lang, 'Yok', 'No')}</span></>}
                       </td>
@@ -955,7 +948,7 @@ export default function Landing() {
                   <div className={`${w.color} w-10 h-10 rounded-xl flex items-center justify-center`}>
                     {w.icon}
                   </div>
-                  <div className="font-display font-bold text-ink-800 text-sm leading-snug">
+                  <div className="font-display font-bold text-ink-800 text-xs sm:text-sm leading-snug">
                     {t(lang, w.title.tr, w.title.en)}
                   </div>
                 </div>
