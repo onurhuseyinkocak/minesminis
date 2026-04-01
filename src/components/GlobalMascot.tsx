@@ -10,13 +10,28 @@
  */
 
 import { useCallback, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMascot } from '../contexts/MascotContext';
 import UnifiedMascot from './UnifiedMascot';
 
+// Pages where mascot should be hidden (full-screen experiences)
+const HIDDEN_ROUTES = ['/stories/', '/phonics/', '/placement', '/tracing', '/reading/'];
+// Pages where mascot moves to top-right to avoid bottom buttons
+const TOP_ROUTES = ['/games', '/worlds/'];
+
 export default function GlobalMascot() {
   const { mascotId, state, message, feedback, triggerMascot } = useMascot();
   const [isHovered, setIsHovered] = useState(false);
+  const location = useLocation();
+  const path = location.pathname;
+
+  // Hide mascot on full-screen reader/game pages
+  const isHidden = HIDDEN_ROUTES.some(r => path.startsWith(r));
+  // Move to safe position on pages with bottom action buttons
+  const useTopPosition = TOP_ROUTES.some(r => path.startsWith(r));
+
+  if (isHidden) return null;
 
   const handleContinue = useCallback(() => {
     feedback?.onContinue?.();
@@ -59,6 +74,7 @@ export default function GlobalMascot() {
         style={{
           position: 'fixed',
           bottom: 'var(--gm-bottom, 80px)',
+          top: 'var(--gm-top, auto)',
           right: 'var(--gm-right, 16px)',
           zIndex: 9999,
           display: 'flex',
@@ -190,20 +206,22 @@ export default function GlobalMascot() {
           />
         </motion.div>
 
-        {/* Responsive sizing */}
+        {/* Responsive sizing — position depends on route */}
         <style>{`
           @media (min-width: 768px) {
             :root {
-              --gm-bottom: 24px;
+              --gm-bottom: ${useTopPosition ? 'auto' : '24px'};
+              --gm-top: ${useTopPosition ? '80px' : 'auto'};
               --gm-right: 24px;
-              --gm-size: 96px;
+              --gm-size: 80px;
             }
           }
           @media (max-width: 767px) {
             :root {
-              --gm-bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px);
-              --gm-right: 12px;
-              --gm-size: 72px;
+              --gm-bottom: ${useTopPosition ? 'auto' : 'calc(56px + env(safe-area-inset-bottom, 0px) + 64px)'};
+              --gm-top: ${useTopPosition ? '72px' : 'auto'};
+              --gm-right: 8px;
+              --gm-size: 56px;
             }
           }
         `}</style>

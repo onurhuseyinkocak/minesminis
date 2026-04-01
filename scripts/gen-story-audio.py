@@ -1,7 +1,8 @@
 #!/Users/jinx/qwen-tts-env/bin/python3
 """
-MinesMinis — Story Audio Generation
-Qwen3-TTS VoiceDesign — warm, friendly, child-appropriate narrator voice.
+MinesMinis — Story Audio Generation v2
+Qwen3-TTS VoiceDesign — warm, clear, child-friendly narrator.
+Lower temperature for consistency, slower pace for children.
 """
 import sys
 import os
@@ -15,26 +16,27 @@ MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign"
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public", "audio", "stories")
 os.makedirs(OUT_DIR, exist_ok=True)
 
-# Child-friendly narrator voice
+# Optimized voice prompt for children's story narration
 VOICE = (
-    "A warm, friendly female voice perfect for reading to young children. "
-    "Speaks slowly and very clearly, with gentle enthusiasm. "
-    "Like a kind teacher reading a story to a small group of kids. "
-    "Each word is pronounced distinctly with natural pauses. "
-    "Patient, nurturing, encouraging. Not sing-songy — natural and warm."
+    "A young, warm, crystal-clear female voice. Age around 25. "
+    "Speaking to a 5-year-old child, very slowly and distinctly. "
+    "Each word is perfectly enunciated with gentle pauses between words. "
+    "Enthusiastic but calm. Like a loving kindergarten teacher. "
+    "British English accent, soft and melodic. "
+    "Natural breathing pauses. No rushing. Patient and kind."
 )
 
-# ── First story: "Nat and the Ant" (Group 1) ──
+# ── Story: "Nat and the Ant" (Group 1) ──
 STORY_ID = "story_g1_nap"
 LINES = [
-    ("scene_1", "Nat sat in a pit."),
-    ("scene_2", "An ant sat on Nat."),
-    ("scene_3", "Nat can tap, tap, tap!"),
-    ("scene_4", "The ant can nap. Nat sat and sat."),
-    ("question", "What did Nat do in the pit?"),
+    ("scene_1", "Nat... sat... in a pit."),
+    ("scene_2", "An ant... sat on Nat."),
+    ("scene_3", "Nat can tap... tap... tap!"),
+    ("scene_4", "The ant can nap. Nat sat... and sat."),
+    ("question", "What did Nat do... in the pit?"),
 ]
 
-print("Loading Qwen3-TTS model (this takes a moment)...")
+print("Loading Qwen3-TTS model...")
 model = Qwen3TTSModel.from_pretrained(MODEL, device_map="cpu", dtype="float32")
 print("Model ready.\n")
 
@@ -49,7 +51,7 @@ for name, text in LINES:
         instruct=VOICE,
         language="english",
         do_sample=True,
-        temperature=0.72,
+        temperature=0.6,  # lower = more consistent, clearer
     )
     audio = wavs[0]
     audio = audio / (np.abs(audio).max() + 1e-8)
@@ -58,4 +60,4 @@ for name, text in LINES:
     dur = len(audio) / sr
     print(f"  -> {out_path}  ({dur:.1f}s)\n")
 
-print(f"Done! Generated {len(LINES)} audio files for {STORY_ID}")
+print(f"Done! {len(LINES)} audio files for {STORY_ID}")

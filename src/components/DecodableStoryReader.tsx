@@ -5,6 +5,41 @@ import { findWord } from '../data/decodableWordbank';
 import { speak as ttsSpeak, stopSpeech } from '../services/ttsService';
 import './DecodableStoryReader.css';
 
+// ─── Audio file player (prefers WAV files over browser TTS) ─────────────────
+const audioRef = { current: null as HTMLAudioElement | null };
+
+function playStoryAudio(storyId: string, fileId: string, fallbackText: string): void {
+  // Stop any playing audio
+  if (audioRef.current) {
+    audioRef.current.pause();
+    audioRef.current = null;
+  }
+  stopSpeech();
+
+  const url = `/audio/stories/${storyId}/${fileId}.wav`;
+  const audio = new Audio(url);
+  audioRef.current = audio;
+
+  audio.onerror = () => {
+    // WAV not found — fallback to browser TTS
+    audioRef.current = null;
+    ttsSpeak(fallbackText, { rate: 0.75 });
+  };
+  audio.play().catch(() => {
+    // Play failed — fallback
+    audioRef.current = null;
+    ttsSpeak(fallbackText, { rate: 0.75 });
+  });
+}
+
+function stopStoryAudio(): void {
+  if (audioRef.current) {
+    audioRef.current.pause();
+    audioRef.current = null;
+  }
+  stopSpeech();
+}
+
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface DecodableStoryReaderProps {
@@ -235,22 +270,24 @@ export default function DecodableStoryReader({
     ? 100
     : Math.round(((sceneIndex + 1) / (totalScenes + 1)) * 100);
 
-  // Cancel TTS on unmount to prevent audio leaking after navigation
+  // Cancel audio on unmount
   useEffect(() => {
-    return () => {
-      stopSpeech();
-    };
+    return () => { stopStoryAudio(); };
   }, []);
 
+  // Speak a single word (clicked by child) — use browser TTS for individual words
   const speak = useCallback((text: string) => {
-    stopSpeech();
+    stopStoryAudio();
     ttsSpeak(text, { rate: 0.75 });
   }, []);
 
+  // Speak entire scene — prefer WAV file, fallback to browser TTS
   const speakScene = useCallback(() => {
     const scene = story.scenes[sceneIndex];
-    if (scene) speak(scene.text);
-  }, [story.scenes, sceneIndex, speak]);
+    if (scene) {
+      playStoryAudio(story.id, `scene_${sceneIndex + 1}`, scene.text);
+    }
+  }, [story.id, story.scenes, sceneIndex]);
 
   const goNext = useCallback(() => {
     if (isLastScene) {
