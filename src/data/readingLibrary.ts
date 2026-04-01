@@ -230,9 +230,9 @@ export const READING_LIBRARY: DecodableBook[] = [
         highlightWords: ['red', 'dim'],
       },
       {
-        text: 'Dad hit the mad track.',
-        illustration: '🧑 🛤️',
-        highlightWords: ['hit', 'mad'],
+        text: 'Dad hid the map fast.',
+        illustration: '🧑 🗺️',
+        highlightWords: ['hid', 'map'],
       },
       {
         text: 'He hid the map in a den.',
@@ -409,9 +409,9 @@ export const READING_LIBRARY: DecodableBook[] = [
         highlightWords: ['rain'],
       },
       {
-        text: 'The goat felt pain in the rain.',
-        illustration: '🐐 🌧️ 😢',
-        highlightWords: ['pain', 'rain'],
+        text: 'The goat had a pail in the rain.',
+        illustration: '🐐 🌧️ 🪣',
+        highlightWords: ['pail', 'rain'],
       },
       {
         text: 'The goat ran for the road!',

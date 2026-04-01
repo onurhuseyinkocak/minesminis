@@ -8,7 +8,7 @@ import type { DecodableStory } from '../services/decodableStoryService';
 
 // ─── GROUP 1 STORIES (s, a, t, p, i, n) ──────────────────────────────────────
 // Allowed content words: sat, sit, sip, tap, tip, tin, pin, pan, nap, pit, pat,
-//   ant, snap, spin, spit, nip, pant, tan, past, snip
+//   ant, snap, spin, spot, nip, pant, tan, past, snip
 // Sight words: the, a, I, is, it, in, on, and, can, to, at, up, so, no, not,
 //              he, she, we, me, my, do, go, into, was, see
 
@@ -296,8 +296,8 @@ const GROUP_1_STORIES: DecodableStory[] = [
     mascotId: 'mimi',
     scenes: [
       {
-        text: 'An ant sat on a pin. It is a nit.',
-        textTr: 'Bir karınca iğnenin üzerine oturdu. Bu bir bit yumurtasıdır.',
+        text: 'An ant sat on a pin. It is a nut.',
+        textTr: 'Bir karınca iğnenin üzerine oturdu. Bu bir fındıktır.',
         highlightedWords: [],
         location: 'garden',
       },
@@ -386,8 +386,8 @@ const GROUP_1_STORIES: DecodableStory[] = [
         location: 'garden',
       },
       {
-        text: 'I pat the ant. It sat on my pin. It is a nit!',
-        textTr: 'Karıncayı okşadım. İğnemin üzerine oturdu. Bu bir bit yumurtası!',
+        text: 'I pat the ant. It sat on my pin. It is a nut!',
+        textTr: 'Karıncayı okşadım. İğnemin üzerine oturdu. Bu bir fındık!',
         highlightedWords: [],
         location: 'garden',
       },
@@ -802,7 +802,7 @@ const GROUP_2_STORIES: DecodableStory[] = [
 
 // ─── GROUP 3 STORIES (adds g, o, u, l, f, b) ─────────────────────────────────
 // Adds: got, get, log, lot, big, bus, bun, fun, fog, dog, leg, bug, fog, mud,
-//       bud, gut, gust, sob, bob, sob, lob, rob, fog, dug, tug, jug, mug, rub
+//       bud, gum, gust, job, bob, job, lob, rod, fog, dug, tug, jug, mug, rub
 
 const GROUP_3_STORIES: DecodableStory[] = [
   // G3-001: The Big Dog
@@ -1197,7 +1197,7 @@ const GROUP_3_STORIES: DecodableStory[] = [
 ];
 
 // ─── GROUP 4 STORIES (adds ai, j, oa, ie, ee, or) ────────────────────────────
-// Adds: rain, tail, mail, sail, jail, pain, main, bait, wait,
+// Adds: rain, tail, mail, sail, rail, pail, main, bait, wait,
 //       boat, road, coat, toad, goat, load, moan, loan,
 //       tied, died, cried, dried, tried, pie, lie, tie,
 //       feet, meet, see, tree, bee, seed, feed, feel, reel, deep,
@@ -1238,7 +1238,7 @@ const GROUP_4_STORIES: DecodableStory[] = [
     decodabilityScore: 87,
     comprehensionQuestion: 'Why did Dad tie the boat?',
     comprehensionQuestionTr: 'Baba neden tekneyi bağladı?',
-    comprehensionAnswers: ['He did not want to sail', 'He felt pain', 'He saw a toad'],
+    comprehensionAnswers: ['He did not want to sail', 'He felt tired', 'He saw a toad'],
     comprehensionAnswersTr: ['Yelken açmak istemedi', 'Acı hissetti', 'Kurbağa gördü'],
     correctAnswerIndex: 0,
   },

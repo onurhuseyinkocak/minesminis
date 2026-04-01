@@ -261,7 +261,7 @@ function FAQSection({ lang }: { lang: Lang }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="py-16 lg:py-24 bg-cream-50 scroll-mt-16">
+    <section id="faq" className="py-16 lg:py-24 bg-cream-50 scroll-mt-[72px]">
       <div className="max-w-3xl mx-auto px-4 lg:px-8">
         <div className="text-center mb-12">
           <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
@@ -765,7 +765,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           COMPETITOR COMPARISON
           ══════════════════════════════════════ */}
-      <section id="compare" className="py-12 bg-white scroll-mt-16">
+      <section id="compare" className="py-12 bg-white scroll-mt-[72px]">
         <div className="max-w-4xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
@@ -784,7 +784,7 @@ export default function Landing() {
 
           <div className="bg-white border-2 border-ink-100 rounded-3xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[400px]" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
+              <table className="w-full" role="table" aria-label={t(lang, 'Uygulama karsilastirma tablosu', 'App comparison table')}>
                 <thead>
                   <tr className="bg-ink-50 border-b border-ink-100 text-center">
                     <th scope="col" className="font-display font-bold text-sm text-ink-500 text-left pl-4 pr-2 py-4 w-1/2">
@@ -841,7 +841,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           FEATURES
           ══════════════════════════════════════ */}
-      <section id="features" className="py-16 lg:py-24 bg-white scroll-mt-16">
+      <section id="features" className="py-16 lg:py-24 bg-white scroll-mt-[72px]">
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
@@ -881,7 +881,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           HOW IT WORKS
           ══════════════════════════════════════ */}
-      <section id="how" className="py-16 lg:py-24 bg-gradient-to-b from-cream-100 to-white scroll-mt-16">
+      <section id="how" className="py-16 lg:py-24 bg-gradient-to-b from-cream-100 to-white scroll-mt-[72px]">
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-primary-500 text-sm uppercase tracking-widest mb-3">
@@ -961,7 +961,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           WHO IS IT FOR?
           ══════════════════════════════════════ */}
-      <section id="who" className="py-16 lg:py-24 bg-white scroll-mt-16">
+      <section id="who" className="py-16 lg:py-24 bg-white scroll-mt-[72px]">
         <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <p className="font-display font-bold text-purple-600 text-sm uppercase tracking-widest mb-3">
@@ -1007,7 +1007,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           EARLY BIRD / BETA PRICING
           ══════════════════════════════════════ */}
-      <section id="pricing" className="py-16 lg:py-24 bg-gradient-to-b from-cream-50 to-white scroll-mt-16">
+      <section id="pricing" className="py-16 lg:py-24 bg-gradient-to-b from-cream-50 to-white scroll-mt-[72px]">
         <div className="max-w-4xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-12">
             <motion.div

@@ -17,6 +17,7 @@ const tr: TranslationKeys = {
     parents: 'Ebeveynler',
     admin: 'Yönetim',
     adminPanel: 'Yönetim Paneli',
+    premium: 'Premium',
   },
   dashboard: {
     findLevel: 'Seviyeni Bul',
@@ -164,6 +165,7 @@ const tr: TranslationKeys = {
     word: 'Kelime',
     score: 'Puan',
     // WordMatch
+    perfectScore: 'Mükemmel!',
     wellDone: 'Aferin!',
     greatJob: 'Harika İş!',
     youMatched: '{total} denemede {score} eşleştirme!',

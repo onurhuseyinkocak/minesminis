@@ -459,7 +459,7 @@ const w11Vocab: VocabularyWord[] = [
   { english: 'brave', turkish: 'cesur', emoji: '🦁', category: 'stories', phonetic: '/breɪv/', exampleSentence: 'The knight is brave.' },
   { english: 'kind', turkish: 'nazik', emoji: '💕', category: 'stories', phonetic: '/kaɪnd/', exampleSentence: 'Be kind to everyone.' },
   { english: 'forest', turkish: 'orman', emoji: '🌲', category: 'stories', phonetic: '/ˈfɒrɪst/', exampleSentence: 'The story is set in a forest.' },
-  { english: 'sword', turkish: 'kılıç', emoji: '⚔️', category: 'stories', phonetic: '/sɔːrd/', exampleSentence: 'The knight has a sword.' },
+  { english: 'shield', turkish: 'kalkan', emoji: '🛡️', category: 'stories', phonetic: '/ʃiːld/', exampleSentence: 'The knight has a shield.' },
   { english: 'crown', turkish: 'taç', emoji: '👑', category: 'stories', phonetic: '/kraʊn/', exampleSentence: 'The king wears a crown.' },
   { english: 'monster', turkish: 'canavar', emoji: '👹', category: 'stories', phonetic: '/ˈmɒnstər/', exampleSentence: 'The friendly monster smiles.' },
   { english: 'wish', turkish: 'dilek', emoji: '🌠', category: 'imagination', phonetic: '/wɪʃ/', exampleSentence: 'I wish for a puppy.' },
@@ -467,13 +467,13 @@ const w11Vocab: VocabularyWord[] = [
 
 const w11Lessons: Lesson[] = [
   L('w11', 11, 1, 'Kings & Queens', 'Krallar ve Kraliçeler', 'Learn royalty words', 'vocabulary', 5, [['word-match', 'Royal Match', 'Match royalty words', 3, 10], ['listening-challenge', 'Royal Listen', 'Listen and pick', 2, 15]], ['king', 'queen', 'princess', 'crown'], 30),
-  L('w11', 11, 2, 'Castles & Dragons', 'Kaleler ve Ejderhalar', 'Fantasy place words', 'vocabulary', 5, [['word-match', 'Fantasy Match', 'Match fantasy words', 3, 10], ['phonics-builder', 'Castle Builder', 'Build fantasy words', 2, 15]], ['castle', 'dragon', 'forest', 'sword'], 30),
+  L('w11', 11, 2, 'Castles & Dragons', 'Kaleler ve Ejderhalar', 'Fantasy place words', 'vocabulary', 5, [['word-match', 'Fantasy Match', 'Match fantasy words', 3, 10], ['phonics-builder', 'Castle Builder', 'Build fantasy words', 2, 15]], ['castle', 'dragon', 'forest', 'shield'], 30),
   L('w11', 11, 3, 'Magic Characters', 'Sihirli Karakterler', 'Magical beings', 'vocabulary', 5, [['word-match', 'Magic Match', 'Match magic words', 3, 10], ['quick-quiz', 'Magic Quiz', 'Identify characters', 2, 15]], ['fairy', 'wizard', 'hero', 'monster'], 30),
   L('w11', 11, 4, 'Magical Words', 'Sihirli Kelimeler', 'Learn magic and treasure', 'vocabulary', 5, [['word-match', 'Treasure Match', 'Match magical words', 3, 10], ['listening-challenge', 'Magic Listen', 'Listen for magic words', 2, 15]], ['magic', 'treasure', 'wish', 'dream'], 30),
   L('w11', 11, 5, 'Once Upon a Time', 'Bir Varmış Bir Yokmuş', 'Story sentence building', 'grammar', 6, [['sentence-scramble', 'Story Start', 'Build story sentences', 3, 15], ['quick-quiz', 'Story Quiz', 'Choose story elements', 3, 15]], ['story', 'imagine', 'brave', 'kind'], 35),
   L('w11', 11, 6, 'Describe Characters', 'Karakterleri Anlat', 'Use adjectives for characters', 'grammar', 5, [['sentence-scramble', 'Character Sentences', 'Describe characters', 3, 15], ['word-match', 'Trait Match', 'Match character traits', 2, 10]], ['brave', 'kind', 'hero', 'magic'], 30),
   L('w11', 11, 7, 'Story Phonics', 'Hikaye Sesleri', 'Phonics of story words', 'phonics', 5, [['phonics-builder', 'Story Sounds', 'Build story words', 3, 15], ['spelling-bee', 'Story Bee', 'Spell story words', 2, 15]], ['king', 'wish', 'dream'], 35),
-  L('w11', 11, 8, 'The Dragon Quest', 'Ejderha Macerası', 'An interactive fantasy story', 'story', 7, [['story-choices', 'Dragon Quest', 'Choose your adventure', 4, 20], ['word-match', 'Quest Words', 'Match story words', 3, 10]], ['dragon', 'castle', 'hero', 'treasure', 'sword'], 40),
+  L('w11', 11, 8, 'The Dragon Quest', 'Ejderha Macerası', 'An interactive fantasy story', 'story', 7, [['story-choices', 'Dragon Quest', 'Choose your adventure', 4, 20], ['word-match', 'Quest Words', 'Match story words', 3, 10]], ['dragon', 'castle', 'hero', 'treasure', 'shield'], 40),
   L('w11', 11, 9, 'Fantasy Spelling', 'Fantazi Heceleme', 'Spelling challenge', 'review', 5, [['spelling-bee', 'Fantasy Spell', 'Spell fantasy words', 3, 15], ['quick-quiz', 'Quick Fantasy Quiz', 'Review story words', 2, 15]], ['princess', 'wizard', 'monster', 'treasure'], 35),
   L('w11', 11, 10, 'Story Time Review', 'Hikaye Zamanı Tekrarı', 'Review all story words', 'review', 8, [['quick-quiz', 'Big Story Quiz', 'Review everything', 4, 20], ['sentence-scramble', 'Story Sentences', 'Build story sentences', 4, 20]], ['king', 'dragon', 'magic', 'brave', 'wish'], 50),
 ];

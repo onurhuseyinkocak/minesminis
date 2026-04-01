@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked, Flame, Star } from 'lucide-react';
+import { Home, Globe, Gamepad2, BookOpen, BookText, Menu, X, User, LogOut, Settings, Flower2, BookMarked, Flame, Star, Crown } from 'lucide-react';
 import './TopNav.css';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -27,6 +27,7 @@ const NAV_ITEMS = [
   { path: '/games', i18nKey: 'nav.games', icon: Gamepad2 },
   { path: '/words', i18nKey: 'nav.library', icon: BookOpen },
   { path: '/stories', i18nKey: 'nav.stories', icon: BookText },
+  { path: '/premium', i18nKey: 'nav.premium', icon: Crown },
 ];
 
 /** Extra nav items shown in mobile slide-out menu */

@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Volume2, Highlighter, CheckCircle, XCircle } from 'lucide-react';
 import type { DecodableStory, HighlightedWord } from '../services/decodableStoryService';
 import { findWord } from '../data/decodableWordbank';
+import { speak as ttsSpeak, stopSpeech } from '../services/ttsService';
 import './DecodableStoryReader.css';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -237,19 +238,13 @@ export default function DecodableStoryReader({
   // Cancel TTS on unmount to prevent audio leaking after navigation
   useEffect(() => {
     return () => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopSpeech();
     };
   }, []);
 
   const speak = useCallback((text: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = 'en-US';
-    utter.rate = 0.75;
-    window.speechSynthesis.speak(utter);
+    stopSpeech();
+    ttsSpeak(text, { rate: 0.75 });
   }, []);
 
   const speakScene = useCallback(() => {

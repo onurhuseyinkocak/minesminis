@@ -204,11 +204,11 @@ const group2Lyrics: PhonicsLyrics = {
       highlightWords: ['drum', 'Dad', 'drumming', 'D-d-d'],
     },
     {
-      text: 'K is for kit and kid and kin and key',
-      textTr: 'K set, çocuk, akraba ve anahtar için',
+      text: 'K is for kit and kid and kite and key',
+      textTr: 'K set, çocuk, uçurtma ve anahtar için',
       startMs: 28000,
       endMs: 32000,
-      highlightWords: ['kit', 'kid', 'kin', 'key'],
+      highlightWords: ['kit', 'kid', 'kite', 'key'],
     },
     {
       text: 'E is for egg and end and elf and me',

@@ -154,9 +154,9 @@ const mediumQuestions: BlendQuestion[] = [
   },
   {
     id: 'med_10',
-    sounds: ['b', 'r', 'i', 'm'],
-    word: 'brim',
-    wordTr: 'kenar / ağız',
+    sounds: ['t', 'r', 'i', 'p'],
+    word: 'trip',
+    wordTr: 'gezi',
     difficulty: 'medium',
   },
 ];

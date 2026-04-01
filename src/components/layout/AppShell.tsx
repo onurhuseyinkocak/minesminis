@@ -5,7 +5,7 @@ import { useGamification } from '../../contexts/GamificationContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { LottieIcon, KidIcon } from '../ui';
 import type { KidIconName } from '../ui';
-import { Users2, LayoutDashboard, Trophy, Gift } from 'lucide-react';
+import { Users2, LayoutDashboard, Trophy, Gift, Crown } from 'lucide-react';
 import Footer from './Footer';
 import DailyRewardPopover from '../DailyReward';
 import './AppShell.css';
@@ -192,6 +192,17 @@ export default function AppShell({
             <Users2 size={18} />
             <span>{lang === 'tr' ? 'Arkadaşlar' : 'Friends'}</span>
           </Link>
+          <Link
+            to="/premium"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-display font-semibold transition-all duration-150 ${
+              isActive('/premium')
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-amber-500 hover:bg-amber-50 hover:text-amber-600'
+            }`}
+          >
+            <Crown size={18} />
+            <span>Premium</span>
+          </Link>
           {isTeacher && (
             <Link
               to="/teacher"
@@ -307,6 +318,15 @@ export default function AppShell({
             <KidIcon name="star" size={14} />
             <span>{stats?.xp?.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US') || 0} XP</span>
           </div>
+
+          {/* Premium link — mobile */}
+          <Link
+            to="/premium"
+            aria-label="Premium"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-50 text-amber-500"
+          >
+            <Crown size={16} />
+          </Link>
 
           {/* Daily reward gift button — mobile */}
           <button

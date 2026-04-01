@@ -154,7 +154,8 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isPremium = plan !== 'free' && subscriptionStatus === 'active';
+  // TODO: temporarily unlocked — all users get premium access
+  const isPremium = true; // was: plan !== 'free' && subscriptionStatus === 'active';
 
   // ── Fetch subscription from backend ──────────────────────────────────────
 

@@ -25,8 +25,6 @@ import {
   requestNotificationPermission,
   scheduleStreakReminder,
 } from "./services/notificationService";
-import { hasParentGatePassed } from "./components/ParentGate";
-
 import { Star } from "lucide-react";
 import LottieCharacter from "./components/LottieCharacter";
 import GlobalMascot from "./components/GlobalMascot";
@@ -272,18 +270,13 @@ function isChildMode(settings: Record<string, unknown> | undefined): boolean {
 }
 
 /**
- * ChildGuardedRoute — blocks access to sensitive pages when the app is in
- * child mode AND the parent has not yet verified via ParentGate this session.
- * Redirects the child back to /dashboard (ChildHome).
+ * ChildGuardedRoute — currently pass-through (all features open).
  *
- * Sensitive pages that must be blocked: settings, profile, premium, pricing,
- * social/friends, leaderboard, achievements, avatar, mascots.
+ * Previously blocked access to sensitive pages when in child mode
+ * unless ParentGate was passed. Kept as a wrapper so routes don't
+ * need restructuring; can be re-enabled later.
  */
 function ChildGuardedRoute({ children }: { children: React.ReactNode }) {
-  const { userProfile } = useAuth();
-  if (isChildMode(userProfile?.settings) && !hasParentGatePassed()) {
-    return <Navigate to="/dashboard" replace />;
-  }
   return <>{children}</>;
 }
 

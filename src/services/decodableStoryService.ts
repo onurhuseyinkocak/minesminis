@@ -78,8 +78,8 @@ const BUILT_IN_STORIES: DecodableStory[] = [
         location: 'garden',
       },
       {
-        text: 'The ant ran. Nat sat and sat.',
-        textTr: 'Karınca koştu. Nat oturdu ve oturdu.',
+        text: 'The ant can nap. Nat sat and sat.',
+        textTr: 'Karınca uyuyabilir. Nat oturdu ve oturdu.',
         highlightedWords: [],
         location: 'garden',
       },
@@ -123,8 +123,8 @@ const BUILT_IN_STORIES: DecodableStory[] = [
         location: 'farm',
       },
       {
-        text: 'Dad hit a drum. The hen came home!',
-        textTr: 'Baba davulu çaldı. Tavuk eve geldi!',
+        text: 'The hen ran to Dad. Dad had a red cap!',
+        textTr: 'Tavuk babaya koştu. Babanın kırmızı şapkası vardı!',
         highlightedWords: [],
         location: 'farm',
       },
@@ -169,7 +169,7 @@ const BUILT_IN_STORIES: DecodableStory[] = [
       },
       {
         text: 'A bug sat on a log in the fog. Splat!',
-        textTr: 'Bir böcek sisteki kütükte oturdu. Çat!',
+        textTr: 'Bir böcek sisdeki kütükte oturdu. Çat!',
         highlightedWords: [],
         location: 'forest',
       },
@@ -180,9 +180,9 @@ const BUILT_IN_STORIES: DecodableStory[] = [
     decodabilityScore: 0,
     comprehensionQuestion: 'What did the big dog do on the bus?',
     comprehensionQuestionTr: 'Büyük köpek otobüste ne yaptı?',
-    comprehensionAnswers: ['Got on the rug', 'Sat down', 'Got off'],
-    comprehensionAnswersTr: ['Halıya geçti', 'Oturdu', 'İndi'],
-    correctAnswerIndex: 0,
+    comprehensionAnswers: ['Sat down', 'Got on the rug', 'Got off'],
+    comprehensionAnswersTr: ['Oturdu', 'Halıya geçti', 'İndi'],
+    correctAnswerIndex: 1,
   },
 
   // ── Group 4: adds ai, j, oa, ie, ee, or ────────────────────────────────────
@@ -201,8 +201,8 @@ const BUILT_IN_STORIES: DecodableStory[] = [
         location: 'ocean',
       },
       {
-        text: 'The goat sailed up the road to see a tree.',
-        textTr: 'Keçi bir ağaç görmek için yolda yelken açtı.',
+        text: 'The goat went up the road to see a tree.',
+        textTr: 'Keçi ağaç görmek için yoldan gitti.',
         highlightedWords: [],
         location: 'ocean',
       },
@@ -225,9 +225,9 @@ const BUILT_IN_STORIES: DecodableStory[] = [
     decodabilityScore: 0,
     comprehensionQuestion: 'Why did the goat get on the boat?',
     comprehensionQuestionTr: 'Keçi neden tekneye bindi?',
-    comprehensionAnswers: ['It was raining', 'To see the bee', 'To get corn'],
-    comprehensionAnswersTr: ['Yağmur yağıyordu', 'Arıyı görmek için', 'Mısır almak için'],
-    correctAnswerIndex: 0,
+    comprehensionAnswers: ['To see the bee', 'To get corn', 'It was raining'],
+    comprehensionAnswersTr: ['Arıyı görmek için', 'Mısır almak için', 'Yağmur yağıyordu'],
+    correctAnswerIndex: 2,
   },
 
   // ── Group 5: adds z, w, ng, v, oo ──────────────────────────────────────────
@@ -270,9 +270,9 @@ const BUILT_IN_STORIES: DecodableStory[] = [
     decodabilityScore: 0,
     comprehensionQuestion: 'What sound did the bee make?',
     comprehensionQuestionTr: 'Arı nasıl ses çıkardı?',
-    comprehensionAnswers: ['Buzz', 'Zing', 'Zoom'],
-    comprehensionAnswersTr: ['Vız', 'Zing', 'Vın'],
-    correctAnswerIndex: 0,
+    comprehensionAnswers: ['Zoom', 'Buzz', 'Zing'],
+    comprehensionAnswersTr: ['Vın', 'Vız', 'Zing'],
+    correctAnswerIndex: 1,
   },
 ];
 

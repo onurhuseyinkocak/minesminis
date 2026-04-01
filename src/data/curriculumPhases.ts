@@ -104,7 +104,7 @@ const phase1Units: LearningUnit[] = [
     phonicsFocus: ['g2_ck', 'g2_e', 'g2_h'],
     vocabularyTheme: 'Pets & Food',
     tprCommands: ['Hug!', 'Kick!', 'Hop!', 'Catch!', 'Hide!'],
-    targetSentences: ['The cat sat.', 'A hen can peck.', 'He hit it.'],
+    targetSentences: ['The cat sat.', 'A hen can peck.', 'He hid it.'],
     decodableText: 'A cat sat in a hat. The hen can peck. He hid in a hut. Can the cat catch the hen?',
     activities: [
       { type: 'sound-intro', title: 'Click Like a Cat', titleTr: 'Kedi Gibi Tıkla', description: 'Learn the /k/ sound with castanets.', xp: 10, duration: 3 },
@@ -206,7 +206,7 @@ const phase2Units: LearningUnit[] = [
       { type: 'sound-intro', title: 'Wobbly Jelly', titleTr: 'Titresen Jole', description: 'Learn the /j/ sound like wobbling jelly.', xp: 15, duration: 4 },
       { type: 'sound-intro', title: 'Sail the Boat', titleTr: 'Tekneyle Yol Al', description: 'Learn the /oa/ sound on a boat ride.', xp: 15, duration: 4 },
       { type: 'blending', title: 'Long Vowel Blends', titleTr: 'Uzun Sesli Karıştırma', description: 'Blend words with ai and oa: rain, tail, boat, coat, road.', xp: 20, duration: 5 },
-      { type: 'pronunciation', title: 'Long vs Short', titleTr: 'Uzun vs Kisa', description: 'Hear the difference: cat vs coat, hat vs hate, pan vs pain.', xp: 20, duration: 5 },
+      { type: 'pronunciation', title: 'Long vs Short', titleTr: 'Uzun vs Kisa', description: 'Hear the difference: cat vs coat, hat vs hate, pan vs pail.', xp: 20, duration: 5 },
       { type: 'word-match', title: 'Weather Words', titleTr: 'Hava Durumu Kelimeleri', description: 'Match weather pictures to words.', xp: 15, duration: 3 },
       { type: 'tpr', title: 'Weather Dance', titleTr: 'Hava Durumu Dansi', description: 'Act out weather: rain, sail, jog, splash!', xp: 15, duration: 4 },
     ],
@@ -291,7 +291,7 @@ const phase2Units: LearningUnit[] = [
     targetSentences: ['I can build.', 'Stack the blocks.', 'Glue it on!'],
     decodableText: 'Bob the builder got his tools. He needed a bolt, a nail, and glue. He built a big boat from green wood. Rain fell on the boat. "Good!" said Bob. "It floats!" The goat got on the boat. Off it sailed to the moon.',
     activities: [
-      { type: 'blending', title: 'Blend Challenge', titleTr: 'Karıştırma Yarışması', description: 'Blend complex words: green, float, street, train, blood.', xp: 25, duration: 5 },
+      { type: 'blending', title: 'Blend Challenge', titleTr: 'Karıştırma Yarışması', description: 'Blend complex words: green, float, street, train, bloom.', xp: 25, duration: 5 },
       { type: 'segmenting', title: 'Sound Machines', titleTr: 'Ses Makineleri', description: 'Break words into sounds fast, like a machine.', xp: 25, duration: 5 },
       { type: 'spelling', title: 'Build the Word', titleTr: 'Kelimeyi İnşa Et', description: 'Use letter tiles to build words from sounds.', xp: 25, duration: 5 },
       { type: 'word-match', title: 'Rhyme Time', titleTr: 'Kafiye Zamanı', description: 'Match words that rhyme: boat-goat, rain-train.', xp: 20, duration: 4 },

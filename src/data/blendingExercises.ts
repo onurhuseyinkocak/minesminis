@@ -89,7 +89,7 @@ const shortI: BlendingWord[] = [
   { word: 'win', letters: ['w', 'i', 'n'], phonemes: ['/w/', '/ɪ/', '/n/'], turkish: 'kazanmak', emoji: '🏆', level: 1, type: 'CVC' },
   { word: 'bit', letters: ['b', 'i', 't'], phonemes: ['/b/', '/ɪ/', '/t/'], turkish: 'parça / ısırmak', emoji: '🦷', level: 1, type: 'CVC' },
   { word: 'fit', letters: ['f', 'i', 't'], phonemes: ['/f/', '/ɪ/', '/t/'], turkish: 'uymak / sağlıklı', emoji: '💪', level: 1, type: 'CVC' },
-  { word: 'hit', letters: ['h', 'i', 't'], phonemes: ['/h/', '/ɪ/', '/t/'], turkish: 'vurmak', emoji: '🥊', level: 1, type: 'CVC' },
+  { word: 'hid', letters: ['h', 'i', 'd'], phonemes: ['/h/', '/ɪ/', '/d/'], turkish: 'saklandı', emoji: '🙈', level: 1, type: 'CVC' },
   { word: 'kit', letters: ['k', 'i', 't'], phonemes: ['/k/', '/ɪ/', '/t/'], turkish: 'takım / kit', emoji: '🧰', level: 1, type: 'CVC' },
   { word: 'sit', letters: ['s', 'i', 't'], phonemes: ['/s/', '/ɪ/', '/t/'], turkish: 'oturmak', emoji: '💺', level: 1, type: 'CVC' },
   { word: 'lip', letters: ['l', 'i', 'p'], phonemes: ['/l/', '/ɪ/', '/p/'], turkish: 'dudak', emoji: '👄', level: 1, type: 'CVC' },
@@ -117,7 +117,7 @@ const shortO: BlendingWord[] = [
   { word: 'log', letters: ['l', 'o', 'g'], phonemes: ['/l/', '/ɒ/', '/g/'], turkish: 'kütük', emoji: '🪵', level: 1, type: 'CVC' },
   { word: 'cob', letters: ['c', 'o', 'b'], phonemes: ['/k/', '/ɒ/', '/b/'], turkish: 'mısır koçanı', emoji: '🌽', level: 1, type: 'CVC' },
   { word: 'job', letters: ['j', 'o', 'b'], phonemes: ['/dʒ/', '/ɒ/', '/b/'], turkish: 'iş', emoji: '💼', level: 1, type: 'CVC' },
-  { word: 'rob', letters: ['r', 'o', 'b'], phonemes: ['/r/', '/ɒ/', '/b/'], turkish: 'soymak', emoji: '🦹', level: 1, type: 'CVC' },
+  { word: 'rod', letters: ['r', 'o', 'd'], phonemes: ['/r/', '/ɒ/', '/d/'], turkish: 'olta çubuğu', emoji: '🎣', level: 1, type: 'CVC' },
 ];
 
 // Short-U family
@@ -130,7 +130,7 @@ const shortU: BlendingWord[] = [
   { word: 'tug', letters: ['t', 'u', 'g'], phonemes: ['/t/', '/ʌ/', '/g/'], turkish: 'çekmek', emoji: '🚢', level: 1, type: 'CVC' },
   { word: 'bun', letters: ['b', 'u', 'n'], phonemes: ['/b/', '/ʌ/', '/n/'], turkish: 'topuz / çörek', emoji: '🍞', level: 1, type: 'CVC' },
   { word: 'fun', letters: ['f', 'u', 'n'], phonemes: ['/f/', '/ʌ/', '/n/'], turkish: 'eğlence', emoji: '🎉', level: 1, type: 'CVC' },
-  { word: 'gun', letters: ['g', 'u', 'n'], phonemes: ['/g/', '/ʌ/', '/n/'], turkish: 'silah', emoji: '🔫', level: 1, type: 'CVC' },
+  { word: 'gum', letters: ['g', 'u', 'm'], phonemes: ['/g/', '/ʌ/', '/m/'], turkish: 'sakız', emoji: '🫧', level: 1, type: 'CVC' },
   { word: 'run', letters: ['r', 'u', 'n'], phonemes: ['/r/', '/ʌ/', '/n/'], turkish: 'koşmak', emoji: '🏃', level: 1, type: 'CVC' },
   { word: 'sun', letters: ['s', 'u', 'n'], phonemes: ['/s/', '/ʌ/', '/n/'], turkish: 'güneş', emoji: '☀️', level: 1, type: 'CVC' },
   { word: 'bus', letters: ['b', 'u', 's'], phonemes: ['/b/', '/ʌ/', '/s/'], turkish: 'otobüs', emoji: '🚌', level: 1, type: 'CVC' },

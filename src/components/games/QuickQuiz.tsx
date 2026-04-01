@@ -52,7 +52,8 @@ function generateQuestions(words: WordItem[], optionsCount: number, questionsCou
       .filter((w) => w.english !== word.english)
       .map((w) => (mode === 'en-to-tr' ? w.turkish : w.english));
 
-    const shuffledDistractors = shuffleArray(distractors).slice(0, optionsCount - 1);
+    const uniqueDistractors = [...new Set(distractors)].filter((d) => d !== correctAnswer);
+    const shuffledDistractors = shuffleArray(uniqueDistractors).slice(0, optionsCount - 1);
     const allOptions = [...shuffledDistractors, correctAnswer];
     const shuffledOptions = shuffleArray(allOptions);
 
@@ -105,7 +106,8 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
   const TIMER_DURATION = getTimerDurationForAge(age);
   const optionsCount = getOptionsCountForAge(age);
   const questionsCount = getQuestionsCountForAge(age);
-  const questions = useMemo(() => words.length >= Math.min(optionsCount, 4) ? generateQuestions(words, optionsCount, questionsCount) : [], [words, optionsCount, questionsCount]);
+  const [round, setRound] = useState(0);
+  const questions = useMemo(() => words.length >= Math.min(optionsCount, 4) ? generateQuestions(words, optionsCount, questionsCount) : [], [words, optionsCount, questionsCount, round]);
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -245,6 +247,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
     setTimeLeft(TIMER_DURATION);
     setCompleted(false);
     setFloatingXp(false);
+    setRound((prev) => prev + 1);
   };
 
   if (words.length < Math.min(optionsCount, 4)) {
@@ -397,7 +400,7 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
           {/* Word display */}
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-blue-100 flex items-center justify-center text-xl font-bold text-violet-600">
-            {question.word.english.charAt(0).toUpperCase()}
+            {question.mode === 'emoji-to-en' ? <span className="text-2xl">{question.word.emoji}</span> : question.word.english.charAt(0).toUpperCase()}
           </div>
 
           <SpeakButton text={question.word.english} autoPlay={question.mode === 'en-to-tr'} size="md" />

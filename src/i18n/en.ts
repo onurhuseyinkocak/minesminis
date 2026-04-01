@@ -15,6 +15,7 @@ const en = {
     parents: 'Parents',
     admin: 'Admin',
     adminPanel: 'Admin Panel',
+    premium: 'Premium',
   },
   dashboard: {
     findLevel: 'Find Your Level',
@@ -162,6 +163,7 @@ const en = {
     word: 'Word',
     score: 'Score',
     // WordMatch
+    perfectScore: 'Perfect!',
     wellDone: 'Well Done!',
     greatJob: 'Great Job!',
     youMatched: 'You matched {score} out of {total}!',
