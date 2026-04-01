@@ -5,7 +5,7 @@
 //         + phoneticsCurriculum.ts (PHONICS stages)
 // ============================================================
 
-import { ALL_PHASES, type LearningPhase, type LearningUnit } from '../data/curriculumPhases';
+import { ALL_PHASES, PHASES, type LearningPhase, type LearningUnit } from '../data/curriculumPhases';
 import { WORLDS, type World, type Lesson } from '../data/curriculum';
 import type { AgeGroup } from '../types/progress';
 
@@ -63,6 +63,11 @@ export const AGE_GROUP_CONFIG: Record<AgeGroup, {
 /** All phases (phonics + general curriculum) in order */
 export function getAllPhases(): LearningPhase[] {
   return ALL_PHASES;
+}
+
+/** Display phases — the 4 original Montessori phases for UI (WorldMap, etc.) */
+export function getDisplayPhases(): LearningPhase[] {
+  return PHASES;
 }
 
 /** Flat list of all units across all phases */

@@ -11,7 +11,7 @@ import { Lock, Star, Sparkles } from 'lucide-react';
 import { useProgress } from '../contexts/ProgressContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
-import { getAllPhases } from '../services/curriculumService';
+import { getDisplayPhases } from '../services/curriculumService';
 import LottieCharacter from '../components/LottieCharacter';
 import type { LearningPhase, LearningUnit } from '../data/curriculumPhases';
 
@@ -56,6 +56,16 @@ const PHASE_COLORS: Record<string, { bg: string; gradient: string; border: strin
   },
 };
 
+const DEFAULT_PHASE_COLOR = {
+  bg: '#F9FAFB',
+  gradient: 'linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)',
+  border: '#D1D5DB',
+  text: '#374151',
+  active: '#9CA3AF',
+  cardFrom: '#F9FAFB',
+  cardTo: '#F3F4F6',
+};
+
 const PHASE_LOTTIE: Record<string, string> = {
   'little-ears': 'idle',
   'word-builders': 'happy',
@@ -74,7 +84,7 @@ function PhaseButton({ phase, isActive, onClick, lang }: {
   onClick: () => void;
   lang: string;
 }) {
-  const colors = PHASE_COLORS[phase.id];
+  const colors = PHASE_COLORS[phase.id] ?? DEFAULT_PHASE_COLOR;
   const label = lang === 'tr' ? phase.nameTr : phase.name;
 
   return (
@@ -117,7 +127,7 @@ function SimpleUnitCard({ unit, phase, index, lang, isCompleted, isUnlocked, isC
   isUnlocked: boolean;
   isCurrent: boolean;
 }) {
-  const colors = PHASE_COLORS[phase.id];
+  const colors = PHASE_COLORS[phase.id] ?? DEFAULT_PHASE_COLOR;
   const title = lang === 'tr' ? unit.titleTr : unit.title;
 
   const cardContent = (
@@ -227,7 +237,7 @@ export default function WorldMap() {
   const { getUnitProgress, isUnitCompleted, isUnitUnlocked, currentUnitId } = useProgress();
   usePageTitle('Ogren', 'Learn');
 
-  const phases = useMemo(() => getAllPhases(), []);
+  const phases = useMemo(() => getDisplayPhases(), []);
 
   // Find which phase contains the current unit
   const defaultPhaseId = useMemo(() => {
