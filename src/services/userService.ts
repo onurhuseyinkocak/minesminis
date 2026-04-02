@@ -4,7 +4,7 @@ import { withRetry } from '../utils/retryUtils';
 
 // Columns needed for a full UserProfile — avoids select('*') bandwidth waste
 const USER_PROFILE_COLUMNS =
-  'id, email, role, display_name, avatar_url, bio, grade, subjects, points, badges, streak_days, level, xp, last_login, is_online, settings, created_at, featured_badge';
+  'id, email, role, display_name, avatar_url, bio, grade, subjects, points, badges, streak_days, level, xp, last_login, is_online, settings, created_at';
 
 export interface UserProfile {
   id: string;
@@ -20,7 +20,6 @@ export interface UserProfile {
   streak_days: number;
   level: number;
   xp: number;
-  featured_badge?: string | null;
   last_login: string;
   is_online: boolean;
   settings: Record<string, unknown>;

@@ -81,7 +81,9 @@ export interface TTSOptions {
 
 // ─── Supabase Storage base URL ────────────────────────────────────────────────
 
-const STORAGE_BASE = `${import.meta.env.VITE_SUPABASE_URL || 'https://sblwqplagirgiroekotp.supabase.co'}/storage/v1/object/public/audio`;
+const STORAGE_BASE = import.meta.env.VITE_SUPABASE_URL
+  ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/audio`
+  : '';
 
 // ─── In-memory cache (text → audio URL | null) ───────────────────────────────
 
@@ -161,7 +163,9 @@ async function lookupCache(text: string): Promise<string | null> {
   }
 
   // 1. Try to guess the Storage URL and verify it exists
-  const storageKey = storageKeyFor(key);
+  // Pass the original (trimmed) text so storageKeyFor can handle case-sensitive
+  // words like the pronoun "I" (word/I.wav vs phonics/i.wav).
+  const storageKey = storageKeyFor(text.trim());
   if (storageKey) {
     const url = `${STORAGE_BASE}/${storageKey}`;
     // Quick HEAD check (10s timeout) to see if the file exists
@@ -352,11 +356,13 @@ async function _playUrl(
  */
 async function _tryLocalWav(text: string): Promise<boolean> {
   if (typeof window === 'undefined') return false;
-  const key = text.toLowerCase().trim();
+  const raw = text.trim();
+  const key = raw.toLowerCase();
   // Only attempt for single words (no spaces)
   if (!key || /\s/.test(key)) return false;
   // Skip phonics graphemes — they have their own path
-  if (PHONICS_GRAPHEMES.has(key)) return false;
+  // Exception: the pronoun "I" (uppercase) is a word, not the phonics /ɪ/ sound
+  if (PHONICS_GRAPHEMES.has(key) && raw !== 'I') return false;
 
   const wavUrl = `/audio/words/${key}.wav`;
   try {

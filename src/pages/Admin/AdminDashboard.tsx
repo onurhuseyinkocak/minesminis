@@ -103,8 +103,8 @@ function AdminDashboard() {
             supabase.from('words').select('*', { count: 'exact', head: true }),
             supabase.from('worksheets').select('*', { count: 'exact', head: true }),
             supabase.from('users').select('created_at').gte('created_at', sevenDaysAgo.toISOString()),
-            supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_premium', true),
-            supabase.from('users').select('*', { count: 'exact', head: true }).gte('last_active', todayStart.toISOString()),
+            supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_premium', true),
+            supabase.from('users').select('*', { count: 'exact', head: true }).gte('updated_at', todayStart.toISOString()),
         ]);
 
         if (usersRes.status === 'fulfilled' && !usersRes.value.error && usersRes.value.data) {

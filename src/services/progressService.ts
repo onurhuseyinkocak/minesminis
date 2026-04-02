@@ -35,46 +35,28 @@ function enqueueSyncEvent(event: Omit<SyncEvent, 'id' | 'timestamp' | 'retryCoun
   } catch { /* quota exceeded — silent */ }
 }
 
-async function flushSyncQueue(userId: string, childId: string | null): Promise<void> {
-  if (!supabase || !navigator.onLine) return;
+/**
+ * flushSyncQueue — processes queued sync events.
+ *
+ * NOTE: The `curriculum_progress` and `curriculum_current_unit` tables do NOT
+ * exist in the database. All curriculum progress is persisted via supabaseSync,
+ * which stores progress inside the `users.settings` JSONB column.
+ * See: src/services/supabaseSync.ts (source of truth for remote persistence).
+ *
+ * This function now only clears processed events from the queue.
+ * The actual Supabase sync is handled by supabaseSync.
+ */
+async function flushSyncQueue(_userId: string, _childId: string | null): Promise<void> {
+  if (!navigator.onLine) return;
   try {
     const raw = localStorage.getItem(KEYS.SYNC_QUEUE);
     if (!raw) return;
     const queue: SyncEvent[] = JSON.parse(raw);
     if (!queue.length) return;
 
-    const processed: string[] = [];
-    for (const event of queue) {
-      try {
-        if (event.type === 'unit_progress' || event.type === 'unit_complete') {
-          await supabase.from('curriculum_progress').upsert({
-            user_id: userId,
-            child_id: childId,
-            unit_id: event.payload.unitId,
-            progress: event.payload.progressPercent,
-            activity_index: event.payload.currentActivityIndex,
-            completed: event.payload.completed,
-            completed_at: event.payload.completedAt,
-            updated_at: event.timestamp,
-          }, { onConflict: 'user_id,child_id,unit_id' });
-        }
-        if (event.type === 'current_unit') {
-          await supabase.from('curriculum_current_unit').upsert({
-            user_id: userId,
-            child_id: childId,
-            current_unit_id: event.payload.unitId,
-            updated_at: event.timestamp,
-          }, { onConflict: 'user_id,child_id' });
-        }
-        processed.push(event.id);
-      } catch {
-        if (event.retryCount >= 3) processed.push(event.id); // give up
-        else event.retryCount++;
-      }
-    }
-
-    const remaining = queue.filter(e => !processed.includes(e.id));
-    localStorage.setItem(KEYS.SYNC_QUEUE, JSON.stringify(remaining));
+    // Mark all events as processed — remote sync is handled by supabaseSync
+    // via users.settings JSONB, not separate curriculum_* tables.
+    localStorage.setItem(KEYS.SYNC_QUEUE, JSON.stringify([]));
   } catch { /* sync error — silent, will retry */ }
 }
 
@@ -267,48 +249,55 @@ class ProgressService {
 
   // ── SUPABASE LOAD ─────────────────────────────────────────
 
+  /**
+   * Load progress from Supabase.
+   *
+   * NOTE: The `curriculum_progress` and `curriculum_current_unit` tables do NOT
+   * exist. Remote progress is stored in `users.settings` JSONB and managed by
+   * supabaseSync (src/services/supabaseSync.ts). This method now reads from
+   * users.settings instead.
+   */
   private async loadFromSupabase(): Promise<void> {
     if (!supabase || !this.userId) return;
     try {
-      // Load current unit
-      const { data: cur } = await supabase
-        .from('curriculum_current_unit')
-        .select('current_unit_id')
-        .eq('user_id', this.userId)
-        .eq('child_id', this.childId ?? '')
+      const { data: user } = await supabase
+        .from('users')
+        .select('settings')
+        .eq('id', this.userId)
         .maybeSingle();
 
-      if (cur?.current_unit_id) {
+      if (!user?.settings) return;
+
+      const settings = user.settings as Record<string, unknown>;
+
+      // Load current unit from settings if available
+      const remoteCurrentUnit = settings.current_unit_id as string | undefined;
+      if (remoteCurrentUnit) {
         const local = this.getCurrentUnitId();
-        // Take whichever is further ahead
-        if (this.compareUnitIds(cur.current_unit_id as string, local) > 0) {
-          localStorage.setItem(KEYS.CURRENT_UNIT(this.prefix), cur.current_unit_id as string);
+        if (this.compareUnitIds(remoteCurrentUnit, local) > 0) {
+          localStorage.setItem(KEYS.CURRENT_UNIT(this.prefix), remoteCurrentUnit);
         }
       }
 
-      // Load unit progress
-      const { data: progressRows } = await supabase
-        .from('curriculum_progress')
-        .select('unit_id, progress, activity_index, completed, completed_at')
-        .eq('user_id', this.userId)
-        .eq('child_id', this.childId ?? '');
-
-      progressRows?.forEach((row: {
-        unit_id: string;
+      // Load unit progress from settings if available
+      const remoteProgress = settings.curriculum_progress as Record<string, {
         progress: number;
         activity_index: number;
         completed: boolean;
-        completed_at: string | null;
-      }) => {
-        const localPct = this.getUnitProgress(row.unit_id);
-        if (row.progress > localPct) {
-          localStorage.setItem(KEYS.UNIT_PROGRESS(this.prefix, row.unit_id), String(row.progress));
-          localStorage.setItem(KEYS.UNIT_ACTIVITY(this.prefix, row.unit_id), String(row.activity_index));
+      }> | undefined;
+
+      if (remoteProgress) {
+        for (const [unitId, row] of Object.entries(remoteProgress)) {
+          const localPct = this.getUnitProgress(unitId);
+          if (row.progress > localPct) {
+            localStorage.setItem(KEYS.UNIT_PROGRESS(this.prefix, unitId), String(row.progress));
+            localStorage.setItem(KEYS.UNIT_ACTIVITY(this.prefix, unitId), String(row.activity_index));
+          }
+          if (row.completed) {
+            localStorage.setItem(KEYS.UNIT_COMPLETED(this.prefix, unitId), '1');
+          }
         }
-        if (row.completed) {
-          localStorage.setItem(KEYS.UNIT_COMPLETED(this.prefix, row.unit_id), '1');
-        }
-      });
+      }
     } catch { /* silent — will use local data */ }
   }
 }

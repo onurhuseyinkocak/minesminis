@@ -674,13 +674,24 @@ export interface Database {
           word: string;
           level: string;
           category: string;
-          emoji: string;
+          emoji: string | null;
           turkish: string;
           example: string | null;
           grade: number | null;
           image_url: string | null;
           word_audio_url: string | null;
           example_audio_url: string | null;
+          age_group_min: number | null;
+          phonics_group: number | null;
+          is_sight_word: boolean;
+          is_decodable: boolean;
+          phonics_sound_id: string | null;
+          phonetic_ipa: string | null;
+          example_en: string | null;
+          example_tr: string | null;
+          frequency: number | null;
+          turkish_trap: string | null;
+          confusing_with: string | null;
           created_at: string;
         };
       };
@@ -827,6 +838,130 @@ export interface Database {
           id: string;
           key: string;
           audio_base64: string;
+          created_at: string;
+        };
+      };
+      exercises: {
+        Row: {
+          id: string;
+          type: string;
+          difficulty: number;
+          title: string | null;
+          title_tr: string | null;
+          content: Record<string, unknown>;
+          target_sounds: string[];
+          target_words: string[];
+          phonics_group: number | null;
+          age_group_min: number | null;
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      songs: {
+        Row: {
+          id: string;
+          title: string;
+          title_tr: string | null;
+          lyrics: string | null;
+          audio_url: string | null;
+          category: string | null;
+          target_age: number[] | null;
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      stories_decodable: {
+        Row: {
+          id: string;
+          title: string;
+          title_tr: string | null;
+          text: string;
+          phonics_group: number | null;
+          difficulty: number;
+          vocabulary: string[];
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      phonics_sounds: {
+        Row: {
+          id: string;
+          grapheme: string;
+          phoneme: string;
+          group_number: number;
+          example_word: string | null;
+          audio_url: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      worlds: {
+        Row: {
+          id: string;
+          name: string;
+          name_tr: string | null;
+          description: string | null;
+          theme_color: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      curriculum_phases: {
+        Row: {
+          id: string;
+          phase_number: number;
+          name: string;
+          name_tr: string | null;
+          description: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      turkish_phonetic_traps: {
+        Row: {
+          id: string;
+          english_sound: string;
+          turkish_confusion: string;
+          explanation: string | null;
+          explanation_tr: string | null;
+          examples: string[];
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      mascots: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+          description: string | null;
+          image_url: string | null;
+          personality: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      badges_def: {
+        Row: {
+          id: string;
+          name: string;
+          name_tr: string | null;
+          description: string | null;
+          icon_url: string | null;
+          category: string | null;
+          requirement: Record<string, unknown> | null;
+          sort_order: number;
+          created_at: string;
+        };
+      };
+      age_groups: {
+        Row: {
+          id: string;
+          label: string;
+          label_tr: string | null;
+          min_age: number;
+          max_age: number;
+          sort_order: number;
           created_at: string;
         };
       };

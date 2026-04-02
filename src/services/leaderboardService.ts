@@ -55,8 +55,8 @@ interface UserRow {
     avatar_url: string | null;
     level: number;
     xp: number;
+    weekly_xp: number;
     streak_days: number;
-    settings: Record<string, unknown> | null;
 }
 
 // ============================================================
@@ -76,7 +76,7 @@ export async function getGlobalLeaderboard(currentUserId?: string): Promise<Lead
         const { data, error } = await withRetry(() =>
             supabase
                 .from('users')
-                .select('id, display_name, avatar_url, level, xp, streak_days, settings')
+                .select('id, display_name, avatar_url, level, xp, weekly_xp, streak_days')
                 .order('xp', { ascending: false })
                 .limit(100)
         );
@@ -86,23 +86,17 @@ export async function getGlobalLeaderboard(currentUserId?: string): Promise<Lead
 
         const rows = data as UserRow[];
 
-        const entries: LeaderboardEntry[] = rows.map((row, index) => {
-            const settingsObj: Record<string, unknown> = row.settings ?? {};
-            const weeklyXP =
-                typeof settingsObj.weekly_xp === 'number' ? settingsObj.weekly_xp : 0;
-
-            return {
+        const entries: LeaderboardEntry[] = rows.map((row, index) => ({
                 userId: row.id,
                 displayName: row.display_name || 'Anonymous',
                 avatarInitial: (row.display_name?.[0] ?? '?').toUpperCase(),
-                weeklyXP,
+                weeklyXP: row.weekly_xp ?? 0,
                 totalXP: row.xp ?? 0,
                 streak: row.streak_days ?? 0,
                 level: row.level ?? 1,
                 rank: index + 1,
                 isCurrentUser: row.id === currentUserId,
-            };
-        });
+        }));
 
         // Re-sort by weeklyXP for the actual tournament ranking
         entries.sort((a, b) => b.weeklyXP - a.weeklyXP);

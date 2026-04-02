@@ -30,3 +30,4 @@ server/uploads
 .vercel
 .git.bak/
 .git.bak
+.env.local

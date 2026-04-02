@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabase';
+import { errorLogger } from './errorLogger';
 import { LS_PET_PREFIX } from '../config/storageKeys';
 
 // Virtual Pet System - gerçek hayvanlar: kedi, köpek, kuş
@@ -90,10 +91,10 @@ export const getUserPet = async (userId: string): Promise<VirtualPet | null> => 
             .maybeSingle();
         data = result.data;
         if (result.error) {
-            console.warn('[petService] getUserPet query failed:', result.error.message);
+            errorLogger.log({ severity: 'medium', message: `[petService] getUserPet query failed: ${result.error.message}`, component: 'petService.getUserPet' });
         }
     } catch (e) {
-        console.warn('[petService] getUserPet failed:', e);
+        errorLogger.log({ severity: 'medium', message: `[petService] getUserPet failed: ${e instanceof Error ? e.message : String(e)}`, component: 'petService.getUserPet' });
     }
 
     if (!data) {
@@ -143,7 +144,7 @@ export const savePet = async (pet: VirtualPet): Promise<void> => {
             last_played: pet.lastPlayed
         }).eq('id', pet.id);
     } catch (e) {
-        console.warn('[petService] savePet failed:', e);
+        errorLogger.log({ severity: 'medium', message: `[petService] savePet failed: ${e instanceof Error ? e.message : String(e)}`, component: 'petService.savePet' });
     }
     localStorage.setItem(`${LS_PET_PREFIX}${pet.id}`, JSON.stringify(pet));
 };
@@ -151,7 +152,7 @@ export const savePet = async (pet: VirtualPet): Promise<void> => {
 export const renamePet = async (userId: string, newName: string): Promise<void> => {
     try {
         await supabase.from('pets').update({ name: newName }).eq('id', userId);
-    } catch (e) { console.warn('[petService] renamePet failed:', e); }
+    } catch (e) { errorLogger.log({ severity: 'low', message: `[petService] renamePet failed: ${e instanceof Error ? e.message : String(e)}`, component: 'petService.renamePet' }); }
     const local = localStorage.getItem(`${LS_PET_PREFIX}${userId}`);
     if (local) {
         try {
