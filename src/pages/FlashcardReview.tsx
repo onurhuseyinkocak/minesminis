@@ -74,6 +74,9 @@ export default function FlashcardReview() {
           setWordMap(m);
         }
         setWordsLoading(false);
+      })
+      .catch(() => {
+        setWordsLoading(false);
       });
   }, []);
 

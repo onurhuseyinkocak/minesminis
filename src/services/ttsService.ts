@@ -425,17 +425,14 @@ export function speak(text: string, options?: TTSOptions): void {
       if (url) {
         _playUrl(url, options).then((ok) => {
           if (!ok) {
-            // Fallback to browser speechSynthesis
             _speakWebSpeech(trimmed, options);
           }
-        });
+        }).catch(() => _speakWebSpeech(trimmed, options));
       } else {
-        // Priority 3 (last resort): browser TTS
-        // Fallback to browser speechSynthesis
         _speakWebSpeech(trimmed, options);
       }
-    });
-  });
+    }).catch(() => _speakWebSpeech(trimmed, options));
+  }).catch(() => _speakWebSpeech(trimmed, options));
 }
 
 /**
@@ -496,6 +493,14 @@ export function speakPhoneme(phoneme: string, options?: Pick<TTSOptions, 'onEnd'
 
   const clean = phoneme.trim().toLowerCase();
 
+  const phonemeFallback = () => _speakWebSpeech(phoneme, {
+    lang: 'en-US',
+    rate: 0.5,
+    pitch: 1.1,
+    volume: 1,
+    ...options,
+  });
+
   _tryLocalWav(clean).then((wavPlayed) => {
     if (wavPlayed) {
       options?.onEnd?.();
@@ -504,29 +509,13 @@ export function speakPhoneme(phoneme: string, options?: Pick<TTSOptions, 'onEnd'
     lookupCache(clean).then((url) => {
       if (url) {
         _playUrl(url, options).then((played) => {
-          if (!played) {
-            // Fallback to browser speechSynthesis for phoneme
-            _speakWebSpeech(phoneme, {
-              lang: 'en-US',
-              rate: 0.5,
-              pitch: 1.1,
-              volume: 1,
-              ...options,
-            });
-          }
-        });
+          if (!played) phonemeFallback();
+        }).catch(() => phonemeFallback());
       } else {
-        // Fallback to browser speechSynthesis for phoneme
-        _speakWebSpeech(phoneme, {
-          lang: 'en-US',
-          rate: 0.5,
-          pitch: 1.1,
-          volume: 1,
-          ...options,
-        });
+        phonemeFallback();
       }
-    });
-  });
+    }).catch(() => phonemeFallback());
+  }).catch(() => phonemeFallback());
 }
 
 /**
