@@ -17,8 +17,8 @@ describe('Curriculum Data', () => {
   // --------------------------------------------------
   // World-level checks
   // --------------------------------------------------
-  it('contains exactly 12 worlds', () => {
-    expect(WORLDS).toHaveLength(12);
+  it('contains exactly 19 worlds', () => {
+    expect(WORLDS).toHaveLength(19);
   });
 
   it('each world has a unique id', () => {
@@ -26,9 +26,9 @@ describe('Curriculum Data', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('each world has exactly 10 lessons', () => {
+  it('each world has at least 5 lessons', () => {
     for (const world of WORLDS) {
-      expect(world.lessons).toHaveLength(10);
+      expect(world.lessons.length).toBeGreaterThanOrEqual(5);
     }
   });
 

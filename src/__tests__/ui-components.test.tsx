@@ -1,5 +1,20 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+
+// Mock LanguageContext (used by Modal and other components)
+vi.mock('../contexts/LanguageContext', () => ({
+  useLanguage: () => ({
+    lang: 'en' as const,
+    setLang: vi.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'common.close': 'Close dialog',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 import {
   Button,
   Card,

@@ -18,6 +18,11 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+// Mock lottie-react (imported transitively via LottieCharacter)
+vi.mock('lottie-react', () => ({
+  default: () => <div data-testid="lottie-react" />,
+}));
+
 // Mock framer-motion
 vi.mock('framer-motion', () => {
   const motion = new Proxy(
@@ -47,44 +52,30 @@ vi.mock('lucide-react', () => {
     Flame: icon,
     Star: icon,
     Gamepad2: icon,
+    Globe: icon,
     BookOpen: icon,
-    Video: icon,
     Music: icon,
-    Clock: icon,
-    CheckCircle: icon,
-    Target: icon,
-    School: icon,
-    Award: icon,
-    Loader2: icon,
-    Gift: icon,
+    Trophy: icon,
+    Sparkles: icon,
+    Sun: icon,
+    Sunset: icon,
+    Moon: icon,
   };
 });
 
-vi.mock('../../components/MimiMascot', () => ({
-  default: () => <span />,
+// Mock LottieCharacter
+vi.mock('../../components/LottieCharacter', () => ({
+  default: () => <span data-testid="lottie-character" />,
 }));
 
-// Mock classroomService
-vi.mock('../../services/classroomService', () => ({
-  joinClassroom: vi.fn(() => ({ success: false })),
-  getStudentClassroom: vi.fn(() => null),
+// Mock dailyLessonService
+vi.mock('../../services/dailyLessonService', () => ({
+  isDailyLessonCompletedToday: vi.fn(() => false),
 }));
 
-// Mock spacedRepetition
-vi.mock('../../data/spacedRepetition', () => ({
-  getDueWords: vi.fn(() => []),
-}));
-
-// Mock learningPathService
-vi.mock('../../services/learningPathService', () => ({
-  getNextAction: vi.fn(() => ({
-    type: 'phonics-lesson',
-    title: 'Learn the /s/ sound',
-    titleTr: '/s/ sesini ogren',
-    route: '/worlds/little-ears/p1-u1',
-    description: 'Practice the snake sound!',
-  })),
-  getCurrentPhonicsSound: vi.fn(() => ({ id: 'g1_s', group: 1, grapheme: 's' })),
+// Mock usePageTitle
+vi.mock('../../hooks/usePageTitle', () => ({
+  usePageTitle: vi.fn(),
 }));
 
 // Mock soundLibrary
@@ -96,11 +87,6 @@ vi.mock('../../data/soundLibrary', () => ({
     levelUp: vi.fn(),
     badge: vi.fn(),
   },
-}));
-
-// Mock MimiGuide component
-vi.mock('../../components/MimiGuide', () => ({
-  default: () => null,
 }));
 
 // Mock AuthContext
@@ -119,6 +105,15 @@ vi.mock('../../contexts/AuthContext', () => ({
     user: mockUser,
     userProfile: mockUserProfile,
     isAdmin: false,
+  }),
+}));
+
+// Mock LanguageContext
+vi.mock('../../contexts/LanguageContext', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: vi.fn(),
+    t: (key: string) => key,
   }),
 }));
 
@@ -172,72 +167,62 @@ describe('Dashboard Page', () => {
 
   it('renders without crashing', () => {
     renderDashboard();
-    expect(document.querySelector('.dash')).toBeTruthy();
+    // Dashboard uses kid-bg class on the root div
+    expect(document.querySelector('.kid-bg')).toBeTruthy();
   });
 
-  it('renders top bar with user name', () => {
+  it('renders user name in greeting', () => {
     renderDashboard();
-    expect(screen.getByText('Ali')).toBeInTheDocument();
+    expect(screen.getByText('Ali!')).toBeInTheDocument();
   });
 
-  it('shows XP in top bar', () => {
-    renderDashboard();
-    const xpText = (1250).toLocaleString();
-    expect(screen.getByText(xpText)).toBeInTheDocument();
-  });
-
-  it('shows streak in top bar', () => {
+  it('shows streak value', () => {
     renderDashboard();
     const streakElements = screen.getAllByText('7');
     expect(streakElements.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders hero card with next action title', () => {
+  it('shows level value', () => {
     renderDashboard();
-    expect(screen.getByText('Learn the /s/ sound')).toBeInTheDocument();
+    const levelElements = screen.getAllByText('5');
+    expect(levelElements.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders play button with aria-label', () => {
-    renderDashboard();
-    expect(screen.getByLabelText('Start lesson')).toBeInTheDocument();
-  });
-
-  it('shows quick action buttons (Games, Words, Videos, Songs)', () => {
+  it('renders action cards (Games, Learn, Books, Songs)', () => {
     renderDashboard();
     expect(screen.getByText('Games')).toBeInTheDocument();
-    expect(screen.getByText('Words')).toBeInTheDocument();
-    expect(screen.getByText('Videos')).toBeInTheDocument();
+    expect(screen.getByText('Learn')).toBeInTheDocument();
+    expect(screen.getByText('Books')).toBeInTheDocument();
     expect(screen.getByText('Songs')).toBeInTheDocument();
   });
 
-  it('quick actions link to correct routes', () => {
+  it('action cards link to correct routes', () => {
     renderDashboard();
     const gamesLink = screen.getByText('Games').closest('a');
     expect(gamesLink).toHaveAttribute('href', '/games');
 
-    const wordsLink = screen.getByText('Words').closest('a');
-    expect(wordsLink).toHaveAttribute('href', '/words');
+    const learnLink = screen.getByText('Learn').closest('a');
+    expect(learnLink).toHaveAttribute('href', '/worlds');
 
-    const videosLink = screen.getByText('Videos').closest('a');
-    expect(videosLink).toHaveAttribute('href', '/videos');
+    const booksLink = screen.getByText('Books').closest('a');
+    expect(booksLink).toHaveAttribute('href', '/reading');
 
     const songsLink = screen.getByText('Songs').closest('a');
     expect(songsLink).toHaveAttribute('href', '/songs');
   });
 
-  it('shows achievements section heading', () => {
+  it('shows Day Streak label', () => {
     renderDashboard();
-    expect(screen.getByText('Achievements')).toBeInTheDocument();
+    expect(screen.getByText('Day Streak')).toBeInTheDocument();
   });
 
-  it('shows no-badges message when no badges earned', () => {
+  it('shows Level label', () => {
     renderDashboard();
-    expect(screen.getByText('Play lessons to unlock badges and rewards!')).toBeInTheDocument();
+    expect(screen.getByText('Level')).toBeInTheDocument();
   });
 
-  it('shows Today section with Play Games', () => {
+  it('renders LottieCharacter mascot', () => {
     renderDashboard();
-    expect(screen.getByText('Today')).toBeInTheDocument();
-    expect(screen.getByText('Play Games')).toBeInTheDocument();
+    expect(screen.getByTestId('lottie-character')).toBeInTheDocument();
   });
 });

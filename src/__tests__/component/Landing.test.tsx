@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import React from 'react';
 
@@ -73,6 +73,14 @@ vi.mock('../../contexts/ThemeContext', () => ({
   }),
 }));
 
+vi.mock('../../contexts/LanguageContext', () => ({
+  useLanguage: () => ({
+    lang: 'en' as const,
+    setLang: vi.fn(),
+    t: (key: string) => key,
+  }),
+}));
+
 vi.mock('../../services/mascotRoaming', () => ({
   mascotRoaming: {
     getCurrentState: () => ({ position: { x: 50, y: 50 }, state: 'idle', bubble: null }),
@@ -83,6 +91,10 @@ vi.mock('../../services/mascotRoaming', () => ({
     triggerCelebration: vi.fn(),
     onHover: vi.fn(),
   },
+}));
+
+vi.mock('../../components/LottieCharacter', () => ({
+  default: () => <div data-testid="lottie-character" />,
 }));
 
 vi.mock('framer-motion', () => ({
@@ -129,103 +141,44 @@ beforeEach(async () => {
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 describe('Landing Page', () => {
-  it('renders hero title in default language (EN)', () => {
+  it('renders hero heading', () => {
     renderLanding();
-    expect(screen.getByText('English Learning That Actually Works')).toBeInTheDocument();
+    expect(screen.getByText(/Learning English/)).toBeInTheDocument();
+    expect(screen.getByText(/can be this fun/)).toBeInTheDocument();
   });
 
-  it('shows audience tabs: Students, Teachers, Parents', () => {
+  it('renders hero subtitle with phonics description', () => {
     renderLanding();
-    expect(screen.getByText('Students')).toBeInTheDocument();
-    expect(screen.getByText('Teachers')).toBeInTheDocument();
-    expect(screen.getByText('Parents')).toBeInTheDocument();
+    expect(screen.getByText(/Just 10 minutes a day/)).toBeInTheDocument();
   });
 
-  it('language toggle switches content to Turkish', () => {
+  it('renders Start Free CTA link', () => {
     renderLanding();
-    fireEvent.click(screen.getByText('TR'));
-    expect(screen.getByText('Gercekten Ise Yarayan Ingilizce Ogrenme')).toBeInTheDocument();
+    const startLinks = screen.getAllByText('Start Free');
+    expect(startLinks.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('language toggle switches back to English', () => {
+  it('renders How It Works link', () => {
     renderLanding();
-    fireEvent.click(screen.getByText('TR'));
-    fireEvent.click(screen.getByText('EN'));
-    expect(screen.getByText('English Learning That Actually Works')).toBeInTheDocument();
+    expect(screen.getByText('How It Works?')).toBeInTheDocument();
   });
 
-  it('renders language toggle buttons', () => {
+  it('navbar has Log In link pointing to /login', () => {
     renderLanding();
-    expect(screen.getByText('EN')).toBeInTheDocument();
-    expect(screen.getByText('TR')).toBeInTheDocument();
-  });
-
-  it('renders method section with 4 phase cards', () => {
-    renderLanding();
-    expect(screen.getByText('A proven path to English fluency')).toBeInTheDocument();
-    expect(screen.getByText('Sound Discovery')).toBeInTheDocument();
-    expect(screen.getByText('Word Building')).toBeInTheDocument();
-    expect(screen.getByText('Reading & Stories')).toBeInTheDocument();
-    expect(screen.getByText('Independence')).toBeInTheDocument();
-  });
-
-  it('renders audience section with tab content', () => {
-    renderLanding();
-    expect(screen.getByText('Built for everyone who cares about learning')).toBeInTheDocument();
-    expect(screen.getByText('Students')).toBeInTheDocument();
-    expect(screen.getByText('Teachers')).toBeInTheDocument();
-    expect(screen.getByText('Parents')).toBeInTheDocument();
-  });
-
-  it('audience tabs switch content', () => {
-    renderLanding();
-    // Default tab is students
-    expect(screen.getByText('42 phonics sounds with actions')).toBeInTheDocument();
-    // Click teacher tab
-    fireEvent.click(screen.getByText('Teachers'));
-    expect(screen.getByText('Free classroom management')).toBeInTheDocument();
-    // Click parent tab
-    fireEvent.click(screen.getByText('Parents'));
-    expect(screen.getByText('Real-time learning analytics')).toBeInTheDocument();
-  });
-
-  it('shows stats section with correct numbers', () => {
-    renderLanding();
-    expect(screen.getAllByText('42').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('Phonics Sounds')).toBeInTheDocument();
-    expect(screen.getByText('14')).toBeInTheDocument();
-    expect(screen.getByText('Decodable Books')).toBeInTheDocument();
-    expect(screen.getByText('7')).toBeInTheDocument();
-    expect(screen.getByText('Song Lessons')).toBeInTheDocument();
-    expect(screen.getAllByText('4').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('Learning Phases')).toBeInTheDocument();
-  });
-
-  it('bottom CTA section exists with Create Free Account', () => {
-    renderLanding();
-    expect(screen.getByText('Create Free Account')).toBeInTheDocument();
-  });
-
-  it('CTA section has correct title', () => {
-    renderLanding();
-    expect(screen.getByText("Ready to start your child's English journey?")).toBeInTheDocument();
-  });
-
-  it('navbar login button links to /login', () => {
-    renderLanding();
-    const loginLink = screen.getAllByText('Login').find(
+    const loginLink = screen.getAllByText('Log In').find(
       (el) => el.closest('a')?.getAttribute('href') === '/login'
     );
     expect(loginLink).toBeTruthy();
   });
 
-  it('hero has Start Learning CTA', () => {
+  it('renders MinesMinis brand name in navbar', () => {
     renderLanding();
-    expect(screen.getByText('Start Learning')).toBeInTheDocument();
+    const matches = screen.getAllByText('MinesMinis');
+    expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('hero has See How It Works link', () => {
+  it('renders BETA badge', () => {
     renderLanding();
-    expect(screen.getByText('See How It Works')).toBeInTheDocument();
+    expect(screen.getByText('BETA')).toBeInTheDocument();
   });
 });

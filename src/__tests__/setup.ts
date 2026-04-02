@@ -1,6 +1,18 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+// Mock lottie-react (depends on lottie-web which crashes in jsdom due to canvas)
+vi.mock('lottie-react', () => ({
+  default: () => null,
+  __esModule: true,
+}));
+
+// Mock @lottiefiles/react-lottie-player
+vi.mock('@lottiefiles/react-lottie-player', () => ({
+  Player: () => null,
+}));
+
+
 // Mock localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {};

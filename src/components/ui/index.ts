@@ -57,3 +57,6 @@ export type { SearchBarProps, SearchBarSize } from './SearchBar';
 
 export { FilterBar } from './FilterBar';
 export type { FilterBarProps, FilterOption } from './FilterBar';
+
+export { Avatar } from './Avatar';
+export type { AvatarProps, AvatarSize } from './Avatar';
