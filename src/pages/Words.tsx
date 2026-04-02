@@ -58,7 +58,7 @@ const spring = { type: 'spring' as const, stiffness: 300, damping: 24 };
 // Skeleton card for loading state
 function WordCardSkeleton() {
   return (
-    <div className="w-[calc(50%-8px)] sm:w-[calc(33.333%-11px)] aspect-square rounded-3xl bg-gray-100 animate-pulse" />
+    <div className="aspect-square rounded-3xl bg-gray-100 animate-pulse" />
   );
 }
 
@@ -191,9 +191,9 @@ const Words: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="pt-4">
+      <div className="pt-4 px-4">
         {isLoading ? (
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {Array.from({ length: 6 }).map((_, i) => <WordCardSkeleton key={i} />)}
           </div>
         ) : (
@@ -211,7 +211,7 @@ const Words: React.FC = () => {
                     <span className="text-xs text-gray-400">{words.length}</span>
                   </div>
                   {/* Word grid */}
-                  <div className="flex flex-wrap gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     {words.map((word, idx) => {
                       const isLearned = learnedWords.has(word.word);
                       return (
@@ -223,7 +223,7 @@ const Words: React.FC = () => {
                           transition={{ ...spring, delay: Math.min(idx * 0.04, 0.5) }}
                           onClick={() => { playWordAudio(word); setActiveWord(word); }}
                           className={`
-                            relative w-[calc(50%-6px)] sm:w-[calc(33.333%-8px)] aspect-square rounded-3xl
+                            relative aspect-square rounded-3xl
                             flex flex-col items-center justify-center gap-1 p-3
                             border-2 shadow-sm active:scale-95 transition-transform
                             ${isLearned ? 'border-green-300 bg-green-50' : 'border-gray-100 bg-white'}

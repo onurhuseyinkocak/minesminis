@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle, Volume2 } from 'lucide-react';
+import { Delete, Lightbulb, Sparkles, Trophy, Star, Check, ArrowRight, RotateCcw, CheckCircle2, XCircle, Volume2, SkipForward } from 'lucide-react';
 import { ConfettiRain } from '../ui/Celebrations';
 import { SFX } from '../../data/soundLibrary';
 import { speakElevenLabs } from '../../services/ttsService';
@@ -345,7 +345,7 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
             <Volume2 size={24} className="text-white" />
           </motion.div>
 
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Tap to listen</p>
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{t('games.tapToListen')}</p>
 
           {/* Turkish translation hint */}
           <p id="sb-word-prompt" className="text-lg font-semibold text-slate-700">
@@ -510,6 +510,28 @@ export const SpellingBee: React.FC<GameProps> = ({ words, onComplete, onXpEarned
             <Check size={18} /> {t('games.check')}
           </button>
         </div>
+
+        {/* Skip button after 2+ wrong attempts */}
+        {wrongAttempts >= 2 && !feedback && (
+          <div className="flex justify-center mt-1">
+            <button
+              type="button"
+              className="flex items-center gap-1.5 px-4 py-2 min-h-[44px] text-slate-400 font-medium hover:text-slate-600 transition-colors"
+              onClick={() => {
+                if (currentIndex + 1 < gameWords.length) {
+                  setCurrentIndex((prev) => prev + 1);
+                  initWord(currentIndex + 1);
+                } else {
+                  setCompleted(true);
+                  const finalScore = scoreRef.current;
+                  autoCompleteTimeoutRef.current = setTimeout(() => onComplete(finalScore, gameWords.length), 4000);
+                }
+              }}
+            >
+              <SkipForward size={16} /> {t('games.skipThisWord')}
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

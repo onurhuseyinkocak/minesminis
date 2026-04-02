@@ -430,7 +430,7 @@ export const PronunciationGame: React.FC<GameProps> = ({ words, onComplete, onXp
           {heardText && feedback && (
             <div className="w-full">
               <div className="flex justify-between text-xs text-gray-400 mb-1">
-                <span>Accuracy</span>
+                <span>{t('games.accuracyLabel')}</span>
                 <span>{accuracyPct}%</span>
               </div>
               <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">

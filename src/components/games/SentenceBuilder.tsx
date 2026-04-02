@@ -26,13 +26,15 @@ const SENTENCES: SentenceEntry[] = [
 interface SentenceBuilderProps {
   words?: KidsWord[];
   onComplete: (score: number, total: number) => void;
+  onXpEarned?: (xp: number) => void;
+  onWrongAnswer?: () => void;
   ageGroup?: string;
 }
 
 const springBounce = { type: 'spring' as const, stiffness: 400, damping: 15 };
 const springGentle = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
-export default function SentenceBuilder({ onComplete, ageGroup }: SentenceBuilderProps) {
+export default function SentenceBuilder({ onComplete, onXpEarned, onWrongAnswer, ageGroup }: SentenceBuilderProps) {
   const { t } = useLanguage();
   const { hearts, loseHeart } = useHearts();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -82,6 +84,7 @@ export default function SentenceBuilder({ onComplete, ageGroup }: SentenceBuilde
     );
     if (isCorrect) {
       setFeedback('correct');
+      onXpEarned?.(10);
       setScore((prevScore) => {
         const newScore = prevScore + 1;
         feedbackTimerRef.current = setTimeout(() => {
@@ -103,6 +106,7 @@ export default function SentenceBuilder({ onComplete, ageGroup }: SentenceBuilde
     } else {
       const gameOver = hearts <= 1;
       loseHeart();
+      onWrongAnswer?.();
       setFeedback('wrong');
       if (gameOver) {
         setScore((currentScore) => {

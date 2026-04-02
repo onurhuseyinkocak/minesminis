@@ -323,7 +323,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
         <div className="grid grid-cols-2 gap-2 flex-1 overflow-hidden">
           {/* LEFT: English words (blue cards) */}
           <div className="flex flex-col gap-2.5" role="list" aria-label="English words">
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider text-center mb-1">English</span>
+            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider text-center mb-1">{t('games.columnEnglish')}</span>
             <AnimatePresence>
               {leftItems.map(item => {
                 const isSelected = selectedLeft === item.id;
@@ -379,7 +379,7 @@ export const WordMatch: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
 
           {/* RIGHT: Turkish words (orange cards) */}
           <div className="flex flex-col gap-2.5" role="list" aria-label="Turkish translations">
-            <span className="text-xs font-bold text-orange-400 uppercase tracking-wider text-center mb-1">T{'\u00FC'}rk{'\u00E7'}e</span>
+            <span className="text-xs font-bold text-orange-400 uppercase tracking-wider text-center mb-1">{t('games.columnTurkish')}</span>
             <AnimatePresence>
               {rightItems.map(item => {
                 const isSelected = selectedRight === item.id;

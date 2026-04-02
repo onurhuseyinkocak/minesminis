@@ -432,7 +432,7 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
             animate={{ opacity: 1 }}
             className="text-emerald-600 font-bold text-sm flex items-center gap-1"
           >
-            <Check size={16} /> All sorted!
+            <Check size={16} /> {t('games.allSorted')}
           </motion.span>
         )}
       </div>
@@ -469,7 +469,7 @@ function SortTask({ question, onAnswer, onSortComplete }: SortTaskProps) {
               aria-label={`Rhyme family: -${rime}`}
               whileTap={isActive ? { scale: 0.97 } : undefined}
             >
-              <p className={`text-xs font-semibold uppercase tracking-wider ${colors.label}`}>Family</p>
+              <p className={`text-xs font-semibold uppercase tracking-wider ${colors.label}`}>{t('games.familyLabel')}</p>
               <span className={`text-xl font-extrabold px-3 py-1 rounded-lg ${colors.rime}`}>
                 -{rime}
               </span>

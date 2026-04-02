@@ -82,7 +82,7 @@ function Videos() {
         </div>
       </div>
 
-      <div className="pt-4 space-y-6">
+      <div className="pt-4 px-4 space-y-6">
         {/* Loading skeleton */}
         {videosLoading && (
           <div className="space-y-4">

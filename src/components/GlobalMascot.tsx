@@ -16,7 +16,7 @@ import { useMascot } from '../contexts/MascotContext';
 import UnifiedMascot from './UnifiedMascot';
 
 // Pages where mascot should be hidden (full-screen experiences)
-const HIDDEN_ROUTES = ['/stories/', '/phonics/', '/placement', '/tracing', '/reading/'];
+const HIDDEN_ROUTES = ['/stories/', '/story', '/phonics/', '/placement', '/tracing', '/reading/'];
 // Pages where mascot moves to top-right to avoid bottom buttons
 const TOP_ROUTES = ['/games', '/worlds/'];
 
@@ -218,7 +218,7 @@ export default function GlobalMascot() {
           }
           @media (max-width: 767px) {
             :root {
-              --gm-bottom: ${useTopPosition ? 'auto' : 'calc(56px + env(safe-area-inset-bottom, 0px) + 64px)'};
+              --gm-bottom: ${useTopPosition ? 'auto' : 'calc(56px + env(safe-area-inset-bottom, 0px) + 68px)'};
               --gm-top: ${useTopPosition ? '72px' : 'auto'};
               --gm-right: 8px;
               --gm-size: 56px;

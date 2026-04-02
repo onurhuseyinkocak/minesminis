@@ -193,6 +193,14 @@ interface QuizProps {
   onDone: () => void;
 }
 
+function saveStoryCompletion(storyId: string): void {
+  try {
+    localStorage.setItem(`mm_story_completed_${storyId}`, '1');
+  } catch {
+    // storage full — ignore
+  }
+}
+
 function ComprehensionQuiz({ story, lang, onDone }: QuizProps) {
   const [selected, setSelected] = useState<number | null>(null);
 
@@ -243,7 +251,7 @@ function ComprehensionQuiz({ story, lang, onDone }: QuizProps) {
       </div>
 
       {selected !== null && (
-        <button type="button" className="dsr-quiz__done-btn" onClick={onDone}>
+        <button type="button" className="dsr-quiz__done-btn" onClick={() => { saveStoryCompletion(story.id); onDone(); }}>
           {lang === 'tr' ? 'Tamamlandı' : 'Done'}
           <CheckCircle size={18} />
         </button>
@@ -300,10 +308,12 @@ export default function DecodableStoryReader({
   const goPrev = useCallback(() => {
     if (showQuiz) {
       setShowQuiz(false);
+    } else if (sceneIndex === 0) {
+      onComplete();
     } else {
-      setSceneIndex(prev => Math.max(0, prev - 1));
+      setSceneIndex(prev => prev - 1);
     }
-  }, [showQuiz]);
+  }, [showQuiz, sceneIndex, onComplete]);
 
   const currentScene = story.scenes[sceneIndex];
 

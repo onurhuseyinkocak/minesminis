@@ -210,7 +210,7 @@ export const StoryChoicesGame: React.FC<GameProps> = ({ words, onComplete, onXpE
           onClick={() => speak(question.word.english)}
           className="flex items-center gap-1.5 px-3 py-2 min-h-[40px] rounded-lg bg-blue-50 text-blue-600 font-medium text-sm hover:bg-blue-100 transition-colors"
         >
-          <Volume2 size={16} /> Listen
+          <Volume2 size={16} /> {t('games.listenButton')}
         </button>
       </motion.div>
 

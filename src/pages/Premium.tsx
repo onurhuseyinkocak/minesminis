@@ -32,8 +32,7 @@ export default function Premium() {
   const tr = lang === 'tr';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 py-6 pb-24">
-      <div>
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 py-6 pb-24 px-4">
         {/* Hero */}
         <div className="text-center mb-6">
           <motion.div
@@ -84,7 +83,7 @@ export default function Premium() {
         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">
           {tr ? 'Premium Ayrıcalıkları' : 'Premium Perks'}
         </p>
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
           {features.map((feat, i) => {
             const Icon = feat.icon;
             return (
@@ -139,7 +138,6 @@ export default function Premium() {
             </button>
           </div>
         )}
-      </div>
     </div>
   );
 }

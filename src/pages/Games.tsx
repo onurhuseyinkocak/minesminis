@@ -179,7 +179,7 @@ function getGameWords(currentAgeGroup?: string) {
 
 function GamesSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-4 px-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="rounded-[28px] bg-orange-100/60 animate-pulse" style={{ minHeight: 140 }} />
       ))}
@@ -452,7 +452,7 @@ function Games() {
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springPop}
-          className="px-5 pt-6 pb-2 flex items-end gap-3"
+          className="px-4 pt-6 pb-2 flex items-end gap-3"
         >
           <div className="shrink-0">
             <LottieCharacter state="wave" size={80} />
@@ -467,7 +467,7 @@ function Games() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ ...springBounce, delay: 0.1 }}
-          className="px-5 mt-4"
+          className="px-4 mt-4"
         >
           <button
             type="button"
@@ -486,7 +486,7 @@ function Games() {
         </motion.div>
 
         {/* Games Grid — 2 columns, big chunky colorful cards */}
-        <div className="mt-6 px-5">
+        <div className="mt-6 px-4">
           {isLoading ? (
             <GamesSkeleton />
           ) : availableGames.length === 0 ? (
@@ -501,7 +501,7 @@ function Games() {
               </p>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {availableGames.map((game, i) => (
                 <motion.button
                   key={game.type}

@@ -270,6 +270,18 @@ const en = {
     no: 'No',
     whichRhymesWith: 'Which word rhymes with...',
     sortIntoFamilies: 'Sort the words into rhyming families!',
+    allSorted: 'All sorted!',
+    familyLabel: 'Family',
+    // SpellingBee extras
+    tapToListen: 'Tap to listen',
+    skipThisWord: 'Skip',
+    // WordMatch extras
+    columnEnglish: 'English',
+    columnTurkish: 'T\u00FCrk\u00E7e',
+    // PronunciationGame extras
+    accuracyLabel: 'Accuracy',
+    // StoryChoicesGame extras
+    listenButton: 'Listen',
     // SayItGame
     sayIt: 'Say It!',
     startSpeaking: 'Start speaking',

@@ -271,7 +271,19 @@ const tr: TranslationKeys = {
     yes: 'Evet!',
     no: 'Hayır',
     whichRhymesWith: 'Hangi kelime ile kafiyeli...',
-    sortIntoFamilies: 'Kelimeleri kafiye ailelerine göre sırala!',
+    sortIntoFamilies: 'Kelimeleri kafiye ailelerine g\u00F6re s\u0131rala!',
+    allSorted: 'Hepsi s\u0131raland\u0131!',
+    familyLabel: 'Aile',
+    // SpellingBee extras
+    tapToListen: 'Dinlemek i\u00E7in dokun',
+    skipThisWord: 'Atla',
+    // WordMatch extras
+    columnEnglish: '\u0130ngilizce',
+    columnTurkish: 'T\u00FCrk\u00E7e',
+    // PronunciationGame extras
+    accuracyLabel: 'Do\u011Fruluk',
+    // StoryChoicesGame extras
+    listenButton: 'Dinle',
     // SayItGame
     sayIt: 'Söyle!',
     startSpeaking: 'Konuşmaya başla',

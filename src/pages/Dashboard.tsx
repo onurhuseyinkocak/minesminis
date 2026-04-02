@@ -111,7 +111,7 @@ export default function Dashboard() {
       <div className="kid-bg kid-bubbles min-h-screen py-6">
         <div className="space-y-4">
           <div className="skeleton rounded-[32px] h-64" />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="skeleton rounded-[24px] h-[140px]" />
             ))}
@@ -125,7 +125,7 @@ export default function Dashboard() {
   // ─── Render ─────────────────────────────────────────────────────────────
 
   return (
-    <div className="kid-bg kid-bubbles min-h-screen py-6 pb-28 relative">
+    <div className="kid-bg kid-bubbles min-h-screen py-6 pb-24 relative">
       <motion.div
         variants={stagger}
         initial="hidden"
@@ -210,7 +210,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* ═══ 2x2 ACTION GRID ═══ */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {ACTIONS.map((action) => {
             const Icon = action.icon;
             return (

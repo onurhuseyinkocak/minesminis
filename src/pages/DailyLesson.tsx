@@ -110,13 +110,13 @@ type PhaseInfo = { id: number; key: string; title: string; subtitle: string; ico
 function MontessoriNav({ phases, currentPhase, completedPhases, onSelectPhase }: {
   phases: PhaseInfo[]; currentPhase: number; completedPhases: Set<number>; onSelectPhase: (id: number) => void;
 }) {
-  const unlocked = completedPhases.has(1);
   return (
     <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3">
       {phases.map((p) => {
         const isActive = currentPhase === p.id;
         const isDone = completedPhases.has(p.id);
-        const isLocked = p.id !== 1 && !unlocked;
+        // A phase is unlocked if it's phase 1, already done, or the previous phase is done
+        const isLocked = p.id !== 1 && !isDone && !completedPhases.has(p.id - 1);
         return (
           <button key={p.id} type="button" disabled={isLocked} onClick={() => !isLocked && onSelectPhase(p.id)}
             className={`min-h-[40px] min-w-[40px] px-2 rounded-2xl text-xs font-bold flex items-center gap-1 whitespace-nowrap transition-all shrink-0 ${

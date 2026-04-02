@@ -22,7 +22,7 @@ function readChildMode(): boolean {
 const spring = { type: 'spring' as const, stiffness: 300, damping: 24 };
 
 function StatCardSkeleton() {
-  return <div className="w-[calc(50%-8px)] h-36 rounded-[24px] bg-gray-100 animate-pulse" />;
+  return <div className="h-36 rounded-[24px] bg-gray-100 animate-pulse" />;
 }
 
 const STAT_CONFIGS = [
@@ -114,7 +114,7 @@ const Profile: React.FC = () => {
           <div className="w-28 h-28 rounded-full bg-gray-100 animate-pulse" />
           <div className="h-7 w-36 rounded-xl bg-gray-100 animate-pulse" />
         </div>
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {[1, 2, 3, 4].map(i => <StatCardSkeleton key={i} />)}
         </div>
       </div>
@@ -203,14 +203,14 @@ const Profile: React.FC = () => {
           </div>
 
           {/* Stats — Big colorful icon cards */}
-          <div className="flex flex-wrap gap-4 mb-6">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             {STATS_DATA.map((stat, idx) => (
               <motion.div
                 key={stat.key}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ ...spring, delay: idx * 0.1 }}
-                className={`w-[calc(50%-8px)] rounded-[24px] bg-gradient-to-br ${stat.gradient} border-2 ${stat.border} p-5 flex flex-col items-center justify-center gap-2 shadow-md`}
+                className={`rounded-[24px] bg-gradient-to-br ${stat.gradient} border-2 ${stat.border} p-5 flex flex-col items-center justify-center gap-2 shadow-md`}
               >
                 <div className={`w-14 h-14 rounded-full ${stat.iconBg} flex items-center justify-center`}>
                   {stat.icon}

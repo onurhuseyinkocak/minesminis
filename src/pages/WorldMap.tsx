@@ -209,7 +209,7 @@ export default function WorldMap() {
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={gentleSpring}
-          className="px-5 pt-6 pb-2 flex items-end gap-3"
+          className="px-4 pt-6 pb-2 flex items-end gap-3"
         >
           <div className="shrink-0">
             <LottieCharacter
@@ -223,7 +223,7 @@ export default function WorldMap() {
         </motion.div>
 
         {/* Phase Buttons — big colorful horizontal scroll */}
-        <div className="px-5 pt-3 pb-2 overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+        <div className="px-4 pt-3 pb-2 overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
           <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
             {phases.map((phase) => (
               <PhaseButton
@@ -238,13 +238,13 @@ export default function WorldMap() {
         </div>
 
         {/* Unit Cards Grid — 2 columns, big chunky cards */}
-        <div className="px-5 pt-4 pb-8">
+        <div className="px-4 pt-4 pb-8">
           <motion.div
             key={activePhaseId}
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={gentleSpring}
-            className="grid grid-cols-2 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           >
             {activePhase.units.map((unit, idx) => (
               <KidUnitCard

@@ -11,7 +11,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 const spring = { type: 'spring' as const, stiffness: 300, damping: 24 };
 
 function BadgeSkeleton() {
-  return <div className="w-[calc(33.333%-8px)] aspect-square rounded-3xl bg-gray-100 animate-pulse" />;
+  return <div className="aspect-square rounded-3xl bg-gray-100 animate-pulse" />;
 }
 
 function getProgressHint(badge: Badge, stats: ReturnType<typeof useGamification>['stats'], _isTr: boolean): string | null {
@@ -63,7 +63,7 @@ const Achievements: React.FC = () => {
         </div>
       </div>
 
-      <div className="pt-4">
+      <div className="pt-4 px-4">
         {/* Progress bar */}
         <div className="mb-6">
           <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
@@ -81,7 +81,7 @@ const Achievements: React.FC = () => {
 
         {/* Badge grid */}
         {loading ? (
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4, 5, 6].map(i => <BadgeSkeleton key={i} />)}
           </div>
         ) : sortedBadges.length === 0 ? (
@@ -90,7 +90,7 @@ const Achievements: React.FC = () => {
             <p className="text-sm text-gray-500">{isTr ? 'Henuz rozet yok.' : 'No badges yet.'}</p>
           </div>
         ) : (
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {sortedBadges.map((badge, idx) => {
               const earned = hasBadge(badge.id);
               const hint = !earned ? getProgressHint(badge, stats, isTr) : null;
@@ -100,7 +100,7 @@ const Achievements: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ ...spring, delay: Math.min(idx * 0.04, 0.6) }}
-                  className={`w-[calc(33.333%-8px)] rounded-3xl p-3 flex flex-col items-center gap-1 border-2 ${
+                  className={`rounded-3xl p-3 flex flex-col items-center gap-1 border-2 ${
                     earned ? 'bg-white border-yellow-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-50'
                   }`}
                 >
