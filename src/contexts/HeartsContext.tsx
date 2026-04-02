@@ -129,7 +129,7 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     async function hydrateHearts() {
-      const userId = user?.id;
+      const userId = user?.uid;
 
       // 1. Try Supabase first if logged in
       if (userId) {
@@ -170,7 +170,7 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
     hydrateHearts();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount / user change
-  }, [user?.id]);
+  }, [user?.uid]);
 
   // Periodic regen check (every 60 seconds)
   useEffect(() => {
@@ -241,8 +241,8 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
         writeStorage(state);
 
         // Async sync to Supabase
-        if (user?.id) {
-          saveHeartsToSupabase(user.id, {
+        if (user?.uid) {
+          saveHeartsToSupabase(user.uid, {
             hearts: next,
             max_hearts: MAX_HEARTS,
             last_heart_lost_at: ts,
@@ -254,7 +254,7 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
 
       return next;
     });
-  }, [isPremium, user?.id]);
+  }, [isPremium, user?.uid]);
 
   const addHeart = useCallback((count: number = 1) => {
     if (isPremium) return;
@@ -274,8 +274,8 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
         writeStorage(state);
 
         // Async sync to Supabase
-        if (user?.id) {
-          saveHeartsToSupabase(user.id, {
+        if (user?.uid) {
+          saveHeartsToSupabase(user.uid, {
             hearts: next,
             max_hearts: MAX_HEARTS,
             last_heart_lost_at: newTs,
@@ -287,7 +287,7 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
 
       return next;
     });
-  }, [isPremium, user?.id]);
+  }, [isPremium, user?.uid]);
 
   const refillHearts = useCallback(() => {
     setHearts(MAX_HEARTS);
@@ -300,15 +300,15 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
     });
 
     // Async sync to Supabase
-    if (user?.id) {
-      saveHeartsToSupabase(user.id, {
+    if (user?.uid) {
+      saveHeartsToSupabase(user.uid, {
         hearts: MAX_HEARTS,
         max_hearts: MAX_HEARTS,
         last_heart_lost_at: null,
         is_unlimited: isPremium,
       });
     }
-  }, [isPremium, user?.id]);
+  }, [isPremium, user?.uid]);
 
   const getRegenTimeMs = useCallback((): number => {
     if (!lastHeartLostAt || hearts >= MAX_HEARTS) return 0;

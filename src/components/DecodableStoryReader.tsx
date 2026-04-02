@@ -393,7 +393,7 @@ export default function DecodableStoryReader({
 
       {/* Content */}
       {showQuiz ? (
-        <ComprehensionQuiz story={story} lang={lang} onDone={onComplete} userId={user?.id} />
+        <ComprehensionQuiz story={story} lang={lang} onDone={onComplete} userId={user?.uid} />
       ) : (
         currentScene && (
           <SceneView
