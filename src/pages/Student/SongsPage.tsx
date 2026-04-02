@@ -81,7 +81,7 @@ export default function SongsPage() {
     return (
       <div className="min-h-screen bg-white px-4 py-4">
         <div className="flex items-center gap-3 mb-4">
-          <button type="button" onClick={() => setActiveSong(null)} className="w-12 h-12 rounded-3xl bg-gray-100 flex items-center justify-center active:scale-95 transition-transform">
+          <button type="button" aria-label="Back" onClick={() => setActiveSong(null)} className="w-12 h-12 rounded-3xl bg-gray-100 flex items-center justify-center active:scale-95 transition-transform">
             <ArrowLeft size={18} className="text-gray-600" />
           </button>
           <div className="flex gap-2">

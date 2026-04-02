@@ -41,7 +41,7 @@ function WordsManager() {
     const [formData, setFormData] = useState<WordFormData>(INITIAL_FORM);
     const [deleteTarget, setDeleteTarget] = useState<KidsWord | null>(null);
 
-    // Load words from in-memory wordStore (words table doesn't exist in Supabase yet)
+    // Load words from in-memory wordStore (localStorage cache; CRUD goes through adminFetch API)
     useEffect(() => {
         setWords(wordStore.getWords());
         setWordsLoading(false);

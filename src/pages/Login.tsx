@@ -246,7 +246,7 @@ const Login: React.FC = () => {
               autoComplete={isLogin ? 'current-password' : 'new-password'}
               className="w-full min-h-[48px] pl-11 pr-12 bg-gray-50 rounded-2xl text-sm border border-gray-200 focus:border-orange-400 focus:outline-none"
             />
-            <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-8 h-8 flex items-center justify-center" onClick={() => setShowPassword(v => !v)}>
+            <button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-8 h-8 flex items-center justify-center" onClick={() => setShowPassword(v => !v)}>
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
@@ -286,7 +286,7 @@ const Login: React.FC = () => {
                   placeholder="********" required disabled={loading} minLength={8} autoComplete="new-password"
                   className="w-full min-h-[48px] pl-11 pr-12 bg-gray-50 rounded-2xl text-sm border border-gray-200 focus:border-orange-400 focus:outline-none"
                 />
-                <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-8 h-8 flex items-center justify-center" onClick={() => setShowConfirmPassword(v => !v)}>
+                <button type="button" aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-8 h-8 flex items-center justify-center" onClick={() => setShowConfirmPassword(v => !v)}>
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>

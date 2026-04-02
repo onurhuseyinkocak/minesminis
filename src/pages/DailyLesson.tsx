@@ -186,7 +186,7 @@ function PhaseSeeStep({ word, index, total, lang, onNext, onPrev }: { word: Kids
         </button>
       </div>
       <div className="flex gap-3 justify-center mt-4">
-        {index > 0 && <button type="button" onClick={onPrev} className="min-h-[56px] w-14 rounded-3xl bg-gray-200 text-gray-600 flex items-center justify-center"><ChevronLeft size={20} /></button>}
+        {index > 0 && <button type="button" aria-label="Previous" onClick={onPrev} className="min-h-[56px] w-14 rounded-3xl bg-gray-200 text-gray-600 flex items-center justify-center"><ChevronLeft size={20} /></button>}
         <button type="button" onClick={onNext} className="min-h-[56px] px-8 rounded-3xl bg-orange-500 text-white font-bold text-base flex items-center gap-2 shadow-md active:scale-95 transition-transform">
           {index < total - 1 ? <>{lang === 'tr' ? 'Ileri' : 'Next'} <ChevronRight size={20} /></> : <>{lang === 'tr' ? 'Tamam' : 'Done'} <Check size={20} /></>}
         </button>
@@ -410,7 +410,7 @@ function PhaseReview({ newWords, reviewWords, lang, onComplete }: { newWords: Ki
       <p className="text-sm text-gray-600 text-center mb-1">{q.prompt}</p>
       <div className="flex items-center justify-center gap-2 mb-3">
         <p className="text-2xl font-extrabold text-gray-900">{q.promptWord}</p>
-        {q.questionType === 'en-to-tr' && <button type="button" onClick={handleHearPrompt} className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><Volume2 size={18} className="text-gray-500" /></button>}
+        {q.questionType === 'en-to-tr' && <button type="button" aria-label="Hear word" onClick={handleHearPrompt} className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><Volume2 size={18} className="text-gray-500" /></button>}
       </div>
       <span className="block text-center text-xs text-gray-400 mb-3">{qIndex + 1}/{questions.length}</span>
       <div className="flex flex-col gap-2">

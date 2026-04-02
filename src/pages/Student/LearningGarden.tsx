@@ -82,7 +82,7 @@ function LearningGarden() {
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <button type="button" onClick={() => navigate('/dashboard')} className="w-12 h-12 rounded-3xl bg-white shadow-sm border border-gray-100 flex items-center justify-center">
+          <button type="button" aria-label="Back to dashboard" onClick={() => navigate('/dashboard')} className="w-12 h-12 rounded-3xl bg-white shadow-sm border border-gray-100 flex items-center justify-center">
             <ArrowLeft size={20} className="text-gray-600" />
           </button>
           <div className="flex-1">
@@ -185,7 +185,7 @@ function LearningGarden() {
               className="bg-white rounded-3xl p-6 max-w-xs w-full shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <button type="button" onClick={() => setSelectedPlant(null)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+              <button type="button" aria-label="Close" onClick={() => setSelectedPlant(null)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
                 <X size={14} className="text-gray-500" />
               </button>
 
