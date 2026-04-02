@@ -11,6 +11,7 @@ import { BookOpen, CheckCircle2, Sparkles, Star, Volume2 } from 'lucide-react';
 import { getStoriesForUser, type DecodableStory, type ScoredStory } from '../services/decodableStoryService';
 import DecodableStoryReader from '../components/DecodableStoryReader';
 import { useAuth } from '../contexts/AuthContext';
+import { getAgeGroupFromSettings, getAgeGroupConfig } from '../services/ageGroupService';
 import { motion } from 'framer-motion';
 
 // ─── Topic-based cover image URLs (children's illustration style) ────────────
@@ -68,14 +69,30 @@ export default function StoriesGrid() {
   const [activeDecodableStory, setActiveDecodableStory] = useState<DecodableStory | null>(null);
   const [selectedGroup, setSelectedGroup] = useState(0);
   const { lang } = useLanguage();
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const userId = user?.uid ?? 'guest';
+  const ageGroup = getAgeGroupFromSettings(userProfile?.settings as Record<string, unknown> | null | undefined);
   const scoredStories = useMemo(() => getStoriesForUser(userId), [userId]);
 
+  // Age-based max phonics group: younger children only see lower-group stories
+  const ageMaxGroup = useMemo(() => {
+    if (!ageGroup) return 99; // no age set — show all
+    const config = getAgeGroupConfig(ageGroup);
+    // maxDifficulty maps roughly to max phonics group for the age
+    return config.maxDifficulty + 1; // e.g. difficulty 2 → groups 1-3
+  }, [ageGroup]);
+
   const filtered = useMemo(() => {
-    if (selectedGroup === 0) return scoredStories;
-    return scoredStories.filter(s => s.story.phonicsGroup === selectedGroup);
-  }, [scoredStories, selectedGroup]);
+    let result = scoredStories;
+    // Filter by age group — only show stories whose phonics group is within range
+    if (ageMaxGroup < 99) {
+      result = result.filter(s => s.story.phonicsGroup <= ageMaxGroup);
+    }
+    if (selectedGroup !== 0) {
+      result = result.filter(s => s.story.phonicsGroup === selectedGroup);
+    }
+    return result;
+  }, [scoredStories, selectedGroup, ageMaxGroup]);
 
   // Full-screen reader
   if (activeDecodableStory) {

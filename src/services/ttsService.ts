@@ -344,6 +344,35 @@ async function _playUrl(
   }
 }
 
+// ─── Local WAV file lookup (PRIMARY method) ──────────────────────────────────
+
+/**
+ * Try to play a local WAV file from /audio/words/{word}.wav.
+ * Returns true if the file exists and playback started successfully.
+ */
+async function _tryLocalWav(text: string): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+  const key = text.toLowerCase().trim();
+  // Only attempt for single words (no spaces)
+  if (!key || /\s/.test(key)) return false;
+  // Skip phonics graphemes — they have their own path
+  if (PHONICS_GRAPHEMES.has(key)) return false;
+
+  const wavUrl = `/audio/words/${key}.wav`;
+  try {
+    const resp = await fetch(wavUrl, { method: 'HEAD' });
+    if (resp.ok) {
+      const audio = new Audio(wavUrl);
+      audio.playbackRate = 0.95;
+      await audio.play();
+      return true;
+    }
+  } catch {
+    // WAV not found — fall through
+  }
+  return false;
+}
+
 // ─── Core speak function ──────────────────────────────────────────────────────
 
 /**
@@ -377,17 +406,27 @@ export function speak(text: string, options?: TTSOptions): void {
 
   const trimmed = text.trim();
 
-  // Async: check Supabase cache, then fall back
-  lookupCache(trimmed).then((url) => {
-    if (url) {
-      _playUrl(url, options).then((played) => {
-        if (!played) {
-          _speakWebSpeech(trimmed, options);
-        }
-      });
-    } else {
-      _speakWebSpeech(trimmed, options);
+  // Priority 1: Try local WAV file
+  _tryLocalWav(trimmed).then((played) => {
+    if (played) {
+      options?.onEnd?.();
+      return;
     }
+    // Priority 2: Supabase cache / ElevenLabs
+    lookupCache(trimmed).then((url) => {
+      if (url) {
+        _playUrl(url, options).then((ok) => {
+          if (!ok) {
+            console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
+            _speakWebSpeech(trimmed, options);
+          }
+        });
+      } else {
+        // Priority 3 (last resort): browser TTS
+        console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
+        _speakWebSpeech(trimmed, options);
+      }
+    });
   });
 }
 
@@ -414,16 +453,27 @@ export async function playText(text: string, options?: TTSOptions): Promise<void
   _lastSpeakTime = now;
 
   const trimmed = text.trim();
-  const url = await lookupCache(trimmed);
 
+  // Priority 1: local WAV
+  const wavPlayed = await _tryLocalWav(trimmed);
+  if (wavPlayed) {
+    options?.onEnd?.();
+    return;
+  }
+
+  // Priority 2: Supabase cache / ElevenLabs
+  const url = await lookupCache(trimmed);
   if (url) {
     const played = await _playUrl(url, options);
     if (!played) {
+      console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
       _speakWebSpeech(trimmed, options);
     }
     return;
   }
 
+  // Priority 3 (last resort): browser TTS
+  console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
   _speakWebSpeech(trimmed, options);
 }
 
@@ -439,28 +489,36 @@ export function speakPhoneme(phoneme: string, options?: Pick<TTSOptions, 'onEnd'
 
   const clean = phoneme.trim().toLowerCase();
 
-  lookupCache(clean).then((url) => {
-    if (url) {
-      _playUrl(url, options).then((played) => {
-        if (!played) {
-          _speakWebSpeech(phoneme, {
-            lang: 'en-US',
-            rate: 0.5,
-            pitch: 1.1,
-            volume: 1,
-            ...options,
-          });
-        }
-      });
-    } else {
-      _speakWebSpeech(phoneme, {
-        lang: 'en-US',
-        rate: 0.5,
-        pitch: 1.1,
-        volume: 1,
-        ...options,
-      });
+  _tryLocalWav(clean).then((wavPlayed) => {
+    if (wavPlayed) {
+      options?.onEnd?.();
+      return;
     }
+    lookupCache(clean).then((url) => {
+      if (url) {
+        _playUrl(url, options).then((played) => {
+          if (!played) {
+            console.warn('[TTS] Falling back to browser speechSynthesis for phoneme:', clean);
+            _speakWebSpeech(phoneme, {
+              lang: 'en-US',
+              rate: 0.5,
+              pitch: 1.1,
+              volume: 1,
+              ...options,
+            });
+          }
+        });
+      } else {
+        console.warn('[TTS] Falling back to browser speechSynthesis for phoneme:', clean);
+        _speakWebSpeech(phoneme, {
+          lang: 'en-US',
+          rate: 0.5,
+          pitch: 1.1,
+          volume: 1,
+          ...options,
+        });
+      }
+    });
   });
 }
 
@@ -527,14 +585,23 @@ export async function narrateText(text: string): Promise<void> {
   const trimmed = text.trim();
   if (!trimmed) return;
 
+  // Priority 1: local WAV
+  const wavPlayed = await _tryLocalWav(trimmed);
+  if (wavPlayed) return;
+
+  // Priority 2: Supabase cache
   const url = await lookupCache(trimmed);
   if (url) {
     const played = await _playUrl(url);
     if (!played) {
+      console.warn('[TTS] Falling back to browser speechSynthesis for narration:', trimmed);
       _speakWebSpeech(trimmed, { lang: 'en-US', rate: 0.8, pitch: 1.0, volume: 1 });
     }
     return;
   }
+
+  // Priority 3 (last resort): browser TTS
+  console.warn('[TTS] Falling back to browser speechSynthesis for narration:', trimmed);
   _speakWebSpeech(trimmed, { lang: 'en-US', rate: 0.8, pitch: 1.0, volume: 1 });
 }
 

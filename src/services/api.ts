@@ -41,6 +41,7 @@ export interface Word {
   phonics_group?: number;
   is_sight_word?: boolean;
   is_decodable?: boolean;
+  age_group_min?: number;
   created_at: string;
 }
 
@@ -120,6 +121,7 @@ export interface DecodableStory {
   scenes: unknown[];
   phonics_group?: number;
   topic?: string;
+  age_group_min?: number;
   status: string;
   created_at: string;
   updated_at: string;
@@ -156,6 +158,7 @@ export interface Exercise {
   phonics_group: number;
   image_url: string | null;
   audio_url: string | null;
+  age_group_min?: number;
   created_at: string;
 }
 
@@ -537,12 +540,13 @@ export const api = {
 
   words: {
     /** Fetch all words with optional filters */
-    async getAll(filters?: { group?: number; level?: string; category?: string }): Promise<Word[]> {
+    async getAll(filters?: { group?: number; level?: string; category?: string; ageGroup?: number }): Promise<Word[]> {
       try {
         let query = supabase.from('words').select('*');
         if (filters?.level) query = query.eq('level', filters.level);
         if (filters?.category) query = query.eq('category', filters.category);
         if (filters?.group) query = query.eq('phonics_group', filters.group);
+        if (filters?.ageGroup) query = query.lte('age_group_min', filters.ageGroup);
         const { data, error } = await query.order('word', { ascending: true });
         if (error) throw error;
         return (data as Word[]) ?? [];
@@ -721,11 +725,12 @@ export const api = {
 
   stories: {
     /** Fetch decodable stories with optional filters */
-    async getDecodable(filters?: { group?: number; topic?: string }): Promise<DecodableStory[]> {
+    async getDecodable(filters?: { group?: number; topic?: string; ageGroup?: number }): Promise<DecodableStory[]> {
       try {
         let query = supabase.from('stories').select('*');
         if (filters?.group) query = query.eq('phonics_group', filters.group);
         if (filters?.topic) query = query.eq('topic', filters.topic);
+        if (filters?.ageGroup) query = query.lte('age_group_min', filters.ageGroup);
         const { data, error } = await query.order('created_at', { ascending: false });
         if (error) throw error;
         return (data as DecodableStory[]) ?? [];
@@ -784,13 +789,13 @@ export const api = {
   },
 
   exercises: {
-    /** Fetch exercises by type with optional group/difficulty filters */
-    async getByType(type: string, filters?: { group?: number; difficulty?: number }): Promise<Exercise[]> {
+    /** Fetch exercises by type with optional group/difficulty/age filters */
+    async getByType(type: string, filters?: { group?: number; difficulty?: number; ageGroup?: number }): Promise<Exercise[]> {
       try {
-        // TODO: populate with real table name
         let query = supabase.from('exercises').select('*').eq('type', type);
         if (filters?.group) query = query.eq('phonics_group', filters.group);
         if (filters?.difficulty) query = query.eq('difficulty', filters.difficulty);
+        if (filters?.ageGroup) query = query.lte('age_group_min', filters.ageGroup);
         const { data, error } = await query.order('difficulty', { ascending: true });
         if (error) throw error;
         return (data as Exercise[]) ?? [];
