@@ -484,7 +484,7 @@ export const DIALOGUE_EXERCISES: DialogueExercise[] = [
         options: [
           { id: 'g', text: 'My best friend is Sam!', textTr: 'En iyi arkadaşım Sam!', correct: true, feedback: 'Sam is lucky to have you!' },
           { id: 'h', text: 'My best friend is Lily!', textTr: 'En iyi arkadaşım Lily!', correct: false },
-          { id: 'i', text: 'I play with everyone!', textTr: 'Herkesin ile oynarım!', correct: false },
+          { id: 'i', text: 'I play with everyone!', textTr: 'Herkesle oynarım!', correct: false },
         ],
       },
       {
