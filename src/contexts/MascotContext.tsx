@@ -102,12 +102,14 @@ export interface MascotContextValue {
 const MascotContext = createContext<MascotContextValue | null>(null);
 
 const CORRECT_MSGS = [
-  'Harika! ⭐', 'Mükemmel!', 'Süpersin! 🎉', 'Bravo!',
-  'İşte bu!', 'Aferin sana!', 'Tam isabet!',
+  'Vay canina!', 'Sen bir dahisin!', 'Muthis!', 'Tam isabet!',
+  'Cok iyi bildin!', 'Boyle devam!', 'Harika!', 'Supersin!',
+  'Bravo sana!', 'Iste bu!', 'Aferin sana!', 'Mukemmel!',
 ];
 const WRONG_MSGS = [
-  'Neredeyse!', 'Tekrar dene!', 'Sen yapabilirsin!',
-  'Az kaldı!', 'Bir daha dene!', 'Devam et!',
+  'Olsun, tekrar dene!', 'Neredeyse biliyordun!', 'Bir daha bakalim!',
+  'Bu sefer olmadi ama olacak!', 'Az kaldi!', 'Sen yapabilirsin!',
+  'Pes etme!', 'Bir sonrakinde bileceksin!',
 ];
 function pick(arr: string[]) { return arr[Math.floor(Math.random() * arr.length)]; }
 

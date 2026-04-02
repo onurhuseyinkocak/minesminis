@@ -223,12 +223,15 @@ const Words: React.FC = () => {
                           transition={{ ...spring, delay: Math.min(idx * 0.04, 0.5) }}
                           onClick={() => { playWordAudio(word); setActiveWord(word); }}
                           className={`
-                            relative aspect-square rounded-3xl
+                            relative aspect-square rounded-3xl word-card
                             flex flex-col items-center justify-center gap-1 p-3
                             border-2 shadow-sm active:scale-95 transition-transform
-                            ${isLearned ? 'border-green-300 bg-green-50' : 'border-gray-100 bg-white'}
+                            ${isLearned ? 'golden-glow bg-amber-50' : 'border-gray-100 bg-white'}
                           `}
                         >
+                          {!isLearned && idx < 3 && (
+                            <span className="new-badge">NEW</span>
+                          )}
                           {word.image_url ? (
                             <img
                               src={getCardThumbnailUrl(word.image_url) ?? word.image_url ?? ''}

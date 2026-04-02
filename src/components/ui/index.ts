@@ -29,7 +29,22 @@ export type { EmptyStateProps } from './EmptyState';
 export { Tabs } from './Tabs';
 export type { TabsProps, TabItem, TabsVariant } from './Tabs';
 
-export { StarBurst, ConfettiRain, FloatingEmoji, StreakFlame, XPPop, PerfectBadge } from './Celebrations';
+export {
+  StarBurst,
+  ConfettiRain,
+  StreakFlame,
+  XPPopup,
+  AnswerFeedback,
+  ComboCounter,
+  useCelebrations,
+  // Legacy (backward compat)
+  FloatingEmoji,
+  XPPop,
+  PerfectBadge,
+} from './Celebrations';
+
+export { useSoundEffects } from './SoundEffects';
+export type { SoundEffects } from './SoundEffects';
 
 export { LottieIcon } from './LottieIcon';
 export type { LottieIconProps, LottieIconName } from './LottieIcon';

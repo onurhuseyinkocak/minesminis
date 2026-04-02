@@ -484,7 +484,7 @@ function Games() {
           <button
             type="button"
             onClick={handleStartDailyPractice}
-            className="kid-pulse w-full rounded-[28px] py-5 px-6 bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white font-black text-2xl tracking-wide flex items-center justify-center gap-4 active:scale-[0.96] transition-transform border-4 border-white/30"
+            className="kid-pulse pulse-btn w-full rounded-[28px] py-5 px-6 bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white font-black text-2xl tracking-wide flex items-center justify-center gap-4 active:scale-[0.96] transition-transform border-4 border-white/30"
           >
             <Play size={36} fill="white" className="text-white shrink-0" />
             <span>{isTr ? 'OYNA!' : 'PLAY!'}</span>
@@ -524,7 +524,7 @@ function Games() {
                   whileTap={{ scale: 0.92 }}
                   onClick={() => handlePlaySingle(game)}
                   aria-label={isTr ? game.nameTr : game.name}
-                  className={`rounded-[28px] flex flex-col items-center justify-center text-white shadow-lg cursor-pointer bg-gradient-to-br ${CARD_GRADIENTS[i % CARD_GRADIENTS.length]} border-4 border-white/20`}
+                  className={`rounded-[28px] flex flex-col items-center justify-center text-white shadow-lg cursor-pointer bg-gradient-to-br ${CARD_GRADIENTS[i % CARD_GRADIENTS.length]} border-4 border-white/20 game-card`}
                   style={{ minHeight: 140, padding: 16 }}
                 >
                   <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-2">

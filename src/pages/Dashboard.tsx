@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import {
   Gamepad2, Globe, BookOpen, Music,
   Play, Flame, Star, Trophy, Sparkles,
+  Sun, Sunset, Moon,
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -78,6 +79,17 @@ function getDailyGreeting(lang: Lang): string {
   return list[dayIndex % list.length];
 }
 
+function getTimeOfDayGreeting(lang: Lang): { text: string; Icon: typeof Sun } {
+  const hour = new Date().getHours();
+  if (hour < 12) {
+    return { text: lang === 'tr' ? 'Gunaydin' : 'Good Morning', Icon: Sun };
+  } else if (hour < 18) {
+    return { text: lang === 'tr' ? 'Iyi gunler' : 'Good Afternoon', Icon: Sunset };
+  } else {
+    return { text: lang === 'tr' ? 'Iyi aksamlar' : 'Good Evening', Icon: Moon };
+  }
+}
+
 // ─── Sparkle Decoration ─────────────────────────────────────────────────────
 
 function SparkleDecor({ className = '' }: { className?: string }) {
@@ -103,6 +115,8 @@ export default function Dashboard() {
   const userId = user?.uid || 'guest';
   const lessonDone = useMemo(() => isDailyLessonCompletedToday(userId), [userId]);
   const greeting = useMemo(() => getDailyGreeting(l), [l]);
+  const timeGreeting = useMemo(() => getTimeOfDayGreeting(l), [l]);
+  const TimeIcon = timeGreeting.Icon;
 
   // ─── Loading Skeleton ───────────────────────────────────────────────────
 
@@ -134,8 +148,11 @@ export default function Dashboard() {
       >
         {/* ═══ GREETING ═══ */}
         <motion.div variants={pop} className="px-1">
-          <p className="font-display font-bold text-lg text-slate-600">
-            {tx(l, 'Merhaba', 'Hello')},
+          <p className="font-display font-bold text-lg text-slate-600 flex items-center gap-1">
+            <span className="greeting-icon">
+              <TimeIcon size={20} className="text-amber-500" />
+            </span>
+            {timeGreeting.text},
           </p>
           <h1 className="font-display font-black text-2xl text-slate-900">
             {displayName}!
@@ -220,7 +237,7 @@ export default function Dashboard() {
                     relative overflow-hidden rounded-[24px] min-h-[140px]
                     bg-gradient-to-br ${action.gradient}
                     flex flex-col items-center justify-center gap-3
-                    shadow-md kid-btn kid-wobble
+                    shadow-md kid-btn kid-wobble action-card
                   `}>
                     {/* Sparkle decorations */}
                     <SparkleDecor className="top-3 right-3" />
@@ -245,7 +262,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-center gap-6 bg-white rounded-[20px] px-6 py-4 shadow-sm border-2 border-orange-100">
             {/* Streak */}
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-sm">
+              <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-sm ${stats.streakDays > 0 ? 'flame-pulse' : ''}`}>
                 <Flame size={20} className="text-white" />
               </div>
               <div>

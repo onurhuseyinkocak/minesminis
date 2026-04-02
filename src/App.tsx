@@ -33,6 +33,7 @@ import { validateCurriculumData } from "./utils/dataValidation";
 import { LS_DAILY_TIME_LIMIT } from "./config/storageKeys";
 import { initTTS } from "./services/ttsService";
 import "./App.css";
+import "./styles/animations.css";
 
 // Initialize error logging
 errorLogger.init();

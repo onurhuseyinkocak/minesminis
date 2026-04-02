@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gamepad2, ArrowLeft } from 'lucide-react';
 import LottieCharacter from '../LottieCharacter';
 import { useLanguage } from '../../contexts/LanguageContext';
+import {
+  StarBurst,
+  ConfettiRain,
+  StreakFlame,
+  XPPopup,
+  AnswerFeedback,
+  ComboCounter,
+  useCelebrations,
+} from '../ui/Celebrations';
+import { useSoundEffects } from '../ui/SoundEffects';
 
 // ── Type Definitions ─────────────────────────────────────────────────────────
 
@@ -428,6 +438,53 @@ export interface GameSelectorProps extends GameProps {
 
 export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ageGroup, ...props }: GameSelectorProps) {
   useLanguage(); // context subscription for re-renders on language change
+
+  // ── Celebration & Sound systems ──
+  const { state: celebState, triggerCorrect, triggerWrong, triggerComplete, reset: resetCelebrations } = useCelebrations();
+  const sound = useSoundEffects();
+
+  // Track streak milestones so we only fire streak sounds at 3, 5, 10
+  const lastStreakMilestone = useRef(0);
+
+  // Wrapped handlers that trigger celebrations
+  const handleXpEarned = useCallback(
+    (xp: number) => {
+      triggerCorrect(xp);
+      sound.playCorrect();
+      sound.playXP();
+      props.onXpEarned?.(xp);
+    },
+    [triggerCorrect, sound, props.onXpEarned],
+  );
+
+  const handleWrongAnswer = useCallback(() => {
+    triggerWrong();
+    sound.playWrong();
+    props.onWrongAnswer?.();
+  }, [triggerWrong, sound, props.onWrongAnswer]);
+
+  const handleComplete = useCallback(
+    (score: number, totalPossible: number) => {
+      triggerComplete();
+      sound.playComplete();
+      props.onComplete(score, totalPossible);
+    },
+    [triggerComplete, sound, props.onComplete],
+  );
+
+  // Check for streak milestones and play streak sound
+  const currentStreak = celebState.streak;
+  if (currentStreak >= 3 && currentStreak !== lastStreakMilestone.current) {
+    if (currentStreak === 3 || currentStreak === 5 || currentStreak === 10) {
+      lastStreakMilestone.current = currentStreak;
+      // Play streak sound in next microtask to avoid calling during render
+      Promise.resolve().then(() => sound.playStreak());
+    }
+  }
+  if (currentStreak === 0) {
+    lastStreakMilestone.current = 0;
+  }
+
   const normalizedType = GAME_TYPE_MAP[type];
 
   // Unknown game type — show kid-friendly "not found" screen
@@ -448,11 +505,40 @@ export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ageGroup
 
   // For specialized games, pass extra props; for standard games, pass words-based props
   const gameProps: GameComponentProps = SPECIALIZED_GAME_TYPES.has(normalizedType)
-    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, onXpEarned: props.onXpEarned, difficultyMultiplier, ageGroup, ...extra }
-    : { ...props, difficultyMultiplier, ageGroup };
+    ? {
+        onComplete: handleComplete,
+        onWrongAnswer: handleWrongAnswer,
+        onXpEarned: handleXpEarned,
+        difficultyMultiplier,
+        ageGroup,
+        ...extra,
+      }
+    : {
+        ...props,
+        onComplete: handleComplete,
+        onWrongAnswer: handleWrongAnswer,
+        onXpEarned: handleXpEarned,
+        difficultyMultiplier,
+        ageGroup,
+      };
 
   return (
-    <GameErrorBoundary>
+    <GameErrorBoundary onReset={resetCelebrations}>
+      {/* ── Celebration overlay layer ── */}
+      <StarBurst show={celebState.showStarBurst} />
+      <ConfettiRain show={celebState.showConfetti} />
+      <XPPopup amount={celebState.xpAmount} show={celebState.showXP} />
+      {celebState.feedbackType && (
+        <AnswerFeedback type={celebState.feedbackType} show={celebState.showFeedback} />
+      )}
+      {currentStreak >= 2 && (
+        <div style={{ position: 'fixed', top: 16, left: 16, zIndex: 9990, pointerEvents: 'none' }}>
+          <StreakFlame streak={currentStreak} />
+        </div>
+      )}
+      <ComboCounter count={celebState.combo} />
+
+      {/* ── Game content ── */}
       <React.Suspense fallback={<GameLoadingSkeleton />}>
         <AnimatePresence mode="wait">
           <motion.div
