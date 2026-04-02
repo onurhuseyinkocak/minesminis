@@ -499,6 +499,15 @@ export function completeDailyLesson(
     // ignore
   }
 
+  // Clean up old daily lesson keys (keep last 7 days)
+  const today = new Date();
+  for (let i = 30; i > 7; i--) {
+    const old = new Date(today);
+    old.setDate(old.getDate() - i);
+    const key = `mm_daily_${userId}_${localDateStr(old)}`;
+    localStorage.removeItem(key);
+  }
+
   // Mark new words as learned
   plan.newWords.forEach((w) => markWordLearned(userId, w.word.toLowerCase()));
 

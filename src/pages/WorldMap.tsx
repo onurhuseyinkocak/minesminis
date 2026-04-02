@@ -231,6 +231,22 @@ export default function WorldMap() {
 
   const isTr = lang === 'tr';
 
+  if (phases.length === 0) {
+    return (
+      <div className="kid-bg kid-bubbles pb-24 flex flex-col items-center justify-center" style={{ minHeight: 'calc(100dvh - 64px)' }}>
+        <p className="text-lg font-bold text-gray-500">{isTr ? 'Henuz icerik yok.' : 'No content available yet.'}</p>
+      </div>
+    );
+  }
+
+  if (!activePhase) {
+    return (
+      <div className="kid-bg kid-bubbles pb-24 flex flex-col items-center justify-center" style={{ minHeight: 'calc(100dvh - 64px)' }}>
+        <p className="text-lg font-bold text-gray-500">{isTr ? 'Yukleniyor...' : 'Loading...'}</p>
+      </div>
+    );
+  }
+
   if (!isReady) {
     return (
       <div className="kid-bg kid-bubbles pb-24" style={{ minHeight: 'calc(100dvh - 64px)' }}>

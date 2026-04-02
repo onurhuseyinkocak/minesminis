@@ -308,12 +308,11 @@ export default function DecodableStoryReader({
   const goPrev = useCallback(() => {
     if (showQuiz) {
       setShowQuiz(false);
-    } else if (sceneIndex === 0) {
-      onComplete();
-    } else {
+    } else if (sceneIndex > 0) {
       setSceneIndex(prev => prev - 1);
     }
-  }, [showQuiz, sceneIndex, onComplete]);
+    // At scene 0, do nothing — back button is disabled in the nav
+  }, [showQuiz, sceneIndex]);
 
   const currentScene = story.scenes[sceneIndex];
 

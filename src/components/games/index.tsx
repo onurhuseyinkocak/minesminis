@@ -448,7 +448,7 @@ export function GameSelector({ type, extra, difficultyMultiplier = 1.0, ageGroup
 
   // For specialized games, pass extra props; for standard games, pass words-based props
   const gameProps: GameComponentProps = SPECIALIZED_GAME_TYPES.has(normalizedType)
-    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, difficultyMultiplier, ageGroup, ...extra }
+    ? { onComplete: props.onComplete, onWrongAnswer: props.onWrongAnswer, onXpEarned: props.onXpEarned, difficultyMultiplier, ageGroup, ...extra }
     : { ...props, difficultyMultiplier, ageGroup };
 
   return (

@@ -138,8 +138,10 @@ function MontessoriNav({ phases, currentPhase, completedPhases, onSelectPhase }:
 
 function PhaseListenStep({ word, index, total, lang, onNext }: { word: KidsWord; index: number; total: number; lang: string; onNext: () => void }) {
   const [entering, setEntering] = useState(true);
-  useEffect(() => { setEntering(true); speak(word.word); const t = setTimeout(() => setEntering(false), 400); return () => clearTimeout(t); }, [word.word]);
-  const handleTap = useCallback(() => { speak(word.word); }, [word.word]);
+  useEffect(() => { if (!word) return; setEntering(true); speak(word.word); const t = setTimeout(() => setEntering(false), 400); return () => clearTimeout(t); }, [word?.word]);
+  const handleTap = useCallback(() => { if (word) speak(word.word); }, [word?.word]);
+
+  if (!word) return <div className="flex items-center justify-center p-8 text-gray-400">{lang === 'tr' ? 'Yukleniyor...' : 'Loading...'}</div>;
 
   return (
     <>
@@ -164,9 +166,11 @@ function PhaseListenStep({ word, index, total, lang, onNext }: { word: KidsWord;
 // ─── Phase 2: SEE ─────────────────────────────────────────────────────────────
 
 function PhaseSeeStep({ word, index, total, lang, onNext, onPrev }: { word: KidsWord; index: number; total: number; lang: string; onNext: () => void; onPrev: () => void }) {
-  const sentence = getSentence(word);
-  const parts = sentence.en.split(sentence.highlight);
-  useEffect(() => { speak(sentence.en); }, [word.word]); // eslint-disable-line react-hooks/exhaustive-deps
+  const sentence = word ? getSentence(word) : null;
+  const parts = sentence ? sentence.en.split(sentence.highlight) : [];
+  useEffect(() => { if (sentence) speak(sentence.en); }, [word?.word]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!word || !sentence) return <div className="flex items-center justify-center p-8 text-gray-400">{lang === 'tr' ? 'Yukleniyor...' : 'Loading...'}</div>;
 
   return (
     <>
@@ -509,8 +513,18 @@ export default function DailyLesson() {
   const [plan] = useState<DailyLessonPlan>(() => getTodayLesson(userId, ageGroup));
   const [homeworkWords] = useState<KidsWord[]>(() => getHomeworkWords(userId));
   const [todaySound] = useState(() => getTodayPhonicsSound(userId));
+  const todayKey = `mm_daily_phases_${new Date().toISOString().slice(0, 10)}`;
   const [phase, setPhase] = useState(1);
-  const [completedPhases, setCompletedPhases] = useState<Set<number>>(new Set());
+  const [completedPhases, setCompletedPhases] = useState<Set<number>>(() => {
+    try {
+      const saved = localStorage.getItem(todayKey);
+      if (saved) {
+        const arr = JSON.parse(saved) as number[];
+        return new Set(arr);
+      }
+    } catch { /* ignore */ }
+    return new Set();
+  });
   const [listenIndex, setListenIndex] = useState(0);
   const [seeIndex, setSeeIndex] = useState(0);
   const [, setPhaseProgress] = useState<Record<number, number>>({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 });
@@ -518,7 +532,7 @@ export default function DailyLesson() {
   const scoresRef = useRef<Record<number, number>>({ 3: 0, 4: 0, 5: 0 });
   const PHASES = lang === 'tr' ? PHASES_TR : PHASES_EN;
 
-  const markPhaseComplete = useCallback((phaseId: number) => { setCompletedPhases((prev) => { const next = new Set(prev); next.add(phaseId); return next; }); }, []);
+  const markPhaseComplete = useCallback((phaseId: number) => { setCompletedPhases((prev) => { const next = new Set(prev); next.add(phaseId); try { localStorage.setItem(todayKey, JSON.stringify([...next])); } catch { /* ignore */ } return next; }); }, [todayKey]);
   const handleSelectPhase = useCallback((phaseId: number) => { if (phaseId === 1) setListenIndex(0); if (phaseId === 2) setSeeIndex(0); setPhase(phaseId); }, []);
 
   const handleListenNext = useCallback(() => {
@@ -607,7 +621,18 @@ export default function DailyLesson() {
         )}
 
         {phase === 1 && plan.newWords.length > 0 && plan.newWords[listenIndex] && <PhaseListenStep word={plan.newWords[listenIndex]} index={listenIndex} total={plan.newWords.length} lang={lang} onNext={handleListenNext} />}
-        {phase === 1 && plan.newWords.length === 0 && <p className="text-center text-gray-500 py-8">{lang === 'tr' ? 'Bugun yeni kelime yok.' : 'No new words today.'}</p>}
+        {phase === 1 && plan.newWords.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-gray-500 mb-4">{lang === 'tr' ? 'Bugun yeni kelime yok.' : 'No new words today.'}</p>
+            <button
+              type="button"
+              onClick={() => { markPhaseComplete(1); setPhase(2); }}
+              className="px-6 py-3 rounded-2xl bg-orange-500 text-white font-bold text-base active:scale-95 transition-transform"
+            >
+              {lang === 'tr' ? 'Devam Et' : 'Continue'}
+            </button>
+          </div>
+        )}
         {phase === 2 && plan.newWords.length > 0 && plan.newWords[seeIndex] && <PhaseSeeStep word={plan.newWords[seeIndex]} index={seeIndex} total={plan.newWords.length} lang={lang} onNext={handleSeeNext} onPrev={handleSeePrev} />}
         {phase === 3 && <PhasePlay words={plan.newWords} lang={lang} onComplete={handlePhase3Complete} />}
         {phase === 4 && <PhaseSpeak words={plan.newWords.slice(0, 3)} lang={lang} onComplete={handlePhase4Complete} />}

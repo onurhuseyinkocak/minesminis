@@ -186,6 +186,14 @@ function PhonicsLesson() {
   );
 
   const renderBreak = () => {
+    if (segmentingWords.length === 0) {
+      return (
+        <motion.div key="break-empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-4 py-8">
+          <Target size={48} className="text-emerald-600" /><h3 className="text-lg font-bold text-gray-900">{isTr ? 'Harika!' : 'Great job!'}</h3>
+          <Button variant="secondary" size="lg" icon={<ArrowRight size={18} />} onClick={goNext}>{isTr ? 'Devam Et' : 'Continue'}</Button>
+        </motion.div>
+      );
+    }
     const currentWord = segmentingWords[segmentingIndex] || segmentingWords[0];
     const currentSounds = currentWord ? splitToSounds(currentWord) : [];
     const allDone = segmentingIndex >= segmentingWords.length;

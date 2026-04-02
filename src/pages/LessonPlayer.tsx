@@ -246,16 +246,6 @@ const LessonPlayer = () => {
   const handleBack = useCallback(() => { if (currentIndex > 0) { setDirection(-1); setActivityScores((prev) => prev.slice(0, currentIndex - 1)); setCurrentIndex((prev) => prev - 1); } }, [currentIndex]);
   const handleRestart = useCallback(() => { setCurrentIndex(0); setDirection(-1); setCompleted(false); setActivityScores([]); setHearts(INITIAL_HEARTS); setGameOver(false); setHeartLostIndex(null); }, []);
 
-  // Free tier gate
-  if (!isPremium() && maxLessonsPerDay !== Infinity && getTodayCompletedLessonCount() >= maxLessonsPerDay) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4">
-        <Paywall feature={lang === 'tr' ? 'Sinirsiz Ders' : 'Unlimited Lessons'} />
-        <button type="button" onClick={() => navigate(-1)} className="mt-4 min-h-[48px] px-6 rounded-3xl border border-gray-200 text-gray-500 text-sm font-bold">{lang === 'tr' ? 'Geri Don' : 'Go Back'}</button>
-      </div>
-    );
-  }
-
   const [showNotFound, setShowNotFound] = useState(false);
 
   useEffect(() => {
@@ -265,6 +255,16 @@ const LessonPlayer = () => {
     }
     setShowNotFound(false);
   }, [lesson]);
+
+  // Free tier gate
+  if (!isPremium() && maxLessonsPerDay !== Infinity && getTodayCompletedLessonCount() >= maxLessonsPerDay) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4">
+        <Paywall feature={lang === 'tr' ? 'Sinirsiz Ders' : 'Unlimited Lessons'} />
+        <button type="button" onClick={() => navigate(-1)} className="mt-4 min-h-[48px] px-6 rounded-3xl border border-gray-200 text-gray-500 text-sm font-bold">{lang === 'tr' ? 'Geri Don' : 'Go Back'}</button>
+      </div>
+    );
+  }
 
   if (!lesson) {
     if (!showNotFound) {

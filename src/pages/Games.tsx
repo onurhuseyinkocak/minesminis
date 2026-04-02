@@ -110,38 +110,47 @@ const springBounce = { type: 'spring' as const, stiffness: 300, damping: 20 };
 function getExtraPropsForGame(gameType: string): Record<string, unknown> | undefined {
   switch (gameType) {
     case 'dialogue': {
+      if (DIALOGUE_EXERCISES.length === 0) return undefined;
       const idx = Math.floor(Math.random() * DIALOGUE_EXERCISES.length);
       return { lines: DIALOGUE_EXERCISES[idx].lines };
     }
     case 'image-label': {
+      if (IMAGE_LABEL_QUESTIONS.length === 0) return undefined;
       const shuffled = [...IMAGE_LABEL_QUESTIONS].sort(() => Math.random() - 0.5);
       return { questions: shuffled.slice(0, 6) };
     }
     case 'say-it': {
+      if (sayItExercises.length === 0) return undefined;
       const shuffled = [...sayItExercises].sort(() => Math.random() - 0.5);
       return { questions: shuffled.slice(0, 6) };
     }
     case 'phonics-blend': {
+      if (phonicsBlendExercises.length === 0) return undefined;
       const shuffled = [...phonicsBlendExercises].sort(() => Math.random() - 0.5);
       return { questions: shuffled.slice(0, 6) };
     }
     case 'phoneme-manipulation': {
+      if (phonemeManipulationExercises.length === 0) return undefined;
       const shuffled = [...phonemeManipulationExercises].sort(() => Math.random() - 0.5);
       return { questions: shuffled.slice(0, 8) };
     }
     case 'syllable': {
+      if (SYLLABLE_EXERCISES.length === 0) return undefined;
       const shuffled = [...SYLLABLE_EXERCISES].sort(() => Math.random() - 0.5);
       return { questions: shuffled.slice(0, 8) };
     }
     case 'word-family': {
+      if (WORD_FAMILIES.length === 0) return undefined;
       const shuffled = [...WORD_FAMILIES].sort(() => Math.random() - 0.5);
       return { families: shuffled.slice(0, 5) };
     }
     case 'rhyme': {
+      if (RHYME_EXERCISES.length === 0) return undefined;
       const shuffled = [...RHYME_EXERCISES].sort(() => Math.random() - 0.5);
       return { questions: shuffled.slice(0, 8) };
     }
     case 'phonetic-trap': {
+      if (PHONETIC_TRAPS.length === 0) return undefined;
       const idx = Math.floor(Math.random() * PHONETIC_TRAPS.length);
       return { trap: PHONETIC_TRAPS[idx] };
     }
@@ -192,7 +201,7 @@ function GamesSkeleton() {
 function Games() {
   usePageTitle('Oyunlar', 'Games');
 
-  const { stats, addXP } = useGamification();
+  const { stats, addXP, trackActivity } = useGamification();
   const { lang } = useLanguage();
   const { user, userProfile } = useAuth();
   const { loseHeart } = useHearts();
@@ -301,6 +310,7 @@ function Games() {
       if (playingGame) {
         reportToAdaptive(playingGame);
         saveBestScore(playingGame.type, score);
+        trackActivity('game_played').catch(() => {});
         setScoreVersion((v) => v + 1);
         toast.success(isTr ? `Harika! ${score}/${total}` : `Great job! ${score}/${total}`);
         setPlayingGame(null);
@@ -316,6 +326,7 @@ function Games() {
 
         if (nextIndex >= dailySession.games.length) {
           saveBestScore(currentGame.type, score);
+          trackActivity('game_played').catch(() => {});
           const streak = recordDailyPractice();
           setDailyStreak(streak);
           setScoreVersion((v) => v + 1);
@@ -325,6 +336,7 @@ function Games() {
           setGameExtra(undefined);
         } else {
           saveBestScore(currentGame.type, score);
+          trackActivity('game_played').catch(() => {});
           setScoreVersion((v) => v + 1);
           setGameWords(getGameWords(ageGroup));
           setGameExtra(getExtraPropsForGame(dailySession.games[nextIndex].type));
@@ -336,7 +348,7 @@ function Games() {
         }
       }
     },
-    [playingGame, dailySession, isTr],
+    [playingGame, dailySession, isTr, trackActivity],
   );
 
   const handleExitGame = useCallback(() => {

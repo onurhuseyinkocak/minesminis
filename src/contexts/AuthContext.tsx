@@ -33,7 +33,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
-  signInWithGoogleRedirect: () => Promise<void>;
+  signInWithGoogleRedirect: () => Promise<{ error: unknown } | void>;
   signOut: () => Promise<void>;
 }
 
@@ -95,7 +95,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signInWithGoogleRedirect = useCallback(async () => {
-    await signInWithRedirect(auth, googleProvider);
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    } catch (err) {
+      return { error: err };
+    }
   }, []);
 
   const signOut = useCallback(async () => {

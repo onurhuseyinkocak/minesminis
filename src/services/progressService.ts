@@ -6,6 +6,7 @@
 
 import { supabase } from '../config/supabase';
 import type { ActivityResult, SyncEvent } from '../types/progress';
+import { syncCurriculumProgress, syncCurrentUnit } from './supabaseSync';
 
 // ── Storage Keys (backward compatible) ──────────────────────
 const KEYS = {
@@ -46,7 +47,7 @@ function enqueueSyncEvent(event: Omit<SyncEvent, 'id' | 'timestamp' | 'retryCoun
  * This function now only clears processed events from the queue.
  * The actual Supabase sync is handled by supabaseSync.
  */
-async function flushSyncQueue(_userId: string, _childId: string | null): Promise<void> {
+async function flushSyncQueue(userId: string, childId: string | null): Promise<void> {
   if (!navigator.onLine) return;
   try {
     const raw = localStorage.getItem(KEYS.SYNC_QUEUE);
@@ -54,9 +55,39 @@ async function flushSyncQueue(_userId: string, _childId: string | null): Promise
     const queue: SyncEvent[] = JSON.parse(raw);
     if (!queue.length) return;
 
-    // Mark all events as processed — remote sync is handled by supabaseSync
-    // via users.settings JSONB, not separate curriculum_* tables.
-    localStorage.setItem(KEYS.SYNC_QUEUE, JSON.stringify([]));
+    const failed: SyncEvent[] = [];
+
+    for (const event of queue) {
+      try {
+        const p = event.payload;
+        switch (event.type) {
+          case 'unit_progress':
+          case 'unit_complete':
+            await syncCurriculumProgress(
+              userId,
+              p.unitId as string,
+              p.progressPercent as number,
+              (p.currentActivityIndex as number) ?? 0,
+              (p.completed as boolean) ?? false,
+              childId ?? undefined,
+            );
+            break;
+          case 'current_unit':
+            await syncCurrentUnit(userId, p.unitId as string, childId ?? undefined);
+            break;
+          default:
+            // Unknown event type — discard
+            break;
+        }
+      } catch {
+        // Failed to sync this event — keep for retry (up to 5 attempts)
+        if ((event.retryCount ?? 0) < 5) {
+          failed.push({ ...event, retryCount: (event.retryCount ?? 0) + 1 });
+        }
+      }
+    }
+
+    localStorage.setItem(KEYS.SYNC_QUEUE, JSON.stringify(failed));
   } catch { /* sync error — silent, will retry */ }
 }
 

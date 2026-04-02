@@ -588,10 +588,11 @@ function AppContent() {
   }, [user?.uid, isAdmin, isAdminRoute, navigate]);
 
   // Redirect to setup if not completed (non-admin only, after profile loads)
-  const isSetupCompleted = userProfile?.settings?.setup_completed === true;
+  const isSetupCompleted = userProfile?.settings?.setup_completed === true
+    || (userProfile?.display_name != null && userProfile.display_name !== '');
   // profileFetched: true once we have actually loaded a profile (or confirmed none exists)
   // Guards against a brief window where profileLoading=false but userProfile=null during page reload
-  const profileFetched = !profileLoading && (userProfile !== null || !user);
+  const profileFetched = !profileLoading;
   useEffect(() => {
     if (loading) return;
     if (user && isAdmin) return;

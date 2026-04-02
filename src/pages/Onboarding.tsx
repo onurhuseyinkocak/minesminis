@@ -198,7 +198,7 @@ const Onboarding: React.FC = () => {
       analytics.onboardingComplete(ageGroup, placementScore, startingGroup);
       await refreshUserProfile();
       toast.success(isTr ? `Hos geldin, ${nickname}! Macera basliyor!` : `Welcome, ${nickname}! Adventure starts!`);
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Please try again.';
       toast.error(`Oops! ${msg}`, { duration: 6000 });
