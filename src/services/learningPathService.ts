@@ -389,7 +389,8 @@ export function getNextAction(): NextAction {
     const completedGroup = currentSound?.group ?? 1;
     const availableBooks = getBooksForGroup(completedGroup);
     const readBooksRaw = localStorage.getItem(getKey(LS_READ_BOOKS));
-    const readBooksMap: Record<string, unknown> = readBooksRaw ? JSON.parse(readBooksRaw) : {};
+    let readBooksMap: Record<string, unknown> = {};
+    try { if (readBooksRaw) readBooksMap = JSON.parse(readBooksRaw); } catch { /* corrupted */ }
     const unreadBooks = availableBooks.filter((b) => !readBooksMap[b.id]);
     if (unreadBooks.length > 0) {
       return {

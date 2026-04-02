@@ -24,7 +24,8 @@ export function incrementSessionCount(): void {
 
 export function markUnitMastered(phaseIndex: number, unitIndex: number): void {
   const key = `${phaseIndex}-${unitIndex}`;
-  const existing: string[] = JSON.parse(localStorage.getItem(MASTERED_UNITS_KEY) ?? '[]');
+  let existing: string[] = [];
+  try { existing = JSON.parse(localStorage.getItem(MASTERED_UNITS_KEY) ?? '[]'); } catch { /* corrupted */ }
   if (!existing.includes(key)) {
     existing.push(key);
     localStorage.setItem(MASTERED_UNITS_KEY, JSON.stringify(existing));
@@ -32,7 +33,8 @@ export function markUnitMastered(phaseIndex: number, unitIndex: number): void {
 }
 
 export function getMasteredUnits(): Array<{ phaseIndex: number; unitIndex: number }> {
-  const raw: string[] = JSON.parse(localStorage.getItem(MASTERED_UNITS_KEY) ?? '[]');
+  let raw: string[] = [];
+  try { raw = JSON.parse(localStorage.getItem(MASTERED_UNITS_KEY) ?? '[]'); } catch { /* corrupted */ }
   return raw.map(k => {
     const [p, u] = k.split('-').map(Number);
     return { phaseIndex: p, unitIndex: u };

@@ -184,12 +184,13 @@ async function lookupCache(text: string): Promise<string | null> {
   }
 
   // 2. Try local /audio/words/{word}.mp3 (bundled in public/)
-  // This is faster and works offline — only for single words
+  // This is faster and works offline — only for single words.
+  // Use GET with range header instead of HEAD — Vercel static may not support HEAD.
   if (/^[a-z'-]+$/.test(key) && !PHONICS_GRAPHEMES.has(key)) {
     const localUrl = `/audio/words/${key}.mp3`;
     try {
-      const resp = await fetch(localUrl, { method: 'HEAD' });
-      if (resp.ok) {
+      const resp = await fetch(localUrl, { method: 'GET', headers: { Range: 'bytes=0-0' } });
+      if (resp.ok || resp.status === 206) {
         _urlCache.set(key, localUrl);
         return localUrl;
       }
@@ -202,8 +203,8 @@ async function lookupCache(text: string): Promise<string | null> {
   if (PHONICS_GRAPHEMES.has(key)) {
     const localUrl = `/audio/phonics/${key}.mp3`;
     try {
-      const resp = await fetch(localUrl, { method: 'HEAD' });
-      if (resp.ok) {
+      const resp = await fetch(localUrl, { method: 'GET', headers: { Range: 'bytes=0-0' } });
+      if (resp.ok || resp.status === 206) {
         _urlCache.set(key, localUrl);
         return localUrl;
       }
@@ -353,6 +354,10 @@ async function _playUrl(
 /**
  * Try to play a local WAV file from /audio/words/{word}.wav.
  * Returns true if the file exists and playback started successfully.
+ *
+ * Note: We skip HEAD checks because Vercel static hosting may not support
+ * HEAD for all file types. Instead we attempt to play directly and rely
+ * on the Audio element's error event as the existence check.
  */
 async function _tryLocalWav(text: string): Promise<boolean> {
   if (typeof window === 'undefined') return false;
@@ -366,15 +371,12 @@ async function _tryLocalWav(text: string): Promise<boolean> {
 
   const wavUrl = `/audio/words/${key}.wav`;
   try {
-    const resp = await fetch(wavUrl, { method: 'HEAD' });
-    if (resp.ok) {
-      const audio = new Audio(wavUrl);
-      audio.playbackRate = 0.95;
-      await audio.play();
-      return true;
-    }
+    const audio = new Audio(wavUrl);
+    audio.playbackRate = 0.95;
+    await audio.play();
+    return true;
   } catch {
-    // WAV not found — fall through
+    // WAV not found or playback blocked — fall through
   }
   return false;
 }
@@ -423,13 +425,13 @@ export function speak(text: string, options?: TTSOptions): void {
       if (url) {
         _playUrl(url, options).then((ok) => {
           if (!ok) {
-            console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
+            // Fallback to browser speechSynthesis
             _speakWebSpeech(trimmed, options);
           }
         });
       } else {
         // Priority 3 (last resort): browser TTS
-        console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
+        // Fallback to browser speechSynthesis
         _speakWebSpeech(trimmed, options);
       }
     });
@@ -472,14 +474,13 @@ export async function playText(text: string, options?: TTSOptions): Promise<void
   if (url) {
     const played = await _playUrl(url, options);
     if (!played) {
-      console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
+      // Fallback to browser speechSynthesis
       _speakWebSpeech(trimmed, options);
     }
     return;
   }
 
   // Priority 3 (last resort): browser TTS
-  console.warn('[TTS] Falling back to browser speechSynthesis for:', trimmed);
   _speakWebSpeech(trimmed, options);
 }
 
@@ -504,7 +505,7 @@ export function speakPhoneme(phoneme: string, options?: Pick<TTSOptions, 'onEnd'
       if (url) {
         _playUrl(url, options).then((played) => {
           if (!played) {
-            console.warn('[TTS] Falling back to browser speechSynthesis for phoneme:', clean);
+            // Fallback to browser speechSynthesis for phoneme
             _speakWebSpeech(phoneme, {
               lang: 'en-US',
               rate: 0.5,
@@ -515,7 +516,7 @@ export function speakPhoneme(phoneme: string, options?: Pick<TTSOptions, 'onEnd'
           }
         });
       } else {
-        console.warn('[TTS] Falling back to browser speechSynthesis for phoneme:', clean);
+        // Fallback to browser speechSynthesis for phoneme
         _speakWebSpeech(phoneme, {
           lang: 'en-US',
           rate: 0.5,
@@ -600,14 +601,14 @@ export async function narrateText(text: string): Promise<void> {
   if (url) {
     const played = await _playUrl(url);
     if (!played) {
-      console.warn('[TTS] Falling back to browser speechSynthesis for narration:', trimmed);
+      // Fallback to browser speechSynthesis for narration
       _speakWebSpeech(trimmed, { lang: 'en-US', rate: 0.8, pitch: 1.0, volume: 1 });
     }
     return;
   }
 
   // Priority 3 (last resort): browser TTS
-  console.warn('[TTS] Falling back to browser speechSynthesis for narration:', trimmed);
+  // Fallback to browser speechSynthesis for narration
   _speakWebSpeech(trimmed, { lang: 'en-US', rate: 0.8, pitch: 1.0, volume: 1 });
 }
 
