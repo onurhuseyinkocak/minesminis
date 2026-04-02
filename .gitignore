@@ -31,3 +31,5 @@ server/uploads
 .git.bak/
 .git.bak
 .env.local
+.next/
+next-env.d.ts
