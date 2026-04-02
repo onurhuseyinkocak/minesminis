@@ -266,11 +266,11 @@ function getWordBankForSound(soundId: string): WordBank {
     s: {
       easy: [
         { word: 'sat', phonemes: ['s', 'a', 't'] },
-        { word: 'sip', phonemes: ['s', 'i', 'p'] },
+        { word: 'sap', phonemes: ['s', 'a', 'p'] },
         { word: 'sun', phonemes: ['s', 'u', 'n'] },
         { word: 'sit', phonemes: ['s', 'i', 't'] },
         { word: 'set', phonemes: ['s', 'e', 't'] },
-        { word: 'sob', phonemes: ['s', 'o', 'b'] },
+        { word: 'sip', phonemes: ['s', 'i', 'p'] },
       ],
       normal: [
         { word: 'snap', phonemes: ['s', 'n', 'a', 'p'] },

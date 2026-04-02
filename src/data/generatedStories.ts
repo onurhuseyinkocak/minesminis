@@ -125,8 +125,8 @@ const GROUP_1_STORIES: DecodableStory[] = [
     decodabilityScore: 91,
     comprehensionQuestion: 'What color is Tip?',
     comprehensionQuestionTr: 'Tip ne renktir?',
-    comprehensionAnswers: ['Tan', 'Nit', 'Tip'],
-    comprehensionAnswersTr: ['Ten rengi', 'Bit yumurtası', 'Uç'],
+    comprehensionAnswers: ['Tan', 'Tin', 'Tip'],
+    comprehensionAnswersTr: ['Ten rengi', 'Teneke', 'Uç'],
     correctAnswerIndex: 0,
   },
 

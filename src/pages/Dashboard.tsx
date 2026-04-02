@@ -147,6 +147,7 @@ export default function Dashboard() {
           <Link
             to={lessonDone ? '/worlds' : '/daily-lesson'}
             className="block"
+            aria-label={lessonDone ? tx(l, 'Kesfetmeye Devam', 'Keep Exploring') : tx(l, 'Derse Basla', 'Start Lesson')}
           >
             <div className={`
               relative overflow-hidden rounded-[32px] p-6
@@ -214,7 +215,7 @@ export default function Dashboard() {
             const Icon = action.icon;
             return (
               <motion.div key={action.route} variants={pop}>
-                <Link to={action.route} className="block">
+                <Link to={action.route} className="block" aria-label={action.title[l]}>
                   <div className={`
                     relative overflow-hidden rounded-[24px] min-h-[140px]
                     bg-gradient-to-br ${action.gradient}

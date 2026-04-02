@@ -65,7 +65,7 @@ const Favorites: React.FC = () => {
 
   const handleNavigate = (type: string, itemId?: string) => {
     switch (type) {
-      case 'game': navigate(itemId ? `/games/${itemId}` : '/games'); break;
+      case 'game': navigate('/games'); break;
       case 'word': navigate('/words'); break;
       case 'worksheet': navigate('/worksheets'); break;
       case 'video': navigate(itemId ? `/videos/${itemId}` : '/videos'); break;

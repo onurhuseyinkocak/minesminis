@@ -232,7 +232,7 @@ describe('getStoryProgress', () => {
   });
 
   it('should count items collected', () => {
-    const state = { ...baseState, inventory: ['sword', 'shield'] };
+    const state = { ...baseState, inventory: ['wand', 'shield'] };
     expect(getStoryProgress(state).itemsCollected).toBe(2);
   });
 

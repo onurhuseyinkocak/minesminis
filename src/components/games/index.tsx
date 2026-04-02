@@ -75,6 +75,8 @@ function GameLoadingSkeleton() {
 // ── Game Not Found ───────────────────────────────────────────────────────────
 
 function GameNotFound({ type, onGoBack }: { type: string; onGoBack?: () => void }) {
+  const { lang } = useLanguage();
+  const tr = lang === 'tr';
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -85,11 +87,12 @@ function GameNotFound({ type, onGoBack }: { type: string; onGoBack?: () => void 
       <LottieCharacter state="sad" size={140} />
       <div className="space-y-2">
         <h3 className="text-xl font-bold text-ink-900 font-display">
-          Oops! Game not found
+          {tr ? 'Hay aksi! Oyun bulunamadı' : 'Oops! Game not found'}
         </h3>
         <p className="text-ink-500 text-sm max-w-xs mx-auto">
-          Mimi couldn&apos;t find the game <strong>&quot;{type}&quot;</strong>.
-          It might have moved or isn&apos;t available yet!
+          {tr
+            ? <>Mimi <strong>&quot;{type}&quot;</strong> oyununu bulamadı. Taşınmış veya henüz hazır olmayabilir!</>
+            : <>Mimi couldn&apos;t find the game <strong>&quot;{type}&quot;</strong>. It might have moved or isn&apos;t available yet!</>}
         </p>
       </div>
       {onGoBack && (
@@ -102,7 +105,7 @@ function GameNotFound({ type, onGoBack }: { type: string; onGoBack?: () => void 
           onClick={onGoBack}
         >
           <ArrowLeft size={16} />
-          Go Back
+          {tr ? 'Geri Dön' : 'Go Back'}
         </motion.button>
       )}
     </motion.div>
@@ -112,6 +115,8 @@ function GameNotFound({ type, onGoBack }: { type: string; onGoBack?: () => void 
 // ── Missing Data Fallback ────────────────────────────────────────────────────
 
 function GameMissingData({ type }: { type: string }) {
+  const { lang } = useLanguage();
+  const tr = lang === 'tr';
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -122,11 +127,12 @@ function GameMissingData({ type }: { type: string }) {
       <LottieCharacter state="thinking" size={120} />
       <div className="space-y-2">
         <h3 className="text-lg font-bold text-ink-900 font-display">
-          Hmm, something&apos;s missing...
+          {tr ? 'Hmm, bir şeyler eksik...' : "Hmm, something's missing..."}
         </h3>
         <p className="text-ink-500 text-sm max-w-xs mx-auto">
-          The game <strong>&quot;{type}&quot;</strong> needs some data that wasn&apos;t provided.
-          Try going back and starting the lesson again.
+          {tr
+            ? <><strong>&quot;{type}&quot;</strong> oyunu için gerekli veriler sağlanmadı. Geri dönüp dersi tekrar başlatmayı deneyin.</>
+            : <>The game <strong>&quot;{type}&quot;</strong> needs some data that wasn&apos;t provided. Try going back and starting the lesson again.</>}
         </p>
       </div>
     </motion.div>
@@ -187,14 +193,14 @@ class GameErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundar
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-display font-bold text-sm shadow-md hover:shadow-lg"
               onClick={this.handleRetry}
             >
-              Try Again
+              Tekrar Dene / Try Again
             </motion.button>
             <button
               type="button"
               className="px-4 py-2.5 rounded-full text-ink-500 hover:text-ink-700 font-display font-semibold text-sm transition-colors"
               onClick={() => window.history.back()}
             >
-              Go Back
+              Geri Dön / Go Back
             </button>
           </div>
         </motion.div>

@@ -131,7 +131,7 @@ export default function StoriesGrid() {
       </div>
 
       {/* ── Stories Grid ── */}
-      <div className="w-full">
+      <div className="w-full px-4">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center py-20 gap-4">
             <div className="w-20 h-20 rounded-full bg-ink-100 flex items-center justify-center">

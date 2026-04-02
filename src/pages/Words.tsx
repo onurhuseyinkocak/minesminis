@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -74,7 +74,7 @@ const Words: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeWord, setActiveWord] = useState<KidsWord | null>(null);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
   const speakWord = async (text: string) => {
     if (!text || isLoadingAudio) return;
@@ -102,10 +102,7 @@ const Words: React.FC = () => {
     } finally { setIsLoadingAudio(false); }
   };
 
-  useEffect(() => { fetchKidsWords(); }, []);
-  useEffect(() => { return () => { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }; }, []);
-
-  const fetchKidsWords = async () => {
+  const fetchKidsWords = useCallback(async () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -116,7 +113,10 @@ const Words: React.FC = () => {
       setKidsWords((data && data.length > 0) ? data : fallbackWords);
     } catch { setKidsWords(fallbackWords); }
     finally { setIsLoading(false); }
-  };
+  }, []);
+
+  useEffect(() => { fetchKidsWords(); }, [fetchKidsWords]);
+  useEffect(() => { return () => { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }; }, []);
 
   const playWordAudio = (wordObj: KidsWord) => {
     if (wordObj.word_audio_url) {
@@ -223,7 +223,7 @@ const Words: React.FC = () => {
                           transition={{ ...spring, delay: Math.min(idx * 0.04, 0.5) }}
                           onClick={() => { playWordAudio(word); setActiveWord(word); }}
                           className={`
-                            w-[calc(50%-6px)] sm:w-[calc(33.333%-8px)] aspect-square rounded-3xl
+                            relative w-[calc(50%-6px)] sm:w-[calc(33.333%-8px)] aspect-square rounded-3xl
                             flex flex-col items-center justify-center gap-1 p-3
                             border-2 shadow-sm active:scale-95 transition-transform
                             ${isLearned ? 'border-green-300 bg-green-50' : 'border-gray-100 bg-white'}

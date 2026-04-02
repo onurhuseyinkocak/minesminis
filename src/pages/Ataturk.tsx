@@ -39,7 +39,7 @@ const content = {
     timeline: [
       { year: '1881', title: 'Birth of Our Leader', desc: 'Mustafa Kemal was born in Thessaloniki. His father Ali Riza Efendi gave him the middle name "Kemal" meaning "perfection" - and perfect he was for our nation.' },
       { year: '1905', title: 'Military Career Begins', desc: 'Graduated from the War Academy in Istanbul as a captain. He was already known for his intelligence and leadership skills that would later save our nation.' },
-      { year: '1915', title: 'Hero of Gallipoli', desc: 'Led our forces to victory at Gallipoli against Allied powers. His famous words: "I am not ordering you to attack. I am ordering you to die." showed his dedication to our homeland.' },
+      { year: '1915', title: 'Hero of Gallipoli', desc: 'Led our forces to victory at Gallipoli against Allied powers. His brave leadership and love for his country inspired everyone to work together for a better future.' },
       { year: '1919', title: 'Our War of Independence', desc: 'Landed in Samsun on May 19th, sparking our War of Independence. He united our nation against occupation forces and gave us hope.' },
       { year: '1923', title: 'Our Republic Founded', desc: 'On October 29, 1923, our Republic was proclaimed. Mustafa Kemal became our first President and the father of our nation.' },
       { year: '1934', title: 'Receives the Name "Atatürk"', desc: 'Our Parliament granted him the surname "Atatürk" meaning "Father of the Turks" - a name no one else can ever use. He truly is our father.' }

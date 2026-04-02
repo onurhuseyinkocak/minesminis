@@ -707,6 +707,7 @@ function LegacyLessonCard({
 // ── Not Found State ─────────────────────────────────────────
 
 function NotFoundState() {
+  const { lang } = useLanguage();
   return (
     <div
       style={{
@@ -738,10 +739,10 @@ function NotFoundState() {
         <BookOpen size={32} color="#EF4444" />
       </motion.div>
       <h2 style={{ margin: '0 0 8px', fontSize: 20, fontWeight: 700, color: '#1a1a2e' }}>
-        Unit Not Found
+        {lang === 'tr' ? 'Ünite Bulunamadı' : 'Unit Not Found'}
       </h2>
       <p style={{ margin: '0 0 24px', fontSize: 14, color: '#777' }}>
-        This unit doesn&apos;t exist or hasn&apos;t been unlocked yet.
+        {lang === 'tr' ? 'Bu ünite mevcut değil veya henüz açılmamış.' : "This unit doesn't exist or hasn't been unlocked yet."}
       </p>
       <Link
         to="/worlds"
@@ -760,7 +761,7 @@ function NotFoundState() {
         }}
       >
         <ArrowLeft size={16} />
-        Back to Map
+        {lang === 'tr' ? 'Haritaya Dön' : 'Back to Map'}
       </Link>
     </div>
   );

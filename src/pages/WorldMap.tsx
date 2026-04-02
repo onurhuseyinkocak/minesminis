@@ -175,7 +175,7 @@ function KidUnitCard({ unit, phase, index, lang, isCompleted, isUnlocked, isCurr
 
 export default function WorldMap() {
   const { lang } = useLanguage();
-  const { getUnitProgress, isUnitCompleted, isUnitUnlocked, currentUnitId } = useProgress();
+  const { isUnitCompleted, isUnitUnlocked, currentUnitId } = useProgress();
   usePageTitle('Ogren', 'Learn');
 
   const phases = useMemo(() => getDisplayPhases(), []);
@@ -198,9 +198,6 @@ export default function WorldMap() {
   );
 
   const isTr = lang === 'tr';
-
-  // Suppress unused — getUnitProgress is used to check completion status indirectly
-  void getUnitProgress;
 
   return (
     <div className="kid-bg kid-bubbles pb-24" style={{ minHeight: 'calc(100dvh - 64px)' }}>

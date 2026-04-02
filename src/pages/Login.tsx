@@ -7,9 +7,8 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import toast from 'react-hot-toast';
 import { analytics } from '../services/analytics';
+import { useLanguage } from '../contexts/LanguageContext';
 import LottieCharacter from '../components/LottieCharacter';
-
-type Lang = 'en' | 'tr';
 
 const content = {
   en: {
@@ -77,7 +76,7 @@ const content = {
 };
 
 const Login: React.FC = () => {
-  const [lang, setLang] = useState<Lang>('tr');
+  const { lang, setLang } = useLanguage();
   const t = content[lang];
   const [searchParams] = useSearchParams();
 
