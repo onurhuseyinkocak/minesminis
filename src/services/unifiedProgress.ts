@@ -48,7 +48,18 @@ function loadGamificationStats(userId: string): { xp: number; level: number; str
 function loadMasteredSounds(userId: string): string[] {
   try {
     const raw = localStorage.getItem(`mm_mastered_sounds_${userId}`);
-    return raw ? (JSON.parse(raw) as string[]) : [];
+    const local = raw ? (JSON.parse(raw) as string[]) : [];
+
+    // Async: try Supabase and update cache if it has more data
+    import('./supabaseDataService').then(({ loadMasteredSoundsFromSupabase }) => {
+      loadMasteredSoundsFromSupabase(userId).then((sbSounds) => {
+        if (sbSounds && sbSounds.length > local.length) {
+          try { localStorage.setItem(`mm_mastered_sounds_${userId}`, JSON.stringify(sbSounds)); } catch {}
+        }
+      });
+    }).catch(() => {});
+
+    return local;
   } catch { return []; }
 }
 

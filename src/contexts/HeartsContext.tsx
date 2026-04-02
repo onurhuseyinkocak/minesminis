@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from 'react';
 import { usePremium } from './PremiumContext';
+import { useAuth } from './AuthContext';
+import { loadHeartsFromSupabase, saveHeartsToSupabase } from '../services/supabaseDataService';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -117,23 +119,58 @@ export function useHearts(): HeartsContextType {
 
 export function HeartsProvider({ children }: { children: ReactNode }) {
   const { isPremium } = usePremium();
+  const { user } = useAuth();
 
   const [hearts, setHearts] = useState<number>(MAX_HEARTS);
   const [lastHeartLostAt, setLastHeartLostAt] = useState<string | null>(null);
 
-  // On mount: hydrate from storage and apply any accumulated regen
+  // On mount: try Supabase first (source of truth), fallback to localStorage cache
   useEffect(() => {
-    const saved = readStorage();
-    if (saved) {
-      const regenned = applyRegen(saved);
-      setHearts(regenned.hearts);
-      setLastHeartLostAt(regenned.lastHeartLostAt);
-      if (regenned.hearts !== saved.hearts || regenned.lastHeartLostAt !== saved.lastHeartLostAt) {
-        writeStorage({ ...regenned, maxHearts: MAX_HEARTS, isUnlimited: isPremium });
+    let cancelled = false;
+
+    async function hydrateHearts() {
+      const userId = user?.id;
+
+      // 1. Try Supabase first if logged in
+      if (userId) {
+        try {
+          const sbData = await loadHeartsFromSupabase(userId);
+          if (!cancelled && sbData) {
+            const sbState: HeartsState = {
+              hearts: sbData.hearts,
+              maxHearts: sbData.max_hearts,
+              lastHeartLostAt: sbData.last_heart_lost_at,
+              isUnlimited: sbData.is_unlimited,
+            };
+            const regenned = applyRegen(sbState);
+            setHearts(regenned.hearts);
+            setLastHeartLostAt(regenned.lastHeartLostAt);
+            writeStorage({ ...regenned, maxHearts: MAX_HEARTS, isUnlimited: isPremium });
+            return;
+          }
+        } catch {
+          // Supabase failed — fall through to localStorage
+        }
+      }
+
+      // 2. Fallback to localStorage cache
+      if (!cancelled) {
+        const saved = readStorage();
+        if (saved) {
+          const regenned = applyRegen(saved);
+          setHearts(regenned.hearts);
+          setLastHeartLostAt(regenned.lastHeartLostAt);
+          if (regenned.hearts !== saved.hearts || regenned.lastHeartLostAt !== saved.lastHeartLostAt) {
+            writeStorage({ ...regenned, maxHearts: MAX_HEARTS, isUnlimited: isPremium });
+          }
+        }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount
-  }, []);
+
+    hydrateHearts();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount / user change
+  }, [user?.id]);
 
   // Periodic regen check (every 60 seconds)
   useEffect(() => {
@@ -195,18 +232,29 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
       setLastHeartLostAt((prevTs) => {
         // Only update timestamp if this is the first lost heart (was full)
         const ts = prevTs ?? now;
-        writeStorage({
+        const state: HeartsState = {
           hearts: next,
           maxHearts: MAX_HEARTS,
           lastHeartLostAt: ts,
           isUnlimited: false,
-        });
+        };
+        writeStorage(state);
+
+        // Async sync to Supabase
+        if (user?.id) {
+          saveHeartsToSupabase(user.id, {
+            hearts: next,
+            max_hearts: MAX_HEARTS,
+            last_heart_lost_at: ts,
+            is_unlimited: false,
+          });
+        }
         return ts;
       });
 
       return next;
     });
-  }, [isPremium]);
+  }, [isPremium, user?.id]);
 
   const addHeart = useCallback((count: number = 1) => {
     if (isPremium) return;
@@ -217,18 +265,29 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
       // Use setLastHeartLostAt callback to read current value without stale closure
       setLastHeartLostAt((prevTs) => {
         const newTs = next >= MAX_HEARTS ? null : prevTs;
-        writeStorage({
+        const state: HeartsState = {
           hearts: next,
           maxHearts: MAX_HEARTS,
           lastHeartLostAt: newTs,
           isUnlimited: false,
-        });
+        };
+        writeStorage(state);
+
+        // Async sync to Supabase
+        if (user?.id) {
+          saveHeartsToSupabase(user.id, {
+            hearts: next,
+            max_hearts: MAX_HEARTS,
+            last_heart_lost_at: newTs,
+            is_unlimited: false,
+          });
+        }
         return newTs;
       });
 
       return next;
     });
-  }, [isPremium]);
+  }, [isPremium, user?.id]);
 
   const refillHearts = useCallback(() => {
     setHearts(MAX_HEARTS);
@@ -239,7 +298,17 @@ export function HeartsProvider({ children }: { children: ReactNode }) {
       lastHeartLostAt: null,
       isUnlimited: isPremium,
     });
-  }, [isPremium]);
+
+    // Async sync to Supabase
+    if (user?.id) {
+      saveHeartsToSupabase(user.id, {
+        hearts: MAX_HEARTS,
+        max_hearts: MAX_HEARTS,
+        last_heart_lost_at: null,
+        is_unlimited: isPremium,
+      });
+    }
+  }, [isPremium, user?.id]);
 
   const getRegenTimeMs = useCallback((): number => {
     if (!lastHeartLostAt || hearts >= MAX_HEARTS) return 0;

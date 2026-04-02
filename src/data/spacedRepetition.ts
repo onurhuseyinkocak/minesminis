@@ -198,7 +198,7 @@ function getScopedSRKey(): string {
   return _srActiveUserId ? `${LS_SR_KEY}_${_srActiveUserId}` : LS_SR_KEY;
 }
 
-/** Load all word progress entries from localStorage */
+/** Load all word progress entries from localStorage (cache) */
 export function loadAllProgress(): WordProgress[] {
   try {
     const raw = localStorage.getItem(getScopedSRKey());
@@ -208,12 +208,44 @@ export function loadAllProgress(): WordProgress[] {
   }
 }
 
-/** Save all word progress entries to localStorage */
+/**
+ * Load SR data with Supabase as source of truth.
+ * Non-blocking: updates cache in background if Supabase has newer data.
+ */
+export function loadAllProgressWithSync(): WordProgress[] {
+  const local = loadAllProgress();
+
+  // Async: try Supabase and update cache if it has more data
+  if (_srActiveUserId) {
+    const userId = _srActiveUserId;
+    import('../services/supabaseDataService').then(({ loadSRFromSupabase }) => {
+      loadSRFromSupabase(userId).then((sbEntries) => {
+        if (sbEntries && sbEntries.length > local.length) {
+          try {
+            localStorage.setItem(getScopedSRKey(), JSON.stringify(sbEntries));
+          } catch {}
+        }
+      });
+    }).catch(() => {});
+  }
+
+  return local;
+}
+
+/** Save all word progress entries to localStorage + async Supabase sync */
 function saveAllProgress(entries: WordProgress[]): void {
   try {
     localStorage.setItem(getScopedSRKey(), JSON.stringify(entries));
   } catch {
     // storage full — silently ignore
+  }
+
+  // Async sync to Supabase
+  if (_srActiveUserId) {
+    const userId = _srActiveUserId;
+    import('../services/supabaseDataService').then(({ saveSRToSupabase }) => {
+      saveSRToSupabase(userId, entries);
+    }).catch(() => {});
   }
 }
 

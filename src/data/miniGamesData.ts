@@ -263,7 +263,39 @@ export function getBestScore(gameType: string): number | undefined {
   }
 }
 
-export function saveBestScore(gameType: string, score: number): void {
+/**
+ * Load best score with Supabase as source of truth.
+ * Returns cached localStorage value immediately, then checks Supabase async.
+ */
+export async function getBestScoreAsync(
+  gameType: string,
+  userId?: string,
+): Promise<number | undefined> {
+  // Fast: check localStorage cache first
+  const cached = getBestScore(gameType);
+
+  if (!userId) return cached;
+
+  // Try Supabase (source of truth)
+  try {
+    const { loadBestScoreFromSupabase } = await import('../services/supabaseDataService');
+    const sbScore = await loadBestScoreFromSupabase(userId, gameType);
+    if (sbScore !== null) {
+      // Update localStorage cache if Supabase has a higher score
+      const current = cached ?? 0;
+      if (sbScore > current) {
+        try { localStorage.setItem(`${LS_GAME_BEST_SCORE_PREFIX}${gameType}`, String(sbScore)); } catch {}
+      }
+      return Math.max(sbScore, current);
+    }
+  } catch {
+    // Supabase failed — use cached value
+  }
+
+  return cached;
+}
+
+export function saveBestScore(gameType: string, score: number, userId?: string): void {
   if (typeof window === 'undefined') return;
   try {
     const current = getBestScore(gameType) ?? 0;
@@ -272,6 +304,13 @@ export function saveBestScore(gameType: string, score: number): void {
     }
   } catch {
     // localStorage quota exceeded or access denied — silently ignore
+  }
+
+  // Async sync to Supabase
+  if (userId) {
+    import('../services/supabaseDataService').then(({ saveBestScoreToSupabase }) => {
+      saveBestScoreToSupabase(userId, gameType, score);
+    }).catch(() => {});
   }
 }
 

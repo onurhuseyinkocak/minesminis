@@ -22,7 +22,17 @@ const DEFAULT_AVATAR: AvatarConfig = {
 export function getAvatarConfig(userId: string): AvatarConfig {
   try {
     const raw = localStorage.getItem(`${LS_KEY}_${userId}`);
-    if (!raw) return { ...DEFAULT_AVATAR };
+    if (!raw) {
+      // Async: try loading from Supabase in background
+      import('./supabaseDataService').then(({ loadAvatarFromSupabase }) => {
+        loadAvatarFromSupabase(userId).then((sbConfig) => {
+          if (sbConfig) {
+            try { localStorage.setItem(`${LS_KEY}_${userId}`, JSON.stringify(sbConfig)); } catch {}
+          }
+        });
+      }).catch(() => {});
+      return { ...DEFAULT_AVATAR };
+    }
     const parsed = JSON.parse(raw) as Partial<AvatarConfig>;
     return {
       color: parsed.color ?? DEFAULT_AVATAR.color,
@@ -36,12 +46,38 @@ export function getAvatarConfig(userId: string): AvatarConfig {
   }
 }
 
+/**
+ * Load avatar config with Supabase as source of truth.
+ * Returns cached value immediately, updates from Supabase in background.
+ */
+export async function getAvatarConfigAsync(userId: string): Promise<AvatarConfig> {
+  // Try Supabase first
+  try {
+    const { loadAvatarFromSupabase } = await import('./supabaseDataService');
+    const sbConfig = await loadAvatarFromSupabase(userId);
+    if (sbConfig) {
+      try { localStorage.setItem(`${LS_KEY}_${userId}`, JSON.stringify(sbConfig)); } catch {}
+      return sbConfig;
+    }
+  } catch {
+    // Fall through to localStorage
+  }
+
+  return getAvatarConfig(userId);
+}
+
 export function saveAvatarConfig(userId: string, config: AvatarConfig): void {
+  // 1. Write to localStorage (instant)
   try {
     localStorage.setItem(`${LS_KEY}_${userId}`, JSON.stringify(config));
   } catch {
     // Storage unavailable — fail silently
   }
+
+  // 2. Async sync to Supabase
+  import('./supabaseDataService').then(({ saveAvatarToSupabase }) => {
+    saveAvatarToSupabase(userId, config);
+  }).catch(() => {});
 }
 
 export interface UnlockStats {

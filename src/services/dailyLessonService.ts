@@ -250,7 +250,18 @@ function learnedKey(userId: string): string {
 export function getLearnedWords(userId: string): string[] {
   try {
     const raw = localStorage.getItem(learnedKey(userId));
-    return raw ? JSON.parse(raw) : [];
+    const local = raw ? JSON.parse(raw) as string[] : [];
+
+    // Async: try Supabase and update cache if more data
+    import('./supabaseDataService').then(({ loadLearnedWordsFromSupabase }) => {
+      loadLearnedWordsFromSupabase(userId).then((sbWords) => {
+        if (sbWords && sbWords.length > local.length) {
+          try { localStorage.setItem(learnedKey(userId), JSON.stringify(sbWords)); } catch {}
+        }
+      });
+    }).catch(() => {});
+
+    return local;
   } catch {
     return [];
   }
@@ -265,6 +276,11 @@ export function markWordLearned(userId: string, english: string): void {
     } catch {
       // storage full — ignore
     }
+
+    // Async sync to Supabase
+    import('./supabaseDataService').then(({ saveLearnedWordsToSupabase }) => {
+      saveLearnedWordsToSupabase(userId, learned);
+    }).catch(() => {});
   }
 }
 
@@ -479,8 +495,28 @@ export function isDailyLessonCompletedToday(userId: string): boolean {
   const today = localDateStr();
   try {
     const saved = localStorage.getItem(dailyKey(userId, today));
-    if (!saved) return false;
-    return (JSON.parse(saved) as DailyLessonPlan).completed;
+    if (saved) {
+      return (JSON.parse(saved) as DailyLessonPlan).completed;
+    }
+
+    // Async: check Supabase in background and update cache
+    import('./supabaseDataService').then(({ isDailyLessonCompletedInSupabase }) => {
+      isDailyLessonCompletedInSupabase(userId, today).then((completed) => {
+        if (completed) {
+          // Mark as completed in localStorage cache
+          const plan: DailyLessonPlan = {
+            date: today,
+            newWords: [],
+            reviewWords: [],
+            completed: true,
+            score: 0,
+          };
+          try { localStorage.setItem(dailyKey(userId, today), JSON.stringify(plan)); } catch {}
+        }
+      });
+    }).catch(() => {});
+
+    return false;
   } catch {
     return false;
   }
@@ -517,6 +553,17 @@ export function completeDailyLesson(
 
   // Also register new words in spaced-repetition engine so they appear for future reviews
   plan.newWords.forEach((w) => updateWordProgress(w.word.toLowerCase(), true));
+
+  // Async sync daily lesson completion to Supabase
+  import('./supabaseDataService').then(({ saveDailyLessonCompletionToSupabase }) => {
+    saveDailyLessonCompletionToSupabase(
+      userId,
+      plan.date,
+      score,
+      plan.newWords.length,
+      plan.reviewWords.length,
+    );
+  }).catch(() => {});
 }
 
 // ─── Phonics: next unmastered sound ──────────────────────────────────────────
@@ -537,6 +584,16 @@ export function getTodayPhonicsSound(
   } catch {
     mastered = [];
   }
+
+  // Async: try loading from Supabase and updating cache (non-blocking)
+  import('./supabaseDataService').then(({ loadMasteredSoundsFromSupabase }) => {
+    loadMasteredSoundsFromSupabase(userId).then((sbSounds) => {
+      if (sbSounds && sbSounds.length > mastered.length) {
+        try { localStorage.setItem(`mm_mastered_sounds_${userId}`, JSON.stringify(sbSounds)); } catch {}
+      }
+    });
+  }).catch(() => {});
+
   const next = ALL_SOUNDS.find((s) => !mastered.includes(s.grapheme));
   if (!next) return null;
   return {

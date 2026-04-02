@@ -309,7 +309,7 @@ function Games() {
 
       if (playingGame) {
         reportToAdaptive(playingGame);
-        saveBestScore(playingGame.type, score);
+        saveBestScore(playingGame.type, score, user?.id ?? user?.uid);
         trackActivity('game_played').catch(() => {});
         setScoreVersion((v) => v + 1);
         toast.success(isTr ? `Harika! ${score}/${total}` : `Great job! ${score}/${total}`);
@@ -325,7 +325,7 @@ function Games() {
         const nextIndex = dailySession.currentIndex + 1;
 
         if (nextIndex >= dailySession.games.length) {
-          saveBestScore(currentGame.type, score);
+          saveBestScore(currentGame.type, score, user?.id ?? user?.uid);
           trackActivity('game_played').catch(() => {});
           const streak = recordDailyPractice();
           setDailyStreak(streak);
@@ -335,7 +335,7 @@ function Games() {
           setDailySession(null);
           setGameExtra(undefined);
         } else {
-          saveBestScore(currentGame.type, score);
+          saveBestScore(currentGame.type, score, user?.id ?? user?.uid);
           trackActivity('game_played').catch(() => {});
           setScoreVersion((v) => v + 1);
           setGameWords(getGameWords(ageGroup));

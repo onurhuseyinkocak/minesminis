@@ -91,7 +91,25 @@ function PhonicsLesson() {
   useEffect(() => {
     if (currentStep !== 'celebrate' || !soundId) return;
     const totalXP = xpEarned + 50;
-    try { const existing = JSON.parse(localStorage.getItem(LS_MASTERED_SOUNDS) || '[]') as string[]; if (!existing.includes(soundId)) { existing.push(soundId); localStorage.setItem(LS_MASTERED_SOUNDS, JSON.stringify(existing)); } } catch { /* */ }
+    try {
+      const existing = JSON.parse(localStorage.getItem(LS_MASTERED_SOUNDS) || '[]') as string[];
+      if (!existing.includes(soundId)) {
+        existing.push(soundId);
+        localStorage.setItem(LS_MASTERED_SOUNDS, JSON.stringify(existing));
+        // Also update user-scoped key
+        if (user?.uid) {
+          const userKey = `mm_mastered_sounds_${user.uid}`;
+          const userExisting = JSON.parse(localStorage.getItem(userKey) || '[]') as string[];
+          if (!userExisting.includes(soundId)) { userExisting.push(soundId); localStorage.setItem(userKey, JSON.stringify(userExisting)); }
+        }
+        // Sync to Supabase
+        if (user?.uid) {
+          import('../../services/supabaseDataService').then(({ saveMasteredSoundsToSupabase }) => {
+            saveMasteredSoundsToSupabase(user.uid, existing);
+          }).catch(() => {});
+        }
+      }
+    } catch { /* */ }
     recordSoundMastery(soundId, 100, user?.uid);
     if (user?.uid) { setActiveUser(user.uid); recordActivity({ soundId, activityType: 'phonics-lesson', correct: true, responseTimeMs: (stepIndex + 1) * 45000, totalQuestions: STEPS.length, correctAnswers: STEPS.length }); }
     SFX.celebration();

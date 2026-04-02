@@ -1,5 +1,6 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useContext } from 'react';
 import { ArrowLeft, ArrowRight, Volume2, Highlighter, CheckCircle, XCircle } from 'lucide-react';
+import AuthContext from '../contexts/AuthContext';
 import type { DecodableStory, HighlightedWord } from '../services/decodableStoryService';
 import { findWord } from '../data/decodableWordbank';
 import { speak as ttsSpeak, stopSpeech } from '../services/ttsService';
@@ -191,17 +192,25 @@ interface QuizProps {
   story: DecodableStory;
   lang: 'en' | 'tr';
   onDone: () => void;
+  userId?: string;
 }
 
-function saveStoryCompletion(storyId: string): void {
+function saveStoryCompletion(storyId: string, userId?: string): void {
   try {
     localStorage.setItem(`mm_story_completed_${storyId}`, '1');
   } catch {
     // storage full — ignore
   }
+
+  // Async sync to Supabase
+  if (userId) {
+    import('../services/supabaseDataService').then(({ saveStoryCompletionToSupabase }) => {
+      saveStoryCompletionToSupabase(userId, storyId);
+    }).catch(() => {});
+  }
 }
 
-function ComprehensionQuiz({ story, lang, onDone }: QuizProps) {
+function ComprehensionQuiz({ story, lang, onDone, userId }: QuizProps) {
   const [selected, setSelected] = useState<number | null>(null);
 
   const question = lang === 'tr'
@@ -251,7 +260,7 @@ function ComprehensionQuiz({ story, lang, onDone }: QuizProps) {
       </div>
 
       {selected !== null && (
-        <button type="button" className="dsr-quiz__done-btn" onClick={() => { saveStoryCompletion(story.id); onDone(); }}>
+        <button type="button" className="dsr-quiz__done-btn" onClick={() => { saveStoryCompletion(story.id, userId); onDone(); }}>
           {lang === 'tr' ? 'Tamamlandı' : 'Done'}
           <CheckCircle size={18} />
         </button>
@@ -268,6 +277,7 @@ export default function DecodableStoryReader({
   highlightMode = true,
   lang = 'en',
 }: DecodableStoryReaderProps) {
+  const { user } = useContext(AuthContext);
   const [sceneIndex, setSceneIndex] = useState(0);
   const [highlight, setHighlight] = useState(highlightMode);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -383,7 +393,7 @@ export default function DecodableStoryReader({
 
       {/* Content */}
       {showQuiz ? (
-        <ComprehensionQuiz story={story} lang={lang} onDone={onComplete} />
+        <ComprehensionQuiz story={story} lang={lang} onDone={onComplete} userId={user?.id} />
       ) : (
         currentScene && (
           <SceneView
