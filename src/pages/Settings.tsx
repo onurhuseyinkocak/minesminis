@@ -250,8 +250,8 @@ export default function Settings() {
           <SettingRow icon={<Globe size={18} />} iconColor="bg-blue-100 text-blue-500" label={isTr ? 'Dil' : 'Language'} sub={lang === 'tr' ? 'Turkce' : 'English'}
             right={
               <div className="flex bg-gray-100 rounded-full p-0.5">
-                <button type="button" className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'tr' ? 'bg-blue-500 text-white' : 'text-gray-500'}`} onClick={() => { if (lang !== 'tr') toggleLang(); }}>TR</button>
-                <button type="button" className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-blue-500 text-white' : 'text-gray-500'}`} onClick={() => { if (lang !== 'en') toggleLang(); }}>EN</button>
+                <button type="button" aria-label="Turkce dil secimi" className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'tr' ? 'bg-blue-500 text-white' : 'text-gray-500'}`} onClick={() => { if (lang !== 'tr') toggleLang(); }}>TR</button>
+                <button type="button" aria-label="English language selection" className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-blue-500 text-white' : 'text-gray-500'}`} onClick={() => { if (lang !== 'en') toggleLang(); }}>EN</button>
               </div>
             }
           />
@@ -262,7 +262,7 @@ export default function Settings() {
             right={
               <div className="flex bg-gray-100 rounded-full p-0.5">
                 {(['slow', 'normal', 'fast'] as TtsSpeed[]).map(s => (
-                  <button key={s} type="button" className={`px-2.5 py-1.5 rounded-full text-[11px] font-bold transition-all ${ttsSpeed === s ? 'bg-blue-500 text-white' : 'text-gray-500'}`} onClick={() => handleTtsSpeed(s)}>
+                  <button key={s} type="button" aria-label={`TTS speed: ${s}`} className={`px-2.5 py-1.5 rounded-full text-[11px] font-bold transition-all ${ttsSpeed === s ? 'bg-blue-500 text-white' : 'text-gray-500'}`} onClick={() => handleTtsSpeed(s)}>
                     {isTr ? (s === 'slow' ? 'Yavas' : s === 'fast' ? 'Hizli' : 'Normal') : (s === 'slow' ? 'Slow' : s === 'fast' ? 'Fast' : 'Normal')}
                   </button>
                 ))}
@@ -309,7 +309,7 @@ export default function Settings() {
 
           {isEmailUser && (
             <>
-              <button type="button" onClick={() => setShowPwForm(v => !v)} className="flex items-center gap-3 px-4 py-3 min-h-[56px] w-full text-left">
+              <button type="button" aria-label={isTr ? 'Sifre degistir' : 'Change password'} onClick={() => setShowPwForm(v => !v)} className="flex items-center gap-3 px-4 py-3 min-h-[56px] w-full text-left">
                 <div className="w-9 h-9 rounded-2xl bg-blue-100 text-blue-500 flex items-center justify-center"><Lock size={18} /></div>
                 <p className="flex-1 text-sm font-semibold text-gray-800">{isTr ? 'Sifre Degistir' : 'Change Password'}</p>
                 <ChevronRight size={18} className={`text-gray-300 transition-transform ${showPwForm ? 'rotate-90' : ''}`} />
@@ -319,16 +319,16 @@ export default function Settings() {
                   <div className="relative">
                     <input type={showCurrentPw ? 'text' : 'password'} value={currentPw} onChange={e => setCurrentPw(e.target.value)} placeholder={isTr ? 'Mevcut sifre' : 'Current password'} autoComplete="current-password"
                       className="w-full min-h-[48px] px-4 pr-10 bg-gray-50 rounded-2xl text-sm border border-gray-200 focus:border-blue-400 focus:outline-none" />
-                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowCurrentPw(v => !v)}>{showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                    <button type="button" aria-label={showCurrentPw ? (isTr ? 'Sifreyi gizle' : 'Hide password') : (isTr ? 'Sifreyi goster' : 'Show password')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowCurrentPw(v => !v)}>{showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}</button>
                   </div>
                   <div className="relative">
                     <input type={showNewPw ? 'text' : 'password'} value={newPw} onChange={e => setNewPw(e.target.value)} placeholder={isTr ? 'Yeni sifre (6+ karakter)' : 'New password (6+ chars)'} autoComplete="new-password"
                       className="w-full min-h-[48px] px-4 pr-10 bg-gray-50 rounded-2xl text-sm border border-gray-200 focus:border-blue-400 focus:outline-none" />
-                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowNewPw(v => !v)}>{showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                    <button type="button" aria-label={showNewPw ? (isTr ? 'Sifreyi gizle' : 'Hide password') : (isTr ? 'Sifreyi goster' : 'Show password')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowNewPw(v => !v)}>{showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}</button>
                   </div>
                   <input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} placeholder={isTr ? 'Sifre tekrar' : 'Confirm password'} autoComplete="new-password"
                     className="w-full min-h-[48px] px-4 bg-gray-50 rounded-2xl text-sm border border-gray-200 focus:border-blue-400 focus:outline-none" />
-                  <button type="button" onClick={handlePasswordChange} disabled={pwLoading || !currentPw || !newPw || !confirmPw}
+                  <button type="button" aria-label={isTr ? 'Sifreyi guncelle' : 'Update password'} onClick={handlePasswordChange} disabled={pwLoading || !currentPw || !newPw || !confirmPw}
                     className="min-h-[48px] bg-blue-500 text-white text-sm font-bold rounded-2xl disabled:opacity-40">
                     {pwLoading ? (isTr ? 'Degistiriliyor...' : 'Updating...') : (isTr ? 'Sifreyi Guncelle' : 'Update Password')}
                   </button>
@@ -337,7 +337,7 @@ export default function Settings() {
             </>
           )}
 
-          <button type="button" onClick={handleSignOut} className="flex items-center gap-3 px-4 py-3 min-h-[56px] w-full text-left">
+          <button type="button" aria-label={isTr ? 'Cikis yap' : 'Sign out'} onClick={handleSignOut} className="flex items-center gap-3 px-4 py-3 min-h-[56px] w-full text-left">
             <div className="w-9 h-9 rounded-2xl bg-red-100 text-red-500 flex items-center justify-center"><LogOut size={18} /></div>
             <p className="flex-1 text-sm font-semibold text-red-500">{isTr ? 'Cikis Yap' : 'Sign Out'}</p>
           </button>
@@ -346,7 +346,7 @@ export default function Settings() {
         {/* Data & Legal */}
         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">{isTr ? 'Veri ve Yasal' : 'Data & Legal'}</p>
         <div className="bg-white rounded-3xl shadow-sm mb-5 divide-y divide-gray-50">
-          <button type="button" onClick={handleExportData} disabled={exportLoading} className="flex items-center gap-3 px-4 py-3 min-h-[56px] w-full text-left">
+          <button type="button" aria-label={isTr ? 'Verilerimi indir' : 'Export my data'} onClick={handleExportData} disabled={exportLoading} className="flex items-center gap-3 px-4 py-3 min-h-[56px] w-full text-left">
             <div className="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-500 flex items-center justify-center"><Download size={18} /></div>
             <p className="flex-1 text-sm font-semibold text-gray-800">{exportLoading ? (isTr ? 'Hazirlaniyor...' : 'Preparing...') : (isTr ? 'Verilerimi Indir' : 'Export My Data')}</p>
             <ChevronRight size={18} className="text-gray-300" />
@@ -365,7 +365,7 @@ export default function Settings() {
 
         {/* Delete */}
         {deleteStep === 'idle' && (
-          <button type="button" onClick={() => setDeleteStep('confirm')} className="w-full text-center text-xs text-red-400 min-h-[48px]">
+          <button type="button" aria-label={isTr ? 'Hesabimi sil' : 'Delete my account'} onClick={() => setDeleteStep('confirm')} className="w-full text-center text-xs text-red-400 min-h-[48px]">
             <Trash2 size={12} className="inline mr-1" /> {isTr ? 'Hesabimi Sil' : 'Delete My Account'}
           </button>
         )}
@@ -375,9 +375,9 @@ export default function Settings() {
             <input type="text" value={deleteConfirmText} onChange={e => setDeleteConfirmText(e.target.value)} placeholder={isTr ? 'SIL' : 'DELETE'} disabled={deleteStep === 'deleting'}
               className="min-h-[48px] px-4 bg-white rounded-2xl text-sm border border-red-200 focus:border-red-400 focus:outline-none" />
             <div className="flex gap-2">
-              <button type="button" onClick={() => { setDeleteStep('idle'); setDeleteConfirmText(''); }} disabled={deleteStep === 'deleting'}
+              <button type="button" aria-label={isTr ? 'Vazgec' : 'Cancel'} onClick={() => { setDeleteStep('idle'); setDeleteConfirmText(''); }} disabled={deleteStep === 'deleting'}
                 className="flex-1 min-h-[48px] bg-gray-100 text-gray-600 text-sm font-bold rounded-2xl">{isTr ? 'Vazgec' : 'Cancel'}</button>
-              <button type="button" onClick={handleDeleteAccount} disabled={deleteStep === 'deleting'}
+              <button type="button" aria-label={isTr ? 'Hesabi sil' : 'Delete account'} onClick={handleDeleteAccount} disabled={deleteStep === 'deleting'}
                 className="flex-1 min-h-[48px] bg-red-500 text-white text-sm font-bold rounded-2xl">
                 {deleteStep === 'deleting' ? (isTr ? 'Siliniyor...' : 'Deleting...') : (isTr ? 'Sil' : 'Delete')}
               </button>

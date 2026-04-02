@@ -178,6 +178,11 @@ class GameErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundar
 
   render() {
     if (this.state.hasError) {
+      // Class components can't use hooks — read lang from localStorage directly
+      const isTr = (() => {
+        try { return typeof localStorage !== 'undefined' && localStorage.getItem('mm_lang') === 'tr'; }
+        catch { return false; }
+      })();
       return (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -188,10 +193,12 @@ class GameErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundar
           <LottieCharacter state="sad" size={140} />
           <div className="space-y-2">
             <h3 className="text-xl font-bold text-ink-900 font-display">
-              Oops! Something went wrong
+              {isTr ? 'Hay aksi! Bir sorun olustu' : 'Oops! Something went wrong'}
             </h3>
             <p className="text-ink-500 text-sm max-w-xs mx-auto">
-              Don&apos;t worry, Mimi is on it! Let&apos;s try that again.
+              {isTr
+                ? 'Merak etme, Mimi hallediyor! Tekrar deneyelim.'
+                : "Don't worry, Mimi is on it! Let's try that again."}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -202,15 +209,17 @@ class GameErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundar
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-display font-bold text-sm shadow-md hover:shadow-lg"
               onClick={this.handleRetry}
+              aria-label={isTr ? 'Tekrar dene' : 'Try again'}
             >
-              Tekrar Dene / Try Again
+              {isTr ? 'Tekrar Dene' : 'Try Again'}
             </motion.button>
             <button
               type="button"
               className="px-4 py-2.5 rounded-full text-ink-500 hover:text-ink-700 font-display font-semibold text-sm transition-colors"
               onClick={() => window.history.back()}
+              aria-label={isTr ? 'Geri don' : 'Go back'}
             >
-              Geri Dön / Go Back
+              {isTr ? 'Geri Don' : 'Go Back'}
             </button>
           </div>
         </motion.div>

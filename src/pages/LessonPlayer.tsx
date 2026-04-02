@@ -105,7 +105,7 @@ function FallbackActivity({ activity, words, onComplete, t }: { activity: Activi
     return (
       <div className="flex flex-col items-center gap-4 py-8">
         <p className="text-sm text-gray-600">{activity.instructions || t('lesson.noWordsToReview')}</p>
-        <button type="button" onClick={() => onComplete(1, 1)} className="min-h-[48px] px-6 rounded-3xl bg-orange-500 text-white font-bold">{t('lesson.doneNext')}</button>
+        <button type="button" aria-label={t('lesson.doneNext')} onClick={() => onComplete(1, 1)} className="min-h-[48px] px-6 rounded-3xl bg-orange-500 text-white font-bold">{t('lesson.doneNext')}</button>
       </div>
     );
   }
@@ -127,11 +127,11 @@ function FallbackActivity({ activity, words, onComplete, t }: { activity: Activi
         ) : (<span className="text-xs text-gray-400">{t('lesson.tapToReveal')}</span>)}
       </div>
       <div className="flex gap-2">
-        <button type="button" onClick={(e) => { e.stopPropagation(); setFlipped((f) => !f); }} className="min-h-[48px] px-4 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-1">
+        <button type="button" aria-label={flipped ? t('lesson.hide') : t('lesson.reveal')} onClick={(e) => { e.stopPropagation(); setFlipped((f) => !f); }} className="min-h-[48px] px-4 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-1">
           {flipped ? <EyeOff size={16} /> : <Eye size={16} />}{flipped ? t('lesson.hide') : t('lesson.reveal')}
         </button>
-        <button type="button" onClick={(e) => { e.stopPropagation(); speakWord(); }} className="min-h-[48px] px-4 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-1"><Volume2 size={16} />{t('lesson.listen')}</button>
-        <button type="button" onClick={(e) => { e.stopPropagation(); setFlipped(false); const nr = reviewedCount + 1; setReviewedCount(nr); if (currentCard < words.length - 1) setCurrentCard((c) => c + 1); else onComplete(words.length, words.length); }}
+        <button type="button" aria-label={t('lesson.listen')} onClick={(e) => { e.stopPropagation(); speakWord(); }} className="min-h-[48px] px-4 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-1"><Volume2 size={16} />{t('lesson.listen')}</button>
+        <button type="button" aria-label={currentCard < words.length - 1 ? t('lesson.next') : t('lesson.done')} onClick={(e) => { e.stopPropagation(); setFlipped(false); const nr = reviewedCount + 1; setReviewedCount(nr); if (currentCard < words.length - 1) setCurrentCard((c) => c + 1); else onComplete(words.length, words.length); }}
           className="min-h-[48px] px-4 rounded-3xl bg-orange-500 text-white font-bold text-sm flex items-center gap-1">
           {currentCard < words.length - 1 ? t('lesson.next') : t('lesson.done')}<ChevronRight size={16} />
         </button>
@@ -261,7 +261,7 @@ const LessonPlayer = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4">
         <Paywall feature={lang === 'tr' ? 'Sinirsiz Ders' : 'Unlimited Lessons'} />
-        <button type="button" onClick={() => navigate(-1)} className="mt-4 min-h-[48px] px-6 rounded-3xl border border-gray-200 text-gray-500 text-sm font-bold">{lang === 'tr' ? 'Geri Don' : 'Go Back'}</button>
+        <button type="button" aria-label={lang === 'tr' ? 'Geri don' : 'Go back'} onClick={() => navigate(-1)} className="mt-4 min-h-[48px] px-6 rounded-3xl border border-gray-200 text-gray-500 text-sm font-bold">{lang === 'tr' ? 'Geri Don' : 'Go Back'}</button>
       </div>
     );
   }
@@ -307,8 +307,8 @@ const LessonPlayer = () => {
           <h1 className="text-2xl font-extrabold text-gray-900">{t('lesson.outOfHearts')}</h1>
           <p className="text-sm text-gray-500 text-center">{t('lesson.dontWorry')}</p>
           <LottieCharacter state="thinking" size={48} />
-          <button type="button" onClick={handleRestart} className="min-h-[56px] px-8 rounded-3xl bg-orange-500 text-white font-bold flex items-center gap-2 shadow-md active:scale-95"><RotateCcw size={18} />{t('lesson.tryAgain')}</button>
-          <button type="button" onClick={() => navigate(`/worlds/${worldId}`)} className="min-h-[48px] px-6 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-2"><ArrowLeft size={16} />{t('lesson.goBack')}</button>
+          <button type="button" aria-label={t('lesson.tryAgain')} onClick={handleRestart} className="min-h-[56px] px-8 rounded-3xl bg-orange-500 text-white font-bold flex items-center gap-2 shadow-md active:scale-95"><RotateCcw size={18} />{t('lesson.tryAgain')}</button>
+          <button type="button" aria-label={t('lesson.goBack')} onClick={() => navigate(`/worlds/${worldId}`)} className="min-h-[48px] px-6 rounded-3xl bg-gray-100 text-gray-600 font-bold text-sm flex items-center gap-2"><ArrowLeft size={16} />{t('lesson.goBack')}</button>
         </motion.div>
       </div>
     );

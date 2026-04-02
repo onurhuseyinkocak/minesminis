@@ -37,6 +37,24 @@ export function setDailyGoal(goal: DailyGoalLevel): void {
 
 // ─── Today XP ─────────────────────────────────────────────────────────────────
 
+/** Remove stale mm_psych_today_xp_ keys older than today. Called on addTodayXP. */
+function cleanupOldXPKeys(uid: string): void {
+  const todayKey = KEYS.todayXP(uid);
+  const prefix = `mm_psych_today_xp_${uid}_`;
+  try {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(prefix) && key !== todayKey) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
+  } catch {
+    // localStorage may be unavailable — silently ignore
+  }
+}
+
 export function getTodayXP(uid: string): number {
   const val = localStorage.getItem(KEYS.todayXP(uid));
   return val ? Number(val) : 0;
@@ -46,6 +64,8 @@ export function addTodayXP(uid: string, amount: number): number {
   const current = getTodayXP(uid);
   const next = current + amount;
   localStorage.setItem(KEYS.todayXP(uid), String(next));
+  // Clean up stale daily XP keys from previous days
+  cleanupOldXPKeys(uid);
   return next;
 }
 

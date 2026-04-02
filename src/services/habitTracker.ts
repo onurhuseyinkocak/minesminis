@@ -22,7 +22,10 @@ function todayISO(): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-/** Parse stored JSON, returning a sorted deduplicated array of ISO date strings. */
+/** Max number of activity dates to retain (roughly 90 days). */
+const MAX_DATES = 90;
+
+/** Parse stored JSON, returning a sorted deduplicated array of ISO date strings (capped to last MAX_DATES). */
 function loadDates(userId: string): string[] {
   try {
     const raw = localStorage.getItem(storageKey(userId));
@@ -30,7 +33,14 @@ function loadDates(userId: string): string[] {
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
     const unique = [...new Set(parsed.filter((d): d is string => typeof d === 'string'))];
-    return unique.sort();
+    unique.sort();
+    // Cap to most recent MAX_DATES entries to prevent unbounded growth
+    if (unique.length > MAX_DATES) {
+      const trimmed = unique.slice(unique.length - MAX_DATES);
+      saveDates(userId, trimmed);
+      return trimmed;
+    }
+    return unique;
   } catch {
     return [];
   }

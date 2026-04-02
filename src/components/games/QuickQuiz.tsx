@@ -200,14 +200,14 @@ export const QuickQuiz: React.FC<GameProps> = ({ words, onComplete, onXpEarned, 
       setFeedback('correct');
       setFloatingXp(true);
       SFX.correct();
-      announceToScreenReader('Correct!', 'polite');
+      announceToScreenReader(t('game.correct') || 'Correct!', 'polite');
       onXpEarned?.(10 + streakBonus);
       advanceTimeoutRef.current = setTimeout(() => advanceQuestion(newScore), 1500);
     } else {
       setStreak(0);
       setFeedback('wrong');
       SFX.wrong();
-      announceToScreenReader('Try again', 'assertive');
+      announceToScreenReader(t('game.tryAgain') || 'Try again', 'assertive');
       loseHeart();
       onWrongAnswer?.();
       if (hearts - 1 <= 0) {

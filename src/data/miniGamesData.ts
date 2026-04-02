@@ -327,7 +327,7 @@ export function getDailyPracticeStreak(): number {
 }
 
 /** Increments streak if last practice was yesterday; resets if more than 1 day gap */
-export function recordDailyPractice(): number {
+export function recordDailyPractice(userId?: string): number {
   if (typeof window === 'undefined') return 0;
   try {
     const today = new Date().toDateString();
@@ -343,6 +343,23 @@ export function recordDailyPractice(): number {
 
     localStorage.setItem(LS_DAILY_PRACTICE_DATE, today);
     localStorage.setItem(LS_DAILY_PRACTICE_STREAK, String(newStreak));
+
+    // Async sync to Supabase
+    if (userId) {
+      import('../services/supabaseDataService').then(async () => {
+        const { supabase } = await import('../config/supabase');
+        try {
+          await supabase.from('user_activities').insert({
+            user_id: userId,
+            activity_type: 'daily_practice',
+            activity_name: `daily_practice_${today}`,
+            xp_earned: 0,
+            metadata: { streak: newStreak, date: today },
+          });
+        } catch { /* silent */ }
+      }).catch(() => {});
+    }
+
     return newStreak;
   } catch {
     return 0;

@@ -429,12 +429,30 @@ export function getWatchedVideoIds(): string[] {
   }
 }
 
-export function markVideoWatched(videoId: string): boolean {
+export function markVideoWatched(videoId: string, userId?: string): boolean {
   try {
     const watched = getWatchedVideoIds();
     if (watched.includes(videoId)) return false; // already watched
     watched.push(videoId);
     localStorage.setItem(WATCHED_KEY, JSON.stringify(watched));
+
+    // Async sync to Supabase
+    if (userId) {
+      import('../services/supabaseDataService').then(async ({ default: _unused, ...mod }) => {
+        // Store as user_activity for cross-device sync
+        const { supabase } = await import('../config/supabase');
+        try {
+          await supabase.from('user_activities').insert({
+            user_id: userId,
+            activity_type: 'video_watched',
+            activity_name: videoId,
+            xp_earned: 0,
+            metadata: { watched_at: new Date().toISOString() },
+          });
+        } catch { /* silent */ }
+      }).catch(() => {});
+    }
+
     return true; // first watch
   } catch {
     return false;

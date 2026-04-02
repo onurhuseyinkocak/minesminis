@@ -959,7 +959,7 @@ function saveBookProgress(progress: Record<string, BookProgress>): void {
 }
 
 /** Mark a book as completed with a star rating */
-export function markBookCompleted(bookId: string, stars: number, totalPages: number): void {
+export function markBookCompleted(bookId: string, stars: number, totalPages: number, userId?: string): void {
   const all = loadBookProgress();
   const existing = all[bookId];
   all[bookId] = {
@@ -970,10 +970,23 @@ export function markBookCompleted(bookId: string, stars: number, totalPages: num
     completedAt: new Date().toISOString(),
   };
   saveBookProgress(all);
+
+  // Async sync to Supabase
+  if (userId) {
+    import('../config/supabase').then(({ supabase }) => {
+      supabase.from('user_activities').insert({
+        user_id: userId,
+        activity_type: 'book_completed',
+        activity_name: bookId,
+        xp_earned: stars * 5,
+        metadata: { stars, totalPages, completed_at: new Date().toISOString() },
+      }).then(() => {}).catch(() => {});
+    }).catch(() => {});
+  }
 }
 
 /** Save partial reading progress (bookmark) */
-export function saveReadingBookmark(bookId: string, pageIndex: number): void {
+export function saveReadingBookmark(bookId: string, pageIndex: number, userId?: string): void {
   const all = loadBookProgress();
   const existing = all[bookId];
   all[bookId] = {
@@ -984,6 +997,20 @@ export function saveReadingBookmark(bookId: string, pageIndex: number): void {
     completedAt: existing?.completedAt ?? null,
   };
   saveBookProgress(all);
+
+  // Async sync bookmark to Supabase (debounced by caller in practice)
+  if (userId) {
+    import('../config/supabase').then(({ supabase }) => {
+      supabase.from('users').select('settings').eq('id', userId).maybeSingle().then(({ data }) => {
+        const current = (data?.settings as Record<string, unknown>) ?? {};
+        const bookmarks = (current.reading_bookmarks as Record<string, number>) ?? {};
+        bookmarks[bookId] = pageIndex;
+        supabase.from('users').update({
+          settings: { ...current, reading_bookmarks: bookmarks },
+        }).eq('id', userId).then(() => {}).catch(() => {});
+      }).catch(() => {});
+    }).catch(() => {});
+  }
 }
 
 /** Get progress for a specific book */
