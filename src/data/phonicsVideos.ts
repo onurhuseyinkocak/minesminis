@@ -438,7 +438,7 @@ export function markVideoWatched(videoId: string, userId?: string): boolean {
 
     // Async sync to Supabase
     if (userId) {
-      import('../services/supabaseDataService').then(async ({ default: _unused, ...mod }) => {
+      (async () => {
         // Store as user_activity for cross-device sync
         const { supabase } = await import('../config/supabase');
         try {
@@ -450,7 +450,7 @@ export function markVideoWatched(videoId: string, userId?: string): boolean {
             metadata: { watched_at: new Date().toISOString() },
           });
         } catch { /* silent */ }
-      }).catch(() => {});
+      })();
     }
 
     return true; // first watch
