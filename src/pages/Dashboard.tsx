@@ -108,8 +108,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="kid-bg kid-bubbles min-h-screen px-4 py-6">
-        <div className="max-w-lg mx-auto space-y-4">
+      <div className="kid-bg kid-bubbles min-h-screen py-6">
+        <div className="space-y-4">
           <div className="skeleton rounded-[32px] h-64" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map(i => (
@@ -125,12 +125,12 @@ export default function Dashboard() {
   // ─── Render ─────────────────────────────────────────────────────────────
 
   return (
-    <div className="kid-bg kid-bubbles min-h-screen px-4 py-6 pb-28 relative">
+    <div className="kid-bg kid-bubbles min-h-screen py-6 pb-28 relative">
       <motion.div
         variants={stagger}
         initial="hidden"
         animate="visible"
-        className="max-w-lg mx-auto space-y-5 relative z-10"
+        className="space-y-5 relative z-10"
       >
         {/* ═══ GREETING ═══ */}
         <motion.div variants={pop} className="px-1">

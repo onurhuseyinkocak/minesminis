@@ -112,7 +112,7 @@ export default function StoriesGrid() {
 
       {/* ── Group Filter Pills ── */}
       <div className="px-4 mb-6">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide max-w-3xl mx-auto justify-center flex-wrap">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide justify-center flex-wrap">
           {GROUP_FILTERS.map(f => (
             <button
               key={f.value}
@@ -131,7 +131,7 @@ export default function StoriesGrid() {
       </div>
 
       {/* ── Stories Grid ── */}
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="w-full">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center py-20 gap-4">
             <div className="w-20 h-20 rounded-full bg-ink-100 flex items-center justify-center">

@@ -74,7 +74,7 @@ function Videos() {
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-white pb-24">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-red-100 px-4 py-3">
-        <div className="flex items-center gap-3 max-w-lg mx-auto">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-red-100 flex items-center justify-center">
             <Play size={20} className="text-red-500" />
           </div>
@@ -82,7 +82,7 @@ function Videos() {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 pt-4 space-y-6">
+      <div className="pt-4 space-y-6">
         {/* Loading skeleton */}
         {videosLoading && (
           <div className="space-y-4">

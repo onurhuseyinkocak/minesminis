@@ -134,7 +134,7 @@ function Worksheets() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 px-4 py-6 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 py-6 pb-24">
       {/* Header */}
       <div className="text-center mb-6">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-3xl bg-emerald-100 mb-3">
@@ -155,7 +155,7 @@ function Worksheets() {
       )}
 
       {/* Worksheet Grid */}
-      <div className="grid grid-cols-2 gap-3 max-w-lg mx-auto">
+      <div className="grid grid-cols-2 gap-3">
         <AnimatePresence mode="popLayout">
           {worksheets.map(worksheet => {
             const cfg = CATEGORY_CONFIG[worksheet.category] || { icon: FileText, color: '#6366f1' };

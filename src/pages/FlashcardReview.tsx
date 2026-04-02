@@ -224,7 +224,7 @@ function Header({ isTr, onBack, direction, onToggleDirection, cardCount }: {
 }) {
   return (
     <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-indigo-100 px-4 py-3">
-      <div className="flex items-center gap-3 max-w-lg mx-auto">
+      <div className="flex items-center gap-3">
         <button type="button" onClick={onBack} className="w-10 h-10 rounded-2xl bg-gray-100 flex items-center justify-center active:scale-90 transition-transform" aria-label={isTr ? 'Geri' : 'Back'}>
           <ArrowLeft size={18} />
         </button>

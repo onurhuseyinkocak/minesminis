@@ -100,7 +100,7 @@ const Favorites: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white pb-24">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-pink-100 px-4 py-3">
-        <div className="flex items-center gap-3 max-w-lg mx-auto">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-pink-100 flex items-center justify-center">
             <Heart size={20} className="text-pink-500" />
           </div>
@@ -109,7 +109,7 @@ const Favorites: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 pt-4">
+      <div className="pt-4">
         {loading ? (
           <div className="flex flex-wrap gap-3">
             {[1, 2, 3, 4].map(i => <FavCardSkeleton key={i} />)}

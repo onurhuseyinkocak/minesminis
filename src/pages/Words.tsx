@@ -167,7 +167,7 @@ const Words: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white pb-24">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-amber-100 px-4 py-3">
-        <div className="flex items-center gap-3 max-w-lg mx-auto">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center">
             <BookOpen size={20} className="text-amber-600" />
           </div>
@@ -191,7 +191,7 @@ const Words: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-lg mx-auto px-4 pt-4">
+      <div className="pt-4">
         {isLoading ? (
           <div className="flex flex-wrap gap-4">
             {Array.from({ length: 6 }).map((_, i) => <WordCardSkeleton key={i} />)}

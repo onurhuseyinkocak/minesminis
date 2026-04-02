@@ -363,7 +363,9 @@ export default function AppShell({
           MAIN CONTENT
           ══════════════════════════════════════════════════ */}
       <main id="main-content" className={`appshell-main${showBottomNav ? ' appshell-main--with-bottom-nav' : ''}`}>
-        {children}
+        <div className="max-w-5xl mx-auto w-full px-4 lg:px-6">
+          {children}
+        </div>
         <Footer variant="minimal" />
       </main>
 

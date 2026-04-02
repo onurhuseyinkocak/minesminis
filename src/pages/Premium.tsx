@@ -32,8 +32,8 @@ export default function Premium() {
   const tr = lang === 'tr';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 px-4 py-6 pb-24">
-      <div className="max-w-sm mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 py-6 pb-24">
+      <div>
         {/* Hero */}
         <div className="text-center mb-6">
           <motion.div

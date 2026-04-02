@@ -219,7 +219,7 @@ export default function Settings() {
       initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', damping: 20, stiffness: 250 }}
     >
-      <div className="max-w-sm mx-auto px-4 py-6">
+      <div className="py-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <Link to="/dashboard" className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white shadow-sm" aria-label={isTr ? 'Geri' : 'Back'}>

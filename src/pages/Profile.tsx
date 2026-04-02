@@ -109,7 +109,7 @@ const Profile: React.FC = () => {
 
   if (gamificationLoading) return (
     <div className="min-h-screen kid-bg pb-24">
-      <div className="max-w-lg mx-auto px-4 pt-8">
+      <div className="pt-8">
         <div className="flex flex-col items-center gap-4 mb-8">
           <div className="w-28 h-28 rounded-full bg-gray-100 animate-pulse" />
           <div className="h-7 w-36 rounded-xl bg-gray-100 animate-pulse" />
@@ -130,7 +130,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className="min-h-screen kid-bg pb-24">
-      <div className="max-w-lg mx-auto px-4 pt-8">
+      <div className="pt-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
