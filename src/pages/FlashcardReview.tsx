@@ -64,20 +64,21 @@ export default function FlashcardReview() {
 
   // Load remote word list
   useEffect(() => {
-    supabase
-      .from('words')
-      .select('word,turkish,example,exampleSentence:example_sentence,exampleSentenceTr:example_sentence_tr')
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('words')
+          .select('word,turkish,example,exampleSentence:example_sentence,exampleSentenceTr:example_sentence_tr');
         if (data && data.length > 0) {
           const m = new Map<string, RawWord>();
           for (const w of data as RawWord[]) { if (w.word) m.set(w.word.toLowerCase(), w); }
           setWordMap(m);
         }
-        setWordsLoading(false);
-      })
-      .catch(() => {
-        setWordsLoading(false);
-      });
+      } catch {
+        // Supabase offline — continue with empty word map
+      }
+      setWordsLoading(false);
+    })();
   }, []);
 
   // Load due words
