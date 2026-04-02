@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Lock, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -9,6 +9,18 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 const spring = { type: 'spring' as const, stiffness: 300, damping: 24 };
+
+// Golden glow animation for recently earned badges
+const badgeShineStyle = `
+@keyframes badge-shine {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0), border-color: #FDE68A; }
+  50% { box-shadow: 0 0 16px 4px rgba(234, 179, 8, 0.35); border-color: #F59E0B; }
+}
+.badge-earned-glow {
+  animation: badge-shine 2s ease-in-out 3;
+  border-color: #FDE68A;
+}
+`;
 
 function BadgeSkeleton() {
   return <div className="aspect-square rounded-3xl bg-gray-100 animate-pulse" />;
@@ -35,6 +47,21 @@ const Achievements: React.FC = () => {
   const earnedIds = stats.badges ?? [];
   const earnedCount = earnedIds.length;
 
+  // Track which badges were already earned when the page first loaded
+  const initialEarnedRef = useRef<Set<string> | null>(null);
+  const [newlyEarnedIds, setNewlyEarnedIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (initialEarnedRef.current === null) {
+      initialEarnedRef.current = new Set(earnedIds);
+    } else {
+      const fresh = earnedIds.filter((id) => !initialEarnedRef.current!.has(id));
+      if (fresh.length > 0) {
+        setNewlyEarnedIds(new Set(fresh));
+      }
+    }
+  }, [earnedIds]);
+
   // Sort: earned first, then unearned
   const sortedBadges = useMemo(() => {
     const earned = allBadges.filter(b => earnedIds.includes(b.id));
@@ -44,6 +71,7 @@ const Achievements: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-white pb-24">
+      <style>{badgeShineStyle}</style>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-yellow-100 px-4 py-3">
         <div className="flex items-center gap-3">
@@ -94,6 +122,7 @@ const Achievements: React.FC = () => {
             {sortedBadges.map((badge, idx) => {
               const earned = hasBadge(badge.id);
               const hint = !earned ? getProgressHint(badge, stats, isTr) : null;
+              const isNewlyEarned = newlyEarnedIds.has(badge.id);
               return (
                 <motion.div
                   key={badge.id}
@@ -101,7 +130,9 @@ const Achievements: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ ...spring, delay: Math.min(idx * 0.04, 0.6) }}
                   className={`rounded-3xl p-3 flex flex-col items-center gap-1 border-2 ${
-                    earned ? 'bg-white border-yellow-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-50'
+                    earned
+                      ? `bg-white shadow-sm ${isNewlyEarned ? 'badge-earned-glow border-yellow-300' : 'border-yellow-200'}`
+                      : 'bg-gray-50 border-gray-100 opacity-50'
                   }`}
                 >
                   <BadgeCard badge={badge} earned={earned} size="md" />

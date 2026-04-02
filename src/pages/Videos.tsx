@@ -123,6 +123,7 @@ function Videos() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ ...spring, delay: idx * 0.05 }}
                             onClick={() => handlePhonicsVideoClick(video)}
+                            aria-label={video.title}
                             className="w-full rounded-3xl overflow-hidden bg-white border-2 border-gray-100 shadow-sm active:scale-[0.97] transition-transform"
                           >
                             <div className="relative aspect-video">
@@ -174,6 +175,7 @@ function Videos() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ ...spring, delay: idx * 0.05 }}
                   onClick={() => handleRegularVideoClick(video)}
+                  aria-label={video.title}
                   className="w-full rounded-3xl overflow-hidden bg-white border-2 border-gray-100 shadow-sm active:scale-[0.97] transition-transform"
                 >
                   <div className="relative aspect-video">

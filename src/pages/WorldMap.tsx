@@ -4,7 +4,7 @@
 // phase buttons and chunky unit cards (Khan Academy Kids style)
 // ============================================================
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Star } from 'lucide-react';
@@ -71,6 +71,32 @@ const PHASE_LOTTIE: Record<string, string> = {
 
 const springTransition = { type: 'spring' as const, stiffness: 300, damping: 24 };
 const gentleSpring = { type: 'spring' as const, stiffness: 200, damping: 20 };
+
+// ── Skeleton Loader ─────────────────────────────────────────
+
+function WorldMapSkeleton() {
+  return (
+    <div className="px-4 pt-4 pb-8">
+      {/* Phase buttons skeleton */}
+      <div className="flex gap-3 mb-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-14 w-32 rounded-[24px] bg-gray-200 animate-pulse" />
+        ))}
+      </div>
+      {/* Unit cards skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="rounded-[28px] bg-gray-200 animate-pulse" style={{ minHeight: 130 }}>
+            <div className="flex flex-col items-center justify-center gap-3 p-4" style={{ minHeight: 130 }}>
+              <div className="w-14 h-14 rounded-2xl bg-gray-300 animate-pulse" />
+              <div className="w-20 h-4 rounded bg-gray-300 animate-pulse" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ── Phase Button (BIG chunky gradient) ───────────────────────
 
@@ -191,6 +217,12 @@ export default function WorldMap() {
   }, [phases, currentUnitId]);
 
   const [activePhaseId, setActivePhaseId] = useState<string>(defaultPhaseId);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setIsReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   const activePhase = useMemo(
     () => phases.find((p) => p.id === activePhaseId) ?? phases[0],
@@ -198,6 +230,20 @@ export default function WorldMap() {
   );
 
   const isTr = lang === 'tr';
+
+  if (!isReady) {
+    return (
+      <div className="kid-bg kid-bubbles pb-24" style={{ minHeight: 'calc(100dvh - 64px)' }}>
+        <div className="relative z-10">
+          <div className="px-4 pt-6 pb-2 flex items-end gap-3">
+            <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse shrink-0" />
+            <div className="flex-1 mb-2 h-12 rounded-2xl bg-gray-200 animate-pulse" />
+          </div>
+          <WorldMapSkeleton />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="kid-bg kid-bubbles pb-24" style={{ minHeight: 'calc(100dvh - 64px)' }}>

@@ -218,14 +218,10 @@ function Worksheets() {
                     <button
                       type="button"
                       className="flex items-center justify-center w-12 min-h-[48px] rounded-2xl bg-gray-100 text-gray-600"
+                      aria-label={lang === 'tr' ? `Yazdir: ${worksheet.title}` : `Print: ${worksheet.title}`}
                       onClick={() => {
                         handleWorksheetAction(worksheet);
-                        const win = window.open(worksheet.external_url, '_blank');
-                        if (win) {
-                          win.addEventListener('load', () => {
-                            try { win.print(); } catch { /* ignore */ }
-                          });
-                        }
+                        window.open(worksheet.external_url, '_blank');
                       }}
                     >
                       <Printer size={16} />

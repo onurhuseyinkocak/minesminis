@@ -157,7 +157,7 @@ const LessonPlayer = () => {
   const [difficultyMultiplier, setDifficultyMultiplier] = useState<number>(1.0);
 
   useEffect(() => { if (user?.uid) { setActiveUser(user.uid); startSession(); } }, [user?.uid]);
-  useEffect(() => { if (lessonId && worldId) analytics.lessonStarted(lessonId, worldId); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (lessonId && worldId) analytics.lessonStarted(lessonId, worldId); }, [lessonId, worldId]);
   useEffect(() => { return () => { if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel(); }; }, []);
 
   const oldLesson = useMemo(() => getLessonById(worldId, lessonId), [worldId, lessonId]);
@@ -256,7 +256,39 @@ const LessonPlayer = () => {
     );
   }
 
+  const [showNotFound, setShowNotFound] = useState(false);
+
+  useEffect(() => {
+    if (!lesson) {
+      const timeout = setTimeout(() => setShowNotFound(true), 600);
+      return () => clearTimeout(timeout);
+    }
+    setShowNotFound(false);
+  }, [lesson]);
+
   if (!lesson) {
+    if (!showNotFound) {
+      return (
+        <div className="min-h-screen bg-white flex flex-col">
+          {/* Skeleton top bar */}
+          <div className="flex items-center gap-3 px-4 pt-4 pb-2">
+            <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 w-32 rounded bg-gray-200 animate-pulse" />
+              <div className="h-2 w-full rounded bg-gray-200 animate-pulse" />
+            </div>
+            <div className="flex gap-1">
+              {[1, 2, 3].map((i) => <div key={i} className="w-5 h-5 rounded-full bg-gray-200 animate-pulse" />)}
+            </div>
+          </div>
+          {/* Skeleton activity area */}
+          <div className="flex-1 px-4 pb-4 flex flex-col gap-4 pt-4">
+            <div className="h-16 rounded-3xl bg-gray-200 animate-pulse" />
+            <div className="h-48 rounded-3xl bg-gray-200 animate-pulse" />
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-4">
         <h2 className="text-xl font-bold text-gray-900">{t('lesson.notFound')}</h2>

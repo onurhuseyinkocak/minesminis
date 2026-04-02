@@ -511,6 +511,7 @@ function Games() {
                   transition={{ ...springBounce, delay: 0.15 + i * 0.04 }}
                   whileTap={{ scale: 0.92 }}
                   onClick={() => handlePlaySingle(game)}
+                  aria-label={isTr ? game.nameTr : game.name}
                   className={`rounded-[28px] flex flex-col items-center justify-center text-white shadow-lg cursor-pointer bg-gradient-to-br ${CARD_GRADIENTS[i % CARD_GRADIENTS.length]} border-4 border-white/20`}
                   style={{ minHeight: 140, padding: 16 }}
                 >

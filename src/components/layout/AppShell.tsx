@@ -5,7 +5,7 @@ import { useGamification } from '../../contexts/GamificationContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { LottieIcon, KidIcon } from '../ui';
 import type { KidIconName } from '../ui';
-import { Users2, LayoutDashboard, Trophy, Gift, Crown } from 'lucide-react';
+import { Users2, LayoutDashboard, Trophy, Gift, Crown, Music } from 'lucide-react';
 import Footer from './Footer';
 import DailyRewardPopover from '../DailyReward';
 import './AppShell.css';
@@ -30,7 +30,7 @@ const MOBILE_NAV_ITEMS: { path: string; label: string; labelTr: string; icon: Ki
   { path: '/dashboard', label: 'Home', labelTr: 'Ana Sayfa', icon: 'home' },
   { path: '/worlds', label: 'Learn', labelTr: 'Öğren', icon: 'learn' },
   { path: '/games', label: 'Games', labelTr: 'Oyunlar', icon: 'games' },
-  { path: '/stories', label: 'Stories', labelTr: 'Hikayeler', icon: 'stories' },
+  { path: '/words', label: 'Words', labelTr: 'Kelimeler', icon: 'words' },
   { path: '/profile', label: 'Me', labelTr: 'Ben', icon: 'profile' },
 ];
 
@@ -170,6 +170,17 @@ export default function AppShell({
               </Link>
             );
           })}
+          <Link
+            to="/songs"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-display font-semibold transition-all duration-150 ${
+              isActive('/songs')
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-ink-500 hover:bg-ink-50 hover:text-ink-800'
+            }`}
+          >
+            <Music size={18} />
+            <span>{lang === 'tr' ? 'Şarkılar' : 'Songs'}</span>
+          </Link>
           <Link
             to="/leaderboard"
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-display font-semibold transition-all duration-150 ${

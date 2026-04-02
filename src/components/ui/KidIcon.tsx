@@ -1,7 +1,7 @@
 import React from 'react';
 
 export type KidIconName =
-  | 'home' | 'learn' | 'games' | 'library' | 'stories'
+  | 'home' | 'learn' | 'games' | 'library' | 'stories' | 'words'
   | 'garden' | 'reading' | 'fire' | 'star' | 'trophy'
   | 'book' | 'music' | 'video' | 'puzzle' | 'heart'
   | 'check' | 'lock' | 'play' | 'mic' | 'logout' | 'profile';
@@ -77,6 +77,22 @@ const icons: Record<KidIconName, React.ReactElement> = {
       <rect x="15.5" y="4" width="1" height="16" rx="0.5" fill="#1D4ED8" />
       {/* Shelf */}
       <rect x="2" y="20" width="20" height="2" rx="1" fill="#1E40AF" />
+    </svg>
+  ),
+
+  words: (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Book body */}
+      <rect x="3" y="3" width="18" height="17" rx="2.5" fill="#3B82F6" />
+      {/* Spine */}
+      <rect x="3" y="3" width="4" height="17" rx="2" fill="#2563EB" />
+      {/* Letter A */}
+      <path d="M13 8L15 14H11L13 8Z" fill="white" opacity="0.9" />
+      <rect x="11.5" y="12" width="3" height="1.2" rx="0.6" fill="white" opacity="0.7" />
+      {/* Dots for text */}
+      <circle cx="10" cy="16" r="0.8" fill="white" opacity="0.6" />
+      <circle cx="13" cy="16" r="0.8" fill="white" opacity="0.6" />
+      <circle cx="16" cy="16" r="0.8" fill="white" opacity="0.6" />
     </svg>
   ),
 

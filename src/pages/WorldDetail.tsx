@@ -4,7 +4,7 @@
 // Supports both phase units (p1-u1) and legacy worlds (w1)
 // ============================================================
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -79,6 +79,21 @@ const staggerItem = {
   show: { opacity: 1, x: 0, transition: springTransition },
 };
 
+// ── Activity Timeline Skeleton ──────────────────────────────
+
+function TimelineSkeleton() {
+  return (
+    <div style={{ padding: '24px 16px', maxWidth: 520, margin: '0 auto', width: '100%' }}>
+      {[1, 2, 3].map((i) => (
+        <div key={i} style={{ display: 'flex', gap: 14, marginBottom: 12 }}>
+          <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" style={{ flexShrink: 0 }} />
+          <div className="flex-1 rounded-[14px] bg-gray-200 animate-pulse" style={{ minHeight: 64 }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ── Main component ──────────────────────────────────────────
 
 export default function WorldDetail() {
@@ -104,6 +119,28 @@ export default function WorldDetail() {
   const progress = worldId ? getUnitProgress(worldId) : 0;
   const completed = worldId ? isUnitCompleted(worldId) : false;
   const currentActivityIdx = worldId ? getCurrentActivityIndex(worldId) : 0;
+
+  // Brief skeleton to avoid flash before data resolves
+  const [isReady, setIsReady] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setIsReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  if (!isReady) {
+    return (
+      <div style={{ minHeight: 'calc(100dvh - 64px)', background: '#FAFBFC', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '20px 24px 24px', background: '#f5f5f5' }}>
+          <div className="h-5 w-24 rounded bg-gray-200 animate-pulse" style={{ marginBottom: 16 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="w-11 h-11 rounded-xl bg-gray-200 animate-pulse" />
+            <div className="h-6 w-40 rounded bg-gray-200 animate-pulse" />
+          </div>
+        </div>
+        <TimelineSkeleton />
+      </div>
+    );
+  }
 
   // 404
   if (!unit && !legacyWorld) {
