@@ -661,7 +661,6 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             saveStatsLocally(newStats);
             return newStats;
         });
-        const newStats = capturedStats ?? { ...currentStats, streakDays: newStreak, lastLoginDate: now.toISOString() };
 
         // Log today's activity in the habit tracker (idempotent)
         if (userRef.current?.uid) {
