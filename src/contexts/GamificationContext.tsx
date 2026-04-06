@@ -654,10 +654,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
         // Functional update — prevents clobbering XP/other fields if loadStats or addXP
         // fires in the same batch on mount.
-        let capturedStats: UserStats | null = null;
         setStats(prev => {
             const newStats = { ...prev, streakDays: newStreak, lastLoginDate: now.toISOString() };
-            capturedStats = newStats;
             saveStatsLocally(newStats);
             return newStats;
         });
