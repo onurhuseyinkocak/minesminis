@@ -357,7 +357,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     .maybeSingle(),
                 supabase
                     .from('profiles')
-                    .select('xp, level, streak_days, badges, last_login, words_learned, games_played, videos_watched, worksheets_completed')
+                    .select('xp, level, streak_days, badges, last_login, words_learned, games_played, videos_watched, worksheets_completed, last_daily_claim')
                     .eq('id', user.uid)
                     .maybeSingle(),
             ]);
@@ -376,11 +376,18 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                     gamesPlayed: profileData.games_played ?? 0,
                     videosWatched: profileData.videos_watched ?? 0,
                     worksheetsCompleted: profileData.worksheets_completed ?? 0,
+                    last_daily_claim: profileData.last_daily_claim ?? null,
                 },
             } : null);
 
             if (effectiveData && !error) {
                 const settingsObj = (effectiveData.settings || {}) as Record<string, unknown>;
+
+                // Capture the merged stats OUTSIDE the setStats callback so we can call
+                // side-effect functions (checkDailyClaim, checkWeeklyReset) with the correct
+                // data instead of the stale statsRef.current they would otherwise read.
+                let resolvedServerStats: UserStats | null = null;
+
                 setStats(prev => {
                     const serverXp = effectiveData.xp || effectiveData.points || 0;
                     // Take the higher XP value — prevents overwriting XP earned during the async fetch
@@ -412,13 +419,18 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
                         dailyRewardsClaimed: Math.max((settingsObj.dailyRewardsClaimed as number) ?? 0, prev.dailyRewardsClaimed ?? 0),
                     };
 
+                    resolvedServerStats = serverStats;
                     // Save the merged result back to local
                     saveStatsLocally(serverStats);
-                    checkDailyClaim(serverStats.lastDailyClaim);
-                    checkWeeklyReset(serverStats.lastWeeklyReset);
-
                     return serverStats;
                 });
+
+                // Call side effects AFTER setStats with the resolved data — NOT inside
+                // the callback where statsRef.current is still stale.
+                if (resolvedServerStats && !cancelled) {
+                    checkDailyClaim((resolvedServerStats as UserStats).lastDailyClaim);
+                    await checkWeeklyReset(resolvedServerStats as UserStats);
+                }
             }
         } catch (error) {
             if (cancelled) return;
@@ -471,20 +483,26 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             totalXP = Math.round(totalXP * activeBoost.multiplier);
         }
 
-        const newXP = currentStats.xp + totalXP;
-        const newWeeklyXP = currentStats.weekly_xp + totalXP;
         const oldLevel = currentStats.level;
-        const newLevelValue = calculateLevel(newXP);
+        // Capture final XP for side effects (level-up detection, Supabase sync)
+        let capturedNewXP = 0;
+        let capturedNewLevel = oldLevel;
+        let capturedNewWeeklyXP = 0;
 
-        const newStats = {
-            ...currentStats,
-            xp: newXP,
-            weekly_xp: newWeeklyXP,
-            level: newLevelValue,
-        };
-
-        setStats(newStats);
-        saveStatsLocally(newStats);
+        // Functional update — safe against concurrent addXP calls.
+        // Each updater receives the state committed by the previous one, so
+        // simultaneous calls (e.g. earnedXp + perfectBonus) accumulate correctly.
+        setStats(prev => {
+            const newXP = prev.xp + totalXP;
+            const newWeeklyXP = (prev.weekly_xp ?? 0) + totalXP;
+            const newLevelValue = calculateLevel(newXP);
+            capturedNewXP = newXP;
+            capturedNewLevel = newLevelValue;
+            capturedNewWeeklyXP = newWeeklyXP;
+            const newStats = { ...prev, xp: newXP, weekly_xp: newWeeklyXP, level: newLevelValue };
+            saveStatsLocally(newStats);
+            return newStats;
+        });
 
         // Update today's XP tracker so Daily Goal widget stays in sync
         if (userRef.current?.uid) {
@@ -500,8 +518,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         }
 
         // Level up! Only show when XP actually qualifies (keeps Learning Journey in sync)
-        if (newLevelValue > oldLevel && newXP >= getTotalXPForLevel(newLevelValue)) {
-            setNewLevel(newLevelValue);
+        if (capturedNewLevel > oldLevel && capturedNewXP >= getTotalXPForLevel(capturedNewLevel)) {
+            setNewLevel(capturedNewLevel);
             setShowLevelUp(true);
 
             // Mimi: bonus XP on level up (skip if this IS the bonus, to prevent recursion)
@@ -512,7 +530,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             // Check if a new mascot just unlocked due to level change
             const newlyUnlocked = hasNewMascotUnlocked(
                 oldLevel,
-                newLevelValue,
+                capturedNewLevel,
                 currentStats.streakDays,
                 currentStats.streakDays,
                 currentStats.wordsLearned,
@@ -533,7 +551,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         // The latest XP value wins because the debounce captures the closure at fire time.
         if (userRef.current?.uid) {
             const currentSettings = userProfileRef.current?.settings ?? {};
-            debouncedSyncXP(userRef.current.uid, newXP, newWeeklyXP, currentSettings);
+            debouncedSyncXP(userRef.current.uid, capturedNewXP, capturedNewWeeklyXP, currentSettings);
         }
     };
 
@@ -552,36 +570,32 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
     // ==================== STREAK FUNCTIONS ====================
 
-    const checkWeeklyReset = async (lastResetStr: string | null) => {
-        const currentStats = statsRef.current;
+    // Accepts the stats object to evaluate — never reads statsRef.current (which would be
+    // stale when called from inside a setStats callback or immediately after setStats).
+    const checkWeeklyReset = async (statsToCheck: UserStats) => {
         const now = new Date();
-        const lastReset = lastResetStr ? new Date(lastResetStr) : new Date(currentStats.created_at || now);
+        const lastReset = statsToCheck.lastWeeklyReset
+            ? new Date(statsToCheck.lastWeeklyReset)
+            : new Date(statsToCheck.created_at || now);
 
-        // Find the most recent Monday at 00:00
+        // Find the most recent Monday at 00:00 local time
         const mostRecentMonday = new Date(now);
         const day = now.getDay();
-        const diff = (day === 0 ? 6 : day - 1); // 0 (Sun) -> 6, 1 (Mon) -> 0, etc.
+        const diff = (day === 0 ? 6 : day - 1); // Sun → 6, Mon → 0, Tue → 1, …
         mostRecentMonday.setDate(now.getDate() - diff);
         mostRecentMonday.setHours(0, 0, 0, 0);
 
         if (lastReset < mostRecentMonday) {
-            // Weekly reset needed!
-            // Weekly reset triggered
-
-            // 1. If user was #1 (we'd need to check the full leaderboard here,
-            // but for simplicity in this context we'll assume a winner check)
-            // In a real app, this logic might live in a Supabase Edge Function
-
-            // 2. Reset weekly XP
-            const newStats = {
-                ...currentStats,
+            // Weekly reset needed — spread the CORRECT stats (passed in, not stale ref)
+            const newStats: UserStats = {
+                ...statsToCheck,
                 weekly_xp: 0,
                 lastWeeklyReset: now.toISOString(),
             };
             setStats(newStats);
             saveStatsLocally(newStats);
 
-            // 3. Sync weekly reset via settings JSONB — merge without extra fetch
+            // Sync via settings JSONB — merge without extra fetch
             if (userRef.current?.uid) {
                 const weeklyResetUserId = userRef.current.uid;
                 const currentSettings = userProfileRef.current?.settings ?? {};
@@ -638,14 +652,16 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             }
         }
 
-        const newStats = {
-            ...currentStats,
-            streakDays: newStreak,
-            lastLoginDate: now.toISOString(),
-        };
-
-        setStats(newStats);
-        saveStatsLocally(newStats);
+        // Functional update — prevents clobbering XP/other fields if loadStats or addXP
+        // fires in the same batch on mount.
+        let capturedStats: UserStats | null = null;
+        setStats(prev => {
+            const newStats = { ...prev, streakDays: newStreak, lastLoginDate: now.toISOString() };
+            capturedStats = newStats;
+            saveStatsLocally(newStats);
+            return newStats;
+        });
+        const newStats = capturedStats ?? { ...currentStats, streakDays: newStreak, lastLoginDate: now.toISOString() };
 
         // Log today's activity in the habit tracker (idempotent)
         if (userRef.current?.uid) {
@@ -717,29 +733,46 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const claimDailyReward = async (): Promise<DailyReward | null> => {
         if (!canClaimDaily) return null;
 
+        // Server-side idempotency guard — prevents multi-tab race conditions and
+        // stale-client state (e.g. user refreshes before previous Supabase write lands).
+        // Checks both tables: users (Firebase auth) and profiles (Supabase auth fallback).
+        if (userRef.current?.uid) {
+            const [{ data: serverRow }, { data: profileRow }] = await Promise.all([
+                supabase.from('users').select('settings').eq('id', userRef.current.uid).maybeSingle(),
+                supabase.from('profiles').select('last_daily_claim').eq('id', userRef.current.uid).maybeSingle(),
+            ]);
+            const serverLastClaim = (serverRow?.settings as Record<string, unknown>)?.last_daily_claim as string | undefined;
+            const profileLastClaim = profileRow?.last_daily_claim ?? undefined;
+            const effectiveLastClaim = serverLastClaim ?? profileLastClaim;
+            if (effectiveLastClaim && isSameDay(new Date(effectiveLastClaim), new Date())) {
+                // Already claimed today on the server — sync local state and bail
+                setCanClaimDaily(false);
+                return null;
+            }
+        }
+
         const currentStats = statsRef.current;
         const dayIndex = currentStats.streakDays === 0 ? 0 : ((currentStats.streakDays - 1) % 7);
         const reward = DAILY_REWARDS[dayIndex] ?? DAILY_REWARDS[0];
 
-        const now = new Date();
-        const newStats = {
-            ...currentStats,
-            lastDailyClaim: now.toISOString(),
-        };
+        const claimTimestamp = new Date().toISOString();
 
-        // Update local state first
-        setStats(newStats);
-        saveStatsLocally(newStats);
+        // Block UI immediately (prevents double-click while awaits run)
         setCanClaimDaily(false);
 
-        // Sync with server — merge without extra fetch (fire-and-forget with retry)
+        // Write claim timestamp to server BEFORE XP operations so any concurrent
+        // requests also see the claim is taken.
+        // Write to BOTH tables in parallel — one of them will be the authoritative row
+        // depending on whether this is a Firebase-auth user (users table) or
+        // Supabase-auth user (profiles table). Supabase UPDATE is a no-op for non-existent rows.
         if (userRef.current?.uid) {
             const dailyClaimUserId = userRef.current.uid;
             const currentSettings = userProfileRef.current?.settings ?? {};
-            const settings = { ...currentSettings, last_daily_claim: now.toISOString() };
-            withRetry(() =>
-                supabase.from('users').update({ settings }).eq('id', dailyClaimUserId)
-            ).catch((error: unknown) => {
+            const settings = { ...currentSettings, last_daily_claim: claimTimestamp };
+            Promise.all([
+                withRetry(() => supabase.from('users').update({ settings }).eq('id', dailyClaimUserId)),
+                withRetry(() => supabase.from('profiles').update({ last_daily_claim: claimTimestamp }).eq('id', dailyClaimUserId)),
+            ]).catch((error: unknown) => {
                 errorLogger.log({
                     severity: 'medium',
                     message: `Error syncing daily claim: ${error instanceof Error ? error.message : String(error)}`,
@@ -748,7 +781,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
             });
         }
 
-        // Add XP
+        // Add XP — note: addXP reads statsRef.current (may be stale for lastDailyClaim).
+        // We re-apply lastDailyClaim below via functional update after all operations.
         await addXP(reward.xp, 'daily_reward');
 
         // Track daily reward claim count (used by weekly_starter / week_champion badges)
@@ -758,6 +792,15 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         if (reward.badge && !currentStats.badges.includes(reward.badge)) {
             await awardBadge(reward.badge);
         }
+
+        // Re-apply lastDailyClaim with a functional update so that the stale-state
+        // spread inside addXP/trackActivity cannot overwrite it.
+        // This is the authoritative local write for the claim timestamp.
+        setStats(prev => {
+            const patched = { ...prev, lastDailyClaim: claimTimestamp };
+            saveStatsLocally(patched);
+            return patched;
+        });
 
         return reward;
     };
@@ -788,15 +831,19 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const awardBadge = async (badgeId: string) => {
         if (hasBadge(badgeId)) return;
 
-        const currentStats = statsRef.current;
-        const newBadges = [...currentStats.badges, badgeId];
-        const newStats = {
-            ...currentStats,
-            badges: newBadges,
-        };
+        // Pre-compute newBadges synchronously from the current ref so Supabase sync below
+        // can use it before React has flushed the updater.
+        const newBadges = [...statsRef.current.badges, badgeId];
 
-        setStats(newStats);
-        saveStatsLocally(newStats);
+        // Functional update — merges badge into whatever is the current committed state,
+        // preventing the badge list from reverting if another update is batched concurrently.
+        setStats(prev => {
+            if (prev.badges.includes(badgeId)) return prev; // double-check inside updater
+            const merged = [...prev.badges, badgeId];
+            const newStats = { ...prev, badges: merged };
+            saveStatsLocally(newStats);
+            return newStats;
+        });
 
         // Notify the user — never award a badge silently
         const badgeDef = ALL_BADGES.find(b => b.id === badgeId);
@@ -890,73 +937,85 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     // ==================== ACTIVITY TRACKING ====================
 
     const trackActivity = async (type: string, metadata?: Record<string, unknown>) => {
-        // Activity tracked: type + metadata logged in dev only
         logger.debug(`Tracking activity: ${type}`, metadata);
-        const currentStats = statsRef.current;
-        const newStats = { ...currentStats };
-        switch (type) {
-            case 'word_learned':
-                newStats.wordsLearned = (currentStats.wordsLearned || 0) + 1;
-                break;
-            case 'game_played':
-                newStats.gamesPlayed = (currentStats.gamesPlayed || 0) + 1;
-                break;
-            case 'video_watched':
-                newStats.videosWatched = (currentStats.videosWatched || 0) + 1;
-                break;
-            case 'worksheet_completed':
-                newStats.worksheetsCompleted = (currentStats.worksheetsCompleted || 0) + 1;
-                break;
-            case 'daily_challenge':
-                newStats.dailyChallengesCompleted = (currentStats.dailyChallengesCompleted || 0) + 1;
-                break;
-            case 'story_read':
-                newStats.storiesRead = (currentStats.storiesRead || 0) + 1;
-                break;
-            case 'dialogue_completed':
-                newStats.dialoguesCompleted = (currentStats.dialoguesCompleted || 0) + 1;
-                break;
-            case 'perfect_pronunciation':
-                newStats.perfectPronunciationCount = (currentStats.perfectPronunciationCount || 0) + 1;
-                break;
-            case 'daily_reward_claimed':
-                newStats.dailyRewardsClaimed = (currentStats.dailyRewardsClaimed || 0) + 1;
-                break;
-            case 'lesson_completed_timed': {
-                // Check time-based and date-based badges at the moment of lesson completion
-                const now = new Date();
-                const hour = now.getHours();
-                const dayOfWeek = now.getDay(); // 0=Sun, 6=Sat
 
-                if (hour < 9 && !hasBadge('early_bird')) {
-                    await awardBadge('early_bird');
-                }
-                if (hour >= 21 && !hasBadge('night_owl')) {
-                    await awardBadge('night_owl');
-                }
+        // lesson_completed_timed: handle async badge checks BEFORE the state update
+        // (needs hasBadge at trigger time; cannot run inside a pure updater function)
+        if (type === 'lesson_completed_timed') {
+            const now = new Date();
+            const hour = now.getHours();
+            const dayOfWeek = now.getDay(); // 0=Sun, 6=Sat
 
-                // Weekend warrior: track which weekend days completed this week
-                const weekKey = `mm_weekend_warrior_${now.getFullYear()}_${Math.floor(now.getTime() / (7 * 86400000))}`;
-                if (dayOfWeek === 0 || dayOfWeek === 6) {
-                    const stored = localStorage.getItem(weekKey) || '';
-                    const daysSet = new Set(stored.split(',').filter(Boolean));
-                    daysSet.add(String(dayOfWeek));
-                    try { localStorage.setItem(weekKey, [...daysSet].join(',')); } catch { /* ignore */ }
-                    if (daysSet.has('0') && daysSet.has('6') && !hasBadge('weekend_warrior')) {
-                        await awardBadge('weekend_warrior');
-                    }
+            if (hour < 9 && !hasBadge('early_bird')) {
+                await awardBadge('early_bird');
+            }
+            if (hour >= 21 && !hasBadge('night_owl')) {
+                await awardBadge('night_owl');
+            }
+
+            // Weekend warrior: track which weekend days completed this week.
+            // Use Monday-anchored week key so Sat and Sun always share the same key.
+            const mondayOffset = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+            const weekStart = new Date(now);
+            weekStart.setDate(now.getDate() - mondayOffset);
+            weekStart.setHours(0, 0, 0, 0);
+            const weekKey = `mm_weekend_warrior_${weekStart.getFullYear()}_${weekStart.getMonth()}_${weekStart.getDate()}`;
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                const stored = localStorage.getItem(weekKey) || '';
+                const daysSet = new Set(stored.split(',').filter(Boolean));
+                daysSet.add(String(dayOfWeek));
+                try { localStorage.setItem(weekKey, [...daysSet].join(',')); } catch { /* ignore */ }
+                if (daysSet.has('0') && daysSet.has('6') && !hasBadge('weekend_warrior')) {
+                    await awardBadge('weekend_warrior');
                 }
-                break;
             }
         }
 
-        setStats(newStats);
-        saveStatsLocally(newStats);
+        // Functional update — safe against concurrent calls (e.g. addXP + trackActivity batched
+        // in the same React tick). Using prev instead of statsRef.current prevents stale spreads
+        // from overwriting XP or other fields set by addXP's updater.
+        let capturedNewStats: UserStats | null = null;
+        setStats(prev => {
+            const newStats = { ...prev };
+            switch (type) {
+                case 'word_learned':
+                    newStats.wordsLearned = (prev.wordsLearned || 0) + 1;
+                    break;
+                case 'game_played':
+                    newStats.gamesPlayed = (prev.gamesPlayed || 0) + 1;
+                    break;
+                case 'video_watched':
+                    newStats.videosWatched = (prev.videosWatched || 0) + 1;
+                    break;
+                case 'worksheet_completed':
+                    newStats.worksheetsCompleted = (prev.worksheetsCompleted || 0) + 1;
+                    break;
+                case 'daily_challenge':
+                    newStats.dailyChallengesCompleted = (prev.dailyChallengesCompleted || 0) + 1;
+                    break;
+                case 'story_read':
+                    newStats.storiesRead = (prev.storiesRead || 0) + 1;
+                    break;
+                case 'dialogue_completed':
+                    newStats.dialoguesCompleted = (prev.dialoguesCompleted || 0) + 1;
+                    break;
+                case 'perfect_pronunciation':
+                    newStats.perfectPronunciationCount = (prev.perfectPronunciationCount || 0) + 1;
+                    break;
+                case 'daily_reward_claimed':
+                    newStats.dailyRewardsClaimed = (prev.dailyRewardsClaimed || 0) + 1;
+                    break;
+                // All other types (xp_earned, lesson_completed_timed, etc.): no counter change
+            }
+            capturedNewStats = newStats;
+            saveStatsLocally(newStats);
+            return newStats;
+        });
 
         // Debounced activity-counter sync — batches rapid writes into a single Supabase call
-        if (userRef.current?.uid) {
+        if (userRef.current?.uid && capturedNewStats) {
             const currentSettings = userProfileRef.current?.settings ?? {};
-            debouncedSyncActivity(userRef.current.uid, newStats, currentSettings);
+            debouncedSyncActivity(userRef.current.uid, capturedNewStats as UserStats, currentSettings);
         }
 
         // Check for new badges

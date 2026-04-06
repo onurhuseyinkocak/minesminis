@@ -37,24 +37,6 @@ export function setDailyGoal(goal: DailyGoalLevel): void {
 
 // ─── Today XP ─────────────────────────────────────────────────────────────────
 
-/** Remove stale mm_psych_today_xp_ keys older than today. Called on addTodayXP. */
-function cleanupOldXPKeys(uid: string): void {
-  const todayKey = KEYS.todayXP(uid);
-  const prefix = `mm_psych_today_xp_${uid}_`;
-  try {
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith(prefix) && key !== todayKey) {
-        keysToRemove.push(key);
-      }
-    }
-    keysToRemove.forEach((k) => localStorage.removeItem(k));
-  } catch {
-    // localStorage may be unavailable — silently ignore
-  }
-}
-
 export function getTodayXP(uid: string): number {
   const val = localStorage.getItem(KEYS.todayXP(uid));
   return val ? Number(val) : 0;
@@ -64,8 +46,6 @@ export function addTodayXP(uid: string, amount: number): number {
   const current = getTodayXP(uid);
   const next = current + amount;
   localStorage.setItem(KEYS.todayXP(uid), String(next));
-  // Clean up stale daily XP keys from previous days
-  cleanupOldXPKeys(uid);
   return next;
 }
 
@@ -125,29 +105,31 @@ export function shouldShowStreakShame(streakDays: number, lastActivityDate: stri
   if (streakDays < 2) return false;
 
   const todayYMD = localYMD();
-  // lastPromptDate is stored as toDateString() — convert for comparison
+  // Use locale-independent YYYY-MM-DD for both store and compare
   const lastPrompt = localStorage.getItem(KEYS.lastPromptDate);
-  if (lastPrompt === new Date().toDateString()) return false; // already shown today
+  if (lastPrompt === todayYMD) return false; // already shown today
 
   const now = new Date();
   if (now.getHours() < 16) return false; // only after 4pm
 
   if (!lastActivityDate) return true;
 
-  // Compare using locale-independent YYYY-MM-DD slicing of the ISO string
+  // Compare using locale-independent YYYY-MM-DD
   const activityYMD = lastActivityDate.length >= 10 ? lastActivityDate.slice(0, 10) : localYMD(new Date(lastActivityDate));
   return activityYMD !== todayYMD; // hasn't practiced today
 }
 
 export function markStreakShameShown(): void {
-  localStorage.setItem(KEYS.lastPromptDate, new Date().toDateString());
+  // Store as YYYY-MM-DD (locale-independent) — must match the read side above
+  localStorage.setItem(KEYS.lastPromptDate, localYMD());
 }
 
 /** Hours remaining until midnight (streak reset boundary) */
 export function getStreakSafeHours(): number {
   const now = new Date();
-  const midnight = new Date();
-  midnight.setHours(23, 59, 59, 0);
+  const midnight = new Date(now);
+  midnight.setDate(midnight.getDate() + 1);
+  midnight.setHours(0, 0, 0, 0);
   return Math.max(0, Math.floor((midnight.getTime() - now.getTime()) / 3600000));
 }
 
