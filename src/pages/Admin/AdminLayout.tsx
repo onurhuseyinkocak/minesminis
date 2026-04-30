@@ -93,7 +93,7 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <div style={{ width: 240, background: 'white', borderRight: '1px solid var(--line)', padding: '24px 16px', display: 'flex', flexDirection: 'column' }}>
         <Link to="/" style={{ textDecoration: 'none', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/images/minesminis-logo.png" alt="minesminis" style={{ height: 32, borderRadius: 8 }} />
+          <img src="/images/minesminis-logo.webp" alt="minesminis" style={{ height: 44, borderRadius: 10 }} />
         </Link>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>

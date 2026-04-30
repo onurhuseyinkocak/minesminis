@@ -63,7 +63,7 @@ describe('Dashboard', () => {
 
     it('renders hero background image', () => {
       renderDashboard()
-      const heroImg = document.querySelector('img[src="/images/hero-bg.png"]')
+      const heroImg = document.querySelector('img[src="/images/hero-bg.webp"]')
       expect(heroImg).toBeInTheDocument()
     })
   })
@@ -108,9 +108,9 @@ describe('Dashboard', () => {
 
     it('renders category images for each card', () => {
       renderDashboard()
-      expect(document.querySelector('img[src="/images/cat-slides.png"]')).toBeInTheDocument()
-      expect(document.querySelector('img[src="/images/cat-videos.png"]')).toBeInTheDocument()
-      expect(document.querySelector('img[src="/images/cat-songs.png"]')).toBeInTheDocument()
+      expect(document.querySelector('img[src="/images/cat-slides.webp"]')).toBeInTheDocument()
+      expect(document.querySelector('img[src="/images/cat-videos.webp"]')).toBeInTheDocument()
+      expect(document.querySelector('img[src="/images/cat-songs.webp"]')).toBeInTheDocument()
     })
 
     it('renders category icons', () => {

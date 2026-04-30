@@ -6,9 +6,9 @@ import Cover from '../components/Cover'
 import { supabase } from '../lib/supabase'
 
 const features = [
-  { id: 'slides', title: 'Slides', icon: Presentation, image: '/images/cat-slides.png', tag: 'Learn', path: '/slides' },
-  { id: 'videos', title: 'Videos', icon: Video, image: '/images/cat-videos.png', tag: 'Watch', path: '/videos' },
-  { id: 'songs', title: 'Songs', icon: Music, image: '/images/cat-songs.png', tag: 'Sing', path: '/songs' },
+  { id: 'slides', title: 'Slides', icon: Presentation, image: '/images/cat-slides.webp', tag: 'Learn', path: '/slides' },
+  { id: 'videos', title: 'Videos', icon: Video, image: '/images/cat-videos.webp', tag: 'Watch', path: '/videos' },
+  { id: 'songs', title: 'Songs', icon: Music, image: '/images/cat-songs.webp', tag: 'Sing', path: '/songs' },
 ]
 
 export default function Dashboard() {
@@ -73,7 +73,7 @@ export default function Dashboard() {
             <Link to="/slides" className="mm-btn" style={{ background: 'white', color: '#7B68EE', fontWeight: 700 }}><Play size={14} /> Start Learning</Link>
           </div>
         </div>
-        <img src="/images/hero-bg.png" alt="" style={{
+        <img src="/images/hero-bg.webp" alt="" loading="eager" style={{
           width: 180, height: 180, objectFit: 'cover', borderRadius: 18, flexShrink: 0,
           boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
         }} />
@@ -87,7 +87,7 @@ export default function Dashboard() {
         {features.map((f, i) => (
           <Link key={f.id} to={f.path} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="mm-card-cover">
-              <img src={f.image} alt={f.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={f.image} alt={f.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div className="mm-card-body">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
