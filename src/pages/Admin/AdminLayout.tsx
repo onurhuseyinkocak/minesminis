@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { Presentation, Video, Music, LogOut, LayoutDashboard } from 'lucide-react'
+import { Presentation, Video, Music, LogOut, LayoutDashboard, Eye, EyeOff } from 'lucide-react'
 import SlidesManager from './SlidesManager'
 import VideosManager from './VideosManager'
 import SongsManager from './SongsManager'
@@ -10,6 +10,7 @@ const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || ''
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
   const [pass, setPass] = useState('')
   const [error, setError] = useState(false)
+  const [showPass, setShowPass] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,16 +29,31 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
           Admin Panel
         </h1>
         <p style={{ color: 'var(--ink-3)', textAlign: 'center', marginBottom: 24 }}>minesminis management</p>
-        <input
-          type="password"
-          placeholder="Password"
-          value={pass}
-          onChange={e => { setPass(e.target.value); setError(false) }}
-          style={{
-            width: '100%', padding: '14px 18px', borderRadius: 14, border: `1px solid ${error ? 'var(--primary)' : 'var(--line)'}`,
-            fontSize: 16, fontFamily: 'var(--font-body)', outline: 'none', marginBottom: 16,
-          }}
-        />
+        <div style={{ position: 'relative', marginBottom: 16 }}>
+          <input
+            type={showPass ? 'text' : 'password'}
+            placeholder="Password"
+            value={pass}
+            onChange={e => { setPass(e.target.value); setError(false) }}
+            style={{
+              width: '100%', padding: '14px 18px', paddingRight: 48, borderRadius: 14,
+              border: `1px solid ${error ? 'var(--primary)' : 'var(--line)'}`,
+              fontSize: 16, fontFamily: 'var(--font-body)', outline: 'none', boxSizing: 'border-box',
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPass(!showPass)}
+            aria-label={showPass ? 'Hide password' : 'Show password'}
+            style={{
+              position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+              background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
+              padding: 4, display: 'flex', alignItems: 'center',
+            }}
+          >
+            {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
         {error && <p style={{ color: 'var(--primary)', fontSize: 13, margin: '-8px 0 16px' }}>Wrong password</p>}
         <button type="submit" className="mm-btn primary" style={{ width: '100%', justifyContent: 'center' }}>
           Sign In

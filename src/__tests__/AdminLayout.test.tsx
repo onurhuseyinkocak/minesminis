@@ -22,6 +22,8 @@ vi.mock('lucide-react', () => ({
   Music: ({ size }: { size: number }) => <span data-testid="icon-music" />,
   LogOut: ({ size }: { size: number }) => <span data-testid="icon-logout" />,
   LayoutDashboard: ({ size }: { size: number }) => <span data-testid="icon-dashboard" />,
+  Eye: ({ size }: { size: number }) => <span data-testid="icon-eye" />,
+  EyeOff: ({ size }: { size: number }) => <span data-testid="icon-eye-off" />,
 }))
 
 describe('AdminLayout - Login Form', () => {
