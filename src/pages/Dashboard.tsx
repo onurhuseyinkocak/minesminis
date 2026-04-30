@@ -61,12 +61,12 @@ export default function Dashboard() {
             <Star size={12} /> ENGLISH FOR KIDS
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800,
+            fontFamily: 'var(--font-display)', fontSize: 42, fontWeight: 800,
             margin: 0, lineHeight: 1.1, letterSpacing: -1, color: 'white',
           }}>
             Learn English<br/>the fun way.
           </h1>
-          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', marginTop: 6, fontWeight: 500, maxWidth: 400 }}>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', marginTop: 8, fontWeight: 500, maxWidth: 400 }}>
             A joyful learning experience for kids with slides, videos and songs.
           </p>
           <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
@@ -74,7 +74,7 @@ export default function Dashboard() {
           </div>
         </div>
         <img src="/images/hero-bg.png" alt="" style={{
-          width: 220, height: 220, objectFit: 'cover', borderRadius: 18, flexShrink: 0,
+          width: 180, height: 180, objectFit: 'cover', borderRadius: 18, flexShrink: 0,
           boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
         }} />
       </div>
