@@ -173,7 +173,7 @@ describe('AdminLayout - Authenticated State', () => {
     await waitFor(() => {
       const logo = screen.getByAltText('minesminis')
       expect(logo).toBeInTheDocument()
-      expect(logo).toHaveAttribute('src', '/images/minesminis-logo.svg')
+      expect(logo).toHaveAttribute('src', '/images/minesminis-logo.png')
     })
   })
 

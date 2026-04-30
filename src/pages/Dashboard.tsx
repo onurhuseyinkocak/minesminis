@@ -47,35 +47,36 @@ export default function Dashboard() {
     <Layout>
       {/* Hero */}
       <div style={{
-        background: 'linear-gradient(135deg, #FFE3D5 0%, #FFC9B5 100%)',
-        borderRadius: 28, padding: 32, marginBottom: 24,
-        display: 'grid', gridTemplateColumns: '1fr 280px', gap: 20, alignItems: 'center',
-        overflow: 'hidden',
+        background: 'linear-gradient(135deg, #7B68EE 0%, #9B87F5 50%, #B8A9FF 100%)',
+        borderRadius: 22, padding: '24px 28px', marginBottom: 20,
+        display: 'flex', alignItems: 'center', gap: 24,
+        overflow: 'hidden', position: 'relative',
       }}>
-        <div>
+        <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6, background: 'white',
-            padding: '6px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700,
-            color: 'var(--primary)', marginBottom: 12,
+            display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.9)',
+            padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700,
+            color: '#7B68EE', marginBottom: 8,
           }}>
-            <Star size={14} /> ENGLISH FOR KIDS
+            <Star size={12} /> ENGLISH FOR KIDS
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 800,
-            margin: 0, lineHeight: 1.05, letterSpacing: -1.5,
+            fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800,
+            margin: 0, lineHeight: 1.1, letterSpacing: -1, color: 'white',
           }}>
             Learn English<br/>the fun way.
           </h1>
-          <p style={{ fontSize: 16, color: 'var(--ink-2)', marginTop: 10, fontWeight: 500, maxWidth: 480 }}>
-            A joyful learning experience for elementary school kids with slides, videos and songs.
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', marginTop: 6, fontWeight: 500, maxWidth: 400 }}>
+            A joyful learning experience for kids with slides, videos and songs.
           </p>
-          <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
-            <Link to="/slides" className="mm-btn primary lg"><Play size={16} /> Start</Link>
+          <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+            <Link to="/slides" className="mm-btn" style={{ background: 'white', color: '#7B68EE', fontWeight: 700 }}><Play size={14} /> Start Learning</Link>
           </div>
         </div>
-        <div style={{ borderRadius: 24, overflow: 'hidden', boxShadow: 'var(--shadow-2)', aspectRatio: '4/3' }}>
-          <Cover kind="happy" />
-        </div>
+        <img src="/images/hero-bg.png" alt="" style={{
+          width: 200, height: 200, objectFit: 'cover', borderRadius: 18, flexShrink: 0,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+        }} />
       </div>
 
       {/* Categories */}

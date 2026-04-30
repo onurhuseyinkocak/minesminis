@@ -17,7 +17,7 @@ export default function TopNav() {
   return (
     <nav className="mm-nav" role="navigation" aria-label="Main navigation">
       <Link to="/" className="mm-logo" aria-label="minesminis home">
-        <img src="/images/minesminis-logo.svg" alt="minesminis logo" style={{ height: 40, borderRadius: 10 }} />
+        <img src="/images/minesminis-logo.png" alt="minesminis logo" style={{ height: 40, borderRadius: 10 }} />
       </Link>
 
       <div className="mm-nav-tabs">

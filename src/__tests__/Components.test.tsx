@@ -80,7 +80,7 @@ describe('TopNav', () => {
     renderTopNav()
     const logo = screen.getByAltText('minesminis logo')
     expect(logo).toBeInTheDocument()
-    expect(logo).toHaveAttribute('src', '/images/minesminis-logo.svg')
+    expect(logo).toHaveAttribute('src', '/images/minesminis-logo.png')
   })
 
   it('logo links to home /', () => {

@@ -46,7 +46,7 @@ describe('Dashboard', () => {
 
     it('renders hero section description', () => {
       renderDashboard()
-      expect(screen.getByText(/A joyful learning experience for elementary school kids/)).toBeInTheDocument()
+      expect(screen.getByText(/A joyful learning experience for kids/)).toBeInTheDocument()
     })
 
     it('renders ENGLISH FOR KIDS badge', () => {
@@ -61,9 +61,10 @@ describe('Dashboard', () => {
       expect(startLink).toHaveAttribute('href', '/slides')
     })
 
-    it('renders happy cover in hero section', () => {
+    it('renders hero background image', () => {
       renderDashboard()
-      expect(screen.getByTestId('cover-happy')).toBeInTheDocument()
+      const heroImg = document.querySelector('img[src="/images/hero-bg.png"]')
+      expect(heroImg).toBeInTheDocument()
     })
   })
 
@@ -105,11 +106,11 @@ describe('Dashboard', () => {
       expect(screen.getByText('Sing')).toBeInTheDocument()
     })
 
-    it('renders correct cover kinds for each category', () => {
+    it('renders category images for each card', () => {
       renderDashboard()
-      expect(screen.getByTestId('cover-rainbow')).toBeInTheDocument()
-      expect(screen.getByTestId('cover-duck')).toBeInTheDocument()
-      expect(screen.getByTestId('cover-star')).toBeInTheDocument()
+      expect(document.querySelector('img[src="/images/cat-slides.png"]')).toBeInTheDocument()
+      expect(document.querySelector('img[src="/images/cat-videos.png"]')).toBeInTheDocument()
+      expect(document.querySelector('img[src="/images/cat-songs.png"]')).toBeInTheDocument()
     })
 
     it('renders category icons', () => {
@@ -242,14 +243,14 @@ describe('Dashboard', () => {
       renderDashboard()
       const playIcon = screen.getByTestId('icon-play')
       expect(playIcon).toBeInTheDocument()
-      expect(playIcon).toHaveAttribute('data-size', '16')
+      expect(playIcon).toHaveAttribute('data-size', '14')
     })
 
     it('renders Star icon in badge', () => {
       renderDashboard()
       const starIcon = screen.getByTestId('icon-star')
       expect(starIcon).toBeInTheDocument()
-      expect(starIcon).toHaveAttribute('data-size', '14')
+      expect(starIcon).toHaveAttribute('data-size', '12')
     })
 
     it('renders category icons with correct sizes', () => {
@@ -270,7 +271,7 @@ describe('Dashboard', () => {
     it('applies correct CSS classes to buttons and cards', () => {
       renderDashboard()
       const startButton = screen.getByRole('link', { name: /Start/ })
-      expect(startButton).toHaveClass('mm-btn', 'primary', 'lg')
+      expect(startButton).toHaveClass('mm-btn')
     })
 
     it('applies card classes to category links', () => {
