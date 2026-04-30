@@ -3,11 +3,11 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, SkipBack, Pause, Play, SkipForward, Repeat } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import { supabase } from '../lib/supabase'
+import { supabase, Song, SongLyric } from '../lib/supabase'
 
 export default function SongPlayer() {
   const { id } = useParams()
-  const [song, setSong] = useState<any>(null)
+  const [song, setSong] = useState<Song | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
@@ -151,7 +151,7 @@ export default function SongPlayer() {
 
           {(song.lyrics || []).length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {(song.lyrics || []).map((line: any, i: number) => (
+              {(song.lyrics || []).map((line: SongLyric, i: number) => (
                 <div key={i}>
                   <div style={{
                     fontFamily: line.highlight ? 'var(--font-display)' : undefined,

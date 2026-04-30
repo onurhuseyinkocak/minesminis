@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 import { Play, Clock } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import { supabase } from '../lib/supabase'
+import { supabase, Song } from '../lib/supabase'
 
 const chips = ['All', 'Classic', 'Action', 'Educational']
 
 export default function SongsList() {
-  const [songs, setSongs] = useState<any[]>([])
+  const [songs, setSongs] = useState<Song[]>([])
   const [activeChip, setActiveChip] = useState('All')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -40,7 +40,7 @@ export default function SongsList() {
 
       <div className="mm-chips">
         {chips.map(c => (
-          <button key={c} className={`mm-chip${activeChip === c ? ' active' : ''}`} onClick={() => setActiveChip(c)}>
+          <button key={c} className={`mm-chip${activeChip === c ? ' active' : ''}`} onClick={() => setActiveChip(c)} aria-label={`Filter by ${c}`}>
             {c}
           </button>
         ))}

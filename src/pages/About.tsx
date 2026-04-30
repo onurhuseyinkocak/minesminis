@@ -21,7 +21,7 @@ export default function About() {
       supabase.from('mm_songs').select('id', { count: 'exact', head: true }).eq('published', true),
     ]).then(([s, v, so]) => {
       setCounts({ slides: s.count || 0, videos: v.count || 0, songs: so.count || 0 })
-    })
+    }).catch(() => {})
   }, [])
 
   const stats = [

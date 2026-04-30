@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 declare global {
-  interface Window { adsbygoogle: any[] }
+  interface Window { adsbygoogle: Record<string, unknown>[] }
 }
 
 function AdSlot({ width, height }: { width: number; height: number }) {

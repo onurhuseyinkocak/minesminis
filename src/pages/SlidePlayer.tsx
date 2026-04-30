@@ -3,11 +3,11 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, SkipBack, Play, Pause, SkipForward, Maximize } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import { supabase } from '../lib/supabase'
+import { supabase, Slide, SlideItem } from '../lib/supabase'
 
 export default function SlidePlayer() {
   const { id } = useParams()
-  const [slide, setSlide] = useState<any>(null)
+  const [slide, setSlide] = useState<Slide | null>(null)
   const [current, setCurrent] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [error, setError] = useState(false)
@@ -121,7 +121,7 @@ export default function SlidePlayer() {
 
           {/* Thumbnails */}
           <div style={{ display: 'flex', gap: 8, marginTop: 16, overflowX: 'auto', paddingBottom: 4 }}>
-            {items.map((item: any, i: number) => (
+            {items.map((item: SlideItem, i: number) => (
               <div
                 key={i}
                 onClick={() => setCurrent(i)}

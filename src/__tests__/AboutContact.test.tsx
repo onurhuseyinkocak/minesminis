@@ -105,7 +105,7 @@ describe('About Page', () => {
   describe('Value Cards', () => {
     it('renders exactly 3 value cards', () => {
       renderAbout()
-      const cards = document.querySelectorAll('div[style*="flex-direction"]').length
+      document.querySelectorAll('div[style*="flex-direction"]')
       // At least contains value cards container
       expect(screen.getByText('Free Education')).toBeInTheDocument()
       expect(screen.getByText('Made for Kids')).toBeInTheDocument()

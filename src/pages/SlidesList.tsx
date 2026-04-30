@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 import { Play } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import { supabase } from '../lib/supabase'
+import { supabase, Slide } from '../lib/supabase'
 
 const chips = ['All', 'Easy', 'Medium']
 
 export default function SlidesList() {
-  const [slides, setSlides] = useState<any[]>([])
+  const [slides, setSlides] = useState<Slide[]>([])
   const [activeChip, setActiveChip] = useState('All')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -40,7 +40,7 @@ export default function SlidesList() {
 
       <div className="mm-chips">
         {chips.map(c => (
-          <button key={c} className={`mm-chip${activeChip === c ? ' active' : ''}`} onClick={() => setActiveChip(c)}>
+          <button key={c} className={`mm-chip${activeChip === c ? ' active' : ''}`} onClick={() => setActiveChip(c)} aria-label={`Filter by ${c}`}>
             {c}
           </button>
         ))}

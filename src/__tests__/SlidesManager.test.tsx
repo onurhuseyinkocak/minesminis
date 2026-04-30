@@ -376,7 +376,6 @@ describe('SlidesManager', () => {
   // ============================================================================
 
   it('shows confirm dialog when delete button is clicked', async () => {
-    const user = userEvent.setup()
     const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
 
     render(<SlidesManager />)
@@ -389,7 +388,6 @@ describe('SlidesManager', () => {
   })
 
   it('does not delete slide when confirm is rejected', async () => {
-    const user = userEvent.setup()
     const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(false)
 
     render(<SlidesManager />)

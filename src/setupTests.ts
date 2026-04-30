@@ -17,6 +17,7 @@ vi.mock('./lib/supabase', () => {
     order: vi.fn().mockReturnThis(),
     limit: vi.fn().mockReturnThis(),
     single: vi.fn().mockResolvedValue({ data: null, error: null }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     then: vi.fn((cb: any) => cb({ data: [], count: 0, error: null })),
   }))
   return {

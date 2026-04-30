@@ -17,13 +17,13 @@ vi.mock('../pages/admin/SongsManager', () => ({
 
 // Mock lucide-react icons to prevent rendering issues
 vi.mock('lucide-react', () => ({
-  Presentation: ({ size }: { size: number }) => <span data-testid="icon-presentation" />,
-  Video: ({ size }: { size: number }) => <span data-testid="icon-video" />,
-  Music: ({ size }: { size: number }) => <span data-testid="icon-music" />,
-  LogOut: ({ size }: { size: number }) => <span data-testid="icon-logout" />,
-  LayoutDashboard: ({ size }: { size: number }) => <span data-testid="icon-dashboard" />,
-  Eye: ({ size }: { size: number }) => <span data-testid="icon-eye" />,
-  EyeOff: ({ size }: { size: number }) => <span data-testid="icon-eye-off" />,
+  Presentation: ({ size: _size }: { size: number }) => <span data-testid="icon-presentation" />,
+  Video: ({ size: _size }: { size: number }) => <span data-testid="icon-video" />,
+  Music: ({ size: _size }: { size: number }) => <span data-testid="icon-music" />,
+  LogOut: ({ size: _size }: { size: number }) => <span data-testid="icon-logout" />,
+  LayoutDashboard: ({ size: _size }: { size: number }) => <span data-testid="icon-dashboard" />,
+  Eye: ({ size: _size }: { size: number }) => <span data-testid="icon-eye" />,
+  EyeOff: ({ size: _size }: { size: number }) => <span data-testid="icon-eye-off" />,
 }))
 
 describe('AdminLayout - Login Form', () => {

@@ -13,7 +13,7 @@ const features = [
 
 export default function Dashboard() {
   const [counts, setCounts] = useState({ slides: 0, videos: 0, songs: 0 })
-  const [recent, setRecent] = useState<any[]>([])
+  const [recent, setRecent] = useState<{ id: string; title: string; cover_kind: string; type: string; meta: string; tag: string }[]>([])
 
   useEffect(() => { document.title = 'minesminis - English for Kids' }, [])
 
@@ -25,7 +25,7 @@ export default function Dashboard() {
       supabase.from('mm_songs').select('id', { count: 'exact', head: true }).eq('published', true),
     ]).then(([s, v, so]) => {
       setCounts({ slides: s.count || 0, videos: v.count || 0, songs: so.count || 0 })
-    })
+    }).catch(() => {})
 
     // Fetch recent content (mix of all types)
     Promise.all([
@@ -33,12 +33,12 @@ export default function Dashboard() {
       supabase.from('mm_videos').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
       supabase.from('mm_songs').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
     ]).then(([s, v, so]) => {
-      const items: any[] = []
+      const items: { id: string; title: string; cover_kind: string; type: string; meta: string; tag: string }[] = []
       ;(s.data || []).forEach(d => items.push({ ...d, type: 'slides', meta: `${d.slide_count} slides`, tag: 'coral' }))
       ;(v.data || []).forEach(d => items.push({ ...d, type: 'videos', meta: d.duration, tag: 'blue' }))
       ;(so.data || []).forEach(d => items.push({ ...d, type: 'songs', meta: d.duration, tag: 'lilac' }))
       setRecent(items)
-    })
+    }).catch(() => {})
   }, [])
 
   const countLabels = [counts.slides + ' slides', counts.videos + ' videos', counts.songs + ' songs']

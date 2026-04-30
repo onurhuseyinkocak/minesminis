@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import VideosList from '../pages/VideosList'
@@ -53,7 +54,7 @@ describe('VideosList', () => {
   })
 
   it('sets document title to "Videos - minesminis"', async () => {
-    const mockFrom = vi.spyOn(supabase, 'from').mockReturnValue({
+    vi.spyOn(supabase, 'from').mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
@@ -76,7 +77,7 @@ describe('VideosList', () => {
   it('fetches videos from mm_videos with published=true filter', async () => {
     let capturedChain: any
 
-    const mockFrom = vi.spyOn(supabase, 'from').mockImplementation((table: string) => {
+    vi.spyOn(supabase, 'from').mockImplementation((_table: string) => {
       const chain = {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
@@ -119,10 +120,10 @@ describe('VideosList', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'All' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Sing-Along' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Dialogue' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Action' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Filter by All/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Filter by Sing-Along/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Filter by Dialogue/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Filter by Action/i })).toBeInTheDocument()
     })
   })
 
@@ -277,7 +278,7 @@ describe('VideosList', () => {
       expect(screen.getByText('Action Video')).toBeInTheDocument()
     })
 
-    const actionChip = screen.getByRole('button', { name: 'Action' })
+    const actionChip = screen.getByRole('button', { name: /Filter by Action/i })
     await user.click(actionChip)
 
     await waitFor(() => {
@@ -430,7 +431,7 @@ describe('VideoPlayer', () => {
   it('fetches video by id from mm_videos', async () => {
     let capturedChain: any
 
-    vi.spyOn(supabase, 'from').mockImplementation((table: string) => {
+    vi.spyOn(supabase, 'from').mockImplementation((_table: string) => {
       const chain = {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),

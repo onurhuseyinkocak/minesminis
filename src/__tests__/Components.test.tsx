@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, within, waitFor } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer'
@@ -535,7 +535,7 @@ describe('Layout', () => {
   })
 
   it('accepts multiple children', () => {
-    const { container } = renderLayout(
+    renderLayout(
       <div>
         <div data-testid="child1">Child 1</div>
         <div data-testid="child2">Child 2</div>
@@ -717,7 +717,7 @@ describe('Component Integration', () => {
   })
 
   it('Multiple Cover kinds render in Layout without errors', () => {
-    const { container } = render(
+    render(
       <MemoryRouter>
         <Layout>
           <div data-testid="covers-container">

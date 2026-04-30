@@ -33,7 +33,7 @@ export default function SlidesManager() {
       toast.success('Saved')
       setEditing(null)
       load()
-    } catch (e: any) { toast.error(e.message || 'Save failed') }
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message :'Save failed') }
   }
 
   const remove = async (id: string) => {
@@ -43,7 +43,7 @@ export default function SlidesManager() {
       if (error) throw error
       toast.success('Deleted')
       load()
-    } catch (e: any) { toast.error(e.message || 'Delete failed') }
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message :'Delete failed') }
   }
 
   const toggle = async (id: string, published: boolean) => {
@@ -52,7 +52,7 @@ export default function SlidesManager() {
       if (error) throw error
       toast.success(published ? 'Unpublished' : 'Published')
       load()
-    } catch (e: any) { toast.error(e.message || 'Update failed') }
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message :'Update failed') }
   }
 
   const newSlide = (): Slide => ({

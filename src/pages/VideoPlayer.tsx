@@ -3,11 +3,11 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Play } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import { supabase } from '../lib/supabase'
+import { supabase, Video } from '../lib/supabase'
 
 export default function VideoPlayer() {
   const { id } = useParams()
-  const [video, setVideo] = useState<any>(null)
+  const [video, setVideo] = useState<Video | null>(null)
   const [error, setError] = useState(false)
 
   useEffect(() => {
