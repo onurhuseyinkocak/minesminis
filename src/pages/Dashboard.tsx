@@ -6,9 +6,9 @@ import Cover from '../components/Cover'
 import { supabase } from '../lib/supabase'
 
 const features = [
-  { id: 'slides', title: 'Slides', icon: Presentation, cover: 'rainbow', tag: 'Learn', path: '/slides' },
-  { id: 'videos', title: 'Videos', icon: Video, cover: 'duck', tag: 'Watch', path: '/videos' },
-  { id: 'songs', title: 'Songs', icon: Music, cover: 'star', tag: 'Sing', path: '/songs' },
+  { id: 'slides', title: 'Slides', icon: Presentation, image: '/images/cat-slides.png', tag: 'Learn', path: '/slides' },
+  { id: 'videos', title: 'Videos', icon: Video, image: '/images/cat-videos.png', tag: 'Watch', path: '/videos' },
+  { id: 'songs', title: 'Songs', icon: Music, image: '/images/cat-songs.png', tag: 'Sing', path: '/songs' },
 ]
 
 export default function Dashboard() {
@@ -85,7 +85,9 @@ export default function Dashboard() {
       <div className="mm-grid-3" style={{ marginBottom: 28 }}>
         {features.map((f, i) => (
           <Link key={f.id} to={f.path} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="mm-card-cover"><Cover kind={f.cover} /></div>
+            <div className="mm-card-cover">
+              <img src={f.image} alt={f.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
             <div className="mm-card-body">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <h3 className="mm-card-title">{f.title}</h3>
