@@ -48,7 +48,7 @@ export default function Dashboard() {
       {/* Hero */}
       <div style={{
         background: 'linear-gradient(135deg, #7B68EE 0%, #9B87F5 50%, #B8A9FF 100%)',
-        borderRadius: 22, padding: '24px 28px', marginBottom: 20,
+        borderRadius: 22, padding: '32px 32px', marginBottom: 22,
         display: 'flex', alignItems: 'center', gap: 24,
         overflow: 'hidden', position: 'relative',
       }}>
@@ -61,7 +61,7 @@ export default function Dashboard() {
             <Star size={12} /> ENGLISH FOR KIDS
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800,
+            fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800,
             margin: 0, lineHeight: 1.1, letterSpacing: -1, color: 'white',
           }}>
             Learn English<br/>the fun way.
@@ -74,7 +74,7 @@ export default function Dashboard() {
           </div>
         </div>
         <img src="/images/hero-bg.png" alt="" style={{
-          width: 200, height: 200, objectFit: 'cover', borderRadius: 18, flexShrink: 0,
+          width: 220, height: 220, objectFit: 'cover', borderRadius: 18, flexShrink: 0,
           boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
         }} />
       </div>
