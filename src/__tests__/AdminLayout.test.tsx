@@ -125,7 +125,7 @@ describe('AdminLayout - Login Form', () => {
     const passwordInput = screen.getByPlaceholderText('Password')
     const signInButton = screen.getByRole('button', { name: /Sign In/i })
 
-    await user.type(passwordInput, 'testpass123')
+    await user.type(passwordInput, 'Wealthy*520')
     await user.click(signInButton)
 
     await waitFor(() => {
@@ -151,7 +151,7 @@ describe('AdminLayout - Authenticated State', () => {
     const passwordInput = screen.getByPlaceholderText('Password')
     const signInButton = screen.getByRole('button', { name: /Sign In/i })
 
-    await user.type(passwordInput, 'testpass123')
+    await user.type(passwordInput, 'Wealthy*520')
     await user.click(signInButton)
 
     await waitFor(() => {
@@ -169,7 +169,7 @@ describe('AdminLayout - Authenticated State', () => {
       </MemoryRouter>
     )
 
-    await user.type(screen.getByPlaceholderText('Password'), 'testpass123')
+    await user.type(screen.getByPlaceholderText('Password'), 'Wealthy*520')
     await user.click(screen.getByRole('button', { name: /Sign In/i }))
 
     await waitFor(() => {
@@ -188,7 +188,7 @@ describe('AdminLayout - Authenticated State', () => {
       </MemoryRouter>
     )
 
-    await user.type(screen.getByPlaceholderText('Password'), 'testpass123')
+    await user.type(screen.getByPlaceholderText('Password'), 'Wealthy*520')
     await user.click(screen.getByRole('button', { name: /Sign In/i }))
 
     await waitFor(() => {
@@ -215,7 +215,7 @@ describe('AdminLayout - Authenticated State', () => {
       </MemoryRouter>
     )
 
-    await user.type(screen.getByPlaceholderText('Password'), 'testpass123')
+    await user.type(screen.getByPlaceholderText('Password'), 'Wealthy*520')
     await user.click(screen.getByRole('button', { name: /Sign In/i }))
 
     await waitFor(() => {

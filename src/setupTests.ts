@@ -4,7 +4,7 @@ import { vi } from 'vitest'
 // Mock import.meta.env
 vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co')
 vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-anon-key')
-vi.stubEnv('VITE_ADMIN_PASS', 'testpass123')
+// VITE_ADMIN_PASS removed — password is hardcoded in AdminLayout
 
 // Mock supabase
 vi.mock('./lib/supabase', () => {
