@@ -1,159 +1,30 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/icons/icon-192.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- PWA Meta Tags -->
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#FF6B35" />
-  <link rel="apple-touch-icon" href="/icons/icon-512.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="MinesMinis" />
-  <meta name="mobile-web-app-capable" content="yes" />
-
-  <!-- iOS Splash Screens (generated sizes for common devices) -->
-  <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/icons/icon-512.png" />
-  <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/icons/icon-512.png" />
-  <link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/icons/icon-512.png" />
-  <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/icons/icon-512.png" />
-  <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/icons/icon-512.png" />
-  <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/icons/icon-512.png" />
-  <link rel="apple-touch-startup-image" media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="/icons/icon-512.png" />
-
-  <!-- Security Meta Tags -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta name="referrer" content="strict-origin-when-cross-origin" />
-
-  <!-- Content Security Policy -->
-  <meta http-equiv="Content-Security-Policy" content="
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://apis.google.com https://accounts.google.com https://*.firebaseapp.com;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      font-src 'self' https://fonts.gstatic.com;
-      img-src 'self' data: https: blob:;
-      connect-src 'self' https://*.supabase.co https://api.openai.com wss://*.supabase.co https://*.googleapis.com https://*.firebaseio.com https://*.google-analytics.com https://*.googletagmanager.com;
-      frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.wordwall.net https://*.liveworksheets.com https://*.firebaseapp.com https://*.google.com;
-      media-src 'self' https://*.supabase.co blob:;
-      worker-src 'self' blob:;
-      base-uri 'self';
-      form-action 'self';
-    " />
-
-
-  <!-- SEO Meta Tags -->
-  <title>MinesMinis</title>
-  <meta name="description"
-    content="MinesMinis — Türk çocukları için İngilizce öğrenme platformu. Jolly Phonics, oyunlar ve hikayelerle eğlenceli İngilizce. | English learning platform for Turkish children." />
-  <meta name="keywords"
-    content="English learning, kids education, interactive games, educational platform, children learning" />
-  <meta name="author" content="MinesMinis" />
-
-  <!-- Canonical URL -->
+  <title>minesminis - Cocuklar icin Ingilizce</title>
+  <meta name="description" content="minesminis - Cocuklar ve ogretmenler icin eglenceli Ingilizce ogrenme platformu. Slaytlar, videolar ve sarkilarla Ingilizce ogren." />
   <link rel="canonical" href="https://minesminis.com/" />
-
-  <!-- Hreflang alternate links -->
-  <link rel="alternate" hreflang="tr" href="https://minesminis.com/" />
-  <link rel="alternate" hreflang="en" href="https://minesminis.com/en/" />
-  <link rel="alternate" hreflang="x-default" href="https://minesminis.com/" />
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://minesminis.com/" />
-  <meta property="og:title" content="MinesMinis - Premium English Learning for Kids" />
-  <meta property="og:description" content="MinesMinis — Türk çocukları için İngilizce öğrenme platformu. Jolly Phonics, oyunlar ve hikayelerle eğlenceli İngilizce. | English learning platform for Turkish children." />
-  <meta property="og:image" content="https://minesminis.com/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="MinesMinis — Türk çocukları için İngilizce öğrenme platformu" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="MinesMinis - Premium English Learning" />
-  <meta name="twitter:description" content="Fun and engaging English learning platform for children" />
-  <meta name="twitter:image" content="https://minesminis.com/og-image.png" />
-  <meta name="twitter:image:alt" content="MinesMinis — English Learning for Turkish Kids" />
-
-  <!-- Preconnect for Google Fonts to speed up font loading -->
+  <link rel="icon" type="image/png" href="/images/minesminis-logo.png" />
+  <link rel="apple-touch-icon" href="/images/minesminis-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-  <!-- Preconnect for Supabase and YouTube (commonly needed) -->
-  <link rel="preconnect" href="https://sblwqplagirgiroekotp.supabase.co" crossorigin />
-  <link rel="preconnect" href="https://img.youtube.com" />
-
-  <!-- Preload critical logo for splash screen LCP -->
-  <link rel="preload" as="image" href="/icons/icon-512.png" />
-
-  <!-- Google Fonts — preloaded, non-render-blocking -->
-  <!-- Inter: 400=body, 500=medium, 600=semibold, 700=bold body/labels -->
-  <!-- Nunito: 400–900 full range for display/headings/buttons -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&display=swap" /></noscript>
-
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    "name": "MinesMinis",
-    "url": "https://minesminis.com",
-    "logo": "https://minesminis.com/images/mine-logo.jpg",
-    "description": "Premium gamified English learning platform for kids ages 1-10",
-    "sameAs": [],
-    "offers": {
-      "@type": "Offer",
-      "category": "Education",
-      "description": "Interactive English learning games, videos, and worksheets for children"
-    }
-  }
-  </script>
-
-  <!-- Google Analytics 4 — only loads when VITE_GA_MEASUREMENT_ID is set -->
-  <script>
-    (function() {
-      var gaId = '%VITE_GA_MEASUREMENT_ID%';
-      if (!gaId || gaId === '%VITE_GA_MEASUREMENT_ID%') return;
-      var script = document.createElement('script');
-      script.async = true;
-      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
-      document.head.appendChild(script);
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', gaId);
-    })();
-  </script>
-
-  <!-- Prevent clickjacking -->
-  <style>
-    html {
-      display: none;
-    }
-  </style>
-  <script>
-    if (self === top) {
-      document.documentElement.style.display = 'block';
-    } else {
-      top.location = self.location;
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="minesminis - Cocuklar icin Ingilizce" />
+  <meta property="og:description" content="Slaytlar, videolar ve sarkilarla eglenceli Ingilizce ogrenme platformu." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://minesminis.com/" />
+  <meta property="og:image" content="https://minesminis.com/images/minesminis-logo.png" />
+  <meta property="og:locale" content="tr_TR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="minesminis - Cocuklar icin Ingilizce" />
+  <meta name="twitter:description" content="Slaytlar, videolar ve sarkilarla eglenceli Ingilizce ogrenme platformu." />
+  <meta name="twitter:image" content="https://minesminis.com/images/minesminis-logo.png" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6644397387275334" crossorigin="anonymous" data-tag-for-child-directed-treatment="1"></script>
 </head>
-
 <body>
-  <noscript>
-    <div style="padding: 20px; text-align: center; font-family: sans-serif;">
-      <h1>JavaScript Required</h1>
-      <p>Please enable JavaScript to use MinesMinis.</p>
-    </div>
-  </noscript>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
-
 </html>

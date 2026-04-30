@@ -1,297 +1,137 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route, NavLink, Link } from 'react-router-dom';
-import type { LucideIcon } from 'lucide-react';
-import {
-    LayoutDashboard,
-    Users,
-    BarChart3,
-    Settings,
-    Menu,
-    X,
-    LogOut,
-    ExternalLink,
-    Lock,
-    GraduationCap,
-    Package,
-    Gamepad2,
-    FileSpreadsheet,
-    PenTool,
-    Bot,
-    Crown,
-    Search,
-    AlertTriangle,
-    FileBarChart,
-    BookOpen,
-    Video,
-    Type,
-    Volume2
-} from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { setAdminPassword, clearAdminPassword } from '../../utils/adminSession';
-import AdminDashboard from './AdminDashboard';
-import AdminUsersManager from './AdminUsersManager';
-import AdminContentManager from './AdminContentManager';
-import AdminCurriculumManager from './AdminCurriculumManager';
-import AdminAnalytics from './AdminAnalytics';
-import AdminSettings from './AdminSettings';
-import AdminMimi from './AdminMimi';
-import BlogManager from './BlogManager';
-import StoryGenerator from './StoryGenerator';
-import ErrorMonitor from './ErrorMonitor';
-import GamesManager from './GamesManager';
-import PremiumManager from './PremiumManager';
-import ReportsManager from './ReportsManager';
-import SEOManager from './SEOManager';
-import VideosManager from './VideosManager';
-import WordsManager from './WordsManager';
-import WorksheetsManager from './WorksheetsManager';
-import AudioManager from './AudioManager';
-import './AdminLayout.css';
+import { useState } from 'react'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { Presentation, Video, Music, LogOut, LayoutDashboard } from 'lucide-react'
+import SlidesManager from './SlidesManager'
+import VideosManager from './VideosManager'
+import SongsManager from './SongsManager'
 
-const ADMIN_SESSION_KEY = 'admin_session';
+const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || ''
 
-interface NavItem {
-    path: string;
-    icon: LucideIcon;
-    label: string;
-    end?: boolean;
-}
+function AdminLogin({ onLogin }: { onLogin: () => void }) {
+  const [pass, setPass] = useState('')
+  const [error, setError] = useState(false)
 
-interface NavSection {
-    label: string;
-    items: NavItem[];
-}
-
-const navSections: NavSection[] = [
-    {
-        label: 'Overview',
-        items: [
-            { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-            { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
-        ]
-    },
-    {
-        label: 'Manage',
-        items: [
-            { path: '/admin/users', icon: Users, label: 'Users' },
-            { path: '/admin/content', icon: Package, label: 'Content' },
-            { path: '/admin/curriculum', icon: GraduationCap, label: 'Curriculum' },
-            { path: '/admin/games', icon: Gamepad2, label: 'Games' },
-            { path: '/admin/videos', icon: Video, label: 'Videos' },
-            { path: '/admin/words', icon: Type, label: 'Words' },
-            { path: '/admin/worksheets', icon: FileSpreadsheet, label: 'Worksheets' },
-        ]
-    },
-    {
-        label: 'Content',
-        items: [
-            { path: '/admin/blog', icon: PenTool, label: 'Blog' },
-            { path: '/admin/stories', icon: BookOpen, label: 'Story Generator' },
-            { path: '/admin/mimi', icon: Bot, label: 'Mimi (AI Chat)' },
-            { path: '/admin/premium', icon: Crown, label: 'Premium' },
-        ]
-    },
-    {
-        label: 'Media',
-        items: [
-            { path: '/admin/audio', icon: Volume2, label: 'Audio' },
-        ]
-    },
-    {
-        label: 'System',
-        items: [
-            { path: '/admin/seo', icon: Search, label: 'SEO' },
-            { path: '/admin/errors', icon: AlertTriangle, label: 'Error Monitor' },
-            { path: '/admin/reports', icon: FileBarChart, label: 'Reports' },
-            { path: '/admin/settings', icon: Settings, label: 'Settings' },
-        ]
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (pass === ADMIN_PASS) {
+      sessionStorage.setItem('mm-admin', '1')
+      onLogin()
+    } else {
+      setError(true)
     }
-];
+  }
 
-function AdminLayout() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isAdmin, setIsAdmin] = useState<boolean>(() =>
-        typeof window !== 'undefined' && sessionStorage.getItem(ADMIN_SESSION_KEY) === '1'
-    );
-    const { signOut } = useAuth();
-    const [password, setPassword] = useState('');
-    const [loginError, setLoginError] = useState('');
-
-    const handlePasswordLogin = async () => {
-        setLoginError('');
-        if (!password.trim()) {
-            setLoginError('Please enter the admin password');
-            return;
-        }
-        try {
-            const res = await fetch('/api/admin/health', {
-                headers: { 'X-Admin-Password': password.trim() }
-            });
-            if (res.ok) {
-                sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-                setAdminPassword(password.trim());
-                setIsAdmin(true);
-                setPassword('');
-            } else {
-                setLoginError('Invalid password. Please try again.');
-            }
-        } catch {
-            setLoginError('Connection error. Please try again.');
-        }
-    };
-
-    const handleLogout = () => {
-        sessionStorage.removeItem(ADMIN_SESSION_KEY);
-        clearAdminPassword();
-        setIsAdmin(false);
-        setPassword('');
-        signOut();
-        window.location.href = '/admin';
-    };
-
-    const [currentTime, setCurrentTime] = useState(() => new Date());
-
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 60_000);
-        return () => clearInterval(timer);
-    }, []);
-
-    // --- Login Screen ---
-    if (!isAdmin) {
-        return (
-            <div className="adm-login">
-                <div className="adm-login-visual">
-                    <div className="adm-login-brand-mark">M</div>
-                    <div className="adm-login-brand">
-                        MinesMinis
-                        <small>Administration</small>
-                    </div>
-                </div>
-                <div className="adm-login-form-side">
-                    <div className="adm-login-box">
-                        <h2>Welcome back</h2>
-                        <p>Enter your admin password to continue</p>
-
-                        <div className="adm-input-group">
-                            <Lock size={18} />
-                            <input
-                                type="password"
-                                placeholder="Admin password"
-                                value={password}
-                                onChange={(e) => { setPassword(e.target.value); setLoginError(''); }}
-                                onKeyDown={(e) => { if (e.key === 'Enter') handlePasswordLogin(); }}
-                                autoFocus
-                            />
-                        </div>
-
-                        {loginError && <p className="adm-login-error">{loginError}</p>}
-
-                        <button type="button" className="adm-login-submit" onClick={handlePasswordLogin}>
-                            Sign In
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // --- Main Shell ---
-    return (
-        <div className="adm-shell">
-            {/* Sidebar */}
-            <aside className={`adm-sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <Link to="/admin" className="adm-sidebar-brand" onClick={() => setSidebarOpen(false)}>
-                    <div className="adm-sidebar-brand-mark">M</div>
-                    <div className="adm-sidebar-brand-text">
-                        MinesMinis
-                        <small>Admin Panel</small>
-                    </div>
-                </Link>
-
-                <nav className="adm-sidebar-nav">
-                    {navSections.map((section) => (
-                        <div key={section.label}>
-                            <div className="adm-nav-section-label">{section.label}</div>
-                            {section.items.map((item) => (
-                                <NavLink
-                                    key={item.path}
-                                    to={item.path}
-                                    end={item.end}
-                                    className={({ isActive }) => `adm-nav-link ${isActive ? 'active' : ''}`}
-                                    onClick={() => setSidebarOpen(false)}
-                                >
-                                    <item.icon size={18} />
-                                    {item.label}
-                                </NavLink>
-                            ))}
-                        </div>
-                    ))}
-                </nav>
-
-                <div className="adm-sidebar-footer">
-                    <Link
-                        to="/dashboard"
-                        className="adm-sidebar-footer-link"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        <ExternalLink size={16} />
-                        View Site
-                    </Link>
-                    <button type="button" className="adm-sidebar-footer-link danger" onClick={handleLogout}>
-                        <LogOut size={16} />
-                        Sign Out
-                    </button>
-                </div>
-            </aside>
-
-            {/* Mobile Overlay */}
-            {sidebarOpen && (
-                <div className="adm-overlay open" onClick={() => setSidebarOpen(false)} />
-            )}
-
-            {/* Main Content */}
-            <div className="adm-main">
-                <header className="adm-topbar">
-                    <button type="button" className="adm-hamburger" onClick={() => setSidebarOpen(prev => !prev)}>
-                        {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
-                    </button>
-
-                    <div className="adm-topbar-spacer" />
-
-                    <span className="adm-topbar-badge">System Online</span>
-
-                    <div className="adm-topbar-time">
-                        {currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                        {' '}
-                        {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                </header>
-
-                <div className="adm-body">
-                    <Routes>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="users" element={<AdminUsersManager />} />
-                        <Route path="content" element={<AdminContentManager />} />
-                        <Route path="curriculum" element={<AdminCurriculumManager />} />
-                        <Route path="analytics" element={<AdminAnalytics />} />
-                        <Route path="games" element={<GamesManager />} />
-                        <Route path="videos" element={<VideosManager />} />
-                        <Route path="words" element={<WordsManager />} />
-                        <Route path="worksheets" element={<WorksheetsManager />} />
-                        <Route path="blog" element={<BlogManager />} />
-                        <Route path="stories" element={<StoryGenerator />} />
-                        <Route path="mimi" element={<AdminMimi />} />
-                        <Route path="premium" element={<PremiumManager />} />
-                        <Route path="seo" element={<SEOManager />} />
-                        <Route path="errors" element={<ErrorMonitor />} />
-                        <Route path="reports" element={<ReportsManager />} />
-                        <Route path="settings" element={<AdminSettings />} />
-                        <Route path="audio" element={<AudioManager />} />
-                    </Routes>
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
+      <form onSubmit={handleSubmit} style={{ background: 'white', padding: 40, borderRadius: 28, boxShadow: 'var(--shadow-2)', width: 360 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, margin: '0 0 8px', textAlign: 'center' }}>
+          Admin Panel
+        </h1>
+        <p style={{ color: 'var(--ink-3)', textAlign: 'center', marginBottom: 24 }}>minesminis yonetim</p>
+        <input
+          type="password"
+          placeholder="Sifre"
+          value={pass}
+          onChange={e => { setPass(e.target.value); setError(false) }}
+          style={{
+            width: '100%', padding: '14px 18px', borderRadius: 14, border: `1px solid ${error ? 'var(--primary)' : 'var(--line)'}`,
+            fontSize: 16, fontFamily: 'var(--font-body)', outline: 'none', marginBottom: 16,
+          }}
+        />
+        {error && <p style={{ color: 'var(--primary)', fontSize: 13, margin: '-8px 0 16px' }}>Yanlis sifre</p>}
+        <button type="submit" className="mm-btn primary" style={{ width: '100%', justifyContent: 'center' }}>
+          Giris Yap
+        </button>
+      </form>
+    </div>
+  )
 }
 
-export default AdminLayout;
+const navItems = [
+  { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/admin/slides', label: 'Slaytlar', icon: Presentation },
+  { path: '/admin/videos', label: 'Videolar', icon: Video },
+  { path: '/admin/songs', label: 'Sarkilar', icon: Music },
+]
+
+function AdminDashboard() {
+  return (
+    <div>
+      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, margin: '0 0 8px' }}>Dashboard</h1>
+      <p style={{ color: 'var(--ink-3)', marginBottom: 32 }}>minesminis icerik yonetimi</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        {[
+          { label: 'Slaytlar', icon: Presentation, path: '/admin/slides', color: 'var(--primary)' },
+          { label: 'Videolar', icon: Video, path: '/admin/videos', color: 'var(--accent)' },
+          { label: 'Sarkilar', icon: Music, path: '/admin/songs', color: 'var(--green)' },
+        ].map(item => (
+          <Link key={item.path} to={item.path} style={{
+            background: 'white', borderRadius: 18, padding: 24, border: '1px solid var(--line)',
+            textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', gap: 12,
+          }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: item.color + '15', color: item.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <item.icon size={24} />
+            </div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>{item.label}</div>
+            <div style={{ color: 'var(--ink-3)', fontSize: 14 }}>Icerik yonet</div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default function AdminLayout() {
+  const [authed, setAuthed] = useState(sessionStorage.getItem('mm-admin') === '1')
+  const location = useLocation()
+
+  if (!authed) return <AdminLogin onLogin={() => setAuthed(true)} />
+
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
+      {/* Sidebar */}
+      <div style={{ width: 240, background: 'white', borderRight: '1px solid var(--line)', padding: '24px 16px', display: 'flex', flexDirection: 'column' }}>
+        <Link to="/" style={{ textDecoration: 'none', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img src="/images/minesminis-logo.svg" alt="minesminis" style={{ height: 32, borderRadius: 8 }} />
+        </Link>
+
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+          {navItems.map(item => {
+            const active = location.pathname === item.path
+            return (
+              <Link key={item.path} to={item.path} style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 12,
+                textDecoration: 'none', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
+                color: active ? 'white' : 'var(--ink-2)',
+                background: active ? 'var(--ink)' : 'transparent',
+              }}>
+                <item.icon size={18} />
+                {item.label}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <button onClick={() => { sessionStorage.removeItem('mm-admin'); setAuthed(false) }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 12,
+            border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--ink-3)',
+            fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
+          }}>
+          <LogOut size={16} /> Cikis
+        </button>
+      </div>
+
+      {/* Main */}
+      <div style={{ flex: 1, padding: 32 }}>
+        <Routes>
+          <Route index element={<AdminDashboard />} />
+          <Route path="slides" element={<SlidesManager />} />
+          <Route path="videos" element={<VideosManager />} />
+          <Route path="songs" element={<SongsManager />} />
+        </Routes>
+      </div>
+    </div>
+  )
+}

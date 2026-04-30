@@ -1,300 +1,140 @@
-/**
- * DASHBOARD — Kids Playground Home
- * MinesMinis v9.0
- *
- * Truly child-themed: big Mimi hero, colorful action cards,
- * simple streak/level strip. Feels like Khan Academy Kids.
- * Zero emoji — Lottie + Lucide only.
- */
-import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  Gamepad2, Globe, BookOpen, Music,
-  Play, Flame, Star, Trophy, Sparkles,
-  Sun, Sunset, Moon,
-} from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { Play, Presentation, Video, Music, ChevronRight, Star } from 'lucide-react'
+import Layout from '../components/Layout'
+import Cover from '../components/Cover'
 
-import { useAuth } from '../contexts/AuthContext';
-import { useLanguage } from '../contexts/LanguageContext';
-import { useGamification } from '../contexts/GamificationContext';
-import LottieCharacter from '../components/LottieCharacter';
-import { isDailyLessonCompletedToday } from '../services/dailyLessonService';
-import { usePageTitle } from '../hooks/usePageTitle';
+const PAGE_TITLE = 'minesminis - Cocuklar icin Ingilizce'
+import { supabase } from '../lib/supabase'
 
-// ─── Types & Helpers ─────────────────────────────────────────────────────────
-
-type Lang = 'tr' | 'en';
-const tx = (lang: Lang, tr: string, en: string) => lang === 'tr' ? tr : en;
-
-// ─── Animation Variants ─────────────────────────────────────────────────────
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
-};
-
-const pop = {
-  hidden: { opacity: 0, y: 24, scale: 0.92 },
-  visible: {
-    opacity: 1, y: 0, scale: 1,
-    transition: { type: 'spring', stiffness: 260, damping: 22 },
-  },
-};
-
-// ─── Action Card Data ────────────────────────────────────────────────────────
-
-interface ActionItem {
-  icon: typeof Gamepad2;
-  title: { tr: string; en: string };
-  route: string;
-  gradient: string;
-}
-
-const ACTIONS: ActionItem[] = [
-  { icon: Gamepad2, title: { tr: 'Oyunlar', en: 'Games' }, route: '/games', gradient: 'from-orange-400 via-red-400 to-pink-500' },
-  { icon: Globe, title: { tr: 'Ogren', en: 'Learn' }, route: '/worlds', gradient: 'from-blue-400 via-indigo-400 to-purple-500' },
-  { icon: BookOpen, title: { tr: 'Kitaplar', en: 'Books' }, route: '/reading', gradient: 'from-emerald-400 via-teal-400 to-cyan-500' },
-  { icon: Music, title: { tr: 'Sarkilar', en: 'Songs' }, route: '/songs', gradient: 'from-amber-400 via-orange-400 to-red-500' },
-];
-
-// ─── Greeting Messages ──────────────────────────────────────────────────────
-
-const GREETINGS_TR = [
-  'Bugun ogrenmeye hazir misin?',
-  'Seni gormek harika!',
-  'Hadi birlikte oynayalim!',
-  'Yeni maceralar seni bekliyor!',
-];
-const GREETINGS_EN = [
-  'Ready to learn today?',
-  'Great to see you!',
-  'Let\'s play together!',
-  'New adventures await!',
-];
-
-function getDailyGreeting(lang: Lang): string {
-  const dayIndex = new Date().getDay();
-  const list = lang === 'tr' ? GREETINGS_TR : GREETINGS_EN;
-  return list[dayIndex % list.length];
-}
-
-function getTimeOfDayGreeting(lang: Lang): { text: string; Icon: typeof Sun } {
-  const hour = new Date().getHours();
-  if (hour < 12) {
-    return { text: lang === 'tr' ? 'Gunaydin' : 'Good Morning', Icon: Sun };
-  } else if (hour < 18) {
-    return { text: lang === 'tr' ? 'Iyi gunler' : 'Good Afternoon', Icon: Sunset };
-  } else {
-    return { text: lang === 'tr' ? 'Iyi aksamlar' : 'Good Evening', Icon: Moon };
-  }
-}
-
-// ─── Sparkle Decoration ─────────────────────────────────────────────────────
-
-function SparkleDecor({ className = '' }: { className?: string }) {
-  return (
-    <Sparkles
-      size={16}
-      className={`text-white/30 absolute pointer-events-none ${className}`}
-    />
-  );
-}
-
-// ─── Main Component ─────────────────────────────────────────────────────────
+const features = [
+  { id: 'slides', title: 'Slaytlar', icon: Presentation, cover: 'rainbow', tag: 'Egitim', path: '/slides' },
+  { id: 'videos', title: 'Videolar', icon: Video, cover: 'duck', tag: 'Izle', path: '/videos' },
+  { id: 'songs', title: 'Sarkilar', icon: Music, cover: 'star', tag: 'Soyle', path: '/songs' },
+]
 
 export default function Dashboard() {
-  const { user, userProfile } = useAuth();
-  const { lang } = useLanguage();
-  const l = lang as Lang;
-  usePageTitle('Ana Sayfa', 'Dashboard');
+  const [counts, setCounts] = useState({ slides: 0, videos: 0, songs: 0 })
+  const [recent, setRecent] = useState<any[]>([])
 
-  const { stats, loading } = useGamification();
+  useEffect(() => { document.title = PAGE_TITLE }, [])
 
-  const displayName = userProfile?.display_name || user?.displayName || 'Adventurer';
-  const userId = user?.uid || 'guest';
-  const lessonDone = useMemo(() => isDailyLessonCompletedToday(userId), [userId]);
-  const greeting = useMemo(() => getDailyGreeting(l), [l]);
-  const timeGreeting = useMemo(() => getTimeOfDayGreeting(l), [l]);
-  const TimeIcon = timeGreeting.Icon;
+  useEffect(() => {
+    // Fetch counts
+    Promise.all([
+      supabase.from('mm_slides').select('id', { count: 'exact', head: true }).eq('published', true),
+      supabase.from('mm_videos').select('id', { count: 'exact', head: true }).eq('published', true),
+      supabase.from('mm_songs').select('id', { count: 'exact', head: true }).eq('published', true),
+    ]).then(([s, v, so]) => {
+      setCounts({ slides: s.count || 0, videos: v.count || 0, songs: so.count || 0 })
+    })
 
-  // ─── Loading Skeleton ───────────────────────────────────────────────────
+    // Fetch recent content (mix of all types)
+    Promise.all([
+      supabase.from('mm_slides').select('id, title, cover_kind, slide_count').eq('published', true).order('created_at', { ascending: false }).limit(2),
+      supabase.from('mm_videos').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
+      supabase.from('mm_songs').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
+    ]).then(([s, v, so]) => {
+      const items: any[] = []
+      ;(s.data || []).forEach(d => items.push({ ...d, type: 'slides', meta: `${d.slide_count} slayt`, tag: 'coral' }))
+      ;(v.data || []).forEach(d => items.push({ ...d, type: 'videos', meta: d.duration, tag: 'blue' }))
+      ;(so.data || []).forEach(d => items.push({ ...d, type: 'songs', meta: d.duration, tag: 'lilac' }))
+      setRecent(items)
+    })
+  }, [])
 
-  if (loading) {
-    return (
-      <div className="kid-bg kid-bubbles min-h-screen py-6">
-        <div className="space-y-4">
-          <div className="skeleton rounded-[32px] h-64" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="skeleton rounded-[24px] h-[140px]" />
-            ))}
-          </div>
-          <div className="skeleton rounded-[24px] h-16" />
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Render ─────────────────────────────────────────────────────────────
+  const countLabels = [counts.slides + ' sunu', counts.videos + ' video', counts.songs + ' sarki']
 
   return (
-    <div className="kid-bg kid-bubbles min-h-screen py-6 pb-24 relative">
-      <motion.div
-        variants={stagger}
-        initial="hidden"
-        animate="visible"
-        className="space-y-5 relative z-10"
-      >
-        {/* ═══ GREETING ═══ */}
-        <motion.div variants={pop} className="px-1">
-          <p className="font-display font-bold text-lg text-slate-600 flex items-center gap-1">
-            <span className="greeting-icon">
-              <TimeIcon size={20} className="text-amber-500" />
-            </span>
-            {timeGreeting.text},
-          </p>
-          <h1 className="font-display font-black text-2xl text-slate-900">
-            {displayName}!
+    <Layout>
+      {/* Hero */}
+      <div style={{
+        background: 'linear-gradient(135deg, #FFE3D5 0%, #FFC9B5 100%)',
+        borderRadius: 28, padding: 32, marginBottom: 24,
+        display: 'grid', gridTemplateColumns: '1fr 280px', gap: 20, alignItems: 'center',
+        overflow: 'hidden',
+      }}>
+        <div>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6, background: 'white',
+            padding: '6px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700,
+            color: 'var(--primary)', marginBottom: 12,
+          }}>
+            <Star size={14} /> COCUKLAR ICIN INGILIZCE
+          </div>
+          <h1 style={{
+            fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 800,
+            margin: 0, lineHeight: 1.05, letterSpacing: -1.5,
+          }}>
+            Eglenerek<br/>Ingilizce ogren.
           </h1>
-        </motion.div>
+          <p style={{ fontSize: 16, color: 'var(--ink-2)', marginTop: 10, fontWeight: 500, maxWidth: 480 }}>
+            Slaytlar, videolar ve sarkilarla ilkokul seviyesinde keyifli bir ogrenme deneyimi.
+          </p>
+          <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+            <Link to="/slides" className="mm-btn primary lg"><Play size={16} /> Basla</Link>
+          </div>
+        </div>
+        <div style={{ borderRadius: 24, overflow: 'hidden', boxShadow: 'var(--shadow-2)', aspectRatio: '4/3' }}>
+          <Cover kind="happy" />
+        </div>
+      </div>
 
-        {/* ═══ MIMI HERO CARD ═══ */}
-        <motion.div variants={pop}>
-          <Link
-            to={lessonDone ? '/worlds' : '/daily-lesson'}
-            className="block"
-            aria-label={lessonDone ? tx(l, 'Kesfetmeye Devam', 'Keep Exploring') : tx(l, 'Derse Basla', 'Start Lesson')}
-          >
-            <div className={`
-              relative overflow-hidden rounded-[32px] p-6
-              bg-gradient-to-br shadow-lg kid-btn
-              ${lessonDone
-                ? 'from-emerald-400 via-teal-400 to-cyan-500'
-                : 'from-orange-400 via-pink-400 to-purple-500'
-              }
-            `}>
-              {/* Decorative circles */}
-              <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10" />
-              <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/10" />
-              <div className="absolute top-4 right-12 w-6 h-6 rounded-full bg-white/15" />
-
-              <div className="relative z-10 flex items-center gap-4">
-                {/* Mimi */}
-                <div className="flex-shrink-0">
-                  <LottieCharacter
-                    state={lessonDone ? 'celebrate' : 'idle'}
-                    size={140}
-                  />
+      {/* Categories */}
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: '0 0 14px', letterSpacing: -0.5 }}>
+        Kategoriler
+      </h2>
+      <div className="mm-grid-3" style={{ marginBottom: 28 }}>
+        {features.map((f, i) => (
+          <Link key={f.id} to={f.path} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="mm-card-cover"><Cover kind={f.cover} /></div>
+            <div className="mm-card-body">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h3 className="mm-card-title">{f.title}</h3>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 10, background: 'var(--surface-2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)',
+                }}>
+                  <f.icon size={18} />
                 </div>
-
-                {/* Speech bubble + CTA */}
-                <div className="flex-1 min-w-0">
-                  {/* Speech bubble */}
-                  <div className="relative bg-white/90 backdrop-blur-sm rounded-[20px] px-4 py-3 mb-4 shadow-sm">
-                    <div className="absolute left-[-8px] top-4 w-0 h-0 border-t-[8px] border-t-transparent border-r-[10px] border-r-white/90 border-b-[8px] border-b-transparent" />
-                    <p className="font-display font-bold text-slate-800 text-sm leading-snug">
-                      {lessonDone
-                        ? tx(l, 'Harika is cikardik!', 'We did great today!')
-                        : greeting
-                      }
-                    </p>
-                  </div>
-
-                  {/* Big CTA */}
-                  <div className={`
-                    flex items-center justify-center gap-2
-                    bg-white rounded-full px-5 py-3 shadow-md
-                    kid-btn kid-pulse
-                  `}>
-                    {lessonDone
-                      ? <Trophy size={22} className="text-emerald-500" />
-                      : <Play size={22} className="text-orange-500" fill="currentColor" />
-                    }
-                    <span className={`font-display font-black text-base ${
-                      lessonDone ? 'text-emerald-600' : 'text-orange-600'
-                    }`}>
-                      {lessonDone
-                        ? tx(l, 'Kesfetmeye Devam', 'Keep Exploring')
-                        : tx(l, 'Derse Basla', 'Start Lesson')
-                      }
-                    </span>
-                  </div>
-                </div>
+              </div>
+              <div className="mm-card-meta" style={{ marginTop: 4 }}>
+                <span>{countLabels[i]}</span>
+                <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-3)' }} />
+                <span>{f.tag}</span>
               </div>
             </div>
           </Link>
-        </motion.div>
+        ))}
+      </div>
 
-        {/* ═══ 2x2 ACTION GRID ═══ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {ACTIONS.map((action) => {
-            const Icon = action.icon;
-            return (
-              <motion.div key={action.route} variants={pop}>
-                <Link to={action.route} className="block" aria-label={action.title[l]}>
-                  <div className={`
-                    relative overflow-hidden rounded-[24px] min-h-[140px]
-                    bg-gradient-to-br ${action.gradient}
-                    flex flex-col items-center justify-center gap-3
-                    shadow-md kid-btn kid-wobble action-card
-                  `}>
-                    {/* Sparkle decorations */}
-                    <SparkleDecor className="top-3 right-3" />
-                    <SparkleDecor className="bottom-4 left-4" />
-                    <SparkleDecor className="top-6 left-6" />
-
-                    <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-                      <Icon size={32} className="text-white" strokeWidth={2.5} />
-                    </div>
-                    <span className="font-display font-black text-white text-base tracking-wide">
-                      {action.title[l]}
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* ═══ STREAK & LEVEL STRIP ═══ */}
-        <motion.div variants={pop}>
-          <div className="flex items-center justify-center gap-6 bg-white rounded-[20px] px-6 py-4 shadow-sm border-2 border-orange-100">
-            {/* Streak */}
-            <div className="flex items-center gap-2">
-              <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-sm ${stats.streakDays > 0 ? 'flame-pulse' : ''}`}>
-                <Flame size={20} className="text-white" />
-              </div>
-              <div>
-                <p className="font-display font-black text-orange-600 text-lg leading-none">
-                  {stats.streakDays}
-                </p>
-                <p className="font-display font-bold text-slate-400 text-[10px] uppercase tracking-wider">
-                  {tx(l, 'Gun Seri', 'Day Streak')}
-                </p>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="w-px h-10 bg-orange-100" />
-
-            {/* Level */}
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-sm">
-                <Star size={20} className="text-white" fill="white" />
-              </div>
-              <div>
-                <p className="font-display font-black text-amber-600 text-lg leading-none">
-                  {stats.level}
-                </p>
-                <p className="font-display font-bold text-slate-400 text-[10px] uppercase tracking-wider">
-                  {tx(l, 'Seviye', 'Level')}
-                </p>
-              </div>
-            </div>
+      {/* Recent */}
+      {recent.length > 0 && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: 0, letterSpacing: -0.5 }}>
+              Son eklenenler
+            </h2>
+            <Link to="/slides" className="mm-btn">Tumu <ChevronRight size={14} /></Link>
           </div>
-        </motion.div>
-      </motion.div>
-    </div>
-  );
+          <div className="mm-grid-3">
+            {recent.map(p => (
+              <Link key={p.type + p.id} to={`/${p.type}/${p.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="mm-card-cover">
+                  <Cover kind={p.cover_kind} />
+                  <div className="mm-card-cta"><Play size={18} /></div>
+                </div>
+                <div className="mm-card-body">
+                  <h3 className="mm-card-title">{p.title}</h3>
+                  <div className="mm-card-meta">
+                    <span className={`mm-tag ${p.tag}`}>{p.meta}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+    </Layout>
+  )
 }

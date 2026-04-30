@@ -2,1512 +2,201 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google Fonts loaded via <link> in index.html for non-blocking preload */
-
-/* ==========================================================================
-   MINESMINIS DESIGN SYSTEM v5.0 — LibreUIUX Methodology
-   Brand: Honey Amber + Deep Teal + Mimi Green
-   Fonts: Nunito (display/headings/buttons) + Inter (body/captions)
-   Base unit: 4px
-   Shadows: soft layered · Radius: tight · Transitions: 200ms default
-   ========================================================================== */
-
-/* ==========================================================================
-   1. CSS CUSTOM PROPERTIES (DESIGN TOKENS)
-   ========================================================================== */
-
 :root {
-  /* ---- PRIMARY: Vivid Orange-Coral (matches Tailwind primary-500 #FF6B35) ---- */
-  --primary: #FF6B35;
-  --primary-hover: #F04B10;
-  --primary-light: #FF7B3A;
-  --primary-pale: #FFF4EE;
-  --primary-glow: rgba(255, 107, 53, 0.35);
-
-  /* Backwards compat alias */
-  --primary-dark: #C73A0A;
-
-  /* ---- SECONDARY: Deep Teal ---- */
-  --secondary: #0D5C4D;
-  --secondary-hover: #0A4A3E;
-  --secondary-light: #1A8A78;
-  --secondary-pale: #E6F5F1;
-
-  /* Backwards compat alias */
-  --secondary-dark: #0A4A3E;
-
-  /* ---- MIMI COLORS ---- */
-  --mimi: #4CAF50;
-  --mimi-light: #81C784;
-  --mimi-dark: #2E7D32;
-  --mimi-gold: #FFD54F;
-
-  /* Backwards compat aliases */
-  --mimi-green: #4CAF50;
-  --mimi-green-light: #81C784;
-  --mimi-green-dark: #2E7D32;
-
-  /* ---- SEMANTIC ---- */
-  --success: #10B981;
-  --success-light: #34D399;
-  --success-pale: #ECFDF5;
-  --warning: #F59E0B;
-  --warning-light: #FBBF24;
-  --warning-pale: #FFFBEB;
-  --error: #EF4444;
-  --error-light: #F87171;
-  --error-soft: #FECACA;
-  --error-pale: #FEF2F2;
-  /* Aliases used by game components */
-  --danger: #EF4444;
-  --danger-pale: #FEF2F2;
-  --info: #0EA5E9;
-  --info-light: #38BDF8;
-  --info-pale: #F0F9FF;
-  --info-soft: #BAE6FD;
-
-  /* ---- SOFT SEMANTIC (for badges/backgrounds) ---- */
-  --success-soft: rgba(16, 185, 129, 0.12);
-  --warning-soft: rgba(245, 158, 11, 0.12);
-  --secondary-glow: rgba(13, 92, 77, 0.3);
-  --shadow-color: rgba(15, 23, 42, 0.08);
-  --info-glow: rgba(14, 165, 233, 0.35);
-  --accent-purple-glow: rgba(139, 92, 246, 0.4);
-
-  /* ---- ACCENT / CATEGORY COLORS ---- */
-  --accent-purple: #8b5cf6;
-  --accent-purple-light: #c4b5fd;
-  --accent-purple-pale: #EDE9FE;
-  --accent-purple-dark: #5b21b6;
-  --accent-purple-hover: #6d28d9;
-  --accent-indigo: #6366f1;
-  --accent-indigo-pale: #E0E7FF;
-  --accent-pink: #ec4899;
-  --accent-pink-pale: #FCE7F3;
-  --accent-teal: #14b8a6;
-  --accent-blue: #3b82f6;
-  --accent-blue-dark: #2563eb;
-  --accent-emerald: #10b981;
-  --accent-green: #22c55e;
-  --accent-green-dark: #16a34a;
-  --accent-orange: #f97316;
-  --accent-violet: #a855f7;
-  --accent-fuchsia: #d946ef;
-  --accent-amber: #fbbf24;
-  --accent-rose: #f43f5e;
-  --accent-red: #dc2626;
-  --accent-red-dark: #991b1b;
-
-  /* ── Missing tokens ─────────────────────────────────────── */
-  --color-gold: #FFD700;
-  --accent-gold: #FFD700;
-  --accent-gold-dark: #E6C200;
-  --shadow-glow-warm: 0 0 6px 2px rgba(255, 200, 0, 0.8);
-  --bg-purple-light: #f3f0ff;
-  --bg-purple-pale: #ede9fe;
-
-  /* ---- WORLD MAP JOURNEY COLORS ---- */
-  --journey-stop-size: 64px;
-  --journey-completed-color: #10B981;
-  --journey-unlocked-glow: rgba(255, 107, 53, 0.4);
-  --journey-path-color: #FF6B35;
-  --journey-locked-color: #CBD5E1;
-
-  /* ---- STORY WORLD COLORS ---- */
-  --world-forest: #2D5A27;
-  --world-ocean: #1A5276;
-  --world-mountain: #6C3483;
-  --world-space: #0B0E2D;
-  --world-desert: #B7950B;
-
-  /* ---- NEUTRALS: Clean modern scale ---- */
-  --slate-50: #FAFAFA;
-  --slate-100: #F5F5F5;
-  --slate-200: #E5E5E5;
-  --slate-300: #D4D4D4;
-  --slate-400: #A3A3A3;
-  --slate-500: #737373;
-  --slate-600: #525252;
-  --slate-700: #404040;
-  --slate-800: #262626;
-  --slate-900: #171717;
-  --slate-950: #0A0A0A;
-
-  /* ---- Backwards compat neutral aliases ---- */
-  --ink: var(--slate-900);
-  --charcoal: var(--slate-800);
-  --slate: var(--slate-500);
-  --stone: var(--slate-400);
-  --cloud: var(--slate-200);
-  --mist: var(--slate-100);
-  --snow: var(--slate-50);
-  --white: #FFFFFF;
-
-  /* ---- BACKGROUNDS ---- */
-  --bg-secondary: #F8FAFC;
-
-  /* ---- PER-ELEMENT TOKENS (set inline via JS, fallback here) ---- */
-  --cat-color: var(--primary);
-  --card-color: var(--primary);
-
-  /* ---- TEXT: Light theme ---- */
-  --text-primary: #1a1a2e;
-  --text-body: #334155;
-  --text-secondary: #475569;
-  /* #6B7A99 gives ~4.6:1 contrast on white — WCAG AA compliant (was #94A3B8 at ~2.5:1) */
-  --text-muted: #6B7A99;
-  --text-tertiary: #6B7A99;
-  --text-on-primary: #FFFFFF;
-  --text-on-dark: #F1F5F9;
-
-  /* ---- TEXT: Legacy aliases (used by some components) ---- */
-  --text-dark: #1A1A2E;
-  --text-medium: #4A5568;
-
-  /* ---- BACKGROUNDS: Light theme ---- */
-  --bg-page: #FFF8F2;
-  --bg-card: #FFFFFF;
-  --bg-elevated: #F8F9FA;
-  --bg-muted: #F1F5F9;
-  --bg-soft: #FFF0E8;
-  --bg-glass: rgba(255, 255, 255, 0.85);
-
-  /* Backwards compat bg aliases */
-  --bg-primary: #FFF8F2;
-  --bg-hover: #F1F5F9;
-  --bg-surface: #FFFFFF;
-  --bg-main: #FFFFFF;
-
-  /* ---- MISSING TOKENS (prevent dark fallbacks in light mode) ---- */
-  --ink-900: #1e293b;
-
-  /* ---- BORDERS: Light theme ---- */
-  --border: #E2E8F0;
-  --border-hover: #CBD5E1;
-  --border-focus: var(--primary-light);
-
-  /* Backwards compat aliases */
-  --border-medium: #CBD5E1;
-
-  /* ---- GRADIENTS: Light theme ---- */
-  --gradient-warm: linear-gradient(135deg, #FFF8F2 0%, #FFF0E8 50%, #FFE4CC 100%);
-  --gradient-mimi: linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 100%);
-  --gradient-premium: linear-gradient(135deg, #FFF0E8 0%, #FFE4CC 100%);
-  --gradient-sky: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 30%, #EFF6FF 100%);
-  --gradient-primary: linear-gradient(135deg, #FF6B35 0%, #F04B10 100%);
-  --gradient-secondary: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
-  --gradient-hero: linear-gradient(160deg, #FFF8F2 0%, #FFF3E8 40%, #F8F4FF 100%);
-
-  /* ---- SHADOWS: Clean with primary orange-coral tint (#FF6B35 = 255,107,53) ---- */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 48px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 24px rgba(255, 107, 53, 0.3);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 12px 32px rgba(0, 0, 0, 0.1);
-  --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(255, 107, 53, 0.22);
-  --shadow-button-hover: 0 2px 6px rgba(0, 0, 0, 0.12), 0 8px 20px rgba(255, 107, 53, 0.3);
-
-  /* ---- BORDER RADIUS: Friendly rounded ---- */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 28px;
-  --radius-full: 9999px;
-
-  /* ---- SPACING (4px base) ---- */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-9: 36px;
-  --space-10: 40px;
-  --space-11: 44px;
-  --space-12: 48px;
-  --space-13: 52px;
-  --space-14: 56px;
-  --space-15: 60px;
-  --space-16: 64px;
-  --space-20: 80px;
-  --space-24: 96px;
-
-  /* Backwards compat spacing aliases */
-  --space-xs: var(--space-1);
-  --space-sm: var(--space-2);
-  --space-md: var(--space-4);
-  --space-lg: var(--space-6);
-  --space-xl: var(--space-8);
-  --space-2xl: var(--space-12);
-  --space-3xl: var(--space-16);
-
-  /* ---- TRANSITIONS: 200ms default with proper ease curves ---- */
-  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --duration-fast: 150ms;
-  --duration-normal: 200ms;
-  --duration-slow: 300ms;
-  --transition-fast: 150ms var(--ease-out);
-  --transition-base: 200ms var(--ease-out);
-  --transition-slow: 300ms var(--ease-in-out);
-  --transition-spring: 500ms var(--ease-spring);
-
-  /* ---- TYPOGRAPHY ---- */
-  --font-display: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-
-  /* ---- FOCUS: 4px ring with 20% opacity — matches primary #FF6B35 ---- */
-  --focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 5px rgba(255, 107, 53, 0.9); /* WCAG 2.4.11: solid ring for color-blind visibility */
-
-  /* ---- PLAYFUL ACCENT COLORS (original MinesMinis) ---- */
-  --accent-coral: #FF6B6B;
-  --accent-mint: #4ECDC4;
-  --accent-lavender: #A78BFA;
-  --accent-peach: #FFD93D;
-  --accent-sky: #4EA8DE;
-  --accent-sunshine: #FFF2B2;
-  --bg-orange-soft: #FEF3C7;
-
-  /* ---- GLASS / OVERLAY ---- */
-  --overlay-bg: rgba(0, 0, 0, 0.4);
-  --overlay-xs:    rgba(0, 0, 0, 0.25);
-  --overlay-sm:    rgba(0, 0, 0, 0.40);
-  --overlay-md:    rgba(0, 0, 0, 0.55);
-  --overlay-lg:    rgba(0, 0, 0, 0.70);
-  --overlay-xl:    rgba(0, 0, 0, 0.85);
-  --overlay-dark:  rgba(15, 15, 30, 0.60);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: #E2E8F0;
-  --glass-shine: rgba(255, 255, 255, 0.3);
-  --glass-hero-badge: rgba(255, 255, 255, 0.2);
-  --glass-hero-text: rgba(255, 255, 255, 0.9);
-  --glass-sparkle: rgba(255, 255, 255, 0.5);
-
-  /* ---- Z-INDEX SCALE ---- */
-  --z-base: 0;
-  --z-raised: 10;
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-overlay: 300;
-  --z-modal: 400;
-  --z-popover: 500;
-  --z-toast: 600;
-  --z-tooltip: 700;
-  --z-banner: 800;
-  --z-max: 900;
-  --z-above-all: 9999;
-
-  /* ---- CONTAINER WIDTHS ---- */
-  --container-max: 1200px;
-  --container-wide: 1440px;
-  --container-xs:  480px;
-  --container-sm:  640px;
-  --container-md:  768px;
-  --container-lg:  1024px;
-  --container-xl:  1280px;
-
-  /* ---- SIZING ---- */
-  --touch-target: 44px;
-  --touch-target-lg: 56px;
-  --nav-height: 64px;
-  /* --header-height: canonical token used for scroll-padding-top and sticky offset.
-     Mobile app shell: 56px top bar. Landing/desktop: 64px sticky header.
-     Default 64px; override per breakpoint below. */
-  --header-height: 64px;
-  --btn-height: 48px;
-  --btn-height-sm: 36px;
-  --btn-height-lg: 56px;
-  --input-height: 48px;
-
-  /* ---- MISC ---- */
-  --radius-card: var(--radius-lg);
-  --radius-modal: var(--radius-xl);
-  --radius-button: var(--radius-md);
-  --radius-input: var(--radius-md);
-
-  /* ---- MEDAL COLORS ---- */
-  --medal-gold: #FFD700;
-  --medal-gold-dark: #D4A300;
-  --medal-silver: #C0C0C0;
-  --medal-silver-dark: #808080;
-  --medal-bronze: #CD7F32;
-  --medal-bronze-dark: #A0522D;
-
-  /* ---- SEMANTIC BORDER ---- */
-  --border-color: var(--border);
-  --border-light: #E2E8F0;
-  --border-subtle: rgba(0, 0, 0, 0.06);
-
-  /* ---- PRIMARY RGB (FF6B35 → 255 107 53) ---- */
-  --primary-rgb: 255 107 53;
-
-  /* ---- SURFACE ALIASES (for components using surface-* tokens) ---- */
-  --surface-card: var(--bg-card);
-  --surface-hover: var(--bg-muted);
-
-  /* ---- SEMANTIC BACKGROUND ALIASES ---- */
-  --success-bg: var(--success-pale);
-  --error-bg: var(--error-pale);
-
-  /* ---- EXTRA SPACING ---- */
-  --space-2xs: 2px;
-
-  /* ---- MISSING / REFERENCED TOKENS ---- */
-  /* warning-dark: used by XPBooster, OfflineBanner, ReadingPlayer, StoriesGrid, UsersManager */
-  --warning-dark: #b45309;
-
-  /* success-dark / error-dark: used by badge text for WCAG AA contrast on pale backgrounds */
-  --success-dark: #047857;
-  --error-dark: #991B1B;
-
-  /* bottom-nav-height: global default for safe bottom positioning */
-  --bottom-nav-height: 56px;
-
-  /* color-primary-500: alias referenced by psychGamification service */
-  --color-primary-500: var(--primary);
-
-  /* ---- FLUID TYPE SCALE ---- */
-  --text-xs:   0.75rem;
-  --text-sm:   0.875rem;
-  --text-base: 1rem;
-  --text-md:   1.125rem;
-  --text-lg:   1.25rem;
-  --text-xl:   1.5rem;
-  --text-2xl:  1.875rem;
-  --text-3xl:  2.25rem;
-  --text-4xl:  3rem;
+  --bg: #F5F2EC;
+  --surface: #FFFFFF;
+  --surface-2: #FAF7F1;
+  --ink: #1B1B2A;
+  --ink-2: #4A4A5C;
+  --ink-3: #8A8A9A;
+  --line: #ECE7DD;
+  --primary: #FF6B4A;
+  --primary-2: #E85530;
+  --accent: #4D6BFF;
+  --accent-2: #2540D9;
+  --green: #1FB67A;
+  --yellow: #FFC542;
+  --pink: #FF8FB1;
+  --lilac: #B59BFF;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 28px;
+  --r-pill: 999px;
+  --shadow-1: 0 1px 0 rgba(27,27,42,0.04), 0 1px 2px rgba(27,27,42,0.06);
+  --shadow-2: 0 8px 24px rgba(27,27,42,0.08);
+  --font-display: "Baloo 2", system-ui, sans-serif;
+  --font-body: "Fredoka", system-ui, sans-serif;
 }
 
-/* ==========================================================================
-   2. CSS RESET / BASE STYLES
-   ========================================================================== */
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-body); font-size: 16px; color: var(--ink); background: var(--bg); }
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  /* iOS Safari: Remove blue tap highlight on all interactive elements */
-  -webkit-tap-highlight-color: transparent;
-}
-
-html {
-  font-size: 16px;
-  scroll-behavior: smooth;
-  /* scroll-padding-top: offset anchor scrolls so sticky header never covers section titles */
-  scroll-padding-top: var(--header-height, 64px);
-  scrollbar-gutter: stable;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
-body {
+.mm-page {
+  min-height: 100vh;
+  background: var(--bg);
   font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: var(--bg-page);
-  color: var(--text-body);
-  line-height: 1.5;
-  /* iOS Safari sticky fix: overflow-x: hidden creates scroll container, breaks position:sticky children.
-     overflow-x: clip has the same visual effect without creating a new stacking/scroll context. */
-  overflow-x: clip;
-  min-height: 100vh;
-  min-height: 100dvh; /* iOS Safari: dynamic viewport height (excludes address bar) */
-}
-
-#root {
-  min-height: 100vh;
-  min-height: 100dvh; /* iOS Safari: dynamic viewport height */
+  color: var(--ink);
   display: flex;
   flex-direction: column;
-  background: var(--bg-page);
-  position: relative;
 }
 
-/* Hide animated bg during splash screen */
-#root.splash-active::before,
-#root.splash-active::after {
-  display: none !important;
+/* Top Nav */
+.mm-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 50;
 }
+.mm-logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; }
+.mm-logo-mark {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: var(--ink); color: white;
+  display: flex; align-items: center; justify-content: center;
+}
+.mm-logo-text { font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -0.5px; }
+.mm-logo-text .a { color: var(--ink); }
+.mm-logo-text .b { color: var(--primary); }
 
-/* Animated background blobs removed — light mode only, clean white/cream bg */
-
-/* Ensure content stays above animated bg (but don't override fixed elements like splash) */
-#root > *:not(.splash) {
-  position: relative;
-  z-index: 1;
-}
-
-img, picture, video, canvas, svg {
-  display: block;
-  max-width: 100%;
-}
-
-input, button, textarea, select {
-  font: inherit;
-}
-
-button {
-  border: none;
-  outline: none;
-  background: none;
-  cursor: pointer;
-}
-
-a {
-  color: var(--primary-hover);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--primary);
-}
-
-a, button, [role="button"], input[type="submit"], input[type="button"] {
-  cursor: pointer;
-}
-
-/* Accessibility: disabled state — show not-allowed cursor globally */
-button:disabled,
-[role="button"]:disabled,
-input[type="submit"]:disabled,
-input[type="button"]:disabled {
-  cursor: not-allowed;
-}
-
-::selection {
-  background: var(--primary);
-  color: var(--white);
-}
-
-/* ---- Focus visible (accessibility) — 4px ring, 20% opacity ---- */
-:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-  border-radius: var(--radius-sm);
-}
-
-:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* ---- Scrollbar ---- */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--slate-100); border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
-
-/* ---- Headings base ---- */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-}
-
-p {
-  line-height: 1.5;
-  color: var(--text-body);
-}
-
-/* ==========================================================================
-   3. TYPOGRAPHY CLASSES
-   ========================================================================== */
-
-.text-display {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-}
-
-.text-h1 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-}
-
-.text-h2 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-}
-
-.text-h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  line-height: 1.25;
-  color: var(--text-primary);
-}
-
-.text-body {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--text-body);
-}
-
-.text-body-strong {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--text-body);
-}
-
-.text-caption {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.text-child {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.text-button {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1rem;
-  line-height: 1;
-  letter-spacing: 0.01em;
-}
-
-/* ==========================================================================
-   4. UTILITY CLASSES
-   ========================================================================== */
-
-/* ---- Containers ---- */
-.container {
-  width: 100%;
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--space-lg);
-}
-
-.container-wide {
-  width: 100%;
-  max-width: var(--container-wide);
-  margin: 0 auto;
-  padding: 0 var(--space-lg);
-}
-
-/* ---- Flexbox ---- */
-.flex { display: flex; }
-.flex-col { display: flex; flex-direction: column; }
-.flex-center { display: flex; align-items: center; justify-content: center; }
-.flex-between { display: flex; align-items: center; justify-content: space-between; }
-.items-center { align-items: center; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.flex-wrap { flex-wrap: wrap; }
-.flex-1 { flex: 1; }
-
-/* ---- Grid ---- */
-.grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-lg);
-}
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-lg);
-}
-.grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-lg);
-}
-
-/* ---- Gap ---- */
-.gap-xs { gap: var(--space-xs); }
-.gap-sm { gap: var(--space-sm); }
-.gap-md { gap: var(--space-md); }
-.gap-lg { gap: var(--space-lg); }
-.gap-xl { gap: var(--space-xl); }
-.gap-2xl { gap: var(--space-2xl); }
-
-/* ---- Padding ---- */
-.p-xs { padding: var(--space-xs); }
-.p-sm { padding: var(--space-sm); }
-.p-md { padding: var(--space-md); }
-.p-lg { padding: var(--space-lg); }
-.p-xl { padding: var(--space-xl); }
-.p-2xl { padding: var(--space-2xl); }
-
-/* ---- Margin ---- */
-.m-xs { margin: var(--space-xs); }
-.m-sm { margin: var(--space-sm); }
-.m-md { margin: var(--space-md); }
-.m-lg { margin: var(--space-lg); }
-.m-xl { margin: var(--space-xl); }
-.m-2xl { margin: var(--space-2xl); }
-
-/* ---- Border Radius ---- */
-.rounded-sm { border-radius: var(--radius-sm); }
-.rounded-md { border-radius: var(--radius-md); }
-.rounded-lg { border-radius: var(--radius-lg); }
-.rounded-xl { border-radius: var(--radius-xl); }
-.rounded-full { border-radius: var(--radius-full); }
-
-/* ---- Shadows ---- */
-.shadow-xs { box-shadow: var(--shadow-xs); }
-.shadow-sm { box-shadow: var(--shadow-sm); }
-.shadow-md { box-shadow: var(--shadow-md); }
-.shadow-lg { box-shadow: var(--shadow-lg); }
-.shadow-xl { box-shadow: var(--shadow-xl); }
-
-/* ---- Accessibility ---- */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* ---- Text overflow ---- */
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ---- Text alignment ---- */
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-
-/* ---- Visibility ---- */
-.hide-mobile { display: none; }
-.hide-desktop { display: block; }
-@media (min-width: 1024px) {
-  .hide-mobile { display: block; }
-  .hide-desktop { display: none; }
-}
-
-/* ==========================================================================
-   5. COMPONENT BASE STYLES
-   ========================================================================== */
-
-/* ---- Buttons ---- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  padding: 12px 28px;
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-  border: none;
-  cursor: pointer;
-  min-height: var(--touch-target);
-  line-height: 1;
-}
-
-.btn:focus-visible {
-  box-shadow: var(--focus-ring);
-}
-
-.btn-primary {
-  background: var(--gradient-primary);
-  color: var(--text-on-primary);
-  box-shadow: var(--shadow-button);
-}
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-button-hover);
-  filter: brightness(1.05);
-}
-.btn-primary:active {
-  transform: translateY(0);
-  filter: brightness(0.95);
-}
-
-.btn-secondary {
-  background: var(--bg-card);
-  color: var(--secondary);
-  border: 2px solid var(--border);
-}
-.btn-secondary:hover {
-  background: var(--secondary-pale);
-  border-color: var(--secondary);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  padding: 10px 20px;
-}
-.btn-ghost:hover {
-  background: var(--bg-muted);
-  color: var(--primary-hover);
-}
-
-/* ---- Cards ---- */
-.card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-card);
-  transition: all var(--transition-base);
-  border: 1px solid var(--border);
-}
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover);
-}
-
-/* ---- Inputs ---- */
-input, textarea, select {
-  font-family: var(--font-body);
-  /* iOS Safari: font-size must be >= 16px to prevent auto-zoom on focus */
-  font-size: 16px;
-  font-size: 1rem;
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--bg-card);
-  color: var(--text-primary);
-  transition: all var(--transition-fast);
-  min-height: var(--touch-target);
-}
-input:focus, textarea:focus, select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: var(--focus-ring);
-}
-input::placeholder, textarea::placeholder {
-  color: var(--text-muted);
-}
-
-/* ---- Badges ---- */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 14px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  font-family: var(--font-display);
-  border-radius: var(--radius-full);
-  background: var(--primary-pale);
-  color: var(--primary-hover);
-}
-.badge-teal {
-  background: var(--secondary-pale);
-  color: var(--secondary);
-}
-.badge-success {
-  background: var(--success-pale);
-  color: var(--success-dark);
-}
-.badge-warning {
-  background: var(--warning-pale);
-  color: var(--warning-dark);
-}
-.badge-error {
-  background: var(--error-pale);
-  color: var(--error-dark);
-}
-
-/* ---- Divider ---- */
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: var(--space-lg) 0;
-}
-
-/* ---- Loading Spinner ---- */
-.loading-spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--slate-200);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ---- Skeleton ---- */
-.skeleton {
-  background: linear-gradient(90deg, var(--slate-100) 25%, var(--slate-200) 50%, var(--slate-100) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: var(--radius-sm);
-}
-
-/* ---- Skip to content (base — App.css has the polished version) ---- */
-.skip-to-content {
-  /* SR-only visually-hidden — guaranteed zero layout impact */
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
+.mm-nav-tabs { display: flex; gap: 4px; align-items: center; background: var(--surface-2); padding: 6px; border-radius: var(--r-pill); }
+.mm-nav-tab {
+  padding: 10px 18px; border-radius: var(--r-pill);
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+  cursor: pointer; transition: all 0.18s; color: var(--ink-2);
+  display: flex; align-items: center; gap: 8px; border: none; background: transparent;
   text-decoration: none;
 }
-.skip-to-content:focus {
-  position: fixed !important;
-  top: 0 !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: auto !important;
-  height: auto !important;
-  padding: var(--space-2) var(--space-6) !important;
-  margin: 0 !important;
-  clip: auto !important;
-  overflow: visible !important;
-  background: var(--gradient-primary);
-  color: var(--text-on-primary);
-  z-index: var(--z-max);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  box-shadow: var(--shadow-md);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.875rem;
-  white-space: nowrap;
-  outline: none;
+.mm-nav-tab:hover { color: var(--ink); }
+.mm-nav-tab.active { background: var(--ink); color: white; }
+
+.mm-nav-actions { display: flex; gap: 8px; align-items: center; }
+.mm-icon-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface-2); border: 1px solid var(--line); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink); transition: all 0.18s;
 }
+.mm-icon-btn:hover { background: white; color: var(--primary); }
+.mm-icon-btn.solid { background: var(--ink); color: white; border-color: var(--ink); }
+.mm-icon-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
 
-/* ==========================================================================
-   6. ANIMATION KEYFRAMES
-   ========================================================================== */
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* Shell layout */
+.mm-shell {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 160px 1fr 160px;
+  gap: 20px;
+  padding: 24px;
 }
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+.mm-shell .rail {
+  display: flex; flex-direction: column; gap: 16px;
+  position: sticky; top: 100px; align-self: start;
 }
-
-@keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-24px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(24px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-@keyframes wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes celebrate {
-  0% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.15) rotate(-3deg); }
-  50% { transform: scale(1.2) rotate(3deg); }
-  75% { transform: scale(1.15) rotate(-2deg); }
-  100% { transform: scale(1) rotate(0deg); }
-}
-
-/* ---- Game completion stars (shared by all game results screens) ---- */
-.game-stars {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.game-stars svg {
-  filter: drop-shadow(0 1px 3px rgba(232, 163, 23, 0.3));
-  animation: game-star-pop 0.4s var(--ease-spring) both;
-}
-
-.game-stars svg:nth-child(1) { animation-delay: 0.1s; }
-.game-stars svg:nth-child(2) { animation-delay: 0.25s; }
-.game-stars svg:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes game-star-pop {
-  0% { opacity: 0; transform: scale(0) rotate(-90deg); }
-  60% { transform: scale(1.3) rotate(5deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
-}
-
-/* ── Duolingo-style XP float animation ─────────────────────── */
-@keyframes xp-float {
-  0%   { transform: translateY(0) scale(1);   opacity: 1; }
-  60%  { transform: translateY(-40px) scale(1.15); opacity: 1; }
-  100% { transform: translateY(-70px) scale(0.9);  opacity: 0; }
-}
-
-.xp-float {
-  position: fixed;
-  font-family: var(--font-display, 'Nunito', sans-serif);
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: var(--success, #10B981);
-  pointer-events: none;
-  z-index: 9999;
-  animation: xp-float 1.2s ease-out forwards;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  letter-spacing: -0.02em;
-}
-
-/* ── Heart shake (on wrong answer) ─────────────────────────── */
-@keyframes heart-shake {
-  0%   { transform: translateX(0); }
-  15%  { transform: translateX(-6px) rotate(-8deg); }
-  30%  { transform: translateX(6px) rotate(8deg); }
-  45%  { transform: translateX(-4px) rotate(-4deg); }
-  60%  { transform: translateX(4px) rotate(4deg); }
-  75%  { transform: translateX(-2px); }
-  100% { transform: translateX(0); }
-}
-
-.heart-shake {
-  animation: heart-shake 0.5s ease-in-out;
-}
-
-/* ── Correct answer pulse ───────────────────────────────────── */
-/* GPU composited ripple via pseudo-element transform+opacity instead of box-shadow */
-@keyframes correct-pulse-ring {
-  0%   { transform: scale(1);    opacity: 0.6; }
-  100% { transform: scale(1.8);  opacity: 0; }
-}
-
-.correct-pulse {
-  position: relative;
-}
-
-.correct-pulse::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 2px solid rgba(16, 185, 129, 0.6);
-  animation: correct-pulse-ring 0.6s ease-out forwards;
-  pointer-events: none;
-}
-
-/* ── Streak fire glow ────────────────────────────────────────── */
-@keyframes streak-glow {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(255, 107, 53, 0.6)); }
-  50%       { filter: drop-shadow(0 0 14px rgba(255, 107, 53, 0.9)); }
-}
-
-.streak-fire {
-  animation: streak-glow 2s ease-in-out infinite;
-}
-
-/* ── Bounce-in for badges/rewards ─────────────────────────── */
-@keyframes bounce-in {
-  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
-  60%  { transform: scale(1.15) rotate(3deg);  opacity: 1; }
-  80%  { transform: scale(0.95) rotate(-1deg); }
-  100% { transform: scale(1) rotate(0); }
-}
-
-.bounce-in {
-  animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* ── Pop-in for XP badges ─────────────────────────────────── */
-@keyframes pop-in {
-  0%   { transform: scale(0); opacity: 0; }
-  70%  { transform: scale(1.12); opacity: 1; }
-  100% { transform: scale(1); }
-}
-
-.pop-in {
-  animation: pop-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* ---- Animation utility classes ---- */
-.fade-in { animation: fadeIn 0.4s var(--ease-out); }
-.fade-in-up { animation: fadeInUp 0.5s var(--ease-out); }
-.fade-in-scale { animation: fadeInScale 0.3s var(--ease-out); }
-.slide-in-left { animation: slideInLeft 0.5s var(--ease-out); }
-.slide-in-right { animation: slideInRight 0.5s var(--ease-out); }
-.slide-in-up { animation: slideInUp 0.5s var(--ease-out); }
-.animate-pulse { animation: pulse 2s var(--ease-in-out) infinite; }
-.animate-bounce { animation: bounce 1s var(--ease-in-out) infinite; }
-.animate-wiggle { animation: wiggle 0.5s var(--ease-in-out); }
-.animate-float { animation: float 3s var(--ease-in-out) infinite; }
-.animate-celebrate { animation: celebrate 0.6s var(--ease-out); }
-
-/* ==========================================================================
-   7. RESPONSIVE BREAKPOINTS
-   ========================================================================== */
+.mm-main { min-width: 0; }
 
 @media (max-width: 1024px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .mm-shell { grid-template-columns: 1fr; }
+  .mm-shell .rail { display: none; }
 }
 
-@media (max-width: 768px) {
-  .container, .container-wide { padding: 0 var(--space-md); }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-}
+/* Page header */
+.mm-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.mm-page-title { font-family: var(--font-display); font-weight: 800; font-size: 36px; letter-spacing: -0.8px; margin: 0; }
+.mm-page-sub { color: var(--ink-3); font-size: 15px; margin: 4px 0 0 0; font-weight: 500; }
 
-@media (max-width: 480px) {
-  .btn { padding: 10px 20px; font-size: 0.9rem; }
-  /* Ensure no accidental horizontal scroll on very small screens */
-  .container, .container-wide { padding: 0 var(--space-md); }
-  /* Reduce all grid layouts to single column on small phones */
-  .grid-2 { grid-template-columns: 1fr; }
-}
-
-/* ---- Tablet (768px) ---- */
-@media (min-width: 768px) {
-  :root {
-    --nav-height: 72px;
-    --header-height: 72px; /* sync scroll-padding-top with taller tablet nav */
-  }
-  /* Tablet grid: 2-col → allow 3-col on md+ when explicitly used */
-  .grid-2 { grid-template-columns: repeat(2, 1fr); }
-  .grid-3 { grid-template-columns: repeat(3, 1fr); }
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* ---- Desktop (1024px+) ---- */
-@media (min-width: 1024px) {
-  :root {
-    --nav-height: 80px;
-    --header-height: 80px;
-  }
-  .grid-4 { grid-template-columns: repeat(4, 1fr); }
-}
-
-/* ---- Large desktop max-width cap (1440px) ---- */
-/* Prevents content from stretching across ultra-wide displays.
-   Applied to the main page body area — not the fixed nav/modals. */
-@media (min-width: 1440px) {
-  .page-content-cap {
-    max-width: 1440px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-  }
-}
-
-/* ---- Landscape mobile orientation ---- */
-/* On small phones rotated to landscape (e.g. 390×844 → 844×390),
-   the available height is too short for games with fixed-height layouts.
-   We clamp min-height to avoid scroll-blocking and shrink tiles. */
-@media (max-height: 500px) and (orientation: landscape) {
-  :root {
-    --header-height: 48px; /* compact header in landscape */
-  }
-  html {
-    scroll-padding-top: 48px;
-  }
-  /* Reduce game tile sizes so they fit without scrolling */
-  .spelling-bee__tile { width: 44px !important; height: 52px !important; font-size: 1.25rem !important; }
-  .spelling-bee__slot { width: 40px !important; height: 48px !important; font-size: 1.25rem !important; }
-  /* Prevent full-screen game pages from overflowing viewport height */
-  .game-container,
-  .lesson-player,
-  .journey-page {
-    min-height: 100vh;
-    min-height: 100dvh;
-    /* Allow scroll instead of overflow-clip in landscape */
-    overflow-y: auto;
-  }
-}
-
-/* ==========================================================================
-   8. SMART BOARD / LARGE SCREEN OVERRIDES
-   ========================================================================== */
-
-@media (min-width: 1920px) {
-  html { font-size: 18px; }
-  :root {
-    --nav-height: 88px;
-    --touch-target: 48px;
-    --touch-target-lg: 56px;
-    --btn-height: 56px;
-    --btn-height-lg: 64px;
-    --space-lg: 32px;
-    --space-xl: 40px;
-    --space-2xl: 56px;
-    --space-3xl: 80px;
-  }
-  .container { max-width: 1600px; }
-  .container-wide { max-width: 1800px; }
-  .btn { min-height: 48px; padding: 14px 32px; }
-}
-
-@media (min-width: 2560px) {
-  html { font-size: 20px; }
-  :root {
-    --nav-height: 96px;
-    --touch-target: 56px;
-    --touch-target-lg: 64px;
-    --btn-height: 64px;
-    --btn-height-lg: 72px;
-    --space-lg: 36px;
-    --space-xl: 48px;
-    --space-2xl: 64px;
-    --space-3xl: 96px;
-  }
-  .container { max-width: 2000px; }
-  .container-wide { max-width: 2200px; }
-  .btn { min-height: 56px; padding: 16px 40px; font-size: 1.1rem; }
-}
-
-/* Ensure touch targets on all interactive elements */
-@media (pointer: coarse) {
-  button, a, [role="button"], input, select, textarea {
-    min-height: var(--touch-target);
-    min-width: var(--touch-target);
-  }
-}
-
-/* ==========================================================================
-   SHARED UTILITY: Modern Tabs
-   ========================================================================== */
-
-.modern-tabs {
-  display: flex;
-  gap: 8px;
-  padding: 4px;
-  background: var(--slate-100);
-  border-radius: var(--radius-lg);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.modern-tab {
-  padding: 10px 20px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-md);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--slate-500);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  white-space: nowrap;
-  min-height: 44px;
-}
-.modern-tab:hover {
-  background: rgba(255, 107, 53, 0.08);
-  color: var(--slate-700);
-}
-.modern-tab.active {
-  background: var(--bg-card);
-  color: var(--primary);
-  box-shadow: var(--shadow-sm);
-}
-
-/* ==========================================================================
-   SHARED UTILITY: mm-card
-   ========================================================================== */
-
+/* Cards */
 .mm-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  background: var(--surface); border-radius: var(--r-lg);
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--line);
+  transition: all 0.18s ease;
+  cursor: pointer; position: relative; overflow: hidden;
 }
-.mm-card--elevated {
-  box-shadow: var(--shadow-md);
+.mm-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: transparent; }
+.mm-card-cover {
+  aspect-ratio: 4/3;
+  border-radius: var(--r-md); margin: 10px 10px 0;
+  position: relative; overflow: hidden;
 }
-.mm-card:hover {
-  box-shadow: var(--shadow-card-hover);
+.mm-card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mm-card-body { padding: 14px 16px 16px; }
+.mm-card-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0 0 6px 0; line-height: 1.2; letter-spacing: -0.3px; }
+.mm-card-meta { display: flex; gap: 10px; align-items: center; color: var(--ink-3); font-size: 13px; font-weight: 500; }
+.mm-card-cta {
+  position: absolute; bottom: 12px; right: 12px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface); color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-2); transition: all 0.18s;
 }
+.mm-card:hover .mm-card-cta { background: var(--primary); color: white; transform: scale(1.06); }
 
-/* ==========================================================================
-   GLOBAL VISUAL POLISH
-   ========================================================================== */
-
-/* Global card hover enhancement */
-[class*="-card"]:not([class*="modal"]) {
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+.mm-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 600; background: var(--surface-2); color: var(--ink-2);
+  border: 1px solid var(--line);
 }
+.mm-tag.green { background: #E5F6EC; color: var(--green); border-color: transparent; }
+.mm-tag.blue { background: #E8EDFF; color: var(--accent-2); border-color: transparent; }
+.mm-tag.yellow { background: #FFF1CE; color: #8B6914; border-color: transparent; }
+.mm-tag.coral { background: #FFE4DC; color: var(--primary-2); border-color: transparent; }
+.mm-tag.lilac { background: #ECE3FF; color: #6442C9; border-color: transparent; }
 
-/* Ensure all pages have warm feel */
-main, [role="main"] {
-  background: transparent;
+/* Ads */
+.mm-ad {
+  width: 160px;
+  background: var(--surface-2);
+  border: 1px dashed var(--line);
+  border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 6px;
+  color: var(--ink-3); font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; padding: 10px;
 }
+.mm-ad .label { text-align: center; line-height: 1.4; opacity: 0.8; }
+.mm-ad.size-a { height: 200px; }
+.mm-ad.size-b { height: 280px; }
+.mm-ad.size-c { height: 120px; }
 
-/* Global heading warmth */
-h1, h2, h3 {
-  color: var(--text-primary);
-  font-family: var(--font-display);
+/* Buttons */
+.mm-btn {
+  font-family: var(--font-display); font-weight: 700; font-size: 15px;
+  padding: 12px 22px; border-radius: var(--r-pill);
+  border: 1px solid var(--line); cursor: pointer; background: var(--surface);
+  color: var(--ink); display: inline-flex; align-items: center; gap: 8px;
+  transition: all 0.18s; text-decoration: none;
 }
+.mm-btn:hover { background: var(--surface-2); }
+.mm-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
+.mm-btn.primary:hover { background: var(--primary-2); border-color: var(--primary-2); }
+.mm-btn.dark { background: var(--ink); color: white; border-color: var(--ink); }
+.mm-btn.lg { font-size: 16px; padding: 14px 26px; }
 
-/* ==========================================================================
-   10. SYSTEM PREFERENCES: prefers-color-scheme + forced-colors
-   ========================================================================== */
+/* Progress */
+.mm-progress { height: 8px; background: var(--surface-2); border-radius: var(--r-pill); overflow: hidden; border: 1px solid var(--line); }
+.mm-progress-fill { height: 100%; border-radius: var(--r-pill); background: var(--primary); }
 
-/**
- * High contrast preference (non-Windows: GNOME, Safari)
- * Increase contrast of muted colors.
- */
-@media (prefers-contrast: high) {
-  :root {
-    --text-muted: #475569;
-    --text-secondary: #334155;
-    --border: #64748B;
-    --border-light: #64748B;
-  }
+/* Grids */
+.mm-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.mm-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+@media (max-width: 900px) {
+  .mm-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .mm-grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
-
-/* ==========================================================================
-   11. iOS SAFARI SPECIFIC FIXES
-   ========================================================================== */
-
-/* Overscroll bounce: contain on game/lesson full-screen containers
-   so the page doesn't rubber-band when user swipes inside the game */
-.lesson-player,
-.lesson-player-page,
-.story-reader,
-.game-container,
-.daily-lesson,
-.phonics-lesson,
-.blending-board,
-.segmenting-board {
-  overscroll-behavior: contain;
-}
-
-/* Touch action on interactive phonics tiles — prevent accidental pan/zoom */
-.blending-board__tile,
-.segmenting-board__option {
-  touch-action: manipulation;
-}
-
-/* Letter tracer uses canvas — no scrolling inside, disable all touch default actions */
-.letter-tracer__canvas,
-.lt-canvas {
-  touch-action: none;
-}
-
-/* Swipe-based story reader — allow vertical pan but prevent horizontal conflicts */
-.story-reader__content,
-.story-choices {
-  touch-action: pan-y;
-}
-
-/* ==========================================================================
-   11. REDUCED MOTION — Accessibility
-   ========================================================================== */
-
-/**
- * Respect the user's motion preference (vestibular disorders, epilepsy, etc.)
- * Cuts all animation/transition durations to near-zero so the UI still
- * functions but stops moving.
- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  /* Keep Framer Motion / JS-driven animations working — they read this value */
-  :root {
-    --motion-reduce: 1;
-  }
+@media (max-width: 600px) {
+  .mm-grid-3 { grid-template-columns: 1fr; }
+  .mm-grid-4 { grid-template-columns: 1fr; }
 }
 
-/* ==========================================================================
-   12. PRINT STYLES
-   ========================================================================== */
-
-@media print {
-  *,
-  *::before,
-  *::after {
-    background: transparent !important;
-    color: #000 !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
-  body {
-    font-size: 12pt;
-    line-height: 1.5;
-  }
-
-  a, a:visited { text-decoration: underline; }
-  a[href]::after { content: " (" attr(href) ")"; }
-
-  h1, h2, h3 {
-    page-break-after: avoid;
-    orphans: 3;
-    widows: 3;
-  }
-
-  img { max-width: 100% !important; page-break-inside: avoid; }
-
-  .no-print, nav, .btn, button:not(.print-include),
-  .speak-btn, .floating-chat-btn, .install-banner,
-  .cookie-banner, .offline-banner { display: none !important; }
-  body { background: white !important; color: black !important; }
-
-  .container, .container-wide {
-    max-width: 100%;
-    padding: 0;
-  }
+/* Filter chips */
+.mm-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.mm-chip {
+  padding: 10px 18px; border-radius: var(--r-pill); min-height: 44px;
+  font-family: var(--font-display); font-weight: 600; font-size: 14px;
+  background: var(--surface); border: 1px solid var(--line); cursor: pointer;
+  color: var(--ink-2); transition: all 0.18s;
 }
-
-/* ═══ KID THEME ═══ */
-
-/* Playful background pattern for all authenticated pages */
-.kid-bg {
-  background-color: #FFF8F0;
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(255, 165, 0, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
-}
-
-/* Floating bubble decorations */
-.kid-bubbles::before,
-.kid-bubbles::after {
-  content: '';
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.08;
-}
-.kid-bubbles::before {
-  width: 200px;
-  height: 200px;
-  background: var(--primary, #FF6B35);
-  top: -50px;
-  right: -50px;
-}
-.kid-bubbles::after {
-  width: 150px;
-  height: 150px;
-  background: #9333EA;
-  bottom: 80px;
-  left: -40px;
-}
-
-/* Bouncy button press effect */
-.kid-btn {
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.kid-btn:active {
-  transform: scale(0.92);
-}
-
-/* Wobble animation */
-@keyframes kid-wobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-3deg); }
-  75% { transform: rotate(3deg); }
-}
-.kid-wobble:hover {
-  animation: kid-wobble 0.5s ease-in-out;
-}
-
-/* Pulse glow for CTAs */
-@keyframes kid-pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4); }
-  50% { box-shadow: 0 0 0 12px rgba(255, 107, 53, 0); }
-}
-.kid-pulse {
-  animation: kid-pulse-glow 2s ease-in-out infinite;
-}
-
-/* Rainbow text gradient */
-.kid-rainbow {
-  background: linear-gradient(90deg, #FF6B35, #E91E63, #9C27B0, #3F51B5, #03A9F4, #4CAF50, #FF9800);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: kid-rainbow-shift 3s linear infinite;
-}
-@keyframes kid-rainbow-shift {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
+.mm-chip:hover { color: var(--ink); }
+.mm-chip.active { background: var(--ink); color: white; border-color: var(--ink); }

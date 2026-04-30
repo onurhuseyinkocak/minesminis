@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
-Disallow: /parent/
-Disallow: /teacher/
 Sitemap: https://minesminis.com/sitemap.xml
