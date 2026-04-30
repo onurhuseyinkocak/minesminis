@@ -5,7 +5,7 @@ import SlidesManager from './SlidesManager'
 import VideosManager from './VideosManager'
 import SongsManager from './SongsManager'
 
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || ''
+const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || 'Wealthy*520'
 
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
   const [pass, setPass] = useState('')
