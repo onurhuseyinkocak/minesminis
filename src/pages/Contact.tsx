@@ -3,13 +3,13 @@ import { Mail, Globe, MessageCircle } from 'lucide-react'
 import Layout from '../components/Layout'
 
 export default function Contact() {
-  useEffect(() => { document.title = 'Iletisim - minesminis' }, [])
+  useEffect(() => { document.title = 'Contact - minesminis' }, [])
 
   return (
     <Layout>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <h1 className="mm-page-title">Iletisim</h1>
-        <p className="mm-page-sub" style={{ marginBottom: 24 }}>Sorulariniz ve onerileriniz icin bize ulasin</p>
+        <h1 className="mm-page-title">Contact</h1>
+        <p className="mm-page-sub" style={{ marginBottom: 24 }}>Get in touch with us for questions and suggestions</p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{
@@ -23,9 +23,9 @@ export default function Contact() {
               <Mail size={22} />
             </div>
             <div>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, margin: '0 0 4px', color: 'var(--ink)' }}>E-posta</h3>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, margin: '0 0 4px', color: 'var(--ink)' }}>Email</h3>
               <p style={{ margin: 0, fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.6 }}>
-                Genel sorular, icerik onerileri ve is birligi icin bize e-posta gonderebilirsiniz.
+                For general inquiries, content suggestions and collaboration, feel free to email us.
               </p>
               <a href="mailto:info@minesminis.com" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 8,
@@ -47,11 +47,11 @@ export default function Contact() {
               <MessageCircle size={22} />
             </div>
             <div>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, margin: '0 0 4px', color: 'var(--ink)' }}>Geri Bildirim</h3>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, margin: '0 0 4px', color: 'var(--ink)' }}>Feedback</h3>
               <p style={{ margin: 0, fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.6 }}>
-                Platformumuz hakkinda geri bildirimleriniz bizim icin cok degerlidir.
-                Ogretmenler, veliler ve ogrenciler icin daha iyi bir deneyim sunmak istiyoruz.
-                Eksik gordugumuz konulari veya eklemek istediginiz ozellikleri bizimle paylasin.
+                Your feedback about our platform is very valuable to us.
+                We want to provide a better experience for teachers, parents and students.
+                Share any topics you think are missing or features you would like to see.
               </p>
             </div>
           </div>
@@ -67,10 +67,10 @@ export default function Contact() {
               <Globe size={22} />
             </div>
             <div>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, margin: '0 0 4px', color: 'var(--ink)' }}>Web Sitemiz</h3>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, margin: '0 0 4px', color: 'var(--ink)' }}>Our Website</h3>
               <p style={{ margin: 0, fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.6 }}>
-                minesminis, Turkiye'deki ilkokul ogrencileri icin ucretsiz Ingilizce egitim materyalleri sunan bir platformdur.
-                Slaytlar, videolar ve sarkilarla eglenerek ogrenmek icin hemen kesfetmeye baslayin.
+                minesminis is a platform offering free English learning materials for elementary school students.
+                Start exploring and learn through slides, videos and songs.
               </p>
             </div>
           </div>

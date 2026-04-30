@@ -4,15 +4,15 @@ import Layout from '../components/Layout'
 import { supabase } from '../lib/supabase'
 
 const values = [
-  { icon: BookOpen, title: 'Ucretsiz Egitim', desc: 'Tum icerikler tamamen ucretsiz. Kayit gerektirmez, hemen ogrenmeye baslayin.' },
-  { icon: Users, title: 'Cocuklara Ozel', desc: '4-12 yas arasi cocuklar icin tasarlanmis, yas grubuna uygun, guvenli icerikler.' },
-  { icon: Heart, title: 'Eglenerek Ogren', desc: 'Slaytlar, videolar ve sarkilarla Ingilizce ogrenmek hic bu kadar eglenceli olmamisti.' },
+  { icon: BookOpen, title: 'Free Education', desc: 'All content is completely free. No registration required — start learning right away.' },
+  { icon: Users, title: 'Made for Kids', desc: 'Designed for children ages 4-12 with age-appropriate, safe content.' },
+  { icon: Heart, title: 'Learn by Having Fun', desc: 'Learning English has never been this fun with slides, videos and songs.' },
 ]
 
 export default function About() {
   const [counts, setCounts] = useState({ slides: 0, videos: 0, songs: 0 })
 
-  useEffect(() => { document.title = 'Hakkimizda - minesminis' }, [])
+  useEffect(() => { document.title = 'About - minesminis' }, [])
 
   useEffect(() => {
     Promise.all([
@@ -25,39 +25,39 @@ export default function About() {
   }, [])
 
   const stats = [
-    { icon: Presentation, label: 'Slayt sunusu', value: counts.slides },
-    { icon: Video, label: 'Egitici video', value: counts.videos },
-    { icon: Music, label: 'Ingilizce sarki', value: counts.songs },
+    { icon: Presentation, label: 'Slide decks', value: counts.slides },
+    { icon: Video, label: 'Educational videos', value: counts.videos },
+    { icon: Music, label: 'English songs', value: counts.songs },
   ]
 
   return (
     <Layout>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <h1 className="mm-page-title">Hakkimizda</h1>
-        <p className="mm-page-sub" style={{ marginBottom: 24 }}>minesminis - Cocuklar icin Ingilizce Ogrenme Platformu</p>
+        <h1 className="mm-page-title">About</h1>
+        <p className="mm-page-sub" style={{ marginBottom: 24 }}>minesminis - English Learning Platform for Kids</p>
 
         <div style={{ background: 'white', borderRadius: 28, padding: 28, border: '1px solid var(--line)', lineHeight: 1.8, fontSize: 15, color: 'var(--ink-2)', marginBottom: 20 }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 0 }}>Misyonumuz</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 0 }}>Our Mission</h2>
           <p>
-            minesminis, Turkiye'deki ilkokul cagindaki cocuklarin Ingilizce ogrenme surecini eglenceli ve etkili hale getirmek amaciyla
-            kurulmus bir egitim platformudur. Amacimiz, her cocugun yabanci dil ogrenme firsatina erisebilmesini saglamaktir.
+            minesminis is an educational platform designed to make learning English fun and effective for elementary school children.
+            Our goal is to ensure every child has access to quality language learning opportunities.
           </p>
           <p>
-            Platformumuz, ogretmenler ve egitim uzmanlari tarafindan hazirlanan iceriklerle donatilmistir.
-            Interaktif slaytlar ile kelime ve kavram ogrenimi, egitici videolarla gorsel ogrenme ve
-            Ingilizce sarkilarla dinleme ve tekrar becerilerini gelistirme imkani sunar.
+            Our platform features content prepared by teachers and education specialists.
+            It offers vocabulary and concept learning through interactive slides, visual learning with educational videos,
+            and listening and repetition skills development through English songs.
           </p>
 
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>Neden minesminis?</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>Why minesminis?</h2>
           <p>
-            Arastirmalar, cocuklarin en etkili ogrenme yonteminin oyun ve eglence yoluyla oldugunu gostermektedir.
-            minesminis, bu prensibi temel alarak rengarenk gorseller, dikkat cekici animasyonlar ve akilda kalici sarkilarla
-            ogrenmeyi bir maceraya donusturur.
+            Research shows that the most effective way for children to learn is through play and fun.
+            minesminis builds on this principle with colorful visuals, engaging animations and memorable songs
+            to turn learning into an adventure.
           </p>
           <p>
-            Her icerik, Avrupa Dil Portfolyosu (CEFR) A1 seviyesine uygun olarak hazirlanmistir.
-            Renkler, sayilar, hayvanlar, aile, vucut, hava durumu ve gunluk rutinler gibi temel konulari
-            kapsayan zengin icerik kutuphanemiz surekli buyumektedir.
+            All content is prepared in accordance with the Common European Framework of Reference (CEFR) A1 level.
+            Our growing content library covers essential topics like colors, numbers, animals, family, body parts,
+            weather and daily routines.
           </p>
         </div>
 

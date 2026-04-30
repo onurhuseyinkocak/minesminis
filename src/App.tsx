@@ -44,8 +44,8 @@ export default function App() {
           <Route path="*" element={
             <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', flexDirection: 'column', gap: 12 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 800, color: 'var(--primary)' }}>404</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--ink-2)' }}>Sayfa bulunamadi</div>
-              <a href="/" className="mm-btn primary" style={{ marginTop: 8, textDecoration: 'none' }}>Ana Sayfa</a>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--ink-2)' }}>Page not found</div>
+              <a href="/" className="mm-btn primary" style={{ marginTop: 8, textDecoration: 'none' }}>Home</a>
             </div>
           } />
         </Routes>

@@ -3,21 +3,19 @@ import { Link } from 'react-router-dom'
 import { Play, Presentation, Video, Music, ChevronRight, Star } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-
-const PAGE_TITLE = 'minesminis - Cocuklar icin Ingilizce'
 import { supabase } from '../lib/supabase'
 
 const features = [
-  { id: 'slides', title: 'Slaytlar', icon: Presentation, cover: 'rainbow', tag: 'Egitim', path: '/slides' },
-  { id: 'videos', title: 'Videolar', icon: Video, cover: 'duck', tag: 'Izle', path: '/videos' },
-  { id: 'songs', title: 'Sarkilar', icon: Music, cover: 'star', tag: 'Soyle', path: '/songs' },
+  { id: 'slides', title: 'Slides', icon: Presentation, cover: 'rainbow', tag: 'Learn', path: '/slides' },
+  { id: 'videos', title: 'Videos', icon: Video, cover: 'duck', tag: 'Watch', path: '/videos' },
+  { id: 'songs', title: 'Songs', icon: Music, cover: 'star', tag: 'Sing', path: '/songs' },
 ]
 
 export default function Dashboard() {
   const [counts, setCounts] = useState({ slides: 0, videos: 0, songs: 0 })
   const [recent, setRecent] = useState<any[]>([])
 
-  useEffect(() => { document.title = PAGE_TITLE }, [])
+  useEffect(() => { document.title = 'minesminis - English for Kids' }, [])
 
   useEffect(() => {
     // Fetch counts
@@ -36,14 +34,14 @@ export default function Dashboard() {
       supabase.from('mm_songs').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
     ]).then(([s, v, so]) => {
       const items: any[] = []
-      ;(s.data || []).forEach(d => items.push({ ...d, type: 'slides', meta: `${d.slide_count} slayt`, tag: 'coral' }))
+      ;(s.data || []).forEach(d => items.push({ ...d, type: 'slides', meta: `${d.slide_count} slides`, tag: 'coral' }))
       ;(v.data || []).forEach(d => items.push({ ...d, type: 'videos', meta: d.duration, tag: 'blue' }))
       ;(so.data || []).forEach(d => items.push({ ...d, type: 'songs', meta: d.duration, tag: 'lilac' }))
       setRecent(items)
     })
   }, [])
 
-  const countLabels = [counts.slides + ' sunu', counts.videos + ' video', counts.songs + ' sarki']
+  const countLabels = [counts.slides + ' slides', counts.videos + ' videos', counts.songs + ' songs']
 
   return (
     <Layout>
@@ -60,19 +58,19 @@ export default function Dashboard() {
             padding: '6px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700,
             color: 'var(--primary)', marginBottom: 12,
           }}>
-            <Star size={14} /> COCUKLAR ICIN INGILIZCE
+            <Star size={14} /> ENGLISH FOR KIDS
           </div>
           <h1 style={{
             fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 800,
             margin: 0, lineHeight: 1.05, letterSpacing: -1.5,
           }}>
-            Eglenerek<br/>Ingilizce ogren.
+            Learn English<br/>the fun way.
           </h1>
           <p style={{ fontSize: 16, color: 'var(--ink-2)', marginTop: 10, fontWeight: 500, maxWidth: 480 }}>
-            Slaytlar, videolar ve sarkilarla ilkokul seviyesinde keyifli bir ogrenme deneyimi.
+            A joyful learning experience for elementary school kids with slides, videos and songs.
           </p>
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
-            <Link to="/slides" className="mm-btn primary lg"><Play size={16} /> Basla</Link>
+            <Link to="/slides" className="mm-btn primary lg"><Play size={16} /> Start</Link>
           </div>
         </div>
         <div style={{ borderRadius: 24, overflow: 'hidden', boxShadow: 'var(--shadow-2)', aspectRatio: '4/3' }}>
@@ -82,7 +80,7 @@ export default function Dashboard() {
 
       {/* Categories */}
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: '0 0 14px', letterSpacing: -0.5 }}>
-        Kategoriler
+        Categories
       </h2>
       <div className="mm-grid-3" style={{ marginBottom: 28 }}>
         {features.map((f, i) => (
@@ -113,9 +111,9 @@ export default function Dashboard() {
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: 0, letterSpacing: -0.5 }}>
-              Son eklenenler
+              Recently added
             </h2>
-            <Link to="/slides" className="mm-btn">Tumu <ChevronRight size={14} /></Link>
+            <Link to="/slides" className="mm-btn">View all <ChevronRight size={14} /></Link>
           </div>
           <div className="mm-grid-3">
             {recent.map(p => (

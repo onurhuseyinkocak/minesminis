@@ -26,8 +26,8 @@ export default function VideoPlayer() {
     return (
       <Layout>
         <div style={{ textAlign: 'center', padding: 60 }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--primary)' }}>Icerik bulunamadi</p>
-          <Link to="/videos" className="mm-btn primary" style={{ marginTop: 12, textDecoration: 'none', display: 'inline-flex' }}>Videolara don</Link>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--primary)' }}>Content not found</p>
+          <Link to="/videos" className="mm-btn primary" style={{ marginTop: 12, textDecoration: 'none', display: 'inline-flex' }}>Back to Videos</Link>
         </div>
       </Layout>
     )
@@ -37,7 +37,7 @@ export default function VideoPlayer() {
     return (
       <Layout>
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Yukleniyor...</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
         </div>
       </Layout>
     )
@@ -47,7 +47,7 @@ export default function VideoPlayer() {
     <Layout>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Link to="/videos" className="mm-icon-btn" aria-label="Videolara don"><ArrowLeft size={18} /></Link>
+          <Link to="/videos" className="mm-icon-btn" aria-label="Back to Videos"><ArrowLeft size={18} /></Link>
           <div>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>{video.title}</div>
             <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>{video.category} - {video.duration}</div>
@@ -95,7 +95,7 @@ export default function VideoPlayer() {
               padding: 12, background: 'rgba(0,0,0,0.6)', borderRadius: 12,
               color: 'white', fontSize: 13, textAlign: 'center',
             }}>
-              YouTube linki henuz eklenmedi
+              YouTube link not added yet
             </div>
           </div>
         </div>
@@ -105,13 +105,13 @@ export default function VideoPlayer() {
       {(video.lyrics_en || video.lyrics_tr) && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 16 }}>
           <div style={{ background: 'white', borderRadius: 18, padding: 18, border: '1px solid var(--line)' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-2)', letterSpacing: 1.5, marginBottom: 8 }}>INGILIZCE</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-2)', letterSpacing: 1.5, marginBottom: 8 }}>ENGLISH</div>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, lineHeight: 1.5, whiteSpace: 'pre-line' }}>
               {video.lyrics_en}
             </div>
           </div>
           <div style={{ background: 'white', borderRadius: 18, padding: 18, border: '1px solid var(--line)' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)', letterSpacing: 1.5, marginBottom: 8 }}>TURKCE</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)', letterSpacing: 1.5, marginBottom: 8 }}>TURKISH</div>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, lineHeight: 1.5, color: 'var(--ink-2)', whiteSpace: 'pre-line' }}>
               {video.lyrics_tr}
             </div>

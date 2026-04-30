@@ -27,10 +27,10 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, margin: '0 0 8px', textAlign: 'center' }}>
           Admin Panel
         </h1>
-        <p style={{ color: 'var(--ink-3)', textAlign: 'center', marginBottom: 24 }}>minesminis yonetim</p>
+        <p style={{ color: 'var(--ink-3)', textAlign: 'center', marginBottom: 24 }}>minesminis management</p>
         <input
           type="password"
-          placeholder="Sifre"
+          placeholder="Password"
           value={pass}
           onChange={e => { setPass(e.target.value); setError(false) }}
           style={{
@@ -38,9 +38,9 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
             fontSize: 16, fontFamily: 'var(--font-body)', outline: 'none', marginBottom: 16,
           }}
         />
-        {error && <p style={{ color: 'var(--primary)', fontSize: 13, margin: '-8px 0 16px' }}>Yanlis sifre</p>}
+        {error && <p style={{ color: 'var(--primary)', fontSize: 13, margin: '-8px 0 16px' }}>Wrong password</p>}
         <button type="submit" className="mm-btn primary" style={{ width: '100%', justifyContent: 'center' }}>
-          Giris Yap
+          Sign In
         </button>
       </form>
     </div>
@@ -49,21 +49,21 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 
 const navItems = [
   { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/admin/slides', label: 'Slaytlar', icon: Presentation },
-  { path: '/admin/videos', label: 'Videolar', icon: Video },
-  { path: '/admin/songs', label: 'Sarkilar', icon: Music },
+  { path: '/admin/slides', label: 'Slides', icon: Presentation },
+  { path: '/admin/videos', label: 'Videos', icon: Video },
+  { path: '/admin/songs', label: 'Songs', icon: Music },
 ]
 
 function AdminDashboard() {
   return (
     <div>
       <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, margin: '0 0 8px' }}>Dashboard</h1>
-      <p style={{ color: 'var(--ink-3)', marginBottom: 32 }}>minesminis icerik yonetimi</p>
+      <p style={{ color: 'var(--ink-3)', marginBottom: 32 }}>minesminis content management</p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {[
-          { label: 'Slaytlar', icon: Presentation, path: '/admin/slides', color: 'var(--primary)' },
-          { label: 'Videolar', icon: Video, path: '/admin/videos', color: 'var(--accent)' },
-          { label: 'Sarkilar', icon: Music, path: '/admin/songs', color: 'var(--green)' },
+          { label: 'Slides', icon: Presentation, path: '/admin/slides', color: 'var(--primary)' },
+          { label: 'Videos', icon: Video, path: '/admin/videos', color: 'var(--accent)' },
+          { label: 'Songs', icon: Music, path: '/admin/songs', color: 'var(--green)' },
         ].map(item => (
           <Link key={item.path} to={item.path} style={{
             background: 'white', borderRadius: 18, padding: 24, border: '1px solid var(--line)',
@@ -74,7 +74,7 @@ function AdminDashboard() {
               <item.icon size={24} />
             </div>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>{item.label}</div>
-            <div style={{ color: 'var(--ink-3)', fontSize: 14 }}>Icerik yonet</div>
+            <div style={{ color: 'var(--ink-3)', fontSize: 14 }}>Manage content</div>
           </Link>
         ))}
       </div>
@@ -119,7 +119,7 @@ export default function AdminLayout() {
             border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--ink-3)',
             fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
           }}>
-          <LogOut size={16} /> Cikis
+          <LogOut size={16} /> Sign Out
         </button>
       </div>
 

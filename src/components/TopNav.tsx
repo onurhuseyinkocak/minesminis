@@ -2,10 +2,10 @@ import { Link, useLocation } from 'react-router-dom'
 import { Home, Presentation, Video, Music } from 'lucide-react'
 
 const tabs = [
-  { id: '/', label: 'Anasayfa', icon: Home },
-  { id: '/slides', label: 'Slaytlar', icon: Presentation },
-  { id: '/videos', label: 'Videolar', icon: Video },
-  { id: '/songs', label: 'Sarkilar', icon: Music },
+  { id: '/', label: 'Home', icon: Home },
+  { id: '/slides', label: 'Slides', icon: Presentation },
+  { id: '/videos', label: 'Videos', icon: Video },
+  { id: '/songs', label: 'Songs', icon: Music },
 ]
 
 export default function TopNav() {
@@ -16,7 +16,7 @@ export default function TopNav() {
 
   return (
     <nav className="mm-nav" role="navigation" aria-label="Main navigation">
-      <Link to="/" className="mm-logo" aria-label="minesminis anasayfa">
+      <Link to="/" className="mm-logo" aria-label="minesminis home">
         <img src="/images/minesminis-logo.svg" alt="minesminis logo" style={{ height: 40, borderRadius: 10 }} />
       </Link>
 
@@ -34,7 +34,7 @@ export default function TopNav() {
       </div>
 
       <div className="mm-nav-actions">
-        <Link to="/about" className="mm-btn" style={{ fontSize: 13, padding: '8px 14px' }}>Hakkimizda</Link>
+        <Link to="/about" className="mm-btn" style={{ fontSize: 13, padding: '8px 14px' }}>About</Link>
       </div>
     </nav>
   )

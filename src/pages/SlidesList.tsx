@@ -5,15 +5,15 @@ import Layout from '../components/Layout'
 import Cover from '../components/Cover'
 import { supabase } from '../lib/supabase'
 
-const chips = ['Tumu', 'Easy', 'Medium']
+const chips = ['All', 'Easy', 'Medium']
 
 export default function SlidesList() {
   const [slides, setSlides] = useState<any[]>([])
-  const [activeChip, setActiveChip] = useState('Tumu')
+  const [activeChip, setActiveChip] = useState('All')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => { document.title = 'Slaytlar - minesminis' }, [])
+  useEffect(() => { document.title = 'Slides - minesminis' }, [])
 
   useEffect(() => {
     supabase.from('mm_slides').select('*').eq('published', true).order('created_at', { ascending: false })
@@ -23,15 +23,15 @@ export default function SlidesList() {
       })
   }, [])
 
-  const filtered = activeChip === 'Tumu' ? slides
+  const filtered = activeChip === 'All' ? slides
     : slides.filter(s => s.level === activeChip || s.category === activeChip)
 
   return (
     <Layout>
       <div className="mm-page-header">
         <div>
-          <h1 className="mm-page-title">Slaytlar</h1>
-          <p className="mm-page-sub">{slides.length} sunu - ilkokul seviyesi</p>
+          <h1 className="mm-page-title">Slides</h1>
+          <p className="mm-page-sub">{slides.length} presentations - elementary level</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
 {/* grid toggle reserved */}
@@ -48,9 +48,9 @@ export default function SlidesList() {
 
       {error ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--primary)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Baglanti hatasi</p>
-          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>Lutfen daha sonra tekrar deneyin.</p>
-          <button className="mm-btn primary" onClick={() => window.location.reload()} style={{ marginTop: 12 }}>Tekrar dene</button>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Connection error</p>
+          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>Please try again later.</p>
+          <button className="mm-btn primary" onClick={() => window.location.reload()} style={{ marginTop: 12 }}>Retry</button>
         </div>
       ) : loading ? (
         <div className="mm-grid-3">
@@ -66,8 +66,8 @@ export default function SlidesList() {
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Henuz icerik eklenmedi</p>
-          <p style={{ fontSize: 14 }}>Yakinda yeni slaytlar eklenecek!</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>No content yet</p>
+          <p style={{ fontSize: 14 }}>New slides coming soon!</p>
         </div>
       ) : (
         <div className="mm-grid-3">
@@ -82,7 +82,7 @@ export default function SlidesList() {
                 <div className="mm-card-meta">
                   <span className={`mm-tag ${s.level === 'Easy' ? 'green' : 'yellow'}`}>{s.level}</span>
                   <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-3)' }} />
-                  <span>{s.slide_count} slayt</span>
+                  <span>{s.slide_count} slides</span>
                 </div>
               </div>
             </Link>

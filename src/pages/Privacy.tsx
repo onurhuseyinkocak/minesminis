@@ -2,61 +2,62 @@ import { useEffect } from 'react'
 import Layout from '../components/Layout'
 
 export default function Privacy() {
-  useEffect(() => { document.title = 'Gizlilik Politikasi - minesminis' }, [])
+  useEffect(() => { document.title = 'Privacy Policy - minesminis' }, [])
 
   return (
     <Layout>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <h1 className="mm-page-title">Gizlilik Politikasi</h1>
-        <p className="mm-page-sub" style={{ marginBottom: 24 }}>Son guncelleme: 30 Nisan 2026</p>
+        <h1 className="mm-page-title">Privacy Policy</h1>
+        <p className="mm-page-sub" style={{ marginBottom: 24 }}>Last updated: April 30, 2026</p>
 
         <div style={{ background: 'white', borderRadius: 28, padding: 28, border: '1px solid var(--line)', lineHeight: 1.8, fontSize: 15, color: 'var(--ink-2)' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 0 }}>1. Genel Bakis</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 0 }}>1. Overview</h2>
           <p>
-            minesminis (minesminis.com), 4-12 yas arasi cocuklar icin tasarlanmis ucretsiz bir Ingilizce ogrenme platformudur.
-            Cocuklarin guvenligi bizim icin en onemli onceliktir. Bu gizlilik politikasi, sitemizi kullanirken hangi verilerin toplandigini
-            ve nasil kullanildigini aciklar.
+            minesminis (minesminis.com) is a free English learning platform designed for children ages 4-12.
+            The safety of children is our top priority. This privacy policy explains what data is collected
+            and how it is used when you use our site.
           </p>
 
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>2. Toplanan Veriler</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>2. Data Collection</h2>
           <p>
-            minesminis, kullanicilardan kisisel bilgi toplamaz. Hesap olusturma, e-posta kaydi veya sosyal medya girisi gerektirmez.
-            Sitemiz tamamen anonim olarak kullanilabilir.
+            minesminis does not collect personal information from users. No account creation, email registration
+            or social media login is required. Our site can be used completely anonymously.
           </p>
           <ul>
-            <li>Kisisel bilgi (ad, e-posta, telefon) toplanmaz</li>
-            <li>Konum bilgisi toplanmaz</li>
-            <li>Cocuklara yonelik kisisel veri toplanmaz</li>
+            <li>No personal information (name, email, phone) is collected</li>
+            <li>No location data is collected</li>
+            <li>No personal data targeting children is collected</li>
           </ul>
 
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>3. Cerezler ve Analitik</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>3. Cookies and Analytics</h2>
           <p>
-            Sitemizde Google AdSense reklamlari gosterilmektedir. Google, reklam sunmak icin cerezler kullanabilir.
-            Bu cerezler kisisel bilgi toplamaz ve yalnizca reklam gosterimini iyilestirmek icin kullanilir.
-            Cocuklara yonelik icerik sundugumuz icin, kisisellestirilmis reklamlar devre disidir.
+            Our site displays Google AdSense advertisements. Google may use cookies to serve ads.
+            These cookies do not collect personal information and are only used to improve ad delivery.
+            Since we serve child-directed content, personalized ads are disabled.
           </p>
 
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>4. COPPA Uyumlulugu</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>4. COPPA Compliance</h2>
           <p>
-            minesminis, ABD Cocuk Cevrimici Gizliligi Koruma Yasasi (COPPA) ve ilgili uluslararasi mevzuata uygun olarak
-            faaliyet gostermektedir. 13 yasindan kucuk cocuklardan bilerek kisisel bilgi toplamiyoruz.
+            minesminis operates in compliance with the U.S. Children's Online Privacy Protection Act (COPPA)
+            and relevant international regulations. We do not knowingly collect personal information from children
+            under the age of 13.
           </p>
 
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>5. Ucuncu Taraf Hizmetleri</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>5. Third-Party Services</h2>
           <ul>
-            <li><strong>Google AdSense:</strong> Icerik temelli reklamlar icin kullanilir. Cocuk icerigi oldugu icin kisisellestirilmis reklam gosterilmez.</li>
-            <li><strong>YouTube:</strong> Video icerikler YouTube uzerinden gomulu olarak gosterilir. YouTube'un kendi gizlilik politikasi gecerlidir.</li>
+            <li><strong>Google AdSense:</strong> Used for content-based ads. Personalized ads are not shown due to child-directed content.</li>
+            <li><strong>YouTube:</strong> Video content is displayed as embedded YouTube videos. YouTube's own privacy policy applies.</li>
           </ul>
 
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>6. Veli Haklari</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>6. Parental Rights</h2>
           <p>
-            Veliler, cocuklarinin site kullanimi hakkinda bilgi talep edebilir. Herhangi bir sorunuz icin
-            bize <a href="mailto:info@minesminis.com" style={{ color: 'var(--accent)' }}>info@minesminis.com</a> adresinden ulasabilirsiniz.
+            Parents may request information about their children's use of the site. For any questions,
+            please contact us at <a href="mailto:info@minesminis.com" style={{ color: 'var(--accent)' }}>info@minesminis.com</a>.
           </p>
 
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>7. Degisiklikler</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)' }}>7. Changes</h2>
           <p>
-            Bu gizlilik politikasi zaman zaman guncellenebilir. Onemli degisiklikler yapildiginda bu sayfa uzerinden bilgilendirileceksiniz.
+            This privacy policy may be updated from time to time. You will be notified of significant changes through this page.
           </p>
         </div>
       </div>

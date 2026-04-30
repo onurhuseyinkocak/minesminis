@@ -81,8 +81,8 @@ export default function SongPlayer() {
     return (
       <Layout>
         <div style={{ textAlign: 'center', padding: 60 }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--primary)' }}>Icerik bulunamadi</p>
-          <Link to="/songs" className="mm-btn primary" style={{ marginTop: 12, textDecoration: 'none', display: 'inline-flex' }}>Sarkilara don</Link>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--primary)' }}>Content not found</p>
+          <Link to="/songs" className="mm-btn primary" style={{ marginTop: 12, textDecoration: 'none', display: 'inline-flex' }}>Back to Songs</Link>
         </div>
       </Layout>
     )
@@ -92,7 +92,7 @@ export default function SongPlayer() {
     return (
       <Layout>
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Yukleniyor...</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
         </div>
       </Layout>
     )
@@ -101,8 +101,8 @@ export default function SongPlayer() {
   return (
     <Layout>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-        <Link to="/songs" className="mm-icon-btn" aria-label="Sarkilara don"><ArrowLeft size={18} /></Link>
-        <span style={{ color: 'var(--ink-3)', fontWeight: 600, fontSize: 14 }}>Sarkilar / {song.title}</span>
+        <Link to="/songs" className="mm-icon-btn" aria-label="Back to Songs"><ArrowLeft size={18} /></Link>
+        <span style={{ color: 'var(--ink-3)', fontWeight: 600, fontSize: 14 }}>Songs / {song.title}</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 20 }}>
@@ -119,12 +119,12 @@ export default function SongPlayer() {
           {song.audio_url ? (
             <>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginTop: 18 }}>
-                <button className="mm-icon-btn" onClick={skipBack} aria-label="10 saniye geri"><SkipBack size={18} /></button>
-                <button className="mm-icon-btn primary" style={{ width: 56, height: 56 }} onClick={togglePlay} aria-label={isPlaying ? 'Durdur' : 'Oynat'}>
+                <button className="mm-icon-btn" onClick={skipBack} aria-label="Skip back 10s"><SkipBack size={18} /></button>
+                <button className="mm-icon-btn primary" style={{ width: 56, height: 56 }} onClick={togglePlay} aria-label={isPlaying ? 'Pause' : 'Play'}>
                   {isPlaying ? <Pause size={22} /> : <Play size={22} />}
                 </button>
-                <button className="mm-icon-btn" onClick={skipForward} aria-label="10 saniye ileri"><SkipForward size={18} /></button>
-                <button className={`mm-icon-btn${loop ? ' primary' : ''}`} onClick={() => setLoop(!loop)} aria-label="Tekrarla">
+                <button className="mm-icon-btn" onClick={skipForward} aria-label="Skip forward 10s"><SkipForward size={18} /></button>
+                <button className={`mm-icon-btn${loop ? ' primary' : ''}`} onClick={() => setLoop(!loop)} aria-label="Repeat">
                   <Repeat size={18} />
                 </button>
               </div>
@@ -137,7 +137,7 @@ export default function SongPlayer() {
             </>
           ) : (
             <div style={{ marginTop: 18, padding: 16, background: 'var(--surface-2)', borderRadius: 14, textAlign: 'center', fontSize: 13, color: 'var(--ink-3)' }}>
-              Ses dosyasi henuz eklenmedi
+              Audio file not added yet
             </div>
           )}
         </div>
@@ -145,8 +145,8 @@ export default function SongPlayer() {
         {/* Lyrics */}
         <div style={{ background: 'white', borderRadius: 28, padding: 28, border: '1px solid var(--line)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink-3)', letterSpacing: 1.5 }}>SOZLER</div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-3)' }}>Ingilizce - Turkce</span>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink-3)', letterSpacing: 1.5 }}>LYRICS</div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-3)' }}>English - Turkish</span>
           </div>
 
           {(song.lyrics || []).length > 0 ? (
@@ -173,7 +173,7 @@ export default function SongPlayer() {
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: 40, color: 'var(--ink-3)', fontSize: 14 }}>
-              Sozler henuz eklenmedi
+              Lyrics not added yet
             </div>
           )}
         </div>

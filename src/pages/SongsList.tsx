@@ -5,15 +5,15 @@ import Layout from '../components/Layout'
 import Cover from '../components/Cover'
 import { supabase } from '../lib/supabase'
 
-const chips = ['Tumu', 'Klasik', 'Hareketli', 'Egitici']
+const chips = ['All', 'Classic', 'Action', 'Educational']
 
 export default function SongsList() {
   const [songs, setSongs] = useState<any[]>([])
-  const [activeChip, setActiveChip] = useState('Tumu')
+  const [activeChip, setActiveChip] = useState('All')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => { document.title = 'Sarkilar - minesminis' }, [])
+  useEffect(() => { document.title = 'Songs - minesminis' }, [])
 
   useEffect(() => {
     supabase.from('mm_songs').select('*').eq('published', true).order('created_at', { ascending: false })
@@ -23,15 +23,15 @@ export default function SongsList() {
       })
   }, [])
 
-  const filtered = activeChip === 'Tumu' ? songs
+  const filtered = activeChip === 'All' ? songs
     : songs.filter(s => s.category === activeChip)
 
   return (
     <Layout>
       <div className="mm-page-header">
         <div>
-          <h1 className="mm-page-title">Sarkilar</h1>
-          <p className="mm-page-sub">{songs.length} sarki - ilkokul seviyesi</p>
+          <h1 className="mm-page-title">Songs</h1>
+          <p className="mm-page-sub">{songs.length} songs - elementary level</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
 {/* grid toggle reserved */}
@@ -48,9 +48,9 @@ export default function SongsList() {
 
       {error ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--primary)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Baglanti hatasi</p>
-          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>Lutfen daha sonra tekrar deneyin.</p>
-          <button className="mm-btn primary" onClick={() => window.location.reload()} style={{ marginTop: 12 }}>Tekrar dene</button>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Connection error</p>
+          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>Please try again later.</p>
+          <button className="mm-btn primary" onClick={() => window.location.reload()} style={{ marginTop: 12 }}>Retry</button>
         </div>
       ) : loading ? (
         <div className="mm-grid-3">
@@ -66,8 +66,8 @@ export default function SongsList() {
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Henuz icerik eklenmedi</p>
-          <p style={{ fontSize: 14 }}>Yakinda yeni sarkilar eklenecek!</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>No content yet</p>
+          <p style={{ fontSize: 14 }}>New songs coming soon!</p>
         </div>
       ) : (
         <div className="mm-grid-3">
