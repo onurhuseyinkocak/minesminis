@@ -33,6 +33,7 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
           <input
             type={showPass ? 'text' : 'password'}
             placeholder="Password"
+            aria-label="Admin password"
             value={pass}
             onChange={e => { setPass(e.target.value); setError(false) }}
             style={{

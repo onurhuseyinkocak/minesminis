@@ -8,8 +8,8 @@
   "theme_color": "#FF6B4A",
   "icons": [
     {
-      "src": "/images/minesminis-logo.png",
-      "sizes": "512x512",
+      "src": "/images/minesminis-logo-512.png",
+      "sizes": "512x205",
       "type": "image/png"
     }
   ]

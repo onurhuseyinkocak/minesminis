@@ -58,7 +58,7 @@ export default function VideosList() {
       ) : loading ? (
         <div className="mm-grid-3">
           {[1,2,3].map(i => (
-            <div key={i} className="mm-card" style={{ opacity: 0.5 }}>
+            <div key={i} className="mm-card mm-skeleton">
               <div className="mm-card-cover" style={{ background: 'var(--surface-2)' }} />
               <div className="mm-card-body">
                 <div style={{ height: 18, background: 'var(--surface-2)', borderRadius: 8, width: '70%' }} />
@@ -80,7 +80,7 @@ export default function VideosList() {
                 <Cover kind={v.cover_kind} />
                 <div style={{
                   position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
-                  color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                  color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
                   display: 'inline-flex', alignItems: 'center', gap: 4,
                 }}>
                   <Clock size={11} /> {v.duration}

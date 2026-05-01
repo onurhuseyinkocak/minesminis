@@ -36,15 +36,27 @@ export default function SongPlayer() {
     audioRef.current = audio
     audio.loop = loop
 
-    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration))
-    audio.addEventListener('timeupdate', () => {
+    const onMeta = () => setDuration(audio.duration)
+    const onTime = () => {
       setCurrentTime(audio.currentTime)
       if (audio.duration) setProgress((audio.currentTime / audio.duration) * 100)
-    })
-    audio.addEventListener('ended', () => { setIsPlaying(false); setProgress(0); setCurrentTime(0) })
-    audio.addEventListener('error', () => { setIsPlaying(false); setError(true) })
+    }
+    const onEnd = () => { setIsPlaying(false); setProgress(0); setCurrentTime(0) }
+    const onErr = () => { setIsPlaying(false); setError(true) }
 
-    return () => { audio.pause(); audio.src = '' }
+    audio.addEventListener('loadedmetadata', onMeta)
+    audio.addEventListener('timeupdate', onTime)
+    audio.addEventListener('ended', onEnd)
+    audio.addEventListener('error', onErr)
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', onMeta)
+      audio.removeEventListener('timeupdate', onTime)
+      audio.removeEventListener('ended', onEnd)
+      audio.removeEventListener('error', onErr)
+      audio.pause()
+      audio.src = ''
+    }
   }, [song?.audio_url, loop])
 
   const togglePlay = useCallback(() => {

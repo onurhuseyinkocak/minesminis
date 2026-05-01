@@ -132,7 +132,7 @@ export default function SlidePlayer() {
                 }}
               >
                 <Cover kind={item.cover_kind} />
-                <div style={{ position: 'absolute', top: 4, left: 6, fontSize: 10, color: 'white', fontWeight: 800, textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
+                <div style={{ position: 'absolute', top: 4, left: 6, fontSize: 12, color: 'white', fontWeight: 800, textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
                   {i + 1}
                 </div>
               </div>

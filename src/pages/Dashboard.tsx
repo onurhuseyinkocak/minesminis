@@ -54,7 +54,7 @@ export default function Dashboard() {
         <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.9)',
-            padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700,
+            padding: '4px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700,
             color: '#7B68EE', marginBottom: 8,
           }}>
             <Star size={12} /> ENGLISH FOR KIDS
