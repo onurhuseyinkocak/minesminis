@@ -62,7 +62,7 @@ export default function About() {
         </div>
 
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 20 }}>
+        <div className="mm-grid-3" style={{ gap: 14, marginBottom: 20 }}>
           {stats.map(s => (
             <div key={s.label} style={{
               background: 'white', borderRadius: 18, padding: 20, border: '1px solid var(--line)',

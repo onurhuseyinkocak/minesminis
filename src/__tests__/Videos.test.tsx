@@ -592,7 +592,7 @@ describe('VideoPlayer', () => {
           category: 'Action',
           duration: '1:30',
           cover_kind: 'farm',
-          youtube_url: 'https://youtu.be/abc123xyz',
+          youtube_url: 'https://youtu.be/abc123xyz_1',
           lyrics_en: '',
           lyrics_tr: '',
         },
@@ -611,7 +611,7 @@ describe('VideoPlayer', () => {
 
     await waitFor(() => {
       const iframe = screen.getByTitle('Short URL Video') as HTMLIFrameElement
-      expect(iframe.src).toContain('https://www.youtube.com/embed/abc123xyz')
+      expect(iframe.src).toContain('https://www.youtube.com/embed/abc123xyz_1')
     })
   })
 
@@ -850,7 +850,7 @@ describe('VideoPlayer', () => {
           category: 'Action',
           duration: '1:45',
           cover_kind: 'farm',
-          youtube_url: 'https://www.youtube.com/watch?v=abc123',
+          youtube_url: 'https://www.youtube.com/watch?v=abc123xyz_1',
           lyrics_en: '',
           lyrics_tr: '',
         },

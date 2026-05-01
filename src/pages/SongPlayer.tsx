@@ -121,6 +121,7 @@ export default function SongPlayer() {
                 style={{ width: '100%', height: '100%', border: 'none' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
               />
             </div>
           ) : (
@@ -149,7 +150,7 @@ export default function SongPlayer() {
               <div className="mm-progress" style={{ marginTop: 12, cursor: 'pointer' }} onClick={seek}>
                 <div className="mm-progress-fill" style={{ width: `${progress}%`, transition: 'width 0.2s' }} />
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 11, color: 'var(--ink-3)', fontWeight: 600 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 12, color: 'var(--ink-3)', fontWeight: 600 }}>
                 <span>{fmt(currentTime)}</span><span>{duration ? fmt(duration) : song.duration}</span>
               </div>
             </>

@@ -10,9 +10,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       <TopNav />
       <div className="mm-shell">
         <AdRail />
-        <div className="mm-main">
+        <main className="mm-main" id="main-content">
           {children}
-        </div>
+        </main>
         <AdRail />
       </div>
       <Footer />

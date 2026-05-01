@@ -38,7 +38,7 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
             style={{
               width: '100%', padding: '14px 18px', paddingRight: 48, borderRadius: 14,
               border: `1px solid ${error ? 'var(--primary)' : 'var(--line)'}`,
-              fontSize: 16, fontFamily: 'var(--font-body)', outline: 'none', boxSizing: 'border-box',
+              fontSize: 16, fontFamily: 'var(--font-body)', boxSizing: 'border-box',
             }}
           />
           <button

@@ -1,0 +1,16 @@
+{
+  "name": "minesminis - English for Kids",
+  "short_name": "minesminis",
+  "description": "Fun English learning platform for elementary children",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F2EC",
+  "theme_color": "#FF6B4A",
+  "icons": [
+    {
+      "src": "/images/minesminis-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

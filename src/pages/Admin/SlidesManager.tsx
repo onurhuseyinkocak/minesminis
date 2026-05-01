@@ -135,7 +135,7 @@ export default function SlidesManager() {
         </div>
 
         {(editing.slides_data || []).map((item, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px 40px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+          <div key={i} className="mm-admin-items-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px 40px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
             <input placeholder="Label (EN)" value={item.label} onChange={e => updateSlideItem(i, 'label', e.target.value)}
               style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line)', fontSize: 14, fontFamily: 'var(--font-body)' }} />
             <input placeholder="Translation (TR)" value={item.translation} onChange={e => updateSlideItem(i, 'translation', e.target.value)}

@@ -182,7 +182,7 @@ export default function SongsManager() {
         </div>
 
         {(editing.lyrics || []).map((line, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 40px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+          <div key={i} className="mm-admin-items-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 40px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
             <input placeholder="English" value={line.en} onChange={e => updateLyric(i, 'en', e.target.value)}
               style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line)', fontSize: 14, fontFamily: 'var(--font-body)' }} />
             <input placeholder="Turkish" value={line.tr} onChange={e => updateLyric(i, 'tr', e.target.value)}

@@ -39,7 +39,7 @@ const mockVideoData = {
   cover_kind: 'abc',
   duration: '3:20',
   category: 'alphabet',
-  youtube_url: 'https://youtube.com/watch?v=test',
+  youtube_url: 'https://youtube.com/watch?v=dQw4w9WgXcQ',
   lyrics_en: 'A B C D E F G',
   lyrics_tr: 'A B C D E F G',
   published: false,
