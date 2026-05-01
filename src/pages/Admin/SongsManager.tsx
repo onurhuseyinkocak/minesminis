@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, Eye, EyeOff, Save, Pencil } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader } from 'lucide-react'
 import { supabase, Song, SongLyric } from '../../lib/supabase'
+import { extractYouTubeId } from '../../lib/youtube'
 import toast from 'react-hot-toast'
 
 const coverOptions = ['star','happy','head','farm2','bus','bingo','spider','dance','rainbow','duck','abc','apple','fruit','hello','days']
@@ -9,6 +10,35 @@ export default function SongsManager() {
   const [songs, setSongs] = useState<Song[]>([])
   const [editing, setEditing] = useState<Song | null>(null)
   const [loading, setLoading] = useState(true)
+  const [fetching, setFetching] = useState(false)
+
+  const fetchYouTubeInfo = async (url: string) => {
+    const videoId = extractYouTubeId(url)
+    if (!videoId) return
+    setFetching(true)
+    try {
+      const ctrl = new AbortController()
+      const timer = setTimeout(() => ctrl.abort(), 5000)
+      const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`, { signal: ctrl.signal })
+      clearTimeout(timer)
+      const data = await res.json()
+      if (data.title) {
+        setEditing(prev => prev ? { ...prev, title: prev.title || data.title } : prev)
+        toast.success('YouTube info fetched')
+      }
+    } catch {
+      // silent fail
+    }
+    setFetching(false)
+  }
+
+  const handleYouTubeUrlChange = (url: string) => {
+    if (!editing) return
+    setEditing({ ...editing, youtube_url: url })
+    if (extractYouTubeId(url) && !editing.title) {
+      fetchYouTubeInfo(url)
+    }
+  }
 
   const load = async () => {
     const { data } = await supabase.from('mm_songs').select('*').order('created_at', { ascending: false })
@@ -98,7 +128,7 @@ export default function SongsManager() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+        <div className="mm-admin-grid">
           <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>Title</span>
             <input value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })}
@@ -128,12 +158,23 @@ export default function SongsManager() {
               style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: 'span 2' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>YouTube URL (optional — small video player)</span>
-            <input value={editing.youtube_url || ''} onChange={e => setEditing({ ...editing, youtube_url: e.target.value })}
-              placeholder="https://youtube.com/watch?v=..."
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>
+              YouTube URL (optional) {fetching && <Loader size={12} style={{ display: 'inline', animation: 'spin 1s linear infinite' }} />}
+            </span>
+            <input value={editing.youtube_url || ''} onChange={e => handleYouTubeUrlChange(e.target.value)}
+              onBlur={() => { if (editing.youtube_url && !editing.title && !fetching) fetchYouTubeInfo(editing.youtube_url) }}
+              placeholder="Paste YouTube link — title auto-fills"
               style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
           </label>
         </div>
+
+        {editing.youtube_url && extractYouTubeId(editing.youtube_url) && (
+          <div style={{ marginBottom: 16, borderRadius: 14, overflow: 'hidden', maxWidth: 320 }}>
+            <img src={`https://img.youtube.com/vi/${extractYouTubeId(editing.youtube_url)}/mqdefault.jpg`}
+              alt={`YouTube thumbnail for ${editing.title || 'song'}`}
+              style={{ width: '100%', display: 'block', borderRadius: 14 }} />
+          </div>
+        )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, margin: 0 }}>Lyrics ({editing.lyrics?.length || 0})</h2>

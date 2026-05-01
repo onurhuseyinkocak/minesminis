@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Play, Clock } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
+import MobileAd from '../components/MobileAd'
 import { supabase, Video } from '../lib/supabase'
 
 const chips = ['All', 'Sing-Along', 'Dialogue', 'Action']
@@ -37,6 +38,8 @@ export default function VideosList() {
 {/* grid toggle reserved */}
         </div>
       </div>
+
+      <MobileAd />
 
       <div className="mm-chips">
         {chips.map(c => (

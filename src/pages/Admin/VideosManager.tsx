@@ -136,7 +136,7 @@ export default function VideosManager() {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+        <div className="mm-admin-grid">
           <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>Title</span>
             <input value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })}

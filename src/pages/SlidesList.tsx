@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Play } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
+import MobileAd from '../components/MobileAd'
 import { supabase, Slide } from '../lib/supabase'
 
 const chips = ['All', 'Easy', 'Medium']
@@ -37,6 +38,8 @@ export default function SlidesList() {
 {/* grid toggle reserved */}
         </div>
       </div>
+
+      <MobileAd />
 
       <div className="mm-chips">
         {chips.map(c => (

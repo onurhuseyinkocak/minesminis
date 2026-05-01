@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import TopNav from './TopNav'
+import BottomNav from './BottomNav'
 import AdRail from './AdRail'
 import Footer from './Footer'
 
@@ -15,6 +16,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <AdRail />
       </div>
       <Footer />
+      <BottomNav />
     </div>
   )
 }

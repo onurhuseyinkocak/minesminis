@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Play, Presentation, Video, Music, ChevronRight, Star } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
+import MobileAd from '../components/MobileAd'
 import { supabase } from '../lib/supabase'
 
 const features = [
@@ -46,11 +47,9 @@ export default function Dashboard() {
   return (
     <Layout>
       {/* Hero */}
-      <div style={{
+      <div className="mm-hero" style={{
         background: 'linear-gradient(135deg, #7B68EE 0%, #9B87F5 50%, #B8A9FF 100%)',
-        borderRadius: 22, padding: '32px 32px', marginBottom: 22,
         display: 'flex', alignItems: 'center', gap: 24,
-        overflow: 'hidden', position: 'relative',
       }}>
         <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
           <div style={{
@@ -61,7 +60,7 @@ export default function Dashboard() {
             <Star size={12} /> ENGLISH FOR KIDS
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 42, fontWeight: 800,
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800,
             margin: 0, lineHeight: 1.1, letterSpacing: -1, color: 'white',
           }}>
             Learn English<br/>the fun way.
@@ -73,7 +72,7 @@ export default function Dashboard() {
             <Link to="/slides" className="mm-btn" style={{ background: 'white', color: '#7B68EE', fontWeight: 700 }}><Play size={14} /> Start Learning</Link>
           </div>
         </div>
-        <img src="/images/hero-bg.webp" alt="" loading="eager" style={{
+        <img src="/images/hero-bg.webp" alt="" loading="eager" className="mm-hero-img" style={{
           width: 180, height: 180, objectFit: 'cover', borderRadius: 18, flexShrink: 0,
           boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
         }} />
@@ -108,6 +107,8 @@ export default function Dashboard() {
           </Link>
         ))}
       </div>
+
+      <MobileAd />
 
       {/* Recent */}
       {recent.length > 0 && (

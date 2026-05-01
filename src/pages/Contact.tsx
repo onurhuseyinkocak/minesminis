@@ -53,6 +53,12 @@ export default function Contact() {
                 We want to provide a better experience for teachers, parents and students.
                 Share any topics you think are missing or features you would like to see.
               </p>
+              <a href="mailto:info@minesminis.com?subject=Feedback" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 8,
+                color: 'var(--green)', fontWeight: 600, fontSize: 15, textDecoration: 'none',
+              }}>
+                Send Feedback
+              </a>
             </div>
           </div>
 
