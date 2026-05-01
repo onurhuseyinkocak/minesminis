@@ -101,23 +101,6 @@ export default function VideoPlayer() {
         </div>
       )}
 
-      {/* Lyrics */}
-      {(video.lyrics_en || video.lyrics_tr) && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 16 }}>
-          <div style={{ background: 'white', borderRadius: 18, padding: 18, border: '1px solid var(--line)' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-2)', letterSpacing: 1.5, marginBottom: 8 }}>ENGLISH</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, lineHeight: 1.5, whiteSpace: 'pre-line' }}>
-              {video.lyrics_en}
-            </div>
-          </div>
-          <div style={{ background: 'white', borderRadius: 18, padding: 18, border: '1px solid var(--line)' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)', letterSpacing: 1.5, marginBottom: 8 }}>TURKISH</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, lineHeight: 1.5, color: 'var(--ink-2)', whiteSpace: 'pre-line' }}>
-              {video.lyrics_tr}
-            </div>
-          </div>
-        </div>
-      )}
     </Layout>
   )
 }

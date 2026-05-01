@@ -457,7 +457,7 @@ describe('SongPlayer', () => {
     })
   })
 
-  it('displays LYRICS section with English-Turkish label', async () => {
+  it('displays KARAOKE section with English-Turkish label', async () => {
     const mockFromFn = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -468,7 +468,7 @@ describe('SongPlayer', () => {
     renderWithRouter(<SongPlayer />, { route: '/songs/1' })
 
     await waitFor(() => {
-      expect(screen.getByText('LYRICS')).toBeInTheDocument()
+      expect(screen.getByText('KARAOKE')).toBeInTheDocument()
       expect(screen.getByText('English - Turkish')).toBeInTheDocument()
     })
   })
@@ -504,7 +504,7 @@ describe('SongPlayer', () => {
     await waitFor(() => {
       const highlightLine = screen.getByText('B is for Ball')
       expect(highlightLine).toHaveStyle({
-        fontSize: '32px',
+        fontSize: '36px',
         fontWeight: '800',
         color: 'var(--primary)',
       })

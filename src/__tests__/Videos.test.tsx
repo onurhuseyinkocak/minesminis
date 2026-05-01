@@ -687,7 +687,7 @@ describe('VideoPlayer', () => {
     })
   })
 
-  it('renders English and Turkish lyrics when present', async () => {
+  it('does not render lyrics section in video player', async () => {
     vi.spyOn(supabase, 'from').mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -701,8 +701,8 @@ describe('VideoPlayer', () => {
           duration: '3:00',
           cover_kind: 'rainbow',
           youtube_url: '',
-          lyrics_en: 'Hello\nWorld\nHow are you?',
-          lyrics_tr: 'Merhaba\nDünya\nNasılsın?',
+          lyrics_en: 'Hello\nWorld',
+          lyrics_tr: 'Merhaba\nDünya',
         },
         error: null,
       }),
@@ -718,11 +718,11 @@ describe('VideoPlayer', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByText('ENGLISH')).toBeInTheDocument()
-      expect(screen.getByText('TURKISH')).toBeInTheDocument()
-      expect(screen.getByText(/Hello/)).toBeInTheDocument()
-      expect(screen.getByText(/Merhaba/)).toBeInTheDocument()
+      expect(screen.getByText('Lyric Video')).toBeInTheDocument()
     })
+
+    expect(screen.queryByText('ENGLISH')).not.toBeInTheDocument()
+    expect(screen.queryByText('TURKISH')).not.toBeInTheDocument()
   })
 
   it('shows "Content not found" when video fetch fails', async () => {
@@ -873,7 +873,7 @@ describe('VideoPlayer', () => {
     })
   })
 
-  it('shows lyrics section when only English lyrics present', async () => {
+  it('renders video title and category without lyrics', async () => {
     vi.spyOn(supabase, 'from').mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -904,9 +904,10 @@ describe('VideoPlayer', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByText('ENGLISH')).toBeInTheDocument()
-      expect(screen.getByText('TURKISH')).toBeInTheDocument()
-      expect(screen.getByText('One, two, three')).toBeInTheDocument()
+      expect(screen.getByText('English Only')).toBeInTheDocument()
+      expect(screen.getByText(/Sing-Along/)).toBeInTheDocument()
     })
+
+    expect(screen.queryByText('ENGLISH')).not.toBeInTheDocument()
   })
 })

@@ -253,8 +253,11 @@ describe('VideosManager', () => {
       fireEvent.click(screen.getByRole('button', { name: /New Video/i }))
     })
 
-    const titleInputs = screen.getAllByDisplayValue('')
-    await user.type(titleInputs[0], 'New Video')
+    // YouTube URL is now first input; find the Title input by label
+    const titleInput = screen.getAllByDisplayValue('').find(
+      el => el.closest('label')?.textContent?.includes('Title')
+    )!
+    await user.type(titleInput, 'New Video')
 
     const saveBtn = screen.getByRole('button', { name: /Save/i })
     fireEvent.click(saveBtn)

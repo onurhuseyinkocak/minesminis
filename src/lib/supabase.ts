@@ -43,6 +43,7 @@ export type Song = {
   duration: string
   category: string
   audio_url: string
+  youtube_url: string
   lyrics: SongLyric[]
   published: boolean
   created_at: string
