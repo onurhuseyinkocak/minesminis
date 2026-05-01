@@ -4,6 +4,7 @@ import { ArrowLeft, Play } from 'lucide-react'
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
 import { supabase, Video } from '../lib/supabase'
+import { extractYouTubeId } from '../lib/youtube'
 
 export default function VideoPlayer() {
   const { id } = useParams()
@@ -12,7 +13,7 @@ export default function VideoPlayer() {
 
   useEffect(() => {
     if (id) {
-      supabase.from('mm_videos').select('*').eq('id', id).single()
+      supabase.from('mm_videos').select('*').eq('id', id).eq('published', true).single()
         .then(({ data, error: err }) => {
           if (err || !data) { setError(true); return }
           setVideo(data)
@@ -59,18 +60,7 @@ export default function VideoPlayer() {
       {video.youtube_url ? (
         <div style={{ borderRadius: 28, overflow: 'hidden', aspectRatio: '16/9' }}>
           <iframe
-            src={(() => {
-              const url = video.youtube_url
-              let videoId = ''
-              if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1]?.split(/[?&#]/)[0] || ''
-              } else if (url.includes('watch?v=')) {
-                try { videoId = new URL(url).searchParams.get('v') || '' } catch { videoId = '' }
-              } else if (url.includes('youtube.com/embed/')) {
-                return url
-              }
-              return videoId ? `https://www.youtube.com/embed/${videoId}` : ''
-            })()}
+            src={`https://www.youtube.com/embed/${extractYouTubeId(video.youtube_url)}`}
             title={video.title}
             style={{ width: '100%', height: '100%', border: 'none' }}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -78,10 +68,10 @@ export default function VideoPlayer() {
           />
         </div>
       ) : (
-        <div style={{ background: 'var(--ink)', borderRadius: 28, overflow: 'hidden', position: 'relative' }}>
+        <div style={{ background: 'var(--surface-2)', borderRadius: 28, overflow: 'hidden', position: 'relative' }}>
           <div style={{ aspectRatio: '16/9', position: 'relative' }}>
             <Cover kind={video.cover_kind} />
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.15)' }}>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{
                 width: 84, height: 84, borderRadius: '50%', background: 'white',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)',
@@ -92,8 +82,8 @@ export default function VideoPlayer() {
             </div>
             <div style={{
               position: 'absolute', bottom: 16, left: 20, right: 20,
-              padding: 12, background: 'rgba(0,0,0,0.6)', borderRadius: 12,
-              color: 'white', fontSize: 13, textAlign: 'center',
+              padding: 12, background: 'rgba(255,255,255,0.9)', borderRadius: 12,
+              color: 'var(--ink-2)', fontSize: 13, textAlign: 'center', fontWeight: 600,
             }}>
               YouTube link not added yet
             </div>

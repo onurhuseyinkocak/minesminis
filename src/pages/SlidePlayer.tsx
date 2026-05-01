@@ -14,7 +14,7 @@ export default function SlidePlayer() {
 
   useEffect(() => {
     if (id) {
-      supabase.from('mm_slides').select('*').eq('id', id).single()
+      supabase.from('mm_slides').select('*').eq('id', id).eq('published', true).single()
         .then(({ data, error: err }) => {
           if (err || !data) { setError(true); return }
           setSlide(data)

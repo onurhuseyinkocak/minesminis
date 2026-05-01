@@ -4,13 +4,7 @@ import { ArrowLeft, SkipBack, Pause, Play, SkipForward, Repeat } from 'lucide-re
 import Layout from '../components/Layout'
 import Cover from '../components/Cover'
 import { supabase, Song, SongLyric } from '../lib/supabase'
-
-function extractYouTubeId(url: string): string {
-  if (url.includes('youtu.be/')) return url.split('youtu.be/')[1]?.split(/[?&#]/)[0] || ''
-  if (url.includes('watch?v=')) try { return new URL(url).searchParams.get('v') || '' } catch { return '' }
-  if (url.includes('youtube.com/embed/')) return url.split('/embed/')[1]?.split(/[?&#]/)[0] || ''
-  return ''
-}
+import { extractYouTubeId } from '../lib/youtube'
 
 export default function SongPlayer() {
   const { id } = useParams()
@@ -25,7 +19,7 @@ export default function SongPlayer() {
 
   useEffect(() => {
     if (id) {
-      supabase.from('mm_songs').select('*').eq('id', id).single()
+      supabase.from('mm_songs').select('*').eq('id', id).eq('published', true).single()
         .then(({ data, error: err }) => {
           if (err || !data) { setError(true); return }
           setSong(data)
@@ -115,7 +109,7 @@ export default function SongPlayer() {
       </div>
 
       {/* Main layout: small video/cover left, big karaoke right */}
-      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 280px) 1fr', gap: 20 }} className="mm-song-layout">
         {/* Left: video/cover + controls */}
         <div>
           {/* Small YouTube embed or cover */}

@@ -40,7 +40,7 @@ export default function SongsList() {
 
       <div className="mm-chips">
         {chips.map(c => (
-          <button key={c} className={`mm-chip${activeChip === c ? ' active' : ''}`} onClick={() => setActiveChip(c)} aria-label={`Filter by ${c}`}>
+          <button key={c} className={`mm-chip${activeChip === c ? ' active' : ''}`} onClick={() => setActiveChip(c)} aria-label={`Filter by ${c}`} aria-pressed={activeChip === c}>
             {c}
           </button>
         ))}

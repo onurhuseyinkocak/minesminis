@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, Eye, EyeOff, Save, Pencil } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader } from 'lucide-react'
 import { supabase, Video } from '../../lib/supabase'
+import { extractYouTubeId } from '../../lib/youtube'
 import toast from 'react-hot-toast'
 
 const coverOptions = ['abc','duck','bus','farm2','hello','dance','days','fruit','rainbow','star','happy','head','bingo','spider','apple']
@@ -9,6 +10,7 @@ export default function VideosManager() {
   const [videos, setVideos] = useState<Video[]>([])
   const [editing, setEditing] = useState<Video | null>(null)
   const [loading, setLoading] = useState(true)
+  const [fetching, setFetching] = useState(false)
 
   const load = async () => {
     const { data } = await supabase.from('mm_videos').select('*').order('created_at', { ascending: false })
@@ -17,6 +19,37 @@ export default function VideosManager() {
   }
 
   useEffect(() => { load() }, [])
+
+  const fetchYouTubeInfo = async (url: string) => {
+    const videoId = extractYouTubeId(url)
+    if (!videoId) return
+    setFetching(true)
+    try {
+      const ctrl = new AbortController()
+      const timer = setTimeout(() => ctrl.abort(), 5000)
+      const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`, { signal: ctrl.signal })
+      clearTimeout(timer)
+      const data = await res.json()
+      if (data.title) {
+        setEditing(prev => prev ? {
+          ...prev,
+          title: prev.title || data.title,
+        } : prev)
+        toast.success('YouTube info fetched')
+      }
+    } catch {
+      // silent fail — user can fill manually
+    }
+    setFetching(false)
+  }
+
+  const handleYouTubeUrlChange = (url: string) => {
+    if (!editing) return
+    setEditing({ ...editing, youtube_url: url })
+    if (extractYouTubeId(url) && !editing.title) {
+      fetchYouTubeInfo(url)
+    }
+  }
 
   const save = async () => {
     if (!editing) return
@@ -68,6 +101,8 @@ export default function VideosManager() {
     created_at: '',
   })
 
+  const videoId = editing ? extractYouTubeId(editing.youtube_url) : ''
+
   if (editing) {
     return (
       <div>
@@ -80,6 +115,26 @@ export default function VideosManager() {
             <button className="mm-btn primary" onClick={save}><Save size={16} /> Save</button>
           </div>
         </div>
+
+        {/* YouTube URL — first field, auto-fetches info */}
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>
+            YouTube URL {fetching && <Loader size={12} style={{ display: 'inline', animation: 'spin 1s linear infinite' }} />}
+          </span>
+          <input value={editing.youtube_url}
+            onChange={e => handleYouTubeUrlChange(e.target.value)}
+            onBlur={() => { if (editing.youtube_url && !editing.title && !fetching) fetchYouTubeInfo(editing.youtube_url) }}
+            placeholder="Paste YouTube link — title auto-fills"
+            style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
+        </label>
+
+        {/* YouTube thumbnail preview */}
+        {videoId && (
+          <div style={{ marginBottom: 16, borderRadius: 14, overflow: 'hidden', maxWidth: 320 }}>
+            <img src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`} alt={`YouTube thumbnail for ${editing.title || 'video'}`}
+              style={{ width: '100%', display: 'block', borderRadius: 14 }} />
+          </div>
+        )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -103,22 +158,6 @@ export default function VideosManager() {
               style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }}>
               {coverOptions.map(c => <option key={c}>{c}</option>)}
             </select>
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: 'span 2' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>YouTube URL</span>
-            <input value={editing.youtube_url} onChange={e => setEditing({ ...editing, youtube_url: e.target.value })}
-              placeholder="https://youtube.com/watch?v=..."
-              style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>English Lyrics</span>
-            <textarea value={editing.lyrics_en} onChange={e => setEditing({ ...editing, lyrics_en: e.target.value })}
-              rows={6} style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 14, fontFamily: 'var(--font-body)', resize: 'vertical' }} />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>Turkish Lyrics</span>
-            <textarea value={editing.lyrics_tr} onChange={e => setEditing({ ...editing, lyrics_tr: e.target.value })}
-              rows={6} style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 14, fontFamily: 'var(--font-body)', resize: 'vertical' }} />
           </label>
         </div>
       </div>

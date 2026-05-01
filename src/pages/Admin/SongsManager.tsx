@@ -62,6 +62,7 @@ export default function SongsManager() {
     duration: '',
     category: '',
     audio_url: '',
+    youtube_url: '',
     lyrics: [],
     published: false,
     created_at: '',
@@ -124,6 +125,12 @@ export default function SongsManager() {
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>Audio URL</span>
             <input value={editing.audio_url} onChange={e => setEditing({ ...editing, audio_url: e.target.value })}
               placeholder="https://..."
+              style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: 'span 2' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>YouTube URL (optional — small video player)</span>
+            <input value={editing.youtube_url || ''} onChange={e => setEditing({ ...editing, youtube_url: e.target.value })}
+              placeholder="https://youtube.com/watch?v=..."
               style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
           </label>
         </div>
