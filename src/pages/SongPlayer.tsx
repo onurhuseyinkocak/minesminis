@@ -138,12 +138,33 @@ export default function SongPlayer() {
     }
   }, [song?.audio_url, loop])
 
-  // Karaoke sync — divide song duration equally among lyrics lines
+  // Karaoke sync — word-weighted timing with intro/outro buffer
   useEffect(() => {
     if (!song?.lyrics?.length || !duration) { setActiveLine(-1); return }
-    const lineCount = song.lyrics.length
-    const timePerLine = duration / lineCount
-    const idx = Math.min(Math.floor(currentTime / timePerLine), lineCount - 1)
+    const lyrics = song.lyrics
+    const lineCount = lyrics.length
+
+    // Reserve ~12% for instrumental intro, ~8% for outro
+    const introRatio = 0.12
+    const outroRatio = 0.08
+    const introTime = duration * introRatio
+    const lyricsTime = duration * (1 - introRatio - outroRatio)
+
+    // Before lyrics start
+    if (currentTime < introTime) { setActiveLine(-1); return }
+
+    // Weight each line by word count (min 1 word)
+    const weights = lyrics.map((l: SongLyric) => Math.max(1, (l.en || '').split(/\s+/).length))
+    const totalWeight = weights.reduce((a: number, b: number) => a + b, 0)
+
+    // Build cumulative time boundaries
+    const elapsed = currentTime - introTime
+    let cumTime = 0
+    let idx = lineCount - 1
+    for (let i = 0; i < lineCount; i++) {
+      cumTime += (weights[i] / totalWeight) * lyricsTime
+      if (elapsed < cumTime) { idx = i; break }
+    }
     setActiveLine(idx)
   }, [currentTime, duration, song?.lyrics])
 
