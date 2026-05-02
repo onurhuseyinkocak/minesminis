@@ -34,6 +34,7 @@ export default function VideosManager() {
         setEditing(prev => prev ? {
           ...prev,
           title: prev.title || data.title,
+          thumbnail_url: prev.thumbnail_url || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
         } : prev)
         toast.success('YouTube info fetched')
       }
@@ -45,16 +46,19 @@ export default function VideosManager() {
 
   const handleYouTubeUrlChange = (url: string) => {
     if (!editing) return
-    setEditing({ ...editing, youtube_url: url })
-    if (extractYouTubeId(url) && !editing.title) {
+    const vid = extractYouTubeId(url)
+    const thumbnail = vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : ''
+    setEditing({ ...editing, youtube_url: url, thumbnail_url: thumbnail })
+    if (vid && !editing.title) {
       fetchYouTubeInfo(url)
     }
   }
 
-  const save = async () => {
+  const save = async (publish: boolean) => {
     if (!editing) return
     if (!editing.title.trim()) { toast.error('Title is required'); return }
     const { id, created_at: _, ...rest } = editing
+    rest.published = publish
     try {
       if (id) {
         const { error } = await supabase.from('mm_videos').update(rest).eq('id', id)
@@ -63,7 +67,7 @@ export default function VideosManager() {
         const { error } = await supabase.from('mm_videos').insert(rest)
         if (error) throw error
       }
-      toast.success('Saved')
+      toast.success(publish ? 'Published' : 'Saved as draft')
       setEditing(null)
       load()
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message :'Save failed') }
@@ -95,6 +99,7 @@ export default function VideosManager() {
     duration: '',
     category: '',
     youtube_url: '',
+    thumbnail_url: '',
     lyrics_en: '',
     lyrics_tr: '',
     published: false,
@@ -112,7 +117,8 @@ export default function VideosManager() {
           </h1>
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="mm-btn" onClick={() => setEditing(null)}>Cancel</button>
-            <button className="mm-btn primary" onClick={save}><Save size={16} /> Save</button>
+            <button className="mm-btn" onClick={() => save(false)}><Save size={16} /> Save Draft</button>
+            <button className="mm-btn primary" onClick={() => save(true)}><Save size={16} /> Publish</button>
           </div>
         </div>
 

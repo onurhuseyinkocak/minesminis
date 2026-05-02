@@ -1,8 +1,36 @@
-import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader, Upload, Languages } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader, Upload, Languages, Timer, RotateCcw } from 'lucide-react'
 import { supabase, Song, SongLyric } from '../../lib/supabase'
 import { extractYouTubeId } from '../../lib/youtube'
 import toast from 'react-hot-toast'
+
+// YouTube IFrame API types
+declare global {
+  interface Window {
+    YT: { Player: new (el: string | HTMLElement, config: Record<string, unknown>) => YTAdminPlayer; PlayerState: Record<string, number> }
+    onYouTubeIframeAPIReady: () => void
+  }
+}
+interface YTAdminPlayer {
+  getCurrentTime: () => number
+  getDuration: () => number
+  getPlayerState: () => number
+  playVideo: () => void
+  pauseVideo: () => void
+  seekTo: (s: number, allowSeekAhead: boolean) => void
+  destroy: () => void
+}
+
+let ytApiLoaded = false
+function loadYouTubeAPI(): Promise<void> {
+  if (ytApiLoaded || window.YT?.Player) { ytApiLoaded = true; return Promise.resolve() }
+  return new Promise(resolve => {
+    const tag = document.createElement('script')
+    tag.src = 'https://www.youtube.com/iframe_api'
+    document.head.appendChild(tag)
+    window.onYouTubeIframeAPIReady = () => { ytApiLoaded = true; resolve() }
+  })
+}
 
 const coverOptions = ['star','happy','head','farm2','bus','bingo','spider','dance','rainbow','duck','abc','apple','fruit','hello','days']
 
@@ -13,7 +41,13 @@ export default function SongsManager() {
   const [fetching, setFetching] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [translating, setTranslating] = useState(false)
+  const [timing, setTiming] = useState(false)
+  const [timingLine, setTimingLine] = useState(0)
+  const [ytCurrentTime, setYtCurrentTime] = useState(0)
   const audioRef = useRef<HTMLInputElement>(null)
+  const ytPlayerRef = useRef<YTAdminPlayer | null>(null)
+  const ytIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const ytContainerRef = useRef<HTMLDivElement>(null)
 
   const fetchYouTubeInfo = async (url: string) => {
     const videoId = extractYouTubeId(url)
@@ -132,6 +166,85 @@ export default function SongsManager() {
     setEditing({ ...editing, lyrics: (editing.lyrics || []).filter((_, i) => i !== idx) })
   }
 
+  // Start "Tap to Time" mode — load YouTube player
+  const startTiming = useCallback(async () => {
+    if (!editing?.youtube_url || !extractYouTubeId(editing.youtube_url)) {
+      toast.error('YouTube URL required for timing')
+      return
+    }
+    if ((editing.lyrics || []).length === 0) {
+      toast.error('Add lyrics first')
+      return
+    }
+    setTiming(true)
+    setTimingLine(0)
+
+    await loadYouTubeAPI()
+    // Small delay for DOM to render the container
+    setTimeout(() => {
+      if (!document.getElementById('yt-timing-player')) return
+      new window.YT.Player('yt-timing-player', {
+        videoId: extractYouTubeId(editing.youtube_url) || '',
+        playerVars: { autoplay: 0, controls: 1, modestbranding: 1, rel: 0 },
+        events: {
+          onReady: (e: { target: YTAdminPlayer }) => {
+            ytPlayerRef.current = e.target
+          },
+          onStateChange: (e: { data: number }) => {
+            if (e.data === 1) {
+              // Playing — poll currentTime
+              if (ytIntervalRef.current) clearInterval(ytIntervalRef.current)
+              ytIntervalRef.current = setInterval(() => {
+                if (ytPlayerRef.current) setYtCurrentTime(ytPlayerRef.current.getCurrentTime())
+              }, 100)
+            } else {
+              if (ytIntervalRef.current) { clearInterval(ytIntervalRef.current); ytIntervalRef.current = null }
+            }
+          },
+        },
+      } as Record<string, unknown>)
+    }, 100)
+  }, [editing])
+
+  const stopTiming = useCallback(() => {
+    setTiming(false)
+    if (ytIntervalRef.current) { clearInterval(ytIntervalRef.current); ytIntervalRef.current = null }
+    if (ytPlayerRef.current) { try { ytPlayerRef.current.destroy() } catch { /* */ } }
+    ytPlayerRef.current = null
+  }, [])
+
+  // Tap handler — stamp current YouTube time on the next lyric line
+  const tapTimestamp = useCallback(() => {
+    if (!editing || !ytPlayerRef.current) return
+    const ct = ytPlayerRef.current.getCurrentTime()
+    const lyrics = [...(editing.lyrics || [])]
+    if (timingLine >= lyrics.length) {
+      toast.success('All lines timed!')
+      return
+    }
+    lyrics[timingLine] = { ...lyrics[timingLine], time: Math.round(ct * 10) / 10 }
+    setEditing({ ...editing, lyrics })
+    setTimingLine(timingLine + 1)
+    if (timingLine + 1 >= lyrics.length) {
+      toast.success('All lines timed!')
+    }
+  }, [editing, timingLine])
+
+  const clearTimestamps = useCallback(() => {
+    if (!editing) return
+    const lyrics = (editing.lyrics || []).map(l => ({ ...l, time: undefined }))
+    setEditing({ ...editing, lyrics })
+    setTimingLine(0)
+    toast.success('Timestamps cleared')
+  }, [editing])
+
+  const fmtTime = (s: number) => {
+    const m = Math.floor(s / 60)
+    const sec = Math.floor(s % 60)
+    const ms = Math.floor((s % 1) * 10)
+    return `${m}:${sec.toString().padStart(2, '0')}.${ms}`
+  }
+
   if (editing) {
     return (
       <div>
@@ -206,13 +319,51 @@ export default function SongsManager() {
           </label>
         </div>
 
-        {editing.youtube_url && extractYouTubeId(editing.youtube_url) && (
+        {/* Tap to Time UI */}
+        {timing ? (
+          <div style={{ marginBottom: 20, padding: 20, background: 'var(--surface-2)', borderRadius: 18, border: '2px solid var(--primary)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, margin: 0, color: 'var(--primary)' }}>
+                Tap to Time — Line {timingLine + 1}/{(editing.lyrics || []).length}
+              </h3>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="mm-btn" onClick={clearTimestamps}><RotateCcw size={14} /> Reset</button>
+                <button className="mm-btn" onClick={stopTiming}>Done</button>
+              </div>
+            </div>
+
+            <div style={{ borderRadius: 14, overflow: 'hidden', aspectRatio: '16/9', marginBottom: 14 }}>
+              <div id="yt-timing-player" ref={ytContainerRef} style={{ width: '100%', height: '100%' }} />
+            </div>
+
+            <div style={{ fontSize: 13, color: 'var(--ink-3)', marginBottom: 10, textAlign: 'center' }}>
+              Current: <strong>{fmtTime(ytCurrentTime)}</strong>
+            </div>
+
+            {/* Tap button */}
+            <button
+              className="mm-btn primary"
+              onClick={tapTimestamp}
+              disabled={timingLine >= (editing.lyrics || []).length}
+              style={{ width: '100%', padding: '16px', fontSize: 18, fontWeight: 700, borderRadius: 14 }}
+            >
+              {timingLine < (editing.lyrics || []).length
+                ? `TAP — "${(editing.lyrics || [])[timingLine]?.en?.slice(0, 40)}..."`
+                : 'All lines timed!'
+              }
+            </button>
+
+            <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '8px 0 0', textAlign: 'center' }}>
+              Play the video, tap the button exactly when each lyric line starts singing
+            </p>
+          </div>
+        ) : editing.youtube_url && extractYouTubeId(editing.youtube_url) ? (
           <div style={{ marginBottom: 16, borderRadius: 14, overflow: 'hidden', maxWidth: 320 }}>
             <img src={`https://img.youtube.com/vi/${extractYouTubeId(editing.youtube_url)}/mqdefault.jpg`}
               alt={`YouTube thumbnail for ${editing.title || 'song'}`}
               style={{ width: '100%', display: 'block', borderRadius: 14 }} />
           </div>
-        )}
+        ) : null}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, margin: 0 }}>Lyrics ({editing.lyrics?.length || 0})</h2>
@@ -251,12 +402,22 @@ export default function SongsManager() {
               {translating ? 'Translating...' : 'Paste Lyrics (Auto-Translate)'}
             </button>
             <button className="mm-btn" onClick={addLyric}><Plus size={16} /> Add Line</button>
+            {editing.youtube_url && extractYouTubeId(editing.youtube_url) && (editing.lyrics || []).length > 0 && !timing && (
+              <button className="mm-btn primary" onClick={startTiming}><Timer size={14} /> Tap to Time</button>
+            )}
           </div>
         </div>
-        <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 12px' }}>Paste English lyrics — Turkish translation is generated automatically. Lyrics scroll as the song plays. Bold = chorus lines.</p>
+        <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 12px' }}>Paste English lyrics — Turkish translation is generated automatically. Use "Tap to Time" to sync karaoke. Bold = chorus lines.</p>
 
         {(editing.lyrics || []).map((line, i) => (
-          <div key={i} className="mm-admin-items-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 40px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+          <div key={i} className="mm-admin-items-row" style={{
+            display: 'grid', gridTemplateColumns: '60px 1fr 1fr 60px 40px', gap: 8, marginBottom: 8, alignItems: 'center',
+            background: timing && i === timingLine ? 'var(--primary-light, #FFF0ED)' : undefined,
+            borderRadius: 10, padding: timing && i === timingLine ? '4px 8px' : undefined,
+          }}>
+            <span style={{ fontSize: 12, color: typeof line.time === 'number' ? 'var(--primary)' : 'var(--ink-3)', fontWeight: 600, fontFamily: 'monospace' }}>
+              {typeof line.time === 'number' ? fmtTime(line.time) : '—'}
+            </span>
             <input placeholder="English" value={line.en} onChange={e => updateLyric(i, 'en', e.target.value)}
               style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line)', fontSize: 14, fontFamily: 'var(--font-body)' }} />
             <input placeholder="Turkish" value={line.tr} onChange={e => updateLyric(i, 'tr', e.target.value)}
