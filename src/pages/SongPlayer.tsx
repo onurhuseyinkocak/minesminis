@@ -138,35 +138,27 @@ export default function SongPlayer() {
     }
   }, [song?.audio_url, loop])
 
-  // Karaoke sync — word-weighted timing with intro/outro buffer
+  // Karaoke sync — use per-line timestamps
   useEffect(() => {
-    if (!song?.lyrics?.length || !duration) { setActiveLine(-1); return }
+    if (!song?.lyrics?.length) { setActiveLine(-1); return }
     const lyrics = song.lyrics
-    const lineCount = lyrics.length
+    const hasTimestamps = lyrics.some((l: SongLyric) => typeof l.time === 'number')
 
-    // Reserve ~12% for instrumental intro, ~8% for outro
-    const introRatio = 0.12
-    const outroRatio = 0.08
-    const introTime = duration * introRatio
-    const lyricsTime = duration * (1 - introRatio - outroRatio)
+    if (!hasTimestamps) {
+      // No timestamps set — no karaoke sync
+      setActiveLine(-1)
+      return
+    }
 
-    // Before lyrics start
-    if (currentTime < introTime) { setActiveLine(-1); return }
-
-    // Weight each line by word count (min 1 word)
-    const weights = lyrics.map((l: SongLyric) => Math.max(1, (l.en || '').split(/\s+/).length))
-    const totalWeight = weights.reduce((a: number, b: number) => a + b, 0)
-
-    // Build cumulative time boundaries
-    const elapsed = currentTime - introTime
-    let cumTime = 0
-    let idx = lineCount - 1
-    for (let i = 0; i < lineCount; i++) {
-      cumTime += (weights[i] / totalWeight) * lyricsTime
-      if (elapsed < cumTime) { idx = i; break }
+    // Find active line: last line whose timestamp <= currentTime
+    let idx = -1
+    for (let i = 0; i < lyrics.length; i++) {
+      if (typeof lyrics[i].time === 'number' && currentTime >= lyrics[i].time!) {
+        idx = i
+      }
     }
     setActiveLine(idx)
-  }, [currentTime, duration, song?.lyrics])
+  }, [currentTime, song?.lyrics])
 
   // Auto-scroll to active line
   useEffect(() => {

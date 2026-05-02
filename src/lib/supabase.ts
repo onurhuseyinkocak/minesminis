@@ -13,6 +13,7 @@ export type Slide = {
   level: string
   category: string
   slides_data: SlideItem[]
+  file_url: string
   published: boolean
   created_at: string
 }
@@ -30,6 +31,7 @@ export type Video = {
   duration: string
   category: string
   youtube_url: string
+  thumbnail_url: string
   lyrics_en: string
   lyrics_tr: string
   published: boolean
@@ -53,4 +55,5 @@ export type SongLyric = {
   en: string
   tr: string
   highlight?: boolean
+  time?: number // karaoke timestamp in seconds
 }
