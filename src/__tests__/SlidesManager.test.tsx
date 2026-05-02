@@ -367,7 +367,7 @@ describe('SlidesManager', () => {
     await user.click(saveBtn)
 
     await waitFor(() => {
-      expect(toast.default.success).toHaveBeenCalledWith('Saved')
+      expect(toast.default.success).toHaveBeenCalledWith('Saved as draft')
     })
   })
 

@@ -6,6 +6,34 @@ import Cover from '../components/Cover'
 import { supabase, Song, SongLyric } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
 
+// YouTube IFrame API types
+declare global {
+  interface Window {
+    YT: { Player: new (el: string | HTMLElement, config: Record<string, unknown>) => YTPlayer; PlayerState: Record<string, number> }
+    onYouTubeIframeAPIReady: () => void
+  }
+}
+interface YTPlayer {
+  getCurrentTime: () => number
+  getDuration: () => number
+  getPlayerState: () => number
+  playVideo: () => void
+  pauseVideo: () => void
+  seekTo: (s: number, allowSeekAhead: boolean) => void
+  destroy: () => void
+}
+
+let ytApiLoaded = false
+function loadYouTubeAPI(): Promise<void> {
+  if (ytApiLoaded || window.YT?.Player) { ytApiLoaded = true; return Promise.resolve() }
+  return new Promise(resolve => {
+    const tag = document.createElement('script')
+    tag.src = 'https://www.youtube.com/iframe_api'
+    document.head.appendChild(tag)
+    window.onYouTubeIframeAPIReady = () => { ytApiLoaded = true; resolve() }
+  })
+}
+
 export default function SongPlayer() {
   const { id } = useParams()
   const [song, setSong] = useState<Song | null>(null)
@@ -15,7 +43,11 @@ export default function SongPlayer() {
   const [duration, setDuration] = useState(0)
   const [loop, setLoop] = useState(false)
   const [error, setError] = useState(false)
+  const [activeLine, setActiveLine] = useState(-1)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const ytPlayerRef = useRef<YTPlayer | null>(null)
+  const ytIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const lyricsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (id) {
@@ -29,7 +61,54 @@ export default function SongPlayer() {
 
   useEffect(() => { document.title = song ? `${song.title} - minesminis` : 'minesminis' }, [song])
 
-  // Audio setup
+  // YouTube Player setup (for karaoke sync)
+  const youtubeId = song?.youtube_url ? extractYouTubeId(song.youtube_url) : ''
+  const useYouTube = !!youtubeId && !song?.audio_url
+
+  useEffect(() => {
+    if (!useYouTube || !youtubeId) return
+    let player: YTPlayer | null = null
+
+    loadYouTubeAPI().then(() => {
+      player = new window.YT.Player('yt-karaoke-player', {
+        videoId: youtubeId,
+        playerVars: { autoplay: 0, controls: 1, modestbranding: 1, rel: 0 },
+        events: {
+          onReady: (e: { target: YTPlayer }) => {
+            ytPlayerRef.current = e.target
+            setDuration(e.target.getDuration())
+          },
+          onStateChange: (e: { data: number }) => {
+            // 1 = playing, 2 = paused
+            const playing = e.data === 1
+            setIsPlaying(playing)
+            if (playing) {
+              // Poll currentTime while playing
+              if (ytIntervalRef.current) clearInterval(ytIntervalRef.current)
+              ytIntervalRef.current = setInterval(() => {
+                if (ytPlayerRef.current) {
+                  const ct = ytPlayerRef.current.getCurrentTime()
+                  const dur = ytPlayerRef.current.getDuration()
+                  setCurrentTime(ct)
+                  if (dur) setProgress((ct / dur) * 100)
+                }
+              }, 250)
+            } else {
+              if (ytIntervalRef.current) { clearInterval(ytIntervalRef.current); ytIntervalRef.current = null }
+            }
+          },
+        },
+      } as Record<string, unknown>)
+    })
+
+    return () => {
+      if (ytIntervalRef.current) clearInterval(ytIntervalRef.current)
+      if (player) { try { player.destroy() } catch { /* */ } }
+      ytPlayerRef.current = null
+    }
+  }, [useYouTube, youtubeId])
+
+  // Audio setup (for songs with audio_url)
   useEffect(() => {
     if (!song?.audio_url) return
     const audio = new Audio(song.audio_url)
@@ -41,7 +120,7 @@ export default function SongPlayer() {
       setCurrentTime(audio.currentTime)
       if (audio.duration) setProgress((audio.currentTime / audio.duration) * 100)
     }
-    const onEnd = () => { setIsPlaying(false); setProgress(0); setCurrentTime(0) }
+    const onEnd = () => { setIsPlaying(false); setProgress(0); setCurrentTime(0); setActiveLine(-1) }
     const onErr = () => { setIsPlaying(false); setError(true) }
 
     audio.addEventListener('loadedmetadata', onMeta)
@@ -59,30 +138,65 @@ export default function SongPlayer() {
     }
   }, [song?.audio_url, loop])
 
+  // Karaoke sync — divide song duration equally among lyrics lines
+  useEffect(() => {
+    if (!song?.lyrics?.length || !duration) { setActiveLine(-1); return }
+    const lineCount = song.lyrics.length
+    const timePerLine = duration / lineCount
+    const idx = Math.min(Math.floor(currentTime / timePerLine), lineCount - 1)
+    setActiveLine(idx)
+  }, [currentTime, duration, song?.lyrics])
+
+  // Auto-scroll to active line
+  useEffect(() => {
+    if (activeLine < 0 || !lyricsRef.current) return
+    const el = lyricsRef.current.children[activeLine] as HTMLElement
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [activeLine])
+
   const togglePlay = useCallback(() => {
+    if (useYouTube && ytPlayerRef.current) {
+      if (isPlaying) ytPlayerRef.current.pauseVideo()
+      else ytPlayerRef.current.playVideo()
+      return
+    }
     const audio = audioRef.current
     if (!audio) return
     if (isPlaying) { audio.pause() } else { audio.play() }
     setIsPlaying(!isPlaying)
-  }, [isPlaying])
+  }, [isPlaying, useYouTube])
 
   const seek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (useYouTube && ytPlayerRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect()
+      const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+      ytPlayerRef.current.seekTo(pct * (ytPlayerRef.current.getDuration() || 0), true)
+      return
+    }
     const audio = audioRef.current
     if (!audio || !audio.duration) return
     const rect = e.currentTarget.getBoundingClientRect()
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
     audio.currentTime = pct * audio.duration
-  }, [])
+  }, [useYouTube])
 
   const skipBack = useCallback(() => {
+    if (useYouTube && ytPlayerRef.current) {
+      ytPlayerRef.current.seekTo(Math.max(0, ytPlayerRef.current.getCurrentTime() - 10), true)
+      return
+    }
     const audio = audioRef.current
     if (audio) audio.currentTime = Math.max(0, audio.currentTime - 10)
-  }, [])
+  }, [useYouTube])
 
   const skipForward = useCallback(() => {
+    if (useYouTube && ytPlayerRef.current) {
+      ytPlayerRef.current.seekTo(ytPlayerRef.current.getCurrentTime() + 10, true)
+      return
+    }
     const audio = audioRef.current
     if (audio) audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10)
-  }, [])
+  }, [useYouTube])
 
   const fmt = (s: number) => {
     const m = Math.floor(s / 60)
@@ -111,7 +225,7 @@ export default function SongPlayer() {
     )
   }
 
-  const youtubeId = song.youtube_url ? extractYouTubeId(song.youtube_url) : ''
+  const hasLyrics = (song.lyrics || []).length > 0
 
   return (
     <Layout>
@@ -120,21 +234,24 @@ export default function SongPlayer() {
         <span style={{ color: 'var(--ink-3)', fontWeight: 600, fontSize: 14 }}>Songs / {song.title}</span>
       </div>
 
-      {/* Main layout: small video/cover left, big karaoke right */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 280px) 1fr', gap: 20 }} className="mm-song-layout">
+      {/* Main layout: video/cover left, lyrics right (if available) */}
+      <div style={{ display: 'grid', gridTemplateColumns: hasLyrics ? 'minmax(0, 280px) 1fr' : '1fr', gap: 20, maxWidth: hasLyrics ? undefined : 560 }} className="mm-song-layout">
         {/* Left: video/cover + controls */}
         <div>
-          {/* Small YouTube embed or cover */}
           {youtubeId ? (
             <div style={{ borderRadius: 18, overflow: 'hidden', aspectRatio: '16/9', boxShadow: 'var(--shadow-1)' }}>
-              <iframe
-                src={`https://www.youtube.com/embed/${youtubeId}`}
-                title={song.title}
-                style={{ width: '100%', height: '100%', border: 'none' }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-              />
+              {useYouTube ? (
+                <div id="yt-karaoke-player" style={{ width: '100%', height: '100%' }} />
+              ) : (
+                <iframe
+                  src={`https://www.youtube.com/embed/${youtubeId}`}
+                  title={song.title}
+                  style={{ width: '100%', height: '100%', border: 'none' }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+                />
+              )}
             </div>
           ) : (
             <div style={{ borderRadius: 18, overflow: 'hidden', boxShadow: 'var(--shadow-1)', aspectRatio: '1' }}>
@@ -168,46 +285,61 @@ export default function SongPlayer() {
             </>
           ) : (
             <div style={{ marginTop: 14, padding: 14, background: 'var(--surface-2)', borderRadius: 12, textAlign: 'center', fontSize: 13, color: 'var(--ink-3)' }}>
-              Audio file not added yet
+              {youtubeId ? 'Play the video above to listen' : 'Audio file not added yet'}
             </div>
           )}
         </div>
 
-        {/* Right: Karaoke lyrics — main focus */}
-        <div style={{ background: 'white', borderRadius: 24, padding: 28, border: '1px solid var(--line)', minHeight: 400 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-3)', letterSpacing: 1.5 }}>KARAOKE</div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-3)' }}>English - Turkish</span>
-          </div>
+        {/* Right: Karaoke lyrics panel */}
+        {hasLyrics && (
+          <div style={{ background: 'white', borderRadius: 24, padding: 28, border: '1px solid var(--line)', maxHeight: 500, overflow: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-3)', letterSpacing: 1.5 }}>
+                {song.audio_url ? 'KARAOKE' : 'LYRICS'}
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-3)' }}>English - Turkish</span>
+            </div>
 
-          {(song.lyrics || []).length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {(song.lyrics || []).map((line: SongLyric, i: number) => (
-                <div key={i}>
-                  <div style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: line.highlight ? 36 : 22,
-                    fontWeight: line.highlight ? 800 : 600,
-                    lineHeight: 1.3,
-                    color: line.highlight ? 'var(--primary)' : 'var(--ink)',
-                    letterSpacing: line.highlight ? -0.5 : 0,
+            <div ref={lyricsRef} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {song.lyrics.map((line: SongLyric, i: number) => {
+                const isActive = i === activeLine
+                return (
+                  <div key={i} style={{
+                    padding: '8px 12px',
+                    borderRadius: 12,
+                    background: isActive ? 'var(--primary-light, #FFF0ED)' : 'transparent',
+                    transition: 'all 0.3s ease',
+                    transform: isActive ? 'scale(1.02)' : 'scale(1)',
                   }}>
-                    {line.en}
-                  </div>
-                  {line.tr && (
-                    <div style={{ fontSize: 16, color: 'var(--ink-2)', fontWeight: 500, fontStyle: 'italic', marginTop: 4 }}>
-                      {line.tr}
+                    <div style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: isActive ? 28 : (line.highlight ? 24 : 20),
+                      fontWeight: isActive || line.highlight ? 800 : 600,
+                      lineHeight: 1.3,
+                      color: isActive ? 'var(--primary)' : (line.highlight ? 'var(--ink)' : 'var(--ink-2)'),
+                      transition: 'all 0.3s ease',
+                    }}>
+                      {line.en}
                     </div>
-                  )}
-                </div>
-              ))}
+                    {line.tr && (
+                      <div style={{
+                        fontSize: isActive ? 16 : 14,
+                        color: isActive ? 'var(--primary)' : 'var(--ink-3)',
+                        fontWeight: 500,
+                        fontStyle: 'italic',
+                        marginTop: 4,
+                        opacity: isActive ? 1 : 0.7,
+                        transition: 'all 0.3s ease',
+                      }}>
+                        {line.tr}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-          ) : (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--ink-3)', fontSize: 14 }}>
-              Lyrics not added yet
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </Layout>
   )

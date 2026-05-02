@@ -6,7 +6,42 @@ import Cover from '../components/Cover'
 import MobileAd from '../components/MobileAd'
 import { supabase, Slide } from '../lib/supabase'
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const getThumbnailUrl = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/slides/thumbnails/${id}.png`
+
 const chips = ['All', 'Easy', 'Medium']
+
+function SlideCard({ s }: { s: Slide }) {
+  const [thumbExists, setThumbExists] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    const url = getThumbnailUrl(s.id)
+    fetch(url, { method: 'HEAD' })
+      .then(r => setThumbExists(r.ok))
+      .catch(() => setThumbExists(false))
+  }, [s.id])
+
+  return (
+    <Link to={`/slides/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div className="mm-card-cover">
+        {thumbExists === true ? (
+          <img src={getThumbnailUrl(s.id)} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <Cover kind={s.cover_kind} />
+        )}
+        <div className="mm-card-cta"><Play size={18} /></div>
+      </div>
+      <div className="mm-card-body">
+        <h3 className="mm-card-title">{s.title}</h3>
+        <div className="mm-card-meta">
+          <span className={`mm-tag ${s.level === 'Easy' ? 'green' : 'yellow'}`}>{s.level}</span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-3)' }} />
+          <span>{s.slide_count} slides</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
 
 export default function SlidesList() {
   const [slides, setSlides] = useState<Slide[]>([])
@@ -74,22 +109,7 @@ export default function SlidesList() {
         </div>
       ) : (
         <div className="mm-grid-3">
-          {filtered.map(s => (
-            <Link key={s.id} to={`/slides/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mm-card-cover">
-                <Cover kind={s.cover_kind} />
-                <div className="mm-card-cta"><Play size={18} /></div>
-              </div>
-              <div className="mm-card-body">
-                <h3 className="mm-card-title">{s.title}</h3>
-                <div className="mm-card-meta">
-                  <span className={`mm-tag ${s.level === 'Easy' ? 'green' : 'yellow'}`}>{s.level}</span>
-                  <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-3)' }} />
-                  <span>{s.slide_count} slides</span>
-                </div>
-              </div>
-            </Link>
-          ))}
+          {filtered.map(s => <SlideCard key={s.id} s={s} />)}
         </div>
       )}
     </Layout>

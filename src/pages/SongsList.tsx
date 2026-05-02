@@ -5,6 +5,7 @@ import Layout from '../components/Layout'
 import Cover from '../components/Cover'
 import MobileAd from '../components/MobileAd'
 import { supabase, Song } from '../lib/supabase'
+import { extractYouTubeId } from '../lib/youtube'
 
 const chips = ['All', 'Classic', 'Action', 'Educational']
 
@@ -77,7 +78,11 @@ export default function SongsList() {
           {filtered.map(s => (
             <Link key={s.id} to={`/songs/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="mm-card-cover">
-                <Cover kind={s.cover_kind} />
+                {s.youtube_url && extractYouTubeId(s.youtube_url) ? (
+                  <img src={`https://img.youtube.com/vi/${extractYouTubeId(s.youtube_url)}/hqdefault.jpg`} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <Cover kind={s.cover_kind} />
+                )}
                 <div style={{
                   position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
                   color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,

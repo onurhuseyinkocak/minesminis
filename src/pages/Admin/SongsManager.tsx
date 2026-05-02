@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader, Upload, Languages } from 'lucide-react'
 import { supabase, Song, SongLyric } from '../../lib/supabase'
 import { extractYouTubeId } from '../../lib/youtube'
 import toast from 'react-hot-toast'
@@ -11,6 +11,9 @@ export default function SongsManager() {
   const [editing, setEditing] = useState<Song | null>(null)
   const [loading, setLoading] = useState(true)
   const [fetching, setFetching] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [translating, setTranslating] = useState(false)
+  const audioRef = useRef<HTMLInputElement>(null)
 
   const fetchYouTubeInfo = async (url: string) => {
     const videoId = extractYouTubeId(url)
@@ -48,10 +51,11 @@ export default function SongsManager() {
 
   useEffect(() => { load() }, [])
 
-  const save = async () => {
+  const save = async (publish: boolean) => {
     if (!editing) return
     if (!editing.title.trim()) { toast.error('Title is required'); return }
     const { id, created_at: _, ...rest } = editing
+    rest.published = publish
     try {
       if (id) {
         const { error } = await supabase.from('mm_songs').update(rest).eq('id', id)
@@ -60,7 +64,7 @@ export default function SongsManager() {
         const { error } = await supabase.from('mm_songs').insert(rest)
         if (error) throw error
       }
-      toast.success('Saved')
+      toast.success(publish ? 'Published' : 'Saved as draft')
       setEditing(null)
       load()
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message :'Save failed') }
@@ -83,6 +87,19 @@ export default function SongsManager() {
       toast.success(published ? 'Unpublished' : 'Published')
       load()
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message :'Update failed') }
+  }
+
+  const uploadAudio = async (file: File) => {
+    if (!editing) return
+    setUploading(true)
+    const ext = file.name.split('.').pop()
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { error } = await supabase.storage.from('songs').upload(path, file)
+    if (error) { toast.error('Upload failed: ' + error.message); setUploading(false); return }
+    const { data: urlData } = supabase.storage.from('songs').getPublicUrl(path)
+    setEditing({ ...editing, audio_url: urlData.publicUrl })
+    toast.success('Audio uploaded')
+    setUploading(false)
   }
 
   const newSong = (): Song => ({
@@ -124,7 +141,8 @@ export default function SongsManager() {
           </h1>
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="mm-btn" onClick={() => setEditing(null)}>Cancel</button>
-            <button className="mm-btn primary" onClick={save}><Save size={16} /> Save</button>
+            <button className="mm-btn" onClick={() => save(false)}><Save size={16} /> Save Draft</button>
+            <button className="mm-btn primary" onClick={() => save(true)}><Save size={16} /> Publish</button>
           </div>
         </div>
 
@@ -151,12 +169,32 @@ export default function SongsManager() {
               {coverOptions.map(c => <option key={c}>{c}</option>)}
             </select>
           </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: 'span 2' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>Audio URL</span>
-            <input value={editing.audio_url} onChange={e => setEditing({ ...editing, audio_url: e.target.value })}
-              placeholder="https://..."
-              style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
-          </label>
+          <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>
+              Audio File (MP3, WAV, OGG) {uploading && <Loader size={12} style={{ display: 'inline', animation: 'spin 1s linear infinite' }} />}
+            </span>
+            {editing.audio_url ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <a href={editing.audio_url} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: 'var(--accent)', wordBreak: 'break-all', flex: 1 }}>
+                  {editing.audio_url.split('/').pop()}
+                </a>
+                <button className="mm-icon-btn" onClick={() => setEditing({ ...editing, audio_url: '' })} title="Remove" style={{ width: 28, height: 28, color: 'var(--primary)' }}>
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input ref={audioRef} type="file" accept=".mp3,.wav,.ogg,.m4a" style={{ display: 'none' }}
+                  onChange={e => { if (e.target.files?.[0]) uploadAudio(e.target.files[0]) }} />
+                <button className="mm-btn" onClick={() => audioRef.current?.click()} disabled={uploading}>
+                  <Upload size={14} /> Upload Audio
+                </button>
+                <input placeholder="Or paste audio URL" value={editing.audio_url}
+                  onChange={e => setEditing({ ...editing, audio_url: e.target.value })}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: 10, border: '1px solid var(--line)', fontSize: 13, fontFamily: 'var(--font-body)' }} />
+              </div>
+            )}
+          </div>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: 'span 2' }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>
               YouTube URL (optional) {fetching && <Loader size={12} style={{ display: 'inline', animation: 'spin 1s linear infinite' }} />}
@@ -176,10 +214,46 @@ export default function SongsManager() {
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, margin: 0 }}>Lyrics ({editing.lyrics?.length || 0})</h2>
-          <button className="mm-btn" onClick={addLyric}><Plus size={16} /> Add Line</button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="mm-btn" onClick={async () => {
+              const text = prompt('Paste English lyrics only (one line per row).\nTurkish translation will be auto-generated!\n\nExample:\nTwinkle twinkle little star\nHow I wonder what you are')
+              if (!text) return
+              const englishLines = text.split('\n').filter(l => l.trim()).map(l => l.trim())
+              // Auto-translate via API
+              setTranslating(true)
+              toast('Translating lyrics to Turkish...')
+              try {
+                const { data: { session } } = await supabase.auth.getSession()
+                const token = session?.access_token || ''
+                const res = await fetch('/api/translate-lyrics', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                  body: JSON.stringify({ lines: englishLines }),
+                })
+                if (!res.ok) throw new Error('Translation failed')
+                const { lyrics } = await res.json()
+                const newLyrics: SongLyric[] = lyrics.map((l: SongLyric) => ({
+                  en: l.en || '', tr: l.tr || '', highlight: !!l.highlight,
+                }))
+                setEditing(prev => prev ? { ...prev, lyrics: [...(prev.lyrics || []), ...newLyrics] } : prev)
+                toast.success(`${newLyrics.length} lines added with translations!`)
+              } catch {
+                // Fallback: add without translation
+                const fallback = englishLines.map(en => ({ en, tr: '', highlight: false }))
+                setEditing(prev => prev ? { ...prev, lyrics: [...(prev.lyrics || []), ...fallback] } : prev)
+                toast.error('Auto-translate failed — lines added without translation')
+              }
+              setTranslating(false)
+            }} disabled={translating}>
+              {translating ? <Loader size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Languages size={14} />}
+              {translating ? 'Translating...' : 'Paste Lyrics (Auto-Translate)'}
+            </button>
+            <button className="mm-btn" onClick={addLyric}><Plus size={16} /> Add Line</button>
+          </div>
         </div>
+        <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 12px' }}>Paste English lyrics — Turkish translation is generated automatically. Lyrics scroll as the song plays. Bold = chorus lines.</p>
 
         {(editing.lyrics || []).map((line, i) => (
           <div key={i} className="mm-admin-items-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 40px', gap: 8, marginBottom: 8, alignItems: 'center' }}>

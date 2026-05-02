@@ -264,7 +264,7 @@ describe('VideosManager', () => {
 
     await waitFor(() => {
       expect(mockChain.insert).toHaveBeenCalled()
-      expect(toast.success).toHaveBeenCalledWith('Saved')
+      expect(toast.success).toHaveBeenCalledWith('Saved as draft')
     })
   })
 
@@ -629,7 +629,7 @@ describe('SongsManager', () => {
 
     await waitFor(() => {
       expect(mockChain.insert).toHaveBeenCalled()
-      expect(toast.success).toHaveBeenCalledWith('Saved')
+      expect(toast.success).toHaveBeenCalledWith('Saved as draft')
     })
   })
 

@@ -57,7 +57,7 @@ export default function VideoPlayer() {
       </div>
 
       {/* Player */}
-      {video.youtube_url ? (
+      {video.youtube_url && extractYouTubeId(video.youtube_url) ? (
         <div style={{ borderRadius: 28, overflow: 'hidden', aspectRatio: '16/9' }}>
           <iframe
             src={`https://www.youtube.com/embed/${extractYouTubeId(video.youtube_url)}`}
