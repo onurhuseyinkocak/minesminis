@@ -238,7 +238,7 @@ export default function SongsManager() {
     toast.success('Timestamps cleared')
   }, [editing])
 
-  // Auto-Sync: distribute timestamps evenly based on verse structure detection
+  // Auto-Sync: fetch YouTube auto-captions and match timing to lyrics
   const autoSync = useCallback(async () => {
     if (!editing?.youtube_url || !extractYouTubeId(editing.youtube_url)) {
       toast.error('YouTube URL required for auto-sync')
@@ -247,9 +247,20 @@ export default function SongsManager() {
     const lyrics = editing.lyrics || []
     if (lyrics.length === 0) { toast.error('Add lyrics first'); return }
 
-    toast('Getting video duration...')
+    const videoId = extractYouTubeId(editing.youtube_url)!
+    toast('Fetching YouTube captions...')
 
-    // Load YT API and create a hidden player to get duration
+    // 1. Try to fetch real YouTube captions via our API
+    let captionEntries: Array<{ start: number; dur: number; text: string }> = []
+    try {
+      const res = await fetch(`/api/youtube-captions?v=${videoId}`)
+      if (res.ok) {
+        const data = await res.json()
+        captionEntries = data.entries || []
+      }
+    } catch { /* silent */ }
+
+    // 2. Get video duration via hidden YT player
     await loadYouTubeAPI()
     const tempDiv = document.createElement('div')
     tempDiv.id = 'yt-autosync-temp'
@@ -259,7 +270,7 @@ export default function SongsManager() {
     const dur = await new Promise<number>((resolve) => {
       const timeout = setTimeout(() => { resolve(0) }, 10000)
       new window.YT.Player('yt-autosync-temp', {
-        videoId: extractYouTubeId(editing.youtube_url) || '',
+        videoId,
         playerVars: { autoplay: 0 },
         events: {
           onReady: (e: { target: YTAdminPlayer }) => {
@@ -275,68 +286,120 @@ export default function SongsManager() {
 
     if (dur <= 0) { toast.error('Could not get video duration'); return }
 
-    // Detect verse structure: find repeating patterns in lyrics
-    const lines = lyrics.map(l => (l.en || '').trim().toLowerCase())
+    const newLyrics = [...lyrics]
 
-    // Detect intro/outro: children's songs typically have 5-10% intro, 5-10% outro
-    const introRatio = 0.05
-    const outroRatio = 0.08
-    const intro = dur * introRatio
-    const outro = dur * outroRatio
-    const singDur = dur - intro - outro
+    if (captionEntries.length > 0) {
+      // Smart sync: match each lyric line to caption entries by text similarity
+      const normalize = (s: string) => s.toLowerCase().replace(/[^\w\s]/g, '').trim()
 
-    // Find verse boundaries: look for repeating first-line patterns
-    const verseStarts: number[] = [0]
-    if (lines.length > 5) {
-      // Check if first line of each "verse" repeats or has similar structure
-      const firstLine = lines[0]
-      for (let i = 1; i < lines.length; i++) {
-        // A verse starts if: same text as first line, or text is very similar (>60% words match)
-        const words1 = firstLine.split(/\s+/)
-        const words2 = lines[i].split(/\s+/)
-        const common = words1.filter(w => words2.includes(w)).length
-        const similarity = common / Math.max(words1.length, words2.length)
-        if (lines[i] === firstLine || similarity > 0.6) {
-          verseStarts.push(i)
+      // Build a full caption text timeline
+      const capWords: Array<{ time: number; word: string }> = []
+      for (const entry of captionEntries) {
+        const words = entry.text.split(/\s+/)
+        for (let i = 0; i < words.length; i++) {
+          capWords.push({ time: entry.start + (i / words.length) * entry.dur, word: normalize(words[i]) })
         }
       }
-    }
 
-    // Calculate time per verse, then distribute lines within each verse
-    const verseCount = verseStarts.length
-    const verseDur = singDur / verseCount
+      let searchFrom = 0
+      for (let li = 0; li < lyrics.length; li++) {
+        const lyricWords = normalize(lyrics[li].en || '').split(/\s+/).filter(Boolean)
+        if (lyricWords.length === 0) continue
 
-    const newLyrics = [...lyrics]
-    for (let v = 0; v < verseCount; v++) {
-      const vStart = verseStarts[v]
-      const vEnd = v + 1 < verseCount ? verseStarts[v + 1] : lines.length
-      const vLineCount = vEnd - vStart
-      const vTimeStart = intro + v * verseDur
+        // Find the best matching position in caption words
+        const firstWord = lyricWords[0]
+        let bestScore = 0
+        let bestTime = -1
 
-      // Distribute lines within verse proportional to word count
-      const wordCounts = []
-      let totalWords = 0
-      for (let i = vStart; i < vEnd; i++) {
-        const wc = Math.max(1, (lines[i] || '').split(/\s+/).length)
-        wordCounts.push(wc)
-        totalWords += wc
+        for (let ci = searchFrom; ci < capWords.length; ci++) {
+          if (capWords[ci].word !== firstWord) continue
+
+          // Check how many consecutive lyric words match from this position
+          let matched = 0
+          for (let j = 0; j < lyricWords.length && ci + j < capWords.length; j++) {
+            if (capWords[ci + j].word === lyricWords[j]) matched++
+          }
+          const score = matched / lyricWords.length
+          if (score > bestScore) {
+            bestScore = score
+            bestTime = capWords[ci].time
+          }
+          if (score >= 0.8) break // Good enough match
+        }
+
+        if (bestTime >= 0 && bestScore >= 0.3) {
+          newLyrics[li] = { ...newLyrics[li], time: Math.round(bestTime * 10) / 10 }
+          // Advance search window to avoid matching same caption segment twice
+          const matchIdx = capWords.findIndex((w, i) => i >= searchFrom && w.time >= bestTime)
+          if (matchIdx >= 0) searchFrom = matchIdx + 1
+        } else {
+          // Fallback: interpolate from neighbors
+          newLyrics[li] = { ...newLyrics[li], time: undefined }
+        }
       }
 
-      let cumWords = 0
-      for (let i = 0; i < vLineCount; i++) {
-        const lineTime = vTimeStart + (cumWords / totalWords) * verseDur
-        newLyrics[vStart + i] = { ...newLyrics[vStart + i], time: Math.round(lineTime * 10) / 10 }
-        cumWords += wordCounts[i]
+      // Fill gaps by interpolation
+      for (let i = 0; i < newLyrics.length; i++) {
+        if (typeof newLyrics[i].time === 'number') continue
+        const prev = i > 0 && typeof newLyrics[i - 1].time === 'number' ? newLyrics[i - 1].time! : 0
+        let next = dur
+        for (let j = i + 1; j < newLyrics.length; j++) {
+          if (typeof newLyrics[j].time === 'number') { next = newLyrics[j].time!; break }
+        }
+        newLyrics[i] = { ...newLyrics[i], time: Math.round(((prev + next) / 2) * 10) / 10 }
       }
+
+      toast.success(`Smart-synced ${lyrics.length} lines from YouTube captions`)
+    } else {
+      // Fallback: verse-aware proportional distribution
+      toast('No captions found, using verse detection...')
+      const lines = lyrics.map(l => (l.en || '').trim().toLowerCase())
+      const intro = dur * 0.05
+      const outro = dur * 0.08
+      const singDur = dur - intro - outro
+
+      const verseStarts: number[] = [0]
+      if (lines.length > 5) {
+        const firstLine = lines[0]
+        const firstWords = firstLine.split(/\s+/)
+        for (let i = 1; i < lines.length; i++) {
+          const words = lines[i].split(/\s+/)
+          const common = firstWords.filter(w => words.includes(w)).length
+          if (lines[i] === firstLine || common / Math.max(firstWords.length, words.length) > 0.6) {
+            verseStarts.push(i)
+          }
+        }
+      }
+
+      const verseCount = verseStarts.length
+      const verseDur = singDur / verseCount
+
+      for (let v = 0; v < verseCount; v++) {
+        const vStart = verseStarts[v]
+        const vEnd = v + 1 < verseCount ? verseStarts[v + 1] : lines.length
+        const vTimeStart = intro + v * verseDur
+        const wordCounts: number[] = []
+        let totalWords = 0
+        for (let i = vStart; i < vEnd; i++) {
+          const wc = Math.max(1, (lines[i] || '').split(/\s+/).length)
+          wordCounts.push(wc)
+          totalWords += wc
+        }
+        let cumWords = 0
+        for (let i = 0; i < vEnd - vStart; i++) {
+          const lineTime = vTimeStart + (cumWords / totalWords) * verseDur
+          newLyrics[vStart + i] = { ...newLyrics[vStart + i], time: Math.round(lineTime * 10) / 10 }
+          cumWords += wordCounts[i]
+        }
+      }
+      toast.success(`Auto-synced ${lyrics.length} lines (verse detection fallback)`)
     }
 
-    // Also set duration
     const mins = Math.floor(dur / 60)
     const secs = Math.floor(dur % 60)
     const durStr = `${mins}:${secs.toString().padStart(2, '0')}`
 
     setEditing({ ...editing, lyrics: newLyrics, duration: durStr })
-    toast.success(`Auto-synced ${lyrics.length} lines across ${verseCount} verses (${durStr})`)
   }, [editing])
 
   const fmtTime = (s: number) => {
