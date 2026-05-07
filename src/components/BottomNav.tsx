@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Presentation, Video, Music } from 'lucide-react'
+import { Home, Presentation, Video, Music, FileText } from 'lucide-react'
 
 const tabs = [
   { id: '/', label: 'Home', icon: Home },
   { id: '/slides', label: 'Slides', icon: Presentation },
   { id: '/videos', label: 'Videos', icon: Video },
   { id: '/songs', label: 'Songs', icon: Music },
+  { id: '/worksheets', label: 'Sheets', icon: FileText },
 ]
 
 export default function BottomNav() {
