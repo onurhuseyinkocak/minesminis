@@ -5,42 +5,32 @@ import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Video } from '../lib/supabase'
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-const getAiThumb = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/slides/thumbnails/${id}.png`
-
 const chips = ['All', 'Sing-Along', 'Dialogue', 'Action']
 
 function VideoCard({ v }: { v: Video }) {
-  const [aiThumb, setAiThumb] = useState(false)
-  useEffect(() => {
-    const img = new Image()
-    img.onload = () => setAiThumb(true)
-    img.src = getAiThumb(v.id)
-  }, [v.id])
-
-  const coverSrc = aiThumb ? getAiThumb(v.id) : v.thumbnail_url || ''
-
   return (
     <Link to={`/videos/${v.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="mm-card-cover">
-        {coverSrc ? (
-          <img src={coverSrc} alt={v.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {v.thumbnail_url ? (
+          <img src={v.thumbnail_url} alt={v.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <Cover kind={v.cover_kind} />
         )}
-        <div style={{
-          position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
-          color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
-          display: 'inline-flex', alignItems: 'center', gap: 4,
-        }}>
-          <Clock size={11} /> {v.duration}
-        </div>
+        {v.duration && (
+          <div style={{
+            position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
+            color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
+            display: 'inline-flex', alignItems: 'center', gap: 4,
+          }}>
+            <Clock size={11} /> {v.duration}
+          </div>
+        )}
         <div className="mm-card-cta"><Play size={18} /></div>
       </div>
       <div className="mm-card-body">
         <h3 className="mm-card-title">{v.title}</h3>
         <div className="mm-card-meta">
-          <span className="mm-tag green">{v.category}</span>
+          {v.category && <span className="mm-tag green">{v.category}</span>}
         </div>
       </div>
     </Link>
