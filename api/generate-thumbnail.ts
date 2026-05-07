@@ -2,17 +2,13 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const COVER_KINDS = ['rainbow','farm','farm2','family','numbers','school','weather','body','routine','abc','duck','bus','star','apple','fruit','hello','dance','days','happy','head','bingo','spider']
 
-function buildPrompt(title: string, category?: string, contentType?: string): string {
+function buildPrompt(title: string, category?: string): string {
   const subject = title.replace(/[^\w\s]/g, '').trim()
   return [
-    `A cute, cheerful children's illustration about "${subject}".`,
-    category ? `Related to the topic: ${category}.` : '',
-    contentType ? `This is for a children's ${contentType}.` : '',
-    'Style: bright colorful cartoon, kawaii, flat illustration, soft rounded shapes, pastel and vibrant colors, playful and friendly.',
-    'Suitable for young children ages 3-8. Absolutely NO scary, violent, dark, or inappropriate imagery.',
-    'NO text, NO letters, NO words, NO numbers in the image.',
-    'Clean white or very light pastel background. Simple centered composition with one clear subject.',
-    'High quality, professional children book illustration style.',
+    `${subject}.`,
+    category ? `${category} theme.` : '',
+    'Cute kawaii children illustration, bright colors, soft rounded shapes, white background.',
+    'No text, no letters, no words. Child-safe, ages 3-8.',
   ].filter(Boolean).join(' ')
 }
 
@@ -77,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const bucket = storageBucket || 'slides'
-  const prompt = buildPrompt(title, category, contentType)
+  const prompt = buildPrompt(title, category)
 
   // 1. Try Pollinations (primary — free)
   let imageBuffer = await generateWithPollinations(prompt)
