@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader, Upload, Languages, Timer, RotateCcw } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader, Upload, Languages, Timer, RotateCcw, ImagePlus } from 'lucide-react'
 import { supabase, Song, SongLyric } from '../../lib/supabase'
 import { extractYouTubeId } from '../../lib/youtube'
 import toast from 'react-hot-toast'
@@ -41,6 +41,8 @@ export default function SongsManager() {
   const [fetching, setFetching] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [translating, setTranslating] = useState(false)
+  const [generatingCover, setGeneratingCover] = useState(false)
+  const [coverPreview, setCoverPreview] = useState('')
   const [timing, setTiming] = useState(false)
   const [timingLine, setTimingLine] = useState(0)
   const [ytCurrentTime, setYtCurrentTime] = useState(0)
@@ -84,6 +86,27 @@ export default function SongsManager() {
   }
 
   useEffect(() => { load() }, [])
+
+  const generateCoverNow = async () => {
+    if (!editing?.title.trim()) { toast.error('Enter a title first'); return }
+    setGeneratingCover(true); setCoverPreview('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token || ''
+      const itemId = editing.id || `preview-${Date.now()}`
+      const res = await fetch('/api/generate-thumbnail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ itemId, title: editing.title, category: editing.category, contentType: 'children song', storageBucket: 'slides' }),
+      })
+      if (res.ok) {
+        const result = await res.json()
+        if (result.thumbnailUrl) { setCoverPreview(result.thumbnailUrl + '?t=' + Date.now()); toast.success(`Cover generated via ${result.source}`) }
+        else if (result.coverKind) { setEditing({ ...editing, cover_kind: result.coverKind }); toast('AI unavailable — random cover selected') }
+      } else toast.error('Generation failed')
+    } catch { toast.error('Generation failed') }
+    setGeneratingCover(false)
+  }
 
   const generateThumbnail = async (songId: string, title: string, category: string): Promise<void> => {
     try {
@@ -507,6 +530,17 @@ export default function SongsManager() {
               placeholder="Paste YouTube link — title auto-fills"
               style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid var(--line)', fontSize: 15, fontFamily: 'var(--font-body)' }} />
           </label>
+        </div>
+
+        {/* AI Cover Generation */}
+        <div style={{ marginTop: 16, padding: 16, background: 'var(--surface-2)', borderRadius: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button className="mm-btn" onClick={generateCoverNow} disabled={generatingCover} style={{ flexShrink: 0 }}>
+              {generatingCover ? <><Loader size={14} style={{ animation: 'spin 1s linear infinite' }} /> Generating...</> : <><ImagePlus size={14} /> Generate AI Cover</>}
+            </button>
+            {coverPreview && <img src={coverPreview} alt="Generated cover" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 12, border: '2px solid var(--green)' }} />}
+            {!coverPreview && <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>AI generates a cover from the title.</span>}
+          </div>
         </div>
 
         {/* Tap to Time UI */}

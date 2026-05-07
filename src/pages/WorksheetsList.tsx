@@ -5,7 +5,40 @@ import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Worksheet } from '../lib/supabase'
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const getAiThumb = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/worksheets/thumbnails/${id}.png`
+
 const chips = ['All', 'Easy', 'Medium']
+
+function WorksheetCard({ w }: { w: Worksheet }) {
+  const [aiThumb, setAiThumb] = useState(false)
+  useEffect(() => {
+    const img = new Image()
+    img.onload = () => setAiThumb(true)
+    img.src = getAiThumb(w.id)
+  }, [w.id])
+
+  return (
+    <Link to={`/worksheets/${w.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div className="mm-card-cover">
+        {aiThumb ? (
+          <img src={getAiThumb(w.id)} alt={w.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <Cover kind={w.cover_kind} />
+        )}
+        <div className="mm-card-cta"><Download size={18} /></div>
+      </div>
+      <div className="mm-card-body">
+        <h3 className="mm-card-title">{w.title}</h3>
+        <div className="mm-card-meta">
+          <span className={`mm-tag ${w.level === 'Easy' ? 'green' : 'yellow'}`}>{w.level}</span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-3)' }} />
+          <span>{w.page_count} page{w.page_count !== 1 ? 's' : ''}</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
 
 export default function WorksheetsList() {
   const [worksheets, setWorksheets] = useState<Worksheet[]>([])
@@ -72,20 +105,7 @@ export default function WorksheetsList() {
         <>
           <div className="mm-grid-3">
             {filtered.map(w => (
-              <Link key={w.id} to={`/worksheets/${w.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="mm-card-cover">
-                  <Cover kind={w.cover_kind} />
-                  <div className="mm-card-cta"><Download size={18} /></div>
-                </div>
-                <div className="mm-card-body">
-                  <h3 className="mm-card-title">{w.title}</h3>
-                  <div className="mm-card-meta">
-                    <span className={`mm-tag ${w.level === 'Easy' ? 'green' : 'yellow'}`}>{w.level}</span>
-                    <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-3)' }} />
-                    <span>{w.page_count} page{w.page_count !== 1 ? 's' : ''}</span>
-                  </div>
-                </div>
-              </Link>
+              <WorksheetCard key={w.id} w={w} />
             ))}
           </div>
           <AdBanner format="auto" />

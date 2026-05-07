@@ -6,7 +6,49 @@ import AdBanner from '../components/AdBanner'
 import { supabase, Song } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const getAiThumb = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/slides/thumbnails/${id}.png`
+
 const chips = ['All', 'Classic', 'Action', 'Educational']
+
+function SongCard({ s }: { s: Song }) {
+  const [aiThumb, setAiThumb] = useState(false)
+  useEffect(() => {
+    const img = new Image()
+    img.onload = () => setAiThumb(true)
+    img.src = getAiThumb(s.id)
+  }, [s.id])
+
+  const ytThumb = s.youtube_url && extractYouTubeId(s.youtube_url)
+    ? `https://img.youtube.com/vi/${extractYouTubeId(s.youtube_url)}/hqdefault.jpg` : ''
+  const coverSrc = aiThumb ? getAiThumb(s.id) : ytThumb
+
+  return (
+    <Link to={`/songs/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div className="mm-card-cover">
+        {coverSrc ? (
+          <img src={coverSrc} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <Cover kind={s.cover_kind} />
+        )}
+        <div style={{
+          position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
+          color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
+          display: 'inline-flex', alignItems: 'center', gap: 4,
+        }}>
+          <Clock size={11} /> {s.duration}
+        </div>
+        <div className="mm-card-cta"><Play size={18} /></div>
+      </div>
+      <div className="mm-card-body">
+        <h3 className="mm-card-title">{s.title}</h3>
+        <div className="mm-card-meta">
+          <span className="mm-tag lilac">{s.category}</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
 
 export default function SongsList() {
   const [songs, setSongs] = useState<Song[]>([])
@@ -76,29 +118,7 @@ export default function SongsList() {
         <>
           <div className="mm-grid-3">
             {filtered.map(s => (
-              <Link key={s.id} to={`/songs/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="mm-card-cover">
-                  {s.youtube_url && extractYouTubeId(s.youtube_url) ? (
-                    <img src={`https://img.youtube.com/vi/${extractYouTubeId(s.youtube_url)}/hqdefault.jpg`} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <Cover kind={s.cover_kind} />
-                  )}
-                  <div style={{
-                    position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
-                    color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
-                    display: 'inline-flex', alignItems: 'center', gap: 4,
-                  }}>
-                    <Clock size={11} /> {s.duration}
-                  </div>
-                  <div className="mm-card-cta"><Play size={18} /></div>
-                </div>
-                <div className="mm-card-body">
-                  <h3 className="mm-card-title">{s.title}</h3>
-                  <div className="mm-card-meta">
-                    <span className="mm-tag lilac">{s.category}</span>
-                  </div>
-                </div>
-              </Link>
+              <SongCard key={s.id} s={s} />
             ))}
           </div>
           <AdBanner format="auto" />
