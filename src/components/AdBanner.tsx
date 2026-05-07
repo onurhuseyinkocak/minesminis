@@ -1,23 +1,29 @@
 import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 
-let railCounter = 0
+type AdFormat = 'horizontal' | 'rectangle' | 'vertical' | 'auto'
 
-function AdSlot() {
+let adCounter = 0
+
+export default function AdBanner({ format = 'auto', className = '' }: { format?: AdFormat; className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const idRef = useRef(`rail-${++railCounter}`)
+  const location = useLocation()
+  const idRef = useRef(`ad-${++adCounter}`)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
+    // Clear previous ad on route change
+    container.innerHTML = ''
+
     const ins = document.createElement('ins')
     ins.className = 'adsbygoogle'
     ins.style.display = 'block'
-    ins.style.width = '160px'
-    ins.style.height = '600px'
     ins.dataset.adClient = 'ca-pub-6644397387275334'
     ins.dataset.adSlot = '5178461633'
-    ins.dataset.adFormat = 'vertical'
+    ins.dataset.adFormat = format
+    ins.dataset.fullWidthResponsive = 'true'
     ins.dataset.tagForChildDirectedTreatment = '1'
     container.appendChild(ins)
 
@@ -30,15 +36,13 @@ function AdSlot() {
     return () => {
       container.innerHTML = ''
     }
-  }, [])
+  }, [location.pathname, format])
 
-  return <div ref={containerRef} id={idRef.current} style={{ width: 160, minHeight: 600 }} />
-}
-
-export default function AdRail() {
   return (
-    <div className="rail">
-      <AdSlot />
-    </div>
+    <div
+      ref={containerRef}
+      className={`mm-ad-banner ${className}`}
+      id={idRef.current}
+    />
   )
 }

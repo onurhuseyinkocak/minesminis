@@ -1,24 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { Presentation, Video, Music, LogOut, LayoutDashboard, Eye, EyeOff } from 'lucide-react'
 import SlidesManager from './SlidesManager'
 import VideosManager from './VideosManager'
 import SongsManager from './SongsManager'
-
-const ADMIN_PASS = 'Wealthy*520'
+import { supabase } from '../../lib/supabase'
 
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
   const [pass, setPass] = useState('')
   const [error, setError] = useState(false)
   const [showPass, setShowPass] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (pass === ADMIN_PASS) {
-      sessionStorage.setItem('mm-admin', '1')
-      onLogin()
-    } else {
+    setSubmitting(true)
+    const { error: err } = await supabase.auth.signInWithPassword({
+      email: 'admin@minesminis.com',
+      password: pass,
+    })
+    setSubmitting(false)
+    if (err) {
       setError(true)
+    } else {
+      onLogin()
     }
   }
 
@@ -56,8 +61,8 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
           </button>
         </div>
         {error && <p style={{ color: 'var(--primary)', fontSize: 13, margin: '-8px 0 16px' }}>Wrong password</p>}
-        <button type="submit" className="mm-btn primary" style={{ width: '100%', justifyContent: 'center' }}>
-          Sign In
+        <button type="submit" className="mm-btn primary" style={{ width: '100%', justifyContent: 'center' }} disabled={submitting}>
+          {submitting ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
     </div>
@@ -100,9 +105,18 @@ function AdminDashboard() {
 }
 
 export default function AdminLayout() {
-  const [authed, setAuthed] = useState(sessionStorage.getItem('mm-admin') === '1')
+  const [authed, setAuthed] = useState(false)
+  const [checking, setChecking] = useState(true)
   const location = useLocation()
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setAuthed(!!session)
+      setChecking(false)
+    })
+  }, [])
+
+  if (checking) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}><p style={{ color: 'var(--ink-3)' }}>Loading...</p></div>
   if (!authed) return <AdminLogin onLogin={() => setAuthed(true)} />
 
   return (
@@ -130,7 +144,7 @@ export default function AdminLayout() {
           })}
         </nav>
 
-        <button onClick={() => { sessionStorage.removeItem('mm-admin'); setAuthed(false) }}
+        <button onClick={() => { supabase.auth.signOut(); setAuthed(false) }}
           style={{
             display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 12,
             border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--ink-3)',

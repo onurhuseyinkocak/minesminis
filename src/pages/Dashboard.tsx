@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Play, Presentation, Video, Music, ChevronRight, Star } from 'lucide-react'
-import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import MobileAd from '../components/MobileAd'
+import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
 
 const features = [
@@ -45,7 +44,7 @@ export default function Dashboard() {
   const countLabels = [counts.slides + ' slides', counts.videos + ' videos', counts.songs + ' songs']
 
   return (
-    <Layout>
+    <>
       {/* Hero */}
       <div className="mm-hero" style={{
         background: 'linear-gradient(135deg, #7B68EE 0%, #9B87F5 50%, #B8A9FF 100%)',
@@ -108,7 +107,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <MobileAd />
+      <AdBanner format="horizontal" />
 
       {/* Recent */}
       {recent.length > 0 && (
@@ -137,6 +136,8 @@ export default function Dashboard() {
           </div>
         </>
       )}
-    </Layout>
+
+      <AdBanner format="auto" />
+    </>
   )
 }

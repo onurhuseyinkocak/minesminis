@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Play, Clock } from 'lucide-react'
-import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import MobileAd from '../components/MobileAd'
+import AdBanner from '../components/AdBanner'
 import { supabase, Song } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
 
@@ -29,7 +28,7 @@ export default function SongsList() {
     : songs.filter(s => s.category === activeChip)
 
   return (
-    <Layout>
+    <>
       <div className="mm-page-header">
         <div>
           <h1 className="mm-page-title">Songs</h1>
@@ -40,7 +39,7 @@ export default function SongsList() {
         </div>
       </div>
 
-      <MobileAd />
+      <AdBanner format="horizontal" />
 
       <div className="mm-chips">
         {chips.map(c => (
@@ -74,34 +73,37 @@ export default function SongsList() {
           <p style={{ fontSize: 14 }}>New songs coming soon!</p>
         </div>
       ) : (
-        <div className="mm-grid-3">
-          {filtered.map(s => (
-            <Link key={s.id} to={`/songs/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mm-card-cover">
-                {s.youtube_url && extractYouTubeId(s.youtube_url) ? (
-                  <img src={`https://img.youtube.com/vi/${extractYouTubeId(s.youtube_url)}/hqdefault.jpg`} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <Cover kind={s.cover_kind} />
-                )}
-                <div style={{
-                  position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
-                  color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                }}>
-                  <Clock size={11} /> {s.duration}
+        <>
+          <div className="mm-grid-3">
+            {filtered.map(s => (
+              <Link key={s.id} to={`/songs/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="mm-card-cover">
+                  {s.youtube_url && extractYouTubeId(s.youtube_url) ? (
+                    <img src={`https://img.youtube.com/vi/${extractYouTubeId(s.youtube_url)}/hqdefault.jpg`} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <Cover kind={s.cover_kind} />
+                  )}
+                  <div style={{
+                    position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
+                    color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                  }}>
+                    <Clock size={11} /> {s.duration}
+                  </div>
+                  <div className="mm-card-cta"><Play size={18} /></div>
                 </div>
-                <div className="mm-card-cta"><Play size={18} /></div>
-              </div>
-              <div className="mm-card-body">
-                <h3 className="mm-card-title">{s.title}</h3>
-                <div className="mm-card-meta">
-                  <span className="mm-tag lilac">{s.category}</span>
+                <div className="mm-card-body">
+                  <h3 className="mm-card-title">{s.title}</h3>
+                  <div className="mm-card-meta">
+                    <span className="mm-tag lilac">{s.category}</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+          <AdBanner format="auto" />
+        </>
       )}
-    </Layout>
+    </>
   )
 }

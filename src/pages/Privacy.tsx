@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import Layout from '../components/Layout'
+import AdBanner from '../components/AdBanner'
 
 export default function Privacy() {
   useEffect(() => { document.title = 'Privacy Policy - minesminis' }, [])
 
   return (
-    <Layout>
+    <>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
         <h1 className="mm-page-title">Privacy Policy</h1>
         <p className="mm-page-sub" style={{ marginBottom: 24 }}>Last updated: April 30, 2026</p>
@@ -61,6 +61,8 @@ export default function Privacy() {
           </p>
         </div>
       </div>
-    </Layout>
+
+      <AdBanner format="auto" />
+    </>
   )
 }

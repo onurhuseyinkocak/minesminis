@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Play } from 'lucide-react'
-import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import MobileAd from '../components/MobileAd'
+import AdBanner from '../components/AdBanner'
 import { supabase, Slide } from '../lib/supabase'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
@@ -63,7 +62,7 @@ export default function SlidesList() {
     : slides.filter(s => s.level === activeChip || s.category === activeChip)
 
   return (
-    <Layout>
+    <>
       <div className="mm-page-header">
         <div>
           <h1 className="mm-page-title">Slides</h1>
@@ -74,7 +73,7 @@ export default function SlidesList() {
         </div>
       </div>
 
-      <MobileAd />
+      <AdBanner format="horizontal" />
 
       <div className="mm-chips">
         {chips.map(c => (
@@ -108,10 +107,13 @@ export default function SlidesList() {
           <p style={{ fontSize: 14 }}>New slides coming soon!</p>
         </div>
       ) : (
-        <div className="mm-grid-3">
-          {filtered.map(s => <SlideCard key={s.id} s={s} />)}
-        </div>
+        <>
+          <div className="mm-grid-3">
+            {filtered.map(s => <SlideCard key={s.id} s={s} />)}
+          </div>
+          <AdBanner format="auto" />
+        </>
       )}
-    </Layout>
+    </>
   )
 }

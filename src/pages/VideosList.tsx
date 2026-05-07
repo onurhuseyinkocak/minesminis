@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Play, Clock } from 'lucide-react'
-import Layout from '../components/Layout'
 import Cover from '../components/Cover'
-import MobileAd from '../components/MobileAd'
+import AdBanner from '../components/AdBanner'
 import { supabase, Video } from '../lib/supabase'
 
 const chips = ['All', 'Sing-Along', 'Dialogue', 'Action']
@@ -28,7 +27,7 @@ export default function VideosList() {
     : videos.filter(v => v.category === activeChip)
 
   return (
-    <Layout>
+    <>
       <div className="mm-page-header">
         <div>
           <h1 className="mm-page-title">Videos</h1>
@@ -39,7 +38,7 @@ export default function VideosList() {
         </div>
       </div>
 
-      <MobileAd />
+      <AdBanner format="horizontal" />
 
       <div className="mm-chips">
         {chips.map(c => (
@@ -73,30 +72,37 @@ export default function VideosList() {
           <p style={{ fontSize: 14 }}>New videos coming soon!</p>
         </div>
       ) : (
-        <div className="mm-grid-3">
-          {filtered.map(v => (
-            <Link key={v.id} to={`/videos/${v.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mm-card-cover">
-                <Cover kind={v.cover_kind} />
-                <div style={{
-                  position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
-                  color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                }}>
-                  <Clock size={11} /> {v.duration}
+        <>
+          <div className="mm-grid-3">
+            {filtered.map(v => (
+              <Link key={v.id} to={`/videos/${v.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="mm-card-cover">
+                  {v.thumbnail_url ? (
+                    <img src={v.thumbnail_url} alt={v.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <Cover kind={v.cover_kind} />
+                  )}
+                  <div style={{
+                    position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
+                    color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                  }}>
+                    <Clock size={11} /> {v.duration}
+                  </div>
+                  <div className="mm-card-cta"><Play size={18} /></div>
                 </div>
-                <div className="mm-card-cta"><Play size={18} /></div>
-              </div>
-              <div className="mm-card-body">
-                <h3 className="mm-card-title">{v.title}</h3>
-                <div className="mm-card-meta">
-                  <span className="mm-tag green">{v.category}</span>
+                <div className="mm-card-body">
+                  <h3 className="mm-card-title">{v.title}</h3>
+                  <div className="mm-card-meta">
+                    <span className="mm-tag green">{v.category}</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+          <AdBanner format="auto" />
+        </>
       )}
-    </Layout>
+    </>
   )
 }

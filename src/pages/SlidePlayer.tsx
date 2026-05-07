@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ChevronLeft, ChevronRight, Play, Pause, Maximize, Download, Printer } from 'lucide-react'
-import Layout from '../components/Layout'
 import Cover from '../components/Cover'
+import AdBanner from '../components/AdBanner'
 import { supabase, Slide, SlideItem } from '../lib/supabase'
 
 export default function SlidePlayer() {
@@ -78,22 +78,22 @@ export default function SlidePlayer() {
 
   if (error) {
     return (
-      <Layout>
+      <>
         <div style={{ textAlign: 'center', padding: 60 }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--primary)' }}>Content not found</p>
           <Link to="/slides" className="mm-btn primary" style={{ marginTop: 12, textDecoration: 'none', display: 'inline-flex' }}>Back to Slides</Link>
         </div>
-      </Layout>
+      </>
     )
   }
 
   if (!slide) {
     return (
-      <Layout>
+      <>
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
         </div>
-      </Layout>
+      </>
     )
   }
 
@@ -107,7 +107,7 @@ export default function SlidePlayer() {
   }
 
   return (
-    <Layout>
+    <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Link to="/slides" className="mm-icon-btn" aria-label="Back to Slides"><ArrowLeft size={18} /></Link>
@@ -234,6 +234,8 @@ export default function SlidePlayer() {
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Slide content not added yet</p>
         </div>
       )}
-    </Layout>
+
+      <AdBanner format="auto" />
+    </>
   )
 }

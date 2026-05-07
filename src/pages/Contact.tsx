@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { Mail, Globe, MessageCircle } from 'lucide-react'
-import Layout from '../components/Layout'
+import AdBanner from '../components/AdBanner'
 
 export default function Contact() {
   useEffect(() => { document.title = 'Contact - minesminis' }, [])
 
   return (
-    <Layout>
+    <>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
         <h1 className="mm-page-title">Contact</h1>
         <p className="mm-page-sub" style={{ marginBottom: 24 }}>Get in touch with us for questions and suggestions</p>
@@ -82,6 +82,8 @@ export default function Contact() {
           </div>
         </div>
       </div>
-    </Layout>
+
+      <AdBanner format="auto" />
+    </>
   )
 }

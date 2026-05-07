@@ -143,30 +143,10 @@ body { margin: 0; font-family: var(--font-body); font-size: 16px; color: var(--i
 .mm-tag.coral { background: #FFE4DC; color: var(--primary-2); border-color: transparent; }
 .mm-tag.lilac { background: #ECE3FF; color: #6442C9; border-color: transparent; }
 
-/* Ads — desktop rail */
-.mm-ad {
-  width: 160px;
-  background: var(--surface-2);
-  border: 1px dashed var(--line);
-  border-radius: var(--r-md);
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 6px;
-  color: var(--ink-3); font-size: 12px; font-weight: 600;
-  letter-spacing: 1px; padding: 10px;
-}
-.mm-ad .label { text-align: center; line-height: 1.4; opacity: 0.8; }
-.mm-ad.size-a { height: 200px; }
-.mm-ad.size-b { height: 280px; }
-.mm-ad.size-c { height: 120px; }
-
-/* Ads — mobile inline banner */
-.mm-mobile-ad {
-  display: none;
-  margin: 16px 0;
-  border-radius: var(--r-sm);
-  overflow: hidden;
-  min-height: 100px;
-  background: var(--surface-2);
+/* Ads — inline banners (all screens) */
+.mm-ad-banner {
+  margin: 20px 0;
+  min-height: 90px;
 }
 
 /* Buttons */
@@ -232,9 +212,6 @@ body { margin: 0; font-family: var(--font-body); font-size: 16px; color: var(--i
 
   /* Add bottom padding for fixed bottom nav */
   .mm-page { padding-bottom: 72px; }
-
-  /* Show mobile ads */
-  .mm-mobile-ad { display: block; }
 
   /* Hero responsive */
   .mm-hero { padding: 24px !important; border-radius: 18px !important; }

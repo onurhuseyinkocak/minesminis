@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Play } from 'lucide-react'
-import Layout from '../components/Layout'
 import Cover from '../components/Cover'
+import AdBanner from '../components/AdBanner'
 import { supabase, Video } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
 
@@ -25,27 +25,27 @@ export default function VideoPlayer() {
 
   if (error) {
     return (
-      <Layout>
+      <>
         <div style={{ textAlign: 'center', padding: 60 }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--primary)' }}>Content not found</p>
           <Link to="/videos" className="mm-btn primary" style={{ marginTop: 12, textDecoration: 'none', display: 'inline-flex' }}>Back to Videos</Link>
         </div>
-      </Layout>
+      </>
     )
   }
 
   if (!video) {
     return (
-      <Layout>
+      <>
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
         </div>
-      </Layout>
+      </>
     )
   }
 
   return (
-    <Layout>
+    <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Link to="/videos" className="mm-icon-btn" aria-label="Back to Videos"><ArrowLeft size={18} /></Link>
@@ -92,6 +92,7 @@ export default function VideoPlayer() {
         </div>
       )}
 
-    </Layout>
+      <AdBanner format="auto" />
+    </>
   )
 }

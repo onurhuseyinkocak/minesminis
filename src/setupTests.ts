@@ -4,8 +4,6 @@ import { vi } from 'vitest'
 // Mock import.meta.env
 vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co')
 vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-anon-key')
-// VITE_ADMIN_PASS removed — password is hardcoded in AdminLayout
-
 // Mock supabase
 vi.mock('./lib/supabase', () => {
   const mockFrom = vi.fn(() => ({
@@ -20,9 +18,14 @@ vi.mock('./lib/supabase', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     then: vi.fn((cb: any) => cb({ data: [], count: 0, error: null })),
   }))
+  const mockAuth = {
+    signInWithPassword: vi.fn().mockResolvedValue({ data: { session: {} }, error: null }),
+    signOut: vi.fn().mockResolvedValue({ error: null }),
+    getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
+  }
   return {
-    supabase: { from: mockFrom },
-    default: { from: mockFrom },
+    supabase: { from: mockFrom, auth: mockAuth },
+    default: { from: mockFrom, auth: mockAuth },
   }
 })
 

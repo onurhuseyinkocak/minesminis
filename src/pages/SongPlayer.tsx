@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, SkipBack, Pause, Play, SkipForward, Repeat } from 'lucide-react'
-import Layout from '../components/Layout'
 import Cover from '../components/Cover'
+import AdBanner from '../components/AdBanner'
 import { supabase, Song, SongLyric } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
 
@@ -63,13 +63,16 @@ export default function SongPlayer() {
 
   // YouTube Player setup (for karaoke sync)
   const youtubeId = song?.youtube_url ? extractYouTubeId(song.youtube_url) : ''
-  const useYouTube = !!youtubeId && !song?.audio_url
+  // Always use YT Player API when youtube exists (for karaoke sync)
+  const useYouTube = !!youtubeId
 
   useEffect(() => {
     if (!useYouTube || !youtubeId) return
     let player: YTPlayer | null = null
 
     loadYouTubeAPI().then(() => {
+      const el = document.getElementById('yt-karaoke-player')
+      if (!el) return
       player = new window.YT.Player('yt-karaoke-player', {
         videoId: youtubeId,
         playerVars: { autoplay: 0, controls: 1, modestbranding: 1, rel: 0 },
@@ -108,9 +111,9 @@ export default function SongPlayer() {
     }
   }, [useYouTube, youtubeId])
 
-  // Audio setup (for songs with audio_url)
+  // Audio setup (for songs with audio_url but NO youtube — avoid dual players)
   useEffect(() => {
-    if (!song?.audio_url) return
+    if (!song?.audio_url || useYouTube) return
     const audio = new Audio(song.audio_url)
     audioRef.current = audio
     audio.loop = loop
@@ -136,7 +139,7 @@ export default function SongPlayer() {
       audio.pause()
       audio.src = ''
     }
-  }, [song?.audio_url, loop])
+  }, [song?.audio_url, loop, useYouTube])
 
   // Karaoke sync — use per-line timestamps
   useEffect(() => {
@@ -145,8 +148,28 @@ export default function SongPlayer() {
     const hasTimestamps = lyrics.some((l: SongLyric) => typeof l.time === 'number')
 
     if (!hasTimestamps) {
-      // No timestamps set — no karaoke sync
-      setActiveLine(-1)
+      // Fallback: word-weighted approximate sync with intro/outro buffer
+      if (duration <= 0) { setActiveLine(-1); return }
+      // Reserve ~15% for intro, ~10% for outro
+      const intro = duration * 0.15
+      const outro = duration * 0.10
+      const lyricDuration = duration - intro - outro
+      if (lyricDuration <= 0) { setActiveLine(-1); return }
+      const totalWords = lyrics.reduce((sum: number, l: SongLyric) => {
+        const text = (l.en || '').trim()
+        return sum + (text ? text.split(/\s+/).length : 0)
+      }, 0)
+      if (totalWords === 0) { setActiveLine(-1); return }
+      let cumWords = 0
+      let idx = -1
+      for (let i = 0; i < lyrics.length; i++) {
+        const text = (lyrics[i].en || '').trim()
+        const words = text ? text.split(/\s+/).length : 0
+        const lineStart = intro + (cumWords / totalWords) * lyricDuration
+        if (currentTime >= lineStart) idx = i
+        cumWords += words
+      }
+      setActiveLine(idx)
       return
     }
 
@@ -158,7 +181,7 @@ export default function SongPlayer() {
       }
     }
     setActiveLine(idx)
-  }, [currentTime, song?.lyrics])
+  }, [currentTime, song?.lyrics, duration])
 
   // Auto-scroll to active line
   useEffect(() => {
@@ -219,29 +242,29 @@ export default function SongPlayer() {
 
   if (error) {
     return (
-      <Layout>
+      <>
         <div style={{ textAlign: 'center', padding: 60 }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--primary)' }}>Content not found</p>
           <Link to="/songs" className="mm-btn primary" style={{ marginTop: 12, textDecoration: 'none', display: 'inline-flex' }}>Back to Songs</Link>
         </div>
-      </Layout>
+      </>
     )
   }
 
   if (!song) {
     return (
-      <Layout>
+      <>
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
         </div>
-      </Layout>
+      </>
     )
   }
 
   const hasLyrics = (song.lyrics || []).length > 0
 
   return (
-    <Layout>
+    <>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
         <Link to="/songs" className="mm-icon-btn" aria-label="Back to Songs"><ArrowLeft size={18} /></Link>
         <span style={{ color: 'var(--ink-3)', fontWeight: 600, fontSize: 14 }}>Songs / {song.title}</span>
@@ -253,18 +276,7 @@ export default function SongPlayer() {
         <div>
           {youtubeId ? (
             <div style={{ borderRadius: 18, overflow: 'hidden', aspectRatio: '16/9', boxShadow: 'var(--shadow-1)' }}>
-              {useYouTube ? (
-                <div id="yt-karaoke-player" style={{ width: '100%', height: '100%' }} />
-              ) : (
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeId}`}
-                  title={song.title}
-                  style={{ width: '100%', height: '100%', border: 'none' }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-                />
-              )}
+              <div id="yt-karaoke-player" style={{ width: '100%', height: '100%' }} />
             </div>
           ) : (
             <div style={{ borderRadius: 18, overflow: 'hidden', boxShadow: 'var(--shadow-1)', aspectRatio: '1' }}>
@@ -277,7 +289,7 @@ export default function SongPlayer() {
             <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '4px 0 0' }}>{song.category} - {song.duration}</p>
           </div>
 
-          {song.audio_url ? (
+          {(song.audio_url || useYouTube) ? (
             <>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 14 }}>
                 <button className="mm-icon-btn" onClick={skipBack} aria-label="Skip back 10s"><SkipBack size={16} /></button>
@@ -285,9 +297,11 @@ export default function SongPlayer() {
                   {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                 </button>
                 <button className="mm-icon-btn" onClick={skipForward} aria-label="Skip forward 10s"><SkipForward size={16} /></button>
-                <button className={`mm-icon-btn${loop ? ' primary' : ''}`} onClick={() => setLoop(!loop)} aria-label="Repeat">
-                  <Repeat size={16} />
-                </button>
+                {!useYouTube && (
+                  <button className={`mm-icon-btn${loop ? ' primary' : ''}`} onClick={() => setLoop(!loop)} aria-label="Repeat">
+                    <Repeat size={16} />
+                  </button>
+                )}
               </div>
               <div className="mm-progress" style={{ marginTop: 12, cursor: 'pointer' }} onClick={seek}>
                 <div className="mm-progress-fill" style={{ width: `${progress}%`, transition: 'width 0.2s' }} />
@@ -298,7 +312,7 @@ export default function SongPlayer() {
             </>
           ) : (
             <div style={{ marginTop: 14, padding: 14, background: 'var(--surface-2)', borderRadius: 12, textAlign: 'center', fontSize: 13, color: 'var(--ink-3)' }}>
-              {youtubeId ? 'Play the video above to listen' : 'Audio file not added yet'}
+              Audio file not added yet
             </div>
           )}
         </div>
@@ -308,7 +322,7 @@ export default function SongPlayer() {
           <div style={{ background: 'white', borderRadius: 24, padding: 28, border: '1px solid var(--line)', maxHeight: 500, overflow: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-3)', letterSpacing: 1.5 }}>
-                {song.audio_url ? 'KARAOKE' : 'LYRICS'}
+                {(song.audio_url || useYouTube) ? 'KARAOKE' : 'LYRICS'}
               </div>
               <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-3)' }}>English - Turkish</span>
             </div>
@@ -354,6 +368,8 @@ export default function SongPlayer() {
           </div>
         )}
       </div>
-    </Layout>
+
+      <AdBanner format="auto" />
+    </>
   )
 }

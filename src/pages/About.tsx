@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Presentation, Video, Music, BookOpen, Users, Heart } from 'lucide-react'
-import Layout from '../components/Layout'
 import { supabase } from '../lib/supabase'
+import AdBanner from '../components/AdBanner'
 
 const values = [
   { icon: BookOpen, title: 'Free Education', desc: 'All content is completely free. No registration required — start learning right away.' },
@@ -31,7 +31,7 @@ export default function About() {
   ]
 
   return (
-    <Layout>
+    <>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
         <h1 className="mm-page-title">About</h1>
         <p className="mm-page-sub" style={{ marginBottom: 24 }}>minesminis - English Learning Platform for Kids</p>
@@ -96,6 +96,8 @@ export default function About() {
           ))}
         </div>
       </div>
-    </Layout>
+
+      <AdBanner format="auto" />
+    </>
   )
 }
