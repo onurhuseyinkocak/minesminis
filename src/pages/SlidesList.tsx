@@ -34,8 +34,6 @@ function SlideCard({ s }: { s: Slide }) {
         <h3 className="mm-card-title">{s.title}</h3>
         <div className="mm-card-meta">
           <span className={`mm-tag ${s.level === 'Easy' ? 'green' : 'yellow'}`}>{s.level}</span>
-          <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-3)' }} />
-          <span>{s.slide_count} slides</span>
         </div>
       </div>
     </Link>
