@@ -30,9 +30,9 @@ export default function Dashboard() {
       supabase.from('mm_slides').select('id', { count: 'exact', head: true }).eq('published', true),
       supabase.from('mm_videos').select('id', { count: 'exact', head: true }).eq('published', true),
       supabase.from('mm_songs').select('id', { count: 'exact', head: true }).eq('published', true),
-      supabase.from('mm_worksheets').select('id', { count: 'exact', head: true }).eq('published', true).catch(() => ({ count: 0 })),
+      supabase.from('mm_worksheets').select('id', { count: 'exact', head: true }).eq('published', true),
     ]).then(([s, v, so, w]) => {
-      setCounts({ slides: s.count || 0, videos: v.count || 0, songs: so.count || 0, worksheets: (w as { count: number | null }).count || 0 })
+      setCounts({ slides: s.count || 0, videos: v.count || 0, songs: so.count || 0, worksheets: w.count || 0 })
     }).catch(() => {})
 
     // Fetch recent content (mix of all types)
@@ -40,13 +40,13 @@ export default function Dashboard() {
       supabase.from('mm_slides').select('id, title, cover_kind, slide_count').eq('published', true).order('created_at', { ascending: false }).limit(2),
       supabase.from('mm_videos').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
       supabase.from('mm_songs').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
-      supabase.from('mm_worksheets').select('id, title, cover_kind, page_count').eq('published', true).order('created_at', { ascending: false }).limit(2).catch(() => ({ data: [] })),
+      supabase.from('mm_worksheets').select('id, title, cover_kind, page_count').eq('published', true).order('created_at', { ascending: false }).limit(2),
     ]).then(([s, v, so, w]) => {
       const items: { id: string; title: string; cover_kind: string; type: string; meta: string; tag: string }[] = []
-      ;(s.data || []).forEach(d => items.push({ ...d, type: 'slides', meta: `${d.slide_count} slides`, tag: 'coral' }))
-      ;(v.data || []).forEach(d => items.push({ ...d, type: 'videos', meta: d.duration, tag: 'blue' }))
-      ;(so.data || []).forEach(d => items.push({ ...d, type: 'songs', meta: d.duration, tag: 'lilac' }))
-      ;((w as { data: Array<{ id: string; title: string; cover_kind: string; page_count: number }> | null }).data || []).forEach(d => items.push({ ...d, type: 'worksheets', meta: `${d.page_count} pages`, tag: 'green' }))
+      ;(s.data || []).forEach((d: any) => items.push({ ...d, type: 'slides', meta: `${d.slide_count} slides`, tag: 'coral' }))
+      ;(v.data || []).forEach((d: any) => items.push({ ...d, type: 'videos', meta: d.duration, tag: 'blue' }))
+      ;(so.data || []).forEach((d: any) => items.push({ ...d, type: 'songs', meta: d.duration, tag: 'lilac' }))
+      ;(w.data || []).forEach((d: any) => items.push({ ...d, type: 'worksheets', meta: `${d.page_count} pages`, tag: 'green' }))
       setRecent(items)
     }).catch(() => {})
   }, [])

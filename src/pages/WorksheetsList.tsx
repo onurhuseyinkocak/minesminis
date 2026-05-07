@@ -11,7 +11,7 @@ export default function WorksheetsList() {
   const [worksheets, setWorksheets] = useState<Worksheet[]>([])
   const [activeChip, setActiveChip] = useState('All')
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+  const [error] = useState(false)
 
   useEffect(() => { document.title = 'Worksheets - minesminis' }, [])
 
@@ -21,7 +21,6 @@ export default function WorksheetsList() {
         if (err) { setLoading(false); return }
         setWorksheets(data || []); setLoading(false)
       })
-      .catch(() => { setLoading(false) })
   }, [])
 
   const filtered = activeChip === 'All' ? worksheets
