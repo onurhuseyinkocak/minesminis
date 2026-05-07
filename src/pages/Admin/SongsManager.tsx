@@ -555,10 +555,9 @@ export default function SongsManager() {
                 setEditing(prev => prev ? { ...prev, lyrics: [...(prev.lyrics || []), ...newLyrics] } : prev)
                 toast.success(`${newLyrics.length} lines added with translations!`)
               } catch {
-                // Fallback: add without translation
+                // Silent fallback: add lines without translation
                 const fallback = englishLines.map(en => ({ en, tr: '', highlight: false }))
                 setEditing(prev => prev ? { ...prev, lyrics: [...(prev.lyrics || []), ...fallback] } : prev)
-                toast.error('Auto-translate failed — lines added without translation')
               }
               setTranslating(false)
             }} disabled={translating}>

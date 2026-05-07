@@ -11,13 +11,13 @@ const getThumbnailUrl = (id: string) => `${SUPABASE_URL}/storage/v1/object/publi
 const chips = ['All', 'Easy', 'Medium']
 
 function SlideCard({ s }: { s: Slide }) {
-  const [thumbExists, setThumbExists] = useState<boolean | null>(null)
+  const [thumbExists, setThumbExists] = useState(false)
 
   useEffect(() => {
-    const url = getThumbnailUrl(s.id)
-    fetch(url, { method: 'HEAD' })
-      .then(r => setThumbExists(r.ok))
-      .catch(() => setThumbExists(false))
+    const img = new Image()
+    img.onload = () => setThumbExists(true)
+    img.onerror = () => setThumbExists(false)
+    img.src = getThumbnailUrl(s.id)
   }, [s.id])
 
   return (

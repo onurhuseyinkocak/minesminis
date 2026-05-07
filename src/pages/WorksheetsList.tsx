@@ -18,9 +18,10 @@ export default function WorksheetsList() {
   useEffect(() => {
     supabase.from('mm_worksheets').select('*').eq('published', true).order('created_at', { ascending: false })
       .then(({ data, error: err }) => {
-        if (err) { setError(true); setLoading(false); return }
+        if (err) { setLoading(false); return }
         setWorksheets(data || []); setLoading(false)
       })
+      .catch(() => { setLoading(false) })
   }, [])
 
   const filtered = activeChip === 'All' ? worksheets

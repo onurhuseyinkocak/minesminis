@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { Presentation, Video, Music, LogOut, LayoutDashboard, Eye, EyeOff } from 'lucide-react'
+import { Presentation, Video, Music, FileText, LogOut, LayoutDashboard, Eye, EyeOff } from 'lucide-react'
 import SlidesManager from './SlidesManager'
 import VideosManager from './VideosManager'
 import SongsManager from './SongsManager'
+import WorksheetsManager from './WorksheetsManager'
 import { supabase } from '../../lib/supabase'
 
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
@@ -74,6 +75,7 @@ const navItems = [
   { path: '/admin/slides', label: 'Slides', icon: Presentation },
   { path: '/admin/videos', label: 'Videos', icon: Video },
   { path: '/admin/songs', label: 'Songs', icon: Music },
+  { path: '/admin/worksheets', label: 'Worksheets', icon: FileText },
 ]
 
 function AdminDashboard() {
@@ -86,6 +88,7 @@ function AdminDashboard() {
           { label: 'Slides', icon: Presentation, path: '/admin/slides', color: 'var(--primary)' },
           { label: 'Videos', icon: Video, path: '/admin/videos', color: 'var(--accent)' },
           { label: 'Songs', icon: Music, path: '/admin/songs', color: 'var(--green)' },
+          { label: 'Worksheets', icon: FileText, path: '/admin/worksheets', color: '#B59BFF' },
         ].map(item => (
           <Link key={item.path} to={item.path} style={{
             background: 'white', borderRadius: 18, padding: 24, border: '1px solid var(--line)',
@@ -161,6 +164,7 @@ export default function AdminLayout() {
           <Route path="slides" element={<SlidesManager />} />
           <Route path="videos" element={<VideosManager />} />
           <Route path="songs" element={<SongsManager />} />
+          <Route path="worksheets" element={<WorksheetsManager />} />
         </Routes>
       </div>
     </div>

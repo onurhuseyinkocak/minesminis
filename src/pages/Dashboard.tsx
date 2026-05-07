@@ -1,18 +1,25 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, Presentation, Video, Music, ChevronRight, Star } from 'lucide-react'
+import { Play, Presentation, Video, Music, FileText, ChevronRight, Star } from 'lucide-react'
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
 
 const features = [
-  { id: 'slides', title: 'Slides', icon: Presentation, image: '/images/cat-slides.webp', tag: 'Learn', path: '/slides' },
-  { id: 'videos', title: 'Videos', icon: Video, image: '/images/cat-videos.webp', tag: 'Watch', path: '/videos' },
-  { id: 'songs', title: 'Songs', icon: Music, image: '/images/cat-songs.webp', tag: 'Sing', path: '/songs' },
+  { id: 'slides', title: 'Slides', icon: Presentation, image: '/images/cat-slides.webp', tag: 'Learn', path: '/slides', coverFallback: 'school' },
+  { id: 'videos', title: 'Videos', icon: Video, image: '/images/cat-videos.webp', tag: 'Watch', path: '/videos', coverFallback: 'star' },
+  { id: 'songs', title: 'Songs', icon: Music, image: '/images/cat-songs.webp', tag: 'Sing', path: '/songs', coverFallback: 'dance' },
+  { id: 'worksheets', title: 'Worksheets', icon: FileText, image: '/images/cat-worksheets.webp', tag: 'Print', path: '/worksheets', coverFallback: 'abc' },
 ]
 
+function CoverImg({ src, alt, fallback }: { src: string; alt: string; fallback: string }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) return <Cover kind={fallback} />
+  return <img src={src} alt={alt} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setFailed(true)} />
+}
+
 export default function Dashboard() {
-  const [counts, setCounts] = useState({ slides: 0, videos: 0, songs: 0 })
+  const [counts, setCounts] = useState({ slides: 0, videos: 0, songs: 0, worksheets: 0 })
   const [recent, setRecent] = useState<{ id: string; title: string; cover_kind: string; type: string; meta: string; tag: string }[]>([])
 
   useEffect(() => { document.title = 'minesminis - English for Kids' }, [])
@@ -23,8 +30,9 @@ export default function Dashboard() {
       supabase.from('mm_slides').select('id', { count: 'exact', head: true }).eq('published', true),
       supabase.from('mm_videos').select('id', { count: 'exact', head: true }).eq('published', true),
       supabase.from('mm_songs').select('id', { count: 'exact', head: true }).eq('published', true),
-    ]).then(([s, v, so]) => {
-      setCounts({ slides: s.count || 0, videos: v.count || 0, songs: so.count || 0 })
+      supabase.from('mm_worksheets').select('id', { count: 'exact', head: true }).eq('published', true).catch(() => ({ count: 0 })),
+    ]).then(([s, v, so, w]) => {
+      setCounts({ slides: s.count || 0, videos: v.count || 0, songs: so.count || 0, worksheets: (w as { count: number | null }).count || 0 })
     }).catch(() => {})
 
     // Fetch recent content (mix of all types)
@@ -32,16 +40,18 @@ export default function Dashboard() {
       supabase.from('mm_slides').select('id, title, cover_kind, slide_count').eq('published', true).order('created_at', { ascending: false }).limit(2),
       supabase.from('mm_videos').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
       supabase.from('mm_songs').select('id, title, cover_kind, duration').eq('published', true).order('created_at', { ascending: false }).limit(2),
-    ]).then(([s, v, so]) => {
+      supabase.from('mm_worksheets').select('id, title, cover_kind, page_count').eq('published', true).order('created_at', { ascending: false }).limit(2).catch(() => ({ data: [] })),
+    ]).then(([s, v, so, w]) => {
       const items: { id: string; title: string; cover_kind: string; type: string; meta: string; tag: string }[] = []
       ;(s.data || []).forEach(d => items.push({ ...d, type: 'slides', meta: `${d.slide_count} slides`, tag: 'coral' }))
       ;(v.data || []).forEach(d => items.push({ ...d, type: 'videos', meta: d.duration, tag: 'blue' }))
       ;(so.data || []).forEach(d => items.push({ ...d, type: 'songs', meta: d.duration, tag: 'lilac' }))
+      ;((w as { data: Array<{ id: string; title: string; cover_kind: string; page_count: number }> | null }).data || []).forEach(d => items.push({ ...d, type: 'worksheets', meta: `${d.page_count} pages`, tag: 'green' }))
       setRecent(items)
     }).catch(() => {})
   }, [])
 
-  const countLabels = [counts.slides + ' slides', counts.videos + ' videos', counts.songs + ' songs']
+  const countLabels = [counts.slides + ' slides', counts.videos + ' videos', counts.songs + ' songs', counts.worksheets + ' sheets']
 
   return (
     <>
@@ -85,7 +95,7 @@ export default function Dashboard() {
         {features.map((f, i) => (
           <Link key={f.id} to={f.path} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="mm-card-cover">
-              <img src={f.image} alt={f.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <CoverImg src={f.image} alt={f.title} fallback={f.coverFallback} />
             </div>
             <div className="mm-card-body">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
