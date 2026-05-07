@@ -48,34 +48,32 @@ export default function WorksheetPlayer() {
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Link to="/worksheets" className="mm-icon-btn" aria-label="Back to Worksheets"><ArrowLeft size={18} /></Link>
-          <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>{worksheet.title}</div>
-            <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>
-              {worksheet.page_count} page{worksheet.page_count !== 1 ? 's' : ''} &middot; {worksheet.level}
-            </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+        <Link to="/worksheets" className="mm-icon-btn" aria-label="Back to Worksheets"><ArrowLeft size={18} /></Link>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{worksheet.title}</div>
+          <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>
+            {worksheet.page_count} page{worksheet.page_count !== 1 ? 's' : ''} &middot; {worksheet.level}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {worksheet.file_url && (
-            <>
-              <a href={worksheet.file_url} download className="mm-btn" style={{ textDecoration: 'none' }}>
-                <Download size={16} /> Download
-              </a>
-              <a
-                href={`https://docs.google.com/gview?url=${encodeURIComponent(worksheet.file_url)}`}
-                target="_blank" rel="noreferrer" className="mm-btn" style={{ textDecoration: 'none' }}
-              >
-                <Printer size={16} /> Print
-              </a>
-            </>
-          )}
-          <button className="mm-btn dark" onClick={() => document.documentElement.requestFullscreen?.()} aria-label="Fullscreen">
-            <Maximize size={16} /> Fullscreen
-          </button>
-        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        {worksheet.file_url && (
+          <>
+            <a href={worksheet.file_url} download className="mm-btn" style={{ textDecoration: 'none', fontSize: 13, padding: '10px 16px' }}>
+              <Download size={14} /> Download
+            </a>
+            <a
+              href={`https://docs.google.com/gview?url=${encodeURIComponent(worksheet.file_url)}`}
+              target="_blank" rel="noreferrer" className="mm-btn" style={{ textDecoration: 'none', fontSize: 13, padding: '10px 16px' }}
+            >
+              <Printer size={14} /> Print
+            </a>
+          </>
+        )}
+        <button className="mm-btn dark" onClick={() => document.documentElement.requestFullscreen?.()} aria-label="Fullscreen" style={{ fontSize: 13, padding: '10px 16px' }}>
+          <Maximize size={14} /> Fullscreen
+        </button>
       </div>
 
       {worksheet.description && (
@@ -84,7 +82,7 @@ export default function WorksheetPlayer() {
 
       {worksheet.file_url ? (
         <div style={{ background: 'white', borderRadius: 28, overflow: 'hidden', border: '1px solid var(--line)', boxShadow: 'var(--shadow-1)' }}>
-          <div style={{ height: 700, position: 'relative' }}>
+          <div style={{ height: 'min(700px, 70vh)', position: 'relative' }}>
             <iframe
               src={getEmbedUrl(worksheet.file_url)}
               title={worksheet.title}

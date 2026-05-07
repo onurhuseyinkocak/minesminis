@@ -122,7 +122,10 @@ body { margin: 0; font-family: var(--font-body); font-size: 16px; color: var(--i
 .mm-card-cover img, .mm-card-cover svg { width: 100%; height: 100%; object-fit: cover; display: block; }
 .mm-card-cover > div { position: absolute; inset: 0; }
 .mm-card-body { padding: 14px 16px 16px; }
-.mm-card-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0 0 6px 0; line-height: 1.2; letter-spacing: -0.3px; }
+.mm-card-title {
+  font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0 0 6px 0; line-height: 1.2; letter-spacing: -0.3px;
+  overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
 .mm-card-meta { display: flex; gap: 10px; align-items: center; color: var(--ink-3); font-size: 13px; font-weight: 500; }
 .mm-card-cta {
   position: absolute; bottom: 12px; right: 12px;
@@ -182,7 +185,6 @@ body { margin: 0; font-family: var(--font-body); font-size: 16px; color: var(--i
   padding: 6px 4px env(safe-area-inset-bottom, 6px);
   justify-content: space-around;
   z-index: 100;
-  justify-content: space-around;
 }
 .mm-bottom-tab {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -217,8 +219,8 @@ body { margin: 0; font-family: var(--font-body); font-size: 16px; color: var(--i
   .mm-page { padding-bottom: 72px; }
 
   /* Hero responsive */
-  .mm-hero { padding: 24px !important; border-radius: 18px !important; }
-  .mm-hero-img { width: 120px !important; height: 120px !important; border-radius: 14px !important; }
+  .mm-hero { padding: 20px !important; border-radius: 16px !important; margin-bottom: 16px !important; }
+  .mm-hero-img { width: 100px !important; height: 100px !important; border-radius: 12px !important; }
 
   /* Admin grids stack */
   .mm-admin-grid { grid-template-columns: 1fr; }
@@ -228,15 +230,23 @@ body { margin: 0; font-family: var(--font-body); font-size: 16px; color: var(--i
 }
 
 @media (max-width: 600px) {
-  .mm-grid-3 { grid-template-columns: 1fr; }
-  .mm-grid-4 { grid-template-columns: 1fr; }
+  .mm-grid-3 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .mm-grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .mm-song-layout { grid-template-columns: 1fr !important; }
   .mm-logo img { height: 40px !important; }
   .mm-nav { padding: 10px 16px; }
   .mm-shell { padding: 12px; }
   .mm-page-title { font-size: 24px; }
-  .mm-hero { flex-direction: column; text-align: center; }
-  .mm-hero-img { width: 100px !important; height: 100px !important; order: -1; }
+  .mm-hero { flex-direction: column; text-align: center; padding: 18px !important; gap: 12px !important; }
+  .mm-hero-img { width: 80px !important; height: 80px !important; order: -1; }
+  .mm-hero h1 { font-size: 22px !important; }
+  .mm-hero p { font-size: 13px !important; margin-top: 4px !important; }
+  .mm-card-cover { margin: 6px 6px 0; }
+  .mm-card-body { padding: 10px 10px 12px; }
+  .mm-card-title { font-size: 14px; }
+  .mm-card-meta { font-size: 11px; gap: 6px; }
+  .mm-card-cta { width: 34px; height: 34px; bottom: 8px; right: 8px; }
+  .mm-page-header { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
 
 /* Filter chips */
