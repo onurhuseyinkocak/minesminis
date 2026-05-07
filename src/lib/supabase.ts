@@ -57,3 +57,16 @@ export type SongLyric = {
   highlight?: boolean
   time?: number // karaoke timestamp in seconds
 }
+
+export type Worksheet = {
+  id: string
+  title: string
+  cover_kind: string
+  level: string
+  category: string
+  description: string
+  file_url: string
+  page_count: number
+  published: boolean
+  created_at: string
+}

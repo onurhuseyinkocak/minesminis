@@ -10,6 +10,8 @@ const VideosList = lazy(() => import('./pages/VideosList'))
 const VideoPlayer = lazy(() => import('./pages/VideoPlayer'))
 const SongsList = lazy(() => import('./pages/SongsList'))
 const SongPlayer = lazy(() => import('./pages/SongPlayer'))
+const WorksheetsList = lazy(() => import('./pages/WorksheetsList'))
+const WorksheetPlayer = lazy(() => import('./pages/WorksheetPlayer'))
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
 const About = lazy(() => import('./pages/About'))
 const Contact = lazy(() => import('./pages/Contact'))
@@ -38,6 +40,8 @@ export default function App() {
             <Route path="/videos/:id" element={<VideoPlayer />} />
             <Route path="/songs" element={<SongsList />} />
             <Route path="/songs/:id" element={<SongPlayer />} />
+            <Route path="/worksheets" element={<WorksheetsList />} />
+            <Route path="/worksheets/:id" element={<WorksheetPlayer />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<Privacy />} />
