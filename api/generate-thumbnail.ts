@@ -73,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Invalid itemId format' })
   }
 
-  const bucket = storageBucket || 'slides'
+  const bucket = 'slides' // all thumbnails go to slides bucket (worksheets bucket has restrictive RLS)
   const prompt = buildPrompt(title, category)
 
   // 1. Try Pollinations (primary — free)

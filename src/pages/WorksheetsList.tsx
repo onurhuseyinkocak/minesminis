@@ -6,7 +6,7 @@ import AdBanner from '../components/AdBanner'
 import { supabase, Worksheet } from '../lib/supabase'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-const getAiThumb = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/worksheets/thumbnails/${id}.png`
+const getAiThumb = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/slides/thumbnails/${id}.png`
 
 const chips = ['All', 'Easy', 'Medium']
 
