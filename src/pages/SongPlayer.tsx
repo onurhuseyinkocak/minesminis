@@ -95,7 +95,7 @@ export default function SongPlayer() {
                   setCurrentTime(ct)
                   if (dur) setProgress((ct / dur) * 100)
                 }
-              }, 250)
+              }, 150)
             } else {
               if (ytIntervalRef.current) { clearInterval(ytIntervalRef.current); ytIntervalRef.current = null }
             }
@@ -148,26 +148,50 @@ export default function SongPlayer() {
     const hasTimestamps = lyrics.some((l: SongLyric) => typeof l.time === 'number')
 
     if (!hasTimestamps) {
-      // Fallback: word-weighted approximate sync with intro/outro buffer
+      // Fallback: verse-aware approximate sync
       if (duration <= 0) { setActiveLine(-1); return }
-      // Reserve ~15% for intro, ~10% for outro
-      const intro = duration * 0.15
-      const outro = duration * 0.10
-      const lyricDuration = duration - intro - outro
-      if (lyricDuration <= 0) { setActiveLine(-1); return }
-      const totalWords = lyrics.reduce((sum: number, l: SongLyric) => {
-        const text = (l.en || '').trim()
-        return sum + (text ? text.split(/\s+/).length : 0)
-      }, 0)
-      if (totalWords === 0) { setActiveLine(-1); return }
-      let cumWords = 0
+      const intro = duration * 0.05
+      const outro = duration * 0.08
+      const singDur = duration - intro - outro
+      if (singDur <= 0) { setActiveLine(-1); return }
+
+      // Detect verse boundaries (repeating first-line pattern)
+      const lines = lyrics.map((l: SongLyric) => (l.en || '').trim().toLowerCase())
+      const verseStarts: number[] = [0]
+      if (lines.length > 5) {
+        const firstLine = lines[0]
+        const firstWords = firstLine.split(/\s+/)
+        for (let i = 1; i < lines.length; i++) {
+          const words = lines[i].split(/\s+/)
+          const common = firstWords.filter((w: string) => words.includes(w)).length
+          if (lines[i] === firstLine || common / Math.max(firstWords.length, words.length) > 0.6) {
+            verseStarts.push(i)
+          }
+        }
+      }
+
+      const verseCount = verseStarts.length
+      const verseDur = singDur / verseCount
+
       let idx = -1
-      for (let i = 0; i < lyrics.length; i++) {
-        const text = (lyrics[i].en || '').trim()
-        const words = text ? text.split(/\s+/).length : 0
-        const lineStart = intro + (cumWords / totalWords) * lyricDuration
-        if (currentTime >= lineStart) idx = i
-        cumWords += words
+      for (let v = 0; v < verseCount; v++) {
+        const vStart = verseStarts[v]
+        const vEnd = v + 1 < verseCount ? verseStarts[v + 1] : lines.length
+        const vTimeStart = intro + v * verseDur
+        const vLineCount = vEnd - vStart
+        let totalWords = 0
+        const wordCounts: number[] = []
+        for (let i = vStart; i < vEnd; i++) {
+          const wc = Math.max(1, (lines[i] || '').split(/\s+/).length)
+          wordCounts.push(wc)
+          totalWords += wc
+        }
+        let cumWords = 0
+        for (let i = 0; i < vLineCount; i++) {
+          const lineStart = vTimeStart + (cumWords / totalWords) * verseDur
+          if (currentTime >= lineStart) idx = vStart + i
+          cumWords += wordCounts[i]
+        }
       }
       setActiveLine(idx)
       return

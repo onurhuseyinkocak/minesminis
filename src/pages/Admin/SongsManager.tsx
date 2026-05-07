@@ -238,6 +238,107 @@ export default function SongsManager() {
     toast.success('Timestamps cleared')
   }, [editing])
 
+  // Auto-Sync: distribute timestamps evenly based on verse structure detection
+  const autoSync = useCallback(async () => {
+    if (!editing?.youtube_url || !extractYouTubeId(editing.youtube_url)) {
+      toast.error('YouTube URL required for auto-sync')
+      return
+    }
+    const lyrics = editing.lyrics || []
+    if (lyrics.length === 0) { toast.error('Add lyrics first'); return }
+
+    toast('Getting video duration...')
+
+    // Load YT API and create a hidden player to get duration
+    await loadYouTubeAPI()
+    const tempDiv = document.createElement('div')
+    tempDiv.id = 'yt-autosync-temp'
+    tempDiv.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px'
+    document.body.appendChild(tempDiv)
+
+    const dur = await new Promise<number>((resolve) => {
+      const timeout = setTimeout(() => { resolve(0) }, 10000)
+      new window.YT.Player('yt-autosync-temp', {
+        videoId: extractYouTubeId(editing.youtube_url) || '',
+        playerVars: { autoplay: 0 },
+        events: {
+          onReady: (e: { target: YTAdminPlayer }) => {
+            clearTimeout(timeout)
+            const d = e.target.getDuration()
+            try { e.target.destroy() } catch { /* */ }
+            resolve(d)
+          },
+        },
+      } as Record<string, unknown>)
+    })
+    tempDiv.remove()
+
+    if (dur <= 0) { toast.error('Could not get video duration'); return }
+
+    // Detect verse structure: find repeating patterns in lyrics
+    const lines = lyrics.map(l => (l.en || '').trim().toLowerCase())
+
+    // Detect intro/outro: children's songs typically have 5-10% intro, 5-10% outro
+    const introRatio = 0.05
+    const outroRatio = 0.08
+    const intro = dur * introRatio
+    const outro = dur * outroRatio
+    const singDur = dur - intro - outro
+
+    // Find verse boundaries: look for repeating first-line patterns
+    const verseStarts: number[] = [0]
+    if (lines.length > 5) {
+      // Check if first line of each "verse" repeats or has similar structure
+      const firstLine = lines[0]
+      for (let i = 1; i < lines.length; i++) {
+        // A verse starts if: same text as first line, or text is very similar (>60% words match)
+        const words1 = firstLine.split(/\s+/)
+        const words2 = lines[i].split(/\s+/)
+        const common = words1.filter(w => words2.includes(w)).length
+        const similarity = common / Math.max(words1.length, words2.length)
+        if (lines[i] === firstLine || similarity > 0.6) {
+          verseStarts.push(i)
+        }
+      }
+    }
+
+    // Calculate time per verse, then distribute lines within each verse
+    const verseCount = verseStarts.length
+    const verseDur = singDur / verseCount
+
+    const newLyrics = [...lyrics]
+    for (let v = 0; v < verseCount; v++) {
+      const vStart = verseStarts[v]
+      const vEnd = v + 1 < verseCount ? verseStarts[v + 1] : lines.length
+      const vLineCount = vEnd - vStart
+      const vTimeStart = intro + v * verseDur
+
+      // Distribute lines within verse proportional to word count
+      const wordCounts = []
+      let totalWords = 0
+      for (let i = vStart; i < vEnd; i++) {
+        const wc = Math.max(1, (lines[i] || '').split(/\s+/).length)
+        wordCounts.push(wc)
+        totalWords += wc
+      }
+
+      let cumWords = 0
+      for (let i = 0; i < vLineCount; i++) {
+        const lineTime = vTimeStart + (cumWords / totalWords) * verseDur
+        newLyrics[vStart + i] = { ...newLyrics[vStart + i], time: Math.round(lineTime * 10) / 10 }
+        cumWords += wordCounts[i]
+      }
+    }
+
+    // Also set duration
+    const mins = Math.floor(dur / 60)
+    const secs = Math.floor(dur % 60)
+    const durStr = `${mins}:${secs.toString().padStart(2, '0')}`
+
+    setEditing({ ...editing, lyrics: newLyrics, duration: durStr })
+    toast.success(`Auto-synced ${lyrics.length} lines across ${verseCount} verses (${durStr})`)
+  }, [editing])
+
   const fmtTime = (s: number) => {
     const m = Math.floor(s / 60)
     const sec = Math.floor(s % 60)
@@ -403,7 +504,10 @@ export default function SongsManager() {
             </button>
             <button className="mm-btn" onClick={addLyric}><Plus size={16} /> Add Line</button>
             {editing.youtube_url && extractYouTubeId(editing.youtube_url) && (editing.lyrics || []).length > 0 && !timing && (
-              <button className="mm-btn primary" onClick={startTiming}><Timer size={14} /> Tap to Time</button>
+              <>
+                <button className="mm-btn" onClick={autoSync}><Timer size={14} /> Auto-Sync</button>
+                <button className="mm-btn primary" onClick={startTiming}><Timer size={14} /> Tap to Time</button>
+              </>
             )}
           </div>
         </div>
