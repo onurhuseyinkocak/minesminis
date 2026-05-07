@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Loader, ImagePlus } from 'lucide-react'
 import { supabase, Video } from '../../lib/supabase'
 import { extractYouTubeId } from '../../lib/youtube'
+import { useCoverProgress, CoverProgressBar } from '../../components/CoverProgress'
 import toast from 'react-hot-toast'
 
 const coverOptions = ['abc','duck','bus','farm2','hello','dance','days','fruit','rainbow','star','happy','head','bingo','spider','apple']
@@ -11,6 +12,8 @@ export default function VideosManager() {
   const [editing, setEditing] = useState<Video | null>(null)
   const [loading, setLoading] = useState(true)
   const [fetching, setFetching] = useState(false)
+  const [coverPreview, setCoverPreview] = useState('')
+  const coverProgress = useCoverProgress()
 
   const load = async () => {
     const { data } = await supabase.from('mm_videos').select('*').order('created_at', { ascending: false })
@@ -52,6 +55,28 @@ export default function VideosManager() {
     if (vid && !editing.title) {
       fetchYouTubeInfo(url)
     }
+  }
+
+  const generateCoverNow = async () => {
+    if (!editing?.title.trim()) { toast.error('Enter a title first'); return }
+    setCoverPreview(''); coverProgress.reset(); coverProgress.setStage('auth')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token || ''
+      const itemId = editing.id || `preview-${Date.now()}`
+      coverProgress.setStage('generating')
+      const res = await fetch('/api/generate-thumbnail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ itemId, title: editing.title, category: editing.category, contentType: 'video', storageBucket: 'slides' }),
+      })
+      coverProgress.setStage('uploading')
+      if (res.ok) {
+        const result = await res.json()
+        if (result.thumbnailUrl) { setCoverPreview(result.thumbnailUrl + '?t=' + Date.now()); coverProgress.setStage('done'); toast.success(`Cover generated via ${result.source}`) }
+        else if (result.coverKind) { setEditing({ ...editing, cover_kind: result.coverKind }); coverProgress.setStage('done'); toast('AI unavailable — random cover selected') }
+      } else { coverProgress.setStage('error'); toast.error('Generation failed') }
+    } catch { coverProgress.setStage('error'); toast.error('Generation failed') }
   }
 
   const generateThumbnail = async (videoId: string, title: string, category: string): Promise<void> => {
@@ -191,6 +216,18 @@ export default function VideosManager() {
               {coverOptions.map(c => <option key={c}>{c}</option>)}
             </select>
           </label>
+        </div>
+
+        {/* AI Cover Generation */}
+        <div style={{ marginTop: 16, padding: 16, background: 'var(--surface-2)', borderRadius: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button className="mm-btn" onClick={generateCoverNow} disabled={coverProgress.stage !== 'idle' && coverProgress.stage !== 'done' && coverProgress.stage !== 'error'} style={{ flexShrink: 0 }}>
+              {coverProgress.stage !== 'idle' && coverProgress.stage !== 'done' && coverProgress.stage !== 'error' ? <><Loader size={14} style={{ animation: 'spin 1s linear infinite' }} /> Generating...</> : <><ImagePlus size={14} /> Generate AI Cover</>}
+            </button>
+            {coverPreview && <img src={coverPreview} alt="Generated cover" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 12, border: '2px solid var(--green)' }} />}
+            {!coverPreview && coverProgress.stage === 'idle' && <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>AI generates a cover from the title.</span>}
+          </div>
+          <CoverProgressBar progress={coverProgress.progress} label={coverProgress.stage !== 'idle' ? { auth: 'Authenticating...', generating: 'AI generating image...', uploading: 'Uploading cover...', done: 'Done!', error: 'Failed' }[coverProgress.stage] || '' : ''} />
         </div>
       </div>
     )

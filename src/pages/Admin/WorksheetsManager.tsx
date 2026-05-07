@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Plus, Trash2, Eye, EyeOff, Save, Pencil, Upload, Loader, ImagePlus } from 'lucide-react'
 import { supabase, Worksheet } from '../../lib/supabase'
+import { useCoverProgress, CoverProgressBar } from '../../components/CoverProgress'
 import toast from 'react-hot-toast'
 
 const coverOptions = ['rainbow','farm','farm2','family','numbers','school','weather','body','routine','abc','duck','bus','star','apple','fruit','hello','dance','days','happy','head','bingo','spider']
@@ -10,8 +11,8 @@ export default function WorksheetsManager() {
   const [editing, setEditing] = useState<Worksheet | null>(null)
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
-  const [generatingCover, setGeneratingCover] = useState(false)
   const [coverPreview, setCoverPreview] = useState('')
+  const coverProgress = useCoverProgress()
   const fileRef = useRef<HTMLInputElement>(null)
 
   const load = async () => {
@@ -42,23 +43,24 @@ export default function WorksheetsManager() {
 
   const generateCoverNow = async () => {
     if (!editing?.title.trim()) { toast.error('Enter a title first'); return }
-    setGeneratingCover(true); setCoverPreview('')
+    setCoverPreview(''); coverProgress.reset(); coverProgress.setStage('auth')
     try {
       const { data: { session } } = await supabase.auth.getSession()
       const token = session?.access_token || ''
       const itemId = editing.id || `preview-${Date.now()}`
+      coverProgress.setStage('generating')
       const res = await fetch('/api/generate-thumbnail', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ itemId, title: editing.title, category: editing.category, contentType: 'printable worksheet', storageBucket: 'worksheets' }),
       })
+      coverProgress.setStage('uploading')
       if (res.ok) {
         const result = await res.json()
-        if (result.thumbnailUrl) { setCoverPreview(result.thumbnailUrl + '?t=' + Date.now()); toast.success(`Cover generated via ${result.source}`) }
-        else if (result.coverKind) { setEditing({ ...editing, cover_kind: result.coverKind }); toast('AI unavailable — random cover selected') }
-      } else toast.error('Generation failed')
-    } catch { toast.error('Generation failed') }
-    setGeneratingCover(false)
+        if (result.thumbnailUrl) { setCoverPreview(result.thumbnailUrl + '?t=' + Date.now()); coverProgress.setStage('done'); toast.success(`Cover generated via ${result.source}`) }
+        else if (result.coverKind) { setEditing({ ...editing, cover_kind: result.coverKind }); coverProgress.setStage('done'); toast('AI unavailable — random cover selected') }
+      } else { coverProgress.setStage('error'); toast.error('Generation failed') }
+    } catch { coverProgress.setStage('error'); toast.error('Generation failed') }
   }
 
   const save = async (publish: boolean) => {
@@ -188,12 +190,13 @@ export default function WorksheetsManager() {
         {/* AI Cover Generation */}
         <div style={{ marginTop: 16, padding: 16, background: 'var(--surface-2)', borderRadius: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <button className="mm-btn" onClick={generateCoverNow} disabled={generatingCover} style={{ flexShrink: 0 }}>
-              {generatingCover ? <><Loader size={14} style={{ animation: 'spin 1s linear infinite' }} /> Generating...</> : <><ImagePlus size={14} /> Generate AI Cover</>}
+            <button className="mm-btn" onClick={generateCoverNow} disabled={coverProgress.stage !== 'idle' && coverProgress.stage !== 'done' && coverProgress.stage !== 'error'} style={{ flexShrink: 0 }}>
+              {coverProgress.stage !== 'idle' && coverProgress.stage !== 'done' && coverProgress.stage !== 'error' ? <><Loader size={14} style={{ animation: 'spin 1s linear infinite' }} /> Generating...</> : <><ImagePlus size={14} /> Generate AI Cover</>}
             </button>
             {coverPreview && <img src={coverPreview} alt="Generated cover" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 12, border: '2px solid var(--green)' }} />}
-            {!coverPreview && <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>AI generates a cover from the title.</span>}
+            {!coverPreview && coverProgress.stage === 'idle' && <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>AI generates a cover from the title.</span>}
           </div>
+          <CoverProgressBar progress={coverProgress.progress} label={coverProgress.stage !== 'idle' ? { auth: 'Authenticating...', generating: 'AI generating image...', uploading: 'Uploading cover...', done: 'Done!', error: 'Failed' }[coverProgress.stage] || '' : ''} />
         </div>
 
         <div style={{ marginTop: 16, padding: 16, background: 'var(--surface-2)', borderRadius: 14 }}>

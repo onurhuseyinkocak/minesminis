@@ -5,10 +5,11 @@ const COVER_KINDS = ['rainbow','farm','farm2','family','numbers','school','weath
 function buildPrompt(title: string, category?: string): string {
   const subject = title.replace(/[^\w\s]/g, '').trim()
   return [
-    `${subject}.`,
-    category ? `${category} theme.` : '',
-    'Cute kawaii children illustration, bright colors, soft rounded shapes, white background.',
-    'No text, no letters, no words. Child-safe, ages 3-8.',
+    `Cute kawaii illustration of ${subject}, children book style,`,
+    category ? `${category} theme,` : '',
+    'bright vivid colors, soft rounded shapes, clean white background, centered composition,',
+    'no text no letters no words no numbers no watermarks no labels no titles, only illustration,',
+    'child-safe friendly happy, digital art, high quality',
   ].filter(Boolean).join(' ')
 }
 
