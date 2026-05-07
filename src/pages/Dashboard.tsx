@@ -98,8 +98,8 @@ export default function Dashboard() {
               <CoverImg src={f.image} alt={f.title} fallback={f.coverFallback} />
             </div>
             <div className="mm-card-body">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h3 className="mm-card-title">{f.title}</h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <h3 className="mm-card-title" style={{ flex: 1, minWidth: 0 }}>{f.title}</h3>
                 <div style={{
                   width: 36, height: 36, borderRadius: 10, background: 'var(--surface-2)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)',

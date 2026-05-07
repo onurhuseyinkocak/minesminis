@@ -1,5 +1,55 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
+const COVER_KINDS = ['rainbow','farm','farm2','family','numbers','school','weather','body','routine','abc','duck','bus','star','apple','fruit','hello','dance','days','happy','head','bingo','spider']
+
+function buildPrompt(title: string, category?: string, contentType?: string): string {
+  const subject = title.replace(/[^\w\s]/g, '').trim()
+  return [
+    `A cute, cheerful children's illustration about "${subject}".`,
+    category ? `Related to the topic: ${category}.` : '',
+    contentType ? `This is for a children's ${contentType}.` : '',
+    'Style: bright colorful cartoon, kawaii, flat illustration, soft rounded shapes, pastel and vibrant colors, playful and friendly.',
+    'Suitable for young children ages 3-8. Absolutely NO scary, violent, dark, or inappropriate imagery.',
+    'NO text, NO letters, NO words, NO numbers in the image.',
+    'Clean white or very light pastel background. Simple centered composition with one clear subject.',
+    'High quality, professional children book illustration style.',
+  ].filter(Boolean).join(' ')
+}
+
+async function generateWithPollinations(prompt: string): Promise<Buffer | null> {
+  try {
+    const encoded = encodeURIComponent(prompt)
+    const url = `https://image.pollinations.ai/prompt/${encoded}?width=512&height=512&nologo=true&seed=${Date.now()}`
+    const res = await fetch(url, { signal: AbortSignal.timeout(30000) })
+    if (!res.ok) return null
+    const buf = Buffer.from(await res.arrayBuffer())
+    if (buf.length < 5000) return null // too small = error image
+    return buf
+  } catch {
+    return null
+  }
+}
+
+async function generateWithDalle(prompt: string, apiKey: string): Promise<Buffer | null> {
+  try {
+    const res = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'dall-e-3', prompt, n: 1, size: '1024x1024', quality: 'standard' }),
+      signal: AbortSignal.timeout(60000),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    const imageUrl = data.data?.[0]?.url
+    if (!imageUrl) return null
+    const imgRes = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) })
+    if (!imgRes.ok) return null
+    return Buffer.from(await imgRes.arrayBuffer())
+  } catch {
+    return null
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
@@ -7,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const SUPABASE_URL = process.env.VITE_SUPABASE_URL
   const SUPABASE_ANON = process.env.VITE_SUPABASE_ANON_KEY
 
-  // Auth check — verify Supabase JWT
+  // Auth check
   const authHeader = req.headers.authorization
   if (!authHeader?.startsWith('Bearer ') || !SUPABASE_URL || !SUPABASE_ANON) {
     return res.status(401).json({ error: 'Unauthorized' })
@@ -18,60 +68,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   })
   if (!userRes.ok) return res.status(401).json({ error: 'Invalid token' })
 
-  const { slideId, title, category, slidesData, fileUrl } = req.body || {}
-  if (!slideId || !title) return res.status(400).json({ error: 'slideId and title required' })
+  const { itemId, title, category, contentType, storageBucket } = req.body || {}
+  if (!itemId || !title) return res.status(400).json({ error: 'itemId and title required' })
 
-  // Validate slideId to prevent path traversal
-  if (!/^[a-zA-Z0-9-]{20,}$/.test(slideId)) {
-    return res.status(400).json({ error: 'Invalid slideId format' })
-  }
-  if (!OPENAI_KEY || !SUPABASE_URL || !SUPABASE_ANON) {
-    return res.status(500).json({ error: 'Missing env vars' })
+  // Validate itemId format
+  if (!/^[a-zA-Z0-9-]{20,}$/.test(itemId)) {
+    return res.status(400).json({ error: 'Invalid itemId format' })
   }
 
-  // Build a content-aware prompt
-  const words = (slidesData || []).map((s: { label: string }) => s.label).filter(Boolean).slice(0, 10)
-  const contentHint = words.length > 0
-    ? `The slides teach these English words: ${words.join(', ')}.`
-    : fileUrl
-      ? `It is a presentation file about "${title}".`
-      : `The topic is "${title}".`
+  const bucket = storageBucket || 'slides'
+  const prompt = buildPrompt(title, category, contentType)
 
-  const prompt = [
-    `Create a colorful, child-friendly educational illustration for a children's English learning slide titled "${title}".`,
-    category ? `Category: ${category}.` : '',
-    contentHint,
-    'Style: bright, playful, cartoon-like, suitable for young children (ages 4-10).',
-    'No text, no letters, no words in the image. Only visual illustrations.',
-    'White or very light background. Clean, simple composition.',
-  ].filter(Boolean).join(' ')
+  // 1. Try Pollinations (primary — free)
+  let imageBuffer = await generateWithPollinations(prompt)
+  let source = 'pollinations'
 
+  // 2. Try DALL-E 3 (fallback)
+  if (!imageBuffer && OPENAI_KEY) {
+    imageBuffer = await generateWithDalle(prompt, OPENAI_KEY)
+    source = 'dalle'
+  }
+
+  // 3. Random cover fallback
+  if (!imageBuffer) {
+    const randomCover = COVER_KINDS[Math.floor(Math.random() * COVER_KINDS.length)]
+    return res.status(200).json({ thumbnailUrl: null, coverKind: randomCover, source: 'fallback' })
+  }
+
+  // Upload to Supabase Storage
   try {
-    // Generate image with DALL-E 3
-    const dalleRes = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'dall-e-3', prompt, n: 1, size: '1024x1024', quality: 'standard' }),
-    })
-
-    if (!dalleRes.ok) {
-      const err = await dalleRes.text()
-      return res.status(500).json({ error: 'DALL-E failed', detail: err })
-    }
-
-    const dalleData = await dalleRes.json()
-    const imageUrl = dalleData.data?.[0]?.url
-    if (!imageUrl) return res.status(500).json({ error: 'No image URL returned' })
-
-    // Download the generated image
-    const imgRes = await fetch(imageUrl)
-    if (!imgRes.ok) return res.status(500).json({ error: 'Failed to download image' })
-    const imgBuffer = Buffer.from(await imgRes.arrayBuffer())
-
-    // Upload to Supabase Storage: slides/thumbnails/{slideId}.png
-    const storagePath = `thumbnails/${slideId}.png`
+    const storagePath = `thumbnails/${itemId}.png`
     const uploadRes = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/slides/${storagePath}`,
+      `${SUPABASE_URL}/storage/v1/object/${bucket}/${storagePath}`,
       {
         method: 'PUT',
         headers: {
@@ -79,18 +107,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           'Content-Type': 'image/png',
           'x-upsert': 'true',
         },
-        body: imgBuffer,
+        body: imageBuffer,
       }
     )
 
     if (!uploadRes.ok) {
-      const err = await uploadRes.text()
-      return res.status(500).json({ error: 'Storage upload failed', detail: err })
+      const randomCover = COVER_KINDS[Math.floor(Math.random() * COVER_KINDS.length)]
+      return res.status(200).json({ thumbnailUrl: null, coverKind: randomCover, source: 'fallback' })
     }
 
-    const thumbnailUrl = `${SUPABASE_URL}/storage/v1/object/public/slides/${storagePath}`
-    return res.status(200).json({ thumbnailUrl })
-  } catch (e) {
-    return res.status(500).json({ error: 'Internal error', detail: String(e) })
+    const thumbnailUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${storagePath}`
+    return res.status(200).json({ thumbnailUrl, source })
+  } catch {
+    const randomCover = COVER_KINDS[Math.floor(Math.random() * COVER_KINDS.length)]
+    return res.status(200).json({ thumbnailUrl: null, coverKind: randomCover, source: 'fallback' })
   }
 }

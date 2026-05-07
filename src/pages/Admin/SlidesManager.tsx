@@ -21,7 +21,7 @@ export default function SlidesManager() {
 
   useEffect(() => { load() }, [])
 
-  const generateThumbnail = async (slideId: string, data: Slide): Promise<boolean> => {
+  const generateThumbnail = async (slideId: string, data: Slide): Promise<void> => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       const token = session?.access_token || ''
@@ -29,18 +29,22 @@ export default function SlidesManager() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
-          slideId,
+          itemId: slideId,
           title: data.title,
           category: data.category,
-          slidesData: data.slides_data,
-          fileUrl: data.file_url,
+          contentType: 'slide presentation',
+          storageBucket: 'slides',
         }),
       })
-      if (!res.ok) throw new Error('AI thumbnail failed')
-      return true
+      if (res.ok) {
+        const result = await res.json()
+        if (result.coverKind && !result.thumbnailUrl) {
+          // AI failed, update cover_kind to random fallback
+          await supabase.from('mm_slides').update({ cover_kind: result.coverKind }).eq('id', slideId)
+        }
+      }
     } catch {
-      // Silent fallback: use a random pre-made cover instead of AI thumbnail
-      return true
+      // Silent — cover_kind stays as is
     }
   }
 
