@@ -79,7 +79,7 @@ export default function WorksheetsManager() {
         if (error) throw error
         savedId = inserted.id
       }
-      if (publish) generateThumbnail(savedId, rest.title, rest.category)
+      // Cover generation is manual via "Generate AI Cover" button
       toast.success(publish ? 'Published' : 'Saved as draft')
       setEditing(null)
       load()

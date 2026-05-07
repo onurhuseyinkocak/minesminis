@@ -108,8 +108,7 @@ export default function SlidesManager() {
           if (error) throw error
           savedId = inserted.id
         }
-        // Generate thumbnail (silently falls back to cover_kind on error)
-        await generateThumbnail(savedId, { ...editing, ...rest })
+        // Cover generation is manual via "Generate AI Cover" button
         // Now publish
         const { error: pubErr } = await supabase.from('mm_slides').update({ published: true }).eq('id', savedId)
         if (pubErr) throw pubErr
@@ -150,7 +149,7 @@ export default function SlidesManager() {
       if (!published) {
         const slideData = slides.find(s => s.id === id)
         if (!slideData?.file_url?.trim()) { toast.error('Upload a file before publishing'); return }
-        if (slideData) await generateThumbnail(id, slideData)
+        // Cover generation is manual via "Generate AI Cover" button
       }
       const { error } = await supabase.from('mm_slides').update({ published: !published }).eq('id', id)
       if (error) throw error
