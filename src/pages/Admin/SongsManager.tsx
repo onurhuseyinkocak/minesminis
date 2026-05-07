@@ -88,6 +88,7 @@ export default function SongsManager() {
   const save = async (publish: boolean) => {
     if (!editing) return
     if (!editing.title.trim()) { toast.error('Title is required'); return }
+    if (publish && !editing.audio_url?.trim() && !editing.youtube_url?.trim()) { toast.error('Add an audio file or YouTube URL before publishing'); return }
     const { id, created_at: _, ...rest } = editing
     rest.published = publish
     try {
@@ -116,6 +117,10 @@ export default function SongsManager() {
 
   const toggle = async (id: string, published: boolean) => {
     try {
+      if (!published) {
+        const song = songs.find(s => s.id === id)
+        if (!song?.audio_url?.trim() && !song?.youtube_url?.trim()) { toast.error('Add an audio file or YouTube URL before publishing'); return }
+      }
       const { error } = await supabase.from('mm_songs').update({ published: !published }).eq('id', id)
       if (error) throw error
       toast.success(published ? 'Unpublished' : 'Published')

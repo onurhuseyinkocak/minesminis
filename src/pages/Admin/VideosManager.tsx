@@ -57,6 +57,7 @@ export default function VideosManager() {
   const save = async (publish: boolean) => {
     if (!editing) return
     if (!editing.title.trim()) { toast.error('Title is required'); return }
+    if (publish && !editing.youtube_url?.trim()) { toast.error('Add a YouTube URL before publishing'); return }
     const { id, created_at: _, ...rest } = editing
     rest.published = publish
     try {
@@ -85,6 +86,10 @@ export default function VideosManager() {
 
   const toggle = async (id: string, published: boolean) => {
     try {
+      if (!published) {
+        const video = videos.find(v => v.id === id)
+        if (!video?.youtube_url?.trim()) { toast.error('Add a YouTube URL before publishing'); return }
+      }
       const { error } = await supabase.from('mm_videos').update({ published: !published }).eq('id', id)
       if (error) throw error
       toast.success(published ? 'Unpublished' : 'Published')

@@ -47,6 +47,7 @@ export default function SlidesManager() {
   const save = async (publish: boolean) => {
     if (!editing) return
     if (!editing.title.trim()) { toast.error('Title is required'); return }
+    if (publish && (!editing.slides_data || editing.slides_data.length === 0)) { toast.error('Add at least one slide before publishing'); return }
     const { id, created_at: _, ...rest } = editing
 
     try {
@@ -103,8 +104,8 @@ export default function SlidesManager() {
   const toggle = async (id: string, published: boolean) => {
     try {
       if (!published) {
-        // Publishing — generate thumbnail first
         const slideData = slides.find(s => s.id === id)
+        if (!slideData?.slides_data || slideData.slides_data.length === 0) { toast.error('Add slide content before publishing'); return }
         if (slideData) await generateThumbnail(id, slideData)
       }
       const { error } = await supabase.from('mm_slides').update({ published: !published }).eq('id', id)

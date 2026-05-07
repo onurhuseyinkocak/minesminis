@@ -23,6 +23,7 @@ export default function WorksheetsManager() {
   const save = async (publish: boolean) => {
     if (!editing) return
     if (!editing.title.trim()) { toast.error('Title is required'); return }
+    if (publish && !editing.file_url?.trim()) { toast.error('Upload a file before publishing'); return }
     const { id, created_at: _, ...rest } = editing
     rest.published = publish
     try {
@@ -51,6 +52,10 @@ export default function WorksheetsManager() {
 
   const toggle = async (id: string, published: boolean) => {
     try {
+      if (!published) {
+        const ws = worksheets.find(w => w.id === id)
+        if (!ws?.file_url?.trim()) { toast.error('Upload a file before publishing'); return }
+      }
       const { error } = await supabase.from('mm_worksheets').update({ published: !published }).eq('id', id)
       if (error) throw error
       toast.success(published ? 'Unpublished' : 'Published')
