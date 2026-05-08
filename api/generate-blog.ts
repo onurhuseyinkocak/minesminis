@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || ''
-const SUPABASE_ANON = process.env.VITE_SUPABASE_ANON_KEY || ''
+const SUPABASE_URL = (process.env.VITE_SUPABASE_URL || '').replace(/\\n/g, '').trim()
+const SUPABASE_ANON = (process.env.VITE_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim()
 
 // SEO keyword pools — researched Turkish teacher search terms (high volume)
 const TEACHER_KEYWORDS = [
@@ -268,7 +268,8 @@ async function generateSingleBlog(category: string, retries = 3): Promise<{ succ
       if (error) throw new Error(`Supabase insert error: ${error}`)
 
       return { success: true, blogId: data?.[0]?.id }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Unknown error'
       if (attempt === retries) {
         // Log failed attempt
         try {
@@ -283,13 +284,13 @@ async function generateSingleBlog(category: string, retries = 3): Promise<{ succ
               title,
               slug: slug + '-failed',
               status: 'failed',
-              error_log: `${err.message} (after ${retries} retries)`,
+              error_log: `${errMsg} (after ${retries} retries)`,
               category,
               keywords,
             }),
           })
         } catch {}
-        return { success: false, error: err.message }
+        return { success: false, error: errMsg }
       }
       // Wait before retry (exponential backoff)
       await new Promise(r => setTimeout(r, 2000 * attempt))
@@ -324,22 +325,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const startTime = Date.now()
   const results = { generated: 0, failed: 0, errors: [] as string[] }
 
-  // Generate 3 blogs: 1 teacher + 2 kids
-  const tasks = [
-    generateSingleBlog('teacher-resources'),
-    generateSingleBlog('teaching-english-to-kids'),
-    generateSingleBlog('teaching-english-to-kids'),
+  // Generate 3 blogs sequentially: 1 teacher + 2 kids
+  // Sequential to avoid Pollinations rate limiting (429)
+  const categories = [
+    'teacher-resources',
+    'teaching-english-to-kids',
+    'teaching-english-to-kids',
   ]
 
-  const outcomes = await Promise.allSettled(tasks)
-
-  for (const outcome of outcomes) {
-    if (outcome.status === 'fulfilled' && outcome.value.success) {
-      results.generated++
-    } else {
+  for (const cat of categories) {
+    try {
+      const outcome = await generateSingleBlog(cat)
+      if (outcome.success) {
+        results.generated++
+      } else {
+        results.failed++
+        if (outcome.error) results.errors.push(outcome.error)
+      }
+    } catch (err: unknown) {
       results.failed++
-      const errMsg = outcome.status === 'fulfilled' ? outcome.value.error : outcome.reason?.message
-      if (errMsg) results.errors.push(errMsg)
+      results.errors.push(err instanceof Error ? err.message : 'Unknown error')
+    }
+    // Small delay between blogs to respect rate limits
+    if (results.generated + results.failed < 3) {
+      await new Promise(r => setTimeout(r, 3000))
     }
   }
 
