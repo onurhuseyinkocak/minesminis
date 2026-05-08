@@ -24,33 +24,6 @@ export default function SlidesManager() {
 
   useEffect(() => { load() }, [])
 
-  const generateThumbnail = async (slideId: string, data: Slide): Promise<void> => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const token = session?.access_token || ''
-      const res = await fetch('/api/generate-thumbnail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({
-          itemId: slideId,
-          title: data.title,
-          category: data.category,
-          contentType: 'slide presentation',
-          storageBucket: 'slides',
-        }),
-      })
-      if (res.ok) {
-        const result = await res.json()
-        if (result.coverKind && !result.thumbnailUrl) {
-          // AI failed, update cover_kind to random fallback
-          await supabase.from('mm_slides').update({ cover_kind: result.coverKind }).eq('id', slideId)
-        }
-      }
-    } catch {
-      // Silent — cover_kind stays as is
-    }
-  }
-
   const generateCoverNow = async () => {
     if (!editing?.title.trim()) { toast.error('Enter a title first'); return }
     setCoverPreview('')

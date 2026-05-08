@@ -110,24 +110,6 @@ export default function SongsManager() {
     } catch { coverProgress.setStage('error'); toast.error('Generation failed') }
   }
 
-  const generateThumbnail = async (songId: string, title: string, category: string): Promise<void> => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const token = session?.access_token || ''
-      const res = await fetch('/api/generate-thumbnail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ itemId: songId, title, category, contentType: 'children song', storageBucket: 'slides' }),
-      })
-      if (res.ok) {
-        const result = await res.json()
-        if (result.coverKind && !result.thumbnailUrl) {
-          await supabase.from('mm_songs').update({ cover_kind: result.coverKind }).eq('id', songId)
-        }
-      }
-    } catch { /* silent */ }
-  }
-
   const save = async (publish: boolean) => {
     if (!editing) return
     if (!editing.title.trim()) { toast.error('Title is required'); return }
@@ -135,14 +117,12 @@ export default function SongsManager() {
     const { id, created_at: _, ...rest } = editing
     rest.published = publish
     try {
-      let savedId = id
       if (id) {
         const { error } = await supabase.from('mm_songs').update(rest).eq('id', id)
         if (error) throw error
       } else {
-        const { data: inserted, error } = await supabase.from('mm_songs').insert(rest).select('id').single()
+        const { error } = await supabase.from('mm_songs').insert(rest)
         if (error) throw error
-        savedId = inserted.id
       }
       // Cover generation is manual via "Generate AI Cover" button
       toast.success(publish ? 'Published' : 'Saved as draft')
