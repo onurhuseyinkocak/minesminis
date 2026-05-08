@@ -21,6 +21,7 @@ export default function Footer() {
           2026 minesminis. All rights reserved.
         </div>
         <nav style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }} aria-label="Footer navigation">
+          <Link to="/blog" style={{ fontSize: 13, color: 'var(--ink-3)', textDecoration: 'none', fontWeight: 600 }}>Blog</Link>
           <Link to="/about" style={{ fontSize: 13, color: 'var(--ink-3)', textDecoration: 'none', fontWeight: 600 }}>About</Link>
           <Link to="/contact" style={{ fontSize: 13, color: 'var(--ink-3)', textDecoration: 'none', fontWeight: 600 }}>Contact</Link>
           <Link to="/privacy" style={{ fontSize: 13, color: 'var(--ink-3)', textDecoration: 'none', fontWeight: 600 }}>Privacy</Link>

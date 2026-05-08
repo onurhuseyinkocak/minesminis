@@ -70,3 +70,21 @@ export type Worksheet = {
   published: boolean
   created_at: string
 }
+
+export type Blog = {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content_html: string
+  meta_description: string
+  keywords: string[]
+  category: string
+  cover_url: string | null
+  status: string
+  error_log: string | null
+  reading_time_min: number
+  published_at: string | null
+  created_at: string
+  updated_at: string
+}

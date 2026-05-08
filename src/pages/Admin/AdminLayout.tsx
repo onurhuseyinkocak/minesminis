@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { Presentation, Video, Music, FileText, LogOut, LayoutDashboard, Eye, EyeOff, BarChart3, ArrowRight } from 'lucide-react'
+import { Presentation, Video, Music, FileText, LogOut, LayoutDashboard, Eye, EyeOff, BarChart3, ArrowRight, BookOpen } from 'lucide-react'
 import SlidesManager from './SlidesManager'
 import VideosManager from './VideosManager'
 import SongsManager from './SongsManager'
 import WorksheetsManager from './WorksheetsManager'
+import BlogsManager from './BlogsManager'
 import { supabase } from '../../lib/supabase'
 import { usePresenceCount } from '../../hooks/usePresence'
 
@@ -77,6 +78,7 @@ const navItems = [
   { path: '/admin/videos', label: 'Videos', icon: Video },
   { path: '/admin/songs', label: 'Songs', icon: Music },
   { path: '/admin/worksheets', label: 'Worksheets', icon: FileText },
+  { path: '/admin/blog', label: 'Blog', icon: BookOpen },
 ]
 
 function AdminDashboard() {
@@ -335,6 +337,7 @@ export default function AdminLayout() {
           <Route path="videos" element={<VideosManager />} />
           <Route path="songs" element={<SongsManager />} />
           <Route path="worksheets" element={<WorksheetsManager />} />
+          <Route path="blog" element={<BlogsManager />} />
         </Routes>
       </div>
     </div>

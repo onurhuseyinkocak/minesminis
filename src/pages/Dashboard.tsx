@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, Presentation, Video, Music, FileText, ChevronRight, Star } from 'lucide-react'
+import { Play, Presentation, Video, Music, FileText, ChevronRight, Star, BookOpen } from 'lucide-react'
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
@@ -22,7 +22,9 @@ export default function Dashboard() {
   const [counts, setCounts] = useState({ slides: 0, videos: 0, songs: 0, worksheets: 0 })
   const [recent, setRecent] = useState<{ id: string; title: string; cover_kind: string; type: string; meta: string; tag: string }[]>([])
 
-  useEffect(() => { document.title = 'minesminis - English for Kids' }, [])
+  const [blogPosts, setBlogPosts] = useState<{ id: string; title: string; slug: string; excerpt: string; cover_url: string | null; published_at: string | null }[]>([])
+
+  useEffect(() => { document.title = 'minesminis - Cocuklar Icin Ingilizce Ogrenme Platformu' }, [])
 
   useEffect(() => {
     // Fetch counts
@@ -49,6 +51,11 @@ export default function Dashboard() {
       ;(w.data || []).forEach((d: any) => items.push({ ...d, type: 'worksheets', meta: `${d.page_count} pages`, tag: 'green' }))
       setRecent(items)
     }).catch(() => {})
+
+    // Fetch latest blog posts
+    supabase.from('mm_blogs').select('id, title, slug, excerpt, cover_url, published_at')
+      .eq('status', 'published').order('published_at', { ascending: false }).limit(3)
+      .then(({ data }) => { if (data) setBlogPosts(data) })
   }, [])
 
   const countLabels = [counts.slides + ' slides', counts.videos + ' videos', counts.songs + ' songs', counts.worksheets + ' sheets']
@@ -140,6 +147,39 @@ export default function Dashboard() {
                   <div className="mm-card-meta">
                     <span className={`mm-tag ${p.tag}`}>{p.meta}</span>
                   </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Blog Posts — SEO + Internal Linking */}
+      {blogPosts.length > 0 && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, marginTop: 28 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: 0, letterSpacing: -0.5 }}>
+              Blog
+            </h2>
+            <Link to="/blog" className="mm-btn">Tumu <ChevronRight size={14} /></Link>
+          </div>
+          <div className="mm-grid-3">
+            {blogPosts.map(post => (
+              <Link key={post.id} to={`/blog/${post.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="mm-card-cover">
+                  {post.cover_url ? (
+                    <img src={post.cover_url} alt={post.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #7B68EE 0%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <BookOpen size={36} color="white" style={{ opacity: 0.6 }} />
+                    </div>
+                  )}
+                </div>
+                <div className="mm-card-body">
+                  <h3 className="mm-card-title" style={{ whiteSpace: 'normal', WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical' as any }}>{post.title}</h3>
+                  <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '4px 0 0', lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                    {post.excerpt}
+                  </p>
                 </div>
               </Link>
             ))}

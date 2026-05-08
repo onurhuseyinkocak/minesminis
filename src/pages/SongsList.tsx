@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, Clock } from 'lucide-react'
+import { Play } from 'lucide-react'
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Song } from '../lib/supabase'
@@ -19,15 +19,6 @@ function SongCard({ s }: { s: Song }) {
           <img src={ytThumb} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <Cover kind={s.cover_kind} />
-        )}
-        {s.duration && (
-          <div style={{
-            position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
-            color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-          }}>
-            <Clock size={11} /> {s.duration}
-          </div>
         )}
         <div className="mm-card-cta"><Play size={18} /></div>
       </div>

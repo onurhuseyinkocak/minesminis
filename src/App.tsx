@@ -15,7 +15,9 @@ const SongsList = lazy(() => import('./pages/SongsList'))
 const SongPlayer = lazy(() => import('./pages/SongPlayer'))
 const WorksheetsList = lazy(() => import('./pages/WorksheetsList'))
 const WorksheetPlayer = lazy(() => import('./pages/WorksheetPlayer'))
-const AdminLayout = lazy(() => import('./pages/Admin/AdminLayout'))
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const BlogList = lazy(() => import('./pages/BlogList'))
+const BlogPost = lazy(() => import('./pages/BlogPost'))
 const About = lazy(() => import('./pages/About'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Privacy = lazy(() => import('./pages/Privacy'))
@@ -58,6 +60,8 @@ function AppContent() {
           <Route path="/songs/:id" element={<SongPlayer />} />
           <Route path="/worksheets" element={<WorksheetsList />} />
           <Route path="/worksheets/:id" element={<WorksheetPlayer />} />
+          <Route path="/blog" element={<BlogList />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />

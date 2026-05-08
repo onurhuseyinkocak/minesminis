@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Presentation, Video, Music, FileText } from 'lucide-react'
+import { Home, Presentation, Video, Music, FileText, BookOpen } from 'lucide-react'
 
 const tabs = [
   { id: '/', label: 'Home', icon: Home },
@@ -7,6 +7,7 @@ const tabs = [
   { id: '/videos', label: 'Videos', icon: Video },
   { id: '/songs', label: 'Songs', icon: Music },
   { id: '/worksheets', label: 'Worksheets', icon: FileText },
+  { id: '/blog', label: 'Blog', icon: BookOpen },
 ]
 
 export default function TopNav() {

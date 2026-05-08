@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, Clock } from 'lucide-react'
+import { Play } from 'lucide-react'
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Video } from '../lib/supabase'
@@ -15,15 +15,6 @@ function VideoCard({ v }: { v: Video }) {
           <img src={v.thumbnail_url} alt={v.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <Cover kind={v.cover_kind} />
-        )}
-        {v.duration && (
-          <div style={{
-            position: 'absolute', bottom: 10, left: 10, background: 'rgba(27,27,42,0.85)',
-            color: 'white', padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-          }}>
-            <Clock size={11} /> {v.duration}
-          </div>
         )}
         <div className="mm-card-cta"><Play size={18} /></div>
       </div>

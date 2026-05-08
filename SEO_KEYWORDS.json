@@ -1,0 +1,805 @@
+{
+  "metadata": {
+    "project": "MinesMinis",
+    "targetAudience": "Turkish elementary school teachers",
+    "language": "Turkish",
+    "domain": "minesminis.com",
+    "generatedDate": "2026-05-08",
+    "description": "Comprehensive SEO keyword research for Turkish English teaching resources website"
+  },
+  "categories": {
+    "teacher-resources": {
+      "description": "Maarif model aligned English teaching resources for elementary school",
+      "keywordCount": 30,
+      "keywords": [
+        {
+          "rank": 1,
+          "keyword": "İlkokul İngilizce öğretim kaynakları",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "educational_resource"
+        },
+        {
+          "rank": 2,
+          "keyword": "İngilizce öğretmen materyalleri",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "educational_resource"
+        },
+        {
+          "rank": 3,
+          "keyword": "Maarif modeli İngilizce kaynaklar",
+          "searchVolume": "high",
+          "difficulty": "high",
+          "intent": "educational_resource"
+        },
+        {
+          "rank": 4,
+          "keyword": "ücretsiz İngilizce öğretim materyalleri",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "free_resource"
+        },
+        {
+          "rank": 5,
+          "keyword": "İngilizce oyun aktiviteleri ilkokul",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "classroom_activity"
+        },
+        {
+          "rank": 6,
+          "keyword": "İngilizce ders planı şablonu",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "planning_tool"
+        },
+        {
+          "rank": 7,
+          "keyword": "İngilizce çalışma sayfaları PDF",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "worksheet_resource"
+        },
+        {
+          "rank": 8,
+          "keyword": "İngilizce kelime kartları",
+          "searchVolume": "medium",
+          "difficulty": "low",
+          "intent": "visual_resource"
+        },
+        {
+          "rank": 9,
+          "keyword": "İngilizce dinleme anlaması etkinlikleri",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "classroom_activity"
+        },
+        {
+          "rank": 10,
+          "keyword": "ilkokul 3. sınıf İngilizce ders",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "grade_specific"
+        },
+        {
+          "rank": 11,
+          "keyword": "ilkokul 4. sınıf İngilizce kaynakları",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "grade_specific"
+        },
+        {
+          "rank": 12,
+          "keyword": "İngilizce konuşma pratik egzersizleri",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "skill_specific"
+        },
+        {
+          "rank": 13,
+          "keyword": "İngilizce yazma etkinlikleri çocuklar",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "skill_specific"
+        },
+        {
+          "rank": 14,
+          "keyword": "İngilizce gramer alıştırmaları",
+          "searchVolume": "medium",
+          "difficulty": "low",
+          "intent": "grammar_focus"
+        },
+        {
+          "rank": 15,
+          "keyword": "İngilizce sözlük öğretme yöntemleri",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "teaching_method"
+        },
+        {
+          "rank": 16,
+          "keyword": "İngilizce okuma metinleri ilkokul",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "reading_material"
+        },
+        {
+          "rank": 17,
+          "keyword": "İngilizce kültür etkinlikleri sınıf",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "cultural_activity"
+        },
+        {
+          "rank": 18,
+          "keyword": "İngilizce interaktif oyunlar sınıf",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "interactive_resource"
+        },
+        {
+          "rank": 19,
+          "keyword": "İngilizce dilbilgisi öğretimi rehberi",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "teaching_guide"
+        },
+        {
+          "rank": 20,
+          "keyword": "İngilizce dinleme metinleri çocuklar",
+          "searchVolume": "medium",
+          "difficulty": "low",
+          "intent": "audio_resource"
+        },
+        {
+          "rank": 21,
+          "keyword": "İngilizce hikaye okuma sınıfta",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "story_activity"
+        },
+        {
+          "rank": 22,
+          "keyword": "İngilizce şarkı ve müzik etkinlikleri",
+          "searchVolume": "medium",
+          "difficulty": "low",
+          "intent": "music_activity"
+        },
+        {
+          "rank": 23,
+          "keyword": "İngilizce ödev fikirleri öğretmenler",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "homework_ideas"
+        },
+        {
+          "rank": 24,
+          "keyword": "İngilizce ölçme ve değerlendirme kaynakları",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "assessment_tool"
+        },
+        {
+          "rank": 25,
+          "keyword": "İngilizce kat eğitim etkinlikleri",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "inclusive_teaching"
+        },
+        {
+          "rank": 26,
+          "keyword": "İngilizce metin setleri temalar",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "thematic_resource"
+        },
+        {
+          "rank": 27,
+          "keyword": "İngilizce dersi öğretmen notları",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "teacher_notes"
+        },
+        {
+          "rank": 28,
+          "keyword": "İngilizce sınıf yönetimi ipuçları",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "teaching_tips"
+        },
+        {
+          "rank": 29,
+          "keyword": "İngilizce yazma rubriği değerlendirme",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "assessment_tool"
+        },
+        {
+          "rank": 30,
+          "keyword": "özel eğitim İngilizce kaynakları",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "specialized_teaching"
+        }
+      ],
+      "blogTopicIdeas": [
+        {
+          "id": 1,
+          "title": "İlkokul İngilizce Dersinde En Etkili 10 Oyun ve Aktivite",
+          "searchIntent": "classroom_activity",
+          "contentType": "listicle",
+          "keyword": "İngilizce oyun aktiviteleri ilkokul"
+        },
+        {
+          "id": 2,
+          "title": "Maarif Modeli İngilizce Öğretimine Uyumlu Ders Planı Şablonları",
+          "searchIntent": "planning_tool",
+          "contentType": "guide",
+          "keyword": "Maarif modeli İngilizce kaynaklar"
+        },
+        {
+          "id": 3,
+          "title": "3. Sınıf İngilizce: Müfredat Uyumlu Kaynak Paketi",
+          "searchIntent": "grade_specific",
+          "contentType": "resource_pack",
+          "keyword": "ilkokul 3. sınıf İngilizce ders"
+        },
+        {
+          "id": 4,
+          "title": "4. Sınıf İngilizce Öğrencileri İçin Ücretsiz Çalışma Sayfaları",
+          "searchIntent": "worksheet_resource",
+          "contentType": "resource_pack",
+          "keyword": "ilkokul 4. sınıf İngilizce kaynakları"
+        },
+        {
+          "id": 5,
+          "title": "İngilizce Kelime Öğretiminde Görsel Materyal Kullanım",
+          "searchIntent": "teaching_method",
+          "contentType": "how_to_guide",
+          "keyword": "İngilizce kelime kartları"
+        },
+        {
+          "id": 6,
+          "title": "Dinleme Anlaması Becerisi: İlkokul Seviyesi Etkinlik Örnekleri",
+          "searchIntent": "classroom_activity",
+          "contentType": "guide",
+          "keyword": "İngilizce dinleme anlaması etkinlikleri"
+        },
+        {
+          "id": 7,
+          "title": "İngilizce Konuşma Kaygısı: Öğrenciler İçin 5 Pratik Yöntemi",
+          "searchIntent": "skill_specific",
+          "contentType": "how_to_guide",
+          "keyword": "İngilizce konuşma pratik egzersizleri"
+        },
+        {
+          "id": 8,
+          "title": "Yaratıcı İngilizce Yazma Etkinlikleri ve Proje Önerileri",
+          "searchIntent": "skill_specific",
+          "contentType": "inspiration_guide",
+          "keyword": "İngilizce yazma etkinlikleri çocuklar"
+        },
+        {
+          "id": 9,
+          "title": "İngilizce Basit Zamanlar: Öğretmen İçin Açıklamalı Rehber",
+          "searchIntent": "grammar_focus",
+          "contentType": "teacher_guide",
+          "keyword": "İngilizce gramer alıştırmaları"
+        },
+        {
+          "id": 10,
+          "title": "Semantik Alanlar ile Kelime Öğretimi Tekniği",
+          "searchIntent": "teaching_method",
+          "contentType": "how_to_guide",
+          "keyword": "İngilizce sözlük öğretme yöntemleri"
+        },
+        {
+          "id": 11,
+          "title": "İngilizce Okuma Tutumu Oluşturma: Seviye Uyumlu Metinler",
+          "searchIntent": "reading_material",
+          "contentType": "resource_guide",
+          "keyword": "İngilizce okuma metinleri ilkokul"
+        },
+        {
+          "id": 12,
+          "title": "Kültürler Arası Farkındalık: İngilizce Dersinde Kültür Aktiviteleri",
+          "searchIntent": "cultural_activity",
+          "contentType": "lesson_plan",
+          "keyword": "İngilizce kültür etkinlikleri sınıf"
+        },
+        {
+          "id": 13,
+          "title": "Dijital Araçlar ile İngilizce Dersi: Web 2.0 Oyunları",
+          "searchIntent": "interactive_resource",
+          "contentType": "tool_review",
+          "keyword": "İngilizce interaktif oyunlar sınıf"
+        },
+        {
+          "id": 14,
+          "title": "İngilizce Dilbilgisi Öğretimi: Tümdengelim mi Tümevarım mı?",
+          "searchIntent": "teaching_guide",
+          "contentType": "methodological_guide",
+          "keyword": "İngilizce dilbilgisi öğretimi rehberi"
+        },
+        {
+          "id": 15,
+          "title": "Ses Kaydedilmiş Dinleme Metinleri: Telaffuz İçin Kaynaklar",
+          "searchIntent": "audio_resource",
+          "contentType": "resource_list",
+          "keyword": "İngilizce dinleme metinleri çocuklar"
+        },
+        {
+          "id": 16,
+          "title": "İngilizce Kitap Okuma Saati: Sınıf Uygulamaları ve Etkinlikleri",
+          "searchIntent": "story_activity",
+          "contentType": "implementation_guide",
+          "keyword": "İngilizce hikaye okuma sınıfta"
+        },
+        {
+          "id": 17,
+          "title": "İngilizce Şarkılar ve Çocuk Düşkünlüğü: TPR Yaklaşımı",
+          "searchIntent": "music_activity",
+          "contentType": "lesson_plan",
+          "keyword": "İngilizce şarkı ve müzik etkinlikleri"
+        },
+        {
+          "id": 18,
+          "title": "Ev Ödevi Tasarlama: İngilizce Dersinde Etkili Ödev Fikirleri",
+          "searchIntent": "homework_ideas",
+          "contentType": "how_to_guide",
+          "keyword": "İngilizce ödev fikirleri öğretmenler"
+        },
+        {
+          "id": 19,
+          "title": "Sınava Hazırlık: İngilizce Kısa Sınavlar ve Quiz Tasarımı",
+          "searchIntent": "assessment_tool",
+          "contentType": "assessment_guide",
+          "keyword": "İngilizce ölçme ve değerlendirme kaynakları"
+        },
+        {
+          "id": 20,
+          "title": "Kapsayıcı Eğitim: Tüm Öğrenciler İçin İngilizce Kaynakları",
+          "searchIntent": "inclusive_teaching",
+          "contentType": "inclusive_guide",
+          "keyword": "İngilizce kat eğitim etkinlikleri"
+        }
+      ],
+      "metaDescriptionPatterns": [
+        "İlkokul öğretmenleri için {{keyword}}. Maarif modeli uyumlu, ücretsiz {{contentType}} kaynakları. MinesMinis ile sınıfınızı renklendir.",
+        "{{keyword}} - İngilizce öğretmen materyallerinin en geniş koleksiyonu. {{grade}} sınıf uyumlu tasarımlar.",
+        "Profesyonel {{contentType}}: {{keyword}}. Öğrenci katılımını artırın, öğrenmeyi eğlenceli hale getirin.",
+        "{{keyword}} PDF indirin. MinesMinis'teki {{number}} ücretsiz kaynak paketi ile sınıfınızı geliştirin.",
+        "İngilizce dersinde başarı: {{keyword}}. Kanıtlanmış yöntemler ve {{category}} kaynakları öğretmenler için."
+      ]
+    },
+    "teaching-english-to-kids": {
+      "description": "General tips, activities, games for teaching English to young learners",
+      "keywordCount": 30,
+      "keywords": [
+        {
+          "rank": 1,
+          "keyword": "çocuklara İngilizce nasıl öğretilir",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "how_to_guide"
+        },
+        {
+          "rank": 2,
+          "keyword": "İngilizce öğrenme oyunları çocuklar",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "game_activity"
+        },
+        {
+          "rank": 3,
+          "keyword": "küçük çocuklara İngilizce öğretme ipuçları",
+          "searchVolume": "high",
+          "difficulty": "medium",
+          "intent": "teaching_tips"
+        },
+        {
+          "rank": 4,
+          "keyword": "çocuk İngilizce konuşması geliştirme",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "skill_development"
+        },
+        {
+          "rank": 5,
+          "keyword": "İngilizce öğrenme engelleri çocuklar",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "problem_solving"
+        },
+        {
+          "rank": 6,
+          "keyword": "TPR yöntemi çocuklara İngilizce",
+          "searchVolume": "medium",
+          "difficulty": "high",
+          "intent": "methodology"
+        },
+        {
+          "rank": 7,
+          "keyword": "İngilizce eğlence etkinlikleri 6-8 yaş",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "age_specific_activity"
+        },
+        {
+          "rank": 8,
+          "keyword": "İngilizce eğlence etkinlikleri 8-10 yaş",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "age_specific_activity"
+        },
+        {
+          "rank": 9,
+          "keyword": "diyalog oyunları İngilizce çocuklar",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "conversation_activity"
+        },
+        {
+          "rank": 10,
+          "keyword": "kelime öğrenme oyunları çocuklar",
+          "searchVolume": "medium",
+          "difficulty": "low",
+          "intent": "vocabulary_game"
+        },
+        {
+          "rank": 11,
+          "keyword": "çocuklara İngilizce aktarımı teknikler",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "teaching_methodology"
+        },
+        {
+          "rank": 12,
+          "keyword": "İngilizce konuşma hızlı geliştirme",
+          "searchVolume": "medium",
+          "difficulty": "medium",
+          "intent": "skill_development"
+        },
+        {
+          "rank": 13,
+          "keyword": "günlük İngilizce cümleler çocuklar",
+          "searchVolume": "low",
+          "difficulty": "low",
+          "intent": "phrase_learning"
+        },
+        {
+          "rank": 14,
+          "keyword": "İngilizce rol oynama aktiviteleri",
+          "searchVolume": "low",
+          "difficulty": "low",
+          "intent": "interactive_game"
+        },
+        {
+          "rank": 15,
+          "keyword": "çocuk İngilizce izlemesi için videolar",
+          "searchVolume": "medium",
+          "difficulty": "low",
+          "intent": "video_resource"
+        },
+        {
+          "rank": 16,
+          "keyword": "İngilizce telaffuz çalışmaları çocuklar",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "pronunciation_focus"
+        },
+        {
+          "rank": 17,
+          "keyword": "İngilizce beden hareketleri etkinliği",
+          "searchVolume": "low",
+          "difficulty": "low",
+          "intent": "kinesthetic_activity"
+        },
+        {
+          "rank": 18,
+          "keyword": "renkler ve şekiller İngilizce öğretme",
+          "searchVolume": "low",
+          "difficulty": "low",
+          "intent": "topic_specific"
+        },
+        {
+          "rank": 19,
+          "keyword": "hayvanlar İngilizce öğrenme oyunları",
+          "searchVolume": "low",
+          "difficulty": "low",
+          "intent": "topic_specific"
+        },
+        {
+          "rank": 20,
+          "keyword": "yiyecek içecek İngilizce kelimeler",
+          "searchVolume": "low",
+          "difficulty": "low",
+          "intent": "vocabulary_topic"
+        },
+        {
+          "rank": 21,
+          "keyword": "çocuk İngilizce yazılı alıştırmaları",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "writing_practice"
+        },
+        {
+          "rank": 22,
+          "keyword": "İngilizce karaoke şarkıları çocuklar",
+          "searchVolume": "low",
+          "difficulty": "low",
+          "intent": "music_activity"
+        },
+        {
+          "rank": 23,
+          "keyword": "İngilizce hikaye anlatma teknikleri",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "storytelling_method"
+        },
+        {
+          "rank": 24,
+          "keyword": "çocuklara İngilizce motivasyon stratejileri",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "motivation_strategy"
+        },
+        {
+          "rank": 25,
+          "keyword": "soru sorma teknikleri İngilizce sınıf",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "teaching_technique"
+        },
+        {
+          "rank": 26,
+          "keyword": "İngilizce hata düzeltme stratejileri",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "classroom_management"
+        },
+        {
+          "rank": 27,
+          "keyword": "İngilizce interaktif board games sınıfta",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "game_activity"
+        },
+        {
+          "rank": 28,
+          "keyword": "çocuk İngilizce geri bildirim yöntemleri",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "teaching_technique"
+        },
+        {
+          "rank": 29,
+          "keyword": "İngilizce dramatizasyon etkinlikleri",
+          "searchVolume": "low",
+          "difficulty": "medium",
+          "intent": "creative_activity"
+        },
+        {
+          "rank": 30,
+          "keyword": "aileler ile İngilizce ev ödevi koordinasyonu",
+          "searchVolume": "low",
+          "difficulty": "high",
+          "intent": "parent_engagement"
+        }
+      ],
+      "blogTopicIdeas": [
+        {
+          "id": 1,
+          "title": "Çocuklara İngilizce Öğretmeye Başlamak: Adım Adım Rehber",
+          "searchIntent": "how_to_guide",
+          "contentType": "beginner_guide",
+          "keyword": "çocuklara İngilizce nasıl öğretilir"
+        },
+        {
+          "id": 2,
+          "title": "En Eğlenceli 15 İngilizce Oyunu Çocuklar İçin",
+          "searchIntent": "game_activity",
+          "contentType": "listicle",
+          "keyword": "İngilizce öğrenme oyunları çocuklar"
+        },
+        {
+          "id": 3,
+          "title": "Deneyimli Öğretmenlerin 10 Gizli İpucu",
+          "searchIntent": "teaching_tips",
+          "contentType": "expert_tips",
+          "keyword": "küçük çocuklara İngilizce öğretme ipuçları"
+        },
+        {
+          "id": 4,
+          "title": "Çocuğun İngilizce Konuşmasını Hızlı Geliştirmenin Kanıtlanmış Yolları",
+          "searchIntent": "skill_development",
+          "contentType": "how_to_guide",
+          "keyword": "çocuk İngilizce konuşması geliştirme"
+        },
+        {
+          "id": 5,
+          "title": "TPR Yöntemi Nedir ve Nasıl Kullanılır?",
+          "searchIntent": "methodology",
+          "contentType": "educational_explainer",
+          "keyword": "TPR yöntemi çocuklara İngilizce"
+        },
+        {
+          "id": 6,
+          "title": "6-8 Yaş Grubu İçin En İyi 20 İngilizce Aktivitesi",
+          "searchIntent": "age_specific_activity",
+          "contentType": "activity_bank",
+          "keyword": "İngilizce eğlence etkinlikleri 6-8 yaş"
+        },
+        {
+          "id": 7,
+          "title": "8-10 Yaş: Orta Seviye İngilizce Öğrenme Stratejileri",
+          "searchIntent": "age_specific_activity",
+          "contentType": "strategy_guide",
+          "keyword": "İngilizce eğlence etkinlikleri 8-10 yaş"
+        },
+        {
+          "id": 8,
+          "title": "Konuşma Pratiği: İngilizce Diyalog Oyunları",
+          "searchIntent": "conversation_activity",
+          "contentType": "activity_guide",
+          "keyword": "diyalog oyunları İngilizce çocuklar"
+        },
+        {
+          "id": 9,
+          "title": "Kelime Öğrenmeyi Eğlenceli Hale Getiren Oyunlar",
+          "searchIntent": "vocabulary_game",
+          "contentType": "game_collection",
+          "keyword": "kelime öğrenme oyunları çocuklar"
+        },
+        {
+          "id": 10,
+          "title": "İngilizce Öğretmek İçin En Etkili 5 Yöntem",
+          "searchIntent": "teaching_methodology",
+          "contentType": "methodological_guide",
+          "keyword": "çocuklara İngilizce aktarımı teknikler"
+        },
+        {
+          "id": 11,
+          "title": "30 Günde İngilizce Konuşma Seviyelerini Yükselt",
+          "searchIntent": "skill_development",
+          "contentType": "challenge_guide",
+          "keyword": "İngilizce konuşma hızlı geliştirme"
+        },
+        {
+          "id": 12,
+          "title": "Günlük Hayatta Kullanılan 50 İngilizce Cümle",
+          "searchIntent": "phrase_learning",
+          "contentType": "vocabulary_list",
+          "keyword": "günlük İngilizce cümleler çocuklar"
+        },
+        {
+          "id": 13,
+          "title": "Rol Oynama ile İngilizce Konuşma Becerisini Geliştir",
+          "searchIntent": "interactive_game",
+          "contentType": "activity_guide",
+          "keyword": "İngilizce rol oynama aktiviteleri"
+        },
+        {
+          "id": 14,
+          "title": "Çocuklar İçin En İyi 30 İngilizce Öğrenme Videosu",
+          "searchIntent": "video_resource",
+          "contentType": "resource_curation",
+          "keyword": "çocuk İngilizce izlemesi için videolar"
+        },
+        {
+          "id": 15,
+          "title": "Telaffuz Sorunlarını Çözmek: İngilizce Ses Eğitimi",
+          "searchIntent": "pronunciation_focus",
+          "contentType": "problem_solving_guide",
+          "keyword": "İngilizce telaffuz çalışmaları çocuklar"
+        },
+        {
+          "id": 16,
+          "title": "Beden Hareketleriyle İngilizce Öğren: TPR Oyunları",
+          "searchIntent": "kinesthetic_activity",
+          "contentType": "activity_bank",
+          "keyword": "İngilizce beden hareketleri etkinliği"
+        },
+        {
+          "id": 17,
+          "title": "Renkler, Şekiller, Sayılar: İngilizce Temel Konular",
+          "searchIntent": "topic_specific",
+          "contentType": "topical_guide",
+          "keyword": "renkler ve şekiller İngilizce öğretme"
+        },
+        {
+          "id": 18,
+          "title": "Hayvan Dünyası: İngilizce Hayvan Kelime Oyunları",
+          "searchIntent": "topic_specific",
+          "contentType": "themed_activities",
+          "keyword": "hayvanlar İngilizce öğrenme oyunları"
+        },
+        {
+          "id": 19,
+          "title": "Leziz Öğrenme: Yiyecek-İçecek İngilizce Aktiviteleri",
+          "searchIntent": "vocabulary_topic",
+          "contentType": "themed_guide",
+          "keyword": "yiyecek içecek İngilizce kelimeler"
+        },
+        {
+          "id": 20,
+          "title": "İngilizce Yazı Becerisini Geliştiren Eğlenceli Alıştırmalar",
+          "searchIntent": "writing_practice",
+          "contentType": "exercise_guide",
+          "keyword": "çocuk İngilizce yazılı alıştırmaları"
+        }
+      ],
+      "metaDescriptionPatterns": [
+        "{{keyword}} - Çocuklara İngilizce öğretmek kolay! MinesMinis'teki {{number}} eğlenceli aktivite ve oyun.",
+        "Başarılı öğretmenler {{keyword}} kullanır. Deneyimli eğitimcilerin kanıtlanmış yöntemleri.",
+        "{{contentType}}: {{keyword}}. Çocuklarınızın İngilizce seviyelendirmesini hızlandırın.",
+        "{{keyword}} - Etkili, eğlenceli ve çocuklara uygun. Sınıfınıza değer katacak materyalleri keşfet.",
+        "Çocuklara {{keyword}}: {{method}} tekniği ile başarı garantili öğrenme ortamı yaratın."
+      ]
+    }
+  },
+  "seoStrategy": {
+    "onPage": {
+      "titlePattern": "{{Primary Keyword}} | {{Brand}} - {{Value Proposition}}",
+      "titleCharacterLimit": 60,
+      "headingStructure": [
+        "H1: Main keyword with question or benefit",
+        "H2: 3-5 supporting subtopics",
+        "H3: Details, examples, practical tips"
+      ],
+      "imageAltText": "Descriptive text including secondary keywords",
+      "internalLinking": "Link to category pages, related blog posts, resource bundles",
+      "keywordPlacement": [
+        "H1 tag (primary keyword)",
+        "First 100 words of content",
+        "Meta description",
+        "H2/H3 headings (variations)",
+        "Image alt text",
+        "URL slug"
+      ]
+    },
+    "contentGuidelines": {
+      "minimumWordCount": 1200,
+      "recommendedWordCount": 2000,
+      "readabilityTarget": "Flesch Reading Ease 60+",
+      "targetAudience": "Turkish elementary school teachers and education professionals",
+      "toneOfVoice": "Professional, supportive, practical, encouraging",
+      "uniqueValue": "Free resources, Maarif-aligned, tested in real classrooms, actionable advice"
+    },
+    "technicalSEO": {
+      "pageSpeed": "< 3 seconds desktop, < 5 seconds mobile",
+      "mobileOptimization": "100% responsive, touch-friendly",
+      "structuredData": "Schema.org markup for Article, FAQPage, BreadcrumbList",
+      "urlStructure": "/{{category}}/{{slug-kebab-case}}",
+      "xmlSitemap": "Include all pages, update weekly"
+    },
+    "linkBuilding": {
+      "internalLinking": "3-5 contextual links per 1500 words",
+      "anchorText": "Descriptive, keyword-rich, natural variation",
+      "relatedResources": "Link to downloadable PDFs, worksheets, activity packs"
+    }
+  },
+  "competitorAnalysis": {
+    "competitors": [
+      "Teach.com",
+      "ESL Games World",
+      "English Banana",
+      "Super Simple Learning",
+      "Bosnian education websites"
+    ],
+    "gap": "Turkish-language, Maarif-aligned, free resources specifically designed for elementary teachers in Turkey"
+  },
+  "keywordResearchNotes": {
+    "searchBehavior": "Turkish teachers search in Turkish first, focus on practical classroom solutions, prefer free resources, look for curriculum alignment",
+    "seasonality": "Back-to-school (August-September), semester starts (January-February), before exams (May-June), summer planning",
+    "relatedQuestions": [
+      "İngilizce öğretmen materyalleri nereden bulabilirim?",
+      "Ücretsiz İngilizce etkinlik kaynakları var mı?",
+      "Maarif İngilizce kaynakları nasıl hazırlanır?",
+      "Çocuklara İngilizce öğretmek kolay mı?",
+      "İngilizce oyun aktiviteleri sınıfta nasıl uygulanır?"
+    ],
+    "longTailKeywords": "5+ word phrases that show high intent and lower competition, ideal for MinesMinis"
+  }
+}
