@@ -174,7 +174,6 @@ HTML formatinda yaz. Yalnizca body icerigini ver, html/head/body etiketleri KOYM
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
-      model: 'openai',
       seed: Date.now(),
     }),
     signal: AbortSignal.timeout(120000),
