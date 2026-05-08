@@ -11,20 +11,19 @@ const getThumbnailUrl = (id: string) => `${SUPABASE_URL}/storage/v1/object/publi
 const chips = ['All', 'Easy', 'Medium']
 
 function SlideCard({ s }: { s: Slide }) {
-  const [thumbExists, setThumbExists] = useState(false)
-
-  useEffect(() => {
-    const img = new Image()
-    img.onload = () => setThumbExists(true)
-    img.onerror = () => setThumbExists(false)
-    img.src = getThumbnailUrl(s.id)
-  }, [s.id])
+  const [thumbFailed, setThumbFailed] = useState(false)
 
   return (
     <Link to={`/slides/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="mm-card-cover">
-        {thumbExists === true ? (
-          <img src={getThumbnailUrl(s.id)} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {!thumbFailed ? (
+          <img
+            src={getThumbnailUrl(s.id)}
+            alt={s.title}
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={() => setThumbFailed(true)}
+          />
         ) : (
           <Cover kind={s.cover_kind} />
         )}

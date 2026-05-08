@@ -11,18 +11,19 @@ const getAiThumb = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/sli
 const chips = ['All', 'Easy', 'Medium']
 
 function WorksheetCard({ w }: { w: Worksheet }) {
-  const [aiThumb, setAiThumb] = useState(false)
-  useEffect(() => {
-    const img = new Image()
-    img.onload = () => setAiThumb(true)
-    img.src = getAiThumb(w.id)
-  }, [w.id])
+  const [thumbFailed, setThumbFailed] = useState(false)
 
   return (
     <Link to={`/worksheets/${w.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="mm-card-cover">
-        {aiThumb ? (
-          <img src={getAiThumb(w.id)} alt={w.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {!thumbFailed ? (
+          <img
+            src={getAiThumb(w.id)}
+            alt={w.title}
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={() => setThumbFailed(true)}
+          />
         ) : (
           <Cover kind={w.cover_kind} />
         )}
