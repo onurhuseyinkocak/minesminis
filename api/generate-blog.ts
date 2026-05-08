@@ -179,7 +179,10 @@ HTML formatinda yaz. Yalnizca body icerigini ver, html/head/body etiketleri KOYM
     signal: AbortSignal.timeout(120000),
   })
 
-  if (!res.ok) throw new Error(`Pollinations text API error: ${res.status}`)
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => 'no body')
+    throw new Error(`Pollinations text API error: ${res.status} - ${errBody.slice(0, 200)}`)
+  }
   const text = await res.text()
   if (!text || text.length < 200) throw new Error('Generated content too short')
   return text
