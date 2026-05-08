@@ -133,7 +133,7 @@ function AdminDashboard() {
     }
 
     loadData()
-    const interval = setInterval(loadData, 30000) // Refresh every 30s
+    const interval = setInterval(loadData, 60000) // Refresh every 60s
     return () => clearInterval(interval)
   }, [])
 
@@ -152,13 +152,13 @@ function AdminDashboard() {
           <p style={{ color: 'var(--ink-3)', margin: 0 }}>Content management overview</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'white', padding: '10px 16px', borderRadius: 12, border: '1px solid var(--line)' }}>
-          <div style={{ width: 8, height: 8, borderRadius: 4, background: 'var(--green)', animation: 'pulse 2s infinite' }} />
+          <div style={{ width: 8, height: 8, borderRadius: 4, background: 'var(--green)', animation: 'live-pulse 2s ease-in-out infinite' }} />
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14 }}>{activeUsers} online</span>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16, marginBottom: 32 }}>
         {[
           { label: 'Slides', count: stats.slides, icon: Presentation, color: 'var(--primary)' },
           { label: 'Videos', count: stats.videos, icon: Video, color: 'var(--accent)' },
@@ -208,7 +208,7 @@ function AdminDashboard() {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 }}>
         {/* Quick Links */}
         <div>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, margin: '0 0 16px' }}>Manage Content</h2>
@@ -328,7 +328,7 @@ export default function AdminLayout() {
       </div>
 
       {/* Main */}
-      <div style={{ flex: 1, padding: 32 }}>
+      <div style={{ flex: 1, padding: 32, minWidth: 0, overflowX: 'hidden' }}>
         <Routes>
           <Route index element={<AdminDashboard />} />
           <Route path="slides" element={<SlidesManager />} />
