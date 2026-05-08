@@ -5,6 +5,7 @@ import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Song, SongLyric } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
+import { useMeta } from '../hooks/useMeta'
 
 // YouTube IFrame API types
 declare global {
@@ -59,7 +60,11 @@ export default function SongPlayer() {
     }
   }, [id])
 
-  useEffect(() => { document.title = song ? `${song.title} - minesminis` : 'minesminis' }, [song])
+  useMeta({
+    title: song ? `${song.title} - minesminis` : 'minesminis',
+    description: song ? `${song.title} - cocuklar icin Ingilizce sarki` : undefined,
+    url: song ? `https://minesminis.com/songs/${song.id}` : undefined,
+  })
 
   // YouTube Player setup (for karaoke sync)
   const youtubeId = song?.youtube_url ? extractYouTubeId(song.youtube_url) : ''
@@ -277,11 +282,16 @@ export default function SongPlayer() {
 
   if (!song) {
     return (
-      <>
-        <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
+      <div className="mm-skeleton">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--surface-2)' }} />
+          <div style={{ height: 20, width: 160, background: 'var(--surface-2)', borderRadius: 8 }} />
         </div>
-      </>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 280px) 1fr', gap: 20 }} className="mm-song-layout">
+          <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', borderRadius: 18 }} />
+          <div style={{ background: 'var(--surface-2)', borderRadius: 24, height: 300 }} />
+        </div>
+      </div>
     )
   }
 

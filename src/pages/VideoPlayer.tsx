@@ -5,6 +5,7 @@ import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Video } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
+import { useMeta } from '../hooks/useMeta'
 
 export default function VideoPlayer() {
   const { id } = useParams()
@@ -21,7 +22,11 @@ export default function VideoPlayer() {
     }
   }, [id])
 
-  useEffect(() => { document.title = video ? `${video.title} - minesminis` : 'minesminis' }, [video])
+  useMeta({
+    title: video ? `${video.title} - minesminis` : 'minesminis',
+    description: video ? `${video.title} - cocuklar icin Ingilizce video` : undefined,
+    url: video ? `https://minesminis.com/videos/${video.id}` : undefined,
+  })
 
   if (error) {
     return (
@@ -36,11 +41,16 @@ export default function VideoPlayer() {
 
   if (!video) {
     return (
-      <>
-        <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
+      <div className="mm-skeleton">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--surface-2)' }} />
+          <div>
+            <div style={{ height: 20, width: 200, background: 'var(--surface-2)', borderRadius: 8 }} />
+            <div style={{ height: 14, width: 120, background: 'var(--surface-2)', borderRadius: 8, marginTop: 6 }} />
+          </div>
         </div>
-      </>
+        <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', borderRadius: 28 }} />
+      </div>
     )
   }
 

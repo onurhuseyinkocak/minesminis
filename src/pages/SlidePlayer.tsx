@@ -4,6 +4,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Play, Pause, Maximize, Download, 
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Slide, SlideItem } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
 
 export default function SlidePlayer() {
   const { id } = useParams()
@@ -22,7 +23,11 @@ export default function SlidePlayer() {
     }
   }, [id])
 
-  useEffect(() => { document.title = slide ? `${slide.title} - minesminis` : 'minesminis' }, [slide])
+  useMeta({
+    title: slide ? `${slide.title} - minesminis` : 'minesminis',
+    description: slide ? `${slide.title} - ilkokul Ingilizce sunum materyali` : undefined,
+    url: slide ? `https://minesminis.com/slides/${slide.id}` : undefined,
+  })
 
   const items = slide?.slides_data || []
   const total = items.length || slide?.slide_count || 0
@@ -89,11 +94,16 @@ export default function SlidePlayer() {
 
   if (!slide) {
     return (
-      <>
-        <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
+      <div className="mm-skeleton">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--surface-2)' }} />
+          <div>
+            <div style={{ height: 20, width: 200, background: 'var(--surface-2)', borderRadius: 8 }} />
+            <div style={{ height: 14, width: 120, background: 'var(--surface-2)', borderRadius: 8, marginTop: 6 }} />
+          </div>
         </div>
-      </>
+        <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', borderRadius: 28 }} />
+      </div>
     )
   }
 

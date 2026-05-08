@@ -378,7 +378,7 @@ describe('SlidesList', () => {
       )
 
       await waitFor(() => {
-        expect(screen.getByText('Loading...')).toBeInTheDocument()
+        expect(document.querySelector('.mm-skeleton')).toBeInTheDocument()
       })
     })
 

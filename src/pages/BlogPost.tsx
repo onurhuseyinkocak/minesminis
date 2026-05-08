@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, Clock, ArrowLeft, BookOpen } from 'lucide-react'
+import DOMPurify from 'dompurify'
 import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
 import type { Blog } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>()
@@ -11,6 +13,13 @@ export default function BlogPost() {
   const [related, setRelated] = useState<Blog[]>([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+
+  useMeta({
+    title: blog ? `${blog.title} - minesminis Blog` : 'minesminis Blog',
+    description: blog?.meta_description || blog?.excerpt,
+    url: blog ? `https://minesminis.com/blog/${blog.slug}` : undefined,
+    image: blog?.cover_url || undefined,
+  })
 
   useEffect(() => {
     if (!slug) return
@@ -24,11 +33,6 @@ export default function BlogPost() {
         if (error || !data) { setNotFound(true); setLoading(false); return }
         setBlog(data)
         setLoading(false)
-
-        // Set page meta
-        document.title = `${data.title} - minesminis Blog`
-        const meta = document.querySelector('meta[name="description"]')
-        if (meta) meta.setAttribute('content', data.meta_description || data.excerpt)
 
         // Fetch related posts
         supabase
@@ -109,7 +113,7 @@ export default function BlogPost() {
             fontFamily: 'var(--font-body)', fontSize: 17, lineHeight: 1.75, color: 'var(--ink)',
             marginTop: 24,
           }}
-          dangerouslySetInnerHTML={{ __html: blog.content_html }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content_html, { ALLOWED_TAGS: ['h2', 'h3', 'h4', 'p', 'ul', 'ol', 'li', 'strong', 'em', 'a', 'blockquote', 'br', 'span'], ALLOWED_ATTR: ['href', 'target', 'rel', 'class'] }) }}
         />
 
         {/* Keywords */}

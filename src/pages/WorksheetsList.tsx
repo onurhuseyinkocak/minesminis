@@ -4,6 +4,7 @@ import { Download } from 'lucide-react'
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Worksheet } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const getAiThumb = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/slides/thumbnails/${id}.png`
@@ -47,7 +48,11 @@ export default function WorksheetsList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => { document.title = 'Worksheets - minesminis' }, [])
+  useMeta({
+    title: 'Worksheets - minesminis',
+    description: 'Cocuklara Ingilizce ogretmek icin ucretsiz calisma kagitlari. PDF indirilebilir materyaller.',
+    url: 'https://minesminis.com/worksheets',
+  })
 
   useEffect(() => {
     supabase.from('mm_worksheets').select('*').eq('published', true).order('created_at', { ascending: false })

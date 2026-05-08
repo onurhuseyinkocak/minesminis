@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Download, Printer, Maximize } from 'lucide-react'
 import AdBanner from '../components/AdBanner'
 import { supabase, Worksheet } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
 
 export default function WorksheetPlayer() {
   const { id } = useParams()
@@ -19,7 +20,11 @@ export default function WorksheetPlayer() {
     }
   }, [id])
 
-  useEffect(() => { document.title = worksheet ? `${worksheet.title} - minesminis` : 'minesminis' }, [worksheet])
+  useMeta({
+    title: worksheet ? `${worksheet.title} - minesminis` : 'minesminis',
+    description: worksheet ? `${worksheet.title} - indirilebilir Ingilizce calisma kagidi` : undefined,
+    url: worksheet ? `https://minesminis.com/worksheets/${worksheet.id}` : undefined,
+  })
 
   const getEmbedUrl = (url: string) => {
     if (url.includes('docs.google.com')) return url
@@ -40,8 +45,15 @@ export default function WorksheetPlayer() {
 
   if (!worksheet) {
     return (
-      <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-        <p style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>Loading...</p>
+      <div className="mm-skeleton">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--surface-2)' }} />
+          <div>
+            <div style={{ height: 20, width: 200, background: 'var(--surface-2)', borderRadius: 8 }} />
+            <div style={{ height: 14, width: 120, background: 'var(--surface-2)', borderRadius: 8, marginTop: 6 }} />
+          </div>
+        </div>
+        <div style={{ height: 'min(700px, 70vh)', background: 'var(--surface-2)', borderRadius: 28 }} />
       </div>
     )
   }

@@ -5,18 +5,20 @@ import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Song } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
+import { useMeta } from '../hooks/useMeta'
 
 const chips = ['All', 'Classic', 'Action', 'Educational']
 
 function SongCard({ s }: { s: Song }) {
+  const [thumbFailed, setThumbFailed] = useState(false)
   const ytThumb = s.youtube_url && extractYouTubeId(s.youtube_url)
     ? `https://img.youtube.com/vi/${extractYouTubeId(s.youtube_url)}/hqdefault.jpg` : ''
 
   return (
     <Link to={`/songs/${s.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="mm-card-cover">
-        {ytThumb ? (
-          <img src={ytThumb} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {ytThumb && !thumbFailed ? (
+          <img src={ytThumb} alt={s.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setThumbFailed(true)} />
         ) : (
           <Cover kind={s.cover_kind} />
         )}
@@ -38,7 +40,11 @@ export default function SongsList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => { document.title = 'Songs - minesminis' }, [])
+  useMeta({
+    title: 'Songs - minesminis',
+    description: 'Cocuklara Ingilizce ogretmek icin ucretsiz sarkilar. Klasik, aksiyon ve egitici sarkilar.',
+    url: 'https://minesminis.com/songs',
+  })
 
   useEffect(() => {
     supabase.from('mm_songs').select('*').eq('published', true).order('created_at', { ascending: false })
@@ -57,9 +63,6 @@ export default function SongsList() {
         <div>
           <h1 className="mm-page-title">Songs</h1>
           <p className="mm-page-sub">{songs.length} songs - elementary level</p>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-{/* grid toggle reserved */}
         </div>
       </div>
 

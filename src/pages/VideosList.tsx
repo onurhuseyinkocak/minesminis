@@ -4,15 +4,19 @@ import { Play } from 'lucide-react'
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Video } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
+
 
 const chips = ['All', 'Sing-Along', 'Dialogue', 'Action']
 
 function VideoCard({ v }: { v: Video }) {
+  const [thumbFailed, setThumbFailed] = useState(false)
+
   return (
     <Link to={`/videos/${v.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="mm-card-cover">
-        {v.thumbnail_url ? (
-          <img src={v.thumbnail_url} alt={v.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {v.thumbnail_url && !thumbFailed ? (
+          <img src={v.thumbnail_url} alt={v.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setThumbFailed(true)} />
         ) : (
           <Cover kind={v.cover_kind} />
         )}
@@ -34,7 +38,11 @@ export default function VideosList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => { document.title = 'Videos - minesminis' }, [])
+  useMeta({
+    title: 'Videos - minesminis',
+    description: 'Cocuklara Ingilizce ogretmek icin ucretsiz videolar. Sarkilar, diyaloglar ve aksiyon videolari.',
+    url: 'https://minesminis.com/videos',
+  })
 
   useEffect(() => {
     supabase.from('mm_videos').select('*').eq('published', true).order('created_at', { ascending: false })
@@ -53,9 +61,6 @@ export default function VideosList() {
         <div>
           <h1 className="mm-page-title">Videos</h1>
           <p className="mm-page-sub">{videos.length} videos - elementary level</p>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-{/* grid toggle reserved */}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import { Calendar, Clock, BookOpen } from 'lucide-react'
 import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
 import type { Blog } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
 
 const categories = [
   { id: 'all', label: 'Tumu' },
@@ -54,11 +55,11 @@ export default function BlogList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => {
-    document.title = 'Blog - minesminis | Ingilizce Ogretim Kaynaklari'
-    const meta = document.querySelector('meta[name="description"]')
-    if (meta) meta.setAttribute('content', 'Cocuklara Ingilizce ogretme teknikleri, Maarif modeli uyumlu ders kaynaklari, etkinlikler ve oyunlar. Ogretmenler icin ucretsiz kaynaklar.')
-  }, [])
+  useMeta({
+    title: 'Blog - minesminis | Ingilizce Ogretim Kaynaklari',
+    description: 'Cocuklara Ingilizce ogretme teknikleri, Maarif modeli uyumlu ders kaynaklari, etkinlikler ve oyunlar. Ogretmenler icin ucretsiz kaynaklar.',
+    url: 'https://minesminis.com/blog',
+  })
 
   useEffect(() => {
     supabase

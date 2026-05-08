@@ -4,6 +4,7 @@ import { Play, Presentation, Video, Music, FileText, ChevronRight, Star, BookOpe
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
 
 const features = [
   { id: 'slides', title: 'Slides', icon: Presentation, image: '/images/cat-slides.webp', tag: 'Learn', path: '/slides', coverFallback: 'school' },
@@ -24,7 +25,11 @@ export default function Dashboard() {
 
   const [blogPosts, setBlogPosts] = useState<{ id: string; title: string; slug: string; excerpt: string; cover_url: string | null; published_at: string | null }[]>([])
 
-  useEffect(() => { document.title = 'minesminis - Cocuklar Icin Ingilizce Ogrenme Platformu' }, [])
+  useMeta({
+    title: 'minesminis - Cocuklar Icin Ingilizce Ogrenme Platformu',
+    description: 'Cocuklara Ingilizce ogretmek icin ucretsiz kaynaklar: sunumlar, videolar, sarkilar ve calisma kagitlari. Maarif modeli uyumlu materyaller.',
+    url: 'https://minesminis.com/',
+  })
 
   useEffect(() => {
     // Fetch counts

@@ -342,7 +342,7 @@ describe('SongPlayer', () => {
 
     renderWithRouter(<SongPlayer />, { route: '/songs/1' })
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    expect(document.querySelector('.mm-skeleton')).toBeInTheDocument()
   })
 
   it('sets document title to "{title} - minesminis"', async () => {

@@ -4,6 +4,7 @@ import { Play } from 'lucide-react'
 import Cover from '../components/Cover'
 import AdBanner from '../components/AdBanner'
 import { supabase, Slide } from '../lib/supabase'
+import { useMeta } from '../hooks/useMeta'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const getThumbnailUrl = (id: string) => `${SUPABASE_URL}/storage/v1/object/public/slides/thumbnails/${id}.png`
@@ -45,7 +46,11 @@ export default function SlidesList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => { document.title = 'Slides - minesminis' }, [])
+  useMeta({
+    title: 'Slides - minesminis',
+    description: 'Cocuklara Ingilizce ogretmek icin ucretsiz sunumlar. Maarif modeli uyumlu ilkokul seviyesi materyaller.',
+    url: 'https://minesminis.com/slides',
+  })
 
   useEffect(() => {
     supabase.from('mm_slides').select('*').eq('published', true).order('created_at', { ascending: false })
@@ -64,9 +69,6 @@ export default function SlidesList() {
         <div>
           <h1 className="mm-page-title">Slides</h1>
           <p className="mm-page-sub">{slides.length} presentations - elementary level</p>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-{/* grid toggle reserved */}
         </div>
       </div>
 

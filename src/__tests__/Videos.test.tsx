@@ -780,7 +780,7 @@ describe('VideoPlayer', () => {
     })
   })
 
-  it('shows "Loading..." while video fetches', () => {
+  it('shows skeleton while video fetches', () => {
     vi.spyOn(supabase, 'from').mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -798,7 +798,7 @@ describe('VideoPlayer', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    expect(document.querySelector('.mm-skeleton')).toBeInTheDocument()
   })
 
   it('shows back arrow link to /videos', async () => {

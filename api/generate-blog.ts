@@ -149,42 +149,48 @@ function turkishSlugify(text: string): string {
 }
 
 async function generateBlogContent(title: string, category: string, keywords: string[]): Promise<string> {
-  const systemPrompt = category === 'teacher-resources'
-    ? `Sen deneyimli bir ilkokul Ingilizce ogretmenisin. Turkiye Maarif modeli mufredatina uygun, pratik, sinifta uygulanabilir icerikler yaz. Hedef kitle: Turkiye'deki ilkokul Ingilizce ogretmenleri. Her zaman Turkce yaz. Icerik SEO uyumlu olmali, anahtar kelimeleri dogal sekilde yerlestir. HTML formatinda yaz (h2, h3, p, ul, li, strong, em etiketleri kullan). Baslik icin h1 KULLANMA — sadece h2 ve h3 alt basliklar kullan. En az 800 kelime yaz. Yaratici, pratik ve uygulanabilir ol. minesminis.com sitesindeki ucretsiz materyallere referans ver (slides, videos, songs, worksheets).`
-    : `Sen cocuk gelisimi uzmani bir egitimcisin. Ailelere ve ogretmenlere cocuklara Ingilizce ogretme konusunda pratik tavsiyeler ver. Her zaman Turkce yaz. Icerik SEO uyumlu olmali, anahtar kelimeleri dogal sekilde yerlestir. HTML formatinda yaz (h2, h3, p, ul, li, strong, em etiketleri kullan). Baslik icin h1 KULLANMA — sadece h2 ve h3 alt basliklar kullan. En az 800 kelime yaz. Yaratici ve eglenceli ol. minesminis.com sitesindeki ucretsiz materyallere referans ver (slides, videos, songs, worksheets).`
+  const role = category === 'teacher-resources'
+    ? 'ilkokul Ingilizce ogretmeni'
+    : 'cocuk gelisimi uzmani egitimci'
 
-  const userPrompt = `Bu baslikta detayli bir blog yazisi yaz: "${title}"
+  const prompt = `Turkce yaz. HTML formatinda yaz (h2, h3, p, ul, li, strong, em, a). h1 KULLANMA. En az 800 kelime.
 
-Anahtar kelimeler (bunlari dogal sekilde metne yerlestir): ${keywords.join(', ')}
+Rol: ${role}. Hedef: Turkiye ilkokul Ingilizce egitimi.
 
-Yazi yapisi:
-1. Giris paragrafi (konunun onemi)
-2. Ana icerik (alt basliklarla bolunmus, pratik ornekler)
-3. Sinifta/evde uygulanabilir etkinlik fikirleri
-4. minesminis.com kaynaklarina yonlendirme
-5. Sonuc ve ozet
+Baslik: "${title}"
+Anahtar kelimeler: ${keywords.join(', ')}
 
-HTML formatinda yaz. Yalnizca body icerigini ver, html/head/body etiketleri KOYMA.`
+Yapi: 1) Giris 2) Alt baslikli ana icerik 3) Pratik etkinlikler 4) minesminis.com referansi (slides, videos, songs, worksheets sayfalarina link ver) 5) Sonuc
 
-  const res = await fetch('https://text.pollinations.ai/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      seed: Date.now(),
-    }),
+Kurallar:
+- Sadece body icerigi ver, html/head/body etiketi KOYMA
+- Her alt basligi h2 veya h3 yap
+- minesminis.com linklerini <a href="https://minesminis.com/slides"> formatinda ekle
+- Dogru, tutarli Turkce yaz
+- Anahtar kelimeleri dogal yerlestir`
+
+  const encoded = encodeURIComponent(prompt)
+  const url = `https://text.pollinations.ai/${encoded}?seed=${Date.now()}&model=openai`
+
+  const res = await fetch(url, {
     signal: AbortSignal.timeout(120000),
   })
 
   if (!res.ok) {
     const errBody = await res.text().catch(() => 'no body')
-    throw new Error(`Pollinations text API error: ${res.status} - ${errBody.slice(0, 200)}`)
+    throw new Error(`Pollinations API error: ${res.status} - ${errBody.slice(0, 200)}`)
   }
-  const text = await res.text()
+  let text = await res.text()
   if (!text || text.length < 200) throw new Error('Generated content too short')
+
+  // Clean up: remove markdown code fences if present
+  text = text.replace(/^```html?\s*/i, '').replace(/\s*```\s*$/i, '').trim()
+
+  // Validate: must contain at least one HTML tag
+  if (!/<(h[23]|p|ul|ol)[\s>]/i.test(text)) {
+    throw new Error('Generated content is not valid HTML')
+  }
+
   return text
 }
 
@@ -223,7 +229,7 @@ async function generateSingleBlog(category: string, retries = 3): Promise<{ succ
   const title = useFixed ? pickRandom(fixedTopics) : generateTitle(pickRandom(dynamicTopics))
   const keywords = Array.from({ length: 6 }, () => pickRandom(keywordPool))
     .filter((v, i, a) => a.indexOf(v) === i) // unique
-  const slug = turkishSlugify(title) + '-' + Date.now().toString(36)
+  const slug = turkishSlugify(title)
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -238,6 +244,16 @@ async function generateSingleBlog(category: string, retries = 3): Promise<{ succ
       const metaDescription = excerpt.slice(0, 160)
 
       // Insert into Supabase
+      // Check slug uniqueness, append counter if needed
+      let uniqueSlug = slug
+      const { data: existing } = await fetch(
+        `${SUPABASE_URL}/rest/v1/mm_blogs?slug=eq.${encodeURIComponent(slug)}&select=id&limit=1`,
+        { headers: { 'apikey': SUPABASE_ANON } }
+      ).then(r => r.json()).catch(() => [])
+      if (existing && existing.length > 0) {
+        uniqueSlug = slug + '-' + Math.random().toString(36).slice(2, 6)
+      }
+
       const { data, error } = await fetch(`${SUPABASE_URL}/rest/v1/mm_blogs`, {
         method: 'POST',
         headers: {
@@ -248,7 +264,7 @@ async function generateSingleBlog(category: string, retries = 3): Promise<{ succ
         },
         body: JSON.stringify({
           title,
-          slug,
+          slug: uniqueSlug,
           excerpt,
           content_html: contentHtml,
           meta_description: metaDescription,
