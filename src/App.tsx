@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { lazy, Suspense } from 'react'
 import Layout from './components/Layout'
+import ErrorBoundary from './components/ErrorBoundary'
 import { usePageView } from './hooks/usePageView'
 import { usePresenceTrack } from './hooks/usePresence'
 
@@ -14,7 +15,7 @@ const SongsList = lazy(() => import('./pages/SongsList'))
 const SongPlayer = lazy(() => import('./pages/SongPlayer'))
 const WorksheetsList = lazy(() => import('./pages/WorksheetsList'))
 const WorksheetPlayer = lazy(() => import('./pages/WorksheetPlayer'))
-const AdminLayout = lazy(() => import('./pages/Admin/AdminLayout'))
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
 const About = lazy(() => import('./pages/About'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Privacy = lazy(() => import('./pages/Privacy'))
@@ -78,7 +79,9 @@ export default function App() {
   return (
     <>
       <Toaster position="top-right" />
-      <AppContent />
+      <ErrorBoundary>
+        <AppContent />
+      </ErrorBoundary>
     </>
   )
 }

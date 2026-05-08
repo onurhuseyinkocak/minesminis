@@ -44,14 +44,14 @@ export default function WorksheetsList() {
   const [worksheets, setWorksheets] = useState<Worksheet[]>([])
   const [activeChip, setActiveChip] = useState('All')
   const [loading, setLoading] = useState(true)
-  const [error] = useState(false)
+  const [error, setError] = useState(false)
 
   useEffect(() => { document.title = 'Worksheets - minesminis' }, [])
 
   useEffect(() => {
     supabase.from('mm_worksheets').select('*').eq('published', true).order('created_at', { ascending: false })
       .then(({ data, error: err }) => {
-        if (err) { setLoading(false); return }
+        if (err) { setError(true); setLoading(false); return }
         setWorksheets(data || []); setLoading(false)
       })
   }, [])
