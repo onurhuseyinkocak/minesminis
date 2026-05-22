@@ -129,8 +129,6 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <AdBanner format="horizontal" />
-
       {/* Recent */}
       {recent.length > 0 && (
         <>
@@ -192,7 +190,7 @@ export default function Dashboard() {
         </>
       )}
 
-      <AdBanner format="auto" />
+      {(recent.length > 0 || blogPosts.length > 0) && <AdBanner format="auto" />}
     </>
   )
 }

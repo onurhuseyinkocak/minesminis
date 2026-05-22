@@ -271,7 +271,7 @@ async function generateSingleBlog(category: string, retries = 3): Promise<{ succ
           keywords,
           category,
           cover_url: coverUrl,
-          status: 'published',
+          status: 'draft',
           reading_time_min: readingTime,
           published_at: new Date().toISOString(),
         }),

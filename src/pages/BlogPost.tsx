@@ -104,8 +104,6 @@ export default function BlogPost() {
           </div>
         )}
 
-        <AdBanner format="horizontal" />
-
         {/* Content */}
         <div
           className="mm-blog-content"

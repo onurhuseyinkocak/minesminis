@@ -74,8 +74,6 @@ export default function WorksheetsList() {
         </div>
       </div>
 
-      <AdBanner format="horizontal" />
-
       <div className="mm-chips">
         {chips.map(c => (
           <button key={c} className={`mm-chip${activeChip === c ? ' active' : ''}`} onClick={() => setActiveChip(c)} aria-label={`Filter by ${c}`} aria-pressed={activeChip === c}>
@@ -104,8 +102,10 @@ export default function WorksheetsList() {
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>No content yet</p>
-          <p style={{ fontSize: 14 }}>New worksheets coming soon!</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>No matching worksheets found</p>
+          <p style={{ fontSize: 14, maxWidth: 400, margin: '8px auto 0', lineHeight: 1.6 }}>
+            Try a different filter or browse our slides, videos and songs for more free English materials.
+          </p>
         </div>
       ) : (
         <>

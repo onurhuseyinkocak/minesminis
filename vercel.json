@@ -1,12 +1,7 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "crons": [
-    {
-      "path": "/api/generate-blog",
-      "schedule": "0 6 * * *"
-    }
-  ],
+  "crons": [],
   "headers": [
     {
       "source": "/(.*)",

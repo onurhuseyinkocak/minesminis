@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import AdBanner from '../components/AdBanner'
 
 export default function Privacy() {
   useEffect(() => { document.title = 'Privacy Policy - minesminis' }, [])
@@ -61,8 +60,6 @@ export default function Privacy() {
           </p>
         </div>
       </div>
-
-      <AdBanner format="auto" />
     </>
   )
 }

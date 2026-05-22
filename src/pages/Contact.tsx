@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Mail, Globe, MessageCircle } from 'lucide-react'
-import AdBanner from '../components/AdBanner'
 
 export default function Contact() {
   useEffect(() => { document.title = 'Contact - minesminis' }, [])
@@ -82,8 +81,6 @@ export default function Contact() {
           </div>
         </div>
       </div>
-
-      <AdBanner format="auto" />
     </>
   )
 }

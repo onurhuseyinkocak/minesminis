@@ -86,8 +86,6 @@ export default function BlogList() {
         </div>
       </div>
 
-      <AdBanner format="horizontal" />
-
       <div className="mm-chips">
         {categories.map(c => (
           <button
@@ -124,8 +122,10 @@ export default function BlogList() {
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Henuz icerik yok</p>
-          <p style={{ fontSize: 14 }}>Yeni yazilar yakinda!</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Bu kategoride yazi bulunamadi</p>
+          <p style={{ fontSize: 14, maxWidth: 400, margin: '8px auto 0', lineHeight: 1.6 }}>
+            Farkli bir kategori deneyin veya ogretmenler icin hazirlanmis tum kaynaklari goruntulemek icin "Tumu" filtresini secin.
+          </p>
         </div>
       ) : (
         <>

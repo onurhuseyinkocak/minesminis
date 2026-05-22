@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import AdBanner from '../components/AdBanner'
 
 export default function Terms() {
   useEffect(() => { document.title = 'Terms of Use - minesminis' }, [])
@@ -49,8 +48,6 @@ export default function Terms() {
           </p>
         </div>
       </div>
-
-      <AdBanner format="auto" />
     </>
   )
 }

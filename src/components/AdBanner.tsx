@@ -21,7 +21,7 @@ export default function AdBanner({ format = 'auto', className = '' }: { format?:
     ins.className = 'adsbygoogle'
     ins.style.display = 'block'
     ins.dataset.adClient = 'ca-pub-6644397387275334'
-    ins.dataset.adSlot = '5178461633'
+    ins.dataset.adSlot = '5178461633' // inline ad unit
     ins.dataset.adFormat = format
     ins.dataset.fullWidthResponsive = 'true'
     ins.dataset.tagForChildDirectedTreatment = '1'

@@ -110,7 +110,7 @@ export default function WorksheetPlayer() {
         </div>
       )}
 
-      <AdBanner format="auto" />
+      {worksheet.file_url && <AdBanner format="auto" />}
     </>
   )
 }

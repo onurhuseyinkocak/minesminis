@@ -43,7 +43,7 @@ export default function About() {
             Our goal is to ensure every child has access to quality language learning opportunities.
           </p>
           <p>
-            Our platform features content prepared by teachers and education specialists.
+            Our platform features curated educational materials aligned with established curricula.
             It offers vocabulary and concept learning through interactive slides, visual learning with educational videos,
             and listening and repetition skills development through English songs.
           </p>
@@ -77,7 +77,8 @@ export default function About() {
 
         {/* Values */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {values.map(v => (
+          <AdBanner format="auto" className="mm-ad-spacer" />
+        {values.map(v => (
             <div key={v.title} style={{
               background: 'white', borderRadius: 18, padding: 20, border: '1px solid var(--line)',
               display: 'flex', gap: 16, alignItems: 'flex-start',
@@ -96,8 +97,6 @@ export default function About() {
           ))}
         </div>
       </div>
-
-      <AdBanner format="auto" />
     </>
   )
 }

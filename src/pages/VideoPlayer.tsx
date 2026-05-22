@@ -102,7 +102,7 @@ export default function VideoPlayer() {
         </div>
       )}
 
-      <AdBanner format="auto" />
+      {video.youtube_url && extractYouTubeId(video.youtube_url) && <AdBanner format="auto" />}
     </>
   )
 }

@@ -47,8 +47,12 @@ function AppContent() {
     )
   }
 
+  const noSidebar = ['/about', '/contact', '/privacy', '/terms'].includes(location.pathname)
+    || !['/', '/slides', '/videos', '/songs', '/worksheets', '/blog'].includes(location.pathname)
+      && !location.pathname.match(/^\/(slides|videos|songs|worksheets|blog)\/.+/)
+
   return (
-    <Layout>
+    <Layout showSidebar={!noSidebar}>
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -70,6 +74,9 @@ function AppContent() {
             <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 800, color: 'var(--primary)' }}>404</div>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--ink-2)' }}>Page not found</div>
+              <p style={{ fontSize: 14, color: 'var(--ink-3)', maxWidth: 400, textAlign: 'center', lineHeight: 1.6, margin: 0 }}>
+                The page you are looking for does not exist. Browse our free English learning materials for kids.
+              </p>
               <a href="/" className="mm-btn primary" style={{ marginTop: 8, textDecoration: 'none' }}>Home</a>
             </div>
           } />

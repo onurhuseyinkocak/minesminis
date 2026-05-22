@@ -403,7 +403,7 @@ export default function SongPlayer() {
         )}
       </div>
 
-      <AdBanner format="auto" />
+      {(song.audio_url || useYouTube) && <AdBanner format="auto" />}
     </>
   )
 }

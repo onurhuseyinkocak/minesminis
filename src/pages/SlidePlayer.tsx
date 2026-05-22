@@ -245,7 +245,7 @@ export default function SlidePlayer() {
         </div>
       )}
 
-      <AdBanner format="auto" />
+      {(hasFile || hasFlashcards) && <AdBanner format="auto" />}
     </>
   )
 }
