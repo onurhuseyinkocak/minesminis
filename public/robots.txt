@@ -1,6 +1,21 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+
+# AdSense crawler — explicitly allow
+User-agent: Mediapartners-Google
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+
+# AdsBot — explicitly allow
+User-agent: AdsBot-Google
+Allow: /
+Disallow: /admin
+Disallow: /admin/
 Disallow: /api/
 
 Sitemap: https://minesminis.com/sitemap.xml

@@ -15,13 +15,16 @@ const SongsList = lazy(() => import('./pages/SongsList'))
 const SongPlayer = lazy(() => import('./pages/SongPlayer'))
 const WorksheetsList = lazy(() => import('./pages/WorksheetsList'))
 const WorksheetPlayer = lazy(() => import('./pages/WorksheetPlayer'))
-const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const AdminLayout = lazy(() => import('./pages/Admin/AdminLayout'))
 const BlogList = lazy(() => import('./pages/BlogList'))
 const BlogPost = lazy(() => import('./pages/BlogPost'))
 const About = lazy(() => import('./pages/About'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const Terms = lazy(() => import('./pages/Terms'))
+const Faq = lazy(() => import('./pages/Faq'))
+const Curriculum = lazy(() => import('./pages/Curriculum'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 function Loading() {
   return (
@@ -47,9 +50,11 @@ function AppContent() {
     )
   }
 
-  const noSidebar = ['/about', '/contact', '/privacy', '/terms'].includes(location.pathname)
-    || !['/', '/slides', '/videos', '/songs', '/worksheets', '/blog'].includes(location.pathname)
-      && !location.pathname.match(/^\/(slides|videos|songs|worksheets|blog)\/.+/)
+  const policyPages = ['/about', '/contact', '/privacy', '/terms', '/faq', '/curriculum']
+  const contentListPages = ['/', '/slides', '/videos', '/songs', '/worksheets', '/blog']
+  const isDetailPage = !!location.pathname.match(/^\/(slides|videos|songs|worksheets|blog)\/.+/)
+  const noSidebar = policyPages.includes(location.pathname)
+    || (!contentListPages.includes(location.pathname) && !isDetailPage)
 
   return (
     <Layout showSidebar={!noSidebar}>
@@ -70,16 +75,9 @@ function AppContent() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
-          <Route path="*" element={
-            <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 800, color: 'var(--primary)' }}>404</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--ink-2)' }}>Page not found</div>
-              <p style={{ fontSize: 14, color: 'var(--ink-3)', maxWidth: 400, textAlign: 'center', lineHeight: 1.6, margin: 0 }}>
-                The page you are looking for does not exist. Browse our free English learning materials for kids.
-              </p>
-              <a href="/" className="mm-btn primary" style={{ marginTop: 8, textDecoration: 'none' }}>Home</a>
-            </div>
-          } />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/curriculum" element={<Curriculum />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </Layout>

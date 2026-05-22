@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Clock, BookOpen } from 'lucide-react'
-import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
 import type { Blog } from '../lib/supabase'
 import { useMeta } from '../hooks/useMeta'
+import { staticBlogs } from '../content/staticBlogs'
 
 const categories = [
   { id: 'all', label: 'Tumu' },
@@ -68,8 +68,18 @@ export default function BlogList() {
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .then(({ data, error: err }) => {
-        if (err) { setError(true); setLoading(false); return }
-        setBlogs(data || [])
+        const dbBlogs: Blog[] = err ? [] : (data || [])
+        // Merge DB blogs with static bundled blogs. Static blogs come first when
+        // DB is empty; otherwise we interleave by published_at desc.
+        const merged = [...dbBlogs, ...(staticBlogs as Blog[])].sort((a, b) => {
+          const ta = a.published_at ? new Date(a.published_at).getTime() : 0
+          const tb = b.published_at ? new Date(b.published_at).getTime() : 0
+          return tb - ta
+        })
+        if (err && dbBlogs.length === 0 && staticBlogs.length === 0) {
+          setError(true)
+        }
+        setBlogs(merged)
         setLoading(false)
       })
   }, [])
@@ -134,7 +144,6 @@ export default function BlogList() {
               <BlogCard key={blog.id} blog={blog} />
             ))}
           </div>
-          <AdBanner format="auto" />
         </>
       )}
 

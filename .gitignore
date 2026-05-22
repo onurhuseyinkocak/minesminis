@@ -34,3 +34,4 @@ server/uploads
 .next/
 next-env.d.ts
 .env*.local
+.env*

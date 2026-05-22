@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, Clock, ArrowLeft, BookOpen } from 'lucide-react'
 import DOMPurify from 'dompurify'
-import AdBanner from '../components/AdBanner'
 import { supabase } from '../lib/supabase'
 import type { Blog } from '../lib/supabase'
 import { useMeta } from '../hooks/useMeta'
+import { findStaticBlogBySlug, staticBlogs } from '../content/staticBlogs'
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>()
@@ -23,6 +23,21 @@ export default function BlogPost() {
 
   useEffect(() => {
     if (!slug) return
+
+    // 1. Check static bundled blogs first (no network roundtrip).
+    const fromStatic = findStaticBlogBySlug(slug)
+    if (fromStatic) {
+      setBlog(fromStatic as unknown as Blog)
+      setLoading(false)
+      // Related: same-category static posts, excluding current
+      const relatedStatic = staticBlogs
+        .filter(b => b.category === fromStatic.category && b.slug !== fromStatic.slug)
+        .slice(0, 3) as unknown as Blog[]
+      setRelated(relatedStatic)
+      return
+    }
+
+    // 2. Fall back to DB
     supabase
       .from('mm_blogs')
       .select('*')
@@ -34,7 +49,7 @@ export default function BlogPost() {
         setBlog(data)
         setLoading(false)
 
-        // Fetch related posts
+        // Fetch related posts (DB + supplement with static if same category)
         supabase
           .from('mm_blogs')
           .select('id, title, slug, excerpt, cover_url, category, published_at, reading_time_min')
@@ -44,7 +59,11 @@ export default function BlogPost() {
           .order('published_at', { ascending: false })
           .limit(3)
           .then(({ data: relatedData }) => {
-            if (relatedData) setRelated(relatedData as Blog[])
+            const dbRelated = (relatedData || []) as Blog[]
+            const staticRelated = staticBlogs
+              .filter(b => b.category === data.category && b.slug !== data.slug)
+              .slice(0, Math.max(0, 3 - dbRelated.length)) as unknown as Blog[]
+            setRelated([...dbRelated, ...staticRelated])
           })
       })
   }, [slug])
@@ -122,8 +141,6 @@ export default function BlogPost() {
             ))}
           </div>
         )}
-
-        <AdBanner format="auto" />
 
         {/* Internal Links — SEO */}
         <div style={{ background: 'var(--surface-2)', borderRadius: 16, padding: 24, marginTop: 32 }}>

@@ -36,7 +36,8 @@ export default function TopNav() {
       </div>
 
       <div className="mm-nav-actions">
-        <Link to="/about" className="mm-btn" style={{ fontSize: 13, padding: '8px 14px' }}>About</Link>
+        <Link to="/curriculum" className="mm-btn" style={{ fontSize: 13, padding: '8px 14px' }}>Müfredat</Link>
+        <Link to="/about" className="mm-btn" style={{ fontSize: 13, padding: '8px 14px' }}>Hakkımızda</Link>
       </div>
     </nav>
   )
