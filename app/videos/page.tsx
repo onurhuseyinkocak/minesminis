@@ -1,0 +1,67 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { Play } from 'lucide-react'
+import Cover from '@/src/components/Cover'
+import { supabase } from '@/src/lib/supabase'
+
+export const metadata: Metadata = {
+  title: 'Videolar — Çocuklar İçin İngilizce Eğitim Videoları',
+  description:
+    'Çocuklara İngilizce öğretmek için seçilmiş, YouTube restricted mode ile sunulan ücretsiz eğitim videoları. Renkler, hayvanlar, günlük rutinler ve daha fazlası.',
+  alternates: { canonical: 'https://minesminis.com/videos' },
+}
+
+export const revalidate = 600
+
+export default async function VideosPage() {
+  let videos: any[] = []
+  try {
+    const { data } = await supabase.from('mm_videos').select('*').eq('published', true).order('created_at', { ascending: false })
+    videos = data || []
+  } catch {
+    // ignore
+  }
+
+  return (
+    <>
+      <div className="mm-page-header">
+        <div>
+          <h1 className="mm-page-title">Videolar</h1>
+          <p className="mm-page-sub">
+            {videos.length > 0 ? `${videos.length} video — restricted mode ile güvenli` : 'Çocuklara özel İngilizce videoları — yakında daha fazlası'}
+          </p>
+        </div>
+      </div>
+
+      {videos.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Videolar yakında eklenecek</p>
+          <p style={{ fontSize: 14, maxWidth: 400, margin: '8px auto 0', lineHeight: 1.6 }}>
+            Eğitsel İngilizce videoları kürelenmesi devam ediyor. Tüm videolar manuel olarak incelenip yayınlanır.
+          </p>
+        </div>
+      ) : (
+        <div className="mm-grid-3">
+          {videos.map((v: any) => (
+            <Link key={v.id} href={`/videos/${v.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="mm-card-cover">
+                {v.thumbnail_url ? (
+                  <img src={v.thumbnail_url} alt={v.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <Cover kind={v.cover_kind} />
+                )}
+                <div className="mm-card-cta"><Play size={18} /></div>
+              </div>
+              <div className="mm-card-body">
+                <h2 className="mm-card-title">{v.title}</h2>
+                <div className="mm-card-meta">
+                  {v.duration && <span className="mm-tag blue">{v.duration}</span>}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </>
+  )
+}

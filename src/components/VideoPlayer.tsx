@@ -1,0 +1,50 @@
+'use client'
+
+import Link from 'next/link'
+import { ArrowLeft, Play } from 'lucide-react'
+import Cover from './Cover'
+import type { Video } from '../lib/supabase'
+import { extractYouTubeId } from '../lib/youtube'
+
+export default function VideoPlayer({ video }: { video: Video }) {
+  return (
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Link href="/videos" className="mm-icon-btn" aria-label="Videolara dön"><ArrowLeft size={18} /></Link>
+          <div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>{video.title}</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>{video.category} - {video.duration}</div>
+          </div>
+        </div>
+      </div>
+
+      {video.youtube_url && extractYouTubeId(video.youtube_url) ? (
+        <div style={{ borderRadius: 28, overflow: 'hidden', aspectRatio: '16/9' }}>
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${extractYouTubeId(video.youtube_url)}`}
+            title={video.title}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+          />
+        </div>
+      ) : (
+        <div style={{ background: 'var(--surface-2)', borderRadius: 28, overflow: 'hidden', position: 'relative' }}>
+          <div style={{ aspectRatio: '16/9', position: 'relative' }}>
+            <Cover kind={video.cover_kind} />
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 84, height: 84, borderRadius: '50%', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', boxShadow: 'var(--shadow-2)' }}>
+                <Play size={32} />
+              </div>
+            </div>
+            <div style={{ position: 'absolute', bottom: 16, left: 20, right: 20, padding: 12, background: 'rgba(255,255,255,0.9)', borderRadius: 12, color: 'var(--ink-2)', fontSize: 13, textAlign: 'center', fontWeight: 600 }}>
+              YouTube linki henüz eklenmedi
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}

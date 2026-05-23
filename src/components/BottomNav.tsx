@@ -1,4 +1,7 @@
-import { Link, useLocation } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Home, Presentation, Video, Music, FileText, BookOpen } from 'lucide-react'
 
 const tabs = [
@@ -11,17 +14,16 @@ const tabs = [
 ]
 
 export default function BottomNav() {
-  const location = useLocation()
-  const active = tabs.find(t =>
-    t.id === '/' ? location.pathname === '/' : location.pathname.startsWith(t.id)
-  )?.id || '/'
+  const pathname = usePathname() || '/'
+  const active =
+    tabs.find((t) => (t.id === '/' ? pathname === '/' : pathname.startsWith(t.id)))?.id || '/'
 
   return (
     <nav className="mm-bottom-nav" role="navigation" aria-label="Mobile navigation">
-      {tabs.map(t => (
+      {tabs.map((t) => (
         <Link
           key={t.id}
-          to={t.id}
+          href={t.id}
           className={`mm-bottom-tab${active === t.id ? ' active' : ''}`}
           aria-label={t.label}
         >

@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Public URLs are baked into the bundle; safe to hardcode as a build-time
+// fallback so SSG doesn't fail when env vars aren't set during build.
+const supabaseUrl =
+  (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://kcbblalwwfjevneegmcv.supabase.co').trim()
+const supabaseAnonKey =
+  (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjYmJsYWx3d2ZqZXZuZWVnbWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MDY3ODQsImV4cCI6MjA5MzI4Mjc4NH0.Pg66b8AWN-8GZlr8PfNxafMU7wYRnWldgdcz88jnkDg').trim()
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
