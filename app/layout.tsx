@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import './globals.css'
 import LayoutShell from '../src/components/LayoutShell'
 import PageViewTracker from '../src/components/PageViewTracker'
+import GoogleAnalytics from '../src/components/GoogleAnalytics'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://minesminis.com'),
@@ -53,6 +54,7 @@ export const metadata: Metadata = {
   },
   other: {
     'google-adsense-account': 'ca-pub-6644397387275334',
+    'google-site-verification': 'uc57zPkk36HVf6lb1fPPBnvwTA5Gk_FBfYZDrhQVDqc',
     'format-detection': 'telephone=no',
   },
 }
@@ -113,6 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Toaster position="top-right" />
         <LayoutShell>{children}</LayoutShell>
         <PageViewTracker />
+        <GoogleAnalytics />
       </body>
     </html>
   )
