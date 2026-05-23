@@ -1,10 +1,8 @@
-import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
-  // Skip lint during build — Next.js still type-checks
   eslint: { ignoreDuringBuilds: true },
-  // Allow images from supabase storage + youtube embeds.
+  typescript: { ignoreBuildErrors: false },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'kcbblalwwfjevneegmcv.supabase.co' },
