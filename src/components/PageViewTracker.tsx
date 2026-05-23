@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import { supabase } from '@/src/lib/supabase'
+import { supabase } from '../lib/supabase'
 
 function getSessionId() {
   try {
