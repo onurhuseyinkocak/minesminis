@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-// Admin is client-side only (react-router-dom inside); never try to SSG.
+// Admin requires runtime Supabase session check; skip SSG.
 export const dynamic = 'force-dynamic'
 
 export default function AdminCatchAllPage() {

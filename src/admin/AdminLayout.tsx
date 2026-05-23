@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { Presentation, Video, Music, FileText, LogOut, LayoutDashboard, Eye, EyeOff, BarChart3, ArrowRight, BookOpen } from 'lucide-react'
 import SlidesManager from './SlidesManager'
 import VideosManager from './VideosManager'
@@ -223,7 +224,7 @@ function AdminDashboard() {
             ].map(item => {
               const Icon = item.icon
               return (
-                <Link key={item.path} to={item.path} style={{
+                <Link key={item.path} href={item.path} style={{
                   background: 'white', borderRadius: 12, padding: 16, border: '1px solid var(--line)',
                   textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 12,
                   transition: 'all 0.2s',
@@ -279,10 +280,36 @@ function AdminDashboard() {
   )
 }
 
+function AdminContent() {
+  const pathname = usePathname() || '/admin'
+
+  let active: typeof navItems[number]['path'] = '/admin'
+  for (const item of navItems) {
+    if (item.path === '/admin') continue
+    if (pathname === item.path || pathname.startsWith(item.path + '/')) {
+      active = item.path
+      break
+    }
+  }
+
+  let Body: React.ComponentType
+  switch (active) {
+    case '/admin/slides': Body = SlidesManager; break
+    case '/admin/videos': Body = VideosManager; break
+    case '/admin/songs': Body = SongsManager; break
+    case '/admin/worksheets': Body = WorksheetsManager; break
+    case '/admin/blog': Body = BlogsManager; break
+    default: Body = AdminDashboard
+  }
+
+  return <Body />
+}
+
 export default function AdminLayout() {
   const [authed, setAuthed] = useState(false)
   const [checking, setChecking] = useState(true)
-  const location = useLocation()
+  const pathname = usePathname() || '/admin'
+  const router = useRouter()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -291,6 +318,12 @@ export default function AdminLayout() {
     })
   }, [])
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    setAuthed(false)
+    router.push('/admin')
+  }
+
   if (checking) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}><p style={{ color: 'var(--ink-3)' }}>Loading...</p></div>
   if (!authed) return <AdminLogin onLogin={() => setAuthed(true)} />
 
@@ -298,19 +331,21 @@ export default function AdminLayout() {
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Sidebar */}
       <div style={{ width: 240, background: 'white', borderRight: '1px solid var(--line)', padding: '24px 16px', display: 'flex', flexDirection: 'column' }}>
-        <Link to="/" style={{ textDecoration: 'none', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Link href="/" style={{ textDecoration: 'none', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 10 }}>
           <img src="/images/minesminis-logo.webp" alt="minesminis" style={{ height: 44, borderRadius: 10 }} />
         </Link>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
           {navItems.map(item => {
-            const active = location.pathname === item.path
+            const isActive = item.path === '/admin'
+              ? pathname === '/admin' || pathname === '/admin/'
+              : pathname === item.path || pathname.startsWith(item.path + '/')
             return (
-              <Link key={item.path} to={item.path} style={{
+              <Link key={item.path} href={item.path} style={{
                 display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 12,
                 textDecoration: 'none', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
-                color: active ? 'white' : 'var(--ink-2)',
-                background: active ? 'var(--ink)' : 'transparent',
+                color: isActive ? 'white' : 'var(--ink-2)',
+                background: isActive ? 'var(--ink)' : 'transparent',
               }}>
                 <item.icon size={18} />
                 {item.label}
@@ -319,7 +354,7 @@ export default function AdminLayout() {
           })}
         </nav>
 
-        <button onClick={() => { supabase.auth.signOut(); setAuthed(false) }}
+        <button onClick={handleSignOut}
           style={{
             display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 12,
             border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--ink-3)',
@@ -331,14 +366,7 @@ export default function AdminLayout() {
 
       {/* Main */}
       <div style={{ flex: 1, padding: 32, minWidth: 0, overflowX: 'hidden' }}>
-        <Routes>
-          <Route index element={<AdminDashboard />} />
-          <Route path="slides" element={<SlidesManager />} />
-          <Route path="videos" element={<VideosManager />} />
-          <Route path="songs" element={<SongsManager />} />
-          <Route path="worksheets" element={<WorksheetsManager />} />
-          <Route path="blog" element={<BlogsManager />} />
-        </Routes>
+        <AdminContent />
       </div>
     </div>
   )

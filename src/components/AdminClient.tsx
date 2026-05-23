@@ -1,12 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BrowserRouter } from 'react-router-dom'
 import AdminLayout from '../admin/AdminLayout'
 
 export default function AdminClient() {
-  // Mount only after first client render so react-router-dom's BrowserRouter
-  // never tries to read window/history during SSR or static export.
+  // AdminLayout uses Supabase auth/getSession which must run on the client.
+  // Avoid SSR mismatch by mounting only after first render.
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
 
@@ -18,9 +17,5 @@ export default function AdminClient() {
     )
   }
 
-  return (
-    <BrowserRouter>
-      <AdminLayout />
-    </BrowserRouter>
-  )
+  return <AdminLayout />
 }

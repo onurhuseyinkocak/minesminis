@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/terms`, lastModified: today, changeFrequency: 'yearly', priority: 0.3 },
   ]
 
-  // Static bundled blog URLs
+  // Static bundled blog URLs (all 10 are pre-generated at build time)
   const staticBlogUrls: MetadataRoute.Sitemap = staticBlogs.map((b) => ({
     url: `${SITE_URL}/blog/${b.slug}`,
     lastModified: b.published_at ? new Date(b.published_at) : today,

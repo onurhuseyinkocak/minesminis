@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'react-hot-toast'
 import './globals.css'
 import LayoutShell from '../src/components/LayoutShell'
@@ -46,7 +46,6 @@ export const metadata: Metadata = {
     apple: '/images/minesminis-logo-512.png',
   },
   manifest: '/manifest.json',
-  themeColor: '#7B68EE',
   appleWebApp: {
     capable: true,
     title: 'minesminis',
@@ -57,6 +56,12 @@ export const metadata: Metadata = {
     'google-site-verification': 'uc57zPkk36HVf6lb1fPPBnvwTA5Gk_FBfYZDrhQVDqc',
     'format-detection': 'telephone=no',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#7B68EE',
+  width: 'device-width',
+  initialScale: 1,
 }
 
 const orgSchema = {
