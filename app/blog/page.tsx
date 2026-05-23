@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Calendar, Clock, BookOpen } from 'lucide-react'
-import { supabase } from '@/src/lib/supabase'
-import { staticBlogs } from '@/src/content/staticBlogs'
-import type { Blog } from '@/src/lib/supabase'
+import { supabase } from '../../src/lib/supabase'
+import { staticBlogs } from '../../src/content/staticBlogs'
+import type { Blog } from '../../src/lib/supabase'
 
 export const metadata: Metadata = {
   title: 'Blog — İngilizce Öğretim Kaynakları',

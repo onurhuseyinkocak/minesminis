@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { supabase } from '@/src/lib/supabase'
-import type { Video } from '@/src/lib/supabase'
-import VideoPlayer from '@/src/components/VideoPlayer'
+import { supabase } from '../../../src/lib/supabase'
+import type { Video } from '../../../src/lib/supabase'
+import VideoPlayer from '../../../src/components/VideoPlayer'
 
 async function fetchVideo(id: string): Promise<Video | null> {
   try {

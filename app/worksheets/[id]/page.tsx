@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { supabase } from '@/src/lib/supabase'
-import type { Worksheet } from '@/src/lib/supabase'
-import WorksheetPlayer from '@/src/components/WorksheetPlayer'
+import { supabase } from '../../../src/lib/supabase'
+import type { Worksheet } from '../../../src/lib/supabase'
+import WorksheetPlayer from '../../../src/components/WorksheetPlayer'
 
 async function fetchWorksheet(id: string): Promise<Worksheet | null> {
   try {

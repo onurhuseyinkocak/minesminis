@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Presentation, Video, Music, BookOpen, Users, Heart, Sparkles, Target, Award, ShieldCheck } from 'lucide-react'
-import { supabase } from '@/src/lib/supabase'
+import { supabase } from '../../src/lib/supabase'
 
 export const metadata: Metadata = {
   title: 'Hakkımızda — Çocuklar İçin İngilizce Öğrenme Platformu',

@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Calendar, Clock, ArrowLeft, BookOpen } from 'lucide-react'
-import { supabase } from '@/src/lib/supabase'
-import { findStaticBlogBySlug, staticBlogs } from '@/src/content/staticBlogs'
-import type { Blog } from '@/src/lib/supabase'
-import SanitizedHtml from '@/src/components/SanitizedHtml'
+import { supabase } from '../../../src/lib/supabase'
+import { findStaticBlogBySlug, staticBlogs } from '../../../src/content/staticBlogs'
+import type { Blog } from '../../../src/lib/supabase'
+import SanitizedHtml from '../../../src/components/SanitizedHtml'
 
 // Pre-render static slugs at build time; DB blogs fall back to runtime SSR
 export async function generateStaticParams() {

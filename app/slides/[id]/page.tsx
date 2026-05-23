@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { supabase } from '@/src/lib/supabase'
-import type { Slide } from '@/src/lib/supabase'
-import SlidePlayer from '@/src/components/SlidePlayer'
+import { supabase } from '../../../src/lib/supabase'
+import type { Slide } from '../../../src/lib/supabase'
+import SlidePlayer from '../../../src/components/SlidePlayer'
 
 async function fetchSlide(id: string): Promise<Slide | null> {
   try {

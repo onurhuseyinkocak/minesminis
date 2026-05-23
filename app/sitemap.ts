@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { staticBlogs } from '@/src/content/staticBlogs'
+import { staticBlogs } from '../src/content/staticBlogs'
 
 const SITE_URL = 'https://minesminis.com'
 const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://kcbblalwwfjevneegmcv.supabase.co').trim()

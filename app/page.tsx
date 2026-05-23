@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Play, Presentation, Video, Music, FileText, ChevronRight, Star, BookOpen } from 'lucide-react'
-import Cover from '@/src/components/Cover'
-import { supabase } from '@/src/lib/supabase'
-import DashboardCover from '@/src/components/DashboardCover'
-import { staticBlogs } from '@/src/content/staticBlogs'
+import Cover from '../src/components/Cover'
+import { supabase } from '../src/lib/supabase'
+import DashboardCover from '../src/components/DashboardCover'
+import { staticBlogs } from '../src/content/staticBlogs'
 
 export const metadata: Metadata = {
   title: 'Çocuklar İçin Ücretsiz İngilizce Öğrenme Platformu',

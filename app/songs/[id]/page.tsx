@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { supabase } from '@/src/lib/supabase'
-import type { Song } from '@/src/lib/supabase'
-import SongPlayer from '@/src/components/SongPlayer'
+import { supabase } from '../../../src/lib/supabase'
+import type { Song } from '../../../src/lib/supabase'
+import SongPlayer from '../../../src/components/SongPlayer'
 
 async function fetchSong(id: string): Promise<Song | null> {
   try {

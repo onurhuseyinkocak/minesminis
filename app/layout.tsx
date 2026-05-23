@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Toaster } from 'react-hot-toast'
 import './globals.css'
-import LayoutShell from '@/src/components/LayoutShell'
-import PageViewTracker from '@/src/components/PageViewTracker'
+import LayoutShell from '../src/components/LayoutShell'
+import PageViewTracker from '../src/components/PageViewTracker'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://minesminis.com'),
