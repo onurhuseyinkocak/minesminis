@@ -82,6 +82,9 @@ export default function Footer() {
               <Link href="/about" style={linkStyle}>Hakkımızda</Link>
               <Link href="/faq" style={linkStyle}>Sıkça Sorulanlar</Link>
               <Link href="/contact" style={linkStyle}>İletişim</Link>
+              <Link href="/ara" style={linkStyle}>Arama</Link>
+              <Link href="/konular" style={linkStyle}>Konu İndeksi</Link>
+              <Link href="/rss.xml" style={linkStyle}>RSS Beslemesi</Link>
               <Link href="/privacy" style={linkStyle}>Gizlilik</Link>
               <Link href="/terms" style={linkStyle}>Kullanım Koşulları</Link>
             </nav>

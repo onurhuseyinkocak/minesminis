@@ -47,6 +47,7 @@ export default function robots(): MetadataRoute.Robots {
     ],
     sitemap: [
       'https://minesminis.com/sitemap.xml',
+      'https://minesminis.com/sitemap-topics.xml',
       'https://minesminis.com/sitemap-news.xml',
       'https://minesminis.com/sitemap-images.xml',
     ],

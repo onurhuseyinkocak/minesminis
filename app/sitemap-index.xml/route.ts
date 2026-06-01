@@ -9,6 +9,10 @@ export async function GET() {
     <lastmod>${now}</lastmod>
   </sitemap>
   <sitemap>
+    <loc>https://minesminis.com/sitemap-topics.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
     <loc>https://minesminis.com/sitemap-news.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
