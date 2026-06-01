@@ -174,5 +174,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...ageTopicUrls, ...categoryUrls, ...activityUrls, ...allBlogs, ...contentUrls]
+  const printUrls: MetadataRoute.Sitemap = topics.map((t) => ({
+    url: `${SITE_URL}/yazdir/${t.id}`,
+    lastModified: today,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...ageTopicUrls, ...categoryUrls, ...activityUrls, ...printUrls, ...allBlogs, ...contentUrls]
 }

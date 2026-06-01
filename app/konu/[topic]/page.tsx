@@ -207,6 +207,7 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
             <Link href="/videos" className="mm-btn" style={{ justifyContent: 'center', fontSize: 13 }}>Videolar</Link>
             <Link href="/songs" className="mm-btn" style={{ justifyContent: 'center', fontSize: 13 }}>Şarkılar</Link>
             <Link href="/worksheets" className="mm-btn" style={{ justifyContent: 'center', fontSize: 13 }}>Çalışma Kâğıtları</Link>
+            <Link href={`/yazdir/${t.id}`} className="mm-btn" style={{ justifyContent: 'center', fontSize: 13, background: 'var(--primary)', color: '#fff' }}>📄 Yazdırılabilir</Link>
           </div>
         </section>
 
