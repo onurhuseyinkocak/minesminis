@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ChevronRight, BookOpen } from 'lucide-react'
 import { findTopic, topics } from '../../../src/content/topics'
 import SpeakWord from '../../../src/components/SpeakWord'
+import RelatedBlogs from '../../../src/components/RelatedBlogs'
 
 export async function generateStaticParams() {
   return topics.map((t) => ({ topic: t.id }))
@@ -206,6 +207,8 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
             <Link href="/worksheets" className="mm-btn" style={{ justifyContent: 'center', fontSize: 13 }}>Çalışma Kâğıtları</Link>
           </div>
         </section>
+
+        <RelatedBlogs topicKeywords={t.seoKeywords} topicLabel={t.titleTr} />
 
         {related.length > 0 && (
           <section style={{ marginBottom: 40 }}>
