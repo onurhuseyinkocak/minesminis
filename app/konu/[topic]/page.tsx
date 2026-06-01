@@ -5,6 +5,7 @@ import { ChevronRight, BookOpen } from 'lucide-react'
 import { findTopic, topics } from '../../../src/content/topics'
 import SpeakWord from '../../../src/components/SpeakWord'
 import RelatedBlogs from '../../../src/components/RelatedBlogs'
+import { activitiesForTopic } from '../../../src/content/activities'
 
 export async function generateStaticParams() {
   return topics.map((t) => ({ topic: t.id }))
@@ -43,6 +44,7 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
   if (!t) notFound()
 
   const related = topics.filter((x) => x.id !== t.id && x.gradeLevels.some((g) => t.gradeLevels.includes(g))).slice(0, 4)
+  const topicActivities = activitiesForTopic(t.id)
 
   const learningSchema = {
     '@context': 'https://schema.org',
@@ -207,6 +209,24 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
             <Link href="/worksheets" className="mm-btn" style={{ justifyContent: 'center', fontSize: 13 }}>Çalışma Kâğıtları</Link>
           </div>
         </section>
+
+        {topicActivities.length > 0 && (
+          <section style={{ marginBottom: 32 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, margin: '0 0 14px' }}>{t.titleTr} İçin Hazır Etkinlikler</h2>
+            <div className="mm-grid-2">
+              {topicActivities.map((a) => (
+                <Link key={a.id} href={`/etkinlik/${a.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit', padding: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                    <span className="mm-tag blue" style={{ fontSize: 11 }}>{a.type}</span>
+                    <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{a.durationMin} dk</span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15 }}>{a.titleTr}</div>
+                  <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 4, lineHeight: 1.4 }}>{a.shortDesc.slice(0, 100)}{a.shortDesc.length > 100 ? '…' : ''}</div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         <RelatedBlogs topicKeywords={t.seoKeywords} topicLabel={t.titleTr} />
 

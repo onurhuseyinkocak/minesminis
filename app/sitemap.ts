@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { staticBlogs } from '../src/content/staticBlogs'
 import { topics } from '../src/content/topics'
+import { activities } from '../src/content/activities'
 import { hasSlideContent, hasSongContent, hasVideoContent, hasWorksheetContent } from '../src/lib/resourceQuality'
 
 const SITE_URL = 'https://minesminis.com'
@@ -24,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/about`, lastModified: today, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/contact`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/konular`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${SITE_URL}/etkinlikler`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/ara`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/privacy`, lastModified: today, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${SITE_URL}/terms`, lastModified: today, changeFrequency: 'yearly', priority: 0.3 },
@@ -165,5 +167,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...ageTopicUrls, ...categoryUrls, ...allBlogs, ...contentUrls]
+  const activityUrls: MetadataRoute.Sitemap = activities.map((a) => ({
+    url: `${SITE_URL}/etkinlik/${a.id}`,
+    lastModified: today,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...ageTopicUrls, ...categoryUrls, ...activityUrls, ...allBlogs, ...contentUrls]
 }
