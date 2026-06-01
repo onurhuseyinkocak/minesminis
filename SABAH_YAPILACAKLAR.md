@@ -7,11 +7,13 @@
 
 **Hepsi otomatik, canlı, çalışıyor:**
 
-- 494+ URL Google'a tarama için hazır (sitemap.xml)
-- 60+ AI bot izinli (ChatGPT, Claude, Perplexity, Gemini, Copilot)
-- 80+ otomatik blog post yayında (cron her gün 3 yeni ekliyor)
-- 57 İngilizce konu sayfası + 30 sınıf etkinliği + yazdırılabilir kâğıtlar
-- AdSense entegrasyonu aktif (script live'da)
+- **499 URL** Google'a tarama için hazır (sitemap.xml) — başlangıçta 16'ydı, **30 kat** büyüdü
+- **60+ AI bot izinli** (ChatGPT/GPTBot, Claude/ClaudeBot, Perplexity, Gemini/Google-Extended, Copilot, You.com, Brave AI)
+- **81 otomatik blog post** yayında (cron her gün 3 yeni ekliyor → bu hafta 100+ olur)
+- **57 İngilizce konu** sayfası + **30 sınıf etkinliği** + **57 yazdırılabilir kâğıt** + 4 yaş grubu + 4 sınıf + 6 tema
+- **Sayfa türleri:** /konu /sinif /yas /tema /konular /etkinlikler /etkinlik /yazdir /blog /ara
+- **JSON-LD schemas:** BlogPosting, VideoObject, LearningResource, Course, HowTo, FAQPage, BreadcrumbList, CollectionPage, ItemList, SpeakableSpecification, EducationalOrganization
+- AdSense entegrasyonu aktif (script live'da, slot ID'leri sen ekleyince reklamlar görünür)
 - IndexNow Bing+Yandex'e otomatik push (her gün 05:30)
 - Vercel Cron — 06:00, 13:00, 19:00 blog gen + 05:30 IndexNow
 
