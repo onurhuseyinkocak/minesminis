@@ -8,12 +8,31 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://minesminis.com/terms' },
 }
 
+const termsSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Kullanım Koşulları',
+  inLanguage: 'tr',
+  url: 'https://minesminis.com/terms',
+  isPartOf: { '@type': 'WebSite', name: 'minesminis', url: 'https://minesminis.com' },
+}
+const termsBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Kullanım Koşulları', item: 'https://minesminis.com/terms' },
+  ],
+}
+
 const lastUpdated = '25 Mayıs 2026'
 const h2Style = { fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 16 }
 
 export default function TermsPage() {
   return (
     <div style={{ maxWidth: 760, margin: '0 auto' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(termsSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(termsBreadcrumb) }} />
       <h1 className="mm-page-title">Kullanım Koşulları</h1>
       <p className="mm-page-sub" style={{ marginBottom: 24 }}>Son güncelleme: {lastUpdated}</p>
 

@@ -137,5 +137,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }))
 
-  return [...staticPages, ...gradeUrls, ...ageUrls, ...topicUrls, ...gradeTopicUrls, ...categoryUrls, ...allBlogs, ...contentUrls]
+  const themeUrls: MetadataRoute.Sitemap = ['gunluk-yasam', 'doga', 'beslenme', 'beceriler', 'okul', 'iletisim'].map((s) => ({
+    url: `${SITE_URL}/tema/${s}`,
+    lastModified: today,
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...categoryUrls, ...allBlogs, ...contentUrls]
 }

@@ -8,6 +8,49 @@ export const metadata: Metadata = {
   description:
     'minesminis nedir, neden kurulduk, hangi pedagojik yaklaşımı benimsiyoruz? Çocuklara İngilizce öğretiminde deneyim, CEFR A1 hizalı içerik, COPPA uyumlu güvenli platform.',
   alternates: { canonical: 'https://minesminis.com/about' },
+  openGraph: {
+    type: 'website',
+    title: 'minesminis Hakkında — Çocuklar İçin Ücretsiz İngilizce',
+    description: 'Türkiye Maarif Modeli uyumlu, CEFR A1 seviyesinde ücretsiz İngilizce öğrenme platformu.',
+    url: 'https://minesminis.com/about',
+  },
+}
+
+const aboutSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'minesminis Hakkında',
+  inLanguage: 'tr',
+  url: 'https://minesminis.com/about',
+  mainEntity: {
+    '@type': 'EducationalOrganization',
+    name: 'minesminis',
+    url: 'https://minesminis.com',
+    description: 'Türkiye Maarif Modeli uyumlu, 4-12 yaş arası çocuklar için ücretsiz İngilizce öğrenme platformu.',
+    foundingDate: '2026',
+    areaServed: 'TR',
+    audience: {
+      '@type': 'EducationalAudience',
+      educationalRole: 'student',
+      audienceType: 'Primary school students aged 4-12',
+    },
+    educationalCredentialAwarded: 'CEFR A1',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: 'info@minesminis.com',
+      contactType: 'Customer Support',
+      availableLanguage: ['Turkish', 'English'],
+    },
+  },
+}
+
+const aboutBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Hakkımızda', item: 'https://minesminis.com/about' },
+  ],
 }
 
 // ISR — refresh counts every 10 minutes
@@ -48,6 +91,8 @@ export default async function AboutPage() {
 
   return (
     <div style={{ maxWidth: 760, margin: '0 auto' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutBreadcrumb) }} />
       <h1 className="mm-page-title">Hakkımızda</h1>
       <p className="mm-page-sub" style={{ marginBottom: 24 }}>Çocuklara İngilizce öğretmek için, çocuk gibi düşünerek tasarlandı.</p>
 

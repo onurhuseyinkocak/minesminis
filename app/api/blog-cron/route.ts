@@ -63,8 +63,12 @@ async function withRetry<T>(fn: () => Promise<T>, attempts = 3, baseDelayMs = 20
     } catch (e) {
       lastError = e
       if (i === attempts - 1) break
-      const delay = baseDelayMs * Math.pow(2, i) + Math.floor(Math.random() * 500)
-      console.warn(`[${label}] attempt ${i + 1}/${attempts} failed: ${String(e).slice(0, 200)}. Retrying in ${delay}ms`)
+      const msg = String(e)
+      // 429 / rate limit: longer backoff
+      const isRateLimited = /429|rate limit|queue full|too many/i.test(msg)
+      const baseFactor = isRateLimited ? 4 : 1
+      const delay = Math.min(60000, baseDelayMs * baseFactor * Math.pow(2, i)) + Math.floor(Math.random() * 1500)
+      console.warn(`[${label}] attempt ${i + 1}/${attempts} failed: ${msg.slice(0, 200)}. Retrying in ${delay}ms`)
       await sleep(delay)
     }
   }
@@ -203,11 +207,11 @@ async function generateSingleBlog(): Promise<{ ok: true; slug: string } | { ok: 
   const slugBase = tslug(title)
 
   try {
-    // Generate content with retry (Pollinations sometimes 502/timeout)
+    // Generate content with retry (Pollinations sometimes 429/502/timeout)
     const contentHtml = await withRetry(
       () => generateContent(title, category, keywords, pick.topicId),
-      3,
-      4000,
+      5,
+      6000,
       'pollinations-text',
     )
 

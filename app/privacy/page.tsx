@@ -8,12 +8,31 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://minesminis.com/privacy' },
 }
 
+const privacySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Gizlilik Politikası',
+  inLanguage: 'tr',
+  url: 'https://minesminis.com/privacy',
+  isPartOf: { '@type': 'WebSite', name: 'minesminis', url: 'https://minesminis.com' },
+}
+const privacyBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Gizlilik Politikası', item: 'https://minesminis.com/privacy' },
+  ],
+}
+
 const lastUpdated = '25 Mayıs 2026'
 const h2Style = { fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 16 }
 
 export default function PrivacyPage() {
   return (
     <div style={{ maxWidth: 760, margin: '0 auto' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(privacySchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(privacyBreadcrumb) }} />
       <h1 className="mm-page-title">Gizlilik Politikası</h1>
       <p className="mm-page-sub" style={{ marginBottom: 24 }}>Son güncelleme: {lastUpdated}</p>
 

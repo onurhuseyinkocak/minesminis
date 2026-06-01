@@ -7,6 +7,42 @@ export const metadata: Metadata = {
   description:
     'minesminis ile iletişime geçin. İçerik önerisi, hata bildirimi, öğretmen işbirliği, aile geri bildirimi ve diğer konular için 7 iş günü içinde dönüş yapıyoruz.',
   alternates: { canonical: 'https://minesminis.com/contact' },
+  openGraph: {
+    type: 'website',
+    title: 'minesminis İletişim',
+    description: 'İçerik önerisi, hata bildirimi ve öğretmen işbirliği için bize ulaşın.',
+    url: 'https://minesminis.com/contact',
+  },
+}
+
+const contactSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'minesminis İletişim',
+  inLanguage: 'tr',
+  url: 'https://minesminis.com/contact',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'minesminis',
+    url: 'https://minesminis.com',
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        contactType: 'Customer Support',
+        email: 'info@minesminis.com',
+        availableLanguage: ['Turkish', 'English'],
+        areaServed: 'TR',
+      },
+    ],
+  },
+}
+const contactBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+    { '@type': 'ListItem', position: 2, name: 'İletişim', item: 'https://minesminis.com/contact' },
+  ],
 }
 
 const reasons = [
@@ -21,6 +57,8 @@ const reasons = [
 export default function ContactPage() {
   return (
     <div style={{ maxWidth: 760, margin: '0 auto' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactBreadcrumb) }} />
       <h1 className="mm-page-title">İletişim</h1>
       <p className="mm-page-sub" style={{ marginBottom: 24 }}>Geri bildirim, soru, işbirliği — bizi şaşırtın.</p>
 
