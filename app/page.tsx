@@ -118,14 +118,17 @@ export default async function HomePage() {
             <Star size={12} /> ÇOCUKLAR İÇİN İNGİLİZCE
           </div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, margin: 0, lineHeight: 1.1, letterSpacing: -1, color: 'white' }}>
-            Eğlenerek<br />İngilizce öğren.
+            Çocuklara Ücretsiz<br />İngilizce Öğretim Platformu
           </h1>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', marginTop: 8, fontWeight: 500, maxWidth: 400 }}>
-            Sunumlar, videolar, şarkılar ve çalışma kâğıtlarıyla çocuğunuza özel keyifli bir öğrenme deneyimi.
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.92)', marginTop: 8, fontWeight: 500, maxWidth: 420 }}>
+            4-12 yaş Maarif modeli uyumlu: 57 konu, 30 sınıf etkinliği, sunumlar, videolar, şarkılar ve yazdırılabilir çalışma kâğıtları. CEFR A1 hedefli.
           </p>
-          <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-            <Link href="/slides" className="mm-btn" style={{ background: 'white', color: '#7B68EE', fontWeight: 700 }}>
-              <Play size={14} /> Öğrenmeye Başla
+          <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+            <Link href="/sinif/1" className="mm-btn" style={{ background: 'white', color: '#7B68EE', fontWeight: 700 }}>
+              <Play size={14} /> Sınıfa Göre Başla
+            </Link>
+            <Link href="/konular" className="mm-btn" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 600, border: '1px solid rgba(255,255,255,0.4)' }}>
+              Tüm Konular
             </Link>
           </div>
         </div>
