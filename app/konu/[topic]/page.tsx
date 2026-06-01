@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ChevronRight, BookOpen } from 'lucide-react'
 import { findTopic, topics } from '../../../src/content/topics'
+import SpeakWord from '../../../src/components/SpeakWord'
 
 export async function generateStaticParams() {
   return topics.map((t) => ({ topic: t.id }))
@@ -122,7 +123,12 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
               <tbody>
                 {t.vocabulary.map((v, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid var(--line)' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600 }}>{v.en}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        <SpeakWord word={v.en} />
+                        {v.en}
+                      </span>
+                    </td>
                     <td style={{ padding: '10px 12px' }}>{v.tr}</td>
                     <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: 'var(--ink-3)' }}>/{v.ipa}/</td>
                     <td style={{ padding: '10px 12px', color: 'var(--ink-2)' }}>{v.example}</td>

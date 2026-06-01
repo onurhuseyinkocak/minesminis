@@ -145,5 +145,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...categoryUrls, ...allBlogs, ...contentUrls]
+  const ageGradesMap: Record<string, number[]> = {
+    '4-5': [1],
+    '6-7': [1, 2],
+    '8-9': [2, 3],
+    '10-12': [3, 4],
+  }
+  const ageTopicUrls: MetadataRoute.Sitemap = []
+  for (const [r, ageGrades] of Object.entries(ageGradesMap)) {
+    for (const t of topics) {
+      if (t.gradeLevels.some((g) => ageGrades.includes(g))) {
+        ageTopicUrls.push({
+          url: `${SITE_URL}/yas/${r}/konu/${t.id}`,
+          lastModified: today,
+          changeFrequency: 'monthly' as const,
+          priority: 0.7,
+        })
+      }
+    }
+  }
+
+  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...ageTopicUrls, ...categoryUrls, ...allBlogs, ...contentUrls]
 }

@@ -64,10 +64,10 @@ async function withRetry<T>(fn: () => Promise<T>, attempts = 3, baseDelayMs = 20
       lastError = e
       if (i === attempts - 1) break
       const msg = String(e)
-      // 429 / rate limit: longer backoff
+      // 429 / rate limit: longer backoff but capped to keep total under 300s budget
       const isRateLimited = /429|rate limit|queue full|too many/i.test(msg)
-      const baseFactor = isRateLimited ? 4 : 1
-      const delay = Math.min(60000, baseDelayMs * baseFactor * Math.pow(2, i)) + Math.floor(Math.random() * 1500)
+      const baseFactor = isRateLimited ? 3 : 1
+      const delay = Math.min(45000, baseDelayMs * baseFactor * Math.pow(2, i)) + Math.floor(Math.random() * 1000)
       console.warn(`[${label}] attempt ${i + 1}/${attempts} failed: ${msg.slice(0, 200)}. Retrying in ${delay}ms`)
       await sleep(delay)
     }
@@ -208,10 +208,11 @@ async function generateSingleBlog(): Promise<{ ok: true; slug: string } | { ok: 
 
   try {
     // Generate content with retry (Pollinations sometimes 429/502/timeout)
+    // 3 attempts cap to fit in 300s function budget
     const contentHtml = await withRetry(
       () => generateContent(title, category, keywords, pick.topicId),
-      5,
-      6000,
+      3,
+      8000,
       'pollinations-text',
     )
 
