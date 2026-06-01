@@ -111,6 +111,17 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
 
         <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, margin: '0 0 28px' }}>{t.introTr}</p>
 
+        <section style={{ background: 'linear-gradient(135deg, #F3F0FF 0%, #E8EDFF 100%)', borderRadius: 12, padding: '16px 18px', marginBottom: 28 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 700, margin: '0 0 10px' }}>Bu Konu Sonunda Çocuk Şunları Yapabilir</h2>
+          <ul style={{ margin: 0, paddingLeft: 22, lineHeight: 1.75, fontSize: 14.5, color: 'var(--ink-2)' }}>
+            <li>"{t.titleTr}" temasında en az {t.vocabulary.length} kelimeyi tanır ve telaffuz eder.</li>
+            <li>{t.structures.length} farklı cümle kalıbını kullanarak basit cümle kurar.</li>
+            <li>Konuyla ilgili 4-6 satırlık diyaloğu anlar ve canlandırır.</li>
+            <li>Sınıf veya ev ortamında "{t.titleTr}" konusunu pratik etkinliklerle pekiştirir.</li>
+            <li>Maarif modeli "{t.maarifUnit}" hedeflerine uyum sağlar.</li>
+          </ul>
+        </section>
+
         <section style={{ marginBottom: 32 }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, margin: '0 0 14px' }}>Kelimeler</h2>
           <div style={{ overflow: 'auto', border: '1px solid var(--line)', borderRadius: 12 }}>
