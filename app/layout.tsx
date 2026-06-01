@@ -113,7 +113,7 @@ const siteSchema = {
   inLanguage: 'tr',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://minesminis.com/blog?q={search_term_string}',
+    target: 'https://minesminis.com/ara?q={search_term_string}',
     'query-input': 'required name=search_term_string',
   },
 }

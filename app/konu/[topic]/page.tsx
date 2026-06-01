@@ -161,6 +161,26 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
         </section>
 
         <section style={{ marginBottom: 32 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, margin: '0 0 14px' }}>{t.titleTr} İçin Sınıf-içi ve Ev Etkinlikleri</h2>
+          <div className="mm-grid-3">
+            {[
+              { title: 'TPR Hareket Oyunu', desc: `Öğretmen "${t.vocabulary[0]?.en || 'word'}" der, çocuklar bedenle gösterir. Her yeni kelimede bir hareket. Beden + kelime = hızlı pekişme.`, icon: '🎯' },
+              { title: 'Eşleştirme Kartları', desc: `${t.titleTr} kelimelerini görsel + İngilizce + Türkçe üçlü olarak kartlara basın. Çocuk doğru eşleştirmeyi bulur.`, icon: '🃏' },
+              { title: 'Çizim Etkinliği', desc: `Çocuk ${t.titleTr.toLowerCase()} ile ilgili bir resim çizer, İngilizce kelimeleri yanlarına yazar. Görsel + el motor pratiği.`, icon: '🎨' },
+              { title: 'Şarkı + Tekrar', desc: `Konuyla ilgili 1-2 dakikalık ezgili şarkı çalın. Ritim çocuğun hafızasına yazılır. "${t.vocabulary[1]?.en || 'word'}" gibi kelimeler doğal pekişir.`, icon: '🎵' },
+              { title: 'Diyalog Rol-Play', desc: 'Yukarıdaki örnek diyaloğu iki öğrenci sınıf önünde canlandırır. Bağlam + ses ile dil canlanır.', icon: '🎭' },
+              { title: 'Çalışma Kâğıdı', desc: `${t.titleTr} konusu için sınıf veya evde yapılabilecek yazdırılabilir aktivite — minesminis.com/worksheets sayfasından indirebilirsiniz.`, icon: '📄' },
+            ].map((a, i) => (
+              <div key={i} style={{ background: 'var(--surface-2)', borderRadius: 12, padding: 16, border: '1px solid var(--line)' }}>
+                <div style={{ fontSize: 24, marginBottom: 8 }}>{a.icon}</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{a.title}</div>
+                <div style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.5 }}>{a.desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section style={{ marginBottom: 32 }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, margin: '0 0 14px' }}>Sıkça Sorulanlar</h2>
           {t.faq.map((f, i) => (
             <details key={i} style={{ border: '1px solid var(--line)', borderRadius: 10, padding: '12px 16px', marginBottom: 10 }}>

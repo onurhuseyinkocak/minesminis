@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Home, Presentation, Video, Music, FileText, BookOpen, GraduationCap } from 'lucide-react'
+import { Home, Presentation, Video, Music, FileText, BookOpen, GraduationCap, Search } from 'lucide-react'
 
 const tabs = [
   { id: '/', label: 'Home', icon: Home },
@@ -47,6 +47,9 @@ export default function TopNav() {
       </div>
 
       <div className="mm-nav-actions">
+        <Link href="/ara" className="mm-btn" aria-label="Ara" style={{ fontSize: 13, padding: '8px 12px' }}>
+          <Search size={15} />
+        </Link>
         <Link href="/curriculum" className="mm-btn" style={{ fontSize: 13, padding: '8px 14px' }}>
           Müfredat
         </Link>
