@@ -23,8 +23,38 @@ export default async function SongsPage() {
     // ignore
   }
 
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Çocuklar İçin İngilizce Şarkılar',
+    description: 'Eğitsel İngilizce çocuk şarkıları — kelime, ritim ve hareketle öğrenme.',
+    inLanguage: 'tr',
+    url: 'https://minesminis.com/songs',
+    publisher: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: songs.length,
+      itemListElement: songs.slice(0, 50).map((s: any, i: number) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: s.title,
+        url: `https://minesminis.com/songs/${s.id}`,
+      })),
+    },
+  }
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Şarkılar', item: 'https://minesminis.com/songs' },
+    ],
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <div className="mm-page-header">
         <div>
           <h1 className="mm-page-title">Şarkılar</h1>

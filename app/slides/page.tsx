@@ -26,8 +26,38 @@ export default async function SlidesPage() {
     // ignore
   }
 
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Çocuklar İçin İngilizce Sunumlar',
+    description: 'İlkokul İngilizce sınıfı için Maarif modeli uyumlu interaktif sunum kütüphanesi.',
+    inLanguage: 'tr',
+    url: 'https://minesminis.com/slides',
+    publisher: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: slides.length,
+      itemListElement: slides.slice(0, 50).map((s: any, i: number) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: s.title,
+        url: `https://minesminis.com/slides/${s.id}`,
+      })),
+    },
+  }
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Sunumlar', item: 'https://minesminis.com/slides' },
+    ],
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <div className="mm-page-header">
         <div>
           <h1 className="mm-page-title">Sunumlar</h1>

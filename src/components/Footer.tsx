@@ -29,6 +29,7 @@ export default function Footer() {
               <Link href="/blog" style={linkStyle}>Blog</Link>
               <Link href="/konular" style={linkStyle}>Tüm Konular</Link>
               <Link href="/etkinlikler" style={linkStyle}>Etkinlikler</Link>
+              <Link href="/yazdir" style={linkStyle}>Yazdırılabilir Kâğıtlar</Link>
             </nav>
           </div>
 

@@ -23,8 +23,38 @@ export default async function WorksheetsPage() {
     // ignore
   }
 
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Yazdırılabilir İngilizce Çalışma Kâğıtları',
+    description: 'İlkokul İngilizce sınıfı ve evde kullanım için ücretsiz yazdırılabilir PDF çalışma kâğıtları.',
+    inLanguage: 'tr',
+    url: 'https://minesminis.com/worksheets',
+    publisher: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: worksheets.length,
+      itemListElement: worksheets.slice(0, 50).map((w: any, i: number) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: w.title,
+        url: `https://minesminis.com/worksheets/${w.id}`,
+      })),
+    },
+  }
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Çalışma Kâğıtları', item: 'https://minesminis.com/worksheets' },
+    ],
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <div className="mm-page-header">
         <div>
           <h1 className="mm-page-title">Çalışma Kâğıtları</h1>
