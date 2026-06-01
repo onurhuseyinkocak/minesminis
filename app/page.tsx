@@ -199,6 +199,30 @@ export default async function HomePage() {
         })}
       </div>
 
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: 0, letterSpacing: -0.5 }}>Sınıf Etkinlikleri</h2>
+        <Link href="/etkinlikler" style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Tümü →</Link>
+      </div>
+      <div className="mm-grid-3" style={{ marginBottom: 28 }}>
+        {[
+          { slug: 'simon-says-actions', tr: 'Simon Diyor ki', en: 'Action Commands', type: 'TPR', time: 15 },
+          { slug: 'color-hunt', tr: 'Renk Avı', en: 'Color Hunt', type: 'Oyun', time: 10 },
+          { slug: 'animal-charades', tr: 'Hayvan Pantomim', en: 'Animal Charades', type: 'Oyun', time: 15 },
+          { slug: 'body-parts-song', tr: 'Vücut Şarkısı', en: 'Body Parts Song', type: 'Şarkı', time: 10 },
+          { slug: 'family-photo-introduction', tr: 'Aile Fotoğrafı', en: 'Family Photo', type: 'Rol-Play', time: 20 },
+          { slug: 'i-spy-with-my-eye', tr: 'I Spy Oyunu', en: 'I Spy', type: 'Oyun', time: 10 },
+        ].map((a) => (
+          <Link key={a.slug} href={`/etkinlik/${a.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit', padding: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span className="mm-tag blue" style={{ fontSize: 11 }}>{a.type}</span>
+              <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{a.time} dk</span>
+            </div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>{a.tr}</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>{a.en}</div>
+          </Link>
+        ))}
+      </div>
+
       {recent.length > 0 && (
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
