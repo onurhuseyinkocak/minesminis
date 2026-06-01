@@ -81,8 +81,34 @@ export default async function HomePage() {
     counts.worksheets + ' kâğıt',
   ]
 
+  const homeSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'minesminis — Çocuklar İçin Ücretsiz İngilizce',
+    description: 'Maarif modeli uyumlu, 4-12 yaş arası çocuklar için ücretsiz İngilizce öğrenme platformu.',
+    inLanguage: 'tr',
+    url: 'https://minesminis.com/',
+    isPartOf: { '@type': 'WebSite', name: 'minesminis', url: 'https://minesminis.com' },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Sunumlar', url: 'https://minesminis.com/slides' },
+        { '@type': 'ListItem', position: 2, name: 'Videolar', url: 'https://minesminis.com/videos' },
+        { '@type': 'ListItem', position: 3, name: 'Şarkılar', url: 'https://minesminis.com/songs' },
+        { '@type': 'ListItem', position: 4, name: 'Çalışma Kâğıtları', url: 'https://minesminis.com/worksheets' },
+        { '@type': 'ListItem', position: 5, name: '1. Sınıf', url: 'https://minesminis.com/sinif/1' },
+        { '@type': 'ListItem', position: 6, name: '2. Sınıf', url: 'https://minesminis.com/sinif/2' },
+        { '@type': 'ListItem', position: 7, name: '3. Sınıf', url: 'https://minesminis.com/sinif/3' },
+        { '@type': 'ListItem', position: 8, name: '4. Sınıf', url: 'https://minesminis.com/sinif/4' },
+        { '@type': 'ListItem', position: 9, name: 'Müfredat', url: 'https://minesminis.com/curriculum' },
+        { '@type': 'ListItem', position: 10, name: 'Konu İndeksi', url: 'https://minesminis.com/konular' },
+      ],
+    },
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }} />
       <div
         className="mm-hero"
         style={{ background: 'linear-gradient(135deg, #7B68EE 0%, #9B87F5 50%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', gap: 24 }}
