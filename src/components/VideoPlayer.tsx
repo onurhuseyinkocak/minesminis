@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowLeft, Play } from 'lucide-react'
 import Cover from './Cover'
+import ResourceStudyGuide from './ResourceStudyGuide'
 import type { Video } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
 
@@ -40,11 +41,18 @@ export default function VideoPlayer({ video }: { video: Video }) {
               </div>
             </div>
             <div style={{ position: 'absolute', bottom: 16, left: 20, right: 20, padding: 12, background: 'rgba(255,255,255,0.9)', borderRadius: 12, color: 'var(--ink-2)', fontSize: 13, textAlign: 'center', fontWeight: 600 }}>
-              YouTube linki henüz eklenmedi
+              Video kaynağı yayın kontrolünden sonra güvenli gömülü oynatıcıyla gösterilir
             </div>
           </div>
         </div>
       )}
+
+      <ResourceStudyGuide
+        kind="video"
+        title={video.title}
+        category={video.category}
+        duration={video.duration}
+      />
     </>
   )
 }

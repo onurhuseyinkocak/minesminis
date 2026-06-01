@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ChevronLeft, ChevronRight, Play, Pause, Maximize, Download, Printer } from 'lucide-react'
 import Cover from './Cover'
+import ResourceStudyGuide from './ResourceStudyGuide'
 import type { Slide, SlideItem } from '../lib/supabase'
 
 export default function SlidePlayer({ slide }: { slide: Slide }) {
@@ -176,9 +177,17 @@ export default function SlidePlayer({ slide }: { slide: Slide }) {
         </>
       ) : (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)', background: 'white', borderRadius: 28, border: '1px solid var(--line)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Slayt içeriği henüz eklenmedi</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Sunum dosyası yayına hazırlanıyor</p>
         </div>
       )}
+
+      <ResourceStudyGuide
+        kind="slide"
+        title={slide.title}
+        category={slide.category}
+        level={slide.level}
+        itemCount={total}
+      />
     </>
   )
 }

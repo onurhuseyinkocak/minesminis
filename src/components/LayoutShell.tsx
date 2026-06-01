@@ -21,6 +21,7 @@ export default function LayoutShell({ children }: { children: ReactNode }) {
   // siblings around the <main>.
   return (
     <div className="mm-page">
+      <a href="#main-content" className="mm-skip-link">Ana içeriğe geç</a>
       <TopNav />
       <div className="mm-shell">
         <main className="mm-main" id="main-content">

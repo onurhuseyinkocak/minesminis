@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://minesminis.com/privacy' },
 }
 
-const lastUpdated = '23 Mayıs 2026'
+const lastUpdated = '25 Mayıs 2026'
 const h2Style = { fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 16 }
 
 export default function PrivacyPage() {
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         <ul>
           <li><strong>Zorunlu çerezler:</strong> Site teknik olarak işlevsel olsun diye. Örneğin sunucu yük dengelemesi.</li>
           <li><strong>Analitik çerezler:</strong> Hangi içeriğin daha çok okunduğunu görmek için tamamen anonim, IP-anonimleştirilmiş analitik. Kişiyi tanımlamaz.</li>
-          <li><strong>Reklam çerezleri:</strong> Google AdSense, çocuk yönlendirmeli içerik için yalnızca <em>bağlamsal</em> reklam sunar. <strong>Kişiselleştirilmiş reklam ve davranış izlemesi kapalıdır.</strong></li>
+          <li><strong>Reklam çerezleri:</strong> AdSense onay sürecinde reklam gösterimi kapalıdır. Aktif edilirse reklamlar yalnızca içerik açısından incelenmiş sayfalarda, yaşa uygun reklam etiketiyle ve <em>bağlamsal</em> şekilde sunulur. <strong>Kişiselleştirilmiş reklam ve davranış izlemesi kapalıdır.</strong></li>
         </ul>
         <p>Tarayıcınızdan çerezleri istediğiniz zaman silebilirsiniz. Sitemiz çerezsiz de çalışır.</p>
 
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
           <li>13 yaş altı çocuklardan <strong>bilinçli olarak hiçbir kişisel veri toplamayız</strong>.</li>
           <li>Kayıt sistemi yok; çocuktan ad/e-posta/telefon istenmiyor.</li>
           <li>Yetişkinlerle iletişim kanalları (yorum, mesajlaşma, sohbet) yok.</li>
-          <li>Google AdSense'e "tag for child-directed treatment" parametresiyle başvurulur; kişiselleştirilmiş reklam disabled.</li>
+          <li>Google AdSense isteklerinde çocuk/yaş kısıtlı içerik etiketi kullanılır; kişiselleştirilmiş reklam devre dışıdır.</li>
           <li>Üçüncü taraf platformlarda (YouTube embed) <em>restricted mode</em> kullanılır.</li>
         </ul>
 
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
         <ul>
           <li><strong>Vercel (Hosting):</strong> Site barındırma. Vercel sunucu günlüklerinde IP adresi, request bilgisi tutar.</li>
           <li><strong>Supabase (Veritabanı):</strong> İçerik (sunum, video meta, blog) depolanır. Kullanıcı kişisel verisi içermez.</li>
-          <li><strong>Google AdSense:</strong> Bağlamsal reklam gösterimi. <em>Child-directed treatment</em> ile yapılandırılmıştır; davranışsal hedefleme yapılmaz.</li>
+          <li><strong>Google AdSense:</strong> Onay sürecinde reklam gösterimi kapalıdır. Aktif edildiğinde yaşa uygun reklam etiketiyle bağlamsal reklam gösterimi yapılır; davranışsal hedefleme yapılmaz.</li>
           <li><strong>YouTube (Embed):</strong> Video oynatma. YouTube'un restricted mode'u kullanılır.</li>
           <li><strong>Google Fonts:</strong> Yazı tipi yükleme.</li>
         </ul>
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
         <ul>
           <li>10 yaş altı çocukların platformu yetişkin gözetiminde kullanması.</li>
           <li>YouTube embed'lerinde "videoyu YouTube'da aç" linkine tıklatmama.</li>
-          <li>Reklamlara dikkat — bağlamsal olarak gösterilse de, çocuğa "reklam nedir, neden gösterilir" diye açıklayın.</li>
+          <li>Reklamlar aktif edildiğinde çocuğa "reklam nedir, neden gösterilir" diye açıklayın.</li>
           <li>Çocuğun ekran süresini sınırlandırın — günde 20-30 dakika tek seferlik kullanım öneriyoruz.</li>
         </ul>
 

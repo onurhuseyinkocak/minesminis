@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Play } from 'lucide-react'
 import Cover from '../../src/components/Cover'
+import CategoryLearningGuide from '../../src/components/CategoryLearningGuide'
 import { supabase } from '../../src/lib/supabase'
 
 export const metadata: Metadata = {
@@ -31,16 +32,16 @@ export default async function SlidesPage() {
         <div>
           <h1 className="mm-page-title">Sunumlar</h1>
           <p className="mm-page-sub">
-            {slides.length > 0 ? `${slides.length} sunum — ilkokul seviyesi` : 'Ücretsiz İngilizce sunum setleri — yakında daha fazlası'}
+            {slides.length > 0 ? `${slides.length} sunum — ilkokul seviyesi` : 'Ücretsiz İngilizce sunum ve kelime tekrar rehberi'}
           </p>
         </div>
       </div>
 
       {slides.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Sunumlar yakında eklenecek</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Sunumlar tema ve seviye uyumuyla düzenlenir</p>
           <p style={{ fontSize: 14, maxWidth: 400, margin: '8px auto 0', lineHeight: 1.6 }}>
-            Şu sırada çocuklara özel sunum setleri hazırlanıyor. Bu arada diğer kaynaklarımıza göz atabilirsiniz.
+            Her set kısa kelime grupları, görsel ipuçları ve yaşa uygun tekrar akışıyla hazırlanır.
           </p>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 16, flexWrap: 'wrap' }}>
             <Link href="/curriculum" className="mm-btn primary" style={{ textDecoration: 'none' }}>Müfredat</Link>
@@ -71,7 +72,7 @@ export default async function SlidesPage() {
         </div>
       )}
 
-      {slides.length === 0 && <Cover kind="school" />}
+      <CategoryLearningGuide kind="slides" itemCount={slides.length} />
     </>
   )
 }

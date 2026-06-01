@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://minesminis.com/terms' },
 }
 
-const lastUpdated = '23 Mayıs 2026'
+const lastUpdated = '25 Mayıs 2026'
 const h2Style = { fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--ink)', marginTop: 16 }
 
 export default function TermsPage() {
@@ -71,11 +71,12 @@ export default function TermsPage() {
         <p>Eğer bir içeriğin telif sahibi siz iseniz ve içeriğin kaldırılmasını talep ediyorsanız <a href="mailto:info@minesminis.com" style={{ color: 'var(--accent)' }}>info@minesminis.com</a> adresine yazabilirsiniz. 7 iş günü içinde dönüş yapılır.</p>
 
         <h2 style={h2Style}>5. Reklamlar</h2>
-        <p>minesminis'in ücretsiz kalabilmesi için ileride Google AdSense üzerinden reklam gösterimi yapılabilir. Reklamlar şu kurallar dahilinde sunulur:</p>
+        <p>minesminis'in ücretsiz kalabilmesi için ileride Google AdSense üzerinden reklam gösterimi yapılabilir. Onay sürecinde reklam gösterimi kapalıdır. Reklamlar aktif edilirse şu kurallar dahilinde sunulur:</p>
         <ul>
           <li>Yalnızca <strong>bağlamsal (contextual)</strong> reklamlar; davranışsal hedefleme yok.</li>
-          <li>Çocuk yönlendirmeli içerik (TFCD) etiketi ile filtrelenir.</li>
-          <li>Reklamların boş, hata veya yükleme ekranında çıkmamasını sağlayacak teknik önlemler alınmıştır.</li>
+          <li>Çocuk/yaş kısıtlı içerik etiketiyle filtrelenir.</li>
+          <li>Boş, hata, yönetim, iletişim, yasal metin veya medya içeriği eksik sayfalarda reklam gösterilmez.</li>
+          <li>Reklam bileşenleri yalnızca içerik açısından incelenmiş blog, müfredat, sık sorulan sorular ve hakkımızda sayfalarında çalışacak şekilde sınırlandırılmıştır.</li>
           <li>Aileler reklamları görmemek için tarayıcı düzeyinde reklam engelleyici kullanabilir.</li>
         </ul>
 

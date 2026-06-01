@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Calendar, Clock, ArrowLeft, BookOpen } from 'lucide-react'
 import { supabase } from '../../../src/lib/supabase'
 import { findStaticBlogBySlug, staticBlogs } from '../../../src/content/staticBlogs'
@@ -100,16 +101,27 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     image: blog.cover_url,
     datePublished: blog.published_at,
     dateModified: blog.updated_at,
-    author: { '@type': 'Organization', name: 'minesminis' },
-    publisher: { '@type': 'Organization', name: 'minesminis', url: 'https://minesminis.com' },
+    author: { '@type': 'Organization', name: 'minesminis', url: 'https://minesminis.com' },
+    publisher: { '@type': 'Organization', name: 'minesminis', url: 'https://minesminis.com', logo: { '@type': 'ImageObject', url: 'https://minesminis.com/images/minesminis-logo-512.png' } },
     url: `https://minesminis.com/blog/${blog.slug}`,
     keywords: blog.keywords?.join(', '),
+    inLanguage: 'tr',
     mainEntityOfPage: { '@type': 'WebPage', '@id': `https://minesminis.com/blog/${blog.slug}` },
+  }
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://minesminis.com/blog' },
+      { '@type': 'ListItem', position: 3, name: blog.title, item: `https://minesminis.com/blog/${blog.slug}` },
+    ],
   }
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
       <article style={{ maxWidth: 760, margin: '0 auto' }}>
         <Link href="/blog" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--ink-3)', textDecoration: 'none', fontWeight: 600, fontSize: 14, marginBottom: 20 }}>
@@ -135,8 +147,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </h1>
 
         {blog.cover_url && (
-          <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 28, aspectRatio: '16/9' }}>
-            <img src={blog.cover_url} alt={blog.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 28, aspectRatio: '16/9', position: 'relative' }}>
+            <Image src={blog.cover_url} alt={blog.title} fill priority sizes="(max-width: 768px) 100vw, 760px" style={{ objectFit: 'cover' }} />
           </div>
         )}
 
@@ -172,7 +184,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <Link key={r.id} href={`/blog/${r.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="mm-card-cover">
                   {r.cover_url ? (
-                    <img src={r.cover_url} alt={r.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <Image src={r.cover_url} alt={r.title} fill loading="lazy" sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #7B68EE 0%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <BookOpen size={36} color="white" style={{ opacity: 0.6 }} />

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Play, Presentation, Video, Music, FileText, ChevronRight, Star, BookOpen } from 'lucide-react'
 import Cover from '../src/components/Cover'
 import { supabase } from '../src/lib/supabase'
@@ -102,12 +103,15 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
-        <img
+        <Image
           src="/images/hero-bg.webp"
           alt=""
-          loading="eager"
+          width={180}
+          height={180}
+          priority
+          fetchPriority="high"
           className="mm-hero-img"
-          style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: 18, flexShrink: 0, boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}
+          style={{ objectFit: 'cover', borderRadius: 18, flexShrink: 0, boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}
         />
       </div>
 
@@ -133,6 +137,40 @@ export default async function HomePage() {
             </div>
           </Link>
         ))}
+      </div>
+
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: '0 0 14px', letterSpacing: -0.5 }}>Sınıfa Göre</h2>
+      <div className="mm-grid-4" style={{ marginBottom: 28 }}>
+        {[1, 2, 3, 4].map((g) => (
+          <Link key={g} href={`/sinif/${g}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit', padding: 18, textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 800, color: 'var(--primary)' }}>{g}. Sınıf</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 4 }}>Maarif modeli uyumlu</div>
+          </Link>
+        ))}
+      </div>
+
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: '0 0 14px', letterSpacing: -0.5 }}>Popüler Konular</h2>
+      <div className="mm-grid-3" style={{ marginBottom: 28 }}>
+        {['greetings', 'family', 'colors', 'numbers-1-10', 'animals', 'food', 'body-parts', 'weather', 'clothes'].map((slug) => {
+          const labels: Record<string, { tr: string; en: string }> = {
+            greetings: { tr: 'Selamlaşmalar', en: 'Greetings' },
+            family: { tr: 'Aile', en: 'Family' },
+            colors: { tr: 'Renkler', en: 'Colors' },
+            'numbers-1-10': { tr: 'Sayılar 1-10', en: 'Numbers' },
+            animals: { tr: 'Hayvanlar', en: 'Animals' },
+            food: { tr: 'Yiyecekler', en: 'Food' },
+            'body-parts': { tr: 'Vücut Bölümleri', en: 'Body Parts' },
+            weather: { tr: 'Hava Durumu', en: 'Weather' },
+            clothes: { tr: 'Kıyafetler', en: 'Clothes' },
+          }
+          const l = labels[slug]
+          return (
+            <Link key={slug} href={`/konu/${slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit', padding: 16 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>{l.tr}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>{l.en}</div>
+            </Link>
+          )
+        })}
       </div>
 
       {recent.length > 0 && (
@@ -169,9 +207,9 @@ export default async function HomePage() {
           <div className="mm-grid-3">
             {blogPosts.map((post: any) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="mm-card-cover">
+                <div className="mm-card-cover" style={{ position: 'relative' }}>
                   {post.cover_url ? (
-                    <img src={post.cover_url} alt={post.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <Image src={post.cover_url} alt={post.title} fill loading="lazy" sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #7B68EE 0%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <BookOpen size={36} color="white" style={{ opacity: 0.6 }} />

@@ -33,9 +33,77 @@ const cefrLevels = [
   { level: 'B1', title: 'Eşik', desc: '2500+ kelime. Hikâye anlatma, fikir ifadesi, basit tartışma. Bu seviye genellikle ortaokul-lise dönemine denk gelir.' },
 ]
 
+const speakableSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', 'h2', '.mm-page-sub'],
+  },
+  url: 'https://minesminis.com/curriculum',
+}
+
+const courseSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'İlkokul İngilizce Müfredatı — CEFR A1, Maarif Modeli Uyumlu',
+  description: '4-12 yaş arası çocuklar için 16 haftalık ücretsiz İngilizce müfredat yol haritası. Maarif modeli uyumlu, CEFR A1 hedefli.',
+  provider: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
+  url: 'https://minesminis.com/curriculum',
+  inLanguage: 'tr',
+  isAccessibleForFree: true,
+  educationalLevel: 'Primary School (Grade 1-4)',
+  teaches: 'CEFR A1 English vocabulary, grammar and conversation',
+  audience: { '@type': 'EducationalAudience', educationalRole: 'student', audienceType: 'Primary school students aged 4-12' },
+  hasCourseInstance: [1, 2, 3, 4].map((g) => ({
+    '@type': 'CourseInstance',
+    name: `${g}. Sınıf`,
+    courseMode: 'online',
+    courseWorkload: 'PT2H',
+    inLanguage: 'tr',
+  })),
+}
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://minesminis.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Müfredat', item: 'https://minesminis.com/curriculum' },
+  ],
+}
+
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'Çocuğa Evde 16 Haftada İngilizce Öğretmek',
+  description: 'Maarif modeli uyumlu, 4-12 yaş arası çocuk için kademeli 16 haftalık İngilizce öğretim planı. Haftada 3-4 gün, 15-25 dakika.',
+  totalTime: 'P16W',
+  inLanguage: 'tr',
+  image: 'https://minesminis.com/images/minesminis-logo-512.png',
+  supply: [
+    { '@type': 'HowToSupply', name: 'minesminis.com — ücretsiz hesap gerekmez' },
+    { '@type': 'HowToSupply', name: 'Tablet veya bilgisayar' },
+    { '@type': 'HowToSupply', name: 'Yazıcı (çalışma kâğıtları için isteğe bağlı)' },
+  ],
+  step: [
+    { '@type': 'HowToStep', position: 1, name: 'Hafta 1-2: Renkler ve Sayılar 1-10', text: 'Renkler ve sayılar 1-10 sunumlarıyla başlayın. TPR ile renk gösterme + parmak sayma etkinlikleri. Hedef kelime: 22.', url: 'https://minesminis.com/konu/colors' },
+    { '@type': 'HowToStep', position: 2, name: 'Hafta 3-4: Hayvanlar ve "I have a..."', text: 'Hayvan kelimeleri + "I have a cat" kalıbı. Sınıf veya ev hayvanları üzerinden pratik.', url: 'https://minesminis.com/konu/animals' },
+    { '@type': 'HowToStep', position: 3, name: 'Hafta 5-6: Aile + "This is my..."', text: 'Aile üyeleri kelimeleri + "This is my mother" kalıbı. Aile fotoğrafı getirme etkinliği.', url: 'https://minesminis.com/konu/family' },
+    { '@type': 'HowToStep', position: 4, name: 'Hafta 7-8: Vücut Bölümleri', text: '"Head, Shoulders, Knees and Toes" şarkısı ile TPR. Vücut bölümleri kelime + "Touch your..." komutu.', url: 'https://minesminis.com/konu/body-parts' },
+    { '@type': 'HowToStep', position: 5, name: 'Hafta 9-10: Hava Durumu', text: 'Her sabah "How\'s the weather today?" rutini. Hava durumu kelimeleri + "It is sunny" kalıbı.', url: 'https://minesminis.com/konu/weather' },
+    { '@type': 'HowToStep', position: 6, name: 'Hafta 11-12: Yiyecekler + "I like..."', text: 'Yiyecek kelimeleri + "I like apples" / "I don\'t like fish" kalıpları. Sevdiği yiyecekleri çizme etkinliği.', url: 'https://minesminis.com/konu/food' },
+    { '@type': 'HowToStep', position: 7, name: 'Hafta 13-14: Okul Eşyaları', text: 'Okul eşyaları kelimeleri + "I have a pencil" kalıbı. Çantadan eşya çıkarma oyunu.', url: 'https://minesminis.com/konu/school-items' },
+    { '@type': 'HowToStep', position: 8, name: 'Hafta 15-16: Mevsimler + Karma Tekrar', text: 'Mevsimler kelimeleri + önceki 7 konunun karma tekrarı. Mini sınıf gösterisi: çocuk öğrendiklerini sunsun.', url: 'https://minesminis.com/konu/seasons' },
+  ],
+}
+
 export default function CurriculumPage() {
   return (
     <div style={{ maxWidth: 860, margin: '0 auto' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
       <h1 className="mm-page-title">Müfredat ve Yol Haritası</h1>
       <p className="mm-page-sub" style={{ marginBottom: 24 }}>Çocuğunuza yaşına uygun, kademeli, bilim temelli bir İngilizce yolculuğu.</p>
 

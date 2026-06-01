@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Play } from 'lucide-react'
 import Cover from '../../src/components/Cover'
+import CategoryLearningGuide from '../../src/components/CategoryLearningGuide'
 import { supabase } from '../../src/lib/supabase'
 
 export const metadata: Metadata = {
@@ -28,16 +29,16 @@ export default async function WorksheetsPage() {
         <div>
           <h1 className="mm-page-title">Çalışma Kâğıtları</h1>
           <p className="mm-page-sub">
-            {worksheets.length > 0 ? `${worksheets.length} çalışma kâğıdı — yazdırılabilir PDF` : 'Yazdırılabilir İngilizce çalışma kâğıtları — yakında daha fazlası'}
+            {worksheets.length > 0 ? `${worksheets.length} çalışma kâğıdı — yazdırılabilir PDF` : 'Yazdırılabilir İngilizce çalışma kâğıdı rehberi'}
           </p>
         </div>
       </div>
 
       {worksheets.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Çalışma kâğıtları yakında</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Çalışma kâğıtları kısa pratik için tasarlanır</p>
           <p style={{ fontSize: 14, maxWidth: 400, margin: '8px auto 0', lineHeight: 1.6 }}>
-            Yazdırılabilir İngilizce çalışma kâğıtları hazırlanıyor.
+            Materyaller boyama, eşleştirme ve basit yazma etkinlikleriyle ekrandan bağımsız tekrar sağlar.
           </p>
         </div>
       ) : (
@@ -58,6 +59,8 @@ export default async function WorksheetsPage() {
           ))}
         </div>
       )}
+
+      <CategoryLearningGuide kind="worksheets" itemCount={worksheets.length} />
     </>
   )
 }

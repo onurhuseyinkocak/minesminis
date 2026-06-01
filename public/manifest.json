@@ -1,16 +1,53 @@
 {
-  "name": "minesminis - English for Kids",
+  "name": "minesminis — Çocuklar İçin Ücretsiz İngilizce",
   "short_name": "minesminis",
-  "description": "Fun English learning platform for elementary children",
-  "start_url": "/",
+  "description": "Maarif modeli uyumlu, çocuklar için ücretsiz İngilizce öğrenme platformu: sunum, video, şarkı, çalışma kâğıdı.",
+  "lang": "tr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#F5F2EC",
-  "theme_color": "#FF6B4A",
+  "theme_color": "#7B68EE",
+  "categories": ["education", "kids"],
   "icons": [
     {
       "src": "/images/minesminis-logo-512.png",
-      "sizes": "512x205",
-      "type": "image/png"
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/minesminis-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Sunumlar",
+      "short_name": "Slides",
+      "url": "/slides",
+      "description": "İngilizce sunum kütüphanesi"
+    },
+    {
+      "name": "Şarkılar",
+      "short_name": "Songs",
+      "url": "/songs",
+      "description": "İngilizce çocuk şarkıları"
+    },
+    {
+      "name": "Çalışma Kâğıtları",
+      "short_name": "Worksheets",
+      "url": "/worksheets",
+      "description": "Yazdırılabilir İngilizce çalışma kâğıtları"
+    },
+    {
+      "name": "Müfredat",
+      "short_name": "Curriculum",
+      "url": "/curriculum",
+      "description": "16 haftalık İngilizce yol haritası"
     }
   ]
 }

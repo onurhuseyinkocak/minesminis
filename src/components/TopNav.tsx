@@ -1,11 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Home, Presentation, Video, Music, FileText, BookOpen } from 'lucide-react'
+import { Home, Presentation, Video, Music, FileText, BookOpen, GraduationCap } from 'lucide-react'
 
 const tabs = [
   { id: '/', label: 'Home', icon: Home },
+  { id: '/sinif/1', label: 'Sınıflar', icon: GraduationCap, matchPrefix: '/sinif' },
   { id: '/slides', label: 'Slides', icon: Presentation },
   { id: '/videos', label: 'Videos', icon: Video },
   { id: '/songs', label: 'Songs', icon: Music },
@@ -16,15 +18,22 @@ const tabs = [
 export default function TopNav() {
   const pathname = usePathname() || '/'
   const active =
-    tabs.find((t) => (t.id === '/' ? pathname === '/' : pathname.startsWith(t.id)))?.id || '/'
+    tabs.find((t) => {
+      if (t.id === '/') return pathname === '/'
+      const prefix = (t as any).matchPrefix || t.id
+      return pathname.startsWith(prefix)
+    })?.id || '/'
 
   return (
     <nav className="mm-nav" role="navigation" aria-label="Main navigation">
       <Link href="/" className="mm-logo" aria-label="minesminis home">
-        <img
+        <Image
           src="/images/minesminis-logo.webp"
           alt="minesminis logo"
-          style={{ height: 54, borderRadius: 12, position: 'relative', zIndex: 2 }}
+          width={140}
+          height={54}
+          priority
+          style={{ height: 54, width: 'auto', borderRadius: 12, position: 'relative', zIndex: 2 }}
         />
       </Link>
 

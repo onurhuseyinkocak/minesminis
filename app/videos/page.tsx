@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Play } from 'lucide-react'
 import Cover from '../../src/components/Cover'
+import CategoryLearningGuide from '../../src/components/CategoryLearningGuide'
 import { supabase } from '../../src/lib/supabase'
 
 export const metadata: Metadata = {
@@ -28,16 +29,16 @@ export default async function VideosPage() {
         <div>
           <h1 className="mm-page-title">Videolar</h1>
           <p className="mm-page-sub">
-            {videos.length > 0 ? `${videos.length} video — restricted mode ile güvenli` : 'Çocuklara özel İngilizce videoları — yakında daha fazlası'}
+            {videos.length > 0 ? `${videos.length} video — restricted mode ile güvenli` : 'Çocuklara özel İngilizce video seçme ve izleme rehberi'}
           </p>
         </div>
       </div>
 
       {videos.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Videolar yakında eklenecek</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Videolar manuel inceleme ile yayınlanır</p>
           <p style={{ fontSize: 14, maxWidth: 400, margin: '8px auto 0', lineHeight: 1.6 }}>
-            Eğitsel İngilizce videoları kürelenmesi devam ediyor. Tüm videolar manuel olarak incelenip yayınlanır.
+            Her video çocuklara uygunluk, telaffuz kalitesi ve öğrenme hedefi açısından kontrol edilir.
           </p>
         </div>
       ) : (
@@ -62,6 +63,8 @@ export default async function VideosPage() {
           ))}
         </div>
       )}
+
+      <CategoryLearningGuide kind="videos" itemCount={videos.length} />
     </>
   )
 }

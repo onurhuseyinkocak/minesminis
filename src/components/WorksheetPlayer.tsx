@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeft, Download, Printer, Maximize } from 'lucide-react'
+import ResourceStudyGuide from './ResourceStudyGuide'
 import type { Worksheet } from '../lib/supabase'
 
 export default function WorksheetPlayer({ worksheet }: { worksheet: Worksheet }) {
@@ -59,9 +60,17 @@ export default function WorksheetPlayer({ worksheet }: { worksheet: Worksheet })
         </div>
       ) : (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)', background: 'white', borderRadius: 28, border: '1px solid var(--line)' }}>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Çalışma kâğıdı dosyası henüz yüklenmedi</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>Çalışma kâğıdı dosyası yayına hazırlanıyor</p>
         </div>
       )}
+
+      <ResourceStudyGuide
+        kind="worksheet"
+        title={worksheet.title}
+        category={worksheet.category}
+        level={worksheet.level}
+        pageCount={worksheet.page_count}
+      />
     </>
   )
 }

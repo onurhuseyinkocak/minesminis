@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, SkipBack, Pause, Play, SkipForward, Repeat } from 'lucide-react'
 import Cover from './Cover'
+import ResourceStudyGuide from './ResourceStudyGuide'
 import type { Song, SongLyric } from '../lib/supabase'
 import { extractYouTubeId } from '../lib/youtube'
 
@@ -311,7 +312,7 @@ export default function SongPlayer({ song }: { song: Song }) {
             </>
           ) : (
             <div style={{ marginTop: 14, padding: 14, background: 'var(--surface-2)', borderRadius: 12, textAlign: 'center', fontSize: 13, color: 'var(--ink-3)' }}>
-              Audio file not added yet
+              Ses kaynağı yayına alınmadan önce sözler ve etkinlik notlarıyla kısa tekrar çalışması yapılabilir.
             </div>
           )}
         </div>
@@ -367,6 +368,14 @@ export default function SongPlayer({ song }: { song: Song }) {
           </div>
         )}
       </div>
+
+      <ResourceStudyGuide
+        kind="song"
+        title={song.title}
+        category={song.category}
+        duration={song.duration}
+        itemCount={song.lyrics?.length}
+      />
 
     </>
   )

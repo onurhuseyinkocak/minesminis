@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export const revalidate = 600
 
 const values = [
-  { icon: BookOpen, title: 'Tamamen Ücretsiz Eğitim', desc: 'Tüm içeriklerimiz reklam dışı kayıt veya ödeme istemeden, ücretsiz olarak sunulur. Hiçbir aileyi geride bırakmamayı taahhüt ediyoruz.' },
+  { icon: BookOpen, title: 'Tamamen Ücretsiz Eğitim', desc: 'Tüm içeriklerimiz kayıt, ödeme veya abonelik istemeden ücretsiz olarak sunulur. Hiçbir aileyi geride bırakmamayı taahhüt ediyoruz.' },
   { icon: Users, title: 'Çocuğa Özel Tasarım', desc: '4-12 yaş aralığındaki çocuklar için gelişim psikolojisi ve dil edinim araştırmaları temel alınarak hazırlanmış güvenli içerik.' },
   { icon: Heart, title: 'Oyunla Öğrenme', desc: 'Çocukların doğal merakını besleyen interaktif sunumlar, görsel anlatım, ezgili şarkılar ve uygulamalı çalışma kâğıtları.' },
   { icon: Target, title: 'CEFR A1 Hizalı Müfredat', desc: 'Avrupa Ortak Dil Çerçevesi (CEFR) A1 seviyesi ile uyumlu kelime ve dilbilgisi yapıları. Türkiye Maarif Modeli ile paralel.' },
@@ -54,7 +54,7 @@ export default async function AboutPage() {
       <article style={{ background: 'white', borderRadius: 28, padding: 28, border: '1px solid var(--line)', lineHeight: 1.8, fontSize: 15, color: 'var(--ink-2)', marginBottom: 20 }}>
         <h2 style={h2Style}>Bir cümlede minesminis</h2>
         <p>
-          <strong>minesminis</strong>, 4-12 yaş Türk çocukları için tasarlanmış ücretsiz bir İngilizce öğrenme platformudur. Sunum, video, şarkı ve çalışma kâğıdı biçiminde yapılandırılmış öğretim materyallerini öğretmenlere ve ailelere kayıtsız, reklam dışı, çocuk dostu bir ortamda sunuyoruz.
+          <strong>minesminis</strong>, 4-12 yaş Türk çocukları için tasarlanmış ücretsiz bir İngilizce öğrenme platformudur. Sunum, video, şarkı ve çalışma kâğıdı biçiminde yapılandırılmış öğretim materyallerini öğretmenlere ve ailelere kayıtsız, ödeme gerektirmeyen, çocuk dostu bir ortamda sunuyoruz.
         </p>
 
         <h2 style={h2Style}>Misyonumuz</h2>
@@ -101,7 +101,7 @@ export default async function AboutPage() {
           <li>Kayıt zorunluluğu yok — çocukların kişisel bilgisi toplanmaz.</li>
           <li>Yorum sistemi yok — bilinmeyen yetişkinlerle iletişim olmaz.</li>
           <li>Video içeriklerimiz YouTube'un sınırlı modunda (restricted mode) sunulur.</li>
-          <li>Reklamlar, AdSense'in <em>Family-friendly</em> kategorisine göre filtrelenir; kişiselleştirilmiş reklam yapılmaz.</li>
+          <li>Reklam gösterimi onay sürecinde kapalıdır; aktif edildiğinde yalnızca bağlamsal, yaşa uygun ve kişiselleştirilmemiş reklam istekleri kullanılır.</li>
           <li>COPPA (Children's Online Privacy Protection Act) ve KVKK gereklilikleriyle uyumluyuz.</li>
         </ul>
         <p>Daha ayrıntılı bilgi için <Link href="/privacy" style={{ color: 'var(--accent)' }}>Gizlilik Politikası</Link> sayfamızı inceleyebilirsiniz.</p>

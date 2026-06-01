@@ -1,9 +1,25 @@
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'react-hot-toast'
+import { Baloo_2, Fredoka } from 'next/font/google'
 import './globals.css'
 import LayoutShell from '../src/components/LayoutShell'
 import PageViewTracker from '../src/components/PageViewTracker'
 import GoogleAnalytics from '../src/components/GoogleAnalytics'
+
+const baloo = Baloo_2({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-baloo',
+  display: 'swap',
+  preload: true,
+})
+const fredoka = Fredoka({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-fredoka',
+  display: 'swap',
+  preload: true,
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://minesminis.com'),
@@ -104,17 +120,16 @@ const siteSchema = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr">
+    <html lang="tr" className={`${baloo.variable} ${fredoka.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="preconnect" href="https://kcbblalwwfjevneegmcv.supabase.co" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }} />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6644397387275334"
+          crossOrigin="anonymous"
+        />
       </head>
       <body>
         <Toaster position="top-right" />
