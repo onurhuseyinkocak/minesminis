@@ -7,10 +7,10 @@
 
 **Hepsi otomatik, canlı, çalışıyor:**
 
-- **499 URL** Google'a tarama için hazır (sitemap.xml) — başlangıçta 16'ydı, **30 kat** büyüdü
+- **520+ URL** Google'a tarama için hazır (sitemap.xml) — başlangıçta 16'ydı, **32 kat** büyüdü
 - **60+ AI bot izinli** (ChatGPT/GPTBot, Claude/ClaudeBot, Perplexity, Gemini/Google-Extended, Copilot, You.com, Brave AI)
-- **81 otomatik blog post** yayında (cron her gün 3 yeni ekliyor → bu hafta 100+ olur)
-- **57 İngilizce konu** sayfası + **30 sınıf etkinliği** + **57 yazdırılabilir kâğıt** + 4 yaş grubu + 4 sınıf + 6 tema
+- **90 otomatik blog post** yayında (cron her gün 3 yeni ekliyor → bu hafta 110+ olur)
+- **62 İngilizce konu** sayfası + **30 sınıf etkinliği** + **62 yazdırılabilir kâğıt** + 4 yaş grubu + 4 sınıf + 6 tema
 - **Sayfa türleri:** /konu /sinif /yas /tema /konular /etkinlikler /etkinlik /yazdir /blog /ara
 - **JSON-LD schemas:** BlogPosting, VideoObject, LearningResource, Course, HowTo, FAQPage, BreadcrumbList, CollectionPage, ItemList, SpeakableSpecification, EducationalOrganization
 - AdSense entegrasyonu aktif (script live'da, slot ID'leri sen ekleyince reklamlar görünür)
