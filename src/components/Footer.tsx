@@ -40,6 +40,8 @@ export default function Footer() {
               <Link href="/sinif/2" style={linkStyle}>2. Sınıf</Link>
               <Link href="/sinif/3" style={linkStyle}>3. Sınıf</Link>
               <Link href="/sinif/4" style={linkStyle}>4. Sınıf</Link>
+              <Link href="/yaslar" style={linkStyle}>Yaş Grupları İndeksi</Link>
+              <Link href="/temalar" style={linkStyle}>Temalar İndeksi</Link>
               <Link href="/curriculum" style={linkStyle}>16 Haftalık Plan</Link>
             </nav>
           </div>
