@@ -7,7 +7,7 @@
 
 **Hepsi otomatik, canlı, çalışıyor:**
 
-- **520+ URL** Google'a tarama için hazır (sitemap.xml) — başlangıçta 16'ydı, **32 kat** büyüdü
+- **540 URL** Google'a tarama için hazır (sitemap.xml) — başlangıçta 16'ydı, **34 kat** büyüdü
 - **60+ AI bot izinli** (ChatGPT/GPTBot, Claude/ClaudeBot, Perplexity, Gemini/Google-Extended, Copilot, You.com, Brave AI)
 - **90 otomatik blog post** yayında (cron her gün 3 yeni ekliyor → bu hafta 110+ olur)
 - **62 İngilizce konu** sayfası + **30 sınıf etkinliği** + **62 yazdırılabilir kâğıt** + 4 yaş grubu + 4 sınıf + 6 tema
