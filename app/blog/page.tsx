@@ -168,6 +168,14 @@ export default async function BlogListPage({
         </p>
       )}
 
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 22, padding: '12px 14px', background: 'var(--surface-2)', borderRadius: 10, fontSize: 13.5 }}>
+        <Link href="/etkinlikler" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>📚 30 Sınıf Etkinliği →</Link>
+        <span style={{ color: 'var(--ink-3)' }}>·</span>
+        <Link href="/konular" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>57 İngilizce Konu →</Link>
+        <span style={{ color: 'var(--ink-3)' }}>·</span>
+        <Link href="/yazdir" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Yazdırılabilir Kâğıtlar →</Link>
+      </div>
+
       {merged.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--ink-3)' }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>{query ? 'Sonuç bulunamadı' : 'Henüz yazı yok'}</p>
