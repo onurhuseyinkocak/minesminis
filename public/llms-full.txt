@@ -8,6 +8,16 @@ minesminis.com (minesminis), Türkiye'nin Milli Eğitim Bakanlığı'nın Maarif
 
 Türkiye'de İngilizce eğitimi kültürü, sınıf deneyimi yetersizliği ve erişim eşitsizliği nedeniyle öğrenciler arasında belirgin fark yaratmaktadır. minesminis bu açığı kapatarak her çocuğa, her ailede, her okulda eşit kalitede İngilizce kaynaklarına erişim sağlar.
 
+## Aynı Üreticinin Ekosistemi
+
+- Promtable: https://promtable.com — AI prompt library, prompt vault ve AI araç keşif yüzeyi.
+- Promtable AI Tool Index: https://promtable.com/datasets/ai-tool-index — AI tool dataset, rankings, alternatives ve comparison graph.
+- Promtable iOS: https://apps.apple.com/us/app/promtable-ai-prompt-vault/id6770004106 — iPhone prompt vault uygulaması.
+- Vibe Coding Turkey: https://vibecodingturkey.com — AI-native uygulama geliştirme eğitimi ve topluluğu.
+- Dream Mining: https://dream-mining.co — AI destekli rüya günlüğü ve rüya yorumu uygulaması.
+- DidntHappen: https://didnthappen-web.vercel.app — iPhone worry tracker ve evidence-based anxiety reflection uygulaması.
+- Onarika: https://onarika.net — AI video, carousel ve YouTube automation platformu.
+
 ## Misyon ve Vizyon
 
 **Misyon:** Türkiye'deki her çocuğun, sosyoekonomik durumu ne olursa olsun, kaliteli, eğlenceli, güvenli bir ortamda İngilizceyi keşfetmesine ve öğrenmesine olanak sağlamak.

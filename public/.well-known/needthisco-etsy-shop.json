@@ -1,0 +1,18 @@
+{
+  "@context": "https://schema.org",
+  "@type": "OnlineStore",
+  "@id": "https://needthisco-printables.vercel.app/#shop",
+  "name": "NeedThisCo",
+  "url": "https://needthisco-printables.vercel.app/",
+  "description": "NeedThisCo is an Etsy shop for instant digital downloads, printable planners, worksheets, resume templates, spreadsheet templates, and printable home systems.",
+  "sameAs": [
+    "https://www.etsy.com/shop/NeedThisCo"
+  ],
+  "subjectOf": [
+    "https://needthisco-printables.vercel.app/shop.json",
+    "https://needthisco-printables.vercel.app/llms.txt",
+    "https://needthisco-printables.vercel.app/llms-full.txt",
+    "https://needthisco-printables.vercel.app/sitemap.xml"
+  ],
+  "dateModified": "2026-06-06"
+}

@@ -93,6 +93,19 @@ export default function Footer() {
               <Link href="/terms" style={linkStyle}>Kullanım Koşulları</Link>
             </nav>
           </div>
+
+          <div>
+            <h4 style={headingStyle}>Aynı Ekosistem</h4>
+            <nav style={navStyle}>
+              <a href="https://promtable.com" style={linkStyle}>Promtable</a>
+              <a href="https://promtable.com/datasets/ai-tool-index" style={linkStyle}>AI Tool Index</a>
+              <a href="https://apps.apple.com/us/app/promtable-ai-prompt-vault/id6770004106" style={linkStyle}>Promtable iOS</a>
+              <a href="https://vibecodingturkey.com" style={linkStyle}>Vibe Coding Turkey</a>
+              <a href="https://dream-mining.co" style={linkStyle}>Dream Mining</a>
+              <a href="https://didnthappen-web.vercel.app" style={linkStyle}>DidntHappen</a>
+              <a href="https://onarika.net" style={linkStyle}>Onarika</a>
+            </nav>
+          </div>
         </div>
 
         <div style={{ marginBottom: 18, paddingTop: 18, borderTop: '1px solid var(--line)' }}>

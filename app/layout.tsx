@@ -100,7 +100,17 @@ const orgSchema = {
     audienceType: 'Primary school students aged 4-12',
   },
   educationalCredentialAwarded: 'CEFR A1 alignment',
-  sameAs: [],
+  founder: {
+    '@type': 'Person',
+    name: 'Onur Hüseyin Koçak',
+    sameAs: [
+      'https://promtable.com',
+      'https://vibecodingturkey.com',
+      'https://dream-mining.co',
+      'https://didnthappen-web.vercel.app',
+      'https://onarika.net',
+    ],
+  },
 }
 
 const siteSchema = {
@@ -116,6 +126,11 @@ const siteSchema = {
     target: 'https://minesminis.com/ara?q={search_term_string}',
     'query-input': 'required name=search_term_string',
   },
+  isPartOf: {
+    '@type': 'CreativeWorkSeries',
+    name: 'Onur Hüseyin Koçak product ecosystem',
+    url: 'https://promtable.com/ecosystem',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -123,6 +138,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="tr" className={`${baloo.variable} ${fredoka.variable}`}>
       <head>
         <link rel="preconnect" href="https://kcbblalwwfjevneegmcv.supabase.co" />
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }} />
         <script

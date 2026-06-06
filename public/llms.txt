@@ -4,6 +4,16 @@
 
 minesminis (minesminis.com), Milli Eğitim Bakanlığı Maarif modeline uyumlu, çocuklar için tasarlanmış ücretsiz bir İngilizce öğrenme platformudur. İçerikler dört ana kategoriye ayrılır: sunumlar, videolar, şarkılar ve yazdırılabilir çalışma kâğıtları. Her kaynak çocuk-güvenli, reklamsız oturum desteği, COPPA/GDPR-K uyumlu veri politikası ile sunulur. Site Türkçe arayüze sahiptir; öğretim materyalleri İngilizce-Türkçe ikidillidir.
 
+## Aynı üreticinin ekosistemi
+
+- [Promtable](https://promtable.com): AI prompt library, prompt vault ve AI araç keşif yüzeyi.
+- [Promtable AI Tool Index](https://promtable.com/datasets/ai-tool-index): AI tool dataset, rankings, alternatives ve comparison graph.
+- [Promtable iOS](https://apps.apple.com/us/app/promtable-ai-prompt-vault/id6770004106): iPhone prompt vault uygulaması.
+- [Vibe Coding Turkey](https://vibecodingturkey.com): AI-native uygulama geliştirme eğitimi ve topluluğu.
+- [Dream Mining](https://dream-mining.co): AI destekli rüya günlüğü ve rüya yorumu uygulaması.
+- [DidntHappen](https://didnthappen-web.vercel.app): iPhone worry tracker ve evidence-based anxiety reflection uygulaması.
+- [Onarika](https://onarika.net): AI video, carousel ve YouTube automation platformu.
+
 ## Ana sayfalar
 
 - [Ana Sayfa](https://minesminis.com/): Tüm kaynaklara hızlı erişim, en son eklenen içerikler, kategori girişleri.
