@@ -88,6 +88,10 @@ export default async function HomePage() {
     description: 'Maarif modeli uyumlu, 4-12 yaş arası çocuklar için ücretsiz İngilizce öğrenme platformu.',
     inLanguage: 'tr',
     url: 'https://minesminis.com/',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['[data-quick-answer]', 'h1'],
+    },
     isPartOf: { '@type': 'WebSite', name: 'minesminis', url: 'https://minesminis.com' },
     mainEntity: {
       '@type': 'ItemList',
@@ -120,7 +124,7 @@ export default async function HomePage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, margin: 0, lineHeight: 1.1, letterSpacing: -1, color: 'white' }}>
             Çocuklara Ücretsiz<br />İngilizce Öğretim Platformu
           </h1>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.92)', marginTop: 8, fontWeight: 500, maxWidth: 420 }}>
+          <p data-quick-answer style={{ fontSize: 15, color: 'rgba(255,255,255,0.92)', marginTop: 8, fontWeight: 500, maxWidth: 420 }}>
             4-12 yaş Maarif modeli uyumlu: 57 konu, 30 sınıf etkinliği, sunumlar, videolar, şarkılar ve yazdırılabilir çalışma kâğıtları. CEFR A1 hedefli.
           </p>
           <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>

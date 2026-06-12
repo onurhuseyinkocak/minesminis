@@ -30,6 +30,10 @@ export default async function WorksheetsPage() {
     description: 'İlkokul İngilizce sınıfı ve evde kullanım için ücretsiz yazdırılabilir PDF çalışma kâğıtları.',
     inLanguage: 'tr',
     url: 'https://minesminis.com/worksheets',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.mm-page-sub'],
+    },
     publisher: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
     mainEntity: {
       '@type': 'ItemList',

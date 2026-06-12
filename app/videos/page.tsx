@@ -30,6 +30,10 @@ export default async function VideosPage() {
     description: 'Maarif modeli uyumlu, çocuk-güvenli İngilizce eğitim videoları kütüphanesi.',
     inLanguage: 'tr',
     url: 'https://minesminis.com/videos',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.mm-page-sub'],
+    },
     publisher: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
     mainEntity: {
       '@type': 'ItemList',

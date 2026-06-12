@@ -33,6 +33,10 @@ export default async function SlidesPage() {
     description: 'İlkokul İngilizce sınıfı için Maarif modeli uyumlu interaktif sunum kütüphanesi.',
     inLanguage: 'tr',
     url: 'https://minesminis.com/slides',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.mm-page-sub'],
+    },
     publisher: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
     mainEntity: {
       '@type': 'ItemList',

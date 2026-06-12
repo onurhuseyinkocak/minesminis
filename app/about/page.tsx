@@ -22,6 +22,10 @@ const aboutSchema = {
   name: 'minesminis Hakkında',
   inLanguage: 'tr',
   url: 'https://minesminis.com/about',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', '.mm-page-sub'],
+  },
   mainEntity: {
     '@type': 'EducationalOrganization',
     name: 'minesminis',

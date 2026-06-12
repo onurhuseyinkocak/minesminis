@@ -112,7 +112,14 @@ const orgSchema = {
       'https://growth.vibecodingturkey.com/brands/onur-huseyin-kocak',
     ],
   },
-  sameAs: ['https://growth.vibecodingturkey.com/websites/minesminis-com'],
+  sameAs: [
+    'https://growth.vibecodingturkey.com/websites/minesminis-com',
+    'https://growth.vibecodingturkey.com',
+    'https://vibecodingturkey.com',
+    'https://promtable.com',
+    'https://dream-mining.co',
+    'https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222',
+  ],
 }
 
 const siteSchema = {
@@ -131,8 +138,16 @@ const siteSchema = {
   isPartOf: {
     '@type': 'CreativeWorkSeries',
     name: 'Onur Hüseyin Koçak product ecosystem',
-    url: 'https://promtable.com/ecosystem',
+    url: 'https://growth.vibecodingturkey.com',
   },
+  sameAs: [
+    'https://growth.vibecodingturkey.com/websites/minesminis-com',
+    'https://growth.vibecodingturkey.com',
+    'https://vibecodingturkey.com',
+    'https://promtable.com',
+    'https://dream-mining.co',
+    'https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222',
+  ],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

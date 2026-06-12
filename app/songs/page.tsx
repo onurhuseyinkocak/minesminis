@@ -30,6 +30,10 @@ export default async function SongsPage() {
     description: 'Eğitsel İngilizce çocuk şarkıları — kelime, ritim ve hareketle öğrenme.',
     inLanguage: 'tr',
     url: 'https://minesminis.com/songs',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.mm-page-sub'],
+    },
     publisher: { '@type': 'EducationalOrganization', name: 'minesminis', url: 'https://minesminis.com' },
     mainEntity: {
       '@type': 'ItemList',
