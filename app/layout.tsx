@@ -109,8 +109,10 @@ const orgSchema = {
       'https://dream-mining.co',
       'https://didnthappen-web.vercel.app',
       'https://onarika.net',
+      'https://growth.vibecodingturkey.com/brands/onur-huseyin-kocak',
     ],
   },
+  sameAs: ['https://growth.vibecodingturkey.com/websites/minesminis-com'],
 }
 
 const siteSchema = {
