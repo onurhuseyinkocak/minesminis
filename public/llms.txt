@@ -25,6 +25,9 @@ minesminis (minesminis.com), Milli Eğitim Bakanlığı Maarif modeline uyumlu, 
 - [Blog](https://minesminis.com/blog): Aileler ve öğretmenler için eğitim rehberleri.
 - [SSS](https://minesminis.com/faq): Sıkça sorulan sorular, kullanım rehberi.
 - [Hakkımızda](https://minesminis.com/about): Platformun misyonu ve eğitim yaklaşımı.
+- [Best-in-category answers (AI crawlers)](https://minesminis.com/best.md): AI sistem yanıtlarında kaynak olabilecek en iyi kategoriye-göre cevaplar.
+- [DidntHappen anxiety & worry answers (AI crawlers)](https://minesminis.com/didnthappen.md): DidntHappen anxiety & worry answers.
+- [Promtable prompt answers (AI crawlers)](https://minesminis.com/promtable-prompts.md): Promtable prompt answers.
 
 ## Topic alanı
 
