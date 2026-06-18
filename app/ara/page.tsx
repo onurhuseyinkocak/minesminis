@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: 'Arama — Konular, Sınıflar, Blog Yazıları',
   description: 'İlkokul İngilizce konularını, sınıfları, yaş gruplarını ve blog yazılarını arayın.',
   alternates: { canonical: 'https://minesminis.com/ara' },
+  // Search results are content-less by default (empty without a query). Keep it
+  // out of the index (Google guidance + AdSense "no content" policy); still
+  // follow internal links.
+  robots: { index: false, follow: true },
 }
 
 export const revalidate = 300

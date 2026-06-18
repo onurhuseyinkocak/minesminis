@@ -15,8 +15,10 @@ export async function generateMetadata({ params }: { params: Promise<{ topic: st
   return {
     title: `${t.titleTr} — Yazdırılabilir Çalışma Kâğıdı`,
     description: `${t.titleTr} İngilizce kelimeleri, IPA telaffuz ve örnek cümleler — A4 boyutunda yazdırılabilir.`,
-    alternates: { canonical: `https://minesminis.com/yazdir/${t.id}` },
-    robots: { index: true, follow: true },
+    // Print view duplicates the topic page content → keep it out of the index
+    // (avoids duplicate/thin "no content" pages). The canonical topic page at
+    // /konu/<id> carries the indexable version.
+    robots: { index: false, follow: true },
   }
 }
 

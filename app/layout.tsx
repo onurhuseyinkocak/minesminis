@@ -158,11 +158,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }} />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6644397387275334"
-          crossOrigin="anonymous"
-        />
+        {/* AdSense SDK is intentionally NOT loaded site-wide. It put ad code on
+            content-less pages (search, print, dynamic empties) → AdSense
+            "İçerik olmayan sayfa" / low-value-content flag. The script is now
+            loaded lazily by <AdBanner>/<AdRail> ONLY on ad-eligible content
+            pages (/about, /blog, /curriculum, /faq) via src/lib/adSafety.ts. */}
       </head>
       <body>
         <Toaster position="top-right" />
