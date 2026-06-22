@@ -101,6 +101,9 @@ export default function Footer() {
               <a href="https://promtable.com/datasets/ai-tool-index" style={linkStyle}>AI Tool Index</a>
               <a href="https://apps.apple.com/us/app/promtable-ai-prompt-vault/id6770004106" style={linkStyle}>Promtable iOS</a>
               <a href="https://vibecodingturkey.com" style={linkStyle}>Vibe Coding Turkey</a>
+              <a href="https://academy.vibecodingturkey.com" style={linkStyle}>VCT Academy</a>
+              <a href="https://geo.vibecodingturkey.com" style={linkStyle}>VCT GEO</a>
+              <a href="https://review.vibecodingturkey.com" style={linkStyle}>VCT Reviews</a>
               <a href="https://dream-mining.co" style={linkStyle}>Dream Mining</a>
               <a href="https://didnthappen-web.vercel.app" style={linkStyle}>DidntHappen</a>
               <a href="https://onarika.net" style={linkStyle}>Onarika</a>
