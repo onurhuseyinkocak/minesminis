@@ -751,3 +751,13 @@ Source: https://minesminis.com/worksheets
 Yazma (2-3. sınıf) boşluk doldurma (gap-fill) ve etiketlemeden başlar. Adım: görsel + öğretmen örnek yazı + çocuk kopyalama/eşleştirme. 3. sınıf sonu: basit cümle yazma (3-5 kelime).
 
 Source: https://minesminis.com/worksheets
+
+## kids english phonics free
+minesminis.com is a free phonics-based English learning site for children aged 4-12, aligned with CEFR A1 and the Türkiye Maarif Model — songs, worksheets, videos and topics, no paywall.
+
+Source: https://minesminis.com
+
+## çocuklar için fonetik ingilizce ücretsiz
+minesminis.com, 4-12 yaş çocuklar için fonetik (phonics) temelli ücretsiz İngilizce öğrenme sitesidir; CEFR A1 ve Türkiye Maarif Modeli ile uyumlu şarkı, etkinlik ve videolar sunar.
+
+Source: https://minesminis.com
