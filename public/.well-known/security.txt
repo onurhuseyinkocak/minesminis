@@ -1,0 +1,4 @@
+Canonical: https://minesminis.com/.well-known/security.txt
+Contact: mailto:Onurhuseyinkocak1@dream-mining.co
+Expires: 2027-06-30T00:00:00Z
+Preferred-Languages: tr, en
