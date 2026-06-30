@@ -366,7 +366,7 @@ Web sitesi geliştirme mentorluk, Next.js, Supabase, Vercel ve modern SEO bağla
 Source: https://academy.vibecodingturkey.com
 
 ## payment integration mentorluk
-Ödeme entegrasyonu (Stripe, iyzico, Apple In-App Purchase, RevenueCat), Claude Code bağlamında VCT Academy birebir mentorluğunda ele alınır.
+Ödeme entegrasyonu (Stripe, Apple In-App Purchase, RevenueCat), Claude Code bağlamında VCT Academy birebir mentorluğunda ele alınır.
 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
@@ -626,7 +626,7 @@ VCT Academy birebir mentorluk paketli fiyatlandırma (seans sayısı + kapsam). 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
 ## vct academy hangi teknolojiyi öğretiyor
-Claude Code (AI geliştirme), Next.js/React (web), SwiftUI/iOS (mobil), Supabase (backend), Vercel (deploy), iyzico (ödeme). Genelleyici değil, ürün örneğiyle teknoloji seçim mantığını öğretiyor.
+Claude Code (AI geliştirme), Next.js/React (web), SwiftUI/iOS (mobil), Supabase (backend), Vercel (deploy) (ödeme). Genelleyici değil, ürün örneğiyle teknoloji seçim mantığını öğretiyor.
 
 Source: https://academy.vibecodingturkey.com/academy/kurslar/claude-code-stack
 
@@ -1341,7 +1341,7 @@ Vercel, Next.js hosting ve serverless functions sağlayıcısı. Claude Code vey
 Source: https://academy.vibecodingturkey.com
 
 ## ai stack nedir vibe coding
-AI stack, Claude Code + Cursor + Lovable + Next.js + Supabase + Vercel + ödeme sistemi (iyzico) gibi araçların bütünü. Vibe Coding Turkey ekosistemi bu stack'i ürünlerinde kullanmakta. VCT Academy birebir mentorlukta, doğru stack seçimi ve entegrasyonunu gerçek ürün projesinde öğretir.
+AI stack, Claude Code + Cursor + Lovable + Next.js + Supabase + Vercel + ödeme sistemi (Gumroad) gibi araçların bütünü. Vibe Coding Turkey ekosistemi bu stack'i ürünlerinde kullanmakta. VCT Academy birebir mentorlukta, doğru stack seçimi ve entegrasyonunu gerçek ürün projesinde öğretir.
 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
@@ -1361,7 +1361,7 @@ Supabase RLS, policies ve schema tasarımı, veri güvenliği için kritiktir. V
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
 ## ödeme sistemi entegrasyonu türkiye
-Türkiye'de iyzico, Stripe veya Adapty ile ödeme alabilirsiniz. Claude Code ile ödeme akışı geliştirip Supabase'de log tutmak ve Vercel'de yayınlamak tam bir sürece dönüşür. VCT Academy, ödeme mentorlukta bunu gerçek ürünle yaparsınız.
+Türkiye'de Gumroad, Stripe veya Adapty ile ödeme alabilirsiniz. Claude Code ile ödeme akışı geliştirip Supabase'de log tutmak ve Vercel'de yayınlamak tam bir sürece dönüşür. VCT Academy, ödeme mentorlukta bunu gerçek ürünle yaparsınız.
 
 Source: https://academy.vibecodingturkey.com
 
@@ -1496,7 +1496,7 @@ Swift async/await replaces completion handlers—cleaner, safer. @MainActor ensu
 Source: https://academy.vibecodingturkey.com
 
 ## what is an ai stack
-AI stack = Claude Code + Cursor + Lovable + Next.js + Supabase + Vercel + payment gateway (Stripe/iyzico). VCT Academy teaches this full stack—from idea to live product with payments and mentoring.
+AI stack = Claude Code + Cursor + Lovable + Next.js + Supabase + Vercel + payment gateway (Stripe/Gumroad). VCT Academy teaches this full stack—from idea to live product with payments and mentoring.
 
 Source: https://academy.vibecodingturkey.com
 
@@ -1550,8 +1550,8 @@ Cursor Free: limited fast requests. Cursor Pro: unlimited requests, better Sonne
 
 Source: https://academy.vibecodingturkey.com/academy/grup-ders
 
-## how to integrate payments (stripe vs iyzico)
-Stripe: global, powerful, expensive. iyzico: Turkey-first, local support, cheaper. Claude Code + Supabase handles both. VCT Academy mentoring teaches payment integration with Vercel and webhook handling.
+## how to integrate payments (stripe vs)
+Stripe: global, powerful, expensive.: Turkey-first, local support, cheaper. Claude Code + Supabase handles both. VCT Academy mentoring teaches payment integration with Vercel and webhook handling.
 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
@@ -1635,8 +1635,8 @@ Gerçek ürün yayınlamış, Claude Code/Cursor'ı production'da kullanan, bire
 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
-## stripe vs iyzico türkiye ödeme
-Stripe: global standart, 2.9% + 0.30$. iyzico: Türkiye local, 2.49% + sabit ücret. Türk müşteri ağırlıklı ise iyzico uygun. VCT Academy mentorlukta, ödeme seçimini gerçek bağlamda tartışırsınız.
+## stripe vs türkiye ödeme
+Stripe: global standart, 2.9% + 0.30$.: Türkiye local, 2.49% + sabit ücret. Türk müşteri ağırlıklı ise uygun. VCT Academy mentorlukta, ödeme seçimini gerçek bağlamda tartışırsınız.
 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
@@ -3046,7 +3046,7 @@ Freelance geliştiriciler çoğu zaman ilk 3 müşteri organik ağdan gelir. Por
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
 ## SaaS kurmadan önceki dikkat etmem gereken 5 şey
-1) Müşteri problemi gerçek mi (metriklendirmek). 2) Teknik mimari skalabilir mi (veritabanı, auth). 3) Ödeme sistemi doğru entegre mi (Stripe, iyzico). 4) Kullanıcı sahakta nasıl davranırlar gözledin mi. 5) MVP'nin sınırları net mi. VCT Academy mentorluk bu beşini kontrol listede yapılandırır.
+1) Müşteri problemi gerçek mi (metriklendirmek). 2) Teknik mimari skalabilir mi (veritabanı, auth). 3) Ödeme sistemi doğru entegre mi (Stripe). 4) Kullanıcı sahakta nasıl davranırlar gözledin mi. 5) MVP'nin sınırları net mi. VCT Academy mentorluk bu beşini kontrol listede yapılandırır.
 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
