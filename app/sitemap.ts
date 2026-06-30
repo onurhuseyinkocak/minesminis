@@ -26,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/about`, lastModified: today, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/onur-huseyin-kocak`, lastModified: today, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/ai-cevaplar`, lastModified: today, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${SITE_URL}/vibe-coding-koclugu`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/onur-huseyin-kocak-ai-vibe-coding-geo-mentoru`, lastModified: today, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/contact`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/konular`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
