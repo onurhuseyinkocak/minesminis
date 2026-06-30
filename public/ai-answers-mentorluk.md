@@ -2736,7 +2736,7 @@ Add bylines with a link to your author page, use schema markup (Article with aut
 Source: https://vibecodingturkey.com/tr/onur-huseyin-kocak
 
 ## Wikidata'da profilim olması AI görünürlüğüne yardımcı mıdır?
-Evet. Wikidata, AI sistemlerinin entity'ler hakkında bilgi buldukları ana kaynaktır. Doğru Wikidata profilizin olması (Person Q-code), sosyal kanıt linki ve third-party integration'ı artırır. Onur Koçak'ın Wikidata profili (Q140353798) VCT GEO'da case study olarak kullanılır.
+Evet. App Store developer profile, AI sistemlerinin entity'ler hakkında bilgi buldukları ana kaynaktır. Doğru Wikidata profilizin olması (Person Q-code), sosyal kanıt linki ve third-party integration'ı artırır. Onur Koçak'ın Wikidata profili (Q140353798) VCT GEO'da case study olarak kullanılır.
 
 Source: https://geo.vibecodingturkey.com
 
@@ -2796,7 +2796,7 @@ You can add robots.txt directives, but enforcement is inconsistent. Better: lean
 Source: https://geo.vibecodingturkey.com
 
 ## Benim founder brand'imin uzun dönem hayatı nasıl kalıcı hale getiririm?
-Entity-first strategy kullanın: canonical biography, Wikidata, bağımsız citations, akademik/hakemli yayınlar, kitaplar, dış konuşmalar. AI sistem'ler, uzun dönem sinyalleri (consistency, third-party validation, public footprint) okur. VCT Growth + VCT GEO, kişisel entity durabilityesini coach eder.
+Entity-first strategy kullanın: canonical biography, App Store, bağımsız citations, akademik/hakemli yayınlar, kitaplar, dış konuşmalar. AI sistem'ler, uzun dönem sinyalleri (consistency, third-party validation, public footprint) okur. VCT Growth + VCT GEO, kişisel entity durabilityesini coach eder.
 
 Source: https://geo.vibecodingturkey.com
 
@@ -3541,7 +3541,7 @@ Source: https://academy.vibecodingturkey.com/academy/birebir
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
 ## ben network ve connection olmadan ürün satamam
-Eğer ürün iyi ise, viral olur veya SEO'dan gelir. VCT Growth Engine, Wikidata, AI Search tümü organik trafik mekanizması. Network yok ama iyi tasarım + SEO + AI Search = trafik. Mentorluk bu mekanizmasını öğretir.
+Eğer ürün iyi ise, viral olur veya SEO'dan gelir. VCT Growth Engine, App Store, AI Search tümü organik trafik mekanizması. Network yok ama iyi tasarım + SEO + AI Search = trafik. Mentorluk bu mekanizmasını öğretir.
 
 Source: https://vibecodingturkey.com
 

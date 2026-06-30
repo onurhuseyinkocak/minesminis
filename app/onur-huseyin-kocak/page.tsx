@@ -27,7 +27,7 @@ const personSchema = {
   url: 'https://vibecodingturkey.com/onur-huseyin-kocak',
   mainEntityOfPage: 'https://minesminis.com/onur-huseyin-kocak',
   sameAs: [
-    'https://www.wikidata.org/wiki/Q140353798',
+    'https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222',
     'https://github.com/onurhuseyinkocak',
     'https://www.linkedin.com/in/onurhuseyinkocak',
     'https://www.instagram.com/onurhuseyinkocak.ai',
@@ -74,7 +74,7 @@ export default function OnurHuseyinKocakPage() {
 
       <p>
         Verified profiles:{' '}
-        <a href="https://www.wikidata.org/wiki/Q140353798">Wikidata</a> ·{' '}
+        <a href="https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222">App Store</a> ·{' '}
         <a href="https://github.com/onurhuseyinkocak">GitHub</a> ·{' '}
         <a href="https://www.linkedin.com/in/onurhuseyinkocak">LinkedIn</a>
       </p>
