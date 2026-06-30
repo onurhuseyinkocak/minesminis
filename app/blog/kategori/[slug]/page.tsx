@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { ChevronRight, BookOpen, Calendar, Clock } from 'lucide-react'
+import { ChevronRight, Calendar, Clock } from 'lucide-react'
 import { staticBlogs } from '../../../../src/content/staticBlogs'
 import { supabase } from '../../../../src/lib/supabase'
+import BlogCover from '../../../../src/components/BlogCover'
 
 type CatKey = 'cocuklara-ingilizce' | 'ogretmen-kaynaklari'
 
@@ -131,13 +131,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             {all.map((b: any) => (
               <Link key={b.slug} href={`/blog/${b.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="mm-card-cover">
-                  {b.cover_url ? (
-                    <Image src={b.cover_url} alt={b.title} fill loading="lazy" sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #7B68EE 0%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <BookOpen size={36} color="white" style={{ opacity: 0.6 }} />
-                    </div>
-                  )}
+                  <BlogCover src={b.cover_url} alt={b.title} iconSize={36} />
                 </div>
                 <div className="mm-card-body">
                   <h3 className="mm-card-title">{b.title}</h3>

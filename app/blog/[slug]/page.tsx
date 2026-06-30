@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
-import { Calendar, Clock, ArrowLeft, BookOpen } from 'lucide-react'
+import { Calendar, Clock, ArrowLeft } from 'lucide-react'
 import { supabase } from '../../../src/lib/supabase'
 import { findStaticBlogBySlug, staticBlogs } from '../../../src/content/staticBlogs'
 import type { Blog } from '../../../src/lib/supabase'
 import SanitizedHtml from '../../../src/components/SanitizedHtml'
+import BlogCover from '../../../src/components/BlogCover'
+import { publicBlogCoverUrl } from '../../../src/lib/coverImages'
 
 // Pre-render static slugs at build time; DB blogs fall back to runtime SSR
 export async function generateStaticParams() {
@@ -65,6 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       robots: { index: false, follow: true },
     }
   }
+  const image = publicBlogCoverUrl(blog.cover_url)
   return {
     title: blog.title,
     description: blog.meta_description || blog.excerpt,
@@ -74,7 +76,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: blog.title,
       description: blog.meta_description || blog.excerpt,
       url: `https://minesminis.com/blog/${blog.slug}`,
-      images: blog.cover_url ? [blog.cover_url] : ['/images/minesminis-logo-512.png'],
+      images: [image],
       publishedTime: blog.published_at || undefined,
       modifiedTime: blog.updated_at,
     },
@@ -98,7 +100,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     '@type': 'BlogPosting',
     headline: blog.title,
     description: blog.meta_description || blog.excerpt,
-    image: blog.cover_url,
+    image: publicBlogCoverUrl(blog.cover_url),
     datePublished: blog.published_at,
     dateModified: blog.updated_at,
     author: { '@type': 'Organization', name: 'minesminis', url: 'https://minesminis.com' },
@@ -146,11 +148,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {blog.title}
         </h1>
 
-        {blog.cover_url && (
-          <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 28, aspectRatio: '16/9', position: 'relative' }}>
-            <Image src={blog.cover_url} alt={blog.title} fill priority sizes="(max-width: 768px) 100vw, 760px" style={{ objectFit: 'cover' }} />
-          </div>
-        )}
+        <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 28, aspectRatio: '16/9', position: 'relative' }}>
+          <BlogCover src={blog.cover_url} alt={blog.title} priority sizes="(max-width: 768px) 100vw, 760px" iconSize={52} />
+        </div>
 
         <SanitizedHtml html={blog.content_html} className="mm-blog-content" />
 
@@ -183,13 +183,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {related.map((r) => (
               <Link key={r.id} href={`/blog/${r.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="mm-card-cover">
-                  {r.cover_url ? (
-                    <Image src={r.cover_url} alt={r.title} fill loading="lazy" sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #7B68EE 0%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <BookOpen size={36} color="white" style={{ opacity: 0.6 }} />
-                    </div>
-                  )}
+                  <BlogCover src={r.cover_url} alt={r.title} iconSize={36} />
                 </div>
                 <div className="mm-card-body">
                   <h3 className="mm-card-title" style={{ whiteSpace: 'normal', WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical' as any }}>{r.title}</h3>

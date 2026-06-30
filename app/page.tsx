@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Play, Presentation, Video, Music, FileText, ChevronRight, Star, BookOpen } from 'lucide-react'
+import { Play, Presentation, Video, Music, FileText, ChevronRight, Star } from 'lucide-react'
 import Cover from '../src/components/Cover'
 import { supabase } from '../src/lib/supabase'
 import DashboardCover from '../src/components/DashboardCover'
 import { staticBlogs } from '../src/content/staticBlogs'
+import BlogCover from '../src/components/BlogCover'
 
 export const metadata: Metadata = {
   title: 'Çocuklar İçin Ücretsiz İngilizce Öğrenme Platformu',
@@ -20,7 +21,7 @@ const features = [
   { id: 'slides', title: 'Sunumlar', icon: Presentation, image: '/images/cat-slides.webp', tag: 'Öğren', path: '/slides', coverFallback: 'school' },
   { id: 'videos', title: 'Videolar', icon: Video, image: '/images/cat-videos.webp', tag: 'İzle', path: '/videos', coverFallback: 'star' },
   { id: 'songs', title: 'Şarkılar', icon: Music, image: '/images/cat-songs.webp', tag: 'Söyle', path: '/songs', coverFallback: 'dance' },
-  { id: 'worksheets', title: 'Çalışma Kâğıtları', icon: FileText, image: '/images/cat-worksheets.webp', tag: 'Yazdır', path: '/worksheets', coverFallback: 'abc' },
+  { id: 'worksheets', title: 'Çalışma Kâğıtları', icon: FileText, image: '', tag: 'Yazdır', path: '/worksheets', coverFallback: 'abc' },
 ]
 
 async function getCounts() {
@@ -265,13 +266,7 @@ export default async function HomePage() {
             {blogPosts.map((post: any) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="mm-card-cover" style={{ position: 'relative' }}>
-                  {post.cover_url ? (
-                    <Image src={post.cover_url} alt={post.title} fill loading="lazy" sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #7B68EE 0%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <BookOpen size={36} color="white" style={{ opacity: 0.6 }} />
-                    </div>
-                  )}
+                  <BlogCover src={post.cover_url} alt={post.title} iconSize={36} />
                 </div>
                 <div className="mm-card-body">
                   <h3 className="mm-card-title" style={{ whiteSpace: 'normal', WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical' as any }}>{post.title}</h3>

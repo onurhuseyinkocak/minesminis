@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
-import { Calendar, Clock, BookOpen, Search } from 'lucide-react'
+import { Calendar, Clock, Search } from 'lucide-react'
 import { supabase } from '../../src/lib/supabase'
 import { staticBlogs } from '../../src/content/staticBlogs'
 import type { Blog } from '../../src/lib/supabase'
+import BlogCover from '../../src/components/BlogCover'
+import { publicBlogCoverUrl } from '../../src/lib/coverImages'
 
 export const metadata: Metadata = {
   title: 'Blog — İngilizce Öğretim Kaynakları',
@@ -96,7 +97,7 @@ export default async function BlogListPage({
       description: b.excerpt,
       url: `https://minesminis.com/blog/${b.slug}`,
       datePublished: b.published_at,
-      image: b.cover_url,
+      image: publicBlogCoverUrl(b.cover_url),
     })),
   }
 
@@ -186,13 +187,7 @@ export default async function BlogListPage({
           {merged.map((blog) => (
             <Link key={blog.id} href={`/blog/${blog.slug}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="mm-card-cover">
-                {blog.cover_url ? (
-                  <Image src={blog.cover_url} alt={blog.title} fill loading="lazy" sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #7B68EE 0%, #B8A9FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <BookOpen size={48} color="white" style={{ opacity: 0.6 }} />
-                  </div>
-                )}
+                <BlogCover src={blog.cover_url} alt={blog.title} iconSize={48} />
               </div>
               <div className="mm-card-body">
                 <div style={{ marginBottom: 6 }}>
