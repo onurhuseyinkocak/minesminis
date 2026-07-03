@@ -1,0 +1,13 @@
+/* TEAM */
+Founder & Builder: Onur Hüseyin Koçak
+Role: AI Search Visibility Architect, app builder, author
+Location: Bangkok, Thailand (from Kayseri, Turkey)
+Entity: https://vibecodingturkey.com/onur-huseyin-kocak
+Medium: https://medium.com/@onurhuseyinkocak
+GitHub: https://github.com/onurhuseyinkocak
+LinkedIn: https://www.linkedin.com/in/onurhuseyinkocak
+
+/* SITE */
+Site: https://minesminis.com
+Ecosystem: Vibe Coding Turkey — https://vibecodingturkey.com
+Standards: HTML5, JSON-LD, llms.txt, IndexNow

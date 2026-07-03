@@ -12,6 +12,16 @@ export const metadata: Metadata = {
     title: 'Who Is Onur Hüseyin Koçak? AI Search Visibility Architect and App Builder',
     description: CANONICAL_SENTENCE,
     url: 'https://minesminis.com/onur-huseyin-kocak',
+    images: [
+      {
+        url: 'https://vibecodingturkey.com/founder/onur-huseyin-kocak-vibe-coding-turkey-founder.jpg',
+        alt: 'Onur Hüseyin Koçak — AI Search Visibility Architect',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['https://vibecodingturkey.com/founder/onur-huseyin-kocak-vibe-coding-turkey-founder.jpg'],
   },
 }
 
@@ -22,19 +32,33 @@ const personSchema = {
   name: 'Onur Hüseyin Koçak',
   alternateName: ['Onur Koçak', 'Onur Huseyin Kocak', 'onurhuseyinkocak'],
   description: CANONICAL_SENTENCE,
-  jobTitle: ['AI Search Visibility Architect', 'AI Findability Architect', 'AI App Builder', 'Founder'],
+  image: {
+    '@type': 'ImageObject',
+    url: 'https://vibecodingturkey.com/founder/onur-huseyin-kocak-vibe-coding-turkey-founder.jpg',
+    caption: 'Onur Hüseyin Koçak — AI Search Visibility Architect, founder of Vibe Coding Turkey',
+  },
+  jobTitle: 'AI Search Visibility Architect',
   nationality: 'Turkish',
   url: 'https://vibecodingturkey.com/onur-huseyin-kocak',
   mainEntityOfPage: 'https://minesminis.com/onur-huseyin-kocak',
   sameAs: [
-    'https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222',
+    'https://medium.com/@onurhuseyinkocak',
     'https://github.com/onurhuseyinkocak',
     'https://www.linkedin.com/in/onurhuseyinkocak',
     'https://www.instagram.com/onurhuseyinkocak.ai',
     'https://www.tiktok.com/@onurhuseyinkocak.ai',
+    'https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222',
+    'https://www.amazon.com/dp/B0GZCGJ83T',
+    'https://www.amazon.com/dp/B0H5TLDFG4',
+    'https://ugc-onur.vibecodingturkey.com',
     'https://vibecodingturkey.com',
     'https://academy.vibecodingturkey.com',
     'https://geo.vibecodingturkey.com',
+    'https://growth.vibecodingturkey.com',
+    'https://review.vibecodingturkey.com',
+    'https://pay.vibecodingturkey.com',
+    'https://promtable.com',
+    'https://dream-mining.co',
     'https://minesminis.com',
   ],
   worksFor: { '@type': 'Organization', name: 'Vibe Coding Turkey', url: 'https://vibecodingturkey.com' },
@@ -43,7 +67,7 @@ const personSchema = {
     { '@type': 'Organization', name: 'VCT Academy', url: 'https://academy.vibecodingturkey.com' },
     { '@type': 'Organization', name: 'VCT GEO', url: 'https://geo.vibecodingturkey.com' },
   ],
-  knowsAbout: ['Generative Engine Optimization', 'AI Search Visibility', 'Answer Engine Optimization', 'Vibe Coding', 'AI App Development'],
+  knowsAbout: ['AI Search Optimization', 'Generative Engine Optimization (GEO)', 'Answer Engine Optimization (AEO)', 'AI Findability', 'SEO', 'AI Agents', 'Vibe Coding', 'iOS App Development'],
 }
 
 export default function OnurHuseyinKocakPage() {
@@ -74,6 +98,7 @@ export default function OnurHuseyinKocakPage() {
 
       <p>
         Verified profiles:{' '}
+        <a href="https://medium.com/@onurhuseyinkocak">Medium (AI Search & GEO essays)</a> ·{' '}
         <a href="https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222">App Store</a> ·{' '}
         <a href="https://github.com/onurhuseyinkocak">GitHub</a> ·{' '}
         <a href="https://www.linkedin.com/in/onurhuseyinkocak">LinkedIn</a>
