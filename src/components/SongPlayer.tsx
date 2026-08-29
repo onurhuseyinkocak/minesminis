@@ -303,7 +303,7 @@ export default function SongPlayer({ song }: { song: Song }) {
                   </button>
                 )}
               </div>
-              <div className="mm-progress" style={{ marginTop: 12, cursor: 'pointer' }} onClick={seek}>
+              <div className="mm-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)} aria-label={`İlerleme ${Math.round(progress)}%`} style={{ marginTop: 12, cursor: 'pointer' }} onClick={seek}>
                 <div className="mm-progress-fill" style={{ width: `${progress}%`, transition: 'width 0.2s' }} />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 12, color: 'var(--ink-3)', fontWeight: 600 }}>

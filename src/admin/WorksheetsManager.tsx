@@ -190,7 +190,7 @@ export default function WorksheetsManager() {
               <a href={editing.file_url} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: 'var(--accent)', wordBreak: 'break-all' }}>
                 {editing.file_url.split('/').pop()}
               </a>
-              <button className="mm-icon-btn" onClick={() => setEditing({ ...editing, file_url: '' })} title="Remove file" style={{ width: 28, height: 28, color: 'var(--primary)' }}>
+              <button className="mm-icon-btn" onClick={() => setEditing({ ...editing, file_url: '' })} title="Remove file" aria-label="Remove file" style={{ width: 28, height: 28, color: 'var(--primary)' }}>
                 <Trash2 size={12} />
               </button>
             </div>
@@ -241,13 +241,13 @@ export default function WorksheetsManager() {
                   <span className={`mm-tag ${w.published ? 'green' : ''}`}>{w.published ? 'Published' : 'Draft'}</span>
                 </td>
                 <td style={{ padding: '12px', display: 'flex', gap: 6 }}>
-                  <button className="mm-icon-btn" onClick={() => setEditing(w)} title="Edit" style={{ width: 34, height: 34 }}>
+                  <button className="mm-icon-btn" onClick={() => setEditing(w)} title="Edit" aria-label="Edit" style={{ width: 34, height: 34 }}>
                     <Pencil size={14} />
                   </button>
-                  <button className="mm-icon-btn" onClick={() => toggle(w.id, w.published)} title={w.published ? 'Unpublish' : 'Publish'} style={{ width: 34, height: 34 }}>
+                  <button className="mm-icon-btn" onClick={() => toggle(w.id, w.published)} title={w.published ? 'Unpublish' : 'Publish'} aria-label={w.published ? 'Unpublish' : 'Publish'} style={{ width: 34, height: 34 }}>
                     {w.published ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
-                  <button className="mm-icon-btn" onClick={() => remove(w.id)} title="Delete" style={{ width: 34, height: 34, color: 'var(--primary)' }}>
+                  <button className="mm-icon-btn" onClick={() => remove(w.id)} title="Delete" aria-label="Delete" style={{ width: 34, height: 34, color: 'var(--primary)' }}>
                     <Trash2 size={14} />
                   </button>
                 </td>

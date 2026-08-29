@@ -249,7 +249,7 @@ export default function SlidesManager() {
               <a href={editing.file_url} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: 'var(--accent)', wordBreak: 'break-all' }}>
                 {editing.file_url.split('/').pop()}
               </a>
-              <button className="mm-icon-btn" onClick={() => setEditing({ ...editing, file_url: '' })} title="Remove file" style={{ width: 28, height: 28, color: 'var(--primary)' }}>
+              <button className="mm-icon-btn" onClick={() => setEditing({ ...editing, file_url: '' })} title="Remove file" aria-label="Remove file" style={{ width: 28, height: 28, color: 'var(--primary)' }}>
                 <Trash2 size={12} />
               </button>
             </div>
@@ -322,13 +322,13 @@ export default function SlidesManager() {
                   <span className={`mm-tag ${s.published ? 'green' : ''}`}>{s.published ? 'Published' : 'Draft'}</span>
                 </td>
                 <td style={{ padding: '12px', display: 'flex', gap: 6 }}>
-                  <button className="mm-icon-btn" onClick={() => setEditing(s)} title="Edit" style={{ width: 34, height: 34 }}>
+                  <button className="mm-icon-btn" onClick={() => setEditing(s)} title="Edit" aria-label="Edit" style={{ width: 34, height: 34 }}>
                     <Pencil size={14} />
                   </button>
-                  <button className="mm-icon-btn" onClick={() => toggle(s.id, s.published)} title={s.published ? 'Unpublish' : 'Publish'} style={{ width: 34, height: 34 }}>
+                  <button className="mm-icon-btn" onClick={() => toggle(s.id, s.published)} title={s.published ? 'Unpublish' : 'Publish'} aria-label={s.published ? 'Unpublish' : 'Publish'} style={{ width: 34, height: 34 }}>
                     {s.published ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
-                  <button className="mm-icon-btn" onClick={() => remove(s.id)} title="Delete" style={{ width: 34, height: 34, color: 'var(--primary)' }}>
+                  <button className="mm-icon-btn" onClick={() => remove(s.id)} title="Delete" aria-label="Delete" style={{ width: 34, height: 34, color: 'var(--primary)' }}>
                     <Trash2 size={14} />
                   </button>
                 </td>

@@ -243,13 +243,13 @@ export default function VideosManager() {
                   <span className={`mm-tag ${v.published ? 'green' : ''}`}>{v.published ? 'Published' : 'Draft'}</span>
                 </td>
                 <td style={{ padding: '12px', display: 'flex', gap: 6 }}>
-                  <button className="mm-icon-btn" onClick={() => setEditing(v)} title="Edit" style={{ width: 34, height: 34 }}>
+                  <button className="mm-icon-btn" onClick={() => setEditing(v)} title="Edit" aria-label="Edit" style={{ width: 34, height: 34 }}>
                     <Pencil size={14} />
                   </button>
-                  <button className="mm-icon-btn" onClick={() => toggle(v.id, v.published)} title={v.published ? 'Unpublish' : 'Publish'} style={{ width: 34, height: 34 }}>
+                  <button className="mm-icon-btn" onClick={() => toggle(v.id, v.published)} title={v.published ? 'Unpublish' : 'Publish'} aria-label={v.published ? 'Unpublish' : 'Publish'} style={{ width: 34, height: 34 }}>
                     {v.published ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
-                  <button className="mm-icon-btn" onClick={() => remove(v.id)} title="Delete" style={{ width: 34, height: 34, color: 'var(--primary)' }}>
+                  <button className="mm-icon-btn" onClick={() => remove(v.id)} title="Delete" aria-label="Delete" style={{ width: 34, height: 34, color: 'var(--primary)' }}>
                     <Trash2 size={14} />
                   </button>
                 </td>

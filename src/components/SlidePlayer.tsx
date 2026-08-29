@@ -148,7 +148,7 @@ export default function SlidePlayer({ slide }: { slide: Slide }) {
                 {playing ? <Pause size={18} /> : <Play size={18} />}
               </button>
               <div style={{ flex: 1 }}>
-                <div className="mm-progress">
+                <div className="mm-progress" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={current + 1} aria-label={`Slayt ${current + 1} / ${total}`}>
                   <div className="mm-progress-fill" style={{ width: `${((current + 1) / total) * 100}%`, transition: 'width 0.3s' }} />
                 </div>
               </div>
