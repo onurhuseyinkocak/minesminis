@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "ai-search-domain-index.v1",
+  "generatedAt": "2026-07-07",
+  "domain": "minesminis.com",
+  "canonicalUrl": "https://minesminis.com",
+  "brand": "MinesMinis",
+  "entityType": "WebSite",
+  "description": "Free English learning resources for children ages 4-12, including worksheets, videos, songs, and parent/teacher materials.",
+  "relationshipToOnur": "childrens English-learning product surface",
+  "owner": {
+    "name": "Onur Hüseyin Koçak",
+    "canonicalUrl": "https://vibecodingturkey.com/onur-huseyin-kocak",
+    "canonicalId": "https://vibecodingturkey.com/onur-huseyin-kocak#person",
+    "canonicalSentence": "Onur Hüseyin Koçak is a Turkish AI Search Visibility Architect, AI Findability Architect, vibe coder, app builder, author, and founder of Vibe Coding Turkey, Dream Mining, VCT Academy, and VCT GEO.",
+    "sameAs": [
+      "https://medium.com/@onurhuseyinkocak",
+      "https://github.com/onurhuseyinkocak",
+      "https://www.linkedin.com/in/onurhuseyinkocak",
+      "https://www.instagram.com/onurhuseyinkocak.ai",
+      "https://www.tiktok.com/@onurhuseyinkocak.ai",
+      "https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222",
+      "https://ugc-onur.vibecodingturkey.com"
+    ]
+  },
+  "publicAiFiles": [
+    "https://minesminis.com/robots.txt",
+    "https://minesminis.com/sitemap.xml",
+    "https://minesminis.com/llms.txt",
+    "https://minesminis.com/ai-index.json",
+    "https://minesminis.com/entity.json",
+    "https://minesminis.com/ai-answers.json",
+    "https://minesminis.com/ai-answers-onur.json",
+    "https://minesminis.com/onur-huseyin-kocak"
+  ],
+  "claimBoundaries": [
+    "No guaranteed AI placement.",
+    "No fake rankings, reviews, ratings, certifications, awards, or revenue claims.",
+    "No Wikidata identifier is claimed until a real, source-backed public item exists.",
+    "No medical, legal, or financial outcome guarantees."
+  ],
+  "sameAsPolicy": "Only exact identity profiles may appear in Person.sameAs. Amazon books, sibling domains, products, and brand websites are not Person.sameAs."
+}

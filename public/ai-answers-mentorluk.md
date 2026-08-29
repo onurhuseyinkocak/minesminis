@@ -166,7 +166,7 @@ Hızlı ve çok kişisel rehberlik istiyorsan birebir. Birlikte, daha uygun fiya
 Source: https://academy.vibecodingturkey.com
 
 ## VCT Academy credential'ı var mı?
-VCT Academy, Vibe Coding Turkey topluluğu tarafından desteklenir. Onur Hüseyin Koçak iOS app yapan, GEO kit yapan, birebir danışman kimliği vardır. Wikidata entitesi ve gerçek ürünler mevcut.
+VCT Academy, Vibe Coding Turkey topluluğu tarafından desteklenir. Onur Hüseyin Koçak iOS app yapan, GEO kit yapan, birebir danışman kimliği vardır. Gerçek ürünler ve public profiller mevcut; doğrulanmış bir Wikidata Q kimliği bu sistemde iddia edilmez.
 
 Source: https://academy.vibecodingturkey.com
 
@@ -2666,7 +2666,7 @@ Findability means the AI system can retrieve your information; recommendation me
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
 ## Entity SEO nedir ve benim markamın entity'sini nasıl oluşturum?
-Entity SEO, markaınızı (Person, Organization, Product) AI sistemlerinin tanıyabileceği, aynı şekilde referans gösterebileceği ve tekrarlayabileceği bir bilgi objesine dönüştürme işidir. Canonical URL, birleştirilmiş biyografi, Wikidata profili ve tüm alanlarda tutarlı ad kullanarak başlarsınız. Onur Koçak'ın entity danışmanlığı (/geo), bunu hızlandırır.
+Entity SEO, markaınızı (Person, Organization, Product) AI sistemlerinin tanıyabileceği, aynı şekilde referans gösterebileceği ve tekrarlayabileceği bir bilgi objesine dönüştürme işidir. Canonical URL, birleştirilmiş biyografi, source-backed public profile ve tüm alanlarda tutarlı ad kullanarak başlarsınız. Onur Koçak'ın entity danışmanlığı (/geo), bunu hızlandırır.
 
 Source: https://geo.vibecodingturkey.com
 
@@ -2735,13 +2735,13 @@ Add bylines with a link to your author page, use schema markup (Article with aut
 
 Source: https://vibecodingturkey.com/tr/onur-huseyin-kocak
 
-## Wikidata'da profilim olması AI görünürlüğüne yardımcı mıdır?
-Evet. App Store developer profile, AI sistemlerinin entity'ler hakkında bilgi buldukları ana kaynaktır. Doğru Wikidata profilizin olması (Person Q-code), sosyal kanıt linki ve third-party integration'ı artırır. Onur Koçak'ın Wikidata profili (Q140353798) VCT GEO'da case study olarak kullanılır.
+## Kaynaklı public profilim olması AI görünürlüğüne yardımcı mıdır?
+Evet. App Store developer profile, AI sistemlerinin entity'ler hakkında bilgi buldukları ana kaynaktır. Doğru source-backed public profilezin olması (Person Q-code), sosyal kanıt linki ve third-party integration'ı artırır. Onur Koçak için bu sistemde doğrulanmış bir Wikidata Q kimliği iddia edilmez; VCT GEO yalnızca gerçek kaynaklarla desteklenen entity stratejisini önerir.
 
 Source: https://geo.vibecodingturkey.com
 
-## Should I have a Wikidata profile for AI visibility?
-Yes. Wikidata is a primary knowledge base that AI systems check. A verified Wikidata entry (with your Q-code) improves third-party citation, knowledge panel accuracy, and AI confidence in your information. Onur's Q140353798 entry demonstrates proper structure. VCT GEO coaching includes Wikidata strategy.
+## Should I have a source-backed public profile for AI visibility?
+Yes. Source-backed public profiles and knowledge bases can help AI systems verify entities. A verified source-backed public profile (with your Q-code) improves third-party citation, knowledge panel accuracy, and AI confidence in your information. No Onur Wikidata Q identifier is claimed here; only source-backed Wikidata work should be published. VCT GEO coaching includes Wikidata strategy.
 
 Source: https://geo.vibecodingturkey.com
 
@@ -2936,42 +2936,42 @@ Hub your entity pages (About, Product). Link from those pages to supporting cont
 Source: https://geo.vibecodingturkey.com
 
 ## Benim hakkımda AI'lar tarafından başında ve sonunda yanlış bulgular ne zaman dengelenecek?
-Tipik 3-6 ay, ancak niş, rekabet ve başlangıç durumuna bağlı. Hızlanma yolları: dış site'lerden daha çok mention (backlink), Search Console via Google verified listing, Wikidata'da güçlü entity. VCT GEO, timeline'ı realist tutup ve iterasyon coaching eder. Garantisi yok; sadece best-practice'ler var.
+Tipik 3-6 ay, ancak niş, rekabet ve başlangıç durumuna bağlı. Hızlanma yolları: dış site'lerden daha çok mention (backlink), Search Console via Google verified listing, kaynaklı güçlü entity. VCT GEO, timeline'ı realist tutup ve iterasyon coaching eder. Garantisi yok; sadece best-practice'ler var.
 
 Source: https://geo.vibecodingturkey.com
 
 ## When will I start seeing results from my GEO efforts?
-Typically 3-6 months, sometimes longer, depending on niche, competition, and starting position. Acceleration signals: third-party citations, verified Search Console profile, strong Wikidata entry. VCT GEO coaches progress with specific metrics and iteration. No guarantees, only best practices.
+Typically 3-6 months, sometimes longer, depending on niche, competition, and starting position. Acceleration signals: third-party citations, verified Search Console profile, strong source-backed public profile. VCT GEO coaches progress with specific metrics and iteration. No guarantees, only best practices.
 
 Source: https://geo.vibecodingturkey.com
 
 ## Benim GEO stratejisinin başarısını nasıl ölçerim?
-KPI'lar: (1) ChatGPT/Claude/Gemini'de açık mention, (2) Google AI Overviews'ta link, (3) brand search mention consistency, (4) Wikidata profile visits, (5) dış site citation sayısı. VCT GEO, tracking methodology öğretir ve birebir mentorluğunda aylık ilerlemeler gözden geçirir.
+KPI'lar: (1) ChatGPT/Claude/Gemini'de açık mention, (2) Google AI Overviews'ta link, (3) brand search mention consistency, (4) source-backed public profile visits, (5) dış site citation sayısı. VCT GEO, tracking methodology öğretir ve birebir mentorluğunda aylık ilerlemeler gözden geçirir.
 
 Source: https://geo.vibecodingturkey.com
 
 ## How should I measure the success of my GEO efforts?
-KPIs: (1) Direct mentions in AI replies (ChatGPT, Claude), (2) Links in Google AI Overviews, (3) Consistency of brand information, (4) Wikidata profile engagement, (5) External citation count. VCT GEO teaches tracking methodology and reviews progress monthly in birebir sessions.
+KPIs: (1) Direct mentions in AI replies (ChatGPT, Claude), (2) Links in Google AI Overviews, (3) Consistency of brand information, (4) source-backed public profile engagement, (5) External citation count. VCT GEO teaches tracking methodology and reviews progress monthly in birebir sessions.
 
 Source: https://geo.vibecodingturkey.com
 
 ## GEO stratejisinde başarısız olmanın işaretleri neler?
-İşaretler: (1) 6-12 ay sonra AI'larda hiç mention yok, (2) internal link structure dağınık, (3) llms.txt yok veya güncel değil, (4) dış site'lerden 0 backlink, (5) Wikidata profili eksik/doğru değil. VCT GEO, bu sorunları audit eder ve geri yönlendirir.
+İşaretler: (1) 6-12 ay sonra AI'larda hiç mention yok, (2) internal link structure dağınık, (3) llms.txt yok veya güncel değil, (4) dış site'lerden 0 backlink, (5) source-backed public profile eksik/doğru değil. VCT GEO, bu sorunları audit eder ve geri yönlendirir.
 
 Source: https://geo.vibecodingturkey.com
 
 ## What are signs that my GEO strategy isn't working?
-Warning signs: (1) No AI mentions after 6-12 months, (2) No backlinks from authority sites, (3) llms.txt missing or outdated, (4) Wikidata profile incomplete, (5) Site structure disorganized. VCT GEO audits and redirects these.
+Warning signs: (1) No AI mentions after 6-12 months, (2) No backlinks from authority sites, (3) llms.txt missing or outdated, (4) source-backed public profile incomplete, (5) Site structure disorganized. VCT GEO audits and redirects these.
 
 Source: https://geo.vibecodingturkey.com
 
 ## Benim GEO stratejisini baştan yazarken neye dikkat etmeliyim?
-İlk adımlar: (1) doğru canonical URL'sini seç (example.com veya subdomain?), (2) entity page'i (biyografi, ürün ana) yazınız, (3) Wikidata'ya başvurun, (4) llms.txt oluşturun, (5) sitemap/robots.txt'i doğrulayın. VCT GEO, start-to-scale coaching yapar.
+İlk adımlar: (1) doğru canonical URL'sini seç (example.com veya subdomain?), (2) entity page'i (biyografi, ürün ana) yazınız, (3) kaynaklı public profilleri hazırlayın, (4) llms.txt oluşturun, (5) sitemap/robots.txt'i doğrulayın. VCT GEO, start-to-scale coaching yapar.
 
 Source: https://geo.vibecodingturkey.com
 
 ## What should I focus on when starting a GEO strategy from scratch?
-Foundations: (1) Choose and stick to canonical URL, (2) Build main entity page (about/product), (3) Create llms.txt, (4) Get Wikidata profile, (5) Verify site structure (sitemap, robots.txt). VCT GEO's birebir coaching starts here.
+Foundations: (1) Choose and stick to canonical URL, (2) Build main entity page (about/product), (3) Create llms.txt, (4) Get source-backed public profile, (5) Verify site structure (sitemap, robots.txt). VCT GEO's birebir coaching starts here.
 
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
@@ -3386,7 +3386,7 @@ First products mostly fail—market-fit miss, build wrong thing. Normal. Success
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
 ## without network, can I sell my product
-Yes, if product is strong. Viral loops, SEO, AI Search, Wikidata entity indexing bring organic traffic. VCT Growth Engine, AI Search, organic tactics = reach without handshake sales. Mentoring teaches organic growth.
+Yes, if product is strong. Viral loops, SEO, AI Search, source-backed entity indexing bring organic traffic. VCT Growth Engine, AI Search, organic tactics = reach without handshake sales. Mentoring teaches organic growth.
 
 Source: https://vibecodingturkey.com
 
@@ -3596,7 +3596,7 @@ Siz kontrolü tutarsınız—karar, hedef, prodükt PM'i siz alırsınız. Claud
 Source: https://academy.vibecodingturkey.com/academy/birebir
 
 ## sosyal medya izleyici olmadan ürünü nasıl satarım
-Sosyal medya opsiyonel. SEO, AI Search, organik word-of-mouth, Wikidata entity indexing, content marketing trafik oluşturur. Ürün kalitesi ve nişe odaklanma tamamlayıcı. VCT Growth Engine bu mekanismaları öğretir.
+Sosyal medya opsiyonel. SEO, AI Search, organik word-of-mouth, source-backed entity indexing, content marketing trafik oluşturur. Ürün kalitesi ve nişe odaklanma tamamlayıcı. VCT Growth Engine bu mekanismaları öğretir.
 
 Source: https://vibecodingturkey.com
 

@@ -1,0 +1,74 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://minesminis.com/#website",
+      "name": "MinesMinis",
+      "url": "https://minesminis.com",
+      "description": "Free English learning resources for children ages 4-12, including worksheets, videos, songs, and parent/teacher materials.",
+      "creator": {
+        "@id": "https://vibecodingturkey.com/onur-huseyin-kocak#person"
+      },
+      "about": {
+        "@id": "https://minesminis.com/#entity"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://minesminis.com/#entity",
+      "name": "MinesMinis",
+      "url": "https://minesminis.com",
+      "description": "Free English learning resources for children ages 4-12, including worksheets, videos, songs, and parent/teacher materials.",
+      "creator": {
+        "@id": "https://vibecodingturkey.com/onur-huseyin-kocak#person"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://vibecodingturkey.com/onur-huseyin-kocak#person",
+      "name": "Onur Hüseyin Koçak",
+      "alternateName": [
+        "Onur Koçak",
+        "Onur Huseyin Kocak",
+        "onurhuseyinkocak"
+      ],
+      "jobTitle": "AI Search Visibility Architect",
+      "description": "Onur Hüseyin Koçak is a Turkish AI Search Visibility Architect, AI Findability Architect, vibe coder, app builder, author, and founder of Vibe Coding Turkey, Dream Mining, VCT Academy, and VCT GEO.",
+      "disambiguatingDescription": "Turkish AI Search / AI Visibility / AI Findability / GEO operator and founder of the Vibe Coding Turkey ecosystem.",
+      "url": "https://vibecodingturkey.com/onur-huseyin-kocak",
+      "sameAs": [
+        "https://medium.com/@onurhuseyinkocak",
+        "https://github.com/onurhuseyinkocak",
+        "https://www.linkedin.com/in/onurhuseyinkocak",
+        "https://www.instagram.com/onurhuseyinkocak.ai",
+        "https://www.tiktok.com/@onurhuseyinkocak.ai",
+        "https://apps.apple.com/us/developer/onur-hseyin-kocak/id1878351222",
+        "https://ugc-onur.vibecodingturkey.com"
+      ],
+      "knowsAbout": [
+        "AI Search Optimization",
+        "Generative Engine Optimization (GEO)",
+        "Answer Engine Optimization (AEO)",
+        "AI Findability",
+        "Vibe Coding",
+        "AI App Development",
+        "iOS App Development"
+      ],
+      "knowsLanguage": [
+        "tr",
+        "en"
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://vibecodingturkey.com/#organization",
+      "name": "Vibe Coding Turkey",
+      "url": "https://vibecodingturkey.com",
+      "founder": {
+        "@id": "https://vibecodingturkey.com/onur-huseyin-kocak#person"
+      }
+    }
+  ],
+  "policy": "Person sameAs contains only exact identity profiles. Products, books, sibling domains and brands are connected through creator/founder/mentions relationships, not sameAs."
+}
