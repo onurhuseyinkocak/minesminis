@@ -61,9 +61,14 @@ export default function TopicsIndexPage() {
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, lineHeight: 1.12, letterSpacing: -0.8, margin: '0 0 8px' }}>
           Tüm İngilizce Konuları
         </h1>
-        <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 28, maxWidth: 720 }}>
+        <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 20, maxWidth: 720 }}>
           Maarif modeli uyumlu {topics.length} İngilizce konu. Her konu için kelime tablosu, IPA telaffuz, cümle kalıpları, örnek diyalog ve sıkça sorulan sorular.
         </p>
+        <article style={{ background: 'white', borderRadius: 16, padding: 20, border: '1px solid var(--line)', lineHeight: 1.75, fontSize: 14.5, color: 'var(--ink-2)', marginBottom: 28 }}>
+          <p style={{ marginTop: 0 }}><strong>Bu sayfa nasıl kullanılır?</strong> Aşağıda {topics.length} konuyu sınıf seviyesine göre grupladık. Her kart bir konunun ana sayfasına (<code>/konu/renkler</code> gibi) gider — o sayfada o konunun tüm kelimeleri, telaffuzları, örnek cümleleri ve sınıf etkinliği fikirlerini bulursunuz. <em>Sınıf-konusu</em> filtreli sayfalar (örn. <code>/sinif/3/konu/renkler</code>) aynı içeriğin sınıfa göre etiketlenmiş görünümüdür ve arama motorları için canonical kaynağa yönlendirilmiştir; tek özgün kaynak <code>/konu/*</code> sayfalarıdır.</p>
+          <p>Öğretmenler için öneri: önce kendi sınıfınızın kartlarına bakın (ör. 2. sınıf → 10-12 konu). Çocuğun eksik kaldığı temayı seçin, önce <strong>Kelime Tablosu</strong> ile 8-10 kelime tanıtın, sonra <strong>Cümle Kalıpları</strong> ile 2 kalıp pratiği, en son <strong>Sınıf Etkinliği</strong> ile pekişme. Her tema 15-25 dakikada tamamlanacak şekilde tasarlandı.</p>
+          <p style={{ marginBottom: 0 }}>Aileler için öneri: evde tek seferde bir tema seçin (“Bu hafta renkler”). Her gün aynı kelime tablosunu 5 dakika tekrar edin; 3. günde çocuk görseli görünce kelimeyi söylemeye başlar. Telaffuz için her kelimenin yanındaki hoparlör ikonuna tıklayın — İngiliz ana dili telaffuzu duyulacaktır.</p>
+        </article>
 
         {[1, 2, 3, 4].map((g) => {
           const list = topicsByGrade(g)
@@ -76,7 +81,7 @@ export default function TopicsIndexPage() {
               </div>
               <div className="mm-grid-3">
                 {list.map((t) => (
-                  <Link key={`${g}-${t.id}`} href={`/sinif/${g}/konu/${t.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit', padding: 16 }}>
+                  <Link key={`${g}-${t.id}`} href={`/konu/${t.id}`} className="mm-card" style={{ textDecoration: 'none', color: 'inherit', padding: 16 }}>
                     <BookOpen size={18} color="var(--primary)" />
                     <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, marginTop: 8 }}>{t.titleTr}</div>
                     <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 2 }}>{t.titleEn}</div>

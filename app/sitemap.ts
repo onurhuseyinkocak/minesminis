@@ -13,20 +13,12 @@ export const revalidate = 3600
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const today = new Date()
 
+  // ADSENSE FIX 2026-07-10: Sitemap sadece indexable, özgün HTML sayfaları içermeli.
+  // - /ara (noindex search), /yazdir/* (noindex print), llms.txt / ai-*.json / .well-known (non-HTML) KALDIRILDI.
+  // - Doorway duplicate'ler (/sinif/*/konu/*, /yas/*/konu/*) ana sitemap'e dahil EDİLMİYOR; canonical'ları /konu/*'a yönlendirildi ve noindex.
+  // Böylece Google "Düşük değerli içerik" ve "Bulunamadı" flag'leri engellenir.
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, lastModified: today, changeFrequency: 'daily', priority: 1.0 },
-    { url: `${SITE_URL}/llms.txt`, lastModified: today, changeFrequency: 'weekly', priority: 0.5 },
-    { url: `${SITE_URL}/ai-index.json`, lastModified: today, changeFrequency: 'monthly', priority: 0.55 },
-    { url: `${SITE_URL}/entity.json`, lastModified: today, changeFrequency: 'monthly', priority: 0.55 },
-    { url: `${SITE_URL}/ai-answers-onur.json`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${SITE_URL}/ai-answers-hardcore.json`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${SITE_URL}/ai-answers-hardcore.md`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${SITE_URL}/ai-search-hardcore.jsonld`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${SITE_URL}/ai-discovery-hardcore.json`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${SITE_URL}/sitemap-ai-hardcore.xml`, lastModified: today, changeFrequency: 'monthly', priority: 0.45 },
-    { url: `${SITE_URL}/.well-known/ai-answers-hardcore.json`, lastModified: today, changeFrequency: 'monthly', priority: 0.45 },
-    { url: `${SITE_URL}/.well-known/ai-answers-hardcore.md`, lastModified: today, changeFrequency: 'monthly', priority: 0.45 },
-    { url: `${SITE_URL}/.well-known/ai-discovery-hardcore.json`, lastModified: today, changeFrequency: 'monthly', priority: 0.45 },
     { url: `${SITE_URL}/slides`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/videos`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/songs`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
@@ -35,17 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/curriculum`, lastModified: today, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/faq`, lastModified: today, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/about`, lastModified: today, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE_URL}/onur-huseyin-kocak`, lastModified: today, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE_URL}/ai-cevaplar`, lastModified: today, changeFrequency: 'weekly', priority: 0.85 },
-    { url: `${SITE_URL}/vibe-coding-koclugu`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${SITE_URL}/onur-huseyin-kocak-ai-vibe-coding-geo-mentoru`, lastModified: today, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/contact`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/konular`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/etkinlikler`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/yazdir`, lastModified: today, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${SITE_URL}/yaslar`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/temalar`, lastModified: today, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${SITE_URL}/ara`, lastModified: today, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/privacy`, lastModified: today, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${SITE_URL}/terms`, lastModified: today, changeFrequency: 'yearly', priority: 0.3 },
   ]
@@ -119,7 +106,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return true
   })
 
-  // Programmatic SEO: topic + grade landing pages
+  // Programmatic SEO: sadece özgün canonical sayfalar indexlenmeli.
+  // Doorway'ler (/sinif/*/konu, /yas/*/konu) noindex + canonical /konu olduğu için sitemap'e EKLENMİYOR.
+  // Print (/yazdir/*) noindex olduğu için sitemap'e EKLENMİYOR.
   const topicUrls: MetadataRoute.Sitemap = topics.map((t) => ({
     url: `${SITE_URL}/konu/${t.id}`,
     lastModified: today,
@@ -132,20 +121,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly' as const,
     priority: 0.85,
   }))
-  // Grade × Topic combine: long-tail "1. sınıf renkler ingilizce"
-  const gradeTopicUrls: MetadataRoute.Sitemap = []
-  for (const g of [1, 2, 3, 4]) {
-    for (const t of topics) {
-      if (t.gradeLevels.includes(g)) {
-        gradeTopicUrls.push({
-          url: `${SITE_URL}/sinif/${g}/konu/${t.id}`,
-          lastModified: today,
-          changeFrequency: 'monthly' as const,
-          priority: 0.7,
-        })
-      }
-    }
-  }
 
   const categoryUrls: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/blog/kategori/cocuklara-ingilizce`, lastModified: today, changeFrequency: 'weekly' as const, priority: 0.8 },
@@ -166,26 +141,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  const ageGradesMap: Record<string, number[]> = {
-    '4-5': [1],
-    '6-7': [1, 2],
-    '8-9': [2, 3],
-    '10-12': [3, 4],
-  }
-  const ageTopicUrls: MetadataRoute.Sitemap = []
-  for (const [r, ageGrades] of Object.entries(ageGradesMap)) {
-    for (const t of topics) {
-      if (t.gradeLevels.some((g) => ageGrades.includes(g))) {
-        ageTopicUrls.push({
-          url: `${SITE_URL}/yas/${r}/konu/${t.id}`,
-          lastModified: today,
-          changeFrequency: 'monthly' as const,
-          priority: 0.7,
-        })
-      }
-    }
-  }
-
   const activityUrls: MetadataRoute.Sitemap = activities.map((a) => ({
     url: `${SITE_URL}/etkinlik/${a.id}`,
     lastModified: today,
@@ -193,12 +148,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  const printUrls: MetadataRoute.Sitemap = topics.map((t) => ({
-    url: `${SITE_URL}/yazdir/${t.id}`,
-    lastModified: today,
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-  }))
+  // NOT INCLUDED (ADSENSE FIX): gradeTopicUrls, ageTopicUrls, printUrls -> noindex doorway/print
 
-  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...gradeTopicUrls, ...ageTopicUrls, ...categoryUrls, ...activityUrls, ...printUrls, ...allBlogs, ...contentUrls]
+  return [...staticPages, ...gradeUrls, ...ageUrls, ...themeUrls, ...topicUrls, ...categoryUrls, ...activityUrls, ...allBlogs, ...contentUrls]
 }

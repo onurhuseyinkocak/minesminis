@@ -124,7 +124,12 @@ export default async function ThemePage({ params }: { params: Promise<{ slug: st
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, lineHeight: 1.12, letterSpacing: -0.8, margin: '0 0 8px' }}>
           {th.titleTr} <span style={{ color: 'var(--ink-3)', fontWeight: 700 }}>· {th.titleEn}</span>
         </h1>
-        <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 24, maxWidth: 720 }}>{th.metaDesc}</p>
+        <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 16, maxWidth: 720 }}>{th.metaDesc}</p>
+        <article style={{ background: 'white', borderRadius: 16, padding: 20, border: '1px solid var(--line)', lineHeight: 1.75, fontSize: 14.5, color: 'var(--ink-2)', marginBottom: 24 }}>
+          <p style={{ marginTop: 0 }}><strong>{th.titleTr}</strong> teması, Maarif modeli müfredatta farklı sınıflara dağılmış {list.length} konuyu tek bir öğrenme yolunda toplar. Her konu kartı, o konunun <strong>özgün kaynak sayfasına</strong> (<code>/konu/{'{id}'}</code>) gider — kelime tablosu, IPA, cümle kalıpları, diyalog ve SSS orada tutulur. Bu tema sayfası, o konulara <em>tema temelli</em> bir giriş ve rehber sunar.</p>
+          <p><strong>Nasıl çalışılır?</strong> Sıradan başlamak yerine, tema içinde en somut konudan başlayın (örn. Beslenme → Meyveler → Yiyecekler → Sebzeler). Her temada haftada 1 konu, 3 gün tekrar, 1 gün oyun pekiştirmesi önerilir. Yazdırılabilir kâğıtlar (<Link href="/yazdir" style={{ color: 'var(--primary)' }}>/yazdir</Link>) ve sınıf etkinlikleri (<Link href="/etkinlikler" style={{ color: 'var(--primary)' }}>/etkinlikler</Link>) bu temayla eşleşir.</p>
+          <p style={{ marginBottom: 0 }}>Toplam <strong>{totalWords} kelime</strong> ve ortalama {Math.round(totalWords/list.length)} kelime/konu — CEFR A1 seviyesinde bir tema seti.</p>
+        </article>
 
         <div style={{ display: 'flex', gap: 12, marginBottom: 28, flexWrap: 'wrap' }}>
           <div style={{ background: 'var(--surface-2)', borderRadius: 10, padding: '10px 16px', fontSize: 14 }}>

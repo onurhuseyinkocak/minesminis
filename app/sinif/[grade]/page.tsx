@@ -82,9 +82,15 @@ export default async function GradePage({ params }: { params: Promise<{ grade: s
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, lineHeight: 1.12, letterSpacing: -0.8, margin: '0 0 8px' }}>
           {g}. Sınıf İngilizce
         </h1>
-        <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 28, maxWidth: 700 }}>
+        <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 16, maxWidth: 700 }}>
           Maarif modeli {g}. sınıf İngilizce müfredatı ile birebir uyumlu konular. Her ünite kelime, cümle kalıbı, örnek diyalog ve sıkça sorulan sorularla birlikte.
         </p>
+        <article style={{ background: 'white', borderRadius: 16, padding: 20, border: '1px solid var(--line)', lineHeight: 1.75, fontSize: 14.5, color: 'var(--ink-2)', marginBottom: 24 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--ink)', marginTop: 0, marginBottom: 8 }}>{g}. Sınıfta Ne Öğretiliyor?</h2>
+          <p style={{ marginTop: 0 }}>MEB Maarif Modeli {g}. sınıfta yaklaşık {t.length} tema ve {wordCount} kelime hedefler. Aşağıdaki her kart, o temanın <strong>ana konu sayfasına</strong> (<code>/konu/renkler</code> gibi) gider — orada o temanın kelime tablosu (IPA telaffuzlu), 3-4 cümle kalıbı, örnek diyalog, 3 SSS ve sınıf etkinliği önerilerini bulursunuz. Bu sayfa ise {g}. sınıfın <em>koleksiyon görünümüdür</em>; bireysel kelime listeleri tek bir özgün kaynakta (<code>/konu/*</code>) tutulur.</p>
+          <p><strong>Sınıfta kullanım:</strong> Her ünite 1 ders saatinde tanıtılır, sonraki ders 15 dakika tekrar + oyun. Ör: “Renkler” → sunumla kelime tanıtma, ertesi gün “I Spy” oyunu. <strong>Evde kullanım:</strong> Haftada 3 kez 20 dakika, sırayla kartların açılması. Ek materyal için <Link href="/yazdir" style={{ color: 'var(--primary)' }}>Yazdırılabilir Kâğıtlar</Link> ve <Link href="/etkinlikler" style={{ color: 'var(--primary)' }}>Sınıf Etkinlikleri</Link> sayfaları ücretsizdir.</p>
+          <p style={{ marginBottom: 0 }}><strong>Not — AdSense/SEO şeffaflığı:</strong> <code>/sinif/{g}/konu/*</code> gibi filtreli URL’ler aynı içeriğin sınıfa göre etiketlenmiş tekrarıdır; arama motorları için canonical kaynak <code>/konu/*</code>’a yönlendirilmiş ve noindex olarak işaretlenmiştir. Böylece tek özgün içerik, düşük değerli çoğul sayfa sorunu oluşmaz.</p>
+        </article>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 28 }}>
           <div style={{ background: 'var(--surface-2)', borderRadius: 12, padding: 16, textAlign: 'center' }}>

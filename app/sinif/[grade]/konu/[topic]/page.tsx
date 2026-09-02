@@ -26,16 +26,18 @@ export async function generateMetadata({ params }: { params: Promise<{ grade: st
   if (!VALID.includes(g as 1 | 2 | 3 | 4) || !t || !t.gradeLevels.includes(g)) {
     return { title: 'Bulunamadı', robots: { index: false } }
   }
+  // ADSENSE FIX: doorway duplicate — canonical tek kaynak /konu/*, bu sayfa noindex
   return {
     title: `${g}. Sınıf ${t.titleTr} (${t.titleEn}) — Maarif İngilizce Konu Anlatımı`,
     description: `${g}. sınıf ilkokul İngilizce ${t.titleTr.toLowerCase()} konusu. ${t.vocabulary.length} kelime, ${t.structures.length} cümle kalıbı, örnek diyalog ve SSS. Maarif modeli uyumlu, ücretsiz.`,
     keywords: [`${g}. sınıf ingilizce ${t.titleTr.toLowerCase()}`, `${g} sınıf ${t.titleEn.toLowerCase()}`, `${t.titleTr.toLowerCase()} ingilizce ilkokul`, `maarif ${t.titleEn.toLowerCase()}`, ...t.seoKeywords],
-    alternates: { canonical: `https://minesminis.com/sinif/${g}/konu/${t.id}` },
+    alternates: { canonical: `https://minesminis.com/konu/${t.id}` },
+    robots: { index: false, follow: true },
     openGraph: {
       type: 'article',
       title: `${g}. Sınıf ${t.titleTr}`,
       description: `${g}. sınıf ${t.titleTr} İngilizce konu anlatımı, kelime ve cümle kalıpları.`,
-      url: `https://minesminis.com/sinif/${g}/konu/${t.id}`,
+      url: `https://minesminis.com/konu/${t.id}`,
     },
   }
 }

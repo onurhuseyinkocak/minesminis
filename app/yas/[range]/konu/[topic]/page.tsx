@@ -37,16 +37,18 @@ export async function generateMetadata({ params }: { params: Promise<{ range: st
   if (!a || !t || !t.gradeLevels.some((g) => a.grades.includes(g))) {
     return { title: 'Bulunamadı', robots: { index: false } }
   }
+  // ADSENSE FIX: doorway duplicate — canonical tek kaynak /konu/*, bu sayfa noindex
   return {
     title: `${a.titleTr} ${t.titleTr} (${t.titleEn}) — İlkokul İngilizce`,
     description: `${a.titleTr} çocuklar için ${t.titleTr} konusu. ${t.vocabulary.length} kelime, IPA telaffuz, cümle kalıbı, örnek diyalog ve SSS. Maarif modeli uyumlu, ücretsiz.`,
     keywords: [`${range} yaş ingilizce ${t.titleTr.toLowerCase()}`, `${range} yaş ${t.titleEn.toLowerCase()}`, `çocuklara ${t.titleTr.toLowerCase()} ingilizce`, ...t.seoKeywords],
-    alternates: { canonical: `https://minesminis.com/yas/${range}/konu/${t.id}` },
+    alternates: { canonical: `https://minesminis.com/konu/${t.id}` },
+    robots: { index: false, follow: true },
     openGraph: {
       type: 'article',
       title: `${a.titleTr} ${t.titleTr}`,
       description: `${a.titleTr} grubuna özel ${t.titleTr} İngilizce konu anlatımı.`,
-      url: `https://minesminis.com/yas/${range}/konu/${t.id}`,
+      url: `https://minesminis.com/konu/${t.id}`,
     },
   }
 }
