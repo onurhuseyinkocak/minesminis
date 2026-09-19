@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://minesminis.com/sitemap.xml
