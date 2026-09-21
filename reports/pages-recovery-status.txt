@@ -1,5 +1,5 @@
 MinesMinis GitHub Pages preflight
-generated_at=2026-09-21T13:54:13Z
+generated_at=2026-09-21T13:56:34Z
 
 == current Pages state ==
 {"message":"Not Found","documentation_url":"https://docs.github.com/rest/pages/pages#get-a-apiname-pages-site","status":"404"}gh: Not Found (HTTP 404)
