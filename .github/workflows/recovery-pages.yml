@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -26,6 +26,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Ensure GitHub Pages is enabled
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          mkdir -p reports
+          {
+            echo "MinesMinis GitHub Pages preflight"
+            echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo
+            echo "== current Pages state =="
+            gh api "repos/${GITHUB_REPOSITORY}/pages" 2>&1
+            GET_STATUS=$?
+            echo "get_exit=$GET_STATUS"
+            if [ "$GET_STATUS" -ne 0 ]; then
+              echo
+              echo "== enable Pages with workflow build =="
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/pages" -f build_type=workflow 2>&1
+              echo "enable_exit=$?"
+            fi
+          } > reports/pages-recovery-status.txt
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload recovery site
@@ -35,3 +57,16 @@ jobs:
       - name: Deploy recovery site
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Persist Pages diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          echo >> reports/pages-recovery-status.txt
+          echo "== post-deploy Pages state ==" >> reports/pages-recovery-status.txt
+          GH_TOKEN="${{ github.token }}" gh api "repos/${GITHUB_REPOSITORY}/pages" >> reports/pages-recovery-status.txt 2>&1 || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/pages-recovery-status.txt
+          git commit -m "ops: record MinesMinis Pages diagnostics" || exit 0
+          git push origin HEAD:main
